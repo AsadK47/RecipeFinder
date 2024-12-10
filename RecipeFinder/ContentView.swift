@@ -39,6 +39,7 @@ struct SearchBar: View {
 }
 
 struct ContentView: View {
+    @Environment(\.colorScheme) var colorScheme
     @State private var searchText = ""
     @State private var recipes = [
         Recipe(name: "Spaghetti", prepTime: "30 min", ingredients: ["Pasta", "Tomato Sauce"], instructions: "Boil pasta, add sauce"),
@@ -62,10 +63,19 @@ struct ContentView: View {
                 List(filteredRecipes) { recipe in
                     NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
                         Text(recipe.name)
+                            .background(colorScheme == .dark ? Color.gray.opacity(0.3) : Color.white)
                     }
+                    .listRowSeparator(.hidden)
                 }
                 .listStyle(PlainListStyle())
-                .navigationTitle("Recipes")
+                .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        Text("Recipe Finder")
+                            .font(.largeTitle)
+                            .foregroundColor(.primary)
+                            .padding(.top, 40)
+                    }
+                }
                 
             }
         }
