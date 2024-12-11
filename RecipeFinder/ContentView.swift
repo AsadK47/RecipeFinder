@@ -25,18 +25,23 @@ struct ContentView: View {
         NavigationView {
             VStack {
                 VStack {
+                    Spacer()
+                        .frame(height: 5)
+                    
                     Text("Recipe finder")
                         .font(.largeTitle)
-                        .padding(.top, 40)
+                    
                     SearchBar(text: $searchText)
                         .padding(.horizontal)
+                    
+                    Spacer()
+                        .frame(height: 15)
                 }
             
                 List(filteredRecipes) { recipe in
                     NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
                         Text(recipe.name)
                             .foregroundColor(.primary)
-//                            .padding(5)
                             .background(colorScheme == .dark ? Color.black : Color.white)
                             .cornerRadius(8)
                     }
