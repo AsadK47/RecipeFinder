@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9E605FFC2D09845E00236896 /* RecipeModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9E605FFA2D09845E00236896 /* RecipeModel.xcdatamodeld */; };
 		9E605FFE2D0985BD00236896 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E605FFD2D0985BD00236896 /* PersistenceController.swift */; };
+		9E6060032D09CB6400236896 /* RecipeModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9E6060002D09CB6400236896 /* RecipeModel.xcdatamodeld */; };
 		9EE5AAD92D08FCBE00C1B736 /* RecipeFinderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EE5AAD82D08FCBE00C1B736 /* RecipeFinderApp.swift */; };
 		9EE5AADB2D08FCBE00C1B736 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EE5AADA2D08FCBE00C1B736 /* ContentView.swift */; };
 		9EE5AADD2D08FCBE00C1B736 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EE5AADC2D08FCBE00C1B736 /* Item.swift */; };
@@ -38,8 +38,10 @@
 
 /* Begin PBXFileReference section */
 		9E37D12A2D09082C005BC8FA /* readme.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = readme.md; sourceTree = "<group>"; };
-		9E605FFB2D09845E00236896 /* RecipeModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = RecipeModel.xcdatamodel; sourceTree = "<group>"; };
 		9E605FFD2D0985BD00236896 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
+		9E6060012D09CB6400236896 /* RecipeModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = RecipeModel.xcdatamodel; sourceTree = "<group>"; };
+		9E6060022D09CB6400236896 /* RecipeModel 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 2.xcdatamodel"; sourceTree = "<group>"; };
+		9EA777B82D09F1E000C3422A /* RecipeModel 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 3.xcdatamodel"; sourceTree = "<group>"; };
 		9EE5AAD52D08FCBE00C1B736 /* RecipeFinder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RecipeFinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9EE5AAD82D08FCBE00C1B736 /* RecipeFinderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeFinderApp.swift; sourceTree = "<group>"; };
 		9EE5AADA2D08FCBE00C1B736 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -51,6 +53,7 @@
 		9EE5AAF12D08FCBF00C1B736 /* RecipeFinderUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RecipeFinderUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9EE5AAF52D08FCBF00C1B736 /* RecipeFinderUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeFinderUITests.swift; sourceTree = "<group>"; };
 		9EE5AAF72D08FCBF00C1B736 /* RecipeFinderUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeFinderUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		9EEDD0812D09F955003C7296 /* RecipeModel 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 4.xcdatamodel"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,7 +107,7 @@
 			children = (
 				9EE5AAD82D08FCBE00C1B736 /* RecipeFinderApp.swift */,
 				9EE5AADA2D08FCBE00C1B736 /* ContentView.swift */,
-				9E605FFA2D09845E00236896 /* RecipeModel.xcdatamodeld */,
+				9E6060002D09CB6400236896 /* RecipeModel.xcdatamodeld */,
 				9EE5AADC2D08FCBE00C1B736 /* Item.swift */,
 				9EE5AADE2D08FCBF00C1B736 /* Assets.xcassets */,
 				9EE5AAE02D08FCBF00C1B736 /* Preview Content */,
@@ -269,10 +272,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				9EE5AADB2D08FCBE00C1B736 /* ContentView.swift in Sources */,
-				9E605FFC2D09845E00236896 /* RecipeModel.xcdatamodeld in Sources */,
 				9EE5AADD2D08FCBE00C1B736 /* Item.swift in Sources */,
 				9EE5AAD92D08FCBE00C1B736 /* RecipeFinderApp.swift in Sources */,
 				9E605FFE2D0985BD00236896 /* PersistenceController.swift in Sources */,
+				9E6060032D09CB6400236896 /* RecipeModel.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -600,12 +603,15 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		9E605FFA2D09845E00236896 /* RecipeModel.xcdatamodeld */ = {
+		9E6060002D09CB6400236896 /* RecipeModel.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				9E605FFB2D09845E00236896 /* RecipeModel.xcdatamodel */,
+				9EEDD0812D09F955003C7296 /* RecipeModel 4.xcdatamodel */,
+				9EA777B82D09F1E000C3422A /* RecipeModel 3.xcdatamodel */,
+				9E6060012D09CB6400236896 /* RecipeModel.xcdatamodel */,
+				9E6060022D09CB6400236896 /* RecipeModel 2.xcdatamodel */,
 			);
-			currentVersion = 9E605FFB2D09845E00236896 /* RecipeModel.xcdatamodel */;
+			currentVersion = 9EEDD0812D09F955003C7296 /* RecipeModel 4.xcdatamodel */;
 			name = RecipeModel.xcdatamodeld;
 			path = /Users/asad.e.khan/Documents/Personal/app_ideas/RecipeFinder/RecipeFinder/RecipeModel.xcdatamodeld;
 			sourceTree = "<group>";

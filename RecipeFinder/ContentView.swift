@@ -52,6 +52,7 @@ struct ContentView: View {
     }
     
     private func loadRecipes() {
+        PersistenceController.shared.clearDatabase()
         PersistenceController.shared.populateDatabaseIfNeeded()
         recipes = PersistenceController.shared.fetchRecipes()
     }
@@ -66,18 +67,36 @@ struct RecipeDetailView: View {
                 Text(recipe.name)
                     .font(.title)
                     .bold()
-                Text("Prep time: \(recipe.prepTime)")
-                    .font(.subheadline)
+                Divider()
+                Text("Prep time")
+                    .font(.headline)
+                Text("\(recipe.prepTime)")
+                Divider()
+                Text("Cooking time")
+                    .font(.headline)
+                Text("\(recipe.cookingTime)")
                 Divider()
                 Text("Ingredients")
                     .font(.headline)
                 ForEach(recipe.ingredients, id: \.self) { ingredient in
-                    Text("* \(ingredient)")
+                    Text("• \(ingredient)")
+                }
+                Divider()
+                Text("Pre-Prep Instructions")
+                    .font(.headline)
+                ForEach(recipe.prePrepInstructions.indices, id: \.self) { index in
+                    Text("\(index + 1). \(recipe.prePrepInstructions[index])")
                 }
                 Divider()
                 Text("Instructions")
                     .font(.headline)
-                Text(recipe.instructions)
+                ForEach(recipe.instructions.indices, id: \.self) { index in
+                    Text("\(index + 1). \(recipe.instructions[index])")
+                }
+                Divider()
+                Text("Notes")
+                    .font(.headline)
+                Text("\(recipe.notes)")
             }
             .padding()
         }
