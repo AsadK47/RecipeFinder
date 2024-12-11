@@ -3005,32 +3005,33 @@ extension PersistenceController {
         )
         saveRecipe(
             name: "Chocolate Chip Shortbread",
-            prepTime: "20 minutes",
-            cookingTime: "20 minutes (plus 30 minutes chilling)",
+            prepTime: "20 mins",
+            cookingTime: "20 mins",
             ingredients: [
-                "300 g plain flour",
-                "200 g cold salted butter, cubed",
+                "300g plain flour",
+                "200g cold salted butter, cubed",
                 "1 large egg yolk",
-                "100 g caster sugar (plus extra for sprinkling)",
-                "80 g milk or dark chocolate chips"
+                "100g caster sugar, plus extra to sprinkle",
+                "80g milk or dark chocolate chips"
             ],
             prePrepInstructions: [
-                "Sieve the flour into a large mixing bowl.",
-                "Cut the butter into cubes and prepare the egg yolk."
+                "Sieve the flour into a large mixing bowl and add the butter.",
+                "Rub the butter and flour between your fingers until the mixture resembles crumbs.",
+                "Stir through the egg yolk and sugar, squishing everything together in the bowl to create a dough.",
+                "Add the chocolate chips and spread them evenly throughout the dough.",
+                "Form the dough into a flattened puck shape, wrap it in plastic wrap, and chill for 30 minutes."
             ],
             instructions: [
-                "Rub the butter into the sieved flour with your fingers until the mixture resembles crumbs.",
-                "Add the egg yolk and caster sugar, then mix and squish everything together to form a dough.",
-                "Incorporate the chocolate chips evenly throughout the dough.",
-                "Form the dough into a flattened round shape, wrap it, and chill in the refrigerator for 30 minutes.",
-                "Preheat the oven to 170°C (150°C fan) or gas mark 3. Line two baking sheets with baking parchment.",
-                "Roll out the dough between two sheets of baking parchment to a thickness of 1 cm. Remove the top sheet and use a 7 cm round biscuit cutter to cut out 14 rounds.",
-                "Re-roll any offcuts to use all the dough. Transfer the rounds carefully to the prepared baking sheets, leaving space between them.",
-                "Sprinkle a little sugar over each round.",
-                "Bake in the preheated oven for 15-20 minutes, or until lightly golden.",
-                "Allow to cool on the baking sheets for 10 minutes before transferring to a wire rack to cool completely."
+                "Preheat the oven to 170C/150C fan/gas 3. Line two baking sheets with baking parchment.",
+                "Roll out the dough between two sheets of baking parchment until it’s 1cm thick.",
+                "Cut into 14 rounds using a 7cm biscuit cutter.",
+                "Re-roll any offcuts to maximize the dough.",
+                "Transfer the rounds carefully to the prepared baking sheets, leaving space between them.",
+                "Sprinkle with a little sugar.",
+                "Bake in the oven for 15-20 minutes or until lightly golden.",
+                "Cool for 10 minutes on the tray before transferring to a wire rack to cool completely."
             ],
-            notes: "Ensure the butter is cold for the best texture. Store the shortbread in an airtight container for up to a week."
+            notes: "The dough may take a little work from the crumb stage to come together. Ensure the chocolate chips are evenly distributed for balanced flavor. Chilling the dough helps it firm up and makes it easier to roll and cut."
         )
         saveRecipe(
             name: "Chocolate Cheesecake (Instant Pot)",
@@ -3065,7 +3066,10 @@ extension PersistenceController {
                 "Cool the ganache for 5-8 minutes until it thickens slightly, then pour it over the chilled cheesecake. Refrigerate for 1 hour to set the ganache.",
                 "Top with raspberries before serving, if desired."
             ],
-            notes: "Ensure the cheesecake chills thoroughly before adding the ganache. Store any leftovers in the fridge for up to 5 days."
+            notes: """
+            Ensure the cheesecake chills thoroughly before adding the ganache.
+            Store any leftovers in the fridge for up to 5 days.
+            """
         )
         saveRecipe(
             name: "Chocolate Chip Cookies (Best Chewy)",
@@ -3095,7 +3099,10 @@ extension PersistenceController {
                 "Bake fresh dough for 8–10 minutes or chilled dough for 10–12 minutes, until the edges are browned and crisp but the centers remain soft.",
                 "Cool the cookies on the tray for a few minutes before transferring to a wire rack to cool completely."
             ],
-            notes: "Adjust the flour amount based on desired texture: use 180g for thinner cookies and 200g for more cakey ones. Store cookies in an airtight container for up to three days."
+            notes: """
+            Adjust the flour amount based on desired texture: use 180g for thinner cookies and 200g for more cakey ones.
+            Store cookies in an airtight container for up to three days.
+            """
         )
         saveRecipe(
             name: "Chocolate Chip Cookies (Best Big Fat Chewy)",
@@ -3126,12 +3133,15 @@ extension PersistenceController {
                 "Bake in the preheated oven for 15–17 minutes, or until the edges are golden.",
                 "Allow cookies to cool briefly on the baking sheets before transferring to a wire rack to cool completely."
             ],
-            notes: "Chilling the dough overnight enhances the flavor and texture. Store cookies in an airtight container for up to a week."
+            notes: """
+            Chilling the dough overnight enhances the flavor and texture.
+            Store cookies in an airtight container for up to a week.
+            """
         )
         saveRecipe(
             name: "Chocolate Cornflake Clusters",
-            prepTime: "15 minutes",
-            cookingTime: "30 minutes (chilling time included)",
+            prepTime: "10 mins",
+            cookingTime: "30 mins (chilling time)",
             ingredients: [
                 "200g milk chocolate chips",
                 "200g dark chocolate chips",
@@ -3140,25 +3150,17 @@ extension PersistenceController {
                 "145.5g cornflakes"
             ],
             prePrepInstructions: [
-                "Line two baking sheets with parchment paper and set aside.",
-                "Lightly crush the cornflakes in a large bowl, leaving some pieces intact for texture."
+                "Line two baking sheets with parchment paper.",
+                "Crush the cornflakes lightly in a bowl, leaving some pieces intact."
             ],
             instructions: [
-                "Add the milk and dark chocolate chips to a microwave-safe bowl.",
-                "Melt the chocolate gently by microwaving in 30-second intervals, stirring after each interval, until fully melted and smooth.",
-                "Stir in the honey and sugar until fully combined.",
-                "Pour the melted chocolate mixture over the crushed cornflakes and quickly mix with a rubber spatula to coat evenly.",
-                "Spoon out approximately 1 tablespoon of the mixture onto the prepared baking sheets, shaping into clusters using a second spoon.",
-                "Repeat until all the mixture is used. Chill the clusters in the fridge for 30 minutes, or until set."
+                "Melt the milk and dark chocolate chips gently in a microwave-safe bowl by microwaving in 30-second intervals.",
+                "Stir until smooth, then mix in the honey and sugar.",
+                "Pour the chocolate mixture over the cornflakes and stir quickly to coat evenly.",
+                "Scoop up 1 tablespoon of the mixture onto the parchment-lined baking sheets, shaping into clusters.",
+                "Chill in the fridge for 30 minutes until set."
             ],
-            notes: """
-            Use any combination of chocolate (chips, bars, or buttons) you have on hand.
-            For a peanut butter twist, add 1-2 tablespoons of peanut butter to the chocolate before melting.
-            Store clusters in the fridge in a tightly sealed container for up to 2 weeks, or freeze for up to 3 months.
-            Thaw at room temperature or overnight in the fridge before enjoying.
-
-            Nutrition (per cluster): 134kcal, 17g carbs, 7g fat, 1g protein, 4g saturated fat, 50mg sodium, 1g fiber, 10g sugar.
-            """
+            notes: "Use any type of chocolate you like, such as chocolate chips, chopped chocolate bars, or buttons. Peanut butter can be added to create chocolate peanut butter bites. Store in the fridge for up to 2 weeks or freeze for up to 3 months."
         )
         saveRecipe(
             name: "Chocolate Cupcakes (Cupcake Jemma)",
@@ -3266,9 +3268,9 @@ extension PersistenceController {
             ],
             notes: """
             For smaller servings:
-            - Use 106.67 grams of dark chocolate.
-            - Reduce double cream to 193.34 ml.
-            - Use 2 large egg whites and 33.34 grams (around ⅔ cup) of granulated sugar.
+            Use 106.67 grams of dark chocolate.
+            Reduce double cream to 193.34 ml.
+            Use 2 large egg whites and 33.34 grams (around ⅔ cup) of granulated sugar.
             """
         )
         saveRecipe(
@@ -3298,17 +3300,17 @@ extension PersistenceController {
             ],
             notes: """
             Ingredient Notes:
-            - Use any type of chocolate or a combination of chocolates for this recipe.
-            - Pistachio spread can be substituted with Lotus Biscoff Spread or homemade pistachio spread.
+            Use any type of chocolate or a combination of chocolates for this recipe.
+            Pistachio spread can be substituted with Lotus Biscoff Spread or homemade pistachio spread.
 
             Tips and Tricks:
-            - Keep an eye on the kunafa while toasting to ensure it doesn’t burn. It should be evenly golden brown.
-            - Melt the chocolate carefully to avoid burning; stop microwaving even if small chunks remain intact.
-            - Spread the chocolate evenly in the loaf pan for consistent thickness.
-            - Chocolate molds can be used for a prettier presentation. You can also drizzle white chocolate on top for decoration.
+            Keep an eye on the kunafa while toasting to ensure it doesn’t burn. It should be evenly golden brown.
+            Melt the chocolate carefully to avoid burning; stop microwaving even if small chunks remain intact.
+            Spread the chocolate evenly in the loaf pan for consistent thickness.
+            Chocolate molds can be used for a prettier presentation. You can also drizzle white chocolate on top for decoration.
 
             Storage:
-            - Store leftover pieces in a tightly covered container in the fridge for up to 5-7 days.
+            Store leftover pieces in a tightly covered container in the fridge for up to 5-7 days.
             """
         )
         saveRecipe(
@@ -3342,8 +3344,8 @@ extension PersistenceController {
                 "Enjoy!"
             ],
             notes: """
-            - Use any chocolate of your choice, such as milk, dark, or white chocolate.
-            - The cookies can be stored in an airtight container for up to a week.
+            Use any chocolate of your choice, such as milk, dark, or white chocolate.
+            The cookies can be stored in an airtight container for up to a week.
             """
         )
         saveRecipe(
@@ -3376,9 +3378,9 @@ extension PersistenceController {
                 "Add bean sprouts and stir-fry on high heat for 1 minute. Drizzle with sesame oil, stir, and serve immediately."
             ],
             notes: """
-            - Use a wok for the best results, but a large frying pan works too.
-            - Keep the wok hot and dry before adding oil to prevent noodles from sticking.
-            - To make vegetarian chow mein, substitute chicken with mushrooms or tofu and use vegetarian alternatives for oyster sauce and chicken bouillon.
+            Use a wok for the best results, but a large frying pan works too.
+            Keep the wok hot and dry before adding oil to prevent noodles from sticking.
+            To make vegetarian chow mein, substitute chicken with mushrooms or tofu and use vegetarian alternatives for oyster sauce and chicken bouillon.
             """
         )
         saveRecipe(
@@ -3413,8 +3415,8 @@ extension PersistenceController {
                 "Dust the cooled bars thickly with icing sugar and cut into 18 pieces by slicing lengthwise into 3 rows and across into 6 columns."
             ],
             notes: """
-            - The bars are best stored in an airtight container and can last for up to 3 days.
-            - Make sure the citrus topping has just set before removing from the oven for a soft, slightly gooey texture.
+            The bars are best stored in an airtight container and can last for up to 3 days.
+            Make sure the citrus topping has just set before removing from the oven for a soft, slightly gooey texture.
             """
         )
         saveRecipe(
@@ -3465,9 +3467,9 @@ extension PersistenceController {
                 "Decorate with raspberries, cut into slices, and serve."
             ],
             notes: """
-            - For best results, ensure the cakes are completely cooled before assembling to prevent the buttercream from melting.
-            - Store the cake in an airtight container for up to 3 days at room temperature or refrigerate for longer freshness.
-            - You can substitute raspberry jam with strawberry jam or another fruit jam of choice.
+            For best results, ensure the cakes are completely cooled before assembling to prevent the buttercream from melting.
+            Store the cake in an airtight container for up to 3 days at room temperature or refrigerate for longer freshness.
+            You can substitute raspberry jam with strawberry jam or another fruit jam of choice.
             """
         )
         saveRecipe(
@@ -3527,11 +3529,11 @@ extension PersistenceController {
                 "Turn off heat, add diced green onions as garnish, and serve with prepared sauce poured over the rice."
             ],
             notes: """
-            - Use Thai jasmine rice or any preferred long-grain rice for authentic results.
-            - The clay pot stays hot for a long time; handle carefully to avoid burns.
-            - For an aromatic crust, be patient with the scorching process, but avoid burning the rice.
-            - If you don't have a clay pot, a stainless steel or non-stick pot can work, but the aroma and texture may differ.
-            - Leftovers can be stored in the fridge and reheated, but the crispy rice texture may not retain fully.
+            Use Thai jasmine rice or any preferred long-grain rice for authentic results.
+            The clay pot stays hot for a long time; handle carefully to avoid burns.
+            For an aromatic crust, be patient with the scorching process, but avoid burning the rice.
+            If you don't have a clay pot, a stainless steel or non-stick pot can work, but the aroma and texture may differ.
+            Leftovers can be stored in the fridge and reheated, but the crispy rice texture may not retain fully.
             """
         )
         saveRecipe(
@@ -3561,10 +3563,10 @@ extension PersistenceController {
                 "Serve immediately or store in the fridge for 3-4 days."
             ],
             notes: """
-            - Cover the steamer with a towel to prevent water droplets from falling onto the dough.
-            - Handle the dough gently to avoid over-kneading for softer texture.
-            - Heat treat flour to make it safe for consumption.
-            - For chewy texture, beat the dough with a wooden spatula before folding.
+            Cover the steamer with a towel to prevent water droplets from falling onto the dough.
+            Handle the dough gently to avoid over-kneading for softer texture.
+            Heat treat flour to make it safe for consumption.
+            For chewy texture, beat the dough with a wooden spatula before folding.
             """
         )
         saveRecipe(
@@ -3591,9 +3593,9 @@ extension PersistenceController {
                 "Serve in bowls, garnished with sesame oil, white pepper, and chopped spring onions."
             ],
             notes: """
-            - Ensure the rice is pre-cooked for smooth consistency.
-            - Stirring after cooking prevents clumps at the bottom.
-            - Use vegetable or chicken stock for enhanced flavor.
+            Ensure the rice is pre-cooked for smooth consistency.
+            Stirring after cooking prevents clumps at the bottom.
+            Use vegetable or chicken stock for enhanced flavor.
             """
         )
         saveRecipe(
@@ -3622,9 +3624,9 @@ extension PersistenceController {
                 "Store in the refrigerator until ready to serve."
             ],
             notes: """
-            - Heat-treated flour ensures the dough is safe for consumption.
-            - The cookie dough will harden in the fridge; let it rest at room temperature before serving.
-            - For variations: replace part of the flour with cocoa powder for chocolate dough or add sprinkles for Funfetti dough.
+            Heat-treated flour ensures the dough is safe for consumption.
+            The cookie dough will harden in the fridge; let it rest at room temperature before serving.
+            For variations: replace part of the flour with cocoa powder for chocolate dough or add sprinkles for Funfetti dough.
             """
         )
         saveRecipe(
@@ -3672,9 +3674,9 @@ extension PersistenceController {
                 "Serve with flatbread."
             ],
             notes: """
-            - Save some coriander leaves for garnishing the finished dish.
-            - Adjust chilli flakes based on spice preference.
-            - The dish can be stored in an airtight container for up to 3 days.
+            Save some coriander leaves for garnishing the finished dish.
+            Adjust chilli flakes based on spice preference.
+            The dish can be stored in an airtight container for up to 3 days.
             """
         )
         saveRecipe(
@@ -3703,9 +3705,9 @@ extension PersistenceController {
                 "Taste and adjust seasoning to your liking."
             ],
             notes: """
-            - For a spicier dip, increase the amount of red pepper flakes.
-            - This dip pairs well with vegetable sticks, crackers, or as a spread on bread.
-            - Leftovers can be stored in an airtight container in the fridge for up to 3 days.
+            For a spicier dip, increase the amount of red pepper flakes.
+            This dip pairs well with vegetable sticks, crackers, or as a spread on bread.
+            Leftovers can be stored in an airtight container in the fridge for up to 3 days.
             """
         )
         saveRecipe(
@@ -3734,9 +3736,9 @@ extension PersistenceController {
                 "Serve warm as a side."
             ],
             notes: """
-            - For fluffier, crispier bread, work with a slightly wetter dough and grease the surface with oil instead of flour during rolling.
-            - Store leftovers in an airtight container in the fridge for up to 3 days, or freeze for up to a month.
-            - Reheat in a skillet with a tablespoon of water to preserve moisture.
+            For fluffier, crispier bread, work with a slightly wetter dough and grease the surface with oil instead of flour during rolling.
+            Store leftovers in an airtight container in the fridge for up to 3 days, or freeze for up to a month.
+            Reheat in a skillet with a tablespoon of water to preserve moisture.
             """
         )
         saveRecipe(
@@ -3769,12 +3771,12 @@ extension PersistenceController {
                 "Steam buns over medium-high heat for 8 minutes. Serve warm."
             ],
             notes: """
-            - To cook salted duck egg yolks: Boil in the shell for 8 minutes or steam for the same duration.
-            - Milk powder can be replaced with custard powder containing egg and milk, but not cornstarch-based powders like Bird’s custard powder.
-            - Use low gluten flour like bao or cake flour for a softer texture, or all-purpose flour as an alternative.
-            - Instant dry yeast can be added directly to the flour, while active dry yeast should be dissolved in water first.
-            - Adjust water quantity slightly depending on the flour type to achieve a soft but not sticky dough.
-            - Store cooked buns in the freezer for up to 3 months. Reheat by steaming for 3 minutes after defrosting, or 6 minutes directly from frozen.
+            To cook salted duck egg yolks: Boil in the shell for 8 minutes or steam for the same duration.
+            Milk powder can be replaced with custard powder containing egg and milk, but not cornstarch-based powders like Bird’s custard powder.
+            Use low gluten flour like bao or cake flour for a softer texture, or all-purpose flour as an alternative.
+            Instant dry yeast can be added directly to the flour, while active dry yeast should be dissolved in water first.
+            Adjust water quantity slightly depending on the flour type to achieve a soft but not sticky dough.
+            Store cooked buns in the freezer for up to 3 months. Reheat by steaming for 3 minutes after defrosting, or 6 minutes directly from frozen.
             """
         )
         saveRecipe(
@@ -3808,10 +3810,10 @@ extension PersistenceController {
                 "Let the cookies cool for 5 minutes to set before transferring them to a wire rack."
             ],
             notes: """
-            - The water in the recipe will initially make the mixture appear curdled, but mixing thoroughly will resolve this.
-            - Chilling the dough helps to enhance flavor and prevent spreading during baking.
-            - The cookie centers may appear under-baked when removed from the oven but will set as they cool.
-            - Store baked cookies in an airtight container for up to 5 days.
+            The water in the recipe will initially make the mixture appear curdled, but mixing thoroughly will resolve this.
+            Chilling the dough helps to enhance flavor and prevent spreading during baking.
+            The cookie centers may appear under-baked when removed from the oven but will set as they cool.
+            Store baked cookies in an airtight container for up to 5 days.
             """
         )
         saveRecipe(
@@ -3880,10 +3882,10 @@ extension PersistenceController {
                 "Decorate as desired and freeze for 2 hours before serving."
             ],
             notes: """
-            - Agar agar is used instead of gelatin for a vegetarian option.
-            - Ensure mousse layers are completely frozen before assembling the cake.
-            - Glaze the cake while it is frozen for best results.
-            - Store leftover cake in the fridge for up to 3 days or freeze for longer storage.
+            Agar agar is used instead of gelatin for a vegetarian option.
+            Ensure mousse layers are completely frozen before assembling the cake.
+            Glaze the cake while it is frozen for best results.
+            Store leftover cake in the fridge for up to 3 days or freeze for longer storage.
             """
         )
         saveRecipe(
@@ -3927,9 +3929,9 @@ extension PersistenceController {
                 "Taste and adjust seasoning if needed."
             ],
             notes: """
-            - Fluff the rice immediately after cooking to prevent clumping.
-            - For additional flavor, add 1 tsp light soy sauce just before plating.
-            - Use the bowl method to create a visually appealing presentation by compressing rice in a bowl and flipping it onto a plate.
+            Fluff the rice immediately after cooking to prevent clumping.
+            For additional flavor, add 1 tsp light soy sauce just before plating.
+            Use the bowl method to create a visually appealing presentation by compressing rice in a bowl and flipping it onto a plate.
             """
         )
         saveRecipe(
@@ -3958,10 +3960,10 @@ extension PersistenceController {
                 "Add vanilla extract and salt, then mix until creamy. Use immediately to frost cooled cakes."
             ],
             notes: """
-            - To make chocolate ermine frosting, whip in 1/4 cup sifted cocoa powder after the frosting is fluffy.
-            - Ensure the flour mixture is completely cool before incorporating it into the butter to prevent melting.
-            - Ermine frosting sets quickly and is best used immediately after preparation. It does not store well overnight.
-            - This frosting is not ideal for use under fondant but works well as a filling between cake layers.
+            To make chocolate ermine frosting, whip in 1/4 cup sifted cocoa powder after the frosting is fluffy.
+            Ensure the flour mixture is completely cool before incorporating it into the butter to prevent melting.
+            Ermine frosting sets quickly and is best used immediately after preparation. It does not store well overnight.
+            This frosting is not ideal for use under fondant but works well as a filling between cake layers.
             """
         )
         saveRecipe(
@@ -3995,9 +3997,9 @@ extension PersistenceController {
                 "Let the cookies cool on the baking sheet for 5 minutes before transferring them to a cooling rack. Sprinkle with flaky salt and enjoy."
             ],
             notes: """
-            - Chilling the dough for at least 2 days develops the best flavor and reduces spreading.
-            - If short on time, a 30-minute chill can work, but the cookies may spread more.
-            - For optimal ripples, flatten the cookies while baking by lifting and dropping the sheet.
+            Chilling the dough for at least 2 days develops the best flavor and reduces spreading.
+            If short on time, a 30-minute chill can work, but the cookies may spread more.
+            For optimal ripples, flatten the cookies while baking by lifting and dropping the sheet.
             """
         )
         saveRecipe(
@@ -4023,9 +4025,9 @@ extension PersistenceController {
                 "Warm the tortillas and serve with the cooked ground beef, peppers, onions, and your choice of toppings."
             ],
             notes: """
-            - Avoid overcooking the ground beef to prevent it from becoming tough.
-            - Use a hot skillet to quickly char the peppers and onions without overcooking.
-            - If sensitive to spice, omit green chilies and reduce fajita seasoning, adding more to taste after cooking.
+            Avoid overcooking the ground beef to prevent it from becoming tough.
+            Use a hot skillet to quickly char the peppers and onions without overcooking.
+            If sensitive to spice, omit green chilies and reduce fajita seasoning, adding more to taste after cooking.
             """
         )
         saveRecipe(
@@ -4055,9 +4057,9 @@ extension PersistenceController {
                 "Serve warm."
             ],
             notes: """
-            - Ensure the liquid for the dough is lukewarm to activate the yeast effectively.
-            - Avoid overstuffing the pancakes to prevent the filling from leaking.
-            - These pancakes are best enjoyed fresh but can be reheated in a skillet or microwave.
+            Ensure the liquid for the dough is lukewarm to activate the yeast effectively.
+            Avoid overstuffing the pancakes to prevent the filling from leaking.
+            These pancakes are best enjoyed fresh but can be reheated in a skillet or microwave.
             """
         )
         saveRecipe(
@@ -4078,8 +4080,8 @@ extension PersistenceController {
                 "Blend until smooth and creamy."
             ],
             notes: """
-            - Serve immediately for the best texture.
-            - Adjust the amount of Nutella and peanut butter to suit personal taste.
+            Serve immediately for the best texture.
+            Adjust the amount of Nutella and peanut butter to suit personal taste.
             """
         )
         saveRecipe(
@@ -4116,8 +4118,8 @@ extension PersistenceController {
                 "Garnish with green onions (optional) and serve hot."
             ],
             notes: """
-            - Adjust the saltiness of the soup by adding 1 tablespoon more oyster sauce if desired.
-            - Avoid overcooking udon noodles to maintain texture.
+            Adjust the saltiness of the soup by adding 1 tablespoon more oyster sauce if desired.
+            Avoid overcooking udon noodles to maintain texture.
             """
         )
         saveRecipe(
@@ -4166,9 +4168,9 @@ extension PersistenceController {
                 "Simmer on low for 2-3 minutes. Top with green chilies, black pepper, julienned ginger, cilantro, and lemon juice."
             ],
             notes: """
-            - Serve with naan, roti, or steamed rice.
-            - Adjust spice levels by reducing or omitting chili powder.
-            - For added depth, use ghee instead of oil during preparation.
+            Serve with naan, roti, or steamed rice.
+            Adjust spice levels by reducing or omitting chili powder.
+            For added depth, use ghee instead of oil during preparation.
             """
         )
         saveRecipe(
@@ -4188,9 +4190,9 @@ extension PersistenceController {
                 "Slice into discs when ready to serve."
             ],
             notes: """
-            - Use immediately if soft butter is needed, such as for spreading on bread.
-            - Store in the fridge for up to two weeks, covered.
-            - For variations, add chili flakes, curry powder, or cold-smoke the butter.
+            Use immediately if soft butter is needed, such as for spreading on bread.
+            Store in the fridge for up to two weeks, covered.
+            For variations, add chili flakes, curry powder, or cold-smoke the butter.
             """
         )
         saveRecipe(
@@ -4222,8 +4224,8 @@ extension PersistenceController {
                 "Toss baked tofu in the sauce and serve over rice or as desired."
             ],
             notes: """
-            - Pressing the tofu will make it crispier but is optional.
-            - Use low sodium soy sauce to avoid excessive saltiness.
+            Pressing the tofu will make it crispier but is optional.
+            Use low sodium soy sauce to avoid excessive saltiness.
             """
         )
         saveRecipe(
@@ -4260,8 +4262,8 @@ extension PersistenceController {
                 "Mix in black pepper, chaat masala, and lemon juice. Serve with naan, roti, or rice."
             ],
             notes: """
-            - Cooking time may vary based on the cut of goat meat.
-              Pressure cook for an additional 5 minutes if needed.
+            Cooking time may vary based on the cut of goat meat.
+            Pressure cook for an additional 5 minutes if needed.
             """
         )
         print("Default recipes added!")

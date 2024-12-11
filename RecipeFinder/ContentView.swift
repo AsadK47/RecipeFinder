@@ -83,8 +83,20 @@ struct RecipeDetailView: View {
                 Divider()
                 Text("Ingredients")
                     .font(.headline)
+                HStack {
+                    Text("Number of ingredients: ")
+                        .font(.headline)
+                    Text("\(recipe.ingredients.count)")
+                        .font(.body)
+                }
                 ForEach(recipe.ingredients, id: \.self) { ingredient in
-                    Text("• \(ingredient)")
+                    HStack {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundColor(.primary)
+                        Text(ingredient)
+                            .padding(.leading, 4)
+                            .foregroundColor(.primary)
+                    }
                 }
                 Divider()
                 Text("Pre-Prep Instructions")
@@ -101,7 +113,17 @@ struct RecipeDetailView: View {
                 Divider()
                 Text("Notes")
                     .font(.headline)
-                Text("\(recipe.notes)")
+                ForEach(recipe.notes.split(separator: "."), id: \.self) { sentence in
+                    if !sentence.trimmingCharacters(in: .whitespaces).isEmpty {
+                        HStack {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.primary)
+                            Text("\(sentence.trimmingCharacters(in: .whitespaces))")
+                                .padding(.leading, 4)
+                                .foregroundColor(.primary)
+                        }
+                    }
+                }
             }
             .padding()
         }
