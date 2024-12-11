@@ -4214,12 +4214,16 @@ extension PersistenceController {
                 "5 cloves garlic, minced",
                 "1 tbsp olive oil"
             ],
-            prePrepInstructions: [],
+            prePrepInstructions: [
+                "Drain tofu and pat dry.",
+                "Cut tofu into 1-inch cubes."
+            ],
             instructions: [
                 "Preheat the oven to 400°F (200°C).",
-                "Drain tofu and pat dry. Cut into 1-inch cubes and toss with soy sauce, cornstarch, and breadcrumbs until coated.",
+                "Toss tofu cubes with soy sauce, cornstarch, and breadcrumbs until coated.",
                 "Bake tofu on a lined tray for 30-35 minutes until golden brown.",
-                "Prepare the sauce by sautéing garlic in olive oil until fragrant. Add soy sauce, honey/maple syrup, rice vinegar, 2 tbsp water, and sesame oil.",
+                "Prepare the sauce by sautéing garlic in olive oil until fragrant.",
+                "Add soy sauce, honey/maple syrup, rice vinegar, 2 tbsp water, and sesame oil.",
                 "Mix 1 tbsp cornstarch with 2 tbsp water and whisk into the sauce. Heat until thickened.",
                 "Toss baked tofu in the sauce and serve over rice or as desired."
             ],
@@ -4228,6 +4232,7 @@ extension PersistenceController {
             Use low sodium soy sauce to avoid excessive saltiness.
             """
         )
+
         saveRecipe(
             name: "Goat & Bell Pepper Curry (Instant Pot)",
             prepTime: "30 minutes",
@@ -4264,6 +4269,104 @@ extension PersistenceController {
             notes: """
             Cooking time may vary based on the cut of goat meat.
             Pressure cook for an additional 5 minutes if needed.
+            """
+        )
+        saveRecipe(
+            name: "Gochujang Chilli Oil Noodles",
+            prepTime: "5 minutes",
+            cookingTime: "15 minutes",
+            ingredients: [
+                "1 tbsp toasted sesame seeds",
+                "2 spring onions",
+                "1 big garlic clove",
+                "1 tsp chilli flakes",
+                "½ tsp caster sugar",
+                "1 tbsp rice wine vinegar",
+                "2 tbsp gochujang paste",
+                "1 tbsp peanut butter",
+                "3 tbsp vegetable oil",
+                "2 portions of udon noodles",
+                "spring onion (to serve)",
+                "roasted peanuts (to serve)",
+                "edamame beans (to serve)"
+            ],
+            prePrepInstructions: [
+                "Microplane or garlic crush",
+                "Mortar and pestle",
+                "Small saucepan",
+                "Pan of boiling water"
+            ],
+            instructions: [
+                "Slice the spring onions thinly and peel the garlic.",
+                "In a small pan, toast the sesame seeds on a medium to low heat until fragrant.",
+                "In a mortar and pestle, grind the sesame seeds until almost a powder.",
+                "Grate the garlic and add to the sesame seeds, then add the chilli flakes, sugar, rice wine vinegar, gochujang, peanut butter and a pinch of salt.",
+                "In a small saucepan, heat the oil until sizzling.",
+                "Once hot, pour it into the mortar and carefully stir everything together so that you have a smooth sauce.",
+                "Cook the noodles according to instructions on the pack.",
+                "Transfer the cooked noodles to a bowl, then smother them in your sauce, add a generous splash of boiling water for extra creaminess.",
+                "Stir through the sliced spring onions, saving some for garnish.",
+                "Finish with chopped roasted peanuts, your reserved spring onions, and edamame if you like."
+            ],
+            notes: """
+            Use fresh, high-quality gochujang paste for the best flavor.
+            For a spicier dish, increase the amount of chili flakes.
+            Edamame beans can be optional but they add extra texture and protein to the dish.
+            """
+        )
+        saveRecipe(
+            name: "Grass Jelly Brown Sugar Milk (Easy)",
+            prepTime: "5 minutes",
+            cookingTime: "5 minutes",
+            ingredients: [
+                "540 g canned grass jelly",
+                "1000 ml milk or plant-based milk",
+                "0.5 cup, 111 g brown sugar or coconut sugar",
+                "0.5 cup, 125 ml cold water",
+                "ice cubes"
+            ],
+            prePrepInstructions: [
+                "Open your canned grass jelly and pop the jelly out onto a cutting board. Slice it into two halves.",
+                "Slice one half of the portion into little cubes and the other half into medium size cubes for variety in texture."
+            ],
+            instructions: [
+                "In a small saucepan, whisk brown sugar and cold water. Bring to a boil, then lower to a simmer to make a thick syrup.",
+                "Take half of the brown sugar syrup and reserve the other half to garnish the glasses.",
+                "Divide the half portion of syrup between the two bowls of grass jelly cubes and gently mix.",
+                "In tall glasses, layer a variety of the grass jelly cubes, followed by 3-5 ice cubes, then more jelly cubes.",
+                "Spoon and pour the reserved syrup along the walls of the glass to create a marble effect.",
+                "Add more grass jelly, then pour 1 cup of milk per glass over the jelly and ice. Serve chilled."
+            ],
+            notes: """
+            If you prefer a thinner syrup, add more water while simmering.
+            Make sure to save some syrup for garnish to create a marble effect.
+            """
+        )
+
+        saveRecipe(
+            name: "Green Chutney (Indian Cilantro Mint Chutney)",
+            prepTime: "5 minutes",
+            cookingTime: "0 minutes",
+            ingredients: [
+                "1 small white onion (4 ounces), roughly chopped",
+                "1 cup packed mint leaves",
+                "1 ½ cups packed cilantro",
+                "1 Indian green chili or serrano pepper to taste",
+                "Juice of 1 lemon (2 tablespoons lemon juice)",
+                "½ teaspoon fine sea salt",
+                "½ teaspoon sugar or jaggery or coconut sugar, to taste",
+                "Small handful of fresh pomegranate seeds (optional)"
+            ],
+            prePrepInstructions: [],
+            instructions: [
+                "Blend all ingredients together until well combined. Add 3-4 tablespoons of water if needed to reach desired consistency.",
+                "Taste and adjust seasoning with more sugar if desired.",
+                "Store chutney in an airtight container in the fridge for up to one week or freeze for longer storage."
+            ],
+            notes: """
+            Add water to thin the chutney if you prefer a runnier consistency.
+            Skip the pomegranate seeds if desired, and adjust sugar accordingly.
+            Freeze chutney cubes for later use and thaw as needed.
             """
         )
         print("Default recipes added!")
