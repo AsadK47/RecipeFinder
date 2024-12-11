@@ -119,7 +119,7 @@ struct RecipeDetailView: View {
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundColor(.primary)
                             Text("\(sentence.trimmingCharacters(in: .whitespaces))")
-                                .padding(.leading, 4)
+                                .padding(.leading, 2)
                                 .foregroundColor(.primary)
                         }
                     }

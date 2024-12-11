@@ -4017,7 +4017,13 @@ extension PersistenceController {
                 "Optional toppings: sour cream, salsa, cheese, avocado slices, guacamole, sliced jalapeños, lime wedges, chopped cilantro"
             ],
             prePrepInstructions: [
-                "Prepare fajita seasoning by mixing: 1 tbsp chili powder, 1 tsp smoked paprika, 1 tsp cumin, 1/2 tsp garlic powder, 1/2 tsp kosher salt, 1/4 tsp onion powder, 1/8 tsp ground cayenne pepper."
+                "Prepare fajita seasoning by mixing: ",
+                "1 tbsp chili powder",
+                "1 tsp smoked paprika", "1 tsp cumin",
+                "1/2 tsp garlic powder",
+                "1/2 tsp kosher salt",
+                "1/4 tsp onion powder",
+                "1/8 tsp ground cayenne pepper"
             ],
             instructions: [
                 "Heat a skillet over medium heat and add the ground beef with fajita seasoning. Brown the beef, breaking it apart into smaller pieces while cooking. Stir in green chilies, if using, and set aside once cooked.",
