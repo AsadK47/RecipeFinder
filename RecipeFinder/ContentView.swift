@@ -8,46 +8,12 @@
 import SwiftUI
 import SwiftData
 
-// Recipe model
-struct Recipe: Identifiable {
-    let id = UUID()
-    let name: String
-    let prepTime: String
-    let ingredients: [String]
-    let instructions: String
-}
-
-struct SearchBar: View {
-    @Binding var text: String
-    var body: some View {
-        HStack {
-            TextField("What would you like to eat...?", text: $text)
-                .padding(7)
-                .background(Color(.systemGray6))
-                .cornerRadius(8)
-                .padding(.horizontal)
-            if !text.isEmpty {
-                Button("Cancel") {
-                    text = ""
-                }
-                .padding(.trailing, 10)
-                .transition(.move(edge: .trailing))
-                .animation(.default, value: text.isEmpty)
-            }
-        }
-    }
-}
-
 struct ContentView: View {
     @Environment(\.colorScheme) var colorScheme
     @State private var searchText = ""
-    @State private var recipes = [
-        Recipe(name: "Spaghetti", prepTime: "30 min", ingredients: ["Pasta", "Tomato Sauce"], instructions: "Boil pasta, add sauce"),
-        Recipe(name: "Pancakes", prepTime: "20 min", ingredients: ["Flour", "Milk", "Eggs"], instructions: "Mix ingredients and fry"),
-        Recipe(name: "Salad", prepTime: "15 min", ingredients: ["Lettuce", "Tomatoes", "Cucumber"], instructions: "Chop ingredients and mix")
-    ]
+    @State private var recipes: [RecipeModel] = []
     
-    var filteredRecipes: [Recipe] {
+    var filteredRecipes: [RecipeModel] {
         if searchText.isEmpty {
             return recipes
         } else {
@@ -58,32 +24,41 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             VStack {
-                SearchBar(text: $searchText)
-                
+                VStack {
+                    Text("Recipe finder")
+                        .font(.largeTitle)
+                        .padding(.top, 40)
+                    SearchBar(text: $searchText)
+                        .padding(.horizontal)
+                }
+            
                 List(filteredRecipes) { recipe in
                     NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
                         Text(recipe.name)
-                            .background(colorScheme == .dark ? Color.gray.opacity(0.3) : Color.white)
+                            .foregroundColor(.primary)
+//                            .padding(5)
+                            .background(colorScheme == .dark ? Color.black : Color.white)
+                            .cornerRadius(8)
                     }
                     .listRowSeparator(.hidden)
                 }
                 .listStyle(PlainListStyle())
-                .toolbar {
-                    ToolbarItem(placement: .principal) {
-                        Text("Recipe Finder")
-                            .font(.largeTitle)
-                            .foregroundColor(.primary)
-                            .padding(.top, 40)
-                    }
-                }
-                
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .onAppear{
+                loadRecipes()
             }
         }
+    }
+    
+    private func loadRecipes() {
+        PersistenceController.shared.populateDatabaseIfNeeded()
+        recipes = PersistenceController.shared.fetchRecipes()
     }
 }
 
 struct RecipeDetailView: View {
-    let recipe: Recipe
+    let recipe: RecipeModel
     
     var body: some View {
         ScrollView {
@@ -107,6 +82,27 @@ struct RecipeDetailView: View {
             .padding()
         }
         .navigationTitle(recipe.name)
+    }
+}
+
+struct SearchBar: View {
+    @Binding var text: String
+    var body: some View {
+        HStack {
+            TextField("What would you like to eat...?", text: $text)
+                .padding(7)
+                .background(Color(.systemGray6))
+                .cornerRadius(8)
+                .padding(.horizontal)
+            if !text.isEmpty {
+                Button("Cancel") {
+                    text = ""
+                }
+                .padding(.trailing, 10)
+                .transition(.move(edge: .trailing))
+                .animation(.default, value: text.isEmpty)
+            }
+        }
     }
 }
 
