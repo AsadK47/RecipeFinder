@@ -10,8 +10,36 @@ import SwiftData
 
 struct ContentView: View {
     @Environment(\.colorScheme) var colorScheme
-    @State private var searchText = ""
     @State private var recipes: [RecipeModel] = []
+    
+    var body: some View {
+        TabView {
+            RecipeSearchView(recipes: $recipes)
+                .tabItem {
+                    Label("Recipes", systemImage: "book")
+                }
+            
+            IngredientSearchView(recipes: $recipes)
+                .tabItem {
+                    Label("Ingredients", systemImage: "leaf")
+                }
+        }
+        .onAppear {
+            loadRecipes()
+        }
+    }
+    
+    private func loadRecipes() {
+        PersistenceController.shared.clearDatabase()
+        PersistenceController.shared.populateDatabase()
+        recipes = PersistenceController.shared.fetchRecipes()
+    }
+}
+
+struct RecipeSearchView: View {
+    @Binding var recipes: [RecipeModel]
+    @State private var searchText = ""
+    @Environment(\.colorScheme) var colorScheme
     
     var filteredRecipes: [RecipeModel] {
         if searchText.isEmpty {
@@ -25,17 +53,10 @@ struct ContentView: View {
         NavigationView {
             VStack {
                 VStack {
-                    Spacer()
-                        .frame(height: 5)
-                    
-                    Text("Recipe finder")
-                        .font(.largeTitle)
-                    
-                    SearchBar(text: $searchText)
-                        .padding(.horizontal)
-                    
-                    Spacer()
-                        .frame(height: 15)
+                    Spacer().frame(height: 5)
+                    Text("Recipe finder").font(.largeTitle)
+                    SearchBar(text: $searchText).padding(.horizontal)
+                    Spacer().frame(height: 15)
                 }
             
                 List(filteredRecipes) { recipe in
@@ -50,21 +71,59 @@ struct ContentView: View {
                 .listStyle(PlainListStyle())
             }
             .navigationBarTitleDisplayMode(.inline)
-            .onAppear{
-                loadRecipes()
+        }
+    }
+}
+
+struct IngredientSearchView: View {
+    @Binding var recipes: [RecipeModel]
+    @State private var searchText = ""
+    @Environment(\.colorScheme) var colorScheme
+    
+    var filteredRecipes: [RecipeModel] {
+        if searchText.isEmpty {
+            return recipes
+        } else {
+            return recipes.filter { recipe in
+                recipe.ingredients.contains { $0.localizedCaseInsensitiveContains(searchText) }
             }
         }
     }
     
-    private func loadRecipes() {
-        PersistenceController.shared.clearDatabase()
-        PersistenceController.shared.populateDatabaseIfNeeded()
-        recipes = PersistenceController.shared.fetchRecipes()
+    var body: some View {
+        NavigationView {
+            VStack {
+                VStack {
+                    Spacer().frame(height: 5)
+                    Text("Ingredient Finder").font(.largeTitle)
+                    SearchBar(text: $searchText).padding(.horizontal)
+                    Spacer().frame(height: 15)
+                }
+                
+                List(filteredRecipes) { recipe in
+                    NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
+                        Text(recipe.name)
+                            .foregroundColor(.primary)
+                            .background(colorScheme == .dark ? Color.black : Color.white)
+                            .cornerRadius(8)
+                    }
+                    .listRowSeparator(.hidden)
+                }
+                .listStyle(PlainListStyle())
+            }
+            .navigationBarTitleDisplayMode(.inline)
+        }
     }
 }
 
 struct RecipeDetailView: View {
     let recipe: RecipeModel
+    @State private var ingredientsState: [Bool]
+    
+    init(recipe: RecipeModel) {
+        self.recipe = recipe
+        _ingredientsState = State(initialValue: Array(repeating: false, count: recipe.ingredients.count))
+    }
     
     var body: some View {
         ScrollView {
@@ -83,21 +142,28 @@ struct RecipeDetailView: View {
                 Divider()
                 Text("Ingredients")
                     .font(.headline)
+                
                 HStack {
                     Text("Number of ingredients: ")
                         .font(.headline)
                     Text("\(recipe.ingredients.count)")
-                        .font(.body)
                 }
-                ForEach(recipe.ingredients, id: \.self) { ingredient in
+                
+                ForEach(recipe.ingredients.indices, id: \.self) { index in
                     HStack {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(.primary)
-                        Text(ingredient)
+                        Image(systemName: ingredientsState[index] ? "checkmark.circle.fill" : "circle")
+                            .foregroundColor(ingredientsState[index] ? .green : .primary)
+                            .onTapGesture {
+                                ingredientsState[index].toggle()
+                            }
+                        
+                        Text(recipe.ingredients[index])
                             .padding(.leading, 4)
                             .foregroundColor(.primary)
+                            .strikethrough(ingredientsState[index])
                     }
                 }
+       
                 Divider()
                 Text("Pre-Prep Instructions")
                     .font(.headline)

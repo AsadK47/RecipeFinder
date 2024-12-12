@@ -101,7 +101,7 @@ class PersistenceController {
 }
 
 extension PersistenceController {
-    func populateDatabaseIfNeeded() {
+    func populateDatabase() {
         let context = container.viewContext
         
         let fetchRequest : NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Recipe")
@@ -7607,7 +7607,8 @@ extension PersistenceController {
                 "2-inch ginger, chopped",
                 "2 pounds roma tomatoes (approx. 9 tomatoes, chopped or 2 cans of diced tomatoes)",
                 "¼ cup water",
-                "\\ Spices",
+                "",
+                "Spices",
                 "3 tablespoons ground coriander",
                 "1 tablespoon paprika",
                 "½ teaspoon ground cumin",
