@@ -4348,7 +4348,6 @@ extension PersistenceController {
             Make sure to save some syrup for garnish to create a marble effect.
             """
         )
-
         saveRecipe(
             name: "Green Chutney (Indian Cilantro Mint Chutney)",
             prepTime: "5 minutes",
@@ -4373,6 +4372,1945 @@ extension PersistenceController {
             Add water to thin the chutney if you prefer a runnier consistency.
             Skip the pomegranate seeds if desired, and adjust sugar accordingly.
             Freeze chutney cubes for later use and thaw as needed.
+            """
+        )
+        saveRecipe(
+            name: "Grilled Corn on the Cob",
+            prepTime: "10 minutes",
+            cookingTime: "10 minutes",
+            ingredients: [
+                "2 ears corn",
+                "Juice of 1/2 lemon",
+                "1/2 teaspoon kosher salt, to taste",
+                "3/4 teaspoon sumac",
+                "1/4 cup parsley, chopped",
+                "1/2 teaspoon cayenne pepper"
+            ],
+            prePrepInstructions: [
+                "Preheat the grill to medium-high heat."
+            ],
+            instructions: [
+                "Place the corn cobs on the grill grates and close the lid.",
+                "Grill for about 5 minutes, open the lid and flip the corn. Close the lid again and grill for another 5-8 minutes, turning occasionally, until tender and charred.",
+                "Transfer the grilled corn to a platter. Top with lemon juice, sumac, salt, cayenne pepper, and chopped parsley.",
+                "Serve immediately and enjoy!"
+            ],
+            notes: """
+            Adjust seasoning like salt and cayenne pepper to your taste preference.
+            For an extra burst of flavor, try adding a sprinkle of grated Parmesan cheese or a drizzle of melted butter after grilling.
+            """
+        )
+        saveRecipe(
+            name: "Habanero Chili (Instant Pot)",
+            prepTime: "10 minutes",
+            cookingTime: "35 minutes",
+            ingredients: [
+                "1 tablespoon avocado oil",
+                "1 onion, diced",
+                "4-5 cloves garlic, minced",
+                "1 habanero, minced (use 2 for extra spice)",
+                "1 pound ground beef",
+                "1 bell pepper, chopped",
+                "5 medium carrots, chopped",
+                "3 stalks celery, chopped",
+                "2 cans (14.5 ounces each) organic diced tomatoes",
+                "1 tablespoon chili powder",
+                "2 teaspoons oregano",
+                "1 1/2 teaspoons cumin powder",
+                "1 teaspoon salt, adjust to taste",
+                "1 teaspoon paprika",
+                "Bacon, cooked and crumbled (optional)"
+            ],
+            prePrepInstructions: [
+                "Press the 'Sauté' button on the Instant Pot."
+            ],
+            instructions: [
+                "Add the avocado oil, onions, and garlic to the Instant Pot and sauté for 2 minutes.",
+                "Add the ground beef and cook until browned.",
+                "Add the remaining ingredients and mix well.",
+                "Secure the lid, close the pressure valve, and cook for 35 minutes at high pressure."
+            ],
+            notes: """
+            For a milder chili, reduce the number of habaneros or omit them entirely.
+            Add crumbled bacon as a topping for extra flavor if desired.
+            Serve with toppings like shredded cheese, sour cream, or chopped cilantro for added variety.
+            """
+        )
+        saveRecipe(
+            name: "Hakka Noodles (Desi Chow Mein)",
+            prepTime: "25 minutes",
+            cookingTime: "15 minutes",
+            ingredients: [
+                "210 g chicken breast or thighs, thinly sliced (~½” pieces) (See Note 1)",
+                "170 g (6 oz) chow mein stir-fry noodles (uncooked), or Ching’s Hakka Noodles (See Note 2)",
+                "2 tbsp + 1 tsp neutral oil (e.g., grapeseed or avocado), divided",
+                "3 garlic cloves, minced",
+                "1/4 inch fresh ginger, minced",
+                "3 (30 g) green onions, thinly sliced (reserve some green parts for garnish)",
+                "4 oz (114 g) green cabbage, thinly sliced into 2” strips",
+                "1 (~60 g) carrot, julienned",
+                "1/2 small (~60 g) red onion, quartered and thinly sliced",
+                "1/2 (~100 g) bell pepper (green, red, or combo), thinly sliced (~1/4 inch strips)",
+                "1/4 tsp sea salt",
+                "1/2 cup low-sodium vegetable stock",
+                "Lime wedges (optional, for serving)"
+            ],
+            prePrepInstructions: [
+                "Prepare all ingredients and slice vegetables as directed.",
+                "Combine all ingredients listed under ‘Hakka Noodles Sauce’ in a medium bowl and whisk to combine.",
+                "Pour 2 tbsp of sauce over the chicken to marinate and set aside.",
+                "Prepare noodles according to packet instructions. Drain, rinse with cold water, and toss with 1 tsp oil to prevent sticking."
+            ],
+            instructions: [
+                "Heat remaining 2 tbsp oil in a large nonstick wok or fry pan over high heat.",
+                "Add garlic and ginger, stir-frying for 10-15 seconds until golden and starting to brown.",
+                "Add marinated chicken and stir-fry until the color changes from pink to pale, about 1-2 minutes.",
+                "Add the green onions, cabbage, carrot, red onion, and bell pepper. Sprinkle in 1/4 tsp sea salt.",
+                "Stir-fry for 5 minutes until the cabbage is wilted and vegetables are tender.",
+                "Add noodles, the prepared sauce, and vegetable stock to the wok.",
+                "Toss everything together using tongs or two wooden spoons until well combined and the sauce has dried up, about 2-3 minutes.",
+                "Garnish with reserved green onion and serve immediately with lime wedges, chili garlic, or ketchup."
+            ],
+            notes: """
+            To make the chicken extra tender, use the velveting method with baking soda as described in the recipe. Alternatively, omit chicken entirely for a vegetarian version.
+            If chow mein, hakka noodles, or lo mein are unavailable, substitute with thin wheat noodles or even spaghetti.
+            Inspired by RecipeTin Eats’ Chicken Chow Mein.
+            """
+        )
+        saveRecipe(
+            name: "Easy Pakistani Haleem (Instant Pot)",
+            prepTime: "30 minutes",
+            cookingTime: "40 minutes",
+            ingredients: [
+                // Lentils and Grains
+                "1/4 cup (48 g) chana dal (split desi chickpeas) or yellow split peas",
+                "1/4 cup (48 g) maash dal (split urad lentils)",
+                "2 tbsp (25 g) masoor dal (red split lentils)",
+                "2 tbsp (27 g) split moong dal (yellow lentils)",
+                "2 tbsp (24 g) basmati rice",
+                "2 tbsp (23 g) pearl barley (optional, see Note 3)",
+                // Whole Spices
+                "2 small dried bay leaves",
+                "1 black cardamom pod",
+                "1-2 inch piece cinnamon stick",
+                "1 tsp cumin seeds",
+                "1-2 green cardamom pods",
+                "2 whole cloves",
+                // For the Instant Pot
+                "1 large (~275-300 g) yellow onion, cut into eighths",
+                "6 garlic cloves, peeled",
+                "1 inch ginger, peeled and roughly chopped",
+                "1/4 cup neutral oil (e.g., grapeseed or canola)",
+                "2 tbsp ghee",
+                "1 lb beef stew meat, cut into 1 1/2-2 inch cubes",
+                "1-2 small tomatoes, quartered",
+                "1-2 green chili peppers, stems removed and sliced",
+                "1 tbsp haleem masala powder (homemade or store-bought)",
+                "1-2 tsp red chili flakes",
+                "3/4 tsp turmeric powder",
+                "2 1/2 to 2 3/4 tsp sea salt (adjust based on haleem masala type)",
+                "2 tbsp whole milk yogurt",
+                "3 cups water",
+                // After Cooking
+                "1/4 cup rolled oats (or instant oats)",
+                "1/2 tsp garam masala or chaat masala",
+                "1/4 tsp freshly ground black pepper",
+                // Tadka (Tempering) – Optional
+                "1/2 small (~85 g) yellow onion, thinly sliced",
+                "2-3 tbsp ghee or oil",
+                // Garnishing
+                "1/4 cup cilantro leaves, finely chopped",
+                "1 inch ginger, julienned",
+                "1-2 green chili peppers, finely chopped",
+                "1 lemon or lime, cut into wedges",
+                "Crispy fried onions (store-bought or homemade)",
+                "Chaat masala or garam masala (optional)",
+                "Mint leaves (optional)"
+            ],
+            prePrepInstructions: [
+                "Combine lentils, rice, and barley (if using) in a bowl. Rinse until water runs clear, then soak in warm water.",
+                "Finely chop onion in a food processor and set aside. Mince garlic and ginger in the food processor."
+            ],
+            instructions: [
+                "Turn Instant Pot on Sauté mode (More/High). Heat oil and ghee, then sauté chopped onion until lightly golden (~8-10 minutes).",
+                "Add garlic, ginger, and whole spices. Deglaze with 1-2 tbsp water if needed.",
+                "Add beef and sauté until its color changes (~5 minutes).",
+                "Pulse tomatoes and green chilies in the food processor, then add to the pot with spices, yogurt, and 3 cups of water.",
+                "Drain soaked lentils and grains, then add to the pot. Stir to prevent sticking. Cancel Sauté mode.",
+                "Cover the Instant Pot, set the valve to Sealing, and pressure cook on Meat/Stew for 45 minutes on High.",
+                "Let pressure naturally release for 5 minutes, then manually release the rest. Remove and shred beef.",
+                "Use an immersion blender to blend dal until smooth. Return shredded beef to the pot with rolled oats.",
+                "Turn on Sauté mode (Less/Low) and cook for 3-5 minutes, then switch to Slow Cook (More/High) for 20-30 minutes.",
+                "Adjust consistency with boiling water if needed and mix in garam masala or chaat masala."
+            ],
+            notes: """
+            For best texture, alternate between Sauté (Less) and Slow Cook (More) while stirring occasionally.
+            Haleem should have a laced, thick consistency with visible shreds of beef.
+            Adding pearl barley enhances texture and creaminess; adjust quantity to preference.
+            If the beef isn’t tender after 45 minutes, pressure cook for an additional 5-10 minutes.
+            """
+        )
+        saveRecipe(
+            name: "Instant Pot Carrot Halwa (Gajar ka Halwa)",
+            prepTime: "20 minutes",
+            cookingTime: "30 minutes",
+            ingredients: [
+                "1 lb organic carrots, tops and ends removed, peeled as needed",
+                "3 tbsp ghee, divided",
+                "4-5 green cardamom pods",
+                "1 cup whole milk",
+                "1/2 cup heavy whipping cream",
+                "3 1/2 – 4 tbsp raw cane sugar (adjust based on carrot sweetness)",
+                "1 tbsp slivered pistachios (optional, for garnish)",
+                "1 tbsp slivered almonds (optional, for garnish)"
+            ],
+            prePrepInstructions: [
+                "Use the shredder attachment of a food processor to thinly grate the carrots in batches if necessary. Set aside."
+            ],
+            instructions: [
+                "Select the Sauté setting on the Instant Pot and set to More/High.",
+                "Add 2 tbsp of ghee, cardamom pods, and shredded carrots. Sauté for 5 minutes, stirring occasionally, until the carrots change color and reduce slightly.",
+                "Add the whole milk and heavy whipping cream, stirring to mix.",
+                "Cancel the Sauté setting. Secure the lid and set the Pressure Release to Sealing. Pressure Cook on High for 30 minutes.",
+                "Allow the pressure to naturally release for 3-5 minutes, then quick release any remaining pressure.",
+                "Select the Sauté setting again and set to More/High. Stir occasionally until most moisture evaporates and the carrots stick to the bottom (~10 minutes).",
+                "Add the remaining 1 tbsp ghee and sugar. Continue sautéing, scraping the bottom, for 8-10 minutes until the halwa is dry, the ghee separates, and the color deepens to a rich orange-red.",
+                "Press the Cancel button to turn off the Instant Pot.",
+                "Transfer the halwa to a serving dish and garnish with pistachios and almonds, if desired."
+            ],
+            notes: """
+            For a deeper flavor, ensure the ghee is fully incorporated and the halwa achieves a rich, deep orange or red color.
+            Adjust the sugar based on the natural sweetness of the carrots.
+            You can substitute raw cane sugar with your preferred sweetener.
+            Garnishing with pistachios and almonds is optional but adds a delightful crunch.
+            """
+        )
+        saveRecipe(
+            name: "Hanami Dango",
+            prepTime: "20 minutes",
+            cookingTime: "10 minutes",
+            ingredients: [
+                "105 grams Shiratamako (glutinous rice flour)",
+                "80 grams Joshinko (rice flour)",
+                "40 grams icing sugar",
+                "135 ml hot boiling water",
+                "1 drop red food coloring",
+                "1 drop green food coloring"
+            ],
+            prePrepInstructions: [
+                "Dust a clean working surface with glutinous rice flour for kneading later."
+            ],
+            instructions: [
+                "In a large mixing bowl, whisk together glutinous rice flour, rice flour, and icing sugar.",
+                "Add hot boiling water and whisk until a ball of dough forms. Knead until smooth, even if slightly tacky at first.",
+                "Roll the dough into a thick log and divide it into three equal portions, placing each portion in a separate bowl.",
+                "Add 1 drop of red food coloring to the first bowl and knead until the color is evenly distributed. Repeat with the second bowl using green food coloring. Leave the third bowl plain.",
+                "Roll each portion into a 1-inch-thick log and cut each log into 6 equal pieces. Roll each piece into a smooth ball, yielding 18 balls in total.",
+                "Bring a medium-sized pot of water to a boil, then reduce to medium-high heat. Roll each ball quickly before lowering into the water to prevent sticking.",
+                "Boil for 7-8 minutes until the balls float and are fully cooked inside, stirring occasionally.",
+                "Strain and transfer the cooked balls into an ice bath to cool.",
+                "Once cool, skewer 1 ball of each color (green, white, pink) onto a stick, creating 3 balls per skewer.",
+                "Serve at room temperature and enjoy!"
+            ],
+            notes: """
+            Store in an airtight container in the fridge for 3-4 days.
+            To soften refrigerated dango, re-boil for a few minutes before serving.
+            """
+        )
+        saveRecipe(
+            name: "Idli Dosa Batter (Instant Pot)",
+            prepTime: "5-6 hours (soaking)",
+            cookingTime: "12 hours (fermentation)",
+            ingredients: [
+                "3 cups idli rice (short-grain parboiled rice), soaked for 5-6 hours",
+                "1 cup whole skinless black lentils (urad dal), soaked for 5-6 hours",
+                "1 teaspoon fenugreek (methi) seeds, soaked for 5-6 hours",
+                "2 cups cold water (adjust as needed)",
+                "3 teaspoons salt"
+            ],
+            prePrepInstructions: [
+                "Soak the rice in a bowl of cold water for 5-6 hours.",
+                "In a separate bowl, soak the urad dal and fenugreek seeds in cold water for 5-6 hours."
+            ],
+            instructions: [
+                "Drain the water from the soaked rice and lentils.",
+                "In a blender, blend the drained rice with 1 cup of cold water until mostly smooth. Pour into the steel pot.",
+                "Blend the drained urad dal and fenugreek seeds with 1 cup of cold water until fluffy and foam-like. Add this to the steel pot.",
+                "Mix the blended rice and lentils together in the pot.",
+                "Press the yogurt button on the Instant Pot and set it to ferment for 12 hours on normal mode. Secure the lid (valve position does not matter).",
+                "Once fermented, the batter should double in size and look light and airy. Gently fold in the salt and adjust the consistency with water to resemble cake or thick pancake batter.",
+                "Use the batter for idli in the first couple of days and for dosa or savory pancakes later. Store in the fridge for up to a week or freeze for up to a month."
+            ],
+            notes: """
+            To make idlis: Spoon the fermented batter into a greased idli mold. Place 2 cups of water in the Instant Pot, insert the mold, and pressure cook for 1 minute on high pressure. Allow natural release for 10 minutes before serving with sambar.
+            To make dosas: Mix 1 cup of batter with 1 tablespoon chickpea flour, 1 teaspoon sugar, and 3-4 tablespoons of water for a runnier consistency. Cook on a hot crepe pan until edges lift, flipping once.
+            Add golden raisins and cashews to the idli mold for a sweeter variation.
+            For best results, soak the rice and lentils in the morning and ferment overnight.
+            """
+        )
+        saveRecipe(
+            name: "Indian Style Pasta",
+            prepTime: "25 minutes",
+            cookingTime: "20 minutes",
+            ingredients: [
+                // Roast Peppers
+                "1 tbsp olive oil",
+                "1 red bell pepper, chopped",
+                "1 green bell pepper, chopped",
+                "1 yellow bell pepper, chopped",
+                "Pinch of salt",
+                // Curry
+                "2 tbsp rapeseed oil",
+                "2 tsp garam masala",
+                "1 tsp cumin seeds",
+                "1 tsp ground coriander",
+                "2 tbsp coriander stalks, finely chopped",
+                "1 tsp sea salt",
+                "1 tsp turmeric",
+                "2 onions, chopped",
+                "1/2 tsp fenugreek",
+                "1 green chilli, diced",
+                "3 garlic cloves, minced",
+                "1 piece fresh ginger, peeled and chopped",
+                "6 tomatoes, chopped",
+                "125 ml water",
+                "Pinch of pepper",
+                "100 g frozen peas",
+                "Cooked penne pasta, enough for 4 people",
+                // Toppings
+                "Handful of coriander leaves"
+            ],
+            prePrepInstructions: [
+                "Preheat oven for roasting peppers."
+            ],
+            instructions: [
+                "Place chopped bell peppers on a baking tray. Drizzle with olive oil, sprinkle with salt, and roast for 20 minutes.",
+                "In a frying pan, heat rapeseed oil and add garam masala, cumin seeds, ground coriander, turmeric, and fenugreek. Simmer for 1-2 minutes until aromatic.",
+                "Add onions and fry until soft. Stir in garlic, coriander stalks, ginger, and chillies. Mix to coat with spices.",
+                "Add chopped tomatoes to the pan and simmer for 7-10 minutes.",
+                "Stir in salt and water, then simmer for 1 minute.",
+                "Add roasted peppers and frozen peas to the pan, folding them into the mixture.",
+                "Add cooked penne pasta to the sauce and fold to coat evenly."
+            ],
+            notes: """
+            Serve immediately garnished with coriander leaves.
+            You can adjust spice levels by varying the amount of green chilli.
+            For a richer flavor, try adding a splash of coconut milk to the sauce.
+            """
+        )
+        saveRecipe(
+            name: "Basic Microwaved Jacket Potato",
+            prepTime: "10 minutes",
+            cookingTime: "15-25 minutes",
+            ingredients: [
+                "2 large baking potatoes",
+                "1 tsp olive oil",
+                "Pinch of salt",
+                "Butter, to taste"
+            ],
+            prePrepInstructions: [
+                "Wash the baking potatoes thoroughly and prick the skins all over with a fork to create steam holes."
+            ],
+            instructions: [
+                "Lay a sheet of kitchen roll on a microwave-safe plate, place the potatoes on top, and cover with another sheet of kitchen roll.",
+                "Microwave the potatoes for 4 minutes. Carefully turn them over, re-cover with kitchen roll, and cook for another 4 minutes.",
+                "Continue cooking in 1-2 minute bursts until the potatoes are soft all the way through and the skins are wrinkled. Allow them to cool slightly.",
+                "Preheat the oven to 220°C/200°C fan/gas mark 7.",
+                "Once cool enough to handle, rub the potato skins with olive oil and sprinkle with salt. Place them directly on the oven rack and bake for 10-15 minutes until the skins are crispy.",
+                "Split the potatoes open, add butter, and serve with your favorite toppings or alongside a stew or casserole."
+            ],
+            notes: """
+            For best results, cooking the potatoes entirely in the oven is recommended, but starting in the microwave speeds up the process.
+            Popular toppings include tuna with sweetcorn and sriracha mayo or other creative fillings of your choice.
+            Ensure the potatoes cool enough to handle before applying oil and seasoning to avoid burns.
+            """
+        )
+        saveRecipe(
+            name: "Jackfruit Bulgogi Bao Buns",
+            prepTime: "90 minutes",
+            cookingTime: "40 minutes",
+            ingredients: [
+                // Bao Buns
+                "1/2 tsp fine sea salt",
+                "500 g plain flour, plus extra for dusting",
+                "1 x 7 g sachet fast-action dried yeast",
+                "30 g caster sugar",
+                "15 g baking powder",
+                "50 ml unsweetened soy milk",
+                "250 ml warm water",
+                "25 g vegetable oil",
+                // Jackfruit Bulgogi
+                "1 tbsp soy sauce",
+                "1 tbsp light brown sugar",
+                "1 tbsp toasted sesame oil",
+                "1/2 tbsp freshly grated ginger",
+                "1/2 x 400 g can of jackfruit, drained",
+                "1/2 pear, peeled and grated",
+                "1 garlic clove, finely grated",
+                "1/2 tbsp gochujang paste",
+                "1 g vegetable oil",
+                "Salt and pepper, to taste",
+                // Toppings
+                "1 tbsp toasted sesame seeds",
+                "Kimchi (optional)",
+                "2 spring onions, finely sliced",
+                "1/2 cucumber, peeled and sliced",
+                "1 carrot, peeled and ribboned",
+                "1/2 tsp salt",
+                "1/2 tbsp sugar"
+            ],
+            prePrepInstructions: [
+                "Preheat the oven to 25°C for the dough to rise.",
+                "Prepare a bamboo steamer lined with parchment paper punctured for steam circulation."
+            ],
+            instructions: [
+                "In a bowl, mix flour, salt, yeast, sugar, and baking powder. Gradually add soy milk and warm water, folding the mixture to form a moist, non-sticky dough.",
+                "Knead the dough on a floured surface for 2 minutes. Add vegetable oil and knead for another 8 minutes until smooth.",
+                "Dust the dough with flour, place it in an oiled bowl, cover with a damp cloth, and let it rise in the warm oven for 60-90 minutes.",
+                "Divide the dough into 8 pieces and shape into balls. Roll each ball into a 10 cm disk, fold over a chopstick, and set aside to rest.",
+                "Steam the buns in a bamboo steamer over a wok with boiling water for 8-10 minutes. Allow to rest for 1 minute before serving.",
+                "Prepare the jackfruit by crushing it between your fingers. Mix it with soy sauce, sesame oil, sugar, garlic, ginger, and gochujang. Marinate for 10 minutes.",
+                "Pickle the cucumber slices with salt and sugar. Let sit for 10 minutes, then drain.",
+                "Cook the jackfruit in a frying pan with oil on high heat for 5 minutes. Reduce to low heat and cook for another 4 minutes, stirring occasionally.",
+                "Serve the buns with jackfruit, sesame seeds, kimchi, spring onions, carrot ribbons, and cucumber slices."
+            ],
+            notes: """
+            Use a bamboo steamer for the best results when steaming the buns. If unavailable, a metal steamer will work.
+            Adjust the spiciness of the jackfruit by varying the amount of gochujang paste.
+            Store leftover buns in an airtight container and reheat by steaming for a few minutes before serving.
+            """
+        )
+        saveRecipe(
+            name: "Japanese Milk Buns",
+            prepTime: "30 minutes",
+            cookingTime: "25 minutes",
+            ingredients: [
+                // For the Tangzhong
+                "2 tablespoons strong white bread flour",
+                "100 ml (1/3 cup plus 1 tablespoon) milk",
+                // For the Dough
+                "350 g (2 1/3 cups) strong white bread flour",
+                "3 g (1 teaspoon) instant dried yeast",
+                "1 teaspoon fine salt",
+                "55 g (1/4 cup) caster sugar",
+                "1 egg",
+                "125 ml (1/2 cup) milk, warmed to 37°C/98°F",
+                "50 g (1/2 stick) unsalted butter, softened",
+                // For the Eggwash
+                "1 egg",
+                "1 tablespoon milk"
+            ],
+            prePrepInstructions: [
+                "Prepare a small saucepan for the Tangzhong."
+            ],
+            instructions: [
+                // Tangzhong Preparation
+                "Whisk flour and milk together in a small saucepan over low heat until a thick paste forms. Transfer to a bowl and let cool.",
+                // Dough Preparation
+                "In a stand mixer bowl, combine flour, yeast, salt, and sugar. Add the egg and cooled Tangzhong.",
+                "Slowly pour in the warmed milk while mixing until a sticky dough forms. Add butter one tablespoon at a time, ensuring full incorporation before adding the next.",
+                "Knead on medium speed for 10-15 minutes until the dough passes the windowpane test and pulls away from the sides of the bowl.",
+                "Lightly oil a mixing bowl. Shape the dough into a ball, place it in the bowl, and lightly oil the top.",
+                "Cover with a tea towel and let rise in a warm place for 1.5 hours or until doubled in size.",
+                // Shaping and Baking
+                "Divide the dough into 9 equal portions. Shape each portion into a ball by pinching edges underneath.",
+                "Place the buns into a lined baking pan and let them proof in a warm place for 30 minutes until doubled in size and touching.",
+                "Preheat the oven to 180°C/356°F (without fan). Brush the buns with egg wash and bake for 20-25 minutes. Cover with foil if browning too quickly.",
+                "Let the buns cool in the pan for 5 minutes before transferring to a wire rack."
+            ],
+            notes: """
+            Tangzhong must be cooled before adding to the dough to avoid affecting the yeast.
+            The dough should stretch thin enough to see light through during the windowpane test to ensure proper gluten development.
+            For an overnight proof, refrigerate the dough covered and continue the process the next day.
+            Adjust baking time and temperature if using a convection oven by consulting your oven’s manual.
+            """
+        )
+        saveRecipe(
+            name: "Japanese Milk Buns 2",
+            prepTime: "2 hours 50 minutes",
+            cookingTime: "20 minutes",
+            ingredients: [
+                // For the Tangzhong
+                "3 tbsp water",
+                "3 tbsp whole milk",
+                "2 tbsp all-purpose flour",
+                // For the Dough
+                "1 tbsp active dry yeast",
+                "1/2 cup whole milk, warmed to 105-115°F",
+                "2 tbsp whole milk powder",
+                "1/4 cup sugar",
+                "1 tsp salt",
+                "1 large egg",
+                "1/4 cup unsalted butter, melted",
+                "2 1/2 cups all-purpose flour",
+                "1 tbsp milk (for brushing on the buns)"
+            ],
+            prePrepInstructions: [
+                "Prepare a small pot for the Tangzhong and a greased 9-inch baking pan for the dough."
+            ],
+            instructions: [
+                // Tangzhong Preparation
+                "Stir milk, water, and flour together in a small pot until lump-free.",
+                "Cook over low heat while stirring continuously until the mixture thickens like a paste. Transfer to a small bowl and let cool.",
+                // Dough Preparation
+                "In a large mixing bowl, combine warm milk and yeast with 1 teaspoon sugar. Let sit for 5 minutes until foamy.",
+                "Add the remaining sugar, milk powder, butter, egg, salt, and cooled Tangzhong. Mix with a wooden spoon until combined.",
+                "Gradually add flour, stirring until the dough forms a shaggy mass.",
+                "Turn the dough onto a floured surface and knead until smooth, elastic, and soft.",
+                "Shape the dough into a ball and place it in a lightly greased bowl. Cover and let rise for 60-90 minutes until puffy.",
+                // Shaping and Baking
+                "Divide the dough into 9 equal portions. Shape each into a ball and place in a greased 9-inch baking pan.",
+                "Cover the rolls and let them rise for 50 minutes until puffy.",
+                "Preheat the oven to 350°F. Brush the rolls with milk and bake for 15-17 minutes, or until golden on top.",
+                "Let cool slightly and serve warm. Store leftovers in a tightly covered container at room temperature for up to 2 days."
+            ],
+            notes: """
+            Tangzhong must be cool before incorporating into the dough to avoid affecting the yeast.
+            The dough should be kneaded until elastic and soft for the best texture.
+            For longer storage, keep the buns in an airtight container at room temperature for up to 2 days.
+            Recipe adapted from King Arthur Flour.
+            """
+        )
+        saveRecipe(
+            name: "Japchae (Korean Glass Noodle Stir-Fry)",
+            prepTime: "15 minutes",
+            cookingTime: "10 minutes",
+            ingredients: [
+                "100 g sweet potato noodles",
+                "100 g rib eye beef (or chuck beef), thinly sliced",
+                "50 g carrot, thinly sliced",
+                "1/4 onion, thinly sliced",
+                "1/4 red bell pepper, thinly sliced",
+                "30 g baby spinach (packed into the measuring cup)",
+                "3 shiitake mushrooms (or dried shiitake mushrooms soaked in hot water)",
+                "1 garlic clove, minced",
+                "15 ml sesame oil (for cooking)",
+                "2 g sesame seeds, toasted",
+                // Sauce
+                "22 ml regular soy sauce",
+                "15 ml sesame oil",
+                "24 g brown sugar"
+            ],
+            prePrepInstructions: [
+                "Combine the sauce ingredients (soy sauce, sesame oil, and brown sugar) in a small bowl and set aside.",
+                "Soak dried shiitake mushrooms in hot water if using."
+            ],
+            instructions: [
+                "In a pot, bring water to a boil. Boil sweet potato noodles for 5 minutes, then strain and transfer to a large mixing bowl to cool.",
+                "In a large non-stick pan over low-medium heat, heat 1/2 tablespoon sesame oil. Add onions, carrots, red bell peppers, and spinach. Fry until softened but still crisp, about 1-2 minutes. Transfer to the mixing bowl.",
+                "Add the remaining 1/2 tablespoon sesame oil to the pan. Fry garlic and mushrooms until softened.",
+                "Add thinly sliced beef and 2 teaspoons of the prepared sauce to the pan. Mix well and cook until the beef is fully cooked. Transfer to the mixing bowl.",
+                "Pour the remaining sauce into the mixing bowl with the noodles. Mix everything together using clean hands or tongs until well combined.",
+                "Garnish with toasted sesame seeds and serve. Enjoy!"
+            ],
+            notes: """
+            Substitute rib eye beef with other protein options like chicken, tofu, or shrimp for variety.
+            Soak dried shiitake mushrooms in hot water before cooking to soften and enhance their flavor.
+            Adjust the level of sweetness in the sauce by varying the amount of brown sugar to your preference.
+            """
+        )
+        saveRecipe(
+            name: "Jollof Rice (Nigerian Style) (Long Grain Rice)",
+            prepTime: "20 minutes",
+            cookingTime: "50 minutes",
+            ingredients: [
+                "2 cups long grain rice",
+                "1 onion, chopped",
+                "1 red bell pepper (tatashe)",
+                "500 ml chopped tomatoes (or 400 g canned tomatoes)",
+                "100 g tomato purée",
+                "2 scotch bonnets (or Thai red chilies)",
+                "100 ml vegetable oil",
+                "2 Maggi cubes (or chicken powder)",
+                "Salt to taste",
+                "1 teaspoon curry powder",
+                "1 teaspoon thyme",
+                "1/2 teaspoon garlic powder",
+                "1/4 teaspoon ginger powder",
+                "2 cups water or stock",
+                "1 bay leaf"
+            ],
+            prePrepInstructions: [
+                "Blend together the tomatoes, scotch bonnets, and red bell pepper until smooth. Set aside.",
+                "Chop the onions and set aside.",
+                "Soak the rice in hot water for 10-15 minutes, then rinse thoroughly with warm water to remove excess starch, or parboil and rinse."
+            ],
+            instructions: [
+                "Heat vegetable oil in a large pot over medium heat.",
+                "Add chopped onions and fry until softened, taking care not to burn them.",
+                "Season with a pinch of salt and fry for 2-3 minutes. Add the bay leaf, curry powder, thyme, and a pinch of black pepper. Stir-fry for another 3-4 minutes.",
+                "Stir in the tomato paste and cook for 2 minutes. Add the blended tomato-pepper mixture, stir, and cook on medium heat with the lid on for 10-12 minutes until reduced by half.",
+                "Add Maggi cubes, garlic powder, ginger powder, curry powder, thyme, and salt. Stir well and adjust seasoning as needed.",
+                "Pour in the stock or water and mix thoroughly.",
+                "Add the rice to the pot, ensuring it is well-coated with the tomato sauce. Stir to combine.",
+                "Cook on low-medium heat. After 10 minutes, check the rice and stir gently with a wooden spatula to prevent burning and ensure even cooking.",
+                "Continue cooking until the rice is tender but not mushy. Once the rice is soft, reduce the heat and allow it to simmer until the water evaporates completely.",
+                "Remove from heat and serve warm."
+            ],
+            notes: """
+            Use long-grain rice for the best texture and flavor. Removing excess starch from the rice helps achieve the desired consistency.
+            Adjust the spice level by varying the amount of scotch bonnets or substituting with milder chilies.
+            Stir gently to avoid breaking the rice grains during cooking.
+            """
+        )
+        saveRecipe(
+            name: "Kathrikai",
+            prepTime: "15 minutes",
+            cookingTime: "40-50 minutes",
+            ingredients: [
+                "5-6 Chinese/Japanese aubergines, chopped (not too long or thick)",
+                "4 onions, chopped",
+                "4 green chillies, slit in half",
+                "3 cloves garlic, minced",
+                "4 tbsp tamarind paste",
+                "800-900 ml warm water",
+                "1 tomato, diced",
+                "1.5 tbsp fennel seeds (dry roasted and ground)",
+                "Handful of curry leaves (dry roasted and ground)",
+                "1 tsp hot mustard seeds",
+                "1 heaping tsp fennel seeds",
+                "1 tsp cumin seeds",
+                "1 tsp fenugreek seeds",
+                "4 tbsp tomato paste",
+                "1 tsp ground turmeric",
+                "5-5 1/2 tbsp Jaffna curry powder",
+                "Small handful of curry leaves, torn",
+                "1 tbsp brown sugar",
+                "1 tsp Vasa thool",
+                "Salt, to taste",
+                "Oil, for frying"
+            ],
+            prePrepInstructions: [
+                "Chop aubergines and onions.",
+                "Slit green chillies and mince garlic.",
+                "Soak tamarind paste in warm water and strain to remove any solids.",
+                "Dry roast fennel seeds and curry leaves, then grind into a powder."
+            ],
+            instructions: [
+                "Deep fry the aubergines in hot oil until browned and cooked thoroughly, starting with high heat and reducing to avoid burning. Drain on kitchen towels.",
+                "Heat oil in a pan until hot and pop the mustard seeds.",
+                "Add fennel seeds, cumin seeds, and fenugreek seeds. Stir for a few seconds.",
+                "Add chopped onions and cook for 3-4 minutes until softened.",
+                "Add garlic and green chillies, letting them cook for a few minutes.",
+                "Add diced tomato and cook until softened.",
+                "Stir in tomato paste and cook until the mixture thickens.",
+                "Pour in the strained tamarind water and bring to a boil.",
+                "Add ground turmeric and Jaffna curry powder, mixing well.",
+                "Gently fold in the fried aubergines, taking care not to tear them.",
+                "Season with salt and bring the mixture to a boil, then reduce to medium-low heat.",
+                "Add torn curry leaves and Vasa thool, mixing gently.",
+                "Let the stew simmer on low heat for 15 minutes with the lid on. For a thicker consistency, cook longer with the lid off.",
+                "Stir in brown sugar and cook for an additional 5 minutes.",
+                "Taste and adjust salt as needed before serving."
+            ],
+            notes: """
+            Kathrikai kulambu thickens over time, especially overnight, as the aubergines absorb the gravy.
+            Avoid reducing the gravy too much during cooking to prevent it from becoming overly thick later.
+            Serve with steamed rice or roti for a traditional pairing.
+            """
+        )
+        saveRecipe(
+            name: "Kachumber Salad - Cucumber Tomato Onion Salad",
+            prepTime: "10 minutes",
+            cookingTime: "5 minutes",
+            ingredients: [
+                "1 small onion, finely chopped",
+                "2 medium tomatoes, chopped small",
+                "1 large cucumber, chopped small",
+                "4-5 red radishes, chopped small (optional)",
+                "1 green chili, finely chopped (remove seeds to reduce heat if needed)",
+                "4 g packed chopped cilantro",
+                "0.25 tsp or more salt",
+                "0.25 tsp or more freshly ground black pepper",
+                "0.25 tsp or more cayenne or pure red chili powder",
+                "1 tsp or more freshly squeezed lime or lemon juice"
+            ],
+            prePrepInstructions: [
+                "Chop the onions, tomatoes, cucumbers, and radishes.",
+                "Wash and drain all chopped vegetables well."
+            ],
+            instructions: [
+                "Add all chopped vegetables to a mixing bowl.",
+                "Add cilantro, green chili, salt, black pepper, cayenne, and lime or lemon juice.",
+                "Mix well and taste. Adjust salt and heat as needed.",
+                "Serve fresh as a side or salad."
+            ],
+            notes: """
+            Adjust the heat by adding or reducing green chili or cayenne powder.
+            For added crunch, serve immediately after preparation.
+            Perfect as a side dish for Indian meals or as a refreshing standalone salad.
+            """
+        )
+        saveRecipe(
+            name: "Keema (Instant Pot Ground Beef Curry)",
+            prepTime: "10 minutes",
+            cookingTime: "30 minutes",
+            ingredients: [
+                // Main Ingredients
+                "1 medium onion, peeled and chopped into eights",
+                "5 garlic cloves, peeled",
+                "1/2 inch ginger, peeled and cut into a few pieces",
+                "1/4 cup neutral oil (such as avocado or grapeseed)",
+                "1 tsp cumin seeds",
+                "1-2 small green chili peppers, stems removed and roughly chopped",
+                "1 small to medium (~150 g) tomato, quartered",
+                "1 lb ground beef (lean or regular)",
+                // Ground Spices & Salt
+                "2 tsp coriander powder",
+                "1 tsp cumin powder",
+                "1/2 tsp turmeric powder",
+                "1/2 tsp red chili powder, or to taste",
+                "1/4 tsp red chili flakes (optional)",
+                "1/4 tsp freshly ground black pepper",
+                "1 1/4 tsp kosher salt, or to taste",
+                // After Pressure Cooking
+                "2 tbsp whole milk yogurt",
+                "2 tbsp cilantro leaves, finely chopped",
+                "1/2-1 tsp garam masala",
+                "1/2 tsp freshly squeezed lemon juice (optional)"
+            ],
+            prePrepInstructions: [
+                "Place onion, garlic, and ginger in a food processor. Pulse until finely chopped but not blended.",
+                "Use the pulse function to roughly chop the tomato and green chili peppers. Set aside."
+            ],
+            instructions: [
+                "Select the Sauté setting on the Instant Pot and set to More/High. When the screen says 'Hot', add oil and cumin seeds. Let them sizzle for a few seconds.",
+                "Add the onion mixture and sauté until lightly browned, about 6-8 minutes.",
+                "Deglaze the Instant Pot with a splash of water, stirring to remove any bits stuck to the pan.",
+                "Add ground beef and cook, stirring to remove lumps, until the meat changes color, about 4-5 minutes.",
+                "Add the tomato and green chili mixture, ground spices, and salt. Mix well, deglazing any bits. (No need to add extra water as the beef and tomatoes provide enough moisture.)",
+                "Cancel Sauté, close the lid, and seal. Select the Pressure Cook setting on High for 10 minutes.",
+                "After cooking, allow pressure to naturally release for 5 minutes, then manually release any remaining pressure.",
+                "Select the Sauté setting on More/High. Stir in yogurt and sauté until the meat turns glossy and no excess liquid remains, about 6-7 minutes.",
+                "Taste and adjust salt and spices. Sprinkle with garam masala, cilantro, and lemon juice (if desired). Serve warm."
+            ],
+            notes: """
+            The moisture from the tomato and beef is sufficient for pressure cooking; no extra water is needed. If it appears dry, add a small splash of water and mix.
+            Keema freezes well. Cool completely before transferring to an airtight container. Reheat in a saucepan or microwave, adding a splash of water if needed.
+            """
+        )
+        saveRecipe(
+            name: "Keema Lobia (Instant Pot Ground Beef & Black Eyed Peas Curry)",
+            prepTime: "15 minutes",
+            cookingTime: "25 minutes",
+            ingredients: [
+                // To Pressure Cook
+                "1 medium to large onion, cut into wedges",
+                "2 small tomatoes, cut into wedges",
+                "5-6 cloves garlic, cut into a couple of pieces",
+                "1 lb ground beef (lean or full-fat)",
+                "1 tsp cumin seeds",
+                "1 ½-2 tsp mild red chili powder, or to taste",
+                "1 tsp coriander powder",
+                "1/2 tsp cumin powder",
+                "½ tsp turmeric powder",
+                "1 1/2 tsp salt, or to taste (use more if using kosher salt)",
+                // After Pressure Cooking
+                "¼ cup neutral oil",
+                "1-1 ½ cups cooked black-eyed peas (or 1 can, 15.8 oz, drained and rinsed)",
+                "1/2 tsp freshly ground black pepper",
+                "½ tsp garam masala",
+                "1 green chili or Serrano pepper, finely chopped",
+                "1 inch ginger, chopped or julienned",
+                // Garnish
+                "2 tbsp cilantro leaves, chopped",
+                "½-1 tsp freshly squeezed lemon juice (optional)"
+            ],
+            prePrepInstructions: [
+                "Add onion, tomatoes, and garlic to a food processor and pulse until a coarse mixture forms."
+            ],
+            instructions: [
+                "Heat the Instant Pot to High/More Sauté mode. Once hot, add the onion mixture, ground beef, cumin seeds, spice powders, and salt. Sauté for 2-3 minutes until the mixture starts to release water.",
+                "Cover and pressure-cook on High for 15 minutes. No additional water is needed.",
+                "Allow the pressure to naturally release for 5 minutes, then manually release any remaining pressure.",
+                "Select Sauté mode on High/More and sauté for 5-7 minutes, or until most of the water evaporates.",
+                "Add the oil, black-eyed peas, black pepper, garam masala, green chili, and ginger. Continue to sauté for another 3-5 minutes until the oil starts to release.",
+                "Taste and adjust salt and spices as needed. Cancel Sauté mode and garnish with cilantro leaves and lemon juice if desired.",
+                "Serve warm with naan, roti, or rice."
+            ],
+            notes: """
+            No additional water is required during pressure cooking as the beef and onion mixture releases enough moisture.
+            Adjust the level of spiciness by varying the amount of chili powder or green chili.
+            Keema Lobia can be refrigerated for up to 3 days and reheated before serving.
+            """
+        )
+        saveRecipe(
+            name: "Kerala Ground Meat Coconut Curry (Instant Pot)",
+            prepTime: "10 minutes",
+            cookingTime: "20 minutes",
+            ingredients: [
+                "2 tablespoons coconut oil",
+                "1 teaspoon black mustard seeds",
+                "1 onion, diced",
+                "1 Serrano pepper or green chili, minced",
+                "20 curry leaves",
+                "3 teaspoons minced garlic",
+                "1 teaspoon minced ginger",
+                // Spices
+                "2 teaspoons meat masala",
+                "1 ½ teaspoons salt",
+                "1 teaspoon coriander powder",
+                "½ teaspoon black pepper",
+                "½ teaspoon paprika",
+                "½ teaspoon turmeric",
+                // Main Ingredients
+                "1 pound ground beef or ground meat of choice",
+                "3 carrots, chopped",
+                "1 potato, chopped",
+                "¼ cup water",
+                "1 (13.5-ounce) can full-fat coconut milk"
+            ],
+            prePrepInstructions: [
+                "Dice onion, mince Serrano pepper or green chili, and prepare garlic and ginger.",
+                "Chop carrots and potato into bite-sized pieces."
+            ],
+            instructions: [
+                "Press the Sauté button on the Instant Pot and add coconut oil. Once melted, add mustard seeds and wait for them to pop.",
+                "Add onion, Serrano pepper, and curry leaves. Stir-fry for 6-7 minutes, or until onions begin to brown.",
+                "Add garlic and ginger, and stir-fry for 30 seconds.",
+                "Stir in the spices (meat masala, salt, coriander powder, black pepper, paprika, and turmeric).",
+                "Add the ground meat and cook until mostly browned.",
+                "Add chopped carrots, potatoes, and ¼ cup of water. Stir well.",
+                "Secure the lid, close the pressure valve, and cook for 4 minutes at high pressure.",
+                "Quick-release any remaining pressure. Open the lid and stir in the coconut milk until combined.",
+                "Serve warm with rice or flatbread."
+            ],
+            notes: """
+            Adjust the spice level by varying the amount of Serrano pepper or green chili.
+            For a vegetarian version, substitute the ground meat with lentils or crumbled tofu.
+            This curry pairs well with steamed rice, naan, or roti.
+            """
+        )
+        saveRecipe(
+            name: "Kheer (Instant Pot Rice Pudding)",
+            prepTime: "5 minutes",
+            cookingTime: "30 minutes",
+            ingredients: [
+                "1/3 cup + 1 tbsp basmati rice",
+                "3 cups whole milk",
+                "2 cups (1 pint) half and half (or sub equal parts milk and heavy whipping cream)",
+                "10 green cardamom pods (or 1/8-1/4 tsp cardamom powder)",
+                "1/4 cup + 2 tbsp pure cane sugar (or more to taste)",
+                "3 tbsp condensed milk (or more to taste; may sub additional sugar)",
+                "¼-1/2 tsp kewra essence or rose water (optional)",
+                "2-3 tbsp finely chopped or slivered nuts (e.g., almonds, pistachios; optional)"
+            ],
+            prePrepInstructions: [
+                "Pulse the basmati rice in a spice grinder or food processor 10-12 times until it resembles steel-cut oats. Shake the grinder to ensure even grinding, but avoid turning it into powder."
+            ],
+            instructions: [
+                "Select the Sauté (More/High) setting on the Instant Pot. Once hot, add the milk, half and half, and cardamom pods.",
+                "Bring the mixture to a simmer, stirring frequently to prevent sticking (about 8-10 minutes). Add the ground rice and stir to combine.",
+                "Cancel Sauté, close the lid, and set the Pressure Release Valve to Sealing. Select the Porridge setting and set the timer for 20 minutes on High Pressure.",
+                "When the timer is up, allow the pressure to naturally release (~20 minutes).",
+                "Remove the lid and press Cancel. Select the Sauté (More/High) setting. Stir in the sugar and condensed milk.",
+                "Sauté while stirring constantly until the mixture reduces slightly, depending on your desired consistency (see Notes). Use a wooden spoon to mash the rice against the sides for a smoother texture.",
+                "Cancel Sauté and stir in kewra essence or rose water, if using. Remove the kheer from the Instant Pot and transfer it to a serving dish.",
+                "Garnish with slivered nuts if desired. Serve hot or chilled."
+            ],
+            notes: """
+            For a richer version, use one part half and half and one part heavy whipping cream.
+            Substitute cardamom pods with 1/8-1/4 tsp cardamom powder, adding it along with the sugar.
+            The rice will absorb more liquid as it cools, thickening the kheer. If you prefer runnier kheer, sauté for 1-2 minutes and adjust sweetener as needed.
+            """
+        )
+        saveRecipe(
+            name: "Kimchi (Halal)",
+            prepTime: "4 hours (includes soaking time)",
+            cookingTime: "30 minutes",
+            ingredients: [
+                // Main Ingredients
+                "500 g salt",
+                "3 napa cabbages",
+                "1 radish",
+                "500 g spring onion",
+                "100 g flour",
+                "1 kelp anchovy pack (optional, for broth)",
+                "1 large onion",
+                "2 Korean pears, peeled and cored",
+                "250 g garlic, minced",
+                "2.5 cups tuna fish sauce (or substitute with anchovy fish sauce)",
+                "600 g chili powder (gochugaru; substitute with chili powder, paprika, cayenne, or crushed red pepper flakes)"
+            ],
+            prePrepInstructions: [
+                "Rip off the outer leaves of the napa cabbages.",
+                "Make a cut halfway down the stem of each cabbage, then tear into two halves and repeat for quarter wedges.",
+                "Remove the tough stem ends and discard. Cut the napa cabbage into smaller pieces."
+            ],
+            instructions: [
+                // Salting the Napa Cabbage
+                "Place the cabbage pieces into storage containers.",
+                "Mix rough sea salt with water to make a brine, ensuring all the salt is dissolved.",
+                "Pour the brine over the cabbage, ensuring the pieces are fully submerged. Add weighty plates if necessary.",
+                "Seal the containers and soak for 2 hours. Test by snapping a piece in half; if it still crunches, soak for an additional 2 hours.",
+                // Making the Kelp Stock and Flour Paste
+                "Boil dried anchovies and kelp to make a broth (optional but recommended).",
+                "Dissolve flour in water, then pour the mixture into a pan of boiling water while stirring constantly. Allow it to cool.",
+                // Preparing Fresh Ingredients
+                "Wash, trim, and slice the spring onions. Peel and slice the radish into sticks.",
+                "Peel and core the pears, then blend them with the garlic and onion to form a paste.",
+                // Making the Kimchi Seasoning
+                "In a large bowl, mix the spring onions, radish, blended paste, chili powder, flour paste, and tuna fish sauce.",
+                "Adjust the seasoning to be saltier and spicier than your usual taste. Add kelp broth as needed to achieve the desired consistency.",
+                // Mixing the Cabbage and Seasoning
+                "Rinse the cabbage thoroughly and squeeze out any excess water.",
+                "Mix the cabbage pieces with the prepared kimchi seasoning until evenly coated."
+            ],
+            notes: """
+            Use gochugaru (Korean chili powder) for authentic flavor, but substitutes like chili powder, paprika, and cayenne can work in a pinch.
+            If using gochujang (Korean chili paste), adjust the recipe to account for its rich, fermented flavor.
+            Allow the kimchi to ferment in an airtight container at room temperature for 1-2 days before transferring to the fridge. Taste daily to monitor fermentation.
+            The longer it ferments, the more tangy and robust the flavor will become.
+            """
+        )
+        saveRecipe(
+            name: "Kiwi Mojito Mocktail",
+            prepTime: "10 minutes",
+            cookingTime: "0 minutes",
+            ingredients: [
+                "3 kiwi fruits, peeled and diced",
+                "10 mint leaves",
+                "2 cups lemonade",
+                "Ice cubes"
+            ],
+            prePrepInstructions: [],
+            instructions: [
+                "Place the kiwi fruits, lemonade, mint leaves, and ice cubes in a high-speed blender.",
+                "Blend until smooth.",
+                "Divide the mixture between 2 ice-filled glasses.",
+                "Garnish with mint leaves or extra kiwi slices and serve immediately."
+            ],
+            notes: """
+            For a tangier flavor, add a splash of lime juice before blending.
+            Adjust sweetness by using a lemonade that matches your taste preference.
+            Use crushed ice for a more refreshing texture.
+            """
+        )
+        saveRecipe(
+            name: "Kofta Curry (Meatball Curry Pakistani Beef)",
+            prepTime: "30 minutes",
+            cookingTime: "50 minutes",
+            ingredients: [
+                // For the Meatballs
+                "2.25 small (270 g after peeling) onions, roughly chopped",
+                "2.25 green chili peppers (e.g., Serrano or Thai), roughly chopped",
+                "0.56 cup packed cilantro leaves",
+                "2.25 tbsp mint leaves (optional)",
+                "3.38 tsp crushed garlic",
+                "2.25 tsp crushed ginger",
+                "2.25 lb ground beef (preferably full-fat)",
+                "4.5 tbsp gram flour (besan) or chickpea flour",
+                "2.25 eggs, lightly whisked",
+                "2.25 tsp freshly squeezed lemon juice",
+                "1.13 tsp cumin powder",
+                "1.13 tsp coriander powder",
+                "1.13 tsp turmeric powder",
+                "1.13 tsp black pepper powder",
+                "1.13 tsp red chili powder",
+                "1.13 tsp garam masala",
+                "2.25 tsp kosher salt",
+                // For the Curry
+                "2.25 large onions, roughly chopped",
+                "4.5 medium (6.75 small) tomatoes, roughly chopped",
+                "2.25 green chili peppers (e.g., Serrano or Thai), roughly chopped",
+                "0.56 cup neutral oil",
+                "2.25 tsp cumin seeds",
+                "6.75 whole cloves",
+                "2.25-inch cinnamon stick",
+                "2.25 bay leaves",
+                "2.25-4.5 green cardamom pods",
+                "9-11.25 garlic cloves, crushed",
+                "1.13-inch piece ginger, crushed",
+                "6.75 tbsp plain, whole milk yogurt",
+                "2.25 tsp cumin powder",
+                "2.25 tsp coriander powder",
+                "1.13-2.25 tsp red chili powder",
+                "1.13 tsp turmeric powder",
+                "0.56 tsp paprika powder or Kashmiri chili powder (optional, for color)",
+                "3.38 tsp kosher salt",
+                "4.5 cups water",
+                "0.56-1.13 tsp garam masala",
+                "2.25-4.5 tbsp cilantro leaves, finely chopped"
+            ],
+            prePrepInstructions: [
+                "Combine onions, green chili peppers, cilantro, and mint (if using) in a food processor. Pulse to finely chop but not blend.",
+                "Mix the remaining meatball ingredients into the chopped mixture and process until just combined. Form into 1.5-inch meatballs and set aside.",
+                "Use the food processor to finely chop onions, then blend tomatoes and green chili peppers separately for the curry."
+            ],
+            instructions: [
+                "Heat oil in a large heavy-bottomed pan over medium-high heat. Add whole spices and let them sizzle for a few seconds.",
+                "Add the chopped onions and sauté, stirring often, until golden brown (about 8 minutes). Deglaze the pan with 2 tbsp of water.",
+                "Add garlic and ginger and sauté for 2 minutes until deeper in color. Add tomato-chili mixture, yogurt, spices, and salt. Cook for 4-5 minutes until oil separates, deglazing with 2 tbsp water as needed.",
+                "Add 2 cups of water and bring to a boil. Lower heat to a simmer and arrange the meatballs in a single layer.",
+                "Increase heat to medium, cover, and cook for 10 minutes. Uncover, gently stir the meatballs, reduce heat, and simmer for 35 minutes. Stir once halfway through.",
+                "Sauté to evaporate excess water to the desired consistency. Sprinkle with garam masala and cilantro.",
+                "Serve hot with roti, naan, paratha, or rice."
+            ],
+            notes: """
+            Reheating: Add 2-3 tbsp of water when reheating to adjust consistency as the curry thickens upon cooling.
+            Make-ahead: Prepare and refrigerate or freeze the meatballs for convenience.
+            Adjust spice levels to taste by increasing or decreasing chili powder or green chilies.
+            """
+        )
+        saveRecipe(
+            name: "Korean Braised Potatoes (Quick & Easy Gamja Jorim)",
+            prepTime: "5 minutes",
+            cookingTime: "25 minutes",
+            ingredients: [
+                // Main Ingredients
+                "1.5 lbs (680 g) baby potatoes (or quartered Yukon gold potatoes with skin on)",
+                "2 tsp (10 ml) vegetable oil or any neutral-tasting oil",
+                "1 tbsp (6 g) green onion, finely chopped (for garnish)",
+                "0.5 tsp (1 g) sesame seeds, toasted",
+                // Braising Sauce
+                "4 tbsp (62 ml) regular soy sauce (not light or dark)",
+                "5 tbsp (75 ml) honey or brown sugar",
+                "1 clove garlic, minced",
+                "1 tsp (5 ml) sesame oil (for garnish)",
+                // Optional
+                "1 tsp (6 g) salt (for seasoning potatoes)",
+                "2 tsp (10 ml) vinegar (e.g., white vinegar, rice vinegar, or apple cider vinegar)"
+            ],
+            prePrepInstructions: [
+                "Rinse the baby potatoes under cold water to remove any dirt. Do not peel.",
+                "Combine all the braising sauce ingredients in a small bowl and set aside."
+            ],
+            instructions: [
+                "In a large pot filled halfway with water, bring to a boil over medium-high heat. Optionally, add salt and vinegar to season the potatoes and help them retain their shape.",
+                "Boil the baby potatoes uncovered for 20 minutes, or until fork-tender.",
+                "Once cooked, strain the potatoes in a colander and set aside.",
+                "Heat the vegetable oil in a large non-stick pan over medium heat. Add the strained potatoes and fry for 2-4 minutes until slightly browned on both sides.",
+                "Pour the braising sauce mixture over the potatoes. Gently toss the potatoes in the sauce for 5 minutes, or until the sauce thickens slightly.",
+                "Remove from heat, garnish with green onions, sesame seeds, and a drizzle of sesame oil. Serve warm and enjoy!"
+            ],
+            notes: """
+            Adding vinegar during the boiling process helps the potatoes maintain their shape, while salt enhances their flavor.
+            Adjust the sweetness of the sauce by using more or less honey or brown sugar to taste.
+            This dish pairs well with rice and other Korean side dishes.
+            """
+        )
+        saveRecipe(
+            name: "Korean Bulgogi Chicken Wings",
+            prepTime: "10 minutes",
+            cookingTime: "16 minutes",
+            ingredients: [
+                // Main Ingredients
+                "771.1 g chicken wings",
+                "54.1 g potato starch (or more as needed)",
+                "1 green onion, finely chopped (for garnish)",
+                // Seasoning
+                "1 tbsp regular soy sauce",
+                "1/2 tsp black pepper",
+                "2 tsp garlic, minced",
+                "1/4 tsp ginger powder",
+                "1/2 tsp onion powder",
+                // Korean Wings Sauce
+                "2 tbsp honey",
+                "2 tbsp brown sugar",
+                "1 tbsp regular soy sauce",
+                "1/2 tbsp sesame seeds",
+                "1/2 tbsp sesame oil",
+                "2 tsp garlic, minced"
+            ],
+            prePrepInstructions: [
+                "Add chicken wings to a large bowl and mix with all the Seasoning ingredients until well-coated.",
+                "Spread potato starch on a large tray or place it in a Ziplock bag and coat the wings evenly in starch."
+            ],
+            instructions: [
+                // Air Fryer Method
+                "Transfer coated wings into the air fryer basket in a single layer, ensuring enough space between pieces. Work in batches if necessary.",
+                "Air fry the wings at 400°F for 8 minutes on each side (16 minutes total).",
+                "Remove the cooked wings and transfer them to a large mixing bowl.",
+                // Deep Fryer Method
+                "Heat 2 cups of neutral oil in a large pan or Dutch oven until it reaches 350°F.",
+                "Deep fry the wings for 7-8 minutes until golden brown and cooked to an internal temperature of 165°F.",
+                // Sauce and Garnish
+                "In a small bowl, combine all ingredients for the Korean wings sauce.",
+                "Pour the sauce over the fried or air-fried wings and toss to coat evenly.",
+                "Garnish with chopped green onions and serve immediately."
+            ],
+            notes: """
+            Use a meat thermometer to ensure the wings are cooked to an internal temperature of 165°F for safe consumption.
+            Adjust the sweetness or spice level of the sauce to your preference by tweaking the honey and garlic.
+            Serve with rice or as an appetizer with dipping sauces.
+            """
+        )
+        saveRecipe(
+            name: "Korean Chicken Bao",
+            prepTime: "1 hour",
+            cookingTime: "30 minutes",
+            ingredients: [
+                // For the Bao Buns
+                "450 g (3 3⁄4 cups) plain (all-purpose) flour",
+                "2 tbsp caster sugar",
+                "1⁄2 tsp salt",
+                "2 tsp (7 g) instant dried yeast",
+                "3 tbsp whole milk",
+                "210 ml (3⁄4 cup + 2 tbsp) warm water",
+                "3 tbsp unsalted butter, very soft",
+                "1 tbsp olive oil",
+                // For the Chicken and Marinade
+                "4 chicken breasts, sliced into bite-sized chunks",
+                "240 ml (1 cup) buttermilk",
+                "1⁄2 tsp salt",
+                "1⁄4 tsp white pepper",
+                "1⁄4 tsp garlic salt",
+                // For the Crispy Coating
+                "180 g (1 1⁄2 cups) plain (all-purpose) flour",
+                "1 tsp salt",
+                "1 tsp ground black pepper",
+                "1⁄2 tsp garlic salt",
+                "1⁄2 tsp celery salt",
+                "1 tsp dried thyme",
+                "1 tsp paprika",
+                "1 tsp baking powder",
+                "1 tsp chili flakes",
+                "Vegetable oil for deep frying (at least 1 liter/four cups)",
+                // For the Korean Sauce
+                "2 tbsp gochujang paste",
+                "2 tbsp honey",
+                "4 tbsp brown sugar",
+                "4 tbsp soy sauce",
+                "2 cloves garlic, peeled and minced",
+                "2 tsp minced ginger",
+                "1 tbsp vegetable oil",
+                "1 tbsp sesame oil",
+                // For Serving
+                "1 small red onion, thinly sliced",
+                "1⁄4 cucumber, chopped into small pieces",
+                "Small bunch of fresh coriander, roughly chopped",
+                "2 tsp black and white sesame seeds"
+            ],
+            prePrepInstructions: [
+                "Mix flour, sugar, salt, and yeast for the bao buns. Combine milk, water, and butter, then add to dry ingredients. Knead into a dough and let prove for 90 minutes to 2 hours.",
+                "Marinate chicken in buttermilk, salt, white pepper, and garlic salt for at least 1 hour in the refrigerator.",
+                "Prepare crispy coating ingredients by mixing flour, salt, spices, and baking powder in a bowl."
+            ],
+            instructions: [
+                "After proving, divide dough into 20 balls. Roll each ball into an oval, brush with olive oil, fold, and let prove for another hour.",
+                "Deep fry the chicken in oil heated to 350°F for 3-5 minutes until golden brown and cooked through.",
+                "Steam the bao buns in a steamer for 10 minutes or until puffed.",
+                "Prepare the Korean sauce by combining gochujang, honey, sugar, soy sauce, garlic, ginger, vegetable oil, and sesame oil in a saucepan. Simmer for 5 minutes until thickened.",
+                "Toss the cooked chicken in the sauce until coated.",
+                "Stuff the steamed bao buns with sauced chicken, red onion slices, cucumber, coriander, and sesame seeds. Serve immediately."
+            ],
+            notes: """
+            Make Ahead: Cook and assemble components separately. Reheat chicken, sauce, and buns before serving.
+            Freezing Buns: Steam and freeze. Reheat in a steamer for 5-6 minutes or microwave covered for 15-20 seconds each.
+            Baking Alternative: Use baked chicken tenders for a healthier option.
+            Steam Oven Option: Steam buns at 210°F for 8-10 minutes or use the bread proving function if available.
+            Nutritional Information: Approx. 289 calories per bao. Adjust based on the amount of oil absorbed during frying.
+            """
+        )
+        saveRecipe(
+            name: "Sri Lankan Chicken Kottu Roti",
+            prepTime: "20 minutes",
+            cookingTime: "30 minutes",
+            ingredients: [
+                // Base Ingredients
+                "2 tbsp vegetable oil",
+                "½ medium onion, sliced",
+                "1 tbsp minced garlic (about 3 garlic cloves)",
+                "1 tbsp minced ginger",
+                "6 large jalapeños or 3 Anaheim peppers, halved and sliced (de-seed for less heat)",
+                "1 cup sliced leeks, white part only, washed",
+                "¼ cabbage, sliced",
+                "½ tsp cayenne pepper (optional, for heat)",
+                "2 heaped cups shredded chicken (leftover curry chicken or rotisserie chicken)",
+                "½ cup leftover curry sauce (or see curry spices below)",
+                "1 cup grated carrots",
+                "3 eggs, whisked",
+                "1 cup shredded cheese (optional, for chicken and cheese version)",
+                "Salt and pepper to taste",
+                "1 lb chopped godhamba roti or flour tortillas (substitutes include paratha or roti canai)",
+                // Curry Spices (if not using leftover curry sauce)
+                "1 tbsp Sri Lankan curry powder",
+                "⅓ cup chicken stock",
+                "¼ tsp black pepper",
+                "½ tsp cayenne pepper (optional, for heat)",
+                "½ tsp ground cinnamon"
+            ],
+            prePrepInstructions: [
+                "Chop all vegetables and prepare the shredded chicken.",
+                "If not using leftover curry sauce, combine the curry spices into a mixture for later use.",
+                "Prepare the roti by chopping it into small pieces or shredding if possible."
+            ],
+            instructions: [
+                "Heat vegetable oil in a large wok or non-stick pan over medium-high heat.",
+                "Add the sliced onion and sauté until softened. Add minced garlic and ginger, and sauté for a few seconds, ensuring they don't burn.",
+                "Add the peppers, leeks, cabbage, and a pinch of salt. Stir-fry for a few minutes until starting to soften.",
+                "Add shredded chicken, cayenne pepper, and curry sauce (or the prepared curry spice mixture) and mix well.",
+                "Add grated carrots and stir to combine.",
+                "Create a well in the center of the pan, pour in the whisked eggs, and scramble them until almost cooked. Mix the eggs with the rest of the ingredients.",
+                "If making chicken and cheese kottu, add shredded cheese and stir until melted and combined.",
+                "Add the chopped roti pieces and mix thoroughly to coat them with the spices and curry sauce. Stir frequently and cook for about 5 minutes until heated through.",
+                "Serve hot with extra curry sauce, if desired."
+            ],
+            notes: """
+            Adjust spice level by reducing or de-seeding the chili peppers, but keep them for added flavor.
+            Substitutes for godhamba roti include roti canai, paratha, or flour tortillas.
+            Try alternative proteins like cooked beef, pork, or extra vegetables for variation.
+            Additional spices like mustard seeds or fennel seeds can enhance flavor.
+            """
+        )
+        saveRecipe(
+            name: "Korean Cucumber Salad (Oi Muchim)",
+            prepTime: "5 minutes",
+            cookingTime: "0 minutes",
+            ingredients: [
+                "1 English cucumber",
+                // Dressing
+                "2 cloves garlic, minced",
+                "1 tablespoon regular soy sauce",
+                "1 tablespoon sesame oil",
+                "2 teaspoons gochugaru or gochujang",
+                "2 teaspoons rice vinegar, apple cider vinegar, or white vinegar",
+                "1 teaspoon white granulated sugar",
+                "1 teaspoon sesame seeds"
+            ],
+            prePrepInstructions: [
+                "Slice the ends off the cucumber and thinly slice into ¼-inch thick pieces."
+            ],
+            instructions: [
+                "Transfer the sliced cucumbers into a large bowl.",
+                "In a small bowl, combine all dressing ingredients as listed.",
+                "Pour the dressing over the cucumber pieces in the large bowl.",
+                "Mix well until the cucumbers are evenly coated in the dressing.",
+                "Enjoy immediately or chill in the fridge for 10 minutes for enhanced flavor."
+            ],
+            notes: """
+            For added crunch, chill the cucumber slices before preparing the salad.
+            Gochugaru provides a subtle smoky heat, while gochujang adds a richer flavor—use based on your preference.
+            Adjust the vinegar and sugar to suit your taste for a balance of tanginess and sweetness.
+            """
+        )
+        saveRecipe(
+            name: "Gochujang Chicken (Easy Sweet Spicy)",
+            prepTime: "15 minutes",
+            cookingTime: "10 minutes",
+            ingredients: [
+                "755 grams boneless skinless chicken thighs, diced",
+                "0.83 onion or red onion, diced",
+                "83.33 g cornstarch",
+                "100 ml vegetable oil or any neutral oil",
+                "1.67 green onion, finely sliced (optional garnish)",
+                "1.67 g sesame seeds, toasted (optional garnish)",
+                // Sauce
+                "3.33 cloves garlic, minced",
+                "3.33 tbsp (40 g) white granulated sugar, or sub with honey or brown sugar",
+                "3.33 tbsp (50 ml) Gochujang",
+                "3.33 tbsp (50 ml) regular soy sauce (not dark soy sauce)",
+                "3.33 tsp (6.67 g) sesame seeds, toasted",
+                "1.67 tsp (8.33 ml) sesame oil, toasted",
+                "1.67 tbsp (16.67 g) cornstarch or potato starch",
+                "1.67 cup (416.67 ml) water, cold or room temperature"
+            ],
+            prePrepInstructions: [
+                "Dice the chicken thighs into 1.5-inch pieces.",
+                "Place the diced chicken in a large mixing bowl and set aside.",
+                "In a small bowl, combine all sauce ingredients and set aside."
+            ],
+            instructions: [
+                "Add cornstarch to the bowl of diced chicken. Toss until the chicken is evenly coated in starch.",
+                "In a large pan over medium-high heat, heat vegetable oil. Fry the coated chicken until golden brown and crispy, about 5-6 minutes per side.",
+                "Remove the chicken from the pan and transfer to a wire rack or paper towel-lined plate to drain off excess oil.",
+                "In the same pan on medium-high heat, fry the diced onions until translucent, about 30-45 seconds.",
+                "Pour the prepared sauce into the pan and simmer until it thickens.",
+                "Once the sauce thickens, reduce the heat to medium. Add the fried chicken to the pan and toss to coat evenly in the sauce.",
+                "Garnish with green onions and toasted sesame seeds if desired. Serve and enjoy!"
+            ],
+            notes: """
+            For a sweeter flavor, substitute white sugar with honey or brown sugar.
+            Adjust the amount of gochujang to control the level of spiciness.
+            Serve with steamed rice or noodles for a complete meal.
+            """
+        )
+        saveRecipe(
+            name: "Lamb Stew (Slow Cooker)",
+            prepTime: "20 minutes",
+            cookingTime: "8 hours",
+            ingredients: [
+                "907.18 g boneless leg of lamb or lamb shoulder, trimmed of excess fat and cut into 1 1/2\" pieces",
+                "1 teaspoon sea salt, or to taste",
+                "1 teaspoon ground black pepper",
+                "31.25 g all-purpose flour",
+                "1 medium yellow onion, diced",
+                "4 cloves garlic, minced",
+                "840 g beef broth, low sodium",
+                "453.59 g baby Bella mushrooms, thickly sliced",
+                "2 tablespoons Worcestershire sauce",
+                "2 bay leaves",
+                "1 teaspoon fresh rosemary, finely chopped",
+                "680.39 g red potatoes, halved or quartered",
+                "3 medium carrots, peeled and cut into 1/2\" thick pieces",
+                "2 celery ribs, chopped",
+                "145 g frozen sweet peas",
+                // Garnish
+                "15 g parsley, finely chopped",
+                "Fresh rosemary for garnish"
+            ],
+            prePrepInstructions: [
+                "In a large bowl, toss lamb meat with salt, pepper, and all-purpose flour.",
+                "Prepare and dice all vegetables as listed in the ingredients."
+            ],
+            instructions: [
+                "Place a large skillet over medium heat and add olive oil. Once hot, brown the lamb meat on each side for about 3-5 minutes. This step is optional but recommended for enhanced flavor.",
+                "Transfer all ingredients, except for the green peas, to the slow cooker.",
+                "Cover and cook on LOW heat for 7-8 hours, or HIGH for 3-4 hours.",
+                "Add the green peas during the last hour of cooking.",
+                "Garnish with freshly chopped parsley and fresh rosemary. Serve warm!"
+            ],
+            notes: """
+            For best results, brown the lamb meat before adding it to the slow cooker to lock in the flavor.
+            Adjust salt to your preference as beef broth may already contain sodium.
+            This dish pairs perfectly with crusty bread or steamed rice for a hearty meal.
+            """
+        )
+        saveRecipe(
+            name: "Lauki Chana Dal (Instant Pot)",
+            prepTime: "1 hour (soaking)",
+            cookingTime: "10 minutes",
+            ingredients: [
+                "1 cup chana dal, soaked for 1 hour",
+                "1 tablespoon oil or ghee",
+                "1 teaspoon cumin seeds",
+                "1 bay leaf",
+                "2 black cardamom",
+                "1 lauki (approx. 1 ½ pounds), peeled and cut into 2-inch pieces",
+                "2 cups water",
+                "½ cup frozen or thawed onion masala",
+                "1 teaspoon salt",
+                "½ teaspoon garam masala",
+                "¼ teaspoon black pepper",
+                "¼ teaspoon cayenne/Indian red chili powder, to taste",
+                "Cilantro for garnish"
+            ],
+            prePrepInstructions: [
+                "Soak the chana dal in cold water for 1 hour. Drain, rinse, and set aside."
+            ],
+            instructions: [
+                "Press the sauté button on the Instant Pot and add oil/ghee. Allow it to heat up for a minute.",
+                "Add cumin seeds, bay leaf, and black cardamom to the pot. Once the cumin seeds brown, add the remaining ingredients.",
+                "Secure the lid, close the pressure valve, and cook for 10 minutes at high pressure.",
+                "Naturally release the pressure.",
+                "Taste and adjust salt and cayenne if desired.",
+                "Garnish with cilantro and serve."
+            ],
+            notes: """
+            Soaking the chana dal for an hour is essential to ensure it becomes tender during cooking.
+            This recipe is part of an onion masala series – you can use frozen cubes of onion masala directly without thawing.
+            Serve this comforting dish with rice or roti for a wholesome meal.
+            """
+        )
+        saveRecipe(
+            name: "Lavender Earl Grey Shortbread Cookies",
+            prepTime: "5 minutes",
+            cookingTime: "15 minutes",
+            ingredients: [
+                "1 stick unsalted butter, room temperature",
+                "32 g cane sugar",
+                "1 earl grey tea bag (contents only)",
+                "1/4 tsp salt",
+                "8 g milk powder",
+                "120 g all-purpose flour",
+                "1.5 tbsp dried lavender",
+                "glazeIngredients:",
+                "115 g powdered sugar",
+                "45 g milk"
+            ],
+            
+            prePrepInstructions: [
+                "Gather all ingredients and ensure butter is at room temperature.",
+                "Prepare baking sheet with silicone baking mat or parchment paper.",
+                "Tear sheets of plastic wrap for rolling the dough."
+            ],
+            instructions: [
+                "Cream together butter and sugar. Then add in salt, tea leaves, and milk powder. Once incorporated, mix in the flour and 1 tbsp of dried lavender to form a thick batter.",
+                "For the 'roll and cut' method: Place cookie dough between two sheets of plastic wrap. Roll out to about 1/4 inch thick and chill in the refrigerator for at least 30 minutes.",
+                "Remove dough from the fridge, sprinkle with reserved 1/2 tbsp of lavender, and lightly press it into the dough using a rolling pin. Chill again for another 30 minutes.",
+                "Preheat oven to 350°F. Remove dough from fridge and cut into squares or desired shapes using a cookie cutter. Place on prepared baking sheet, spacing cookies 4 inches apart.",
+                "Bake for about 15 minutes or until the edges start to turn brown. Remove from oven and let cool completely on the baking sheet to avoid breaking the cookies.",
+                "Prepare the glaze by mixing powdered sugar and milk until thick and smooth. Optionally, add some tea leaves to the glaze.",
+                "Drizzle the glaze over the cooled cookies and let it dry completely, approximately 1 hour."
+            ],
+            notes: """
+            Ensure the dough is properly chilled before cutting to maintain shape during baking.
+            Handle the cookies carefully after baking as they can be fragile when warm.
+            For extra flavor, infuse some lavender or tea leaves into the glaze.
+            RestingTime: "1 hour 30 minutes",
+            """
+        )
+        saveRecipe(
+            name: "Lychee Coconut Jelly",
+            prepTime: "30 minutes",
+            cookingTime: "4 hours (resting)",
+            ingredients: [
+                "1.5 cups lychee juice",
+                "¾ teaspoon agar agar powder",
+                "1.5 cups coconut milk, full fat",
+                "¾ teaspoon agar agar powder"
+            ],
+            prePrepInstructions: [
+                "Prepare an 8 x 6 inch rectangle container for layering the jelly.",
+                "Ensure you have two small pots ready for cooking each layer.",
+                "Gather all ingredients and measure them out for convenience."
+            ],
+            instructions: [
+                "In a small pot, whisk together the lychee juice and agar agar powder. Bring to a boil, then lower to a simmer and keep covered on low heat.",
+                "In another small pot, whisk together the coconut milk and agar agar powder. Bring to a boil, then lower to a simmer and keep covered on low heat.",
+                "Pour ½ cup of the lychee mixture into the prepared container and let it set for about 5 minutes, or until firm to the touch.",
+                "Once the first layer is set, pour ½ cup of the coconut mixture over the lychee layer using the back of a spoon to avoid breaking the set layer. Let it set completely.",
+                "Continue alternating layers of lychee and coconut mixtures, allowing each layer to set before adding the next.",
+                "Cover the container and refrigerate for at least 4 hours or overnight until fully set.",
+                "Slice into pieces and serve with fresh fruit if desired. Enjoy!"
+            ],
+            notes: """
+            For best results, pour each new layer gently over the back of a spoon to avoid disturbing the previous layer.
+            Keep both mixtures on low heat and covered to prevent them from setting too quickly while you work.
+            Fresh fruit, such as lychee or mango, makes an excellent garnish for serving.
+            """
+        )
+        saveRecipe(
+            name: "Lamb Chops",
+            prepTime: "30 minutes (marinating time)",
+            cookingTime: "10-15 minutes",
+            ingredients: [
+                "1 kg lamb chops (rib chops)",
+                "1 & ½ tsp salt",
+                "2 tsp smoked paprika",
+                "2 tsp cumin",
+                "1 tsp cracked black pepper",
+                "2 tsp oregano",
+                "4 tbsp olive oil",
+                "Optional: juice of 1 lemon",
+                "Sliced onions",
+                "Sliced bell peppers"
+            ],
+            prePrepInstructions: [
+                "Wash the lamb chops thoroughly.",
+                "Place the lamb chops in a mixing bowl and add olive oil. Mix thoroughly to enable the seasoning to be absorbed.",
+                "Combine smoked paprika, ground cumin, cracked black pepper, salt, and oregano in a plate.",
+                "Add the spice mixture to the lamb and mix in thoroughly.",
+                "Marinate for at least 30 minutes to allow the flavors to develop."
+            ],
+            instructions: [
+                "Heat a saucepan over medium-high heat and fry the lamb chops until browned on both sides, flipping frequently to ensure even cooking.",
+                "Alternatively, place the lamb chops onto a foil-lined baking tray, spaced apart, and grill in a preheated oven for 5-7 minutes until browning. Flip the chops and grill for another 5-7 minutes. Be careful not to overcook.",
+                "In a separate skillet or pan, fry the sliced onions and bell peppers until softened and slightly caramelized.",
+                "Place the lamb chops on top of the onions and bell peppers for serving."
+            ],
+            notes: """
+            For added flavor, squeeze the juice of one lemon over the lamb chops before serving.
+            Ensure not to overcook the lamb to maintain its tenderness.
+            Serve with a side of salad, rice, or flatbread for a complete meal.
+            """
+        )
+        saveRecipe(
+            name: "Lemon Drizzle Cake",
+            prepTime: "15 minutes",
+            cookingTime: "45 minutes",
+            ingredients: [
+                "225g unsalted butter, softened",
+                "225g caster sugar",
+                "4 eggs",
+                "225g self-raising flour",
+                "Finely grated zest of 1 lemon",
+                "Juice of 1 ½ lemons (for drizzle topping)",
+                "85g caster sugar (for drizzle topping)"
+            ],
+            prePrepInstructions: [
+                "Preheat the oven to 180°C (fan 160°C/gas 4).",
+                "Line an 8 x 21cm loaf tin with greaseproof paper."
+            ],
+            instructions: [
+                "Beat together the softened butter and caster sugar until pale and creamy.",
+                "Add the eggs one at a time, slowly mixing them into the batter.",
+                "Sift in the self-raising flour, then add the finely grated lemon zest and mix until well combined.",
+                "Spoon the mixture into the prepared loaf tin and level the top with a spoon.",
+                "Bake for 45-50 minutes, or until a thin skewer inserted into the center of the cake comes out clean.",
+                "While the cake is cooling in the tin, mix the lemon juice and caster sugar to make the drizzle topping.",
+                "Prick the warm cake all over with a skewer or fork, then pour over the drizzle. The juice will sink in and the sugar will form a crisp topping.",
+                "Leave the cake in the tin until completely cool, then remove and serve."
+            ],
+            notes: """
+            The cake will keep in an airtight container for 3-4 days or can be frozen for up to 1 month.
+            For best results, ensure the butter is fully softened before mixing.
+            Serve as is or with a dollop of cream or ice cream for added indulgence.
+            """
+        )
+        saveRecipe(
+            name: "Lotus Biscoff Frappe",
+            prepTime: "5 minutes",
+            cookingTime: "0 minutes",
+            ingredients: [
+                "1 tsp coffee",
+                "2 tsp sugar",
+                "30 ml hot water (approximately ⅓ cup)",
+                "40-50 ml milk (approximately ⅓ cup)",
+                "Handful of ice cubes (approximately 6)",
+                "1 tbsp + 1 tsp Lotus Biscoff spread",
+                "1 Lotus Biscoff biscuit"
+            ],
+            prePrepInstructions: [
+                "Prepare all ingredients.",
+                "Ensure the hot water is ready for dissolving coffee and sugar."
+            ],
+            instructions: [
+                "Stir and dissolve coffee and sugar in hot water.",
+                "Add milk and 1 tbsp Lotus Biscoff spread, then stir to combine.",
+                "Add ice cubes to the mixture and shake well.",
+                "Serve in a glass with additional ice cubes and a Lotus Biscoff biscuit on the side."
+                "Alternate instructions:",
+                "Stir and dissolve coffee and sugar in hot water.",
+                "Add 1 tbsp Lotus Biscoff spread and stir until dissolved.",
+                "Smear 1 tsp Lotus Biscoff spread on the side of the serving glass.",
+                "Add ice cubes and milk to the serving glass.",
+                "Pour the coffee and Biscoff mixture into the glass.",
+                "Serve with a Lotus Biscoff biscuit."
+            ],
+            notes: """
+            Adjust sugar to taste for sweetness preference.
+            For a creamier frappe, use whole milk or a milk alternative like oat or almond milk.
+            Best enjoyed immediately for maximum flavor and texture.
+            """
+        )
+        saveRecipe(
+            name: "Lamb Biryani (Slow Cooker)",
+            prepTime: "4 hours (including marination time)",
+            cookingTime: "3 hours 30 minutes",
+            ingredients: [
+                "1 kg lamb pieces (mixture of bone and meat)",
+                "1 packet Laziza biryani mix",
+                "1 pot full-fat yoghurt (75% for marinade, 25% for raita)",
+                "4.5 cups jasmine rice, cooked",
+                "2 medium potatoes",
+                "2 carrots",
+                "1 bag broad beans (or substitute with ½ cauliflower, ½ broccoli, peas, or mushrooms)",
+                "3 medium onions",
+                "2 inches garlic",
+                "Plenty of oil",
+                "1.5 tsp turmeric",
+                "1/2 tsp chilli powder",
+                "Cucumber (for raita)",
+                "Mint (for raita)",
+                "Coriander (for raita)",
+                "1-2 chillies"
+            ],
+            prePrepInstructions: [
+                "Marinate 1 kg lamb with 7 tbsp yoghurt, 1.5 tsp turmeric, 1/2 tsp chilli powder, and ¾ packet of Laziza biryani mix for 4 hours or preferably overnight.",
+                "Soak 4.5 cups of jasmine rice in water for cooking later."
+            ],
+            instructions: [
+                "Cook the marinated lamb on high in the slow cooker for 2 hours and 45 minutes, covering it with foil.",
+                "Fry sliced onions in plenty of oil until browned, then set aside for garnishing.",
+                "Cook the rice with minimal water (use water level suitable for 4.25 cups of rice).",
+                "In the leftover onion oil, fry ¼ packet of Laziza biryani mix and add the vegetables (potatoes, carrots, and broad beans or substitutes). Cook until the vegetables are tender.",
+                "Add the cooked vegetables to the lamb in the slow cooker and mix.",
+                "Layer the cooked rice, fried onions, and fresh chillies on top of the lamb and vegetable mixture.",
+                "Cover the slow cooker with the lid and cook on high for an additional 40-45 minutes, stirring gently at the 20-minute mark.",
+                "Serve hot once the lamb is tender and fully cooked."
+            ],
+            notes: """
+            For best results, marinate the lamb overnight to allow flavors to develop fully.
+            Use high-quality jasmine rice to ensure the perfect texture and flavor.
+            Raita can be prepared by mixing the reserved yoghurt with chopped cucumber, mint, coriander, and finely diced chillies.
+            Adjust the spice level by varying the amount of chilli powder and fresh chillies.
+            """
+        )
+        saveRecipe(
+            name: "Lamb Shanks (Slow Cooker)",
+            prepTime: "20 minutes",
+            cookingTime: "4 hours",
+            ingredients: [
+                "1 onion, sliced",
+                "2 cloves garlic, finely chopped",
+                "1 glug olive oil",
+                "2 lamb shanks (approx. 1kg)",
+                "1 tsp ground cumin",
+                "1/2 tsp ground turmeric",
+                "1 tsp ground cinnamon",
+                "1 tbsp tomato purée",
+                "4 plum tomatoes, chopped",
+                "1 pinch saffron",
+                "400 ml chicken stock",
+                "1 tsp cornflour",
+                "2 cups rice",
+                "1 egg or 1 tbsp chicken broth (for rice)"
+            ],
+            prePrepInstructions: [
+                "Set your slow cooker to a high heat.",
+                "Slice the onion and finely chop the garlic."
+            ],
+            instructions: [
+                "Heat olive oil in an oven-proof saucepan and brown the lamb shanks on all sides.",
+                "Remove the lamb shanks and place them into the slow cooker.",
+                "Add the onion, garlic, and dry spices (cumin, turmeric, cinnamon) to the slow cooker.",
+                "Squeeze in the tomato purée, add the chopped tomatoes, saffron, and chicken stock.",
+                "Cover the slow cooker and cook for a minimum of 4 hours.",
+                "Prepare the rice in a rice cooker. Once cooked, stir in either a beaten egg or chicken broth. If using egg, fry the rice briefly in a pan with some oil.",
+                "After the lamb shanks are cooked, remove them from the slow cooker.",
+                "Mix the cornflour with a little cold water and stir it into the remaining sauce in the slow cooker to thicken.",
+                "Let the sauce bubble for another minute or two, then serve the lamb shanks over the rice with a generous amount of sauce poured on top."
+            ],
+            notes: """
+            Ensure the lamb shanks are browned evenly to enhance flavor before slow cooking.
+            Adjust spices to suit your taste preference for a more or less intense flavor.
+            Use saffron sparingly as it has a strong flavor and aroma.
+            This dish pairs well with a side of sautéed vegetables or a fresh salad.
+            """
+        )
+        saveRecipe(
+            name: "Lactose Free Meat Lasagne",
+            prepTime: "1 hour 20 minutes",
+            cookingTime: "40 minutes",
+            ingredients: [
+                // White Sauce
+                "25g butter",
+                "25g plain flour",
+                "500ml hot lactose-free milk",
+                "¼ grated onion",
+                "1.5 cloves",
+                "25g lactose-free cheese, grated",
+                "1 pinch salt and ground black pepper",
+                // Meat Sauce
+                "500g minced lamb or beef",
+                "500g Baresa Lasagne ragu sauce",
+                "3-5 mushrooms, chopped",
+                "1 bell pepper, diced",
+                "1 small bowl spinach",
+                "1-2 carrots, diced",
+                "1 bag lasagne sheets",
+                "1 can chopped tomatoes",
+                "2 vegetable stock cubes",
+                "1 onion, cubed",
+                "3-4 garlic cloves, minced",
+                "1-1.5 tsp salt",
+                "1-1.5 tsp chili flakes",
+                "1-1.5 tsp sugar",
+                "0.5-1 tsp cumin",
+                "0.5-1 tsp hot paprika",
+                "0.5-1 tsp oregano",
+                "Approx. 1 cup water",
+                "1 tbsp tomato paste",
+                "1 tbsp olive oil",
+                "400g x2 lacto-free grated mature cheddar cheese"
+            ],
+            prePrepInstructions: [
+                "Infuse milk for bechamel sauce: Add thickly sliced onion and cloves to milk in a saucepan, gently bring to a boil, then turn off heat and set aside for 1 hour.",
+                "Strain infused milk through a fine sieve into a jug.",
+                "If required, prepare lasagne sheets by boiling water in a saucepan, submerging the sheets, and boiling for 2 minutes. Turn off heat and set aside."
+            ],
+            instructions: [
+                "Melt butter in a saucepan for white sauce. Add flour and cook for 1 minute, then gradually whisk in the hot milk until thickened. Add cheese, salt, and pepper to taste.",
+                "Cube the onion and sauté it in olive oil. Add minced meat and cook until browned.",
+                "Add lasagne ragu sauce, chopped tomatoes, garlic, stock cubes, cumin, hot paprika, oregano, tomato paste, water, and chili flakes to the meat. Stir to combine.",
+                "Add salt and sugar to taste, then mix in mushrooms, bell pepper, and carrots. Check if carrots are cooked, then add spinach and bring to a boil.",
+                "Preheat oven to 200°C or 180°C fan-assisted.",
+                "In an oven tray, spread a spoonful of sauce on the bottom layer. Layer with lasagne sheet, cheese, sauce, and repeat for 3 layers. Top with cheese.",
+                "Cover the tray with foil and bake for 40 minutes. Remove foil and bake until cheese is melted and golden.",
+                "Remove from oven and let settle for 10 minutes before serving."
+            ],
+            notes: """
+            Ensure milk is infused for the bechamel sauce for the best flavor.
+            For gluten-free options, substitute plain flour and lasagne sheets with gluten-free alternatives.
+            Add additional vegetables or herbs to customize the recipe to your taste.
+            """
+        )
+        saveRecipe(
+            name: "Lotus Biscoff Cupcakes",
+            prepTime: "1 hour",
+            cookingTime: "20 minutes",
+            ingredients: [
+                // Buttery Biscoff Base
+                "100g crushed Lotus biscuits (or any tasty biscuit)",
+                "15g melted butter",
+                "1 tsp golden syrup",
+                // Sponge
+                "125g self-raising flour",
+                "100g caster sugar",
+                "25g dark brown soft sugar",
+                "1/4 tsp bicarbonate of soda",
+                "Pinch of salt",
+                "125g soft butter",
+                "2 large eggs",
+                "1.5 tbsp milk",
+                // Filling
+                "100g double/heavy cream",
+                "1 generous tbsp Lotus Biscoff spread or cookie butter",
+                // Swiss Meringue Buttercream
+                "4 large egg whites",
+                "300g caster sugar",
+                "400g unsalted butter, chopped and softened",
+                "1 tsp vanilla extract",
+                "150g slightly warmed Biscoff spread"
+            ],
+            prePrepInstructions: [
+                "Crush Lotus biscuits into crumbs and mix with melted butter and golden syrup for the base.",
+                "Preheat oven to 180°C (350°F) and line a cupcake tray with cases.",
+                "Slightly warm the Biscoff spread for the buttercream to make it easier to incorporate."
+            ],
+            instructions: [
+                "Combine the crushed biscuits, melted butter, and golden syrup to make the base. Press a small amount into the bottom of each cupcake case and set aside.",
+                "In a mixing bowl, combine self-raising flour, caster sugar, dark brown sugar, bicarbonate of soda, and salt.",
+                "Add the soft butter, eggs, and milk to the dry ingredients. Mix until smooth.",
+                "Spoon the batter over the biscuit base in the cupcake cases, filling each about 2/3 full.",
+                "Bake the cupcakes for 20 minutes or until a skewer inserted into the center comes out clean. Let cool completely.",
+                "Whip the double/heavy cream until stiff peaks form, then fold in a generous tablespoon of Biscoff spread to make the filling.",
+                "Core the center of each cooled cupcake and fill with the Biscoff cream mixture.",
+                "To make the Swiss Meringue Buttercream, whisk egg whites and caster sugar over a double boiler until the sugar dissolves. Beat until stiff peaks form and cool to room temperature. Gradually add softened butter and vanilla extract, then mix in the warmed Biscoff spread.",
+                "Pipe the buttercream onto the cupcakes and garnish as desired."
+            ],
+            notes: """
+            Use room-temperature ingredients for the best texture in the sponge and buttercream.
+            Store cupcakes in an airtight container at room temperature for up to 2 days or refrigerate for longer storage.
+            Add crushed biscuits or a drizzle of Biscoff spread on top for extra decoration.
+            """
+        )
+        saveRecipe(
+            name: "Lemon Sponge Cake",
+            prepTime: "15 minutes",
+            cookingTime: "20-25 minutes",
+            ingredients: [
+                // Cake Ingredients
+                "225g self-raising flour + 1 tsp",
+                "200g caster sugar",
+                "2 tsp baking powder",
+                "225g soft unsalted butter",
+                "3 eggs",
+                "2 tbsp lemon juice (juice of two lemons)",
+                "Pinch of salt",
+                // Strawberry Filling
+                "2 tbsp (43g) strawberry jam",
+                "1 pint (241g) fresh strawberries",
+                "1 tbsp icing sugar"
+            ],
+            prePrepInstructions: [
+                "Preheat the oven to 190°C (374°F).",
+                "Grease two 20cm cake tins, then dust them with flour."
+            ],
+            instructions: [
+                "In a mixing bowl, cream together the sugar and butter until light and fluffy.",
+                "Add the eggs one at a time, beating well after each addition.",
+                "Mix in the lemon juice.",
+                "Gently fold in the self-raising flour and baking powder, being careful not to overmix.",
+                "Divide the batter evenly between the two prepared cake tins.",
+                "Bake in the preheated oven for 20-25 minutes, or until the cakes are golden and a skewer inserted into the center comes out clean.",
+                "Allow the cakes to cool completely in the tins before removing them.",
+                "For the filling, spread strawberry jam evenly over one of the cake layers.",
+                "Arrange the fresh strawberries on top of the jam layer.",
+                "Place the second cake layer on top and dust with icing sugar before serving."
+            ],
+            notes: """
+            To enhance the lemon flavor, add some finely grated lemon zest to the batter.
+            Ensure the cakes are fully cooled before assembling to prevent the filling from melting.
+            Serve with whipped cream or a dollop of Greek yogurt for added indulgence.
+            """
+        )
+        saveRecipe(
+            name: "Mac and Cheese",
+            prepTime: "10 minutes",
+            cookingTime: "25-30 minutes",
+            ingredients: [
+                // Pasta
+                "1 tsp salt",
+                "250g macaroni pasta",
+                // Cheese Sauce
+                "2 tbsp butter",
+                "1 tbsp all-purpose flour",
+                "1/2 tsp garlic granules",
+                "2 cups (370ml) milk",
+                "1/2 tsp salt (or to taste)",
+                "1/2 tsp cumin powder",
+                "1 tsp paprika powder",
+                "1 cup shredded cheddar cheese (add more if desired)",
+                "3-5 slices gouda cheese",
+                "2 tbsp double cream",
+                "Sriracha sauce (optional)",
+                // Topping
+                "Extra shredded cheddar cheese",
+                "Shredded Leicester cheese"
+            ],
+            prePrepInstructions: [
+                "Bring a pot of water to a boil and add 1 tsp of salt.",
+                "Add 250g macaroni pasta and boil for 8-10 minutes, or until al dente.",
+                "Drain the pasta and rinse with cold water. Set aside."
+            ],
+            instructions: [
+                "In a saucepan, melt the butter over medium heat.",
+                "Add paprika powder, garlic granules, cumin powder, and all-purpose flour. Stir thoroughly to form a paste and cook until slightly browned.",
+                "Gradually add milk while whisking continuously until the mixture is smooth and thick.",
+                "Season with 1/2 tsp of salt (or to taste).",
+                "Reduce the heat to low and stir in the shredded cheddar and gouda cheese slices until melted.",
+                "Add double cream and whisk until the sauce is thick and smooth.",
+                "Combine the cooked pasta with the cheese sauce and mix well.",
+                "Transfer the mac and cheese to a large ovenproof dish.",
+                "Top with Sriracha sauce (optional) and sprinkle with extra shredded cheddar and Leicester cheese.",
+                "Bake at 180°C (350°F) for 15-20 minutes or until the top is crisp and golden."
+            ],
+            notes: """
+            Use your favorite combination of cheeses for the sauce and topping to customize the flavor.
+            Serve with a side salad or garlic bread for a complete meal.
+            Adjust the amount of Sriracha sauce for desired spiciness.
+            """
+        )
+        saveRecipe(
+            name: "Malaysian Curry Puff (Easy & Crispy Karipap)",
+            prepTime: "1 hr 20 mins",
+            cookingTime: "20 mins",
+            ingredients: [
+                // For frying
+                "500-750 ml vegetable oil for frying",
+                // Filling
+                "150 grams skinless boneless chicken thighs, finely chopped",
+                "430 grams potatoes, peeled & small diced",
+                "0.5 small onion, finely diced",
+                "2 bay leaves",
+                "4 tsp curry powder",
+                "0.5 tsp turmeric powder",
+                "0.5 tsp salt",
+                // Wrapper
+                "500 grams all-purpose flour",
+                "1.25 cup water, room temperature",
+                "1 tsp salt",
+                "0.33 cup + 3 tbsp vegetable oil"
+            ],
+            prePrepInstructions: [
+                "Prepare all the ingredients: dice the potatoes, onions, and chicken thighs.",
+                "Measure out the flour, salt, curry powder, turmeric powder, and oil."
+            ],
+            instructions: [
+                "Heat 1 teaspoon of vegetable oil in a large pan on medium heat. Fry the chicken until 80% cooked.",
+                "Add onions and potatoes to the pan, followed by curry powder, salt, turmeric, and bay leaves. Cover and cook until the potatoes are fork-tender. Remove the filling from the pan and allow it to cool completely.",
+                "In a large mixing bowl, whisk together all-purpose flour and salt. Make a well in the center.",
+                "In a small saucepan, heat ⅓ cup + 3 tablespoons of vegetable oil on high heat. Once hot, pour the oil carefully into the flour well. Let it bubble for 1 minute, then mix with the flour.",
+                "Add water and knead the mixture into a smooth, oiled ball of dough.",
+                "On a floured surface, roll the dough into a long log and slice into 26 equal pieces. Roll each piece into a ball.",
+                "Use a rolling pin to flatten each ball into a 4-inch wide circular wrapper.",
+                "Place 1 tablespoon of the cooled filling onto the center of each wrapper. Fold the wrapper over the filling and pinch the edges to seal completely.",
+                "Pleat the edges using your thumb for a decorative finish.",
+                "Heat 2 inches of vegetable oil in a large pan over medium heat. Check for readiness by inserting a chopstick or wooden spoon; if bubbles form, the oil is hot enough.",
+                "Carefully fry 5-6 curry puffs at a time for 2 minutes per side or until golden brown.",
+                "Remove the fried curry puffs from the oil using a slotted spoon and transfer to a wire rack or paper towel-lined baking sheet to cool.",
+                "Serve and enjoy your crispy Malaysian curry puffs!"
+            ],
+            notes: """
+            To save time, you can prepare the filling a day ahead and store it in the refrigerator until ready to use.
+            Pleating the edges creates a more traditional look but can be skipped if time is limited.
+            These curry puffs can be frozen before frying for later use. Fry directly from frozen, adjusting cooking time slightly.
+            """
+        )
+        saveRecipe(
+            name: "Malaysian Curry Wings (Easy Baked Crispy)",
+            prepTime: "10 mins",
+            cookingTime: "35 mins",
+            ingredients: [
+                "750 g chicken wings (or 15 wings)",
+                "1 shallot, peeled and chopped",
+                "3 tbsp lemongrass, white bulbous part only, finely sliced",
+                "1 tbsp ginger, peeled",
+                "1 clove garlic, minced",
+                "3 tbsp water, cold",
+                "1 tbsp regular soy sauce",
+                "1 tbsp curry powder",
+                "1/2 tbsp turmeric powder",
+                "1/2 tbsp white granulated sugar",
+                "2 tsp Shaoxing Cooking Wine",
+                "1/2 tsp salt",
+                "1/2 cup potato starch",
+                // Optional garnish
+                "1 green onion, finely diced"
+            ],
+            prePrepInstructions: [
+                "Rinse the chicken wings under cold water and strain them. Transfer the wings to a large mixing bowl.",
+                "Preheat your oven to 425°F."
+            ],
+            instructions: [
+                "In a mortar & pestle or food processor, add shallot, lemongrass, garlic, ginger, and salt. Pulverize into a thick paste (it doesn’t need to be completely smooth).",
+                "Add the aromatic paste to the bowl of chicken wings.",
+                "Add the remaining ingredients, with potato starch being the last addition. Mix well to ensure the wings are evenly coated in a batter-like consistency.",
+                "Line a baking sheet with parchment paper. Before placing the wings on the sheet, give them one final mix to ensure even coating.",
+                "Lay the wings in a single layer on the baking sheet, leaving enough space between them.",
+                "Reduce the oven temperature to 400°F and bake the wings for 35 minutes, flipping them halfway through the cooking time.",
+                "Once done, remove from the oven and optionally garnish with finely diced green onions.",
+                "Serve and enjoy!"
+            ],
+            notes: """
+            For an even crispier texture, you can broil the wings for 1-2 minutes at the end of the baking time, but watch carefully to avoid burning.
+            If you don't have Shaoxing Cooking Wine, you can substitute it with dry sherry or omit it altogether.
+            Serve with your favorite dipping sauce for added flavor.
+            """
+        )
+        saveRecipe(
+            name: "Mandarin Coconut Sponge Cake",
+            prepTime: "15 minutes",
+            cookingTime: "20-25 minutes",
+            ingredients: [
+                "225g self-raising flour + 1 tsp",
+                "200g caster sugar",
+                "2 tsp baking powder",
+                "225g soft unsalted butter",
+                "3 eggs",
+                "2 tbsp mandarin juice (juice from a can)",
+                "Pinch of salt",
+                "10ml vegetable oil",
+                "600ml double cream (2 x 300ml cans)",
+                "600g canned mandarins (2 x 300g cans)",
+                "1 tbsp cornstarch or 3 tbsp icing sugar",
+                "Dessicated coconut (for toasting)"
+            ],
+            prePrepInstructions: [
+                "Preheat the oven to 190°C (170°C fan/gas 5).",
+                "Toast the desiccated coconut on a foil-lined baking sheet for 4-6 minutes or until golden brown.",
+                "Grease two 20cm cake tins and dust with flour."
+            ],
+            instructions: [
+                "Cream together the sugar and butter in a mixing bowl.",
+                "Add the eggs one at a time, mixing thoroughly after each addition.",
+                "Add the mandarin juice and mix until combined.",
+                "Gently fold in the self-raising flour and baking powder until the batter is smooth.",
+                "Divide the batter evenly between the prepared cake tins.",
+                "Bake for 20-25 minutes or until a skewer inserted into the center of the cakes comes out clean.",
+                "Cool the cakes in their tins for 10 minutes before transferring them to a wire rack to cool completely.",
+                "Brush vegetable oil over the tops of the cooled cakes.",
+                "Chill the bowl and whisk attachment of a stand mixer for 7-10 minutes to speed up whipping the cream.",
+                "Whip the double cream in the chilled bowl, gradually adding the sugar or cornstarch for stabilization. Whip until firm peaks form.",
+                "Layer half the whipped cream onto the base layer of the cake. Sprinkle with toasted coconut and arrange mandarin segments, reserving a few for topping.",
+                "Add the second cake layer on top. Spread the remaining cream over the top and sprinkle with more toasted coconut. Garnish with the reserved mandarin segments."
+            ],
+            notes: """
+            Be careful not to over-whip the cream, as it may separate.
+            The toasted coconut adds texture and a nutty flavor; toast it lightly for the best results.
+            Use the juice from the canned mandarins for extra flavor in the sponge.
+            """
+        )
+        saveRecipe(
+            name: "Mango Sago (Quick & Easy 4-ingredient)",
+            prepTime: "20 minutes",
+            cookingTime: "10 minutes",
+            ingredients: [
+                "3 large mangos, fully ripe (about 750 grams or 1.7 lbs)",
+                "115 g small tapioca pearls, uncooked (do not use minute tapioca)",
+                "80 ml condensed milk (or condensed coconut milk for a vegan alternative)",
+                "400 ml whole fat coconut milk at room temperature"
+            ],
+            prePrepInstructions: [
+                "Peel and slice 2 large mangos, removing the pit. Reserve the remaining mango for topping.",
+                "Open canned coconut milk and stir well to combine the fats and water inside the can."
+            ],
+            instructions: [
+                "In a medium-sized pot of water (about 5 cups), bring to a boil on high heat. Once boiling, add tapioca pearls.",
+                "Reduce to medium heat or a rolling boil and boil uncovered for 10 minutes, stirring occasionally.",
+                "Turn off the heat, cover, and let sit for another 10 minutes until the pearls are completely translucent. If a small white dot remains in the center, let them sit in the hot water covered for another 2-3 minutes.",
+                "Strain the cooked pearls in a fine mesh sieve and rinse with cold running water until cool. Strain out excess water and transfer to a large bowl.",
+                "Combine the coconut milk with the cooked tapioca pearls and mix well to form the sago mixture.",
+                "Place the peeled mango pieces into a blender or food processor with condensed milk. Blend until smooth. If components get stuck, use a spatula or blender stick to loosen them.",
+                "Divide the mango mixture evenly among 4 dessert bowls or glasses.",
+                "Dice the remaining mango into 1-cm cubes and set aside.",
+                "Divide the coconut sago mixture evenly and layer it over the mango mixture in each bowl.",
+                "Top with the diced mango cubes and garnish with a fresh mint leaf. Serve cold and enjoy."
+            ],
+            notes: """
+            This dessert can be served as a layered treat for visual appeal or mixed together in a large bowl for a simpler presentation. Ensure the tapioca pearls are fully cooked to achieve the best texture. Condensed coconut milk is a great vegan alternative for this recipe.
             """
         )
         print("Default recipes added!")
