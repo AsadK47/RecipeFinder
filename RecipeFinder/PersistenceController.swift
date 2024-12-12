@@ -6310,7 +6310,191 @@ extension PersistenceController {
                 "Top with the diced mango cubes and garnish with a fresh mint leaf. Serve cold and enjoy."
             ],
             notes: """
-            This dessert can be served as a layered treat for visual appeal or mixed together in a large bowl for a simpler presentation. Ensure the tapioca pearls are fully cooked to achieve the best texture. Condensed coconut milk is a great vegan alternative for this recipe.
+            This dessert can be served as a layered treat for visual appeal or mixed together in a large bowl for a simpler presentation. 
+            Ensure the tapioca pearls are fully cooked to achieve the best texture.
+            Condensed coconut milk is a great vegan alternative for this recipe.
+            """
+        )
+        saveRecipe(
+            name: "Mantou (Steamed Bun)",
+            prepTime: "3 hours",
+            cookingTime: "10-12 minutes",
+            ingredients: [
+                "150 g milk or milk of choice or water",
+                "25 g granulated sugar",
+                "3/4 tsp active dry yeast",
+                "15 g vegetable oil",
+                "250 g all-purpose flour",
+                "1/2 tsp baking powder"
+            ],
+            prePrepInstructions: [
+                "Heat milk in a microwave for 30 seconds until hot but not unbearable to touch.",
+                "Dissolve sugar and oil into the warm milk and sprinkle yeast on top. Let rest for 5 minutes or until foamy."
+            ],
+            instructions: [
+                "Combine flour and baking powder in a mixing bowl.",
+                "Mix the flour mixture into the yeast mixture and knead until a smooth and elastic dough forms.",
+                "Cover and let the dough rest for 1 hour.",
+                "Prepare your steamer with parchment paper, steaming cloth, or liner.",
+                "Flatten the dough onto your work surface using your hand. Use a rolling pin to roll the dough into a rectangle.",
+                "Tightly roll the rectangle into a log and slice into 8 even pieces.",
+                "Place the pieces seam side down into the steamer. Cover and let the dough prove for 30-60 minutes.",
+                "Add water to a pot and turn your stove on high. Place the steam basket on top and steam for 10-12 minutes.",
+                "Turn off the heat and let the buns sit for about 5 minutes before serving."
+            ],
+            notes: """
+            These steamed buns can be stored by freezing once they have cooled. 
+            To reheat, place back in the steam basket and repeat the steaming process.
+            Shape options include logs, twists, gua bao buns, and filled baos.
+            For filled baos, flatten the dough and add your desired filling before sealing.
+            """
+        )
+        saveRecipe(
+            name: "Mapo Tofu, the Authentic Way (麻婆豆腐)",
+            prepTime: "8 minutes",
+            cookingTime: "12 minutes",
+            ingredients: [
+                "600 g regular tofu (soft or medium firm)",
+                "1 teaspoon salt",
+                // For the sauce
+                "2 tablespoon neutral cooking oil",
+                "100 g minced beef or pork",
+                "1 teaspoon minced ginger",
+                "2 tablespoon Sichuan chilli bean paste",
+                "1 tablespoon fermented black beans (rinsed and chopped)",
+                "1 tablespoon ground chilli or chilli flakes",
+                "1 tablespoon minced garlic",
+                "1 tablespoon Shaoxing rice wine",
+                "400 ml water or unsalted stock",
+                "2 tablespoon cornstarch (mixed with 3 tablespoons water)",
+                // Additional
+                "½ teaspoon ground Sichuan pepper",
+                "1 stalk scallions (finely chopped)"
+            ],
+            prePrepInstructions: [
+                "Cut the tofu into 2.5cm/1inch cubes.",
+                "Dissolve salt into a pot of water, bring it to a boil, then simmer the tofu cubes for 1 minute. Drain and set aside.",
+                "Prepare the cornstarch slurry by mixing 2 tablespoons of cornstarch with 3 tablespoons of water."
+            ],
+            instructions: [
+                "Heat a wok until hot, then add cooking oil.",
+                "Stir fry minced meat with minced ginger over high heat until the meat turns pale.",
+                "Add Sichuan chilli bean paste, fermented black beans, ground chilli, and minced garlic. Fry until fragrant.",
+                "Pour in Shaoxing rice wine and water or unsalted stock. Bring to a boil.",
+                "Gently slide in the tofu and boil uncovered for 5 minutes.",
+                "Turn the heat to medium and add half of the cornstarch slurry. Simmer for 10 seconds, then add the remaining slurry. Stir until the sauce thickens enough to coat the spatula.",
+                "Add ground Sichuan pepper and chopped scallions. Gently mix everything together and turn off the heat. Serve hot with steamed rice."
+            ],
+            notes: """
+            Classic Mapo tofu traditionally uses regular tofu. 
+            Medium-firm or firm silken tofu is an acceptable substitute, but avoid the soft version.
+            Adjust the quantity of Sichuan chilli bean paste based on its saltiness, spiciness, and texture.
+            For less heat and numbing sensation, reduce the ground chilli and Sichuan pepper.
+            Adding a little sugar can balance the spiciness and saltiness if desired.
+            """
+        )
+        saveRecipe(
+            name: "Marinated Tofu (The Best Tofu Ever!)",
+            prepTime: "1 hour 20 minutes",
+            cookingTime: "10 minutes",
+            ingredients: [
+                "454 g block extra-firm tofu",
+                "4 tablespoons low sodium soy sauce",
+                "3 tablespoons seasoned rice vinegar",
+                "1 tablespoon pure maple syrup",
+                "1 teaspoon toasted sesame oil",
+                "2 garlic cloves, minced",
+                "1 tablespoon fresh grated ginger OR 1/2 teaspoon dried ginger",
+                "2-3 tablespoons neutral oil, such as canola or avocado"
+            ],
+            prePrepInstructions: [
+                "Quick press the tofu by cutting it into cubes. Place them evenly on a cutting board lined with paper towels or a clean towel. Cover with more paper towels, set a baking sheet on top, and then something heavy, like a large book or skillet. Press for 15 minutes."
+            ],
+            instructions: [
+                "In a small bowl, combine soy sauce, rice vinegar, maple syrup, sesame oil, garlic, and ginger to make the marinade.",
+                "Place the pressed tofu cubes in a shallow dish and pour the marinade over them. Cover and refrigerate for at least 1 hour, or overnight for more flavor.",
+                "Heat a skillet over medium-high heat with neutral oil. Remove the tofu from the marinade and add to the pan, reserving the marinade.",
+                "Fry the tofu until golden brown on all sides.",
+                "Pour the leftover marinade into the pan with the tofu and stir to coat. Let the tofu absorb the sauce before removing from heat.",
+                "Serve with rice and stir-fried vegetables like baby bok choy, mushrooms, and carrots."
+            ],
+            notes: """
+            For a gluten-free option, use tamari instead of soy sauce.
+            You can bake the tofu by placing the pieces on a silicone mat or parchment-lined baking sheet. Bake at 350°F for 20 minutes, flip, and bake for another 20 minutes. 
+            To add more flavor, quickly sauté with the leftover marinade sauce.
+            Instead of quick pressing, you can press the whole block of tofu for at least an hour.
+            This recipe can be doubled or tripled and stored in the refrigerator for 3-4 days.
+            Nutrition information is for 1/4 of the tofu using 2 tablespoons of canola oil for frying.
+            """
+        )
+        saveRecipe(
+            name: "Masala Chai (Easy Tea)",
+            prepTime: "20 minutes",
+            cookingTime: "20 minutes",
+            ingredients: [
+                "2 1/4 cups (532 ml) filtered water",
+                "1 3-inch cinnamon stick, ceylon or cassia are both fine",
+                "3 whole cloves",
+                "4 green cardamom pods, cracked open and deseeded (seeds & pods included)",
+                "3 black peppercorns",
+                "1/2 tsp fennel seeds, optional",
+                "1/2-inch (~4 g) fresh ginger, peeled and thinly sliced",
+                "3 black tea bags or 3 tsp loose leaf black tea (depending on strength)",
+                "1 cup (8 oz) whole milk or 2% reduced fat milk",
+                "4 tsp (20 g) turbinado cane sugar or raw cane sugar"
+            ],
+            prePrepInstructions: [
+                "Gather and prepare all the whole spices by cracking cardamom pods and peeling and slicing ginger."
+            ],
+            instructions: [
+                "Heat a medium saucepan over high heat and add water, cinnamon stick, cloves, cardamom pods, black peppercorns, fennel seeds (if using), and ginger.",
+                "Bring the water to a boil and add the tea bags or tea leaves.",
+                "Reduce the heat to medium-low and simmer gently for 7-10 minutes, depending on desired strength. The tea should turn a deep burgundy color and reduce slightly.",
+                "Add milk and sugar to the saucepan and stir well. Raise the heat to high or allow the milk to come to a boil naturally.",
+                "Reduce the heat to medium and simmer for another 5 minutes.",
+                "Raise the heat to high again to bring the tea to a rolling boil for 1-2 minutes, depending on how 'cooked' you prefer the milk.",
+                "Optionally, use a ladle to aerate the chai for a deeper flavor and creamier texture.",
+                "Pour the chai into cups through a strainer and add more sweetener if desired. Serve hot."
+            ],
+            notes: """
+            Use strong black tea bags such as Assam or Darjeeling for best results.
+            If using weaker brands, add extra tea bags.
+            Whole spices can be used as-is, but crushing them will increase their intensity slightly.
+            Allowing the milk to boil enhances the flavor but overboiling can cause bitterness.
+            Find a balance to achieve an evaporated, cooked flavor.
+            Store leftover chai in an airtight glass jar in the fridge for up to 3 days.
+            """
+        )
+        saveRecipe(
+            name: "Matcha Bars (Danielle's No-Bake)",
+            prepTime: "30 minutes",
+            cookingTime: "1 hour",
+            ingredients: [
+                "5 dates, pitted and soaked⁣",
+                "1/4 cup Matcha Bucks + more for topping⁣",
+                "1/2 cup oats",
+                "1/2 cup shredded coconut⁣",
+                "2 tablespoons tahini",
+                "1 1/2 tablespoons coconut oil⁣",
+                "1 tablespoon maple syrup⁣",
+                "1 tablespoon matcha"
+            ],
+            prePrepInstructions: [
+                "Pit the dates and soak them in water until softened."
+            ],
+            instructions: [
+                "Blend the soaked dates in a food processor until a paste forms.⁣",
+                "Add the oats, shredded coconut, tahini, coconut oil, maple syrup, and matcha to the food processor.",
+                "Blend until well combined but still slightly textured.⁣",
+                "Press the mixture into a parchment-lined baking dish, ensuring the thickness is even throughout.⁣",
+                "Sprinkle more Matcha Bucks on top and gently press them into the bar mix.⁣",
+                "Freeze the dish for at least an hour to set the bars.⁣",
+                "Once set, use a pizza cutter to slice the bars into portions. Enjoy!"
+            ],
+            notes: """
+            Ensure the dates are well-soaked for easier blending.
+            Adjust the thickness of the bars to your preference before freezing.
+            Store the bars in the freezer for longer shelf life, and let them thaw slightly before serving.
             """
         )
         print("Default recipes added!")
