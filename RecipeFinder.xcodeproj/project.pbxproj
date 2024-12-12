@@ -42,6 +42,9 @@
 		9E6060012D09CB6400236896 /* RecipeModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = RecipeModel.xcdatamodel; sourceTree = "<group>"; };
 		9E6060022D09CB6400236896 /* RecipeModel 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 2.xcdatamodel"; sourceTree = "<group>"; };
 		9EA777B82D09F1E000C3422A /* RecipeModel 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 3.xcdatamodel"; sourceTree = "<group>"; };
+		9EC3AE5E2D0B772D006C30E1 /* RecipeModel 5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 5.xcdatamodel"; sourceTree = "<group>"; };
+		9EC3AE5F2D0BA3C8006C30E1 /* RecipeModel 6.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 6.xcdatamodel"; sourceTree = "<group>"; };
+		9EC3AE602D0BA9A4006C30E1 /* RecipeModel 7.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 7.xcdatamodel"; sourceTree = "<group>"; };
 		9EE5AAD52D08FCBE00C1B736 /* RecipeFinder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RecipeFinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9EE5AAD82D08FCBE00C1B736 /* RecipeFinderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeFinderApp.swift; sourceTree = "<group>"; };
 		9EE5AADA2D08FCBE00C1B736 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -606,12 +609,15 @@
 		9E6060002D09CB6400236896 /* RecipeModel.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				9EC3AE602D0BA9A4006C30E1 /* RecipeModel 7.xcdatamodel */,
+				9EC3AE5F2D0BA3C8006C30E1 /* RecipeModel 6.xcdatamodel */,
+				9EC3AE5E2D0B772D006C30E1 /* RecipeModel 5.xcdatamodel */,
 				9EEDD0812D09F955003C7296 /* RecipeModel 4.xcdatamodel */,
 				9EA777B82D09F1E000C3422A /* RecipeModel 3.xcdatamodel */,
 				9E6060012D09CB6400236896 /* RecipeModel.xcdatamodel */,
 				9E6060022D09CB6400236896 /* RecipeModel 2.xcdatamodel */,
 			);
-			currentVersion = 9EEDD0812D09F955003C7296 /* RecipeModel 4.xcdatamodel */;
+			currentVersion = 9EC3AE602D0BA9A4006C30E1 /* RecipeModel 7.xcdatamodel */;
 			name = RecipeModel.xcdatamodeld;
 			path = /Users/asad.e.khan/Documents/Personal/app_ideas/RecipeFinder/RecipeFinder/RecipeModel.xcdatamodeld;
 			sourceTree = "<group>";

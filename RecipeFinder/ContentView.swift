@@ -50,7 +50,7 @@ struct RecipeSearchView: View {
     }
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack {
                 VStack {
                     Spacer().frame(height: 5)
@@ -85,17 +85,17 @@ struct IngredientSearchView: View {
             return recipes
         } else {
             return recipes.filter { recipe in
-                recipe.ingredients.contains { $0.localizedCaseInsensitiveContains(searchText) }
+                recipe.ingredients.contains { $0.name.localizedCaseInsensitiveContains(searchText) }
             }
         }
     }
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack {
                 VStack {
                     Spacer().frame(height: 5)
-                    Text("Ingredient Searcher").font(.largeTitle)
+                    Text("Search by ingredient").font(.largeTitle)
                     SearchBar(text: $searchText).padding(.horizontal)
                     Spacer().frame(height: 15)
                 }
@@ -117,7 +117,7 @@ struct IngredientSearchView: View {
 }
 
 struct RecipeDetailView: View {
-    let recipe: RecipeModel
+    @State private var recipe: RecipeModel
     @State private var ingredientsState: [Bool]
     
     init(recipe: RecipeModel) {
@@ -131,33 +131,83 @@ struct RecipeDetailView: View {
                 Text(recipe.name)
                     .font(.title)
                     .bold()
+                    .frame(maxWidth: .infinity, alignment: .center)
+                
                 Divider()
-                Text("Prep time")
-                    .font(.headline)
-                Text("\(recipe.prepTime)")
+                
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text("Prep time")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                        Text("\(recipe.prepTime)")
+                            .frame(maxWidth: .infinity, alignment: .center)
+                    }.frame(maxWidth: .infinity)
+                    
+                    Divider().frame(height: 50)
+                    
+                    VStack(alignment: .leading) {
+                        Text("Cooking time").font(.headline).frame(maxWidth: .infinity, alignment: .center)
+                        Text("\(recipe.cookingTime)").frame(maxWidth: .infinity, alignment: .center)
+                    }.frame(maxWidth: .infinity)
+                }
+                
                 Divider()
-                Text("Cooking time")
-                    .font(.headline)
-                Text("\(recipe.cookingTime)")
+                
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text("Difficulty")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                        Text("\(recipe.difficulty)")
+                            .frame(maxWidth: .infinity, alignment: .center)
+                    }.frame(maxWidth: .infinity)
+                    
+                    Divider().frame(height: 50)
+                    
+                    VStack(alignment: .leading) {
+                        Text("Category")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                        Text("\(recipe.category)")
+                            .frame(maxWidth: .infinity, alignment: .center)
+                    }.frame(maxWidth: .infinity)
+                }
+                
                 Divider()
+                
+                HStack {
+                    Text("Servings")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                    Spacer()
+                    Stepper(value: $recipe.currentServings, in: 1...100, step: 1) {
+                        Text("\(recipe.currentServings)")
+                            .frame(maxWidth: .infinity, alignment: .center)
+                    }
+                    .onChange(of: recipe.currentServings) { oldValue, newValue in
+                        adjustIngredients(for: newValue)
+                    }
+                }
+                
+                Divider()
+                
                 Text("Ingredients")
                     .font(.headline)
                 
-                HStack {
-                    Text("Number of ingredients: ")
-                        .font(.headline)
-                    Text("\(recipe.ingredients.count)")
-                }
-                
                 ForEach(recipe.ingredients.indices, id: \.self) { index in
                     HStack {
+                        // Checkmark toggle
                         Image(systemName: ingredientsState[index] ? "checkmark.circle.fill" : "circle")
                             .foregroundColor(ingredientsState[index] ? .green : .primary)
                             .onTapGesture {
-                                ingredientsState[index].toggle()
+                                withAnimation {
+                                    ingredientsState[index].toggle()
+                                }
                             }
                         
-                        Text(recipe.ingredients[index])
+                        // Ingredient details
+                        Text("\(String(format: "%.2f", recipe.ingredients[index].quantity)) \(recipe.ingredients[index].unit) \(recipe.ingredients[index].name)")
                             .padding(.leading, 4)
                             .foregroundColor(.primary)
                             .strikethrough(ingredientsState[index])
@@ -165,18 +215,23 @@ struct RecipeDetailView: View {
                 }
        
                 Divider()
+                
                 Text("Pre-Prep Instructions")
                     .font(.headline)
                 ForEach(recipe.prePrepInstructions.indices, id: \.self) { index in
                     Text("\(index + 1). \(recipe.prePrepInstructions[index])")
                 }
+                
                 Divider()
+                
                 Text("Instructions")
                     .font(.headline)
                 ForEach(recipe.instructions.indices, id: \.self) { index in
                     Text("\(index + 1). \(recipe.instructions[index])")
                 }
+                
                 Divider()
+                
                 Text("Notes")
                     .font(.headline)
                 ForEach(recipe.notes.split(separator: "."), id: \.self) { sentence in
@@ -195,6 +250,15 @@ struct RecipeDetailView: View {
             .padding()
         }
         .navigationTitle(recipe.name)
+    }
+    
+    private func adjustIngredients(for newServings: Int) {
+        let factor = Double(newServings) / Double(recipe.baseServings)
+        recipe.ingredients = recipe.ingredients.map { ingredient in
+            var updatedIngredient = ingredient
+            updatedIngredient.quantity = ingredient.baseQuantity * factor
+            return updatedIngredient
+        }
     }
 }
 
