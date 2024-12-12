@@ -5859,7 +5859,7 @@ extension PersistenceController {
                 "Stir and dissolve coffee and sugar in hot water.",
                 "Add milk and 1 tbsp Lotus Biscoff spread, then stir to combine.",
                 "Add ice cubes to the mixture and shake well.",
-                "Serve in a glass with additional ice cubes and a Lotus Biscoff biscuit on the side."
+                "Serve in a glass with additional ice cubes and a Lotus Biscoff biscuit on the side.",
                 "Alternate instructions:",
                 "Stir and dissolve coffee and sugar in hot water.",
                 "Add 1 tbsp Lotus Biscoff spread and stir until dissolved.",
@@ -7606,7 +7606,7 @@ extension PersistenceController {
                 "1 head of garlic (approx. 12 garlic cloves, chopped)",
                 "2-inch ginger, chopped",
                 "2 pounds roma tomatoes (approx. 9 tomatoes, chopped or 2 cans of diced tomatoes)",
-                "¼ cup water"
+                "¼ cup water",
                 "\\ Spices",
                 "3 tablespoons ground coriander",
                 "1 tablespoon paprika",
