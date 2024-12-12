@@ -54,7 +54,7 @@ struct RecipeSearchView: View {
             VStack {
                 VStack {
                     Spacer().frame(height: 5)
-                    Text("Recipe finder").font(.largeTitle)
+                    Text("Recipe Finder").font(.largeTitle)
                     SearchBar(text: $searchText).padding(.horizontal)
                     Spacer().frame(height: 15)
                 }
@@ -95,7 +95,7 @@ struct IngredientSearchView: View {
             VStack {
                 VStack {
                     Spacer().frame(height: 5)
-                    Text("Ingredient Finder").font(.largeTitle)
+                    Text("Ingredient Searcher").font(.largeTitle)
                     SearchBar(text: $searchText).padding(.horizontal)
                     Spacer().frame(height: 15)
                 }
@@ -181,10 +181,11 @@ struct RecipeDetailView: View {
                     .font(.headline)
                 ForEach(recipe.notes.split(separator: "."), id: \.self) { sentence in
                     if !sentence.trimmingCharacters(in: .whitespaces).isEmpty {
-                        HStack {
-                            Image(systemName: "checkmark.circle.fill")
+                        HStack(alignment: .top) {
+                            Text("•")
+                                .font(.system(size: 18, weight: .bold))
                                 .foregroundColor(.primary)
-                            Text("\(sentence.trimmingCharacters(in: .whitespaces))")
+                            Text(sentence.trimmingCharacters(in: .whitespaces))
                                 .padding(.leading, 2)
                                 .foregroundColor(.primary)
                         }
