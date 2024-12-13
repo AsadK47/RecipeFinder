@@ -124,6 +124,10 @@ struct IngredientSearchView: View {
     @Binding var recipes: [RecipeModel]
     @State private var searchText = ""
     @Environment(\.colorScheme) var colorScheme
+    
+    var allIngredients: [String] {
+        Set(recipes.flatMap { $0.ingredients.map { $0.name }}).sorted()
+    }
 
     var filteredRecipes: [RecipeModel] {
         if searchText.isEmpty {
@@ -134,7 +138,7 @@ struct IngredientSearchView: View {
             }
         }
     }
-
+    
     var body: some View {
         NavigationStack {
             VStack {
@@ -146,19 +150,70 @@ struct IngredientSearchView: View {
                         .padding(.horizontal)
                     Spacer().frame(height: 15)
                 }
-
-                List(filteredRecipes) { recipe in
-                    NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
-                        Text(recipe.name)
-                            .foregroundColor(.primary)
-                            .background(colorScheme == .dark ? Color.black : Color.white)
-                            .cornerRadius(8)
+                
+                if searchText.isEmpty {
+                    if allIngredients.isEmpty {
+                        Text("No ingredients available")
+                            .foregroundColor(.gray)
+                            .padding()
+                    } else {
+                        ScrollView {
+                            VStack(spacing: 10) {
+                                ForEach(allIngredients.chunked(into: 2), id: \.self) { pair in
+                                    HStack(spacing: 20) {
+                                        ForEach(pair, id: \.self) { ingredient in
+                                            IngredientButton(ingredient: ingredient) {
+                                                searchText = ingredient
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            .padding()
+                        }
                     }
-                    .listRowSeparator(.hidden)
+                } else {
+                    List(filteredRecipes) { recipe in
+                        NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
+                            Text(recipe.name)
+                                .foregroundColor(.primary)
+                                .background(colorScheme == .dark ? Color.black : Color.white)
+                                .cornerRadius(8)
+                        }
+                        .listRowSeparator(.hidden)
+                    }
+                    .listStyle(PlainListStyle())
                 }
-                .listStyle(PlainListStyle())
             }
             .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+}
+
+extension Array {
+    func chunked(into size: Int) -> [[Element]] {
+        guard size > 0 else { return [] }
+        return stride(from: 0, to: count, by: size).map {
+            Array(self[$0..<Swift.min($0 + size, count)])
+        }
+    }
+}
+
+struct IngredientButton: View {
+    let ingredient: String
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            Text(ingredient)
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color(UIColor.systemGray5))
+                .cornerRadius(8)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.gray, lineWidth: 1)
+                )
         }
     }
 }
