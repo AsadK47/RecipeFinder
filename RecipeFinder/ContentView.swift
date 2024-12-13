@@ -9,30 +9,73 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @Environment(\.colorScheme) var colorScheme
     @State private var recipes: [RecipeModel] = []
-    
+    @State private var selectedTab: Int = 0
+
     var body: some View {
-        TabView {
-            RecipeSearchView(recipes: $recipes)
-                .tabItem {
-                    Label("Recipes", systemImage: "book")
+        VStack {
+            ZStack {
+                if selectedTab == 0 {
+                    RecipeSearchView(recipes: $recipes)
+                } else if selectedTab == 1 {
+                    IngredientSearchView(recipes: $recipes)
+                } else if selectedTab == 2 {
+                    Text("Favourites View")
+                } else if selectedTab == 3 {
+                    SettingsView()
                 }
-            
-            IngredientSearchView(recipes: $recipes)
-                .tabItem {
-                    Label("Ingredients", systemImage: "leaf")
+            }
+
+            Divider()
+
+            HStack {
+                ForEach(0..<4, id: \.self) { index in
+                    Button(action: {
+                        selectedTab = index
+                    }) {
+                        VStack {
+                            Image(systemName: getTabIcon(for: index))
+                                .foregroundColor(selectedTab == index ? .blue : .gray)
+                            Text(getTabLabel(for: index))
+                                .foregroundColor(selectedTab == index ? .blue : .gray)
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
                 }
+            }
+            .frame(maxWidth: .infinity)
+            .padding()
+            .background(Color(UIColor.systemBackground))
         }
         .onAppear {
             loadRecipes()
         }
     }
-    
+
     private func loadRecipes() {
         PersistenceController.shared.clearDatabase()
         PersistenceController.shared.populateDatabase()
         recipes = PersistenceController.shared.fetchRecipes()
+    }
+
+    private func getTabIcon(for index: Int) -> String {
+        switch index {
+        case 0: return "book"
+        case 1: return "leaf"
+        case 2: return "heart"
+        case 3: return "gearshape"
+        default: return "questionmark.circle"
+        }
+    }
+
+    private func getTabLabel(for index: Int) -> String {
+        switch index {
+        case 0: return "Recipes"
+        case 1: return "Ingredients"
+        case 2: return "Favourites"
+        case 3: return "Settings"
+        default: return "Unknown"
+        }
     }
 }
 
@@ -40,7 +83,7 @@ struct RecipeSearchView: View {
     @Binding var recipes: [RecipeModel]
     @State private var searchText = ""
     @Environment(\.colorScheme) var colorScheme
-    
+
     var filteredRecipes: [RecipeModel] {
         if searchText.isEmpty {
             return recipes
@@ -48,17 +91,19 @@ struct RecipeSearchView: View {
             return recipes.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
         }
     }
-    
+
     var body: some View {
         NavigationStack {
             VStack {
                 VStack {
                     Spacer().frame(height: 5)
-                    Text("Recipe Finder").font(.largeTitle)
-                    SearchBar(text: $searchText).padding(.horizontal)
+                    Text("Recipe Finder")
+                        .font(.largeTitle)
+                    RecipeSearchBar(text: $searchText)
+                        .padding(.horizontal)
                     Spacer().frame(height: 15)
                 }
-            
+
                 List(filteredRecipes) { recipe in
                     NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
                         Text(recipe.name)
@@ -79,7 +124,7 @@ struct IngredientSearchView: View {
     @Binding var recipes: [RecipeModel]
     @State private var searchText = ""
     @Environment(\.colorScheme) var colorScheme
-    
+
     var filteredRecipes: [RecipeModel] {
         if searchText.isEmpty {
             return recipes
@@ -89,17 +134,19 @@ struct IngredientSearchView: View {
             }
         }
     }
-    
+
     var body: some View {
         NavigationStack {
             VStack {
                 VStack {
                     Spacer().frame(height: 5)
-                    Text("Search by ingredient").font(.largeTitle)
-                    SearchBar(text: $searchText).padding(.horizontal)
+                    Text("Search by ingredient")
+                        .font(.largeTitle)
+                    IngredientSearchBar(text: $searchText)
+                        .padding(.horizontal)
                     Spacer().frame(height: 15)
                 }
-                
+
                 List(filteredRecipes) { recipe in
                     NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
                         Text(recipe.name)
@@ -262,11 +309,56 @@ struct RecipeDetailView: View {
     }
 }
 
-struct SearchBar: View {
+struct SettingsView: View {
+    var body: some View {
+        VStack {
+            Text("Settings")
+                .font(.largeTitle)
+                .padding()
+            
+            Button(action: {
+                // Placeholder action: does nothing for now
+            }) {
+                Text("I wonder what this does?")
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+            }
+            .padding()
+            
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
+struct RecipeSearchBar: View {
     @Binding var text: String
     var body: some View {
         HStack {
             TextField("What would you like to eat...?", text: $text)
+                .padding(7)
+                .background(Color(.systemGray6))
+                .cornerRadius(8)
+                .padding(.horizontal)
+            if !text.isEmpty {
+                Button("Cancel") {
+                    text = ""
+                }
+                .padding(.trailing, 10)
+                .transition(.move(edge: .trailing))
+                .animation(.default, value: text.isEmpty)
+            }
+        }
+    }
+}
+
+struct IngredientSearchBar: View {
+    @Binding var text: String
+    var body: some View {
+        HStack {
+            TextField("What's in the fridge...?", text: $text)
                 .padding(7)
                 .background(Color(.systemGray6))
                 .cornerRadius(8)

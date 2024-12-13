@@ -102,9 +102,19 @@ class PersistenceController {
         }
     }
     
-    func saveRecipe(name: String, category: String, difficulty: String, baseServings: Int, currentServings: Int,
-                    prepTime: String, cookingTime: String, ingredients: [Ingredient], prePrepInstructions: [String],
-                    instructions: [String], notes: String) {
+    func saveRecipe(
+            name: String,
+            category: String,
+            difficulty: String,
+            prepTime: String,
+            cookingTime: String,
+            baseServings: Int,
+            currentServings: Int,
+            ingredients: [Ingredient],
+            prePrepInstructions: [String],
+            instructions: [String],
+            notes: String
+    ) {
         let context = container.viewContext
         let entity = NSEntityDescription.insertNewObject(forEntityName: "Recipe", into: context)
         
@@ -221,10 +231,10 @@ extension PersistenceController {
             name: "Achari Chicken Curry (Instant Pot Version)",
             category: "Main Course",
             difficulty: "Medium",
-            baseServings: 4,
-            currentServings: 4,
             prepTime: "20 minutes",
             cookingTime: "20 minutes",
+            baseServings: 4,
+            currentServings: 4,
             ingredients: [
                 Ingredient(baseQuantity: 3, unit: "tbsp", name: "oil of choice"),
                 Ingredient(baseQuantity: 1, unit: "tsp", name: "cumin seeds"),
@@ -261,6 +271,247 @@ extension PersistenceController {
                 "Garnish with cilantro and serve."
             ],
             notes: "A flavorful and tangy chicken curry, perfect for pairing with naan or rice."
+        )
+        
+        saveRecipe(
+            name: "Air Fryer Crispy Chilli Beef",
+            category: "Main Course",
+            difficulty: "Medium",
+            prepTime: "15 minutes",
+            cookingTime: "10 minutes",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                Ingredient(baseQuantity: 500, unit: "g", name: "beef steak, sliced into strips"),
+                Ingredient(baseQuantity: 3, unit: "tbsp", name: "cornflour"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "soy sauce"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "sweet chilli sauce"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "rice vinegar"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "ketchup"),
+                Ingredient(baseQuantity: 1, unit: "", name: "red chilli, finely sliced"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "vegetable oil"),
+                Ingredient(baseQuantity: 2, unit: "", name: "spring onions, finely sliced")
+            ],
+            prePrepInstructions: [
+                "Slice the beef into thin strips and pat dry."
+            ],
+            instructions: [
+                "Place the beef strips in a bowl, add cornflour, and toss to coat evenly.",
+                "Preheat the air fryer to 200°C.",
+                "Lightly spray the air fryer basket with oil and add the beef strips in a single layer.",
+                "Cook for 8-10 minutes, shaking halfway through until crispy.",
+                "In a separate bowl, mix soy sauce, sweet chilli sauce, rice vinegar, ketchup, and red chilli.",
+                "Heat the sauce mixture in a pan until it starts to thicken.",
+                "Add the cooked beef to the pan and toss to coat in the sauce.",
+                "Garnish with spring onions before serving."
+            ],
+            notes: "Serve immediately with steamed rice or noodles for a delicious and crispy meal."
+        )
+        
+        saveRecipe(
+            name: "Achari Gosht (Hot & Sour Lamb Curry Instant Pot Version)",
+            category: "Main Course",
+            difficulty: "Medium",
+            prepTime: "25 minutes",
+            cookingTime: "40 minutes",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                Ingredient(baseQuantity: 3, unit: "tbsp", name: "mustard oil"),
+                Ingredient(baseQuantity: 2, unit: "tsp", name: "fenugreek seeds"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "fennel seeds"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "mustard seeds"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "nigella seeds"),
+                Ingredient(baseQuantity: 2, unit: "", name: "large onions, finely sliced"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "minced garlic"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "minced ginger"),
+                Ingredient(baseQuantity: 2, unit: "", name: "large tomatoes, pureed"),
+                Ingredient(baseQuantity: 1, unit: "cup", name: "yogurt, whisked"),
+                Ingredient(baseQuantity: 1.5, unit: "tsp", name: "turmeric powder"),
+                Ingredient(baseQuantity: 1.5, unit: "tsp", name: "red chili powder"),
+                Ingredient(baseQuantity: 2, unit: "tsp", name: "coriander powder"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "garam masala"),
+                Ingredient(baseQuantity: 2, unit: "lbs", name: "lamb pieces, bone-in"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "salt, or to taste"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "vinegar"),
+                Ingredient(baseQuantity: 2, unit: "", name: "green chilies, slit"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "fresh cilantro, chopped (for garnish)")
+            ],
+            prePrepInstructions: [
+                "Puree the tomatoes and whisk the yogurt."
+            ],
+            instructions: [
+                "Turn on the sauté function on the Instant Pot and heat mustard oil until it begins to smoke slightly.",
+                "Add fenugreek seeds, fennel seeds, mustard seeds, and nigella seeds. Sauté until aromatic.",
+                "Add sliced onions and cook until golden brown.",
+                "Stir in minced garlic and ginger, cooking for another 2 minutes.",
+                "Add pureed tomatoes, yogurt, turmeric, red chili powder, and coriander powder. Mix well.",
+                "Add lamb pieces and sauté for 5-7 minutes until coated in the spice mixture.",
+                "Pour in 1 cup of water, close the lid, and pressure cook on high for 25 minutes.",
+                "Naturally release pressure for 10 minutes before opening the lid.",
+                "Add garam masala, vinegar, and slit green chilies. Mix well.",
+                "Garnish with chopped cilantro and serve hot."
+            ],
+            notes: "Pairs well with naan, roti, or steamed basmati rice. Adjust spices to taste for a milder or spicier curry."
+        )
+        
+        saveRecipe(
+            name: "Air-Fryer Doughnuts",
+            category: "Dessert",
+            difficulty: "Medium",
+            prepTime: "15 minutes",
+            cookingTime: "15 minutes",
+            baseServings: 12,
+            currentServings: 12,
+            ingredients: [
+                Ingredient(baseQuantity: 2, unit: "cups", name: "all-purpose flour"),
+                Ingredient(baseQuantity: 0.25, unit: "cup", name: "sugar"),
+                Ingredient(baseQuantity: 2.5, unit: "tsp", name: "baking powder"),
+                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "salt"),
+                Ingredient(baseQuantity: 0.5, unit: "cup", name: "milk"),
+                Ingredient(baseQuantity: 2, unit: "", name: "large eggs"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "unsalted butter, melted"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "vanilla extract"),
+                Ingredient(baseQuantity: 1, unit: "cup", name: "powdered sugar (for coating)")
+            ],
+            prePrepInstructions: [
+                "Combine dry ingredients in a bowl."
+            ],
+            instructions: [
+                "In a separate bowl, whisk wet ingredients together.",
+                "Combine wet and dry ingredients to form a dough.",
+                "Shape into doughnuts.",
+                "Air fry at 350°F for 5-6 minutes until golden.",
+                "Coat with powdered sugar before serving."
+            ],
+            notes: "A healthier twist on a classic treat. Best served fresh."
+        )
+        
+        saveRecipe(
+            name: "Air Fryer Korean Fried Chicken",
+            category: "Appetizer",
+            difficulty: "Hard",
+            prepTime: "20 minutes",
+            cookingTime: "25 minutes",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                Ingredient(baseQuantity: 2, unit: "lbs", name: "chicken wings"),
+                Ingredient(baseQuantity: 0.5, unit: "cup", name: "cornstarch"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "soy sauce"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "ginger, grated"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "gochujang (Korean chili paste)"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "honey"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "sesame oil"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "scallions, chopped"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "sesame seeds")
+            ],
+            prePrepInstructions: [
+                "Pat chicken wings dry.",
+                "Combine cornstarch, soy sauce, and grated ginger."
+            ],
+            instructions: [
+                "Coat chicken wings with the cornstarch mixture.",
+                "Air fry at 375°F for 15 minutes, turning halfway.",
+                "Prepare sauce by mixing gochujang, honey, and sesame oil.",
+                "Toss cooked wings in sauce and garnish with scallions and sesame seeds."
+            ],
+            notes: "Crispy, spicy, and savory, these wings pair well with a cold drink."
+        )
+        
+        saveRecipe(
+            name: "Air Fryer Southern Fried Chicken",
+            category: "Main Course",
+            difficulty: "Medium",
+            prepTime: "30 minutes",
+            cookingTime: "20 minutes",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                Ingredient(baseQuantity: 4, unit: "", name: "chicken drumsticks"),
+                Ingredient(baseQuantity: 1, unit: "cup", name: "buttermilk"),
+                Ingredient(baseQuantity: 1, unit: "cup", name: "all-purpose flour"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "paprika"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "garlic powder"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "onion powder"),
+                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "cayenne pepper"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "salt"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "black pepper")
+            ],
+            prePrepInstructions: [
+                "Marinate chicken in buttermilk for 2 hours or overnight."
+            ],
+            instructions: [
+                "Mix flour and spices in a bowl.",
+                "Coat chicken in the flour mixture.",
+                "Place chicken in the air fryer and spray lightly with oil.",
+                "Air fry at 375°F for 20 minutes, flipping halfway through."
+            ],
+            notes: "Crispy, flavorful chicken with less grease—perfect for any occasion."
+        )
+        
+        saveRecipe(
+            name: "Air Fryer Soy Sauce Chicken Wings",
+            category: "Appetizer",
+            difficulty: "Easy",
+            prepTime: "10 minutes",
+            cookingTime: "20 minutes",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                Ingredient(baseQuantity: 2, unit: "lbs", name: "chicken wings"),
+                Ingredient(baseQuantity: 0.25, unit: "cup", name: "soy sauce"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "honey"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "ginger, grated"),
+                Ingredient(baseQuantity: 2, unit: "cloves", name: "garlic, minced"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "sesame oil"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "black pepper"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "sesame seeds (optional)")
+            ],
+            prePrepInstructions: [
+                "Mix soy sauce, honey, ginger, garlic, sesame oil, and black pepper in a bowl."
+            ],
+            instructions: [
+                "Marinate chicken wings in the sauce for 30 minutes.",
+                "Place wings in air fryer and cook at 375°F for 20 minutes, flipping halfway.",
+                "Garnish with sesame seeds before serving."
+            ],
+            notes: "Juicy and savory wings, perfect for game day."
+        )
+        
+        saveRecipe(
+            name: "Aloo Gosht (Mutton/Lamb and Potato Curry)",
+            category: "Main Course",
+            difficulty: "Medium",
+            prepTime: "20 minutes",
+            cookingTime: "1 hour",
+            baseServings: 6,
+            currentServings: 6,
+            ingredients: [
+                Ingredient(baseQuantity: 2, unit: "lbs", name: "mutton or lamb, bone-in"),
+                Ingredient(baseQuantity: 4, unit: "medium", name: "potatoes, peeled and cubed"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "vegetable oil"),
+                Ingredient(baseQuantity: 2, unit: "large", name: "onions, finely sliced"),
+                Ingredient(baseQuantity: 2, unit: "tsp", name: "ginger paste"),
+                Ingredient(baseQuantity: 2, unit: "tsp", name: "garlic paste"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "turmeric powder"),
+                Ingredient(baseQuantity: 2, unit: "tsp", name: "red chili powder"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "coriander powder"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "cumin seeds"),
+                Ingredient(baseQuantity: 3, unit: "cups", name: "water"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "cilantro, chopped (for garnish)")
+            ],
+            prePrepInstructions: [
+                "Wash and cut mutton into pieces."
+            ],
+            instructions: [
+                "Heat oil in a large pot and fry onions until golden brown.",
+                "Add ginger and garlic paste, followed by spices.",
+                "Add mutton and cook until browned.",
+                "Add potatoes and water, and simmer until tender.",
+                "Garnish with chopped cilantro before serving."
+            ],
+            notes: "A hearty and comforting curry, best served with naan or rice."
         )
         print("Default recipes added!")
     }
