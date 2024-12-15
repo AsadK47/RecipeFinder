@@ -25,7 +25,7 @@ struct Ingredient: Identifiable, Codable {
 }
 
 struct RecipeModel: Identifiable, Codable {
-    var id: UUID = UUID() // Mutable to support decoding
+    var id: UUID = UUID() // Mutable to support decodes
     let name: String
     let category: String
     let difficulty: String
