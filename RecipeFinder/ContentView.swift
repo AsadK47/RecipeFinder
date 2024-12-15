@@ -124,9 +124,15 @@ struct IngredientSearchView: View {
     @Binding var recipes: [RecipeModel]
     @State private var searchText = ""
     @Environment(\.colorScheme) var colorScheme
+    @State private var expandedSections: Set<String> = []
     
-    var allIngredients: [String] {
-        Set(recipes.flatMap { $0.ingredients.map { $0.name }}).sorted()
+    var groupedIngredients: [String: [String]] {
+        Dictionary(grouping: Set(recipes.flatMap { $0.ingredients.map {$0.name }})) { ingredient in
+            String(ingredient.prefix(1).uppercased())
+        }
+        .mapValues { $0.sorted() }
+        .sorted { $0.key < $1.key }
+        .reduce(into: [String: [String]]()) { $0[$1.key] = $1.value }
     }
 
     var filteredRecipes: [RecipeModel] {
@@ -152,21 +158,42 @@ struct IngredientSearchView: View {
                 }
                 
                 if searchText.isEmpty {
-                    if allIngredients.isEmpty {
+                    if groupedIngredients.isEmpty {
                         Text("No ingredients available")
                             .foregroundColor(.gray)
                             .padding()
                     } else {
                         ScrollView {
-                            VStack(spacing: 10) {
-                                ForEach(allIngredients.chunked(into: 2), id: \.self) { pair in
-                                    HStack(spacing: 20) {
-                                        ForEach(pair, id: \.self) { ingredient in
-                                            IngredientButton(ingredient: ingredient) {
-                                                searchText = ingredient
+                            LazyVStack(spacing: 10) {
+                                ForEach(groupedIngredients.keys.sorted(), id: \.self) { letter in
+                                    DisclosureGroup(
+                                        isExpanded: Binding(
+                                            get: { expandedSections.contains(letter) },
+                                            set: { isExpanded in
+                                                if isExpanded {
+                                                    expandedSections.insert(letter)
+                                                } else {
+                                                    expandedSections.remove(letter)
+                                                }
                                             }
+                                        ),
+                                        content: {
+                                            LazyVStack(spacing: 10) {
+                                                ForEach(groupedIngredients[letter] ?? [], id: \.self) { ingredient in
+                                                    IngredientButton(ingredient: ingredient) {
+                                                        searchText = ingredient
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        label: {
+                                            Text(letter)
+                                                .font(.headline)
+                                                .padding(.leading, 10)
+                                                .frame(maxWidth: .infinity, alignment: .leading)
                                         }
-                                    }
+                                    )
+                                    .padding(.vertical, 5)
                                 }
                             }
                             .padding()
@@ -186,15 +213,6 @@ struct IngredientSearchView: View {
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
-        }
-    }
-}
-
-extension Array {
-    func chunked(into size: Int) -> [[Element]] {
-        guard size > 0 else { return [] }
-        return stride(from: 0, to: count, by: size).map {
-            Array(self[$0..<Swift.min($0 + size, count)])
         }
     }
 }
