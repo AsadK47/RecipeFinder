@@ -383,7 +383,7 @@ struct RecipeDetailView: View {
 }
 
 struct ShoppingListView: View {
-    @State private var shoppingListItems: [String] = []
+    @State private var shoppingListItems: [(name: String, isChecked: Bool)] = []
     @State private var newItem: String = ""
     
     var body: some View {
@@ -409,8 +409,20 @@ struct ShoppingListView: View {
                 }.padding()
                 
                 List {
-                    ForEach(shoppingListItems, id: \.self) { item in
-                        Text(item)
+                    ForEach(shoppingListItems.indices, id: \.self) { index in
+                        HStack {
+                            Text(shoppingListItems[index].name)
+                                .strikethrough(shoppingListItems[index].isChecked, color: .gray)
+                                .foregroundColor(shoppingListItems[index].isChecked ? .gray : .primary)
+                            
+                            Spacer()
+                            
+                            Image(systemName: shoppingListItems[index].isChecked ? "checkmark.circle.fill" : "circle")
+                                .foregroundColor(shoppingListItems[index].isChecked ? .green : .gray)
+                                .onTapGesture {
+                                    toggleItem(at: index)
+                                }
+                        }
                     }.onDelete(perform: deleteItems)
                 }
             }.navigationBarTitleDisplayMode(.inline)
@@ -419,12 +431,16 @@ struct ShoppingListView: View {
     
     private func addItem() {
         guard !newItem.isEmpty else { return }
-        shoppingListItems.append(newItem)
+        shoppingListItems.append((name: newItem, isChecked: false))
         newItem = ""
     }
-    
+
     private func deleteItems(at offsets: IndexSet) {
         shoppingListItems.remove(atOffsets: offsets)
+    }
+
+    private func toggleItem(at index: Int) {
+        shoppingListItems[index].isChecked.toggle()
     }
 }
 
