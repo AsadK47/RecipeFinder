@@ -20,7 +20,7 @@ struct ContentView: View {
                 } else if selectedTab == 1 {
                     IngredientSearchView(recipes: $recipes)
                 } else if selectedTab == 2 {
-                    Text("Favourites View")
+                    ShoppingListView()
                 } else if selectedTab == 3 {
                     SettingsView()
                 }
@@ -379,6 +379,52 @@ struct RecipeDetailView: View {
             updatedIngredient.quantity = ingredient.baseQuantity * factor
             return updatedIngredient
         }
+    }
+}
+
+struct ShoppingListView: View {
+    @State private var shoppingListItems: [String] = []
+    @State private var newItem: String = ""
+    
+    var body: some View {
+        NavigationStack {
+            VStack {
+                Text("Shopping List")
+                    .font(.largeTitle)
+                    .padding()
+                
+                HStack {
+                    TextField("Add item...", text: $newItem)
+                        .padding(7)
+                        .background(Color(.systemGray6))
+                        .cornerRadius(8)
+                    
+                    Button(action: addItem) {
+                        Text("Add")
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(Color.blue)
+                            .cornerRadius(8)
+                    }
+                }.padding()
+                
+                List {
+                    ForEach(shoppingListItems, id: \.self) { item in
+                        Text(item)
+                    }.onDelete(perform: deleteItems)
+                }
+            }.navigationBarTitleDisplayMode(.inline)
+        }
+    }
+    
+    private func addItem() {
+        guard !newItem.isEmpty else { return }
+        shoppingListItems.append(newItem)
+        newItem = ""
+    }
+    
+    private func deleteItems(at offsets: IndexSet) {
+        shoppingListItems.remove(atOffsets: offsets)
     }
 }
 
