@@ -62,7 +62,7 @@ struct ContentView: View {
         switch index {
         case 0: return "book"
         case 1: return "leaf"
-        case 2: return "heart"
+        case 2: return "cart"
         case 3: return "gearshape"
         default: return "questionmark.circle"
         }
@@ -72,7 +72,7 @@ struct ContentView: View {
         switch index {
         case 0: return "Recipes"
         case 1: return "Ingredients"
-        case 2: return "Favourites"
+        case 2: return "Shopping"
         case 3: return "Settings"
         default: return "Unknown"
         }
