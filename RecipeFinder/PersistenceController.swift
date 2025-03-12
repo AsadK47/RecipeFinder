@@ -513,6 +513,327 @@ extension PersistenceController {
             ],
             notes: "A hearty and comforting curry, best served with naan or rice."
         )
+        
+        saveRecipe(
+            name: "American Pancakes",
+            category: "Breakfast",
+            difficulty: "Easy",
+            prepTime: "5 minutes",
+            cookingTime: "10 minutes",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                Ingredient(baseQuantity: 200, unit: "g", name: "self-raising flour"),
+                Ingredient(baseQuantity: 1.5, unit: "tsp", name: "baking powder"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "golden caster sugar"),
+                Ingredient(baseQuantity: 3, unit: "large", name: "eggs"),
+                Ingredient(baseQuantity: 25, unit: "g", name: "melted butter"),
+                Ingredient(baseQuantity: 200, unit: "ml", name: "milk"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "vegetable oil"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "maple syrup"),
+                Ingredient(baseQuantity: 1, unit: "assorted", name: "toppings (e.g., bacon, chocolate chips, blueberries, peanut butter, jam)")
+            ],
+            prePrepInstructions: [
+                "Mix self-raising flour, baking powder, golden caster sugar, and a pinch of salt together in a large bowl."
+            ],
+            instructions: [
+                "Create a well in the centre with the back of your spoon, then add eggs, melted butter, and milk.",
+                "Whisk together with a balloon whisk or electric hand beaters until smooth, then pour into a jug.",
+                "Heat a small knob of butter and vegetable oil in a large, non-stick frying pan over medium heat.",
+                "When the butter looks frothy, pour in rounds of the batter, approximately 8cm wide.",
+                "Cook pancakes on one side for about 1-2 minutes or until tiny bubbles appear and pop on the surface.",
+                "Flip pancakes over and cook for another minute on the other side. Repeat until all batter is used.",
+                "Serve pancakes stacked with a drizzle of maple syrup and your favourite toppings."
+            ],
+            notes: "American pancakes are a classic breakfast dish. Experiment with different toppings like fresh fruits, whipped cream, or savory additions like bacon."
+        )
+        
+        saveRecipe(
+            name: "Apam Balik",
+            category: "Dessert",
+            difficulty: "Medium",
+            prepTime: "10 minutes",
+            cookingTime: "20 minutes",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                Ingredient(baseQuantity: 5, unit: "ml", name: "unsalted butter (for greasing the pan, or substitute with dairy-free butter or neutral oil)"),
+                Ingredient(baseQuantity: 135, unit: "g", name: "all-purpose flour"),
+                Ingredient(baseQuantity: 63, unit: "g", name: "self-rising flour"),
+                Ingredient(baseQuantity: 3, unit: "g", name: "baking soda"),
+                Ingredient(baseQuantity: 0.8, unit: "g", name: "salt"),
+                Ingredient(baseQuantity: 500, unit: "ml", name: "warm milk (or substitute with plain oat milk for a dairy-free version)"),
+                Ingredient(baseQuantity: 4.7, unit: "g", name: "dry active yeast"),
+                Ingredient(baseQuantity: 10, unit: "ml", name: "vanilla extract"),
+                Ingredient(baseQuantity: 24, unit: "g", name: "white granulated sugar"),
+                Ingredient(baseQuantity: 1, unit: "large", name: "egg (room temperature)"),
+                Ingredient(baseQuantity: 1, unit: "as desired", name: "white granulated sugar (for topping)"),
+                Ingredient(baseQuantity: 1, unit: "as desired", name: "crushed peanuts (for topping)"),
+                Ingredient(baseQuantity: 250, unit: "ml", name: "creamed corn (canned)"),
+                Ingredient(baseQuantity: 1, unit: "as needed", name: "unsalted butter (or substitute with vegan butter)")
+            ],
+            prePrepInstructions: [
+                "Sift and whisk all-purpose flour, self-rising flour, baking soda, and salt in a large mixing bowl.",
+                "In a medium-sized bowl, whisk together warm milk, dry active yeast, vanilla extract, and sugar. Allow the yeast to dissolve completely.",
+                "Whisk the milk mixture into the dry ingredients, then crack an egg into the batter and whisk just until combined. Do not overmix.",
+                "Cover the bowl and rest the pancake batter for 30 minutes (or 60 minutes if you have extra time)."
+            ],
+            instructions: [
+                "Set a 10-inch pan over medium-low heat and lightly grease it with butter using a clean paper towel.",
+                "Ladle the batter into the pan and spread it into an even pancake.",
+                "Swirl the batter against the wall of the pan to create a thin crust, then cover the pan with a lid.",
+                "Cook until bubbles form all over the pancake (about 2-3 minutes).",
+                "Evenly sprinkle sugar, creamed corn, crushed peanuts, and small slices of butter across the pancake.",
+                "Cover the pan with a lid for 2 minutes so the creamed corn can warm up.",
+                "Remove the lid and fold one side of the pancake over the other to create a semi-circle.",
+                "Slide the pancake onto a cutting board, slice it in half with a sharp knife, and repeat for the remaining batter. Enjoy!"
+            ],
+            notes: "Apam Balik is a popular Malaysian street food pancake filled with sweet and savory fillings. For a dairy-free version, use oat milk and vegan butter. Enjoy it as a dessert, snack, or breakfast."
+        )
+        
+        saveRecipe(
+            name: "Apple Crumble",
+            category: "Dessert",
+            difficulty: "Easy",
+            prepTime: "10 minutes",
+            cookingTime: "25-30 minutes",
+            baseServings: 6,
+            currentServings: 6,
+            ingredients: [
+                Ingredient(baseQuantity: 350, unit: "g", name: "Bramley apples (approx. 4-5)"),
+                Ingredient(baseQuantity: 100, unit: "g", name: "Demerara sugar (for filling)"),
+                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "ground nutmeg"),
+                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "ground cinnamon"),
+                Ingredient(baseQuantity: 1, unit: "box", name: "shortcrust pastry"),
+                Ingredient(baseQuantity: 1, unit: "as needed", name: "water"),
+                Ingredient(baseQuantity: 112.5, unit: "g", name: "Demerara sugar (for crumble)"),
+                Ingredient(baseQuantity: 45, unit: "g", name: "oats"),
+                Ingredient(baseQuantity: 75, unit: "g", name: "plain flour"),
+                Ingredient(baseQuantity: 90, unit: "g", name: "cold butter"),
+                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "ground cinnamon (for crumble)"),
+                Ingredient(baseQuantity: 1, unit: "to serve", name: "custard")
+            ],
+            prePrepInstructions: [
+                "Defrost the butter and pastry.",
+                "Peel and chop the apples into cubes."
+            ],
+            instructions: [
+                "Sprinkle 100g Demerara sugar evenly over the chopped apples in a saucepan.",
+                "Add 1/2 teaspoon nutmeg, 1/2 teaspoon cinnamon, and water to the apples. Cover and cook until translucent.",
+                "In a bowl, mix 90g butter, 112.5g sugar, 75g flour, and 45g oats until a crumble forms. Add 1/2 teaspoon cinnamon to the crumble mix.",
+                "Preheat the oven to Gas Mark 5/375°F/190°C.",
+                "Grease the two tins and blind bake the pastry for about 6 minutes.",
+                "Remove the cooked apple from the stove and set aside.",
+                "Arrange the shortcrust pastry in the oven dish and add the cooked apple.",
+                "Distribute the crumble mix over the apples and pat it down with a spatula.",
+                "Bake for 25 minutes or until the crumble is toasted golden.",
+                "Sprinkle cinnamon sugar and serve with custard."
+            ],
+            notes: "Apple crumble is a versatile dessert that pairs well with custard, vanilla ice cream, or chilled double cream. For added flavor, consider adding 1 tsp of cinnamon to the apples before cooking. You can substitute Hob Nobs for digestive biscuits in the crumble for a different texture."
+        )
+        
+        saveRecipe(
+            name: "Apple Jalebi (Gluten Free, Paleo, Vegan)",
+            category: "Dessert",
+            difficulty: "Hard",
+            prepTime: "10 hours (fermentation) + 15 minutes",
+            cookingTime: "15 minutes",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                Ingredient(baseQuantity: 1, unit: "as needed", name: "avocado oil or fat of choice (for frying)"),
+                Ingredient(baseQuantity: 0.5, unit: "cup", name: "almond flour"),
+                Ingredient(baseQuantity: 0.5, unit: "cup", name: "arrowroot flour (for batter)"),
+                Ingredient(baseQuantity: 0.5, unit: "cup", name: "full-fat canned coconut milk"),
+                Ingredient(baseQuantity: 40, unit: "to 50 billion", name: "probiotic cultures (capsules)"),
+                Ingredient(baseQuantity: 0.25, unit: "cup", name: "water (for batter)"),
+                Ingredient(baseQuantity: 0.25, unit: "cup", name: "arrowroot flour (for coating)"),
+                Ingredient(baseQuantity: 2, unit: "medium", name: "apples (peeled, cored, and sliced)"),
+                Ingredient(baseQuantity: 0.5, unit: "cup", name: "coconut sugar"),
+                Ingredient(baseQuantity: 0.25, unit: "cup", name: "water (for syrup)"),
+                Ingredient(baseQuantity: 0.25, unit: "tsp", name: "ground cardamom"),
+                Ingredient(baseQuantity: 1, unit: "as needed", name: "crushed pistachios (for garnish)")
+            ],
+            prePrepInstructions: [
+                "Prepare the batter by combining almond flour, arrowroot flour, and coconut milk in a bowl.",
+                "Empty the contents of the probiotic capsules into the bowl and mix well.",
+                "Loosely cover the bowl with a lid and place it in an oven with only the oven light on (do not turn on the oven) for at least 10 hours to ferment the batter."
+            ],
+            instructions: [
+                "Add ¼ cup water to the fermented batter and mix well.",
+                "Heat oil in a wok or a deep, wide-bottomed pot to 360°F or until a small drop of the batter sizzles and floats to the top.",
+                "While the oil is heating, add ¼ cup arrowroot flour to a plate. Dip the apple slices on both sides into the arrowroot flour.",
+                "Dip the apple slices into the fermented batter, then place them into the hot oil. Fry 2-3 apple slices at a time until both sides are light golden brown.",
+                "Remove the fried apple slices and set them aside on a paper-towel-lined plate.",
+                "Dip the fried apple slices into the cooled syrup, garnish with crushed pistachios, and serve."
+            ],
+            notes: "This delicious Malaysian-inspired dessert uses probiotics to ferment the batter, resulting in a light and flavorful dish. The syrup can be prepared ahead of time and cooled for dipping. Experiment with different oils or vegan butter substitutes for frying. Adjust the number of probiotic capsules based on the culture count (40-50 billion)."
+        )
+        
+        saveRecipe(
+            name: "Apple Crisp with Oat Topping",
+            category: "Dessert",
+            difficulty: "Easy",
+            prepTime: "10 minutes",
+            cookingTime: "35-40 minutes",
+            baseServings: 6,
+            currentServings: 6,
+            ingredients: [
+                Ingredient(baseQuantity: 6, unit: "medium", name: "apples (peeled, cored, and sliced)"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "white sugar"),
+                Ingredient(baseQuantity: 1.5, unit: "tsp", name: "ground cinnamon (divided)"),
+                Ingredient(baseQuantity: 1, unit: "cup", name: "brown sugar"),
+                Ingredient(baseQuantity: 0.75, unit: "cup", name: "old-fashioned oats"),
+                Ingredient(baseQuantity: 0.75, unit: "cup", name: "all-purpose flour"),
+                Ingredient(baseQuantity: 0.5, unit: "cup", name: "cold butter")
+            ],
+            prePrepInstructions: [
+                "Preheat the oven to 350°F (175°C)."
+            ],
+            instructions: [
+                "Toss apples with white sugar and ½ teaspoon cinnamon in a medium bowl to coat. Pour into a 9-inch square baking dish.",
+                "Mix brown sugar, oats, flour, and 1 teaspoon cinnamon in a separate bowl.",
+                "Cut in cold butter with two knives or a pastry blender until the mixture resembles coarse crumbs.",
+                "Spread over apples and pat down gently until even.",
+                "Bake in the preheated oven until golden brown and sides are bubbling, about 35-40 minutes."
+            ],
+            notes: "Use high-quality cinnamon for a richer flavor. Serve with ice cream or whipped cream for an extra treat."
+        )
+        
+        saveRecipe(
+            name: "Apple Oat Crumble",
+            category: "Dessert",
+            difficulty: "Easy",
+            prepTime: "20 minutes",
+            cookingTime: "30 minutes",
+            baseServings: 6,
+            currentServings: 6,
+            ingredients: [
+                Ingredient(baseQuantity: 700, unit: "g", name: "apples, peeled, cored, and sliced finely"),
+                Ingredient(baseQuantity: 3, unit: "tbsp", name: "brown sugar"),
+                Ingredient(baseQuantity: 2, unit: "tsp", name: "plain white flour"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "lemon juice (or water)"),
+                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "ground cinnamon"),
+                Ingredient(baseQuantity: 0.75, unit: "cup", name: "plain white flour (112g)"),
+                Ingredient(baseQuantity: 0.75, unit: "cup", name: "rolled oats (63g)"),
+                Ingredient(baseQuantity: 0.5, unit: "cup", name: "brown sugar (100g)"),
+                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "ground cinnamon"),
+                Ingredient(baseQuantity: 0.25, unit: "tsp", name: "salt"),
+                Ingredient(baseQuantity: 120, unit: "g", name: "cold butter, cubed")
+            ],
+            prePrepInstructions: [
+                "Preheat the oven to 190°C (375°F)."
+            ],
+            instructions: [
+                "Peel and core the apples, then slice finely and place in a medium bowl.",
+                "Add the first measure of brown sugar, flour, lemon juice, and cinnamon. Mix to coat the apples.",
+                "Pour into a baking dish and press the apples flat in the dish to remove gaps.",
+                "In a medium bowl, combine the flour, oats, second measure of brown sugar, cinnamon, and salt. Mix well.",
+                "Rub in the cubed butter into the flour and oats mixture until it forms moist breadcrumbs.",
+                "Sprinkle the crumble mixture evenly over the apples.",
+                "Bake for at least 30 minutes until golden brown and bubbling.",
+                "Let sit for 20 minutes before serving."
+            ],
+            notes: "Serve with ice cream, custard, or cream. This dish can be reheated or frozen for later use."
+        )
+        
+        saveRecipe(
+            name: "Apple Crumble",
+            category: "Dessert",
+            difficulty: "Easy",
+            prepTime: "10 minutes",
+            cookingTime: "30 minutes",
+            baseServings: 6,
+            currentServings: 6,
+            ingredients: [
+                Ingredient(baseQuantity: 1000, unit: "g", name: "Bramley apples (2lb 3½oz)"),
+                Ingredient(baseQuantity: 1, unit: "pinch", name: "sugar, to taste"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "water or apple juice"),
+                Ingredient(baseQuantity: 100, unit: "g", name: "plain flour"),
+                Ingredient(baseQuantity: 75, unit: "g", name: "butter"),
+                Ingredient(baseQuantity: 50, unit: "g", name: "rolled oats"),
+                Ingredient(baseQuantity: 100, unit: "g", name: "demerara sugar")
+            ],
+            prePrepInstructions: [
+                "Preheat the oven to 200°C (180°C Fan)/Gas 6."
+            ],
+            instructions: [
+                "Wipe the apples and cut them into quarters. Remove the cores and slice each piece in two.",
+                "Put the apples into a pan. Taste a slice for sweetness and add sugar accordingly. Add a tablespoon of water or apple juice and cook over medium heat for about 5 minutes until softened.",
+                "Transfer the apple mixture to a shallow ovenproof dish.",
+                "Blend the flour and butter in a food processor until the mixture resembles breadcrumbs.",
+                "Stir in the oats and brown sugar, then sprinkle over the cooked apples in the dish.",
+                "Bake for 30 minutes or until crisp and golden brown on top."
+            ],
+            notes: "Serve warm with custard or vanilla ice cream. Adjust sugar based on the sweetness of the apples used."
+        )
+        
+        saveRecipe(
+            name: "Apple Crumble with Spiced Filling",
+            category: "Dessert",
+            difficulty: "Medium",
+            prepTime: "15 minutes",
+            cookingTime: "18-22 minutes",
+            baseServings: 6,
+            currentServings: 6,
+            ingredients: [
+                Ingredient(baseQuantity: 5, unit: "medium", name: "apples, peeled and cut into 1-inch pieces"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "apple cider vinegar"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "water"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "cinnamon"),
+                Ingredient(baseQuantity: 0.25, unit: "tsp", name: "ground ginger"),
+                Ingredient(baseQuantity: 0.25, unit: "tsp", name: "nutmeg"),
+                Ingredient(baseQuantity: 1, unit: "pinch", name: "sea salt"),
+                Ingredient(baseQuantity: 0.5, unit: "cup", name: "almond flour"),
+                Ingredient(baseQuantity: 0.33, unit: "cup", name: "all-purpose flour"),
+                Ingredient(baseQuantity: 0.33, unit: "cup", name: "whole rolled oats"),
+                Ingredient(baseQuantity: 0.33, unit: "cup", name: "crushed walnuts"),
+                Ingredient(baseQuantity: 0.33, unit: "cup", name: "brown sugar or coconut sugar"),
+                Ingredient(baseQuantity: 0.33, unit: "cup", name: "melted coconut oil"),
+                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "cinnamon"),
+                Ingredient(baseQuantity: 0.25, unit: "heaping tsp", name: "sea salt"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "water, if needed")
+            ],
+            prePrepInstructions: [
+                "Preheat the oven to 400°F and grease an 8x8-inch baking dish."
+            ],
+            instructions: [
+                "Combine the apples, apple cider vinegar, and water in a saucepan. Simmer over very low heat, covered, for 15 minutes, stirring occasionally.",
+                "Uncover, add cinnamon, ginger, nutmeg, and salt. Stir well. The apples should be tender, and the juices should thicken.",
+                "In a food processor, pulse the almond flour, all-purpose flour, oats, walnuts, sugar, coconut oil, cinnamon, and salt until crumbly. Add water if needed.",
+                "Scoop the apple filling into the prepared baking dish. Sprinkle the topping evenly over the filling.",
+                "Bake for 18-22 minutes or until lightly crisp on top."
+            ],
+            notes: "This recipe has a delightful spiced twist. Garnish with additional walnuts or a dollop of whipped cream for extra flavor."
+        )
+        
+        saveRecipe(
+            name: "Asian Lemon Wings",
+            category: "Main Course",
+            difficulty: "Medium",
+            prepTime: "20 minutes",
+            cookingTime: "16 minutes (air fry) or 8 minutes (deep fry)",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                Ingredient(baseQuantity: 907, unit: "g", name: "chicken wings (about 22 wings)"),
+                Ingredient(baseQuantity: 120, unit: "g", name: "corn starch or potato starch/tapioca starch"),
+                Ingredient(baseQuantity: 30, unit: "ml", name: "vegetable oil"),
+                Ingredient(baseQuantity: 30, unit: "ml", name: "regular soy sauce (for marinade)"),
+                Ingredient(baseQuantity: 4, unit: "g", name: "chicken bouillon powder (for marinade)"),
+                Ingredient(baseQuantity: 1, unit: "g", name: "ginger powder (for marinade)"),
+                Ingredient(baseQuantity: 4.5, unit: "g", name: "garlic powder (for marinade)")
+            ],
+            prePrepInstructions: [
+                "Marinate chicken wings with soy sauce, chicken bouillon powder, ginger powder, and garlic powder for 10 minutes."
+            ],
+            instructions: [
+                "Coat marinated wings with cornstarch or potato starch.",
+                "Air fry or deep fry the wings as per instructions.",
+                "Toss hot wings in sweet lemon sauce and serve."
+            ],
+            notes: "Crispy, tangy, and delicious wings with an Asian twist!"
+        )
         print("Default recipes added!")
     }
 }
