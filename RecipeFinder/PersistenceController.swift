@@ -615,7 +615,8 @@ extension PersistenceController {
             ],
             prePrepInstructions: [
                 "Defrost the butter and pastry.",
-                "Peel and chop the apples into cubes."
+                "Peel and chop the apples into cubes.",
+                "Preheat the oven to 200°C (180°C Fan)/Gas 6."
             ],
             instructions: [
                 "Sprinkle 100g Demerara sugar evenly over the chopped apples in a saucepan.",
@@ -629,7 +630,38 @@ extension PersistenceController {
                 "Bake for 25 minutes or until the crumble is toasted golden.",
                 "Sprinkle cinnamon sugar and serve with custard."
             ],
-            notes: "Apple crumble is a versatile dessert that pairs well with custard, vanilla ice cream, or chilled double cream. For added flavor, consider adding 1 tsp of cinnamon to the apples before cooking. You can substitute Hob Nobs for digestive biscuits in the crumble for a different texture."
+            notes: "Apple crumble is a versatile dessert that pairs well with custard, vanilla ice cream, or chilled double cream. For added flavor, consider adding 1 tsp of cinnamon to the apples before cooking. You can substitute Hob Nobs for digestive biscuits in the crumble for a different texture. Serve warm with custard or vanilla ice cream. Adjust sugar based on the sweetness of the apples used."
+        )
+        
+        saveRecipe(
+            name: "Apple Crumble",
+            category: "Dessert",
+            difficulty: "Easy",
+            prepTime: "10 minutes",
+            cookingTime: "30 minutes",
+            baseServings: 6,
+            currentServings: 6,
+            ingredients: [
+                Ingredient(baseQuantity: 1000, unit: "g", name: "Bramley apples (2lb 3½oz)"),
+                Ingredient(baseQuantity: 1, unit: "pinch", name: "sugar, to taste"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "water or apple juice"),
+                Ingredient(baseQuantity: 100, unit: "g", name: "plain flour"),
+                Ingredient(baseQuantity: 75, unit: "g", name: "butter"),
+                Ingredient(baseQuantity: 50, unit: "g", name: "rolled oats"),
+                Ingredient(baseQuantity: 100, unit: "g", name: "demerara sugar")
+            ],
+            prePrepInstructions: [
+                "Preheat the oven to 200°C (180°C Fan)/Gas 6."
+            ],
+            instructions: [
+                "Wipe the apples and cut them into quarters. Remove the cores and slice each piece in two.",
+                "Put the apples into a pan. Taste a slice for sweetness and add sugar accordingly. Add a tablespoon of water or apple juice and cook over medium heat for about 5 minutes until softened.",
+                "Transfer the apple mixture to a shallow ovenproof dish.",
+                "Blend the flour and butter in a food processor until the mixture resembles breadcrumbs.",
+                "Stir in the oats and brown sugar, then sprinkle over the cooked apples in the dish.",
+                "Bake for 30 minutes or until crisp and golden brown on top."
+            ],
+            notes: "Serve warm with custard or vanilla ice cream. Adjust sugar based on the sweetness of the apples used."
         )
         
         saveRecipe(
@@ -738,37 +770,6 @@ extension PersistenceController {
         )
         
         saveRecipe(
-            name: "Apple Crumble",
-            category: "Dessert",
-            difficulty: "Easy",
-            prepTime: "10 minutes",
-            cookingTime: "30 minutes",
-            baseServings: 6,
-            currentServings: 6,
-            ingredients: [
-                Ingredient(baseQuantity: 1000, unit: "g", name: "Bramley apples (2lb 3½oz)"),
-                Ingredient(baseQuantity: 1, unit: "pinch", name: "sugar, to taste"),
-                Ingredient(baseQuantity: 1, unit: "tbsp", name: "water or apple juice"),
-                Ingredient(baseQuantity: 100, unit: "g", name: "plain flour"),
-                Ingredient(baseQuantity: 75, unit: "g", name: "butter"),
-                Ingredient(baseQuantity: 50, unit: "g", name: "rolled oats"),
-                Ingredient(baseQuantity: 100, unit: "g", name: "demerara sugar")
-            ],
-            prePrepInstructions: [
-                "Preheat the oven to 200°C (180°C Fan)/Gas 6."
-            ],
-            instructions: [
-                "Wipe the apples and cut them into quarters. Remove the cores and slice each piece in two.",
-                "Put the apples into a pan. Taste a slice for sweetness and add sugar accordingly. Add a tablespoon of water or apple juice and cook over medium heat for about 5 minutes until softened.",
-                "Transfer the apple mixture to a shallow ovenproof dish.",
-                "Blend the flour and butter in a food processor until the mixture resembles breadcrumbs.",
-                "Stir in the oats and brown sugar, then sprinkle over the cooked apples in the dish.",
-                "Bake for 30 minutes or until crisp and golden brown on top."
-            ],
-            notes: "Serve warm with custard or vanilla ice cream. Adjust sugar based on the sweetness of the apples used."
-        )
-        
-        saveRecipe(
             name: "Apple Crumble with Spiced Filling",
             category: "Dessert",
             difficulty: "Medium",
@@ -833,6 +834,80 @@ extension PersistenceController {
                 "Toss hot wings in sweet lemon sauce and serve."
             ],
             notes: "Crispy, tangy, and delicious wings with an Asian twist!"
+        )
+        
+        saveRecipe(
+            name: "Baingan ka Bharta (Indian Eggplant)",
+            category: "Main Course",
+            difficulty: "Medium",
+            prepTime: "10 minutes",
+            cookingTime: "50 minutes",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                Ingredient(baseQuantity: 2, unit: "large", name: "eggplants"),
+                Ingredient(baseQuantity: 4, unit: "tbsp", name: "oil, divided"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "cumin seeds"),
+                Ingredient(baseQuantity: 1, unit: "large", name: "white onion, finely chopped"),
+                Ingredient(baseQuantity: 5, unit: "cloves", name: "garlic, minced"),
+                Ingredient(baseQuantity: 1, unit: "inch", name: "knob ginger, minced"),
+                Ingredient(baseQuantity: 1-2, unit: "pieces", name: "Serrano peppers, minced (adjust to preference)"),
+                Ingredient(baseQuantity: 2, unit: "tsp", name: "coriander powder"),
+                Ingredient(baseQuantity: 2, unit: "tsp", name: "salt"),
+                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "black pepper"),
+                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "garam masala"),
+                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "paprika"),
+                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "turmeric powder"),
+                Ingredient(baseQuantity: 3, unit: "medium", name: "tomatoes, chopped"),
+                Ingredient(baseQuantity: 1, unit: "handful", name: "cilantro, chopped (for garnish)")
+            ],
+            prePrepInstructions: [
+                "Preheat the oven to 500°F.",
+                "Make four slits in each eggplant and coat them with 1 tablespoon of oil each.",
+                "Place eggplants on a baking sheet and roast in the oven for 40 minutes, flipping halfway through.",
+                "Turn the oven to broil for the last 5 minutes. Remove the eggplants and allow them to cool.",
+                "Peel off the skin from the eggplants and chop the flesh. Set aside."
+            ],
+            instructions: [
+                "While the eggplants are roasting, heat 2 tablespoons of oil in a Dutch oven or heavy pot over medium heat.",
+                "Add cumin seeds and wait for them to splutter.",
+                "Add onions and sauté for 10 minutes until golden brown.",
+                "Stir in garlic, ginger, Serrano pepper, and spices. Stir-fry for 1 minute.",
+                "Add chopped tomatoes, mix well, cover the pot, and cook for 10 minutes.",
+                "Uncover and stir-fry for another 5 minutes.",
+                "Add the roasted and chopped eggplant, mix, and cook for an additional 5 minutes.",
+                "Garnish with chopped cilantro and serve hot."
+            ],
+            notes: "Baingan ka Bharta is a traditional Indian dish known for its smoky flavor, thanks to the roasted eggplant. Serve it with naan, roti, or steamed rice for a comforting meal. This dish originates from North India and is a staple in many households."
+        )
+        
+        saveRecipe(
+            name: "Baked Cajun Garlic Butter Cod",
+            category: "Main Course",
+            difficulty: "Easy",
+            prepTime: "5 minutes",
+            cookingTime: "15 minutes",
+            baseServings: 3,
+            currentServings: 3,
+            ingredients: [
+                Ingredient(baseQuantity: 3, unit: "filets", name: "cod, cut in half"),
+                Ingredient(baseQuantity: 1, unit: "pinch", name: "salt and pepper, to taste"),
+                Ingredient(baseQuantity: 0.25, unit: "cup", name: "butter, melted"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "olive oil"),
+                Ingredient(baseQuantity: 3, unit: "cloves", name: "garlic, minced"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "Cajun seasoning")
+            ],
+            prePrepInstructions: [
+                "Preheat oven to 400°F (200°C).",
+                "Cut cod filets in half and place in a 9x13 inch baking dish."
+            ],
+            instructions: [
+                "Sprinkle cod with salt and pepper.",
+                "In a small bowl, whisk together melted butter, olive oil, garlic, and Cajun seasoning to make the Cajun Garlic Butter Sauce.",
+                "Spread the sauce evenly over the fish.",
+                "Bake for about 15 minutes or until the fish is opaque and flakes easily."
+            ],
+            notes: "This dish pairs wonderfully with steamed vegetables or a side of rice. Cajun seasoning adds a spicy kick, but feel free to adjust based on your spice tolerance!"
         )
         print("Default recipes added!")
     }

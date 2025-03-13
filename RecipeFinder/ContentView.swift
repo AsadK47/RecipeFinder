@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import ConfettiSwiftUI
 
 struct ContentView: View {
     @State private var recipes: [RecipeModel] = []
@@ -444,30 +445,6 @@ struct ShoppingListView: View {
     }
 }
 
-struct SettingsView: View {
-    var body: some View {
-        VStack {
-            Text("Settings")
-                .font(.largeTitle)
-                .padding()
-            
-            Button(action: {
-                // Placeholder action: does nothing for now
-            }) {
-                Text("I wonder what this does?")
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
-            }
-            .padding()
-            
-            Spacer()
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-}
-
 struct RecipeSearchBar: View {
     @Binding var text: String
     var body: some View {
@@ -507,6 +484,33 @@ struct IngredientSearchBar: View {
                 .animation(.default, value: text.isEmpty)
             }
         }
+    }
+}
+
+struct SettingsView: View {
+    @State private var fireworkTrigger: Int = 0
+    
+    var body: some View {
+        VStack {
+            Text("Settings")
+                .font(.largeTitle)
+                .padding()
+            
+            Button(action: {
+                fireworkTrigger += 1
+            }) {
+                Text("Party time!")
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+            }
+            .padding()
+            .confettiCannon(trigger: $fireworkTrigger)
+            
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
