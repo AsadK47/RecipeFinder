@@ -384,7 +384,7 @@ struct RecipeDetailView: View {
 }
 
 struct ShoppingListView: View {
-    @State private var shoppingListItems: [(name: String, isChecked: Bool)] = []
+    @State private var shoppingListItems: [(name: String, isChecked: Bool, quantity: Int)] = []
     @State private var newItem: String = ""
     
     var body: some View {
@@ -412,17 +412,22 @@ struct ShoppingListView: View {
                 List {
                     ForEach(shoppingListItems.indices, id: \.self) { index in
                         HStack {
+                            Image(systemName: shoppingListItems[index].isChecked ? "checkmark.circle.fill" : "circle")
+                                .foregroundColor(shoppingListItems[index].isChecked ? .green : .gray)
+                                .onTapGesture {
+                                    toggleItem(at: index)
+                                }
+                            
                             Text(shoppingListItems[index].name)
                                 .strikethrough(shoppingListItems[index].isChecked, color: .gray)
                                 .foregroundColor(shoppingListItems[index].isChecked ? .gray : .primary)
                             
                             Spacer()
                             
-                            Image(systemName: shoppingListItems[index].isChecked ? "checkmark.circle.fill" : "circle")
-                                .foregroundColor(shoppingListItems[index].isChecked ? .green : .gray)
-                                .onTapGesture {
-                                    toggleItem(at: index)
-                                }
+                            Stepper(value: $shoppingListItems[index].quantity, in: 0...100, step: 1) {
+                                Text("\(shoppingListItems[index].quantity)")
+                            }.frame(width: 120)
+                            
                         }
                     }.onDelete(perform: deleteItems)
                 }
@@ -432,7 +437,7 @@ struct ShoppingListView: View {
     
     private func addItem() {
         guard !newItem.isEmpty else { return }
-        shoppingListItems.append((name: newItem, isChecked: false))
+        shoppingListItems.append((name: newItem, isChecked: false, quantity: 0))
         newItem = ""
     }
 
