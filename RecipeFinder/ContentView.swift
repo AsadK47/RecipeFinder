@@ -9,9 +9,17 @@ import SwiftUI
 import SwiftData
 import ConfettiSwiftUI
 
+struct ShoppingListItem: Identifiable {
+    let id = UUID()
+    var name: String
+    var isChecked: Bool
+    var quantity: Int
+}
+
 struct ContentView: View {
     @State private var recipes: [RecipeModel] = []
     @State private var selectedTab: Int = 0
+    @State private var shoppingListItems: [ShoppingListItem] = []
 
     var body: some View {
         VStack {
@@ -21,7 +29,7 @@ struct ContentView: View {
                 } else if selectedTab == 1 {
                     IngredientSearchView(recipes: $recipes)
                 } else if selectedTab == 2 {
-                    ShoppingListView()
+                    ShoppingListView(shoppingListItems: $shoppingListItems)
                 } else if selectedTab == 3 {
                     SettingsView()
                 }
@@ -384,7 +392,7 @@ struct RecipeDetailView: View {
 }
 
 struct ShoppingListView: View {
-    @State private var shoppingListItems: [(name: String, isChecked: Bool, quantity: Int)] = []
+    @Binding var shoppingListItems: [ShoppingListItem]
     @State private var newItem: String = ""
     
     var body: some View {
@@ -437,7 +445,8 @@ struct ShoppingListView: View {
     
     private func addItem() {
         guard !newItem.isEmpty else { return }
-        shoppingListItems.append((name: newItem, isChecked: false, quantity: 0))
+        let newShoppingItem = ShoppingListItem(name: newItem, isChecked: false, quantity: 0)
+        shoppingListItems.append(newShoppingItem)
         newItem = ""
     }
 
