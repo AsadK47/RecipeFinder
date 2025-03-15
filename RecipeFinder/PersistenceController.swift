@@ -909,6 +909,55 @@ extension PersistenceController {
             ],
             notes: "This dish pairs wonderfully with steamed vegetables or a side of rice. Cajun seasoning adds a spicy kick, but feel free to adjust based on your spice tolerance!"
         )
+        
+        saveRecipe(
+            name: "Banana Roti - Thai Banana Pancakes",
+            category: "Dessert",
+            difficulty: "Medium",
+            prepTime: "3+ hours (including resting time for dough)",
+            cookingTime: "20 minutes",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                Ingredient(baseQuantity: 1.5, unit: "tsp", name: "salt"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "sweetened condensed milk (or sugar substitute)"),
+                Ingredient(baseQuantity: 1, unit: "large", name: "egg"),
+                Ingredient(baseQuantity: 260, unit: "ml", name: "water"),
+                Ingredient(baseQuantity: 500, unit: "g", name: "all-purpose flour"),
+                Ingredient(baseQuantity: 55, unit: "g", name: "unsalted butter, room temperature"),
+                Ingredient(baseQuantity: 1.5, unit: "tbsp", name: "unsalted butter, for coating the dough"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "neutral-flavored oil, for coating the dough"),
+                Ingredient(baseQuantity: 3, unit: "tbsp", name: "neutral-flavored oil, for cooking"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "extra unsalted butter, optional for cooking"),
+                Ingredient(baseQuantity: 2, unit: "medium", name: "bananas, sliced"),
+                Ingredient(baseQuantity: 3, unit: "tbsp", name: "sweetened condensed milk, for drizzling"),
+                Ingredient(baseQuantity: 3, unit: "tbsp", name: "Nutella or chocolate sauce"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "granulated sugar, for sprinkling")
+            ],
+            prePrepInstructions: [
+                "In a large bowl, mix salt and water until dissolved.",
+                "Add condensed milk and egg, and whisk to combine.",
+                "In another bowl, combine flour and butter.",
+                "Rub butter into the flour until no large chunks remain.",
+                "Add the flour mixture to the wet ingredients and knead until the dry flour is absorbed.",
+                "Let rest for 15-30 minutes.",
+                "Knead the dough for 5 minutes until moist but not sticky.",
+                "Let rest for 10-15 minutes.",
+                "Cut dough into 80g pieces and form into balls.",
+                "Brush with a butter-oil mixture and store in a container.",
+                "Allow to rest for at least 3 hours (or refrigerate overnight)."
+            ],
+            instructions: [
+                "Preheat a flat skillet over medium heat and generously coat with oil.",
+                "Stretch each dough ball into a very thin sheet.",
+                "Transfer stretched dough carefully to the pan.",
+                "Place banana slices or other filling in the center and fold the edges of the dough over to seal.",
+                "Cook until both sides are golden and crispy, flipping every minute (about 4-5 minutes total).",
+                "Optionally, add a small piece of butter to the pan, let it melt, and coat the roti.",
+                "Cut the roti into pieces, drizzle with condensed milk or chocolate sauce, and sprinkle with granulated sugar before serving."
+            ],
+            notes: "This street-food favorite is perfect for dessert or a snack. Adjust toppings to suit your taste. Be cautious of hot filling when serving!"
+        )
         print("Default recipes added!")
     }
 }
