@@ -958,6 +958,69 @@ extension PersistenceController {
             ],
             notes: "This street-food favorite is perfect for dessert or a snack. Adjust toppings to suit your taste. Be cautious of hot filling when serving!"
         )
+        
+        saveRecipe(
+            name: "Keema (Instant Pot Ground Beef Curry)",
+            category: "Main Course",
+            difficulty: "Medium",
+            prepTime: "30 minutes",
+            cookingTime: "30 minutes",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                // Main Ingredients
+                Ingredient(baseQuantity: 1, unit: "medium", name: "onion, peeled and chopped into eighths"),
+                Ingredient(baseQuantity: 5, unit: "cloves", name: "garlic, peeled"),
+                Ingredient(baseQuantity: 0.5, unit: "inch", name: "ginger, peeled and cut into a few pieces"),
+                Ingredient(baseQuantity: 0.25, unit: "cup", name: "neutral oil (such as avocado or grapeseed)"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "cumin seeds"),
+                Ingredient(baseQuantity: 1, unit: "small", name: "green chili peppers, stems removed and roughly chopped"),
+                Ingredient(baseQuantity: 1, unit: "small to medium (~150 g)", name: "tomato, quartered"),
+                Ingredient(baseQuantity: 1, unit: "lb", name: "ground beef (lean or regular)"),
+                Ingredient(baseQuantity: 0.5, unit: "lb", name: "potatoes, diced"),
+                
+                // Ground Spices & Salt
+                Ingredient(baseQuantity: 2, unit: "tsp", name: "coriander powder"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "cumin powder"),
+                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "turmeric powder"),
+                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "red chili powder, or to taste"),
+                Ingredient(baseQuantity: 0.25, unit: "tsp", name: "red chili flakes (optional)"),
+                Ingredient(baseQuantity: 0.25, unit: "tsp", name: "freshly ground black pepper"),
+                Ingredient(baseQuantity: 1.25, unit: "tsp", name: "kosher salt, or to taste"),
+                
+                // After Pressure Cooking
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "whole milk yogurt"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "cilantro leaves, finely chopped"),
+                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "garam masala"),
+                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "freshly squeezed lemon juice (optional)")
+            ],
+            prePrepInstructions: [
+                "Place onion, garlic, and ginger in a food processor.",
+                "Pulse until finely chopped but not blended.",
+                "Use the pulse function to roughly chop the tomato and green chili peppers.",
+                "Set aside."
+            ],
+            instructions: [
+                "Select the Sauté setting on the Instant Pot and set to More/High.",
+                "When the screen says 'Hot', add oil and cumin seeds.",
+                "Let them sizzle for a few seconds.",
+                "Add the onion mixture and sauté until lightly browned, about 6-8 minutes.",
+                "Deglaze the Instant Pot with a splash of water, stirring to remove any bits stuck to the pan.",
+                "Add ground beef and cook, stirring to remove lumps, until the meat changes color, about 4-5 minutes.",
+                "Add the tomato and green chili mixture, ground spices, and salt.",
+                "Mix well, deglazing any bits. (No need to add extra water as the beef and tomatoes provide enough moisture.)",
+                "Cancel Sauté, close the lid, and seal.",
+                "Select the Pressure Cook setting on High for 10 minutes.",
+                "After cooking, allow pressure to naturally release for 5 minutes, then manually release any remaining pressure.",
+                "Select the Sauté setting on More/High.",
+                "Stir in yogurt and sauté until the meat turns glossy and no excess liquid remains, about 6-7 minutes.",
+                "Taste and adjust salt and spices.",
+                "Sprinkle with garam masala, cilantro, and lemon juice (if desired).",
+                "Serve warm."
+            ],
+            notes: "The moisture from the tomato and beef is sufficient for pressure cooking; no extra water is needed. If it appears dry, add a small splash of water and mix. Keema freezes well. Cool completely before transferring to an airtight container. Reheat in a saucepan or microwave, adding a splash of water if needed."
+            
+        )
         print("Default recipes added!")
     }
 }
