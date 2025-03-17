@@ -969,14 +969,14 @@ extension PersistenceController {
             currentServings: 4,
             ingredients: [
                 // Main Ingredients
+                Ingredient(baseQuantity: 1, unit: "lb", name: "ground beef (lean or regular)"),
                 Ingredient(baseQuantity: 1, unit: "medium", name: "onion, peeled and chopped into eighths"),
                 Ingredient(baseQuantity: 5, unit: "cloves", name: "garlic, peeled"),
                 Ingredient(baseQuantity: 0.5, unit: "inch", name: "ginger, peeled and cut into a few pieces"),
                 Ingredient(baseQuantity: 0.25, unit: "cup", name: "neutral oil (such as avocado or grapeseed)"),
                 Ingredient(baseQuantity: 1, unit: "tsp", name: "cumin seeds"),
                 Ingredient(baseQuantity: 1, unit: "small", name: "green chili peppers, stems removed and roughly chopped"),
-                Ingredient(baseQuantity: 1, unit: "small to medium (~150 g)", name: "tomato, quartered"),
-                Ingredient(baseQuantity: 1, unit: "lb", name: "ground beef (lean or regular)"),
+                Ingredient(baseQuantity: 1, unit: "small to medium", name: "tomato, quartered or use a chopped tomato can"),
                 Ingredient(baseQuantity: 0.5, unit: "lb", name: "potatoes, diced"),
                 
                 // Ground Spices & Salt
@@ -989,6 +989,7 @@ extension PersistenceController {
                 Ingredient(baseQuantity: 1.25, unit: "tsp", name: "kosher salt, or to taste"),
                 
                 // After Pressure Cooking
+                Ingredient(baseQuantity: 135, unit: "g", name: "Peas"),
                 Ingredient(baseQuantity: 2, unit: "tbsp", name: "whole milk yogurt"),
                 Ingredient(baseQuantity: 2, unit: "tbsp", name: "cilantro leaves, finely chopped"),
                 Ingredient(baseQuantity: 0.5, unit: "tsp", name: "garam masala"),
