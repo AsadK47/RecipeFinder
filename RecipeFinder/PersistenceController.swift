@@ -960,6 +960,93 @@ extension PersistenceController {
         )
         
         saveRecipe(
+            name: "Banana Bread - One 2lb loaf",
+            category: "Dessert",
+            difficulty: "Easy",
+            prepTime: "15 minutes",
+            cookingTime: "50 minutes to 1 hour",
+            baseServings: 1, // Makes one standard 2lb loaf
+            currentServings: 1,
+            ingredients: [
+                // Dry Ingredients
+                Ingredient(baseQuantity: 270, unit: "g", name: "plain (all-purpose) flour"),
+                Ingredient(baseQuantity: 200, unit: "g", name: "caster (granulated) sugar"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "bicarbonate of soda"),
+                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "salt"),
+                
+                // Wet Ingredients
+                Ingredient(baseQuantity: 3, unit: "small-medium", name: "bananas (ripe)"),
+                Ingredient(baseQuantity: 2, unit: "large", name: "bananas (ripe, if using instead of small)"),
+                Ingredient(baseQuantity: 1, unit: "large", name: "egg"),
+                Ingredient(baseQuantity: 1, unit: "large", name: "egg yolk"),
+                Ingredient(baseQuantity: 60, unit: "g", name: "plain yogurt (or sour cream or buttermilk)"),
+                Ingredient(baseQuantity: 110, unit: "g", name: "unsalted butter, melted and cooled"),
+
+                // Mix-ins
+                Ingredient(baseQuantity: 100, unit: "g", name: "chocolate chips (mix of milk and dark recommended)"),
+                Ingredient(baseQuantity: 60, unit: "g", name: "chopped walnuts"),
+                Ingredient(baseQuantity: 20, unit: "g", name: "chopped pecans")
+            ],
+            prePrepInstructions: [
+                "Preheat oven to Gas Mark 4.5 or 165°C (fan-assisted).",
+                "Grease a 2lb loaf tin and line it with parchment paper, leaving an overhang on the long sides."
+            ],
+            instructions: [
+                "In a large bowl, mix together the dry ingredients: flour, sugar, bicarbonate of soda, and salt.",
+                "Mash the bananas in a separate bowl using a fork or potato masher.",
+                "In another bowl, whisk together the whole egg and egg yolk. Add yogurt, melted butter, and the mashed bananas. Mix until combined.",
+                "Pour the wet mixture into the bowl with the dry ingredients. Mix just until combined; avoid overmixing.",
+                "Fold in 90% of the chocolate chips, walnuts, and pecans. Save the remaining 10% for topping.",
+                "Pour the batter into the prepared loaf tin and sprinkle the reserved chocolate chips and nuts on top.",
+                "Bake for 50 minutes to 1 hour. Check doneness with a skewer inserted into the middle; if it comes out clean, it's cooked.",
+                "If the top browns too quickly and the skewer comes out unclean, cover the loaf loosely with foil and bake for additional time until fully cooked.",
+                "Let the banana bread cool in the tin for 10 minutes, then transfer to a wire rack to cool completely before slicing."
+            ],
+            notes: "This banana bread is rich and moist, perfect for breakfast or dessert. Use overly ripe bananas for the best flavor. Customize with different nuts or chocolate types!"
+        )
+        
+        saveRecipe(
+            name: "Bao Buns (A Foolproof Recipe)",
+            category: "Bread",
+            difficulty: "Medium",
+            prepTime: "20 minutes",
+            cookingTime: "10 minutes",
+            baseServings: 8, // Makes 8-12 buns
+            currentServings: 8,
+            ingredients: [
+                // Dry Ingredients
+                Ingredient(baseQuantity: 300, unit: "g", name: "all-purpose flour (see notes for substitutes)"),
+                Ingredient(baseQuantity: 1.25, unit: "tsp", name: "instant yeast (see notes for substitutes)"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "baking powder"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "white sugar"),
+                
+                // Wet Ingredients
+                Ingredient(baseQuantity: 165, unit: "g", name: "lukewarm water or milk (see notes)"),
+                
+                // Other
+                Ingredient(baseQuantity: 1, unit: "as needed", name: "oil (for brushing)")
+            ],
+            prePrepInstructions: [
+                "Ensure all ingredients are measured and ready.",
+                "Prepare necessary tools: mixing bowl, steamer with liners, rolling pin, and biscuit cutter (optional)."
+            ],
+            instructions: [
+                "To prepare the dough (manual method): In a large bowl, mix flour, instant yeast, baking powder, and sugar. Gradually add water or milk while stirring.",
+                "Knead by hand until a rough dough forms. Rest for 10 minutes, then knead for 2-3 minutes until smooth.",
+                "For the stand-mixer method: Combine all ingredients in the mixing bowl and knead with a dough hook on low speed for 8-10 minutes until smooth.",
+                "To shape the buns: Roll the dough into a rope and divide into 8-12 pieces. Roll each piece into a ball and flatten with a rolling pin into an oval shape (dust with flour to prevent sticking).",
+                "Brush a thin layer of oil over half the oval, then fold over lengthways.",
+                "Alternatively, flatten the dough into a rectangle and use a round cutter to cut out circles. Roll each circle into an oval shape and fold as above.",
+                "Line the steamer basket with parchment paper or silicone liners. Place the buns in the basket, leaving space for expansion.",
+                "Let the buns proof for about 30 minutes or until they are plump and feel lighter in weight.",
+                "To steam the buns: Add 500 ml of water to the steaming pot. Once boiling, reduce heat to medium-low and steam the buns for 10 minutes.",
+                "Allow buns to cool completely if storing or freeze for later use.",
+                "Reheat by steaming for 5 minutes if chilled or 7 minutes if frozen."
+            ],
+            notes: "Bao buns are soft and fluffy, perfect for filling with meats, vegetables, or sweet spreads. Adjust proofing time based on room temperature and ensure proper steaming for best results!"
+        )
+        
+        saveRecipe(
             name: "Keema (Instant Pot Ground Beef Curry)",
             category: "Main Course",
             difficulty: "Medium",
@@ -1020,7 +1107,6 @@ extension PersistenceController {
                 "Serve warm."
             ],
             notes: "The moisture from the tomato and beef is sufficient for pressure cooking; no extra water is needed. If it appears dry, add a small splash of water and mix. Keema freezes well. Cool completely before transferring to an airtight container. Reheat in a saucepan or microwave, adding a splash of water if needed."
-            
         )
         print("Default recipes added!")
     }
