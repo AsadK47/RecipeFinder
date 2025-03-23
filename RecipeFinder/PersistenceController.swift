@@ -1047,6 +1047,47 @@ extension PersistenceController {
         )
         
         saveRecipe(
+            name: "Beijing Beef",
+            category: "Main",
+            difficulty: "Easy",
+            prepTime: "30 minutes",
+            cookingTime: "20 minutes",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                Ingredient(baseQuantity: 800, unit: "g", name: "beef strips (beef fillet or any tender beef strips will work)"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "Shaoxing cooking wine"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "soy sauce"),
+                Ingredient(baseQuantity: 1, unit: "", name: "red capsicum, diced"),
+                Ingredient(baseQuantity: 1, unit: "", name: "brown onion, diced"),
+                Ingredient(baseQuantity: 3, unit: "cloves", name: "garlic, finely diced"),
+                Ingredient(baseQuantity: 3, unit: "tbsp", name: "oyster sauce"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "black vinegar"),
+                Ingredient(baseQuantity: 3, unit: "tbsp", name: "tomato sauce (ketchup)"),
+                Ingredient(baseQuantity: 3, unit: "tsp", name: "sambal (chilli paste)"),
+                Ingredient(baseQuantity: 200, unit: "g", name: "cornflour (cornstarch)"),
+                Ingredient(baseQuantity: 400, unit: "ml", name: "beef tallow or neutral-flavoured oil"),
+                Ingredient(baseQuantity: 1, unit: "as needed", name: "Rice, to serve")
+            ],
+            prePrepInstructions: [
+                "Mix beef strips with Shaoxing cooking wine and soy sauce in a bowl. Marinate for 30 minutes to 1 hour.",
+                "Prepare the sauce by mixing oyster sauce, black vinegar, tomato sauce, and sambal in a small bowl.",
+                "Chop all vegetables and ensure the rice is cooked and kept warm."
+            ],
+            instructions: [
+                "Heat oil in a wok to 180°C (350°F).",
+                "Dust the marinated beef strips in cornflour, shaking off excess.",
+                "Fry the beef in batches until crispy. Remove from the oil and set aside.",
+                "Drain 99% of the oil from the wok and return it to high heat.",
+                "Add diced onion and capsicum to the wok. Sauté for 2–3 minutes until slightly softened.",
+                "Add diced garlic and toss well.",
+                "Return the crispy beef to the wok and add the prepared sauce. Stir-fry over high heat for 2–3 minutes until the beef is well coated.",
+                "Serve hot with steamed rice and optional wok-fried greens."
+            ],
+            notes: "Beijing Beef is a quick and flavorful dish that pairs perfectly with rice and stir-fried vegetables.\nCustomize the spice level by adjusting the sambal quantity to taste.\nMake sure to fry the beef in small batches to keep it crispy.\nLeftovers can be stored in an airtight container and reheated in a pan or air fryer."
+        )
+        
+        saveRecipe(
             name: "Keema (Instant Pot Ground Beef Curry)",
             category: "Main Course",
             difficulty: "Medium",
