@@ -1088,6 +1088,50 @@ extension PersistenceController {
         )
         
         saveRecipe(
+            name: "Beef Chow Fun",
+            category: "Main",
+            difficulty: "Medium",
+            prepTime: "20 minutes",
+            cookingTime: "10 minutes",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                Ingredient(baseQuantity: 300, unit: "g", name: "flank steak"),
+                Ingredient(baseQuantity: 4, unit: "g", name: "cornstarch"),
+                Ingredient(baseQuantity: 7.5, unit: "ml", name: "soy sauce (for marinade)"),
+                Ingredient(baseQuantity: 5, unit: "ml", name: "Shaoxing wine"),
+                Ingredient(baseQuantity: 1, unit: "g", name: "baking soda"),
+                Ingredient(baseQuantity: 0.3, unit: "g", name: "white pepper"),
+                Ingredient(baseQuantity: 15, unit: "ml", name: "vegetable oil (for marinade)"),
+                Ingredient(baseQuantity: 22, unit: "ml", name: "soy sauce (for noodle sauce)"),
+                Ingredient(baseQuantity: 15, unit: "ml", name: "oyster sauce"),
+                Ingredient(baseQuantity: 15, unit: "ml", name: "dark soy sauce"),
+                Ingredient(baseQuantity: 10, unit: "ml", name: "sesame oil"),
+                Ingredient(baseQuantity: 8, unit: "g", name: "sugar"),
+                Ingredient(baseQuantity: 400, unit: "g", name: "wide flat rice noodles (fresh or refrigerated)"),
+                Ingredient(baseQuantity: 2, unit: "cloves", name: "garlic, minced"),
+                Ingredient(baseQuantity: 2, unit: "", name: "scallions, whites and greens separated and cut into 2-inch pieces"),
+                Ingredient(baseQuantity: 100, unit: "g", name: "bean sprouts"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "vegetable oil (for cooking)")
+            ],
+            prePrepInstructions: [
+                "Thinly slice flank steak against the grain on an angle into ¼-inch-thick pieces and transfer to a bowl.",
+                "Add marinade ingredients (4 g cornstarch, 7.5 ml soy sauce, 5 ml Shaoxing wine, 1 g baking soda, 0.3 g white pepper, and 15 ml vegetable oil) to the beef and mix well. Marinate for 15 minutes.",
+                "Combine noodle sauce ingredients (22 ml soy sauce, 15 ml oyster sauce, 15 ml dark soy sauce, 10 ml sesame oil, and 8 g sugar) in a small bowl and set aside.",
+                "If using fresh rice noodles, microwave for 2–3 intervals of 60 seconds until soft and pliable. Gently separate them by hand once cooled."
+            ],
+            instructions: [
+                "Heat vegetable oil in a large pan over medium-high heat.",
+                "Fry marinated beef in a single layer until cooked and slightly browned on the edges. Remove and set aside.",
+                "Using the residual oil, fry the scallion whites and garlic for 10 seconds.",
+                "Add remaining oil, rice noodles, and noodle sauce to the pan. Toss gently with two spatulas, lifting from the bottom.",
+                "Return the cooked beef, bean sprouts, and scallion greens to the pan. Toss gently until everything is mixed.",
+                "Remove from heat and serve hot."
+            ],
+            notes: "Use fresh rice noodles if available for the best texture.\nAvoid over-stirring the noodles to keep them from breaking.\nCook beef in a single layer for good browning.\nThis dish is best served immediately after cooking."
+        )
+        
+        saveRecipe(
             name: "Keema (Instant Pot Ground Beef Curry)",
             category: "Main Course",
             difficulty: "Medium",
