@@ -1132,6 +1132,55 @@ extension PersistenceController {
         )
         
         saveRecipe(
+            name: "Beef in Black Bean",
+            category: "Main",
+            difficulty: "Medium",
+            prepTime: "10 minutes",
+            cookingTime: "10 minutes",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                Ingredient(baseQuantity: 300, unit: "g", name: "beef steak, thinly sliced"),
+                Ingredient(baseQuantity: 25, unit: "ml", name: "light soy sauce (for marinade)"),
+                Ingredient(baseQuantity: 25, unit: "ml", name: "Shao Xing wine (optional, for marinade)"),
+                Ingredient(baseQuantity: 25, unit: "g", name: "sugar (for marinade)"),
+                Ingredient(baseQuantity: 5, unit: "ml", name: "cornstarch (for marinade)"),
+                Ingredient(baseQuantity: 2.5, unit: "ml", name: "baking soda (for marinade)"),
+                
+                Ingredient(baseQuantity: 75, unit: "ml", name: "oyster sauce (for stir fry sauce)"),
+                Ingredient(baseQuantity: 5, unit: "ml", name: "dark soy sauce (for stir fry sauce)"),
+                Ingredient(baseQuantity: 75, unit: "ml", name: "water (for stir fry sauce)"),
+                Ingredient(baseQuantity: 2.5, unit: "ml", name: "cornstarch (for stir fry sauce)"),
+                Ingredient(baseQuantity: 15, unit: "ml", name: "Shao Xing wine (for stir fry sauce)"),
+                Ingredient(baseQuantity: 15, unit: "g", name: "sugar (for stir fry sauce)"),
+
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "oil (for cooking)"),
+                Ingredient(baseQuantity: 2, unit: "cloves", name: "garlic, chopped"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "ginger, chopped"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "fermented black beans, roughly chopped or whole"),
+                Ingredient(baseQuantity: 1, unit: "", name: "onion, diced"),
+                Ingredient(baseQuantity: 1, unit: "", name: "bell pepper, chopped")
+            ],
+            prePrepInstructions: [
+                "Cut the beef steak into thin slices against the grain.",
+                "Marinate the beef with 25 ml light soy sauce, 25 g sugar, 25 ml Shao Xing wine (optional), 5 ml corn starch, and 2.5 ml baking soda. Mix well and let sit for 10–15 minutes.",
+                "Mix all the stir fry sauce ingredients (75 ml oyster sauce, 5 ml dark soy sauce, 75 ml water, 2.5 ml corn starch, 15 ml Shao Xing wine, and 15 g sugar) in a small bowl and set aside.",
+                "Roughly chop the black beans or leave them whole if preferred."
+            ],
+            instructions: [
+                "Heat a wok or pan over medium-high heat and drizzle in oil. Add the marinated beef slices.",
+                "Flatten the beef and sear for 2–3 minutes, then flip and stir fry for another 2–3 minutes.",
+                "Add the diced onions and stir fry for 1 minute, then add the bell peppers and stir for a few seconds. Remove from the pan and set aside.",
+                "In the same pan, drizzle a bit more oil. Sauté the chopped garlic over medium heat for 1 minute.",
+                "Add the ginger and stir for a few seconds. Then add the black beans and stir fry for 1–2 minutes.",
+                "Pour in the sauce mixture and stir until the sauce thickens.",
+                "Add the fried beef, onions, and peppers back into the pan. Toss well over medium-high heat to combine evenly for 1–2 minutes.",
+                "Remove from heat and transfer to a serving plate. Serve hot with plain rice, egg fried rice, or noodles."
+            ],
+            notes: "Adjust sugar and salt to taste.\nYou can substitute black beans with black bean garlic sauce if needed.\nEnsure the beef is thinly sliced and not overcrowded in the pan for best browning.\nThis dish pairs well with hot steamed rice or noodles."
+        )
+        
+        saveRecipe(
             name: "Keema (Instant Pot Ground Beef Curry)",
             category: "Main Course",
             difficulty: "Medium",
