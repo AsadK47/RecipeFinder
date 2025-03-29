@@ -1242,6 +1242,53 @@ extension PersistenceController {
             ],
             notes: "The moisture from the tomato and beef is sufficient for pressure cooking; no extra water is needed. If it appears dry, add a small splash of water and mix. Keema freezes well. Cool completely before transferring to an airtight container. Reheat in a saucepan or microwave, adding a splash of water if needed."
         )
+        
+        saveRecipe(
+            name: "Beef Lo Mein (Easy)",
+            category: "Main",
+            difficulty: "Medium",
+            prepTime: "23 minutes",
+            cookingTime: "7 minutes",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                Ingredient(baseQuantity: 300, unit: "g", name: "flank steak, thinly sliced"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "soy sauce (for marinade)"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "Shaoxing wine (for marinade)"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "cornstarch (for marinade)"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "sugar (for marinade)"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "vegetable oil (for marinade)"),
+
+                Ingredient(baseQuantity: 3, unit: "tbsp", name: "soy sauce (for sauce)"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "oyster sauce (for sauce)"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "dark soy sauce (for sauce)"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "sesame oil (for sauce)"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "sugar (for sauce)"),
+
+                Ingredient(baseQuantity: 400, unit: "g", name: "fresh egg noodles"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "vegetable oil (for cooking)"),
+                Ingredient(baseQuantity: 1, unit: "pc", name: "carrot, julienned"),
+                Ingredient(baseQuantity: 1, unit: "pc", name: "red bell pepper, sliced"),
+                Ingredient(baseQuantity: 1, unit: "cup", name: "cabbage, shredded"),
+                Ingredient(baseQuantity: 60, unit: "ml", name: "water (for steaming veg)"),
+                Ingredient(baseQuantity: 2, unit: "stalks", name: "green onions, chopped")
+            ],
+            prePrepInstructions: [
+                "Thinly slice flank steak against the grain into ¼-inch-thick pieces.",
+                "Add marinade ingredients (2 tbsp soy sauce, 1 tbsp Shaoxing wine, 1 tsp cornstarch, 1 tsp sugar, and 1 tbsp vegetable oil) to sliced beef and mix well. Set aside to marinate for 15 minutes at room temperature.",
+                "To thinly slice beef, freeze it for 45–60 minutes until the exterior is firm, then slice with a sharp knife.",
+                "In a small bowl, combine sauce ingredients (3 tbsp soy sauce, 1 tbsp oyster sauce, 1 tbsp dark soy sauce, 1 tbsp sesame oil, and 1 tsp sugar) and set aside."
+            ],
+            instructions: [
+                "Bring a large pot of water to a boil. Blanch fresh egg noodles for 20–30 seconds until loosened.",
+                "Strain noodles, rinse under cold running water, and shake off excess water. Set aside.",
+                "Heat 1 tablespoon vegetable oil in a large pan over medium-high heat. Fry the marinated beef until cooked through and browned. Remove and set aside.",
+                "Add carrots, red bell pepper, cabbage, and ¼ cup (60 ml) water to the pan. Cook for 30–60 seconds until vegetables are vibrant and just tender.",
+                "Add blanched noodles to the pan followed by the prepared sauce mixture. Toss until noodles are evenly coated and sauce thickens slightly.",
+                "Return the cooked beef to the pan and add green onions. Toss everything together until well combined. Remove from heat and serve immediately."
+            ],
+            notes: "Use fresh egg noodles if possible for best texture. Do not overcook the vegetables—they should stay vibrant and slightly crisp. Freezing the beef before slicing makes it easier to cut thinly.This dish is great with a side of chili oil or pickled vegetables."
+        )
         print("Default recipes added!")
     }
 }
