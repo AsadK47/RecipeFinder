@@ -1289,6 +1289,56 @@ extension PersistenceController {
             ],
             notes: "Use fresh egg noodles if possible for best texture. Do not overcook the vegetables—they should stay vibrant and slightly crisp. Freezing the beef before slicing makes it easier to cut thinly.This dish is great with a side of chili oil or pickled vegetables."
         )
+        
+        saveRecipe(
+            name: "Beef Ragu Sauce (Classic)",
+            category: "Main",
+            difficulty: "Medium",
+            prepTime: "15 minutes",
+            cookingTime: "3 hours",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                Ingredient(baseQuantity: 600, unit: "g", name: "beef chuck or stewing beef, cut into cubes"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "salt (for seasoning beef)"),
+                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "black pepper (for seasoning beef)"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "olive oil"),
+                Ingredient(baseQuantity: 1, unit: "", name: "onion, diced"),
+                Ingredient(baseQuantity: 1, unit: "", name: "carrot, diced"),
+                Ingredient(baseQuantity: 3, unit: "cloves", name: "garlic, chopped"),
+                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "red chili flakes"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "tomato paste"),
+                Ingredient(baseQuantity: 125, unit: "ml", name: "red wine"),
+                Ingredient(baseQuantity: 400, unit: "g", name: "canned whole tomatoes"),
+                Ingredient(baseQuantity: 250, unit: "ml", name: "beef broth"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "unsalted butter"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "dried oregano"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "dried thyme"),
+                Ingredient(baseQuantity: 1, unit: "", name: "bay leaf"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "red wine vinegar"),
+                Ingredient(baseQuantity: 400, unit: "g", name: "pasta (e.g. pappardelle or tagliatelle)"),
+                Ingredient(baseQuantity: 20, unit: "g", name: "Parmesan cheese, grated"),
+                Ingredient(baseQuantity: 5, unit: "leaves", name: "fresh basil, torn")
+            ],
+            prePrepInstructions: [
+                "Pat the beef cubes dry and season with 1 tsp salt and ½ tsp freshly ground black pepper.",
+                "Prepare the vegetables: dice the onion and carrot, chop the garlic, and measure out remaining ingredients.",
+                "Set aside pasta or polenta for serving later."
+            ],
+            instructions: [
+                "Heat olive oil in a large heavy-bottomed pot over medium-high heat. Brown the beef in small batches to develop flavor, then remove and set aside.",
+                "In the same pot, cook the diced onions and carrots for 3–4 minutes until softened. Add red chili flakes and garlic, cooking for another minute.",
+                "Stir in the tomato paste and cook for 30 seconds. Deglaze the pot with red wine and reduce by half, about 3 minutes.",
+                "Add the canned tomatoes (break them up slightly with a spoon), beef broth, butter, oregano, thyme, and a pinch of salt. Stir until the butter melts, then add the bay leaf and reserved beef.",
+                "Bring to a boil, then reduce to low heat. Cover and simmer for 2½ hours, stirring occasionally.",
+                "Once the beef is fork-tender, remove the bay leaf and shred the meat using a potato masher or fork.",
+                "Add red wine vinegar and simmer uncovered for another 30 minutes to thicken the sauce. Adjust seasoning to taste.",
+                "Meanwhile, cook the pasta in salted water until al dente. Drain and toss with the finished ragu.",
+                "Let the pasta stand for a couple of minutes to absorb the sauce before serving.",
+                "Garnish with Parmesan cheese and fresh basil."
+            ],
+            notes: "For a deeper flavor, allow the ragu to rest for 10–15 minutes before serving. This sauce can also be made ahead and refrigerated overnight—it tastes even better the next day. Polenta is a great alternative to pasta. Use quality canned tomatoes for best results."
+        )
         print("Default recipes added!")
     }
 }
