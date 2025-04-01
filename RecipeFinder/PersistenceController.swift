@@ -1084,7 +1084,7 @@ extension PersistenceController {
                 "Return the crispy beef to the wok and add the prepared sauce. Stir-fry over high heat for 2–3 minutes until the beef is well coated.",
                 "Serve hot with steamed rice and optional wok-fried greens."
             ],
-            notes: "Beijing Beef is a quick and flavorful dish that pairs perfectly with rice and stir-fried vegetables.\nCustomize the spice level by adjusting the sambal quantity to taste.\nMake sure to fry the beef in small batches to keep it crispy.\nLeftovers can be stored in an airtight container and reheated in a pan or air fryer."
+            notes: "Beijing Beef is a quick and flavorful dish that pairs perfectly with rice and stir-fried vegetables. Customize the spice level by adjusting the sambal quantity to taste. Make sure to fry the beef in small batches to keep it crispy. Leftovers can be stored in an airtight container and reheated in a pan or air fryer."
         )
         
         saveRecipe(
@@ -1128,7 +1128,7 @@ extension PersistenceController {
                 "Return the cooked beef, bean sprouts, and scallion greens to the pan. Toss gently until everything is mixed.",
                 "Remove from heat and serve hot."
             ],
-            notes: "Use fresh rice noodles if available for the best texture.\nAvoid over-stirring the noodles to keep them from breaking.\nCook beef in a single layer for good browning.\nThis dish is best served immediately after cooking."
+            notes: "Use fresh rice noodles if available for the best texture. Avoid over-stirring the noodles to keep them from breaking. Cook beef in a single layer for good browning. This dish is best served immediately after cooking."
         )
         
         saveRecipe(
@@ -1177,70 +1177,7 @@ extension PersistenceController {
                 "Add the fried beef, onions, and peppers back into the pan. Toss well over medium-high heat to combine evenly for 1–2 minutes.",
                 "Remove from heat and transfer to a serving plate. Serve hot with plain rice, egg fried rice, or noodles."
             ],
-            notes: "Adjust sugar and salt to taste.\nYou can substitute black beans with black bean garlic sauce if needed.\nEnsure the beef is thinly sliced and not overcrowded in the pan for best browning.\nThis dish pairs well with hot steamed rice or noodles."
-        )
-        
-        saveRecipe(
-            name: "Keema (Instant Pot Ground Beef Curry)",
-            category: "Main Course",
-            difficulty: "Medium",
-            prepTime: "30 minutes",
-            cookingTime: "30 minutes",
-            baseServings: 4,
-            currentServings: 4,
-            ingredients: [
-                // Main Ingredients
-                Ingredient(baseQuantity: 1, unit: "lb", name: "ground beef (lean or regular)"),
-                Ingredient(baseQuantity: 1, unit: "medium", name: "onion, peeled and chopped into eighths"),
-                Ingredient(baseQuantity: 5, unit: "cloves", name: "garlic, peeled"),
-                Ingredient(baseQuantity: 0.5, unit: "inch", name: "ginger, peeled and cut into a few pieces"),
-                Ingredient(baseQuantity: 0.25, unit: "cup", name: "neutral oil (such as avocado or grapeseed)"),
-                Ingredient(baseQuantity: 1, unit: "tsp", name: "cumin seeds"),
-                Ingredient(baseQuantity: 1, unit: "small", name: "green chili peppers, stems removed and roughly chopped"),
-                Ingredient(baseQuantity: 1, unit: "small to medium", name: "tomato, quartered or use a chopped tomato can"),
-                Ingredient(baseQuantity: 0.5, unit: "lb", name: "potatoes, diced"),
-                
-                // Ground Spices & Salt
-                Ingredient(baseQuantity: 2, unit: "tsp", name: "coriander powder"),
-                Ingredient(baseQuantity: 1, unit: "tsp", name: "cumin powder"),
-                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "turmeric powder"),
-                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "red chili powder, or to taste"),
-                Ingredient(baseQuantity: 0.25, unit: "tsp", name: "red chili flakes (optional)"),
-                Ingredient(baseQuantity: 0.25, unit: "tsp", name: "freshly ground black pepper"),
-                Ingredient(baseQuantity: 1.25, unit: "tsp", name: "kosher salt, or to taste"),
-                
-                // After Pressure Cooking
-                Ingredient(baseQuantity: 135, unit: "g", name: "Peas"),
-                Ingredient(baseQuantity: 2, unit: "tbsp", name: "whole milk yogurt"),
-                Ingredient(baseQuantity: 2, unit: "tbsp", name: "cilantro leaves, finely chopped"),
-                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "garam masala"),
-                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "freshly squeezed lemon juice (optional)")
-            ],
-            prePrepInstructions: [
-                "Place onion, garlic, and ginger in a food processor.",
-                "Pulse until finely chopped but not blended.",
-                "Use the pulse function to roughly chop the tomato and green chili peppers.",
-                "Set aside."
-            ],
-            instructions: [
-                "Select the Sauté setting on the Instant Pot and set to More/High.",
-                "When the screen says 'Hot', add oil and cumin seeds.",
-                "Let them sizzle for a few seconds.",
-                "Add the onion mixture and sauté until lightly browned, about 6-8 minutes.",
-                "Deglaze the Instant Pot with a splash of water, stirring to remove any bits stuck to the pan.",
-                "Add ground beef and cook, stirring to remove lumps, until the meat changes color, about 4-5 minutes.",
-                "Add the tomato and green chili mixture, ground spices, and salt.",
-                "Mix well, deglazing any bits. (No need to add extra water as the beef and tomatoes provide enough moisture.)",
-                "Cancel Sauté, close the lid, and seal.",
-                "Select the Pressure Cook setting on High for 10 minutes.",
-                "After cooking, allow pressure to naturally release for 5 minutes, then manually release any remaining pressure.",
-                "Select the Sauté setting on More/High.",
-                "Stir in yogurt and sauté until the meat turns glossy and no excess liquid remains, about 6-7 minutes.",
-                "Taste and adjust salt and spices.",
-                "Sprinkle with garam masala, cilantro, and lemon juice (if desired).",
-                "Serve warm."
-            ],
-            notes: "The moisture from the tomato and beef is sufficient for pressure cooking; no extra water is needed. If it appears dry, add a small splash of water and mix. Keema freezes well. Cool completely before transferring to an airtight container. Reheat in a saucepan or microwave, adding a splash of water if needed."
+            notes: "Adjust sugar and salt to taste. You can substitute black beans with black bean garlic sauce if needed. Ensure the beef is thinly sliced and not overcrowded in the pan for best browning. This dish pairs well with hot steamed rice or noodles."
         )
         
         saveRecipe(
@@ -1338,6 +1275,426 @@ extension PersistenceController {
                 "Garnish with Parmesan cheese and fresh basil."
             ],
             notes: "For a deeper flavor, allow the ragu to rest for 10–15 minutes before serving. This sauce can also be made ahead and refrigerated overnight—it tastes even better the next day. Polenta is a great alternative to pasta. Use quality canned tomatoes for best results."
+        )
+        
+        saveRecipe(
+            name: "Beef Stew with Potatoes",
+            category: "Main",
+            difficulty: "Medium",
+            prepTime: "20 minutes",
+            cookingTime: "2 hours",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                Ingredient(baseQuantity: 700, unit: "g", name: "beef chuck, trimmed and cut into cubes"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "vegetable oil"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "black pepper"),
+                Ingredient(baseQuantity: 2, unit: "cloves", name: "garlic, minced"),
+                Ingredient(baseQuantity: 1, unit: "", name: "onion, chopped"),
+                Ingredient(baseQuantity: 2, unit: "stalks", name: "celery, chopped"),
+                Ingredient(baseQuantity: 2, unit: "", name: "carrots, sliced"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "vinegar or red wine"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "all-purpose flour"),
+                Ingredient(baseQuantity: 750, unit: "ml", name: "beef broth"),
+                Ingredient(baseQuantity: 400, unit: "g", name: "potatoes, peeled and chopped"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "Dijon mustard"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "salt, or to taste"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "fresh parsley, chopped (for garnish)")
+            ],
+            prePrepInstructions: [
+                "Trim and cut beef into cubes.",
+                "Chop vegetables into specified sizes.",
+                "Mix vinegar if using instead of red wine."
+            ],
+            instructions: [
+                "Dry beef cubes and sprinkle with pepper.",
+                "Heat oil in a Dutch oven and brown beef in batches. Set aside.",
+                "Add a splash of broth to the pot to deglaze, then sauté carrots, celery, and onions for 5 minutes.",
+                "Add garlic and stir for 1 minute. Add vinegar and reduce liquid by half.",
+                "Whisk flour with broth and add to pot. Return beef and bring to a boil.",
+                "Reduce heat, cover, and simmer for 2 hours, adding potatoes and mustard in the last 20 minutes.",
+                "Season with salt and pepper to taste. Garnish with parsley and serve."
+            ],
+            notes: "Use red wine for a deeper flavor, or substitute with vinegar. Deglazing the pot ensures you capture the fond for added depth. This stew is even better the next day after the flavors develop further."
+        )
+        
+        saveRecipe(
+            name: "Beef Tomato Stir-fry (Chinese - Quick and Easy)",
+            category: "Main",
+            difficulty: "Medium",
+            prepTime: "15 minutes",
+            cookingTime: "10 minutes",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                Ingredient(baseQuantity: 300, unit: "g", name: "flank steak, sliced"),
+                Ingredient(baseQuantity: 15, unit: "ml", name: "soy sauce (for marinade)"),
+                Ingredient(baseQuantity: 5, unit: "ml", name: "cornstarch (for marinade)"),
+                Ingredient(baseQuantity: 1, unit: "ml", name: "baking soda (for marinade)"),
+                Ingredient(baseQuantity: 1, unit: "g", name: "garlic powder"),
+                Ingredient(baseQuantity: 10, unit: "ml", name: "water (for marinade)"),
+                Ingredient(baseQuantity: 2, unit: "", name: "tomatoes, sliced"),
+                Ingredient(baseQuantity: 1, unit: "", name: "onion, sliced"),
+                Ingredient(baseQuantity: 2, unit: "cloves", name: "garlic, minced"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "ginger, minced"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "ketchup"),
+                Ingredient(baseQuantity: 5, unit: "ml", name: "cornstarch (for slurry)"),
+                Ingredient(baseQuantity: 15, unit: "ml", name: "cold water (for slurry)"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "oil (for cooking)"),
+                Ingredient(baseQuantity: 2, unit: "", name: "green onions, chopped (for garnish)")
+            ],
+            prePrepInstructions: [
+                "Slice flank steak against the grain and marinate with soy sauce, cornstarch, baking soda, garlic powder, and water for 15 minutes.",
+                "Slice tomatoes and onions.",
+                "Mix cornstarch with cold water to prepare slurry."
+            ],
+            instructions: [
+                "Heat oil in a wok and stir-fry marinated beef until 75% cooked.",
+                "Add garlic, onions, ginger, and ketchup, and stir-fry until onions are softened.",
+                "Add cornstarch slurry, followed by tomatoes. Simmer until sauce thickens.",
+                "Garnish with green onions and serve."
+            ],
+            notes: "Serve with steamed jasmine rice. Adjust ketchup for sweetness or tartness. Do not overcook beef for tenderness."
+        )
+        
+        saveRecipe(
+            name: "Biang Biang Noodles",
+            category: "Main",
+            difficulty: "Medium",
+            prepTime: "25 minutes",
+            cookingTime: "5 minutes",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                Ingredient(baseQuantity: 300, unit: "g", name: "all-purpose flour"),
+                Ingredient(baseQuantity: 3, unit: "g", name: "salt"),
+                Ingredient(baseQuantity: 150, unit: "ml", name: "water"),
+                Ingredient(baseQuantity: 100, unit: "g", name: "bok choy"),
+                Ingredient(baseQuantity: 3, unit: "tbsp", name: "black vinegar"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "light soy sauce"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "sugar"),
+                Ingredient(baseQuantity: 2, unit: "tsp", name: "chili flakes"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "garlic, minced"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "Sichuan pepper"),
+                Ingredient(baseQuantity: 2, unit: "", name: "green onions, chopped"),
+                Ingredient(baseQuantity: 3, unit: "tbsp", name: "vegetable oil (for hot oil pour)")
+            ],
+            prePrepInstructions: [
+                "Mix flour and salt in a bowl. Add water slowly, kneading until a rough dough forms. Rest for 20–30 minutes.",
+                "Knead the dough until smooth. Divide into 6 equal pieces, roll into slabs, and coat with oil. Cover and rest for 2 hours."
+            ],
+            instructions: [
+                "Prepare black vinegar sauce by mixing vinegar, soy sauce, and sugar. Set aside.",
+                "Pull the dough into long, thin noodles and tear in the middle to create strands.",
+                "Cook noodles and bok choy in boiling water for 45–90 seconds.",
+                "Arrange noodles in a bowl with sauce and toppings: chili flakes, garlic, Sichuan pepper, and green onion.",
+                "Heat oil until smoking, pour over the toppings, and mix until combined. Serve immediately."
+            ],
+            notes: "Dough resting time is key for pulling elasticity. Use gloves when handling hot oil. Customize spice level to taste."
+        )
+        
+        saveRecipe(
+            name: "Black Sesame Rugelach",
+            category: "Dessert",
+            difficulty: "Medium",
+            prepTime: "2 hours 30 minutes (includes chilling time)",
+            cookingTime: "20-25 minutes",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                Ingredient(baseQuantity: 200, unit: "g", name: "all-purpose flour"),
+                Ingredient(baseQuantity: 1, unit: "pinch", name: "salt"),
+                Ingredient(baseQuantity: 115, unit: "g", name: "unsalted butter, cold and cubed"),
+                Ingredient(baseQuantity: 115, unit: "g", name: "cream cheese, cold"),
+                Ingredient(baseQuantity: 80, unit: "g", name: "black sesame paste or red bean paste"),
+                Ingredient(baseQuantity: 1, unit: "", name: "egg (for egg wash)"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "water (for egg wash)"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "coarse sugar (for topping)")
+            ],
+            prePrepInstructions: [
+                "Combine flour and salt in a mixing bowl. Cut cold butter and cream cheese into the mixture until a crumbly texture forms.",
+                "Form the mixture into a dough ball, wrap in plastic, and chill for at least 2 hours.",
+                "Roll out the dough into a thin disk, approximately 10 inches wide. Wrap and chill for at least 30 minutes."
+            ],
+            instructions: [
+                "Spread black sesame or red bean paste evenly over the chilled dough.",
+                "Cut the dough like a pizza into 12 triangles: first in half vertically, then horizontally to create 4 pieces, then each piece into thirds.",
+                "Roll up each triangle from the wide edge (outer edge) to form rugelach shapes. Place on a plastic-lined plate and chill for at least 30 minutes.",
+                "Preheat the oven to 350°F (175°C).",
+                "Transfer rugelach to a lined baking sheet. Prepare the egg wash by beating 1 egg with 1 tsp water. Brush the tops of the cookies with egg wash and sprinkle generously with coarse sugar.",
+                "Bake for 20–25 minutes or until golden brown."
+            ],
+            notes: "Keep dough cold throughout for flakiness. Use parchment or silicone mats for easy release. Great for gifting or freezing."
+        )
+        
+        saveRecipe(
+            name: "Black Sesame Matcha Tiramisu",
+            category: "Dessert",
+            difficulty: "Medium",
+            prepTime: "20 minutes",
+            cookingTime: "20 minutes",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                Ingredient(baseQuantity: 12, unit: "", name: "Black Sesame Lady Fingers"),
+                Ingredient(baseQuantity: 2, unit: "tsp", name: "matcha powder"),
+                Ingredient(baseQuantity: 60, unit: "ml", name: "hot water"),
+                Ingredient(baseQuantity: 200, unit: "ml", name: "heavy cream"),
+                Ingredient(baseQuantity: 25, unit: "g", name: "powdered sugar"),
+                Ingredient(baseQuantity: 20, unit: "g", name: "black sesame powder")
+            ],
+            prePrepInstructions: [
+                "Prepare Black Sesame Lady Fingers as per recipe.",
+                "Mix matcha powder with hot water and set aside to cool.",
+                "Whip heavy cream with powdered sugar and black sesame powder to stiff peaks. Transfer to a piping bag."
+            ],
+            instructions: [
+                "Layer lady fingers soaked in matcha at the base of a dish.",
+                "Pipe a layer of black sesame whipped cream on top. Repeat for a second layer of lady fingers and cream.",
+                "Cover and refrigerate for at least 4 hours or overnight.",
+                "Before serving, decorate with whipped cream and dust with matcha."
+            ],
+            notes: "Let sit overnight for better flavor. Use ceremonial-grade matcha for best color and taste. Keep chilled until serving."
+        )
+        
+        saveRecipe(
+            name: "Black Sesame Tangyuan With Plain Skins And Matcha Skins",
+            category: "Dessert",
+            difficulty: "Medium",
+            prepTime: "2 hours",
+            cookingTime: "15 minutes",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                Ingredient(baseQuantity: 40, unit: "g", name: "unsalted butter"),
+                Ingredient(baseQuantity: 40, unit: "g", name: "sugar"),
+                Ingredient(baseQuantity: 60, unit: "g", name: "black sesame seeds"),
+                Ingredient(baseQuantity: 100, unit: "g", name: "glutinous rice flour (for plain dough)"),
+                Ingredient(baseQuantity: 100, unit: "g", name: "glutinous rice flour (for matcha dough)"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "matcha powder"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "sugar (optional, for matcha dough)"),
+                Ingredient(baseQuantity: 100, unit: "ml", name: "water (adjust as needed)")
+            ],
+            prePrepInstructions: [
+                "Heat butter until just melted, then stir in sugar and sesame seeds until incorporated. Chill until solidified (about 2 hours).",
+                "Roll teaspoon-sized amounts of the sesame mixture into balls and freeze for 1 hour.",
+                "For plain skins: Gradually mix water into rice flour, stirring, and knead into a smooth dough.",
+                "For matcha skins: Mix rice flour, matcha, and sugar (if using), then add water gradually and knead into a smooth dough."
+            ],
+            instructions: [
+                "Take a tablespoon-sized amount of dough and flatten into a thin disk.",
+                "Place a frozen sesame ball in the center and wrap the dough around it, sealing the edges. Roll between your palms to form a smooth ball.",
+                "Boil water in a pot. Add tangyuan and cook for 15 minutes, stirring occasionally to prevent sticking.",
+                "Serve warm, optionally with sweet ginger syrup or osmanthus broth."
+            ],
+            notes: "To enhance flavor, toast the sesame seeds before grinding. Keep dough covered to prevent drying. Matcha dough may need slightly more water than plain."
+        )
+        
+        saveRecipe(
+            name: "Blueberry Cupcake with Streusel Topping",
+            category: "Dessert",
+            difficulty: "Medium",
+            prepTime: "15 minutes",
+            cookingTime: "35-40 minutes",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                Ingredient(baseQuantity: 2, unit: "", name: "eggs"),
+                Ingredient(baseQuantity: 120, unit: "ml", name: "buttermilk"),
+                Ingredient(baseQuantity: 60, unit: "ml", name: "vegetable oil"),
+                Ingredient(baseQuantity: 60, unit: "g", name: "melted butter"),
+                Ingredient(baseQuantity: 200, unit: "g", name: "plain flour"),
+                Ingredient(baseQuantity: 80, unit: "g", name: "caster sugar"),
+                Ingredient(baseQuantity: 60, unit: "g", name: "soft brown sugar"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "baking powder"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "lemon zest (optional)"),
+                Ingredient(baseQuantity: 100, unit: "g", name: "blueberries"),
+                Ingredient(baseQuantity: 60, unit: "g", name: "Demerara sugar (for streusel)"),
+                Ingredient(baseQuantity: 50, unit: "g", name: "plain flour (for streusel)"),
+                Ingredient(baseQuantity: 30, unit: "g", name: "melted butter (for streusel)"),
+                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "cinnamon (for streusel)"),
+                Ingredient(baseQuantity: 1, unit: "pinch", name: "salt (for streusel)")
+            ],
+            prePrepInstructions: [
+                "Prepare the streusel topping by mixing melted butter, plain flour, cinnamon, salt, and Demerara sugar in a bowl until crumbly.",
+                "Set the streusel aside.",
+                "Preheat the oven to 185°C (170°C fan assisted)."
+            ],
+            instructions: [
+                "In a large bowl, whisk eggs, buttermilk, vegetable oil, and melted butter together.",
+                "In a separate bowl, mix plain flour, caster sugar, soft brown sugar, baking powder, zest (if using), and blueberries.",
+                "Fold the dry mixture into the wet ingredients until just combined. Avoid overmixing.",
+                "Spoon the batter into cupcake cases, filling to the edges.",
+                "Sprinkle streusel topping over the batter.",
+                "Bake for 35-40 minutes or until a skewer inserted into the center comes out clean."
+            ],
+            notes: "Use frozen blueberries if fresh ones aren't available. Do not thaw them before mixing. Optional zest adds a citrus note."
+        )
+        
+        saveRecipe(
+            name: "Brown Butter Chocolate Chip Cookies",
+            category: "Dessert",
+            difficulty: "Medium",
+            prepTime: "1 hour (includes chilling time)",
+            cookingTime: "18 minutes",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                Ingredient(baseQuantity: 170, unit: "g", name: "unsalted butter"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "instant coffee"),
+                Ingredient(baseQuantity: 100, unit: "g", name: "granulated sugar"),
+                Ingredient(baseQuantity: 120, unit: "g", name: "dark brown sugar"),
+                Ingredient(baseQuantity: 1, unit: "", name: "egg"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "vanilla extract"),
+                Ingredient(baseQuantity: 180, unit: "g", name: "bread flour"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "cream of tartar"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "baking soda"),
+                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "salt"),
+                Ingredient(baseQuantity: 200, unit: "g", name: "chocolate chips"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "flaky salt (optional, for garnish)")
+            ],
+            prePrepInstructions: [
+                "Brown the butter over medium-high heat until golden and nutty. Stir in instant coffee and let cool.",
+                "Combine granulated sugar, dark brown sugar, egg, and vanilla with the cooled butter and mix until glossy."
+            ],
+            instructions: [
+                "Combine dry ingredients: bread flour, salt, cream of tartar, and baking soda.",
+                "Fold dry ingredients and chocolate chips into the butter mixture until evenly combined.",
+                "Form dough into balls and chill for at least overnight or up to three days.",
+                "Preheat oven to 325°F. Bake cookies on a parchment-lined baking sheet for 18 minutes.",
+                "Sprinkle with flaky salt after baking, if desired."
+            ],
+            notes: "Chilling the dough enhances flavor and improves texture. Use high-quality dark chocolate for rich flavor. Cookies will firm up as they cool."
+        )
+        
+        saveRecipe(
+            name: "Best Ever Classic Chocolate Brownies",
+            category: "Dessert",
+            difficulty: "Medium",
+            prepTime: "15 minutes",
+            cookingTime: "25-30 minutes",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                Ingredient(baseQuantity: 180, unit: "g", name: "unsalted butter"),
+                Ingredient(baseQuantity: 200, unit: "g", name: "dark chocolate"),
+                Ingredient(baseQuantity: 3, unit: "", name: "eggs"),
+                Ingredient(baseQuantity: 250, unit: "g", name: "caster sugar"),
+                Ingredient(baseQuantity: 100, unit: "g", name: "plain flour"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "cocoa powder"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "baking powder"),
+                Ingredient(baseQuantity: 100, unit: "g", name: "chocolate chunks, nuts, or marshmallows (optional)")
+            ],
+            prePrepInstructions: [
+                "Preheat oven to 180°C (160°C fan/gas mark 4). Line a 22cm square tin with parchment.",
+                "Melt butter and chocolate together, then cool to room temperature."
+            ],
+            instructions: [
+                "Whisk eggs and sugar until light and fluffy.",
+                "Fold in melted chocolate mixture.",
+                "Sift in plain flour, baking powder, and cocoa powder. Fold to combine.",
+                "Add optional mix-ins like chocolate chunks, nuts, or marshmallows, if desired.",
+                "Pour batter into the prepared tin and bake for 25-30 minutes, or until the top is cracked but the center is just set.",
+                "Cool completely before slicing."
+            ],
+            notes: "Brownies will continue to set as they cool. For gooier centers, reduce baking time by a couple of minutes. Dust with powdered sugar or serve with ice cream."
+        )
+        
+        saveRecipe(
+            name: "Brown Sugar Boba Matcha Latte",
+            category: "Drink",
+            difficulty: "Medium",
+            prepTime: "25 minutes",
+            cookingTime: "20 minutes",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                Ingredient(baseQuantity: 100, unit: "g", name: "tapioca pearls (boba)"),
+                Ingredient(baseQuantity: 60, unit: "g", name: "brown sugar"),
+                Ingredient(baseQuantity: 60, unit: "ml", name: "cold water (for syrup)"),
+                Ingredient(baseQuantity: 2, unit: "tsp", name: "matcha powder"),
+                Ingredient(baseQuantity: 120, unit: "ml", name: "hot water (for matcha)"),
+                Ingredient(baseQuantity: 500, unit: "ml", name: "milk of choice"),
+                Ingredient(baseQuantity: 1, unit: "cup", name: "ice")
+            ],
+            prePrepInstructions: [
+                "Prepare the bobas by boiling them for 25 minutes uncovered over medium flame, stirring occasionally.",
+                "After boiling, turn off the heat and allow the bobas to sit in the pot of water for another 20 minutes, covered.",
+                "Strain the bobas and rinse them with cold water to retain their bounciness."
+            ],
+            instructions: [
+                "In a small pot, combine brown sugar and ¼ cup cold water. Bring to a boil and simmer over medium heat until it becomes a thick syrup. Remove from heat and cover to keep warm.",
+                "In a large measuring cup, whisk together matcha powder and ½ cup hot boiling water until smooth.",
+                "Spoon the cooked bobas into the base of a glass.",
+                "Drizzle the brown sugar syrup along the walls of the glass for a decorative effect.",
+                "Fill the glass with ice as much as desired.",
+                "Pour the matcha tea into the glass, followed by the milk of your choice.",
+                "Stir gently and enjoy your homemade brown sugar boba matcha latte!"
+            ],
+            notes: "You can sweeten the matcha if preferred. Adjust milk quantity to your taste. Use barista oat milk for extra creaminess."
+        )
+        
+        saveRecipe(
+            name: "Keema (Instant Pot Ground Beef Curry)",
+            category: "Main Course",
+            difficulty: "Medium",
+            prepTime: "30 minutes",
+            cookingTime: "30 minutes",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                // Main Ingredients
+                Ingredient(baseQuantity: 1, unit: "lb", name: "ground beef (lean or regular)"),
+                Ingredient(baseQuantity: 1, unit: "medium", name: "onion, peeled and chopped into eighths"),
+                Ingredient(baseQuantity: 5, unit: "cloves", name: "garlic, peeled"),
+                Ingredient(baseQuantity: 0.5, unit: "inch", name: "ginger, peeled and cut into a few pieces"),
+                Ingredient(baseQuantity: 0.25, unit: "cup", name: "neutral oil (such as avocado or grapeseed)"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "cumin seeds"),
+                Ingredient(baseQuantity: 1, unit: "small", name: "green chili peppers, stems removed and roughly chopped"),
+                Ingredient(baseQuantity: 1, unit: "small to medium", name: "tomato, quartered or use a chopped tomato can"),
+                Ingredient(baseQuantity: 0.5, unit: "lb", name: "potatoes, diced"),
+                
+                // Ground Spices & Salt
+                Ingredient(baseQuantity: 2, unit: "tsp", name: "coriander powder"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "cumin powder"),
+                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "turmeric powder"),
+                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "red chili powder, or to taste"),
+                Ingredient(baseQuantity: 0.25, unit: "tsp", name: "red chili flakes (optional)"),
+                Ingredient(baseQuantity: 0.25, unit: "tsp", name: "freshly ground black pepper"),
+                Ingredient(baseQuantity: 1.25, unit: "tsp", name: "kosher salt, or to taste"),
+                
+                // After Pressure Cooking
+                Ingredient(baseQuantity: 135, unit: "g", name: "Peas"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "whole milk yogurt"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "cilantro leaves, finely chopped"),
+                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "garam masala"),
+                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "freshly squeezed lemon juice (optional)")
+            ],
+            prePrepInstructions: [
+                "Place onion, garlic, and ginger in a food processor.",
+                "Pulse until finely chopped but not blended.",
+                "Use the pulse function to roughly chop the tomato and green chili peppers.",
+                "Set aside."
+            ],
+            instructions: [
+                "Select the Sauté setting on the Instant Pot and set to More/High.",
+                "When the screen says 'Hot', add oil and cumin seeds.",
+                "Let them sizzle for a few seconds.",
+                "Add the onion mixture and sauté until lightly browned, about 6-8 minutes.",
+                "Deglaze the Instant Pot with a splash of water, stirring to remove any bits stuck to the pan.",
+                "Add ground beef and cook, stirring to remove lumps, until the meat changes color, about 4-5 minutes.",
+                "Add the tomato and green chili mixture, ground spices, and salt.",
+                "Mix well, deglazing any bits. (No need to add extra water as the beef and tomatoes provide enough moisture.)",
+                "Cancel Sauté, close the lid, and seal.",
+                "Select the Pressure Cook setting on High for 10 minutes.",
+                "After cooking, allow pressure to naturally release for 5 minutes, then manually release any remaining pressure.",
+                "Select the Sauté setting on More/High.",
+                "Stir in yogurt and sauté until the meat turns glossy and no excess liquid remains, about 6-7 minutes.",
+                "Taste and adjust salt and spices.",
+                "Sprinkle with garam masala, cilantro, and lemon juice (if desired).",
+                "Serve warm."
+            ],
+            notes: "The moisture from the tomato and beef is sufficient for pressure cooking; no extra water is needed. If it appears dry, add a small splash of water and mix. Keema freezes well. Cool completely before transferring to an airtight container. Reheat in a saucepan or microwave, adding a splash of water if needed."
         )
         print("Default recipes added!")
     }
