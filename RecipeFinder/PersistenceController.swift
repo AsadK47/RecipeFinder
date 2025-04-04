@@ -1635,6 +1635,46 @@ extension PersistenceController {
         )
         
         saveRecipe(
+            name: "Cabbage Dolmas",
+            category: "Middle Eastern",
+            difficulty: "Medium",
+            prepTime: "15 minutes",
+            cookingTime: "50 minutes",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                Ingredient(baseQuantity: 1, unit: "medium", name: "green cabbage"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "butter or olive oil"),
+                Ingredient(baseQuantity: 300, unit: "g", name: "stew meat, cubed"),
+                Ingredient(baseQuantity: 1, unit: "", name: "onion, chopped"),
+                Ingredient(baseQuantity: 2, unit: "", name: "cinnamon sticks"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "salt (or to taste)"),
+                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "black pepper (or to taste)"),
+                Ingredient(baseQuantity: 2, unit: "cups", name: "beef broth"),
+                Ingredient(baseQuantity: 250, unit: "g", name: "ground beef"),
+                Ingredient(baseQuantity: 0.25, unit: "cup", name: "fresh parsley, chopped"),
+                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "ground cumin"),
+                Ingredient(baseQuantity: 0.25, unit: "tsp", name: "ground cinnamon"),
+                Ingredient(baseQuantity: 1, unit: "handful", name: "fresh cilantro, for garnish")
+            ],
+            prePrepInstructions: [
+                "Steam cabbage leaves for 3 to 5 minutes until softened. Set aside.",
+                "Chop onion and parsley for the stuffing and broth mixture."
+            ],
+            instructions: [
+                "In a large sauté pan, melt the butter or oil over medium heat. Brown the stew meat on all sides, about 5 minutes.",
+                "Add the chopped onion, cinnamon sticks, and a pinch of salt and pepper. Cook for 3 minutes until onion is translucent.",
+                "Pour in beef broth, bring to a boil, then simmer uncovered for 30 minutes.",
+                "While the stew meat cooks, combine the stuffing ingredients (ground beef, parsley, cumin, and cinnamon) in a large bowl.",
+                "Place 1/4 cup of the stuffing mixture onto a steamed cabbage leaf. Roll halfway, tuck in the sides, and finish rolling. Place seam-side down on a plate.",
+                "Repeat until all stuffing is used.",
+                "Using tongs, add the cabbage rolls to the sauté pan. Cover and simmer for 15–20 minutes.",
+                "Remove the cinnamon sticks, garnish with fresh cilantro, and serve warm."
+            ],
+            notes: "Use savoy cabbage for easier rolling. Cabbage leaves can be prepped in advance and stored in the fridge. If desired, add a splash of lemon juice before serving for brightness."
+        )
+        
+        saveRecipe(
             name: "Keema (Instant Pot Ground Beef Curry)",
             category: "Main Course",
             difficulty: "Medium",
