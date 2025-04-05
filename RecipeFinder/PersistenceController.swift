@@ -1675,6 +1675,40 @@ extension PersistenceController {
         )
         
         saveRecipe(
+            name: "Carrot Ginger Lentil Soup (Instant Pot or Stovetop)",
+            category: "Soup",
+            difficulty: "Medium",
+            prepTime: "45 minutes",
+            cookingTime: "6 minutes (plus pressure release time)",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                Ingredient(baseQuantity: 4, unit: "large", name: "carrots"),
+                Ingredient(baseQuantity: 1, unit: "", name: "onion, diced"),
+                Ingredient(baseQuantity: 1, unit: "cup", name: "red lentils, rinsed"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "fresh ginger, minced"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "curry powder"),
+                Ingredient(baseQuantity: 4, unit: "cups", name: "vegetable broth"),
+                Ingredient(baseQuantity: 1, unit: "cup", name: "full-fat coconut milk"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "lemon juice")
+            ],
+            prePrepInstructions: [
+                "Rinse and pat dry carrots. Cut into large chunks.",
+                "Dice the onion and rinse the red lentils.",
+                "Peel and mince the ginger."
+            ],
+            instructions: [
+                "Combine carrots, onion, lentils, ginger, curry powder, and vegetable broth in the base of a 6-quart or 8-quart Instant Pot pressure cooker.",
+                "Lock on the lid and set the timer to 6 minutes at high pressure.",
+                "Once cooking is complete, allow the pressure to release naturally for about 10 minutes.",
+                "Carefully remove the lid and stir in the coconut milk and lemon juice.",
+                "Use a hand-immersion blender to blend the soup until smooth.",
+                "Serve the soup hot."
+            ],
+            notes: "This soup can also be made on the stovetop by simmering the ingredients until carrots are soft. Adjust curry powder to taste. A swirl of extra coconut milk on top adds a nice touch."
+        )
+        
+        saveRecipe(
             name: "Keema (Instant Pot Ground Beef Curry)",
             category: "Main Course",
             difficulty: "Medium",
