@@ -257,6 +257,16 @@ struct RecipeDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
+                // 👇 Add this block to show the image if available
+                if let imageName = recipe.imageName {
+                    Image(imageName)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 200)
+                        .cornerRadius(12)
+                        .shadow(radius: 5)
+                }
+                
                 Text(recipe.name)
                     .font(.title)
                     .bold()

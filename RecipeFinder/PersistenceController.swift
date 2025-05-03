@@ -25,19 +25,21 @@ struct Ingredient: Identifiable, Codable {
 }
 
 struct RecipeModel: Identifiable, Codable {
-    var id: UUID = UUID() // Mutable to support decoding
+    var id: UUID = UUID()
     let name: String
     let category: String
     let difficulty: String
     let prepTime: String
     let cookingTime: String
     let baseServings: Int
-    var currentServings: Int // Mutable for dynamic adjustment
+    var currentServings: Int
     var ingredients: [Ingredient]
     let prePrepInstructions: [String]
     let instructions: [String]
     let notes: String
-    
+    let imageName: String? // NEW
+
+    // Update your initializer
     init(
         id: UUID = UUID(),
         name: String,
@@ -50,7 +52,8 @@ struct RecipeModel: Identifiable, Codable {
         ingredients: [Ingredient],
         prePrepInstructions: [String],
         instructions: [String],
-        notes: String
+        notes: String,
+        imageName: String? = nil // Default nil
     ) {
         self.id = id
         self.name = name
@@ -64,6 +67,7 @@ struct RecipeModel: Identifiable, Codable {
         self.prePrepInstructions = prePrepInstructions
         self.instructions = instructions
         self.notes = notes
+        self.imageName = imageName
     }
 }
 
@@ -113,7 +117,8 @@ class PersistenceController {
             ingredients: [Ingredient],
             prePrepInstructions: [String],
             instructions: [String],
-            notes: String
+            notes: String,
+            imageName: String
     ) {
         let context = container.viewContext
         let entity = NSEntityDescription.insertNewObject(forEntityName: "Recipe", into: context)
@@ -141,7 +146,8 @@ class PersistenceController {
             "ingredients": ingredientValues,
             "prePrepInstructions": prePrepInstructions,
             "instructions": instructions,
-            "notes": notes
+            "notes": notes,
+            "imageName": imageName
         ]
         
         for (key, value) in values {
@@ -179,6 +185,7 @@ class PersistenceController {
                 let prePrepInstructions = result.value(forKey: "prePrepInstructions") as? [String] ?? []
                 let instructions = result.value(forKey: "instructions") as? [String] ?? []
                 let notes = result.value(forKey: "notes") as? String ?? ""
+                let imageName = result.value(forKey: "imageName") as? String ?? "default_image"
                 
                 let ingredients: [Ingredient]
                 if let ingredientsData = result.value(forKey: "ingredients") as? Data {
@@ -204,7 +211,8 @@ class PersistenceController {
                     ingredients: ingredients,
                     prePrepInstructions: prePrepInstructions,
                     instructions: instructions,
-                    notes: notes
+                    notes: notes,
+                    imageName: imageName
                 )
             }
         } catch {
@@ -270,7 +278,8 @@ extension PersistenceController {
                 "Naturally release pressure.",
                 "Garnish with cilantro and serve."
             ],
-            notes: "A flavorful and tangy chicken curry, perfect for pairing with naan or rice."
+            notes: "A flavorful and tangy chicken curry, perfect for pairing with naan or rice.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -305,7 +314,8 @@ extension PersistenceController {
                 "Add the cooked beef to the pan and toss to coat in the sauce.",
                 "Garnish with spring onions before serving."
             ],
-            notes: "Serve immediately with steamed rice or noodles for a delicious and crispy meal."
+            notes: "Serve immediately with steamed rice or noodles for a delicious and crispy meal.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -352,7 +362,8 @@ extension PersistenceController {
                 "Add garam masala, vinegar, and slit green chilies. Mix well.",
                 "Garnish with chopped cilantro and serve hot."
             ],
-            notes: "Pairs well with naan, roti, or steamed basmati rice. Adjust spices to taste for a milder or spicier curry."
+            notes: "Pairs well with naan, roti, or steamed basmati rice. Adjust spices to taste for a milder or spicier curry.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -384,7 +395,8 @@ extension PersistenceController {
                 "Air fry at 350°F for 5-6 minutes until golden.",
                 "Coat with powdered sugar before serving."
             ],
-            notes: "A healthier twist on a classic treat. Best served fresh."
+            notes: "A healthier twist on a classic treat. Best served fresh.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -416,7 +428,8 @@ extension PersistenceController {
                 "Prepare sauce by mixing gochujang, honey, and sesame oil.",
                 "Toss cooked wings in sauce and garnish with scallions and sesame seeds."
             ],
-            notes: "Crispy, spicy, and savory, these wings pair well with a cold drink."
+            notes: "Crispy, spicy, and savory, these wings pair well with a cold drink.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -447,7 +460,8 @@ extension PersistenceController {
                 "Place chicken in the air fryer and spray lightly with oil.",
                 "Air fry at 375°F for 20 minutes, flipping halfway through."
             ],
-            notes: "Crispy, flavorful chicken with less grease—perfect for any occasion."
+            notes: "Crispy, flavorful chicken with less grease—perfect for any occasion.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -476,7 +490,8 @@ extension PersistenceController {
                 "Place wings in air fryer and cook at 375°F for 20 minutes, flipping halfway.",
                 "Garnish with sesame seeds before serving."
             ],
-            notes: "Juicy and savory wings, perfect for game day."
+            notes: "Juicy and savory wings, perfect for game day.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -511,7 +526,8 @@ extension PersistenceController {
                 "Add potatoes and water, and simmer until tender.",
                 "Garnish with chopped cilantro before serving."
             ],
-            notes: "A hearty and comforting curry, best served with naan or rice."
+            notes: "A hearty and comforting curry, best served with naan or rice.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -545,7 +561,8 @@ extension PersistenceController {
                 "Flip pancakes over and cook for another minute on the other side. Repeat until all batter is used.",
                 "Serve pancakes stacked with a drizzle of maple syrup and your favourite toppings."
             ],
-            notes: "American pancakes are a classic breakfast dish. Experiment with different toppings like fresh fruits, whipped cream, or savory additions like bacon."
+            notes: "American pancakes are a classic breakfast dish. Experiment with different toppings like fresh fruits, whipped cream, or savory additions like bacon.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -588,7 +605,8 @@ extension PersistenceController {
                 "Remove the lid and fold one side of the pancake over the other to create a semi-circle.",
                 "Slide the pancake onto a cutting board, slice it in half with a sharp knife, and repeat for the remaining batter. Enjoy!"
             ],
-            notes: "Apam Balik is a popular Malaysian street food pancake filled with sweet and savory fillings. For a dairy-free version, use oat milk and vegan butter. Enjoy it as a dessert, snack, or breakfast."
+            notes: "Apam Balik is a popular Malaysian street food pancake filled with sweet and savory fillings. For a dairy-free version, use oat milk and vegan butter. Enjoy it as a dessert, snack, or breakfast.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -630,7 +648,8 @@ extension PersistenceController {
                 "Bake for 25 minutes or until the crumble is toasted golden.",
                 "Sprinkle cinnamon sugar and serve with custard."
             ],
-            notes: "Apple crumble is a versatile dessert that pairs well with custard, vanilla ice cream, or chilled double cream. For added flavor, consider adding 1 tsp of cinnamon to the apples before cooking. You can substitute Hob Nobs for digestive biscuits in the crumble for a different texture. Serve warm with custard or vanilla ice cream. Adjust sugar based on the sweetness of the apples used."
+            notes: "Apple crumble is a versatile dessert that pairs well with custard, vanilla ice cream, or chilled double cream. For added flavor, consider adding 1 tsp of cinnamon to the apples before cooking. You can substitute Hob Nobs for digestive biscuits in the crumble for a different texture. Serve warm with custard or vanilla ice cream. Adjust sugar based on the sweetness of the apples used.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -661,7 +680,8 @@ extension PersistenceController {
                 "Stir in the oats and brown sugar, then sprinkle over the cooked apples in the dish.",
                 "Bake for 30 minutes or until crisp and golden brown on top."
             ],
-            notes: "Serve warm with custard or vanilla ice cream. Adjust sugar based on the sweetness of the apples used."
+            notes: "Serve warm with custard or vanilla ice cream. Adjust sugar based on the sweetness of the apples used.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -699,7 +719,8 @@ extension PersistenceController {
                 "Remove the fried apple slices and set them aside on a paper-towel-lined plate.",
                 "Dip the fried apple slices into the cooled syrup, garnish with crushed pistachios, and serve."
             ],
-            notes: "This delicious Malaysian-inspired dessert uses probiotics to ferment the batter, resulting in a light and flavorful dish. The syrup can be prepared ahead of time and cooled for dipping. Experiment with different oils or vegan butter substitutes for frying. Adjust the number of probiotic capsules based on the culture count (40-50 billion)."
+            notes: "This delicious Malaysian-inspired dessert uses probiotics to ferment the batter, resulting in a light and flavorful dish. The syrup can be prepared ahead of time and cooled for dipping. Experiment with different oils or vegan butter substitutes for frying. Adjust the number of probiotic capsules based on the culture count (40-50 billion).",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -729,7 +750,8 @@ extension PersistenceController {
                 "Spread over apples and pat down gently until even.",
                 "Bake in the preheated oven until golden brown and sides are bubbling, about 35-40 minutes."
             ],
-            notes: "Use high-quality cinnamon for a richer flavor. Serve with ice cream or whipped cream for an extra treat."
+            notes: "Use high-quality cinnamon for a richer flavor. Serve with ice cream or whipped cream for an extra treat.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -766,7 +788,8 @@ extension PersistenceController {
                 "Bake for at least 30 minutes until golden brown and bubbling.",
                 "Let sit for 20 minutes before serving."
             ],
-            notes: "Serve with ice cream, custard, or cream. This dish can be reheated or frozen for later use."
+            notes: "Serve with ice cream, custard, or cream. This dish can be reheated or frozen for later use.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -805,7 +828,8 @@ extension PersistenceController {
                 "Scoop the apple filling into the prepared baking dish. Sprinkle the topping evenly over the filling.",
                 "Bake for 18-22 minutes or until lightly crisp on top."
             ],
-            notes: "This recipe has a delightful spiced twist. Garnish with additional walnuts or a dollop of whipped cream for extra flavor."
+            notes: "This recipe has a delightful spiced twist. Garnish with additional walnuts or a dollop of whipped cream for extra flavor.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -833,7 +857,8 @@ extension PersistenceController {
                 "Air fry or deep fry the wings as per instructions.",
                 "Toss hot wings in sweet lemon sauce and serve."
             ],
-            notes: "Crispy, tangy, and delicious wings with an Asian twist!"
+            notes: "Crispy, tangy, and delicious wings with an Asian twist!",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -878,7 +903,8 @@ extension PersistenceController {
                 "Add the roasted and chopped eggplant, mix, and cook for an additional 5 minutes.",
                 "Garnish with chopped cilantro and serve hot."
             ],
-            notes: "Baingan ka Bharta is a traditional Indian dish known for its smoky flavor, thanks to the roasted eggplant. Serve it with naan, roti, or steamed rice for a comforting meal. This dish originates from North India and is a staple in many households."
+            notes: "Baingan ka Bharta is a traditional Indian dish known for its smoky flavor, thanks to the roasted eggplant. Serve it with naan, roti, or steamed rice for a comforting meal. This dish originates from North India and is a staple in many households.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -907,7 +933,8 @@ extension PersistenceController {
                 "Spread the sauce evenly over the fish.",
                 "Bake for about 15 minutes or until the fish is opaque and flakes easily."
             ],
-            notes: "This dish pairs wonderfully with steamed vegetables or a side of rice. Cajun seasoning adds a spicy kick, but feel free to adjust based on your spice tolerance!"
+            notes: "This dish pairs wonderfully with steamed vegetables or a side of rice. Cajun seasoning adds a spicy kick, but feel free to adjust based on your spice tolerance!",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -956,7 +983,8 @@ extension PersistenceController {
                 "Optionally, add a small piece of butter to the pan, let it melt, and coat the roti.",
                 "Cut the roti into pieces, drizzle with condensed milk or chocolate sauce, and sprinkle with granulated sugar before serving."
             ],
-            notes: "This street-food favorite is perfect for dessert or a snack. Adjust toppings to suit your taste. Be cautious of hot filling when serving!"
+            notes: "This street-food favorite is perfect for dessert or a snack. Adjust toppings to suit your taste. Be cautious of hot filling when serving!",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -1002,7 +1030,8 @@ extension PersistenceController {
                 "If the top browns too quickly and the skewer comes out unclean, cover the loaf loosely with foil and bake for additional time until fully cooked.",
                 "Let the banana bread cool in the tin for 10 minutes, then transfer to a wire rack to cool completely before slicing."
             ],
-            notes: "This banana bread is rich and moist, perfect for breakfast or dessert. Use overly ripe bananas for the best flavor. Customize with different nuts or chocolate types!"
+            notes: "This banana bread is rich and moist, perfect for breakfast or dessert. Use overly ripe bananas for the best flavor. Customize with different nuts or chocolate types!",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -1043,7 +1072,8 @@ extension PersistenceController {
                 "Allow buns to cool completely if storing or freeze for later use.",
                 "Reheat by steaming for 5 minutes if chilled or 7 minutes if frozen."
             ],
-            notes: "Bao buns are soft and fluffy, perfect for filling with meats, vegetables, or sweet spreads. Adjust proofing time based on room temperature and ensure proper steaming for best results!"
+            notes: "Bao buns are soft and fluffy, perfect for filling with meats, vegetables, or sweet spreads. Adjust proofing time based on room temperature and ensure proper steaming for best results!",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -1084,7 +1114,8 @@ extension PersistenceController {
                 "Return the crispy beef to the wok and add the prepared sauce. Stir-fry over high heat for 2–3 minutes until the beef is well coated.",
                 "Serve hot with steamed rice and optional wok-fried greens."
             ],
-            notes: "Beijing Beef is a quick and flavorful dish that pairs perfectly with rice and stir-fried vegetables. Customize the spice level by adjusting the sambal quantity to taste. Make sure to fry the beef in small batches to keep it crispy. Leftovers can be stored in an airtight container and reheated in a pan or air fryer."
+            notes: "Beijing Beef is a quick and flavorful dish that pairs perfectly with rice and stir-fried vegetables. Customize the spice level by adjusting the sambal quantity to taste. Make sure to fry the beef in small batches to keep it crispy. Leftovers can be stored in an airtight container and reheated in a pan or air fryer.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -1128,7 +1159,8 @@ extension PersistenceController {
                 "Return the cooked beef, bean sprouts, and scallion greens to the pan. Toss gently until everything is mixed.",
                 "Remove from heat and serve hot."
             ],
-            notes: "Use fresh rice noodles if available for the best texture. Avoid over-stirring the noodles to keep them from breaking. Cook beef in a single layer for good browning. This dish is best served immediately after cooking."
+            notes: "Use fresh rice noodles if available for the best texture. Avoid over-stirring the noodles to keep them from breaking. Cook beef in a single layer for good browning. This dish is best served immediately after cooking.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -1177,7 +1209,8 @@ extension PersistenceController {
                 "Add the fried beef, onions, and peppers back into the pan. Toss well over medium-high heat to combine evenly for 1–2 minutes.",
                 "Remove from heat and transfer to a serving plate. Serve hot with plain rice, egg fried rice, or noodles."
             ],
-            notes: "Adjust sugar and salt to taste. You can substitute black beans with black bean garlic sauce if needed. Ensure the beef is thinly sliced and not overcrowded in the pan for best browning. This dish pairs well with hot steamed rice or noodles."
+            notes: "Adjust sugar and salt to taste. You can substitute black beans with black bean garlic sauce if needed. Ensure the beef is thinly sliced and not overcrowded in the pan for best browning. This dish pairs well with hot steamed rice or noodles.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -1224,7 +1257,8 @@ extension PersistenceController {
                 "Add blanched noodles to the pan followed by the prepared sauce mixture. Toss until noodles are evenly coated and sauce thickens slightly.",
                 "Return the cooked beef to the pan and add green onions. Toss everything together until well combined. Remove from heat and serve immediately."
             ],
-            notes: "Use fresh egg noodles if possible for best texture. Do not overcook the vegetables—they should stay vibrant and slightly crisp. Freezing the beef before slicing makes it easier to cut thinly.This dish is great with a side of chili oil or pickled vegetables."
+            notes: "Use fresh egg noodles if possible for best texture. Do not overcook the vegetables—they should stay vibrant and slightly crisp. Freezing the beef before slicing makes it easier to cut thinly.This dish is great with a side of chili oil or pickled vegetables.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -1274,7 +1308,8 @@ extension PersistenceController {
                 "Let the pasta stand for a couple of minutes to absorb the sauce before serving.",
                 "Garnish with Parmesan cheese and fresh basil."
             ],
-            notes: "For a deeper flavor, allow the ragu to rest for 10–15 minutes before serving. This sauce can also be made ahead and refrigerated overnight—it tastes even better the next day. Polenta is a great alternative to pasta. Use quality canned tomatoes for best results."
+            notes: "For a deeper flavor, allow the ragu to rest for 10–15 minutes before serving. This sauce can also be made ahead and refrigerated overnight—it tastes even better the next day. Polenta is a great alternative to pasta. Use quality canned tomatoes for best results.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -1315,7 +1350,8 @@ extension PersistenceController {
                 "Reduce heat, cover, and simmer for 2 hours, adding potatoes and mustard in the last 20 minutes.",
                 "Season with salt and pepper to taste. Garnish with parsley and serve."
             ],
-            notes: "Use red wine for a deeper flavor, or substitute with vinegar. Deglazing the pot ensures you capture the fond for added depth. This stew is even better the next day after the flavors develop further."
+            notes: "Use red wine for a deeper flavor, or substitute with vinegar. Deglazing the pot ensures you capture the fond for added depth. This stew is even better the next day after the flavors develop further.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -1354,7 +1390,8 @@ extension PersistenceController {
                 "Add cornstarch slurry, followed by tomatoes. Simmer until sauce thickens.",
                 "Garnish with green onions and serve."
             ],
-            notes: "Serve with steamed jasmine rice. Adjust ketchup for sweetness or tartness. Do not overcook beef for tenderness."
+            notes: "Serve with steamed jasmine rice. Adjust ketchup for sweetness or tartness. Do not overcook beef for tenderness.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -1390,7 +1427,8 @@ extension PersistenceController {
                 "Arrange noodles in a bowl with sauce and toppings: chili flakes, garlic, Sichuan pepper, and green onion.",
                 "Heat oil until smoking, pour over the toppings, and mix until combined. Serve immediately."
             ],
-            notes: "Dough resting time is key for pulling elasticity. Use gloves when handling hot oil. Customize spice level to taste."
+            notes: "Dough resting time is key for pulling elasticity. Use gloves when handling hot oil. Customize spice level to taste.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -1424,7 +1462,8 @@ extension PersistenceController {
                 "Transfer rugelach to a lined baking sheet. Prepare the egg wash by beating 1 egg with 1 tsp water. Brush the tops of the cookies with egg wash and sprinkle generously with coarse sugar.",
                 "Bake for 20–25 minutes or until golden brown."
             ],
-            notes: "Keep dough cold throughout for flakiness. Use parchment or silicone mats for easy release. Great for gifting or freezing."
+            notes: "Keep dough cold throughout for flakiness. Use parchment or silicone mats for easy release. Great for gifting or freezing.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -1454,7 +1493,8 @@ extension PersistenceController {
                 "Cover and refrigerate for at least 4 hours or overnight.",
                 "Before serving, decorate with whipped cream and dust with matcha."
             ],
-            notes: "Let sit overnight for better flavor. Use ceremonial-grade matcha for best color and taste. Keep chilled until serving."
+            notes: "Let sit overnight for better flavor. Use ceremonial-grade matcha for best color and taste. Keep chilled until serving.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -1487,7 +1527,8 @@ extension PersistenceController {
                 "Boil water in a pot. Add tangyuan and cook for 15 minutes, stirring occasionally to prevent sticking.",
                 "Serve warm, optionally with sweet ginger syrup or osmanthus broth."
             ],
-            notes: "To enhance flavor, toast the sesame seeds before grinding. Keep dough covered to prevent drying. Matcha dough may need slightly more water than plain."
+            notes: "To enhance flavor, toast the sesame seeds before grinding. Keep dough covered to prevent drying. Matcha dough may need slightly more water than plain.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -1528,7 +1569,8 @@ extension PersistenceController {
                 "Sprinkle streusel topping over the batter.",
                 "Bake for 35-40 minutes or until a skewer inserted into the center comes out clean."
             ],
-            notes: "Use frozen blueberries if fresh ones aren't available. Do not thaw them before mixing. Optional zest adds a citrus note."
+            notes: "Use frozen blueberries if fresh ones aren't available. Do not thaw them before mixing. Optional zest adds a citrus note.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -1564,7 +1606,8 @@ extension PersistenceController {
                 "Preheat oven to 325°F. Bake cookies on a parchment-lined baking sheet for 18 minutes.",
                 "Sprinkle with flaky salt after baking, if desired."
             ],
-            notes: "Chilling the dough enhances flavor and improves texture. Use high-quality dark chocolate for rich flavor. Cookies will firm up as they cool."
+            notes: "Chilling the dough enhances flavor and improves texture. Use high-quality dark chocolate for rich flavor. Cookies will firm up as they cool.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -1597,7 +1640,8 @@ extension PersistenceController {
                 "Pour batter into the prepared tin and bake for 25-30 minutes, or until the top is cracked but the center is just set.",
                 "Cool completely before slicing."
             ],
-            notes: "Brownies will continue to set as they cool. For gooier centers, reduce baking time by a couple of minutes. Dust with powdered sugar or serve with ice cream."
+            notes: "Brownies will continue to set as they cool. For gooier centers, reduce baking time by a couple of minutes. Dust with powdered sugar or serve with ice cream.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -1631,7 +1675,8 @@ extension PersistenceController {
                 "Pour the matcha tea into the glass, followed by the milk of your choice.",
                 "Stir gently and enjoy your homemade brown sugar boba matcha latte!"
             ],
-            notes: "You can sweeten the matcha if preferred. Adjust milk quantity to your taste. Use barista oat milk for extra creaminess."
+            notes: "You can sweeten the matcha if preferred. Adjust milk quantity to your taste. Use barista oat milk for extra creaminess.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -1671,7 +1716,8 @@ extension PersistenceController {
                 "Using tongs, add the cabbage rolls to the sauté pan. Cover and simmer for 15–20 minutes.",
                 "Remove the cinnamon sticks, garnish with fresh cilantro, and serve warm."
             ],
-            notes: "Use savoy cabbage for easier rolling. Cabbage leaves can be prepped in advance and stored in the fridge. If desired, add a splash of lemon juice before serving for brightness."
+            notes: "Use savoy cabbage for easier rolling. Cabbage leaves can be prepped in advance and stored in the fridge. If desired, add a splash of lemon juice before serving for brightness.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -1705,7 +1751,8 @@ extension PersistenceController {
                 "Use a hand-immersion blender to blend the soup until smooth.",
                 "Serve the soup hot."
             ],
-            notes: "This soup can also be made on the stovetop by simmering the ingredients until carrots are soft. Adjust curry powder to taste. A swirl of extra coconut milk on top adds a nice touch."
+            notes: "This soup can also be made on the stovetop by simmering the ingredients until carrots are soft. Adjust curry powder to taste. A swirl of extra coconut milk on top adds a nice touch.",
+            imageName: "crispy_chilli_beef"
         )
         
         saveRecipe(
@@ -1768,7 +1815,8 @@ extension PersistenceController {
                 "Sprinkle with garam masala, cilantro, and lemon juice (if desired).",
                 "Serve warm."
             ],
-            notes: "The moisture from the tomato and beef is sufficient for pressure cooking; no extra water is needed. If it appears dry, add a small splash of water and mix. Keema freezes well. Cool completely before transferring to an airtight container. Reheat in a saucepan or microwave, adding a splash of water if needed."
+            notes: "The moisture from the tomato and beef is sufficient for pressure cooking; no extra water is needed. If it appears dry, add a small splash of water and mix. Keema freezes well. Cool completely before transferring to an airtight container. Reheat in a saucepan or microwave, adding a splash of water if needed.",
+            imageName: "crispy_chilli_beef"
         )
         print("Default recipes added!")
     }
