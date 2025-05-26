@@ -105,13 +105,9 @@ struct RecipeSearchView: View {
         NavigationStack {
             VStack {
                 VStack {
-                    Spacer().frame(height: 5)
-                    Text("Recipe Finder")
-                        .font(.largeTitle)
-                    RecipeSearchBar(text: $searchText)
-                        .padding(.horizontal)
-                    Spacer().frame(height: 15)
-                }
+                    Text("Recipe Finder").font(.largeTitle)
+                    RecipeSearchBar(text: $searchText).padding(.horizontal)
+                }.padding(.top)
 
                 List(filteredRecipes) { recipe in
                     NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
@@ -158,13 +154,11 @@ struct IngredientSearchView: View {
         NavigationStack {
             VStack {
                 VStack {
-                    Spacer().frame(height: 5)
                     Text("Search by ingredient")
                         .font(.largeTitle)
                     IngredientSearchBar(text: $searchText)
                         .padding(.horizontal)
-                    Spacer().frame(height: 15)
-                }
+                }.padding(.top)
                 
                 if searchText.isEmpty {
                     if groupedIngredients.isEmpty {
@@ -408,24 +402,10 @@ struct ShoppingListView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                Text("Shopping List")
-                    .font(.largeTitle)
-                    .padding()
-                
-                HStack {
-                    TextField("Add item...", text: $newItem)
-                        .padding(7)
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                    
-                    Button(action: addItem) {
-                        Text("Add")
-                            .foregroundColor(.white)
-                            .padding()
-                            .background(Color.blue)
-                            .cornerRadius(8)
-                    }
-                }.padding()
+                VStack {
+                    Text("Shopping List").font(.largeTitle)
+                    ShoppingListInputBar(text: $newItem, onAdd: addItem).padding(.horizontal)
+                }.padding(.top)
                 
                 List {
                     ForEach(shoppingListItems.indices, id: \.self) { index in
@@ -508,6 +488,30 @@ struct IngredientSearchBar: View {
                 .animation(.default, value: text.isEmpty)
             }
         }
+    }
+}
+
+struct ShoppingListInputBar: View {
+    @Binding var text: String
+    let onAdd: () -> Void
+
+    var body: some View {
+        HStack {
+            TextField("Add item...", text: $text)
+                .padding(7)
+                .background(Color(.systemGray6))
+                .cornerRadius(8)
+                .padding(.horizontal)
+
+            Button(action: onAdd) {
+                Text("Add")
+                    .foregroundColor(.white)
+                    .padding()
+                    .background(Color.blue)
+                    .cornerRadius(8)
+            }
+        }
+        .padding(.horizontal)
     }
 }
 

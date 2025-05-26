@@ -7,6 +7,10 @@
 
 import CoreData
 
+func formattedImageName(for recipeName: String) -> String {
+    return recipeName.lowercased().replacingOccurrences(of: " ", with: "_") + ".jpg"
+}
+
 struct Ingredient: Identifiable, Codable {
     var id: UUID = UUID()
     var baseQuantity: Double
@@ -37,9 +41,8 @@ struct RecipeModel: Identifiable, Codable {
     let prePrepInstructions: [String]
     let instructions: [String]
     let notes: String
-    let imageName: String? // NEW
+    let imageName: String?
 
-    // Update your initializer
     init(
         id: UUID = UUID(),
         name: String,
@@ -279,7 +282,7 @@ extension PersistenceController {
                 "Garnish with cilantro and serve."
             ],
             notes: "A flavorful and tangy chicken curry, perfect for pairing with naan or rice.",
-            imageName: "crispy_chilli_beef"
+            imageName: "achari_chicken_curry"
         )
         
         saveRecipe(
