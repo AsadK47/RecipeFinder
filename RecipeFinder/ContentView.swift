@@ -16,6 +16,29 @@ struct ShoppingListItem: Identifiable {
     var quantity: Int
 }
 
+struct InfoPairView: View {
+    let label1: String
+    let value1: String
+    let label2: String
+    let value2: String
+
+    var body: some View {
+        HStack {
+            VStack {
+                Text(label1).font(.headline)
+                Text(value1)
+            }.frame(maxWidth: .infinity)
+
+            Divider().frame(height: 50)
+
+            VStack {
+                Text(label2).font(.headline)
+                Text(value2)
+            }.frame(maxWidth: .infinity)
+        }
+    }
+}
+
 struct ContentView: View {
     @State private var recipes: [RecipeModel] = []
     @State private var selectedTab: Int = 0
@@ -235,44 +258,13 @@ struct RecipeDetailView: View {
                 
                 Divider()
                 
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("Prep time")
-                            .font(.headline)
-                            .frame(maxWidth: .infinity, alignment: .center)
-                        Text("\(recipe.prepTime)")
-                            .frame(maxWidth: .infinity, alignment: .center)
-                    }.frame(maxWidth: .infinity)
-                    
-                    Divider().frame(height: 50)
-                    
-                    VStack(alignment: .leading) {
-                        Text("Cooking time").font(.headline).frame(maxWidth: .infinity, alignment: .center)
-                        Text("\(recipe.cookingTime)").frame(maxWidth: .infinity, alignment: .center)
-                    }.frame(maxWidth: .infinity)
-                }
+                InfoPairView(label1: "Prep time", value1: recipe.prepTime,
+                             label2: "Cooking time", value2: recipe.cookingTime)
                 
                 Divider()
                 
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("Difficulty")
-                            .font(.headline)
-                            .frame(maxWidth: .infinity, alignment: .center)
-                        Text("\(recipe.difficulty)")
-                            .frame(maxWidth: .infinity, alignment: .center)
-                    }.frame(maxWidth: .infinity)
-                    
-                    Divider().frame(height: 50)
-                    
-                    VStack(alignment: .leading) {
-                        Text("Category")
-                            .font(.headline)
-                            .frame(maxWidth: .infinity, alignment: .center)
-                        Text("\(recipe.category)")
-                            .frame(maxWidth: .infinity, alignment: .center)
-                    }.frame(maxWidth: .infinity)
-                }
+                InfoPairView(label1: "Difficulty", value1: recipe.difficulty,
+                             label2: "Category", value2: recipe.category)
                 
                 Divider()
                 
