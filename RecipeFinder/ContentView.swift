@@ -73,7 +73,7 @@ struct RecipeSearchView: View {
             VStack {
                 VStack {
                     Text("Recipe Finder").font(.largeTitle)
-                    RecipeSearchBar(text: $searchText).padding(.horizontal)
+                    SearchBar(text: $searchText, placeholder: "What would you like to eat...?").padding(.horizontal)
                 }.padding(.top)
 
                 List(filteredRecipes) { recipe in
@@ -123,7 +123,7 @@ struct IngredientSearchView: View {
                 VStack {
                     Text("Search by ingredient")
                         .font(.largeTitle)
-                    IngredientSearchBar(text: $searchText)
+                    SearchBar(text: $searchText, placeholder: "What's in the fridge...?")
                         .padding(.horizontal)
                 }.padding(.top)
                 
@@ -416,32 +416,13 @@ struct ShoppingListView: View {
     }
 }
 
-struct RecipeSearchBar: View {
+struct SearchBar: View {
     @Binding var text: String
-    var body: some View {
-        HStack {
-            TextField("What would you like to eat...?", text: $text)
-                .padding(7)
-                .background(Color(.systemGray6))
-                .cornerRadius(8)
-                .padding(.horizontal)
-            if !text.isEmpty {
-                Button("Cancel") {
-                    text = ""
-                }
-                .padding(.trailing, 10)
-                .transition(.move(edge: .trailing))
-                .animation(.default, value: text.isEmpty)
-            }
-        }
-    }
-}
+    var placeholder: String
 
-struct IngredientSearchBar: View {
-    @Binding var text: String
     var body: some View {
         HStack {
-            TextField("What's in the fridge...?", text: $text)
+            TextField(placeholder, text: $text)
                 .padding(7)
                 .background(Color(.systemGray6))
                 .cornerRadius(8)
