@@ -1759,6 +1759,50 @@ extension PersistenceController {
         )
         
         saveRecipe(
+            name: "Chicken Biryani (Instant Pot)",
+            category: "Main Course",
+            difficulty: "Medium",
+            prepTime: "1 hour (plus marination)",
+            cookingTime: "1.5 hours",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                Ingredient(baseQuantity: 8, unit: "", name: "chicken drumsticks"),
+                Ingredient(baseQuantity: 7, unit: "tbsp", name: "yogurt"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "turmeric"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "chili powder"),
+                Ingredient(baseQuantity: 4.5, unit: "cups", name: "jasmine rice"),
+                Ingredient(baseQuantity: 1, unit: "cup", name: "cooking oil"),
+                Ingredient(baseQuantity: 2, unit: "", name: "onions, thinly sliced"),
+                Ingredient(baseQuantity: 1, unit: "packet", name: "Laziza biryani mix"),
+                Ingredient(baseQuantity: 3, unit: "", name: "potatoes, peeled and halved"),
+                Ingredient(baseQuantity: 0.25, unit: "cup", name: "chopped fresh mint"),
+                Ingredient(baseQuantity: 0.25, unit: "cup", name: "chopped fresh coriander"),
+                Ingredient(baseQuantity: 2, unit: "", name: "green chillies, sliced"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "kewra water"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "rose water")
+            ],
+            prePrepInstructions: [
+                "Marinate chicken drumsticks with yogurt, turmeric, and chili powder for at least 1 hour or overnight.",
+                "Soak jasmine rice in water.",
+                "Cook soaked rice in a rice cooker using minimal water (4.25 cups water for 4.5 cups rice)."
+            ],
+            instructions: [
+                "Set Instant Pot to sauté mode and heat the oil.",
+                "Fry sliced onions until golden brown (12–24 minutes) and remove for garnishing.",
+                "In the same oil, fry the marinated chicken along with Laziza biryani mix for 3–4 minutes on high heat.",
+                "Turn off sauté mode and pressure cook the chicken with any additional vegetables for 6–8 minutes on high pressure with natural release.",
+                "Boil the potatoes separately in salted water until fork-tender (up to 40 minutes).",
+                "Layer in slow cooker: chicken curry, sauce, boiled potatoes, and cooked rice, repeating as needed.",
+                "Top with mint, coriander, green chillies, kewra water, and rose water.",
+                "Cook on high for 1.5 hours, mixing gently halfway through at the 45-minute mark.",
+                "Serve hot, ensuring the chicken is fully cooked through."
+            ],
+            notes: "Use a rice cooker to prevent mushy rice. Garnish with crispy onions for an authentic touch. Can be made fully in an Instant Pot or layered in a slow cooker for a dum-style finish.",
+            imageName: "chicken_biryani_instant_pot"
+        )
+        
+        saveRecipe(
             name: "Keema (Instant Pot Ground Beef Curry)",
             category: "Main Course",
             difficulty: "Medium",

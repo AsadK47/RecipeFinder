@@ -22,39 +22,26 @@ struct ContentView: View {
     @State private var shoppingListItems: [ShoppingListItem] = []
 
     var body: some View {
-        VStack {
-            ZStack {
-                if selectedTab == 0 {
-                    RecipeSearchView(recipes: $recipes)
-                } else if selectedTab == 1 {
-                    IngredientSearchView(recipes: $recipes)
-                } else if selectedTab == 2 {
-                    ShoppingListView(shoppingListItems: $shoppingListItems)
-                } else if selectedTab == 3 {
-                    SettingsView()
-                }
-            }
+        TabView(selection: $selectedTab) {
+            RecipeSearchView(recipes: $recipes)
+                .tabItem {
+                    Label("Recipes", systemImage: "book")
+                }.tag(0)
 
-            Divider()
+            IngredientSearchView(recipes: $recipes)
+                .tabItem {
+                    Label("Ingredients", systemImage: "leaf")
+                }.tag(1)
 
-            HStack {
-                ForEach(0..<4, id: \.self) { index in
-                    Button(action: {
-                        selectedTab = index
-                    }) {
-                        VStack {
-                            Image(systemName: getTabIcon(for: index))
-                                .foregroundColor(selectedTab == index ? .blue : .gray)
-                            Text(getTabLabel(for: index))
-                                .foregroundColor(selectedTab == index ? .blue : .gray)
-                        }
-                        .frame(maxWidth: .infinity)
-                    }
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background(Color(UIColor.systemBackground))
+            ShoppingListView(shoppingListItems: $shoppingListItems)
+                .tabItem {
+                    Label("Shopping", systemImage: "cart")
+                }.tag(2)
+
+            SettingsView()
+                .tabItem {
+                    Label("Settings", systemImage: "gearshape")
+                }.tag(3)
         }
         .onAppear {
             loadRecipes()
@@ -65,26 +52,6 @@ struct ContentView: View {
         PersistenceController.shared.clearDatabase()
         PersistenceController.shared.populateDatabase()
         recipes = PersistenceController.shared.fetchRecipes()
-    }
-
-    private func getTabIcon(for index: Int) -> String {
-        switch index {
-        case 0: return "book"
-        case 1: return "leaf"
-        case 2: return "cart"
-        case 3: return "gearshape"
-        default: return "questionmark.circle"
-        }
-    }
-
-    private func getTabLabel(for index: Int) -> String {
-        switch index {
-        case 0: return "Recipes"
-        case 1: return "Ingredients"
-        case 2: return "Shopping"
-        case 3: return "Settings"
-        default: return "Unknown"
-        }
     }
 }
 
