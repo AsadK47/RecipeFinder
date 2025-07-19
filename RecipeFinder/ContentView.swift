@@ -39,6 +39,25 @@ struct InfoPairView: View {
     }
 }
 
+struct IngredientRowView: View {
+    let ingredient: Ingredient
+    let isChecked: Bool
+    let toggle: () -> Void
+
+    var body: some View {
+        HStack {
+            Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
+                .foregroundColor(isChecked ? .green : .primary)
+                .onTapGesture { withAnimation { toggle() } }
+
+            Text("\(String(format: "%.2f", ingredient.quantity)) \(ingredient.unit) \(ingredient.name)")
+                .padding(.leading, 4)
+                .foregroundColor(.primary)
+                .strikethrough(isChecked)
+        }
+    }
+}
+
 struct ContentView: View {
     @State private var recipes: [RecipeModel] = []
     @State private var selectedTab: Int = 0
@@ -288,22 +307,13 @@ struct RecipeDetailView: View {
                     .font(.headline)
                 
                 ForEach(recipe.ingredients.indices, id: \.self) { index in
-                    HStack {
-                        // Checkmark toggle
-                        Image(systemName: ingredientsState[index] ? "checkmark.circle.fill" : "circle")
-                            .foregroundColor(ingredientsState[index] ? .green : .primary)
-                            .onTapGesture {
-                                withAnimation {
-                                    ingredientsState[index].toggle()
-                                }
-                            }
-                        
-                        // Ingredient details
-                        Text("\(String(format: "%.2f", recipe.ingredients[index].quantity)) \(recipe.ingredients[index].unit) \(recipe.ingredients[index].name)")
-                            .padding(.leading, 4)
-                            .foregroundColor(.primary)
-                            .strikethrough(ingredientsState[index])
-                    }
+                    IngredientRowView(
+                        ingredient: recipe.ingredients[index],
+                        isChecked: ingredientsState[index],
+                        toggle: {
+                            ingredientsState[index].toggle()
+                        }
+                    )
                 }
        
                 Divider()

@@ -691,7 +691,7 @@ extension PersistenceController {
             name: "Apple Jalebi (Gluten Free, Paleo, Vegan)",
             category: "Dessert",
             difficulty: "Hard",
-            prepTime: "10 hours (fermentation) + 15 minutes",
+            prepTime: "10 hours",
             cookingTime: "15 minutes",
             baseServings: 4,
             currentServings: 4,
@@ -715,6 +715,7 @@ extension PersistenceController {
                 "Loosely cover the bowl with a lid and place it in an oven with only the oven light on (do not turn on the oven) for at least 10 hours to ferment the batter."
             ],
             instructions: [
+                "Fermentation takes about 15 minutes"
                 "Add ¼ cup water to the fermented batter and mix well.",
                 "Heat oil in a wok or a deep, wide-bottomed pot to 360°F or until a small drop of the batter sizzles and floats to the top.",
                 "While the oil is heating, add ¼ cup arrowroot flour to a plate. Dip the apple slices on both sides into the arrowroot flour.",
