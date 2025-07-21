@@ -1804,6 +1804,84 @@ extension PersistenceController {
         )
         
         saveRecipe(
+            name: "Raita",
+            category: "Side",
+            difficulty: "Medium",
+            prepTime: "10 minutes",
+            cookingTime: "None",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                Ingredient(baseQuantity: 1.5, unit: "cups", name: "plain yogurt"),
+                Ingredient(baseQuantity: 1, unit: "", name: "cucumber, grated"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "ground cumin"),
+                Ingredient(baseQuantity: 0.25, unit: "tsp", name: "cayenne pepper"),
+                Ingredient(baseQuantity: 0.25, unit: "tsp", name: "paprika"),
+                Ingredient(baseQuantity: 0.25, unit: "tsp", name: "salt"),
+                Ingredient(baseQuantity: 0.25, unit: "tsp", name: "black pepper"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "chopped fresh mint")
+            ],
+            prePrepInstructions: [
+                "Grate cucumber and press out excess moisture using a sieve or tea towel.",
+                "Toast cumin seeds (if using whole) until fragrant and grind."
+            ],
+            instructions: [
+                "Mix yogurt with ground cumin, cayenne, paprika, salt, pepper, and mint in a medium bowl.",
+                "Stir in the grated cucumber until evenly combined.",
+                "Chill in the refrigerator until ready to serve."
+            ],
+            notes: "Use Greek yogurt for a thicker consistency. Adjust spice levels to taste. Can be made a few hours ahead for flavors to develop.",
+            imageName: "raita"
+        )
+        
+        saveRecipe(
+            name: "Chicken Chow Mein",
+            category: "Main Course",
+            difficulty: "Medium",
+            prepTime: "15 minutes",
+            cookingTime: "35 minutes",
+            baseServings: 4,
+            currentServings: 4,
+            ingredients: [
+                Ingredient(baseQuantity: 250, unit: "g", name: "egg noodles"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "vegetable oil"),
+                Ingredient(baseQuantity: 1, unit: "", name: "onion, sliced"),
+                Ingredient(baseQuantity: 2, unit: "", name: "chicken breasts, thinly sliced"),
+                Ingredient(baseQuantity: 1, unit: "", name: "red chili, sliced"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "grated ginger"),
+                Ingredient(baseQuantity: 2, unit: "cloves", name: "garlic, minced"),
+                Ingredient(baseQuantity: 1.5, unit: "cups", name: "shredded cabbage"),
+                Ingredient(baseQuantity: 1, unit: "", name: "carrot, julienned"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "Chinese five spice"),
+                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "black pepper"),
+                Ingredient(baseQuantity: 0.5, unit: "tsp", name: "chili powder"),
+                Ingredient(baseQuantity: 2, unit: "tbsp", name: "soy sauce"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "white vinegar"),
+                Ingredient(baseQuantity: 1, unit: "", name: "red bell pepper, sliced"),
+                Ingredient(baseQuantity: 1, unit: "", name: "green bell pepper, sliced"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "chili garlic sauce"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "sriracha"),
+                Ingredient(baseQuantity: 2, unit: "", name: "spring onions, chopped"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "nigella seeds"),
+                Ingredient(baseQuantity: 1, unit: "tsp", name: "sesame seeds")
+            ],
+            prePrepInstructions: [
+                "Cook the noodles according to the packet instructions, drain, and set aside."
+            ],
+            instructions: [
+                "Heat the oil in a wok or large frying pan on medium heat and stir-fry the onion until soft and translucent.",
+                "Add the chicken, fresh chili, ginger, and garlic. Cook for about 25 minutes until the chicken is cooked through and only a little moisture is left.",
+                "Add the cabbage and carrot and stir for 3 minutes until the cabbage has almost wilted but still has a bite to it.",
+                "Add the five spice powder, black pepper, chili powder, soy sauce, vinegar, and red and green peppers. Season with salt.",
+                "Add the chili garlic sauce and sriracha for an extra kick and stir-fry for another 2–3 minutes.",
+                "Add the noodles and toss everything together to coat them in the sauce.",
+                "Serve garnished with spring onions, nigella seeds, and sesame seeds."
+            ],
+            notes: "Ensure the noodles are just-cooked so they don’t break when tossing. Great with leftover roast chicken. Adjust spice levels to your taste.",
+            imageName: "chicken_chow_mein"
+        )
+        
+        saveRecipe(
             name: "Keema (Instant Pot Ground Beef Curry)",
             category: "Main Course",
             difficulty: "Medium",
