@@ -1,0 +1,36 @@
+# Custom documentation files
+doc/doc-filelist.js
+doc/doc-script.js
+doc/doc-style.css
+
+# Xcode build files
+build/
+DerivedData/
+xcuserdata/
+
+# Xcode project files that shouldn't be committed
+*.xcuserstate
+*.xcscmblueprint
+*.xccheckout
+
+# App packaging
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Swift Package Manager (if you use it)
+.build/
+Packages/
+Package.resolved
+
+# macOS system files
+.DS_Store
+._*
+
+# IDEs
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*~

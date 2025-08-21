@@ -9,6 +9,43 @@ import SwiftUI
 import SwiftData
 import ConfettiSwiftUI
 
+struct RecipeImageView: View {
+    let imageName: String?
+    
+    private var hasSpecificImage: Bool {
+        if let imageName = imageName {
+            return UIImage(named: imageName) != nil
+        }
+        return false
+    }
+    
+    var body: some View {
+        Image(hasSpecificImage ? imageName! : "food_icon")
+            .resizable()
+            .scaledToFill()
+            .clipped()
+            .overlay(
+                // Show camera overlay if using fallback
+                !hasSpecificImage ? 
+                VStack {
+                    HStack {
+                        Spacer()
+                        Image(systemName: "camera.fill")
+                            .font(.title2)
+                            .foregroundColor(.white)
+                            .padding(8)
+                            .background(Color.black.opacity(0.6))
+                            .clipShape(Circle())
+                            .padding(.top, 8)
+                            .padding(.trailing, 8)
+                    }
+                    Spacer()
+                }
+                : nil
+            )
+    }
+}
+
 struct ShoppingListItem: Identifiable {
     let id = UUID()
     var name: String
@@ -260,15 +297,11 @@ struct RecipeDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                // 👇 Add this block to show the image if available
-                if let imageName = recipe.imageName {
-                    Image(imageName)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 200)
-                        .cornerRadius(12)
-                        .shadow(radius: 5)
-                }
+                // Recipe Image with fallback
+                RecipeImageView(imageName: recipe.imageName)
+                    .frame(height: 200)
+                    .cornerRadius(12)
+                    .shadow(radius: 5)
                 
                 Text(recipe.name)
                     .font(.title)

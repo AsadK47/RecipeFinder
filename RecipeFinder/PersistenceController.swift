@@ -366,7 +366,7 @@ extension PersistenceController {
                 "Garnish with chopped cilantro and serve hot."
             ],
             notes: "Pairs well with naan, roti, or steamed basmati rice. Adjust spices to taste for a milder or spicier curry.",
-            imageName: "crispy_chilli_beef"
+            imageName: "achari_gosht"
         )
         
         saveRecipe(
@@ -399,7 +399,7 @@ extension PersistenceController {
                 "Coat with powdered sugar before serving."
             ],
             notes: "A healthier twist on a classic treat. Best served fresh.",
-            imageName: "crispy_chilli_beef"
+            imageName: "air_fryer_doughnuts"
         )
         
         saveRecipe(
@@ -432,7 +432,7 @@ extension PersistenceController {
                 "Toss cooked wings in sauce and garnish with scallions and sesame seeds."
             ],
             notes: "Crispy, spicy, and savory, these wings pair well with a cold drink.",
-            imageName: "crispy_chilli_beef"
+            imageName: "air_fryer_korean_fried_chicken"
         )
         
         saveRecipe(
@@ -464,7 +464,7 @@ extension PersistenceController {
                 "Air fry at 375°F for 20 minutes, flipping halfway through."
             ],
             notes: "Crispy, flavorful chicken with less grease—perfect for any occasion.",
-            imageName: "crispy_chilli_beef"
+            imageName: "air_fryer_southern_fried_chicken"
         )
         
         saveRecipe(
@@ -494,7 +494,7 @@ extension PersistenceController {
                 "Garnish with sesame seeds before serving."
             ],
             notes: "Juicy and savory wings, perfect for game day.",
-            imageName: "crispy_chilli_beef"
+            imageName: "air_fryer_soy_sauce_chicken_wings"
         )
         
         saveRecipe(
@@ -530,7 +530,7 @@ extension PersistenceController {
                 "Garnish with chopped cilantro before serving."
             ],
             notes: "A hearty and comforting curry, best served with naan or rice.",
-            imageName: "crispy_chilli_beef"
+            imageName: "aloo_gosht"
         )
         
         saveRecipe(
@@ -565,7 +565,7 @@ extension PersistenceController {
                 "Serve pancakes stacked with a drizzle of maple syrup and your favourite toppings."
             ],
             notes: "American pancakes are a classic breakfast dish. Experiment with different toppings like fresh fruits, whipped cream, or savory additions like bacon.",
-            imageName: "crispy_chilli_beef"
+            imageName: "american_pancakes"
         )
         
         saveRecipe(
@@ -609,7 +609,7 @@ extension PersistenceController {
                 "Slide the pancake onto a cutting board, slice it in half with a sharp knife, and repeat for the remaining batter. Enjoy!"
             ],
             notes: "Apam Balik is a popular Malaysian street food pancake filled with sweet and savory fillings. For a dairy-free version, use oat milk and vegan butter. Enjoy it as a dessert, snack, or breakfast.",
-            imageName: "crispy_chilli_beef"
+            imageName: "apam_balik"
         )
         
         saveRecipe(
@@ -652,7 +652,7 @@ extension PersistenceController {
                 "Sprinkle cinnamon sugar and serve with custard."
             ],
             notes: "Apple crumble is a versatile dessert that pairs well with custard, vanilla ice cream, or chilled double cream. For added flavor, consider adding 1 tsp of cinnamon to the apples before cooking. You can substitute Hob Nobs for digestive biscuits in the crumble for a different texture. Serve warm with custard or vanilla ice cream. Adjust sugar based on the sweetness of the apples used.",
-            imageName: "crispy_chilli_beef"
+            imageName: "apple_crumble"
         )
         
         saveRecipe(
@@ -684,7 +684,7 @@ extension PersistenceController {
                 "Bake for 30 minutes or until crisp and golden brown on top."
             ],
             notes: "Serve warm with custard or vanilla ice cream. Adjust sugar based on the sweetness of the apples used.",
-            imageName: "crispy_chilli_beef"
+            imageName: "apple_crumble"
         )
         
         saveRecipe(
@@ -715,7 +715,7 @@ extension PersistenceController {
                 "Loosely cover the bowl with a lid and place it in an oven with only the oven light on (do not turn on the oven) for at least 10 hours to ferment the batter."
             ],
             instructions: [
-                "Fermentation takes about 15 minutes"
+                "Fermentation takes about 15 minutes",
                 "Add ¼ cup water to the fermented batter and mix well.",
                 "Heat oil in a wok or a deep, wide-bottomed pot to 360°F or until a small drop of the batter sizzles and floats to the top.",
                 "While the oil is heating, add ¼ cup arrowroot flour to a plate. Dip the apple slices on both sides into the arrowroot flour.",
@@ -724,7 +724,7 @@ extension PersistenceController {
                 "Dip the fried apple slices into the cooled syrup, garnish with crushed pistachios, and serve."
             ],
             notes: "This delicious Malaysian-inspired dessert uses probiotics to ferment the batter, resulting in a light and flavorful dish. The syrup can be prepared ahead of time and cooled for dipping. Experiment with different oils or vegan butter substitutes for frying. Adjust the number of probiotic capsules based on the culture count (40-50 billion).",
-            imageName: "crispy_chilli_beef"
+            imageName: "apple_jalebi"
         )
         
         saveRecipe(
@@ -755,7 +755,7 @@ extension PersistenceController {
                 "Bake in the preheated oven until golden brown and sides are bubbling, about 35-40 minutes."
             ],
             notes: "Use high-quality cinnamon for a richer flavor. Serve with ice cream or whipped cream for an extra treat.",
-            imageName: "crispy_chilli_beef"
+            imageName: "apple_crisp_with_oat_topping"
         )
         
         saveRecipe(
@@ -793,7 +793,7 @@ extension PersistenceController {
                 "Let sit for 20 minutes before serving."
             ],
             notes: "Serve with ice cream, custard, or cream. This dish can be reheated or frozen for later use.",
-            imageName: "crispy_chilli_beef"
+            imageName: "apple_oat_crumble"
         )
         
         saveRecipe(
@@ -833,7 +833,7 @@ extension PersistenceController {
                 "Bake for 18-22 minutes or until lightly crisp on top."
             ],
             notes: "This recipe has a delightful spiced twist. Garnish with additional walnuts or a dollop of whipped cream for extra flavor.",
-            imageName: "crispy_chilli_beef"
+            imageName: "apple_crumble_with_spiced_filling"
         )
         
         saveRecipe(
@@ -862,7 +862,7 @@ extension PersistenceController {
                 "Toss hot wings in sweet lemon sauce and serve."
             ],
             notes: "Crispy, tangy, and delicious wings with an Asian twist!",
-            imageName: "crispy_chilli_beef"
+            imageName: "asian_lemon_wings"
         )
         
         saveRecipe(
@@ -908,7 +908,7 @@ extension PersistenceController {
                 "Garnish with chopped cilantro and serve hot."
             ],
             notes: "Baingan ka Bharta is a traditional Indian dish known for its smoky flavor, thanks to the roasted eggplant. Serve it with naan, roti, or steamed rice for a comforting meal. This dish originates from North India and is a staple in many households.",
-            imageName: "crispy_chilli_beef"
+            imageName: "baingan_ka_bharta"
         )
         
         saveRecipe(
@@ -938,7 +938,7 @@ extension PersistenceController {
                 "Bake for about 15 minutes or until the fish is opaque and flakes easily."
             ],
             notes: "This dish pairs wonderfully with steamed vegetables or a side of rice. Cajun seasoning adds a spicy kick, but feel free to adjust based on your spice tolerance!",
-            imageName: "crispy_chilli_beef"
+            imageName: "baked_cajun_garlic_butter_cod"
         )
         
         saveRecipe(
@@ -1942,7 +1942,7 @@ extension PersistenceController {
                 "Serve warm."
             ],
             notes: "The moisture from the tomato and beef is sufficient for pressure cooking; no extra water is needed. If it appears dry, add a small splash of water and mix. Keema freezes well. Cool completely before transferring to an airtight container. Reheat in a saucepan or microwave, adding a splash of water if needed.",
-            imageName: "crispy_chilli_beef"
+            imageName: "keema"
         )
         print("Default recipes added!")
     }
