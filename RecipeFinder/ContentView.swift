@@ -789,80 +789,117 @@ struct RecipeDetailView: View {
     }
     
     var body: some View {
-        ScrollView {
-            VStack(spacing: 20) {
-                // Image without extra padding - let ScrollView handle it
-                RecipeImageView(imageName: recipe.imageName, height: 240)
-                    .padding(.horizontal)
-                
-                VStack(alignment: .leading, spacing: 16) {
-                    // Recipe title with proper visibility
+        ZStack {
+            AppTheme.backgroundGradient(for: colorScheme)
+                .ignoresSafeArea()
+            
+            ScrollView {
+                VStack(spacing: 0) {
+                    // Title directly on gradient
                     Text(recipe.name)
-                        .font(.system(size: 26, weight: .bold))
+                        .font(.system(size: 28, weight: .bold))
                         .foregroundColor(.white)
-                        .lineLimit(3)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(.horizontal)
+                        .multilineTextAlignment(.leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 20)
+                        .padding(.top, 8)
+                        .padding(.bottom, 20)
                     
-                    // Info cards with proper spacing
-                    CardView {
-                        InfoPairView(
-                            label1: "Prep time", value1: recipe.prepTime, icon1: "clock",
-                            label2: "Cook time", value2: recipe.cookingTime, icon2: "flame"
-                        )
-                        .padding()
-                    }
-                    .padding(.horizontal)
-                    
-                    CardView {
-                        InfoPairView(
-                            label1: "Difficulty", value1: recipe.difficulty, icon1: "chart.bar",
-                            label2: "Category", value2: recipe.category, icon2: "fork.knife"
-                        )
-                        .padding()
-                    }
-                    .padding(.horizontal)
-                    
-                    // Servings card
-                    CardView {
-                        HStack {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("Servings")
-                                    .font(.caption)
-                                    .foregroundColor(AppTheme.secondaryText)
-                                Text("\(recipe.currentServings)")
-                                    .font(.title2)
-                                    .fontWeight(.bold)
-                                    .foregroundColor(.primary)
+                    VStack(spacing: 16) {
+                        // Info cards
+                        CardView {
+                            InfoPairView(
+                                label1: "Prep time", value1: recipe.prepTime, icon1: "clock",
+                                label2: "Cook time", value2: recipe.cookingTime, icon2: "flame"
+                            )
+                            .padding()
+                        }
+                        
+                        CardView {
+                            InfoPairView(
+                                label1: "Difficulty", value1: recipe.difficulty, icon1: "chart.bar",
+                                label2: "Category", value2: recipe.category, icon2: "fork.knife"
+                            )
+                            .padding()
+                        }
+                        
+                        // Servings card
+                        CardView {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Servings")
+                                        .font(.caption)
+                                        .foregroundColor(AppTheme.secondaryText)
+                                    Text("\(recipe.currentServings)")
+                                        .font(.title2)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(.primary)
+                                }
+                                
+                                Spacer()
+                                
+                                HStack(spacing: 0) {
+                                    Button(action: {
+                                        if recipe.currentServings > 1 {
+                                            recipe.currentServings -= 1
+                                        }
+                                    }) {
+                                        Image(systemName: "minus")
+                                            .font(.system(size: 16, weight: .semibold))
+                                            .foregroundColor(.primary)
+                                            .frame(width: 44, height: 44)
+                                            .background(Color(.systemGray5))
+                                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                                    }
+                                    
+                                    Button(action: {
+                                        recipe.currentServings += 1
+                                    }) {
+                                        Image(systemName: "plus")
+                                            .font(.system(size: 16, weight: .semibold))
+                                            .foregroundColor(.primary)
+                                            .frame(width: 44, height: 44)
+                                            .background(Color(.systemGray5))
+                                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                                    }
+                                }
                             }
-                            
+                            .padding()
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                    
+                    // Ingredients section with header on gradient
+                    VStack(spacing: 12) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "leaf.fill")
+                                .foregroundColor(.white)
+                                .font(.title3)
+                            Text("Ingredients")
+                                .font(.title2)
+                                .fontWeight(.bold)
+                                .foregroundColor(.white)
                             Spacer()
-                            
-                            Stepper("", value: $recipe.currentServings, in: 1...100)
-                                .labelsHidden()
                         }
-                        .padding()
-                    }
-                    .padding(.horizontal)
-                    .onChange(of: recipe.currentServings) { oldValue, newValue in
-                        adjustIngredients(for: newValue)
-                    }
-                    
-                    // Ingredients section
-                    sectionView(title: "Ingredients", icon: "leaf.fill") {
-                        VStack(spacing: 12) {
-                            ForEach(recipe.ingredients.indices, id: \.self) { index in
-                                IngredientRowView(
-                                    ingredient: recipe.ingredients[index],
-                                    isChecked: ingredientsState[index],
-                                    toggle: { ingredientsState[index].toggle() }
-                                )
+                        .padding(.horizontal, 20)
+                        .padding(.top, 24)
+                        
+                        CardView {
+                            VStack(spacing: 12) {
+                                ForEach(recipe.ingredients.indices, id: \.self) { index in
+                                    IngredientRowView(
+                                        ingredient: recipe.ingredients[index],
+                                        isChecked: ingredientsState[index],
+                                        toggle: { ingredientsState[index].toggle() }
+                                    )
+                                }
                             }
+                            .padding()
                         }
+                        .padding(.horizontal, 20)
                     }
-                    .padding(.horizontal)
                     
-                    // Pre-prep section (if exists)
+                    // Pre-prep section
                     if !recipe.prePrepInstructions.isEmpty {
                         sectionView(title: "Pre-Prep", icon: "list.clipboard") {
                             VStack(alignment: .leading, spacing: 12) {
@@ -871,7 +908,6 @@ struct RecipeDetailView: View {
                                 }
                             }
                         }
-                        .padding(.horizontal)
                     }
                     
                     // Instructions section
@@ -882,9 +918,8 @@ struct RecipeDetailView: View {
                             }
                         }
                     }
-                    .padding(.horizontal)
                     
-                    // Notes section (if exists)
+                    // Notes section
                     if !recipe.notes.isEmpty {
                         sectionView(title: "Notes", icon: "note.text") {
                             VStack(alignment: .leading, spacing: 8) {
@@ -903,33 +938,37 @@ struct RecipeDetailView: View {
                                 }
                             }
                         }
-                        .padding(.horizontal)
                     }
                 }
+                .padding(.bottom, 100)
             }
-            .padding(.top, 8)
-            .padding(.bottom, 100)
         }
-        .background(AppTheme.backgroundGradient(for: colorScheme).ignoresSafeArea())
         .navigationBarTitleDisplayMode(.inline)
+        .onChange(of: recipe.currentServings) { oldValue, newValue in
+            adjustIngredients(for: newValue)
+        }
     }
     
     private func sectionView<Content: View>(title: String, icon: String, @ViewBuilder content: () -> Content) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(spacing: 12) {
             HStack(spacing: 8) {
                 Image(systemName: icon)
-                    .foregroundColor(AppTheme.accentColor)
-                    .font(.body)
-                Text(title)
+                    .foregroundColor(.white)
                     .font(.title3)
+                Text(title)
+                    .font(.title2)
                     .fontWeight(.bold)
                     .foregroundColor(.white)
+                Spacer()
             }
+            .padding(.horizontal, 20)
+            .padding(.top, 24)
             
             CardView {
                 content()
                     .padding()
             }
+            .padding(.horizontal, 20)
         }
     }
     
