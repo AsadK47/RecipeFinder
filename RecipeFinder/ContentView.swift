@@ -99,28 +99,42 @@ struct ContentView: View {
     @State private var recipes: [RecipeModel] = []
     @State private var selectedTab: Int = 0
     @State private var shoppingListItems: [ShoppingListItem] = []
+    @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
-        TabView(selection: $selectedTab) {
-            RecipeSearchView(recipes: $recipes)
-                .tabItem {
-                    Label("Recipes", systemImage: "book")
-                }.tag(0)
+        ZStack {
+            if colorScheme == .light {
+                // Turquoise to green gradient background in light mode
+                LinearGradient(
+                    colors: [Color(red: 64/255, green: 224/255, blue: 208/255), Color.green],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .ignoresSafeArea()
+            }
 
-            IngredientSearchView(recipes: $recipes)
-                .tabItem {
-                    Label("Ingredients", systemImage: "leaf")
-                }.tag(1)
+            TabView(selection: $selectedTab) {
+                RecipeSearchView(recipes: $recipes)
+                    .tabItem {
+                        Label("Recipes", systemImage: "book")
+                    }.tag(0)
 
-            ShoppingListView(shoppingListItems: $shoppingListItems)
-                .tabItem {
-                    Label("Shopping", systemImage: "cart")
-                }.tag(2)
+                IngredientSearchView(recipes: $recipes)
+                    .tabItem {
+                        Label("Ingredients", systemImage: "leaf")
+                    }.tag(1)
 
-            SettingsView()
-                .tabItem {
-                    Label("Settings", systemImage: "gearshape")
-                }.tag(3)
+                ShoppingListView(shoppingListItems: $shoppingListItems)
+                    .tabItem {
+                        Label("Shopping", systemImage: "cart")
+                    }.tag(2)
+
+                SettingsView()
+                    .tabItem {
+                        Label("Settings", systemImage: "gearshape")
+                    }.tag(3)
+            }
+            .background(Color.clear)
         }
         .onAppear {
             loadRecipes()
@@ -159,15 +173,18 @@ struct RecipeSearchView: View {
                     NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
                         Text(recipe.name)
                             .foregroundColor(.primary)
-                            .background(colorScheme == .dark ? Color.black : Color.white)
                             .cornerRadius(8)
                     }
                     .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
                 }
                 .listStyle(PlainListStyle())
+                .scrollContentBackground(.hidden)
+                .background(Color.clear)
             }
             .navigationBarTitleDisplayMode(.inline)
         }
+        .background(Color.clear)
     }
 }
 
@@ -253,16 +270,19 @@ struct IngredientSearchView: View {
                         NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
                             Text(recipe.name)
                                 .foregroundColor(.primary)
-                                .background(colorScheme == .dark ? Color.black : Color.white)
                                 .cornerRadius(8)
                         }
                         .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
                     }
                     .listStyle(PlainListStyle())
+                    .scrollContentBackground(.hidden)
+                    .background(Color.clear)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
         }
+        .background(Color.clear)
     }
 }
 
@@ -425,14 +445,18 @@ struct ShoppingListView: View {
                             Spacer()
                             
                             Stepper(value: $shoppingListItems[index].quantity, in: 0...100, step: 1) {
-                                Text("\(shoppingListItems[index].quantity)")
+                                Text("\\(shoppingListItems[index].quantity)")
                             }.frame(width: 120)
                             
                         }
                     }.onDelete(perform: deleteItems)
                 }
+                .scrollContentBackground(.hidden)
+                .listRowBackground(Color.clear)
+                .background(Color.clear)
             }.navigationBarTitleDisplayMode(.inline)
         }
+        .background(Color.clear)
     }
     
     private func addItem() {
