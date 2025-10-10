@@ -11,38 +11,96 @@ import UIKit
 
 @main
 struct RecipeFinderApp: App {
+    // Initialize PersistenceController
+    let persistenceController = PersistenceController.shared
+    
     init() {
-        // Make tab bar and navigation bar transparent so backgrounds show through
-        if #available(iOS 15.0, *) {
-            let tabAppearance = UITabBarAppearance()
-            tabAppearance.configureWithTransparentBackground()
-            UITabBar.appearance().standardAppearance = tabAppearance
-            UITabBar.appearance().scrollEdgeAppearance = tabAppearance
-
-            let navAppearance = UINavigationBarAppearance()
-            navAppearance.configureWithTransparentBackground()
-            UINavigationBar.appearance().standardAppearance = navAppearance
-            UINavigationBar.appearance().scrollEdgeAppearance = navAppearance
+        configureAppearance()
+        
+        // Populate database with sample data on first launch
+        #if DEBUG
+        if UserDefaults.standard.bool(forKey: "hasPopulatedDatabase") == false {
+            persistenceController.populateDatabase()
+            UserDefaults.standard.set(true, forKey: "hasPopulatedDatabase")
         }
+        #endif
     }
-
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self,
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-
-        do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
-        }
-    }()
-
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
-        .modelContainer(sharedModelContainer)
+    }
+    
+    // MARK: - UI Configuration
+    private func configureAppearance() {
+        // Configure tab bar appearance
+        let tabAppearance = UITabBarAppearance()
+        tabAppearance.configureWithTransparentBackground()
+        tabAppearance.backgroundColor = UIColor.black.withAlphaComponent(0.1)
+        
+        // Style unselected tabs
+        tabAppearance.stackedLayoutAppearance.normal.iconColor = .gray
+        tabAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [
+            .foregroundColor: UIColor.gray
+        ]
+        
+        // Style selected tabs
+        tabAppearance.stackedLayoutAppearance.selected.iconColor = UIColor(red: 0.8, green: 0.2, blue: 0.6, alpha: 1.0)
+        tabAppearance.stackedLayoutAppearance.selected.titleTextAttributes = [
+            .foregroundColor: UIColor(red: 0.8, green: 0.2, blue: 0.6, alpha: 1.0)
+        ]
+        
+        UITabBar.appearance().standardAppearance = tabAppearance
+        if #available(iOS 15.0, *) {
+            UITabBar.appearance().scrollEdgeAppearance = tabAppearance
+        }
+        
+        // Configure navigation bar appearance
+        let navAppearance = UINavigationBarAppearance()
+        navAppearance.configureWithTransparentBackground()
+        navAppearance.backgroundColor = UIColor.black.withAlphaComponent(0.1)
+        
+        // Style navigation bar text
+        navAppearance.titleTextAttributes = [
+            .foregroundColor: UIColor.white,
+            .font: UIFont.systemFont(ofSize: 18, weight: .semibold)
+        ]
+        navAppearance.largeTitleTextAttributes = [
+            .foregroundColor: UIColor.white,
+            .font: UIFont.systemFont(ofSize: 34, weight: .bold)
+        ]
+        
+        // Style back button
+        navAppearance.backButtonAppearance.normal.titleTextAttributes = [
+            .foregroundColor: UIColor.white
+        ]
+        UINavigationBar.appearance().tintColor = .white
+        
+        UINavigationBar.appearance().standardAppearance = navAppearance
+        UINavigationBar.appearance().compactAppearance = navAppearance
+        UINavigationBar.appearance().scrollEdgeAppearance = navAppearance
+        
+        // Configure search bar appearance
+        UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self]).backgroundColor = UIColor.white.withAlphaComponent(0.1)
+        UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = UIColor(red: 0.8, green: 0.2, blue: 0.6, alpha: 1.0)
     }
 }
+
+// MARK: - Remove SwiftData if not needed
+// If you're using Core Data exclusively, you can remove this:
+/*
+var sharedModelContainer: ModelContainer = {
+    let schema = Schema([
+        Item.self,
+    ])
+    let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+
+    do {
+        return try ModelContainer(for: schema, configurations: [modelConfiguration])
+    } catch {
+        fatalError("Could not create ModelContainer: \(error)")
+    }
+}()
+*/

@@ -11,10 +11,10 @@ import ConfettiSwiftUI
 
 // MARK: - Theme Configuration
 struct AppTheme {
-    // Instagram-inspired gradient colors
+    // Purple to Blue to Teal gradient
     static let gradientStart = Color(red: 131/255, green: 58/255, blue: 180/255) // Purple
-    static let gradientMiddle = Color(red: 253/255, green: 29/255, blue: 29/255) // Red
-    static let gradientEnd = Color(red: 252/255, green: 176/255, blue: 69/255) // Orange
+    static let gradientMiddle = Color(red: 88/255, green: 86/255, blue: 214/255) // Blue-Purple
+    static let gradientEnd = Color(red: 64/255, green: 224/255, blue: 208/255) // Turquoise/Teal
     
     static let cardBackground = Color.white.opacity(0.95)
     static let cardBackgroundDark = Color(white: 0.15)
@@ -78,7 +78,149 @@ struct GlassCard<Content: View>: View {
     }
 }
 
-// Recipe Image with Gradient Overlay
+// MARK: - View Mode Enum
+enum RecipeViewMode: String, CaseIterable {
+    case list = "List"
+    case grid2 = "Grid 2x2"
+    case grid3 = "Grid 3x3"
+    var columns: Int {
+        switch self {
+        case .list: return 1
+        case .grid2: return 2
+        case .grid3: return 3
+        }
+    }
+    
+    var icon: String {
+        switch self {
+        case .list: return "rectangle.grid.1x2"
+        case .grid2: return "square.grid.2x2"
+        case .grid3: return "square.grid.3x3"
+        }
+    }
+}
+
+// Recipe Card Component with Grid Support and Bubble Style
+struct RecipeCard: View {
+    let recipe: RecipeModel
+    let viewMode: RecipeViewMode
+    
+    init(recipe: RecipeModel, viewMode: RecipeViewMode = .list) {
+        self.recipe = recipe
+        self.viewMode = viewMode
+    }
+    
+    var body: some View {
+        HStack(spacing: 0) {
+            // Image on the left
+            RecipeImageView(
+                imageName: recipe.imageName,
+                height: viewMode == .list ? 120 : (viewMode == .grid2 ? 100 : 80)
+            )
+            .frame(width: viewMode == .list ? 120 : (viewMode == .grid2 ? 100 : 80))
+            .clipShape(
+                UnevenRoundedRectangle(
+                    topLeadingRadius: 24,
+                    bottomLeadingRadius: 24
+                )
+            )
+            
+            // Content in the middle
+            VStack(alignment: .leading, spacing: viewMode == .grid3 ? 4 : 8) {
+                Text(recipe.name)
+                    .font(viewMode == .grid3 ? .caption : .headline)
+                    .fontWeight(.bold)
+                    .foregroundColor(.primary)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
+                
+                if viewMode != .grid3 {
+                    HStack(spacing: 12) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "clock")
+                                .font(.caption)
+                            Text(recipe.prepTime)
+                                .font(.caption)
+                        }
+                        
+                        HStack(spacing: 4) {
+                            Image(systemName: "chart.bar")
+                                .font(.caption)
+                            Text(recipe.difficulty)
+                                .font(.caption)
+                        }
+                    }
+                    .foregroundColor(AppTheme.secondaryText)
+                }
+                
+                if viewMode == .list {
+                    Text(recipe.category)
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(
+                            Capsule()
+                                .fill(AppTheme.accentColor)
+                        )
+                        .foregroundColor(.white)
+                } else if viewMode == .grid2 {
+                    HStack(spacing: 4) {
+                        Image(systemName: "fork.knife")
+                            .font(.caption2)
+                        Text(recipe.category)
+                            .font(.caption2)
+                            .fontWeight(.medium)
+                    }
+                    .foregroundColor(AppTheme.accentColor)
+                } else {
+                    // Grid 3 - minimal info
+                    HStack(spacing: 4) {
+                        Image(systemName: "clock")
+                            .font(.caption2)
+                        Text(recipe.prepTime)
+                            .font(.caption2)
+                    }
+                    .foregroundColor(AppTheme.secondaryText)
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, viewMode == .grid3 ? 8 : 12)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            
+            // Chevron on the right
+            if viewMode == .list {
+                Image(systemName: "chevron.right")
+                    .font(.title3)
+                    .fontWeight(.semibold)
+                    .foregroundColor(AppTheme.accentColor.opacity(0.6))
+                    .padding(.trailing, 16)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .background(
+            RoundedRectangle(cornerRadius: 24)
+                .fill(.ultraThinMaterial)
+                .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 24)
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [
+                            Color.white.opacity(0.4),
+                            Color.white.opacity(0.1)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1.5
+                )
+        )
+    }
+}
+
+// Recipe Image Component
 struct RecipeImageView: View {
     let imageName: String?
     let height: CGFloat
@@ -96,37 +238,37 @@ struct RecipeImageView: View {
     }
     
     var body: some View {
-        ZStack(alignment: .bottomLeading) {
-            Image(hasSpecificImage ? imageName! : "food_icon")
-                .resizable()
-                .scaledToFill()
-                .frame(height: height)
-                .clipped()
-            
-            // Gradient overlay for better text readability
-            LinearGradient(
-                colors: [.clear, .black.opacity(0.6)],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            
-            // Camera icon for fallback
-            if !hasSpecificImage {
-                VStack {
-                    Spacer()
-                    HStack {
-                        Spacer()
-                        Image(systemName: "camera.fill")
-                            .font(.title2)
-                            .foregroundColor(.white)
-                            .padding(12)
-                            .background(Circle().fill(Color.black.opacity(0.5)))
-                            .padding()
-                    }
-                }
+        ZStack {
+            if hasSpecificImage {
+                Image(imageName!)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(height: height)
+                    .frame(maxWidth: .infinity)
+                    .clipped()
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+            } else {
+                Image("food_icon")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(height: height)
+                    .frame(maxWidth: .infinity)
+                    .clipped()
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .overlay(
+                        Circle()
+                            .fill(Color.black.opacity(0.6))
+                            .frame(width: 50, height: 50)
+                            .overlay(
+                                Image(systemName: "camera.fill")
+                                    .font(.title3)
+                                    .foregroundColor(.white)
+                            )
+                    )
             }
         }
-        .cornerRadius(20)
+        .frame(height: height)
+        .frame(maxWidth: .infinity)
     }
 }
 
@@ -258,45 +400,38 @@ struct IngredientRowView: View {
     }
 }
 
-// Modern Ingredient Button
+// MARK: - Ingredient Button Component
 struct IngredientButton: View {
     let ingredient: String
     let action: () -> Void
     
     var body: some View {
         Button(action: action) {
-            Text(ingredient)
-                .font(.subheadline)
-                .fontWeight(.medium)
-                .foregroundColor(.primary)
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(.ultraThinMaterial)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .strokeBorder(AppTheme.accentColor.opacity(0.3), lineWidth: 1)
-                )
+            HStack {
+                Text(ingredient)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                
+                Spacer()
+                
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundColor(AppTheme.accentColor.opacity(0.6))
+            }
+            .padding()
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color(.systemGray6))
+            )
         }
-        .buttonStyle(ScaleButtonStyle())
+        .buttonStyle(PlainButtonStyle())
     }
 }
 
-// Scale Button Style for Better Interaction
-struct ScaleButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
-            .animation(.spring(response: 0.3), value: configuration.isPressed)
-    }
-}
-
-// Shopping List Input Bar
+// MARK: - Shopping List Input Bar
 struct ShoppingListInputBar: View {
     @Binding var text: String
-    let onAdd: () -> Void
+    var onAdd: () -> Void
     @FocusState private var isFocused: Bool
     
     var body: some View {
@@ -307,7 +442,17 @@ struct ShoppingListInputBar: View {
                 
                 TextField("Add item...", text: $text)
                     .focused($isFocused)
-                    .onSubmit(onAdd)
+                    .autocorrectionDisabled()
+                    .onSubmit {
+                        onAdd()
+                    }
+                
+                if !text.isEmpty {
+                    Button(action: { text = "" }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(.gray)
+                    }
+                }
             }
             .padding(12)
             .background(
@@ -315,25 +460,21 @@ struct ShoppingListInputBar: View {
                     .fill(Color(.systemGray6))
             )
             
-            Button(action: onAdd) {
-                Image(systemName: "arrow.up.circle.fill")
-                    .font(.title2)
-                    .foregroundColor(.white)
-                    .frame(width: 44, height: 44)
-                    .background(
-                        Circle()
-                            .fill(
-                                LinearGradient(
-                                    colors: [AppTheme.gradientStart, AppTheme.gradientMiddle],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
-                    )
+            if !text.isEmpty {
+                Button(action: onAdd) {
+                    Image(systemName: "arrow.up.circle.fill")
+                        .font(.title2)
+                        .foregroundColor(.white)
+                        .frame(width: 40, height: 40)
+                        .background(
+                            Circle()
+                                .fill(AppTheme.accentColor)
+                        )
+                }
+                .transition(.scale.combined(with: .opacity))
             }
-            .disabled(text.isEmpty)
-            .opacity(text.isEmpty ? 0.5 : 1.0)
         }
+        .animation(.spring(response: 0.3), value: text.isEmpty)
     }
 }
 
@@ -390,12 +531,17 @@ struct ContentView: View {
 struct RecipeSearchView: View {
     @Binding var recipes: [RecipeModel]
     @State private var searchText = ""
+    @State private var viewMode: RecipeViewMode = .list
     @Environment(\.colorScheme) var colorScheme
 
     var filteredRecipes: [RecipeModel] {
         searchText.isEmpty ? recipes : recipes.filter {
             $0.name.localizedCaseInsensitiveContains(searchText)
         }
+    }
+    
+    var gridColumns: [GridItem] {
+        Array(repeating: GridItem(.flexible(), spacing: 16), count: viewMode.columns)
     }
 
     var body: some View {
@@ -406,9 +552,35 @@ struct RecipeSearchView: View {
                 
                 VStack(spacing: 20) {
                     VStack(spacing: 16) {
-                        Text("Recipe Finder")
-                            .font(.system(size: 34, weight: .bold))
-                            .foregroundColor(.white)
+                        HStack {
+                            Text("Recipe Finder")
+                                .font(.system(size: 34, weight: .bold))
+                                .foregroundColor(.white)
+                            
+                            Spacer()
+                            
+                            Menu {
+                                ForEach(RecipeViewMode.allCases, id: \.self) { mode in
+                                    Button(action: { 
+                                        withAnimation(.spring(response: 0.3)) {
+                                            viewMode = mode
+                                        }
+                                    }) {
+                                        Label(mode.rawValue, systemImage: mode.icon)
+                                    }
+                                }
+                            } label: {
+                                Image(systemName: viewMode.icon)
+                                    .font(.title2)
+                                    .foregroundColor(.white)
+                                    .padding(12)
+                                    .background(
+                                        Circle()
+                                            .fill(.ultraThinMaterial)
+                                    )
+                            }
+                        }
+                        .padding(.horizontal)
                         
                         ModernSearchBar(text: $searchText, placeholder: "What would you like to eat...?")
                             .padding(.horizontal)
@@ -416,15 +588,27 @@ struct RecipeSearchView: View {
                     .padding(.top, 20)
                     
                     ScrollView {
-                        LazyVStack(spacing: 16) {
-                            ForEach(filteredRecipes) { recipe in
-                                NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
-                                    RecipeCard(recipe: recipe)
+                        if viewMode == .list {
+                            LazyVStack(spacing: 16) {
+                                ForEach(filteredRecipes) { recipe in
+                                    NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
+                                        RecipeCard(recipe: recipe, viewMode: .list)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
                                 }
-                                .buttonStyle(PlainButtonStyle())
                             }
+                            .padding()
+                        } else {
+                            LazyVGrid(columns: gridColumns, spacing: 16) {
+                                ForEach(filteredRecipes) { recipe in
+                                    NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
+                                        RecipeCard(recipe: recipe, viewMode: viewMode)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                }
+                            }
+                            .padding()
                         }
-                        .padding()
                     }
                 }
             }
@@ -434,55 +618,12 @@ struct RecipeSearchView: View {
     }
 }
 
-// Recipe Card Component
-struct RecipeCard: View {
-    let recipe: RecipeModel
-    
-    var body: some View {
-        GlassCard {
-            HStack(spacing: 16) {
-                RecipeImageView(imageName: recipe.imageName, height: 100)
-                    .frame(width: 100, height: 100)
-                
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(recipe.name)
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                        .lineLimit(2)
-                    
-                    HStack(spacing: 16) {
-                        Label(recipe.prepTime, systemImage: "clock")
-                        Label(recipe.difficulty, systemImage: "chart.bar")
-                    }
-                    .font(.caption)
-                    .foregroundColor(AppTheme.secondaryText)
-                    
-                    Text(recipe.category)
-                        .font(.caption)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(
-                            Capsule()
-                                .fill(AppTheme.accentColor.opacity(0.2))
-                        )
-                        .foregroundColor(AppTheme.accentColor)
-                }
-                
-                Spacer()
-                
-                Image(systemName: "chevron.right")
-                    .foregroundColor(.gray)
-            }
-            .padding()
-        }
-    }
-}
-
 // MARK: - Ingredient Search View
 struct IngredientSearchView: View {
     @Binding var recipes: [RecipeModel]
     @State private var searchText = ""
     @State private var expandedSections: Set<String> = []
+    @State private var viewMode: RecipeViewMode = .list
     @Environment(\.colorScheme) var colorScheme
     
     var groupedIngredients: [(key: String, value: [String])] {
@@ -499,6 +640,10 @@ struct IngredientSearchView: View {
         }
     }
     
+    var gridColumns: [GridItem] {
+        Array(repeating: GridItem(.flexible(), spacing: 16), count: viewMode.columns)
+    }
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -507,9 +652,37 @@ struct IngredientSearchView: View {
                 
                 VStack(spacing: 20) {
                     VStack(spacing: 16) {
-                        Text("Search by Ingredient")
-                            .font(.system(size: 34, weight: .bold))
-                            .foregroundColor(.white)
+                        HStack {
+                            Text("Search by Ingredient")
+                                .font(.system(size: 34, weight: .bold))
+                                .foregroundColor(.white)
+                            
+                            Spacer()
+                            
+                            if !searchText.isEmpty {
+                                Menu {
+                                    ForEach(RecipeViewMode.allCases, id: \.self) { mode in
+                                        Button(action: { 
+                                            withAnimation(.spring(response: 0.3)) {
+                                                viewMode = mode
+                                            }
+                                        }) {
+                                            Label(mode.rawValue, systemImage: mode.icon)
+                                        }
+                                    }
+                                } label: {
+                                    Image(systemName: viewMode.icon)
+                                        .font(.title2)
+                                        .foregroundColor(.white)
+                                        .padding(12)
+                                        .background(
+                                            Circle()
+                                                .fill(.ultraThinMaterial)
+                                        )
+                                }
+                            }
+                        }
+                        .padding(.horizontal)
                         
                         ModernSearchBar(text: $searchText, placeholder: "What's in the fridge...?")
                             .padding(.horizontal)
@@ -579,15 +752,27 @@ struct IngredientSearchView: View {
     
     private var recipeResultsView: some View {
         ScrollView {
-            LazyVStack(spacing: 16) {
-                ForEach(filteredRecipes) { recipe in
-                    NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
-                        RecipeCard(recipe: recipe)
+            if viewMode == .list {
+                LazyVStack(spacing: 16) {
+                    ForEach(filteredRecipes) { recipe in
+                        NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
+                            RecipeCard(recipe: recipe, viewMode: .list)
+                        }
+                        .buttonStyle(PlainButtonStyle())
                     }
-                    .buttonStyle(PlainButtonStyle())
                 }
+                .padding()
+            } else {
+                LazyVGrid(columns: gridColumns, spacing: 16) {
+                    ForEach(filteredRecipes) { recipe in
+                        NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
+                            RecipeCard(recipe: recipe, viewMode: viewMode)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
+                }
+                .padding()
             }
-            .padding()
         }
     }
 }
@@ -605,14 +790,21 @@ struct RecipeDetailView: View {
     
     var body: some View {
         ScrollView {
-            VStack(spacing: 24) {
-                RecipeImageView(imageName: recipe.imageName, height: 300)
+            VStack(spacing: 20) {
+                // Image without extra padding - let ScrollView handle it
+                RecipeImageView(imageName: recipe.imageName, height: 240)
                     .padding(.horizontal)
                 
-                VStack(alignment: .leading, spacing: 20) {
+                VStack(alignment: .leading, spacing: 16) {
+                    // Recipe title with proper visibility
                     Text(recipe.name)
-                        .font(.system(size: 28, weight: .bold))
+                        .font(.system(size: 26, weight: .bold))
+                        .foregroundColor(.white)
+                        .lineLimit(3)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.horizontal)
                     
+                    // Info cards with proper spacing
                     CardView {
                         InfoPairView(
                             label1: "Prep time", value1: recipe.prepTime, icon1: "clock",
@@ -620,6 +812,7 @@ struct RecipeDetailView: View {
                         )
                         .padding()
                     }
+                    .padding(.horizontal)
                     
                     CardView {
                         InfoPairView(
@@ -628,16 +821,19 @@ struct RecipeDetailView: View {
                         )
                         .padding()
                     }
+                    .padding(.horizontal)
                     
+                    // Servings card
                     CardView {
                         HStack {
-                            VStack(alignment: .leading) {
+                            VStack(alignment: .leading, spacing: 4) {
                                 Text("Servings")
                                     .font(.caption)
                                     .foregroundColor(AppTheme.secondaryText)
                                 Text("\(recipe.currentServings)")
                                     .font(.title2)
                                     .fontWeight(.bold)
+                                    .foregroundColor(.primary)
                             }
                             
                             Spacer()
@@ -647,10 +843,12 @@ struct RecipeDetailView: View {
                         }
                         .padding()
                     }
+                    .padding(.horizontal)
                     .onChange(of: recipe.currentServings) { oldValue, newValue in
                         adjustIngredients(for: newValue)
                     }
                     
+                    // Ingredients section
                     sectionView(title: "Ingredients", icon: "leaf.fill") {
                         VStack(spacing: 12) {
                             ForEach(recipe.ingredients.indices, id: \.self) { index in
@@ -662,7 +860,9 @@ struct RecipeDetailView: View {
                             }
                         }
                     }
+                    .padding(.horizontal)
                     
+                    // Pre-prep section (if exists)
                     if !recipe.prePrepInstructions.isEmpty {
                         sectionView(title: "Pre-Prep", icon: "list.clipboard") {
                             VStack(alignment: .leading, spacing: 12) {
@@ -671,8 +871,10 @@ struct RecipeDetailView: View {
                                 }
                             }
                         }
+                        .padding(.horizontal)
                     }
                     
+                    // Instructions section
                     sectionView(title: "Instructions", icon: "text.alignleft") {
                         VStack(alignment: .leading, spacing: 12) {
                             ForEach(recipe.instructions.indices, id: \.self) { index in
@@ -680,7 +882,9 @@ struct RecipeDetailView: View {
                             }
                         }
                     }
+                    .padding(.horizontal)
                     
+                    // Notes section (if exists)
                     if !recipe.notes.isEmpty {
                         sectionView(title: "Notes", icon: "note.text") {
                             VStack(alignment: .leading, spacing: 8) {
@@ -693,16 +897,18 @@ struct RecipeDetailView: View {
                                                 .padding(.top, 6)
                                             Text(sentence.trimmingCharacters(in: .whitespaces))
                                                 .font(.subheadline)
+                                                .foregroundColor(.primary)
                                         }
                                     }
                                 }
                             }
                         }
+                        .padding(.horizontal)
                     }
                 }
-                .padding(.horizontal)
             }
-            .padding(.vertical)
+            .padding(.top, 8)
+            .padding(.bottom, 100)
         }
         .background(AppTheme.backgroundGradient(for: colorScheme).ignoresSafeArea())
         .navigationBarTitleDisplayMode(.inline)
@@ -710,12 +916,14 @@ struct RecipeDetailView: View {
     
     private func sectionView<Content: View>(title: String, icon: String, @ViewBuilder content: () -> Content) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack {
+            HStack(spacing: 8) {
                 Image(systemName: icon)
                     .foregroundColor(AppTheme.accentColor)
+                    .font(.body)
                 Text(title)
                     .font(.title3)
                     .fontWeight(.bold)
+                    .foregroundColor(.white)
             }
             
             CardView {
@@ -744,6 +952,7 @@ struct RecipeDetailView: View {
             
             Text(text)
                 .font(.subheadline)
+                .foregroundColor(.primary)
                 .fixedSize(horizontal: false, vertical: true)
         }
     }
@@ -893,7 +1102,22 @@ struct ShoppingListView: View {
 // MARK: - Settings View
 struct SettingsView: View {
     @State private var confettiTrigger: Int = 0
+    @AppStorage("appearanceMode") private var appearanceMode: AppearanceMode = .system
     @Environment(\.colorScheme) var colorScheme
+    
+    enum AppearanceMode: String, CaseIterable {
+        case system = "System"
+        case light = "Light"
+        case dark = "Dark"
+        
+        var icon: String {
+            switch self {
+            case .system: return "circle.lefthalf.filled"
+            case .light: return "sun.max.fill"
+            case .dark: return "moon.fill"
+            }
+        }
+    }
     
     var body: some View {
         NavigationStack {
@@ -912,8 +1136,46 @@ struct SettingsView: View {
                             CardView {
                                 VStack(alignment: .leading, spacing: 16) {
                                     settingRow(icon: "bell.fill", title: "Notifications", color: .orange)
+                                    
                                     Divider()
-                                    settingRow(icon: "moon.fill", title: "Dark Mode", color: .purple)
+                                    
+                                    // Dark Mode Toggle with Picker
+                                    HStack(spacing: 16) {
+                                        Image(systemName: appearanceMode.icon)
+                                            .foregroundColor(.purple)
+                                            .frame(width: 30)
+                                        
+                                        Text("Appearance")
+                                            .font(.subheadline)
+                                            .fontWeight(.medium)
+                                        
+                                        Spacer()
+                                        
+                                        Menu {
+                                            Picker("Appearance", selection: $appearanceMode) {
+                                                ForEach(AppearanceMode.allCases, id: \.self) { mode in
+                                                    Label(mode.rawValue, systemImage: mode.icon)
+                                                        .tag(mode)
+                                                }
+                                            }
+                                        } label: {
+                                            HStack(spacing: 6) {
+                                                Text(appearanceMode.rawValue)
+                                                    .font(.subheadline)
+                                                    .foregroundColor(AppTheme.accentColor)
+                                                Image(systemName: "chevron.up.chevron.down")
+                                                    .font(.caption2)
+                                                    .foregroundColor(.gray)
+                                            }
+                                            .padding(.horizontal, 12)
+                                            .padding(.vertical, 6)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 8)
+                                                    .fill(Color(.systemGray6))
+                                            )
+                                        }
+                                    }
+                                    
                                     Divider()
                                     settingRow(icon: "globe", title: "Language", color: .blue)
                                 }
@@ -962,6 +1224,7 @@ struct SettingsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)
         }
+        .preferredColorScheme(appearanceMode == .system ? nil : (appearanceMode == .light ? .light : .dark))
     }
     
     private func settingRow(icon: String, title: String, color: Color) -> some View {

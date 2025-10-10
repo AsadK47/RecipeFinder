@@ -7,10 +7,12 @@
 
 import CoreData
 
+// MARK: - Helper Functions
 func formattedImageName(for recipeName: String) -> String {
     return recipeName.lowercased().replacingOccurrences(of: " ", with: "_") + ".jpg"
 }
 
+// MARK: - Models
 struct Ingredient: Identifiable, Codable {
     var id: UUID = UUID()
     var baseQuantity: Double
@@ -23,8 +25,8 @@ struct Ingredient: Identifiable, Codable {
         self.id = id
         self.baseQuantity = baseQuantity
         self.quantity = quantity ?? baseQuantity
-        self.unit = unit
-        self.name = name
+        self.unit = unit.capitalized
+        self.name = name.capitalized
     }
 }
 
@@ -56,12 +58,12 @@ struct RecipeModel: Identifiable, Codable {
         prePrepInstructions: [String],
         instructions: [String],
         notes: String,
-        imageName: String? = nil // Default nil
+        imageName: String? = nil
     ) {
         self.id = id
-        self.name = name
-        self.category = category
-        self.difficulty = difficulty
+        self.name = name.capitalized
+        self.category = category.capitalized
+        self.difficulty = difficulty.capitalized
         self.prepTime = prepTime
         self.cookingTime = cookingTime
         self.baseServings = baseServings
@@ -74,94 +76,92 @@ struct RecipeModel: Identifiable, Codable {
     }
 }
 
+// MARK: - Persistence Controller
 class PersistenceController {
     static let shared = PersistenceController()
     
     let container: NSPersistentContainer
     
-    init() {
+    private init() {
         container = NSPersistentContainer(name: "RecipeModel")
         
         let description = container.persistentStoreDescriptions.first
         description?.setOption(true as NSNumber, forKey: NSMigratePersistentStoresAutomaticallyOption)
         description?.setOption(true as NSNumber, forKey: NSInferMappingModelAutomaticallyOption)
         
-        if let storeURL = container.persistentStoreDescriptions.first?.url {
-            try? FileManager.default.removeItem(at: storeURL)
-        }
-        
         container.loadPersistentStores { _, error in
             if let error = error as NSError? {
-                print("Failed to load persistent store: \(error), \(error.userInfo)")
+                print("❌ Failed to load persistent store: \(error.localizedDescription)")
                 fatalError("Unresolved error \(error), \(error.userInfo)")
+            } else {
+                print("✅ Core Data store loaded successfully")
             }
         }
     }
     
     func clearDatabase() {
-        if let storeURL = container.persistentStoreDescriptions.first?.url {
-            do {
-                try FileManager.default.removeItem(at: storeURL)
-                print("Database cleared successfully.")
-            } catch {
-                print("Failed to clear database: \(error)")
-            }
+        let context = container.viewContext
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Recipe")
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        
+        do {
+            try context.execute(deleteRequest)
+            try context.save()
+            print("✅ Database cleared successfully")
+        } catch {
+            print("❌ Failed to clear database: \(error.localizedDescription)")
         }
     }
     
     func saveRecipe(
-            name: String,
-            category: String,
-            difficulty: String,
-            prepTime: String,
-            cookingTime: String,
-            baseServings: Int,
-            currentServings: Int,
-            ingredients: [Ingredient],
-            prePrepInstructions: [String],
-            instructions: [String],
-            notes: String,
-            imageName: String
+        name: String,
+        category: String,
+        difficulty: String,
+        prepTime: String,
+        cookingTime: String,
+        baseServings: Int,
+        currentServings: Int,
+        ingredients: [Ingredient],
+        prePrepInstructions: [String],
+        instructions: [String],
+        notes: String,
+        imageName: String
     ) {
         let context = container.viewContext
-        let entity = NSEntityDescription.insertNewObject(forEntityName: "Recipe", into: context)
         
-        let id = UUID()
-        entity.setValue(id, forKey: "id")
-        
-        let ingredientValues: Data
-        do {
-            ingredientValues = try JSONEncoder().encode(ingredients)
-        } catch {
-            print("Failed to encode ingredients: \(error)")
+        guard let entity = NSEntityDescription.entity(forEntityName: "Recipe", in: context) else {
+            print("❌ Failed to find Recipe entity")
             return
         }
-        print("Encoded ingredients: \(String(data: ingredientValues, encoding: .utf8) ?? "Invalid data")")
         
-        let values: [String: Any] = [
-            "name": name,
-            "category": category,
-            "difficulty": difficulty,
-            "prepTime": prepTime,
-            "cookingTime": cookingTime,
-            "baseServings": baseServings,
-            "currentServings": currentServings,
-            "ingredients": ingredientValues,
-            "prePrepInstructions": prePrepInstructions,
-            "instructions": instructions,
-            "notes": notes,
-            "imageName": imageName
-        ]
+        let recipe = NSManagedObject(entity: entity, insertInto: context)
         
-        for (key, value) in values {
-            entity.setValue(value, forKey: key)
+        // Encode ingredients
+        guard let ingredientData = try? JSONEncoder().encode(ingredients) else {
+            print("❌ Failed to encode ingredients for recipe: \(name)")
+            return
         }
+        
+        // Set values with proper capitalization
+        recipe.setValue(UUID(), forKey: "id")
+        recipe.setValue(name.capitalized, forKey: "name")
+        recipe.setValue(category.capitalized, forKey: "category")
+        recipe.setValue(difficulty.capitalized, forKey: "difficulty")
+        recipe.setValue(prepTime, forKey: "prepTime")
+        recipe.setValue(cookingTime, forKey: "cookingTime")
+        recipe.setValue(baseServings, forKey: "baseServings")
+        recipe.setValue(currentServings, forKey: "currentServings")
+        recipe.setValue(ingredientData, forKey: "ingredients")
+        recipe.setValue(prePrepInstructions, forKey: "prePrepInstructions")
+        recipe.setValue(instructions, forKey: "instructions")
+        recipe.setValue(notes, forKey: "notes")
+        recipe.setValue(imageName, forKey: "imageName")
         
         do {
             try context.save()
-            print("Recipe '\(name)' saved successfully!")
+            print("✅ Recipe '\(name)' saved successfully")
         } catch {
-            print("Failed to save recipe: \(error)")
+            print("❌ Failed to save recipe '\(name)': \(error.localizedDescription)")
         }
     }
     
@@ -169,37 +169,43 @@ class PersistenceController {
         let context = container.viewContext
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Recipe")
         
-        let sortDescriptor = NSSortDescriptor(key: "name", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare(_:)))
+        let sortDescriptor = NSSortDescriptor(
+            key: "name",
+            ascending: true,
+            selector: #selector(NSString.localizedCaseInsensitiveCompare(_:))
+        )
         fetchRequest.sortDescriptors = [sortDescriptor]
         
         do {
             let results = try context.fetch(fetchRequest)
-            print("Fetched \(results.count) recipes")
+            print("✅ Fetched \(results.count) recipes from database")
             
             return results.compactMap { result in
-                let id = result.value(forKey: "id") as? UUID ?? UUID()
-                let name = result.value(forKey: "name") as? String ?? "Unknown Name"
-                let category = result.value(forKey: "category") as? String ?? "Uncategorised"
-                let difficulty = result.value(forKey: "difficulty") as? String ?? "Unknown Name"
-                let prepTime = result.value(forKey: "prepTime") as? String ?? "Unknown Prep Time"
-                let cookingTime = result.value(forKey: "cookingTime") as? String ?? "Unknown Cooking Time"
+                guard let id = result.value(forKey: "id") as? UUID,
+                      let name = result.value(forKey: "name") as? String,
+                      let ingredientsData = result.value(forKey: "ingredients") as? Data else {
+                    print("⚠️ Skipping recipe with missing required fields")
+                    return nil
+                }
+                
+                let category = result.value(forKey: "category") as? String ?? "Uncategorized"
+                let difficulty = result.value(forKey: "difficulty") as? String ?? "Unknown"
+                let prepTime = result.value(forKey: "prepTime") as? String ?? "Unknown"
+                let cookingTime = result.value(forKey: "cookingTime") as? String ?? "Unknown"
                 let baseServings = result.value(forKey: "baseServings") as? Int ?? 1
                 let currentServings = result.value(forKey: "currentServings") as? Int ?? baseServings
                 let prePrepInstructions = result.value(forKey: "prePrepInstructions") as? [String] ?? []
                 let instructions = result.value(forKey: "instructions") as? [String] ?? []
                 let notes = result.value(forKey: "notes") as? String ?? ""
-                let imageName = result.value(forKey: "imageName") as? String ?? "default_image"
+                let imageName = result.value(forKey: "imageName") as? String
                 
+                // Decode ingredients
                 let ingredients: [Ingredient]
-                if let ingredientsData = result.value(forKey: "ingredients") as? Data {
-                    do {
-                        ingredients = try JSONDecoder().decode([Ingredient].self, from: ingredientsData)
-                    } catch {
-                        print("Failed to decode ingredients: \(error.localizedDescription)")
-                        ingredients = []
-                    }
-                } else {
-                    ingredients = []
+                do {
+                    ingredients = try JSONDecoder().decode([Ingredient].self, from: ingredientsData)
+                } catch {
+                    print("❌ Failed to decode ingredients for '\(name)': \(error.localizedDescription)")
+                    return nil
                 }
                 
                 return RecipeModel(
@@ -219,24 +225,35 @@ class PersistenceController {
                 )
             }
         } catch {
-            print("Failed to fetch recipes from Core Data \(error.localizedDescription)")
+            print("❌ Failed to fetch recipes: \(error.localizedDescription)")
             return []
+        }
+    }
+    
+    func deleteRecipe(withId id: UUID) {
+        let context = container.viewContext
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Recipe")
+        fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        
+        do {
+            let results = try context.fetch(fetchRequest)
+            for object in results {
+                context.delete(object)
+            }
+            try context.save()
+            print("✅ Recipe deleted successfully")
+        } catch {
+            print("❌ Failed to delete recipe: \(error.localizedDescription)")
         }
     }
 }
 
+// MARK: - Sample Data Population
 extension PersistenceController {
     func populateDatabase() {
-        let context = container.viewContext
+        clearDatabase()
         
-        let fetchRequest : NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Recipe")
-        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-        do {
-            try context.execute(deleteRequest)
-            try context.save()
-        } catch {
-            print("Failed to clear existing data: \(error)")
-        }
+        print("🔄 Populating database with sample recipes...")
         
         saveRecipe(
             name: "Achari Chicken Curry (Instant Pot Version)",
