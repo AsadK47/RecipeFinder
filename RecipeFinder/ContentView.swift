@@ -781,6 +781,7 @@ struct IngredientSearchView: View {
 struct RecipeDetailView: View {
     @State private var recipe: RecipeModel
     @State private var ingredientsState: [Bool]
+    @State private var expandedSections: Set<String> = ["Ingredients", "Instructions"] // Default expanded
     @Environment(\.colorScheme) var colorScheme
     
     init(recipe: RecipeModel) {
@@ -868,8 +869,8 @@ struct RecipeDetailView: View {
                     }
                     .padding(.horizontal, 20)
                     
-                    // ALL SECTIONS using the unified sectionView
-                    sectionView(title: "Ingredients", icon: "leaf.fill") {
+                    // Collapsible Ingredients section
+                    collapsibleSection(title: "Ingredients", icon: "leaf.fill") {
                         VStack(spacing: 12) {
                             ForEach(recipe.ingredients.indices, id: \.self) { index in
                                 IngredientRowView(
@@ -881,8 +882,9 @@ struct RecipeDetailView: View {
                         }
                     }
                     
+                    // Collapsible Pre-prep section
                     if !recipe.prePrepInstructions.isEmpty {
-                        sectionView(title: "Pre-Prep", icon: "list.clipboard") {
+                        collapsibleSection(title: "Pre-Prep", icon: "list.clipboard") {
                             VStack(alignment: .leading, spacing: 12) {
                                 ForEach(recipe.prePrepInstructions.indices, id: \.self) { index in
                                     instructionRow(number: index + 1, text: recipe.prePrepInstructions[index])
@@ -891,7 +893,8 @@ struct RecipeDetailView: View {
                         }
                     }
                     
-                    sectionView(title: "Instructions", icon: "text.alignleft") {
+                    // Collapsible Instructions section
+                    collapsibleSection(title: "Instructions", icon: "text.alignleft") {
                         VStack(alignment: .leading, spacing: 12) {
                             ForEach(recipe.instructions.indices, id: \.self) { index in
                                 instructionRow(number: index + 1, text: recipe.instructions[index])
@@ -899,8 +902,9 @@ struct RecipeDetailView: View {
                         }
                     }
                     
+                    // Collapsible Notes section
                     if !recipe.notes.isEmpty {
-                        sectionView(title: "Notes", icon: "note.text") {
+                        collapsibleSection(title: "Notes", icon: "note.text") {
                             VStack(alignment: .leading, spacing: 8) {
                                 ForEach(recipe.notes.split(separator: "."), id: \.self) { sentence in
                                     if !sentence.trimmingCharacters(in: .whitespaces).isEmpty {
@@ -928,24 +932,54 @@ struct RecipeDetailView: View {
         }
     }
     
-    // UNIFIED section view - ZERO extra padding
-    private func sectionView<Content: View>(title: String, icon: String, @ViewBuilder content: () -> Content) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 8) {
-                Image(systemName: icon)
-                    .foregroundColor(.white)
-                    .font(.title3)
-                Text(title)
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
-                Spacer()
+    // COLLAPSIBLE section view with expand/collapse animation
+    private func collapsibleSection<Content: View>(title: String, icon: String, @ViewBuilder content: () -> Content) -> some View {
+        let isExpanded = expandedSections.contains(title)
+        
+        return VStack(alignment: .leading, spacing: 12) {
+            // Tappable header
+            Button(action: {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    if isExpanded {
+                        expandedSections.remove(title)
+                    } else {
+                        expandedSections.insert(title)
+                    }
+                }
+            }) {
+                HStack(spacing: 8) {
+                    Image(systemName: icon)
+                        .foregroundColor(.white)
+                        .font(.title3)
+                    Text(title)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                    
+                    Spacer()
+                    
+                    // Chevron indicator
+                    Image(systemName: "chevron.down")
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white.opacity(0.8))
+                        .rotationEffect(.degrees(isExpanded ? 0 : -90))
+                        .animation(.spring(response: 0.3), value: isExpanded)
+                }
+                .padding(.top, 24)
             }
-            .padding(.top, 24)
+            .buttonStyle(PlainButtonStyle())
             
-            CardView {
-                content()
-                    .padding(20)
+            // Collapsible content
+            if isExpanded {
+                CardView {
+                    content()
+                        .padding(20)
+                }
+                .transition(.asymmetric(
+                    insertion: .scale(scale: 0.95).combined(with: .opacity),
+                    removal: .scale(scale: 0.95).combined(with: .opacity)
+                ))
             }
         }
         .padding(.horizontal, 20)
