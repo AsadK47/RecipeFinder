@@ -781,7 +781,7 @@ struct IngredientSearchView: View {
 struct RecipeDetailView: View {
     @State private var recipe: RecipeModel
     @State private var ingredientsState: [Bool]
-    @State private var expandedSections: Set<String> = ["Ingredients", "Instructions"] // Default expanded
+    @State private var expandedSections: Set<String> = ["Ingredients", "Instructions"]
     @Environment(\.colorScheme) var colorScheme
     
     init(recipe: RecipeModel) {
@@ -824,9 +824,13 @@ struct RecipeDetailView: View {
                             .padding()
                         }
                         
+                        // Updated Servings Card with Icon
                         CardView {
                             HStack {
-                                VStack(alignment: .leading, spacing: 4) {
+                                VStack(spacing: 8) {
+                                    Image(systemName: "person.2.fill")
+                                        .font(.title2)
+                                        .foregroundColor(AppTheme.accentColor)
                                     Text("Servings")
                                         .font(.caption)
                                         .foregroundColor(AppTheme.secondaryText)
@@ -835,34 +839,42 @@ struct RecipeDetailView: View {
                                         .fontWeight(.bold)
                                         .foregroundColor(.primary)
                                 }
+                                .frame(maxWidth: .infinity)
                                 
-                                Spacer()
+                                Divider()
+                                    .frame(height: 60)
+                                    .padding(.horizontal)
                                 
-                                HStack(spacing: 8) {
+                                HStack(spacing: 12) {
                                     Button(action: {
                                         if recipe.currentServings > 1 {
                                             recipe.currentServings -= 1
                                         }
                                     }) {
                                         Image(systemName: "minus")
-                                            .font(.system(size: 16, weight: .semibold))
-                                            .foregroundColor(.primary)
+                                            .font(.system(size: 18, weight: .semibold))
+                                            .foregroundColor(.white)
                                             .frame(width: 44, height: 44)
-                                            .background(Color(.systemGray5))
-                                            .clipShape(Circle())
+                                            .background(
+                                                Circle()
+                                                    .fill(AppTheme.accentColor)
+                                            )
                                     }
                                     
                                     Button(action: {
                                         recipe.currentServings += 1
                                     }) {
                                         Image(systemName: "plus")
-                                            .font(.system(size: 16, weight: .semibold))
-                                            .foregroundColor(.primary)
+                                            .font(.system(size: 18, weight: .semibold))
+                                            .foregroundColor(.white)
                                             .frame(width: 44, height: 44)
-                                            .background(Color(.systemGray5))
-                                            .clipShape(Circle())
+                                            .background(
+                                                Circle()
+                                                    .fill(AppTheme.accentColor)
+                                            )
                                     }
                                 }
+                                .frame(maxWidth: .infinity)
                             }
                             .padding()
                         }
