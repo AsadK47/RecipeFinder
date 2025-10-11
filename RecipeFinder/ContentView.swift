@@ -805,8 +805,8 @@ struct RecipeDetailView: View {
                         .padding(.top, 8)
                         .padding(.bottom, 20)
                     
+                    // All info cards with consistent spacing
                     VStack(spacing: 16) {
-                        // Info cards
                         CardView {
                             InfoPairView(
                                 label1: "Prep time", value1: recipe.prepTime, icon1: "clock",
@@ -823,7 +823,6 @@ struct RecipeDetailView: View {
                             .padding()
                         }
                         
-                        // Servings card
                         CardView {
                             HStack {
                                 VStack(alignment: .leading, spacing: 4) {
@@ -838,7 +837,7 @@ struct RecipeDetailView: View {
                                 
                                 Spacer()
                                 
-                                HStack(spacing: 0) {
+                                HStack(spacing: 8) {
                                     Button(action: {
                                         if recipe.currentServings > 1 {
                                             recipe.currentServings -= 1
@@ -849,7 +848,7 @@ struct RecipeDetailView: View {
                                             .foregroundColor(.primary)
                                             .frame(width: 44, height: 44)
                                             .background(Color(.systemGray5))
-                                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                                            .clipShape(Circle())
                                     }
                                     
                                     Button(action: {
@@ -860,7 +859,7 @@ struct RecipeDetailView: View {
                                             .foregroundColor(.primary)
                                             .frame(width: 44, height: 44)
                                             .background(Color(.systemGray5))
-                                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                                            .clipShape(Circle())
                                     }
                                 }
                             }
@@ -869,37 +868,19 @@ struct RecipeDetailView: View {
                     }
                     .padding(.horizontal, 20)
                     
-                    // Ingredients section with header on gradient
-                    VStack(spacing: 12) {
-                        HStack(spacing: 8) {
-                            Image(systemName: "leaf.fill")
-                                .foregroundColor(.white)
-                                .font(.title3)
-                            Text("Ingredients")
-                                .font(.title2)
-                                .fontWeight(.bold)
-                                .foregroundColor(.white)
-                            Spacer()
-                        }
-                        .padding(.horizontal, 20)
-                        .padding(.top, 24)
-                        
-                        CardView {
-                            VStack(spacing: 12) {
-                                ForEach(recipe.ingredients.indices, id: \.self) { index in
-                                    IngredientRowView(
-                                        ingredient: recipe.ingredients[index],
-                                        isChecked: ingredientsState[index],
-                                        toggle: { ingredientsState[index].toggle() }
-                                    )
-                                }
+                    // ALL SECTIONS using the unified sectionView
+                    sectionView(title: "Ingredients", icon: "leaf.fill") {
+                        VStack(spacing: 12) {
+                            ForEach(recipe.ingredients.indices, id: \.self) { index in
+                                IngredientRowView(
+                                    ingredient: recipe.ingredients[index],
+                                    isChecked: ingredientsState[index],
+                                    toggle: { ingredientsState[index].toggle() }
+                                )
                             }
-                            .padding()
                         }
-                        .padding(.horizontal, 20)
                     }
                     
-                    // Pre-prep section
                     if !recipe.prePrepInstructions.isEmpty {
                         sectionView(title: "Pre-Prep", icon: "list.clipboard") {
                             VStack(alignment: .leading, spacing: 12) {
@@ -910,7 +891,6 @@ struct RecipeDetailView: View {
                         }
                     }
                     
-                    // Instructions section
                     sectionView(title: "Instructions", icon: "text.alignleft") {
                         VStack(alignment: .leading, spacing: 12) {
                             ForEach(recipe.instructions.indices, id: \.self) { index in
@@ -919,7 +899,6 @@ struct RecipeDetailView: View {
                         }
                     }
                     
-                    // Notes section
                     if !recipe.notes.isEmpty {
                         sectionView(title: "Notes", icon: "note.text") {
                             VStack(alignment: .leading, spacing: 8) {
@@ -949,8 +928,9 @@ struct RecipeDetailView: View {
         }
     }
     
+    // UNIFIED section view - ZERO extra padding
     private func sectionView<Content: View>(title: String, icon: String, @ViewBuilder content: () -> Content) -> some View {
-        VStack(spacing: 12) {
+        VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 8) {
                 Image(systemName: icon)
                     .foregroundColor(.white)
@@ -961,15 +941,14 @@ struct RecipeDetailView: View {
                     .foregroundColor(.white)
                 Spacer()
             }
-            .padding(.horizontal, 20)
             .padding(.top, 24)
             
             CardView {
                 content()
-                    .padding()
+                    .padding(20)
             }
-            .padding(.horizontal, 20)
         }
+        .padding(.horizontal, 20)
     }
     
     private func instructionRow(number: Int, text: String) -> some View {
