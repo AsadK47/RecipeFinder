@@ -5,7 +5,6 @@ import ConfettiSwiftUI
 struct ContentView: View {
     @State private var recipes: [RecipeModel] = []
     @State private var selectedTab: Int = 0
-    @State private var shoppingListItems: [ShoppingListItem] = []
     @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
@@ -26,7 +25,7 @@ struct ContentView: View {
                     }
                     .tag(1)
 
-                ShoppingListView(shoppingListItems: $shoppingListItems)
+                ShoppingListView()
                     .tabItem {
                         Label("Shopping", systemImage: "cart.fill")
                     }
