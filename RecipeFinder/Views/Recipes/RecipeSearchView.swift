@@ -5,9 +5,10 @@ struct RecipeSearchView: View {
     @State private var searchText = ""
     @State private var viewMode: RecipeViewMode = .list
     @State private var showFilters = false
-    @State private var selectedCategory: String? = nil
-    @State private var selectedDifficulty: String? = nil
-    @State private var maxCookTime: Int? = nil
+    @State private var selectedCategories: Set<String> = []
+    @State private var selectedCuisines: Set<String> = []
+    @State private var selectedDifficulties: Set<String> = []
+    @State private var selectedCookTimes: Set<Int> = []
     @Environment(\.colorScheme) var colorScheme
 
     var filteredRecipes: [RecipeModel] {
@@ -18,21 +19,26 @@ struct RecipeSearchView: View {
             results = results.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
         }
         
-        // Category filter
-        if let category = selectedCategory {
-            results = results.filter { $0.category == category }
+        // Category filter (OR logic - show if matches any selected category)
+        if !selectedCategories.isEmpty {
+            results = results.filter { selectedCategories.contains($0.category) }
         }
         
-        // Difficulty filter
-        if let difficulty = selectedDifficulty {
-            results = results.filter { $0.difficulty == difficulty }
+        // Cuisine filter (OR logic - show if matches any selected cuisine)
+        if !selectedCuisines.isEmpty {
+            results = results.filter { selectedCuisines.contains($0.cuisine) }
         }
         
-        // Cook time filter
-        if let maxTime = maxCookTime {
+        // Difficulty filter (OR logic - show if matches any selected difficulty)
+        if !selectedDifficulties.isEmpty {
+            results = results.filter { selectedDifficulties.contains($0.difficulty) }
+        }
+        
+        // Cook time filter (OR logic - show if under any selected time limit)
+        if !selectedCookTimes.isEmpty {
             results = results.filter { recipe in
                 let time = extractMinutes(from: recipe.cookingTime)
-                return time <= maxTime
+                return selectedCookTimes.contains { time <= $0 }
             }
         }
         
@@ -40,19 +46,22 @@ struct RecipeSearchView: View {
     }
     
     var activeFilterCount: Int {
-        var count = 0
-        if selectedCategory != nil { count += 1 }
-        if selectedDifficulty != nil { count += 1 }
-        if maxCookTime != nil { count += 1 }
-        return count
+        return selectedCategories.count + selectedCuisines.count + selectedDifficulties.count + selectedCookTimes.count
     }
     
     var categories: [String] {
-        Array(Set(recipes.map { $0.category })).sorted()
+        let validCategories = ["Appetizer", "Main Course", "Side", "Dessert", "Breakfast", "Soup", "Drink", "Bread"]
+        return Array(Set(recipes.map { $0.category }))
+            .filter { validCategories.contains($0) }
+            .sorted()
+    }
+    
+    var cuisines: [String] {
+        Array(Set(recipes.map { $0.cuisine })).sorted()
     }
     
     var difficulties: [String] {
-        Array(Set(recipes.map { $0.difficulty })).sorted()
+        ["Easy", "Medium", "Hard"]
     }
     
     private func extractMinutes(from timeString: String) -> Int {
@@ -138,21 +147,27 @@ struct RecipeSearchView: View {
                         if activeFilterCount > 0 {
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 8) {
-                                    if let category = selectedCategory {
+                                    ForEach(Array(selectedCategories), id: \.self) { category in
                                         FilterChip(label: category, icon: "fork.knife") {
-                                            selectedCategory = nil
+                                            selectedCategories.remove(category)
                                         }
                                     }
                                     
-                                    if let difficulty = selectedDifficulty {
+                                    ForEach(Array(selectedCuisines), id: \.self) { cuisine in
+                                        FilterChip(label: cuisine, icon: "globe") {
+                                            selectedCuisines.remove(cuisine)
+                                        }
+                                    }
+                                    
+                                    ForEach(Array(selectedDifficulties), id: \.self) { difficulty in
                                         FilterChip(label: difficulty, icon: "chart.bar.fill") {
-                                            selectedDifficulty = nil
+                                            selectedDifficulties.remove(difficulty)
                                         }
                                     }
                                     
-                                    if let time = maxCookTime {
+                                    ForEach(Array(selectedCookTimes), id: \.self) { time in
                                         FilterChip(label: "≤ \(time) min", icon: "clock.fill") {
-                                            maxCookTime = nil
+                                            selectedCookTimes.remove(time)
                                         }
                                     }
                                     
@@ -209,10 +224,12 @@ struct RecipeSearchView: View {
             .sheet(isPresented: $showFilters) {
                 FilterSheet(
                     categories: categories,
+                    cuisines: cuisines,
                     difficulties: difficulties,
-                    selectedCategory: $selectedCategory,
-                    selectedDifficulty: $selectedDifficulty,
-                    maxCookTime: $maxCookTime
+                    selectedCategories: $selectedCategories,
+                    selectedCuisines: $selectedCuisines,
+                    selectedDifficulties: $selectedDifficulties,
+                    selectedCookTimes: $selectedCookTimes
                 )
             }
         }
@@ -220,9 +237,10 @@ struct RecipeSearchView: View {
     
     private func clearAllFilters() {
         withAnimation {
-            selectedCategory = nil
-            selectedDifficulty = nil
-            maxCookTime = nil
+            selectedCategories.removeAll()
+            selectedCuisines.removeAll()
+            selectedDifficulties.removeAll()
+            selectedCookTimes.removeAll()
         }
     }
 }
@@ -262,12 +280,14 @@ struct FilterSheet: View {
     @Environment(\.colorScheme) var colorScheme
     
     let categories: [String]
+    let cuisines: [String]
     let difficulties: [String]
-    @Binding var selectedCategory: String?
-    @Binding var selectedDifficulty: String?
-    @Binding var maxCookTime: Int?
+    @Binding var selectedCategories: Set<String>
+    @Binding var selectedCuisines: Set<String>
+    @Binding var selectedDifficulties: Set<String>
+    @Binding var selectedCookTimes: Set<Int>
     
-    let cookTimeOptions = [15, 30, 45, 60, 90]
+    let cookTimeOptions = [15, 30, 45, 60, 90, 120]
     
     private let columns = [
         GridItem(.adaptive(minimum: 100, maximum: 120), spacing: 8, alignment: .center)
@@ -291,9 +311,30 @@ struct FilterSheet: View {
                                 ForEach(categories, id: \.self) { category in
                                     FilterButton(
                                         label: category,
-                                        isSelected: selectedCategory == category
+                                        isSelected: selectedCategories.contains(category)
                                     ) {
-                                        selectedCategory = selectedCategory == category ? nil : category
+                                        toggleSelection(category, in: $selectedCategories)
+                                    }
+                                }
+                            }
+                        }
+                        
+                        Divider()
+                            .background(Color.white.opacity(0.3))
+                        
+                        // Cuisine Filter
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Cuisine")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                            
+                            LazyVGrid(columns: columns, spacing: 8) {
+                                ForEach(cuisines, id: \.self) { cuisine in
+                                    FilterButton(
+                                        label: cuisine,
+                                        isSelected: selectedCuisines.contains(cuisine)
+                                    ) {
+                                        toggleSelection(cuisine, in: $selectedCuisines)
                                     }
                                 }
                             }
@@ -312,9 +353,9 @@ struct FilterSheet: View {
                                 ForEach(difficulties, id: \.self) { difficulty in
                                     FilterButton(
                                         label: difficulty,
-                                        isSelected: selectedDifficulty == difficulty
+                                        isSelected: selectedDifficulties.contains(difficulty)
                                     ) {
-                                        selectedDifficulty = selectedDifficulty == difficulty ? nil : difficulty
+                                        toggleSelection(difficulty, in: $selectedDifficulties)
                                     }
                                 }
                             }
@@ -333,9 +374,9 @@ struct FilterSheet: View {
                                 ForEach(cookTimeOptions, id: \.self) { time in
                                     FilterButton(
                                         label: "≤ \(time) min",
-                                        isSelected: maxCookTime == time
+                                        isSelected: selectedCookTimes.contains(time)
                                     ) {
-                                        maxCookTime = maxCookTime == time ? nil : time
+                                        toggleSelection(time, in: $selectedCookTimes)
                                     }
                                 }
                             }
@@ -349,9 +390,10 @@ struct FilterSheet: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Clear All") {
-                        selectedCategory = nil
-                        selectedDifficulty = nil
-                        maxCookTime = nil
+                        selectedCategories.removeAll()
+                        selectedCuisines.removeAll()
+                        selectedDifficulties.removeAll()
+                        selectedCookTimes.removeAll()
                     }
                     .foregroundColor(.white)
                 }
@@ -364,6 +406,14 @@ struct FilterSheet: View {
                     .fontWeight(.semibold)
                 }
             }
+        }
+    }
+    
+    private func toggleSelection<T: Hashable>(_ item: T, in set: Binding<Set<T>>) {
+        if set.wrappedValue.contains(item) {
+            set.wrappedValue.remove(item)
+        } else {
+            set.wrappedValue.insert(item)
         }
     }
 }
