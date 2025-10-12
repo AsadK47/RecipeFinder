@@ -6,7 +6,6 @@ struct RecipeSearchView: View {
     @State private var viewMode: RecipeViewMode = .list
     @State private var showFilters = false
     @State private var selectedCategories: Set<String> = []
-    @State private var selectedCuisines: Set<String> = []
     @State private var selectedDifficulties: Set<String> = []
     @State private var selectedCookTimes: Set<Int> = []
     @Environment(\.colorScheme) var colorScheme
@@ -22,11 +21,6 @@ struct RecipeSearchView: View {
         // Category filter (OR logic - show if matches any selected category)
         if !selectedCategories.isEmpty {
             results = results.filter { selectedCategories.contains($0.category) }
-        }
-        
-        // Cuisine filter (OR logic - show if matches any selected cuisine)
-        if !selectedCuisines.isEmpty {
-            results = results.filter { selectedCuisines.contains($0.cuisine) }
         }
         
         // Difficulty filter (OR logic - show if matches any selected difficulty)
@@ -46,7 +40,7 @@ struct RecipeSearchView: View {
     }
     
     var activeFilterCount: Int {
-        return selectedCategories.count + selectedCuisines.count + selectedDifficulties.count + selectedCookTimes.count
+        return selectedCategories.count + selectedDifficulties.count + selectedCookTimes.count
     }
     
     var categories: [String] {
@@ -54,10 +48,6 @@ struct RecipeSearchView: View {
         return Array(Set(recipes.map { $0.category }))
             .filter { validCategories.contains($0) }
             .sorted()
-    }
-    
-    var cuisines: [String] {
-        Array(Set(recipes.map { $0.cuisine })).sorted()
     }
     
     var difficulties: [String] {
@@ -153,12 +143,6 @@ struct RecipeSearchView: View {
                                         }
                                     }
                                     
-                                    ForEach(Array(selectedCuisines), id: \.self) { cuisine in
-                                        FilterChip(label: cuisine, icon: "globe") {
-                                            selectedCuisines.remove(cuisine)
-                                        }
-                                    }
-                                    
                                     ForEach(Array(selectedDifficulties), id: \.self) { difficulty in
                                         FilterChip(label: difficulty, icon: "chart.bar.fill") {
                                             selectedDifficulties.remove(difficulty)
@@ -224,10 +208,8 @@ struct RecipeSearchView: View {
             .sheet(isPresented: $showFilters) {
                 FilterSheet(
                     categories: categories,
-                    cuisines: cuisines,
                     difficulties: difficulties,
                     selectedCategories: $selectedCategories,
-                    selectedCuisines: $selectedCuisines,
                     selectedDifficulties: $selectedDifficulties,
                     selectedCookTimes: $selectedCookTimes
                 )
@@ -238,7 +220,6 @@ struct RecipeSearchView: View {
     private func clearAllFilters() {
         withAnimation {
             selectedCategories.removeAll()
-            selectedCuisines.removeAll()
             selectedDifficulties.removeAll()
             selectedCookTimes.removeAll()
         }
@@ -280,10 +261,8 @@ struct FilterSheet: View {
     @Environment(\.colorScheme) var colorScheme
     
     let categories: [String]
-    let cuisines: [String]
     let difficulties: [String]
     @Binding var selectedCategories: Set<String>
-    @Binding var selectedCuisines: Set<String>
     @Binding var selectedDifficulties: Set<String>
     @Binding var selectedCookTimes: Set<Int>
     
@@ -314,27 +293,6 @@ struct FilterSheet: View {
                                         isSelected: selectedCategories.contains(category)
                                     ) {
                                         toggleSelection(category, in: $selectedCategories)
-                                    }
-                                }
-                            }
-                        }
-                        
-                        Divider()
-                            .background(Color.white.opacity(0.3))
-                        
-                        // Cuisine Filter
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text("Cuisine")
-                                .font(.headline)
-                                .foregroundColor(.white)
-                            
-                            LazyVGrid(columns: columns, spacing: 8) {
-                                ForEach(cuisines, id: \.self) { cuisine in
-                                    FilterButton(
-                                        label: cuisine,
-                                        isSelected: selectedCuisines.contains(cuisine)
-                                    ) {
-                                        toggleSelection(cuisine, in: $selectedCuisines)
                                     }
                                 }
                             }
@@ -391,7 +349,6 @@ struct FilterSheet: View {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Clear All") {
                         selectedCategories.removeAll()
-                        selectedCuisines.removeAll()
                         selectedDifficulties.removeAll()
                         selectedCookTimes.removeAll()
                     }
