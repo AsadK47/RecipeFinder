@@ -1,0 +1,147 @@
+import SwiftUI
+
+struct SettingsView: View {
+    @State private var confettiTrigger: Int = 0
+    @AppStorage("appearanceMode") private var appearanceMode: AppearanceMode = .system
+    @Environment(\.colorScheme) var colorScheme
+    
+    enum AppearanceMode: String, CaseIterable {
+        case system = "System"
+        case light = "Light"
+        case dark = "Dark"
+        
+        var icon: String {
+            switch self {
+            case .system: return "circle.lefthalf.filled"
+            case .light: return "sun.max.fill"
+            case .dark: return "moon.fill"
+            }
+        }
+    }
+    
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                AppTheme.backgroundGradient(for: colorScheme)
+                    .ignoresSafeArea()
+                
+                VStack(spacing: 24) {
+                    Text("Settings")
+                        .font(.system(size: 34, weight: .bold))
+                        .foregroundColor(.white)
+                        .padding(.top, 20)
+                    
+                    ScrollView {
+                        VStack(spacing: 16) {
+                            CardView {
+                                VStack(alignment: .leading, spacing: 16) {
+                                    settingRow(icon: "bell.fill", title: "Notifications", color: .orange)
+                                    
+                                    Divider()
+                                    
+                                    // Dark Mode Toggle with Picker
+                                    HStack(spacing: 16) {
+                                        Image(systemName: appearanceMode.icon)
+                                            .foregroundColor(.purple)
+                                            .frame(width: 30)
+                                        
+                                        Text("Appearance")
+                                            .font(.subheadline)
+                                            .fontWeight(.medium)
+                                        
+                                        Spacer()
+                                        
+                                        Menu {
+                                            Picker("Appearance", selection: $appearanceMode) {
+                                                ForEach(AppearanceMode.allCases, id: \.self) { mode in
+                                                    Label(mode.rawValue, systemImage: mode.icon)
+                                                        .tag(mode)
+                                                }
+                                            }
+                                        } label: {
+                                            HStack(spacing: 6) {
+                                                Text(appearanceMode.rawValue)
+                                                    .font(.subheadline)
+                                                    .foregroundColor(AppTheme.accentColor)
+                                                Image(systemName: "chevron.up.chevron.down")
+                                                    .font(.caption2)
+                                                    .foregroundColor(.gray)
+                                            }
+                                            .padding(.horizontal, 12)
+                                            .padding(.vertical, 6)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 8)
+                                                    .fill(Color(.systemGray6))
+                                            )
+                                        }
+                                    }
+                                    
+                                    Divider()
+                                    settingRow(icon: "globe", title: "Language", color: .blue)
+                                }
+                                .padding()
+                            }
+                            
+                            CardView {
+                                VStack(alignment: .leading, spacing: 16) {
+                                    settingRow(icon: "person.fill", title: "Account", color: .green)
+                                    Divider()
+                                    settingRow(icon: "lock.fill", title: "Privacy", color: .red)
+                                }
+                                .padding()
+                            }
+                            
+                            Button(action: { confettiTrigger += 1 }) {
+                                HStack {
+                                    Image(systemName: "party.popper.fill")
+                                    Text("Celebrate!")
+                                        .fontWeight(.semibold)
+                                }
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(
+                                    LinearGradient(
+                                        colors: [AppTheme.gradientStart, AppTheme.gradientMiddle],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .cornerRadius(16)
+                            }
+                            .confettiCannon(
+                                trigger: $confettiTrigger,
+                                num: 50,
+                                radius: 500.0
+                            )
+                        }
+                        .padding()
+                    }
+                    
+                    Spacer()
+                }
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.hidden, for: .navigationBar)
+        }
+        .preferredColorScheme(appearanceMode == .system ? nil : (appearanceMode == .light ? .light : .dark))
+    }
+    
+    private func settingRow(icon: String, title: String, color: Color) -> some View {
+        HStack(spacing: 16) {
+            Image(systemName: icon)
+                .foregroundColor(color)
+                .frame(width: 30)
+            
+            Text(title)
+                .font(.subheadline)
+                .fontWeight(.medium)
+            
+            Spacer()
+            
+            Image(systemName: "chevron.right")
+                .foregroundColor(.gray)
+                .font(.caption)
+        }
+    }
+}
