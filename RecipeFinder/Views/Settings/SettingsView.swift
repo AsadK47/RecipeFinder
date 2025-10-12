@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @State private var confettiTrigger: Int = 0
+    @State private var showResetAlert: Bool = false
     @AppStorage("appearanceMode") private var appearanceMode: AppearanceMode = .system
     @Environment(\.colorScheme) var colorScheme
     
@@ -91,6 +92,38 @@ struct SettingsView: View {
                                 .padding()
                             }
                             
+                            // Debug Section
+                            #if DEBUG
+                            CardView {
+                                VStack(alignment: .leading, spacing: 16) {
+                                    Text("Developer Options")
+                                        .font(.headline)
+                                        .foregroundColor(AppTheme.secondaryText)
+                                    
+                                    Button(action: { showResetAlert = true }) {
+                                        HStack(spacing: 16) {
+                                            Image(systemName: "arrow.clockwise.circle.fill")
+                                                .foregroundColor(.orange)
+                                                .frame(width: 30)
+                                            
+                                            Text("Reset Database")
+                                                .font(.subheadline)
+                                                .fontWeight(.medium)
+                                                .foregroundColor(.primary)
+                                            
+                                            Spacer()
+                                            
+                                            Image(systemName: "exclamationmark.triangle.fill")
+                                                .foregroundColor(.orange)
+                                                .font(.caption)
+                                        }
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                }
+                                .padding()
+                            }
+                            #endif
+                            
                             Button(action: { confettiTrigger += 1 }) {
                                 HStack {
                                     Image(systemName: "party.popper.fill")
@@ -125,6 +158,14 @@ struct SettingsView: View {
             .toolbarBackground(.hidden, for: .navigationBar)
         }
         .preferredColorScheme(appearanceMode == .system ? nil : (appearanceMode == .light ? .light : .dark))
+        .alert("Reset Database", isPresented: $showResetAlert) {
+            Button("Cancel", role: .cancel) { }
+            Button("Reset", role: .destructive) {
+                PersistenceController.shared.resetDatabase()
+            }
+        } message: {
+            Text("This will delete all recipes and reload the sample data. This action cannot be undone.")
+        }
     }
     
     private func settingRow(icon: String, title: String, color: Color) -> some View {

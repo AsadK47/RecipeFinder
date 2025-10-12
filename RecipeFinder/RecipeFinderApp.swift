@@ -17,13 +17,15 @@ struct RecipeFinderApp: App {
     init() {
         configureAppearance()
         
-        // Populate database with sample data on first launch
-        #if DEBUG
-        if UserDefaults.standard.bool(forKey: "hasPopulatedDatabase") == false {
+        // Populate database with sample data on first launch only
+        if !UserDefaults.standard.bool(forKey: "hasPopulatedDatabase") {
+            print("🔄 First launch detected - populating database with sample recipes...")
             persistenceController.populateDatabase()
             UserDefaults.standard.set(true, forKey: "hasPopulatedDatabase")
+            print("✅ Database populated successfully")
+        } else {
+            print("✅ Database already populated - skipping initialization")
         }
-        #endif
     }
     
     var body: some Scene {

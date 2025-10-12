@@ -36,6 +36,17 @@ class PersistenceController {
         }
     }
     
+    /// Resets the database by clearing all data and repopulating with sample recipes
+    /// This also resets the UserDefaults flag to allow repopulation
+    func resetDatabase() {
+        print("🔄 Resetting database...")
+        clearDatabase()
+        UserDefaults.standard.set(false, forKey: "hasPopulatedDatabase")
+        populateDatabase()
+        UserDefaults.standard.set(true, forKey: "hasPopulatedDatabase")
+        print("✅ Database reset complete")
+    }
+    
     func saveRecipe(
         name: String,
         category: String,

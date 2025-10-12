@@ -44,8 +44,6 @@ struct ContentView: View {
     }
 
     private func loadRecipes() {
-        PersistenceController.shared.clearDatabase()
-        PersistenceController.shared.populateDatabase()
         recipes = PersistenceController.shared.fetchRecipes()
     }
 }
