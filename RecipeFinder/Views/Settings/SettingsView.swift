@@ -27,10 +27,25 @@ struct SettingsView: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 24) {
-                    Text("Settings")
-                        .font(.system(size: 34, weight: .bold))
-                        .foregroundColor(.white)
-                        .padding(.top, 20)
+                    HStack {
+                        // Left spacer for alignment
+                        Color.clear
+                            .frame(width: 48, height: 48)
+                        
+                        Spacer()
+                        
+                        Text("Settings")
+                            .font(.system(size: 34, weight: .bold))
+                            .foregroundColor(.white)
+                        
+                        Spacer()
+                        
+                        // Right spacer for alignment
+                        Color.clear
+                            .frame(width: 48, height: 48)
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 20)
                     
                     ScrollView {
                         VStack(spacing: 16) {

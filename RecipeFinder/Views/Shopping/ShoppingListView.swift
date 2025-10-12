@@ -13,12 +13,27 @@ struct ShoppingListView: View {
                 
                 VStack(spacing: 20) {
                     VStack(spacing: 16) {
-                        Text("Shopping List")
-                            .font(.system(size: 34, weight: .bold))
-                            .foregroundColor(.white)
+                        HStack {
+                            // Left spacer for alignment
+                            Color.clear
+                                .frame(width: 48, height: 48)
+                            
+                            Spacer()
+                            
+                            Text("Shopping List")
+                                .font(.system(size: 34, weight: .bold))
+                                .foregroundColor(.white)
+                            
+                            Spacer()
+                            
+                            // Right spacer for alignment
+                            Color.clear
+                                .frame(width: 48, height: 48)
+                        }
+                        .padding(.horizontal, 20)
                         
                         ShoppingListInputBar(text: $newItem, onAdd: addItem)
-                            .padding(.horizontal)
+                            .padding(.horizontal, 20)
                     }
                     .padding(.top, 20)
                     
