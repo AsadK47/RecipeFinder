@@ -250,7 +250,7 @@ struct RecipeDetailView: View {
         let factor = Double(newServings) / Double(recipe.baseServings)
         recipe.ingredients = recipe.ingredients.map { ingredient in
             var updatedIngredient = ingredient
-            updatedIngredient.quantity = ingredient.baseQuantity * factor
+            updatedIngredient.baseQuantity = ingredient.baseQuantity * factor
             return updatedIngredient
         }
     }

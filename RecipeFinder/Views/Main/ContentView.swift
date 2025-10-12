@@ -2,7 +2,6 @@ import SwiftUI
 import SwiftData
 import ConfettiSwiftUI
 
-// MARK: - Main Content View
 struct ContentView: View {
     @State private var recipes: [RecipeModel] = []
     @State private var selectedTab: Int = 0

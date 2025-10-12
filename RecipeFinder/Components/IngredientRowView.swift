@@ -31,7 +31,7 @@ struct IngredientRowView: View {
                     .strikethrough(isChecked)
                     .foregroundColor(isChecked ? .gray : .primary)
                 
-                Text("\(String(format: "%.2f", ingredient.quantity)) \(ingredient.unit)")
+                Text("\(ingredient.formattedQuantity) \(ingredient.unit)")
                     .font(.caption)
                     .foregroundColor(AppTheme.secondaryText)
             }
