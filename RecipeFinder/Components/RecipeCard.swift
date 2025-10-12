@@ -3,6 +3,7 @@ import SwiftUI
 struct RecipeCard: View {
     let recipe: RecipeModel
     let viewMode: RecipeViewMode
+    @Environment(\.colorScheme) var colorScheme
     
     init(recipe: RecipeModel, viewMode: RecipeViewMode = .list) {
         self.recipe = recipe
@@ -10,84 +11,64 @@ struct RecipeCard: View {
     }
     
     var body: some View {
-        HStack(spacing: 0) {
-            // Image on the left
-            RecipeImageView(imageName: recipe.imageName, height: 120)
-                .frame(width: 120)
-                .clipShape(
-                    UnevenRoundedRectangle(
-                        topLeadingRadius: 24,
-                        bottomLeadingRadius: 24
-                    )
-                )
-            
-            // Content in the middle
-            VStack(alignment: .leading, spacing: 8) {
-                Text(recipe.name)
-                    .font(.headline)
-                    .fontWeight(.bold)
-                    .foregroundColor(.primary)
-                    .lineLimit(2)
-                    .multilineTextAlignment(.leading)
+        GlassCard {
+            HStack(spacing: 12) {
+                // Image on the left with rounded corners
+                RecipeImageView(imageName: recipe.imageName, height: 70)
+                    .frame(width: 70, height: 70)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
                 
-                HStack(spacing: 12) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "clock")
-                            .font(.caption)
-                        Text(recipe.prepTime)
-                            .font(.caption)
+                // Content in the middle
+                VStack(alignment: .leading, spacing: 6) {
+                    // Title and category on same line
+                    HStack(alignment: .top, spacing: 8) {
+                        Text(recipe.name)
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.primary)
+                            .lineLimit(2)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        Text(recipe.category)
+                            .font(.system(size: 10))
+                            .fontWeight(.semibold)
+                            .padding(.horizontal, 7)
+                            .padding(.vertical, 3)
+                            .background(
+                                Capsule()
+                                    .fill(AppTheme.accentColor.opacity(0.15))
+                            )
+                            .foregroundColor(AppTheme.accentColor)
                     }
                     
-                    HStack(spacing: 4) {
-                        Image(systemName: "chart.bar")
-                            .font(.caption)
-                        Text(recipe.difficulty)
-                            .font(.caption)
+                    // Time and difficulty on same line
+                    HStack(spacing: 12) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "clock.fill")
+                                .font(.system(size: 10))
+                                .foregroundColor(.orange)
+                            Text(recipe.prepTime)
+                                .font(.caption)
+                                .foregroundColor(.primary.opacity(0.7))
+                        }
+                        
+                        HStack(spacing: 4) {
+                            Image(systemName: "chart.bar.fill")
+                                .font(.system(size: 10))
+                                .foregroundColor(.blue)
+                            Text(recipe.difficulty)
+                                .font(.caption)
+                                .foregroundColor(.primary.opacity(0.7))
+                        }
                     }
                 }
-                .foregroundColor(AppTheme.secondaryText)
                 
-                Text(recipe.category)
+                // Chevron on the right
+                Image(systemName: "chevron.right")
                     .font(.caption)
-                    .fontWeight(.semibold)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 5)
-                    .background(
-                        Capsule()
-                            .fill(AppTheme.accentColor)
-                    )
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary.opacity(0.3))
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            
-            // Chevron on the right
-            Image(systemName: "chevron.right")
-                .font(.title3)
-                .fontWeight(.semibold)
-                .foregroundColor(AppTheme.accentColor.opacity(0.6))
-                .padding(.trailing, 16)
+            .padding(12)
         }
-        .frame(maxWidth: .infinity)
-        .background(
-            RoundedRectangle(cornerRadius: 24)
-                .fill(.ultraThinMaterial)
-                .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 24)
-                .strokeBorder(
-                    LinearGradient(
-                        colors: [
-                            Color.white.opacity(0.4),
-                            Color.white.opacity(0.1)
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ),
-                    lineWidth: 1.5
-                )
-        )
     }
 }
