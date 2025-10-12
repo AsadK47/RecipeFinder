@@ -756,7 +756,7 @@ extension PersistenceController {
                 "Cut the roti into pieces, drizzle with condensed milk or chocolate sauce, and sprinkle with granulated sugar before serving."
             ],
             notes: "This street-food favorite is perfect for dessert or a snack. Adjust toppings to suit your taste. Be cautious of hot filling when serving!",
-            imageName: "crispy_chilli_beef"
+            imageName: "banana_roti"
         )
         
         saveRecipe(
@@ -803,7 +803,7 @@ extension PersistenceController {
                 "Let the banana bread cool in the tin for 10 minutes, then transfer to a wire rack to cool completely before slicing."
             ],
             notes: "This banana bread is rich and moist, perfect for breakfast or dessert. Use overly ripe bananas for the best flavor. Customize with different nuts or chocolate types!",
-            imageName: "crispy_chilli_beef"
+            imageName: "banana_bread"
         )
         
         saveRecipe(
@@ -845,7 +845,7 @@ extension PersistenceController {
                 "Reheat by steaming for 5 minutes if chilled or 7 minutes if frozen."
             ],
             notes: "Bao buns are soft and fluffy, perfect for filling with meats, vegetables, or sweet spreads. Adjust proofing time based on room temperature and ensure proper steaming for best results!",
-            imageName: "crispy_chilli_beef"
+            imageName: "bao_buns"
         )
         
         saveRecipe(
@@ -887,7 +887,7 @@ extension PersistenceController {
                 "Serve hot with steamed rice and optional wok-fried greens."
             ],
             notes: "Beijing Beef is a quick and flavorful dish that pairs perfectly with rice and stir-fried vegetables. Customize the spice level by adjusting the sambal quantity to taste. Make sure to fry the beef in small batches to keep it crispy. Leftovers can be stored in an airtight container and reheated in a pan or air fryer.",
-            imageName: "crispy_chilli_beef"
+            imageName: "beijing_beef"
         )
         
         saveRecipe(
@@ -932,7 +932,7 @@ extension PersistenceController {
                 "Remove from heat and serve hot."
             ],
             notes: "Use fresh rice noodles if available for the best texture. Avoid over-stirring the noodles to keep them from breaking. Cook beef in a single layer for good browning. This dish is best served immediately after cooking.",
-            imageName: "crispy_chilli_beef"
+            imageName: "beef_chow_fun"
         )
         
         saveRecipe(
@@ -982,7 +982,7 @@ extension PersistenceController {
                 "Remove from heat and transfer to a serving plate. Serve hot with plain rice, egg fried rice, or noodles."
             ],
             notes: "Adjust sugar and salt to taste. You can substitute black beans with black bean garlic sauce if needed. Ensure the beef is thinly sliced and not overcrowded in the pan for best browning. This dish pairs well with hot steamed rice or noodles.",
-            imageName: "crispy_chilli_beef"
+            imageName: "beef_in_black_bean"
         )
         
         saveRecipe(
@@ -1030,7 +1030,7 @@ extension PersistenceController {
                 "Return the cooked beef to the pan and add green onions. Toss everything together until well combined. Remove from heat and serve immediately."
             ],
             notes: "Use fresh egg noodles if possible for best texture. Do not overcook the vegetables—they should stay vibrant and slightly crisp. Freezing the beef before slicing makes it easier to cut thinly.This dish is great with a side of chili oil or pickled vegetables.",
-            imageName: "crispy_chilli_beef"
+            imageName: "beef_lo_mein"
         )
         
         saveRecipe(
@@ -1081,7 +1081,7 @@ extension PersistenceController {
                 "Garnish with Parmesan cheese and fresh basil."
             ],
             notes: "For a deeper flavor, allow the ragu to rest for 10–15 minutes before serving. This sauce can also be made ahead and refrigerated overnight—it tastes even better the next day. Polenta is a great alternative to pasta. Use quality canned tomatoes for best results.",
-            imageName: "crispy_chilli_beef"
+            imageName: "beef_ragu_sauce"
         )
         
         saveRecipe(
@@ -1123,7 +1123,7 @@ extension PersistenceController {
                 "Season with salt and pepper to taste. Garnish with parsley and serve."
             ],
             notes: "Use red wine for a deeper flavor, or substitute with vinegar. Deglazing the pot ensures you capture the fond for added depth. This stew is even better the next day after the flavors develop further.",
-            imageName: "crispy_chilli_beef"
+            imageName: "beef_stew_with_potatoes"
         )
         
         saveRecipe(
@@ -1163,7 +1163,7 @@ extension PersistenceController {
                 "Garnish with green onions and serve."
             ],
             notes: "Serve with steamed jasmine rice. Adjust ketchup for sweetness or tartness. Do not overcook beef for tenderness.",
-            imageName: "crispy_chilli_beef"
+            imageName: "beef_tomato_stir_fry"
         )
         
         saveRecipe(
@@ -1200,7 +1200,7 @@ extension PersistenceController {
                 "Heat oil until smoking, pour over the toppings, and mix until combined. Serve immediately."
             ],
             notes: "Dough resting time is key for pulling elasticity. Use gloves when handling hot oil. Customize spice level to taste.",
-            imageName: "crispy_chilli_beef"
+            imageName: "biang_biang_noodles"
         )
         
         saveRecipe(
@@ -1235,7 +1235,7 @@ extension PersistenceController {
                 "Bake for 20–25 minutes or until golden brown."
             ],
             notes: "Keep dough cold throughout for flakiness. Use parchment or silicone mats for easy release. Great for gifting or freezing.",
-            imageName: "crispy_chilli_beef"
+            imageName: "black_sesame_rugelach"
         )
         
         saveRecipe(
@@ -1266,7 +1266,7 @@ extension PersistenceController {
                 "Before serving, decorate with whipped cream and dust with matcha."
             ],
             notes: "Let sit overnight for better flavor. Use ceremonial-grade matcha for best color and taste. Keep chilled until serving.",
-            imageName: "crispy_chilli_beef"
+            imageName: "black_sesame_matcha_tiramisu"
         )
         
         saveRecipe(
@@ -1300,7 +1300,7 @@ extension PersistenceController {
                 "Serve warm, optionally with sweet ginger syrup or osmanthus broth."
             ],
             notes: "To enhance flavor, toast the sesame seeds before grinding. Keep dough covered to prevent drying. Matcha dough may need slightly more water than plain.",
-            imageName: "crispy_chilli_beef"
+            imageName: "black_sesame_tangyuan"
         )
         
         saveRecipe(
@@ -1342,7 +1342,7 @@ extension PersistenceController {
                 "Bake for 35-40 minutes or until a skewer inserted into the center comes out clean."
             ],
             notes: "Use frozen blueberries if fresh ones aren't available. Do not thaw them before mixing. Optional zest adds a citrus note.",
-            imageName: "crispy_chilli_beef"
+            imageName: "blueberry_cupcake_with_streusel_topping"
         )
         
         saveRecipe(
@@ -1379,7 +1379,7 @@ extension PersistenceController {
                 "Sprinkle with flaky salt after baking, if desired."
             ],
             notes: "Chilling the dough enhances flavor and improves texture. Use high-quality dark chocolate for rich flavor. Cookies will firm up as they cool.",
-            imageName: "crispy_chilli_beef"
+            imageName: "brown_butter_chocolate_chip_cookies"
         )
         
         saveRecipe(
@@ -1413,7 +1413,7 @@ extension PersistenceController {
                 "Cool completely before slicing."
             ],
             notes: "Brownies will continue to set as they cool. For gooier centers, reduce baking time by a couple of minutes. Dust with powdered sugar or serve with ice cream.",
-            imageName: "crispy_chilli_beef"
+            imageName: "best_ever_classic_chocolate_brownies"
         )
         
         saveRecipe(
@@ -1448,7 +1448,7 @@ extension PersistenceController {
                 "Stir gently and enjoy your homemade brown sugar boba matcha latte!"
             ],
             notes: "You can sweeten the matcha if preferred. Adjust milk quantity to your taste. Use barista oat milk for extra creaminess.",
-            imageName: "crispy_chilli_beef"
+            imageName: "brown_sugar_boba_matcha_latte"
         )
         
         saveRecipe(
@@ -1489,7 +1489,7 @@ extension PersistenceController {
                 "Remove the cinnamon sticks, garnish with fresh cilantro, and serve warm."
             ],
             notes: "Use savoy cabbage for easier rolling. Cabbage leaves can be prepped in advance and stored in the fridge. If desired, add a splash of lemon juice before serving for brightness.",
-            imageName: "crispy_chilli_beef"
+            imageName: "cabbage_dolmas"
         )
         
         saveRecipe(
@@ -1524,7 +1524,7 @@ extension PersistenceController {
                 "Serve the soup hot."
             ],
             notes: "This soup can also be made on the stovetop by simmering the ingredients until carrots are soft. Adjust curry powder to taste. A swirl of extra coconut milk on top adds a nice touch.",
-            imageName: "crispy_chilli_beef"
+            imageName: "carrot_ginger_lentil_soup"
         )
         
         saveRecipe(
