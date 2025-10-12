@@ -67,7 +67,7 @@ struct RecipeSearchView: View {
                     
                     ScrollView {
                         if viewMode == .list {
-                            LazyVStack(spacing: 16) {
+                            LazyVStack(spacing: 8) {
                                 ForEach(filteredRecipes) { recipe in
                                     NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
                                         RecipeCard(recipe: recipe, viewMode: .list)
@@ -77,7 +77,7 @@ struct RecipeSearchView: View {
                             }
                             .padding(.horizontal, 20)
                         } else {
-                            LazyVGrid(columns: gridColumns, spacing: 16) {
+                            LazyVGrid(columns: gridColumns, spacing: 12) {
                                 ForEach(filteredRecipes) { recipe in
                                     NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
                                         CompactRecipeCard(recipe: recipe)

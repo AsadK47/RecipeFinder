@@ -11,7 +11,7 @@ struct RecipeCard: View {
     }
     
     var body: some View {
-        GlassCard {
+        CardView {
             HStack(spacing: 12) {
                 // Image on the left with rounded corners
                 RecipeImageView(imageName: recipe.imageName, height: 70)

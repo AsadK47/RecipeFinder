@@ -5,7 +5,7 @@ struct CompactRecipeCard: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        GlassCard {
+        CardView {
             VStack(spacing: 12) {
                 // Image with rounded corners
                 RecipeImageView(imageName: recipe.imageName, height: 100)
