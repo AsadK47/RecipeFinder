@@ -8,7 +8,16 @@ struct IngredientSearchView: View {
     @State private var showAllIngredients = false
     @Environment(\.colorScheme) var colorScheme
     
-    // Ingredient categories
+    // Ingredient categories in logical order (meal-building flow)
+    let categoryOrder: [String] = [
+        "Proteins",
+        "Vegetables", 
+        "Grains & Noodles",
+        "Dairy & Eggs",
+        "Spices & Herbs",
+        "Sauces & Condiments"
+    ]
+    
     let ingredientCategories: [String: [String]] = [
         "Proteins": ["chicken", "beef", "lamb", "mutton", "pork", "fish", "cod", "eggs", "tofu"],
         "Vegetables": ["onion", "tomato", "carrot", "cabbage", "potato", "bell pepper", "capsicum", "cucumber", "eggplant", "bok choy"],
@@ -34,7 +43,8 @@ struct IngredientSearchView: View {
     }
     
     var categorizedIngredients: [(category: String, ingredients: [String])] {
-        ingredientCategories.compactMap { category, keywords in
+        categoryOrder.compactMap { category in
+            guard let keywords = ingredientCategories[category] else { return nil }
             let matchedIngredients = allIngredients.filter { ingredient in
                 keywords.contains { keyword in
                     ingredient.localizedCaseInsensitiveContains(keyword)
@@ -73,15 +83,18 @@ struct IngredientSearchView: View {
                 VStack(spacing: 20) {
                     VStack(spacing: 16) {
                         HStack {
-                            // Empty spacer for alignment (only when menu is visible)
+                            // Left spacer for balance
                             if selectedIngredient != nil {
+                                Color.clear
+                                    .frame(width: 48, height: 48)
+                            } else {
                                 Color.clear
                                     .frame(width: 48, height: 48)
                             }
                             
                             Spacer()
                             
-                            Text("Search by Ingredient")
+                            Text("Ingredients")
                                 .font(.system(size: 34, weight: .bold))
                                 .foregroundColor(.white)
                             
@@ -171,7 +184,7 @@ struct IngredientSearchView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 // Popular Ingredients Section
-                VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: 16) {
                     Text("Popular Ingredients")
                         .font(.title3)
                         .fontWeight(.bold)
@@ -187,15 +200,15 @@ struct IngredientSearchView: View {
                                     }
                                 }) {
                                     VStack(spacing: 8) {
-                                        ZStack {
-                                            Circle()
-                                                .fill(AppTheme.accentColor.opacity(0.2))
-                                                .frame(width: 60, height: 60)
-                                            
-                                            Image(systemName: ingredientIcon(for: ingredient))
-                                                .font(.title2)
-                                                .foregroundColor(AppTheme.accentColor)
-                                        }
+                                        Circle()
+                                            .fill(Color.white.opacity(0.15))
+                                            .frame(width: 60, height: 60, alignment: .center)
+                                            .fixedSize()
+                                            .overlay(
+                                                Image(systemName: "leaf.fill")
+                                                    .font(.title2)
+                                                    .foregroundColor(.white)
+                                            )
                                         
                                         Text(ingredient)
                                             .font(.caption)
@@ -203,9 +216,12 @@ struct IngredientSearchView: View {
                                             .foregroundColor(.white)
                                             .lineLimit(2)
                                             .multilineTextAlignment(.center)
-                                            .frame(width: 70)
+                                            .frame(width: 70, height: 32, alignment: .center)
+                                            .fixedSize(horizontal: false, vertical: true)
                                     }
+                                    .frame(width: 70, alignment: .center)
                                 }
+                                .buttonStyle(PlainButtonStyle())
                             }
                         }
                         .padding(.horizontal, 20)
@@ -218,7 +234,6 @@ struct IngredientSearchView: View {
                         .font(.title3)
                         .fontWeight(.bold)
                         .foregroundColor(.white)
-                        .padding(.horizontal, 20)
                     
                     ForEach(categorizedIngredients, id: \.category) { category, ingredients in
                         CategoryCard(
@@ -275,21 +290,6 @@ struct IngredientSearchView: View {
             }
         }
         .buttonStyle(PlainButtonStyle())
-    }
-    
-    private func ingredientIcon(for ingredient: String) -> String {
-        let lowercased = ingredient.lowercased()
-        if lowercased.contains("chicken") || lowercased.contains("beef") || lowercased.contains("lamb") || lowercased.contains("meat") {
-            return "fork.knife"
-        } else if lowercased.contains("onion") || lowercased.contains("tomato") || lowercased.contains("carrot") || lowercased.contains("pepper") {
-            return "carrot.fill"
-        } else if lowercased.contains("rice") || lowercased.contains("flour") || lowercased.contains("noodle") {
-            return "takeoutbag.and.cup.and.straw.fill"
-        } else if lowercased.contains("milk") || lowercased.contains("butter") || lowercased.contains("cream") || lowercased.contains("cheese") {
-            return "cup.and.saucer.fill"
-        } else {
-            return "leaf.fill"
-        }
     }
     
     private func recipeCount(for ingredient: String) -> Int {
@@ -401,7 +401,6 @@ struct CategoryCard: View {
     let category: String
     let ingredients: [String]
     let onSelectIngredient: (String) -> Void
-    @State private var isExpanded = false
     
     var categoryIcon: String {
         switch category {
@@ -428,74 +427,43 @@ struct CategoryCard: View {
     }
     
     var body: some View {
-        CardView {
-            VStack(alignment: .leading, spacing: 0) {
-                // Header
-                Button(action: {
-                    withAnimation(.spring(response: 0.3)) {
-                        isExpanded.toggle()
-                    }
-                }) {
-                    HStack(spacing: 16) {
-                        ZStack {
-                            Circle()
-                                .fill(categoryColor.opacity(0.2))
-                                .frame(width: 44, height: 44)
-                            
-                            Image(systemName: categoryIcon)
-                                .foregroundColor(categoryColor)
-                                .font(.title3)
-                        }
-                        
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(category)
-                                .font(.headline)
-                                .foregroundColor(.primary)
-                            
-                            Text("\(ingredients.count) ingredient\(ingredients.count == 1 ? "" : "s")")
-                                .font(.caption)
-                                .foregroundColor(AppTheme.secondaryText)
-                        }
-                        
-                        Spacer()
-                        
-                        Image(systemName: "chevron.right")
-                            .foregroundColor(.gray)
-                            .font(.caption)
-                            .rotationEffect(.degrees(isExpanded ? 90 : 0))
-                    }
-                }
-                .buttonStyle(PlainButtonStyle())
-                
-                // Expanded ingredients
-                if isExpanded {
-                    VStack(spacing: 0) {
-                        Divider()
-                            .padding(.vertical, 12)
-                        
-                        FlowLayout(spacing: 8) {
-                            ForEach(ingredients, id: \.self) { ingredient in
-                                Button(action: {
-                                    onSelectIngredient(ingredient)
-                                }) {
-                                    Text(ingredient)
-                                        .font(.subheadline)
-                                        .foregroundColor(categoryColor)
-                                        .padding(.horizontal, 12)
-                                        .padding(.vertical, 8)
-                                        .background(
-                                            Capsule()
-                                                .fill(categoryColor.opacity(0.15))
-                                        )
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                            }
-                        }
-                    }
-                    .transition(.opacity.combined(with: .move(edge: .top)))
+        Menu {
+            ForEach(ingredients, id: \.self) { ingredient in
+                Button(ingredient) {
+                    onSelectIngredient(ingredient)
                 }
             }
-            .padding()
+        } label: {
+            CardView {
+                HStack(spacing: 16) {
+                    ZStack {
+                        Circle()
+                            .fill(categoryColor.opacity(0.2))
+                            .frame(width: 44, height: 44)
+                        
+                        Image(systemName: categoryIcon)
+                            .foregroundColor(categoryColor)
+                            .font(.title3)
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(category)
+                            .font(.headline)
+                            .foregroundColor(.primary)
+                        
+                        Text("\(ingredients.count) ingredient\(ingredients.count == 1 ? "" : "s")")
+                            .font(.caption)
+                            .foregroundColor(AppTheme.secondaryText)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.down")
+                        .foregroundColor(.gray)
+                        .font(.caption)
+                }
+                .padding()
+            }
         }
     }
 }
