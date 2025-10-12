@@ -276,7 +276,7 @@ struct ShoppingListView: View {
                             HStack(spacing: 12) {
                                 Image(systemName: categoryIcon(for: group.category))
                                     .font(.title3)
-                                    .foregroundColor(AppTheme.accentColor)
+                                    .foregroundColor(.white)
                                     .frame(width: 28)
                                 
                                 Text(group.category)
@@ -402,42 +402,32 @@ struct ShoppingListItemRow: View {
                     }
                 }
                 
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(item.name)
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                        .strikethrough(item.isChecked)
-                        .foregroundColor(item.isChecked ? .gray : .primary)
-                    
-                    HStack(spacing: 12) {
-                        if item.quantity > 1 {
-                            HStack(spacing: 4) {
-                                Image(systemName: "number")
-                                    .font(.caption2)
-                                Text("× \(item.quantity)")
-                                    .font(.caption)
-                                    .fontWeight(.semibold)
-                            }
-                            .foregroundColor(AppTheme.accentColor)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 3)
-                            .background(
-                                Capsule()
-                                    .fill(AppTheme.accentColor.opacity(0.2))
-                            )
-                        }
-                        
-                        Stepper("", value: Binding(
-                            get: { item.quantity },
-                            set: { onQuantityChange($0) }
-                        ), in: 1...99)
-                        .labelsHidden()
-                        .opacity(item.isChecked ? 0.5 : 1)
-                        .fixedSize()
-                    }
-                }
+                Text(item.name)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .strikethrough(item.isChecked)
+                    .foregroundColor(item.isChecked ? .gray : .primary)
                 
                 Spacer()
+                
+                HStack(spacing: 8) {
+                    // Quantity display on the right
+                    if item.quantity > 1 {
+                        Text("\(item.quantity)")
+                            .font(.subheadline)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                            .frame(minWidth: 20)
+                    }
+                    
+                    Stepper("", value: Binding(
+                        get: { item.quantity },
+                        set: { onQuantityChange($0) }
+                    ), in: 1...99)
+                    .labelsHidden()
+                    .opacity(item.isChecked ? 0.5 : 1)
+                    .fixedSize()
+                }
             }
             .padding(14)
         }
