@@ -78,29 +78,335 @@ struct GlassCard<Content: View>: View {
     }
 }
 
-// MARK: - View Mode Enum
+// MARK: - View Mode Enum (Updated - Removed Grid 3x3)
 enum RecipeViewMode: String, CaseIterable {
     case list = "List"
-    case grid2 = "Grid 2x2"
-    case grid3 = "Grid 3x3"
+    case grid = "Grid"
+    
     var columns: Int {
         switch self {
         case .list: return 1
-        case .grid2: return 2
-        case .grid3: return 3
+        case .grid: return 2
         }
     }
     
     var icon: String {
         switch self {
         case .list: return "rectangle.grid.1x2"
-        case .grid2: return "square.grid.2x2"
-        case .grid3: return "square.grid.3x3"
+        case .grid: return "square.grid.2x2"
         }
     }
 }
 
-// Recipe Card Component with Grid Support and Bubble Style
+// MARK: - Compact Recipe Card for Grid View
+struct CompactRecipeCard: View {
+    let recipe: RecipeModel
+    @Environment(\.colorScheme) var colorScheme
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            // Circular image bubble
+            RecipeImageView(imageName: recipe.imageName, height: 100)
+                .frame(width: 100, height: 100)
+                .clipShape(Circle())
+                .overlay(
+                    Circle()
+                        .strokeBorder(
+                            LinearGradient(
+                                colors: [
+                                    AppTheme.gradientStart.opacity(0.6),
+                                    AppTheme.gradientEnd.opacity(0.6)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 3
+                        )
+                )
+                .shadow(color: Color.black.opacity(0.15), radius: 8, x: 0, y: 4)
+            
+            // Recipe name below
+            Text(recipe.name)
+                .font(.caption)
+                .fontWeight(.semibold)
+                .foregroundColor(.white)
+                .lineLimit(2)
+                .multilineTextAlignment(.center)
+                .frame(width: 100)
+        }
+    }
+}
+
+// MARK: - Recipe Search View (Fixed Title + Better Grid)
+struct RecipeSearchView: View {
+    @Binding var recipes: [RecipeModel]
+    @State private var searchText = ""
+    @State private var viewMode: RecipeViewMode = .list
+    @Environment(\.colorScheme) var colorScheme
+
+    var filteredRecipes: [RecipeModel] {
+        searchText.isEmpty ? recipes : recipes.filter {
+            $0.name.localizedCaseInsensitiveContains(searchText)
+        }
+    }
+    
+    var gridColumns: [GridItem] {
+        Array(repeating: GridItem(.flexible(), spacing: 12), count: viewMode.columns)
+    }
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                AppTheme.backgroundGradient(for: colorScheme)
+                    .ignoresSafeArea()
+                
+                VStack(spacing: 20) {
+                    VStack(spacing: 16) {
+                        HStack {
+                            // Empty spacer for alignment
+                            Color.clear
+                                .frame(width: 48, height: 48)
+                            
+                            Spacer()
+                            
+                            Text("Recipe Finder")
+                                .font(.system(size: 34, weight: .bold))
+                                .foregroundColor(.white)
+                            
+                            Spacer()
+                            
+                            Menu {
+                                ForEach(RecipeViewMode.allCases, id: \.self) { mode in
+                                    Button(action: { 
+                                        withAnimation(.spring(response: 0.3)) {
+                                            viewMode = mode
+                                        }
+                                    }) {
+                                        Label(mode.rawValue, systemImage: mode.icon)
+                                    }
+                                }
+                            } label: {
+                                Image(systemName: viewMode.icon)
+                                    .font(.title2)
+                                    .foregroundColor(.white)
+                                    .padding(12)
+                                    .background(
+                                        Circle()
+                                            .fill(.ultraThinMaterial)
+                                    )
+                            }
+                        }
+                        .padding(.horizontal, 20)
+                        
+                        ModernSearchBar(text: $searchText, placeholder: "What would you like to eat...?")
+                            .padding(.horizontal, 20)
+                    }
+                    .padding(.top, 20)
+                    
+                    ScrollView {
+                        if viewMode == .list {
+                            LazyVStack(spacing: 16) {
+                                ForEach(filteredRecipes) { recipe in
+                                    NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
+                                        RecipeCard(recipe: recipe, viewMode: .list)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                }
+                            }
+                            .padding(.horizontal, 20)
+                        } else {
+                            LazyVGrid(columns: gridColumns, spacing: 16) {
+                                ForEach(filteredRecipes) { recipe in
+                                    NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
+                                        CompactRecipeCard(recipe: recipe)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                }
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 8)
+                        }
+                    }
+                }
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.hidden, for: .navigationBar)
+        }
+    }
+}
+
+// MARK: - Ingredient Search View (Fixed Title + Better Grid)
+struct IngredientSearchView: View {
+    @Binding var recipes: [RecipeModel]
+    @State private var searchText = ""
+    @State private var expandedSections: Set<String> = []
+    @State private var viewMode: RecipeViewMode = .list
+    @Environment(\.colorScheme) var colorScheme
+    
+    var groupedIngredients: [(key: String, value: [String])] {
+        Dictionary(grouping: Set(recipes.flatMap { $0.ingredients.map { $0.name } })) {
+            String($0.prefix(1).uppercased())
+        }
+        .mapValues { $0.sorted() }
+        .sorted { $0.key < $1.key }
+    }
+
+    var filteredRecipes: [RecipeModel] {
+        searchText.isEmpty ? recipes : recipes.filter { recipe in
+            recipe.ingredients.contains { $0.name.localizedCaseInsensitiveContains(searchText) }
+        }
+    }
+    
+    var gridColumns: [GridItem] {
+        Array(repeating: GridItem(.flexible(), spacing: 12), count: viewMode.columns)
+    }
+    
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                AppTheme.backgroundGradient(for: colorScheme)
+                    .ignoresSafeArea()
+                
+                VStack(spacing: 20) {
+                    VStack(spacing: 16) {
+                        HStack {
+                            // Empty spacer for alignment (only when menu is visible)
+                            if !searchText.isEmpty {
+                                Color.clear
+                                    .frame(width: 48, height: 48)
+                            }
+                            
+                            Spacer()
+                            
+                            Text("Search by Ingredient")
+                                .font(.system(size: 34, weight: .bold))
+                                .foregroundColor(.white)
+                            
+                            Spacer()
+                            
+                            if !searchText.isEmpty {
+                                Menu {
+                                    ForEach(RecipeViewMode.allCases, id: \.self) { mode in
+                                        Button(action: { 
+                                            withAnimation(.spring(response: 0.3)) {
+                                                viewMode = mode
+                                            }
+                                        }) {
+                                            Label(mode.rawValue, systemImage: mode.icon)
+                                        }
+                                    }
+                                } label: {
+                                    Image(systemName: viewMode.icon)
+                                        .font(.title2)
+                                        .foregroundColor(.white)
+                                        .padding(12)
+                                        .background(
+                                            Circle()
+                                                .fill(.ultraThinMaterial)
+                                        )
+                                }
+                            } else {
+                                Color.clear
+                                    .frame(width: 48, height: 48)
+                            }
+                        }
+                        .padding(.horizontal, 20)
+                        
+                        ModernSearchBar(text: $searchText, placeholder: "What's in the fridge...?")
+                            .padding(.horizontal, 20)
+                    }
+                    .padding(.top, 20)
+                    
+                    if searchText.isEmpty {
+                        ingredientAlphabetView
+                    } else {
+                        recipeResultsView
+                    }
+                }
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.hidden, for: .navigationBar)
+        }
+    }
+    
+    private var ingredientAlphabetView: some View {
+        ScrollView {
+            LazyVStack(spacing: 12) {
+                ForEach(groupedIngredients, id: \.key) { letter, ingredients in
+                    GlassCard {
+                        DisclosureGroup(
+                            isExpanded: Binding(
+                                get: { expandedSections.contains(letter) },
+                                set: { isExpanded in
+                                    withAnimation(.spring(response: 0.3)) {
+                                        if isExpanded {
+                                            expandedSections.insert(letter)
+                                        } else {
+                                            expandedSections.remove(letter)
+                                        }
+                                    }
+                                }
+                            )
+                        ) {
+                            VStack(spacing: 10) {
+                                ForEach(ingredients, id: \.self) { ingredient in
+                                    IngredientButton(ingredient: ingredient) {
+                                        searchText = ingredient
+                                    }
+                                }
+                            }
+                            .padding(.top, 10)
+                        } label: {
+                            HStack {
+                                Text(letter)
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(AppTheme.accentColor)
+                                
+                                Text("\(ingredients.count) ingredients")
+                                    .font(.caption)
+                                    .foregroundColor(AppTheme.secondaryText)
+                                
+                                Spacer()
+                            }
+                        }
+                        .padding()
+                    }
+                }
+            }
+            .padding()
+        }
+    }
+    
+    private var recipeResultsView: some View {
+        ScrollView {
+            if viewMode == .list {
+                LazyVStack(spacing: 16) {
+                    ForEach(filteredRecipes) { recipe in
+                        NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
+                            RecipeCard(recipe: recipe, viewMode: .list)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
+                }
+                .padding(.horizontal, 20)
+            } else {
+                LazyVGrid(columns: gridColumns, spacing: 16) {
+                    ForEach(filteredRecipes) { recipe in
+                        NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
+                            CompactRecipeCard(recipe: recipe)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 8)
+            }
+        }
+    }
+}
+
+// MARK: - Updated Recipe Card (removed grid3 logic)
 struct RecipeCard: View {
     let recipe: RecipeModel
     let viewMode: RecipeViewMode
@@ -113,89 +419,62 @@ struct RecipeCard: View {
     var body: some View {
         HStack(spacing: 0) {
             // Image on the left
-            RecipeImageView(
-                imageName: recipe.imageName,
-                height: viewMode == .list ? 120 : (viewMode == .grid2 ? 100 : 80)
-            )
-            .frame(width: viewMode == .list ? 120 : (viewMode == .grid2 ? 100 : 80))
-            .clipShape(
-                UnevenRoundedRectangle(
-                    topLeadingRadius: 24,
-                    bottomLeadingRadius: 24
+            RecipeImageView(imageName: recipe.imageName, height: 120)
+                .frame(width: 120)
+                .clipShape(
+                    UnevenRoundedRectangle(
+                        topLeadingRadius: 24,
+                        bottomLeadingRadius: 24
+                    )
                 )
-            )
             
             // Content in the middle
-            VStack(alignment: .leading, spacing: viewMode == .grid3 ? 4 : 8) {
+            VStack(alignment: .leading, spacing: 8) {
                 Text(recipe.name)
-                    .font(viewMode == .grid3 ? .caption : .headline)
+                    .font(.headline)
                     .fontWeight(.bold)
                     .foregroundColor(.primary)
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
                 
-                if viewMode != .grid3 {
-                    HStack(spacing: 12) {
-                        HStack(spacing: 4) {
-                            Image(systemName: "clock")
-                                .font(.caption)
-                            Text(recipe.prepTime)
-                                .font(.caption)
-                        }
-                        
-                        HStack(spacing: 4) {
-                            Image(systemName: "chart.bar")
-                                .font(.caption)
-                            Text(recipe.difficulty)
-                                .font(.caption)
-                        }
-                    }
-                    .foregroundColor(AppTheme.secondaryText)
-                }
-                
-                if viewMode == .list {
-                    Text(recipe.category)
-                        .font(.caption)
-                        .fontWeight(.semibold)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 5)
-                        .background(
-                            Capsule()
-                                .fill(AppTheme.accentColor)
-                        )
-                        .foregroundColor(.white)
-                } else if viewMode == .grid2 {
-                    HStack(spacing: 4) {
-                        Image(systemName: "fork.knife")
-                            .font(.caption2)
-                        Text(recipe.category)
-                            .font(.caption2)
-                            .fontWeight(.medium)
-                    }
-                    .foregroundColor(AppTheme.accentColor)
-                } else {
-                    // Grid 3 - minimal info
+                HStack(spacing: 12) {
                     HStack(spacing: 4) {
                         Image(systemName: "clock")
-                            .font(.caption2)
+                            .font(.caption)
                         Text(recipe.prepTime)
-                            .font(.caption2)
+                            .font(.caption)
                     }
-                    .foregroundColor(AppTheme.secondaryText)
+                    
+                    HStack(spacing: 4) {
+                        Image(systemName: "chart.bar")
+                            .font(.caption)
+                        Text(recipe.difficulty)
+                            .font(.caption)
+                    }
                 }
+                .foregroundColor(AppTheme.secondaryText)
+                
+                Text(recipe.category)
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(
+                        Capsule()
+                            .fill(AppTheme.accentColor)
+                    )
+                    .foregroundColor(.white)
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, viewMode == .grid3 ? 8 : 12)
+            .padding(.vertical, 12)
             .frame(maxWidth: .infinity, alignment: .leading)
             
             // Chevron on the right
-            if viewMode == .list {
-                Image(systemName: "chevron.right")
-                    .font(.title3)
-                    .fontWeight(.semibold)
-                    .foregroundColor(AppTheme.accentColor.opacity(0.6))
-                    .padding(.trailing, 16)
-            }
+            Image(systemName: "chevron.right")
+                .font(.title3)
+                .fontWeight(.semibold)
+                .foregroundColor(AppTheme.accentColor.opacity(0.6))
+                .padding(.trailing, 16)
         }
         .frame(maxWidth: .infinity)
         .background(
@@ -524,256 +803,6 @@ struct ContentView: View {
         PersistenceController.shared.clearDatabase()
         PersistenceController.shared.populateDatabase()
         recipes = PersistenceController.shared.fetchRecipes()
-    }
-}
-
-// MARK: - Recipe Search View
-struct RecipeSearchView: View {
-    @Binding var recipes: [RecipeModel]
-    @State private var searchText = ""
-    @State private var viewMode: RecipeViewMode = .list
-    @Environment(\.colorScheme) var colorScheme
-
-    var filteredRecipes: [RecipeModel] {
-        searchText.isEmpty ? recipes : recipes.filter {
-            $0.name.localizedCaseInsensitiveContains(searchText)
-        }
-    }
-    
-    var gridColumns: [GridItem] {
-        Array(repeating: GridItem(.flexible(), spacing: 16), count: viewMode.columns)
-    }
-
-    var body: some View {
-        NavigationStack {
-            ZStack {
-                AppTheme.backgroundGradient(for: colorScheme)
-                    .ignoresSafeArea()
-                
-                VStack(spacing: 20) {
-                    VStack(spacing: 16) {
-                        HStack {
-                            Text("Recipe Finder")
-                                .font(.system(size: 34, weight: .bold))
-                                .foregroundColor(.white)
-                            
-                            Spacer()
-                            
-                            Menu {
-                                ForEach(RecipeViewMode.allCases, id: \.self) { mode in
-                                    Button(action: { 
-                                        withAnimation(.spring(response: 0.3)) {
-                                            viewMode = mode
-                                        }
-                                    }) {
-                                        Label(mode.rawValue, systemImage: mode.icon)
-                                    }
-                                }
-                            } label: {
-                                Image(systemName: viewMode.icon)
-                                    .font(.title2)
-                                    .foregroundColor(.white)
-                                    .padding(12)
-                                    .background(
-                                        Circle()
-                                            .fill(.ultraThinMaterial)
-                                    )
-                            }
-                        }
-                        .padding(.horizontal)
-                        
-                        ModernSearchBar(text: $searchText, placeholder: "What would you like to eat...?")
-                            .padding(.horizontal)
-                    }
-                    .padding(.top, 20)
-                    
-                    ScrollView {
-                        if viewMode == .list {
-                            LazyVStack(spacing: 16) {
-                                ForEach(filteredRecipes) { recipe in
-                                    NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
-                                        RecipeCard(recipe: recipe, viewMode: .list)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                }
-                            }
-                            .padding()
-                        } else {
-                            LazyVGrid(columns: gridColumns, spacing: 16) {
-                                ForEach(filteredRecipes) { recipe in
-                                    NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
-                                        RecipeCard(recipe: recipe, viewMode: viewMode)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                }
-                            }
-                            .padding()
-                        }
-                    }
-                }
-            }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
-        }
-    }
-}
-
-// MARK: - Ingredient Search View
-struct IngredientSearchView: View {
-    @Binding var recipes: [RecipeModel]
-    @State private var searchText = ""
-    @State private var expandedSections: Set<String> = []
-    @State private var viewMode: RecipeViewMode = .list
-    @Environment(\.colorScheme) var colorScheme
-    
-    var groupedIngredients: [(key: String, value: [String])] {
-        Dictionary(grouping: Set(recipes.flatMap { $0.ingredients.map { $0.name } })) {
-            String($0.prefix(1).uppercased())
-        }
-        .mapValues { $0.sorted() }
-        .sorted { $0.key < $1.key }
-    }
-
-    var filteredRecipes: [RecipeModel] {
-        searchText.isEmpty ? recipes : recipes.filter { recipe in
-            recipe.ingredients.contains { $0.name.localizedCaseInsensitiveContains(searchText) }
-        }
-    }
-    
-    var gridColumns: [GridItem] {
-        Array(repeating: GridItem(.flexible(), spacing: 16), count: viewMode.columns)
-    }
-    
-    var body: some View {
-        NavigationStack {
-            ZStack {
-                AppTheme.backgroundGradient(for: colorScheme)
-                    .ignoresSafeArea()
-                
-                VStack(spacing: 20) {
-                    VStack(spacing: 16) {
-                        HStack {
-                            Text("Search by Ingredient")
-                                .font(.system(size: 34, weight: .bold))
-                                .foregroundColor(.white)
-                            
-                            Spacer()
-                            
-                            if !searchText.isEmpty {
-                                Menu {
-                                    ForEach(RecipeViewMode.allCases, id: \.self) { mode in
-                                        Button(action: { 
-                                            withAnimation(.spring(response: 0.3)) {
-                                                viewMode = mode
-                                            }
-                                        }) {
-                                            Label(mode.rawValue, systemImage: mode.icon)
-                                        }
-                                    }
-                                } label: {
-                                    Image(systemName: viewMode.icon)
-                                        .font(.title2)
-                                        .foregroundColor(.white)
-                                        .padding(12)
-                                        .background(
-                                            Circle()
-                                                .fill(.ultraThinMaterial)
-                                        )
-                                }
-                            }
-                        }
-                        .padding(.horizontal)
-                        
-                        ModernSearchBar(text: $searchText, placeholder: "What's in the fridge...?")
-                            .padding(.horizontal)
-                    }
-                    .padding(.top, 20)
-                    
-                    if searchText.isEmpty {
-                        ingredientAlphabetView
-                    } else {
-                        recipeResultsView
-                    }
-                }
-            }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
-        }
-    }
-    
-    private var ingredientAlphabetView: some View {
-        ScrollView {
-            LazyVStack(spacing: 12) {
-                ForEach(groupedIngredients, id: \.key) { letter, ingredients in
-                    GlassCard {
-                        DisclosureGroup(
-                            isExpanded: Binding(
-                                get: { expandedSections.contains(letter) },
-                                set: { isExpanded in
-                                    withAnimation(.spring(response: 0.3)) {
-                                        if isExpanded {
-                                            expandedSections.insert(letter)
-                                        } else {
-                                            expandedSections.remove(letter)
-                                        }
-                                    }
-                                }
-                            )
-                        ) {
-                            VStack(spacing: 10) {
-                                ForEach(ingredients, id: \.self) { ingredient in
-                                    IngredientButton(ingredient: ingredient) {
-                                        searchText = ingredient
-                                    }
-                                }
-                            }
-                            .padding(.top, 10)
-                        } label: {
-                            HStack {
-                                Text(letter)
-                                    .font(.title2)
-                                    .fontWeight(.bold)
-                                    .foregroundColor(AppTheme.accentColor)
-                                
-                                Text("\(ingredients.count) ingredients")
-                                    .font(.caption)
-                                    .foregroundColor(AppTheme.secondaryText)
-                                
-                                Spacer()
-                            }
-                        }
-                        .padding()
-                    }
-                }
-            }
-            .padding()
-        }
-    }
-    
-    private var recipeResultsView: some View {
-        ScrollView {
-            if viewMode == .list {
-                LazyVStack(spacing: 16) {
-                    ForEach(filteredRecipes) { recipe in
-                        NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
-                            RecipeCard(recipe: recipe, viewMode: .list)
-                        }
-                        .buttonStyle(PlainButtonStyle())
-                    }
-                }
-                .padding()
-            } else {
-                LazyVGrid(columns: gridColumns, spacing: 16) {
-                    ForEach(filteredRecipes) { recipe in
-                        NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
-                            RecipeCard(recipe: recipe, viewMode: viewMode)
-                        }
-                        .buttonStyle(PlainButtonStyle())
-                    }
-                }
-                .padding()
-            }
-        }
     }
 }
 
