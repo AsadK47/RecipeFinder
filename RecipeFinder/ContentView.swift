@@ -781,7 +781,7 @@ struct IngredientSearchView: View {
 struct RecipeDetailView: View {
     @State private var recipe: RecipeModel
     @State private var ingredientsState: [Bool]
-    @State private var expandedSections: Set<String> = ["Ingredients", "Instructions"]
+    @State private var expandedSections: Set<String> = ["Ingredients", "Pre-Prep", "Instructions", "Notes"]
     @Environment(\.colorScheme) var colorScheme
     
     init(recipe: RecipeModel) {
@@ -986,6 +986,7 @@ struct RecipeDetailView: View {
             if isExpanded {
                 CardView {
                     content()
+                        .frame(maxWidth: .infinity, alignment: .leading) // Force full width
                         .padding(20)
                 }
                 .transition(.asymmetric(
@@ -994,6 +995,7 @@ struct RecipeDetailView: View {
                 ))
             }
         }
+        .frame(maxWidth: .infinity) // Ensure container fills width
         .padding(.horizontal, 20)
     }
     
@@ -1019,6 +1021,7 @@ struct RecipeDetailView: View {
                 .foregroundColor(.primary)
                 .fixedSize(horizontal: false, vertical: true)
         }
+        .frame(maxWidth: .infinity, alignment: .leading) // Ensure full width alignment
     }
     
     private func adjustIngredients(for newServings: Int) {
