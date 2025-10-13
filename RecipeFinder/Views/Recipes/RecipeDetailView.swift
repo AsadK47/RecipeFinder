@@ -22,8 +22,8 @@ struct RecipeDetailView: View {
                     Text(recipe.name)
                         .font(.system(size: 28, weight: .bold))
                         .foregroundColor(.white)
-                        .multilineTextAlignment(.leading)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity, alignment: .center)
                         .padding(.horizontal, 20)
                         .padding(.top, 8)
                         .padding(.bottom, 20)
@@ -161,6 +161,7 @@ struct RecipeDetailView: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
         .onChange(of: recipe.currentServings) { oldValue, newValue in
             adjustIngredients(for: newValue)
         }

@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ShoppingListView: View {
-    @StateObject private var manager = ShoppingListManager()
+    @ObservedObject var manager: ShoppingListManager
     @State private var newItem: String = ""
     @State private var showClearConfirmation = false
     @State private var collapsedCategories: Set<String> = []
@@ -450,7 +450,7 @@ struct ShoppingListItemRow: View {
         }
         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
             Button(role: .destructive, action: onDelete) {
-                Label("Delete", systemImage: "trash")
+                Image(systemName: "trash")
             }
         }
         .swipeActions(edge: .leading, allowsFullSwipe: false) {
@@ -458,7 +458,7 @@ struct ShoppingListItemRow: View {
                 editedName = item.name
                 showEditSheet = true
             } label: {
-                Label("Edit", systemImage: "pencil")
+                Image(systemName: "pencil")
             }
             .tint(.blue)
         }

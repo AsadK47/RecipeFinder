@@ -2,12 +2,15 @@ import SwiftUI
 
 struct IngredientSearchView: View {
     @Binding var recipes: [RecipeModel]
+    @ObservedObject var shoppingListManager: ShoppingListManager
     @State private var searchText = ""
     @State private var viewMode: RecipeViewMode = .list
     @State private var selectedIngredient: String?
     @State private var showAllIngredients = false
     @State private var showFilters = false
     @State private var selectedCategories: Set<String> = []
+    @State private var addedIngredients: Set<String> = []
+    @State private var showAddedFeedback: String?
     @Environment(\.colorScheme) var colorScheme
     
     // Ingredient categories in logical order (meal-building flow)
@@ -308,11 +311,14 @@ struct IngredientSearchView: View {
                         CategoryCard(
                             category: category,
                             ingredients: ingredients,
+                            shoppingListManager: shoppingListManager,
+                            addedIngredients: $addedIngredients,
                             onSelectIngredient: { ingredient in
                                 withAnimation(.spring(response: 0.3)) {
                                     selectedIngredient = ingredient
                                 }
-                            }
+                            },
+                            onAddToShoppingList: addToShoppingList
                         )
                     }
                 }
@@ -325,46 +331,77 @@ struct IngredientSearchView: View {
     // MARK: - Helper Views
     private func ingredientButton(_ ingredient: String) -> some View {
         let category = CategoryClassifier.suggestCategory(for: ingredient)
+        let isAdded = addedIngredients.contains(ingredient)
         
-        return Button(action: {
-            withAnimation(.spring(response: 0.3)) {
-                selectedIngredient = ingredient
+        return HStack(spacing: 0) {
+            Button(action: {
+                withAnimation(.spring(response: 0.3)) {
+                    selectedIngredient = ingredient
+                }
+            }) {
+                HStack(spacing: 12) {
+                    Image(systemName: categoryIcon(for: category))
+                        .foregroundColor(categoryColor(for: category))
+                        .font(.body)
+                    
+                    Text(ingredient)
+                        .font(.body)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                    
+                    Spacer()
+                    
+                    Text("\(recipeCount(for: ingredient))")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(
+                            Capsule()
+                                .fill(AppTheme.accentColor)
+                        )
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 14)
             }
-        }) {
-            HStack(spacing: 12) {
-                Image(systemName: categoryIcon(for: category))
-                    .foregroundColor(categoryColor(for: category))
-                    .font(.body)
-                
-                Text(ingredient)
-                    .font(.body)
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
-                
-                Spacer()
-                
-                Text("\(recipeCount(for: ingredient))")
-                    .font(.caption)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 5)
-                    .background(
-                        Capsule()
-                            .fill(AppTheme.accentColor)
-                    )
-                
-                Image(systemName: "chevron.right")
-                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.4))
-                    .font(.caption)
+            .buttonStyle(PlainButtonStyle())
+            
+            // Basket button
+            Button(action: {
+                addToShoppingList(ingredient)
+            }) {
+                Image(systemName: isAdded ? "basket.fill" : "basket")
+                    .foregroundColor(isAdded ? AppTheme.accentColor : (colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5)))
+                    .font(.system(size: 20))
+                    .frame(width: 44, height: 44)
+                    .scaleEffect(isAdded ? 1.2 : 1.0)
+                    .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isAdded)
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 14)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
-            )
+            .buttonStyle(PlainButtonStyle())
+            .padding(.trailing, 12)
         }
-        .buttonStyle(PlainButtonStyle())
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
+        )
+    }
+    
+    private func addToShoppingList(_ ingredient: String) {
+        shoppingListManager.addItem(name: ingredient)
+        addedIngredients.insert(ingredient)
+        showAddedFeedback = ingredient
+        
+        // Remove the visual feedback after a delay
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            if self.showAddedFeedback == ingredient {
+                self.showAddedFeedback = nil
+            }
+        }
+        
+        // Reset the added state after a delay
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            self.addedIngredients.remove(ingredient)
+        }
     }
     
     private func recipeCount(for ingredient: String) -> Int {
@@ -509,7 +546,12 @@ struct IngredientSearchView: View {
 struct CategoryCard: View {
     let category: String
     let ingredients: [String]
+    @ObservedObject var shoppingListManager: ShoppingListManager
+    @Binding var addedIngredients: Set<String>
     let onSelectIngredient: (String) -> Void
+    let onAddToShoppingList: (String) -> Void
+    @State private var isExpanded = false
+    @Environment(\.colorScheme) var colorScheme
     
     var categoryIcon: String {
         switch category {
@@ -536,46 +578,97 @@ struct CategoryCard: View {
     }
     
     var body: some View {
-        Menu {
-            ForEach(ingredients, id: \.self) { ingredient in
-                Button(ingredient) {
-                    onSelectIngredient(ingredient)
+        VStack(spacing: 0) {
+            // Category Header - Tappable
+            Button(action: {
+                withAnimation(.spring(response: 0.3)) {
+                    isExpanded.toggle()
                 }
-            }
-        } label: {
-            HStack(spacing: 16) {
-                ZStack {
-                    Circle()
-                        .fill(categoryColor.opacity(0.3))
-                        .frame(width: 44, height: 44)
+            }) {
+                HStack(spacing: 16) {
+                    ZStack {
+                        Circle()
+                            .fill(categoryColor.opacity(0.3))
+                            .frame(width: 44, height: 44)
+                        
+                        Image(systemName: categoryIcon)
+                            .foregroundColor(categoryColor)
+                            .font(.title3)
+                    }
                     
-                    Image(systemName: categoryIcon)
-                        .foregroundColor(categoryColor)
-                        .font(.title3)
-                }
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(category)
-                        .font(.headline)
-                        .foregroundColor(.primary)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(category)
+                            .font(.headline)
+                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                        
+                        Text("\(ingredients.count) ingredient\(ingredients.count == 1 ? "" : "s")")
+                            .font(.caption)
+                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
+                    }
                     
-                    Text("\(ingredients.count) ingredient\(ingredients.count == 1 ? "" : "s")")
+                    Spacer()
+                    
+                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
                         .font(.caption)
-                        .foregroundColor(.secondary)
                 }
-                
-                Spacer()
-                
-                Image(systemName: "chevron.down")
-                    .foregroundColor(.secondary)
-                    .font(.caption)
+                .padding(16)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
+                )
             }
-            .padding(16)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(.regularMaterial)
-            )
+            .buttonStyle(PlainButtonStyle())
+            
+            // Ingredients List
+            if isExpanded {
+                VStack(spacing: 8) {
+                    ForEach(ingredients, id: \.self) { ingredient in
+                        ingredientRow(ingredient)
+                    }
+                }
+                .padding(.top, 8)
+            }
         }
+    }
+    
+    private func ingredientRow(_ ingredient: String) -> some View {
+        let isAdded = addedIngredients.contains(ingredient)
+        
+        return HStack(spacing: 0) {
+            Button(action: {
+                onSelectIngredient(ingredient)
+            }) {
+                HStack(spacing: 12) {
+                    Text(ingredient)
+                        .font(.subheadline)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                    
+                    Spacer()
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+            }
+            .buttonStyle(PlainButtonStyle())
+            
+            // Basket button
+            Button(action: {
+                onAddToShoppingList(ingredient)
+            }) {
+                Image(systemName: isAdded ? "basket.fill" : "basket")
+                    .foregroundColor(isAdded ? AppTheme.accentColor : (colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5)))
+                    .font(.system(size: 18))
+                    .frame(width: 44, height: 44)
+                    .scaleEffect(isAdded ? 1.2 : 1.0)
+                    .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isAdded)
+            }
+            .buttonStyle(PlainButtonStyle())
+            .padding(.trailing, 12)
+        }
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(colorScheme == .dark ? Color(white: 0.15) : Color(white: 0.95))
+        )
     }
 }
 
@@ -685,6 +778,7 @@ struct IngredientFilterSheet: View {
             }
             .navigationTitle("Filter Ingredients")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.hidden, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") {
