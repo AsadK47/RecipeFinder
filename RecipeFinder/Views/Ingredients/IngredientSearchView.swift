@@ -156,7 +156,7 @@ struct IngredientSearchView: View {
                 if searchResults.isEmpty {
                     VStack(spacing: 16) {
                         Image(systemName: "magnifyingglass")
-                            .font(.system(size: 50))
+                            .font(.system(size: 60))
                             .foregroundColor(.white.opacity(0.5))
                         
                         Text("No ingredients found")
@@ -175,7 +175,8 @@ struct IngredientSearchView: View {
                     }
                 }
             }
-            .padding()
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
         }
     }
     
@@ -201,19 +202,19 @@ struct IngredientSearchView: View {
                                 }) {
                                     VStack(spacing: 8) {
                                         Circle()
-                                            .fill(Color.white.opacity(0.15))
+                                            .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
                                             .frame(width: 60, height: 60, alignment: .center)
                                             .fixedSize()
                                             .overlay(
                                                 Image(systemName: "leaf.fill")
                                                     .font(.title2)
-                                                    .foregroundColor(.white)
+                                                    .foregroundColor(colorScheme == .dark ? .white : .black.opacity(0.7))
                                             )
                                         
                                         Text(ingredient)
                                             .font(.caption)
                                             .fontWeight(.medium)
-                                            .foregroundColor(.white)
+                                            .foregroundColor(colorScheme == .dark ? .white : .black)
                                             .lineLimit(2)
                                             .multilineTextAlignment(.center)
                                             .frame(width: 70, height: 32, alignment: .center)
@@ -260,34 +261,38 @@ struct IngredientSearchView: View {
                 selectedIngredient = ingredient
             }
         }) {
-            CardView {
-                HStack(spacing: 12) {
-                    Image(systemName: "leaf.fill")
-                        .foregroundColor(AppTheme.accentColor.opacity(0.7))
-                        .font(.body)
-                    
-                    Text(ingredient)
-                        .font(.body)
-                        .foregroundColor(.primary)
-                    
-                    Spacer()
-                    
-                    Text("\(recipeCount(for: ingredient))")
-                        .font(.caption)
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(
-                            Capsule()
-                                .fill(AppTheme.accentColor)
-                        )
-                    
-                    Image(systemName: "chevron.right")
-                        .foregroundColor(AppTheme.accentColor.opacity(0.6))
-                        .font(.caption)
-                }
-                .padding()
+            HStack(spacing: 12) {
+                Image(systemName: "leaf.fill")
+                    .foregroundColor(colorScheme == .dark ? .white : .black.opacity(0.7))
+                    .font(.body)
+                
+                Text(ingredient)
+                    .font(.body)
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                
+                Spacer()
+                
+                Text("\(recipeCount(for: ingredient))")
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(
+                        Capsule()
+                            .fill(AppTheme.accentColor)
+                    )
+                
+                Image(systemName: "chevron.right")
+                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.4))
+                    .font(.caption)
             }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
+            )
         }
         .buttonStyle(PlainButtonStyle())
     }
@@ -434,36 +439,38 @@ struct CategoryCard: View {
                 }
             }
         } label: {
-            CardView {
-                HStack(spacing: 16) {
-                    ZStack {
-                        Circle()
-                            .fill(categoryColor.opacity(0.2))
-                            .frame(width: 44, height: 44)
-                        
-                        Image(systemName: categoryIcon)
-                            .foregroundColor(categoryColor)
-                            .font(.title3)
-                    }
+            HStack(spacing: 16) {
+                ZStack {
+                    Circle()
+                        .fill(categoryColor.opacity(0.3))
+                        .frame(width: 44, height: 44)
                     
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(category)
-                            .font(.headline)
-                            .foregroundColor(.primary)
-                        
-                        Text("\(ingredients.count) ingredient\(ingredients.count == 1 ? "" : "s")")
-                            .font(.caption)
-                            .foregroundColor(AppTheme.secondaryText)
-                    }
-                    
-                    Spacer()
-                    
-                    Image(systemName: "chevron.down")
-                        .foregroundColor(.gray)
-                        .font(.caption)
+                    Image(systemName: categoryIcon)
+                        .foregroundColor(categoryColor)
+                        .font(.title3)
                 }
-                .padding()
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(category)
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                    
+                    Text("\(ingredients.count) ingredient\(ingredients.count == 1 ? "" : "s")")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                
+                Spacer()
+                
+                Image(systemName: "chevron.down")
+                    .foregroundColor(.secondary)
+                    .font(.caption)
             }
+            .padding(16)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(.regularMaterial)
+            )
         }
     }
 }

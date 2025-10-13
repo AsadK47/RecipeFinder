@@ -35,6 +35,12 @@ class ShoppingListManager: ObservableObject {
         saveItems()
     }
     
+    func updateName(at index: Int, name: String) {
+        guard index < items.count else { return }
+        items[index].name = name
+        saveItems()
+    }
+    
     func toggleItem(at index: Int) {
         guard index < items.count else { return }
         items[index].isChecked.toggle()

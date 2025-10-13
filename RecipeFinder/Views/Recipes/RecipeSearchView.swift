@@ -175,30 +175,34 @@ struct RecipeSearchView: View {
                     }
                     .padding(.top, 20)
                     
-                    ScrollView {
-                        if viewMode == .list {
-                            LazyVStack(spacing: 10) {
-                                ForEach(filteredRecipes) { recipe in
-                                    NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
-                                        RecipeCard(recipe: recipe, viewMode: .list)
+                    if filteredRecipes.isEmpty {
+                        emptyStateView
+                    } else {
+                        ScrollView {
+                            if viewMode == .list {
+                                LazyVStack(spacing: 10) {
+                                    ForEach(filteredRecipes) { recipe in
+                                        NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
+                                            RecipeCard(recipe: recipe, viewMode: .list)
+                                        }
+                                        .buttonStyle(PlainButtonStyle())
                                     }
-                                    .buttonStyle(PlainButtonStyle())
                                 }
-                            }
-                            .padding(.horizontal, 20)
-                            .padding(.bottom, 20)
-                        } else {
-                            LazyVGrid(columns: gridColumns, spacing: 12) {
-                                ForEach(filteredRecipes) { recipe in
-                                    NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
-                                        CompactRecipeCard(recipe: recipe)
+                                .padding(.horizontal, 20)
+                                .padding(.bottom, 20)
+                            } else {
+                                LazyVGrid(columns: gridColumns, spacing: 12) {
+                                    ForEach(filteredRecipes) { recipe in
+                                        NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
+                                            CompactRecipeCard(recipe: recipe)
+                                        }
+                                        .buttonStyle(PlainButtonStyle())
                                     }
-                                    .buttonStyle(PlainButtonStyle())
                                 }
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 8)
+                                .padding(.bottom, 20)
                             }
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 8)
-                            .padding(.bottom, 20)
                         }
                     }
                 }
@@ -215,6 +219,43 @@ struct RecipeSearchView: View {
                 )
             }
         }
+    }
+    
+    private var emptyStateView: some View {
+        VStack(spacing: 20) {
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 80))
+                .foregroundColor(.white.opacity(0.5))
+            
+            Text("No recipes found")
+                .font(.title3)
+                .fontWeight(.semibold)
+                .foregroundColor(.white)
+            
+            Text("Try adjusting your filters or search")
+                .font(.subheadline)
+                .foregroundColor(.white.opacity(0.7))
+            
+            if activeFilterCount > 0 {
+                Button(action: clearAllFilters) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "xmark.circle.fill")
+                        Text("Clear All Filters")
+                    }
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 12)
+                    .background(
+                        Capsule()
+                            .fill(.ultraThinMaterial)
+                    )
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(.top, 60)
     }
     
     private func clearAllFilters() {

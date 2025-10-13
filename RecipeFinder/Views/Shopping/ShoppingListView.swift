@@ -259,92 +259,97 @@ struct ShoppingListView: View {
     }
     
     private var shoppingListContent: some View {
-        ScrollView(.vertical, showsIndicators: true) {
-            LazyVStack(spacing: 16, pinnedViews: []) {
-                ForEach(sortedGroupedItems, id: \.category) { group in
-                    VStack(spacing: 8) {
-                        // Category Header - Tappable
-                        Button(action: {
-                            withAnimation(.spring(response: 0.3)) {
-                                if collapsedCategories.contains(group.category) {
-                                    collapsedCategories.remove(group.category)
-                                } else {
-                                    collapsedCategories.insert(group.category)
-                                }
+        List {
+            ForEach(sortedGroupedItems, id: \.category) { group in
+                Section {
+                    // Items in category
+                    if !collapsedCategories.contains(group.category) {
+                        ForEach(group.items) { item in
+                            if let index = manager.items.firstIndex(where: { $0.id == item.id }) {
+                                ShoppingListItemRow(
+                                    item: item,
+                                    onToggle: { 
+                                        withAnimation(.spring(response: 0.3)) {
+                                            manager.toggleItem(at: index)
+                                        }
+                                    },
+                                    onQuantityChange: { newQuantity in
+                                        manager.updateQuantity(at: index, quantity: newQuantity)
+                                    },
+                                    onDelete: { 
+                                        withAnimation(.spring(response: 0.3)) {
+                                            manager.deleteItem(at: index)
+                                        }
+                                    },
+                                    onNameChange: { newName in
+                                        manager.updateName(at: index, name: newName)
+                                    },
+                                    onCategoryChange: { newCategory in
+                                        withAnimation(.spring(response: 0.3)) {
+                                            manager.updateCategory(at: index, category: newCategory)
+                                        }
+                                    },
+                                    allCategories: categoryOrder
+                                )
+                                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                                .listRowSeparator(.hidden)
+                                .listRowBackground(Color.clear)
                             }
-                        }) {
-                            HStack(spacing: 12) {
-                                Image(systemName: categoryIcon(for: group.category))
-                                    .font(.title3)
-                                    .foregroundColor(.white)
-                                    .frame(width: 28)
-                                
-                                Text(group.category)
-                                    .font(.title3)
-                                    .fontWeight(.bold)
-                                    .foregroundColor(.white)
-                                
-                                Text("(\(group.items.filter { !$0.isChecked }.count)/\(group.items.count))")
-                                    .font(.subheadline)
-                                    .foregroundColor(.white.opacity(0.6))
-                                
-                                Spacer()
-                                
-                                Image(systemName: collapsedCategories.contains(group.category) ? "chevron.down" : "chevron.up")
-                                    .font(.caption)
-                                    .foregroundColor(.white.opacity(0.6))
-                                    .rotationEffect(.degrees(collapsedCategories.contains(group.category) ? 0 : 180))
-                            }
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 12)
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(.ultraThinMaterial)
-                            )
-                        }
-                        .buttonStyle(.plain)
-                        
-                        // Items in category
-                        if !collapsedCategories.contains(group.category) {
-                            VStack(spacing: 8) {
-                                ForEach(group.items) { item in
-                                    if let index = manager.items.firstIndex(where: { $0.id == item.id }) {
-                                        ShoppingListItemRow(
-                                            item: item,
-                                            onToggle: { 
-                                                withAnimation(.spring(response: 0.3)) {
-                                                    manager.toggleItem(at: index)
-                                                }
-                                            },
-                                            onQuantityChange: { newQuantity in
-                                                manager.updateQuantity(at: index, quantity: newQuantity)
-                                            },
-                                            onDelete: { 
-                                                withAnimation(.spring(response: 0.3)) {
-                                                    manager.deleteItem(at: index)
-                                                }
-                                            },
-                                            onCategoryChange: { newCategory in
-                                                withAnimation(.spring(response: 0.3)) {
-                                                    manager.updateCategory(at: index, category: newCategory)
-                                                }
-                                            },
-                                            allCategories: categoryOrder
-                                        )
-                                    }
-                                }
-                            }
-                            .transition(.asymmetric(
-                                insertion: .scale.combined(with: .opacity),
-                                removal: .scale.combined(with: .opacity)
-                            ))
                         }
                     }
+                } header: {
+                    // Category Header - Tappable
+                    Button(action: {
+                        withAnimation(.spring(response: 0.3)) {
+                            if collapsedCategories.contains(group.category) {
+                                collapsedCategories.remove(group.category)
+                            } else {
+                                collapsedCategories.insert(group.category)
+                            }
+                        }
+                    }) {
+                        HStack(spacing: 12) {
+                            Image(systemName: categoryIcon(for: group.category))
+                                .font(.title3)
+                                .foregroundColor(.white)
+                                .frame(width: 28)
+                            
+                            Text(group.category)
+                                .font(.title3)
+                                .fontWeight(.bold)
+                                .foregroundColor(.white)
+                            
+                            Text("(\(group.items.filter { !$0.isChecked }.count)/\(group.items.count))")
+                                .font(.subheadline)
+                                .foregroundColor(.white.opacity(0.6))
+                            
+                            Spacer()
+                            
+                            Image(systemName: collapsedCategories.contains(group.category) ? "chevron.down" : "chevron.up")
+                                .font(.caption)
+                                .foregroundColor(.white.opacity(0.6))
+                                .rotationEffect(.degrees(collapsedCategories.contains(group.category) ? 0 : 180))
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(.ultraThinMaterial)
+                        )
+                        .padding(.horizontal, 16)
+                        .padding(.top, 8)
+                    }
+                    .buttonStyle(.plain)
+                    .textCase(nil)
+                    .listRowInsets(EdgeInsets())
                 }
+                .headerProminence(.increased)
             }
-            .padding(.horizontal, 20)
-            .padding(.bottom, 20)
         }
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
+        .environment(\.defaultMinListHeaderHeight, 0)
     }
     
     private func addItem() {
@@ -377,61 +382,81 @@ struct ShoppingListItemRow: View {
     let onToggle: () -> Void
     let onQuantityChange: (Int) -> Void
     let onDelete: () -> Void
+    let onNameChange: (String) -> Void
     let onCategoryChange: (String) -> Void
     let allCategories: [String]
     
+    @State private var showEditSheet = false
+    @State private var editedName = ""
+    
     var body: some View {
-        GlassCard {
-            HStack(spacing: 16) {
-                Button(action: onToggle) {
-                    ZStack {
-                        Circle()
-                            .strokeBorder(
-                                item.isChecked ? AppTheme.accentColor : Color.gray,
-                                lineWidth: 2
-                            )
-                            .frame(width: 28, height: 28)
-                        
-                        if item.isChecked {
-                            Image(systemName: "checkmark")
-                                .font(.system(size: 14, weight: .bold))
-                                .foregroundColor(.white)
+        ZStack {
+            GlassCard {
+                HStack(spacing: 16) {
+                    Button(action: onToggle) {
+                        ZStack {
+                            Circle()
+                                .strokeBorder(
+                                    item.isChecked ? AppTheme.accentColor : Color.gray,
+                                    lineWidth: 2
+                                )
                                 .frame(width: 28, height: 28)
-                                .background(Circle().fill(AppTheme.accentColor))
+                            
+                            if item.isChecked {
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 14, weight: .bold))
+                                    .foregroundColor(.white)
+                                    .frame(width: 28, height: 28)
+                                    .background(Circle().fill(AppTheme.accentColor))
+                            }
                         }
                     }
-                }
-                
-                Text(item.name)
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .strikethrough(item.isChecked)
-                    .foregroundColor(item.isChecked ? .gray : .primary)
-                
-                Spacer()
-                
-                HStack(spacing: 8) {
-                    // Quantity display on the right
-                    if item.quantity > 1 {
-                        Text("\(item.quantity)")
-                            .font(.subheadline)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                            .frame(minWidth: 20)
-                    }
                     
-                    Stepper("", value: Binding(
-                        get: { item.quantity },
-                        set: { onQuantityChange($0) }
-                    ), in: 1...99)
-                    .labelsHidden()
-                    .opacity(item.isChecked ? 0.5 : 1)
-                    .fixedSize()
+                    Text(item.name)
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .strikethrough(item.isChecked)
+                        .foregroundColor(item.isChecked ? .gray : .primary)
+                    
+                    Spacer()
+                    
+                    HStack(spacing: 8) {
+                        // Quantity display on the right
+                        if item.quantity > 1 {
+                            Text("\(item.quantity)")
+                                .font(.subheadline)
+                                .fontWeight(.bold)
+                                .foregroundColor(.white)
+                                .frame(minWidth: 20)
+                        }
+                        
+                        Stepper("", value: Binding(
+                            get: { item.quantity },
+                            set: { onQuantityChange($0) }
+                        ), in: 1...99)
+                        .labelsHidden()
+                        .opacity(item.isChecked ? 0.5 : 1)
+                        .fixedSize()
+                    }
                 }
+                .padding(14)
             }
-            .padding(14)
+            .opacity(item.isChecked ? 0.6 : 1)
         }
-        .opacity(item.isChecked ? 0.6 : 1)
+        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+            Button(role: .destructive, action: onDelete) {
+                Label("Delete", systemImage: "trash")
+            }
+        }
+        .swipeActions(edge: .leading, allowsFullSwipe: false) {
+            Button {
+                editedName = item.name
+                showEditSheet = true
+            } label: {
+                Label("Edit", systemImage: "pencil")
+            }
+            .tint(.blue)
+        }
         .contextMenu {
             Menu("Change Category") {
                 ForEach(allCategories, id: \.self) { category in
@@ -449,6 +474,18 @@ struct ShoppingListItemRow: View {
                 Label("Delete", systemImage: "trash")
             }
         }
+        .sheet(isPresented: $showEditSheet) {
+            EditItemSheet(
+                itemName: editedName,
+                onSave: { newName in
+                    if !newName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        onNameChange(newName)
+                    }
+                }
+            )
+            .presentationDetents([.height(250)])
+            .presentationDragIndicator(.visible)
+        }
     }
     
     private func categoryIcon(for category: String) -> String {
@@ -462,6 +499,46 @@ struct ShoppingListItemRow: View {
         case "Beverages": return "cup.and.saucer.fill"
         case "Spices & Seasonings": return "sparkles"
         default: return "basket.fill"
+        }
+    }
+}
+
+// MARK: - Edit Item Sheet
+struct EditItemSheet: View {
+    @State var itemName: String
+    let onSave: (String) -> Void
+    @Environment(\.dismiss) private var dismiss
+    
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 20) {
+                Text("Edit Item")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .padding(.top)
+                
+                TextField("Item name", text: $itemName)
+                    .textFieldStyle(.roundedBorder)
+                    .font(.body)
+                    .padding(.horizontal)
+                
+                Spacer()
+            }
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                }
+                
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") {
+                        onSave(itemName)
+                        dismiss()
+                    }
+                    .disabled(itemName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                }
+            }
         }
     }
 }
