@@ -19,6 +19,7 @@ struct CardView<Content: View>: View {
 }
 
 struct GlassCard<Content: View>: View {
+    @Environment(\.colorScheme) var colorScheme
     let content: Content
     
     init(@ViewBuilder content: () -> Content) {
@@ -29,8 +30,8 @@ struct GlassCard<Content: View>: View {
         content
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(.ultraThinMaterial)
-                    .shadow(color: Color.black.opacity(0.15), radius: 15, x: 0, y: 8)
+                    .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
+                    .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
             )
     }
 }

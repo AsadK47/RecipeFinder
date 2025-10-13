@@ -200,15 +200,16 @@ struct IngredientSearchView: View {
                                         selectedIngredient = ingredient
                                     }
                                 }) {
+                                    let category = CategoryClassifier.suggestCategory(for: ingredient)
                                     VStack(spacing: 8) {
                                         Circle()
                                             .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
                                             .frame(width: 60, height: 60, alignment: .center)
                                             .fixedSize()
                                             .overlay(
-                                                Image(systemName: "leaf.fill")
+                                                Image(systemName: categoryIcon(for: category))
                                                     .font(.title2)
-                                                    .foregroundColor(colorScheme == .dark ? .white : .black.opacity(0.7))
+                                                    .foregroundColor(categoryColor(for: category))
                                             )
                                         
                                         Text(ingredient)
@@ -256,14 +257,16 @@ struct IngredientSearchView: View {
     
     // MARK: - Helper Views
     private func ingredientButton(_ ingredient: String) -> some View {
-        Button(action: {
+        let category = CategoryClassifier.suggestCategory(for: ingredient)
+        
+        return Button(action: {
             withAnimation(.spring(response: 0.3)) {
                 selectedIngredient = ingredient
             }
         }) {
             HStack(spacing: 12) {
-                Image(systemName: "leaf.fill")
-                    .foregroundColor(colorScheme == .dark ? .white : .black.opacity(0.7))
+                Image(systemName: categoryIcon(for: category))
+                    .foregroundColor(categoryColor(for: category))
                     .font(.body)
                 
                 Text(ingredient)
@@ -301,6 +304,34 @@ struct IngredientSearchView: View {
         recipes.filter { recipe in
             recipe.ingredients.contains { $0.name.localizedCaseInsensitiveContains(ingredient) }
         }.count
+    }
+    
+    private func categoryIcon(for category: String) -> String {
+        switch category {
+        case "Produce": return "leaf.fill"
+        case "Meat & Seafood": return "fish.fill"
+        case "Dairy & Eggs": return "drop.fill"
+        case "Bakery": return "birthday.cake.fill"
+        case "Pantry": return "cabinet.fill"
+        case "Frozen": return "snowflake"
+        case "Beverages": return "cup.and.saucer.fill"
+        case "Spices & Seasonings": return "sparkles"
+        default: return "basket.fill"
+        }
+    }
+    
+    private func categoryColor(for category: String) -> Color {
+        switch category {
+        case "Produce": return .green
+        case "Meat & Seafood": return .red
+        case "Dairy & Eggs": return .blue
+        case "Bakery": return .orange
+        case "Pantry": return .brown
+        case "Frozen": return .cyan
+        case "Beverages": return .purple
+        case "Spices & Seasonings": return .yellow
+        default: return .gray
+        }
     }
     
     private var recipeResultsView: some View {

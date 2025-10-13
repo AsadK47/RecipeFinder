@@ -65,7 +65,7 @@ struct ShoppingListView: View {
                                     .padding(12)
                                     .background(
                                         Circle()
-                                            .fill(.ultraThinMaterial)
+                                            .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
                                     )
                             }
                             
@@ -89,15 +89,15 @@ struct ShoppingListView: View {
                             VStack(spacing: 4) {
                                 Image(systemName: categoryIcon(for: suggestedCategory))
                                     .font(.title3)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(categoryColor(for: suggestedCategory))
                                 Text(suggestedCategory == "Other" ? "Auto" : suggestedCategory)
                                     .font(.system(size: 9))
-                                    .foregroundColor(.white.opacity(0.8))
+                                    .foregroundColor(.white.opacity(0.9))
                             }
                             .padding(8)
                             .background(
                                 Circle()
-                                    .fill(AppTheme.accentColor.opacity(0.3))
+                                    .fill(.ultraThinMaterial)
                             )
                         }
                         .padding(.horizontal, 20)
@@ -110,9 +110,9 @@ struct ShoppingListView: View {
                                     .padding(14)
                                     .background(
                                         RoundedRectangle(cornerRadius: 12)
-                                            .fill(.ultraThinMaterial)
+                                            .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
                                     )
-                                    .foregroundColor(.white)
+                                    .foregroundColor(colorScheme == .dark ? .white : .black)
                                     .onChange(of: newItem) { oldValue, newValue in
                                         suggestedCategory = CategoryClassifier.suggestCategory(for: newValue)
                                     }
@@ -142,12 +142,12 @@ struct ShoppingListView: View {
                                     HStack {
                                         Text("\(manager.checkedCount) completed")
                                             .font(.caption2)
-                                            .foregroundColor(.white.opacity(0.7))
+                                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
                                         Spacer()
                                         Text("\(Int((Double(manager.checkedCount) / Double(manager.items.count)) * 100))%")
                                             .font(.caption2)
                                             .fontWeight(.semibold)
-                                            .foregroundColor(.white.opacity(0.9))
+                                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.9) : .black.opacity(0.7))
                                     }
                                 }
                                 .padding(.horizontal, 20)
@@ -191,16 +191,16 @@ struct ShoppingListView: View {
         VStack(spacing: 20) {
             Image(systemName: "cart")
                 .font(.system(size: 80))
-                .foregroundColor(.white.opacity(0.5))
+                .foregroundColor(colorScheme == .dark ? .white.opacity(0.5) : .black.opacity(0.3))
             
             Text("Your shopping list is empty")
                 .font(.title3)
                 .fontWeight(.semibold)
-                .foregroundColor(.white)
+                .foregroundColor(colorScheme == .dark ? .white : .black)
             
             Text("Items are automatically categorized")
                 .font(.subheadline)
-                .foregroundColor(.white.opacity(0.7))
+                .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
             
             VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 12) {
@@ -211,10 +211,10 @@ struct ShoppingListView: View {
                         Text("Smart Categories")
                             .font(.subheadline)
                             .fontWeight(.semibold)
-                            .foregroundColor(.white)
+                            .foregroundColor(colorScheme == .dark ? .white : .black)
                         Text("Type 'milk' → Dairy, 'chicken' → Meat")
                             .font(.caption)
-                            .foregroundColor(.white.opacity(0.7))
+                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
                     }
                 }
                 
@@ -226,10 +226,10 @@ struct ShoppingListView: View {
                         Text("Auto Grouping")
                             .font(.subheadline)
                             .fontWeight(.semibold)
-                            .foregroundColor(.white)
+                            .foregroundColor(colorScheme == .dark ? .white : .black)
                         Text("Items group by category automatically")
                             .font(.caption)
-                            .foregroundColor(.white.opacity(0.7))
+                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
                     }
                 }
                 
@@ -241,10 +241,10 @@ struct ShoppingListView: View {
                         Text("Tap to Collapse")
                             .font(.subheadline)
                             .fontWeight(.semibold)
-                            .foregroundColor(.white)
+                            .foregroundColor(colorScheme == .dark ? .white : .black)
                         Text("Hide completed categories while shopping")
                             .font(.caption)
-                            .foregroundColor(.white.opacity(0.7))
+                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
                     }
                 }
             }
@@ -311,23 +311,23 @@ struct ShoppingListView: View {
                         HStack(spacing: 12) {
                             Image(systemName: categoryIcon(for: group.category))
                                 .font(.title3)
-                                .foregroundColor(.white)
+                                .foregroundColor(categoryColor(for: group.category))
                                 .frame(width: 28)
                             
                             Text(group.category)
                                 .font(.title3)
                                 .fontWeight(.bold)
-                                .foregroundColor(.white)
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
                             
                             Text("(\(group.items.filter { !$0.isChecked }.count)/\(group.items.count))")
                                 .font(.subheadline)
-                                .foregroundColor(.white.opacity(0.6))
+                                .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.4))
                             
                             Spacer()
                             
                             Image(systemName: collapsedCategories.contains(group.category) ? "chevron.down" : "chevron.up")
                                 .font(.caption)
-                                .foregroundColor(.white.opacity(0.6))
+                                .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.4))
                                 .rotationEffect(.degrees(collapsedCategories.contains(group.category) ? 0 : 180))
                         }
                         .padding(.horizontal, 16)
@@ -335,7 +335,7 @@ struct ShoppingListView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(
                             RoundedRectangle(cornerRadius: 12)
-                                .fill(.ultraThinMaterial)
+                                .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
                         )
                         .padding(.horizontal, 16)
                         .padding(.top, 8)
@@ -374,6 +374,20 @@ struct ShoppingListView: View {
         default: return "basket.fill"
         }
     }
+    
+    private func categoryColor(for category: String) -> Color {
+        switch category {
+        case "Produce": return .green
+        case "Meat & Seafood": return .red
+        case "Dairy & Eggs": return .blue
+        case "Bakery": return .orange
+        case "Pantry": return .brown
+        case "Frozen": return .cyan
+        case "Beverages": return .purple
+        case "Spices & Seasonings": return .yellow
+        default: return .gray
+        }
+    }
 }
 
 // MARK: - Shopping List Item Row
@@ -388,6 +402,7 @@ struct ShoppingListItemRow: View {
     
     @State private var showEditSheet = false
     @State private var editedName = ""
+    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         ZStack {
@@ -416,7 +431,7 @@ struct ShoppingListItemRow: View {
                         .font(.subheadline)
                         .fontWeight(.medium)
                         .strikethrough(item.isChecked)
-                        .foregroundColor(item.isChecked ? .gray : .primary)
+                        .foregroundColor(item.isChecked ? .gray : (colorScheme == .dark ? .white : .black))
                     
                     Spacer()
                     
@@ -426,7 +441,7 @@ struct ShoppingListItemRow: View {
                             Text("\(item.quantity)")
                                 .font(.subheadline)
                                 .fontWeight(.bold)
-                                .foregroundColor(.white)
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
                                 .frame(minWidth: 20)
                         }
                         
