@@ -4,10 +4,14 @@ struct RecipeDetailView: View {
     @State private var recipe: RecipeModel
     @State private var ingredientsState: [Bool]
     @State private var expandedSections: Set<String> = ["Ingredients", "Pre-Prep", "Instructions", "Notes"]
+    @ObservedObject var shoppingListManager: ShoppingListManager
+    @State private var addedIngredients: Set<String> = []
+    @State private var showAddedFeedback: String?
     @Environment(\.colorScheme) var colorScheme
     
-    init(recipe: RecipeModel) {
+    init(recipe: RecipeModel, shoppingListManager: ShoppingListManager) {
         self.recipe = recipe
+        self.shoppingListManager = shoppingListManager
         _ingredientsState = State(initialValue: Array(repeating: false, count: recipe.ingredients.count))
     }
     
@@ -111,7 +115,11 @@ struct RecipeDetailView: View {
                                 IngredientRowView(
                                     ingredient: recipe.ingredients[index],
                                     isChecked: ingredientsState[index],
-                                    toggle: { ingredientsState[index].toggle() }
+                                    toggle: { ingredientsState[index].toggle() },
+                                    onAddToShopping: {
+                                        addIngredientToShoppingList(recipe.ingredients[index])
+                                    },
+                                    isInShoppingList: isIngredientInShoppingList(recipe.ingredients[index])
                                 )
                             }
                         }
@@ -168,6 +176,27 @@ struct RecipeDetailView: View {
         .toolbarBackground(.hidden, for: .navigationBar)
         .onChange(of: recipe.currentServings) { oldValue, newValue in
             adjustIngredients(for: newValue)
+        }
+        .overlay(alignment: .bottom) {
+            if let feedback = showAddedFeedback {
+                HStack(spacing: 12) {
+                    Image(systemName: "basket.fill")
+                        .foregroundColor(.white)
+                    Text("\(feedback) added to shopping list")
+                        .font(.subheadline)
+                        .foregroundColor(.white)
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 12)
+                .background(
+                    Capsule()
+                        .fill(AppTheme.accentColor)
+                        .shadow(color: .black.opacity(0.2), radius: 8, y: 4)
+                )
+                .padding(.bottom, 100)
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+                .animation(.spring(response: 0.3), value: showAddedFeedback)
+            }
         }
     }
     
@@ -257,6 +286,25 @@ struct RecipeDetailView: View {
             var updatedIngredient = ingredient
             updatedIngredient.baseQuantity = ingredient.baseQuantity * factor
             return updatedIngredient
+        }
+    }
+    
+    private func addIngredientToShoppingList(_ ingredient: Ingredient) {
+        // Create item with ingredient name including quantity and unit as part of the name
+        let fullName = "\(ingredient.name) (\(ingredient.formattedQuantity) \(ingredient.unit))"
+        shoppingListManager.addItem(name: fullName, quantity: 1, category: nil)
+        addedIngredients.insert(ingredient.name)
+        
+        // Show feedback briefly
+        showAddedFeedback = ingredient.name
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            showAddedFeedback = nil
+        }
+    }
+    
+    private func isIngredientInShoppingList(_ ingredient: Ingredient) -> Bool {
+        return shoppingListManager.items.contains { item in
+            item.name.lowercased() == ingredient.name.lowercased()
         }
     }
 }

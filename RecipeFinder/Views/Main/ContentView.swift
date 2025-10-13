@@ -14,7 +14,7 @@ struct ContentView: View {
                 .ignoresSafeArea()
             
             TabView(selection: $selectedTab) {
-                RecipeSearchView(recipes: $recipes)
+                RecipeSearchView(recipes: $recipes, shoppingListManager: shoppingListManager)
                     .tabItem {
                         Label("Recipes", systemImage: "book.fill")
                     }

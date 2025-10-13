@@ -500,7 +500,7 @@ struct IngredientSearchView: View {
                 if viewMode == .list {
                     LazyVStack(spacing: 16) {
                         ForEach(filteredRecipes) { recipe in
-                            NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
+                            NavigationLink(destination: RecipeDetailView(recipe: recipe, shoppingListManager: shoppingListManager)) {
                                 RecipeCard(recipe: recipe, viewMode: .list)
                             }
                             .buttonStyle(PlainButtonStyle())
@@ -510,7 +510,7 @@ struct IngredientSearchView: View {
                 } else {
                     LazyVGrid(columns: gridColumns, spacing: 16) {
                         ForEach(filteredRecipes) { recipe in
-                            NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
+                            NavigationLink(destination: RecipeDetailView(recipe: recipe, shoppingListManager: shoppingListManager)) {
                                 CompactRecipeCard(recipe: recipe)
                             }
                             .buttonStyle(PlainButtonStyle())
@@ -530,72 +530,117 @@ struct QuickMatchRecipeCard: View {
     let matchPercentage: Double
     @Environment(\.colorScheme) var colorScheme
     
+    private var backgroundFill: Color {
+        colorScheme == .dark ? Color.white.opacity(0.08) : Color.white
+    }
+    
+    private var borderColor: Color {
+        colorScheme == .dark ? Color.white.opacity(0.15) : Color.gray.opacity(0.15)
+    }
+    
+    private var shadowOpacity: Double {
+        colorScheme == .dark ? 0.3 : 0.08
+    }
+    
     var body: some View {
         VStack(spacing: 0) {
-            // Image
-            RecipeImageView(imageName: recipe.imageName, height: 140)
-                .frame(width: 160, height: 140)
+            imageSection
+            contentSection
+        }
+        .frame(width: 220)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(backgroundFill)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(borderColor, lineWidth: 1)
+        )
+        .shadow(color: Color.black.opacity(shadowOpacity), radius: 8, x: 0, y: 4)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+    }
+    
+    private var imageSection: some View {
+        ZStack(alignment: .topTrailing) {
+            RecipeImageView(imageName: recipe.imageName, height: 160)
+                .frame(width: 220, height: 160)
                 .clipped()
             
-            // Content
-            VStack(alignment: .leading, spacing: 8) {
-                // Recipe name
-                Text(recipe.name)
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
-                    .lineLimit(2)
-                    .multilineTextAlignment(.leading)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                
-                // Match percentage badge
-                HStack(spacing: 6) {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 12))
-                        .foregroundColor(.green)
-                    
-                    Text("\(Int(matchPercentage * 100))% Match")
-                        .font(.caption)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.green)
-                }
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(
-                    Capsule()
-                        .fill(Color.green.opacity(0.15))
-                )
-                
-                // Time and category
-                HStack(spacing: 8) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "clock.fill")
-                            .font(.system(size: 10))
-                            .foregroundColor(.orange)
-                        Text(recipe.prepTime)
-                            .font(.caption2)
-                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.7))
-                    }
-                    
-                    Text("•")
-                        .font(.caption2)
-                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.5) : .black.opacity(0.5))
-                    
-                    Text(recipe.category)
-                        .font(.caption2)
-                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.7))
-                        .lineLimit(1)
-                }
-            }
-            .padding(12)
-            .frame(width: 160, alignment: .leading)
+            matchBadge
         }
-        .frame(width: 160)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
-        )
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+    
+    private var matchBadge: some View {
+        HStack(spacing: 4) {
+            Image(systemName: "checkmark.circle.fill")
+                .font(.caption2)
+                .foregroundColor(.white)
+            
+            Text("\(Int(matchPercentage * 100))%")
+                .font(.caption2)
+                .fontWeight(.bold)
+                .foregroundColor(.white)
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .background(Capsule().fill(Color.green))
+        .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
+        .padding(10)
+    }
+    
+    private var contentSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            recipeNameText
+            metadataRow
+        }
+        .padding(12)
+        .frame(width: 220, alignment: .leading)
+        .background(contentBackground)
+    }
+    
+    private var contentBackground: Color {
+        colorScheme == .dark ? Color.white.opacity(0.05) : Color.white
+    }
+    
+    private var recipeNameText: some View {
+        Text(recipe.name)
+            .font(.headline)
+            .fontWeight(.semibold)
+            .foregroundColor(colorScheme == .dark ? .white : .black)
+            .lineLimit(2)
+            .multilineTextAlignment(.leading)
+            .fixedSize(horizontal: false, vertical: true)
+            .frame(height: 40, alignment: .top)
+    }
+    
+    private var metadataRow: some View {
+        HStack(spacing: 6) {
+            timeInfo
+            
+            Text("•")
+                .font(.caption)
+                .foregroundColor(colorScheme == .dark ? .white.opacity(0.4) : .black.opacity(0.4))
+            
+            categoryText
+        }
+    }
+    
+    private var timeInfo: some View {
+        HStack(spacing: 3) {
+            Image(systemName: "clock.fill")
+                .font(.caption2)
+                .foregroundColor(.orange)
+            Text(recipe.prepTime)
+                .font(.caption)
+                .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
+        }
+    }
+    
+    private var categoryText: some View {
+        Text(recipe.category)
+            .font(.caption)
+            .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
+            .lineLimit(1)
     }
 }
 

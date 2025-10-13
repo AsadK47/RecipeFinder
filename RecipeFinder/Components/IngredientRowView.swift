@@ -4,6 +4,8 @@ struct IngredientRowView: View {
     let ingredient: Ingredient
     let isChecked: Bool
     let toggle: () -> Void
+    var onAddToShopping: (() -> Void)? = nil
+    var isInShoppingList: Bool = false
     
     var body: some View {
         HStack(spacing: 12) {
@@ -37,6 +39,22 @@ struct IngredientRowView: View {
             }
             
             Spacer()
+            
+            // Optional basket button for adding to shopping list
+            if let addToShopping = onAddToShopping {
+                Button(action: {
+                    withAnimation(.spring(response: 0.3)) {
+                        addToShopping()
+                    }
+                }) {
+                    Image(systemName: isInShoppingList ? "basket.fill" : "basket")
+                        .font(.system(size: 18))
+                        .foregroundColor(isInShoppingList ? AppTheme.accentColor : .gray)
+                        .frame(width: 32, height: 32)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
         }
         .padding(.vertical, 4)
     }

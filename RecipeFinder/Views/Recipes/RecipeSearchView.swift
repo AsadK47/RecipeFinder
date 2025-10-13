@@ -2,6 +2,7 @@ import SwiftUI
 
 struct RecipeSearchView: View {
     @Binding var recipes: [RecipeModel]
+    @ObservedObject var shoppingListManager: ShoppingListManager
     @State private var searchText = ""
     @State private var viewMode: RecipeViewMode = .list
     @State private var showFilters = false
@@ -182,7 +183,7 @@ struct RecipeSearchView: View {
                             if viewMode == .list {
                                 LazyVStack(spacing: 10) {
                                     ForEach(filteredRecipes) { recipe in
-                                        NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
+                                        NavigationLink(destination: RecipeDetailView(recipe: recipe, shoppingListManager: shoppingListManager)) {
                                             RecipeCard(recipe: recipe, viewMode: .list)
                                         }
                                         .buttonStyle(PlainButtonStyle())
@@ -193,7 +194,7 @@ struct RecipeSearchView: View {
                             } else {
                                 LazyVGrid(columns: gridColumns, spacing: 12) {
                                     ForEach(filteredRecipes) { recipe in
-                                        NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
+                                        NavigationLink(destination: RecipeDetailView(recipe: recipe, shoppingListManager: shoppingListManager)) {
                                             CompactRecipeCard(recipe: recipe)
                                         }
                                         .buttonStyle(PlainButtonStyle())

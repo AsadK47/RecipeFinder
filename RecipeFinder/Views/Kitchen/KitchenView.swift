@@ -57,7 +57,8 @@ struct KitchenView: View {
                         
                         PantryView(
                             recipes: $recipes,
-                            pantryManager: pantryManager
+                            pantryManager: pantryManager,
+                            shoppingListManager: shoppingListManager
                         )
                         .tag(KitchenTab.pantry)
                     }

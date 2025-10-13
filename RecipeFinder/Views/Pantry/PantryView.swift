@@ -3,6 +3,7 @@ import SwiftUI
 struct PantryView: View {
     @Binding var recipes: [RecipeModel]
     @ObservedObject var pantryManager: PantryManager
+    @ObservedObject var shoppingListManager: ShoppingListManager
     @State private var searchText = ""
     @State private var showAddSheet = false
     @Environment(\.colorScheme) var colorScheme
@@ -142,12 +143,13 @@ struct PantryView: View {
                         } else if !searchText.isEmpty {
                             searchResultsView
                         } else {
-                            pantryItemsView
-                            
-                            // Quick Recipe Matches Section
+                            // Quick Recipe Matches Section - TOP PLACEMENT (Hero)
                             if !quickMatchRecipes.isEmpty {
                                 quickRecipeMatchesView
+                                    .padding(.top, 8)
                             }
+                            
+                            pantryItemsView
                         }
                         
                         // Quick add from categories
@@ -232,22 +234,41 @@ struct PantryView: View {
     // MARK: - Quick Recipe Matches
     private var quickRecipeMatchesView: some View {
         VStack(alignment: .leading, spacing: 16) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Quick Recipe Matches")
-                    .font(.title3)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(spacing: 8) {
+                    Image(systemName: "sparkles")
+                        .font(.title3)
+                        .foregroundColor(.yellow)
+                    
+                    Text("Quick Recipe Matches")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                }
                 
-                Text("Recipes you can make with items in your pantry")
-                    .font(.caption)
-                    .foregroundColor(.white.opacity(0.7))
+                Text(matchCountText)
+                    .font(.subheadline)
+                    .foregroundColor(.white.opacity(0.8))
             }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(
+                        LinearGradient(
+                            colors: [Color.purple.opacity(0.3), Color.pink.opacity(0.2)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+            )
             .padding(.horizontal, 20)
             
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 12) {
+                HStack(spacing: 16) {
                     ForEach(quickMatchRecipes.prefix(10)) { recipe in
-                        NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
+                        NavigationLink(destination: RecipeDetailView(recipe: recipe, shoppingListManager: shoppingListManager)) {
                             QuickMatchRecipeCard(
                                 recipe: recipe,
                                 matchPercentage: matchPercentage(
@@ -261,6 +282,15 @@ struct PantryView: View {
                 }
                 .padding(.horizontal, 20)
             }
+        }
+    }
+    
+    private var matchCountText: String {
+        let count = quickMatchRecipes.count
+        if count == 1 {
+            return "You can make this recipe right now!"
+        } else {
+            return "You can make \(count) recipes right now!"
         }
     }
     
