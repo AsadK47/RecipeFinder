@@ -12,21 +12,22 @@ struct RecipeDetailView: View {
     }
     
     var body: some View {
-        ZStack {
-            AppTheme.backgroundGradient(for: colorScheme)
-                .ignoresSafeArea()
-            
-            ScrollView(.vertical, showsIndicators: true) {
-                VStack(spacing: 0) {
-                    // Title directly on gradient
-                    Text(recipe.name)
-                        .font(.system(size: 28, weight: .bold))
-                        .foregroundColor(.white)
-                        .multilineTextAlignment(.center)
-                        .frame(maxWidth: .infinity, alignment: .center)
-                        .padding(.horizontal, 20)
-                        .padding(.top, 8)
-                        .padding(.bottom, 20)
+        GeometryReader { geometry in
+            ZStack {
+                AppTheme.backgroundGradient(for: colorScheme)
+                    .ignoresSafeArea()
+                
+                ScrollView(.vertical, showsIndicators: true) {
+                    VStack(spacing: 0) {
+                        // Title directly on gradient
+                        Text(recipe.name)
+                            .font(.system(size: 28, weight: .bold))
+                            .foregroundColor(.white)
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.horizontal, 20)
+                            .padding(.top, 8)
+                            .padding(.bottom, 20)
                     
                     // All info cards with consistent spacing
                     VStack(spacing: 16) {
@@ -158,9 +159,10 @@ struct RecipeDetailView: View {
                     }
                 }
                 .padding(.bottom, 100)
-                .frame(maxWidth: .infinity)
+                .frame(width: geometry.size.width)
             }
             .scrollBounceBehavior(.basedOnSize, axes: .vertical)
+            }
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
