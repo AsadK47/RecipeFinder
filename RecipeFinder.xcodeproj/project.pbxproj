@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9E2E341C2E9D9F2000E2E49F /* PantryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E2E341B2E9D9F2000E2E49F /* PantryManager.swift */; };
+		9E2E341F2E9D9F3800E2E49F /* PantryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E2E341D2E9D9F3800E2E49F /* PantryView.swift */; };
+		9E2E34212E9D9F8500E2E49F /* KitchenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E2E34202E9D9F8500E2E49F /* KitchenView.swift */; };
+		9E2E34242E9DA10000E2E49F /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E2E34232E9DA10000E2E49F /* FlowLayout.swift */; };
 		9E4DC7382E9BF19700E17DDF /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E4DC7372E9BF19700E17DDF /* AppTheme.swift */; };
 		9E4DC73A2E9C0EBD00E17DDF /* ShoppingListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E4DC7392E9C0EB800E17DDF /* ShoppingListItem.swift */; };
 		9E4DC73C2E9C10D500E17DDF /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E4DC73B2E9C10CC00E17DDF /* CardView.swift */; };
@@ -60,6 +64,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9E2E341B2E9D9F2000E2E49F /* PantryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryManager.swift; sourceTree = "<group>"; };
+		9E2E341D2E9D9F3800E2E49F /* PantryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryView.swift; sourceTree = "<group>"; };
+		9E2E34202E9D9F8500E2E49F /* KitchenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KitchenView.swift; sourceTree = "<group>"; };
+		9E2E34232E9DA10000E2E49F /* FlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowLayout.swift; sourceTree = "<group>"; };
 		9E37D12A2D09082C005BC8FA /* readme.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = readme.md; sourceTree = "<group>"; };
 		9E45FAE32DC690E300F46909 /* RecipeModel 8.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 8.xcdatamodel"; sourceTree = "<group>"; };
 		9E4DC7372E9BF19700E17DDF /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
@@ -132,9 +140,26 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9E2E341E2E9D9F3800E2E49F /* Pantry */ = {
+			isa = PBXGroup;
+			children = (
+				9E2E341D2E9D9F3800E2E49F /* PantryView.swift */,
+			);
+			path = Pantry;
+			sourceTree = "<group>";
+		};
+		9E2E34222E9D9F8900E2E49F /* Kitchen */ = {
+			isa = PBXGroup;
+			children = (
+				9E2E34202E9D9F8500E2E49F /* KitchenView.swift */,
+			);
+			path = Kitchen;
+			sourceTree = "<group>";
+		};
 		9E4DC7322E9BF10900E17DDF /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				9E2E34232E9DA10000E2E49F /* FlowLayout.swift */,
 				9E4DC7682E9D738500E17DDF /* FilterComponents.swift */,
 				9E4DC74C2E9C118B00E17DDF /* ShoppingListInputBar.swift */,
 				9E4DC74A2E9C117F00E17DDF /* IngredientButton.swift */,
@@ -160,6 +185,7 @@
 		9E4DC7342E9BF14A00E17DDF /* Persistence */ = {
 			isa = PBXGroup;
 			children = (
+				9E2E341B2E9D9F2000E2E49F /* PantryManager.swift */,
 				9E4DC7612E9C5D8A00E17DDF /* ShoppingListManager.swift */,
 				9E4DC75B2E9C197D00E17DDF /* RecipeDataExtensions.swift */,
 				9E4DC7592E9C196A00E17DDF /* SampleRecipeData.swift */,
@@ -197,6 +223,8 @@
 		9E7B9A7F2E9BEC3D007E1786 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				9E2E34222E9D9F8900E2E49F /* Kitchen */,
+				9E2E341E2E9D9F3800E2E49F /* Pantry */,
 				9E7B9A842E9BECFE007E1786 /* Settings */,
 				9E7B9A832E9BECF9007E1786 /* Shopping */,
 				9E7B9A822E9BECEF007E1786 /* Ingredients */,
@@ -449,6 +477,7 @@
 				9E4DC7502E9C11FB00E17DDF /* RecipeDetailView.swift in Sources */,
 				9E4DC73E2E9C10E300E17DDF /* CompactRecipeCard.swift in Sources */,
 				9E4DC7602E9C1B6A00E17DDF /* RecipeModel.swift in Sources */,
+				9E2E34242E9DA10000E2E49F /* FlowLayout.swift in Sources */,
 				9E4DC7422E9C10FC00E17DDF /* RecipeImageView.swift in Sources */,
 				9E4DC7542E9C12B200E17DDF /* ShoppingListView.swift in Sources */,
 				9E4DC73C2E9C10D500E17DDF /* CardView.swift in Sources */,
@@ -459,11 +488,14 @@
 				9E7B9A862E9BED16007E1786 /* RecipeSearchView.swift in Sources */,
 				9E4DC7522E9C12A900E17DDF /* IngredientSearchView.swift in Sources */,
 				9E4DC7672E9C603B00E17DDF /* CategoryClassifier.swift in Sources */,
+				9E2E341F2E9D9F3800E2E49F /* PantryView.swift in Sources */,
 				9E4DC7582E9C136E00E17DDF /* RecipeViewMode.swift in Sources */,
 				9E4DC7622E9C5D8A00E17DDF /* ShoppingListManager.swift in Sources */,
 				9E4DC73A2E9C0EBD00E17DDF /* ShoppingListItem.swift in Sources */,
+				9E2E341C2E9D9F2000E2E49F /* PantryManager.swift in Sources */,
 				9E4DC7442E9C110600E17DDF /* ModernSearchBar.swift in Sources */,
 				9EE5AAD92D08FCBE00C1B736 /* RecipeFinderApp.swift in Sources */,
+				9E2E34212E9D9F8500E2E49F /* KitchenView.swift in Sources */,
 				9E605FFE2D0985BD00236896 /* PersistenceController.swift in Sources */,
 				9E4DC7402E9C10F000E17DDF /* RecipeCard.swift in Sources */,
 				9E4DC74D2E9C119000E17DDF /* ShoppingListInputBar.swift in Sources */,

@@ -20,9 +20,9 @@ struct ContentView: View {
                     }
                     .tag(0)
 
-                IngredientSearchView(recipes: $recipes, shoppingListManager: shoppingListManager)
+                KitchenView(recipes: $recipes, shoppingListManager: shoppingListManager)
                     .tabItem {
-                        Label("Ingredients", systemImage: "leaf.fill")
+                        Label("Kitchen", systemImage: "refrigerator.fill")
                     }
                     .tag(1)
 

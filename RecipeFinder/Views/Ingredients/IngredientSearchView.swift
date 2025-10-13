@@ -3,6 +3,7 @@ import SwiftUI
 struct IngredientSearchView: View {
     @Binding var recipes: [RecipeModel]
     @ObservedObject var shoppingListManager: ShoppingListManager
+    @ObservedObject var pantryManager: PantryManager
     @State private var searchText = ""
     @State private var viewMode: RecipeViewMode = .list
     @State private var selectedIngredient: String?
@@ -189,7 +190,7 @@ struct IngredientSearchView: View {
                         }
                         .padding(.horizontal, 20)
                         
-                        ModernSearchBar(text: $searchText, placeholder: "What's in the fridge...?")
+                        ModernSearchBar(text: $searchText, placeholder: "Search for ingredients...")
                             .padding(.horizontal, 20)
                         
                         // Active filters chips
@@ -279,52 +280,6 @@ struct IngredientSearchView: View {
     private var ingredientBrowserView: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                // Popular Ingredients Section
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("Popular Ingredients")
-                        .font(.title3)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 20)
-                    
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 12) {
-                            ForEach(popularIngredients, id: \.self) { ingredient in
-                                Button(action: {
-                                    withAnimation(.spring(response: 0.3)) {
-                                        selectedIngredient = ingredient
-                                    }
-                                }) {
-                                    let category = CategoryClassifier.suggestCategory(for: ingredient)
-                                    VStack(spacing: 8) {
-                                        Circle()
-                                            .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
-                                            .frame(width: 60, height: 60, alignment: .center)
-                                            .fixedSize()
-                                            .overlay(
-                                                Image(systemName: categoryIcon(for: category))
-                                                    .font(.title2)
-                                                    .foregroundColor(categoryColor(for: category))
-                                            )
-                                        
-                                        Text(ingredient)
-                                            .font(.caption)
-                                            .fontWeight(.medium)
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
-                                            .lineLimit(2)
-                                            .multilineTextAlignment(.center)
-                                            .frame(width: 70, height: 32, alignment: .center)
-                                            .fixedSize(horizontal: false, vertical: true)
-                                    }
-                                    .frame(width: 70, alignment: .center)
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                            }
-                        }
-                        .padding(.horizontal, 20)
-                    }
-                }
-                
                 // Categories Section
                 VStack(alignment: .leading, spacing: 16) {
                     Text("Browse by Category")
@@ -337,6 +292,7 @@ struct IngredientSearchView: View {
                             category: category,
                             ingredients: ingredients,
                             shoppingListManager: shoppingListManager,
+                            pantryManager: pantryManager,
                             addedIngredients: $addedIngredients,
                             onSelectIngredient: { ingredient in
                                 withAnimation(.spring(response: 0.3)) {
@@ -568,11 +524,87 @@ struct IngredientSearchView: View {
     }
 }
 
+// MARK: - Quick Match Recipe Card Component
+struct QuickMatchRecipeCard: View {
+    let recipe: RecipeModel
+    let matchPercentage: Double
+    @Environment(\.colorScheme) var colorScheme
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            // Image
+            RecipeImageView(imageName: recipe.imageName, height: 140)
+                .frame(width: 160, height: 140)
+                .clipped()
+            
+            // Content
+            VStack(alignment: .leading, spacing: 8) {
+                // Recipe name
+                Text(recipe.name)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                
+                // Match percentage badge
+                HStack(spacing: 6) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 12))
+                        .foregroundColor(.green)
+                    
+                    Text("\(Int(matchPercentage * 100))% Match")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.green)
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(
+                    Capsule()
+                        .fill(Color.green.opacity(0.15))
+                )
+                
+                // Time and category
+                HStack(spacing: 8) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "clock.fill")
+                            .font(.system(size: 10))
+                            .foregroundColor(.orange)
+                        Text(recipe.prepTime)
+                            .font(.caption2)
+                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.7))
+                    }
+                    
+                    Text("•")
+                        .font(.caption2)
+                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.5) : .black.opacity(0.5))
+                    
+                    Text(recipe.category)
+                        .font(.caption2)
+                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.7))
+                        .lineLimit(1)
+                }
+            }
+            .padding(12)
+            .frame(width: 160, alignment: .leading)
+        }
+        .frame(width: 160)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+}
+
 // MARK: - Category Card Component
 struct CategoryCard: View {
     let category: String
     let ingredients: [String]
     @ObservedObject var shoppingListManager: ShoppingListManager
+    @ObservedObject var pantryManager: PantryManager
     @Binding var addedIngredients: Set<String>
     let onSelectIngredient: (String) -> Void
     let onAddToShoppingList: (String) -> Void
@@ -686,6 +718,13 @@ struct CategoryCard: View {
                             .fontWeight(.medium)
                             .foregroundColor(colorScheme == .dark ? .white.opacity(0.95) : .black.opacity(0.9))
                         
+                        // Pantry indicator
+                        if variations.contains(where: { pantryManager.hasItem($0) }) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.caption)
+                                .foregroundColor(.green)
+                        }
+                        
                         if variations.count > 1 {
                             Text("(\(variations.count))")
                                 .font(.caption)
@@ -783,63 +822,6 @@ struct CategoryCard: View {
             RoundedRectangle(cornerRadius: 8)
                 .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
         )
-    }
-}
-
-// MARK: - Flow Layout for ingredient chips
-struct FlowLayout: Layout {
-    var spacing: CGFloat = 8
-    
-    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-        let result = FlowResult(
-            in: proposal.replacingUnspecifiedDimensions().width,
-            subviews: subviews,
-            spacing: spacing
-        )
-        return result.size
-    }
-    
-    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-        let result = FlowResult(
-            in: bounds.width,
-            subviews: subviews,
-            spacing: spacing
-        )
-        for (index, subview) in subviews.enumerated() {
-            subview.place(at: result.positions[index], proposal: .unspecified)
-        }
-    }
-    
-    struct FlowResult {
-        var size: CGSize
-        var positions: [CGPoint]
-        
-        init(in maxWidth: CGFloat, subviews: Subviews, spacing: CGFloat) {
-            var positions: [CGPoint] = []
-            var size: CGSize = .zero
-            var currentX: CGFloat = 0
-            var currentY: CGFloat = 0
-            var lineHeight: CGFloat = 0
-            
-            for subview in subviews {
-                let subviewSize = subview.sizeThatFits(.unspecified)
-                
-                if currentX + subviewSize.width > maxWidth && currentX > 0 {
-                    currentX = 0
-                    currentY += lineHeight + spacing
-                    lineHeight = 0
-                }
-                
-                positions.append(CGPoint(x: currentX, y: currentY))
-                lineHeight = max(lineHeight, subviewSize.height)
-                currentX += subviewSize.width + spacing
-                size.width = max(size.width, currentX - spacing)
-            }
-            
-            size.height = currentY + lineHeight
-            self.size = size
-            self.positions = positions
-        }
     }
 }
 
