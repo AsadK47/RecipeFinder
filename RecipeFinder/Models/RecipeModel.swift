@@ -5,13 +5,24 @@ struct Ingredient: Identifiable, Codable {
     var id: UUID = UUID()
     var baseQuantity: Double
     var unit: String
-    var name: String
+    private var _name: String
+    
+    var name: String {
+        get { _name.capitalized }
+        set { _name = newValue }
+    }
     
     init(id: UUID = UUID(), baseQuantity: Double, unit: String, name: String) {
         self.id = id
         self.baseQuantity = baseQuantity
         self.unit = unit
-        self.name = name
+        self._name = name
+    }
+    
+    // MARK: - Codable
+    enum CodingKeys: String, CodingKey {
+        case id, baseQuantity, unit
+        case _name = "name"
     }
     
     // MARK: - Computed Properties (Required for scaling)

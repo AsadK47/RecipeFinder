@@ -16,7 +16,7 @@ struct RecipeDetailView: View {
             AppTheme.backgroundGradient(for: colorScheme)
                 .ignoresSafeArea()
             
-            ScrollView {
+            ScrollView(.vertical, showsIndicators: true) {
                 VStack(spacing: 0) {
                     // Title directly on gradient
                     Text(recipe.name)
@@ -30,7 +30,7 @@ struct RecipeDetailView: View {
                     
                     // All info cards with consistent spacing
                     VStack(spacing: 16) {
-                        CardView {
+                        GlassCard {
                             InfoPairView(
                                 label1: "Prep time", value1: recipe.prepTime, icon1: "clock",
                                 label2: "Cook time", value2: recipe.cookingTime, icon2: "flame"
@@ -38,7 +38,7 @@ struct RecipeDetailView: View {
                             .padding()
                         }
                         
-                        CardView {
+                        GlassCard {
                             InfoPairView(
                                 label1: "Difficulty", value1: recipe.difficulty, icon1: "chart.bar",
                                 label2: "Category", value2: recipe.category, icon2: "fork.knife"
@@ -47,7 +47,7 @@ struct RecipeDetailView: View {
                         }
                         
                         // Updated Servings Card with Icon
-                        CardView {
+                        GlassCard {
                             HStack {
                                 VStack(spacing: 8) {
                                     Image(systemName: "person.2.fill")
@@ -158,7 +158,9 @@ struct RecipeDetailView: View {
                     }
                 }
                 .padding(.bottom, 100)
+                .frame(maxWidth: .infinity)
             }
+            .scrollBounceBehavior(.basedOnSize, axes: .vertical)
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
@@ -207,7 +209,7 @@ struct RecipeDetailView: View {
             
             // Collapsible content
             if isExpanded {
-                CardView {
+                GlassCard {
                     content()
                         .frame(maxWidth: .infinity, alignment: .leading) // Force full width
                         .padding(20)

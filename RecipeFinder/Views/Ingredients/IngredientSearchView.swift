@@ -307,7 +307,7 @@ struct IngredientSearchView: View {
                                                     .foregroundColor(categoryColor(for: category))
                                             )
                                         
-                                        Text(ingredient.capitalized)
+                                        Text(ingredient)
                                             .font(.caption)
                                             .fontWeight(.medium)
                                             .foregroundColor(colorScheme == .dark ? .white : .black)
@@ -370,7 +370,7 @@ struct IngredientSearchView: View {
                         .foregroundColor(categoryColor(for: category))
                         .font(.body)
                     
-                    Text(ingredient.capitalized)
+                    Text(ingredient)
                         .font(.body)
                         .foregroundColor(colorScheme == .dark ? .white : .black)
                     
@@ -524,7 +524,7 @@ struct IngredientSearchView: View {
                         .foregroundColor(AppTheme.accentColor)
                         .font(.title3)
                     
-                    Text(ingredient.capitalized)
+                    Text(ingredient)
                         .font(.title2)
                         .fontWeight(.bold)
                         .foregroundColor(.white)
@@ -681,10 +681,10 @@ struct CategoryCard: View {
                     }
                 }) {
                     HStack(spacing: 12) {
-                        Text(mainIngredient.capitalized)
+                        Text(mainIngredient)
                             .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                            .fontWeight(.medium)
+                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.95) : .black.opacity(0.9))
                         
                         if variations.count > 1 {
                             Text("(\(variations.count))")
@@ -753,9 +753,10 @@ struct CategoryCard: View {
                         .font(.system(size: 4))
                         .foregroundColor(colorScheme == .dark ? .white.opacity(0.5) : .black.opacity(0.4))
                     
-                    Text(ingredient.capitalized)
+                    Text(ingredient)
                         .font(.subheadline)
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .fontWeight(.regular)
+                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.85) : .black.opacity(0.75))
                     
                     Spacer()
                 }
