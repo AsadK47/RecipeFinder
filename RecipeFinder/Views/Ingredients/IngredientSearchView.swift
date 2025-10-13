@@ -55,8 +55,33 @@ struct IngredientSearchView: View {
                     ingredient.localizedCaseInsensitiveContains(keyword)
                 }
             }
-            return matchedIngredients.isEmpty ? nil : (category, matchedIngredients.sorted())
+            // Group similar ingredients and capitalize
+            let grouped = groupSimilarIngredients(matchedIngredients)
+            return grouped.isEmpty ? nil : (category, grouped.sorted())
         }
+    }
+    
+    // Group similar ingredients (e.g., "chicken breast", "chicken thighs" -> "Chicken")
+    private func groupSimilarIngredients(_ ingredients: [String]) -> [String] {
+        var mainIngredients = Set<String>()
+        
+        for ingredient in ingredients {
+            // Extract the main ingredient (first word or two)
+            let words = ingredient.split(separator: " ")
+            if words.count > 0 {
+                // Use first word as main ingredient (e.g., "chicken" from "chicken breast")
+                mainIngredients.insert(String(words[0]).capitalized)
+            }
+        }
+        
+        return Array(mainIngredients)
+    }
+    
+    // Get all variations of a main ingredient
+    private func getIngredientVariations(_ mainIngredient: String) -> [String] {
+        return allIngredients.filter { ingredient in
+            ingredient.localizedCaseInsensitiveContains(mainIngredient)
+        }.sorted()
     }
     
     var filteredCategorizedIngredients: [(category: String, ingredients: [String])] {
@@ -282,7 +307,7 @@ struct IngredientSearchView: View {
                                                     .foregroundColor(categoryColor(for: category))
                                             )
                                         
-                                        Text(ingredient)
+                                        Text(ingredient.capitalized)
                                             .font(.caption)
                                             .fontWeight(.medium)
                                             .foregroundColor(colorScheme == .dark ? .white : .black)
@@ -318,7 +343,8 @@ struct IngredientSearchView: View {
                                     selectedIngredient = ingredient
                                 }
                             },
-                            onAddToShoppingList: addToShoppingList
+                            onAddToShoppingList: addToShoppingList,
+                            getVariations: getIngredientVariations
                         )
                     }
                 }
@@ -344,7 +370,7 @@ struct IngredientSearchView: View {
                         .foregroundColor(categoryColor(for: category))
                         .font(.body)
                     
-                    Text(ingredient)
+                    Text(ingredient.capitalized)
                         .font(.body)
                         .foregroundColor(colorScheme == .dark ? .white : .black)
                     
@@ -498,7 +524,7 @@ struct IngredientSearchView: View {
                         .foregroundColor(AppTheme.accentColor)
                         .font(.title3)
                     
-                    Text(ingredient)
+                    Text(ingredient.capitalized)
                         .font(.title2)
                         .fontWeight(.bold)
                         .foregroundColor(.white)
@@ -550,7 +576,9 @@ struct CategoryCard: View {
     @Binding var addedIngredients: Set<String>
     let onSelectIngredient: (String) -> Void
     let onAddToShoppingList: (String) -> Void
+    let getVariations: (String) -> [String]
     @State private var isExpanded = false
+    @State private var expandedIngredients: Set<String> = []
     @Environment(\.colorScheme) var colorScheme
     
     var categoryIcon: String {
@@ -623,8 +651,8 @@ struct CategoryCard: View {
             // Ingredients List
             if isExpanded {
                 VStack(spacing: 8) {
-                    ForEach(ingredients, id: \.self) { ingredient in
-                        ingredientRow(ingredient)
+                    ForEach(ingredients, id: \.self) { mainIngredient in
+                        ingredientGroup(mainIngredient)
                     }
                 }
                 .padding(.top, 8)
@@ -632,7 +660,88 @@ struct CategoryCard: View {
         }
     }
     
-    private func ingredientRow(_ ingredient: String) -> some View {
+    private func ingredientGroup(_ mainIngredient: String) -> some View {
+        let variations = getVariations(mainIngredient)
+        let isGroupExpanded = expandedIngredients.contains(mainIngredient)
+        
+        return VStack(spacing: 4) {
+            // Main ingredient row
+            HStack(spacing: 0) {
+                Button(action: {
+                    if variations.count > 1 {
+                        withAnimation(.spring(response: 0.3)) {
+                            if isGroupExpanded {
+                                expandedIngredients.remove(mainIngredient)
+                            } else {
+                                expandedIngredients.insert(mainIngredient)
+                            }
+                        }
+                    } else if variations.count == 1 {
+                        onSelectIngredient(variations[0])
+                    }
+                }) {
+                    HStack(spacing: 12) {
+                        Text(mainIngredient.capitalized)
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                        
+                        if variations.count > 1 {
+                            Text("(\(variations.count))")
+                                .font(.caption)
+                                .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.4))
+                        }
+                        
+                        Spacer()
+                        
+                        if variations.count > 1 {
+                            Image(systemName: isGroupExpanded ? "chevron.up" : "chevron.down")
+                                .font(.caption2)
+                                .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.4))
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                }
+                .buttonStyle(PlainButtonStyle())
+                
+                // Basket button for single variation
+                if variations.count == 1 {
+                    let ingredient = variations[0]
+                    let isAdded = addedIngredients.contains(ingredient)
+                    
+                    Button(action: {
+                        onAddToShoppingList(ingredient)
+                    }) {
+                        Image(systemName: isAdded ? "basket.fill" : "basket")
+                            .foregroundColor(isAdded ? AppTheme.accentColor : (colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5)))
+                            .font(.system(size: 18))
+                            .frame(width: 44, height: 44)
+                            .scaleEffect(isAdded ? 1.2 : 1.0)
+                            .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isAdded)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    .padding(.trailing, 12)
+                }
+            }
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
+            )
+            
+            // Sub-ingredients (variations)
+            if isGroupExpanded && variations.count > 1 {
+                VStack(spacing: 4) {
+                    ForEach(variations, id: \.self) { variation in
+                        variationRow(variation)
+                    }
+                }
+                .padding(.leading, 20)
+            }
+        }
+    }
+    
+    private func variationRow(_ ingredient: String) -> some View {
         let isAdded = addedIngredients.contains(ingredient)
         
         return HStack(spacing: 0) {
@@ -640,7 +749,11 @@ struct CategoryCard: View {
                 onSelectIngredient(ingredient)
             }) {
                 HStack(spacing: 12) {
-                    Text(ingredient)
+                    Image(systemName: "circle.fill")
+                        .font(.system(size: 4))
+                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.5) : .black.opacity(0.4))
+                    
+                    Text(ingredient.capitalized)
                         .font(.subheadline)
                         .foregroundColor(colorScheme == .dark ? .white : .black)
                     
@@ -667,7 +780,7 @@ struct CategoryCard: View {
         }
         .background(
             RoundedRectangle(cornerRadius: 8)
-                .fill(colorScheme == .dark ? Color(white: 0.15) : Color(white: 0.95))
+                .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
         )
     }
 }
