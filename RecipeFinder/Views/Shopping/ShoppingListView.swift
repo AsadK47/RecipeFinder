@@ -5,7 +5,6 @@ struct ShoppingListView: View {
     @State private var newItem: String = ""
     @State private var showClearConfirmation = false
     @State private var collapsedCategories: Set<String> = []
-    @State private var suggestedCategory: String = "Other"
     @Environment(\.colorScheme) var colorScheme
     
     let categoryOrder = ["Produce", "Meat & Seafood", "Dairy & Eggs", "Bakery", "Pantry", "Frozen", "Beverages", "Spices & Seasonings", "Other"]
@@ -85,20 +84,9 @@ struct ShoppingListView: View {
                             
                             Spacer()
                             
-                            // Category indicator
-                            VStack(spacing: 4) {
-                                Image(systemName: categoryIcon(for: suggestedCategory))
-                                    .font(.title3)
-                                    .foregroundColor(categoryColor(for: suggestedCategory))
-                                Text(suggestedCategory == "Other" ? "Auto" : suggestedCategory)
-                                    .font(.system(size: 9))
-                                    .foregroundColor(.white.opacity(0.9))
-                            }
-                            .padding(8)
-                            .background(
-                                Circle()
-                                    .fill(.ultraThinMaterial)
-                            )
+                            // Balance spacer for centering
+                            Color.clear
+                                .frame(width: 48, height: 48)
                         }
                         .padding(.horizontal, 20)
                         
@@ -113,9 +101,6 @@ struct ShoppingListView: View {
                                             .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
                                     )
                                     .foregroundColor(colorScheme == .dark ? .white : .black)
-                                    .onChange(of: newItem) { oldValue, newValue in
-                                        suggestedCategory = CategoryClassifier.suggestCategory(for: newValue)
-                                    }
                                     .onSubmit(addItem)
                                 
                                 Button(action: addItem) {
@@ -207,6 +192,7 @@ struct ShoppingListView: View {
                     Image(systemName: "sparkles")
                         .foregroundColor(AppTheme.accentColor)
                         .font(.title3)
+                        .frame(width: 24)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Smart Categories")
                             .font(.subheadline)
@@ -216,12 +202,14 @@ struct ShoppingListView: View {
                             .font(.caption)
                             .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
                     }
+                    Spacer()
                 }
                 
                 HStack(spacing: 12) {
                     Image(systemName: "list.bullet.indent")
                         .foregroundColor(AppTheme.accentColor)
                         .font(.title3)
+                        .frame(width: 24)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Auto Grouping")
                             .font(.subheadline)
@@ -231,12 +219,14 @@ struct ShoppingListView: View {
                             .font(.caption)
                             .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
                     }
+                    Spacer()
                 }
                 
                 HStack(spacing: 12) {
                     Image(systemName: "hand.tap")
                         .foregroundColor(AppTheme.accentColor)
                         .font(.title3)
+                        .frame(width: 24)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Tap to Collapse")
                             .font(.subheadline)
@@ -246,6 +236,7 @@ struct ShoppingListView: View {
                             .font(.caption)
                             .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
                     }
+                    Spacer()
                 }
             }
             .padding(20)
@@ -357,7 +348,6 @@ struct ShoppingListView: View {
         withAnimation(.spring(response: 0.3)) {
             manager.addItem(name: newItem)
             newItem = ""
-            suggestedCategory = "Other"
         }
     }
     

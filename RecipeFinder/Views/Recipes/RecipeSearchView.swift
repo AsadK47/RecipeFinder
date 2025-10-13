@@ -267,35 +267,6 @@ struct RecipeSearchView: View {
     }
 }
 
-// MARK: - Filter Chip Component
-struct FilterChip: View {
-    let label: String
-    let icon: String
-    let onRemove: () -> Void
-    
-    var body: some View {
-        HStack(spacing: 6) {
-            Image(systemName: icon)
-                .font(.caption2)
-            Text(label)
-                .font(.caption)
-                .fontWeight(.medium)
-            
-            Button(action: onRemove) {
-                Image(systemName: "xmark.circle.fill")
-                    .font(.caption)
-            }
-        }
-        .foregroundColor(.white)
-        .padding(.horizontal, 12)
-        .padding(.vertical, 6)
-        .background(
-            Capsule()
-                .fill(AppTheme.accentColor.opacity(0.9))
-        )
-    }
-}
-
 // MARK: - Filter Sheet
 struct FilterSheet: View {
     @Environment(\.dismiss) var dismiss
@@ -329,7 +300,7 @@ struct FilterSheet: View {
                             
                             LazyVGrid(columns: columns, spacing: 8) {
                                 ForEach(categories, id: \.self) { category in
-                                    FilterButton(
+                                    RecipeFilterButton(
                                         label: category,
                                         isSelected: selectedCategories.contains(category)
                                     ) {
@@ -350,7 +321,7 @@ struct FilterSheet: View {
                             
                             LazyVGrid(columns: columns, spacing: 8) {
                                 ForEach(difficulties, id: \.self) { difficulty in
-                                    FilterButton(
+                                    RecipeFilterButton(
                                         label: difficulty,
                                         isSelected: selectedDifficulties.contains(difficulty)
                                     ) {
@@ -371,7 +342,7 @@ struct FilterSheet: View {
                             
                             LazyVGrid(columns: columns, spacing: 8) {
                                 ForEach(cookTimeOptions, id: \.self) { time in
-                                    FilterButton(
+                                    RecipeFilterButton(
                                         label: "≤ \(time) min",
                                         isSelected: selectedCookTimes.contains(time)
                                     ) {
@@ -416,8 +387,8 @@ struct FilterSheet: View {
     }
 }
 
-// MARK: - Filter Button Component
-struct FilterButton: View {
+// MARK: - Recipe Filter Button Component (specific styling for recipe filters)
+struct RecipeFilterButton: View {
     let label: String
     let isSelected: Bool
     let action: () -> Void
@@ -444,4 +415,3 @@ struct FilterButton: View {
         .buttonStyle(.plain)
     }
 }
-

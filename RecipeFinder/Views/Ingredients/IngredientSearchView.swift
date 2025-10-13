@@ -6,6 +6,8 @@ struct IngredientSearchView: View {
     @State private var viewMode: RecipeViewMode = .list
     @State private var selectedIngredient: String?
     @State private var showAllIngredients = false
+    @State private var showFilters = false
+    @State private var selectedCategories: Set<String> = []
     @Environment(\.colorScheme) var colorScheme
     
     // Ingredient categories in logical order (meal-building flow)
@@ -54,6 +56,17 @@ struct IngredientSearchView: View {
         }
     }
     
+    var filteredCategorizedIngredients: [(category: String, ingredients: [String])] {
+        if selectedCategories.isEmpty {
+            return categorizedIngredients
+        }
+        return categorizedIngredients.filter { selectedCategories.contains($0.category) }
+    }
+    
+    var activeFilterCount: Int {
+        return selectedCategories.count
+    }
+    
     var searchResults: [String] {
         if searchText.isEmpty {
             return []
@@ -83,10 +96,30 @@ struct IngredientSearchView: View {
                 VStack(spacing: 20) {
                     VStack(spacing: 16) {
                         HStack {
-                            // Left spacer for balance
-                            if selectedIngredient != nil {
-                                Color.clear
-                                    .frame(width: 48, height: 48)
+                            // Filter button
+                            if selectedIngredient == nil {
+                                Button(action: { showFilters.toggle() }) {
+                                    ZStack(alignment: .topTrailing) {
+                                        Image(systemName: "line.3.horizontal.decrease.circle")
+                                            .font(.title2)
+                                            .foregroundColor(.white)
+                                            .padding(12)
+                                            .background(
+                                                Circle()
+                                                    .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
+                                            )
+                                        
+                                        if activeFilterCount > 0 {
+                                            Text("\(activeFilterCount)")
+                                                .font(.caption2)
+                                                .fontWeight(.bold)
+                                                .foregroundColor(.white)
+                                                .frame(width: 18, height: 18)
+                                                .background(Circle().fill(Color.red))
+                                                .offset(x: 4, y: -4)
+                                        }
+                                    }
+                                }
                             } else {
                                 Color.clear
                                     .frame(width: 48, height: 48)
@@ -118,7 +151,7 @@ struct IngredientSearchView: View {
                                         .padding(12)
                                         .background(
                                             Circle()
-                                                .fill(.ultraThinMaterial)
+                                                .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
                                         )
                                 }
                             } else {
@@ -130,6 +163,34 @@ struct IngredientSearchView: View {
                         
                         ModernSearchBar(text: $searchText, placeholder: "What's in the fridge...?")
                             .padding(.horizontal, 20)
+                        
+                        // Active filters chips
+                        if activeFilterCount > 0 {
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 8) {
+                                    ForEach(Array(selectedCategories), id: \.self) { category in
+                                        FilterChip(label: category, icon: categoryIcon(for: CategoryClassifier.suggestCategory(for: category.lowercased()))) {
+                                            selectedCategories.remove(category)
+                                        }
+                                    }
+                                    
+                                    Button(action: clearAllFilters) {
+                                        Text("Clear All")
+                                            .font(.caption)
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(.white)
+                                            .padding(.horizontal, 12)
+                                            .padding(.vertical, 6)
+                                            .background(
+                                                Capsule()
+                                                    .fill(Color.red.opacity(0.8))
+                                            )
+                                    }
+                                }
+                                .padding(.horizontal, 20)
+                            }
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                        }
                     }
                     .padding(.top, 20)
                     
@@ -146,6 +207,12 @@ struct IngredientSearchView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)
+            .sheet(isPresented: $showFilters) {
+                IngredientFilterSheet(
+                    categories: categoryOrder,
+                    selectedCategories: $selectedCategories
+                )
+            }
         }
     }
     
@@ -237,7 +304,7 @@ struct IngredientSearchView: View {
                         .fontWeight(.bold)
                         .foregroundColor(.white)
                     
-                    ForEach(categorizedIngredients, id: \.category) { category, ingredients in
+                    ForEach(filteredCategorizedIngredients, id: \.category) { category, ingredients in
                         CategoryCard(
                             category: category,
                             ingredients: ingredients,
@@ -331,6 +398,12 @@ struct IngredientSearchView: View {
         case "Beverages": return .purple
         case "Spices & Seasonings": return .yellow
         default: return .gray
+        }
+    }
+    
+    private func clearAllFilters() {
+        withAnimation(.spring(response: 0.3)) {
+            selectedCategories.removeAll()
         }
     }
     
@@ -559,6 +632,105 @@ struct FlowLayout: Layout {
             size.height = currentY + lineHeight
             self.size = size
             self.positions = positions
+        }
+    }
+}
+
+// MARK: - Ingredient Filter Sheet
+struct IngredientFilterSheet: View {
+    let categories: [String]
+    @Binding var selectedCategories: Set<String>
+    @Environment(\.dismiss) var dismiss
+    @Environment(\.colorScheme) var colorScheme
+    
+    var body: some View {
+        NavigationView {
+            ZStack {
+                AppTheme.backgroundGradient(for: colorScheme)
+                    .ignoresSafeArea()
+                
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 24) {
+                        // Categories Section
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Ingredient Categories")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 20)
+                            
+                            LazyVGrid(columns: [
+                                GridItem(.flexible()),
+                                GridItem(.flexible())
+                            ], spacing: 12) {
+                                ForEach(categories, id: \.self) { category in
+                                    FilterButton(
+                                        label: category,
+                                        icon: categoryIcon(for: CategoryClassifier.suggestCategory(for: category.lowercased())),
+                                        color: categoryColor(for: CategoryClassifier.suggestCategory(for: category.lowercased())),
+                                        isSelected: selectedCategories.contains(category)
+                                    ) {
+                                        if selectedCategories.contains(category) {
+                                            selectedCategories.remove(category)
+                                        } else {
+                                            selectedCategories.insert(category)
+                                        }
+                                    }
+                                }
+                            }
+                            .padding(.horizontal, 20)
+                        }
+                    }
+                    .padding(.vertical, 20)
+                }
+            }
+            .navigationTitle("Filter Ingredients")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                    .foregroundColor(.white)
+                    .fontWeight(.semibold)
+                }
+                
+                ToolbarItem(placement: .navigationBarLeading) {
+                    if !selectedCategories.isEmpty {
+                        Button("Clear All") {
+                            selectedCategories.removeAll()
+                        }
+                        .foregroundColor(.white)
+                    }
+                }
+            }
+        }
+    }
+    
+    private func categoryIcon(for category: String) -> String {
+        switch category.lowercased() {
+        case "produce": return "leaf.fill"
+        case "meat & seafood": return "fish.fill"
+        case "dairy & eggs": return "drop.fill"
+        case "bakery": return "birthday.cake.fill"
+        case "pantry": return "shippingbox.fill"
+        case "frozen": return "snowflake"
+        case "beverages": return "cup.and.saucer.fill"
+        case "spices & herbs": return "sparkles"
+        default: return "tag.fill"
+        }
+    }
+    
+    private func categoryColor(for category: String) -> Color {
+        switch category.lowercased() {
+        case "produce": return .green
+        case "meat & seafood": return .red
+        case "dairy & eggs": return .blue
+        case "bakery": return .orange
+        case "pantry": return .brown
+        case "frozen": return .cyan
+        case "beverages": return .purple
+        case "spices & herbs": return .yellow
+        default: return .gray
         }
     }
 }
