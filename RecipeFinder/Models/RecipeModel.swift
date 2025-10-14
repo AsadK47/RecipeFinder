@@ -3,7 +3,7 @@ import SwiftUI
 
 struct Ingredient: Identifiable, Codable {
     var id: UUID = UUID()
-    var baseQuantity: Double
+    let baseQuantity: Double  // Changed to let - should never be mutated
     var unit: String
     private var _name: String
     
@@ -26,20 +26,21 @@ struct Ingredient: Identifiable, Codable {
     }
     
     // MARK: - Computed Properties (Required for scaling)
-    var scaledQuantity: Double {
-        baseQuantity
+    func scaledQuantity(for scaleFactor: Double) -> Double {
+        baseQuantity * scaleFactor
     }
     
-    var formattedQuantity: String {
+    func formattedQuantity(for scaleFactor: Double) -> String {
+        let quantity = scaledQuantity(for: scaleFactor)
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         formatter.maximumFractionDigits = 2
         formatter.minimumFractionDigits = 0
         
-        if scaledQuantity.truncatingRemainder(dividingBy: 1) == 0 {
-            return String(format: "%.0f", scaledQuantity)
+        if quantity.truncatingRemainder(dividingBy: 1) == 0 {
+            return String(format: "%.0f", quantity)
         } else {
-            return formatter.string(from: NSNumber(value: scaledQuantity)) ?? "\(scaledQuantity)"
+            return formatter.string(from: NSNumber(value: quantity)) ?? "\(quantity)"
         }
     }
 }
@@ -106,13 +107,8 @@ struct RecipeModel: Identifiable, Codable {
     }
     
     // MARK: - Scaling Methods (Required for RecipeDetailView)
-    var scaledIngredients: [Ingredient] {
-        let scaleFactor = Double(currentServings) / Double(baseServings)
-        return ingredients.map { ingredient in
-            var scaled = ingredient
-            scaled.baseQuantity = ingredient.baseQuantity * scaleFactor
-            return scaled
-        }
+    var scaleFactor: Double {
+        Double(currentServings) / Double(baseServings)
     }
     
     mutating func updateServings(to servings: Int) {

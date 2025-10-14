@@ -116,6 +116,7 @@ struct RecipeDetailView: View {
                                     ingredient: recipe.ingredients[index],
                                     isChecked: ingredientsState[index],
                                     toggle: { ingredientsState[index].toggle() },
+                                    scaleFactor: recipe.scaleFactor,
                                     onAddToShopping: {
                                         addIngredientToShoppingList(recipe.ingredients[index])
                                     },
@@ -174,9 +175,6 @@ struct RecipeDetailView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
-        .onChange(of: recipe.currentServings) { oldValue, newValue in
-            adjustIngredients(for: newValue)
-        }
         .overlay(alignment: .bottom) {
             if let feedback = showAddedFeedback {
                 HStack(spacing: 12) {
@@ -280,18 +278,10 @@ struct RecipeDetailView: View {
         .frame(maxWidth: .infinity, alignment: .leading) // Ensure full width alignment
     }
     
-    private func adjustIngredients(for newServings: Int) {
-        let factor = Double(newServings) / Double(recipe.baseServings)
-        recipe.ingredients = recipe.ingredients.map { ingredient in
-            var updatedIngredient = ingredient
-            updatedIngredient.baseQuantity = ingredient.baseQuantity * factor
-            return updatedIngredient
-        }
-    }
-    
     private func addIngredientToShoppingList(_ ingredient: Ingredient) {
         // Create item with ingredient name including quantity and unit as part of the name
-        let fullName = "\(ingredient.name) (\(ingredient.formattedQuantity) \(ingredient.unit))"
+        let scaledQuantity = ingredient.formattedQuantity(for: recipe.scaleFactor)
+        let fullName = "\(ingredient.name) (\(scaledQuantity) \(ingredient.unit))"
         shoppingListManager.addItem(name: fullName, quantity: 1, category: nil)
         addedIngredients.insert(ingredient.name)
         
