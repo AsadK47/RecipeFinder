@@ -89,20 +89,3 @@ struct RecipeFinderApp: App {
         UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = UIColor(red: 0.8, green: 0.2, blue: 0.6, alpha: 1.0)
     }
 }
-
-// MARK: - Remove SwiftData if not needed
-// If you're using Core Data exclusively, you can remove this:
-/*
-var sharedModelContainer: ModelContainer = {
-    let schema = Schema([
-        Item.self,
-    ])
-    let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-
-    do {
-        return try ModelContainer(for: schema, configurations: [modelConfiguration])
-    } catch {
-        fatalError("Could not create ModelContainer: \(error)")
-    }
-}()
-*/

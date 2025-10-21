@@ -1,10 +1,10 @@
 import Foundation
 import SwiftUI
 
-struct Ingredient: Identifiable, Codable {
+struct Ingredient: Identifiable, Codable, Hashable {
     var id: UUID = UUID()
     let baseQuantity: Double  // Changed to let - should never be mutated
-    var unit: String
+    let unit: String
     private var _name: String
     
     var name: String {
@@ -23,6 +23,15 @@ struct Ingredient: Identifiable, Codable {
     enum CodingKeys: String, CodingKey {
         case id, baseQuantity, unit
         case _name = "name"
+    }
+    
+    // MARK: - Hashable Conformance
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+    
+    static func == (lhs: Ingredient, rhs: Ingredient) -> Bool {
+        lhs.id == rhs.id
     }
     
     // MARK: - Computed Properties (Required for scaling)
@@ -45,7 +54,7 @@ struct Ingredient: Identifiable, Codable {
     }
 }
 
-struct RecipeModel: Identifiable, Codable {
+struct RecipeModel: Identifiable, Codable, Hashable {
     var id: UUID = UUID()
     let name: String
     let category: String
@@ -88,6 +97,17 @@ struct RecipeModel: Identifiable, Codable {
         self.instructions = instructions
         self.notes = notes
         self.imageName = imageName
+    }
+    
+    // MARK: - Hashable Conformance
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+    
+    static func == (lhs: RecipeModel, rhs: RecipeModel) -> Bool {
+        lhs.id == rhs.id &&
+        lhs.currentServings == rhs.currentServings &&
+        lhs.ingredients == rhs.ingredients
     }
     
     // MARK: - Computed Properties (Required for UI)

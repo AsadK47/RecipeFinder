@@ -1,7 +1,7 @@
 import Foundation
 
-class ShoppingListManager: ObservableObject {
-    @Published var items: [ShoppingListItem] = []
+final class ShoppingListManager: ObservableObject {
+    @Published private(set) var items: [ShoppingListItem] = []
     
     private let saveKey = "ShoppingListItems"
     
@@ -9,14 +9,14 @@ class ShoppingListManager: ObservableObject {
         loadItems()
     }
     
-    func loadItems() {
+    private func loadItems() {
         if let data = UserDefaults.standard.data(forKey: saveKey),
            let decoded = try? JSONDecoder().decode([ShoppingListItem].self, from: data) {
             items = decoded
         }
     }
     
-    func saveItems() {
+    private func saveItems() {
         if let encoded = try? JSONEncoder().encode(items) {
             UserDefaults.standard.set(encoded, forKey: saveKey)
         }

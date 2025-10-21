@@ -50,12 +50,7 @@ struct ShoppingListView: View {
                                 Button(role: .destructive, action: { 
                                     showClearConfirmation = true 
                                 }) {
-                                    Label("Clear Checked Items", systemImage: "checkmark.circle")
-                                }
-                                Button(role: .destructive, action: { 
-                                    showClearConfirmation = true 
-                                }) {
-                                    Label("Clear All Items", systemImage: "trash")
+                                    Label("Clear Items", systemImage: "trash")
                                 }
                             } label: {
                                 Image(systemName: "ellipsis.circle")

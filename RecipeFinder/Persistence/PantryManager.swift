@@ -2,7 +2,7 @@ import Foundation
 import Combine
 
 // MARK: - Pantry Item Model
-struct PantryItem: Identifiable, Codable, Equatable {
+struct PantryItem: Identifiable, Codable, Equatable, Hashable {
     let id: UUID
     var name: String
     var category: String
@@ -17,8 +17,8 @@ struct PantryItem: Identifiable, Codable, Equatable {
 }
 
 // MARK: - Pantry Manager
-class PantryManager: ObservableObject {
-    @Published var items: [PantryItem] = []
+final class PantryManager: ObservableObject {
+    @Published private(set) var items: [PantryItem] = []
     
     private let saveKey = "PantryItems"
     

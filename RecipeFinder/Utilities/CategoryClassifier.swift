@@ -1,6 +1,6 @@
 import Foundation
 
-struct CategoryClassifier {
+enum CategoryClassifier {
     
     static func categorize(_ itemName: String) -> String {
         let lowercased = itemName.lowercased()
