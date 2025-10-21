@@ -42,7 +42,7 @@ enum CategoryClassifier {
             return "Bakery"
         }
         
-        // Pantry
+    // Kitchen
         let pantryKeywords = ["flour", "sugar", "salt", "pepper", "oil", "olive oil", "vegetable oil", "canola oil",
                              "rice", "pasta", "noodle", "spaghetti", "macaroni", "quinoa", "couscous", "beans",
                              "lentil", "chickpea", "peanut butter", "jam", "jelly", "honey", "maple syrup",
@@ -52,7 +52,7 @@ enum CategoryClassifier {
                              "cocoa", "chocolate chip", "nut", "almond", "walnut", "pecan", "cashew", "pistachio",
                              "can", "canned", "jar", "dried", "powder"]
         if pantryKeywords.contains(where: { lowercased.contains($0) }) {
-            return "Pantry"
+            return "Kitchen"
         }
         
         // Frozen

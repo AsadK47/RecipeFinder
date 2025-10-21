@@ -348,7 +348,7 @@ struct KitchenView: View {
         case "Meat & Seafood": return "fish.fill"
         case "Dairy & Eggs": return "drop.fill"
         case "Bakery": return "birthday.cake.fill"
-        case "Pantry": return "cabinet.fill"
+    case "Kitchen": return "cabinet.fill"
         case "Frozen": return "snowflake"
         case "Beverages": return "cup.and.saucer.fill"
         case "Spices & Seasonings": return "sparkles"
@@ -362,7 +362,7 @@ struct KitchenView: View {
         case "Meat & Seafood": return .red
         case "Dairy & Eggs": return .blue
         case "Bakery": return .orange
-        case "Pantry": return .brown
+    case "Kitchen": return .brown
         case "Frozen": return .cyan
         case "Beverages": return .purple
         case "Spices & Seasonings": return .yellow
@@ -383,7 +383,7 @@ struct KitchenCategoryCard: View {
         case "Meat & Seafood": return "fish.fill"
         case "Dairy & Eggs": return "drop.fill"
         case "Bakery": return "birthday.cake.fill"
-        case "Pantry": return "cabinet.fill"
+    case "Kitchen": return "cabinet.fill"
         case "Frozen": return "snowflake"
         case "Beverages": return "cup.and.saucer.fill"
         case "Spices & Seasonings": return "sparkles"
@@ -397,7 +397,7 @@ struct KitchenCategoryCard: View {
         case "Meat & Seafood": return .red
         case "Dairy & Eggs": return .blue
         case "Bakery": return .orange
-        case "Pantry": return .brown
+    case "Kitchen": return .brown
         case "Frozen": return .cyan
         case "Beverages": return .purple
         case "Spices & Seasonings": return .yellow

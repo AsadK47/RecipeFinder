@@ -398,7 +398,7 @@ struct IngredientSearchView: View {
         case "Meat & Seafood": return "fish.fill"
         case "Dairy & Eggs": return "drop.fill"
         case "Bakery": return "birthday.cake.fill"
-        case "Pantry": return "cabinet.fill"
+    case "Kitchen": return "cabinet.fill"
         case "Frozen": return "snowflake"
         case "Beverages": return "cup.and.saucer.fill"
         case "Spices & Seasonings": return "sparkles"
@@ -412,7 +412,7 @@ struct IngredientSearchView: View {
         case "Meat & Seafood": return .red
         case "Dairy & Eggs": return .blue
         case "Bakery": return .orange
-        case "Pantry": return .brown
+    case "Kitchen": return .brown
         case "Frozen": return .cyan
         case "Beverages": return .purple
         case "Spices & Seasonings": return .yellow
@@ -763,7 +763,7 @@ struct CategoryCard: View {
                             .fontWeight(.medium)
                             .foregroundColor(colorScheme == .dark ? .white.opacity(0.95) : .black.opacity(0.9))
                         
-                        // Pantry indicator
+                        // Kitchen indicator
                         if variations.contains(where: { pantryManager.hasItem($0) }) {
                             Image(systemName: "checkmark.circle.fill")
                                 .font(.caption)
@@ -947,7 +947,7 @@ struct IngredientFilterSheet: View {
         case "meat & seafood": return "fish.fill"
         case "dairy & eggs": return "drop.fill"
         case "bakery": return "birthday.cake.fill"
-        case "pantry": return "shippingbox.fill"
+    case "kitchen": return "shippingbox.fill"
         case "frozen": return "snowflake"
         case "beverages": return "cup.and.saucer.fill"
         case "spices & herbs": return "sparkles"
@@ -961,7 +961,7 @@ struct IngredientFilterSheet: View {
         case "meat & seafood": return .red
         case "dairy & eggs": return .blue
         case "bakery": return .orange
-        case "pantry": return .brown
+    case "kitchen": return .brown
         case "frozen": return .cyan
         case "beverages": return .purple
         case "spices & herbs": return .yellow

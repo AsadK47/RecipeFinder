@@ -70,7 +70,7 @@ final class ShoppingListManager: ObservableObject {
     }
     
     var groupedItems: [(category: String, items: [ShoppingListItem])] {
-        let categories = ["Produce", "Meat & Seafood", "Dairy & Eggs", "Bakery", "Pantry", "Frozen", "Beverages", "Spices & Seasonings", "Other"]
+    let categories = ["Produce", "Meat & Seafood", "Dairy & Eggs", "Bakery", "Kitchen", "Frozen", "Beverages", "Spices & Seasonings", "Other"]
         
         return categories.compactMap { category in
             let categoryItems = items.filter { $0.category == category }

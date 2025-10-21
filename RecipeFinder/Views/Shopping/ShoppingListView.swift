@@ -7,7 +7,7 @@ struct ShoppingListView: View {
     @State private var collapsedCategories: Set<String> = []
     @Environment(\.colorScheme) var colorScheme
     
-    let categoryOrder = ["Produce", "Meat & Seafood", "Dairy & Eggs", "Bakery", "Pantry", "Frozen", "Beverages", "Spices & Seasonings", "Other"]
+    let categoryOrder = ["Produce", "Meat & Seafood", "Dairy & Eggs", "Bakery", "Kitchen", "Frozen", "Beverages", "Spices & Seasonings", "Other"]
     
     var sortedGroupedItems: [(category: String, items: [ShoppingListItem])] {
         let grouped = Dictionary(grouping: manager.items) { $0.category }
@@ -352,7 +352,7 @@ struct ShoppingListView: View {
         case "Meat & Seafood": return "fish.fill"
         case "Dairy & Eggs": return "drop.fill"
         case "Bakery": return "birthday.cake.fill"
-        case "Pantry": return "cabinet.fill"
+    case "Kitchen": return "cabinet.fill"
         case "Frozen": return "snowflake"
         case "Beverages": return "cup.and.saucer.fill"
         case "Spices & Seasonings": return "sparkles"
@@ -366,7 +366,7 @@ struct ShoppingListView: View {
         case "Meat & Seafood": return .red
         case "Dairy & Eggs": return .blue
         case "Bakery": return .orange
-        case "Pantry": return .brown
+    case "Kitchen": return .brown
         case "Frozen": return .cyan
         case "Beverages": return .purple
         case "Spices & Seasonings": return .yellow
@@ -494,7 +494,7 @@ struct ShoppingListItemRow: View {
         case "Meat & Seafood": return "fish.fill"
         case "Dairy & Eggs": return "drop.fill"
         case "Bakery": return "birthday.cake.fill"
-        case "Pantry": return "cabinet.fill"
+    case "Kitchen": return "cabinet.fill"
         case "Frozen": return "snowflake"
         case "Beverages": return "cup.and.saucer.fill"
         case "Spices & Seasonings": return "sparkles"
