@@ -1650,6 +1650,45 @@ extension PersistenceController {
         )
         
         saveRecipe(
+            name: "Harissa Salmon with Crispy Potatoes & Chickpeas",
+            category: "Main",
+            difficulty: "Easy",
+            prepTime: "10 minutes",
+            cookingTime: "28 minutes",
+            baseServings: 2,
+            currentServings: 2,
+            ingredients: [
+                Ingredient(baseQuantity: 2, unit: "", name: "salmon fillets (approx 150g / 5.5oz each)"),
+                Ingredient(baseQuantity: 350, unit: "g", name: "potatoes, peeled and cubed"),
+                Ingredient(baseQuantity: 150, unit: "g", name: "canned chickpeas, drained and patted dry"),
+                Ingredient(baseQuantity: 1, unit: "small", name: "onion, halved and thinly sliced"),
+                Ingredient(baseQuantity: 0.5, unit: "tbsp", name: "extra virgin olive oil"),
+                Ingredient(baseQuantity: 2.5, unit: "tbsp", name: "harissa paste (or harissa powder mixed with oil)"),
+                Ingredient(baseQuantity: 1, unit: "tbsp", name: "honey"),
+                Ingredient(baseQuantity: 1, unit: "clove", name: "garlic, crushed"),
+                Ingredient(baseQuantity: 0, unit: "", name: "salt and black pepper, to taste"),
+                Ingredient(baseQuantity: 0, unit: "", name: "olive oil spray"),
+                Ingredient(baseQuantity: 0, unit: "", name: "fresh lemon wedges, to serve"),
+                Ingredient(baseQuantity: 0, unit: "", name: "fresh coriander (cilantro), to serve")
+            ],
+            prePrepInstructions: [
+                "Preheat the oven to 200°C (400°F)."
+            ],
+            instructions: [
+                "Add the potatoes and onion to a baking tray, season with salt and pepper, drizzle with olive oil, and toss to coat.",
+                "Roast for 20 minutes, tossing halfway through.",
+                "Meanwhile, mix the harissa paste, crushed garlic, and honey in a small bowl.",
+                "Add 1 tablespoon of the harissa mixture to the chickpeas and toss to coat.",
+                "Spread the remaining harissa mixture over the salmon fillets, season with salt and pepper, and lightly spray with olive oil.",
+                "After the potatoes have roasted for 20 minutes, add the chickpeas to the tray, mix, and spread evenly.",
+                "Place the salmon fillets on top (skin side down) and cook for 8–10 minutes until the salmon is cooked through.",
+                "Serve with lemon wedges and fresh coriander."
+            ],
+            notes: "A simple one-tray meal packed with spicy harissa flavor, crispy potatoes, and tender salmon. Great for a quick and healthy dinner.",
+            imageName: "harissa_salmon_traybake"
+        )
+        
+        saveRecipe(
             name: "Keema (Instant Pot Ground Beef Curry)",
             category: "Main Course",
             difficulty: "Medium",
