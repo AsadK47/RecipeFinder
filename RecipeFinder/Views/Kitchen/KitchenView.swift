@@ -128,31 +128,32 @@ struct KitchenView: View {
     
     private var header: some View {
         VStack(spacing: 16) {
-            HStack {
+            ZStack {
+                HStack {
+                    Spacer()
+                    if !kitchenManager.items.isEmpty {
+                        Menu {
+                            Button(role: .destructive, action: {
+                                kitchenManager.clearAll()
+                            }) {
+                                Label("Clear All", systemImage: "trash")
+                            }
+                        } label: {
+                            Image(systemName: "ellipsis.circle")
+                                .font(.title2)
+                                .foregroundColor(.white)
+                                .padding(12)
+                                .background(
+                                    Circle()
+                                        .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
+                                )
+                        }
+                    }
+                }
+
                 Text("Kitchen")
                     .font(.system(size: 34, weight: .bold))
                     .foregroundColor(.white)
-                
-                Spacer()
-                
-                if !kitchenManager.items.isEmpty {
-                    Menu {
-                        Button(role: .destructive, action: {
-                            kitchenManager.clearAll()
-                        }) {
-                            Label("Clear All", systemImage: "trash")
-                        }
-                    } label: {
-                        Image(systemName: "ellipsis.circle")
-                            .font(.title2)
-                            .foregroundColor(.white)
-                            .padding(12)
-                            .background(
-                                Circle()
-                                    .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
-                            )
-                    }
-                }
             }
             .padding(.horizontal, 20)
             
