@@ -7,7 +7,7 @@
  import SwiftUI
 
 // MARK: - Theme Configuration
-struct AppTheme {
+enum AppTheme {
     // Purple to Blue to Teal gradient
     static let gradientStart = Color(red: 131/255, green: 58/255, blue: 180/255) // Purple
     static let gradientMiddle = Color(red: 88/255, green: 86/255, blue: 214/255) // Blue-Purple
