@@ -3,7 +3,7 @@ import SwiftUI
 struct IngredientSearchView: View {
     @Binding var recipes: [RecipeModel]
     @ObservedObject var shoppingListManager: ShoppingListManager
-    @ObservedObject var pantryManager: PantryManager
+    @ObservedObject var pantryManager: KitchenInventoryManager
     @State private var searchText = ""
     @State private var viewMode: RecipeViewMode = .list
     @State private var selectedIngredient: String?
@@ -649,7 +649,7 @@ struct CategoryCard: View {
     let category: String
     let ingredients: [String]
     @ObservedObject var shoppingListManager: ShoppingListManager
-    @ObservedObject var pantryManager: PantryManager
+    @ObservedObject var pantryManager: KitchenInventoryManager
     @Binding var addedIngredients: Set<String>
     let onSelectIngredient: (String) -> Void
     let onAddToShoppingList: (String) -> Void
