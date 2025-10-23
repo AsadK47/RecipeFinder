@@ -10,6 +10,7 @@ struct RecipeSearchView: View {
     @State private var selectedDifficulties: Set<String> = []
     @State private var selectedCookTimes: Set<Int> = []
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.appTheme) var appTheme
 
     var filteredRecipes: [RecipeModel] {
         var results = recipes
@@ -62,7 +63,7 @@ struct RecipeSearchView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: colorScheme)
+                AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
                 
                 VStack(spacing: 20) {
@@ -278,6 +279,7 @@ struct RecipeSearchView: View {
 struct FilterSheet: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.appTheme) var appTheme
     
     let categories: [String]
     let difficulties: [String]
@@ -294,7 +296,7 @@ struct FilterSheet: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: colorScheme)
+                AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
                 
                 ScrollView {

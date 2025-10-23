@@ -8,6 +8,7 @@ struct RecipeDetailView: View {
     @State private var addedIngredients: Set<String> = []
     @State private var showAddedFeedback: String?
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.appTheme) var appTheme
     
     init(recipe: RecipeModel, shoppingListManager: ShoppingListManager) {
         self.recipe = recipe
@@ -18,7 +19,7 @@ struct RecipeDetailView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                AppTheme.backgroundGradient(for: colorScheme)
+                AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
                 
                 ScrollView(.vertical, showsIndicators: true) {

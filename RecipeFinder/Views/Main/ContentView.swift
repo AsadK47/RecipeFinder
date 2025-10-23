@@ -11,7 +11,7 @@ struct ContentView: View {
     
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: colorScheme)
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
             TabView(selection: $selectedTab) {
@@ -39,12 +39,10 @@ struct ContentView: View {
                     }
                     .tag(3)
             }
-            .tint(AppTheme.accentColor)
+            .environment(\.appTheme, selectedTheme)
+            .tint(AppTheme.accentColor(for: selectedTheme))
             .onChange(of: selectedTab) { oldValue, newValue in
                 HapticManager.shared.selection()
-            }
-            .onChange(of: selectedTheme) { oldValue, newValue in
-                AppTheme.currentTheme = newValue
             }
             .gesture(
                 DragGesture(minimumDistance: 50)
@@ -67,7 +65,6 @@ struct ContentView: View {
             )
         }
         .onAppear {
-            AppTheme.currentTheme = selectedTheme
             loadRecipes()
         }
     }

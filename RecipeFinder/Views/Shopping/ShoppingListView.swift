@@ -6,6 +6,7 @@ struct ShoppingListView: View {
     @State private var showClearConfirmation = false
     @State private var collapsedCategories: Set<String> = []
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.appTheme) var appTheme
     
     var sortedGroupedItems: [(category: String, items: [ShoppingListItem])] {
         let grouped = Dictionary(grouping: manager.items) { $0.category }
@@ -19,7 +20,7 @@ struct ShoppingListView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: colorScheme)
+                AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {

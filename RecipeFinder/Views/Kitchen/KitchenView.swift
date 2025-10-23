@@ -7,6 +7,7 @@ struct KitchenView: View {
     @State private var searchText = ""
     @State private var cachedCategorizedIngredients: [(category: String, ingredients: [String])] = []
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.appTheme) var appTheme
     
     var allIngredients: [String] {
         Set(recipes.flatMap { $0.ingredients.map { $0.name } }).sorted()
@@ -22,7 +23,10 @@ struct KitchenView: View {
         let result: [(category: String, ingredients: [String])] = CategoryClassifier.kitchenCategories.compactMap { category -> (category: String, ingredients: [String])? in
             guard let keywords = CategoryClassifier.kitchenIngredientKeywords[category] else { return nil }
             let matchedIngredients = allIngredients.filter { ingredient in
-                keywords.contains { keyword in
+                // Filter out descriptor-only words
+                guard CategoryClassifier.isValidIngredient(ingredient) else { return false }
+                
+                return keywords.contains { keyword in
                     ingredient.localizedCaseInsensitiveContains(keyword)
                 }
             }
@@ -73,7 +77,7 @@ struct KitchenView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: colorScheme)
+                AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {

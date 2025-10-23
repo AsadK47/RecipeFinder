@@ -24,7 +24,7 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: colorScheme)
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
                 
                 VStack(spacing: 24) {
@@ -79,7 +79,7 @@ struct SettingsView: View {
                                             HStack(spacing: 6) {
                                                 Text(selectedTheme.rawValue)
                                                     .font(.subheadline)
-                                                    .foregroundColor(AppTheme.accentColor)
+                                                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                                                 Image(systemName: "chevron.up.chevron.down")
                                                     .font(.caption2)
                                                     .foregroundColor(.gray)
@@ -93,7 +93,6 @@ struct SettingsView: View {
                                         }
                                         .onChange(of: selectedTheme) { oldValue, newValue in
                                             HapticManager.shared.selection()
-                                            AppTheme.currentTheme = newValue
                                         }
                                     }
                                     

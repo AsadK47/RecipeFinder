@@ -9,14 +9,17 @@ enum CategoryClassifier {
     // Kitchen Inventory Categories
     static let kitchenCategories = ["Proteins", "Vegetables", "Grains & Noodles", "Dairy & Eggs", "Spices & Herbs", "Sauces & Condiments"]
     
+    // Words to exclude (descriptors, not ingredients)
+    static let descriptorWords = ["large", "small", "medium", "fresh", "dried", "frozen", "canned", "chopped", "sliced", "diced", "minced", "whole", "ground", "raw", "cooked"]
+    
     // Kitchen Ingredient Keywords (for matching ingredients to kitchen categories)
     static let kitchenIngredientKeywords: [String: [String]] = [
-        "Proteins": ["chicken", "beef", "lamb", "mutton", "pork", "fish", "cod", "eggs", "tofu"],
-        "Vegetables": ["onion", "tomato", "carrot", "cabbage", "potato", "bell pepper", "capsicum", "cucumber", "eggplant", "bok choy"],
-        "Spices & Herbs": ["cumin", "coriander", "turmeric", "paprika", "ginger", "garlic", "chili", "cinnamon", "cardamom", "garam masala", "cilantro", "parsley", "mint", "basil"],
+        "Proteins": ["chicken", "beef", "lamb", "mutton", "pork", "fish", "cod", "tofu", "shrimp", "prawn"],
+        "Vegetables": ["onion", "tomato", "carrot", "cabbage", "potato", "bell pepper", "capsicum", "cucumber", "eggplant", "bok choy", "broccoli", "cauliflower", "spinach"],
+        "Spices & Herbs": ["cumin", "coriander", "turmeric", "paprika", "ginger", "garlic", "chili", "cinnamon", "cardamom", "garam masala", "cilantro", "parsley", "mint", "basil", "pepper", "black pepper", "white pepper", "cayenne", "thyme", "oregano", "bay leaf"],
         "Dairy & Eggs": ["milk", "butter", "yogurt", "cream", "cheese", "egg"],
-        "Grains & Noodles": ["rice", "flour", "noodles", "pasta", "bread", "oats"],
-        "Sauces & Condiments": ["soy sauce", "oyster sauce", "vinegar", "ketchup", "mustard", "mayo"]
+        "Grains & Noodles": ["rice", "flour", "noodles", "pasta", "bread", "oats", "quinoa", "couscous"],
+        "Sauces & Condiments": ["soy sauce", "oyster sauce", "vinegar", "ketchup", "mustard", "mayo", "sesame oil", "olive oil", "vegetable oil"]
     ]
     
     // Category Helpers
@@ -150,6 +153,23 @@ enum CategoryClassifier {
             return "Other"
         }
         return categorize(partialInput)
+    }
+    
+    // Check if an ingredient name is valid (not just a descriptor word)
+    static func isValidIngredient(_ name: String) -> Bool {
+        let cleaned = name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        
+        // Filter out pure descriptor words
+        if descriptorWords.contains(cleaned) {
+            return false
+        }
+        
+        // Must have at least one actual ingredient keyword
+        let hasIngredientKeyword = kitchenIngredientKeywords.values.flatMap { $0 }.contains { keyword in
+            cleaned.localizedCaseInsensitiveContains(keyword)
+        }
+        
+        return hasIngredientKeyword || cleaned.count > 15 // Allow longer names that might not match keywords
     }
     
     // Group similar ingredients (e.g., "chicken breast", "chicken thighs" -> "Chicken")

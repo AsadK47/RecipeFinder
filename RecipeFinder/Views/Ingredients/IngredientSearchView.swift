@@ -13,6 +13,7 @@ struct IngredientSearchView: View {
     @State private var addedIngredients: Set<String> = []
     @State private var showAddedFeedback: String?
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.appTheme) var appTheme
     
     var allIngredients: [String] {
         Set(recipes.flatMap { $0.ingredients.map { $0.name } }).sorted()
@@ -84,7 +85,7 @@ struct IngredientSearchView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: colorScheme)
+                AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
                 
                 VStack(spacing: 20) {
@@ -841,11 +842,12 @@ struct IngredientFilterSheet: View {
     @Binding var selectedCategories: Set<String>
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.appTheme) var appTheme
     
     var body: some View {
         NavigationView {
             ZStack {
-                AppTheme.backgroundGradient(for: colorScheme)
+                AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
                 
                 ScrollView {
