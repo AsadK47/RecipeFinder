@@ -6,8 +6,9 @@ struct ContentView: View {
     @State private var recipes: [RecipeModel] = []
     @State private var selectedTab: Int = 0
     @StateObject private var shoppingListManager = ShoppingListManager()
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .purple
     @Environment(\.colorScheme) var colorScheme
-
+    
     var body: some View {
         ZStack {
             AppTheme.backgroundGradient(for: colorScheme)
@@ -39,6 +40,12 @@ struct ContentView: View {
                     .tag(3)
             }
             .tint(AppTheme.accentColor)
+            .onChange(of: selectedTab) { oldValue, newValue in
+                HapticManager.shared.selection()
+            }
+            .onChange(of: selectedTheme) { oldValue, newValue in
+                AppTheme.currentTheme = newValue
+            }
             .gesture(
                 DragGesture(minimumDistance: 50)
                     .onEnded { value in
@@ -59,7 +66,10 @@ struct ContentView: View {
                     }
             )
         }
-        .onAppear(perform: loadRecipes)
+        .onAppear {
+            AppTheme.currentTheme = selectedTheme
+            loadRecipes()
+        }
     }
 
     private func loadRecipes() {

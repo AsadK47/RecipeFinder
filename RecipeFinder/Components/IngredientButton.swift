@@ -5,7 +5,10 @@ struct IngredientButton: View {
     let action: () -> Void
     
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            HapticManager.shared.light()
+            action()
+        }) {
             HStack {
                 Text(ingredient)
                     .font(.subheadline)

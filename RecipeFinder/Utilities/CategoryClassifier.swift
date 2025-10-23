@@ -157,12 +157,37 @@ enum CategoryClassifier {
         var mainIngredients = Set<String>()
         
         for ingredient in ingredients {
-            let words = ingredient.split(separator: " ")
-            if let first = words.first {
-                mainIngredients.insert(String(first).capitalized)
+            // Clean up the ingredient name - remove quantities, parenthetical notes, and split by comma
+            let cleaned = ingredient
+                .components(separatedBy: ",").first ?? ingredient // Take first part before comma
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            
+            // Extract the main ingredient name (first 1-2 words typically)
+            let words = cleaned.split(separator: " ").map { String($0) }
+            
+            if words.count >= 2 {
+                // For compound ingredients like "black pepper", "soy sauce", keep both words
+                let firstTwo = words.prefix(2).joined(separator: " ")
+                
+                // Check if it's a common compound ingredient
+                let compounds = ["black pepper", "soy sauce", "oyster sauce", "fish sauce", 
+                               "olive oil", "sesame oil", "coconut milk", "bell pepper",
+                               "green onion", "spring onion", "red onion", "white onion",
+                               "black beans", "red beans", "green beans", "rice wine",
+                               "brown sugar", "white sugar", "chicken breast", "chicken thigh",
+                               "beef chuck", "pork belly", "rice vinegar", "white vinegar",
+                               "black vinegar", "sesame seeds", "chili flakes", "curry powder"]
+                
+                if compounds.contains(firstTwo.lowercased()) {
+                    mainIngredients.insert(firstTwo.capitalized)
+                } else if let first = words.first {
+                    mainIngredients.insert(first.capitalized)
+                }
+            } else if let first = words.first {
+                mainIngredients.insert(first.capitalized)
             }
         }
         
-        return Array(mainIngredients)
+        return Array(mainIngredients).sorted()
     }
 }

@@ -29,6 +29,7 @@ final class ShoppingListManager: ObservableObject {
         // Validate quantity
         guard quantity > 0 else {
             print("⚠️ Invalid quantity for item '\(trimmedName)'. Must be greater than 0.")
+            HapticManager.shared.error()
             return
         }
         
@@ -36,6 +37,7 @@ final class ShoppingListManager: ObservableObject {
         if let existingIndex = items.firstIndex(where: { $0.name.lowercased() == trimmedName.lowercased() }) {
             items[existingIndex].quantity += quantity
             saveItems()
+            HapticManager.shared.light()
             return
         }
         
@@ -43,6 +45,7 @@ final class ShoppingListManager: ObservableObject {
         let newItem = ShoppingListItem(name: trimmedName, quantity: quantity, category: detectedCategory)
         items.append(newItem)
         saveItems()
+        HapticManager.shared.medium()
     }
     
     func updateCategory(at index: Int, category: String) {
@@ -63,6 +66,14 @@ final class ShoppingListManager: ObservableObject {
     func toggleItem(at index: Int) {
         guard index < items.count else { return }
         items[index].isChecked.toggle()
+        
+        // Celebratory haptic when checking off, soft when unchecking
+        if items[index].isChecked {
+            HapticManager.shared.success()
+        } else {
+            HapticManager.shared.light()
+        }
+        
         saveItems()
     }
     
@@ -75,16 +86,19 @@ final class ShoppingListManager: ObservableObject {
     func deleteItem(at index: Int) {
         guard index < items.count else { return }
         items.remove(at: index)
+        HapticManager.shared.delete()
         saveItems()
     }
     
     func clearCheckedItems() {
         items.removeAll { $0.isChecked }
+        HapticManager.shared.celebrate()
         saveItems()
     }
     
     func clearAllItems() {
         items.removeAll()
+        HapticManager.shared.rigid()
         saveItems()
     }
     

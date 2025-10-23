@@ -69,7 +69,10 @@ struct RecipeSearchView: View {
                     VStack(spacing: 16) {
                         HStack {
                             // Filter button
-                            Button(action: { showFilters.toggle() }) {
+                            Button(action: {
+                                HapticManager.shared.light()
+                                showFilters.toggle()
+                            }) {
                                 ZStack(alignment: .topTrailing) {
                                     Image(systemName: "line.3.horizontal.decrease.circle")
                                         .font(.title2)
@@ -103,6 +106,7 @@ struct RecipeSearchView: View {
                             Menu {
                                 ForEach(RecipeViewMode.allCases, id: \.self) { mode in
                                     Button(action: {
+                                        HapticManager.shared.selection()
                                         withAnimation(.spring(response: 0.3)) {
                                             viewMode = mode
                                         }
@@ -132,18 +136,21 @@ struct RecipeSearchView: View {
                                 HStack(spacing: 8) {
                                     ForEach(Array(selectedCategories), id: \.self) { category in
                                         FilterChip(label: category, icon: "fork.knife") {
+                                            HapticManager.shared.light()
                                             selectedCategories.remove(category)
                                         }
                                     }
                                     
                                     ForEach(Array(selectedDifficulties), id: \.self) { difficulty in
                                         FilterChip(label: difficulty, icon: "chart.bar.fill") {
+                                            HapticManager.shared.light()
                                             selectedDifficulties.remove(difficulty)
                                         }
                                     }
                                     
                                     ForEach(Array(selectedCookTimes), id: \.self) { time in
                                         FilterChip(label: "≤ \(time) min", icon: "clock.fill") {
+                                            HapticManager.shared.light()
                                             selectedCookTimes.remove(time)
                                         }
                                     }
@@ -179,6 +186,9 @@ struct RecipeSearchView: View {
                                             RecipeCard(recipe: recipe, viewMode: .list)
                                         }
                                         .buttonStyle(PlainButtonStyle())
+                                        .simultaneousGesture(TapGesture().onEnded {
+                                            HapticManager.shared.light()
+                                        })
                                     }
                                 }
                                 .padding(.horizontal, 20)
@@ -190,6 +200,9 @@ struct RecipeSearchView: View {
                                             CompactRecipeCard(recipe: recipe)
                                         }
                                         .buttonStyle(PlainButtonStyle())
+                                        .simultaneousGesture(TapGesture().onEnded {
+                                            HapticManager.shared.light()
+                                        })
                                     }
                                 }
                                 .padding(.horizontal, 20)
@@ -252,6 +265,7 @@ struct RecipeSearchView: View {
     }
     
     private func clearAllFilters() {
+        HapticManager.shared.medium()
         withAnimation {
             selectedCategories.removeAll()
             selectedDifficulties.removeAll()

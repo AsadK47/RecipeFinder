@@ -35,20 +35,26 @@ final class KitchenInventoryManager: ObservableObject {
 		let newItem = KitchenItem(name: trimmedName, category: detectedCategory)
         
 		// Don't add duplicates
-		guard !items.contains(where: { $0.name.lowercased() == trimmedName.lowercased() }) else { return }
+		guard !items.contains(where: { $0.name.lowercased() == trimmedName.lowercased() }) else {
+			HapticManager.shared.warning()
+			return
+		}
         
 		items.append(newItem)
+		HapticManager.shared.medium()
 		saveItems()
 	}
     
 	func removeItem(at index: Int) {
 		guard index < items.count else { return }
 		items.remove(at: index)
+		HapticManager.shared.light()
 		saveItems()
 	}
     
 	func removeItem(_ item: KitchenItem) {
 		items.removeAll { $0.id == item.id }
+		HapticManager.shared.light()
 		saveItems()
 	}
     
@@ -66,6 +72,7 @@ final class KitchenInventoryManager: ObservableObject {
     
 	func clearAll() {
 		items.removeAll()
+		HapticManager.shared.rigid()
 		saveItems()
 	}
     

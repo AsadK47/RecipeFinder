@@ -4,6 +4,7 @@ struct SettingsView: View {
     @State private var confettiTrigger: Int = 0
     @State private var showResetAlert: Bool = false
     @AppStorage("appearanceMode") private var appearanceMode: AppearanceMode = .system
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .purple
     @Environment(\.colorScheme) var colorScheme
     
     enum AppearanceMode: String, CaseIterable {
@@ -55,6 +56,49 @@ struct SettingsView: View {
                                     
                                     Divider()
                                     
+                                    // Theme Picker
+                                    HStack(spacing: 16) {
+                                        Image(systemName: "paintpalette.fill")
+                                            .foregroundColor(.pink)
+                                            .frame(width: 30)
+                                        
+                                        Text("Theme")
+                                            .font(.subheadline)
+                                            .fontWeight(.medium)
+                                        
+                                        Spacer()
+                                        
+                                        Menu {
+                                            Picker("Theme", selection: $selectedTheme) {
+                                                ForEach(AppTheme.ThemeType.allCases) { theme in
+                                                    Text(theme.rawValue)
+                                                        .tag(theme)
+                                                }
+                                            }
+                                        } label: {
+                                            HStack(spacing: 6) {
+                                                Text(selectedTheme.rawValue)
+                                                    .font(.subheadline)
+                                                    .foregroundColor(AppTheme.accentColor)
+                                                Image(systemName: "chevron.up.chevron.down")
+                                                    .font(.caption2)
+                                                    .foregroundColor(.gray)
+                                            }
+                                            .padding(.horizontal, 12)
+                                            .padding(.vertical, 6)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 8)
+                                                    .fill(Color(.systemGray6))
+                                            )
+                                        }
+                                        .onChange(of: selectedTheme) { oldValue, newValue in
+                                            HapticManager.shared.selection()
+                                            AppTheme.currentTheme = newValue
+                                        }
+                                    }
+                                    
+                                    Divider()
+                                    
                                     // Dark Mode Toggle with Picker
                                     HStack(spacing: 16) {
                                         Image(systemName: appearanceMode.icon)
@@ -89,6 +133,9 @@ struct SettingsView: View {
                                                 RoundedRectangle(cornerRadius: 8)
                                                     .fill(Color(.systemGray6))
                                             )
+                                        }
+                                        .onChange(of: appearanceMode) { oldValue, newValue in
+                                            HapticManager.shared.selection()
                                         }
                                     }
                                     
@@ -139,7 +186,10 @@ struct SettingsView: View {
                             }
                             #endif
                             
-                            Button(action: { confettiTrigger += 1 }) {
+                            Button(action: {
+                                HapticManager.shared.celebrate()
+                                confettiTrigger += 1
+                            }) {
                                 HStack {
                                     Image(systemName: "party.popper.fill")
                                     Text("Celebrate!")
@@ -148,13 +198,7 @@ struct SettingsView: View {
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding()
-                                .background(
-                                    LinearGradient(
-                                        colors: [AppTheme.gradientStart, AppTheme.gradientMiddle],
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    )
-                                )
+                                .background(AppTheme.accentColor)
                                 .cornerRadius(16)
                             }
                             .confettiCannon(

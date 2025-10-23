@@ -57,10 +57,10 @@ struct RecipeDetailView: View {
                                 VStack(spacing: 8) {
                                     Image(systemName: "person.2.fill")
                                         .font(.title2)
-                                        .foregroundColor(AppTheme.accentColor)
+                                        .foregroundColor(.cyan)
                                     Text("Servings")
                                         .font(.caption)
-                                        .foregroundColor(AppTheme.secondaryText)
+                                        .foregroundColor(.secondary)
                                     Text("\(recipe.currentServings)")
                                         .font(.title2)
                                         .fontWeight(.bold)
@@ -155,7 +155,7 @@ struct RecipeDetailView: View {
                                         HStack(alignment: .top, spacing: 8) {
                                             Image(systemName: "circle.fill")
                                                 .font(.system(size: 6))
-                                                .foregroundColor(AppTheme.accentColor)
+                                                .foregroundColor(.orange)
                                                 .padding(.top, 6)
                                             Text(sentence.trimmingCharacters(in: .whitespaces))
                                                 .font(.subheadline)
@@ -261,13 +261,7 @@ struct RecipeDetailView: View {
                 .frame(width: 32, height: 32)
                 .background(
                     Circle()
-                        .fill(
-                            LinearGradient(
-                                colors: [AppTheme.gradientStart, AppTheme.gradientMiddle],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
+                        .fill(AppTheme.accentColor)
                 )
             
             Text(text)

@@ -26,17 +26,29 @@ struct InfoItem: View {
     let label: String
     let value: String
     
+    // Custom icon colors for better visibility
+    private var iconColor: Color {
+        switch icon {
+        case "clock": return .orange
+        case "flame": return .red
+        case "chart.bar": return .blue
+        case "fork.knife": return .green
+        default: return .white
+        }
+    }
+    
     var body: some View {
         VStack(spacing: 8) {
             Image(systemName: icon)
                 .font(.title2)
-                .foregroundColor(AppTheme.accentColor)
+                .foregroundColor(iconColor)
             Text(label)
                 .font(.caption)
-                .foregroundColor(AppTheme.secondaryText)
+                .foregroundColor(.secondary)
             Text(value)
                 .font(.subheadline)
                 .fontWeight(.semibold)
+                .foregroundColor(.primary)
         }
         .frame(maxWidth: .infinity)
     }
