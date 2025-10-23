@@ -1,7 +1,41 @@
 import Foundation
+import SwiftUI
 
 enum CategoryClassifier {
     
+    // Category Configuration
+    static let categoryOrder = ["Produce", "Meat & Seafood", "Dairy & Eggs", "Bakery", "Kitchen", "Frozen", "Beverages", "Spices & Seasonings", "Other"]
+    
+    // Category Helpers
+    static func categoryIcon(for category: String) -> String {
+        switch category {
+        case "Produce": return "leaf.fill"
+        case "Meat & Seafood": return "fish.fill"
+        case "Dairy & Eggs": return "drop.fill"
+        case "Bakery": return "birthday.cake.fill"
+        case "Kitchen": return "cabinet.fill"
+        case "Frozen": return "snowflake"
+        case "Beverages": return "cup.and.saucer.fill"
+        case "Spices & Seasonings": return "sparkles"
+        default: return "basket.fill"
+        }
+    }
+    
+    static func categoryColor(for category: String) -> Color {
+        switch category {
+        case "Produce": return .green
+        case "Meat & Seafood": return .red
+        case "Dairy & Eggs": return .blue
+        case "Bakery": return .orange
+        case "Kitchen": return .brown
+        case "Frozen": return .cyan
+        case "Beverages": return .purple
+        case "Spices & Seasonings": return .yellow
+        default: return .gray
+        }
+    }
+    
+    // Categorization
     static func categorize(_ itemName: String) -> String {
         let lowercased = itemName.lowercased()
         

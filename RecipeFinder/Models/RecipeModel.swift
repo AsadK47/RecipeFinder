@@ -112,18 +112,10 @@ struct RecipeModel: Identifiable, Codable, Hashable {
     
     // MARK: - Computed Properties (Required for UI)
     var totalTime: String {
-        let prepMinutes = extractMinutes(from: prepTime)
-        let cookMinutes = extractMinutes(from: cookingTime)
+        let prepMinutes = TimeExtractor.extractMinutes(from: prepTime)
+        let cookMinutes = TimeExtractor.extractMinutes(from: cookingTime)
         let total = prepMinutes + cookMinutes
         return "\(total) minutes"
-    }
-    
-    private func extractMinutes(from timeString: String) -> Int {
-        let components = timeString.components(separatedBy: " ")
-        if let minutes = components.first, let value = Int(minutes) {
-            return value
-        }
-        return 0
     }
     
     // MARK: - Scaling Methods (Required for RecipeDetailView)
@@ -136,7 +128,18 @@ struct RecipeModel: Identifiable, Codable, Hashable {
     }
 }
 
-// MARK: - Helper Function
+// Time Extraction Helper
+enum TimeExtractor {
+    static func extractMinutes(from timeString: String) -> Int {
+        let components = timeString.components(separatedBy: " ")
+        if let minutes = components.first, let value = Int(minutes) {
+            return value
+        }
+        return 0
+    }
+}
+
+// Helper Function
 func formattedImageName(for recipeName: String) -> String {
     return recipeName
         .lowercased()

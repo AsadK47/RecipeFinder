@@ -7,11 +7,9 @@ struct ShoppingListView: View {
     @State private var collapsedCategories: Set<String> = []
     @Environment(\.colorScheme) var colorScheme
     
-    let categoryOrder = ["Produce", "Meat & Seafood", "Dairy & Eggs", "Bakery", "Kitchen", "Frozen", "Beverages", "Spices & Seasonings", "Other"]
-    
     var sortedGroupedItems: [(category: String, items: [ShoppingListItem])] {
         let grouped = Dictionary(grouping: manager.items) { $0.category }
-        return categoryOrder.compactMap { category in
+        return CategoryClassifier.categoryOrder.compactMap { category in
             guard let items = grouped[category], !items.isEmpty else { return nil }
             let sortedItems = items.sorted { !$0.isChecked && $1.isChecked }
             return (category, sortedItems)
@@ -30,20 +28,20 @@ struct ShoppingListView: View {
                         HStack {
                             // Options menu
                             Menu {
-                                Button(action: { 
-                                    withAnimation {
-                                        if collapsedCategories.count == categoryOrder.count {
-                                            collapsedCategories.removeAll()
-                                        } else {
-                                            collapsedCategories = Set(categoryOrder)
-                                        }
-                                    }
-                                }) {
-                                    Label(
-                                        collapsedCategories.count == categoryOrder.count ? "Expand All" : "Collapse All",
-                                        systemImage: collapsedCategories.count == categoryOrder.count ? "chevron.down.circle" : "chevron.up.circle"
-                                    )
-                                }
+                Button(action: { 
+                    withAnimation {
+                        if collapsedCategories.count == CategoryClassifier.categoryOrder.count {
+                            collapsedCategories.removeAll()
+                        } else {
+                            collapsedCategories = Set(CategoryClassifier.categoryOrder)
+                        }
+                    }
+                }) {
+                    Label(
+                        collapsedCategories.count == CategoryClassifier.categoryOrder.count ? "Expand All" : "Collapse All",
+                        systemImage: collapsedCategories.count == CategoryClassifier.categoryOrder.count ? "chevron.down.circle" : "chevron.up.circle"
+                    )
+                }
                                 
                                 Divider()
                                 
@@ -275,7 +273,7 @@ struct ShoppingListView: View {
                                             manager.updateCategory(at: index, category: newCategory)
                                         }
                                     },
-                                    allCategories: categoryOrder
+                                    allCategories: CategoryClassifier.categoryOrder
                                 )
                                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
                                 .listRowSeparator(.hidden)
@@ -347,31 +345,11 @@ struct ShoppingListView: View {
     }
     
     private func categoryIcon(for category: String) -> String {
-        switch category {
-        case "Produce": return "leaf.fill"
-        case "Meat & Seafood": return "fish.fill"
-        case "Dairy & Eggs": return "drop.fill"
-        case "Bakery": return "birthday.cake.fill"
-    case "Kitchen": return "cabinet.fill"
-        case "Frozen": return "snowflake"
-        case "Beverages": return "cup.and.saucer.fill"
-        case "Spices & Seasonings": return "sparkles"
-        default: return "basket.fill"
-        }
+        CategoryClassifier.categoryIcon(for: category)
     }
     
     private func categoryColor(for category: String) -> Color {
-        switch category {
-        case "Produce": return .green
-        case "Meat & Seafood": return .red
-        case "Dairy & Eggs": return .blue
-        case "Bakery": return .orange
-    case "Kitchen": return .brown
-        case "Frozen": return .cyan
-        case "Beverages": return .purple
-        case "Spices & Seasonings": return .yellow
-        default: return .gray
-        }
+        CategoryClassifier.categoryColor(for: category)
     }
 }
 
@@ -489,17 +467,7 @@ struct ShoppingListItemRow: View {
     }
     
     private func categoryIcon(for category: String) -> String {
-        switch category {
-        case "Produce": return "leaf.fill"
-        case "Meat & Seafood": return "fish.fill"
-        case "Dairy & Eggs": return "drop.fill"
-        case "Bakery": return "birthday.cake.fill"
-    case "Kitchen": return "cabinet.fill"
-        case "Frozen": return "snowflake"
-        case "Beverages": return "cup.and.saucer.fill"
-        case "Spices & Seasonings": return "sparkles"
-        default: return "basket.fill"
-        }
+        CategoryClassifier.categoryIcon(for: category)
     }
 }
 

@@ -23,8 +23,11 @@ final class ShoppingListManager: ObservableObject {
     }
     
     func addItem(name: String, quantity: Int = 1, category: String? = nil) {
-        let detectedCategory = category ?? CategoryClassifier.categorize(name)
-        let newItem = ShoppingListItem(name: name, quantity: quantity, category: detectedCategory)
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedName.isEmpty else { return }
+        
+        let detectedCategory = category ?? CategoryClassifier.categorize(trimmedName)
+        let newItem = ShoppingListItem(name: trimmedName, quantity: quantity, category: detectedCategory)
         items.append(newItem)
         saveItems()
     }
@@ -37,7 +40,10 @@ final class ShoppingListManager: ObservableObject {
     
     func updateName(at index: Int, name: String) {
         guard index < items.count else { return }
-        items[index].name = name
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedName.isEmpty else { return }
+        
+        items[index].name = trimmedName
         saveItems()
     }
     
@@ -70,9 +76,7 @@ final class ShoppingListManager: ObservableObject {
     }
     
     var groupedItems: [(category: String, items: [ShoppingListItem])] {
-    let categories = ["Produce", "Meat & Seafood", "Dairy & Eggs", "Bakery", "Kitchen", "Frozen", "Beverages", "Spices & Seasonings", "Other"]
-        
-        return categories.compactMap { category in
+        return CategoryClassifier.categoryOrder.compactMap { category in
             let categoryItems = items.filter { $0.category == category }
             return categoryItems.isEmpty ? nil : (category, categoryItems)
         }

@@ -32,7 +32,7 @@ struct RecipeSearchView: View {
         // Cook time filter (OR logic - show if under any selected time limit)
         if !selectedCookTimes.isEmpty {
             results = results.filter { recipe in
-                let time = extractMinutes(from: recipe.cookingTime)
+                let time = TimeExtractor.extractMinutes(from: recipe.cookingTime)
                 return selectedCookTimes.contains { time <= $0 }
             }
         }
@@ -53,14 +53,6 @@ struct RecipeSearchView: View {
     
     var difficulties: [String] {
         ["Easy", "Medium", "Hard"]
-    }
-    
-    private func extractMinutes(from timeString: String) -> Int {
-        let components = timeString.components(separatedBy: " ")
-        if let minutes = components.first, let value = Int(minutes) {
-            return value
-        }
-        return 0
     }
     
     var gridColumns: [GridItem] {

@@ -344,31 +344,11 @@ struct KitchenView: View {
     }
     
     private func categoryIcon(for category: String) -> String {
-        switch category {
-        case "Produce": return "leaf.fill"
-        case "Meat & Seafood": return "fish.fill"
-        case "Dairy & Eggs": return "drop.fill"
-        case "Bakery": return "birthday.cake.fill"
-    case "Kitchen": return "cabinet.fill"
-        case "Frozen": return "snowflake"
-        case "Beverages": return "cup.and.saucer.fill"
-        case "Spices & Seasonings": return "sparkles"
-        default: return "basket.fill"
-        }
+        CategoryClassifier.categoryIcon(for: category)
     }
     
     private func categoryColor(for category: String) -> Color {
-        switch category {
-        case "Produce": return .green
-        case "Meat & Seafood": return .red
-        case "Dairy & Eggs": return .blue
-        case "Bakery": return .orange
-    case "Kitchen": return .brown
-        case "Frozen": return .cyan
-        case "Beverages": return .purple
-        case "Spices & Seasonings": return .yellow
-        default: return .gray
-        }
+        CategoryClassifier.categoryColor(for: category)
     }
 }
 
@@ -378,43 +358,15 @@ struct KitchenCategoryCard: View {
     @ObservedObject var kitchenManager: KitchenInventoryManager
     @Environment(\.colorScheme) var colorScheme
     
-    var categoryIcon: String {
-        switch category {
-        case "Produce": return "leaf.fill"
-        case "Meat & Seafood": return "fish.fill"
-        case "Dairy & Eggs": return "drop.fill"
-        case "Bakery": return "birthday.cake.fill"
-    case "Kitchen": return "cabinet.fill"
-        case "Frozen": return "snowflake"
-        case "Beverages": return "cup.and.saucer.fill"
-        case "Spices & Seasonings": return "sparkles"
-        default: return "basket.fill"
-        }
-    }
-    
-    var categoryColor: Color {
-        switch category {
-        case "Produce": return .green
-        case "Meat & Seafood": return .red
-        case "Dairy & Eggs": return .blue
-        case "Bakery": return .orange
-    case "Kitchen": return .brown
-        case "Frozen": return .cyan
-        case "Beverages": return .purple
-        case "Spices & Seasonings": return .yellow
-        default: return .gray
-        }
-    }
-    
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 12) {
                 Circle()
-                    .fill(categoryColor.opacity(0.2))
+                    .fill(CategoryClassifier.categoryColor(for: category).opacity(0.2))
                     .frame(width: 40, height: 40)
                     .overlay(
-                        Image(systemName: categoryIcon)
-                            .foregroundColor(categoryColor)
+                        Image(systemName: CategoryClassifier.categoryIcon(for: category))
+                            .foregroundColor(CategoryClassifier.categoryColor(for: category))
                     )
                 
                 VStack(alignment: .leading, spacing: 2) {
@@ -481,30 +433,6 @@ struct KitchenQuickAddCategoryCard: View {
     @State private var isExpanded = false
     @Environment(\.colorScheme) var colorScheme
     
-    var categoryIcon: String {
-        switch category {
-        case "Proteins": return "fork.knife"
-        case "Vegetables": return "carrot.fill"
-        case "Spices & Herbs": return "leaf.fill"
-        case "Dairy & Eggs": return "cup.and.saucer.fill"
-        case "Grains & Noodles": return "takeoutbag.and.cup.and.straw.fill"
-        case "Sauces & Condiments": return "drop.fill"
-        default: return "bag.fill"
-        }
-    }
-    
-    var categoryColor: Color {
-        switch category {
-        case "Proteins": return .red
-        case "Vegetables": return .green
-        case "Spices & Herbs": return .orange
-        case "Dairy & Eggs": return .blue
-        case "Grains & Noodles": return .yellow
-        case "Sauces & Condiments": return .purple
-        default: return .gray
-        }
-    }
-    
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Button(action: {
@@ -514,11 +442,11 @@ struct KitchenQuickAddCategoryCard: View {
             }) {
                 HStack(spacing: 12) {
                     Circle()
-                        .fill(categoryColor.opacity(0.2))
+                        .fill(kitchenCategoryColor(for: category).opacity(0.2))
                         .frame(width: 40, height: 40)
                         .overlay(
-                            Image(systemName: categoryIcon)
-                                .foregroundColor(categoryColor)
+                            Image(systemName: kitchenCategoryIcon(for: category))
+                                .foregroundColor(kitchenCategoryColor(for: category))
                         )
                     
                     VStack(alignment: .leading, spacing: 2) {
@@ -552,6 +480,31 @@ struct KitchenQuickAddCategoryCard: View {
             RoundedRectangle(cornerRadius: 12)
                 .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
         )
+    }
+    
+    // Helper functions for kitchen-specific categories
+    private func kitchenCategoryIcon(for category: String) -> String {
+        switch category {
+        case "Proteins": return "fork.knife"
+        case "Vegetables": return "carrot.fill"
+        case "Spices & Herbs": return "leaf.fill"
+        case "Dairy & Eggs": return "cup.and.saucer.fill"
+        case "Grains & Noodles": return "takeoutbag.and.cup.and.straw.fill"
+        case "Sauces & Condiments": return "drop.fill"
+        default: return "bag.fill"
+        }
+    }
+    
+    private func kitchenCategoryColor(for category: String) -> Color {
+        switch category {
+        case "Proteins": return .red
+        case "Vegetables": return .green
+        case "Spices & Herbs": return .orange
+        case "Dairy & Eggs": return .blue
+        case "Grains & Noodles": return .yellow
+        case "Sauces & Condiments": return .purple
+        default: return .gray
+        }
     }
 }
 

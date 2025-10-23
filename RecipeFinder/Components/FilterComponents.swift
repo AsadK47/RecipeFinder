@@ -1,13 +1,5 @@
-//
-//  FilterComponents.swift
-//  RecipeFinder
-//
-//  Shared filter UI components
-//
-
 import SwiftUI
 
-// MARK: - Filter Chip Component
 struct FilterChip: View {
     let label: String
     let icon: String

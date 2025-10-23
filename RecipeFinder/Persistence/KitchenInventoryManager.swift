@@ -28,11 +28,14 @@ final class KitchenInventoryManager: ObservableObject {
     
 	// MARK: - Add/Remove Items
 	func addItem(name: String, category: String? = nil) {
-		let detectedCategory = category ?? CategoryClassifier.categorize(name)
-		let newItem = KitchenItem(name: name, category: detectedCategory)
+		let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+		guard !trimmedName.isEmpty else { return }
+		
+		let detectedCategory = category ?? CategoryClassifier.categorize(trimmedName)
+		let newItem = KitchenItem(name: trimmedName, category: detectedCategory)
         
 		// Don't add duplicates
-		guard !items.contains(where: { $0.name.lowercased() == name.lowercased() }) else { return }
+		guard !items.contains(where: { $0.name.lowercased() == trimmedName.lowercased() }) else { return }
         
 		items.append(newItem)
 		saveItems()
