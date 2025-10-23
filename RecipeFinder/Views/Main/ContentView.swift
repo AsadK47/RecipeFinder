@@ -39,6 +39,25 @@ struct ContentView: View {
                     .tag(3)
             }
             .tint(AppTheme.accentColor)
+            .gesture(
+                DragGesture(minimumDistance: 50)
+                    .onEnded { value in
+                        let horizontalSwipe = value.translation.width
+                        
+                        // Swipe right (go to previous tab)
+                        if horizontalSwipe > 0 && selectedTab > 0 {
+                            withAnimation {
+                                selectedTab -= 1
+                            }
+                        }
+                        // Swipe left (go to next tab)
+                        else if horizontalSwipe < 0 && selectedTab < 3 {
+                            withAnimation {
+                                selectedTab += 1
+                            }
+                        }
+                    }
+            )
         }
         .onAppear(perform: loadRecipes)
     }
