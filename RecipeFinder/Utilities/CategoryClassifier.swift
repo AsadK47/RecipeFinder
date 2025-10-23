@@ -3,8 +3,21 @@ import SwiftUI
 
 enum CategoryClassifier {
     
-    // Category Configuration
+    // Shopping List Categories
     static let categoryOrder = ["Produce", "Meat & Seafood", "Dairy & Eggs", "Bakery", "Kitchen", "Frozen", "Beverages", "Spices & Seasonings", "Other"]
+    
+    // Kitchen Inventory Categories
+    static let kitchenCategories = ["Proteins", "Vegetables", "Grains & Noodles", "Dairy & Eggs", "Spices & Herbs", "Sauces & Condiments"]
+    
+    // Kitchen Ingredient Keywords (for matching ingredients to kitchen categories)
+    static let kitchenIngredientKeywords: [String: [String]] = [
+        "Proteins": ["chicken", "beef", "lamb", "mutton", "pork", "fish", "cod", "eggs", "tofu"],
+        "Vegetables": ["onion", "tomato", "carrot", "cabbage", "potato", "bell pepper", "capsicum", "cucumber", "eggplant", "bok choy"],
+        "Spices & Herbs": ["cumin", "coriander", "turmeric", "paprika", "ginger", "garlic", "chili", "cinnamon", "cardamom", "garam masala", "cilantro", "parsley", "mint", "basil"],
+        "Dairy & Eggs": ["milk", "butter", "yogurt", "cream", "cheese", "egg"],
+        "Grains & Noodles": ["rice", "flour", "noodles", "pasta", "bread", "oats"],
+        "Sauces & Condiments": ["soy sauce", "oyster sauce", "vinegar", "ketchup", "mustard", "mayo"]
+    ]
     
     // Category Helpers
     static func categoryIcon(for category: String) -> String {
@@ -17,6 +30,12 @@ enum CategoryClassifier {
         case "Frozen": return "snowflake"
         case "Beverages": return "cup.and.saucer.fill"
         case "Spices & Seasonings": return "sparkles"
+        // Kitchen categories
+        case "Proteins": return "fork.knife"
+        case "Vegetables": return "carrot.fill"
+        case "Spices & Herbs": return "leaf.fill"
+        case "Grains & Noodles": return "takeoutbag.and.cup.and.straw.fill"
+        case "Sauces & Condiments": return "drop.fill"
         default: return "basket.fill"
         }
     }
@@ -31,6 +50,12 @@ enum CategoryClassifier {
         case "Frozen": return .cyan
         case "Beverages": return .purple
         case "Spices & Seasonings": return .yellow
+        // Kitchen categories  
+        case "Proteins": return .red
+        case "Vegetables": return .green
+        case "Spices & Herbs": return .orange
+        case "Grains & Noodles": return .yellow
+        case "Sauces & Condiments": return .purple
         default: return .gray
         }
     }
@@ -125,5 +150,19 @@ enum CategoryClassifier {
             return "Other"
         }
         return categorize(partialInput)
+    }
+    
+    // Group similar ingredients (e.g., "chicken breast", "chicken thighs" -> "Chicken")
+    static func groupSimilarIngredients(_ ingredients: [String]) -> [String] {
+        var mainIngredients = Set<String>()
+        
+        for ingredient in ingredients {
+            let words = ingredient.split(separator: " ")
+            if let first = words.first {
+                mainIngredients.insert(String(first).capitalized)
+            }
+        }
+        
+        return Array(mainIngredients)
     }
 }

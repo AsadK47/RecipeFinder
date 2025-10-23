@@ -12,14 +12,19 @@ class PersistenceController {
         description?.setOption(true as NSNumber, forKey: NSMigratePersistentStoresAutomaticallyOption)
         description?.setOption(true as NSNumber, forKey: NSInferMappingModelAutomaticallyOption)
         
-        container.loadPersistentStores { _, error in
+        container.loadPersistentStores { storeDescription, error in
             if let error = error as NSError? {
                 print("❌ Failed to load persistent store: \(error.localizedDescription)")
+                print("❌ Error details: \(error.userInfo)")
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             } else {
-                print("✅ Core Data store loaded successfully")
+                print("✅ Core Data store loaded successfully at: \(storeDescription.url?.absoluteString ?? "unknown location")")
             }
         }
+        
+        // Enable automatic merging of changes
+        container.viewContext.automaticallyMergesChangesFromParent = true
+        container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
     }
     
     func clearDatabase() {
@@ -41,9 +46,9 @@ class PersistenceController {
     func resetDatabase() {
         print("🔄 Resetting database...")
         clearDatabase()
-        UserDefaults.standard.set(false, forKey: "hasPopulatedDatabase")
+        UserDefaults.standard.set(false, forKey: Constants.UserDefaultsKeys.hasPopulatedDatabase)
         populateDatabase()
-        UserDefaults.standard.set(true, forKey: "hasPopulatedDatabase")
+        UserDefaults.standard.set(true, forKey: Constants.UserDefaultsKeys.hasPopulatedDatabase)
         print("✅ Database reset complete")
     }
     

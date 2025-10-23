@@ -14,25 +14,6 @@ struct IngredientSearchView: View {
     @State private var showAddedFeedback: String?
     @Environment(\.colorScheme) var colorScheme
     
-    // Ingredient categories in logical order (meal-building flow)
-    let categoryOrder: [String] = [
-        "Proteins",
-        "Vegetables", 
-        "Grains & Noodles",
-        "Dairy & Eggs",
-        "Spices & Herbs",
-        "Sauces & Condiments"
-    ]
-    
-    let ingredientCategories: [String: [String]] = [
-        "Proteins": ["chicken", "beef", "lamb", "mutton", "pork", "fish", "cod", "eggs", "tofu"],
-        "Vegetables": ["onion", "tomato", "carrot", "cabbage", "potato", "bell pepper", "capsicum", "cucumber", "eggplant", "bok choy"],
-        "Spices & Herbs": ["cumin", "coriander", "turmeric", "paprika", "ginger", "garlic", "chili", "cinnamon", "cardamom", "garam masala", "cilantro", "parsley", "mint", "basil"],
-        "Dairy & Eggs": ["milk", "butter", "yogurt", "cream", "cheese", "egg"],
-        "Grains & Noodles": ["rice", "flour", "noodles", "pasta", "bread", "oats"],
-        "Sauces & Condiments": ["soy sauce", "oyster sauce", "vinegar", "ketchup", "mustard", "mayo"]
-    ]
-    
     var allIngredients: [String] {
         Set(recipes.flatMap { $0.ingredients.map { $0.name } }).sorted()
     }
@@ -49,33 +30,17 @@ struct IngredientSearchView: View {
     }
     
     var categorizedIngredients: [(category: String, ingredients: [String])] {
-        categoryOrder.compactMap { category in
-            guard let keywords = ingredientCategories[category] else { return nil }
+        CategoryClassifier.kitchenCategories.compactMap { category in
+            guard let keywords = CategoryClassifier.kitchenIngredientKeywords[category] else { return nil }
             let matchedIngredients = allIngredients.filter { ingredient in
                 keywords.contains { keyword in
                     ingredient.localizedCaseInsensitiveContains(keyword)
                 }
             }
             // Group similar ingredients and capitalize
-            let grouped = groupSimilarIngredients(matchedIngredients)
+            let grouped = CategoryClassifier.groupSimilarIngredients(matchedIngredients)
             return grouped.isEmpty ? nil : (category, grouped.sorted())
         }
-    }
-    
-    // Group similar ingredients (e.g., "chicken breast", "chicken thighs" -> "Chicken")
-    private func groupSimilarIngredients(_ ingredients: [String]) -> [String] {
-        var mainIngredients = Set<String>()
-        
-        for ingredient in ingredients {
-            // Extract the main ingredient (first word or two)
-            let words = ingredient.split(separator: " ")
-            if words.count > 0 {
-                // Use first word as main ingredient (e.g., "chicken" from "chicken breast")
-                mainIngredients.insert(String(words[0]).capitalized)
-            }
-        }
-        
-        return Array(mainIngredients)
     }
     
     // Get all variations of a main ingredient
@@ -238,7 +203,7 @@ struct IngredientSearchView: View {
             .toolbarBackground(.hidden, for: .navigationBar)
             .sheet(isPresented: $showFilters) {
                 IngredientFilterSheet(
-                    categories: categoryOrder,
+                    categories: CategoryClassifier.kitchenCategories,
                     selectedCategories: $selectedCategories
                 )
             }

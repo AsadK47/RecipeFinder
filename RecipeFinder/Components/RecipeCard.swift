@@ -72,5 +72,8 @@ struct RecipeCard: View {
             RoundedRectangle(cornerRadius: 12)
                 .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
         )
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(recipe.name), \(recipe.category), Preparation time: \(recipe.prepTime), Difficulty: \(recipe.difficulty)")
+        .accessibilityHint("Double tap to view recipe details")
     }
 }

@@ -5,52 +5,32 @@ struct KitchenView: View {
     @ObservedObject var shoppingListManager: ShoppingListManager
     @StateObject private var kitchenManager = KitchenInventoryManager()
     @State private var searchText = ""
+    @State private var cachedCategorizedIngredients: [(category: String, ingredients: [String])] = []
     @Environment(\.colorScheme) var colorScheme
-    
-    let categoryOrder: [String] = [
-        "Proteins",
-        "Vegetables",
-        "Grains & Noodles",
-        "Dairy & Eggs",
-        "Spices & Herbs",
-        "Sauces & Condiments"
-    ]
-    
-    let ingredientCategories: [String: [String]] = [
-        "Proteins": ["chicken", "beef", "lamb", "mutton", "pork", "fish", "cod", "eggs", "tofu"],
-        "Vegetables": ["onion", "tomato", "carrot", "cabbage", "potato", "bell pepper", "capsicum", "cucumber", "eggplant", "bok choy"],
-        "Spices & Herbs": ["cumin", "coriander", "turmeric", "paprika", "ginger", "garlic", "chili", "cinnamon", "cardamom", "garam masala", "cilantro", "parsley", "mint", "basil"],
-        "Dairy & Eggs": ["milk", "butter", "yogurt", "cream", "cheese", "egg"],
-        "Grains & Noodles": ["rice", "flour", "noodles", "pasta", "bread", "oats"],
-        "Sauces & Condiments": ["soy sauce", "oyster sauce", "vinegar", "ketchup", "mustard", "mayo"]
-    ]
     
     var allIngredients: [String] {
         Set(recipes.flatMap { $0.ingredients.map { $0.name } }).sorted()
     }
     
     var categorizedIngredients: [(category: String, ingredients: [String])] {
-        categoryOrder.compactMap { category in
-            guard let keywords = ingredientCategories[category] else { return nil }
+        // Return cached value if available
+        guard cachedCategorizedIngredients.isEmpty else {
+            return cachedCategorizedIngredients
+        }
+        
+        // Compute and cache
+        let result: [(category: String, ingredients: [String])] = CategoryClassifier.kitchenCategories.compactMap { category -> (category: String, ingredients: [String])? in
+            guard let keywords = CategoryClassifier.kitchenIngredientKeywords[category] else { return nil }
             let matchedIngredients = allIngredients.filter { ingredient in
                 keywords.contains { keyword in
                     ingredient.localizedCaseInsensitiveContains(keyword)
                 }
             }
-            let grouped = groupSimilarIngredients(matchedIngredients)
+            let grouped = CategoryClassifier.groupSimilarIngredients(matchedIngredients)
             return grouped.isEmpty ? nil : (category, grouped.sorted())
         }
-    }
-    
-    private func groupSimilarIngredients(_ ingredients: [String]) -> [String] {
-        var mainIngredients = Set<String>()
-        for ingredient in ingredients {
-            let words = ingredient.split(separator: " ")
-            if let first = words.first {
-                mainIngredients.insert(String(first).capitalized)
-            }
-        }
-        return Array(mainIngredients)
+        
+        return result
     }
     
     var searchResults: [String] {
@@ -123,6 +103,12 @@ struct KitchenView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)
+        }
+        .onAppear {
+            // Cache categorized ingredients on first load
+            if cachedCategorizedIngredients.isEmpty {
+                cachedCategorizedIngredients = categorizedIngredients
+            }
         }
     }
     
@@ -352,6 +338,7 @@ struct KitchenView: View {
     }
 }
 
+// Kitchen Category Card
 struct KitchenCategoryCard: View {
     let category: String
     let items: [KitchenItem]
@@ -442,11 +429,11 @@ struct KitchenQuickAddCategoryCard: View {
             }) {
                 HStack(spacing: 12) {
                     Circle()
-                        .fill(kitchenCategoryColor(for: category).opacity(0.2))
+                        .fill(CategoryClassifier.categoryColor(for: category).opacity(0.2))
                         .frame(width: 40, height: 40)
                         .overlay(
-                            Image(systemName: kitchenCategoryIcon(for: category))
-                                .foregroundColor(kitchenCategoryColor(for: category))
+                            Image(systemName: CategoryClassifier.categoryIcon(for: category))
+                                .foregroundColor(CategoryClassifier.categoryColor(for: category))
                         )
                     
                     VStack(alignment: .leading, spacing: 2) {
@@ -481,33 +468,9 @@ struct KitchenQuickAddCategoryCard: View {
                 .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
         )
     }
-    
-    // Helper functions for kitchen-specific categories
-    private func kitchenCategoryIcon(for category: String) -> String {
-        switch category {
-        case "Proteins": return "fork.knife"
-        case "Vegetables": return "carrot.fill"
-        case "Spices & Herbs": return "leaf.fill"
-        case "Dairy & Eggs": return "cup.and.saucer.fill"
-        case "Grains & Noodles": return "takeoutbag.and.cup.and.straw.fill"
-        case "Sauces & Condiments": return "drop.fill"
-        default: return "bag.fill"
-        }
-    }
-    
-    private func kitchenCategoryColor(for category: String) -> Color {
-        switch category {
-        case "Proteins": return .red
-        case "Vegetables": return .green
-        case "Spices & Herbs": return .orange
-        case "Dairy & Eggs": return .blue
-        case "Grains & Noodles": return .yellow
-        case "Sauces & Condiments": return .purple
-        default: return .gray
-        }
-    }
 }
 
+// Kitchen Quick Add Chip
 struct KitchenQuickAddChip: View {
     let ingredient: String
     @ObservedObject var kitchenManager: KitchenInventoryManager

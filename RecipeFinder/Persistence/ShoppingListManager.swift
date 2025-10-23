@@ -3,7 +3,7 @@ import Foundation
 final class ShoppingListManager: ObservableObject {
     @Published private(set) var items: [ShoppingListItem] = []
     
-    private let saveKey = "ShoppingListItems"
+    private let saveKey = Constants.UserDefaultsKeys.shoppingListItems
     
     init() {
         loadItems()
@@ -25,6 +25,19 @@ final class ShoppingListManager: ObservableObject {
     func addItem(name: String, quantity: Int = 1, category: String? = nil) {
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedName.isEmpty else { return }
+        
+        // Validate quantity
+        guard quantity > 0 else {
+            print("⚠️ Invalid quantity for item '\(trimmedName)'. Must be greater than 0.")
+            return
+        }
+        
+        // Check for duplicates - if exists, just increase quantity
+        if let existingIndex = items.firstIndex(where: { $0.name.lowercased() == trimmedName.lowercased() }) {
+            items[existingIndex].quantity += quantity
+            saveItems()
+            return
+        }
         
         let detectedCategory = category ?? CategoryClassifier.categorize(trimmedName)
         let newItem = ShoppingListItem(name: trimmedName, quantity: quantity, category: detectedCategory)

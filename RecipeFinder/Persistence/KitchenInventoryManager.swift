@@ -20,7 +20,7 @@ struct KitchenItem: Identifiable, Codable, Equatable, Hashable {
 final class KitchenInventoryManager: ObservableObject {
 	@Published private(set) var items: [KitchenItem] = []
     
-	private let saveKey = "KitchenItems"
+	private let saveKey = Constants.UserDefaultsKeys.kitchenItems
     
 	init() {
 		loadItems()
