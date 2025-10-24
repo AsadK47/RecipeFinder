@@ -11,20 +11,10 @@ struct IngredientRowView: View {
     var body: some View {
         HStack(spacing: 12) {
             Button(action: { withAnimation(.spring(response: 0.3)) { toggle() } }) {
-                ZStack {
-                    Circle()
-                        .strokeBorder(isChecked ? AppTheme.accentColor : Color.gray, lineWidth: 2)
-                        .frame(width: 24, height: 24)
-                    
-                    if isChecked {
-                        Image(systemName: "checkmark")
-                            .font(.system(size: 12, weight: .bold))
-                            .foregroundColor(.white)
-                            .frame(width: 24, height: 24)
-                            .background(Circle().fill(AppTheme.accentColor))
-                            .transition(.scale.combined(with: .opacity))
-                    }
-                }
+                Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
+                    .font(.title3)
+                    .foregroundColor(isChecked ? .green : .gray.opacity(0.3))
+                    .frame(width: 28, height: 28)
             }
             
             VStack(alignment: .leading, spacing: 2) {

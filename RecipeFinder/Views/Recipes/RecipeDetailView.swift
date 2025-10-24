@@ -3,6 +3,8 @@ import SwiftUI
 struct RecipeDetailView: View {
     @State private var recipe: RecipeModel
     @State private var ingredientsState: [Bool]
+    @State private var instructionsState: [Bool]
+    @State private var prePrepState: [Bool]
     @State private var expandedSections: Set<String> = ["Ingredients", "Pre-Prep", "Instructions", "Notes"]
     @ObservedObject var shoppingListManager: ShoppingListManager
     @State private var addedIngredients: Set<String> = []
@@ -14,6 +16,8 @@ struct RecipeDetailView: View {
         self.recipe = recipe
         self.shoppingListManager = shoppingListManager
         _ingredientsState = State(initialValue: Array(repeating: false, count: recipe.ingredients.count))
+        _instructionsState = State(initialValue: Array(repeating: false, count: recipe.instructions.count))
+        _prePrepState = State(initialValue: Array(repeating: false, count: recipe.prePrepInstructions.count))
     }
     
     var body: some View {
@@ -130,9 +134,14 @@ struct RecipeDetailView: View {
                     // Collapsible Pre-prep section
                     if !recipe.prePrepInstructions.isEmpty {
                         collapsibleSection(title: "Pre-Prep", icon: "list.clipboard") {
-                            VStack(alignment: .leading, spacing: 12) {
+                            VStack(alignment: .leading, spacing: 16) {
                                 ForEach(recipe.prePrepInstructions.indices, id: \.self) { index in
-                                    instructionRow(number: index + 1, text: recipe.prePrepInstructions[index])
+                                    instructionRow(
+                                        number: index + 1,
+                                        text: recipe.prePrepInstructions[index],
+                                        isChecked: prePrepState[index],
+                                        toggle: { prePrepState[index].toggle() }
+                                    )
                                 }
                             }
                         }
@@ -140,9 +149,14 @@ struct RecipeDetailView: View {
                     
                     // Collapsible Instructions section
                     collapsibleSection(title: "Instructions", icon: "text.alignleft") {
-                        VStack(alignment: .leading, spacing: 12) {
+                        VStack(alignment: .leading, spacing: 16) {
                             ForEach(recipe.instructions.indices, id: \.self) { index in
-                                instructionRow(number: index + 1, text: recipe.instructions[index])
+                                instructionRow(
+                                    number: index + 1,
+                                    text: recipe.instructions[index],
+                                    isChecked: instructionsState[index],
+                                    toggle: { instructionsState[index].toggle() }
+                                )
                             }
                         }
                     }
@@ -254,23 +268,37 @@ struct RecipeDetailView: View {
         .padding(.horizontal, 20)
     }
     
-    private func instructionRow(number: Int, text: String) -> some View {
-        HStack(alignment: .top, spacing: 12) {
-            Text("\(number)")
-                .font(.headline)
-                .foregroundColor(.white)
-                .frame(width: 32, height: 32)
-                .background(
+    private func instructionRow(number: Int, text: String, isChecked: Bool, toggle: @escaping () -> Void) -> some View {
+        Button(action: toggle) {
+            HStack(alignment: .center, spacing: 12) {
+                ZStack {
                     Circle()
                         .fill(AppTheme.accentColor)
-                )
-            
-            Text(text)
-                .font(.subheadline)
-                .foregroundColor(.primary)
-                .fixedSize(horizontal: false, vertical: true)
+                        .frame(width: 32, height: 32)
+                    
+                    Text("\(number)")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                }
+                
+                Text(text)
+                    .font(.subheadline)
+                    .foregroundColor(.primary)
+                    .strikethrough(isChecked, color: .primary)
+                    .opacity(isChecked ? 0.5 : 1.0)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .multilineTextAlignment(.leading)
+                
+                Spacer()
+                
+                Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
+                    .font(.title3)
+                    .foregroundColor(isChecked ? .green : .gray.opacity(0.3))
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle())
         }
-        .frame(maxWidth: .infinity, alignment: .leading) // Ensure full width alignment
+        .buttonStyle(.plain)
     }
     
     private func addIngredientToShoppingList(_ ingredient: Ingredient) {
