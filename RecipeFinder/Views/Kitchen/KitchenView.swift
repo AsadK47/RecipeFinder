@@ -159,7 +159,6 @@ struct KitchenView: View {
             Image(systemName: "refrigerator")
                 .font(.system(size: 80))
                 .foregroundColor(.white.opacity(0.3))
-                .padding(.top, 60)
             
             Text("Your Kitchen is Empty")
                 .font(.title2)
