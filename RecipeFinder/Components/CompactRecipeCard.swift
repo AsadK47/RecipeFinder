@@ -36,6 +36,7 @@ struct CompactRecipeCard: View {
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
+                .shadow(color: Color.black.opacity(0.25), radius: 8, x: 0, y: 4)
         )
     }
 }
