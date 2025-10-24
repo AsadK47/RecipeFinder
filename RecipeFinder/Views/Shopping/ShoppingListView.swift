@@ -266,9 +266,6 @@ struct ShoppingListView: View {
                                             manager.deleteItem(at: index)
                                         }
                                     },
-                                    onNameChange: { newName in
-                                        manager.updateName(at: index, name: newName)
-                                    },
                                     onCategoryChange: { newCategory in
                                         withAnimation(.spring(response: 0.3)) {
                                             manager.updateCategory(at: index, category: newCategory)
@@ -360,12 +357,9 @@ struct ShoppingListItemRow: View {
     let onToggle: () -> Void
     let onQuantityChange: (Int) -> Void
     let onDelete: () -> Void
-    let onNameChange: (String) -> Void
     let onCategoryChange: (String) -> Void
     let allCategories: [String]
     
-    @State private var showEditSheet = false
-    @State private var editedName = ""
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
@@ -427,15 +421,6 @@ struct ShoppingListItemRow: View {
                 Image(systemName: "trash")
             }
         }
-        .swipeActions(edge: .leading, allowsFullSwipe: false) {
-            Button {
-                editedName = item.name
-                showEditSheet = true
-            } label: {
-                Image(systemName: "pencil")
-            }
-            .tint(.blue)
-        }
         .contextMenu {
             Menu("Change Category") {
                 ForEach(allCategories, id: \.self) { category in
@@ -453,18 +438,6 @@ struct ShoppingListItemRow: View {
                 Label("Delete", systemImage: "trash")
             }
         }
-        .sheet(isPresented: $showEditSheet) {
-            EditItemSheet(
-                itemName: editedName,
-                onSave: { newName in
-                    if !newName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                        onNameChange(newName)
-                    }
-                }
-            )
-            .presentationDetents([.height(250)])
-            .presentationDragIndicator(.visible)
-        }
     }
     
     private func categoryIcon(for category: String) -> String {
@@ -473,41 +446,4 @@ struct ShoppingListItemRow: View {
 }
 
 // MARK: - Edit Item Sheet
-struct EditItemSheet: View {
-    @State var itemName: String
-    let onSave: (String) -> Void
-    @Environment(\.dismiss) private var dismiss
-    
-    var body: some View {
-        NavigationView {
-            VStack(spacing: 20) {
-                Text("Edit Item")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .padding(.top)
-                
-                TextField("Item name", text: $itemName)
-                    .textFieldStyle(.roundedBorder)
-                    .font(.body)
-                    .padding(.horizontal)
-                
-                Spacer()
-            }
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
-                }
-                
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        onSave(itemName)
-                        dismiss()
-                    }
-                    .disabled(itemName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                }
-            }
-        }
-    }
-}
+

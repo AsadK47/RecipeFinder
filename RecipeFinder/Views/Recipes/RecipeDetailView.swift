@@ -80,6 +80,7 @@ struct RecipeDetailView: View {
                                 HStack(spacing: 12) {
                                     Button(action: {
                                         if recipe.currentServings > 1 {
+                                            HapticManager.shared.light()
                                             recipe.currentServings -= 1
                                         }
                                     }) {
@@ -94,6 +95,7 @@ struct RecipeDetailView: View {
                                     }
                                     
                                     Button(action: {
+                                        HapticManager.shared.light()
                                         recipe.currentServings += 1
                                     }) {
                                         Image(systemName: "plus")
@@ -120,7 +122,10 @@ struct RecipeDetailView: View {
                                 IngredientRowView(
                                     ingredient: recipe.ingredients[index],
                                     isChecked: ingredientsState[index],
-                                    toggle: { ingredientsState[index].toggle() },
+                                    toggle: { 
+                                        HapticManager.shared.light()
+                                        ingredientsState[index].toggle()
+                                    },
                                     scaleFactor: recipe.scaleFactor,
                                     onAddToShopping: {
                                         addIngredientToShoppingList(recipe.ingredients[index])
@@ -140,7 +145,10 @@ struct RecipeDetailView: View {
                                         number: index + 1,
                                         text: recipe.prePrepInstructions[index],
                                         isChecked: prePrepState[index],
-                                        toggle: { prePrepState[index].toggle() }
+                                        toggle: { 
+                                            HapticManager.shared.light()
+                                            prePrepState[index].toggle()
+                                        }
                                     )
                                 }
                             }
@@ -155,7 +163,10 @@ struct RecipeDetailView: View {
                                     number: index + 1,
                                     text: recipe.instructions[index],
                                     isChecked: instructionsState[index],
-                                    toggle: { instructionsState[index].toggle() }
+                                    toggle: { 
+                                        HapticManager.shared.light()
+                                        instructionsState[index].toggle()
+                                    }
                                 )
                             }
                         }
@@ -206,11 +217,12 @@ struct RecipeDetailView: View {
                         .fill(AppTheme.accentColor)
                         .shadow(color: .black.opacity(0.2), radius: 8, y: 4)
                 )
-                .padding(.bottom, 100)
+                .padding(.bottom, 20)
                 .transition(.move(edge: .bottom).combined(with: .opacity))
-                .animation(.spring(response: 0.3), value: showAddedFeedback)
+                .opacity(showAddedFeedback != nil ? 1 : 0)
             }
         }
+        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: showAddedFeedback)
     }
     
     // COLLAPSIBLE section view with expand/collapse animation
@@ -302,22 +314,41 @@ struct RecipeDetailView: View {
     }
     
     private func addIngredientToShoppingList(_ ingredient: Ingredient) {
+        // Haptic feedback
+        HapticManager.shared.light()
+        
         // Create item with ingredient name including quantity and unit as part of the name
         let scaledQuantity = ingredient.formattedQuantity(for: recipe.scaleFactor)
         let fullName = "\(ingredient.name) (\(scaledQuantity) \(ingredient.unit))"
         shoppingListManager.addItem(name: fullName, quantity: 1, category: nil)
+        
+        // Mark as added immediately for UI update
         addedIngredients.insert(ingredient.name)
         
-        // Show feedback briefly
+        // Show feedback with gradual fade
         showAddedFeedback = ingredient.name
+        
+        // Keep basket purple and start fading after 1.5 seconds
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            showAddedFeedback = nil
+            withAnimation(.easeOut(duration: 0.8)) {
+                showAddedFeedback = nil
+            }
+        }
+        
+        // Clear the added state after 2 seconds (basket returns to normal)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            withAnimation {
+                _ = addedIngredients.remove(ingredient.name)
+            }
         }
     }
     
     private func isIngredientInShoppingList(_ ingredient: Ingredient) -> Bool {
-        return shoppingListManager.items.contains { item in
-            item.name.lowercased() == ingredient.name.lowercased()
+        // Check if recently added (basket stays purple temporarily)
+        if addedIngredients.contains(ingredient.name) {
+            return true
         }
+        // Don't check actual shopping list - let user add multiple times if needed
+        return false
     }
 }

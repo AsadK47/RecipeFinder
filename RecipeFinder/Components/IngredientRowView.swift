@@ -9,24 +9,24 @@ struct IngredientRowView: View {
     var isInShoppingList: Bool = false
     
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 16) {
             Button(action: { withAnimation(.spring(response: 0.3)) { toggle() } }) {
                 Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
-                    .font(.title3)
+                    .font(.system(size: 24))
                     .foregroundColor(isChecked ? .green : .gray.opacity(0.3))
                     .frame(width: 28, height: 28)
             }
             
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(ingredient.name)
-                    .font(.subheadline)
+                    .font(.body)
                     .fontWeight(.medium)
                     .strikethrough(isChecked)
-                    .foregroundColor(isChecked ? .gray : .primary)
+                    .foregroundColor(isChecked ? .secondary : .primary)
                 
                 Text("\(ingredient.formattedQuantity(for: scaleFactor)) \(ingredient.unit)")
-                    .font(.caption)
-                    .foregroundColor(AppTheme.secondaryText)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
             }
             
             Spacer()
@@ -39,14 +39,14 @@ struct IngredientRowView: View {
                     }
                 }) {
                     Image(systemName: isInShoppingList ? "basket.fill" : "basket")
-                        .font(.system(size: 18))
-                        .foregroundColor(isInShoppingList ? AppTheme.accentColor : .gray)
-                        .frame(width: 32, height: 32)
+                        .font(.system(size: 20))
+                        .foregroundColor(isInShoppingList ? AppTheme.accentColor : .gray.opacity(0.5))
+                        .frame(width: 44, height: 44)
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(PlainButtonStyle())
             }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 8)
     }
 }

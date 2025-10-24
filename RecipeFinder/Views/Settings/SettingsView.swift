@@ -137,9 +137,6 @@ struct SettingsView: View {
                                             HapticManager.shared.selection()
                                         }
                                     }
-                                    
-                                    Divider()
-                                    settingRow(icon: "globe", title: "Language", color: .blue)
                                 }
                                 .padding()
                             }

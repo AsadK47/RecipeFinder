@@ -81,11 +81,11 @@ class PersistenceController {
             return
         }
         
-        // Set values with proper capitalization
+        // Set values
         recipe.setValue(UUID(), forKey: "id")
-        recipe.setValue(name.capitalized, forKey: "name")
-        recipe.setValue(category.capitalized, forKey: "category")
-        recipe.setValue(difficulty.capitalized, forKey: "difficulty")
+        recipe.setValue(name, forKey: "name")
+        recipe.setValue(category, forKey: "category")
+        recipe.setValue(difficulty, forKey: "difficulty")
         recipe.setValue(prepTime, forKey: "prepTime")
         recipe.setValue(cookingTime, forKey: "cookingTime")
         recipe.setValue(baseServings, forKey: "baseServings")

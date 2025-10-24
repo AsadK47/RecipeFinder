@@ -237,7 +237,7 @@ extension PersistenceController {
         
         saveRecipe(
             name: "Air Fryer Soy Sauce Chicken Wings",
-            category: "Appetizer",
+            category: "Starter",
             difficulty: "Basic",
             prepTime: "10 minutes",
             cookingTime: "20 minutes",
@@ -267,7 +267,7 @@ extension PersistenceController {
         
         saveRecipe(
             name: "Aloo Gosht (Mutton/Lamb and Potato Curry)",
-            category: "Main Course",
+            category: "Main",
             difficulty: "Intermediate",
             prepTime: "20 minutes",
             cookingTime: "1 hour",
@@ -606,7 +606,7 @@ extension PersistenceController {
         
         saveRecipe(
             name: "Asian Lemon Wings",
-            category: "Main Course",
+            category: "Main",
             difficulty: "Intermediate",
             prepTime: "20 minutes",
             cookingTime: "16 minutes (air fry) or 8 minutes (deep fry)",
@@ -635,7 +635,7 @@ extension PersistenceController {
         
         saveRecipe(
             name: "Baingan ka Bharta (Indian Eggplant)",
-            category: "Main Course",
+            category: "Main",
             difficulty: "Intermediate",
             prepTime: "10 minutes",
             cookingTime: "50 minutes",
@@ -681,7 +681,7 @@ extension PersistenceController {
         
         saveRecipe(
             name: "Baked Cajun Garlic Butter Cod",
-            category: "Main Course",
+            category: "Main",
             difficulty: "Basic",
             prepTime: "5 minutes",
             cookingTime: "15 minutes",
@@ -1453,7 +1453,7 @@ extension PersistenceController {
         
         saveRecipe(
             name: "Cabbage Dolmas",
-            category: "Middle Eastern",
+            category: "Starter",
             difficulty: "Intermediate",
             prepTime: "15 minutes",
             cookingTime: "50 minutes",
@@ -1529,7 +1529,7 @@ extension PersistenceController {
         
         saveRecipe(
             name: "Chicken Biryani (Instant Pot)",
-            category: "Main Course",
+            category: "Main",
             difficulty: "Intermediate",
             prepTime: "1 hour (plus marination)",
             cookingTime: "1.5 hours",
@@ -1604,7 +1604,7 @@ extension PersistenceController {
         
         saveRecipe(
             name: "Chicken Chow Mein",
-            category: "Main Course",
+            category: "Main",
             difficulty: "Intermediate",
             prepTime: "15 minutes",
             cookingTime: "35 minutes",
@@ -1690,7 +1690,7 @@ extension PersistenceController {
         
         saveRecipe(
             name: "Keema (Instant Pot Ground Beef Curry)",
-            category: "Main Course",
+            category: "Main",
             difficulty: "Intermediate",
             prepTime: "30 minutes",
             cookingTime: "30 minutes",

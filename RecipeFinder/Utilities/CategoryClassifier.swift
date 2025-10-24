@@ -185,25 +185,42 @@ enum CategoryClassifier {
             // Extract the main ingredient name (first 1-2 words typically)
             let words = cleaned.split(separator: " ").map { String($0) }
             
-            if words.count >= 2 {
+            // Filter out pure descriptor words at the start
+            let filteredWords = words.filter { word in
+                !descriptorWords.contains(word.lowercased())
+            }
+            
+            if filteredWords.isEmpty {
+                continue // Skip if only descriptors
+            }
+            
+            if filteredWords.count >= 2 {
                 // For compound ingredients like "black pepper", "soy sauce", keep both words
-                let firstTwo = words.prefix(2).joined(separator: " ")
+                let firstTwo = filteredWords.prefix(2).joined(separator: " ")
                 
                 // Check if it's a common compound ingredient
                 let compounds = ["black pepper", "soy sauce", "oyster sauce", "fish sauce", 
                                "olive oil", "sesame oil", "coconut milk", "bell pepper",
-                               "green onion", "spring onion", "red onion", "white onion",
+                               "green onion", "spring onions", "spring onion", "red onion", "white onion",
                                "black beans", "red beans", "green beans", "rice wine",
                                "brown sugar", "white sugar", "chicken breast", "chicken thigh",
                                "beef chuck", "pork belly", "rice vinegar", "white vinegar",
-                               "black vinegar", "sesame seeds", "chili flakes", "curry powder"]
+                               "black vinegar", "sesame seeds", "chili flakes", "curry powder",
+                               "chili powder", "garlic powder", "onion powder", "ginger paste",
+                               "garlic paste", "tomato paste", "fish paste", "bok choy",
+                               "red pepper", "green pepper", "yellow onion", "sweet potato",
+                               "soy milk", "almond milk", "peanut butter", "tomato sauce",
+                               "chicken stock", "beef stock", "vegetable stock", "fish stock",
+                               "egg noodles", "tomato puree", "coconut cream", "heavy cream",
+                               "sour cream", "cream cheese", "maple syrup", "corn starch",
+                               "baking powder", "baking soda", "vanilla extract"]
                 
                 if compounds.contains(firstTwo.lowercased()) {
                     mainIngredients.insert(firstTwo.capitalized)
-                } else if let first = words.first {
+                } else if let first = filteredWords.first {
                     mainIngredients.insert(first.capitalized)
                 }
-            } else if let first = words.first {
+            } else if let first = filteredWords.first {
                 mainIngredients.insert(first.capitalized)
             }
         }
