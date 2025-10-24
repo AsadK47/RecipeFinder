@@ -67,6 +67,22 @@ enum CategoryClassifier {
     static func categorize(_ itemName: String) -> String {
         let lowercased = itemName.lowercased()
         
+        // Bakery (check first for compound items like "garlic bread")
+        let bakeryKeywords = ["bread", "baguette", "roll", "bun", "croissant", "bagel", "muffin", "donut",
+                             "pastry", "cake", "cookie", "pie", "tart", "biscuit", "scone", "cracker",
+                             "tortilla", "pita", "naan", "flatbread", "sourdough", "ciabatta", "pretzel"]
+        if bakeryKeywords.contains(where: { lowercased.contains($0) }) {
+            return "Bakery"
+        }
+        
+        // Frozen (check before beverages to avoid juice confusion)
+        let frozenKeywords = ["frozen", "ice cream", "popsicle", "frozen pizza", "frozen meal",
+                             "frozen vegetable", "frozen fruit", "frozen berry", "frozen pea", "frozen corn"]
+        // Don't match standalone "ice" to avoid catching "rice"
+        if frozenKeywords.contains(where: { lowercased.contains($0) }) && !lowercased.contains("rice") {
+            return "Frozen"
+        }
+        
         // Produce
         let produceKeywords = ["apple", "banana", "orange", "lettuce", "tomato", "potato", "onion", "garlic", 
                                "carrot", "celery", "cucumber", "pepper", "spinach", "broccoli", "cauliflower",
@@ -96,38 +112,23 @@ enum CategoryClassifier {
             return "Dairy & Eggs"
         }
         
-        // Bakery
-        let bakeryKeywords = ["bread", "baguette", "roll", "bun", "croissant", "bagel", "muffin", "donut",
-                             "pastry", "cake", "cookie", "pie", "tart", "biscuit", "scone", "cracker",
-                             "tortilla", "pita", "naan", "flatbread", "sourdough", "ciabatta", "pretzel"]
-        if bakeryKeywords.contains(where: { lowercased.contains($0) }) {
-            return "Bakery"
-        }
-        
-    // Kitchen
+        // Kitchen
         let pantryKeywords = ["flour", "sugar", "salt", "pepper", "oil", "olive oil", "vegetable oil", "canola oil",
                              "rice", "pasta", "noodle", "spaghetti", "macaroni", "quinoa", "couscous", "beans",
                              "lentil", "chickpea", "peanut butter", "jam", "jelly", "honey", "maple syrup",
                              "vinegar", "soy sauce", "worcestershire", "hot sauce", "ketchup", "mustard", "mayo",
                              "mayonnaise", "salsa", "sauce", "broth", "stock", "bouillon", "cereal", "oats",
                              "granola", "cornmeal", "baking powder", "baking soda", "yeast", "vanilla", "extract",
-                             "cocoa", "chocolate chip", "nut", "almond", "walnut", "pecan", "cashew", "pistachio",
+                             "cocoa", "chocolate", "chocolate chip", "nut", "almond", "walnut", "pecan", "cashew", "pistachio",
                              "can", "canned", "jar", "dried", "powder"]
         if pantryKeywords.contains(where: { lowercased.contains($0) }) {
             return "Kitchen"
         }
         
-        // Frozen
-        let frozenKeywords = ["frozen", "ice", "popsicle", "ice cream", "frozen pizza", "frozen meal",
-                             "frozen vegetable", "frozen fruit", "frozen berry", "frozen pea", "frozen corn"]
-        if frozenKeywords.contains(where: { lowercased.contains($0) }) {
-            return "Frozen"
-        }
-        
-        // Beverages
+        // Beverages (juice should stay here)
         let beverageKeywords = ["water", "juice", "soda", "pop", "cola", "sprite", "coffee", "tea", "beer",
                                "wine", "vodka", "whiskey", "rum", "tequila", "gin", "champagne", "cider",
-                               "lemonade", "smoothie", "shake", "milk", "almond milk", "soy milk", "oat milk",
+                               "lemonade", "smoothie", "shake", "almond milk", "soy milk", "oat milk",
                                "coconut milk", "energy drink", "sports drink", "tonic", "sparkling"]
         if beverageKeywords.contains(where: { lowercased.contains($0) }) {
             return "Beverages"

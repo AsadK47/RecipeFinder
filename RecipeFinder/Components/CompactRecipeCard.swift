@@ -30,6 +30,13 @@ struct CompactRecipeCard: View {
                         .foregroundColor(colorScheme == .dark ? .white.opacity(0.9) : .black.opacity(0.7))
                 }
                 
+                // Difficulty text and bars inline
+                HStack(spacing: 4) {
+                    DifficultyBarsView(difficulty: recipe.difficulty, size: 2.5)
+                    Text(recipe.difficulty)
+                        .font(.system(size: 9))
+                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.9) : .black.opacity(0.7))
+                }
             }
         }
         .padding(12)

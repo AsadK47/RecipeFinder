@@ -34,6 +34,7 @@
 		9E5447AF2EAA867600AD6D0A /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5447AD2EAA867600AD6D0A /* Constants.swift */; };
 		9E5447B02EAA867600AD6D0A /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5447AE2EAA867600AD6D0A /* Extensions.swift */; };
 		9E5447B22EAA92B900AD6D0A /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5447B12EAA92B900AD6D0A /* HapticManager.swift */; };
+		9E5447B42EABEDB200AD6D0A /* DifficultyBarsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5447B32EABEDB200AD6D0A /* DifficultyBarsView.swift */; };
 		9E605FFE2D0985BD00236896 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E605FFD2D0985BD00236896 /* PersistenceController.swift */; };
 		9E6060032D09CB6400236896 /* RecipeModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9E6060002D09CB6400236896 /* RecipeModel.xcdatamodeld */; };
 		9E6CF3AA2D83092A00D79DD6 /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 9E6CF3A92D83092A00D79DD6 /* ConfettiSwiftUI */; };
@@ -95,6 +96,7 @@
 		9E5447AD2EAA867600AD6D0A /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		9E5447AE2EAA867600AD6D0A /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		9E5447B12EAA92B900AD6D0A /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
+		9E5447B32EABEDB200AD6D0A /* DifficultyBarsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DifficultyBarsView.swift; sourceTree = "<group>"; };
 		9E605FFD2D0985BD00236896 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		9E6060012D09CB6400236896 /* RecipeModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = RecipeModel.xcdatamodel; sourceTree = "<group>"; };
 		9E6060022D09CB6400236896 /* RecipeModel 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 2.xcdatamodel"; sourceTree = "<group>"; };
@@ -155,6 +157,7 @@
 		9E4DC7322E9BF10900E17DDF /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				9E5447B32EABEDB200AD6D0A /* DifficultyBarsView.swift */,
 				9E2E34232E9DA10000E2E49F /* FlowLayout.swift */,
 				9E4DC7682E9D738500E17DDF /* FilterComponents.swift */,
 				9E4DC74C2E9C118B00E17DDF /* ShoppingListInputBar.swift */,
@@ -498,6 +501,7 @@
 				9E4DC7402E9C10F000E17DDF /* RecipeCard.swift in Sources */,
 				9E5447AF2EAA867600AD6D0A /* Constants.swift in Sources */,
 				9E5447B02EAA867600AD6D0A /* Extensions.swift in Sources */,
+				9E5447B42EABEDB200AD6D0A /* DifficultyBarsView.swift in Sources */,
 				9E4DC74D2E9C119000E17DDF /* ShoppingListInputBar.swift in Sources */,
 				9E4DC7482E9C114300E17DDF /* IngredientRowView.swift in Sources */,
 				9E4DC7692E9D738500E17DDF /* FilterComponents.swift in Sources */,

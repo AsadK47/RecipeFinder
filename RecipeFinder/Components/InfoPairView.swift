@@ -39,16 +39,31 @@ struct InfoItem: View {
     
     var body: some View {
         VStack(spacing: 8) {
-            Image(systemName: icon)
-                .font(.title2)
-                .foregroundColor(iconColor)
+            if icon != "chart.bar" {
+                Image(systemName: icon)
+                    .font(.title2)
+                    .foregroundColor(iconColor)
+            }
             Text(label)
                 .font(.caption)
                 .foregroundColor(.secondary)
-            Text(value)
-                .font(.subheadline)
-                .fontWeight(.semibold)
-                .foregroundColor(.primary)
+            
+            if icon == "chart.bar" {
+                // Show difficulty bars and text (bars replace icon position)
+                VStack(spacing: 6) {
+                    DifficultyBarsView(difficulty: value, size: 4)
+                    
+                    Text(value)
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.primary)
+                }
+            } else {
+                Text(value)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+            }
         }
         .frame(maxWidth: .infinity)
     }

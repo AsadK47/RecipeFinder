@@ -1,10 +1,13 @@
 import SwiftUI
+import ConfettiSwiftUI
 
 struct ShoppingListView: View {
     @ObservedObject var manager: ShoppingListManager
-    @State private var newItem: String = ""
+    @State private var searchText: String = ""
     @State private var showClearConfirmation = false
     @State private var collapsedCategories: Set<String> = []
+    @State private var confettiTrigger = 0
+    @FocusState private var isSearchFocused: Bool
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
     
@@ -64,15 +67,35 @@ struct ShoppingListView: View {
                             
                             Spacer()
                             
-                            VStack(spacing: 4) {
+                            VStack(spacing: 8) {
                                 Text("Shopping List")
                                     .font(.system(size: 34, weight: .bold))
                                     .foregroundColor(.white)
                                 
                                 if !manager.items.isEmpty {
-                                    Text("\(manager.uncheckedCount) of \(manager.items.count) items")
-                                        .font(.caption)
-                                        .foregroundColor(.white.opacity(0.8))
+                                    // Progress indicator integrated with count
+                                    HStack(spacing: 8) {
+                                        Text("\(manager.checkedCount)/\(manager.items.count)")
+                                            .font(.caption)
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(.white.opacity(0.9))
+                                        
+                                        GeometryReader { geometry in
+                                            ZStack(alignment: .leading) {
+                                                RoundedRectangle(cornerRadius: 2)
+                                                    .fill(.white.opacity(0.3))
+                                                    .frame(height: 4)
+                                                
+                                                RoundedRectangle(cornerRadius: 2)
+                                                    .fill(.white)
+                                                    .frame(
+                                                        width: geometry.size.width * (Double(manager.checkedCount) / Double(manager.items.count)),
+                                                        height: 4
+                                                    )
+                                            }
+                                        }
+                                        .frame(width: 60, height: 4)
+                                    }
                                 }
                             }
                             
@@ -84,54 +107,53 @@ struct ShoppingListView: View {
                         }
                         .padding(.horizontal, 20)
                         
-                        // Input section
-                        VStack(spacing: 12) {
+                        // Search bar with cancel option
+                        HStack(spacing: 12) {
                             HStack(spacing: 12) {
-                                TextField("Add item (e.g., milk, chicken, apples)...", text: $newItem)
-                                    .textFieldStyle(.plain)
-                                    .padding(14)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
-                                    )
+                                Image(systemName: "magnifyingglass")
+                                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.6))
+                                    .font(.body)
+                                
+                                TextField("Add item (e.g., milk, chicken, apples)...", text: $searchText)
+                                    .focused($isSearchFocused)
+                                    .autocorrectionDisabled()
                                     .foregroundColor(colorScheme == .dark ? .white : .black)
                                     .onSubmit(addItem)
                                 
-                                Button(action: addItem) {
-                                    Image(systemName: "plus.circle.fill")
-                                        .font(.system(size: 32))
-                                        .foregroundColor(.white)
-                                        .background(
-                                            Circle()
-                                                .fill(AppTheme.accentColor)
-                                                .frame(width: 32, height: 32)
-                                        )
-                                }
-                                .disabled(newItem.trimmingCharacters(in: .whitespaces).isEmpty)
-                                .opacity(newItem.trimmingCharacters(in: .whitespaces).isEmpty ? 0.5 : 1)
-                            }
-                            .padding(.horizontal, 20)
-                            
-                            // Progress bar
-                            if !manager.items.isEmpty {
-                                VStack(spacing: 4) {
-                                    ProgressView(value: Double(manager.checkedCount), total: Double(manager.items.count))
-                                        .progressViewStyle(LinearProgressViewStyle(tint: AppTheme.accentColor))
-                                    
-                                    HStack {
-                                        Text("\(manager.checkedCount) completed")
-                                            .font(.caption2)
+                                if !searchText.isEmpty {
+                                    Button(action: { 
+                                        searchText = ""
+                                    }) {
+                                        Image(systemName: "xmark.circle.fill")
                                             .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
-                                        Spacer()
-                                        Text("\(Int((Double(manager.checkedCount) / Double(manager.items.count)) * 100))%")
-                                            .font(.caption2)
-                                            .fontWeight(.semibold)
-                                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.9) : .black.opacity(0.7))
                                     }
                                 }
-                                .padding(.horizontal, 20)
+                            }
+                            .padding(14)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
+                            )
+                            
+                            if isSearchFocused || !searchText.isEmpty {
+                                Button(action: {
+                                    if !searchText.isEmpty {
+                                        addItem()
+                                    } else {
+                                        searchText = ""
+                                        isSearchFocused = false
+                                    }
+                                }) {
+                                    Text(searchText.isEmpty ? "Cancel" : "Add")
+                                        .foregroundColor(.white)
+                                        .fontWeight(.semibold)
+                                }
+                                .transition(.move(edge: .trailing).combined(with: .opacity))
                             }
                         }
+                        .padding(.horizontal, 20)
+                        .animation(.spring(response: 0.3), value: isSearchFocused)
+                        .animation(.spring(response: 0.3), value: searchText.isEmpty)
                     }
                     .padding(.top, 20)
                     .padding(.bottom, 16)
@@ -143,9 +165,32 @@ struct ShoppingListView: View {
                         shoppingListContent
                     }
                 }
+                .toolbar {
+                    ToolbarItemGroup(placement: .keyboard) {
+                        Spacer()
+                        Button {
+                            isSearchFocused = false
+                        } label: {
+                            Image(systemName: "keyboard.chevron.compact.down")
+                                .foregroundColor(.gray)
+                        }
+                    }
+                }
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)
+            .confettiCannon(
+                trigger: $confettiTrigger,
+                num: 50,
+                radius: 500.0
+            )
+            .onChange(of: manager.checkedCount) { oldValue, newValue in
+                // Trigger confetti when all items are checked (but only if there are items)
+                if !manager.items.isEmpty && newValue == manager.items.count {
+                    HapticManager.shared.success()
+                    confettiTrigger += 1
+                }
+            }
             .confirmationDialog("Clear Items", isPresented: $showClearConfirmation) {
                 if manager.checkedCount > 0 {
                     Button("Clear Checked Items (\(manager.checkedCount))", role: .destructive) {
@@ -335,10 +380,10 @@ struct ShoppingListView: View {
     }
     
     private func addItem() {
-        guard !newItem.trimmingCharacters(in: .whitespaces).isEmpty else { return }
+        guard !searchText.trimmingCharacters(in: .whitespaces).isEmpty else { return }
         withAnimation(.spring(response: 0.3)) {
-            manager.addItem(name: newItem)
-            newItem = ""
+            manager.addItem(name: searchText)
+            searchText = ""
         }
     }
     

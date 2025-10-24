@@ -1,4 +1,5 @@
 import SwiftUI
+import ConfettiSwiftUI
 
 struct RecipeDetailView: View {
     @State private var recipe: RecipeModel
@@ -9,6 +10,7 @@ struct RecipeDetailView: View {
     @ObservedObject var shoppingListManager: ShoppingListManager
     @State private var addedIngredients: Set<String> = []
     @State private var showAddedFeedback: String?
+    @State private var confettiCounter = 0
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
     
@@ -223,6 +225,18 @@ struct RecipeDetailView: View {
             }
         }
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: showAddedFeedback)
+        .confettiCannon(
+            trigger: $confettiCounter,
+            num: 50,
+            radius: 500.0
+        )
+        .onChange(of: instructionsState) { oldValue, newValue in
+            // Trigger confetti when all instructions are complete (not counting pre-prep)
+            if !recipe.instructions.isEmpty && newValue.allSatisfy({ $0 }) {
+                HapticManager.shared.success()
+                confettiCounter += 1
+            }
+        }
     }
     
     // COLLAPSIBLE section view with expand/collapse animation

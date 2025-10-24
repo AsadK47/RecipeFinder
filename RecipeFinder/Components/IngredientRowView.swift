@@ -10,11 +10,20 @@ struct IngredientRowView: View {
     
     var body: some View {
         HStack(spacing: 16) {
-            Button(action: { withAnimation(.spring(response: 0.3)) { toggle() } }) {
-                Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: 24))
-                    .foregroundColor(isChecked ? .green : .gray.opacity(0.3))
-                    .frame(width: 28, height: 28)
+            // Optional basket button for adding to shopping list
+            if let addToShopping = onAddToShopping {
+                Button(action: {
+                    withAnimation(.spring(response: 0.3)) {
+                        addToShopping()
+                    }
+                }) {
+                    Image(systemName: isInShoppingList ? "basket.fill" : "basket")
+                        .font(.system(size: 20))
+                        .foregroundColor(isInShoppingList ? AppTheme.accentColor : .gray.opacity(0.5))
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(PlainButtonStyle())
             }
             
             VStack(alignment: .leading, spacing: 4) {
@@ -31,20 +40,11 @@ struct IngredientRowView: View {
             
             Spacer()
             
-            // Optional basket button for adding to shopping list
-            if let addToShopping = onAddToShopping {
-                Button(action: {
-                    withAnimation(.spring(response: 0.3)) {
-                        addToShopping()
-                    }
-                }) {
-                    Image(systemName: isInShoppingList ? "basket.fill" : "basket")
-                        .font(.system(size: 20))
-                        .foregroundColor(isInShoppingList ? AppTheme.accentColor : .gray.opacity(0.5))
-                        .frame(width: 44, height: 44)
-                        .contentShape(Rectangle())
-                }
-                .buttonStyle(PlainButtonStyle())
+            Button(action: { withAnimation(.spring(response: 0.3)) { toggle() } }) {
+                Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 28))
+                    .foregroundColor(isChecked ? .green : .gray.opacity(0.4))
+                    .frame(width: 32, height: 32)
             }
         }
         .padding(.vertical, 8)

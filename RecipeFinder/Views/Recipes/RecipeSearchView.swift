@@ -30,7 +30,7 @@ struct RecipeSearchView: View {
             results = results.filter { selectedDifficulties.contains($0.difficulty) }
         }
         
-        // Cook time filter (OR logic - show if under any selected time limit)
+        // Cook time filter (OR logic - show if <= any selected time limit)
         if !selectedCookTimes.isEmpty {
             results = results.filter { recipe in
                 let time = TimeExtractor.extractMinutes(from: recipe.cookingTime)
@@ -287,7 +287,7 @@ struct FilterSheet: View {
     @Binding var selectedDifficulties: Set<String>
     @Binding var selectedCookTimes: Set<Int>
     
-    let cookTimeOptions = [15, 30, 45, 60, 90, 120]
+    let cookTimeOptions = [15, 30, 45, 60, 90, 120, 150]
     
     private let columns = [
         GridItem(.adaptive(minimum: 100, maximum: 120), spacing: 8, alignment: .center)

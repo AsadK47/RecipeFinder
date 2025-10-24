@@ -40,9 +40,7 @@ struct RecipeCard: View {
                     }
                     
                     HStack(spacing: 4) {
-                        Image(systemName: "chart.bar.fill")
-                            .font(.system(size: 10))
-                            .foregroundColor(.blue)
+                        DifficultyBarsView(difficulty: recipe.difficulty, size: 3)
                         Text(recipe.difficulty)
                             .font(.caption)
                             .foregroundColor(colorScheme == .dark ? .white.opacity(0.9) : .black.opacity(0.7))
