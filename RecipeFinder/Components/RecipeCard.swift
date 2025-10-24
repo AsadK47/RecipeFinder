@@ -19,26 +19,14 @@ struct RecipeCard: View {
             
             // Content in the middle
             VStack(alignment: .leading, spacing: 6) {
-                // Title and category on same line
-                HStack(alignment: .top, spacing: 8) {
-                    Text(recipe.name)
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
-                        .lineLimit(2)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    Text(recipe.category)
-                        .font(.system(size: 10))
-                        .fontWeight(.semibold)
-                        .padding(.horizontal, 7)
-                        .padding(.vertical, 3)
-                        .background(
-                            Capsule()
-                                .fill(AppTheme.accentColor)
-                        )
-                        .foregroundColor(.white)
-                }
+                // Title 
+                Text(recipe.name)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .lineLimit(2)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                
                 
                 // Time and difficulty on same line
                 HStack(spacing: 12) {
@@ -46,7 +34,7 @@ struct RecipeCard: View {
                         Image(systemName: "clock.fill")
                             .font(.system(size: 10))
                             .foregroundColor(.orange)
-                        Text(recipe.prepTime)
+                        Text(recipe.totalTime)
                             .font(.caption)
                             .foregroundColor(colorScheme == .dark ? .white.opacity(0.9) : .black.opacity(0.7))
                     }
@@ -77,3 +65,4 @@ struct RecipeCard: View {
         .accessibilityHint("Double tap to view recipe details")
     }
 }
+

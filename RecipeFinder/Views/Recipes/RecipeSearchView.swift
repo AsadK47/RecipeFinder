@@ -46,14 +46,14 @@ struct RecipeSearchView: View {
     }
     
     var categories: [String] {
-        let validCategories = ["Appetizer", "Main Course", "Side", "Dessert", "Breakfast", "Soup", "Drink", "Bread"]
+        let validCategories = ["Breakfast", "Dessert", "Drink", "Main", "Side", "Soup", "Starter"]
         return Array(Set(recipes.map { $0.category }))
             .filter { validCategories.contains($0) }
             .sorted()
     }
     
     var difficulties: [String] {
-        ["Easy", "Medium", "Hard"]
+        ["Basic", "Expert", "Intermediate"]
     }
     
     var gridColumns: [GridItem] {

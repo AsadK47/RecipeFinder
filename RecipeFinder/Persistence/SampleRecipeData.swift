@@ -8,8 +8,8 @@ extension PersistenceController {
         
         saveRecipe(
             name: "Achari Chicken Curry (Instant Pot Version)",
-            category: "Main Course",
-            difficulty: "Medium",
+            category: "Main",
+            difficulty: "Intermediate",
             prepTime: "20 minutes",
             cookingTime: "20 minutes",
             baseServings: 4,
@@ -55,8 +55,8 @@ extension PersistenceController {
         
         saveRecipe(
             name: "Air Fryer Crispy Chilli Beef",
-            category: "Main Course",
-            difficulty: "Medium",
+            category: "Main",
+            difficulty: "Intermediate",
             prepTime: "15 minutes",
             cookingTime: "10 minutes",
             baseServings: 4,
@@ -91,8 +91,8 @@ extension PersistenceController {
         
         saveRecipe(
             name: "Achari Gosht (Hot & Sour Lamb Curry Instant Pot Version)",
-            category: "Main Course",
-            difficulty: "Medium",
+            category: "Main",
+            difficulty: "Intermediate",
             prepTime: "25 minutes",
             cookingTime: "40 minutes",
             baseServings: 4,
@@ -140,7 +140,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Air-Fryer Doughnuts",
             category: "Dessert",
-            difficulty: "Medium",
+            difficulty: "Intermediate",
             prepTime: "15 minutes",
             cookingTime: "15 minutes",
             baseServings: 12,
@@ -172,8 +172,8 @@ extension PersistenceController {
         
         saveRecipe(
             name: "Air Fryer Korean Fried Chicken",
-            category: "Appetizer",
-            difficulty: "Hard",
+            category: "Starter",
+            difficulty: "Expert",
             prepTime: "20 minutes",
             cookingTime: "25 minutes",
             baseServings: 4,
@@ -205,8 +205,8 @@ extension PersistenceController {
         
         saveRecipe(
             name: "Air Fryer Southern Fried Chicken",
-            category: "Main Course",
-            difficulty: "Medium",
+            category: "Main",
+            difficulty: "Intermediate",
             prepTime: "30 minutes",
             cookingTime: "20 minutes",
             baseServings: 4,
@@ -238,7 +238,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Air Fryer Soy Sauce Chicken Wings",
             category: "Appetizer",
-            difficulty: "Easy",
+            difficulty: "Basic",
             prepTime: "10 minutes",
             cookingTime: "20 minutes",
             baseServings: 4,
@@ -268,7 +268,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Aloo Gosht (Mutton/Lamb and Potato Curry)",
             category: "Main Course",
-            difficulty: "Medium",
+            difficulty: "Intermediate",
             prepTime: "20 minutes",
             cookingTime: "1 hour",
             baseServings: 6,
@@ -304,7 +304,7 @@ extension PersistenceController {
         saveRecipe(
             name: "American Pancakes",
             category: "Breakfast",
-            difficulty: "Easy",
+            difficulty: "Basic",
             prepTime: "5 minutes",
             cookingTime: "10 minutes",
             baseServings: 4,
@@ -339,7 +339,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Apam Balik",
             category: "Dessert",
-            difficulty: "Medium",
+            difficulty: "Intermediate",
             prepTime: "10 minutes",
             cookingTime: "20 minutes",
             baseServings: 4,
@@ -383,7 +383,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Apple Crumble",
             category: "Dessert",
-            difficulty: "Easy",
+            difficulty: "Basic",
             prepTime: "10 minutes",
             cookingTime: "25-30 minutes",
             baseServings: 6,
@@ -426,7 +426,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Apple Crumble",
             category: "Dessert",
-            difficulty: "Easy",
+            difficulty: "Basic",
             prepTime: "10 minutes",
             cookingTime: "30 minutes",
             baseServings: 6,
@@ -458,7 +458,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Apple Jalebi (Gluten Free, Paleo, Vegan)",
             category: "Dessert",
-            difficulty: "Hard",
+            difficulty: "Expert",
             prepTime: "10 hours",
             cookingTime: "15 minutes",
             baseServings: 4,
@@ -498,7 +498,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Apple Crisp with Oat Topping",
             category: "Dessert",
-            difficulty: "Easy",
+            difficulty: "Basic",
             prepTime: "10 minutes",
             cookingTime: "35-40 minutes",
             baseServings: 6,
@@ -529,7 +529,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Apple Oat Crumble",
             category: "Dessert",
-            difficulty: "Easy",
+            difficulty: "Basic",
             prepTime: "20 minutes",
             cookingTime: "30 minutes",
             baseServings: 6,
@@ -567,7 +567,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Apple Crumble with Spiced Filling",
             category: "Dessert",
-            difficulty: "Medium",
+            difficulty: "Intermediate",
             prepTime: "15 minutes",
             cookingTime: "18-22 minutes",
             baseServings: 6,
@@ -607,7 +607,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Asian Lemon Wings",
             category: "Main Course",
-            difficulty: "Medium",
+            difficulty: "Intermediate",
             prepTime: "20 minutes",
             cookingTime: "16 minutes (air fry) or 8 minutes (deep fry)",
             baseServings: 4,
@@ -636,7 +636,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Baingan ka Bharta (Indian Eggplant)",
             category: "Main Course",
-            difficulty: "Medium",
+            difficulty: "Intermediate",
             prepTime: "10 minutes",
             cookingTime: "50 minutes",
             baseServings: 4,
@@ -682,7 +682,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Baked Cajun Garlic Butter Cod",
             category: "Main Course",
-            difficulty: "Easy",
+            difficulty: "Basic",
             prepTime: "5 minutes",
             cookingTime: "15 minutes",
             baseServings: 3,
@@ -712,7 +712,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Banana Roti - Thai Banana Pancakes",
             category: "Dessert",
-            difficulty: "Medium",
+            difficulty: "Intermediate",
             prepTime: "3+ hours (including resting time for dough)",
             cookingTime: "20 minutes",
             baseServings: 4,
@@ -762,7 +762,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Banana Bread - One 2lb loaf",
             category: "Dessert",
-            difficulty: "Easy",
+            difficulty: "Basic",
             prepTime: "15 minutes",
             cookingTime: "50 minutes to 1 hour",
             baseServings: 1, // Makes one standard 2lb loaf
@@ -808,8 +808,8 @@ extension PersistenceController {
         
         saveRecipe(
             name: "Bao Buns (A Foolproof Recipe)",
-            category: "Bread",
-            difficulty: "Medium",
+            category: "Side",
+            difficulty: "Intermediate",
             prepTime: "20 minutes",
             cookingTime: "10 minutes",
             baseServings: 8, // Makes 8-12 buns
@@ -851,7 +851,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Beijing Beef",
             category: "Main",
-            difficulty: "Easy",
+            difficulty: "Basic",
             prepTime: "30 minutes",
             cookingTime: "20 minutes",
             baseServings: 4,
@@ -893,7 +893,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Beef Chow Fun",
             category: "Main",
-            difficulty: "Medium",
+            difficulty: "Intermediate",
             prepTime: "20 minutes",
             cookingTime: "10 minutes",
             baseServings: 4,
@@ -938,7 +938,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Beef in Black Bean",
             category: "Main",
-            difficulty: "Medium",
+            difficulty: "Intermediate",
             prepTime: "10 minutes",
             cookingTime: "10 minutes",
             baseServings: 4,
@@ -986,9 +986,9 @@ extension PersistenceController {
         )
         
         saveRecipe(
-            name: "Beef Lo Mein (Easy)",
+            name: "Beef Lo Mein (Basic)",
             category: "Main",
-            difficulty: "Medium",
+            difficulty: "Intermediate",
             prepTime: "23 minutes",
             cookingTime: "7 minutes",
             baseServings: 4,
@@ -1036,7 +1036,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Beef Ragu Sauce (Classic)",
             category: "Main",
-            difficulty: "Medium",
+            difficulty: "Intermediate",
             prepTime: "15 minutes",
             cookingTime: "3 hours",
             baseServings: 4,
@@ -1087,7 +1087,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Beef Stew with Potatoes",
             category: "Main",
-            difficulty: "Medium",
+            difficulty: "Intermediate",
             prepTime: "20 minutes",
             cookingTime: "2 hours",
             baseServings: 4,
@@ -1127,9 +1127,9 @@ extension PersistenceController {
         )
         
         saveRecipe(
-            name: "Beef Tomato Stir-fry (Chinese - Quick and Easy)",
+            name: "Beef Tomato Stir-fry (Chinese - Quick and Basic)",
             category: "Main",
-            difficulty: "Medium",
+            difficulty: "Intermediate",
             prepTime: "15 minutes",
             cookingTime: "10 minutes",
             baseServings: 4,
@@ -1169,7 +1169,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Biang Biang Noodles",
             category: "Main",
-            difficulty: "Medium",
+            difficulty: "Intermediate",
             prepTime: "25 minutes",
             cookingTime: "5 minutes",
             baseServings: 4,
@@ -1206,7 +1206,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Black Sesame Rugelach",
             category: "Dessert",
-            difficulty: "Medium",
+            difficulty: "Intermediate",
             prepTime: "2 hours 30 minutes (includes chilling time)",
             cookingTime: "20-25 minutes",
             baseServings: 4,
@@ -1241,7 +1241,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Black Sesame Matcha Tiramisu",
             category: "Dessert",
-            difficulty: "Medium",
+            difficulty: "Intermediate",
             prepTime: "20 minutes",
             cookingTime: "20 minutes",
             baseServings: 4,
@@ -1272,7 +1272,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Black Sesame Tangyuan With Plain Skins And Matcha Skins",
             category: "Dessert",
-            difficulty: "Medium",
+            difficulty: "Intermediate",
             prepTime: "2 hours",
             cookingTime: "15 minutes",
             baseServings: 4,
@@ -1306,7 +1306,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Blueberry Cupcake with Streusel Topping",
             category: "Dessert",
-            difficulty: "Medium",
+            difficulty: "Intermediate",
             prepTime: "15 minutes",
             cookingTime: "35-40 minutes",
             baseServings: 4,
@@ -1348,7 +1348,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Brown Butter Chocolate Chip Cookies",
             category: "Dessert",
-            difficulty: "Medium",
+            difficulty: "Intermediate",
             prepTime: "1 hour (includes chilling time)",
             cookingTime: "18 minutes",
             baseServings: 4,
@@ -1385,7 +1385,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Best Ever Classic Chocolate Brownies",
             category: "Dessert",
-            difficulty: "Medium",
+            difficulty: "Intermediate",
             prepTime: "15 minutes",
             cookingTime: "25-30 minutes",
             baseServings: 4,
@@ -1419,7 +1419,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Brown Sugar Boba Matcha Latte",
             category: "Drink",
-            difficulty: "Medium",
+            difficulty: "Intermediate",
             prepTime: "25 minutes",
             cookingTime: "20 minutes",
             baseServings: 4,
@@ -1454,7 +1454,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Cabbage Dolmas",
             category: "Middle Eastern",
-            difficulty: "Medium",
+            difficulty: "Intermediate",
             prepTime: "15 minutes",
             cookingTime: "50 minutes",
             baseServings: 4,
@@ -1495,7 +1495,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Carrot Ginger Lentil Soup (Instant Pot or Stovetop)",
             category: "Soup",
-            difficulty: "Medium",
+            difficulty: "Intermediate",
             prepTime: "45 minutes",
             cookingTime: "6 minutes (plus pressure release time)",
             baseServings: 4,
@@ -1530,7 +1530,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Chicken Biryani (Instant Pot)",
             category: "Main Course",
-            difficulty: "Medium",
+            difficulty: "Intermediate",
             prepTime: "1 hour (plus marination)",
             cookingTime: "1.5 hours",
             baseServings: 4,
@@ -1574,7 +1574,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Raita",
             category: "Side",
-            difficulty: "Medium",
+            difficulty: "Intermediate",
             prepTime: "10 minutes",
             cookingTime: "None",
             baseServings: 4,
@@ -1605,7 +1605,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Chicken Chow Mein",
             category: "Main Course",
-            difficulty: "Medium",
+            difficulty: "Intermediate",
             prepTime: "15 minutes",
             cookingTime: "35 minutes",
             baseServings: 4,
@@ -1652,7 +1652,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Harissa Salmon with Crispy Potatoes & Chickpeas",
             category: "Main",
-            difficulty: "Easy",
+            difficulty: "Basic",
             prepTime: "10 minutes",
             cookingTime: "28 minutes",
             baseServings: 2,
@@ -1691,7 +1691,7 @@ extension PersistenceController {
         saveRecipe(
             name: "Keema (Instant Pot Ground Beef Curry)",
             category: "Main Course",
-            difficulty: "Medium",
+            difficulty: "Intermediate",
             prepTime: "30 minutes",
             cookingTime: "30 minutes",
             baseServings: 4,

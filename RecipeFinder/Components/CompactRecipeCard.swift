@@ -17,7 +17,7 @@ struct CompactRecipeCard: View {
                     .font(.caption)
                     .fontWeight(.semibold)
                     .foregroundColor(colorScheme == .dark ? .white : .black)
-                    .lineLimit(2)
+                    .lineLimit(3)
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity)
                 
@@ -25,21 +25,11 @@ struct CompactRecipeCard: View {
                     Image(systemName: "clock.fill")
                         .font(.system(size: 8))
                         .foregroundColor(.orange)
-                    Text(recipe.prepTime)
+                    Text(recipe.totalTime)
                         .font(.system(size: 9))
                         .foregroundColor(colorScheme == .dark ? .white.opacity(0.9) : .black.opacity(0.7))
                 }
                 
-                Text(recipe.category)
-                    .font(.system(size: 9))
-                    .fontWeight(.semibold)
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 3)
-                    .background(
-                        Capsule()
-                            .fill(AppTheme.accentColor)
-                    )
-                    .foregroundColor(.white)
             }
         }
         .padding(12)
