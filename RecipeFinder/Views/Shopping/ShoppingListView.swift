@@ -329,7 +329,7 @@ struct ShoppingListView: View {
                     .textCase(nil)
                     .listRowInsets(EdgeInsets())
                 }
-                .headerProminence(.increased)
+                .headerProminence(.standard)
             }
         }
         .listStyle(.plain)
