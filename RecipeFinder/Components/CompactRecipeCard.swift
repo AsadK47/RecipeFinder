@@ -31,7 +31,7 @@ struct CompactRecipeCard: View {
                 }
                 
                 // Difficulty text and bars inline
-                HStack(spacing: 4) {
+                HStack(spacing: 6) {
                     DifficultyBarsView(difficulty: recipe.difficulty, size: 2.5)
                     Text(recipe.difficulty)
                         .font(.system(size: 9))
@@ -40,6 +40,7 @@ struct CompactRecipeCard: View {
             }
         }
         .padding(12)
+        .frame(height: 220)
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)

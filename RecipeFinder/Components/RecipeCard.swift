@@ -39,7 +39,7 @@ struct RecipeCard: View {
                             .foregroundColor(colorScheme == .dark ? .white.opacity(0.9) : .black.opacity(0.7))
                     }
                     
-                    HStack(spacing: 4) {
+                    HStack(spacing: 6) {
                         DifficultyBarsView(difficulty: recipe.difficulty, size: 3)
                         Text(recipe.difficulty)
                             .font(.caption)
