@@ -57,7 +57,7 @@ struct RecipeSearchView: View {
     }
     
     var gridColumns: [GridItem] {
-        Array(repeating: GridItem(.flexible(), spacing: 12), count: viewMode.columns)
+        [GridItem(.flexible(), spacing: 16), GridItem(.flexible(), spacing: 16)]
     }
 
     var body: some View {
@@ -195,7 +195,7 @@ struct RecipeSearchView: View {
                                 .padding(.horizontal, 20)
                                 .padding(.bottom, 20)
                             } else {
-                                LazyVGrid(columns: gridColumns, spacing: 12) {
+                                LazyVGrid(columns: gridColumns, spacing: 16) {
                                     ForEach(filteredRecipes) { recipe in
                                         NavigationLink(destination: RecipeDetailView(recipe: recipe, shoppingListManager: shoppingListManager)) {
                                             CompactRecipeCard(recipe: recipe)
@@ -206,7 +206,7 @@ struct RecipeSearchView: View {
                                         })
                                     }
                                 }
-                                .padding(.horizontal, 20)
+                                .padding(.horizontal, 16)
                                 .padding(.vertical, 8)
                                 .padding(.bottom, 20)
                             }

@@ -5,11 +5,15 @@ struct CompactRecipeCard: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(alignment: .center, spacing: 0) {
             // Image with rounded corners
             RecipeImageView(imageName: recipe.imageName, height: 100)
-                .frame(width: 100, height: 100)
+                .frame(width: 100, height: 100, alignment: .center)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
+                .padding(.top, 12)
+            
+            Spacer()
+                .frame(height: 12)
             
             // Recipe info
             VStack(spacing: 6) {
@@ -38,9 +42,10 @@ struct CompactRecipeCard: View {
                         .foregroundColor(colorScheme == .dark ? .white.opacity(0.9) : .black.opacity(0.7))
                 }
             }
+            .padding(.bottom, 12)
         }
-        .padding(12)
-        .frame(height: 220)
+        .padding(.horizontal, 12)
+        .frame(maxWidth: .infinity, maxHeight: 220, alignment: .top)
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)

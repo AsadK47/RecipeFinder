@@ -56,7 +56,7 @@ struct Ingredient: Identifiable, Codable, Hashable {
     // Unit Conversion (for metric/imperial)
     func converted(to system: MeasurementSystem, scaleFactor: Double = 1.0) -> (quantity: Double, unit: String) {
         let scaledQty = scaledQuantity(for: scaleFactor)
-        return UnitConversion.convert(value: scaledQty, unit: unit, to: system)
+        return UnitConversion.convert(value: scaledQty, unit: unit, to: system, ingredientName: name)
     }
     
     func formattedWithUnit(for scaleFactor: Double, system: MeasurementSystem) -> String {
