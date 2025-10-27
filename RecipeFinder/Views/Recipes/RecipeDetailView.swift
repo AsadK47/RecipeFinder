@@ -118,27 +118,110 @@ struct RecipeDetailView: View {
                     }
                     .padding(.horizontal, 20)
                     
-                    // Collapsible Ingredients section
-                    collapsibleSection(title: "Ingredients", icon: "leaf.fill") {
-                        VStack(spacing: 12) {
-                            ForEach(recipe.ingredients.indices, id: \.self) { index in
-                                IngredientRowView(
-                                    ingredient: recipe.ingredients[index],
-                                    isChecked: ingredientsState[index],
-                                    toggle: { 
-                                        HapticManager.shared.light()
-                                        ingredientsState[index].toggle()
-                                    },
-                                    scaleFactor: recipe.scaleFactor,
-                                    measurementSystem: measurementSystem,
-                                    onAddToShopping: {
-                                        addIngredientToShoppingList(recipe.ingredients[index])
-                                    },
-                                    isInShoppingList: isIngredientInShoppingList(recipe.ingredients[index])
+                    // Collapsible Ingredients section with unit toggle
+                    VStack(alignment: .leading, spacing: 12) {
+                        // Custom header with unit toggle
+                        HStack(spacing: 8) {
+                            Button(action: {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    if expandedSections.contains("Ingredients") {
+                                        expandedSections.remove("Ingredients")
+                                    } else {
+                                        expandedSections.insert("Ingredients")
+                                    }
+                                }
+                            }) {
+                                HStack(spacing: 8) {
+                                    Image(systemName: "leaf.fill")
+                                        .foregroundColor(.white)
+                                        .font(.title3)
+                                    Text("Ingredients")
+                                        .font(.title2)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(.white)
+                                }
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                            
+                            Spacer()
+                            
+                            // Unit toggle
+                            Button(action: {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    measurementSystem = measurementSystem == .metric ? .imperial : .metric
+                                    HapticManager.shared.selection()
+                                }
+                            }) {
+                                HStack(spacing: 6) {
+                                    Image(systemName: measurementSystem.icon)
+                                        .font(.caption)
+                                    Text(measurementSystem.rawValue)
+                                        .font(.subheadline)
+                                        .fontWeight(.medium)
+                                }
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(Color.white.opacity(0.2))
                                 )
                             }
+                            .buttonStyle(PlainButtonStyle())
+                            
+                            // Chevron indicator
+                            Button(action: {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    if expandedSections.contains("Ingredients") {
+                                        expandedSections.remove("Ingredients")
+                                    } else {
+                                        expandedSections.insert("Ingredients")
+                                    }
+                                }
+                            }) {
+                                Image(systemName: "chevron.down")
+                                    .font(.title3)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.white.opacity(0.8))
+                                    .rotationEffect(.degrees(expandedSections.contains("Ingredients") ? 0 : -90))
+                                    .animation(.spring(response: 0.3), value: expandedSections.contains("Ingredients"))
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
+                        .padding(.top, 24)
+                        
+                        // Collapsible content
+                        if expandedSections.contains("Ingredients") {
+                            GlassCard {
+                                VStack(spacing: 12) {
+                                    ForEach(recipe.ingredients.indices, id: \.self) { index in
+                                        IngredientRowView(
+                                            ingredient: recipe.ingredients[index],
+                                            isChecked: ingredientsState[index],
+                                            toggle: { 
+                                                HapticManager.shared.light()
+                                                ingredientsState[index].toggle()
+                                            },
+                                            scaleFactor: recipe.scaleFactor,
+                                            measurementSystem: measurementSystem,
+                                            onAddToShopping: {
+                                                addIngredientToShoppingList(recipe.ingredients[index])
+                                            },
+                                            isInShoppingList: isIngredientInShoppingList(recipe.ingredients[index])
+                                        )
+                                    }
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(20)
+                            }
+                            .transition(.asymmetric(
+                                insertion: .scale(scale: 0.95).combined(with: .opacity),
+                                removal: .scale(scale: 0.95).combined(with: .opacity)
+                            ))
                         }
                     }
+                    .frame(maxWidth: .infinity)
+                    .padding(.horizontal, 20)
                     
                     // Collapsible Pre-prep section
                     if !recipe.prePrepInstructions.isEmpty {
