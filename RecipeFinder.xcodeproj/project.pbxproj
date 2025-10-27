@@ -35,6 +35,7 @@
 		9E5447B02EAA867600AD6D0A /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5447AE2EAA867600AD6D0A /* Extensions.swift */; };
 		9E5447B22EAA92B900AD6D0A /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5447B12EAA92B900AD6D0A /* HapticManager.swift */; };
 		9E5447B42EABEDB200AD6D0A /* DifficultyBarsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5447B32EABEDB200AD6D0A /* DifficultyBarsView.swift */; };
+		9E5447B62EB0270700AD6D0A /* UnitConversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5447B52EB0270700AD6D0A /* UnitConversion.swift */; };
 		9E605FFE2D0985BD00236896 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E605FFD2D0985BD00236896 /* PersistenceController.swift */; };
 		9E6060032D09CB6400236896 /* RecipeModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9E6060002D09CB6400236896 /* RecipeModel.xcdatamodeld */; };
 		9E6CF3AA2D83092A00D79DD6 /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 9E6CF3A92D83092A00D79DD6 /* ConfettiSwiftUI */; };
@@ -97,6 +98,7 @@
 		9E5447AE2EAA867600AD6D0A /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		9E5447B12EAA92B900AD6D0A /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
 		9E5447B32EABEDB200AD6D0A /* DifficultyBarsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DifficultyBarsView.swift; sourceTree = "<group>"; };
+		9E5447B52EB0270700AD6D0A /* UnitConversion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitConversion.swift; sourceTree = "<group>"; };
 		9E605FFD2D0985BD00236896 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		9E6060012D09CB6400236896 /* RecipeModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = RecipeModel.xcdatamodel; sourceTree = "<group>"; };
 		9E6060022D09CB6400236896 /* RecipeModel 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 2.xcdatamodel"; sourceTree = "<group>"; };
@@ -196,6 +198,7 @@
 		9E4DC7662E9C603B00E17DDF /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				9E5447B52EB0270700AD6D0A /* UnitConversion.swift */,
 				9E5447B12EAA92B900AD6D0A /* HapticManager.swift */,
 				9E5447AD2EAA867600AD6D0A /* Constants.swift */,
 				9E5447AE2EAA867600AD6D0A /* Extensions.swift */,
@@ -472,6 +475,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9E5447B62EB0270700AD6D0A /* UnitConversion.swift in Sources */,
 				9E83ED8F2EA78A3900425CC0 /* KitchenInventoryManager.swift in Sources */,
 				9E4DC75C2E9C198300E17DDF /* RecipeDataExtensions.swift in Sources */,
 				9E4DC7562E9C12CD00E17DDF /* SettingsView.swift in Sources */,

@@ -5,6 +5,7 @@ struct IngredientRowView: View {
     let isChecked: Bool
     let toggle: () -> Void
     var scaleFactor: Double = 1.0
+    var measurementSystem: MeasurementSystem = .metric
     var onAddToShopping: (() -> Void)? = nil
     var isInShoppingList: Bool = false
     
@@ -33,7 +34,7 @@ struct IngredientRowView: View {
                     .strikethrough(isChecked)
                     .foregroundColor(isChecked ? .secondary : .primary)
                 
-                Text("\(ingredient.formattedQuantity(for: scaleFactor)) \(ingredient.unit)")
+                Text(ingredient.formattedWithUnit(for: scaleFactor, system: measurementSystem))
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }

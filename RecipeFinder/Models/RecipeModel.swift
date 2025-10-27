@@ -52,6 +52,29 @@ struct Ingredient: Identifiable, Codable, Hashable {
             return formatter.string(from: NSNumber(value: quantity)) ?? "\(quantity)"
         }
     }
+    
+    // Unit Conversion (for metric/imperial)
+    func converted(to system: MeasurementSystem, scaleFactor: Double = 1.0) -> (quantity: Double, unit: String) {
+        let scaledQty = scaledQuantity(for: scaleFactor)
+        return UnitConversion.convert(value: scaledQty, unit: unit, to: system)
+    }
+    
+    func formattedWithUnit(for scaleFactor: Double, system: MeasurementSystem) -> String {
+        let converted = converted(to: system, scaleFactor: scaleFactor)
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.maximumFractionDigits = 2
+        formatter.minimumFractionDigits = 0
+        
+        let formattedValue: String
+        if converted.quantity.truncatingRemainder(dividingBy: 1) == 0 {
+            formattedValue = String(format: "%.0f", converted.quantity)
+        } else {
+            formattedValue = formatter.string(from: NSNumber(value: converted.quantity)) ?? "\(converted.quantity)"
+        }
+        
+        return converted.unit.isEmpty ? formattedValue : "\(formattedValue) \(converted.unit)"
+    }
 }
 
 struct RecipeModel: Identifiable, Codable, Hashable {

@@ -5,6 +5,7 @@ struct SettingsView: View {
     @State private var showResetAlert: Bool = false
     @AppStorage("appearanceMode") private var appearanceMode: AppearanceMode = .system
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .purple
+    @AppStorage("measurementSystem") private var measurementSystem: MeasurementSystem = .metric
     @Environment(\.colorScheme) var colorScheme
     
     enum AppearanceMode: String, CaseIterable {
@@ -92,6 +93,48 @@ struct SettingsView: View {
                                             )
                                         }
                                         .onChange(of: selectedTheme) { oldValue, newValue in
+                                            HapticManager.shared.selection()
+                                        }
+                                    }
+                                    
+                                    Divider()
+                                    
+                                    // Measurement System Picker
+                                    HStack(spacing: 16) {
+                                        Image(systemName: measurementSystem.icon)
+                                            .foregroundColor(.blue)
+                                            .frame(width: 30)
+                                        
+                                        Text("Units")
+                                            .font(.subheadline)
+                                            .fontWeight(.medium)
+                                        
+                                        Spacer()
+                                        
+                                        Menu {
+                                            Picker("Units", selection: $measurementSystem) {
+                                                ForEach(MeasurementSystem.allCases, id: \.self) { system in
+                                                    Text(system.rawValue)
+                                                        .tag(system)
+                                                }
+                                            }
+                                        } label: {
+                                            HStack(spacing: 6) {
+                                                Text(measurementSystem.rawValue)
+                                                    .font(.subheadline)
+                                                    .foregroundColor(.blue)
+                                                Image(systemName: "chevron.up.chevron.down")
+                                                    .font(.caption2)
+                                                    .foregroundColor(.gray)
+                                            }
+                                            .padding(.horizontal, 12)
+                                            .padding(.vertical, 6)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 8)
+                                                    .fill(Color(.systemGray6))
+                                            )
+                                        }
+                                        .onChange(of: measurementSystem) { oldValue, newValue in
                                             HapticManager.shared.selection()
                                         }
                                     }

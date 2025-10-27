@@ -11,6 +11,7 @@ struct RecipeDetailView: View {
     @State private var addedIngredients: Set<String> = []
     @State private var showAddedFeedback: String?
     @State private var confettiCounter = 0
+    @AppStorage("measurementSystem") private var measurementSystem: MeasurementSystem = .metric
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
     
@@ -129,6 +130,7 @@ struct RecipeDetailView: View {
                                         ingredientsState[index].toggle()
                                     },
                                     scaleFactor: recipe.scaleFactor,
+                                    measurementSystem: measurementSystem,
                                     onAddToShopping: {
                                         addIngredientToShoppingList(recipe.ingredients[index])
                                     },
@@ -332,8 +334,8 @@ struct RecipeDetailView: View {
         HapticManager.shared.light()
         
         // Create item with ingredient name including quantity and unit as part of the name
-        let scaledQuantity = ingredient.formattedQuantity(for: recipe.scaleFactor)
-        let fullName = "\(ingredient.name) (\(scaledQuantity) \(ingredient.unit))"
+        let formattedWithUnit = ingredient.formattedWithUnit(for: recipe.scaleFactor, system: measurementSystem)
+        let fullName = "\(ingredient.name) (\(formattedWithUnit))"
         shoppingListManager.addItem(name: fullName, quantity: 1, category: nil)
         
         // Mark as added immediately for UI update
