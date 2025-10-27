@@ -67,37 +67,9 @@ struct ShoppingListView: View {
                             
                             Spacer()
                             
-                            VStack(spacing: 8) {
-                                Text("Shopping List")
-                                    .font(.system(size: 34, weight: .bold))
-                                    .foregroundColor(.white)
-                                
-                                if !manager.items.isEmpty {
-                                    // Progress indicator integrated with count
-                                    HStack(spacing: 8) {
-                                        Text("\(manager.checkedCount)/\(manager.items.count)")
-                                            .font(.caption)
-                                            .fontWeight(.semibold)
-                                            .foregroundColor(.white.opacity(0.9))
-                                        
-                                        GeometryReader { geometry in
-                                            ZStack(alignment: .leading) {
-                                                RoundedRectangle(cornerRadius: 2)
-                                                    .fill(.white.opacity(0.3))
-                                                    .frame(height: 4)
-                                                
-                                                RoundedRectangle(cornerRadius: 2)
-                                                    .fill(.white)
-                                                    .frame(
-                                                        width: geometry.size.width * (Double(manager.checkedCount) / Double(manager.items.count)),
-                                                        height: 4
-                                                    )
-                                            }
-                                        }
-                                        .frame(width: 60, height: 4)
-                                    }
-                                }
-                            }
+                            Text("Shopping List")
+                                .font(.system(size: 34, weight: .bold))
+                                .foregroundColor(.white)
                             
                             Spacer()
                             
@@ -154,6 +126,23 @@ struct ShoppingListView: View {
                         .padding(.horizontal, 20)
                         .animation(.spring(response: 0.3), value: isSearchFocused)
                         .animation(.spring(response: 0.3), value: searchText.isEmpty)
+                        
+                        // Progress bar below search
+                        if !manager.items.isEmpty {
+                            VStack(spacing: 8) {
+                                ProgressView(value: Double(manager.checkedCount), total: Double(manager.items.count))
+                                    .progressViewStyle(LinearProgressViewStyle(tint: AppTheme.accentColor))
+                                    .frame(height: 8)
+                                
+                                HStack {
+                                    Text("\(manager.checkedCount)/\(manager.items.count) completed")
+                                        .font(.caption)
+                                        .foregroundColor(.white.opacity(0.8))
+                                    Spacer()
+                                }
+                            }
+                            .padding(.horizontal, 20)
+                        }
                     }
                     .padding(.top, 20)
                     .padding(.bottom, 16)

@@ -39,31 +39,28 @@ struct InfoItem: View {
     
     var body: some View {
         VStack(spacing: 8) {
-            if icon != "chart.bar" {
-                Image(systemName: icon)
-                    .font(.title2)
-                    .foregroundColor(iconColor)
+            // Icon or Bars with fixed height for alignment
+            Group {
+                if icon == "chart.bar" {
+                    // Show difficulty bars at top (replacing icon)
+                    DifficultyBarsView(difficulty: value, size: 4)
+                        .frame(height: 28) // Match icon height
+                } else {
+                    Image(systemName: icon)
+                        .font(.title2)
+                        .foregroundColor(iconColor)
+                        .frame(height: 28) // Fixed height for alignment
+                }
             }
+            
             Text(label)
                 .font(.caption)
                 .foregroundColor(.secondary)
             
-            if icon == "chart.bar" {
-                // Show difficulty bars and text (bars replace icon position)
-                VStack(spacing: 6) {
-                    DifficultyBarsView(difficulty: value, size: 4)
-                    
-                    Text(value)
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.primary)
-                }
-            } else {
-                Text(value)
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.primary)
-            }
+            Text(value)
+                .font(.subheadline)
+                .fontWeight(.semibold)
+                .foregroundColor(.primary)
         }
         .frame(maxWidth: .infinity)
     }
