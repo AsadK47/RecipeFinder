@@ -158,25 +158,25 @@ class RecipeShareUtility {
             let timeLabel = "Prep time" as NSString
             timeLabel.draw(at: CGPoint(x: margin + 50, y: cardY + 15), withAttributes: [
                 .font: UIFont.systemFont(ofSize: 10, weight: .medium),
-                .foregroundColor: UIColor.secondaryLabel
+                .foregroundColor: UIColor.darkGray
             ])
             
             let prepValue = recipe.prepTime as NSString
             prepValue.draw(at: CGPoint(x: margin + 50, y: cardY + 30), withAttributes: [
                 .font: UIFont.systemFont(ofSize: 13, weight: .semibold),
-                .foregroundColor: UIColor.label
+                .foregroundColor: UIColor.black
             ])
             
             let cookLabel = "Cook time" as NSString
             cookLabel.draw(at: CGPoint(x: margin + 15, y: cardY + 52), withAttributes: [
                 .font: UIFont.systemFont(ofSize: 10, weight: .medium),
-                .foregroundColor: UIColor.secondaryLabel
+                .foregroundColor: UIColor.darkGray
             ])
             
             let cookValue = recipe.cookingTime as NSString
             cookValue.draw(at: CGPoint(x: margin + 15, y: cardY + 67), withAttributes: [
                 .font: UIFont.systemFont(ofSize: 13, weight: .semibold),
-                .foregroundColor: UIColor.label
+                .foregroundColor: UIColor.black
             ])
             
             // Card 2: Difficulty & Category
@@ -191,25 +191,25 @@ class RecipeShareUtility {
             let diffLabel = "Difficulty" as NSString
             diffLabel.draw(at: CGPoint(x: rightCardX + 50, y: cardY + 15), withAttributes: [
                 .font: UIFont.systemFont(ofSize: 10, weight: .medium),
-                .foregroundColor: UIColor.secondaryLabel
+                .foregroundColor: UIColor.darkGray
             ])
             
             let diffValue = recipe.difficulty as NSString
             diffValue.draw(at: CGPoint(x: rightCardX + 50, y: cardY + 30), withAttributes: [
                 .font: UIFont.systemFont(ofSize: 13, weight: .semibold),
-                .foregroundColor: UIColor.label
+                .foregroundColor: UIColor.black
             ])
             
             let catLabel = "Category" as NSString
             catLabel.draw(at: CGPoint(x: rightCardX + 15, y: cardY + 52), withAttributes: [
                 .font: UIFont.systemFont(ofSize: 10, weight: .medium),
-                .foregroundColor: UIColor.secondaryLabel
+                .foregroundColor: UIColor.darkGray
             ])
             
             let catValue = "\(recipe.category) • \(recipe.baseServings) servings" as NSString
             catValue.draw(at: CGPoint(x: rightCardX + 15, y: cardY + 67), withAttributes: [
                 .font: UIFont.systemFont(ofSize: 13, weight: .semibold),
-                .foregroundColor: UIColor.label
+                .foregroundColor: UIColor.black
             ])
             
             yPos += cardHeight + 24
