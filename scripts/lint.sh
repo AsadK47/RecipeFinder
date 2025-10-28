@@ -29,7 +29,7 @@ echo "📁 Project root: $PROJECT_ROOT"
 echo ""
 
 # Run SwiftLint
-swiftlint lint --path RecipeFinder/ --config .swiftlint.yml
+swiftlint lint RecipeFinder/ --config .swiftlint.yml
 
 # Check exit code
 if [ $? -eq 0 ]; then

@@ -1,10 +1,17 @@
 import SwiftUI
 
+// MARK: - Card Style Enum
+enum CardStyle: String, CaseIterable {
+    case frosted = "Frosted Glass"
+    case solid = "Solid"
+}
+
 struct SettingsView: View {
     @State private var confettiTrigger: Int = 0
     @State private var showResetAlert: Bool = false
     @AppStorage("appearanceMode") private var appearanceMode: AppearanceMode = .system
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @Environment(\.colorScheme) var colorScheme
     
     enum AppearanceMode: String, CaseIterable {
@@ -134,6 +141,48 @@ struct SettingsView: View {
                                             )
                                         }
                                         .onChange(of: appearanceMode) { oldValue, newValue in
+                                            HapticManager.shared.selection()
+                                        }
+                                    }
+                                    
+                                    Divider()
+                                    
+                                    // Card Style Toggle
+                                    HStack(spacing: 16) {
+                                        Image(systemName: "rectangle.inset.filled")
+                                            .foregroundColor(.cyan)
+                                            .frame(width: 30)
+                                        
+                                        Text("Card Style")
+                                            .font(.subheadline)
+                                            .fontWeight(.medium)
+                                        
+                                        Spacer()
+                                        
+                                        Menu {
+                                            Picker("Card Style", selection: $cardStyle) {
+                                                Label("Frosted Glass", systemImage: "sparkles")
+                                                    .tag(CardStyle.frosted)
+                                                Label("Solid", systemImage: "square.fill")
+                                                    .tag(CardStyle.solid)
+                                            }
+                                        } label: {
+                                            HStack(spacing: 6) {
+                                                Text(cardStyle.rawValue)
+                                                    .font(.subheadline)
+                                                    .foregroundColor(AppTheme.accentColor)
+                                                Image(systemName: "chevron.up.chevron.down")
+                                                    .font(.caption2)
+                                                    .foregroundColor(.gray)
+                                            }
+                                            .padding(.horizontal, 12)
+                                            .padding(.vertical, 6)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 8)
+                                                    .fill(Color(.systemGray6))
+                                            )
+                                        }
+                                        .onChange(of: cardStyle) { oldValue, newValue in
                                             HapticManager.shared.selection()
                                         }
                                     }

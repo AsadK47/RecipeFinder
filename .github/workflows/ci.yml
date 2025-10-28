@@ -26,7 +26,7 @@ jobs:
       
       - name: Run SwiftLint
         run: |
-          swiftlint lint --path RecipeFinder/ --config .swiftlint.yml --reporter github-actions-logging
+          swiftlint lint RecipeFinder/ --config .swiftlint.yml --reporter github-actions-logging
 
   test:
     name: 🧪 Run Unit Tests
