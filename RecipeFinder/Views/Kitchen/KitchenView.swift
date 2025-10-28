@@ -251,10 +251,13 @@ struct KitchenView: View {
             )
             .padding(.horizontal, 20)
             
-            ScrollView(.horizontal, showsIndicators: false) {
+                ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 16) {
                     ForEach(quickMatchRecipes.prefix(10)) { recipe in
-                        NavigationLink(destination: RecipeDetailView(recipe: recipe, shoppingListManager: shoppingListManager)) {
+                        NavigationLink(destination: RecipeDetailView(recipe: recipe, shoppingListManager: shoppingListManager, onFavoriteToggle: {
+                            // Refresh recipes when favorite is toggled
+                            recipes = PersistenceController.shared.fetchRecipes()
+                        })) {
                             QuickMatchRecipeCard(
                                 recipe: recipe,
                                 matchPercentage: matchPercentage(

@@ -7,10 +7,26 @@ struct CompactRecipeCard: View {
     var body: some View {
         VStack(alignment: .center, spacing: 0) {
             // Image with rounded corners
-            RecipeImageView(imageName: recipe.imageName, height: 100)
-                .frame(width: 100, height: 100, alignment: .center)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .padding(.top, 12)
+            ZStack(alignment: .topLeading) {
+                RecipeImageView(imageName: recipe.imageName, height: 100)
+                    .frame(width: 100, height: 100, alignment: .center)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                
+                // Favorite badge
+                if recipe.isFavorite {
+                    Image(systemName: "heart.fill")
+                        .font(.system(size: 12))
+                        .foregroundColor(.red)
+                        .padding(4)
+                        .background(
+                            Circle()
+                                .fill(.white)
+                                .shadow(color: .black.opacity(0.2), radius: 2)
+                        )
+                        .offset(x: -4, y: -4)
+                }
+            }
+            .padding(.top, 12)
             
             Spacer()
                 .frame(height: 12)

@@ -1,149 +1,97 @@
-# RecipeFinder — Find tasty meals from what's in your kitchen
+# RecipeFinder
 
-Welcome to RecipeFinder, a cozy SwiftUI app that helps you turn whatever's in your kitchen into delicious meals. Think of it like a friendly kitchen assistant: tell it what ingredients you have, and it suggests tasty recipes you can make right now.
+A SwiftUI-based iOS application for recipe discovery through ingredient-based search and kitchen inventory management.
 
-Got leftovers? Want to use up produce before it goes bad? This app is designed to help.
-
-<!-- Badges -->
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](#)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Quick highlights
-----------------
+## Overview
 
-- Find recipes by ingredients instantly
-- Save favorites and build a small cookbook
-- Keep a simple 'Kitchen' inventory (formerly Pantry) of what you have on hand
-- Works offline with local persistence
+RecipeFinder implements an ingredient-driven recipe matching system with local persistence, enabling users to identify recipes based on available kitchen inventory. The application employs Core Data for efficient local storage and operates fully offline.
 
-Built with
-----------
+## Technical Stack
 
-- Swift & SwiftUI
-- Core Data for local persistence
-- ConfettiSwiftUI for delightful micro-interactions
+- **Language:** Swift 5.7+
+- **UI Framework:** SwiftUI
+- **Data Persistence:** Core Data
+- **Minimum Target:** iOS 15.0+
+- **Dependencies:** ConfettiSwiftUI
 
-Prerequisites
--------------
+## Core Features
 
-- macOS with Xcode 14+ installed
-- iOS 15.0+ (deployment target)
+- **Ingredient-Based Search:** Query recipes by available ingredients
+- **Kitchen Inventory System:** Persistent storage of ingredient availability
+- **Recipe Import:** URL-based recipe import with Schema.org parsing
+- **Shopping List Management:** Track required ingredients
+- **Unit Conversion:** Dynamic metric/imperial measurement conversion
+- **Favorites System:** Bookmark your favorite recipes with visual indicators
+- **Recipe Sharing:** Export recipes as text, PDF, or copy to clipboard
 
+## Screenshots
 
-Screenshots
------------
+<img src="docs/screenshots/screenshot-home.png" width="500" alt="Home View"/>
+<img src="docs/screenshots/screenshot-recipe-detail.png" width="500" alt="Recipe Detail"/>
+<img src="docs/screenshots/screenshot-kitchen.png" width="500" alt="Kitchen Inventory"/>
 
-Add screenshots to the `docs/screenshots/` folder and they will show up here. Suggested filenames:
+## System Requirements
 
-- `screenshot-home.png` — Home/Recipes list
-- `screenshot-recipe-detail.png` — Recipe detail view
-- `screenshot-kitchen.png` — Kitchen (pantry) inventory
-
-![Home screenshot placeholder](docs/screenshots/screenshot-home.png)
-![Recipe detail placeholder](docs/screenshots/screenshot-recipe-detail.png)
-![Kitchen placeholder](docs/screenshots/screenshot-kitchen.png)
-
-Cool features
--------------
-
-Here are some of the standout features packed into RecipeFinder:
-
-- Quick Recipe Matches — Automatically shows recipes you can already make from the items in your Kitchen.
-- Smart Kitchen Inventory — Add, toggle, and categorize ingredients you have on hand.
-- Quick Add — Rapidly add commonly used ingredients grouped by category.
-- Shopping List Integration — Add missing ingredients straight from a recipe to your shopping list.
-- Favorites & Bookmarks — Save recipes you love for fast access.
-- Delightful micro-interactions — small touches like confetti on special actions thanks to ConfettiSwiftUI.
-
-These are pulled together with a modern SwiftUI interface and local persistence so everything works offline.
-
-Requirements
-------------
-
-- iOS 15.0+
-- Xcode 14.0+
+- macOS with Xcode 14.0+
+- iOS 15.0+ deployment target
 - Swift 5.7+
 
-Quick start
------------
-
-1. Clone the repository:
+## Installation
 
 ```bash
-git clone https://github.com/yourusername/RecipeFinder.git
+git clone https://github.com/AsadK47/RecipeFinder.git
 cd RecipeFinder
-```
-
-2. Open in Xcode:
-
-```bash
 open RecipeFinder.xcodeproj
 ```
 
-3. Select a simulator or device and press Cmd + R.
+Build and run: `⌘R`
 
-How to use
-----------
+## Architecture
 
-- Add items to your Kitchen inventory using the Kitchen view.
-- Use the search bar to find recipes by ingredient.
-- Tap a recipe to view details, add to favorites, or add missing ingredients to your shopping list.
-
-Quick usage example
--------------------
-
-1. Open Kitchen and add items you have using the Quick Add or search
-2. Visit the Recipes tab to see Quick Recipe Matches
-3. Tap a recipe → Add missing ingredients to the Shopping List
-
-Project structure
------------------
-
-```text
+```
 RecipeFinder/
-├── RecipeFinder/               # App source
-├── Components/                  # Reusable SwiftUI components
-├── Models/                      # Data models and CoreData/xcdatamodeld
-├── Persistence/                 # Storage and managers (Kitchen, Shopping List)
-├── Views/                       # SwiftUI screens grouped by feature
-└── docs/screenshots/            # Put screenshots here to show in README
+├── Components/          # Reusable UI components
+├── Models/              # Data models and Core Data schema
+├── Persistence/         # Storage managers
+├── Utilities/           # Helper functions and extensions
+├── Views/               # Feature-specific view hierarchy
+└── Theme/               # Styling and theming
 ```
 
-Development
------------
+## Testing
 
-Run unit tests: Press Cmd + U.
+Execute unit tests: `⌘U`
 
-Common tips
------------
-- Clean build: Cmd + Shift + K
-- Reset simulator: Device → Erase All Content and Settings (in Simulator menu)
-- Delete derived data:
+## Development Commands
 
 ```bash
+# Clean build
+⌘⇧K
+
+# Clear derived data
 rm -rf ~/Library/Developer/Xcode/DerivedData
+
+# Reset simulator
+Device → Erase All Content and Settings
 ```
 
-Contributing
-------------
+## Contributing
 
-Contributions are welcome. Please fork the repo and open a pull request with your changes. If you add new features, include screenshots in `docs/screenshots/` and update this README.
+Submit pull requests with:
+- Clear description of changes
+- Updated documentation
+- Screenshots for UI modifications (300px width)
 
-License
--------
+## License
 
-This project is licensed under the terms in the [LICENSE](LICENSE) file.
+MIT License - see [LICENSE](LICENSE) file
 
-Roadmap
--------
+## Future Development
 
-- Add iCloud sync for cross-device Kitchen & Shopping list
-- ML-driven ingredient suggestions
-- More localized content and accessibility improvements
-
-Need help?
-----------
-
-Open an issue on GitHub for questions, bugs, or feature requests. I'm happy to help you get the most out of RecipeFinder.
-
-Thanks for checking this out — happy cooking! 🍳
+- iCloud synchronization
+- Machine learning ingredient suggestions
+- Enhanced accessibility features
+- Localization support

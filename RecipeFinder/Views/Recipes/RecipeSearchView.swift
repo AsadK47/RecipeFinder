@@ -9,11 +9,18 @@ struct RecipeSearchView: View {
     @State private var selectedCategories: Set<String> = []
     @State private var selectedDifficulties: Set<String> = []
     @State private var selectedCookTimes: Set<Int> = []
+    @State private var showFavoritesOnly = false
+    @State private var showImportSheet = false
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
 
     var filteredRecipes: [RecipeModel] {
         var results = recipes
+        
+        // Favorites filter
+        if showFavoritesOnly {
+            results = results.filter { $0.isFavorite }
+        }
         
         // Search filter
         if !searchText.isEmpty {
@@ -42,7 +49,7 @@ struct RecipeSearchView: View {
     }
     
     var activeFilterCount: Int {
-        return selectedCategories.count + selectedDifficulties.count + selectedCookTimes.count
+        return selectedCategories.count + selectedDifficulties.count + selectedCookTimes.count + (showFavoritesOnly ? 1 : 0)
     }
     
     var categories: [String] {
@@ -104,7 +111,19 @@ struct RecipeSearchView: View {
                             
                             Spacer()
                             
+                            // Combined actions menu
                             Menu {
+                                // Import option
+                                Button(action: {
+                                    HapticManager.shared.selection()
+                                    showImportSheet = true
+                                }) {
+                                    Label("Import Recipe", systemImage: "plus.circle")
+                                }
+                                
+                                Divider()
+                                
+                                // View mode options
                                 ForEach(RecipeViewMode.allCases, id: \.self) { mode in
                                     Button(action: {
                                         HapticManager.shared.selection()
@@ -113,10 +132,13 @@ struct RecipeSearchView: View {
                                         }
                                     }) {
                                         Label(mode.rawValue, systemImage: mode.icon)
+                                        if viewMode == mode {
+                                            Image(systemName: "checkmark")
+                                        }
                                     }
                                 }
                             } label: {
-                                Image(systemName: viewMode.icon)
+                                Image(systemName: "ellipsis.circle.fill")
                                     .font(.title2)
                                     .foregroundColor(.white)
                                     .padding(12)
@@ -135,6 +157,13 @@ struct RecipeSearchView: View {
                         if activeFilterCount > 0 {
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 8) {
+                                    if showFavoritesOnly {
+                                        FilterChip(label: "Favorites", icon: "heart.fill") {
+                                            HapticManager.shared.light()
+                                            showFavoritesOnly = false
+                                        }
+                                    }
+                                    
                                     ForEach(Array(selectedCategories), id: \.self) { category in
                                         FilterChip(label: category, icon: "fork.knife") {
                                             HapticManager.shared.light()
@@ -183,7 +212,9 @@ struct RecipeSearchView: View {
                             if viewMode == .list {
                                 LazyVStack(spacing: 10) {
                                     ForEach(filteredRecipes) { recipe in
-                                        NavigationLink(destination: RecipeDetailView(recipe: recipe, shoppingListManager: shoppingListManager)) {
+                                        NavigationLink(destination: RecipeDetailView(recipe: recipe, shoppingListManager: shoppingListManager, onFavoriteToggle: {
+                                            refreshRecipes()
+                                        })) {
                                             RecipeCard(recipe: recipe, viewMode: .list)
                                         }
                                         .buttonStyle(PlainButtonStyle())
@@ -197,7 +228,9 @@ struct RecipeSearchView: View {
                             } else {
                                 LazyVGrid(columns: gridColumns, spacing: 16) {
                                     ForEach(filteredRecipes) { recipe in
-                                        NavigationLink(destination: RecipeDetailView(recipe: recipe, shoppingListManager: shoppingListManager)) {
+                                        NavigationLink(destination: RecipeDetailView(recipe: recipe, shoppingListManager: shoppingListManager, onFavoriteToggle: {
+                                            refreshRecipes()
+                                        })) {
                                             CompactRecipeCard(recipe: recipe)
                                         }
                                         .buttonStyle(PlainButtonStyle())
@@ -222,8 +255,20 @@ struct RecipeSearchView: View {
                     difficulties: difficulties,
                     selectedCategories: $selectedCategories,
                     selectedDifficulties: $selectedDifficulties,
-                    selectedCookTimes: $selectedCookTimes
+                    selectedCookTimes: $selectedCookTimes,
+                    showFavoritesOnly: $showFavoritesOnly
                 )
+            }
+            .sheet(isPresented: $showImportSheet) {
+                RecipeImportView { importedRecipe in
+                    // Add the imported recipe to the list
+                    recipes.append(importedRecipe)
+                    
+                    // Save to Core Data
+                    PersistenceController.shared.saveRecipeModel(importedRecipe)
+                    
+                    HapticManager.shared.success()
+                }
             }
         }
     }
@@ -271,7 +316,13 @@ struct RecipeSearchView: View {
             selectedCategories.removeAll()
             selectedDifficulties.removeAll()
             selectedCookTimes.removeAll()
+            showFavoritesOnly = false
         }
+    }
+    
+    private func refreshRecipes() {
+        // Reload recipes from Core Data to get updated favorite status
+        recipes = PersistenceController.shared.fetchRecipes()
     }
 }
 
@@ -286,6 +337,7 @@ struct FilterSheet: View {
     @Binding var selectedCategories: Set<String>
     @Binding var selectedDifficulties: Set<String>
     @Binding var selectedCookTimes: Set<Int>
+    @Binding var showFavoritesOnly: Bool
     
     let cookTimeOptions = [15, 30, 45, 60, 90, 120, 150]
     
@@ -301,6 +353,23 @@ struct FilterSheet: View {
                 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 24) {
+                        // Favorites Toggle
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack {
+                                Text("Show Favorites Only")
+                                    .font(.headline)
+                                    .foregroundColor(.white)
+                                
+                                Spacer()
+                                
+                                Toggle("", isOn: $showFavoritesOnly)
+                                    .tint(AppTheme.accentColor)
+                            }
+                        }
+                        
+                        Divider()
+                            .background(Color.white.opacity(0.3))
+                        
                         // Category Filter
                         VStack(alignment: .leading, spacing: 12) {
                             Text("Course / Category")
@@ -373,6 +442,7 @@ struct FilterSheet: View {
                         selectedCategories.removeAll()
                         selectedDifficulties.removeAll()
                         selectedCookTimes.removeAll()
+                        showFavoritesOnly = false
                     }
                     .foregroundColor(.white)
                 }

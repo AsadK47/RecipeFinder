@@ -11,13 +11,20 @@ struct RecipeDetailView: View {
     @State private var addedIngredients: Set<String> = []
     @State private var showAddedFeedback: String?
     @State private var confettiCounter = 0
+    @State private var showShareSheet = false
+    @State private var shareItems: [Any] = []
+    @State private var isGeneratingPDF = false
     @AppStorage("measurementSystem") private var measurementSystem: MeasurementSystem = .metric
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
     
-    init(recipe: RecipeModel, shoppingListManager: ShoppingListManager) {
+    // Callback to refresh recipes list when favorite is toggled
+    var onFavoriteToggle: (() -> Void)?
+    
+    init(recipe: RecipeModel, shoppingListManager: ShoppingListManager, onFavoriteToggle: (() -> Void)? = nil) {
         self.recipe = recipe
         self.shoppingListManager = shoppingListManager
+        self.onFavoriteToggle = onFavoriteToggle
         _ingredientsState = State(initialValue: Array(repeating: false, count: recipe.ingredients.count))
         _instructionsState = State(initialValue: Array(repeating: false, count: recipe.instructions.count))
         _prePrepState = State(initialValue: Array(repeating: false, count: recipe.prePrepInstructions.count))
@@ -288,6 +295,54 @@ struct RecipeDetailView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                HStack(spacing: 16) {
+                    // Favorite button
+                    Button(action: toggleFavorite) {
+                        Image(systemName: recipe.isFavorite ? "heart.fill" : "heart")
+                            .font(.title3)
+                            .foregroundColor(recipe.isFavorite ? .red : .white)
+                    }
+                    
+                    // Share button
+                    Menu {
+                        Button(action: { shareAsText() }) {
+                            Label("Share as Text", systemImage: "doc.text")
+                        }
+                        
+                        Button(action: { shareAsPDF() }) {
+                            Label("Share as PDF", systemImage: "doc.richtext")
+                        }
+                        
+                        Button(action: { copyToClipboard() }) {
+                            Label("Copy to Clipboard", systemImage: "doc.on.clipboard")
+                        }
+                    } label: {
+                        ZStack {
+                            Image(systemName: "square.and.arrow.up")
+                                .font(.title3)
+                                .foregroundColor(.white)
+                                .opacity(isGeneratingPDF ? 0 : 1)
+                            
+                            if isGeneratingPDF {
+                                ProgressView()
+                                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                    .scaleEffect(0.8)
+                            }
+                        }
+                    }
+                    .disabled(isGeneratingPDF)
+                }
+            }
+        }
+        .sheet(isPresented: $showShareSheet) {
+            if #available(iOS 16.0, *) {
+                ShareSheet(items: shareItems)
+            } else {
+                ShareSheet(items: shareItems)
+            }
+        }
         .overlay(alignment: .bottom) {
             if let feedback = showAddedFeedback {
                 HStack(spacing: 12) {
@@ -450,4 +505,99 @@ struct RecipeDetailView: View {
         // Don't check actual shopping list - let user add multiple times if needed
         return false
     }
+    
+    // MARK: - Favorites
+    
+    private func toggleFavorite() {
+        HapticManager.shared.light()
+        recipe.isFavorite.toggle()
+        
+        // Update in Core Data
+        PersistenceController.shared.toggleFavorite(withId: recipe.id)
+        
+        // Trigger callback if provided
+        onFavoriteToggle?()
+    }
+    
+    // MARK: - Sharing
+    
+    private func shareAsText() {
+        HapticManager.shared.light()
+        
+        // Generate text immediately (it's fast)
+        let text = RecipeShareUtility.generateTextFormat(recipe: recipe, measurementSystem: measurementSystem)
+        
+        // Wrap in an array for the share sheet
+        shareItems = [text as NSString]
+        showShareSheet = true
+    }
+    
+    private func shareAsPDF() {
+        guard !isGeneratingPDF else { return }
+        
+        HapticManager.shared.light()
+        isGeneratingPDF = true
+        
+        // Generate PDF on background thread
+        DispatchQueue.global(qos: .userInitiated).async {
+            if let pdfData = RecipeShareUtility.generatePDF(
+                recipe: recipe, 
+                measurementSystem: measurementSystem,
+                theme: appTheme
+            ) {
+                // Create temporary file
+                let tempURL = FileManager.default.temporaryDirectory
+                    .appendingPathComponent("\(recipe.name.replacingOccurrences(of: "/", with: "-")).pdf")
+                
+                do {
+                    try pdfData.write(to: tempURL)
+                    
+                    DispatchQueue.main.async {
+                        shareItems = [tempURL]
+                        showShareSheet = true
+                        isGeneratingPDF = false
+                        HapticManager.shared.success()
+                    }
+                } catch {
+                    print("❌ Failed to save PDF: \(error)")
+                    DispatchQueue.main.async {
+                        isGeneratingPDF = false
+                    }
+                }
+            } else {
+                DispatchQueue.main.async {
+                    isGeneratingPDF = false
+                }
+            }
+        }
+    }
+    
+    private func copyToClipboard() {
+        HapticManager.shared.light()
+        
+        // Generate and copy immediately
+        let text = RecipeShareUtility.generateTextFormat(recipe: recipe, measurementSystem: measurementSystem)
+        UIPasteboard.general.string = text
+        HapticManager.shared.success()
+        
+        // Show feedback
+        showAddedFeedback = "Recipe copied"
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            withAnimation(.easeOut(duration: 0.8)) {
+                showAddedFeedback = nil
+            }
+        }
+    }
+}
+
+// MARK: - Share Sheet
+struct ShareSheet: UIViewControllerRepresentable {
+    let items: [Any]
+    
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        let controller = UIActivityViewController(activityItems: items, applicationActivities: nil)
+        return controller
+    }
+    
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }

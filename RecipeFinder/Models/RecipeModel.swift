@@ -19,13 +19,13 @@ struct Ingredient: Identifiable, Codable, Hashable {
         self._name = name
     }
     
-    // MARK: - Codable
+    // Codable
     enum CodingKeys: String, CodingKey {
         case id, baseQuantity, unit
         case _name = "name"
     }
     
-    // MARK: - Hashable Conformance
+    // Hashable Conformance
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
@@ -91,6 +91,7 @@ struct RecipeModel: Identifiable, Codable, Hashable {
     let instructions: [String]
     let notes: String
     let imageName: String?
+    var isFavorite: Bool
 
     init(
         id: UUID = UUID(),
@@ -105,7 +106,8 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         prePrepInstructions: [String],
         instructions: [String],
         notes: String,
-        imageName: String? = nil
+        imageName: String? = nil,
+        isFavorite: Bool = false
     ) {
         self.id = id
         self.name = name
@@ -120,6 +122,7 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         self.instructions = instructions
         self.notes = notes
         self.imageName = imageName
+        self.isFavorite = isFavorite
     }
     
     // MARK: - Hashable Conformance
@@ -130,7 +133,8 @@ struct RecipeModel: Identifiable, Codable, Hashable {
     static func == (lhs: RecipeModel, rhs: RecipeModel) -> Bool {
         lhs.id == rhs.id &&
         lhs.currentServings == rhs.currentServings &&
-        lhs.ingredients == rhs.ingredients
+        lhs.ingredients == rhs.ingredients &&
+        lhs.isFavorite == rhs.isFavorite
     }
     
     // MARK: - Computed Properties (Required for UI)

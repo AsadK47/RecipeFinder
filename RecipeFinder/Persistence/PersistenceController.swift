@@ -64,7 +64,8 @@ class PersistenceController {
         prePrepInstructions: [String],
         instructions: [String],
         notes: String,
-        imageName: String
+        imageName: String,
+        isFavorite: Bool = false
     ) {
         let context = container.viewContext
         
@@ -95,6 +96,7 @@ class PersistenceController {
         recipe.setValue(instructions, forKey: "instructions")
         recipe.setValue(notes, forKey: "notes")
         recipe.setValue(imageName, forKey: "imageName")
+        recipe.setValue(isFavorite, forKey: "isFavorite")
         
         do {
             try context.save()
@@ -102,6 +104,25 @@ class PersistenceController {
         } catch {
             print("❌ Failed to save recipe '\(name)': \(error.localizedDescription)")
         }
+    }
+    
+    // Helper method to save a RecipeModel directly
+    func saveRecipeModel(_ recipe: RecipeModel) {
+        saveRecipe(
+            name: recipe.name,
+            category: recipe.category,
+            difficulty: recipe.difficulty,
+            prepTime: recipe.prepTime,
+            cookingTime: recipe.cookingTime,
+            baseServings: recipe.baseServings,
+            currentServings: recipe.currentServings,
+            ingredients: recipe.ingredients,
+            prePrepInstructions: recipe.prePrepInstructions,
+            instructions: recipe.instructions,
+            notes: recipe.notes,
+            imageName: recipe.imageName ?? "",
+            isFavorite: recipe.isFavorite
+        )
     }
     
     func fetchRecipes() -> [RecipeModel] {
@@ -137,6 +158,7 @@ class PersistenceController {
                 let instructions = result.value(forKey: "instructions") as? [String] ?? []
                 let notes = result.value(forKey: "notes") as? String ?? ""
                 let imageName = result.value(forKey: "imageName") as? String
+                let isFavorite = result.value(forKey: "isFavorite") as? Bool ?? false
                 
                 // Decode ingredients
                 let ingredients: [Ingredient]
@@ -160,7 +182,8 @@ class PersistenceController {
                     prePrepInstructions: prePrepInstructions,
                     instructions: instructions,
                     notes: notes,
-                    imageName: imageName
+                    imageName: imageName,
+                    isFavorite: isFavorite
                 )
             }
         } catch {
@@ -183,6 +206,24 @@ class PersistenceController {
             print("✅ Recipe deleted successfully")
         } catch {
             print("❌ Failed to delete recipe: \(error.localizedDescription)")
+        }
+    }
+    
+    func toggleFavorite(withId id: UUID) {
+        let context = container.viewContext
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Recipe")
+        fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        
+        do {
+            let results = try context.fetch(fetchRequest)
+            if let recipe = results.first {
+                let currentFavorite = recipe.value(forKey: "isFavorite") as? Bool ?? false
+                recipe.setValue(!currentFavorite, forKey: "isFavorite")
+                try context.save()
+                print("✅ Recipe favorite status toggled to \(!currentFavorite)")
+            }
+        } catch {
+            print("❌ Failed to toggle favorite: \(error.localizedDescription)")
         }
     }
 }

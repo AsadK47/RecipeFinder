@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9E212D722EB12375005743F7 /* RecipeShareUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E212D712EB12375005743F7 /* RecipeShareUtility.swift */; };
 		9E2E34212E9D9F8500E2E49F /* KitchenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E2E34202E9D9F8500E2E49F /* KitchenView.swift */; };
 		9E2E34242E9DA10000E2E49F /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E2E34232E9DA10000E2E49F /* FlowLayout.swift */; };
 		9E4DC7382E9BF19700E17DDF /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E4DC7372E9BF19700E17DDF /* AppTheme.swift */; };
@@ -36,6 +37,8 @@
 		9E5447B22EAA92B900AD6D0A /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5447B12EAA92B900AD6D0A /* HapticManager.swift */; };
 		9E5447B42EABEDB200AD6D0A /* DifficultyBarsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5447B32EABEDB200AD6D0A /* DifficultyBarsView.swift */; };
 		9E5447B62EB0270700AD6D0A /* UnitConversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5447B52EB0270700AD6D0A /* UnitConversion.swift */; };
+		9E5447B82EB0407F00AD6D0A /* RecipeImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5447B72EB0407F00AD6D0A /* RecipeImporter.swift */; };
+		9E5447BA2EB0409700AD6D0A /* RecipeImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5447B92EB0409700AD6D0A /* RecipeImportView.swift */; };
 		9E605FFE2D0985BD00236896 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E605FFD2D0985BD00236896 /* PersistenceController.swift */; };
 		9E6060032D09CB6400236896 /* RecipeModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9E6060002D09CB6400236896 /* RecipeModel.xcdatamodeld */; };
 		9E6CF3AA2D83092A00D79DD6 /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 9E6CF3A92D83092A00D79DD6 /* ConfettiSwiftUI */; };
@@ -68,6 +71,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9E212D6F2EB12315005743F7 /* RecipeModel 9.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 9.xcdatamodel"; sourceTree = "<group>"; };
+		9E212D702EB12315005743F7 /* RecipeModel 10.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 10.xcdatamodel"; sourceTree = "<group>"; };
+		9E212D712EB12375005743F7 /* RecipeShareUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeShareUtility.swift; sourceTree = "<group>"; };
 		9E2E34202E9D9F8500E2E49F /* KitchenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KitchenView.swift; sourceTree = "<group>"; };
 		9E2E34232E9DA10000E2E49F /* FlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowLayout.swift; sourceTree = "<group>"; };
 		9E37D12A2D09082C005BC8FA /* readme.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = readme.md; sourceTree = "<group>"; };
@@ -99,6 +105,8 @@
 		9E5447B12EAA92B900AD6D0A /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
 		9E5447B32EABEDB200AD6D0A /* DifficultyBarsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DifficultyBarsView.swift; sourceTree = "<group>"; };
 		9E5447B52EB0270700AD6D0A /* UnitConversion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitConversion.swift; sourceTree = "<group>"; };
+		9E5447B72EB0407F00AD6D0A /* RecipeImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeImporter.swift; sourceTree = "<group>"; };
+		9E5447B92EB0409700AD6D0A /* RecipeImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeImportView.swift; sourceTree = "<group>"; };
 		9E605FFD2D0985BD00236896 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		9E6060012D09CB6400236896 /* RecipeModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = RecipeModel.xcdatamodel; sourceTree = "<group>"; };
 		9E6060022D09CB6400236896 /* RecipeModel 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 2.xcdatamodel"; sourceTree = "<group>"; };
@@ -198,6 +206,8 @@
 		9E4DC7662E9C603B00E17DDF /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				9E212D712EB12375005743F7 /* RecipeShareUtility.swift */,
+				9E5447B72EB0407F00AD6D0A /* RecipeImporter.swift */,
 				9E5447B52EB0270700AD6D0A /* UnitConversion.swift */,
 				9E5447B12EAA92B900AD6D0A /* HapticManager.swift */,
 				9E5447AD2EAA867600AD6D0A /* Constants.swift */,
@@ -249,6 +259,7 @@
 		9E7B9A812E9BECE5007E1786 /* Recipes */ = {
 			isa = PBXGroup;
 			children = (
+				9E5447B92EB0409700AD6D0A /* RecipeImportView.swift */,
 				9E4DC74F2E9C11F400E17DDF /* RecipeDetailView.swift */,
 				9E7B9A852E9BED12007E1786 /* RecipeSearchView.swift */,
 			);
@@ -495,6 +506,7 @@
 				9E4DC7522E9C12A900E17DDF /* IngredientSearchView.swift in Sources */,
 				9E4DC7672E9C603B00E17DDF /* CategoryClassifier.swift in Sources */,
 				9E4DC7582E9C136E00E17DDF /* RecipeViewMode.swift in Sources */,
+				9E212D722EB12375005743F7 /* RecipeShareUtility.swift in Sources */,
 				9E5447B22EAA92B900AD6D0A /* HapticManager.swift in Sources */,
 				9E4DC7622E9C5D8A00E17DDF /* ShoppingListManager.swift in Sources */,
 				9E4DC73A2E9C0EBD00E17DDF /* ShoppingListItem.swift in Sources */,
@@ -504,10 +516,12 @@
 				9E605FFE2D0985BD00236896 /* PersistenceController.swift in Sources */,
 				9E4DC7402E9C10F000E17DDF /* RecipeCard.swift in Sources */,
 				9E5447AF2EAA867600AD6D0A /* Constants.swift in Sources */,
+				9E5447B82EB0407F00AD6D0A /* RecipeImporter.swift in Sources */,
 				9E5447B02EAA867600AD6D0A /* Extensions.swift in Sources */,
 				9E5447B42EABEDB200AD6D0A /* DifficultyBarsView.swift in Sources */,
 				9E4DC74D2E9C119000E17DDF /* ShoppingListInputBar.swift in Sources */,
 				9E4DC7482E9C114300E17DDF /* IngredientRowView.swift in Sources */,
+				9E5447BA2EB0409700AD6D0A /* RecipeImportView.swift in Sources */,
 				9E4DC7692E9D738500E17DDF /* FilterComponents.swift in Sources */,
 				9E6060032D09CB6400236896 /* RecipeModel.xcdatamodeld in Sources */,
 			);
@@ -859,6 +873,8 @@
 		9E6060002D09CB6400236896 /* RecipeModel.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				9E212D6F2EB12315005743F7 /* RecipeModel 9.xcdatamodel */,
+				9E212D702EB12315005743F7 /* RecipeModel 10.xcdatamodel */,
 				9E45FAE32DC690E300F46909 /* RecipeModel 8.xcdatamodel */,
 				9EC3AE612D0F430F006C30E1 /* RecipeModel 2.xcdatamodel */,
 				9EC3AE602D0BA9A4006C30E1 /* RecipeModel 7.xcdatamodel */,
@@ -869,7 +885,7 @@
 				9E6060012D09CB6400236896 /* RecipeModel.xcdatamodel */,
 				9E6060022D09CB6400236896 /* RecipeModel 2.xcdatamodel */,
 			);
-			currentVersion = 9E45FAE32DC690E300F46909 /* RecipeModel 8.xcdatamodel */;
+			currentVersion = 9E212D702EB12315005743F7 /* RecipeModel 10.xcdatamodel */;
 			path = RecipeModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

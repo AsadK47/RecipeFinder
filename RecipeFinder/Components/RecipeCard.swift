@@ -13,9 +13,25 @@ struct RecipeCard: View {
     var body: some View {
         HStack(spacing: 12) {
             // Image on the left with rounded corners
-            RecipeImageView(imageName: recipe.imageName, height: 70)
-                .frame(width: 70, height: 70)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
+            ZStack(alignment: .topLeading) {
+                RecipeImageView(imageName: recipe.imageName, height: 70)
+                    .frame(width: 70, height: 70)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                
+                // Favorite badge
+                if recipe.isFavorite {
+                    Image(systemName: "heart.fill")
+                        .font(.system(size: 14))
+                        .foregroundColor(.red)
+                        .padding(4)
+                        .background(
+                            Circle()
+                                .fill(.white)
+                                .shadow(color: .black.opacity(0.2), radius: 2)
+                        )
+                        .offset(x: -4, y: -4)
+                }
+            }
             
             // Content in the middle
             VStack(alignment: .leading, spacing: 6) {
