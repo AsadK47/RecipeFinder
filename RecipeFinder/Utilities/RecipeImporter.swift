@@ -190,7 +190,8 @@ class RecipeImporter: ObservableObject {
         } catch ImportError.noSchemaFound {
             print("❌ Import failed: No schema found")
             await MainActor.run {
-                errorMessage = "No recipe data found. This site may not support automatic import."
+                errorMessage = "This website doesn't support automatic import"
+                debugInfo = "Try sites like AllRecipes, Food Network, or Serious Eats. Or copy the recipe manually."
                 isLoading = false
             }
         } catch ImportError.missingRequiredField(let field) {
@@ -223,6 +224,12 @@ class RecipeImporter: ObservableObject {
         let matches = regex.matches(in: html, range: range)
         print("🔍 Found \(matches.count) JSON-LD script tags")
         
+        // If no JSON-LD found, try to find recipe data in other formats
+        if matches.isEmpty {
+            print("⚠️ No JSON-LD found, trying alternate patterns...")
+            return tryAlternatePatterns(in: html)
+        }
+        
         for (index, match) in matches.enumerated() {
             guard let jsonRange = Range(match.range(at: 1), in: html) else { 
                 print("  ⚠️ Skipping match #\(index + 1) - couldn't extract range")
@@ -243,19 +250,34 @@ class RecipeImporter: ObservableObject {
             
             print("📋 Processing JSON-LD block #\(index + 1) (\(jsonString.count) chars)")
             
+            // Show first 200 chars of JSON for debugging
+            let preview = String(jsonString.prefix(200))
+            print("  📄 JSON preview: \(preview)...")
+            
             // Try to decode as single recipe
-            if let recipe = try? JSONDecoder().decode(SchemaRecipe.self, from: jsonData),
-               recipe.name != nil {
-                print("✅ Found recipe (single object): \(recipe.name ?? "")")
-                return recipe
+            do {
+                let recipe = try JSONDecoder().decode(SchemaRecipe.self, from: jsonData)
+                if recipe.name != nil {
+                    print("✅ Found recipe (single object): \(recipe.name ?? "")")
+                    return recipe
+                } else {
+                    print("  ⚠️ Decoded but no name field")
+                }
+            } catch {
+                print("  ⚠️ Not a single recipe: \(error.localizedDescription)")
             }
             
             // Try to decode as array and find Recipe type
-            if let array = try? JSONDecoder().decode([SchemaRecipe].self, from: jsonData) {
+            do {
+                let array = try JSONDecoder().decode([SchemaRecipe].self, from: jsonData)
                 if let recipe = array.first(where: { $0.name != nil }) {
                     print("✅ Found recipe (array): \(recipe.name ?? "")")
                     return recipe
+                } else {
+                    print("  ⚠️ Array decoded but no recipe with name found")
                 }
+            } catch {
+                print("  ⚠️ Not an array: \(error.localizedDescription)")
             }
             
             // Try to decode as wrapper object with @graph
@@ -310,6 +332,59 @@ class RecipeImporter: ObservableObject {
         }
         
         print("❌ No valid recipe found in any JSON-LD block")
+        return nil
+    }
+    
+    private func tryAlternatePatterns(in html: String) -> SchemaRecipe? {
+        print("🔍 Trying alternate recipe detection patterns...")
+        
+        // Pattern 1: Look for JSON embedded in JavaScript variables
+        let jsPatterns = [
+            #"var\s+recipe\s*=\s*(\{[^;]+\});"#,
+            #"window\.recipe\s*=\s*(\{[^;]+\});"#,
+            #"recipe:\s*(\{[^}]+\})"#
+        ]
+        
+        for pattern in jsPatterns {
+            if let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive, .dotMatchesLineSeparators]),
+               let match = regex.firstMatch(in: html, range: NSRange(html.startIndex..., in: html)),
+               let range = Range(match.range(at: 1), in: html) {
+                let jsonString = String(html[range])
+                print("  📋 Found potential recipe in JS variable")
+                if let data = jsonString.data(using: .utf8),
+                   let recipe = try? JSONDecoder().decode(SchemaRecipe.self, from: data),
+                   recipe.name != nil {
+                    print("  ✅ Successfully decoded recipe from JS")
+                    return recipe
+                }
+            }
+        }
+        
+        // Pattern 2: Look for WordPress/Elementor recipe format
+        if html.contains("wp-content") || html.contains("elementor") {
+            print("  ℹ️ Detected WordPress/Elementor site - checking for recipe card")
+            return tryWordPressRecipe(in: html)
+        }
+        
+        print("  ❌ No alternate patterns found")
+        return nil
+    }
+    
+    private func tryWordPressRecipe(in html: String) -> SchemaRecipe? {
+        // Try to extract from common WordPress recipe card plugins
+        // This is a simplified version - would need enhancement for production
+        print("  🔍 Checking for WordPress recipe card...")
+        
+        // Look for WP Recipe Maker format
+        if html.contains("wprm-recipe") {
+            print("  ℹ️ Found WP Recipe Maker format (not yet supported)")
+        }
+        
+        // Look for Tasty Recipes format
+        if html.contains("tasty-recipes") {
+            print("  ℹ️ Found Tasty Recipes format (not yet supported)")
+        }
+        
         return nil
     }
     

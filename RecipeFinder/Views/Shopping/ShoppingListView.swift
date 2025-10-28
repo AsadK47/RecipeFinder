@@ -201,10 +201,11 @@ struct ShoppingListView: View {
     }
     
     private var emptyStateView: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 12) {
             Image(systemName: "cart")
-                .font(.system(size: 80))
+                .font(.system(size: 65))
                 .foregroundColor(colorScheme == .dark ? .white.opacity(0.5) : .black.opacity(0.3))
+                .padding(.top, 16)
             
             Text("Your shopping list is empty")
                 .font(.title3)
@@ -214,8 +215,9 @@ struct ShoppingListView: View {
             Text("Items are automatically categorized")
                 .font(.subheadline)
                 .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
+                .padding(.bottom, 6)
             
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 11) {
                 HStack(spacing: 12) {
                     Image(systemName: "sparkles")
                         .foregroundColor(AppTheme.accentColor)
@@ -266,8 +268,76 @@ struct ShoppingListView: View {
                     }
                     Spacer()
                 }
+                
+                HStack(spacing: 12) {
+                    Image(systemName: "checkmark.circle")
+                        .foregroundColor(AppTheme.accentColor)
+                        .font(.title3)
+                        .frame(width: 24)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Check Off Items")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                        Text("Tap checkbox or swipe to mark as purchased")
+                            .font(.caption)
+                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
+                    }
+                    Spacer()
+                }
+                
+                HStack(spacing: 12) {
+                    Image(systemName: "trash")
+                        .foregroundColor(AppTheme.accentColor)
+                        .font(.title3)
+                        .frame(width: 24)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Delete Items")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                        Text("Swipe left on any item to remove it")
+                            .font(.caption)
+                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
+                    }
+                    Spacer()
+                }
+                
+                HStack(spacing: 12) {
+                    Image(systemName: "ellipsis.circle")
+                        .foregroundColor(AppTheme.accentColor)
+                        .font(.title3)
+                        .frame(width: 24)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Bulk Actions")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                        Text("Use menu (⋯) to clear checked or all items")
+                            .font(.caption)
+                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
+                    }
+                    Spacer()
+                }
+                
+                HStack(spacing: 12) {
+                    Image(systemName: "square.and.pencil")
+                        .foregroundColor(AppTheme.accentColor)
+                        .font(.title3)
+                        .frame(width: 24)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Edit Quantity")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                        Text("Tap item to change amount or category")
+                            .font(.caption)
+                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
+                    }
+                    Spacer()
+                }
             }
-            .padding(20)
+            .padding(16)
             .background(
                 RoundedRectangle(cornerRadius: 16)
                     .fill(.ultraThinMaterial)

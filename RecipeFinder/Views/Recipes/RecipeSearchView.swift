@@ -210,7 +210,7 @@ struct RecipeSearchView: View {
                     } else {
                         ScrollView {
                             if viewMode == .list {
-                                LazyVStack(spacing: 10) {
+                                LazyVStack(spacing: AppTheme.cardVerticalSpacing) {
                                     ForEach(filteredRecipes) { recipe in
                                         NavigationLink(destination: RecipeDetailView(recipe: recipe, shoppingListManager: shoppingListManager, onFavoriteToggle: {
                                             refreshRecipes()
@@ -223,8 +223,8 @@ struct RecipeSearchView: View {
                                         })
                                     }
                                 }
-                                .padding(.horizontal, 20)
-                                .padding(.bottom, 20)
+                                .padding(.horizontal, AppTheme.cardHorizontalPadding)
+                                .padding(.bottom, AppTheme.cardHorizontalPadding)
                             } else {
                                 LazyVGrid(columns: gridColumns, spacing: 16) {
                                     ForEach(filteredRecipes) { recipe in

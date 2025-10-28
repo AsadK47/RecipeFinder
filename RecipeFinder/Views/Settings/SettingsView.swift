@@ -4,7 +4,7 @@ struct SettingsView: View {
     @State private var confettiTrigger: Int = 0
     @State private var showResetAlert: Bool = false
     @AppStorage("appearanceMode") private var appearanceMode: AppearanceMode = .system
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .purple
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @Environment(\.colorScheme) var colorScheme
     
     enum AppearanceMode: String, CaseIterable {

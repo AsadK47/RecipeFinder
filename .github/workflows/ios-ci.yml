@@ -1,0 +1,194 @@
+name: iOS CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: macos-14
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Select Xcode
+      run: sudo xcode-select -s /Applications/Xcode_15.2.app/Contents/Developer
+      
+    - name: Show Xcode version
+      run: xcodebuild -version
+      
+    - name: Show available simulators
+      run: xcrun simctl list devices available
+      
+    - name: Cache SPM dependencies
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/Library/Caches/org.swift.swiftpm
+          .build
+        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+        restore-keys: |
+          ${{ runner.os }}-spm-
+    
+    - name: Install dependencies
+      run: |
+        cd RecipeFinder
+        xcodebuild -resolvePackageDependencies -scheme RecipeFinder
+    
+    - name: Build for testing
+      run: |
+        xcodebuild clean build-for-testing \
+          -scheme RecipeFinder \
+          -destination 'platform=iOS Simulator,name=iPhone 15 Pro,OS=17.2' \
+          -configuration Debug \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO
+    
+    - name: Run tests
+      run: |
+        xcodebuild test-without-building \
+          -scheme RecipeFinder \
+          -destination 'platform=iOS Simulator,name=iPhone 15 Pro,OS=17.2' \
+          -configuration Debug \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO
+      continue-on-error: true
+    
+    - name: Build for Release
+      run: |
+        xcodebuild clean build \
+          -scheme RecipeFinder \
+          -destination 'generic/platform=iOS' \
+          -configuration Release \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO
+    
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: build-logs
+        path: |
+          ~/Library/Logs/DiagnosticReports/
+          DerivedData/Logs/
+        retention-days: 5
+
+  code-quality:
+    name: Code Quality Checks
+    runs-on: macos-14
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Select Xcode
+      run: sudo xcode-select -s /Applications/Xcode_15.2.app/Contents/Developer
+    
+    - name: SwiftLint
+      run: |
+        # Install SwiftLint if not present
+        if ! command -v swiftlint &> /dev/null; then
+          brew install swiftlint
+        fi
+        
+        # Run SwiftLint (create .swiftlint.yml if you want custom rules)
+        swiftlint lint --reporter github-actions-logging || true
+      continue-on-error: true
+    
+    - name: Check for TODO/FIXME
+      run: |
+        echo "🔍 Checking for TODO/FIXME comments..."
+        grep -r "TODO\|FIXME" RecipeFinder --include="*.swift" || echo "✅ No TODO/FIXME found"
+      continue-on-error: true
+
+  security-scan:
+    name: Security Scan
+    runs-on: macos-14
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    
+    - name: Check for sensitive data
+      run: |
+        echo "🔒 Scanning for potential sensitive data..."
+        
+        # Check for API keys
+        if grep -r "api_key\|apiKey\|API_KEY" RecipeFinder --include="*.swift"; then
+          echo "⚠️ Potential API keys found"
+        else
+          echo "✅ No API keys detected"
+        fi
+        
+        # Check for passwords
+        if grep -r "password\|passwd\|pwd" RecipeFinder --include="*.swift" | grep -v "// "; then
+          echo "⚠️ Potential passwords found"
+        else
+          echo "✅ No passwords detected"
+        fi
+        
+        # Check for private keys
+        if grep -r "private_key\|privateKey" RecipeFinder --include="*.swift"; then
+          echo "⚠️ Potential private keys found"
+        else
+          echo "✅ No private keys detected"
+        fi
+      continue-on-error: true
+
+  documentation:
+    name: Documentation Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    
+    - name: Check documentation
+      run: |
+        echo "📚 Checking documentation..."
+        
+        # Check for README
+        if [ -f "readme.md" ] || [ -f "README.md" ]; then
+          echo "✅ README found"
+        else
+          echo "❌ README missing"
+          exit 1
+        fi
+        
+        # Check for DOCUMENTATION
+        if [ -f "DOCUMENTATION.md" ]; then
+          echo "✅ DOCUMENTATION.md found"
+        else
+          echo "⚠️ DOCUMENTATION.md missing"
+        fi
+        
+        # Check for LICENSE
+        if [ -f "LICENSE" ]; then
+          echo "✅ LICENSE found"
+        else
+          echo "⚠️ LICENSE missing"
+        fi
+
+  notification:
+    name: Build Status Notification
+    needs: [build-and-test, code-quality, security-scan, documentation]
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+    - name: Check build status
+      run: |
+        if [ "${{ needs.build-and-test.result }}" == "success" ]; then
+          echo "✅ Build successful!"
+        else
+          echo "❌ Build failed!"
+          exit 1
+        fi

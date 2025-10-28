@@ -5,18 +5,24 @@ struct RecipeCard: View {
     let viewMode: RecipeViewMode
     @Environment(\.colorScheme) var colorScheme
     
+    // Golden ratio proportions for aesthetic beauty
+    private let cardPadding: CGFloat = AppTheme.cardHorizontalPadding
+    private let imageSize: CGFloat = AppTheme.cardImageSize
+    private let cornerRadius: CGFloat = AppTheme.cardCornerRadius
+    private let contentSpacing: CGFloat = AppTheme.cardVerticalSpacing
+    
     init(recipe: RecipeModel, viewMode: RecipeViewMode = .list) {
         self.recipe = recipe
         self.viewMode = viewMode
     }
     
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: contentSpacing) {
             // Image on the left with rounded corners
             ZStack(alignment: .topLeading) {
-                RecipeImageView(imageName: recipe.imageName, height: 70)
-                    .frame(width: 70, height: 70)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                RecipeImageView(imageName: recipe.imageName, height: imageSize)
+                    .frame(width: imageSize, height: imageSize)
+                    .clipShape(RoundedRectangle(cornerRadius: cornerRadius * AppTheme.goldenRatioInverse))
                 
                 // Favorite badge
                 if recipe.isFavorite {
@@ -45,7 +51,7 @@ struct RecipeCard: View {
                 
                 
                 // Time and difficulty on same line
-                HStack(spacing: 12) {
+                HStack(spacing: contentSpacing) {
                     HStack(spacing: 4) {
                         Image(systemName: "clock.fill")
                             .font(.system(size: 10))
@@ -69,9 +75,9 @@ struct RecipeCard: View {
                 .font(.caption)
                 .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.4))
         }
-        .padding(12)
+        .padding(contentSpacing)
         .background(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: cornerRadius)
                 .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
                 .shadow(color: Color.black.opacity(0.25), radius: 8, x: 0, y: 4)
         )
@@ -80,4 +86,3 @@ struct RecipeCard: View {
         .accessibilityHint("Double tap to view recipe details")
     }
 }
-

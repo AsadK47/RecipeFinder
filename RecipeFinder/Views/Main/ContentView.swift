@@ -6,7 +6,7 @@ struct ContentView: View {
     @State private var recipes: [RecipeModel] = []
     @State private var selectedTab: Int = 0
     @StateObject private var shoppingListManager = ShoppingListManager()
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .purple
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal // Changed to teal default
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {

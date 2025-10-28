@@ -114,14 +114,28 @@ struct RecipeImportView: View {
                 // Example URLs
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Try these examples:")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.primary)
                         .padding(.horizontal)
                     
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 12) {
-                            exampleButton(url: "https://www.teaforturmeric.com/chicken-kofta/", title: "Chicken Kofta")
-                            exampleButton(url: "https://www.allrecipes.com/recipe/223042/chicken-parmesan/", title: "Chicken Parmesan")
+                            exampleButton(
+                                url: "https://www.allrecipes.com/recipe/223042/chicken-parmesan/", 
+                                title: "Chicken Parmesan",
+                                subtitle: "AllRecipes"
+                            )
+                            exampleButton(
+                                url: "https://www.foodnetwork.com/recipes/ree-drummond/perfect-pot-roast-recipe-2118771",
+                                title: "Perfect Pot Roast",
+                                subtitle: "Food Network"
+                            )
+                            exampleButton(
+                                url: "https://www.seriouseats.com/easy-pressure-cooker-pork-chile-verde-recipe",
+                                title: "Pork Chile Verde",
+                                subtitle: "Serious Eats"
+                            )
                         }
                         .padding(.horizontal)
                     }
@@ -165,16 +179,33 @@ struct RecipeImportView: View {
         }
     }
     
-    private func exampleButton(url: String, title: String) -> some View {
-        Button(action: { urlText = url }) {
-            Text(title)
-                .font(.caption)
-                .foregroundColor(AppTheme.accentColor(for: appTheme))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .background(AppTheme.accentColor(for: appTheme).opacity(0.1))
-                .cornerRadius(8)
+    private func exampleButton(url: String, title: String, subtitle: String) -> some View {
+        Button(action: { 
+            urlText = url
+            HapticManager.shared.light()
+        }) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(AppTheme.accentColor(for: appTheme))
+                
+                Text(subtitle)
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(AppTheme.accentColor(for: appTheme).opacity(0.1))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(AppTheme.accentColor(for: appTheme).opacity(0.3), lineWidth: 1)
+                    )
+            )
         }
+        .buttonStyle(PlainButtonStyle())
     }
     
     private func importRecipe() {
