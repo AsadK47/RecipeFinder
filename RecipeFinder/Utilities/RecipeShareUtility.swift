@@ -146,7 +146,7 @@ class RecipeShareUtility {
             let cardHeight: CGFloat = 90
             
             // Card 1: Time Info
-            var cardY = yPos
+            let cardY = yPos
             drawGlassCardExact(context: cgContext, rect: CGRect(x: margin, y: cardY, width: cardWidth, height: cardHeight))
             
             // Icon and text for time card

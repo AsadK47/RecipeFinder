@@ -171,8 +171,8 @@ struct RecipeImportView: View {
                 }
             }
         }
-        .onChange(of: importer.importedRecipe) { recipe in
-            if let recipe = recipe {
+        .onChange(of: importer.importedRecipe) { oldValue, newValue in
+            if let recipe = newValue {
                 onImport(recipe)
                 dismiss()
             }

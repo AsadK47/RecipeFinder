@@ -1,172 +1,143 @@
-# Privacy Policy
+# Privacy Policy for RecipeFinder
 
-**Last Updated: October 28, 2025**
+**Last Updated:** October 28, 2025
 
-## 1. Introduction
+## Overview
 
-Welcome to RecipeFinder ("we", "our", or "us"). This Privacy Policy explains how we handle information when you use our mobile application.
+RecipeFinder ("we", "our", or "the app") is committed to protecting your privacy. This Privacy Policy explains how we handle information in our iOS application.
 
-## 2. Information We Do NOT Collect
+## Information Collection and Use
 
-RecipeFinder is designed with privacy in mind. We do NOT collect, transmit, or store:
-- Personal identification information (name, email, phone number)
-- Location data
-- Device identifiers
-- Usage analytics or tracking data
-- Cookies or similar tracking technologies
-- IP addresses
-- Payment information
-- Advertising data
+**We do NOT collect, store, or transmit any personal information.**
 
-## 3. Information Stored Locally
+RecipeFinder is designed with privacy as a core principle:
 
-All data is stored locally on your device using Apple's Core Data framework:
+- ✅ **100% Offline Functionality** - All features work without internet connection
+- ✅ **No Account Required** - No registration, login, or user accounts
+- ✅ **No Analytics** - We don't track your usage or behavior
+- ✅ **No Advertising** - No third-party ad networks or tracking
+- ✅ **No Cookies** - No web-based tracking mechanisms
+- ✅ **No Cloud Storage** - All data stored locally on your device
 
-### 3.1 Recipe Data
-- Recipe names, ingredients, instructions
-- Photos you add to recipes
-- Recipe categories and metadata
-- Favorite status
+## Data Storage
 
-### 3.2 Shopping List Data
-- Shopping list items
-- Item categories
-- Checked/unchecked status
+All data is stored exclusively on your device using:
 
-### 3.3 Kitchen Inventory
-- Ingredients you mark as available
-- Custom ingredient lists
+### **Local Storage:**
+- **Recipes** - Stored in Core Data on your device
+- **Shopping Lists** - Stored in Core Data on your device
+- **Kitchen Inventory** - Stored in Core Data on your device
+- **User Preferences** - Stored in UserDefaults on your device
+- **Favorites** - Stored in Core Data on your device
 
-### 3.4 User Preferences
-- Theme selection (Teal, Purple, Red, Orange, Yellow, Green, Pink, Gold)
-- Appearance mode (Light, Dark, System)
-- Measurement system (Metric, Imperial)
+### **Data Access:**
+- Only you have access to your data
+- Data is sandboxed by iOS
+- Data is encrypted at rest by iOS
+- No backup to our servers (iCloud backup is controlled by you)
 
-**IMPORTANT**: This data never leaves your device unless you explicitly share it using the share functionality.
+## Network Activity
 
-## 4. Recipe Import Feature
+The app has minimal network activity:
 
-When you import recipes from websites:
-- The App fetches recipe data from the URL you provide
-- This connection is made directly from your device to the recipe website
-- We do not intercept, store, or transmit this data to any third-party servers
-- No tracking or analytics occur during import
+### **Recipe Import (Optional Feature):**
+When you choose to import a recipe from a URL:
+- The app fetches the webpage HTML from the URL you provide
+- This is a direct connection to the website (not through our servers)
+- We don't log, store, or track which URLs you import from
+- The imported recipe data is stored locally on your device
 
-## 5. Share Functionality
+**That's it.** No other network connections are made.
 
-When you share recipes:
-- Data is shared using iOS native sharing (UIActivityViewController)
-- You control what is shared and with whom
-- Shared content may include recipe text or PDF files
-- We do not receive or store any information about your sharing activities
+## Third-Party Services
 
-## 6. Data Storage and Security
+RecipeFinder uses minimal third-party code:
 
-### 6.1 Local Storage
-- All data is stored in an encrypted SQLite database on your device
-- Data is protected by your device's security features
-- We use Apple's recommended Core Data practices
+### **ConfettiSwiftUI:**
+- Purpose: Visual celebration animation
+- Type: Open-source library
+- Data: No data collection
+- Privacy: No privacy implications
 
-### 6.2 No Cloud Storage
-- RecipeFinder does NOT sync data to cloud services
-- No backup to external servers
-- Data remains entirely on your device
+No other third-party SDKs, analytics, or tracking services are used.
 
-### 6.3 Data Deletion
-- Uninstalling the App deletes all local data
-- You can manually delete recipes, shopping lists, and kitchen inventory at any time
-- Developer Debug option available to reset database in Settings
+## Children's Privacy
 
-## 7. Third-Party Services
+RecipeFinder is safe for all ages, including children under 13:
+- No personal information collected
+- No user-generated content shared
+- No in-app purchases
+- No advertising
+- No social features
+- COPPA compliant by design
 
-RecipeFinder uses minimal third-party dependencies:
-- **ConfettiSwiftUI**: Animation library (no data collection)
-- No analytics SDKs
-- No advertising networks
-- No crash reporting services
+## Your Rights
 
-## 8. Children's Privacy
+Since we don't collect any data, you have complete control:
 
-RecipeFinder does not knowingly collect any information from children under 13. The App is suitable for all ages.
+### **Data Portability:**
+- Export recipes as PDF or text anytime
+- No account to manage
+- No data tied to your identity
 
-## 9. Your Rights
+### **Data Deletion:**
+- Simply delete the app to remove all data
+- Or use in-app delete functions
+- No residual data on our servers (we don't have servers)
 
-You have the right to:
-- Access all your data (stored locally on your device)
-- Delete your data (uninstall the App or delete individual items)
-- Export your data (using the share feature)
-- Opt-out of any data collection (there is none to opt-out of)
+## Security
 
-## 10. Data Retention
+Your data security is ensured by:
+- **iOS Sandboxing** - App data isolated from other apps
+- **iOS Encryption** - Data encrypted at rest
+- **No Network Transmission** - Data never leaves your device (except recipe import which is your choice)
+- **No Authentication** - No passwords or credentials to compromise
 
-- Data is retained only on your device
-- You control retention by choosing what to keep or delete
-- Uninstalling the App removes all data
+## Changes to This Privacy Policy
 
-## 11. International Users
+We may update this Privacy Policy from time to time. Changes will be posted:
+- In the app (if significant)
+- On GitHub: https://github.com/AsadK47/RecipeFinder
+- Effective date will be updated at the top
 
-RecipeFinder does not transfer data internationally because:
-- All data is stored locally on your device
-- No data is transmitted to servers
-- No cross-border data transfers occur
+## International Users
 
-## 12. Changes to Privacy Policy
+RecipeFinder can be used anywhere in the world. Since no data is collected:
+- GDPR compliant (EU)
+- CCPA compliant (California)
+- PIPEDA compliant (Canada)
+- Compliant with privacy laws worldwide
 
-We may update this Privacy Policy from time to time. We will notify you of changes by:
-- Updating the "Last Updated" date
-- Including change notifications in App updates
-- Posting updates in the App Store description
+## Contact Us
 
-Continued use after changes indicates acceptance.
+If you have questions about this Privacy Policy:
 
-## 13. Compliance
+**GitHub:** https://github.com/AsadK47/RecipeFinder/issues  
+**Email:** [Your Email]  
+**Repository:** https://github.com/AsadK47/RecipeFinder
 
-RecipeFinder complies with:
-- **GDPR** (General Data Protection Regulation) - EU
-- **CCPA** (California Consumer Privacy Act) - California, USA
-- **UK Data Protection Act** - United Kingdom
-- **Apple App Store Guidelines**
+## Transparency
 
-Compliance is straightforward because we collect no personal data.
-
-## 14. Contact Us
-
-For privacy-related questions or concerns:
-- **Email**: asad.e.khan@outlook.com
-- **GitHub**: https://github.com/AsadK47/RecipeFinder
-- **Issues**: https://github.com/AsadK47/RecipeFinder/issues
-
-We will respond to privacy inquiries within 30 days.
-
-## 15. Data Breach Notification
-
-In the unlikely event of a data breach:
-- Since data is stored locally, breaches would require physical device access
-- Device-level security (passcode, biometrics) protects your data
-- We do not have access to your device, so we cannot breach your data
-
-## 16. Transparency
-
-We commit to:
-- Open-source transparency (code available on GitHub)
-- Clear documentation of data practices
-- No hidden data collection
-- Honest communication about App functionality
+This app is open source:
+- View the code: https://github.com/AsadK47/RecipeFinder
+- Verify our privacy claims
+- Contribute improvements
+- Report issues
 
 ---
 
 ## Summary (TL;DR)
 
-**RecipeFinder is a privacy-first app:**
-- ✅ All data stored locally on YOUR device
-- ✅ Zero personal data collection
-- ✅ No tracking, analytics, or advertisements
-- ✅ No cloud sync or external servers
-- ✅ Open source and transparent
-- ✅ You own and control ALL your data
+✅ **Zero data collection**  
+✅ **Everything stored locally**  
+✅ **No tracking or analytics**  
+✅ **No advertising**  
+✅ **Open source code**  
+✅ **Works 100% offline**  
 
-**Your privacy is our priority.**
+We can't access your data because we never receive it in the first place.
 
 ---
 
-**By using RecipeFinder, you acknowledge that you have read and understood this Privacy Policy.**
+**RecipeFinder** - Privacy by Design  
+Version 1.0.0 | October 2025
