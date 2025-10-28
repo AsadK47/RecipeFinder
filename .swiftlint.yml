@@ -58,6 +58,7 @@ identifier_name:
     - URL
     - x
     - y
+    - _name # Core Data generated property
     
 cyclomatic_complexity:
   warning: 15
