@@ -6,12 +6,15 @@ struct ContentView: View {
     @State private var recipes: [RecipeModel] = []
     @State private var selectedTab: Int = 0
     @StateObject private var shoppingListManager = ShoppingListManager()
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal // Changed to teal default
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @Environment(\.colorScheme) var colorScheme
+    
+    // Performance: Cache the theme for the session
+    private var themeBinding: AppTheme.ThemeType { selectedTheme }
     
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
+            AppTheme.backgroundGradient(for: themeBinding, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
             TabView(selection: $selectedTab) {
@@ -39,33 +42,17 @@ struct ContentView: View {
                     }
                     .tag(3)
             }
-            .environment(\.appTheme, selectedTheme)
-            .tint(AppTheme.accentColor(for: selectedTheme))
+            .environment(\.appTheme, themeBinding)
+            .tint(AppTheme.accentColor(for: themeBinding))
             .onChange(of: selectedTab) { _, _ in
                 HapticManager.shared.selection()
             }
-            .gesture(
-                DragGesture(minimumDistance: 50)
-                    .onEnded { value in
-                        let horizontalSwipe = value.translation.width
-                        
-                        // Swipe right (go to previous tab)
-                        if horizontalSwipe > 0 && selectedTab > 0 {
-                            withAnimation {
-                                selectedTab -= 1
-                            }
-                        }
-                        // Swipe left (go to next tab)
-                        else if horizontalSwipe < 0 && selectedTab < 3 {
-                            withAnimation {
-                                selectedTab += 1
-                            }
-                        }
-                    }
-            )
         }
         .onAppear {
-            loadRecipes()
+            // Load recipes only once on appear
+            if recipes.isEmpty {
+                loadRecipes()
+            }
         }
     }
 

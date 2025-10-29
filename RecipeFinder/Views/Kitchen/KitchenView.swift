@@ -125,11 +125,15 @@ struct KitchenView: View {
                     Spacer()
                     if !kitchenManager.items.isEmpty {
                         Menu {
-                            Button(role: .destructive, action: {
-                                kitchenManager.clearAll()
-                            }) {
-                                Label("Clear All", systemImage: "trash")
-                            }
+                            Button(
+                                role: .destructive,
+                                action: {
+                                    kitchenManager.clearAll()
+                                },
+                                label: {
+                                    Label("Clear All", systemImage: "trash")
+                                }
+                            )
                         } label: {
                             Image(systemName: "ellipsis.circle")
                                 .font(.title2)
@@ -308,33 +312,36 @@ struct KitchenView: View {
         let isInKitchen = kitchenManager.hasItem(ingredient)
         let category = CategoryClassifier.suggestCategory(for: ingredient)
         
-        return Button(action: {
-            withAnimation(.spring(response: 0.3)) {
-                kitchenManager.toggleItem(ingredient)
+        return Button(
+            action: {
+                withAnimation(.spring(response: 0.3)) {
+                    kitchenManager.toggleItem(ingredient)
+                }
+            },
+            label: {
+                HStack(spacing: 12) {
+                    Image(systemName: categoryIcon(for: category))
+                        .foregroundColor(categoryColor(for: category))
+                        .font(.body)
+                    
+                    Text(ingredient)
+                        .font(.body)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                    
+                    Spacer()
+                    
+                    Image(systemName: isInKitchen ? "checkmark.circle.fill" : "plus.circle")
+                        .foregroundColor(isInKitchen ? .green : AppTheme.accentColor)
+                        .font(.title3)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 14)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
+                )
             }
-        }) {
-            HStack(spacing: 12) {
-                Image(systemName: categoryIcon(for: category))
-                    .foregroundColor(categoryColor(for: category))
-                    .font(.body)
-                
-                Text(ingredient)
-                    .font(.body)
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
-                
-                Spacer()
-                
-                Image(systemName: isInKitchen ? "checkmark.circle.fill" : "plus.circle")
-                    .foregroundColor(isInKitchen ? .green : AppTheme.accentColor)
-                    .font(.title3)
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 14)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
-            )
-        }
+        )
         .buttonStyle(PlainButtonStyle())
     }
     
@@ -403,15 +410,18 @@ struct KitchenItemChip: View {
                 .font(.subheadline)
                 .foregroundColor(colorScheme == .dark ? .white : .black)
             
-            Button(action: {
-                withAnimation(.spring(response: 0.3)) {
-                    kitchenManager.removeItem(item)
+            Button(
+                action: {
+                    withAnimation(.spring(response: 0.3)) {
+                        kitchenManager.removeItem(item)
+                    }
+                },
+                label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.caption)
+                        .foregroundColor(.gray)
                 }
-            }) {
-                Image(systemName: "xmark.circle.fill")
-                    .font(.caption)
-                    .foregroundColor(.gray)
-            }
+            )
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
@@ -431,36 +441,39 @@ struct KitchenQuickAddCategoryCard: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Button(action: {
-                withAnimation(.spring(response: 0.3)) {
-                    isExpanded.toggle()
-                }
-            }) {
-                HStack(spacing: 12) {
-                    Circle()
-                        .fill(CategoryClassifier.categoryColor(for: category).opacity(0.2))
-                        .frame(width: 40, height: 40)
-                        .overlay(
-                            Image(systemName: CategoryClassifier.categoryIcon(for: category))
-                                .foregroundColor(CategoryClassifier.categoryColor(for: category))
-                        )
-                    
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(category)
-                            .font(.headline)
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
+            Button(
+                action: {
+                    withAnimation(.spring(response: 0.3)) {
+                        isExpanded.toggle()
+                    }
+                },
+                label: {
+                    HStack(spacing: 12) {
+                        Circle()
+                            .fill(CategoryClassifier.categoryColor(for: category).opacity(0.2))
+                            .frame(width: 40, height: 40)
+                            .overlay(
+                                Image(systemName: CategoryClassifier.categoryIcon(for: category))
+                                    .foregroundColor(CategoryClassifier.categoryColor(for: category))
+                            )
                         
-                        Text("\(ingredients.count) ingredients")
-                            .font(.caption)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(category)
+                                .font(.headline)
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                            
+                            Text("\(ingredients.count) ingredients")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                        }
+                        
+                        Spacer()
+                        
+                        Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                             .foregroundColor(.gray)
                     }
-                    
-                    Spacer()
-                    
-                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                        .foregroundColor(.gray)
                 }
-            }
+            )
             .buttonStyle(PlainButtonStyle())
             
             if isExpanded {
@@ -490,27 +503,30 @@ struct KitchenQuickAddChip: View {
     }
     
     var body: some View {
-        Button(action: {
-            withAnimation(.spring(response: 0.3)) {
-                kitchenManager.toggleItem(ingredient)
+        Button(
+            action: {
+                withAnimation(.spring(response: 0.3)) {
+                    kitchenManager.toggleItem(ingredient)
+                }
+            },
+            label: {
+                HStack(spacing: 6) {
+                    Text(ingredient)
+                        .font(.subheadline)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                    
+                    Image(systemName: isInKitchen ? "checkmark.circle.fill" : "plus.circle")
+                        .font(.caption)
+                        .foregroundColor(isInKitchen ? .green : .gray)
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(
+                    Capsule()
+                        .fill(isInKitchen ? Color.green.opacity(0.2) : Color.gray.opacity(0.1))
+                )
             }
-        }) {
-            HStack(spacing: 6) {
-                Text(ingredient)
-                    .font(.subheadline)
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
-                
-                Image(systemName: isInKitchen ? "checkmark.circle.fill" : "plus.circle")
-                    .font(.caption)
-                    .foregroundColor(isInKitchen ? .green : .gray)
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .background(
-                Capsule()
-                    .fill(isInKitchen ? Color.green.opacity(0.2) : Color.gray.opacity(0.1))
-            )
-        }
+        )
         .buttonStyle(PlainButtonStyle())
     }
 }

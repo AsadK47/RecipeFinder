@@ -116,7 +116,7 @@ struct IngredientSearchView: View {
                                                 .offset(x: 4, y: -4)
                                         }
                                     }
-                                }
+                                })
                             } else {
                                 Color.clear
                                     .frame(width: 48, height: 48)
@@ -133,13 +133,16 @@ struct IngredientSearchView: View {
                             if selectedIngredient != nil {
                                 Menu {
                                     ForEach(RecipeViewMode.allCases, id: \.self) { mode in
-                                        Button(action: {
-                                            withAnimation(.spring(response: 0.3)) {
-                                                viewMode = mode
+                                        Button(
+                                            action: {
+                                                withAnimation(.spring(response: 0.3)) {
+                                                    viewMode = mode
+                                                }
+                                            },
+                                            label: {
+                                                Label(mode.rawValue, systemImage: mode.icon)
                                             }
-                                        }) {
-                                            Label(mode.rawValue, systemImage: mode.icon)
-                                        }
+                                        )
                                     }
                                 } label: {
                                     Image(systemName: viewMode.icon)
@@ -287,12 +290,14 @@ struct IngredientSearchView: View {
         let isAdded = addedIngredients.contains(ingredient)
         
         return HStack(spacing: 0) {
-            Button(action: {
-                withAnimation(.spring(response: 0.3)) {
-                    selectedIngredient = ingredient
-                }
-            }) {
-                HStack(spacing: 12) {
+            Button(
+                action: {
+                    withAnimation(.spring(response: 0.3)) {
+                        selectedIngredient = ingredient
+                    }
+                },
+                label: {
+                    HStack(spacing: 12) {
                     Image(systemName: categoryIcon(for: category))
                         .foregroundColor(categoryColor(for: category))
                         .font(.body)
@@ -316,20 +321,23 @@ struct IngredientSearchView: View {
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 14)
-            }
+            })
             .buttonStyle(PlainButtonStyle())
             
             // Basket button
-            Button(action: {
-                addToShoppingList(ingredient)
-            }) {
-                Image(systemName: isAdded ? "basket.fill" : "basket")
-                    .foregroundColor(isAdded ? AppTheme.accentColor : (colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5)))
-                    .font(.system(size: 20))
-                    .frame(width: 44, height: 44)
-                    .scaleEffect(isAdded ? 1.2 : 1.0)
-                    .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isAdded)
-            }
+            Button(
+                action: {
+                    addToShoppingList(ingredient)
+                },
+                label: {
+                    Image(systemName: isAdded ? "basket.fill" : "basket")
+                        .foregroundColor(isAdded ? AppTheme.accentColor : (colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5)))
+                        .font(.system(size: 20))
+                        .frame(width: 44, height: 44)
+                        .scaleEffect(isAdded ? 1.2 : 1.0)
+                        .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isAdded)
+                }
+            )
             .buttonStyle(PlainButtonStyle())
             .padding(.trailing, 12)
         }
@@ -401,19 +409,22 @@ struct IngredientSearchView: View {
         VStack(spacing: 0) {
             // Back button with selected ingredient
             HStack {
-                Button(action: {
-                    withAnimation(.spring(response: 0.3)) {
-                        selectedIngredient = nil
+                Button(
+                    action: {
+                        withAnimation(.spring(response: 0.3)) {
+                            selectedIngredient = nil
+                        }
+                    },
+                    label: {
+                        HStack(spacing: 8) {
+                            Image(systemName: "chevron.left")
+                                .font(.body)
+                            Text("Back")
+                                .font(.body)
+                        }
+                        .foregroundColor(.white)
                     }
-                }) {
-                    HStack(spacing: 8) {
-                        Image(systemName: "chevron.left")
-                            .font(.body)
-                        Text("Back")
-                            .font(.body)
-                    }
-                    .foregroundColor(.white)
-                }
+                )
                 .padding(.horizontal, 20)
                 .padding(.vertical, 12)
                 
@@ -422,13 +433,16 @@ struct IngredientSearchView: View {
                 if !filteredRecipes.isEmpty {
                     Menu {
                         ForEach(RecipeViewMode.allCases, id: \.self) { mode in
-                            Button(action: {
-                                withAnimation(.spring(response: 0.3)) {
-                                    viewMode = mode
+                            Button(
+                                action: {
+                                    withAnimation(.spring(response: 0.3)) {
+                                        viewMode = mode
+                                    }
+                                },
+                                label: {
+                                    Label(mode.rawValue, systemImage: mode.icon)
                                 }
-                            }) {
-                                Label(mode.rawValue, systemImage: mode.icon)
-                            }
+                            )
                         }
                     } label: {
                         Image(systemName: viewMode.icon)
@@ -661,44 +675,47 @@ struct CategoryCard: View {
     var body: some View {
         VStack(spacing: 0) {
             // Category Header - Tappable
-            Button(action: {
-                withAnimation(.spring(response: 0.3)) {
-                    isExpanded.toggle()
-                }
-            }) {
-                HStack(spacing: 16) {
-                    ZStack {
-                        Circle()
-                            .fill(categoryColor.opacity(0.3))
-                            .frame(width: 44, height: 44)
-                        
-                        Image(systemName: categoryIcon)
-                            .foregroundColor(categoryColor)
-                            .font(.title3)
+            Button(
+                action: {
+                    withAnimation(.spring(response: 0.3)) {
+                        isExpanded.toggle()
                     }
-                    
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(category)
-                            .font(.headline)
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                },
+                label: {
+                    HStack(spacing: 16) {
+                        ZStack {
+                            Circle()
+                                .fill(categoryColor.opacity(0.3))
+                                .frame(width: 44, height: 44)
+                            
+                            Image(systemName: categoryIcon)
+                                .foregroundColor(categoryColor)
+                                .font(.title3)
+                        }
                         
-                        Text("\(ingredients.count) ingredient\(ingredients.count == 1 ? "" : "s")")
-                            .font(.caption)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(category)
+                                .font(.headline)
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                            
+                            Text("\(ingredients.count) ingredient\(ingredients.count == 1 ? "" : "s")")
+                                .font(.caption)
+                                .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
+                        }
+                        
+                        Spacer()
+                        
+                        Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                             .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
+                            .font(.caption)
                     }
-                    
-                    Spacer()
-                    
-                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
-                        .font(.caption)
+                    .padding(16)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
+                    )
                 }
-                .padding(16)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
-                )
-            }
+            )
             .buttonStyle(PlainButtonStyle())
             
             // Ingredients List
@@ -721,16 +738,17 @@ struct CategoryCard: View {
         return VStack(spacing: 4) {
             // Main ingredient row
             HStack(spacing: 0) {
-                Button(action: {
-                    if variations.count > 1 {
-                        withAnimation(.spring(response: 0.3)) {
-                            if isGroupExpanded {
-                                expandedIngredients.remove(mainIngredient)
-                            } else {
-                                expandedIngredients.insert(mainIngredient)
+                Button(
+                    action: {
+                        if variations.count > 1 {
+                            withAnimation(.spring(response: 0.3)) {
+                                if isGroupExpanded {
+                                    expandedIngredients.remove(mainIngredient)
+                                } else {
+                                    expandedIngredients.insert(mainIngredient)
+                                }
                             }
-                        }
-                    } else if variations.count == 1 {
+                        } else if variations.count == 1 {
                         onSelectIngredient(variations[0])
                     }
                 }) {
@@ -771,16 +789,19 @@ struct CategoryCard: View {
                     let ingredient = variations[0]
                     let isAdded = addedIngredients.contains(ingredient)
                     
-                    Button(action: {
-                        onAddToShoppingList(ingredient)
-                    }) {
-                        Image(systemName: isAdded ? "basket.fill" : "basket")
-                            .foregroundColor(isAdded ? AppTheme.accentColor : (colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5)))
-                            .font(.system(size: 18))
-                            .frame(width: 44, height: 44)
-                            .scaleEffect(isAdded ? 1.2 : 1.0)
-                            .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isAdded)
-                    }
+                    Button(
+                        action: {
+                            onAddToShoppingList(ingredient)
+                        },
+                        label: {
+                            Image(systemName: isAdded ? "basket.fill" : "basket")
+                                .foregroundColor(isAdded ? AppTheme.accentColor : (colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5)))
+                                .font(.system(size: 18))
+                                .frame(width: 44, height: 44)
+                                .scaleEffect(isAdded ? 1.2 : 1.0)
+                                .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isAdded)
+                        }
+                    )
                     .buttonStyle(PlainButtonStyle())
                     .padding(.trailing, 12)
                 }
@@ -806,37 +827,43 @@ struct CategoryCard: View {
         let isAdded = addedIngredients.contains(ingredient)
         
         return HStack(spacing: 0) {
-            Button(action: {
-                onSelectIngredient(ingredient)
-            }) {
-                HStack(spacing: 12) {
-                    Image(systemName: "circle.fill")
-                        .font(.system(size: 4))
-                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.5) : .black.opacity(0.4))
-                    
-                    Text(ingredient)
-                        .font(.subheadline)
-                        .fontWeight(.regular)
-                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.85) : .black.opacity(0.75))
-                    
-                    Spacer()
+            Button(
+                action: {
+                    onSelectIngredient(ingredient)
+                },
+                label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "circle.fill")
+                            .font(.system(size: 4))
+                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.5) : .black.opacity(0.4))
+                        
+                        Text(ingredient)
+                            .font(.subheadline)
+                            .fontWeight(.regular)
+                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.85) : .black.opacity(0.75))
+                        
+                        Spacer()
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
-            }
+            )
             .buttonStyle(PlainButtonStyle())
             
             // Basket button
-            Button(action: {
-                onAddToShoppingList(ingredient)
-            }) {
-                Image(systemName: isAdded ? "basket.fill" : "basket")
-                    .foregroundColor(isAdded ? AppTheme.accentColor : (colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5)))
-                    .font(.system(size: 18))
-                    .frame(width: 44, height: 44)
-                    .scaleEffect(isAdded ? 1.2 : 1.0)
-                    .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isAdded)
-            }
+            Button(
+                action: {
+                    onAddToShoppingList(ingredient)
+                },
+                label: {
+                    Image(systemName: isAdded ? "basket.fill" : "basket")
+                        .foregroundColor(isAdded ? AppTheme.accentColor : (colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5)))
+                        .font(.system(size: 18))
+                        .frame(width: 44, height: 44)
+                        .scaleEffect(isAdded ? 1.2 : 1.0)
+                        .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isAdded)
+                }
+            )
             .buttonStyle(PlainButtonStyle())
             .padding(.trailing, 12)
         }

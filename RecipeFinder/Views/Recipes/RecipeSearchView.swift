@@ -12,10 +12,20 @@ struct RecipeSearchView: View {
     @State private var selectedCookTimes: Set<Int> = []
     @State private var showFavoritesOnly = false
     @State private var showImportSheet = false
+    @State private var cachedFilteredRecipes: [RecipeModel] = []
+    @State private var lastFilterHash: Int = 0
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
 
-    var filteredRecipes: [RecipeModel] {
+    // Optimized filtered recipes with caching
+    private var filteredRecipes: [RecipeModel] {
+        let currentHash = computeFilterHash()
+        
+        // Return cached result if filters haven't changed
+        if currentHash == lastFilterHash && !cachedFilteredRecipes.isEmpty {
+            return cachedFilteredRecipes
+        }
+        
         var results = recipes
         
         // Favorites filter
@@ -49,6 +59,18 @@ struct RecipeSearchView: View {
         return results
     }
     
+    // Helper to compute hash of current filter state
+    private func computeFilterHash() -> Int {
+        var hasher = Hasher()
+        hasher.combine(searchText)
+        hasher.combine(showFavoritesOnly)
+        hasher.combine(selectedCategories)
+        hasher.combine(selectedDifficulties)
+        hasher.combine(selectedCookTimes)
+        hasher.combine(recipes.count) // Include recipe count to detect changes
+        return hasher.finalize()
+    }
+    
     var activeFilterCount: Int {
         return selectedCategories.count + selectedDifficulties.count + selectedCookTimes.count + (showFavoritesOnly ? 1 : 0)
     }
@@ -78,31 +100,34 @@ struct RecipeSearchView: View {
                     VStack(spacing: 16) {
                         HStack {
                             // Filter button
-                            Button(action: {
-                                HapticManager.shared.light()
-                                showFilters.toggle()
-                            }) {
-                                ZStack(alignment: .topTrailing) {
-                                    Image(systemName: "line.3.horizontal.decrease.circle")
-                                        .font(.title2)
-                                        .foregroundColor(.white)
-                                        .padding(12)
-                                        .background(
-                                            Circle()
-                                                .fill(.ultraThinMaterial)
-                                        )
-                                    
-                                    if activeFilterCount > 0 {
-                                        Text("\(activeFilterCount)")
-                                            .font(.caption2)
-                                            .fontWeight(.bold)
+                            Button(
+                                action: {
+                                    HapticManager.shared.light()
+                                    showFilters.toggle()
+                                },
+                                label: {
+                                    ZStack(alignment: .topTrailing) {
+                                        Image(systemName: "line.3.horizontal.decrease.circle")
+                                            .font(.title2)
                                             .foregroundColor(.white)
-                                            .frame(width: 18, height: 18)
-                                            .background(Circle().fill(Color.red))
-                                            .offset(x: 4, y: -4)
+                                            .padding(12)
+                                            .background(
+                                                Circle()
+                                                    .fill(.ultraThinMaterial)
+                                            )
+                                        
+                                        if activeFilterCount > 0 {
+                                            Text("\(activeFilterCount)")
+                                                .font(.caption2)
+                                                .fontWeight(.bold)
+                                                .foregroundColor(.white)
+                                                .frame(width: 18, height: 18)
+                                                .background(Circle().fill(Color.red))
+                                                .offset(x: 4, y: -4)
+                                        }
                                     }
                                 }
-                            }
+                            )
                             
                             Spacer()
                             
@@ -115,28 +140,34 @@ struct RecipeSearchView: View {
                             // Combined actions menu
                             Menu {
                                 // Import option
-                                Button(action: {
-                                    HapticManager.shared.selection()
-                                    showImportSheet = true
-                                }) {
-                                    Label("Import Recipe", systemImage: "plus.circle")
-                                }
+                                Button(
+                                    action: {
+                                        HapticManager.shared.selection()
+                                        showImportSheet = true
+                                    },
+                                    label: {
+                                        Label("Import Recipe", systemImage: "plus.circle")
+                                    }
+                                )
                                 
                                 Divider()
                                 
                                 // View mode options
                                 ForEach(RecipeViewMode.allCases, id: \.self) { mode in
-                                    Button(action: {
-                                        HapticManager.shared.selection()
-                                        withAnimation(.spring(response: 0.3)) {
-                                            viewMode = mode
+                                    Button(
+                                        action: {
+                                            HapticManager.shared.selection()
+                                            withAnimation(.spring(response: 0.3)) {
+                                                viewMode = mode
+                                            }
+                                        },
+                                        label: {
+                                            Label(mode.rawValue, systemImage: mode.icon)
+                                            if viewMode == mode {
+                                                Image(systemName: "checkmark")
+                                            }
                                         }
-                                    }) {
-                                        Label(mode.rawValue, systemImage: mode.icon)
-                                        if viewMode == mode {
-                                            Image(systemName: "checkmark")
-                                        }
-                                    }
+                                    )
                                 }
                             } label: {
                                 Image(systemName: "ellipsis.circle.fill")
@@ -253,6 +284,7 @@ struct RecipeSearchView: View {
                                 .padding(.bottom, 20)
                             }
                         }
+                        .id(viewMode) // Force refresh when view mode changes
                     }
                 }
             }
@@ -279,6 +311,21 @@ struct RecipeSearchView: View {
                     HapticManager.shared.success()
                 }
             }
+            .onChange(of: searchText) { _, _ in updateFilterCache() }
+            .onChange(of: selectedCategories) { _, _ in updateFilterCache() }
+            .onChange(of: selectedDifficulties) { _, _ in updateFilterCache() }
+            .onChange(of: selectedCookTimes) { _, _ in updateFilterCache() }
+            .onChange(of: showFavoritesOnly) { _, _ in updateFilterCache() }
+            .onChange(of: recipes) { _, _ in updateFilterCache() }
+        }
+    }
+    
+    // Update cache when filters change
+    private func updateFilterCache() {
+        let newHash = computeFilterHash()
+        if newHash != lastFilterHash {
+            cachedFilteredRecipes = filteredRecipes
+            lastFilterHash = newHash
         }
     }
     
@@ -312,7 +359,7 @@ struct RecipeSearchView: View {
                         Capsule()
                             .fill(.ultraThinMaterial)
                     )
-                }
+                })
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -500,7 +547,7 @@ struct RecipeFilterButton: View {
                     Capsule()
                         .strokeBorder(Color.white.opacity(isSelected ? 0 : 0.3), lineWidth: 1)
                 )
-        }
+        })
         .buttonStyle(.plain)
     }
 }

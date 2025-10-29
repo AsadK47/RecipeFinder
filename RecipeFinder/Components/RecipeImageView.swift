@@ -4,36 +4,39 @@ struct RecipeImageView: View {
     let imageName: String?
     let height: CGFloat
     
+    // Cache the image check result to avoid repeated lookups
+    @State private var cachedImage: UIImage?
+    private let cornerRadius: CGFloat = 16
+    
     init(imageName: String?, height: CGFloat = 200) {
         self.imageName = imageName
         self.height = height
     }
     
-    private var hasSpecificImage: Bool {
-        if let imageName = imageName {
-            return UIImage(named: imageName) != nil
-        }
-        return false
-    }
-    
     var body: some View {
-        ZStack {
-            if let imageName = imageName, hasSpecificImage {
-                Image(imageName)
+        Group {
+            if let cachedImage = cachedImage {
+                Image(uiImage: cachedImage)
                     .resizable()
                     .scaledToFill()
-                    .frame(height: height)
-                    .frame(maxWidth: .infinity)
+                    .frame(width: .infinity, height: height)
                     .clipped()
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
+            } else if let imageName = imageName, let uiImage = UIImage(named: imageName) {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: .infinity, height: height)
+                    .clipped()
+                    .onAppear {
+                        cachedImage = uiImage
+                    }
             } else {
+                // Default placeholder image
                 Image("food_icon")
                     .resizable()
                     .scaledToFill()
-                    .frame(height: height)
-                    .frame(maxWidth: .infinity)
+                    .frame(width: .infinity, height: height)
                     .clipped()
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
                     .overlay(
                         Circle()
                             .fill(Color.black.opacity(0.6))
@@ -48,5 +51,7 @@ struct RecipeImageView: View {
         }
         .frame(height: height)
         .frame(maxWidth: .infinity)
+        .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+        .drawingGroup() // Performance optimization for complex image rendering
     }
 }

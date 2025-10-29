@@ -20,6 +20,11 @@ struct RecipeDetailView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
     
+    // Performance: Pre-compute expensive checks
+    private let hasPrePrep: Bool
+    private let hasNotes: Bool
+    private let notesSentences: [Substring]
+    
     // Callback to refresh recipes list when favorite is toggled
     var onFavoriteToggle: (() -> Void)?
     
@@ -27,9 +32,16 @@ struct RecipeDetailView: View {
         self.recipe = recipe
         self.shoppingListManager = shoppingListManager
         self.onFavoriteToggle = onFavoriteToggle
+        
+        // Pre-compute state arrays
         _ingredientsState = State(initialValue: Array(repeating: false, count: recipe.ingredients.count))
         _instructionsState = State(initialValue: Array(repeating: false, count: recipe.instructions.count))
         _prePrepState = State(initialValue: Array(repeating: false, count: recipe.prePrepInstructions.count))
+        
+        // Pre-compute expensive checks
+        self.hasPrePrep = !recipe.prePrepInstructions.isEmpty
+        self.hasNotes = !recipe.notes.isEmpty
+        self.notesSentences = recipe.notes.split(separator: ".")
     }
     
     var body: some View {
@@ -90,35 +102,41 @@ struct RecipeDetailView: View {
                                     .padding(.horizontal)
                                 
                                 HStack(spacing: 12) {
-                                    Button(action: {
-                                        if recipe.currentServings > 1 {
-                                            HapticManager.shared.light()
-                                            recipe.currentServings -= 1
+                                    Button(
+                                        action: {
+                                            if recipe.currentServings > 1 {
+                                                HapticManager.shared.light()
+                                                recipe.currentServings -= 1
+                                            }
+                                        },
+                                        label: {
+                                            Image(systemName: "minus")
+                                                .font(.system(size: 18, weight: .semibold))
+                                                .foregroundColor(.white)
+                                                .frame(width: 44, height: 44)
+                                                .background(
+                                                    Circle()
+                                                        .fill(AppTheme.accentColor)
+                                                )
                                         }
-                                    }) {
-                                        Image(systemName: "minus")
-                                            .font(.system(size: 18, weight: .semibold))
-                                            .foregroundColor(.white)
-                                            .frame(width: 44, height: 44)
-                                            .background(
-                                                Circle()
-                                                    .fill(AppTheme.accentColor)
-                                            )
-                                    }
+                                    )
                                     
-                                    Button(action: {
-                                        HapticManager.shared.light()
-                                        recipe.currentServings += 1
-                                    }) {
-                                        Image(systemName: "plus")
-                                            .font(.system(size: 18, weight: .semibold))
-                                            .foregroundColor(.white)
-                                            .frame(width: 44, height: 44)
-                                            .background(
-                                                Circle()
-                                                    .fill(AppTheme.accentColor)
-                                            )
-                                    }
+                                    Button(
+                                        action: {
+                                            HapticManager.shared.light()
+                                            recipe.currentServings += 1
+                                        },
+                                        label: {
+                                            Image(systemName: "plus")
+                                                .font(.system(size: 18, weight: .semibold))
+                                                .foregroundColor(.white)
+                                                .frame(width: 44, height: 44)
+                                                .background(
+                                                    Circle()
+                                                        .fill(AppTheme.accentColor)
+                                                )
+                                        }
+                                    )
                                 }
                                 .frame(maxWidth: .infinity)
                             }
@@ -131,70 +149,79 @@ struct RecipeDetailView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         // Custom header with unit toggle
                         HStack(spacing: 8) {
-                            Button(action: {
-                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                    if expandedSections.contains("Ingredients") {
-                                        expandedSections.remove("Ingredients")
-                                    } else {
-                                        expandedSections.insert("Ingredients")
+                            Button(
+                                action: {
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                        if expandedSections.contains("Ingredients") {
+                                            expandedSections.remove("Ingredients")
+                                        } else {
+                                            expandedSections.insert("Ingredients")
+                                        }
+                                    }
+                                },
+                                label: {
+                                    HStack(spacing: 8) {
+                                        Image(systemName: "leaf.fill")
+                                            .foregroundColor(.white)
+                                            .font(.title3)
+                                        Text("Ingredients")
+                                            .font(.title2)
+                                            .fontWeight(.bold)
+                                            .foregroundColor(.white)
                                     }
                                 }
-                            }) {
-                                HStack(spacing: 8) {
-                                    Image(systemName: "leaf.fill")
-                                        .foregroundColor(.white)
-                                        .font(.title3)
-                                    Text("Ingredients")
-                                        .font(.title2)
-                                        .fontWeight(.bold)
-                                        .foregroundColor(.white)
-                                }
-                            }
+                            )
                             .buttonStyle(PlainButtonStyle())
                             
                             Spacer()
                             
                             // Unit toggle
-                            Button(action: {
-                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                    measurementSystem = measurementSystem == .metric ? .imperial : .metric
-                                    HapticManager.shared.selection()
+                            Button(
+                                action: {
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                        measurementSystem = measurementSystem == .metric ? .imperial : .metric
+                                        HapticManager.shared.selection()
+                                    }
+                                },
+                                label: {
+                                    HStack(spacing: 6) {
+                                        Image(systemName: measurementSystem.icon)
+                                            .font(.caption)
+                                        Text(measurementSystem.rawValue)
+                                            .font(.subheadline)
+                                            .fontWeight(.medium)
+                                    }
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 6)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(Color.white.opacity(0.2))
+                                    )
                                 }
-                            }) {
-                                HStack(spacing: 6) {
-                                    Image(systemName: measurementSystem.icon)
-                                        .font(.caption)
-                                    Text(measurementSystem.rawValue)
-                                        .font(.subheadline)
-                                        .fontWeight(.medium)
-                                }
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .fill(Color.white.opacity(0.2))
-                                )
-                            }
+                            )
                             .buttonStyle(PlainButtonStyle())
                             
                             // Chevron indicator
-                            Button(action: {
-                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                    if expandedSections.contains("Ingredients") {
-                                        expandedSections.remove("Ingredients")
-                                    } else {
-                                        expandedSections.insert("Ingredients")
+                            Button(
+                                action: {
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                        if expandedSections.contains("Ingredients") {
+                                            expandedSections.remove("Ingredients")
+                                        } else {
+                                            expandedSections.insert("Ingredients")
+                                        }
                                     }
+                                },
+                                label: {
+                                    Image(systemName: "chevron.down")
+                                        .font(.title3)
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.white.opacity(0.8))
+                                        .rotationEffect(.degrees(expandedSections.contains("Ingredients") ? 0 : -90))
+                                        .animation(.spring(response: 0.3), value: expandedSections.contains("Ingredients"))
                                 }
-                            }) {
-                                Image(systemName: "chevron.down")
-                                    .font(.title3)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.white.opacity(0.8))
-                                    .rotationEffect(.degrees(expandedSections.contains("Ingredients") ? 0 : -90))
-                                    .animation(.spring(response: 0.3), value: expandedSections.contains("Ingredients"))
-                            }
+                            )
                             .buttonStyle(PlainButtonStyle())
                         }
                         .padding(.top, 24)
@@ -233,7 +260,7 @@ struct RecipeDetailView: View {
                     .padding(.horizontal, 20)
                     
                     // Collapsible Pre-prep section
-                    if !recipe.prePrepInstructions.isEmpty {
+                    if hasPrePrep {
                         collapsibleSection(title: "Pre-Prep", icon: "list.clipboard") {
                             VStack(alignment: .leading, spacing: 16) {
                                 ForEach(recipe.prePrepInstructions.indices, id: \.self) { index in
@@ -269,17 +296,18 @@ struct RecipeDetailView: View {
                     }
                     
                     // Collapsible Notes section
-                    if !recipe.notes.isEmpty {
+                    if hasNotes {
                         collapsibleSection(title: "Notes", icon: "note.text") {
                             VStack(alignment: .leading, spacing: 8) {
-                                ForEach(recipe.notes.split(separator: "."), id: \.self) { sentence in
-                                    if !sentence.trimmingCharacters(in: .whitespaces).isEmpty {
+                                ForEach(notesSentences, id: \.self) { sentence in
+                                    let trimmed = sentence.trimmingCharacters(in: .whitespaces)
+                                    if !trimmed.isEmpty {
                                         HStack(alignment: .top, spacing: 8) {
                                             Image(systemName: "circle.fill")
                                                 .font(.system(size: 6))
                                                 .foregroundColor(.orange)
                                                 .padding(.top, 6)
-                                            Text(sentence.trimmingCharacters(in: .whitespaces))
+                                            Text(trimmed)
                                                 .font(.subheadline)
                                                 .foregroundColor(.primary)
                                         }
@@ -387,36 +415,39 @@ struct RecipeDetailView: View {
         
         return VStack(alignment: .leading, spacing: 12) {
             // Tappable header
-            Button(action: {
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                    if isExpanded {
-                        expandedSections.remove(title)
-                    } else {
-                        expandedSections.insert(title)
+            Button(
+                action: {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        if isExpanded {
+                            expandedSections.remove(title)
+                        } else {
+                            expandedSections.insert(title)
+                        }
                     }
+                },
+                label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: icon)
+                            .foregroundColor(.white)
+                            .font(.title3)
+                        Text(title)
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                        
+                        Spacer()
+                        
+                        // Chevron indicator
+                        Image(systemName: "chevron.down")
+                            .font(.title3)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.white.opacity(0.8))
+                            .rotationEffect(.degrees(isExpanded ? 0 : -90))
+                            .animation(.spring(response: 0.3), value: isExpanded)
+                    }
+                    .padding(.top, 24)
                 }
-            }) {
-                HStack(spacing: 8) {
-                    Image(systemName: icon)
-                        .foregroundColor(.white)
-                        .font(.title3)
-                    Text(title)
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                    
-                    Spacer()
-                    
-                    // Chevron indicator
-                    Image(systemName: "chevron.down")
-                        .font(.title3)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white.opacity(0.8))
-                        .rotationEffect(.degrees(isExpanded ? 0 : -90))
-                        .animation(.spring(response: 0.3), value: isExpanded)
-                }
-                .padding(.top, 24)
-            }
+            )
             .buttonStyle(PlainButtonStyle())
             
             // Collapsible content
@@ -465,7 +496,7 @@ struct RecipeDetailView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .contentShape(Rectangle())
-        }
+        })
         .buttonStyle(.plain)
     }
     

@@ -1,11 +1,20 @@
-// swiftlint:disable file_length
 import PDFKit
 import SwiftUI
 
-// swiftlint:disable:next type_body_length
-
 /// High-performance utility for sharing and exporting recipes
 class RecipeShareUtility {
+    
+    // MARK: - Drawing Configuration
+    
+    /// Configuration for drawing PDF sections
+    private struct SectionDrawConfig {
+        let context: CGContext
+        let title: String
+        let yPos: CGFloat
+        let margin: CGFloat
+        let width: CGFloat
+        let accentColor: UIColor
+    }
     
     // MARK: - Text Format Export (Blazing Fast)
     
@@ -226,12 +235,14 @@ class RecipeShareUtility {
             
             // MARK: - INGREDIENTS SECTION (exactly like app)
             yPos = drawSectionWithCard(
-                context: cgContext,
-                title: "🥘 Ingredients",
-                yPos: yPos,
-                margin: margin,
-                width: contentWidth,
-                accentColor: accentColor
+                config: SectionDrawConfig(
+                    context: cgContext,
+                    title: "🥘 Ingredients",
+                    yPos: yPos,
+                    margin: margin,
+                    width: contentWidth,
+                    accentColor: accentColor
+                )
             ) {
                 var itemY: CGFloat = 20
                 
@@ -263,12 +274,14 @@ class RecipeShareUtility {
             // MARK: - PRE-PREP SECTION (if exists)
             if !recipe.prePrepInstructions.isEmpty {
                 yPos = drawSectionWithCard(
-                    context: cgContext,
-                    title: "📋 Preparation",
-                    yPos: yPos,
-                    margin: margin,
-                    width: contentWidth,
-                    accentColor: accentColor
+                    config: SectionDrawConfig(
+                        context: cgContext,
+                        title: "📋 Preparation",
+                        yPos: yPos,
+                        margin: margin,
+                        width: contentWidth,
+                        accentColor: accentColor
+                    )
                 ) {
                     var itemY: CGFloat = 20
                     
@@ -317,12 +330,14 @@ class RecipeShareUtility {
             
             // MARK: - INSTRUCTIONS SECTION (exactly like app)
             yPos = drawSectionWithCard(
-                context: cgContext,
-                title: "👨‍🍳 Instructions",
-                yPos: yPos,
-                margin: margin,
-                width: contentWidth,
-                accentColor: accentColor
+                config: SectionDrawConfig(
+                    context: cgContext,
+                    title: "👨‍🍳 Instructions",
+                    yPos: yPos,
+                    margin: margin,
+                    width: contentWidth,
+                    accentColor: accentColor
+                )
             ) {
                 var itemY: CGFloat = 20
                 
@@ -372,12 +387,14 @@ class RecipeShareUtility {
             // MARK: - NOTES SECTION (if exists)
             if !recipe.notes.isEmpty {
                 yPos = drawSectionWithCard(
-                    context: cgContext,
-                    title: "📝 Notes",
-                    yPos: yPos,
-                    margin: margin,
-                    width: contentWidth,
-                    accentColor: accentColor
+                    config: SectionDrawConfig(
+                        context: cgContext,
+                        title: "📝 Notes",
+                        yPos: yPos,
+                        margin: margin,
+                        width: contentWidth,
+                        accentColor: accentColor
+                    )
                 ) {
                     let textRect = CGRect(x: 15, y: 20, width: contentWidth - 30, height: 300)
                     let boundingRect = (recipe.notes as NSString).boundingRect(
@@ -441,57 +458,50 @@ class RecipeShareUtility {
         context.restoreGState()
     }
     
-    // swiftlint:disable:next function_parameter_count
-    
     /// Draw section with white header and glass card content (exactly like app)
     private static func drawSectionWithCard(
-        context: CGContext,
-        title: String,
-        yPos: CGFloat,
-        margin: CGFloat,
-        width: CGFloat,
-        accentColor: UIColor,
+        config: SectionDrawConfig,
         contentBlock: @escaping () -> CGFloat
     ) -> CGFloat {
         // White section title (exactly like app)
-        (title as NSString).draw(
-            at: CGPoint(x: margin, y: yPos),
+        (config.title as NSString).draw(
+            at: CGPoint(x: config.margin, y: config.yPos),
             withAttributes: [
                 .font: UIFont.systemFont(ofSize: 20, weight: .bold),
                 .foregroundColor: UIColor.white
             ]
         )
         
-        let cardY = yPos + 32
+        let cardY = config.yPos + 32
         
         // Calculate content height (content draws to measure itself)
-        context.saveGState()
-        context.translateBy(x: margin, y: cardY)
+        config.context.saveGState()
+        config.context.translateBy(x: config.margin, y: cardY)
         
         // TEMP: Enable transparency to "hide" the measurement draw
-        context.setAlpha(0)
+        config.context.setAlpha(0)
         let contentHeight = contentBlock()
-        context.setAlpha(1)
+        config.context.setAlpha(1)
         
-        context.restoreGState()
+        config.context.restoreGState()
         
         // NOW draw the glass card background
-        let cardRect = CGRect(x: margin, y: cardY, width: width, height: contentHeight)
+        let cardRect = CGRect(x: config.margin, y: cardY, width: config.width, height: contentHeight)
         let path = CGPath(roundedRect: cardRect, cornerWidth: 16, cornerHeight: 16, transform: nil)
-        context.addPath(path)
-        context.setFillColor(UIColor.white.withAlphaComponent(0.9).cgColor)
-        context.fillPath()
+        config.context.addPath(path)
+        config.context.setFillColor(UIColor.white.withAlphaComponent(0.9).cgColor)
+        config.context.fillPath()
         
-        context.addPath(path)
-        context.setStrokeColor(UIColor.white.withAlphaComponent(0.3).cgColor)
-        context.setLineWidth(0.5)
-        context.strokePath()
+        config.context.addPath(path)
+        config.context.setStrokeColor(UIColor.white.withAlphaComponent(0.3).cgColor)
+        config.context.setLineWidth(0.5)
+        config.context.strokePath()
         
         // NOW draw the actual visible content
-        context.saveGState()
-        context.translateBy(x: margin, y: cardY)
+        config.context.saveGState()
+        config.context.translateBy(x: config.margin, y: cardY)
         _ = contentBlock()
-        context.restoreGState()
+        config.context.restoreGState()
         
         return cardY + contentHeight
     }

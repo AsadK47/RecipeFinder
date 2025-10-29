@@ -6,11 +6,16 @@ struct RecipeCard: View {
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
-    // Golden ratio proportions for aesthetic beauty
-    private let cardPadding: CGFloat = AppTheme.cardHorizontalPadding
-    private let imageSize: CGFloat = AppTheme.cardImageSize
-    private let cornerRadius: CGFloat = AppTheme.cardCornerRadius
-    private let contentSpacing: CGFloat = AppTheme.cardVerticalSpacing
+    // Golden ratio proportions for aesthetic beauty - now static for performance
+    private static let cardPadding: CGFloat = AppTheme.cardHorizontalPadding
+    private static let imageSize: CGFloat = AppTheme.cardImageSize
+    private static let cornerRadius: CGFloat = AppTheme.cardCornerRadius
+    private static let contentSpacing: CGFloat = AppTheme.cardVerticalSpacing
+    
+    private var cardPadding: CGFloat { Self.cardPadding }
+    private var imageSize: CGFloat { Self.imageSize }
+    private var cornerRadius: CGFloat { Self.cornerRadius }
+    private var contentSpacing: CGFloat { Self.contentSpacing }
     
     init(recipe: RecipeModel, viewMode: RecipeViewMode = .list) {
         self.recipe = recipe
@@ -77,18 +82,25 @@ struct RecipeCard: View {
         }
         .padding(contentSpacing)
         .background {
-            if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
-                    .shadow(color: Color.black.opacity(0.25), radius: 8, x: 0, y: 4)
-            } else {
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
-                    .shadow(color: Color.black.opacity(0.25), radius: 8, x: 0, y: 4)
-            }
+            cardBackground
         }
+        .drawingGroup() // Optimize complex card rendering
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(recipe.name), \(recipe.category), Preparation time: \(recipe.prepTime), Difficulty: \(recipe.difficulty)")
         .accessibilityHint("Double tap to view recipe details")
+    }
+    
+    // Extracted background to reduce body complexity
+    @ViewBuilder
+    private var cardBackground: some View {
+        if cardStyle == .solid {
+            RoundedRectangle(cornerRadius: cornerRadius)
+                .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                .shadow(color: Color.black.opacity(0.25), radius: 8, x: 0, y: 4)
+        } else {
+            RoundedRectangle(cornerRadius: cornerRadius)
+                .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
+                .shadow(color: Color.black.opacity(0.25), radius: 8, x: 0, y: 4)
+        }
     }
 }

@@ -224,28 +224,31 @@ struct SettingsView: View {
                                                 .foregroundColor(.orange)
                                                 .font(.caption)
                                         }
-                                    }
+                                    })
                                     .buttonStyle(PlainButtonStyle())
                                 }
                                 .padding()
                             }
                             #endif
                             
-                            Button(action: {
-                                HapticManager.shared.celebrate()
-                                confettiTrigger += 1
-                            }) {
-                                HStack {
-                                    Image(systemName: "party.popper.fill")
-                                    Text("Celebrate!")
-                                        .fontWeight(.semibold)
+                            Button(
+                                action: {
+                                    HapticManager.shared.celebrate()
+                                    confettiTrigger += 1
+                                },
+                                label: {
+                                    HStack {
+                                        Image(systemName: "party.popper.fill")
+                                        Text("Celebrate!")
+                                            .fontWeight(.semibold)
+                                    }
+                                    .foregroundColor(.white)
+                                    .frame(maxWidth: .infinity)
+                                    .padding()
+                                    .background(AppTheme.accentColor)
+                                    .cornerRadius(16)
                                 }
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(AppTheme.accentColor)
-                                .cornerRadius(16)
-                            }
+                            )
                             .confettiCannon(
                                 trigger: $confettiTrigger,
                                 num: 50,

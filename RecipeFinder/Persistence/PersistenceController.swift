@@ -110,8 +110,6 @@ class PersistenceController {
         }
     }
     
-    // swiftlint:disable:next function_body_length
-    
     // Helper method to save a RecipeModel directly
     func saveRecipeModel(_ recipe: RecipeModel) {
         let parameters = RecipeSaveParameters(
@@ -147,56 +145,59 @@ class PersistenceController {
             let results = try context.fetch(fetchRequest)
             debugLog("✅ Fetched \(results.count) recipes from database")
             
-            return results.compactMap { result in
-                guard let id = result.value(forKey: "id") as? UUID,
-                      let name = result.value(forKey: "name") as? String,
-                      let ingredientsData = result.value(forKey: "ingredients") as? Data else {
-                    debugLog("⚠️ Skipping recipe with missing required fields")
-                    return nil
-                }
-                
-                let category = result.value(forKey: "category") as? String ?? "Uncategorized"
-                let difficulty = result.value(forKey: "difficulty") as? String ?? "Unknown"
-                let prepTime = result.value(forKey: "prepTime") as? String ?? "Unknown"
-                let cookingTime = result.value(forKey: "cookingTime") as? String ?? "Unknown"
-                let baseServings = result.value(forKey: "baseServings") as? Int ?? 1
-                let currentServings = result.value(forKey: "currentServings") as? Int ?? baseServings
-                let prePrepInstructions = result.value(forKey: "prePrepInstructions") as? [String] ?? []
-                let instructions = result.value(forKey: "instructions") as? [String] ?? []
-                let notes = result.value(forKey: "notes") as? String ?? ""
-                let imageName = result.value(forKey: "imageName") as? String
-                let isFavorite = result.value(forKey: "isFavorite") as? Bool ?? false
-                
-                // Decode ingredients
-                let ingredients: [Ingredient]
-                do {
-                    ingredients = try JSONDecoder().decode([Ingredient].self, from: ingredientsData)
-                } catch {
-                    debugLog("❌ Failed to decode ingredients for '\(name)': \(error.localizedDescription)")
-                    return nil
-                }
-                
-                return RecipeModel(
-                    id: id,
-                    name: name,
-                    category: category,
-                    difficulty: difficulty,
-                    prepTime: prepTime,
-                    cookingTime: cookingTime,
-                    baseServings: baseServings,
-                    currentServings: currentServings,
-                    ingredients: ingredients,
-                    prePrepInstructions: prePrepInstructions,
-                    instructions: instructions,
-                    notes: notes,
-                    imageName: imageName,
-                    isFavorite: isFavorite
-                )
-            }
+            return results.compactMap { mapToRecipeModel($0) }
         } catch {
             debugLog("❌ Failed to fetch recipes: \(error.localizedDescription)")
             return []
         }
+    }
+    
+    // Helper method to map NSManagedObject to RecipeModel
+    private func mapToRecipeModel(_ result: NSManagedObject) -> RecipeModel? {
+        guard let id = result.value(forKey: "id") as? UUID,
+              let name = result.value(forKey: "name") as? String,
+              let ingredientsData = result.value(forKey: "ingredients") as? Data else {
+            debugLog("⚠️ Skipping recipe with missing required fields")
+            return nil
+        }
+        
+        let category = result.value(forKey: "category") as? String ?? "Uncategorized"
+        let difficulty = result.value(forKey: "difficulty") as? String ?? "Unknown"
+        let prepTime = result.value(forKey: "prepTime") as? String ?? "Unknown"
+        let cookingTime = result.value(forKey: "cookingTime") as? String ?? "Unknown"
+        let baseServings = result.value(forKey: "baseServings") as? Int ?? 1
+        let currentServings = result.value(forKey: "currentServings") as? Int ?? baseServings
+        let prePrepInstructions = result.value(forKey: "prePrepInstructions") as? [String] ?? []
+        let instructions = result.value(forKey: "instructions") as? [String] ?? []
+        let notes = result.value(forKey: "notes") as? String ?? ""
+        let imageName = result.value(forKey: "imageName") as? String
+        let isFavorite = result.value(forKey: "isFavorite") as? Bool ?? false
+        
+        // Decode ingredients
+        let ingredients: [Ingredient]
+        do {
+            ingredients = try JSONDecoder().decode([Ingredient].self, from: ingredientsData)
+        } catch {
+            debugLog("❌ Failed to decode ingredients for '\(name)': \(error.localizedDescription)")
+            return nil
+        }
+        
+        return RecipeModel(
+            id: id,
+            name: name,
+            category: category,
+            difficulty: difficulty,
+            prepTime: prepTime,
+            cookingTime: cookingTime,
+            baseServings: baseServings,
+            currentServings: currentServings,
+            ingredients: ingredients,
+            prePrepInstructions: prePrepInstructions,
+            instructions: instructions,
+            notes: notes,
+            imageName: imageName,
+            isFavorite: isFavorite
+        )
     }
     
     func deleteRecipe(withId id: UUID) {

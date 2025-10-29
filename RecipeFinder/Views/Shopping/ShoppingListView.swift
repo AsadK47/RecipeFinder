@@ -34,28 +34,35 @@ struct ShoppingListView: View {
                         HStack {
                             // Options menu
                             Menu {
-                Button(action: { 
-                    withAnimation {
-                        if collapsedCategories.count == CategoryClassifier.categoryOrder.count {
-                            collapsedCategories.removeAll()
-                        } else {
-                            collapsedCategories = Set(CategoryClassifier.categoryOrder)
+                Button(
+                    action: { 
+                        withAnimation {
+                            if collapsedCategories.count == CategoryClassifier.categoryOrder.count {
+                                collapsedCategories.removeAll()
+                            } else {
+                                collapsedCategories = Set(CategoryClassifier.categoryOrder)
+                            }
                         }
+                    },
+                    label: {
+                        Label(
+                            collapsedCategories.count == CategoryClassifier.categoryOrder.count ? "Expand All" : "Collapse All",
+                            systemImage: collapsedCategories.count == CategoryClassifier.categoryOrder.count ? "chevron.down.circle" : "chevron.up.circle"
+                        )
                     }
-                }) {
-                    Label(
-                        collapsedCategories.count == CategoryClassifier.categoryOrder.count ? "Expand All" : "Collapse All",
-                        systemImage: collapsedCategories.count == CategoryClassifier.categoryOrder.count ? "chevron.down.circle" : "chevron.up.circle"
-                    )
-                }
+                )
                                 
                                 Divider()
                                 
-                                Button(role: .destructive, action: { 
-                                    showClearConfirmation = true 
-                                }) {
-                                    Label("Clear Items", systemImage: "trash")
-                                }
+                                Button(
+                                    role: .destructive,
+                                    action: { 
+                                        showClearConfirmation = true 
+                                    },
+                                    label: {
+                                        Label("Clear Items", systemImage: "trash")
+                                    }
+                                )
                             } label: {
                                 Image(systemName: "ellipsis.circle")
                                     .font(.title2)
@@ -95,12 +102,15 @@ struct ShoppingListView: View {
                                     .onSubmit(addItem)
                                 
                                 if !searchText.isEmpty {
-                                    Button(action: { 
-                                        searchText = ""
-                                    }) {
-                                        Image(systemName: "xmark.circle.fill")
-                                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
-                                    }
+                                    Button(
+                                        action: { 
+                                            searchText = ""
+                                        },
+                                        label: {
+                                            Image(systemName: "xmark.circle.fill")
+                                                .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
+                                        }
+                                    )
                                 }
                             }
                             .padding(14)
@@ -110,18 +120,21 @@ struct ShoppingListView: View {
                             )
                             
                             if isSearchFocused || !searchText.isEmpty {
-                                Button(action: {
-                                    if !searchText.isEmpty {
-                                        addItem()
-                                    } else {
-                                        searchText = ""
-                                        isSearchFocused = false
+                                Button(
+                                    action: {
+                                        if !searchText.isEmpty {
+                                            addItem()
+                                        } else {
+                                            searchText = ""
+                                            isSearchFocused = false
+                                        }
+                                    },
+                                    label: {
+                                        Text(searchText.isEmpty ? "Cancel" : "Add")
+                                            .foregroundColor(.white)
+                                            .fontWeight(.semibold)
                                     }
-                                }) {
-                                    Text(searchText.isEmpty ? "Cancel" : "Add")
-                                        .foregroundColor(.white)
-                                        .fontWeight(.semibold)
-                                }
+                                )
                                 .transition(.move(edge: .trailing).combined(with: .opacity))
                             }
                         }
@@ -387,47 +400,50 @@ struct ShoppingListView: View {
                     }
                 } header: {
                     // Category Header - Tappable
-                    Button(action: {
-                        withAnimation(.spring(response: 0.3)) {
-                            if collapsedCategories.contains(group.category) {
-                                collapsedCategories.remove(group.category)
-                            } else {
-                                collapsedCategories.insert(group.category)
+                    Button(
+                        action: {
+                            withAnimation(.spring(response: 0.3)) {
+                                if collapsedCategories.contains(group.category) {
+                                    collapsedCategories.remove(group.category)
+                                } else {
+                                    collapsedCategories.insert(group.category)
+                                }
                             }
+                        },
+                        label: {
+                            HStack(spacing: 12) {
+                                Image(systemName: categoryIcon(for: group.category))
+                                    .font(.title3)
+                                    .foregroundColor(categoryColor(for: group.category))
+                                    .frame(width: 28)
+                                
+                                Text(group.category)
+                                    .font(.title3)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                
+                                Text("(\(group.items.filter { !$0.isChecked }.count)/\(group.items.count))")
+                                    .font(.subheadline)
+                                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.4))
+                                
+                                Spacer()
+                                
+                                Image(systemName: collapsedCategories.contains(group.category) ? "chevron.down" : "chevron.up")
+                                    .font(.caption)
+                                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.4))
+                                    .rotationEffect(.degrees(collapsedCategories.contains(group.category) ? 0 : 180))
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
+                            )
+                            .padding(.horizontal, 16)
+                            .padding(.top, 8)
                         }
-                    }) {
-                        HStack(spacing: 12) {
-                            Image(systemName: categoryIcon(for: group.category))
-                                .font(.title3)
-                                .foregroundColor(categoryColor(for: group.category))
-                                .frame(width: 28)
-                            
-                            Text(group.category)
-                                .font(.title3)
-                                .fontWeight(.bold)
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
-                            
-                            Text("(\(group.items.filter { !$0.isChecked }.count)/\(group.items.count))")
-                                .font(.subheadline)
-                                .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.4))
-                            
-                            Spacer()
-                            
-                            Image(systemName: collapsedCategories.contains(group.category) ? "chevron.down" : "chevron.up")
-                                .font(.caption)
-                                .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.4))
-                                .rotationEffect(.degrees(collapsedCategories.contains(group.category) ? 0 : 180))
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 12)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
-                        )
-                        .padding(.horizontal, 16)
-                        .padding(.top, 8)
-                    }
+                    )
                     .buttonStyle(.plain)
                     .textCase(nil)
                     .listRowInsets(EdgeInsets())
@@ -489,7 +505,7 @@ struct ShoppingListItemRow: View {
                                     .background(Circle().fill(AppTheme.accentColor))
                             }
                         }
-                    }
+                    })
                     
                     Text(item.name)
                         .font(.subheadline)
@@ -523,9 +539,13 @@ struct ShoppingListItemRow: View {
             .opacity(item.isChecked ? 0.6 : 1)
         }
         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-            Button(role: .destructive, action: onDelete) {
-                Image(systemName: "trash")
-            }
+            Button(
+                role: .destructive,
+                action: onDelete,
+                label: {
+                    Image(systemName: "trash")
+                }
+            )
         }
         .contextMenu {
             Menu("Change Category") {

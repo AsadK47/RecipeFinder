@@ -77,7 +77,7 @@ struct RecipeImportView: View {
                     .frame(height: 56)
                     .background(urlText.isEmpty || importer.isLoading ? Color.gray : AppTheme.accentColor(for: appTheme))
                     .cornerRadius(16)
-                }
+                })
                 .disabled(urlText.isEmpty || importer.isLoading)
                 .padding(.horizontal)
                 
@@ -180,31 +180,34 @@ struct RecipeImportView: View {
     }
     
     private func exampleButton(url: String, title: String, subtitle: String) -> some View {
-        Button(action: { 
-            urlText = url
-            HapticManager.shared.light()
-        }) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title)
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .foregroundColor(AppTheme.accentColor(for: appTheme))
-                
-                Text(subtitle)
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
+        Button(
+            action: { 
+                urlText = url
+                HapticManager.shared.light()
+            },
+            label: {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title)
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(AppTheme.accentColor(for: appTheme))
+                    
+                    Text(subtitle)
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(AppTheme.accentColor(for: appTheme).opacity(0.1))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(AppTheme.accentColor(for: appTheme).opacity(0.3), lineWidth: 1)
+                        )
+                )
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(AppTheme.accentColor(for: appTheme).opacity(0.1))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(AppTheme.accentColor(for: appTheme).opacity(0.3), lineWidth: 1)
-                    )
-            )
-        }
+        )
         .buttonStyle(PlainButtonStyle())
     }
     

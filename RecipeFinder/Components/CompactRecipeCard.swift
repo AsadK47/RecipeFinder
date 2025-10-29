@@ -5,13 +5,18 @@ struct CompactRecipeCard: View {
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
+    // Performance: Pre-compute static values
+    private static let imageSize: CGFloat = 100
+    private static let cornerRadius: CGFloat = 12
+    private static let cardHeight: CGFloat = 220
+    
     var body: some View {
         VStack(alignment: .center, spacing: 0) {
             // Image with rounded corners
             ZStack(alignment: .topLeading) {
-                RecipeImageView(imageName: recipe.imageName, height: 100)
-                    .frame(width: 100, height: 100, alignment: .center)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                RecipeImageView(imageName: recipe.imageName, height: Self.imageSize)
+                    .frame(width: Self.imageSize, height: Self.imageSize, alignment: .center)
+                    .clipShape(RoundedRectangle(cornerRadius: Self.cornerRadius))
                 
                 // Favorite badge
                 if recipe.isFavorite {
@@ -62,27 +67,24 @@ struct CompactRecipeCard: View {
             .padding(.bottom, 12)
         }
         .padding(.horizontal, 12)
-        .frame(maxWidth: .infinity, maxHeight: 220, alignment: .top)
+        .frame(maxWidth: .infinity, maxHeight: Self.cardHeight, alignment: .top)
         .background {
-            if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
-                    .shadow(
-                        color: Color.black.opacity(0.25),
-                        radius: 8,
-                        x: 0,
-                        y: 4
-                    )
-            } else {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
-                    .shadow(
-                        color: Color.black.opacity(0.25),
-                        radius: 8,
-                        x: 0,
-                        y: 4
-                    )
-            }
+            cardBackground
+        }
+        .drawingGroup() // Performance optimization
+    }
+    
+    // Extract background to reduce body complexity
+    @ViewBuilder
+    private var cardBackground: some View {
+        if cardStyle == .solid {
+            RoundedRectangle(cornerRadius: Self.cornerRadius)
+                .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                .shadow(color: Color.black.opacity(0.25), radius: 8, x: 0, y: 4)
+        } else {
+            RoundedRectangle(cornerRadius: Self.cornerRadius)
+                .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
+                .shadow(color: Color.black.opacity(0.25), radius: 8, x: 0, y: 4)
         }
     }
 }
