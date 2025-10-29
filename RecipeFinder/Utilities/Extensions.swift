@@ -4,6 +4,7 @@ import Foundation
 /// Prints debug messages only in DEBUG builds
 func debugLog(_ message: String) {
     #if DEBUG
+    // swiftlint:disable:next no_print
     print(message)
     #endif
 }

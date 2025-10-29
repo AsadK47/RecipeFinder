@@ -63,18 +63,26 @@ struct CompactRecipeCard: View {
         }
         .padding(.horizontal, 12)
         .frame(maxWidth: .infinity, maxHeight: 220, alignment: .top)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(cardStyle == .solid
-                    ? (colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
-                    : (colorScheme == .dark ? AnyShapeStyle(.ultraThinMaterial) : AnyShapeStyle(.regularMaterial))
-                )
-                .shadow(
-                    color: Color.black.opacity(0.25),
-                    radius: 8,
-                    x: 0,
-                    y: 4
-                )
-        )
+        .background {
+            if cardStyle == .solid {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                    .shadow(
+                        color: Color.black.opacity(0.25),
+                        radius: 8,
+                        x: 0,
+                        y: 4
+                    )
+            } else {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
+                    .shadow(
+                        color: Color.black.opacity(0.25),
+                        radius: 8,
+                        x: 0,
+                        y: 4
+                    )
+            }
+        }
     }
 }

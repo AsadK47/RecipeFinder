@@ -5,8 +5,8 @@
 //  Created by asad.e.khan on 10/12/2024.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 import UIKit
 
 @main

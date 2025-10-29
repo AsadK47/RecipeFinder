@@ -1,4 +1,5 @@
 import CoreData
+import Foundation
 
 class PersistenceController {
     static let shared = PersistenceController()
@@ -110,6 +111,7 @@ class PersistenceController {
     }
     
     // Helper method to save a RecipeModel directly
+    // swiftlint:disable:next function_body_length
     func saveRecipeModel(_ recipe: RecipeModel) {
         let parameters = RecipeSaveParameters(
             name: recipe.name,

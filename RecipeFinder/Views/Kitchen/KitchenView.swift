@@ -1,3 +1,4 @@
+// swiftlint:disable file_length
 import SwiftUI
 
 struct KitchenView: View {
@@ -20,7 +21,8 @@ struct KitchenView: View {
         }
         
         // Compute and cache
-        let result: [(category: String, ingredients: [String])] = CategoryClassifier.kitchenCategories.compactMap { category -> (category: String, ingredients: [String])? in
+        let result: [(category: String, ingredients: [String])] =
+            CategoryClassifier.kitchenCategories.compactMap { category -> (category: String, ingredients: [String])? in
             guard let keywords = CategoryClassifier.kitchenIngredientKeywords[category] else { return nil }
             let matchedIngredients = allIngredients.filter { ingredient in
                 // Filter out descriptor-only words

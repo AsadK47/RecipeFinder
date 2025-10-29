@@ -1,6 +1,6 @@
-import SwiftUI
-import SwiftData
 import ConfettiSwiftUI
+import SwiftData
+import SwiftUI
 
 struct ContentView: View {
     @State private var recipes: [RecipeModel] = []
@@ -41,7 +41,7 @@ struct ContentView: View {
             }
             .environment(\.appTheme, selectedTheme)
             .tint(AppTheme.accentColor(for: selectedTheme))
-            .onChange(of: selectedTab) { oldValue, newValue in
+            .onChange(of: selectedTab) { _, _ in
                 HapticManager.shared.selection()
             }
             .gesture(
@@ -76,4 +76,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .environment(\.managedObjectContext, PersistenceController.shared.container.viewContext)
 }

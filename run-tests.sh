@@ -18,7 +18,8 @@ NC='\033[0m' # No Color
 # Configuration
 SCHEME="RecipeFinder"
 PROJECT="RecipeFinder.xcodeproj"
-DESTINATION="platform=iOS Simulator,name=iPhone 15 Pro,OS=latest"
+DESTINATION="platform=iOS Simulator,name=iPhone 15 Pro"
+DERIVED_DATA="DerivedData"
 
 # Parse arguments
 VERBOSE=false
@@ -70,19 +71,23 @@ run_tests() {
     echo -e "${YELLOW}Running $test_name...${NC}"
     
     if [ "$VERBOSE" = true ]; then
-        xcodebuild test \
+        xcodebuild test-without-building \
             -project "$PROJECT" \
             -scheme "$SCHEME" \
             -destination "$DESTINATION" \
+            -derivedDataPath "$DERIVED_DATA" \
             -only-testing:"$test_target" \
-            | xcpretty --color
+            -resultBundlePath "TestResults-${test_target}.xcresult" \
+            | $FORMATTER
     else
-        xcodebuild test \
+        xcodebuild test-without-building \
             -project "$PROJECT" \
             -scheme "$SCHEME" \
             -destination "$DESTINATION" \
+            -derivedDataPath "$DERIVED_DATA" \
             -only-testing:"$test_target" \
-            2>&1 | grep -E '(Test Suite|Test Case|PASS|FAIL|error|warning)' || true
+            -resultBundlePath "TestResults-${test_target}.xcresult" \
+            2>&1 | grep -E '(Test Suite|Test Case|✓|✗|passed|failed)' || true
     fi
     
     if [ ${PIPESTATUS[0]} -eq 0 ]; then
@@ -90,6 +95,7 @@ run_tests() {
         return 0
     else
         echo -e "${RED}✗ $test_name failed${NC}"
+        echo "   View results: open TestResults-${test_target}.xcresult"
         return 1
     fi
 }
@@ -102,9 +108,29 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Clean build folder
-echo "🧹 Cleaning build folder..."
-xcodebuild clean -project "$PROJECT" -scheme "$SCHEME" > /dev/null 2>&1
+# Check if xcpretty is available
+if command -v xcpretty &> /dev/null; then
+    FORMATTER="xcpretty --color"
+else
+    FORMATTER="cat"
+    echo "💡 Tip: Install xcpretty for better output: gem install xcpretty"
+fi
+
+# Build tests once (much faster)
+echo "🏗️  Building tests..."
+xcodebuild build-for-testing \
+    -project "$PROJECT" \
+    -scheme "$SCHEME" \
+    -destination "$DESTINATION" \
+    -derivedDataPath "$DERIVED_DATA" \
+    CODE_SIGN_IDENTITY="" \
+    CODE_SIGNING_REQUIRED=NO \
+    | $FORMATTER
+
+if [ ${PIPESTATUS[0]} -ne 0 ]; then
+    echo -e "${RED}❌ Build failed${NC}"
+    exit 1
+fi
 
 echo ""
 

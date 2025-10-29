@@ -48,10 +48,10 @@ struct RecipeImportView: View {
                             .disabled(importer.isLoading)
                         
                         if !urlText.isEmpty {
-                            Button(action: { urlText = "" }) {
+                            Button(action: { urlText = "" }, label: {
                                 Image(systemName: "xmark.circle.fill")
                                     .foregroundColor(.secondary)
-                            }
+                            })
                         }
                     }
                     .padding()
@@ -61,7 +61,7 @@ struct RecipeImportView: View {
                 .padding(.horizontal)
                 
                 // Import Button
-                Button(action: importRecipe) {
+                Button(action: importRecipe, label: {
                     HStack {
                         if importer.isLoading {
                             ProgressView()
@@ -171,7 +171,7 @@ struct RecipeImportView: View {
                 }
             }
         }
-        .onChange(of: importer.importedRecipe) { oldValue, newValue in
+        .onChange(of: importer.importedRecipe) { _, newValue in
             if let recipe = newValue {
                 onImport(recipe)
                 dismiss()

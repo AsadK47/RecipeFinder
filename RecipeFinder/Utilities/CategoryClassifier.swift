@@ -4,13 +4,22 @@ import SwiftUI
 enum CategoryClassifier {
     
     // Shopping List Categories
-    static let categoryOrder = ["Produce", "Meat & Seafood", "Dairy & Eggs", "Bakery", "Kitchen", "Frozen", "Beverages", "Spices & Seasonings", "Other"]
+    static let categoryOrder = [
+        "Produce", "Meat & Seafood", "Dairy & Eggs", "Bakery",
+        "Kitchen", "Frozen", "Beverages", "Spices & Seasonings", "Other"
+    ]
     
     // Kitchen Inventory Categories
-    static let kitchenCategories = ["Proteins", "Vegetables", "Grains & Noodles", "Dairy & Eggs", "Spices & Herbs", "Sauces & Condiments"]
+    static let kitchenCategories = [
+        "Proteins", "Vegetables", "Grains & Noodles",
+        "Dairy & Eggs", "Spices & Herbs", "Sauces & Condiments"
+    ]
     
     // Words to exclude (descriptors, not ingredients)
-    static let descriptorWords = ["large", "small", "medium", "fresh", "dried", "frozen", "canned", "chopped", "sliced", "diced", "minced", "whole", "ground", "raw", "cooked"]
+    static let descriptorWords = [
+        "large", "small", "medium", "fresh", "dried", "frozen",
+        "canned", "chopped", "sliced", "diced", "minced", "whole", "ground", "raw", "cooked"
+    ]
     
     // Kitchen Ingredient Keywords (for matching ingredients to kitchen categories)
     static let kitchenIngredientKeywords: [String: [String]] = [
@@ -75,6 +84,7 @@ enum CategoryClassifier {
     }
     
     // Categorization
+    // swiftlint:disable:next function_body_length
     static func categorize(_ itemName: String) -> String {
         let lowercased = itemName.lowercased()
         

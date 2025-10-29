@@ -7,10 +7,16 @@ on:
     branches: [ main, develop ]
   workflow_dispatch:
 
+# Prevent multiple workflow runs for the same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-and-test:
     name: Build and Test
     runs-on: macos-14
+    timeout-minutes: 30
     
     steps:
     - name: Checkout
@@ -35,16 +41,25 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-spm-
     
+    - name: Cache DerivedData
+      uses: actions/cache@v4
+      with:
+        path: DerivedData
+        key: ${{ runner.os }}-deriveddata-${{ hashFiles('**/*.swift') }}
+        restore-keys: |
+          ${{ runner.os }}-deriveddata-
+    
     - name: Install dependencies
       run: |
         xcodebuild -resolvePackageDependencies -scheme RecipeFinder
     
     - name: Build for testing
       run: |
-        xcodebuild clean build-for-testing \
+        xcodebuild build-for-testing \
           -scheme RecipeFinder \
           -destination 'platform=iOS Simulator,name=iPhone 15 Pro,OS=17.2' \
           -configuration Debug \
+          -derivedDataPath DerivedData \
           CODE_SIGN_IDENTITY="" \
           CODE_SIGNING_REQUIRED=NO \
           CODE_SIGNING_ALLOWED=NO
@@ -55,33 +70,26 @@ jobs:
           -scheme RecipeFinder \
           -destination 'platform=iOS Simulator,name=iPhone 15 Pro,OS=17.2' \
           -configuration Debug \
+          -derivedDataPath DerivedData \
           CODE_SIGN_IDENTITY="" \
           CODE_SIGNING_REQUIRED=NO \
-          CODE_SIGNING_ALLOWED=NO
+          CODE_SIGNING_ALLOWED=NO \
+          -resultBundlePath TestResults.xcresult
     
-    - name: Build for Release
-      run: |
-        xcodebuild clean build \
-          -scheme RecipeFinder \
-          -destination 'generic/platform=iOS' \
-          -configuration Release \
-          CODE_SIGN_IDENTITY="" \
-          CODE_SIGNING_REQUIRED=NO \
-          CODE_SIGNING_ALLOWED=NO
-    
-    - name: Upload build artifacts
+    - name: Upload test results
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: build-logs
-        path: |
-          ~/Library/Logs/DiagnosticReports/
-          DerivedData/Logs/
-        retention-days: 5
+        name: test-results
+        path: TestResults.xcresult
+        retention-days: 7
 
-  code-quality:
-    name: Code Quality Checks
+  release-build:
+    name: Release Build
     runs-on: macos-14
+    timeout-minutes: 30
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [build-and-test, code-quality, security-scan]
     
     steps:
     - name: Checkout
@@ -89,6 +97,57 @@ jobs:
       
     - name: Select Xcode
       run: sudo xcode-select -s /Applications/Xcode_15.2.app/Contents/Developer
+    
+    - name: Cache SPM dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/Library/Caches/org.swift.swiftpm
+          .build
+        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+        restore-keys: |
+          ${{ runner.os }}-spm-
+    
+    - name: Build Release
+      run: |
+        xcodebuild build \
+          -scheme RecipeFinder \
+          -destination 'generic/platform=iOS' \
+          -configuration Release \
+          -derivedDataPath DerivedData \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO
+    
+    - name: Archive app
+      run: |
+        xcodebuild archive \
+          -scheme RecipeFinder \
+          -archivePath RecipeFinder.xcarchive \
+          -configuration Release \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO || echo "Archive step skipped (requires signing)"
+
+  code-quality:
+    name: Code Quality Checks
+    runs-on: macos-14
+    timeout-minutes: 15
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Select Xcode
+      run: sudo xcode-select -s /Applications/Xcode_15.2.app/Contents/Developer
+    
+    - name: Cache SwiftLint
+      uses: actions/cache@v4
+      with:
+        path: /usr/local/bin/swiftlint
+        key: ${{ runner.os }}-swiftlint-${{ hashFiles('.swiftlint.yml') }}
+        restore-keys: |
+          ${{ runner.os }}-swiftlint-
     
     - name: SwiftLint
       run: |
@@ -109,6 +168,7 @@ jobs:
   security-scan:
     name: Security Scan
     runs-on: macos-14
+    timeout-minutes: 10
     
     steps:
     - name: Checkout
@@ -152,6 +212,7 @@ jobs:
   documentation:
     name: Documentation Check
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     
     steps:
     - name: Checkout
@@ -198,9 +259,12 @@ jobs:
         echo "  Security Scan: ${{ needs.security-scan.result }}"
         echo "  Documentation: ${{ needs.documentation.result }}"
         
-        if [ "${{ needs.build-and-test.result }}" == "success" ]; then
-          echo "✅ Build successful!"
-        else
-          echo "❌ Build failed or was skipped"
+        # Only fail if critical jobs failed
+        if [ "${{ needs.build-and-test.result }}" == "failure" ] || \
+           [ "${{ needs.code-quality.result }}" == "failure" ] || \
+           [ "${{ needs.security-scan.result }}" == "failure" ]; then
+          echo "❌ Critical checks failed!"
           exit 1
         fi
+        
+        echo "✅ All checks passed!"

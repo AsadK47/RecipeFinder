@@ -13,11 +13,11 @@ struct FilterChip: View {
             Text(label)
                 .font(.caption)
                 .fontWeight(.semibold)
-            Button(action: onRemove) {
+            Button(action: onRemove, label: {
                 Image(systemName: "xmark.circle.fill")
                     .font(.caption)
                     .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.6))
-            }
+            })
         }
         .foregroundColor(colorScheme == .dark ? .white : .black)
         .padding(.horizontal, 12)

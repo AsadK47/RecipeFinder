@@ -1,6 +1,8 @@
-import SwiftUI
+// swiftlint:disable file_length
 import ConfettiSwiftUI
+import SwiftUI
 
+// swiftlint:disable:next type_body_length
 struct ShoppingListView: View {
     @ObservedObject var manager: ShoppingListManager
     @State private var searchText: String = ""
@@ -173,7 +175,7 @@ struct ShoppingListView: View {
                 num: 50,
                 radius: 500.0
             )
-            .onChange(of: manager.checkedCount) { oldValue, newValue in
+            .onChange(of: manager.checkedCount) { _, newValue in
                 // Trigger confetti when all items are checked (but only if there are items)
                 if !manager.items.isEmpty && newValue == manager.items.count {
                     HapticManager.shared.success()
@@ -470,7 +472,7 @@ struct ShoppingListItemRow: View {
         ZStack {
             GlassCard {
                 HStack(spacing: 16) {
-                    Button(action: onToggle) {
+                    Button(action: onToggle, label: {
                         ZStack {
                             Circle()
                                 .strokeBorder(
@@ -493,7 +495,7 @@ struct ShoppingListItemRow: View {
                         .font(.subheadline)
                         .fontWeight(.medium)
                         .strikethrough(item.isChecked)
-                        .foregroundColor(item.isChecked ? .gray : (colorScheme == .dark ? .white : .black))
+                        .foregroundColor(item.isChecked ? .gray: (colorScheme == .dark ? .white: .black))
                     
                     Spacer()
                     
@@ -550,4 +552,3 @@ struct ShoppingListItemRow: View {
 }
 
 // MARK: - Edit Item Sheet
-

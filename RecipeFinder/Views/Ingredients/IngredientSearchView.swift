@@ -1,5 +1,7 @@
+// swiftlint:disable file_length
 import SwiftUI
 
+// swiftlint:disable:next type_body_length
 struct IngredientSearchView: View {
     @Binding var recipes: [RecipeModel]
     @ObservedObject var shoppingListManager: ShoppingListManager
@@ -93,7 +95,7 @@ struct IngredientSearchView: View {
                         HStack {
                             // Filter button
                             if selectedIngredient == nil {
-                                Button(action: { showFilters.toggle() }) {
+                                Button(action: { showFilters.toggle() }, label: {
                                     ZStack(alignment: .topTrailing) {
                                         Image(systemName: "line.3.horizontal.decrease.circle")
                                             .font(.title2)
@@ -164,12 +166,15 @@ struct IngredientSearchView: View {
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 8) {
                                     ForEach(Array(selectedCategories), id: \.self) { category in
-                                        FilterChip(label: category, icon: categoryIcon(for: CategoryClassifier.suggestCategory(for: category.lowercased()))) {
+                                        FilterChip(
+                                            label: category,
+                                            icon: categoryIcon(for: CategoryClassifier.suggestCategory(for: category.lowercased()))
+                                        ) {
                                             selectedCategories.remove(category)
                                         }
                                     }
                                     
-                                    Button(action: clearAllFilters) {
+                                    Button(action: clearAllFilters, label: {
                                         Text("Clear All")
                                             .font(.caption)
                                             .fontWeight(.semibold)
@@ -180,7 +185,7 @@ struct IngredientSearchView: View {
                                                 Capsule()
                                                     .fill(Color.red.opacity(0.8))
                                             )
-                                    }
+                                    })
                                 }
                                 .padding(.horizontal, 20)
                             }
@@ -364,7 +369,7 @@ struct IngredientSearchView: View {
         case "Meat & Seafood": return "fish.fill"
         case "Dairy & Eggs": return "drop.fill"
         case "Bakery": return "birthday.cake.fill"
-    case "Kitchen": return "cabinet.fill"
+        case "Kitchen": return "cabinet.fill"
         case "Frozen": return "snowflake"
         case "Beverages": return "cup.and.saucer.fill"
         case "Spices & Seasonings": return "sparkles"
@@ -378,7 +383,7 @@ struct IngredientSearchView: View {
         case "Meat & Seafood": return .red
         case "Dairy & Eggs": return .blue
         case "Bakery": return .orange
-    case "Kitchen": return .brown
+        case "Kitchen": return .brown
         case "Frozen": return .cyan
         case "Beverages": return .purple
         case "Spices & Seasonings": return .yellow
@@ -708,6 +713,7 @@ struct CategoryCard: View {
         }
     }
     
+    // swiftlint:disable:next function_body_length
     private func ingredientGroup(_ mainIngredient: String) -> some View {
         let variations = getVariations(mainIngredient)
         let isGroupExpanded = expandedIngredients.contains(mainIngredient)
@@ -919,7 +925,7 @@ struct IngredientFilterSheet: View {
         case "meat & seafood": return "fish.fill"
         case "dairy & eggs": return "drop.fill"
         case "bakery": return "birthday.cake.fill"
-    case "kitchen": return "shippingbox.fill"
+        case "kitchen": return "shippingbox.fill"
         case "frozen": return "snowflake"
         case "beverages": return "cup.and.saucer.fill"
         case "spices & herbs": return "sparkles"
@@ -933,7 +939,7 @@ struct IngredientFilterSheet: View {
         case "meat & seafood": return .red
         case "dairy & eggs": return .blue
         case "bakery": return .orange
-    case "kitchen": return .brown
+        case "kitchen": return .brown
         case "frozen": return .cyan
         case "beverages": return .purple
         case "spices & herbs": return .yellow

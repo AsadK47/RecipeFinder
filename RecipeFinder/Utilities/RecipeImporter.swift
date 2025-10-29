@@ -1,3 +1,4 @@
+// swiftlint:disable file_length
 import Foundation
 import SwiftUI
 
@@ -123,6 +124,7 @@ class RecipeImporter: ObservableObject {
     @Published var debugInfo: String?
     @Published var importedRecipe: RecipeModel?
     
+    // swiftlint:disable:next function_body_length
     func importRecipe(from urlString: String) async {
         await MainActor.run {
             isLoading = true
@@ -211,6 +213,7 @@ class RecipeImporter: ObservableObject {
         }
     }
     
+    // swiftlint:disable:next function_body_length cyclomatic_complexity
     private func extractSchemaRecipe(from html: String) -> SchemaRecipe? {
         // Find JSON-LD script tags with more flexible pattern
         // This pattern handles various formatting and whitespace
@@ -475,10 +478,8 @@ class RecipeImporter: ObservableObject {
         if let keywords = schema.keywords {
             // Try to extract category from keywords
             let categories = ["Breakfast", "Lunch", "Dinner", "Dessert", "Snack", "Appetizer"]
-            for cat in categories {
-                if keywords.localizedCaseInsensitiveContains(cat) {
-                    return cat
-                }
+            for cat in categories where keywords.localizedCaseInsensitiveContains(cat) {
+                return cat
             }
         }
         

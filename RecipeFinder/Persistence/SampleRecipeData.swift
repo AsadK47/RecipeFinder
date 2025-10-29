@@ -341,7 +341,10 @@ extension PersistenceController {
                 "Flip pancakes over and cook for another minute on the other side. Repeat until all batter is used.",
                 "Serve pancakes stacked with a drizzle of maple syrup and your favourite toppings."
             ],
-            notes: "American pancakes are a classic breakfast dish. Experiment with different toppings like fresh fruits, whipped cream, or savory additions like bacon.",
+            notes: """
+                American pancakes are a classic breakfast dish. Experiment with different toppings \
+                like fresh fruits, whipped cream, or savory additions like bacon.
+                """,
             imageName: "american_pancakes",
             isFavorite: false
         ))
@@ -355,7 +358,11 @@ extension PersistenceController {
             baseServings: 4,
             currentServings: 4,
             ingredients: [
-                Ingredient(baseQuantity: 5, unit: "ml", name: "unsalted butter (for greasing the pan, or substitute with dairy-free butter or neutral oil)"),
+                Ingredient(
+                    baseQuantity: 5,
+                    unit: "ml",
+                    name: "unsalted butter (for greasing the pan, or substitute with dairy-free butter or neutral oil)"
+                ),
                 Ingredient(baseQuantity: 135, unit: "g", name: "all-purpose flour"),
                 Ingredient(baseQuantity: 63, unit: "g", name: "self-rising flour"),
                 Ingredient(baseQuantity: 3, unit: "g", name: "baking soda"),
@@ -372,7 +379,10 @@ extension PersistenceController {
             ],
             prePrepInstructions: [
                 "Sift and whisk all-purpose flour, self-rising flour, baking soda, and salt in a large mixing bowl.",
-                "In a medium-sized bowl, whisk together warm milk, dry active yeast, vanilla extract, and sugar. Allow the yeast to dissolve completely.",
+                """
+                In a medium-sized bowl, whisk together warm milk, dry active yeast, vanilla extract, and sugar. \
+                Allow the yeast to dissolve completely.
+                """,
                 "Whisk the milk mixture into the dry ingredients, then crack an egg into the batter and whisk just until combined. Do not overmix.",
                 "Cover the bowl and rest the pancake batter for 30 minutes (or 60 minutes if you have extra time)."
             ],

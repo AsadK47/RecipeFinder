@@ -18,8 +18,8 @@ struct RecipeImageView: View {
     
     var body: some View {
         ZStack {
-            if hasSpecificImage {
-                Image(imageName!)
+            if let imageName = imageName, hasSpecificImage {
+                Image(imageName)
                     .resizable()
                     .scaledToFill()
                     .frame(height: height)

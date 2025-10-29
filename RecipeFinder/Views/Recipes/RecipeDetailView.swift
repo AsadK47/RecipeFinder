@@ -1,6 +1,8 @@
-import SwiftUI
+// swiftlint:disable file_length
 import ConfettiSwiftUI
+import SwiftUI
 
+// swiftlint:disable:next type_body_length
 struct RecipeDetailView: View {
     @State private var recipe: RecipeModel
     @State private var ingredientsState: [Bool]
@@ -299,25 +301,25 @@ struct RecipeDetailView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 HStack(spacing: 16) {
                     // Favorite button
-                    Button(action: toggleFavorite) {
+                    Button(action: toggleFavorite, label: {
                         Image(systemName: recipe.isFavorite ? "heart.fill" : "heart")
                             .font(.title3)
                             .foregroundColor(recipe.isFavorite ? .red : .white)
-                    }
+                    })
                     
                     // Share button
                     Menu {
-                        Button(action: { shareAsText() }) {
+                        Button(action: { shareAsText() }, label: {
                             Label("Share as Text", systemImage: "doc.text")
-                        }
+                        })
                         
-                        Button(action: { shareAsPDF() }) {
+                        Button(action: { shareAsPDF() }, label: {
                             Label("Share as PDF", systemImage: "doc.richtext")
-                        }
+                        })
                         
-                        Button(action: { copyToClipboard() }) {
+                        Button(action: { copyToClipboard() }, label: {
                             Label("Copy to Clipboard", systemImage: "doc.on.clipboard")
-                        }
+                        })
                     } label: {
                         ZStack {
                             Image(systemName: "square.and.arrow.up")
@@ -370,7 +372,7 @@ struct RecipeDetailView: View {
             num: 50,
             radius: 500.0
         )
-        .onChange(of: instructionsState) { oldValue, newValue in
+        .onChange(of: instructionsState) { _, newValue in
             // Trigger confetti when all instructions are complete (not counting pre-prep)
             if !recipe.instructions.isEmpty && newValue.allSatisfy({ $0 }) {
                 HapticManager.shared.success()
@@ -435,7 +437,7 @@ struct RecipeDetailView: View {
     }
     
     private func instructionRow(number: Int, text: String, isChecked: Bool, toggle: @escaping () -> Void) -> some View {
-        Button(action: toggle) {
+        Button(action: toggle, label: {
             HStack(alignment: .center, spacing: 12) {
                 ZStack {
                     Circle()

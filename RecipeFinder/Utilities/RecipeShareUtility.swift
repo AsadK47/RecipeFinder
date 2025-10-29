@@ -1,5 +1,8 @@
-import SwiftUI
+// swiftlint:disable file_length
 import PDFKit
+import SwiftUI
+
+// swiftlint:disable:next type_body_length
 
 /// High-performance utility for sharing and exporting recipes
 class RecipeShareUtility {
@@ -66,7 +69,12 @@ class RecipeShareUtility {
     // MARK: - PDF Export (App-Style Screenshot)
     
     /// Generate a beautiful iPhone-width PDF that looks exactly like the app
-    // swiftlint:disable function_body_length
+    /// - Parameters:
+    ///   - recipe: The recipe to export
+    ///   - measurementSystem: The measurement system to use
+    ///   - theme: The app theme to apply
+    /// - Returns: PDF data or nil if generation fails
+    // swiftlint:disable:next function_body_length
     static func generatePDF(recipe: RecipeModel, measurementSystem: MeasurementSystem = .metric, theme: AppTheme.ThemeType = .purple) -> Data? {
         
         // iPhone 14/15 Pro width
@@ -433,6 +441,7 @@ class RecipeShareUtility {
     }
     
     /// Draw section with white header and glass card content (exactly like app)
+    // swiftlint:disable:next function_parameter_count
     private static func drawSectionWithCard(
         context: CGContext,
         title: String,

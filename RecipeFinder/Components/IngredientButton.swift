@@ -8,7 +8,7 @@ struct IngredientButton: View {
         Button(action: {
             HapticManager.shared.light()
             action()
-        }) {
+        }, label: {
             HStack {
                 Text(ingredient)
                     .font(.subheadline)
@@ -25,7 +25,7 @@ struct IngredientButton: View {
                 RoundedRectangle(cornerRadius: 12)
                     .fill(Color(.systemGray6))
             )
-        }
+        })
         .buttonStyle(PlainButtonStyle())
     }
 }

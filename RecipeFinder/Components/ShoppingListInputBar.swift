@@ -19,10 +19,10 @@ struct ShoppingListInputBar: View {
                     }
                 
                 if !text.isEmpty {
-                    Button(action: { text = "" }) {
+                    Button(action: { text = "" }, label: {
                         Image(systemName: "xmark.circle.fill")
                             .foregroundColor(.gray)
-                    }
+                    })
                 }
             }
             .padding(12)
@@ -32,7 +32,7 @@ struct ShoppingListInputBar: View {
             )
             
             if !text.isEmpty {
-                Button(action: onAdd) {
+                Button(action: onAdd, label: {
                     Image(systemName: "arrow.up.circle.fill")
                         .font(.title2)
                         .foregroundColor(.white)
@@ -41,7 +41,7 @@ struct ShoppingListInputBar: View {
                             Circle()
                                 .fill(AppTheme.accentColor)
                         )
-                }
+                })
                 .transition(.scale.combined(with: .opacity))
             }
         }

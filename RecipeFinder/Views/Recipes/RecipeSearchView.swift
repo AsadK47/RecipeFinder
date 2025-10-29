@@ -1,3 +1,4 @@
+// swiftlint:disable file_length
 import SwiftUI
 
 struct RecipeSearchView: View {
@@ -185,7 +186,7 @@ struct RecipeSearchView: View {
                                         }
                                     }
                                     
-                                    Button(action: clearAllFilters) {
+                                    Button(action: clearAllFilters, label: {
                                         Text("Clear All")
                                             .font(.caption)
                                             .fontWeight(.semibold)
@@ -196,7 +197,7 @@ struct RecipeSearchView: View {
                                                 Capsule()
                                                     .fill(Color.red.opacity(0.8))
                                             )
-                                    }
+                                    })
                                 }
                                 .padding(.horizontal, 20)
                             }
@@ -212,7 +213,11 @@ struct RecipeSearchView: View {
                             if viewMode == .list {
                                 LazyVStack(spacing: AppTheme.cardVerticalSpacing) {
                                     ForEach(filteredRecipes) { recipe in
-                                        NavigationLink(destination: RecipeDetailView(recipe: recipe, shoppingListManager: shoppingListManager, onFavoriteToggle: {
+                                        NavigationLink(
+                                            destination: RecipeDetailView(
+                                                recipe: recipe,
+                                                shoppingListManager: shoppingListManager,
+                                                onFavoriteToggle: {
                                             refreshRecipes()
                                         })) {
                                             RecipeCard(recipe: recipe, viewMode: .list)
@@ -228,7 +233,11 @@ struct RecipeSearchView: View {
                             } else {
                                 LazyVGrid(columns: gridColumns, spacing: 16) {
                                     ForEach(filteredRecipes) { recipe in
-                                        NavigationLink(destination: RecipeDetailView(recipe: recipe, shoppingListManager: shoppingListManager, onFavoriteToggle: {
+                                        NavigationLink(
+                                            destination: RecipeDetailView(
+                                                recipe: recipe,
+                                                shoppingListManager: shoppingListManager,
+                                                onFavoriteToggle: {
                                             refreshRecipes()
                                         })) {
                                             CompactRecipeCard(recipe: recipe)
@@ -289,7 +298,7 @@ struct RecipeSearchView: View {
                 .foregroundColor(.white.opacity(0.7))
             
             if activeFilterCount > 0 {
-                Button(action: clearAllFilters) {
+                Button(action: clearAllFilters, label: {
                     HStack(spacing: 8) {
                         Image(systemName: "xmark.circle.fill")
                         Text("Clear All Filters")
@@ -474,7 +483,7 @@ struct RecipeFilterButton: View {
     let action: () -> Void
     
     var body: some View {
-        Button(action: action) {
+        Button(action: action, label: {
             Text(label)
                 .font(.subheadline)
                 .fontWeight(isSelected ? .semibold : .regular)

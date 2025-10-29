@@ -50,7 +50,6 @@ struct RecipeCard: View {
                     .lineLimit(2)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
-                
                 // Time and difficulty on same line
                 HStack(spacing: contentSpacing) {
                     HStack(spacing: 4) {
@@ -77,14 +76,17 @@ struct RecipeCard: View {
                 .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.4))
         }
         .padding(contentSpacing)
-        .background(
-            RoundedRectangle(cornerRadius: cornerRadius)
-                .fill(cardStyle == .solid 
-                    ? (colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
-                    : (colorScheme == .dark ? AnyShapeStyle(.ultraThinMaterial) : AnyShapeStyle(.regularMaterial))
-                )
-                .shadow(color: Color.black.opacity(0.25), radius: 8, x: 0, y: 4)
-        )
+        .background {
+            if cardStyle == .solid {
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                    .shadow(color: Color.black.opacity(0.25), radius: 8, x: 0, y: 4)
+            } else {
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
+                    .shadow(color: Color.black.opacity(0.25), radius: 8, x: 0, y: 4)
+            }
+        }
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(recipe.name), \(recipe.category), Preparation time: \(recipe.prepTime), Difficulty: \(recipe.difficulty)")
         .accessibilityHint("Double tap to view recipe details")

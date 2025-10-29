@@ -6,6 +6,7 @@ enum CardStyle: String, CaseIterable {
     case solid = "Solid"
 }
 
+// swiftlint:disable:next type_body_length
 struct SettingsView: View {
     @State private var confettiTrigger: Int = 0
     @State private var showResetAlert: Bool = false
@@ -98,7 +99,7 @@ struct SettingsView: View {
                                                     .fill(Color(.systemGray6))
                                             )
                                         }
-                                        .onChange(of: selectedTheme) { oldValue, newValue in
+                                        .onChange(of: selectedTheme) { _, _ in
                                             HapticManager.shared.selection()
                                         }
                                     }
@@ -140,7 +141,7 @@ struct SettingsView: View {
                                                     .fill(Color(.systemGray6))
                                             )
                                         }
-                                        .onChange(of: appearanceMode) { oldValue, newValue in
+                                        .onChange(of: appearanceMode) { _, _ in
                                             HapticManager.shared.selection()
                                         }
                                     }
@@ -182,7 +183,7 @@ struct SettingsView: View {
                                                     .fill(Color(.systemGray6))
                                             )
                                         }
-                                        .onChange(of: cardStyle) { oldValue, newValue in
+                                        .onChange(of: cardStyle) { _, _ in
                                             HapticManager.shared.selection()
                                         }
                                     }
@@ -207,7 +208,7 @@ struct SettingsView: View {
                                         .font(.headline)
                                         .foregroundColor(AppTheme.secondaryText)
                                     
-                                    Button(action: { showResetAlert = true }) {
+                                    Button(action: { showResetAlert = true }, label: {
                                         HStack(spacing: 16) {
                                             Image(systemName: "arrow.clockwise.circle.fill")
                                                 .foregroundColor(.orange)

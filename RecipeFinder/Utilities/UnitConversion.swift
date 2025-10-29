@@ -119,7 +119,12 @@ struct UnitConversion {
     }
     
     // MARK: - Smart Conversion
-    static func convert(value: Double, unit: String, to system: MeasurementSystem, ingredientName: String? = nil) -> (quantity: Double, unit: String) {
+    static func convert(
+        value: Double,
+        unit: String,
+        to system: MeasurementSystem,
+        ingredientName: String? = nil
+    ) -> (quantity: Double, unit: String) {
         let unitType = getUnitType(unit)
         
         switch unitType {
@@ -148,10 +153,8 @@ struct UnitConversion {
                       "sauce", "vinegar", "wine", "soy sauce", "coconut milk", "honey",
                       "syrup", "extract", "liquid", "melted"]
         
-        for liquid in liquids {
-            if name.contains(liquid) {
-                return false
-            }
+        for liquid in liquids where name.contains(liquid) {
+            return false
         }
         
         // Common spices and dry herbs
@@ -172,10 +175,8 @@ struct UnitConversion {
                              "dried", "powder", "ground", "crushed", "flake", "granule"]
         
         // Check if any keyword matches
-        for keyword in spices + dryIngredients {
-            if name.contains(keyword) {
-                return true
-            }
+        for keyword in spices + dryIngredients where name.contains(keyword) {
+            return true
         }
         
         return false
@@ -187,6 +188,7 @@ struct UnitConversion {
         let normalized = unit.lowercased().trimmingCharacters(in: .whitespaces)
         
         // More accurate conversions for common ingredients (grams per tsp/tbsp/cup)
+        // swiftlint:disable:next large_tuple
         let densityMap: [String: (tsp: Double, tbsp: Double, cup: Double)] = [
             // Spices (grams)
             "salt": (tsp: 6, tbsp: 18, cup: 288),
@@ -213,22 +215,20 @@ struct UnitConversion {
             
             // Seeds and nuts
             "sesame seed": (tsp: 3, tbsp: 9, cup: 144),
-            "poppy seed": (tsp: 3.3, tbsp: 10, cup: 160),
+            "poppy seed": (tsp: 3.3, tbsp: 10, cup: 160)
         ]
         
         // Find matching density
-        for (ingredient, densities) in densityMap {
-            if name.contains(ingredient) {
-                switch normalized {
-                case "tsp", "teaspoon", "teaspoons":
-                    return densities.tsp
-                case "tbsp", "tablespoon", "tablespoons":
-                    return densities.tbsp
-                case "cup", "cups":
-                    return densities.cup
-                default:
-                    return nil
-                }
+        for (ingredient, densities) in densityMap where name.contains(ingredient) {
+            switch normalized {
+            case "tsp", "teaspoon", "teaspoons":
+                return densities.tsp
+            case "tbsp", "tablespoon", "tablespoons":
+                return densities.tbsp
+            case "cup", "cups":
+                return densities.cup
+            default:
+                return nil
             }
         }
         
@@ -236,7 +236,12 @@ struct UnitConversion {
     }
     
     // MARK: - Volume to Weight Conversion for Solids
-    private static func convertVolumeToWeightForSolids(value: Double, unit: String, system: MeasurementSystem, ingredientName: String) -> (quantity: Double, unit: String) {
+    private static func convertVolumeToWeightForSolids(
+        value: Double,
+        unit: String,
+        system: MeasurementSystem,
+        ingredientName: String
+    ) -> (quantity: Double, unit: String) {
         let normalized = unit.lowercased().trimmingCharacters(in: .whitespaces)
         
         // For imperial system, keep volume units (tsp/tbsp) as-is for spices/dry ingredients

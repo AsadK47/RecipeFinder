@@ -23,10 +23,10 @@ struct ModernSearchBar: View {
                     }
                 
                 if !text.isEmpty {
-                    Button(action: { text = "" }) {
+                    Button(action: { text = "" }, label: {
                         Image(systemName: "xmark.circle.fill")
                             .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
-                    }
+                    })
                 }
             }
             .padding(14)
