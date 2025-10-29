@@ -4,6 +4,7 @@ struct RecipeCard: View {
     let recipe: RecipeModel
     let viewMode: RecipeViewMode
     @Environment(\.colorScheme) var colorScheme
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
     // Golden ratio proportions for aesthetic beauty
     private let cardPadding: CGFloat = AppTheme.cardHorizontalPadding
@@ -78,7 +79,10 @@ struct RecipeCard: View {
         .padding(contentSpacing)
         .background(
             RoundedRectangle(cornerRadius: cornerRadius)
-                .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
+                .fill(cardStyle == .solid 
+                    ? (colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                    : (colorScheme == .dark ? AnyShapeStyle(.ultraThinMaterial) : AnyShapeStyle(.regularMaterial))
+                )
                 .shadow(color: Color.black.opacity(0.25), radius: 8, x: 0, y: 4)
         )
         .accessibilityElement(children: .combine)

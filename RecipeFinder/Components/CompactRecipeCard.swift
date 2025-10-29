@@ -3,6 +3,7 @@ import SwiftUI
 struct CompactRecipeCard: View {
     let recipe: RecipeModel
     @Environment(\.colorScheme) var colorScheme
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
     var body: some View {
         VStack(alignment: .center, spacing: 0) {
@@ -64,10 +65,9 @@ struct CompactRecipeCard: View {
         .frame(maxWidth: .infinity, maxHeight: 220, alignment: .top)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(
-                    colorScheme == .dark
-                        ? .ultraThinMaterial
-                        : .regularMaterial
+                .fill(cardStyle == .solid
+                    ? (colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                    : (colorScheme == .dark ? AnyShapeStyle(.ultraThinMaterial) : AnyShapeStyle(.regularMaterial))
                 )
                 .shadow(
                     color: Color.black.opacity(0.25),

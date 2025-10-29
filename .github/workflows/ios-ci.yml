@@ -37,7 +37,6 @@ jobs:
     
     - name: Install dependencies
       run: |
-        cd RecipeFinder
         xcodebuild -resolvePackageDependencies -scheme RecipeFinder
     
     - name: Build for testing
@@ -59,7 +58,6 @@ jobs:
           CODE_SIGN_IDENTITY="" \
           CODE_SIGNING_REQUIRED=NO \
           CODE_SIGNING_ALLOWED=NO
-      continue-on-error: true
     
     - name: Build for Release
       run: |
@@ -99,9 +97,8 @@ jobs:
           brew install swiftlint
         fi
         
-        # Run SwiftLint (create .swiftlint.yml if you want custom rules)
-        swiftlint lint --reporter github-actions-logging || true
-      continue-on-error: true
+        # Run SwiftLint
+        swiftlint lint --reporter github-actions-logging
     
     - name: Check for TODO/FIXME
       run: |
@@ -121,27 +118,36 @@ jobs:
       run: |
         echo "🔒 Scanning for potential sensitive data..."
         
+        FOUND_ISSUES=0
+        
         # Check for API keys
-        if grep -r "api_key\|apiKey\|API_KEY" RecipeFinder --include="*.swift"; then
+        if grep -r "api_key\|apiKey\|API_KEY" RecipeFinder --include="*.swift" --exclude="*Test*.swift"; then
           echo "⚠️ Potential API keys found"
+          FOUND_ISSUES=1
         else
           echo "✅ No API keys detected"
         fi
         
-        # Check for passwords
-        if grep -r "password\|passwd\|pwd" RecipeFinder --include="*.swift" | grep -v "// "; then
+        # Check for passwords (excluding comments)
+        if grep -r "password\|passwd\|pwd" RecipeFinder --include="*.swift" --exclude="*Test*.swift" | grep -v "//"; then
           echo "⚠️ Potential passwords found"
+          FOUND_ISSUES=1
         else
           echo "✅ No passwords detected"
         fi
         
         # Check for private keys
-        if grep -r "private_key\|privateKey" RecipeFinder --include="*.swift"; then
+        if grep -r "private_key\|privateKey\|PRIVATE_KEY" RecipeFinder --include="*.swift" --exclude="*Test*.swift"; then
           echo "⚠️ Potential private keys found"
+          FOUND_ISSUES=1
         else
           echo "✅ No private keys detected"
         fi
-      continue-on-error: true
+        
+        if [ $FOUND_ISSUES -eq 1 ]; then
+          echo "❌ Security issues found! Please remove sensitive data from source code."
+          exit 1
+        fi
 
   documentation:
     name: Documentation Check
@@ -186,9 +192,15 @@ jobs:
     steps:
     - name: Check build status
       run: |
+        echo "📊 Build Status Summary:"
+        echo "  Build & Test: ${{ needs.build-and-test.result }}"
+        echo "  Code Quality: ${{ needs.code-quality.result }}"
+        echo "  Security Scan: ${{ needs.security-scan.result }}"
+        echo "  Documentation: ${{ needs.documentation.result }}"
+        
         if [ "${{ needs.build-and-test.result }}" == "success" ]; then
           echo "✅ Build successful!"
         else
-          echo "❌ Build failed!"
+          echo "❌ Build failed or was skipped"
           exit 1
         fi

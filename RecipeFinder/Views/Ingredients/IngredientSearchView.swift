@@ -495,9 +495,14 @@ struct QuickMatchRecipeCard: View {
     let recipe: RecipeModel
     let matchPercentage: Double
     @Environment(\.colorScheme) var colorScheme
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
-    private var backgroundFill: Color {
-        colorScheme == .dark ? Color.white.opacity(0.08) : Color.white
+    private var backgroundFill: some ShapeStyle {
+        if cardStyle == .solid {
+            return AnyShapeStyle(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+        } else {
+            return AnyShapeStyle(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
+        }
     }
     
     private var borderColor: Color {
