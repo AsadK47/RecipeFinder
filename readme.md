@@ -203,7 +203,7 @@ RecipeFinder/
 ```bash
 xcodebuild test \
     -scheme RecipeFinder \
-    -destination 'platform=iOS Simulator,name=iPhone 15 Pro,OS=latest'
+    -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=latest'
 ```
 
 ### Test Coverage

@@ -23,10 +23,10 @@ AVAILABLE_SIMULATOR=$(xcrun simctl list devices available | grep "iPhone" | head
 
 if [ -z "$AVAILABLE_SIMULATOR" ]; then
     echo "⚠️  No iPhone simulator found, using default destination"
-    DESTINATION='platform=iOS Simulator,name=iPhone 15 Pro'
+    DESTINATION='platform=iOS Simulator,name=iPhone 17 Pro'
 else
     echo "✅ Using available iPhone simulator"
-    DESTINATION='platform=iOS Simulator,name=iPhone 15 Pro'
+    DESTINATION='platform=iOS Simulator,name=iPhone 17 Pro'
 fi
 
 echo ""

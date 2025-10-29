@@ -68,13 +68,14 @@ class RecipeShareUtility {
     
     // MARK: - PDF Export (App-Style Screenshot)
     
+    // swiftlint:disable:next function_body_length
+    
     /// Generate a beautiful iPhone-width PDF that looks exactly like the app
     /// - Parameters:
     ///   - recipe: The recipe to export
     ///   - measurementSystem: The measurement system to use
     ///   - theme: The app theme to apply
     /// - Returns: PDF data or nil if generation fails
-    // swiftlint:disable:next function_body_length
     static func generatePDF(recipe: RecipeModel, measurementSystem: MeasurementSystem = .metric, theme: AppTheme.ThemeType = .purple) -> Data? {
         
         // iPhone 14/15 Pro width
@@ -440,8 +441,9 @@ class RecipeShareUtility {
         context.restoreGState()
     }
     
-    /// Draw section with white header and glass card content (exactly like app)
     // swiftlint:disable:next function_parameter_count
+    
+    /// Draw section with white header and glass card content (exactly like app)
     private static func drawSectionWithCard(
         context: CGContext,
         title: String,

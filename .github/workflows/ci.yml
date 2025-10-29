@@ -7,6 +7,11 @@ on:
     branches: [ main, develop ]
   workflow_dispatch:
 
+# Prevent duplicate workflow runs for the same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   SCHEME: RecipeFinder
   CONFIGURATION: Debug
@@ -16,13 +21,25 @@ jobs:
   lint:
     name: 🔍 SwiftLint
     runs-on: macos-14
+    timeout-minutes: 10
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
       
+      - name: Cache SwiftLint
+        uses: actions/cache@v4
+        with:
+          path: /opt/homebrew/bin/swiftlint
+          key: ${{ runner.os }}-swiftlint-0.54.0
+          restore-keys: |
+            ${{ runner.os }}-swiftlint-
+      
       - name: Install SwiftLint
-        run: brew install swiftlint
+        run: |
+          if ! command -v swiftlint &> /dev/null; then
+            brew install swiftlint
+          fi
       
       - name: Run SwiftLint
         run: |
@@ -31,6 +48,7 @@ jobs:
   test:
     name: 🧪 Run Unit Tests
     runs-on: macos-14
+    timeout-minutes: 30
     needs: lint
     
     steps:
@@ -38,13 +56,35 @@ jobs:
         uses: actions/checkout@v4
       
       - name: Select Xcode version
-        run: sudo xcode-select -s /Applications/Xcode_15.2.app
+        run: sudo xcode-select -s /Applications/Xcode_15.2.app/Contents/Developer
       
       - name: Show Xcode version
         run: xcodebuild -version
       
       - name: List available simulators
         run: xcrun simctl list devices available
+      
+      - name: Cache SPM dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/Library/Caches/org.swift.swiftpm
+            .build
+          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+      
+      - name: Cache DerivedData
+        uses: actions/cache@v4
+        with:
+          path: DerivedData
+          key: ${{ runner.os }}-deriveddata-${{ hashFiles('**/*.swift', '**/*.m', '**/*.h') }}
+          restore-keys: |
+            ${{ runner.os }}-deriveddata-
+      
+      - name: Resolve SPM dependencies
+        run: |
+          xcodebuild -resolvePackageDependencies -scheme ${{ env.SCHEME }}
       
       - name: Clean build folder
         run: |
@@ -58,16 +98,24 @@ jobs:
             -scheme ${{ env.SCHEME }} \
             -destination '${{ env.DESTINATION }}' \
             -configuration ${{ env.CONFIGURATION }} \
-            -derivedDataPath DerivedData
+            -derivedDataPath DerivedData \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            -quiet
       
       - name: Run tests
         run: |
-          xcodebuild test-without-building \
+          set -o pipefail && xcodebuild test-without-building \
             -scheme ${{ env.SCHEME }} \
             -destination '${{ env.DESTINATION }}' \
             -configuration ${{ env.CONFIGURATION }} \
             -derivedDataPath DerivedData \
             -enableCodeCoverage YES \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            -resultBundlePath TestResults.xcresult \
             | xcpretty --report junit --output test-results.xml
       
       - name: Upload test results
@@ -75,7 +123,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-results
-          path: test-results.xml
+          path: |
+            test-results.xml
+            TestResults.xcresult
+          retention-days: 7
       
       - name: Generate code coverage report
         if: success()
@@ -98,6 +149,7 @@ jobs:
   build:
     name: 🏗️ Build App
     runs-on: macos-14
+    timeout-minutes: 25
     needs: test
     
     steps:
@@ -105,7 +157,25 @@ jobs:
         uses: actions/checkout@v4
       
       - name: Select Xcode version
-        run: sudo xcode-select -s /Applications/Xcode_15.2.app
+        run: sudo xcode-select -s /Applications/Xcode_15.2.app/Contents/Developer
+      
+      - name: Cache SPM dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/Library/Caches/org.swift.swiftpm
+            .build
+          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+      
+      - name: Cache DerivedData
+        uses: actions/cache@v4
+        with:
+          path: DerivedData
+          key: ${{ runner.os }}-deriveddata-${{ hashFiles('**/*.swift', '**/*.m', '**/*.h') }}
+          restore-keys: |
+            ${{ runner.os }}-deriveddata-
       
       - name: Build app
         run: |
@@ -113,7 +183,11 @@ jobs:
             -scheme ${{ env.SCHEME }} \
             -destination '${{ env.DESTINATION }}' \
             -configuration Release \
-            -derivedDataPath DerivedData
+            -derivedDataPath DerivedData \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            -quiet
       
       - name: Archive build artifacts
         if: success()
@@ -121,10 +195,12 @@ jobs:
         with:
           name: build-artifacts
           path: DerivedData/Build/Products/Release-iphonesimulator/
+          retention-days: 7
 
   summary:
     name: 📊 Job Summary
     runs-on: macos-14
+    timeout-minutes: 5
     needs: [lint, test, build]
     if: always()
     
@@ -142,3 +218,10 @@ jobs:
           echo "**Triggered by:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
           echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
           echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Workflow:** ${{ github.workflow }}" >> $GITHUB_STEP_SUMMARY
+      
+      - name: Check critical failures
+        if: needs.lint.result == 'failure' || needs.test.result == 'failure' || needs.build.result == 'failure'
+        run: |
+          echo "❌ Critical checks failed!"
+          exit 1

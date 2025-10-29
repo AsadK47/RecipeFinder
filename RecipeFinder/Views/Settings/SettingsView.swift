@@ -6,7 +6,6 @@ enum CardStyle: String, CaseIterable {
     case solid = "Solid"
 }
 
-// swiftlint:disable:next type_body_length
 struct SettingsView: View {
     @State private var confettiTrigger: Int = 0
     @State private var showResetAlert: Bool = false
