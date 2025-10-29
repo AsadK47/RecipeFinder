@@ -95,7 +95,7 @@ struct RecipeCard: View {
         .background {
             cardBackground
         }
-        .drawingGroup() // Optimize complex card rendering
+        .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(recipe.name), \(recipe.category), Preparation time: \(recipe.prepTime), Difficulty: \(recipe.difficulty)")
         .accessibilityHint("Double tap to view recipe details")
@@ -109,10 +109,9 @@ struct RecipeCard: View {
                 .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
                 .shadow(color: Color.black.opacity(0.25), radius: 8, x: 0, y: 4)
         } else {
-            // Pure frosted glass - exactly like Settings
+            // Frosted glass - exactly like Shopping List
             RoundedRectangle(cornerRadius: cornerRadius)
                 .fill(.regularMaterial)
-                .shadow(color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.15), radius: 10, x: 0, y: 4)
         }
     }
 }

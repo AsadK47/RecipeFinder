@@ -351,7 +351,7 @@ struct ShoppingListView: View {
                         .foregroundColor(AppTheme.accentColor)
                         .font(.title3)
                         .frame(width: 24)
-                    VStack(alignment: .leading, spacing: 2) {
+                    VStack(alignment: .leading, spacing: 4) {
                         Text("Edit Quantity")
                             .font(.subheadline)
                             .fontWeight(.semibold)
@@ -359,6 +359,7 @@ struct ShoppingListView: View {
                         Text("Tap item to change amount or category")
                             .font(.caption)
                             .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
+                            .lineSpacing(2)
                     }
                     Spacer()
                 }

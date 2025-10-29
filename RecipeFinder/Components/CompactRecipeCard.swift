@@ -83,7 +83,7 @@ struct CompactRecipeCard: View {
         .background {
             cardBackground
         }
-        .drawingGroup() // Performance optimization
+        .clipShape(RoundedRectangle(cornerRadius: Self.cornerRadius))
     }
     
     // Extract background to reduce body complexity
@@ -94,10 +94,9 @@ struct CompactRecipeCard: View {
                 .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
                 .shadow(color: Color.black.opacity(0.25), radius: 8, x: 0, y: 4)
         } else {
-            // Pure frosted glass - exactly like Settings
+            // Frosted glass - exactly like Shopping List
             RoundedRectangle(cornerRadius: Self.cornerRadius)
                 .fill(.regularMaterial)
-                .shadow(color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.15), radius: 10, x: 0, y: 4)
         }
     }
 }
