@@ -15,11 +15,18 @@ struct CardView<Content: View>: View {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 16)
                         .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
-                        .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
+                        .shadow(color: Color.black.opacity(0.25), radius: 8, x: 0, y: 4)
                 } else {
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
-                        .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
+                    ZStack {
+                        // Base layer for better contrast - lighter in light mode, darker in dark mode
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(colorScheme == .dark ? Color.black.opacity(0.3) : Color.white.opacity(0.5))
+                        
+                        // Frosted glass layer on top
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(.ultraThinMaterial)
+                    }
+                    .shadow(color: Color.black.opacity(colorScheme == .dark ? 0.2 : 0.15), radius: 10, x: 0, y: 4)
                 }
             }
             .clipShape(RoundedRectangle(cornerRadius: 16))
@@ -41,11 +48,18 @@ struct GlassCard<Content: View>: View {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 16)
                         .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
-                        .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
+                        .shadow(color: Color.black.opacity(0.25), radius: 8, x: 0, y: 4)
                 } else {
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
-                        .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
+                    ZStack {
+                        // Base layer for better contrast - lighter in light mode, darker in dark mode
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(colorScheme == .dark ? Color.black.opacity(0.3) : Color.white.opacity(0.5))
+                        
+                        // Frosted glass layer on top
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(.ultraThinMaterial)
+                    }
+                    .shadow(color: Color.black.opacity(colorScheme == .dark ? 0.2 : 0.15), radius: 10, x: 0, y: 4)
                 }
             }
             .clipShape(RoundedRectangle(cornerRadius: 16))

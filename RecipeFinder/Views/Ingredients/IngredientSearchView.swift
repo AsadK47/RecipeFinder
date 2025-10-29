@@ -520,7 +520,7 @@ struct QuickMatchRecipeCard: View {
         if cardStyle == .solid {
             return AnyShapeStyle(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
         } else {
-            return AnyShapeStyle(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
+            return AnyShapeStyle(.ultraThinMaterial)
         }
     }
     
@@ -529,7 +529,7 @@ struct QuickMatchRecipeCard: View {
     }
     
     private var shadowOpacity: Double {
-        colorScheme == .dark ? 0.3 : 0.08
+        cardStyle == .solid ? 0.25 : 0.15
     }
     
     var body: some View {
