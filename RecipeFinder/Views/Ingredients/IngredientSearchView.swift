@@ -16,6 +16,7 @@ struct IngredientSearchView: View {
     @State private var showAddedFeedback: String?
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
     var allIngredients: [String] {
         Set(recipes.flatMap { $0.ingredients.map { $0.name } }).sorted()
@@ -101,10 +102,15 @@ struct IngredientSearchView: View {
                                             .font(.title2)
                                             .foregroundColor(.white)
                                             .padding(12)
-                                            .background(
-                                                Circle()
-                                                    .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
-                                            )
+                                            .background {
+                                                if cardStyle == .solid {
+                                                    Circle()
+                                                        .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                                                } else {
+                                                    Circle()
+                                                        .fill(.ultraThinMaterial)
+                                                }
+                                            }
                                         
                                         if activeFilterCount > 0 {
                                             Text("\(activeFilterCount)")
@@ -149,10 +155,15 @@ struct IngredientSearchView: View {
                                         .font(.title2)
                                         .foregroundColor(.white)
                                         .padding(12)
-                                        .background(
-                                            Circle()
-                                                .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
-                                        )
+                                        .background {
+                                            if cardStyle == .solid {
+                                                Circle()
+                                                    .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                                            } else {
+                                                Circle()
+                                                    .fill(.ultraThinMaterial)
+                                            }
+                                        }
                                 }
                             } else {
                                 Color.clear
@@ -341,10 +352,15 @@ struct IngredientSearchView: View {
             .buttonStyle(PlainButtonStyle())
             .padding(.trailing, 12)
         }
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
-        )
+        .background {
+            if cardStyle == .solid {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+            } else {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(.ultraThinMaterial)
+            }
+        }
     }
     
     private func addToShoppingList(_ ingredient: String) {
@@ -516,20 +532,12 @@ struct QuickMatchRecipeCard: View {
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
-    private var backgroundFill: some ShapeStyle {
-        if cardStyle == .solid {
-            return AnyShapeStyle(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
-        } else {
-            return AnyShapeStyle(.ultraThinMaterial)
-        }
-    }
-    
     private var borderColor: Color {
         colorScheme == .dark ? Color.white.opacity(0.15) : Color.gray.opacity(0.15)
     }
     
     private var shadowOpacity: Double {
-        cardStyle == .solid ? 0.25 : 0.15
+        cardStyle == .solid ? 0.25 : (colorScheme == .dark ? 0.2 : 0.15)
     }
     
     var body: some View {
@@ -538,16 +546,33 @@ struct QuickMatchRecipeCard: View {
             contentSection
         }
         .frame(width: 220)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(backgroundFill)
-        )
+        .background {
+            cardBackground
+        }
         .overlay(
             RoundedRectangle(cornerRadius: 16)
                 .stroke(borderColor, lineWidth: 1)
         )
         .shadow(color: Color.black.opacity(shadowOpacity), radius: 8, x: 0, y: 4)
         .clipShape(RoundedRectangle(cornerRadius: 16))
+    }
+    
+    @ViewBuilder
+    private var cardBackground: some View {
+        if cardStyle == .solid {
+            RoundedRectangle(cornerRadius: 16)
+                .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+        } else {
+            ZStack {
+                // Base layer for subtle contrast - allows gradient to show through
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(colorScheme == .dark ? Color.black.opacity(0.15) : Color.white.opacity(0.3))
+                
+                // Frosted glass layer on top - adapts to color scheme automatically
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(.ultraThinMaterial)
+            }
+        }
     }
     
     private var imageSection: some View {
@@ -647,6 +672,7 @@ struct CategoryCard: View {
     @State private var isExpanded = false
     @State private var expandedIngredients: Set<String> = []
     @Environment(\.colorScheme) var colorScheme
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
     var categoryIcon: String {
         switch category {
@@ -710,10 +736,15 @@ struct CategoryCard: View {
                             .font(.caption)
                     }
                     .padding(16)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
-                    )
+                    .background {
+                        if cardStyle == .solid {
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                        } else {
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(.ultraThinMaterial)
+                        }
+                    }
                 }
             )
             .buttonStyle(PlainButtonStyle())
@@ -806,10 +837,15 @@ struct CategoryCard: View {
                     .padding(.trailing, 12)
                 }
             }
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
-            )
+            .background {
+                if cardStyle == .solid {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                } else {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(.ultraThinMaterial)
+                }
+            }
             
             // Sub-ingredients (variations)
             if isGroupExpanded && variations.count > 1 {
@@ -867,10 +903,15 @@ struct CategoryCard: View {
             .buttonStyle(PlainButtonStyle())
             .padding(.trailing, 12)
         }
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
-        )
+        .background {
+            if cardStyle == .solid {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+            } else {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(.ultraThinMaterial)
+            }
+        }
     }
 }
 

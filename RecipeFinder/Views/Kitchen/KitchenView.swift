@@ -9,6 +9,7 @@ struct KitchenView: View {
     @State private var cachedCategorizedIngredients: [(category: String, ingredients: [String])] = []
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
     var allIngredients: [String] {
         Set(recipes.flatMap { $0.ingredients.map { $0.name } }).sorted()
@@ -139,10 +140,15 @@ struct KitchenView: View {
                                 .font(.title2)
                                 .foregroundColor(.white)
                                 .padding(12)
-                                .background(
-                                    Circle()
-                                        .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
-                                )
+                                .background {
+                                    if cardStyle == .solid {
+                                        Circle()
+                                            .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
+                                    } else {
+                                        Circle()
+                                            .fill(.ultraThinMaterial)
+                                    }
+                                }
                         }
                     }
                 }
@@ -336,10 +342,15 @@ struct KitchenView: View {
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 14)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
-                )
+                .background {
+                    if cardStyle == .solid {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                    } else {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(.ultraThinMaterial)
+                    }
+                }
             }
         )
         .buttonStyle(PlainButtonStyle())
@@ -360,6 +371,7 @@ struct KitchenCategoryCard: View {
     let items: [KitchenItem]
     @ObservedObject var kitchenManager: KitchenInventoryManager
     @Environment(\.colorScheme) var colorScheme
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -392,10 +404,15 @@ struct KitchenCategoryCard: View {
             }
         }
         .padding(16)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
-        )
+        .background {
+            if cardStyle == .solid {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+            } else {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(.ultraThinMaterial)
+            }
+        }
     }
 }
 
@@ -438,6 +455,7 @@ struct KitchenQuickAddCategoryCard: View {
     @ObservedObject var kitchenManager: KitchenInventoryManager
     @State private var isExpanded = false
     @Environment(\.colorScheme) var colorScheme
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -485,10 +503,15 @@ struct KitchenQuickAddCategoryCard: View {
             }
         }
         .padding(16)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
-        )
+        .background {
+            if cardStyle == .solid {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+            } else {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(.ultraThinMaterial)
+            }
+        }
     }
 }
 

@@ -99,11 +99,11 @@ struct RecipeCard: View {
                 .shadow(color: Color.black.opacity(0.25), radius: 8, x: 0, y: 4)
         } else {
             ZStack {
-                // Base layer for better contrast - lighter in light mode, darker in dark mode
+                // Base layer for subtle contrast - allows gradient to show through
                 RoundedRectangle(cornerRadius: cornerRadius)
-                    .fill(colorScheme == .dark ? Color.black.opacity(0.3) : Color.white.opacity(0.5))
+                    .fill(colorScheme == .dark ? Color.black.opacity(0.15) : Color.white.opacity(0.3))
                 
-                // Frosted glass layer on top
+                // Frosted glass layer on top - adapts to color scheme automatically
                 RoundedRectangle(cornerRadius: cornerRadius)
                     .fill(.ultraThinMaterial)
             }

@@ -7,6 +7,7 @@ struct ContentView: View {
     @State private var selectedTab: Int = 0
     @StateObject private var shoppingListManager = ShoppingListManager()
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @Environment(\.colorScheme) var colorScheme
     
     // Performance: Cache the theme for the session
@@ -44,6 +45,15 @@ struct ContentView: View {
             }
             .environment(\.appTheme, themeBinding)
             .tint(AppTheme.accentColor(for: themeBinding))
+            .onAppear {
+                configureTabBarAppearance()
+            }
+            .onChange(of: cardStyle) { _, _ in
+                configureTabBarAppearance()
+            }
+            .onChange(of: colorScheme) { _, _ in
+                configureTabBarAppearance()
+            }
             .onChange(of: selectedTab) { _, _ in
                 HapticManager.shared.selection()
             }
@@ -54,6 +64,42 @@ struct ContentView: View {
                 loadRecipes()
             }
         }
+    }
+
+    private func configureTabBarAppearance() {
+        let appearance = UITabBarAppearance()
+        
+        if cardStyle == .solid {
+            // Solid mode: Use opaque backgrounds
+            appearance.configureWithOpaqueBackground()
+            let tabBarBgColor: UIColor = {
+                if colorScheme == .dark {
+                    return UIColor(white: 0.15, alpha: 1.0) // Match cardBackgroundDark
+                } else {
+                    return UIColor(white: 1.0, alpha: 0.95) // Match cardBackground
+                }
+            }()
+            appearance.backgroundColor = tabBarBgColor
+        } else {
+            // Frosted mode: Use blur with subtle base layer
+            appearance.configureWithTransparentBackground()
+            
+            // Add subtle base color for contrast
+            let baseColor: UIColor = {
+                if colorScheme == .dark {
+                    return UIColor(white: 0.0, alpha: 0.15) // Subtle dark base
+                } else {
+                    return UIColor(white: 1.0, alpha: 0.3) // Subtle light base
+                }
+            }()
+            appearance.backgroundColor = baseColor
+            
+            // Add blur effect
+            appearance.backgroundEffect = UIBlurEffect(style: colorScheme == .dark ? .systemUltraThinMaterialDark : .systemUltraThinMaterialLight)
+        }
+        
+        UITabBar.appearance().standardAppearance = appearance
+        UITabBar.appearance().scrollEdgeAppearance = appearance
     }
 
     private func loadRecipes() {

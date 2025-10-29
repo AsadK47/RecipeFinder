@@ -12,6 +12,7 @@ struct ShoppingListView: View {
     @FocusState private var isSearchFocused: Bool
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
     var sortedGroupedItems: [(category: String, items: [ShoppingListItem])] {
         let grouped = Dictionary(grouping: manager.items) { $0.category }
@@ -68,10 +69,15 @@ struct ShoppingListView: View {
                                     .font(.title2)
                                     .foregroundColor(.white)
                                     .padding(12)
-                                    .background(
-                                        Circle()
-                                            .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
-                                    )
+                                    .background {
+                                        if cardStyle == .solid {
+                                            Circle()
+                                                .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
+                                        } else {
+                                            Circle()
+                                                .fill(.ultraThinMaterial)
+                                        }
+                                    }
                             }
                             
                             Spacer()
@@ -114,10 +120,15 @@ struct ShoppingListView: View {
                                 }
                             }
                             .padding(14)
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
-                            )
+                            .background {
+                                if cardStyle == .solid {
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                                } else {
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(.ultraThinMaterial)
+                                }
+                            }
                             
                             if isSearchFocused || !searchText.isEmpty {
                                 Button(
@@ -353,10 +364,15 @@ struct ShoppingListView: View {
                 }
             }
             .padding(16)
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(.ultraThinMaterial)
-            )
+            .background {
+                if cardStyle == .solid {
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                } else {
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(.ultraThinMaterial)
+                }
+            }
             .padding(.horizontal, 30)
         }
         .frame(maxHeight: .infinity)
@@ -436,10 +452,15 @@ struct ShoppingListView: View {
                             .padding(.horizontal, 16)
                             .padding(.vertical, 12)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(colorScheme == .dark ? .ultraThinMaterial : .regularMaterial)
-                            )
+                            .background {
+                                if cardStyle == .solid {
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                                } else {
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(.ultraThinMaterial)
+                                }
+                            }
                             .padding(.horizontal, 16)
                             .padding(.top, 8)
                         }
@@ -483,6 +504,7 @@ struct ShoppingListItemRow: View {
     let allCategories: [String]
     
     @Environment(\.colorScheme) var colorScheme
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
     var body: some View {
         ZStack {

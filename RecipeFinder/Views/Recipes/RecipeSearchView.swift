@@ -16,6 +16,7 @@ struct RecipeSearchView: View {
     @State private var lastFilterHash: Int = 0
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
 
     // Optimized filtered recipes with caching
     private var filteredRecipes: [RecipeModel] {
@@ -111,10 +112,15 @@ struct RecipeSearchView: View {
                                             .font(.title2)
                                             .foregroundColor(.white)
                                             .padding(12)
-                                            .background(
-                                                Circle()
-                                                    .fill(.ultraThinMaterial)
-                                            )
+                                            .background {
+                                                if cardStyle == .solid {
+                                                    Circle()
+                                                        .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
+                                                } else {
+                                                    Circle()
+                                                        .fill(.ultraThinMaterial)
+                                                }
+                                            }
                                         
                                         if activeFilterCount > 0 {
                                             Text("\(activeFilterCount)")
@@ -174,10 +180,15 @@ struct RecipeSearchView: View {
                                     .font(.title2)
                                     .foregroundColor(.white)
                                     .padding(12)
-                                    .background(
-                                        Circle()
-                                            .fill(.ultraThinMaterial)
-                                    )
+                                    .background {
+                                        if cardStyle == .solid {
+                                            Circle()
+                                                .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
+                                        } else {
+                                            Circle()
+                                                .fill(.ultraThinMaterial)
+                                        }
+                                    }
                             }
                         }
                         .padding(.horizontal, 20)
