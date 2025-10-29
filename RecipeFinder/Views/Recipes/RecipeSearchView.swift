@@ -118,7 +118,7 @@ struct RecipeSearchView: View {
                                                         .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
                                                 } else {
                                                     Circle()
-                                                        .fill(.ultraThinMaterial)
+                                                        .fill(.regularMaterial)
                                                 }
                                             }
                                         
@@ -186,7 +186,7 @@ struct RecipeSearchView: View {
                                                 .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
                                         } else {
                                             Circle()
-                                                .fill(.ultraThinMaterial)
+                                                .fill(.regularMaterial)
                                         }
                                     }
                             }
@@ -368,7 +368,7 @@ struct RecipeSearchView: View {
                     .padding(.vertical, 12)
                     .background(
                         Capsule()
-                            .fill(.ultraThinMaterial)
+                            .fill(.regularMaterial)
                     )
                 })
             }

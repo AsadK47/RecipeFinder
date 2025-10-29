@@ -36,15 +36,9 @@ struct ModernSearchBar: View {
                     RoundedRectangle(cornerRadius: 12)
                         .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
                 } else {
-                    ZStack {
-                        // Base layer for subtle contrast - allows gradient to show through
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(colorScheme == .dark ? Color.black.opacity(0.15) : Color.white.opacity(0.3))
-                        
-                        // Frosted glass layer - adapts to color scheme automatically
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(.ultraThinMaterial)
-                    }
+                    // Pure frosted glass - exactly like Settings
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(.regularMaterial)
                 }
             }
             

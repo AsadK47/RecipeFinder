@@ -1,42 +1,18 @@
 #!/bin/bash
 
 # RecipeFinder - SwiftLint Script
-# Can be run from anywhere: ./scripts/lint.sh or just ./lint.sh from scripts dir
+# Run from project root: ./scripts/lint.sh
 
-echo "🔍 Running SwiftLint on entire project..."
-echo ""
+set -e  # Exit on error
 
-# Get the directory where the script is located
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-# Navigate to project root (one level up from scripts/)
-PROJECT_ROOT="$( cd "$SCRIPT_DIR/.." && pwd )"
-
-# Change to project root
-cd "$PROJECT_ROOT" || exit 1
+# Navigate to project root
+cd "$(dirname "$0")/.." || exit 1
 
 # Check if SwiftLint is installed
 if ! command -v swiftlint &> /dev/null; then
-    echo "❌ SwiftLint is not installed!"
-    echo ""
-    echo "Install with Homebrew:"
-    echo "  brew install swiftlint"
-    echo ""
-    echo "Or download from: https://github.com/realm/SwiftLint"
+    echo "❌ SwiftLint not installed. Run: brew install swiftlint"
     exit 1
 fi
 
-echo "📁 Project root: $PROJECT_ROOT"
-echo ""
-
-# Run SwiftLint
-swiftlint lint RecipeFinder/ --config .swiftlint.yml
-
-# Check exit code
-if [ $? -eq 0 ]; then
-    echo ""
-    echo "✅ SwiftLint passed! No issues found."
-else
-    echo ""
-    echo "⚠️  SwiftLint found issues. Please fix them above."
-    exit 1
-fi
+echo "� Running SwiftLint..."
+swiftlint lint RecipeFinder/ --config .swiftlint.yml && echo "✅ All checks passed!"

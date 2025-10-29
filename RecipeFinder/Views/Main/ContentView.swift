@@ -74,29 +74,38 @@ struct ContentView: View {
             appearance.configureWithOpaqueBackground()
             let tabBarBgColor: UIColor = {
                 if colorScheme == .dark {
-                    return UIColor(white: 0.15, alpha: 1.0) // Match cardBackgroundDark
+                    return UIColor(white: 0.15, alpha: 1.0)
                 } else {
-                    return UIColor(white: 1.0, alpha: 0.95) // Match cardBackground
+                    return UIColor(white: 1.0, alpha: 0.95)
                 }
             }()
             appearance.backgroundColor = tabBarBgColor
         } else {
-            // Frosted mode: Use blur with subtle base layer
+            // Frosted Glass mode: Beautiful blur effect like screenshot 2
             appearance.configureWithTransparentBackground()
             
-            // Add subtle base color for contrast
-            let baseColor: UIColor = {
-                if colorScheme == .dark {
-                    return UIColor(white: 0.0, alpha: 0.15) // Subtle dark base
-                } else {
-                    return UIColor(white: 1.0, alpha: 0.3) // Subtle light base
-                }
-            }()
-            appearance.backgroundColor = baseColor
+            // No background color - let the blur do the work
+            appearance.backgroundColor = .clear
             
-            // Add blur effect
-            appearance.backgroundEffect = UIBlurEffect(style: colorScheme == .dark ? .systemUltraThinMaterialDark : .systemUltraThinMaterialLight)
+            // Premium blur effect - matches the aesthetic
+            let blurStyle: UIBlurEffect.Style = colorScheme == .dark 
+                ? .systemMaterialDark 
+                : .systemMaterialLight
+            
+            appearance.backgroundEffect = UIBlurEffect(style: blurStyle)
         }
+        
+        // Icon colors
+        let accentColor = UIColor(AppTheme.accentColor(for: themeBinding))
+        appearance.stackedLayoutAppearance.selected.iconColor = accentColor
+        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
+            .foregroundColor: accentColor
+        ]
+        
+        appearance.stackedLayoutAppearance.normal.iconColor = .gray
+        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
+            .foregroundColor: UIColor.gray
+        ]
         
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance

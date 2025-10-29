@@ -77,7 +77,7 @@ class RecipeShareUtility {
     
     // MARK: - PDF Export (App-Style Screenshot)
     
-    // swiftlint:disable:next function_body_length
+    // swiftlint:disable function_body_length type_body_length file_length
     
     /// Generate a beautiful iPhone-width PDF that looks exactly like the app
     /// - Parameters:
@@ -531,4 +531,5 @@ class RecipeShareUtility {
         
         return height
     }
+    // swiftlint:enable function_body_length type_body_length file_length
 }

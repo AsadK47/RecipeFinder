@@ -108,7 +108,7 @@ struct IngredientSearchView: View {
                                                         .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
                                                 } else {
                                                     Circle()
-                                                        .fill(.ultraThinMaterial)
+                                                        .fill(.regularMaterial)
                                                 }
                                             }
                                         
@@ -161,7 +161,7 @@ struct IngredientSearchView: View {
                                                     .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
                                             } else {
                                                 Circle()
-                                                    .fill(.ultraThinMaterial)
+                                                    .fill(.regularMaterial)
                                             }
                                         }
                                 }
@@ -358,7 +358,7 @@ struct IngredientSearchView: View {
                     .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
             } else {
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(.ultraThinMaterial)
+                    .fill(.regularMaterial)
             }
         }
     }
@@ -467,7 +467,7 @@ struct IngredientSearchView: View {
                             .padding(12)
                             .background(
                                 Circle()
-                                    .fill(.ultraThinMaterial)
+                                    .fill(.regularMaterial)
                             )
                     }
                     .padding(.horizontal, 20)
@@ -570,7 +570,7 @@ struct QuickMatchRecipeCard: View {
                 
                 // Frosted glass layer on top - adapts to color scheme automatically
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(.ultraThinMaterial)
+                    .fill(.regularMaterial)
             }
         }
     }
@@ -742,7 +742,7 @@ struct CategoryCard: View {
                                 .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
                         } else {
                             RoundedRectangle(cornerRadius: 12)
-                                .fill(.ultraThinMaterial)
+                                .fill(.regularMaterial)
                         }
                     }
                 }
@@ -843,7 +843,7 @@ struct CategoryCard: View {
                         .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
                 } else {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(.ultraThinMaterial)
+                        .fill(.regularMaterial)
                 }
             }
             
@@ -909,7 +909,7 @@ struct CategoryCard: View {
                     .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
             } else {
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(.ultraThinMaterial)
+                    .fill(.regularMaterial)
             }
         }
     }

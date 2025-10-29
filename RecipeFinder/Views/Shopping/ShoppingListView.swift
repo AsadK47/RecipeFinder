@@ -75,7 +75,7 @@ struct ShoppingListView: View {
                                                 .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
                                         } else {
                                             Circle()
-                                                .fill(.ultraThinMaterial)
+                                                .fill(.regularMaterial)
                                         }
                                     }
                             }
@@ -126,7 +126,7 @@ struct ShoppingListView: View {
                                         .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
                                 } else {
                                     RoundedRectangle(cornerRadius: 12)
-                                        .fill(.ultraThinMaterial)
+                                        .fill(.regularMaterial)
                                 }
                             }
                             
@@ -370,7 +370,7 @@ struct ShoppingListView: View {
                         .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
                 } else {
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(.ultraThinMaterial)
+                        .fill(.regularMaterial)
                 }
             }
             .padding(.horizontal, 30)
@@ -458,7 +458,7 @@ struct ShoppingListView: View {
                                         .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
                                 } else {
                                     RoundedRectangle(cornerRadius: 12)
-                                        .fill(.ultraThinMaterial)
+                                        .fill(.regularMaterial)
                                 }
                             }
                             .padding(.horizontal, 16)

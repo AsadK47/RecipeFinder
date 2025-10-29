@@ -146,7 +146,7 @@ struct KitchenView: View {
                                             .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
                                     } else {
                                         Circle()
-                                            .fill(.ultraThinMaterial)
+                                            .fill(.regularMaterial)
                                     }
                                 }
                         }
@@ -348,7 +348,7 @@ struct KitchenView: View {
                             .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
                     } else {
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(.ultraThinMaterial)
+                            .fill(.regularMaterial)
                     }
                 }
             }
@@ -410,7 +410,7 @@ struct KitchenCategoryCard: View {
                     .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
             } else {
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(.ultraThinMaterial)
+                    .fill(.regularMaterial)
             }
         }
     }
@@ -509,7 +509,7 @@ struct KitchenQuickAddCategoryCard: View {
                     .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
             } else {
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(.ultraThinMaterial)
+                    .fill(.regularMaterial)
             }
         }
     }

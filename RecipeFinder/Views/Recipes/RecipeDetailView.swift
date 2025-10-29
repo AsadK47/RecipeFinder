@@ -329,6 +329,7 @@ struct RecipeDetailView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 HStack(spacing: 16) {
                     // Favorite button
+                    // TODO: Replace with AnimatedHeartButton once added to Xcode target
                     Button(action: toggleFavorite, label: {
                         Image(systemName: recipe.isFavorite ? "heart.fill" : "heart")
                             .font(.title3)
