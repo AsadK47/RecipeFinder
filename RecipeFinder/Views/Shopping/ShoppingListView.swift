@@ -67,7 +67,7 @@ struct ShoppingListView: View {
                             } label: {
                                 Image(systemName: "ellipsis.circle")
                                     .font(.title2)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(cardStyle == .solid && colorScheme == .light ? .black : .white)
                                     .padding(12)
                                     .background {
                                         if cardStyle == .solid {

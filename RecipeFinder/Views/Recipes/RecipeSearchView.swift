@@ -110,7 +110,7 @@ struct RecipeSearchView: View {
                                     ZStack(alignment: .topTrailing) {
                                         Image(systemName: "line.3.horizontal.decrease.circle")
                                             .font(.title2)
-                                            .foregroundColor(.white)
+                                            .foregroundColor(cardStyle == .solid && colorScheme == .light ? .black : .white)
                                             .padding(12)
                                             .background {
                                                 if cardStyle == .solid {
@@ -178,7 +178,7 @@ struct RecipeSearchView: View {
                             } label: {
                                 Image(systemName: "ellipsis.circle.fill")
                                     .font(.title2)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(cardStyle == .solid && colorScheme == .light ? .black : .white)
                                     .padding(12)
                                     .background {
                                         if cardStyle == .solid {

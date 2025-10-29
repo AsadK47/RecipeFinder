@@ -6,7 +6,6 @@ struct RecipeCard: View {
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
-    // Golden ratio proportions for aesthetic beauty - now static for performance
     private static let cardPadding: CGFloat = AppTheme.cardHorizontalPadding
     private static let imageSize: CGFloat = AppTheme.cardImageSize
     private static let cornerRadius: CGFloat = AppTheme.cardCornerRadius

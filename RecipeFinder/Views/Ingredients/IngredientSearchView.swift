@@ -100,7 +100,7 @@ struct IngredientSearchView: View {
                                     ZStack(alignment: .topTrailing) {
                                         Image(systemName: "line.3.horizontal.decrease.circle")
                                             .font(.title2)
-                                            .foregroundColor(.white)
+                                            .foregroundColor(cardStyle == .solid && colorScheme == .light ? .black : .white)
                                             .padding(12)
                                             .background {
                                                 if cardStyle == .solid {
@@ -153,7 +153,7 @@ struct IngredientSearchView: View {
                                 } label: {
                                     Image(systemName: viewMode.icon)
                                         .font(.title2)
-                                        .foregroundColor(.white)
+                                        .foregroundColor(cardStyle == .solid && colorScheme == .light ? .black : .white)
                                         .padding(12)
                                         .background {
                                             if cardStyle == .solid {
@@ -463,12 +463,17 @@ struct IngredientSearchView: View {
                     } label: {
                         Image(systemName: viewMode.icon)
                             .font(.title2)
-                            .foregroundColor(.white)
+                            .foregroundColor(cardStyle == .solid && colorScheme == .light ? .black : .white)
                             .padding(12)
-                            .background(
-                                Circle()
-                                    .fill(.regularMaterial)
-                            )
+                            .background {
+                                if cardStyle == .solid {
+                                    Circle()
+                                        .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                                } else {
+                                    Circle()
+                                        .fill(.regularMaterial)
+                                }
+                            }
                     }
                     .padding(.horizontal, 20)
                 }

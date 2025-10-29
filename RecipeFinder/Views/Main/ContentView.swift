@@ -48,6 +48,9 @@ struct ContentView: View {
             .onAppear {
                 configureTabBarAppearance()
             }
+            .onChange(of: selectedTheme) { _, _ in
+                configureTabBarAppearance()
+            }
             .onChange(of: cardStyle) { _, _ in
                 configureTabBarAppearance()
             }
@@ -69,25 +72,39 @@ struct ContentView: View {
     private func configureTabBarAppearance() {
         let appearance = UITabBarAppearance()
         
+        // Get the theme's accent color
+        let themeColor = UIColor(AppTheme.accentColor(for: themeBinding))
+        
         if cardStyle == .solid {
-            // Solid mode: Use opaque backgrounds
+            // Solid mode: Use opaque backgrounds with theme tint
             appearance.configureWithOpaqueBackground()
             let tabBarBgColor: UIColor = {
                 if colorScheme == .dark {
-                    return UIColor(white: 0.15, alpha: 1.0)
+                    // Dark mode: Dark background with subtle theme tint
+                    return UIColor(white: 0.15, alpha: 1.0).withAlphaComponent(0.95)
                 } else {
-                    return UIColor(white: 1.0, alpha: 0.95)
+                    // Light mode: Light background with very subtle theme tint
+                    return UIColor(white: 0.98, alpha: 0.98)
                 }
             }()
             appearance.backgroundColor = tabBarBgColor
         } else {
-            // Frosted Glass mode: Beautiful blur effect like screenshot 2
-            appearance.configureWithTransparentBackground()
+            // Frosted Glass mode: Colored blur for readability
+            appearance.configureWithDefaultBackground()
             
-            // No background color - let the blur do the work
-            appearance.backgroundColor = .clear
+            // Add theme-colored tint to the blur for better readability
+            let tintedBackground: UIColor = {
+                if colorScheme == .dark {
+                    // Dark mode: Dark blur with theme tint
+                    return themeColor.withAlphaComponent(0.15)
+                } else {
+                    // Light mode: Light blur with stronger theme tint for readability
+                    return themeColor.withAlphaComponent(0.12)
+                }
+            }()
+            appearance.backgroundColor = tintedBackground
             
-            // Premium blur effect - matches the aesthetic
+            // Add blur effect for frosted glass look
             let blurStyle: UIBlurEffect.Style = colorScheme == .dark 
                 ? .systemMaterialDark 
                 : .systemMaterialLight
@@ -95,16 +112,23 @@ struct ContentView: View {
             appearance.backgroundEffect = UIBlurEffect(style: blurStyle)
         }
         
-        // Icon colors
+        // Icon colors - stronger contrast for readability
         let accentColor = UIColor(AppTheme.accentColor(for: themeBinding))
         appearance.stackedLayoutAppearance.selected.iconColor = accentColor
         appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
-            .foregroundColor: accentColor
+            .foregroundColor: accentColor,
+            .font: UIFont.systemFont(ofSize: 11, weight: .semibold)
         ]
         
-        appearance.stackedLayoutAppearance.normal.iconColor = .gray
+        // Unselected icons - better contrast
+        let unselectedColor: UIColor = colorScheme == .dark 
+            ? UIColor.white.withAlphaComponent(0.6)
+            : UIColor.black.withAlphaComponent(0.5)
+        
+        appearance.stackedLayoutAppearance.normal.iconColor = unselectedColor
         appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
-            .foregroundColor: UIColor.gray
+            .foregroundColor: unselectedColor,
+            .font: UIFont.systemFont(ofSize: 11, weight: .regular)
         ]
         
         UITabBar.appearance().standardAppearance = appearance

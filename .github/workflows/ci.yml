@@ -15,7 +15,7 @@ concurrency:
 env:
   SCHEME: RecipeFinder
   CONFIGURATION: Debug
-  DESTINATION: 'platform=iOS Simulator,name=iPhone 15 Pro,OS=17.2'
+  DESTINATION: 'platform=iOS Simulator,name=iPhone 15 Pro,OS=17.5'
 
 jobs:
   lint:
