@@ -1,12 +1,13 @@
 import Foundation
 
 extension PersistenceController {
+    // swiftlint:disable function_body_length
     func populateDatabase() {
         clearDatabase()
         
-        print("🔄 Populating database with sample recipes...")
+        debugLog("🔄 Populating database with sample recipes...")
         
-        saveRecipe(
+        saveRecipe(parameters: RecipeSaveParameters(
             name: "Achari Chicken Curry (Instant Pot Version)",
             category: "Main",
             difficulty: "Intermediate",
@@ -50,10 +51,11 @@ extension PersistenceController {
                 "Garnish with cilantro and serve."
             ],
             notes: "A flavorful and tangy chicken curry, perfect for pairing with naan or rice.",
-            imageName: "achari_chicken_curry"
-        )
+            imageName: "achari_chicken_curry",
+            isFavorite: false
+        ))
         
-        saveRecipe(
+        saveRecipe(parameters: RecipeSaveParameters(
             name: "Air Fryer Crispy Chilli Beef",
             category: "Main",
             difficulty: "Intermediate",
@@ -86,10 +88,11 @@ extension PersistenceController {
                 "Garnish with spring onions before serving."
             ],
             notes: "Serve immediately with steamed rice or noodles for a delicious and crispy meal.",
-            imageName: "crispy_chilli_beef"
-        )
+            imageName: "crispy_chilli_beef",
+            isFavorite: false
+        ))
         
-        saveRecipe(
+        saveRecipe(parameters: RecipeSaveParameters(
             name: "Achari Gosht (Hot & Sour Lamb Curry Instant Pot Version)",
             category: "Main",
             difficulty: "Intermediate",
@@ -134,10 +137,11 @@ extension PersistenceController {
                 "Garnish with chopped cilantro and serve hot."
             ],
             notes: "Pairs well with naan, roti, or steamed basmati rice. Adjust spices to taste for a milder or spicier curry.",
-            imageName: "achari_gosht"
-        )
+            imageName: "achari_gosht",
+            isFavorite: false
+        ))
         
-        saveRecipe(
+        saveRecipe(parameters: RecipeSaveParameters(
             name: "Air-Fryer Doughnuts",
             category: "Dessert",
             difficulty: "Intermediate",
@@ -167,10 +171,11 @@ extension PersistenceController {
                 "Coat with powdered sugar before serving."
             ],
             notes: "A healthier twist on a classic treat. Best served fresh.",
-            imageName: "air_fryer_doughnuts"
-        )
+            imageName: "air_fryer_doughnuts",
+            isFavorite: false
+        ))
         
-        saveRecipe(
+        saveRecipe(parameters: RecipeSaveParameters(
             name: "Air Fryer Korean Fried Chicken",
             category: "Starter",
             difficulty: "Expert",
@@ -200,10 +205,11 @@ extension PersistenceController {
                 "Toss cooked wings in sauce and garnish with scallions and sesame seeds."
             ],
             notes: "Crispy, spicy, and savory, these wings pair well with a cold drink.",
-            imageName: "air_fryer_korean_fried_chicken"
-        )
+            imageName: "air_fryer_korean_fried_chicken",
+            isFavorite: false
+        ))
         
-        saveRecipe(
+        saveRecipe(parameters: RecipeSaveParameters(
             name: "Air Fryer Southern Fried Chicken",
             category: "Main",
             difficulty: "Intermediate",
@@ -232,10 +238,11 @@ extension PersistenceController {
                 "Air fry at 375°F for 20 minutes, flipping halfway through."
             ],
             notes: "Crispy, flavorful chicken with less grease—perfect for any occasion.",
-            imageName: "air_fryer_southern_fried_chicken"
-        )
+            imageName: "air_fryer_southern_fried_chicken",
+            isFavorite: false
+        ))
         
-        saveRecipe(
+        saveRecipe(parameters: RecipeSaveParameters(
             name: "Air Fryer Soy Sauce Chicken Wings",
             category: "Starter",
             difficulty: "Basic",
@@ -262,10 +269,11 @@ extension PersistenceController {
                 "Garnish with sesame seeds before serving."
             ],
             notes: "Juicy and savory wings, perfect for game day.",
-            imageName: "air_fryer_soy_sauce_chicken_wings"
-        )
+            imageName: "air_fryer_teriyaki_chicken_wings",
+            isFavorite: false
+        ))
         
-        saveRecipe(
+        saveRecipe(parameters: RecipeSaveParameters(
             name: "Aloo Gosht (Mutton/Lamb and Potato Curry)",
             category: "Main",
             difficulty: "Intermediate",
@@ -298,10 +306,11 @@ extension PersistenceController {
                 "Garnish with chopped cilantro before serving."
             ],
             notes: "A hearty and comforting curry, best served with naan or rice.",
-            imageName: "aloo_gosht"
-        )
+            imageName: "aloo_gosht",
+            isFavorite: false
+        ))
         
-        saveRecipe(
+        saveRecipe(parameters: RecipeSaveParameters(
             name: "American Pancakes",
             category: "Breakfast",
             difficulty: "Basic",
@@ -333,10 +342,11 @@ extension PersistenceController {
                 "Serve pancakes stacked with a drizzle of maple syrup and your favourite toppings."
             ],
             notes: "American pancakes are a classic breakfast dish. Experiment with different toppings like fresh fruits, whipped cream, or savory additions like bacon.",
-            imageName: "american_pancakes"
-        )
+            imageName: "american_pancakes",
+            isFavorite: false
+        ))
         
-        saveRecipe(
+        saveRecipe(parameters: RecipeSaveParameters(
             name: "Apam Balik",
             category: "Dessert",
             difficulty: "Intermediate",
@@ -376,10 +386,16 @@ extension PersistenceController {
                 "Remove the lid and fold one side of the pancake over the other to create a semi-circle.",
                 "Slide the pancake onto a cutting board, slice it in half with a sharp knife, and repeat for the remaining batter. Enjoy!"
             ],
-            notes: "Apam Balik is a popular Malaysian street food pancake filled with sweet and savory fillings. For a dairy-free version, use oat milk and vegan butter. Enjoy it as a dessert, snack, or breakfast.",
-            imageName: "apam_balik"
-        )
+            notes: """
+                Apam Balik is a popular Malaysian street food pancake filled with sweet and savory fillings. \
+                For a dairy-free version, use oat milk and vegan butter. \
+                Enjoy it as a dessert, snack, or breakfast.
+                """,
+            imageName: "apam_balik",
+            isFavorite: false
+        ))
         
-        print("✅ Default recipes added!")
+        debugLog("✅ Default recipes added!")
     }
+    // swiftlint:enable function_body_length
 }

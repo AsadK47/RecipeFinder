@@ -1,5 +1,13 @@
 import Foundation
 
+// Debug Logging
+/// Prints debug messages only in DEBUG builds
+func debugLog(_ message: String) {
+    #if DEBUG
+    print(message)
+    #endif
+}
+
 // Array Safe Subscript
 extension Array {
     /// Safely access array elements by index

@@ -66,6 +66,7 @@ class RecipeShareUtility {
     // MARK: - PDF Export (App-Style Screenshot)
     
     /// Generate a beautiful iPhone-width PDF that looks exactly like the app
+    // swiftlint:disable function_body_length
     static func generatePDF(recipe: RecipeModel, measurementSystem: MeasurementSystem = .metric, theme: AppTheme.ThemeType = .purple) -> Data? {
         
         // iPhone 14/15 Pro width
@@ -404,6 +405,7 @@ class RecipeShareUtility {
         
         return data
     }
+    // swiftlint:enable function_body_length
     
     // MARK: - Helper Functions (Optimized for App-Like Look)
     

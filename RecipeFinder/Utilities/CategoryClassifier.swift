@@ -15,11 +15,22 @@ enum CategoryClassifier {
     // Kitchen Ingredient Keywords (for matching ingredients to kitchen categories)
     static let kitchenIngredientKeywords: [String: [String]] = [
         "Proteins": ["chicken", "beef", "lamb", "mutton", "pork", "fish", "cod", "tofu", "shrimp", "prawn"],
-        "Vegetables": ["onion", "tomato", "carrot", "cabbage", "potato", "bell pepper", "capsicum", "cucumber", "eggplant", "bok choy", "broccoli", "cauliflower", "spinach"],
-        "Spices & Herbs": ["cumin", "coriander", "turmeric", "paprika", "ginger", "garlic", "chili", "cinnamon", "cardamom", "garam masala", "cilantro", "parsley", "mint", "basil", "pepper", "black pepper", "white pepper", "cayenne", "thyme", "oregano", "bay leaf"],
+        "Vegetables": [
+            "onion", "tomato", "carrot", "cabbage", "potato", "bell pepper", "capsicum",
+            "cucumber", "eggplant", "bok choy", "broccoli", "cauliflower", "spinach"
+        ],
+        "Spices & Herbs": [
+            "cumin", "coriander", "turmeric", "paprika", "ginger", "garlic", "chili",
+            "cinnamon", "cardamom", "garam masala", "cilantro", "parsley", "mint",
+            "basil", "pepper", "black pepper", "white pepper", "cayenne", "thyme", "oregano",
+            "bay leaf"
+        ],
         "Dairy & Eggs": ["milk", "butter", "yogurt", "cream", "cheese", "egg"],
         "Grains & Noodles": ["rice", "flour", "noodles", "pasta", "bread", "oats", "quinoa", "couscous"],
-        "Sauces & Condiments": ["soy sauce", "oyster sauce", "vinegar", "ketchup", "mustard", "mayo", "sesame oil", "olive oil", "vegetable oil"]
+        "Sauces & Condiments": [
+            "soy sauce", "oyster sauce", "vinegar", "ketchup", "mustard", "mayo",
+            "sesame oil", "olive oil", "vegetable oil"
+        ]
     ]
     
     // Category Helpers

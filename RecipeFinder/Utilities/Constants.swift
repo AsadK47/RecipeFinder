@@ -11,7 +11,7 @@ enum Constants {
     }
     
     // UI Constants
-    enum UI {
+    enum UILayout {
         static let cornerRadius: CGFloat = 12
         static let largeShadowRadius: CGFloat = 10
         static let smallShadowRadius: CGFloat = 8

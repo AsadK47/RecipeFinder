@@ -131,10 +131,10 @@ class RecipeImporter: ObservableObject {
             importedRecipe = nil
         }
         
-        print("🌐 Starting import from: \(urlString)")
+        debugLog("🌐 Starting import from: \(urlString)")
         
         guard let url = URL(string: urlString) else {
-            print("❌ Invalid URL")
+            debugLog("❌ Invalid URL")
             await MainActor.run {
                 errorMessage = "Invalid URL"
                 debugInfo = "The URL format is not valid"
@@ -145,41 +145,41 @@ class RecipeImporter: ObservableObject {
         
         do {
             // Fetch HTML content
-            print("📥 Fetching HTML content...")
+            debugLog("📥 Fetching HTML content...")
             let (data, response) = try await URLSession.shared.data(from: url)
             
             if let httpResponse = response as? HTTPURLResponse {
-                print("✅ HTTP Status: \(httpResponse.statusCode)")
+                debugLog("✅ HTTP Status: \(httpResponse.statusCode)")
                 await MainActor.run {
                     debugInfo = "HTTP Status: \(httpResponse.statusCode), Size: \(data.count) bytes"
                 }
             }
             
-            print("✅ Received \(data.count) bytes")
+            debugLog("✅ Received \(data.count) bytes")
             
             guard let html = String(data: data, encoding: .utf8) else {
-                print("❌ Failed to decode HTML")
+                debugLog("❌ Failed to decode HTML")
                 throw ImportError.invalidHTML
             }
             
-            print("✅ HTML decoded, length: \(html.count) characters")
+            debugLog("✅ HTML decoded, length: \(html.count) characters")
             
             // Extract Schema.org JSON-LD
-            print("🔍 Extracting Schema.org recipe data...")
+            debugLog("🔍 Extracting Schema.org recipe data...")
             guard let schemaRecipe = extractSchemaRecipe(from: html) else {
-                print("❌ No schema recipe found")
+                debugLog("❌ No schema recipe found")
                 await MainActor.run {
                     debugInfo = "HTML: \(html.count) chars. No Schema.org recipe data found. This site may use a different format."
                 }
                 throw ImportError.noSchemaFound
             }
             
-            print("✅ Schema recipe extracted: \(schemaRecipe.name ?? "unnamed")")
+            debugLog("✅ Schema recipe extracted: \(schemaRecipe.name ?? "unnamed")")
             
             // Convert to RecipeModel
-            print("🔄 Converting to RecipeModel...")
+            debugLog("🔄 Converting to RecipeModel...")
             let recipe = try convertToRecipeModel(schemaRecipe, sourceURL: url)
-            print("✅ Recipe converted successfully!")
+            debugLog("✅ Recipe converted successfully!")
             
             await MainActor.run {
                 importedRecipe = recipe
@@ -188,21 +188,21 @@ class RecipeImporter: ObservableObject {
             }
             
         } catch ImportError.noSchemaFound {
-            print("❌ Import failed: No schema found")
+            debugLog("❌ Import failed: No schema found")
             await MainActor.run {
                 errorMessage = "This website doesn't support automatic import"
                 debugInfo = "Try sites like AllRecipes, Food Network, or Serious Eats. Or copy the recipe manually."
                 isLoading = false
             }
         } catch ImportError.missingRequiredField(let field) {
-            print("❌ Import failed: Missing field \(field)")
+            debugLog("❌ Import failed: Missing field \(field)")
             await MainActor.run {
                 errorMessage = "Recipe data is incomplete"
                 debugInfo = "Missing required field: \(field)"
                 isLoading = false
             }
         } catch {
-            print("❌ Import failed: \(error)")
+            debugLog("❌ Import failed: \(error)")
             await MainActor.run {
                 errorMessage = "Failed to import recipe"
                 debugInfo = error.localizedDescription
@@ -216,76 +216,76 @@ class RecipeImporter: ObservableObject {
         // This pattern handles various formatting and whitespace
         let pattern = #"<script[^>]*type\s*=\s*["\']application/ld\+json["\'][^>]*>(.*?)</script>"#
         guard let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive, .dotMatchesLineSeparators]) else {
-            print("❌ Failed to create regex")
+            debugLog("❌ Failed to create regex")
             return nil
         }
         
         let range = NSRange(html.startIndex..., in: html)
         let matches = regex.matches(in: html, range: range)
-        print("🔍 Found \(matches.count) JSON-LD script tags")
+        debugLog("🔍 Found \(matches.count) JSON-LD script tags")
         
         // If no JSON-LD found, try to find recipe data in other formats
         if matches.isEmpty {
-            print("⚠️ No JSON-LD found, trying alternate patterns...")
+            debugLog("⚠️ No JSON-LD found, trying alternate patterns...")
             return tryAlternatePatterns(in: html)
         }
         
         for (index, match) in matches.enumerated() {
             guard let jsonRange = Range(match.range(at: 1), in: html) else { 
-                print("  ⚠️ Skipping match #\(index + 1) - couldn't extract range")
+                debugLog("  ⚠️ Skipping match #\(index + 1) - couldn't extract range")
                 continue 
             }
             let jsonString = String(html[jsonRange]).trimmingCharacters(in: .whitespacesAndNewlines)
             
             // Skip empty or very short JSON
             guard jsonString.count > 10 else {
-                print("  ⚠️ Skipping match #\(index + 1) - too short (\(jsonString.count) chars)")
+                debugLog("  ⚠️ Skipping match #\(index + 1) - too short (\(jsonString.count) chars)")
                 continue
             }
             
             guard let jsonData = jsonString.data(using: .utf8) else { 
-                print("  ⚠️ Skipping match #\(index + 1) - couldn't convert to data")
+                debugLog("  ⚠️ Skipping match #\(index + 1) - couldn't convert to data")
                 continue 
             }
             
-            print("📋 Processing JSON-LD block #\(index + 1) (\(jsonString.count) chars)")
+            debugLog("📋 Processing JSON-LD block #\(index + 1) (\(jsonString.count) chars)")
             
             // Show first 200 chars of JSON for debugging
             let preview = String(jsonString.prefix(200))
-            print("  📄 JSON preview: \(preview)...")
+            debugLog("  📄 JSON preview: \(preview)...")
             
             // Try to decode as single recipe
             do {
                 let recipe = try JSONDecoder().decode(SchemaRecipe.self, from: jsonData)
                 if recipe.name != nil {
-                    print("✅ Found recipe (single object): \(recipe.name ?? "")")
+                    debugLog("✅ Found recipe (single object): \(recipe.name ?? "")")
                     return recipe
                 } else {
-                    print("  ⚠️ Decoded but no name field")
+                    debugLog("  ⚠️ Decoded but no name field")
                 }
             } catch {
-                print("  ⚠️ Not a single recipe: \(error.localizedDescription)")
+                debugLog("  ⚠️ Not a single recipe: \(error.localizedDescription)")
             }
             
             // Try to decode as array and find Recipe type
             do {
                 let array = try JSONDecoder().decode([SchemaRecipe].self, from: jsonData)
                 if let recipe = array.first(where: { $0.name != nil }) {
-                    print("✅ Found recipe (array): \(recipe.name ?? "")")
+                    debugLog("✅ Found recipe (array): \(recipe.name ?? "")")
                     return recipe
                 } else {
-                    print("  ⚠️ Array decoded but no recipe with name found")
+                    debugLog("  ⚠️ Array decoded but no recipe with name found")
                 }
             } catch {
-                print("  ⚠️ Not an array: \(error.localizedDescription)")
+                debugLog("  ⚠️ Not an array: \(error.localizedDescription)")
             }
             
             // Try to decode as wrapper object with @graph
             if let json = try? JSONSerialization.jsonObject(with: jsonData) as? [String: Any] {
-                print("📊 Decoded as dictionary, keys: \(json.keys.joined(separator: ", "))")
+                debugLog("📊 Decoded as dictionary, keys: \(json.keys.joined(separator: ", "))")
                 
                 if let graph = json["@graph"] as? [[String: Any]] {
-                    print("📈 Found @graph with \(graph.count) items")
+                    debugLog("📈 Found @graph with \(graph.count) items")
                     
                     for (itemIndex, item) in graph.enumerated() {
                         // Check if this item is a Recipe
@@ -304,39 +304,39 @@ class RecipeImporter: ObservableObject {
                         }
                         
                         if itemIndex < 3 || isRecipe { // Only log first 3 or recipes
-                            print("  Item #\(itemIndex + 1): type=\(typeName), isRecipe=\(isRecipe)")
+                            debugLog("  Item #\(itemIndex + 1): type=\(typeName), isRecipe=\(isRecipe)")
                         }
                         
                         if isRecipe {
                             if let name = item["name"] as? String, !name.isEmpty {
-                                print("  ✅ Found Recipe with name: \(name)")
+                                debugLog("  ✅ Found Recipe with name: \(name)")
                                 // Found a recipe, try to decode it
                                 if let itemData = try? JSONSerialization.data(withJSONObject: item) {
                                     do {
                                         let recipe = try JSONDecoder().decode(SchemaRecipe.self, from: itemData)
-                                        print("  ✅ Successfully decoded recipe!")
+                                        debugLog("  ✅ Successfully decoded recipe!")
                                         return recipe
                                     } catch {
-                                        print("  ❌ Failed to decode recipe: \(error)")
+                                        debugLog("  ❌ Failed to decode recipe: \(error)")
                                     }
                                 }
                             } else {
-                                print("  ⚠️ Recipe found but no name")
+                                debugLog("  ⚠️ Recipe found but no name")
                             }
                         }
                     }
                 } else {
-                    print("  ℹ️ No @graph found in this JSON")
+                    debugLog("  ℹ️ No @graph found in this JSON")
                 }
             }
         }
         
-        print("❌ No valid recipe found in any JSON-LD block")
+        debugLog("❌ No valid recipe found in any JSON-LD block")
         return nil
     }
     
     private func tryAlternatePatterns(in html: String) -> SchemaRecipe? {
-        print("🔍 Trying alternate recipe detection patterns...")
+        debugLog("🔍 Trying alternate recipe detection patterns...")
         
         // Pattern 1: Look for JSON embedded in JavaScript variables
         let jsPatterns = [
@@ -350,11 +350,11 @@ class RecipeImporter: ObservableObject {
                let match = regex.firstMatch(in: html, range: NSRange(html.startIndex..., in: html)),
                let range = Range(match.range(at: 1), in: html) {
                 let jsonString = String(html[range])
-                print("  📋 Found potential recipe in JS variable")
+                debugLog("  📋 Found potential recipe in JS variable")
                 if let data = jsonString.data(using: .utf8),
                    let recipe = try? JSONDecoder().decode(SchemaRecipe.self, from: data),
                    recipe.name != nil {
-                    print("  ✅ Successfully decoded recipe from JS")
+                    debugLog("  ✅ Successfully decoded recipe from JS")
                     return recipe
                 }
             }
@@ -362,27 +362,27 @@ class RecipeImporter: ObservableObject {
         
         // Pattern 2: Look for WordPress/Elementor recipe format
         if html.contains("wp-content") || html.contains("elementor") {
-            print("  ℹ️ Detected WordPress/Elementor site - checking for recipe card")
+            debugLog("  ℹ️ Detected WordPress/Elementor site - checking for recipe card")
             return tryWordPressRecipe(in: html)
         }
         
-        print("  ❌ No alternate patterns found")
+        debugLog("  ❌ No alternate patterns found")
         return nil
     }
     
     private func tryWordPressRecipe(in html: String) -> SchemaRecipe? {
         // Try to extract from common WordPress recipe card plugins
         // This is a simplified version - would need enhancement for production
-        print("  🔍 Checking for WordPress recipe card...")
+        debugLog("  🔍 Checking for WordPress recipe card...")
         
         // Look for WP Recipe Maker format
         if html.contains("wprm-recipe") {
-            print("  ℹ️ Found WP Recipe Maker format (not yet supported)")
+            debugLog("  ℹ️ Found WP Recipe Maker format (not yet supported)")
         }
         
         // Look for Tasty Recipes format
         if html.contains("tasty-recipes") {
-            print("  ℹ️ Found Tasty Recipes format (not yet supported)")
+            debugLog("  ℹ️ Found Tasty Recipes format (not yet supported)")
         }
         
         return nil

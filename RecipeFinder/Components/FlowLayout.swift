@@ -1,10 +1,3 @@
-//
-//  FlowLayout.swift
-//  RecipeFinder
-//
-//  Created by Asad Khan on 13/10/2025.
-//
-
 import SwiftUI
 
 /// A custom layout that arranges its subviews in a flowing manner,

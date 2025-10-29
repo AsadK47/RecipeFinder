@@ -14,11 +14,11 @@ class PersistenceController {
         
         container.loadPersistentStores { storeDescription, error in
             if let error = error as NSError? {
-                print("❌ Failed to load persistent store: \(error.localizedDescription)")
-                print("❌ Error details: \(error.userInfo)")
+                debugLog("❌ Failed to load persistent store: \(error.localizedDescription)")
+                debugLog("❌ Error details: \(error.userInfo)")
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             } else {
-                print("✅ Core Data store loaded successfully at: \(storeDescription.url?.absoluteString ?? "unknown location")")
+                debugLog("✅ Core Data store loaded successfully at: \(storeDescription.url?.absoluteString ?? "unknown location")")
             }
         }
         
@@ -35,80 +35,83 @@ class PersistenceController {
         do {
             try context.execute(deleteRequest)
             try context.save()
-            print("✅ Database cleared successfully")
+            debugLog("✅ Database cleared successfully")
         } catch {
-            print("❌ Failed to clear database: \(error.localizedDescription)")
+            debugLog("❌ Failed to clear database: \(error.localizedDescription)")
         }
     }
     
     /// Resets the database by clearing all data and repopulating with sample recipes
     /// This also resets the UserDefaults flag to allow repopulation
     func resetDatabase() {
-        print("🔄 Resetting database...")
+        debugLog("🔄 Resetting database...")
         clearDatabase()
         UserDefaults.standard.set(false, forKey: Constants.UserDefaultsKeys.hasPopulatedDatabase)
         populateDatabase()
         UserDefaults.standard.set(true, forKey: Constants.UserDefaultsKeys.hasPopulatedDatabase)
-        print("✅ Database reset complete")
+        debugLog("✅ Database reset complete")
     }
     
-    func saveRecipe(
-        name: String,
-        category: String,
-        difficulty: String,
-        prepTime: String,
-        cookingTime: String,
-        baseServings: Int,
-        currentServings: Int,
-        ingredients: [Ingredient],
-        prePrepInstructions: [String],
-        instructions: [String],
-        notes: String,
-        imageName: String,
-        isFavorite: Bool = false
-    ) {
+    // Struct to encapsulate recipe save parameters
+    struct RecipeSaveParameters {
+        let name: String
+        let category: String
+        let difficulty: String
+        let prepTime: String
+        let cookingTime: String
+        let baseServings: Int
+        let currentServings: Int
+        let ingredients: [Ingredient]
+        let prePrepInstructions: [String]
+        let instructions: [String]
+        let notes: String
+        let imageName: String
+        let isFavorite: Bool
+    }
+    
+    func saveRecipe(parameters: RecipeSaveParameters) {
         let context = container.viewContext
         
         guard let entity = NSEntityDescription.entity(forEntityName: "Recipe", in: context) else {
-            print("❌ Failed to find Recipe entity")
+            debugLog("❌ Failed to find Recipe entity")
             return
         }
         
         let recipe = NSManagedObject(entity: entity, insertInto: context)
         
         // Encode ingredients
-        guard let ingredientData = try? JSONEncoder().encode(ingredients) else {
-            print("❌ Failed to encode ingredients for recipe: \(name)")
+        guard let ingredientData = try? JSONEncoder().encode(parameters.ingredients) else {
+            debugLog("❌ Failed to encode ingredients for recipe: \(parameters.name)")
             return
         }
         
         // Set values
         recipe.setValue(UUID(), forKey: "id")
-        recipe.setValue(name, forKey: "name")
-        recipe.setValue(category, forKey: "category")
-        recipe.setValue(difficulty, forKey: "difficulty")
-        recipe.setValue(prepTime, forKey: "prepTime")
-        recipe.setValue(cookingTime, forKey: "cookingTime")
-        recipe.setValue(baseServings, forKey: "baseServings")
-        recipe.setValue(currentServings, forKey: "currentServings")
+        recipe.setValue(parameters.name, forKey: "name")
+        recipe.setValue(parameters.category, forKey: "category")
+        recipe.setValue(parameters.difficulty, forKey: "difficulty")
+        recipe.setValue(parameters.prepTime, forKey: "prepTime")
+        recipe.setValue(parameters.cookingTime, forKey: "cookingTime")
+        recipe.setValue(parameters.baseServings, forKey: "baseServings")
+        recipe.setValue(parameters.currentServings, forKey: "currentServings")
         recipe.setValue(ingredientData, forKey: "ingredients")
-        recipe.setValue(prePrepInstructions, forKey: "prePrepInstructions")
-        recipe.setValue(instructions, forKey: "instructions")
-        recipe.setValue(notes, forKey: "notes")
-        recipe.setValue(imageName, forKey: "imageName")
-        recipe.setValue(isFavorite, forKey: "isFavorite")
+        recipe.setValue(parameters.prePrepInstructions, forKey: "prePrepInstructions")
+        recipe.setValue(parameters.instructions, forKey: "instructions")
+        recipe.setValue(parameters.notes, forKey: "notes")
+        recipe.setValue(parameters.imageName, forKey: "imageName")
+        recipe.setValue(parameters.isFavorite, forKey: "isFavorite")
         
         do {
             try context.save()
-            print("✅ Recipe '\(name)' saved successfully")
+            debugLog("✅ Recipe '\(parameters.name)' saved successfully")
         } catch {
-            print("❌ Failed to save recipe '\(name)': \(error.localizedDescription)")
+            debugLog("❌ Failed to save recipe '\(parameters.name)': \(error.localizedDescription)")
         }
     }
     
     // Helper method to save a RecipeModel directly
     func saveRecipeModel(_ recipe: RecipeModel) {
-        saveRecipe(
+        let parameters = RecipeSaveParameters(
             name: recipe.name,
             category: recipe.category,
             difficulty: recipe.difficulty,
@@ -123,6 +126,7 @@ class PersistenceController {
             imageName: recipe.imageName ?? "",
             isFavorite: recipe.isFavorite
         )
+        saveRecipe(parameters: parameters)
     }
     
     func fetchRecipes() -> [RecipeModel] {
@@ -138,13 +142,13 @@ class PersistenceController {
         
         do {
             let results = try context.fetch(fetchRequest)
-            print("✅ Fetched \(results.count) recipes from database")
+            debugLog("✅ Fetched \(results.count) recipes from database")
             
             return results.compactMap { result in
                 guard let id = result.value(forKey: "id") as? UUID,
                       let name = result.value(forKey: "name") as? String,
                       let ingredientsData = result.value(forKey: "ingredients") as? Data else {
-                    print("⚠️ Skipping recipe with missing required fields")
+                    debugLog("⚠️ Skipping recipe with missing required fields")
                     return nil
                 }
                 
@@ -165,7 +169,7 @@ class PersistenceController {
                 do {
                     ingredients = try JSONDecoder().decode([Ingredient].self, from: ingredientsData)
                 } catch {
-                    print("❌ Failed to decode ingredients for '\(name)': \(error.localizedDescription)")
+                    debugLog("❌ Failed to decode ingredients for '\(name)': \(error.localizedDescription)")
                     return nil
                 }
                 
@@ -187,7 +191,7 @@ class PersistenceController {
                 )
             }
         } catch {
-            print("❌ Failed to fetch recipes: \(error.localizedDescription)")
+            debugLog("❌ Failed to fetch recipes: \(error.localizedDescription)")
             return []
         }
     }
@@ -203,9 +207,9 @@ class PersistenceController {
                 context.delete(object)
             }
             try context.save()
-            print("✅ Recipe deleted successfully")
+            debugLog("✅ Recipe deleted successfully")
         } catch {
-            print("❌ Failed to delete recipe: \(error.localizedDescription)")
+            debugLog("❌ Failed to delete recipe: \(error.localizedDescription)")
         }
     }
     
@@ -220,10 +224,10 @@ class PersistenceController {
                 let currentFavorite = recipe.value(forKey: "isFavorite") as? Bool ?? false
                 recipe.setValue(!currentFavorite, forKey: "isFavorite")
                 try context.save()
-                print("✅ Recipe favorite status toggled to \(!currentFavorite)")
+                debugLog("✅ Recipe favorite status toggled to \(!currentFavorite)")
             }
         } catch {
-            print("❌ Failed to toggle favorite: \(error.localizedDescription)")
+            debugLog("❌ Failed to toggle favorite: \(error.localizedDescription)")
         }
     }
 }
