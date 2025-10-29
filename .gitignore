@@ -7,6 +7,13 @@ doc/doc-style.css
 build/
 DerivedData/
 xcuserdata/
+TestResults.xcresult/
+
+# Test artifacts
+test_output.log
+build_output.log
+ref.0*
+data.0*
 
 # Xcode project files that shouldn't be committed
 *.xcuserstate

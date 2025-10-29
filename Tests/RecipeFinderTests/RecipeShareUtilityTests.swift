@@ -105,26 +105,15 @@ final class RecipeShareUtilityTests: XCTestCase {
         XCTAssertTrue(text.contains("Step 2"))
     }
     
-    // MARK: - PDF Generation Tests
+    // MARK: - PDF Generation Tests (Combined for Performance)
     
-    func testGeneratePDFReturnsNonNilData() {
-        // Given & When
+    func testGeneratePDFCombined() {
+        // Test 1: Returns non-nil and non-empty data
         let pdfData = RecipeShareUtility.generatePDF(recipe: testRecipe)
+        XCTAssertNotNil(pdfData, "PDF data should not be nil")
+        XCTAssertTrue((pdfData?.count ?? 0) > 0, "PDF data should not be empty")
         
-        // Then
-        XCTAssertNotNil(pdfData)
-    }
-    
-    func testGeneratePDFReturnsNonEmptyData() {
-        // Given & When
-        let pdfData = RecipeShareUtility.generatePDF(recipe: testRecipe)
-        
-        // Then
-        XCTAssertTrue((pdfData?.count ?? 0) > 0)
-    }
-    
-    func testGeneratePDFForMinimalRecipe() {
-        // Given
+        // Test 2: Works with minimal recipe
         let minimalRecipe = RecipeModel(
             name: "Minimal",
             category: "Main",
@@ -139,12 +128,8 @@ final class RecipeShareUtilityTests: XCTestCase {
             notes: "",
             imageName: nil
         )
-        
-        // When
-        let pdfData = RecipeShareUtility.generatePDF(recipe: minimalRecipe)
-        
-        // Then
-        XCTAssertNotNil(pdfData)
+        let minimalPdfData = RecipeShareUtility.generatePDF(recipe: minimalRecipe)
+        XCTAssertNotNil(minimalPdfData, "Minimal recipe PDF should not be nil")
     }
     
     // MARK: - Edge Case Tests

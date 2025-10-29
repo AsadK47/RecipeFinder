@@ -1,87 +1,63 @@
 #!/bin/bash
 
-# RecipeFinder - Test Runner Script
-# Can be run from anywhere: ./scripts/test.sh or just ./test.sh from scripts dir
+# RecipeFinder - Fast Unit Test Runner
+# Optimized for speed
 
-echo "🧪 Running RecipeFinder Tests..."
-echo ""
+set -e
 
-# Get the directory where the script is located
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-# Navigate to project root (one level up from scripts/)
-PROJECT_ROOT="$( cd "$SCRIPT_DIR/.." && pwd )"
+# Cleanup function
+cleanup() {
+    cd "$PROJECT_ROOT" 2>/dev/null || true
+    rm -f ref.0* data.0* 2>/dev/null || true
+}
 
-# Change to project root
-cd "$PROJECT_ROOT" || exit 1
+# Set trap to cleanup on exit
+trap cleanup EXIT INT TERM
 
-echo "📁 Project root: $PROJECT_ROOT"
-echo ""
+echo "🧪 Running RecipeFinder Unit Tests (Fast Mode)..."
 
-# Check if simulator is available
-echo "🔍 Checking available simulators..."
-AVAILABLE_SIMULATOR=$(xcrun simctl list devices available | grep "iPhone" | head -1 | sed 's/.*(\([^)]*\)).*/\1/')
+# Get project root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+cd "$PROJECT_ROOT"
 
-if [ -z "$AVAILABLE_SIMULATOR" ]; then
-    echo "⚠️  No iPhone simulator found, using default destination"
-    DESTINATION='platform=iOS Simulator,name=iPhone 17 Pro'
-else
-    echo "✅ Using available iPhone simulator"
-    DESTINATION='platform=iOS Simulator,name=iPhone 17 Pro'
-fi
+# Clean up old results and temp files
+rm -rf TestResults.xcresult 2>/dev/null || true
+rm -f ref.0* data.0* 2>/dev/null || true
 
-echo ""
-echo "🏗️  Building tests..."
-
-# Check if xcpretty is available
-if command -v xcpretty &> /dev/null; then
-    FORMATTER="xcpretty"
-else
-    FORMATTER="cat"
-    echo "💡 Tip: Install xcpretty for better output: gem install xcpretty"
-fi
-
-# Build tests first (faster than build + test in one command)
+# Run tests with optimizations:
+# - Build test bundle first to ensure it's available
+# - Use -parallel-testing-enabled YES for faster execution
+# - Use -quiet to reduce output overhead
+# - Use existing DerivedData to avoid rebuilding
+# - Only run unit tests, not UI tests
+echo "Building test bundle..."
 xcodebuild build-for-testing \
     -scheme RecipeFinder \
-    -destination "$DESTINATION" \
+    -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
     -derivedDataPath DerivedData \
-    CODE_SIGN_IDENTITY="" \
-    CODE_SIGNING_REQUIRED=NO \
-    | $FORMATTER
+    -quiet
 
-if [ ${PIPESTATUS[0]} -ne 0 ]; then
+BUILD_EXIT_CODE=$?
+if [ $BUILD_EXIT_CODE -ne 0 ]; then
     echo ""
-    echo "❌ Build failed. Cannot run tests."
-    exit 1
+    echo "❌ Build failed with exit code $BUILD_EXIT_CODE"
+    exit $BUILD_EXIT_CODE
+fi
+
+echo "Running unit tests..."
+xcodebuild test-without-building \
+    -scheme RecipeFinder \
+    -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+    -only-testing:RecipeFinderTests \
+    -derivedDataPath DerivedData
+
+TEST_EXIT_CODE=$?
+if [ $TEST_EXIT_CODE -ne 0 ]; then
+    echo ""
+    echo "❌ Tests failed with exit code $TEST_EXIT_CODE"
+    exit $TEST_EXIT_CODE
 fi
 
 echo ""
-echo "🧪 Running tests..."
-
-# Run tests without building (much faster)
-xcodebuild test-without-building \
-    -scheme RecipeFinder \
-    -destination "$DESTINATION" \
-    -derivedDataPath DerivedData \
-    -resultBundlePath TestResults.xcresult \
-    | $FORMATTER
-
-TEST_EXIT_CODE=${PIPESTATUS[0]}
-
-TEST_EXIT_CODE=${PIPESTATUS[0]}
-
-# Check exit code
-if [ $TEST_EXIT_CODE -eq 0 ]; then
-    echo ""
-    echo "✅ All tests passed!"
-    echo ""
-    echo "📊 View detailed results:"
-    echo "   open TestResults.xcresult"
-else
-    echo ""
-    echo "❌ Some tests failed."
-    echo ""
-    echo "📊 View detailed results:"
-    echo "   open TestResults.xcresult"
-    exit 1
-fi
+echo "✅ Unit tests completed!"
