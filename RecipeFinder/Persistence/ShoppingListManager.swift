@@ -28,7 +28,7 @@ final class ShoppingListManager: ObservableObject {
         
         // Validate quantity
         guard quantity > 0 else {
-            print("⚠️ Invalid quantity for item '\(trimmedName)'. Must be greater than 0.")
+            debugLog("⚠️ Invalid quantity for item '\(trimmedName)'. Must be greater than 0.")
             HapticManager.shared.error()
             return
         }

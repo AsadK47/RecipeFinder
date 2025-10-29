@@ -220,6 +220,6 @@ struct RecipeImportView: View {
 
 #Preview {
     RecipeImportView { recipe in
-        print("Imported: \(recipe.name)")
+        debugLog("Imported: \(recipe.name)")
     }
 }

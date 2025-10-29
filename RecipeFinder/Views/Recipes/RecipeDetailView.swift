@@ -559,7 +559,7 @@ struct RecipeDetailView: View {
                         HapticManager.shared.success()
                     }
                 } catch {
-                    print("❌ Failed to save PDF: \(error)")
+                    debugLog("❌ Failed to save PDF: \(error)")
                     DispatchQueue.main.async {
                         isGeneratingPDF = false
                     }
