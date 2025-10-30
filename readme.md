@@ -150,6 +150,45 @@ Build and run: `⌘R`
 ./scripts/test-single.sh <TestFileName>
 ```
 
+### Developer Commands
+
+**Build Commands**:
+
+```bash
+# Resolve package dependencies
+xcodebuild -resolvePackageDependencies -scheme RecipeFinder
+
+# Build for simulator (iOS 26.0 - iPhone 17 Pro)
+xcodebuild -scheme RecipeFinder -sdk iphonesimulator \
+  -destination 'platform=iOS Simulator,OS=26.0,name=iPhone 17 Pro' build
+
+# Build for simulator (iOS 18.2 - iPhone 16)
+xcodebuild -scheme RecipeFinder -sdk iphonesimulator \
+  -destination 'platform=iOS Simulator,OS=18.2,name=iPhone 16' build
+
+# Build for any iOS Simulator (recommended)
+xcodebuild -scheme RecipeFinder -sdk iphonesimulator \
+  -destination 'platform=iOS Simulator,name=Any iOS Simulator Device' build
+
+# Clean build folder
+xcodebuild clean -scheme RecipeFinder
+
+# Build and run tests
+xcodebuild test -scheme RecipeFinder -sdk iphonesimulator \
+  -destination 'platform=iOS Simulator,OS=26.0,name=iPhone 17 Pro'
+```
+
+**Firebase Setup** (if using authentication):
+
+```bash
+# Verify Firebase packages are resolved
+grep -A 5 "firebase-ios-sdk" RecipeFinder.xcodeproj/project.pbxproj
+
+# Check Firebase version compatibility
+# Firebase 11.5.0 = Xcode 16+ required (current version)
+# Firebase 10.29.0 = Xcode 15.4 compatible (legacy)
+```
+
 ---
 
 ## Roadmap
