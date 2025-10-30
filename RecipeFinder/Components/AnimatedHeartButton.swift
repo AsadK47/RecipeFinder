@@ -58,7 +58,7 @@ struct AnimatedHeartButton: View {
         }
     }
     
-    // MARK: - Actions
+    //Actions
     private func handleTap() {
         HapticManager.shared.light()
         action()
@@ -88,7 +88,7 @@ struct AnimatedHeartButton: View {
         }
     }
     
-    // MARK: - Particle Helpers
+    //Particle Helpers
     private func particleColor(for index: Int) -> Color {
         let colors: [Color] = [
             Color(red: 1.0, green: 0.2, blue: 0.4),      // Pink-red
@@ -113,7 +113,7 @@ struct AnimatedHeartButton: View {
     }
 }
 
-// MARK: - Preview
+// Preview
 #Preview {
     ZStack {
         AppTheme.backgroundGradient(for: .teal, colorScheme: .dark)

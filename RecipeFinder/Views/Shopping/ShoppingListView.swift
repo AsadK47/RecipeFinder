@@ -495,7 +495,7 @@ struct ShoppingListView: View {
     }
 }
 
-// MARK: - Shopping List Item Row
+// Shopping List Item Row
 struct ShoppingListItemRow: View {
     let item: ShoppingListItem
     let onToggle: () -> Void
@@ -594,4 +594,4 @@ struct ShoppingListItemRow: View {
     }
 }
 
-// MARK: - Edit Item Sheet
+// Edit Item Sheet

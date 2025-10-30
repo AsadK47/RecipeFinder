@@ -230,7 +230,7 @@ struct IngredientSearchView: View {
         }
     }
     
-    // MARK: - Search Results View
+    // Search Results View
     private var searchResultsView: some View {
         ScrollView {
             LazyVStack(spacing: 12) {
@@ -261,7 +261,7 @@ struct IngredientSearchView: View {
         }
     }
     
-    // MARK: - Main Ingredient Browser
+    // Main Ingredient Browser
     private var ingredientBrowserView: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
@@ -295,7 +295,7 @@ struct IngredientSearchView: View {
         }
     }
     
-    // MARK: - Helper Views
+    // Helper Views
     private func ingredientButton(_ ingredient: String) -> some View {
         let category = CategoryClassifier.suggestCategory(for: ingredient)
         let isAdded = addedIngredients.contains(ingredient)
@@ -530,7 +530,7 @@ struct IngredientSearchView: View {
     }
 }
 
-// MARK: - Quick Match Recipe Card Component
+// Quick Match Recipe Card Component
 struct QuickMatchRecipeCard: View {
     let recipe: RecipeModel
     let matchPercentage: Double
@@ -664,7 +664,7 @@ struct QuickMatchRecipeCard: View {
     }
 }
 
-// MARK: - Category Card Component
+// Category Card Component
 struct CategoryCard: View {
     let category: String
     let ingredients: [String]
@@ -920,7 +920,7 @@ struct CategoryCard: View {
     }
 }
 
-// MARK: - Ingredient Filter Sheet
+// Ingredient Filter Sheet
 struct IngredientFilterSheet: View {
     let categories: [String]
     @Binding var selectedCategories: Set<String>

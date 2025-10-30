@@ -393,7 +393,7 @@ struct RecipeSearchView: View {
     }
 }
 
-// MARK: - Filter Sheet
+// Filter Sheet
 struct FilterSheet: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
@@ -534,7 +534,7 @@ struct FilterSheet: View {
     }
 }
 
-// MARK: - Recipe Filter Button Component (specific styling for recipe filters)
+// Recipe Filter Button Component (specific styling for recipe filters)
 struct RecipeFilterButton: View {
     let label: String
     let isSelected: Bool

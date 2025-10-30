@@ -34,7 +34,7 @@ struct Ingredient: Identifiable, Codable, Hashable {
         lhs.id == rhs.id
     }
     
-    // MARK: - Computed Properties (Required for scaling)
+    // Computed Properties (Required for scaling)
     func scaledQuantity(for scaleFactor: Double) -> Double {
         baseQuantity * scaleFactor
     }
@@ -125,7 +125,7 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         self.isFavorite = isFavorite
     }
     
-    // MARK: - Hashable Conformance
+    //  Hashable Conformance
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
@@ -137,7 +137,7 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         lhs.isFavorite == rhs.isFavorite
     }
     
-    // MARK: - Computed Properties (Required for UI)
+    //  Computed Properties (Required for UI)
     var totalTime: String {
         let prepMinutes = TimeExtractor.extractMinutes(from: prepTime)
         let cookMinutes = TimeExtractor.extractMinutes(from: cookingTime)
@@ -145,7 +145,7 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         return "\(total) minutes"
     }
     
-    // MARK: - Scaling Methods (Required for RecipeDetailView)
+    //  Scaling Methods (Required for RecipeDetailView)
     var scaleFactor: Double {
         Double(currentServings) / Double(baseServings)
     }

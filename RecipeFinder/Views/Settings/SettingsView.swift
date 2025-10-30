@@ -1,6 +1,6 @@
 import SwiftUI
 
-// MARK: - Card Style Enum
+// Card Style Enum
 enum CardStyle: String, CaseIterable {
     case frosted = "Frosted Glass"
     case solid = "Solid"

@@ -540,7 +540,7 @@ struct RecipeDetailView: View {
         return false
     }
     
-    // MARK: - Favorites
+    // Favorites
     
     private func toggleFavorite() {
         HapticManager.shared.light()
@@ -553,7 +553,7 @@ struct RecipeDetailView: View {
         onFavoriteToggle?()
     }
     
-    // MARK: - Sharing
+    // Sharing
     
     private func shareAsText() {
         HapticManager.shared.light()
@@ -624,7 +624,7 @@ struct RecipeDetailView: View {
     }
 }
 
-// MARK: - Share Sheet
+// Share Sheet
 struct ShareSheet: UIViewControllerRepresentable {
     let items: [Any]
     

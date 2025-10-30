@@ -2,7 +2,7 @@
 import Foundation
 import SwiftUI
 
-// MARK: - Schema.org Recipe Structure
+// Schema.org Recipe Structure
 struct SchemaRecipe: Codable {
     let name: String?
     let description: String?
@@ -117,7 +117,7 @@ struct SchemaRecipe: Codable {
     }
 }
 
-// MARK: - Recipe Importer
+// Recipe Importer
 class RecipeImporter: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
@@ -493,7 +493,7 @@ class RecipeImporter: ObservableObject {
     }
 }
 
-// MARK: - Ingredient Parser
+// Ingredient Parser
 struct IngredientParser {
     static func parse(_ ingredientString: String) -> Ingredient? {
         let normalized = ingredientString.trimmingCharacters(in: .whitespaces)
@@ -554,7 +554,7 @@ struct IngredientParser {
     }
 }
 
-// MARK: - Errors
+// Errors
 enum ImportError: LocalizedError {
     case invalidHTML
     case noSchemaFound

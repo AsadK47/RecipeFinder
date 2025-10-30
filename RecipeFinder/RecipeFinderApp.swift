@@ -35,7 +35,7 @@ struct RecipeFinderApp: App {
         }
     }
     
-    // MARK: - UI Configuration
+    // UI Configuration
     private func configureAppearance() {
         // Configure tab bar appearance
         let tabAppearance = UITabBarAppearance()

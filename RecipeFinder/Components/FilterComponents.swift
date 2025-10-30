@@ -29,7 +29,7 @@ struct FilterChip: View {
     }
 }
 
-// MARK: - Filter Button Component
+// Filter Button Component
 struct FilterButton: View {
     let label: String
     let icon: String

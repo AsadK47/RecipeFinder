@@ -6,7 +6,7 @@
 //
  import SwiftUI
 
-// MARK: - Theme Environment Key
+// Theme Environment Key
 private struct ThemeEnvironmentKey: EnvironmentKey {
     static let defaultValue: AppTheme.ThemeType = .teal // Changed to teal as default
 }
@@ -20,7 +20,7 @@ extension EnvironmentValues {
 
 // Theme Configuration
 enum AppTheme {
-    // MARK: - Golden Ratio Constants
+    //  Golden Ratio Constants
     static let goldenRatio: CGFloat = 1.618
     static let goldenRatioInverse: CGFloat = 0.618
     
@@ -177,7 +177,7 @@ enum AppTheme {
     }
 }
 
-// MARK: - View Extension for Theme Access
+// View Extension for Theme Access
 extension View {
     var themeAccentColor: Color {
         AppTheme.accentColor

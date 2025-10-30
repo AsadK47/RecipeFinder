@@ -4,7 +4,7 @@ import SwiftUI
 /// High-performance utility for sharing and exporting recipes
 class RecipeShareUtility {
     
-    // MARK: - Drawing Configuration
+    // Drawing Configuration
     
     /// Configuration for drawing PDF sections
     private struct SectionDrawConfig {
@@ -16,7 +16,7 @@ class RecipeShareUtility {
         let accentColor: UIColor
     }
     
-    // MARK: - Text Format Export (Blazing Fast)
+    // Text Format Export (Blazing Fast)
     
     /// Generate a clean text version of the recipe (optimized)
     static func generateTextFormat(recipe: RecipeModel, measurementSystem: MeasurementSystem = .metric) -> String {
@@ -75,7 +75,7 @@ class RecipeShareUtility {
         return text
     }
     
-    // MARK: - PDF Export (App-Style Screenshot)
+    // PDF Export (App-Style Screenshot)
     
     // swiftlint:disable function_body_length type_body_length file_length
     
@@ -119,7 +119,7 @@ class RecipeShareUtility {
             context.beginPage()
             let cgContext = context.cgContext
             
-            // MARK: - FULL GRADIENT BACKGROUND (exactly like app)
+            // FULL GRADIENT BACKGROUND (exactly like app)
             if let gradient = CGGradient(
                 colorsSpace: CGColorSpaceCreateDeviceRGB(),
                 colors: gradientColors.map { $0.cgColor } as CFArray,
@@ -137,7 +137,7 @@ class RecipeShareUtility {
             let margin: CGFloat = 20
             let contentWidth = pageWidth - (margin * 2)
             
-            // MARK: - TITLE (White, centered - exactly like app)
+            // TITLE (White, centered - exactly like app)
             let titleParagraph = NSMutableParagraphStyle()
             titleParagraph.alignment = .center
             titleParagraph.lineBreakMode = .byWordWrapping
@@ -159,7 +159,7 @@ class RecipeShareUtility {
             titleText.draw(in: titleRect, withAttributes: titleAttrs)
             yPos += titleBounds.height + 20
             
-            // MARK: - INFO CARDS (Glass morphism - exactly like app)
+            // INFO CARDS (Glass morphism - exactly like app)
             let cardSpacing: CGFloat = 16
             let cardWidth = (contentWidth - cardSpacing) / 2
             let cardHeight: CGFloat = 90
@@ -233,7 +233,7 @@ class RecipeShareUtility {
             
             yPos += cardHeight + 24
             
-            // MARK: - INGREDIENTS SECTION (exactly like app)
+            // INGREDIENTS SECTION (exactly like app)
             yPos = drawSectionWithCard(
                 config: SectionDrawConfig(
                     context: cgContext,
@@ -271,7 +271,7 @@ class RecipeShareUtility {
             
             yPos += 20
             
-            // MARK: - PRE-PREP SECTION (if exists)
+            // PRE-PREP SECTION (if exists)
             if !recipe.prePrepInstructions.isEmpty {
                 yPos = drawSectionWithCard(
                     config: SectionDrawConfig(
@@ -328,7 +328,7 @@ class RecipeShareUtility {
                 yPos += 20
             }
             
-            // MARK: - INSTRUCTIONS SECTION (exactly like app)
+            // INSTRUCTIONS SECTION (exactly like app)
             yPos = drawSectionWithCard(
                 config: SectionDrawConfig(
                     context: cgContext,
@@ -384,7 +384,7 @@ class RecipeShareUtility {
             
             yPos += 20
             
-            // MARK: - NOTES SECTION (if exists)
+            // NOTES SECTION (if exists)
             if !recipe.notes.isEmpty {
                 yPos = drawSectionWithCard(
                     config: SectionDrawConfig(
@@ -413,7 +413,7 @@ class RecipeShareUtility {
                 }
             }
             
-            // MARK: - FOOTER
+            // FOOTER
             yPos = pageHeight - 30
             let footerText = "Created with RecipeFinder" as NSString
             let footerSize = footerText.size(withAttributes: [
@@ -433,7 +433,7 @@ class RecipeShareUtility {
     }
     // swiftlint:enable function_body_length
     
-    // MARK: - Helper Functions (Optimized for App-Like Look)
+    // Helper Functions (Optimized for App-Like Look)
     
     /// Draw glass card exactly like the app (with material blur effect simulation)
     private static func drawGlassCardExact(context: CGContext, rect: CGRect) {

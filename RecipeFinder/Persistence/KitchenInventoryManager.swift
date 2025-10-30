@@ -1,7 +1,7 @@
 import Combine
 import Foundation
 
-// MARK: - Kitchen Item Model
+// Kitchen Item Model
 struct KitchenItem: Identifiable, Codable, Equatable, Hashable {
 	let id: UUID
 	var name: String
@@ -16,7 +16,7 @@ struct KitchenItem: Identifiable, Codable, Equatable, Hashable {
 	}
 }
 
-// MARK: - Kitchen Inventory Manager
+// Kitchen Inventory Manager
 final class KitchenInventoryManager: ObservableObject {
 	@Published private(set) var items: [KitchenItem] = []
     
@@ -26,7 +26,7 @@ final class KitchenInventoryManager: ObservableObject {
 		loadItems()
 	}
     
-	// MARK: - Add/Remove Items
+	// Add/Remove Items
 	func addItem(name: String, category: String? = nil) {
 		let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
 		guard !trimmedName.isEmpty else { return }
@@ -76,7 +76,7 @@ final class KitchenInventoryManager: ObservableObject {
 		saveItems()
 	}
     
-	// MARK: - Grouped Items
+	// Grouped Items
 	var groupedItems: [(category: String, items: [KitchenItem])] {
 		let categories = Set(items.map { $0.category }).sorted()
         
@@ -86,7 +86,7 @@ final class KitchenInventoryManager: ObservableObject {
 		}
 	}
     
-	// MARK: - Persistence
+	// Persistence
 	private func saveItems() {
 		if let encoded = try? JSONEncoder().encode(items) {
 			UserDefaults.standard.set(encoded, forKey: saveKey)

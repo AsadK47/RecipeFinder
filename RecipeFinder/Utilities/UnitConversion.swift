@@ -14,7 +14,7 @@ enum MeasurementSystem: String, CaseIterable, Codable {
 
 struct UnitConversion {
     
-    // MARK: - Weight Conversions
+    // Weight Conversions
     static func convertWeight(value: Double, from fromUnit: String, to toUnit: String) -> Double {
         let normalizedFrom = fromUnit.lowercased().trimmingCharacters(in: .whitespaces)
         let normalizedTo = toUnit.lowercased().trimmingCharacters(in: .whitespaces)
@@ -51,7 +51,7 @@ struct UnitConversion {
         }
     }
     
-    // MARK: - Volume Conversions
+    // Volume Conversions
     static func convertVolume(value: Double, from fromUnit: String, to toUnit: String) -> Double {
         let normalizedFrom = fromUnit.lowercased().trimmingCharacters(in: .whitespaces)
         let normalizedTo = toUnit.lowercased().trimmingCharacters(in: .whitespaces)
@@ -96,7 +96,7 @@ struct UnitConversion {
         }
     }
     
-    // MARK: - Unit Type Detection
+    // Unit Type Detection
     static func getUnitType(_ unit: String) -> UnitType {
         let normalized = unit.lowercased().trimmingCharacters(in: .whitespaces)
         
@@ -118,7 +118,7 @@ struct UnitConversion {
         }
     }
     
-    // MARK: - Smart Conversion
+    // Smart Conversion
     static func convert(
         value: Double,
         unit: String,
@@ -144,7 +144,7 @@ struct UnitConversion {
         }
     }
     
-    // MARK: - Solid Ingredient Detection
+    // Solid Ingredient Detection
     private static func isSolidIngredient(_ ingredientName: String) -> Bool {
         let name = ingredientName.lowercased()
         
@@ -182,7 +182,7 @@ struct UnitConversion {
         return false
     }
     
-    // MARK: - Specific Density Conversions
+    // Specific Density Conversions
     private static func getDensityConversion(ingredientName: String, unit: String) -> Double? {
         let name = ingredientName.lowercased()
         let normalized = unit.lowercased().trimmingCharacters(in: .whitespaces)
@@ -235,7 +235,7 @@ struct UnitConversion {
         return nil
     }
     
-    // MARK: - Volume to Weight Conversion for Solids
+    // Volume to Weight Conversion for Solids
     private static func convertVolumeToWeightForSolids(
         value: Double,
         unit: String,
