@@ -40,18 +40,26 @@ struct ShoppingListView: View {
             applicationActivities: nil
         )
         
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let window = windowScene.windows.first,
-           let rootViewController = window.rootViewController {
-            activityController.popoverPresentationController?.sourceView = window
-            activityController.popoverPresentationController?.sourceRect = CGRect(
-                x: window.bounds.midX,
-                y: window.bounds.midY,
-                width: 0,
-                height: 0
-            )
-            rootViewController.present(activityController, animated: true)
+        // Use proper window scene access (iOS 15+)
+        guard let windowScene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
+              let rootViewController = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController else {
+            return
         }
+        
+        // Find the topmost presented view controller
+        var topController = rootViewController
+        while let presented = topController.presentedViewController {
+            topController = presented
+        }
+        
+        // Configure for iPad
+        if let popover = activityController.popoverPresentationController {
+            popover.sourceView = topController.view
+            popover.sourceRect = CGRect(x: topController.view.bounds.midX, y: topController.view.bounds.midY, width: 0, height: 0)
+            popover.permittedArrowDirections = []
+        }
+        
+        topController.present(activityController, animated: true)
     }
     
     var body: some View {

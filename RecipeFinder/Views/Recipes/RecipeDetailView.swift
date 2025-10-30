@@ -648,9 +648,11 @@ struct ShareSheet: UIViewControllerRepresentable {
         let controller = UIActivityViewController(activityItems: items, applicationActivities: nil)
         
         // Configure for iPad if needed
-        if let popover = controller.popoverPresentationController {
-            popover.sourceView = UIApplication.shared.windows.first
-            popover.sourceRect = CGRect(x: UIScreen.main.bounds.midX, y: UIScreen.main.bounds.midY, width: 0, height: 0)
+        if let popover = controller.popoverPresentationController,
+           let windowScene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
+           let window = windowScene.windows.first(where: { $0.isKeyWindow }) {
+            popover.sourceView = window
+            popover.sourceRect = CGRect(x: window.bounds.midX, y: window.bounds.midY, width: 0, height: 0)
             popover.permittedArrowDirections = []
         }
         

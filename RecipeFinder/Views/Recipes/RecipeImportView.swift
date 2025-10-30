@@ -6,6 +6,7 @@ struct RecipeImportView: View {
     @StateObject private var importer = RecipeImporter()
     @State private var urlText = ""
     @FocusState private var isTextFieldFocused: Bool
+    @State private var showRecipeWizard = false
     
     var onImport: (RecipeModel) -> Void
     
@@ -96,13 +97,6 @@ struct RecipeImportView: View {
                         Text(error)
                             .font(.subheadline)
                             .foregroundColor(.secondary)
-                        
-                        if let debugInfo = importer.debugInfo {
-                            Text(debugInfo)
-                                .font(.caption)
-                                .foregroundColor(.secondary.opacity(0.7))
-                                .padding(.top, 4)
-                        }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
@@ -171,10 +165,26 @@ struct RecipeImportView: View {
                 }
             }
         }
-        .onChange(of: importer.importedRecipe) { _, newValue in
-            if let recipe = newValue {
-                onImport(recipe)
-                dismiss()
+        .onChange(of: importer.extractedData) { _, newValue in
+            if newValue != nil {
+                // Data extracted successfully - show Recipe Wizard
+                showRecipeWizard = true
+            }
+        }
+        .sheet(isPresented: $showRecipeWizard) {
+            if let data = importer.extractedData {
+                RecipeWizardView(
+                    prefilledData: RecipeWizardView.PrefilledRecipeData(
+                        name: data.name,
+                        ingredients: data.matchedIngredients,
+                        instructions: data.instructions,
+                        notes: "Imported from: \(data.sourceURL.absoluteString)"
+                    )
+                ) { newRecipe in
+                    onImport(newRecipe)
+                    showRecipeWizard = false
+                    dismiss()
+                }
             }
         }
     }

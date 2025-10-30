@@ -5,13 +5,15 @@ struct KitchenView: View {
     @ObservedObject var shoppingListManager: ShoppingListManager
     @StateObject private var kitchenManager = KitchenInventoryManager()
     @State private var searchText = ""
+    @State private var showAddIngredientSheet = false
     @State private var cachedCategorizedIngredients: [(category: String, ingredients: [String])] = []
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
+    // Use USDA foods list instead of recipe ingredients
     var allIngredients: [String] {
-        Set(recipes.flatMap { $0.ingredients.map { $0.name } }).sorted()
+        USDAFoodsList.getAllFoods()
     }
     
     var categorizedIngredients: [(category: String, ingredients: [String])] {
@@ -20,39 +22,14 @@ struct KitchenView: View {
             return cachedCategorizedIngredients
         }
         
-        // Build a smart category map from actual recipe ingredients
-        var categoryMap: [String: Set<String>] = [:]
+        // Use USDA categorized foods
+        var result: [(category: String, ingredients: [String])] = []
         
-        for recipe in recipes {
-            for ingredient in recipe.ingredients {
-                let ingredientName = ingredient.name
-                
-                // Determine category based on keywords
-                var assigned = false
-                for (category, keywords) in CategoryClassifier.kitchenIngredientKeywords {
-                    if keywords.contains(where: { ingredientName.localizedCaseInsensitiveContains($0) }) {
-                        categoryMap[category, default: Set()].insert(ingredientName)
-                        assigned = true
-                        break
-                    }
-                }
-                
-                // If no category matched, put in "Other"
-                if !assigned {
-                    categoryMap["Other", default: Set()].insert(ingredientName)
-                }
+        for category in USDAFoodsList.categories {
+            let foods = USDAFoodsList.getFoods(forCategory: category)
+            if !foods.isEmpty {
+                result.append((category, foods))
             }
-        }
-        
-        // Convert to sorted array format
-        let result = CategoryClassifier.kitchenCategories.compactMap { category -> (category: String, ingredients: [String])? in
-            guard let ingredients = categoryMap[category], !ingredients.isEmpty else { return nil }
-            return (category, ingredients.sorted())
-        }
-        
-        // Add "Other" category at the end if it has items
-        if let otherIngredients = categoryMap["Other"], !otherIngredients.isEmpty {
-            return result + [("Other", otherIngredients.sorted())]
         }
         
         return result
@@ -62,7 +39,7 @@ struct KitchenView: View {
         if searchText.isEmpty {
             return []
         }
-        return allIngredients.filter { $0.localizedCaseInsensitiveContains(searchText) }
+        return USDAFoodsList.searchFoods(query: searchText)
     }
     
     var quickMatchRecipes: [RecipeModel] {
@@ -108,18 +85,21 @@ struct KitchenView: View {
                         VStack(alignment: .leading, spacing: 24) {
                             if kitchenManager.items.isEmpty && searchText.isEmpty {
                                 emptyStateView
+                                
+                                // Quick Add section prominently shown when empty
+                                quickAddSection
+                                    .padding(.top, 16)
                             } else if !searchText.isEmpty {
                                 searchResultsView
                             } else {
+                                // Quick Add section at the TOP when there are items
+                                quickAddSection
+                                
                                 if !quickMatchRecipes.isEmpty {
                                     quickRecipeMatchesView
                                         .padding(.top, 8)
                                 }
                                 kitchenItemsView
-                            }
-                            
-                            if searchText.isEmpty {
-                                quickAddSection
                             }
                         }
                         .padding(.vertical, 16)
@@ -129,12 +109,11 @@ struct KitchenView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)
         }
+        .sheet(isPresented: $showAddIngredientSheet) {
+            AddIngredientSheet(kitchenManager: kitchenManager)
+        }
         .onAppear {
             // Cache categorized ingredients on first load
-            refreshCategorizedIngredients()
-        }
-        .onChange(of: recipes.count) { _ in
-            // Refresh when recipes change
             refreshCategorizedIngredients()
         }
     }
@@ -147,56 +126,61 @@ struct KitchenView: View {
         VStack(spacing: 16) {
             ZStack {
                 HStack {
+                    // Add Ingredient button on the LEFT
+                    Button(action: {
+                        showAddIngredientSheet = true
+                    }) {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.title2)
+                            .foregroundColor(cardStyle == .solid && colorScheme == .light ? .black : .white)
+                            .padding(12)
+                            .background {
+                                if cardStyle == .solid {
+                                    Circle()
+                                        .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
+                                } else {
+                                    Circle()
+                                        .fill(.regularMaterial)
+                                }
+                            }
+                    }
+                    
                     Spacer()
+                    
+                    // Options menu on the RIGHT (only show when kitchen has items)
                     if !kitchenManager.items.isEmpty {
-                        HStack(spacing: 12) {
-                            // Share button
+                        Menu {
                             Button(action: shareKitchenInventory) {
-                                Image(systemName: "square.and.arrow.up")
-                                    .font(.title2)
-                                    .foregroundColor(cardStyle == .solid && colorScheme == .light ? .black : .white)
-                                    .padding(12)
-                                    .background {
-                                        if cardStyle == .solid {
-                                            Circle()
-                                                .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
-                                        } else {
-                                            Circle()
-                                                .fill(.regularMaterial)
-                                        }
-                                    }
+                                Label("Share Kitchen", systemImage: "square.and.arrow.up")
                             }
                             
-                            // Options menu
-                            Menu {
-                                Button(
-                                    role: .destructive,
-                                    action: {
-                                        kitchenManager.clearAll()
-                                    },
-                                    label: {
-                                        Label("Clear All", systemImage: "trash")
+                            Button(
+                                role: .destructive,
+                                action: {
+                                    kitchenManager.clearAll()
+                                },
+                                label: {
+                                    Label("Clear All", systemImage: "trash")
+                                }
+                            )
+                        } label: {
+                            Image(systemName: "ellipsis.circle")
+                                .font(.title2)
+                                .foregroundColor(cardStyle == .solid && colorScheme == .light ? .black : .white)
+                                .padding(12)
+                                .background {
+                                    if cardStyle == .solid {
+                                        Circle()
+                                            .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
+                                    } else {
+                                        Circle()
+                                            .fill(.regularMaterial)
                                     }
-                                )
-                            } label: {
-                                Image(systemName: "ellipsis.circle")
-                                    .font(.title2)
-                                    .foregroundColor(cardStyle == .solid && colorScheme == .light ? .black : .white)
-                                    .padding(12)
-                                    .background {
-                                        if cardStyle == .solid {
-                                            Circle()
-                                                .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
-                                        } else {
-                                            Circle()
-                                                .fill(.regularMaterial)
-                                        }
-                                    }
-                            }
+                                }
                         }
                     }
                 }
-
+                
                 Text("Kitchen")
                     .font(.system(size: 34, weight: .bold))
                     .foregroundColor(.white)
@@ -221,19 +205,11 @@ struct KitchenView: View {
                 .fontWeight(.bold)
                 .foregroundColor(.white)
             
-            if recipes.isEmpty {
-                Text("Add recipes first to see ingredients you can track")
-                    .font(.body)
-                    .foregroundColor(.white.opacity(0.7))
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 40)
-            } else {
-                Text("Add ingredients from your recipes below to track what's in your kitchen")
-                    .font(.body)
-                    .foregroundColor(.white.opacity(0.7))
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 40)
-            }
+            Text("Tap the + button above to add ingredients from the USDA-approved foods list")
+                .font(.body)
+                .foregroundColor(.white.opacity(0.7))
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 40)
         }
         .frame(maxWidth: .infinity)
     }
@@ -350,25 +326,46 @@ struct KitchenView: View {
     private var quickAddSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Quick Add to Kitchen")
-                    .font(.title3)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
+                HStack {
+                    Image(systemName: "bolt.fill")
+                        .foregroundColor(.yellow)
+                        .font(.title3)
+                    
+                    Text("Quick Add")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                }
                 
-                Text("Ingredients from your \(recipes.count) recipe\(recipes.count == 1 ? "" : "s")")
+                Text("Browse \(USDAFoodsList.getAllFoods().count)+ USDA-approved ingredients")
                     .font(.caption)
                     .foregroundColor(.white.opacity(0.7))
             }
             .padding(.horizontal, 20)
             
-            ForEach(categorizedIngredients, id: \.category) { category, ingredients in
+            // Show top 3 popular categories expanded by default
+            ForEach(Array(categorizedIngredients.prefix(3).enumerated()), id: \.element.category) { index, element in
                 KitchenQuickAddCategoryCard(
-                    category: category,
-                    ingredients: ingredients,
-                    kitchenManager: kitchenManager
+                    category: element.category,
+                    ingredients: element.ingredients,
+                    kitchenManager: kitchenManager,
+                    defaultExpanded: true
                 )
             }
             .padding(.horizontal, 20)
+            
+            // Show rest collapsed
+            if categorizedIngredients.count > 3 {
+                ForEach(Array(categorizedIngredients.dropFirst(3)), id: \.category) { category, ingredients in
+                    KitchenQuickAddCategoryCard(
+                        category: category,
+                        ingredients: ingredients,
+                        kitchenManager: kitchenManager,
+                        defaultExpanded: false
+                    )
+                }
+                .padding(.horizontal, 20)
+            }
         }
     }
     
@@ -440,23 +437,31 @@ struct KitchenView: View {
         text += String(repeating: "━", count: 40) + "\n"
         text += "Created with RecipeFinder\n"
         
+        // Use proper view finder
+        guard let windowScene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
+              let rootViewController = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController else {
+            return
+        }
+        
+        // Find the topmost presented view controller
+        var topController = rootViewController
+        while let presented = topController.presentedViewController {
+            topController = presented
+        }
+        
         let activityController = UIActivityViewController(
             activityItems: [text],
             applicationActivities: nil
         )
         
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let window = windowScene.windows.first,
-           let rootViewController = window.rootViewController {
-            activityController.popoverPresentationController?.sourceView = window
-            activityController.popoverPresentationController?.sourceRect = CGRect(
-                x: window.bounds.midX,
-                y: window.bounds.midY,
-                width: 0,
-                height: 0
-            )
-            rootViewController.present(activityController, animated: true)
+        // iPad support
+        if let popover = activityController.popoverPresentationController {
+            popover.sourceView = topController.view
+            popover.sourceRect = CGRect(x: topController.view.bounds.midX, y: topController.view.bounds.midY, width: 0, height: 0)
+            popover.permittedArrowDirections = []
         }
+        
+        topController.present(activityController, animated: true)
     }
 }
 
@@ -548,6 +553,7 @@ struct KitchenQuickAddCategoryCard: View {
     let category: String
     let ingredients: [String]
     @ObservedObject var kitchenManager: KitchenInventoryManager
+    let defaultExpanded: Bool
     @State private var isExpanded = false
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
@@ -607,6 +613,9 @@ struct KitchenQuickAddCategoryCard: View {
                     .fill(.regularMaterial)
             }
         }
+        .onAppear {
+            isExpanded = defaultExpanded
+        }
     }
 }
 
@@ -645,6 +654,197 @@ struct KitchenQuickAddChip: View {
                 )
             }
         )
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
+// MARK: - Add Ingredient Sheet
+struct AddIngredientSheet: View {
+    @ObservedObject var kitchenManager: KitchenInventoryManager
+    @Environment(\.dismiss) var dismiss
+    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.appTheme) var appTheme
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
+    @State private var searchText = ""
+    @State private var selectedCategory: String? = nil
+    
+    var filteredCategories: [String] {
+        if !searchText.isEmpty {
+            return []
+        }
+        return USDAFoodsList.categories
+    }
+    
+    var searchResults: [String] {
+        if searchText.isEmpty {
+            return []
+        }
+        return USDAFoodsList.searchFoods(query: searchText)
+    }
+    
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
+                    .ignoresSafeArea()
+                
+                VStack(spacing: 0) {
+                    // Search Bar
+                    ModernSearchBar(text: $searchText, placeholder: "Search USDA foods...")
+                        .padding(.horizontal, 20)
+                        .padding(.top, 16)
+                        .padding(.bottom, 12)
+                    
+                    if !searchText.isEmpty {
+                        // Search Results
+                        ScrollView {
+                            LazyVStack(spacing: 8) {
+                                ForEach(searchResults, id: \.self) { food in
+                                    foodButton(food)
+                                }
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 12)
+                        }
+                    } else if let category = selectedCategory {
+                        // Category Foods
+                        ScrollView {
+                            VStack(alignment: .leading, spacing: 16) {
+                                Button(action: {
+                                    withAnimation {
+                                        selectedCategory = nil
+                                    }
+                                }) {
+                                    HStack {
+                                        Image(systemName: "chevron.left")
+                                        Text("Back to Categories")
+                                    }
+                                    .foregroundColor(AppTheme.accentColor(for: appTheme))
+                                    .padding(.horizontal, 20)
+                                    .padding(.vertical, 8)
+                                }
+                                
+                                Text(category)
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 20)
+                                
+                                LazyVStack(spacing: 8) {
+                                    ForEach(USDAFoodsList.getFoods(forCategory: category), id: \.self) { food in
+                                        foodButton(food)
+                                    }
+                                }
+                                .padding(.horizontal, 20)
+                            }
+                            .padding(.vertical, 12)
+                        }
+                    } else {
+                        // Categories List
+                        ScrollView {
+                            LazyVStack(spacing: 12) {
+                                ForEach(filteredCategories, id: \.self) { category in
+                                    categoryButton(category)
+                                }
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 12)
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Add Ingredients")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                    .foregroundColor(AppTheme.accentColor(for: appTheme))
+                }
+            }
+        }
+    }
+    
+    private func categoryButton(_ category: String) -> some View {
+        Button(action: {
+            withAnimation {
+                selectedCategory = category
+            }
+        }) {
+            HStack(spacing: 12) {
+                Image(systemName: CategoryClassifier.categoryIcon(for: category))
+                    .font(.title3)
+                    .foregroundColor(CategoryClassifier.categoryColor(for: category))
+                    .frame(width: 40)
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(category)
+                        .font(.headline)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                    
+                    Text("\(USDAFoodsList.getFoods(forCategory: category).count) items")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                }
+                
+                Spacer()
+                
+                Image(systemName: "chevron.right")
+                    .foregroundColor(.gray)
+                    .font(.caption)
+            }
+            .padding(16)
+            .background {
+                if cardStyle == .solid {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                } else {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(.regularMaterial)
+                }
+            }
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+    
+    private func foodButton(_ food: String) -> some View {
+        let isInKitchen = kitchenManager.hasItem(food)
+        let category = USDAFoodsList.getCategoryForFood(food) ?? "Other"
+        
+        return Button(action: {
+            withAnimation(.spring(response: 0.3)) {
+                kitchenManager.toggleItem(food)
+                HapticManager.shared.light()
+            }
+        }) {
+            HStack(spacing: 12) {
+                Image(systemName: CategoryClassifier.categoryIcon(for: category))
+                    .foregroundColor(CategoryClassifier.categoryColor(for: category))
+                    .font(.body)
+                
+                Text(food)
+                    .font(.body)
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                
+                Spacer()
+                
+                Image(systemName: isInKitchen ? "checkmark.circle.fill" : "plus.circle")
+                    .foregroundColor(isInKitchen ? .green : AppTheme.accentColor(for: appTheme))
+                    .font(.title3)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .background {
+                if cardStyle == .solid {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                } else {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(.regularMaterial)
+                }
+            }
+        }
         .buttonStyle(PlainButtonStyle())
     }
 }

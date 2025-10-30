@@ -314,7 +314,7 @@ struct RecipeSearchView: View {
                 }
             }
             .sheet(isPresented: $showRecipeWizard) {
-                RecipeWizardView { newRecipe in
+                RecipeWizardView(prefilledData: nil) { newRecipe in
                     // Add the new recipe to the list
                     recipes.append(newRecipe)
                     

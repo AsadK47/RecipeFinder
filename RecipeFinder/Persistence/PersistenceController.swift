@@ -234,4 +234,21 @@ class PersistenceController {
             debugLog("❌ Failed to toggle favorite: \(error.localizedDescription)")
         }
     }
+    
+    func fetchRecipeCount() -> Int {
+        let context = container.viewContext
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Recipe")
+        
+        do {
+            let count = try context.count(for: fetchRequest)
+            return count
+        } catch {
+            debugLog("❌ Failed to fetch recipe count: \(error.localizedDescription)")
+            return 0
+        }
+    }
+    
+    func clearAllRecipes() {
+        clearDatabase()
+    }
 }

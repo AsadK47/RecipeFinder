@@ -359,16 +359,53 @@ For complete command reference, see [Commands Documentation](docs/COMMANDS.md).
 
 **🔄 In Progress**:
 - Biometric authentication (Face ID/Touch ID)
-- Weekly meal planning interface
 - Theme-aware animation colors
 - Enhanced error handling
 - Loading state UI
 - Onboarding flow
 
+### Next Phase: Meal Planning System (v1.1)
+
+**📅 Meal Planning Module** - Complete calendar-based meal scheduling with recipe integration
+
+**Features**:
+- 📆 **Interactive Calendar View**: Monthly calendar grid with date selection
+- 🍽️ **Meal Time Categorization**: Breakfast, Brunch, Lunch, Snack, Dinner, Late Night
+- 🔗 **Recipe Integration**: 
+  - Launch Recipe Wizard directly from calendar to create new recipes
+  - Select from existing recipe library for quick meal planning
+  - Auto-populated recipe list with search functionality
+- 💾 **Persistent Meal Plans**: Save meal assignments to specific dates and times
+- 🎯 **Smart Navigation**: Seamless flow from date selection → meal time → recipe choice
+
+**Implementation Details**:
+- New `MealPlanningView` with calendar grid (6-week display)
+- `MealTimeSelectorSheet` for choosing meal periods
+- `RecipeSelectionSheet` with dual-path: create new vs. select existing
+- Direct Recipe Wizard integration for on-the-fly recipe creation
+- Month navigation with previous/next controls
+- Visual indicators for today's date and selected dates
+
+**User Flow**:
+1. User taps calendar date
+2. Sheet appears asking for meal time (Breakfast, Lunch, Dinner, etc.)
+3. User selects meal time
+4. Second sheet presents two options:
+   - "Create New Recipe" → Opens Recipe Wizard
+   - "Choose Existing Recipe" → Shows filtered recipe list with search
+5. Selected recipe is assigned to that date/time slot
+
+**Tab Order** (Final):
+- Tab 1: 📖 Recipes
+- Tab 2: 🛒 Shopping
+- Tab 3: 🍳 Kitchen
+- Tab 4: ⚙️ Settings
+- Tab 5: 📅 Meals (NEW)
+
 ### Future Releases
 
-**v1.1**: ☁️ iCloud sync (optional), 🌍 localization (ES, FR, DE), 🗣️ Siri integration  
-**v2.0**: 🤖 AI-powered recipe suggestions, 📸 ingredient scanning, 🥗 nutrition analysis
+**v1.2**: ☁️ iCloud sync (optional), 🌍 localization (ES, FR, DE), 🗣️ Siri integration  
+**v2.0**: 🤖 AI-powered recipe suggestions, 📸 ingredient scanning, 🥗 nutrition analysis, 📊 grocery cost tracking
 
 ---
 

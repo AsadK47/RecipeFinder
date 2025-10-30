@@ -1,4 +1,3 @@
-import ConfettiSwiftUI
 import SwiftData
 import SwiftUI
 
@@ -25,23 +24,35 @@ struct ContentView: View {
                     }
                     .tag(0)
 
-                KitchenView(recipes: $recipes, shoppingListManager: shoppingListManager)
-                    .tabItem {
-                        Label("Kitchen", systemImage: "refrigerator.fill")
-                    }
-                    .tag(1)
-
                 ShoppingListView(manager: shoppingListManager)
                     .tabItem {
                         Label("Shopping", systemImage: "cart.fill")
                     }
+                    .tag(1)
+
+                KitchenView(recipes: $recipes, shoppingListManager: shoppingListManager)
+                    .tabItem {
+                        Label("Kitchen", systemImage: "refrigerator.fill")
+                    }
                     .tag(2)
+                
+                MealPlanningView(recipes: $recipes)
+                    .tabItem {
+                        Label("Meals", systemImage: "calendar")
+                    }
+                    .tag(3)
+                
+                AccountView()
+                    .tabItem {
+                        Label("Account", systemImage: "person.fill")
+                    }
+                    .tag(4)
 
                 SettingsView()
                     .tabItem {
                         Label("Settings", systemImage: "gearshape.fill")
                     }
-                    .tag(3)
+                    .tag(5)
             }
             .environment(\.appTheme, themeBinding)
             .tint(AppTheme.accentColor(for: themeBinding))

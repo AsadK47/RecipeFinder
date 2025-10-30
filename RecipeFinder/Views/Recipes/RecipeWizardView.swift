@@ -7,6 +7,15 @@ struct RecipeWizardView: View {
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
     let onComplete: (RecipeModel) -> Void
+    let prefilledData: PrefilledRecipeData?
+    
+    // Struct for pre-filling wizard with imported data
+    struct PrefilledRecipeData {
+        let name: String?
+        let ingredients: [String]?
+        let instructions: [String]?
+        let notes: String?
+    }
     
     // Step tracking
     @State private var currentStep = 0
@@ -35,6 +44,12 @@ struct RecipeWizardView: View {
     
     // Step 7: Notes
     @State private var notes = ""
+    
+    // Initializer with optional prefilled data
+    init(prefilledData: PrefilledRecipeData? = nil, onComplete: @escaping (RecipeModel) -> Void) {
+        self.prefilledData = prefilledData
+        self.onComplete = onComplete
+    }
     
     let difficulties = ["Basic", "Intermediate", "Expert"]
     let categories = ["Breakfast", "Starter", "Main", "Side", "Soup", "Dessert", "Drink"]
@@ -81,6 +96,44 @@ struct RecipeWizardView: View {
                     .foregroundColor(.white)
                 }
             }
+            .onAppear {
+                applyPrefilledData()
+            }
+        }
+    }
+    
+    // Apply prefilled data from import
+    private func applyPrefilledData() {
+        guard let data = prefilledData else { return }
+        
+        // Pre-fill recipe name
+        if let name = data.name, !name.isEmpty {
+            recipeName = name
+        }
+        
+        // Pre-fill ingredients (USDA-matched ingredients from import)
+        if let ingredients = data.ingredients, !ingredients.isEmpty {
+            ingredientItems = ingredients.map { ingredientName in
+                IngredientItem(quantity: "1", unit: "", name: ingredientName)
+            }
+            // Add one empty row for user to add more
+            if !ingredients.isEmpty {
+                ingredientItems.append(IngredientItem())
+            }
+        }
+        
+        // Pre-fill instructions
+        if let instructions = data.instructions, !instructions.isEmpty {
+            mainInstructions = instructions.isEmpty ? [""] : instructions
+            // Add one empty step for user to add more
+            if !instructions.isEmpty {
+                mainInstructions.append("")
+            }
+        }
+        
+        // Pre-fill notes
+        if let notes = data.notes, !notes.isEmpty {
+            self.notes = notes
         }
     }
     
@@ -640,6 +693,6 @@ struct RecipeWizardView: View {
 }
 
 #Preview {
-    RecipeWizardView { _ in }
+    RecipeWizardView(prefilledData: nil) { _ in }
         .environment(\.appTheme, .teal)
 }
