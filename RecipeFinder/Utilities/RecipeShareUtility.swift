@@ -531,5 +531,4 @@ class RecipeShareUtility {
         
         return height
     }
-    // swiftlint:enable function_body_length type_body_length file_length
 }
