@@ -75,197 +75,411 @@ class RecipeShareUtility {
         return text
     }
     
-    // PDF Export (App-Style Screenshot)
-    
-    // swiftlint:disable function_body_length type_body_length file_length
+    // MARK: - PDF Export
     
     /// Generate a beautiful iPhone-width PDF that looks exactly like the app
-    /// - Parameters:
-    ///   - recipe: The recipe to export
-    ///   - measurementSystem: The measurement system to use
-    ///   - theme: The app theme to apply
-    /// - Returns: PDF data or nil if generation fails
-    static func generatePDF(recipe: RecipeModel, measurementSystem: MeasurementSystem = .metric, theme: AppTheme.ThemeType = .purple) -> Data? {
-        
-        // iPhone 14/15 Pro width
+    static func generatePDF(
+        recipe: RecipeModel,
+        measurementSystem: MeasurementSystem = .metric,
+        theme: AppTheme.ThemeType = .purple
+    ) -> Data? {
         let pageWidth: CGFloat = 390
-        
-        // Calculate dynamic height based on all content
         let estimatedHeight = calculateContentHeight(recipe: recipe, measurementSystem: measurementSystem)
-        let pageHeight = estimatedHeight + 60 // Bottom padding
-        
+        let pageHeight = estimatedHeight + 60
         let pageRect = CGRect(x: 0, y: 0, width: pageWidth, height: pageHeight)
         
-        let format = UIGraphicsPDFRendererFormat()
-        format.documentInfo = [
-            kCGPDFContextCreator as String: "RecipeFinder",
-            kCGPDFContextTitle as String: recipe.name
-        ]
-        
+        let format = createPDFFormat(for: recipe)
         let renderer = UIGraphicsPDFRenderer(bounds: pageRect, format: format)
+        let gradientColors = getGradientColors(for: theme)
         
-        // Theme gradient colors (exactly like app)
-        let gradientColors: [UIColor] = theme == .purple ?
-            [UIColor(red: 131/255, green: 58/255, blue: 180/255, alpha: 1.0),
-             UIColor(red: 88/255, green: 86/255, blue: 214/255, alpha: 1.0),
-             UIColor(red: 64/255, green: 224/255, blue: 208/255, alpha: 1.0)] :
-            [UIColor(red: 20/255, green: 184/255, blue: 166/255, alpha: 1.0),
-             UIColor(red: 59/255, green: 130/255, blue: 246/255, alpha: 1.0),
-             UIColor(red: 96/255, green: 165/255, blue: 250/255, alpha: 1.0)]
-        
-        let accentColor = gradientColors[0]
-        
-        let data = renderer.pdfData { context in
+        return renderer.pdfData { context in
             context.beginPage()
             let cgContext = context.cgContext
             
-            // FULL GRADIENT BACKGROUND (exactly like app)
-            if let gradient = CGGradient(
-                colorsSpace: CGColorSpaceCreateDeviceRGB(),
-                colors: gradientColors.map { $0.cgColor } as CFArray,
-                locations: [0.0, 0.5, 1.0]
-            ) {
-                cgContext.drawLinearGradient(
-                    gradient,
-                    start: CGPoint(x: 0, y: 0),
-                    end: CGPoint(x: pageWidth, y: pageHeight),
-                    options: []
-                )
-            }
+            drawBackground(context: cgContext, pageWidth: pageWidth, pageHeight: pageHeight, colors: gradientColors)
             
             var yPos: CGFloat = 20
             let margin: CGFloat = 20
             let contentWidth = pageWidth - (margin * 2)
             
-            // TITLE (White, centered - exactly like app)
-            let titleParagraph = NSMutableParagraphStyle()
-            titleParagraph.alignment = .center
-            titleParagraph.lineBreakMode = .byWordWrapping
+            yPos = drawTitle(recipe: recipe, context: cgContext, yPos: yPos, margin: margin, contentWidth: contentWidth)
+            yPos = drawInfoCards(
+                recipe: recipe, context: cgContext, yPos: yPos, 
+                margin: margin, contentWidth: contentWidth
+            )
+            yPos = drawIngredients(
+                recipe: recipe, measurementSystem: measurementSystem, 
+                context: cgContext, yPos: yPos, margin: margin, 
+                contentWidth: contentWidth, accentColor: gradientColors[0]
+            )
             
-            let titleAttrs: [NSAttributedString.Key: Any] = [
-                .font: UIFont.systemFont(ofSize: 28, weight: .bold),
-                .foregroundColor: UIColor.white,
-                .paragraphStyle: titleParagraph
+            if !recipe.prePrepInstructions.isEmpty {
+                yPos = drawPreparation(
+                    recipe: recipe, context: cgContext, yPos: yPos, 
+                    margin: margin, contentWidth: contentWidth, accentColor: gradientColors[0]
+                )
+            }
+            
+            yPos = drawInstructions(recipe: recipe, context: cgContext, yPos: yPos, margin: margin, contentWidth: contentWidth, accentColor: gradientColors[0])
+            
+            if !recipe.notes.isEmpty {
+                yPos = drawNotes(recipe: recipe, context: cgContext, yPos: yPos, margin: margin, contentWidth: contentWidth, accentColor: gradientColors[0])
+            }
+            
+            drawFooter(context: cgContext, yPos: yPos, pageWidth: pageWidth)
+        }
+    }
+    
+    // MARK: - PDF Configuration
+    
+    private static func createPDFFormat(for recipe: RecipeModel) -> UIGraphicsPDFRendererFormat {
+        let format = UIGraphicsPDFRendererFormat()
+        format.documentInfo = [
+            kCGPDFContextCreator as String: "RecipeFinder",
+            kCGPDFContextTitle as String: recipe.name
+        ]
+        return format
+    }
+    
+    private static func getGradientColors(for theme: AppTheme.ThemeType) -> [UIColor] {
+        switch theme {
+        case .purple:
+            return [
+                UIColor(red: 131/255, green: 58/255, blue: 180/255, alpha: 1.0),
+                UIColor(red: 88/255, green: 86/255, blue: 214/255, alpha: 1.0),
+                UIColor(red: 64/255, green: 224/255, blue: 208/255, alpha: 1.0)
             ]
-            
-            let titleText = recipe.name as NSString
-            let titleRect = CGRect(x: margin, y: yPos, width: contentWidth, height: 100)
-            let titleBounds = titleText.boundingRect(
-                with: CGSize(width: contentWidth, height: 100),
+        default:
+            return [
+                UIColor(red: 20/255, green: 184/255, blue: 166/255, alpha: 1.0),
+                UIColor(red: 59/255, green: 130/255, blue: 246/255, alpha: 1.0),
+                UIColor(red: 96/255, green: 165/255, blue: 250/255, alpha: 1.0)
+            ]
+        }
+    }
+    
+    // MARK: - Drawing Functions
+    
+    private static func drawBackground(context: CGContext, pageWidth: CGFloat, pageHeight: CGFloat, colors: [UIColor]) {
+        guard let gradient = CGGradient(
+            colorsSpace: CGColorSpaceCreateDeviceRGB(),
+            colors: colors.map { $0.cgColor } as CFArray,
+            locations: [0.0, 0.5, 1.0]
+        ) else { return }
+        
+        context.drawLinearGradient(
+            gradient,
+            start: CGPoint(x: 0, y: 0),
+            end: CGPoint(x: pageWidth, y: pageHeight),
+            options: []
+        )
+    }
+    
+    private static func drawTitle(recipe: RecipeModel, context: CGContext, yPos: CGFloat, margin: CGFloat, contentWidth: CGFloat) -> CGFloat {
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .center
+        paragraphStyle.lineBreakMode = .byWordWrapping
+        
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.systemFont(ofSize: 28, weight: .bold),
+            .foregroundColor: UIColor.white,
+            .paragraphStyle: paragraphStyle
+        ]
+        
+        let titleText = recipe.name as NSString
+        let titleRect = CGRect(x: margin, y: yPos, width: contentWidth, height: 100)
+        let bounds = titleText.boundingRect(
+            with: CGSize(width: contentWidth, height: 100),
+            options: [.usesLineFragmentOrigin, .usesFontLeading],
+            attributes: attributes,
+            context: nil
+        )
+        
+        titleText.draw(in: titleRect, withAttributes: attributes)
+        return yPos + bounds.height + 20
+    }
+    
+    private static func drawInfoCards(recipe: RecipeModel, context: CGContext, yPos: CGFloat, margin: CGFloat, contentWidth: CGFloat) -> CGFloat {
+        let cardSpacing: CGFloat = 16
+        let cardWidth = (contentWidth - cardSpacing) / 2
+        let cardHeight: CGFloat = 90
+        
+        // Time card
+        drawGlassCardExact(context: context, rect: CGRect(x: margin, y: yPos, width: cardWidth, height: cardHeight))
+        drawTimeCardContent(recipe: recipe, context: context, x: margin, y: yPos)
+        
+        // Difficulty card
+        let rightCardX = margin + cardWidth + cardSpacing
+        drawGlassCardExact(context: context, rect: CGRect(x: rightCardX, y: yPos, width: cardWidth, height: cardHeight))
+        drawDifficultyCardContent(recipe: recipe, context: context, x: rightCardX, y: yPos)
+        
+        return yPos + cardHeight + 30
+    }
+    
+    private static func drawTimeCardContent(recipe: RecipeModel, context: CGContext, x: CGFloat, y: CGFloat) {
+        ("⏱" as NSString).draw(at: CGPoint(x: x + 15, y: y + 15), withAttributes: [
+            .font: UIFont.systemFont(ofSize: 22)
+        ])
+        
+        ("Prep time" as NSString).draw(at: CGPoint(x: x + 50, y: y + 15), withAttributes: [
+            .font: UIFont.systemFont(ofSize: 10, weight: .medium),
+            .foregroundColor: UIColor.darkGray
+        ])
+        
+        (recipe.prepTime as NSString).draw(at: CGPoint(x: x + 50, y: y + 30), withAttributes: [
+            .font: UIFont.systemFont(ofSize: 13, weight: .semibold),
+            .foregroundColor: UIColor.black
+        ])
+        
+        ("Cook time" as NSString).draw(at: CGPoint(x: x + 15, y: y + 52), withAttributes: [
+            .font: UIFont.systemFont(ofSize: 10, weight: .medium),
+            .foregroundColor: UIColor.darkGray
+        ])
+        
+        (recipe.cookingTime as NSString).draw(at: CGPoint(x: x + 15, y: y + 67), withAttributes: [
+            .font: UIFont.systemFont(ofSize: 13, weight: .semibold),
+            .foregroundColor: UIColor.black
+        ])
+    }
+    
+    private static func drawDifficultyCardContent(recipe: RecipeModel, context: CGContext, x: CGFloat, y: CGFloat) {
+        ("📊" as NSString).draw(at: CGPoint(x: x + 15, y: y + 15), withAttributes: [
+            .font: UIFont.systemFont(ofSize: 22)
+        ])
+        
+        ("Difficulty" as NSString).draw(at: CGPoint(x: x + 50, y: y + 15), withAttributes: [
+            .font: UIFont.systemFont(ofSize: 10, weight: .medium),
+            .foregroundColor: UIColor.darkGray
+        ])
+        
+        (recipe.difficulty as NSString).draw(at: CGPoint(x: x + 50, y: y + 30), withAttributes: [
+            .font: UIFont.systemFont(ofSize: 13, weight: .semibold),
+            .foregroundColor: UIColor.black
+        ])
+        
+        ("Category" as NSString).draw(at: CGPoint(x: x + 15, y: y + 52), withAttributes: [
+            .font: UIFont.systemFont(ofSize: 10, weight: .medium),
+            .foregroundColor: UIColor.darkGray
+        ])
+        
+        let categoryValue = "\(recipe.category) • \(recipe.baseServings) servings" as NSString
+        categoryValue.draw(at: CGPoint(x: x + 15, y: y + 67), withAttributes: [
+            .font: UIFont.systemFont(ofSize: 13, weight: .semibold),
+            .foregroundColor: UIColor.black
+        ])
+    }
+    
+    private static func drawIngredients(
+        recipe: RecipeModel,
+        measurementSystem: MeasurementSystem,
+        context: CGContext,
+        yPos: CGFloat,
+        margin: CGFloat,
+        contentWidth: CGFloat,
+        accentColor: UIColor
+    ) -> CGFloat {
+        drawSectionWithCard(
+            config: SectionDrawConfig(
+                context: context,
+                title: "🥘 Ingredients",
+                yPos: yPos,
+                margin: margin,
+                width: contentWidth,
+                accentColor: accentColor
+            )
+        ) {
+            var itemY: CGFloat = 20
+            for ingredient in recipe.ingredients {
+                let formatted = ingredient.formattedWithUnit(for: 1.0, system: measurementSystem)
+                let text = "• \(formatted) \(ingredient.name)" as NSString
+                let textRect = CGRect(x: 15, y: itemY, width: contentWidth - 30, height: 100)
+                let bounds = text.boundingRect(
+                    with: textRect.size,
+                    options: [.usesLineFragmentOrigin, .usesFontLeading],
+                    attributes: [.font: UIFont.systemFont(ofSize: 14)],
+                    context: nil
+                )
+                text.draw(in: textRect, withAttributes: [
+                    .font: UIFont.systemFont(ofSize: 14),
+                    .foregroundColor: UIColor.black
+                ])
+                itemY += max(bounds.height, 24)
+            }
+            return itemY + 10
+        } + 20
+    }
+    
+    private static func drawPreparation(
+        recipe: RecipeModel,
+        context: CGContext,
+        yPos: CGFloat,
+        margin: CGFloat,
+        contentWidth: CGFloat,
+        accentColor: UIColor
+    ) -> CGFloat {
+        drawSectionWithCard(
+            config: SectionDrawConfig(
+                context: context,
+                title: "🔪 Preparation",
+                yPos: yPos,
+                margin: margin,
+                width: contentWidth,
+                accentColor: accentColor
+            )
+        ) {
+            var itemY: CGFloat = 20
+            for (index, instruction) in recipe.prePrepInstructions.enumerated() {
+                let circleRect = CGRect(x: 15, y: itemY, width: 24, height: 24)
+                context.setFillColor(accentColor.cgColor)
+                context.fillEllipse(in: circleRect)
+                
+                let numText = "\(index + 1)" as NSString
+                let numSize = numText.size(withAttributes: [.font: UIFont.systemFont(ofSize: 12, weight: .bold)])
+                numText.draw(
+                    at: CGPoint(x: circleRect.midX - numSize.width / 2, y: circleRect.midY - numSize.height / 2),
+                    withAttributes: [.font: UIFont.systemFont(ofSize: 12, weight: .bold), .foregroundColor: UIColor.white]
+                )
+                
+                let textRect = CGRect(x: 50, y: itemY, width: contentWidth - 65, height: 300)
+                let bounds = (instruction as NSString).boundingRect(
+                    with: textRect.size,
+                    options: [.usesLineFragmentOrigin, .usesFontLeading],
+                    attributes: [.font: UIFont.systemFont(ofSize: 14)],
+                    context: nil
+                )
+                (instruction as NSString).draw(in: textRect, withAttributes: [
+                    .font: UIFont.systemFont(ofSize: 14),
+                    .foregroundColor: UIColor.black
+                ])
+                itemY += max(bounds.height + 15, 40)
+            }
+            return itemY + 10
+        } + 20
+    }
+    
+    private static func drawInstructions(
+        recipe: RecipeModel,
+        context: CGContext,
+        yPos: CGFloat,
+        margin: CGFloat,
+        contentWidth: CGFloat,
+        accentColor: UIColor
+    ) -> CGFloat {
+        drawSectionWithCard(
+            config: SectionDrawConfig(
+                context: context,
+                title: "👨‍🍳 Instructions",
+                yPos: yPos,
+                margin: margin,
+                width: contentWidth,
+                accentColor: accentColor
+            )
+        ) {
+            var itemY: CGFloat = 20
+            for (index, instruction) in recipe.instructions.enumerated() {
+                let circleRect = CGRect(x: 15, y: itemY, width: 32, height: 32)
+                context.setFillColor(accentColor.cgColor)
+                context.fillEllipse(in: circleRect)
+                
+                let numText = "\(index + 1)" as NSString
+                let numSize = numText.size(withAttributes: [.font: UIFont.systemFont(ofSize: 16, weight: .bold)])
+                numText.draw(
+                    at: CGPoint(x: circleRect.midX - numSize.width / 2, y: circleRect.midY - numSize.height / 2),
+                    withAttributes: [.font: UIFont.systemFont(ofSize: 16, weight: .bold), .foregroundColor: UIColor.white]
+                )
+                
+                let textRect = CGRect(x: 60, y: itemY, width: contentWidth - 75, height: 300)
+                let bounds = (instruction as NSString).boundingRect(
+                    with: textRect.size,
+                    options: [.usesLineFragmentOrigin, .usesFontLeading],
+                    attributes: [.font: UIFont.systemFont(ofSize: 14)],
+                    context: nil
+                )
+                (instruction as NSString).draw(in: textRect, withAttributes: [
+                    .font: UIFont.systemFont(ofSize: 14),
+                    .foregroundColor: UIColor.black
+                ])
+                itemY += max(bounds.height + 20, 45)
+            }
+            return itemY + 10
+        } + 20
+    }
+    
+    private static func drawNotes(
+        recipe: RecipeModel,
+        context: CGContext,
+        yPos: CGFloat,
+        margin: CGFloat,
+        contentWidth: CGFloat,
+        accentColor: UIColor
+    ) -> CGFloat {
+        drawSectionWithCard(
+            config: SectionDrawConfig(
+                context: context,
+                title: "📝 Notes",
+                yPos: yPos,
+                margin: margin,
+                width: contentWidth,
+                accentColor: accentColor
+            )
+        ) {
+            let textRect = CGRect(x: 15, y: 20, width: contentWidth - 30, height: 300)
+            let bounds = (recipe.notes as NSString).boundingRect(
+                with: textRect.size,
                 options: [.usesLineFragmentOrigin, .usesFontLeading],
-                attributes: titleAttrs,
+                attributes: [.font: UIFont.systemFont(ofSize: 14)],
                 context: nil
             )
-            titleText.draw(in: titleRect, withAttributes: titleAttrs)
-            yPos += titleBounds.height + 20
-            
-            // INFO CARDS (Glass morphism - exactly like app)
-            let cardSpacing: CGFloat = 16
-            let cardWidth = (contentWidth - cardSpacing) / 2
-            let cardHeight: CGFloat = 90
-            
-            // Card 1: Time Info
-            let cardY = yPos
-            drawGlassCardExact(context: cgContext, rect: CGRect(x: margin, y: cardY, width: cardWidth, height: cardHeight))
-            
-            // Icon and text for time card
-            let timeIcon = "⏱" as NSString
-            timeIcon.draw(at: CGPoint(x: margin + 15, y: cardY + 15), withAttributes: [
-                .font: UIFont.systemFont(ofSize: 22)
-            ])
-            
-            let timeLabel = "Prep time" as NSString
-            timeLabel.draw(at: CGPoint(x: margin + 50, y: cardY + 15), withAttributes: [
-                .font: UIFont.systemFont(ofSize: 10, weight: .medium),
-                .foregroundColor: UIColor.darkGray
-            ])
-            
-            let prepValue = recipe.prepTime as NSString
-            prepValue.draw(at: CGPoint(x: margin + 50, y: cardY + 30), withAttributes: [
-                .font: UIFont.systemFont(ofSize: 13, weight: .semibold),
+            (recipe.notes as NSString).draw(in: textRect, withAttributes: [
+                .font: UIFont.systemFont(ofSize: 14),
                 .foregroundColor: UIColor.black
             ])
-            
-            let cookLabel = "Cook time" as NSString
-            cookLabel.draw(at: CGPoint(x: margin + 15, y: cardY + 52), withAttributes: [
-                .font: UIFont.systemFont(ofSize: 10, weight: .medium),
-                .foregroundColor: UIColor.darkGray
-            ])
-            
-            let cookValue = recipe.cookingTime as NSString
-            cookValue.draw(at: CGPoint(x: margin + 15, y: cardY + 67), withAttributes: [
-                .font: UIFont.systemFont(ofSize: 13, weight: .semibold),
-                .foregroundColor: UIColor.black
-            ])
-            
-            // Card 2: Difficulty & Category
-            let rightCardX = margin + cardWidth + cardSpacing
-            drawGlassCardExact(context: cgContext, rect: CGRect(x: rightCardX, y: cardY, width: cardWidth, height: cardHeight))
-            
-            let diffIcon = "📊" as NSString
-            diffIcon.draw(at: CGPoint(x: rightCardX + 15, y: cardY + 15), withAttributes: [
-                .font: UIFont.systemFont(ofSize: 22)
-            ])
-            
-            let diffLabel = "Difficulty" as NSString
-            diffLabel.draw(at: CGPoint(x: rightCardX + 50, y: cardY + 15), withAttributes: [
-                .font: UIFont.systemFont(ofSize: 10, weight: .medium),
-                .foregroundColor: UIColor.darkGray
-            ])
-            
-            let diffValue = recipe.difficulty as NSString
-            diffValue.draw(at: CGPoint(x: rightCardX + 50, y: cardY + 30), withAttributes: [
-                .font: UIFont.systemFont(ofSize: 13, weight: .semibold),
-                .foregroundColor: UIColor.black
-            ])
-            
-            let catLabel = "Category" as NSString
-            catLabel.draw(at: CGPoint(x: rightCardX + 15, y: cardY + 52), withAttributes: [
-                .font: UIFont.systemFont(ofSize: 10, weight: .medium),
-                .foregroundColor: UIColor.darkGray
-            ])
-            
-            let catValue = "\(recipe.category) • \(recipe.baseServings) servings" as NSString
-            catValue.draw(at: CGPoint(x: rightCardX + 15, y: cardY + 67), withAttributes: [
-                .font: UIFont.systemFont(ofSize: 13, weight: .semibold),
-                .foregroundColor: UIColor.black
-            ])
-            
-            yPos += cardHeight + 24
-            
-            // INGREDIENTS SECTION (exactly like app)
-            yPos = drawSectionWithCard(
-                config: SectionDrawConfig(
-                    context: cgContext,
-                    title: "🥘 Ingredients",
-                    yPos: yPos,
-                    margin: margin,
-                    width: contentWidth,
-                    accentColor: accentColor
-                )
-            ) {
-                var itemY: CGFloat = 20
-                
-                for ingredient in recipe.ingredients {
-                    let formatted = ingredient.formattedWithUnit(for: 1.0, system: measurementSystem)
-                    let text = "• \(formatted) \(ingredient.name)" as NSString
-                    
-                    let textRect = CGRect(x: 15, y: itemY, width: contentWidth - 30, height: 100)
-                    let boundingRect = text.boundingRect(
-                        with: textRect.size,
-                        options: [.usesLineFragmentOrigin, .usesFontLeading],
-                        attributes: [.font: UIFont.systemFont(ofSize: 14)],
-                        context: nil
-                    )
-                    
-                    text.draw(in: textRect, withAttributes: [
-                        .font: UIFont.systemFont(ofSize: 14),
-                        .foregroundColor: UIColor.black
-                    ])
-                    
-                    itemY += max(boundingRect.height, 24)
-                }
-                
+            return bounds.height + 30
+        }
+    }
+    
+    private static func drawFooter(context: CGContext, yPos: CGFloat, pageWidth: CGFloat) {
+        let footerText = "Created with RecipeFinder" as NSString
+        let footerSize = footerText.size(withAttributes: [
+            .font: UIFont.systemFont(ofSize: 11),
+            .foregroundColor: UIColor.white.withAlphaComponent(0.8)
+        ])
+        footerText.draw(
+            at: CGPoint(x: (pageWidth - footerSize.width) / 2, y: yPos - 30),
+            withAttributes: [
+                .font: UIFont.systemFont(ofSize: 11),
+                .foregroundColor: UIColor.white.withAlphaComponent(0.8)
+            ]
+        )
+    }
+    
+    // MARK: - Helper Functions
+    
+    private static func drawGlassCardExact(context: CGContext, rect: CGRect) {
+        context.saveGState()
+        let path = CGPath(roundedRect: rect, cornerWidth: 16, cornerHeight: 16, transform: nil)
+        context.addPath(path)
+        context.setFillColor(UIColor.white.withAlphaComponent(0.9).cgColor)
+        context.fillPath()
+        context.addPath(path)
+        context.setStrokeColor(UIColor.white.withAlphaComponent(0.3).cgColor)
+        context.setLineWidth(0.5)
+        context.strokePath()
+        context.setShadow(offset: CGSize(width: 0, height: 4), blur: 8, color: UIColor.black.withAlphaComponent(0.1).cgColor)
+        context.restoreGState()
+    }
+    
+    private static func drawSectionWithCard(
+        config: SectionDrawConfig,
+        contentBlock: @escaping () -> CGFloat
+    ) -> CGFloat {
+        (config.title as NSString).draw(
+            at: CGPoint(x: config.margin, y: config.yPos),
+            withAttributes: [
+                .font: UIFont.systemFont(ofSize: 20, weight: .bold),
+                .foregroundColor: UIColor.white
+            ]
+        )
                 return itemY + 10
             }
             
@@ -431,7 +645,6 @@ class RecipeShareUtility {
         
         return data
     }
-    // swiftlint:enable function_body_length
     
     // Helper Functions (Optimized for App-Like Look)
     

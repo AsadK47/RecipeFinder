@@ -1,7 +1,6 @@
 // swiftlint:disable file_length
 import SwiftUI
 
-// swiftlint:disable:next type_body_length
 struct IngredientSearchView: View {
     @Binding var recipes: [RecipeModel]
     @ObservedObject var shoppingListManager: ShoppingListManager

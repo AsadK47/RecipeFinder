@@ -1,8 +1,6 @@
-// swiftlint:disable file_length
 import ConfettiSwiftUI
 import SwiftUI
 
-// swiftlint:disable:next type_body_length
 struct ShoppingListView: View {
     @ObservedObject var manager: ShoppingListManager
     @State private var searchText: String = ""

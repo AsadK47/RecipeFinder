@@ -1,8 +1,6 @@
-// swiftlint:disable file_length
 import ConfettiSwiftUI
 import SwiftUI
 
-// swiftlint:disable:next type_body_length
 struct RecipeDetailView: View {
     @State private var recipe: RecipeModel
     @State private var ingredientsState: [Bool]

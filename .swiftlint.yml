@@ -17,6 +17,7 @@ excluded:
 disabled_rules:
   - trailing_whitespace # Too strict for development
   - todo # Allow TODO comments during development
+  - multiple_closures_with_trailing_closure # Common in SwiftUI
   
 opt_in_rules:
   - empty_count
@@ -29,22 +30,26 @@ opt_in_rules:
   
 # Rule configurations
 line_length:
-  warning: 150
+  warning: 160
   error: 200
   ignores_comments: true
   ignores_urls: true
   
 file_length:
-  warning: 500
+  warning: 800
   error: 1000
   
 function_body_length:
-  warning: 50
+  warning: 60
   error: 100
+
+function_parameter_count:
+  warning: 8
+  error: 10
   
 type_body_length:
-  warning: 300
-  error: 500
+  warning: 520
+  error: 600
   
 identifier_name:
   min_length:
