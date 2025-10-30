@@ -474,7 +474,7 @@ struct SignUpView: View {
 // MARK: - Custom Text Field Style
 
 struct AuthTextFieldStyle: TextFieldStyle {
-    func _body(configuration: TextField<Self._Label>) -> some View {
+    func makeBody(configuration: Configuration) -> some View {
         configuration
             .padding()
             .background(
