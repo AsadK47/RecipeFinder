@@ -11,7 +11,9 @@ struct RecipeSearchView: View {
     @State private var selectedCookTimes: Set<Int> = []
     @State private var showFavoritesOnly = false
     @State private var showImportSheet = false
-    @State private var showRecipeWizard = false
+        @State private var showRecipeWizard: Bool = false
+    @State private var recipeToDelete: RecipeModel?
+    @State private var showDeleteAlert: Bool = false
     @State private var cachedFilteredRecipes: [RecipeModel] = []
     @State private var lastFilterHash: Int = 0
     @Environment(\.colorScheme) var colorScheme
@@ -213,7 +215,7 @@ struct RecipeSearchView: View {
                                     }
                                     
                                     ForEach(Array(selectedCookTimes), id: \.self) { time in
-                                        FilterChip(label: "≤ \(time) min", icon: "clock.fill") {
+                                        FilterChip(label: time > 120 ? "> 120 min" : "≤ \(time) min", icon: "clock.fill") {
                                             HapticManager.shared.light()
                                             selectedCookTimes.remove(time)
                                         }
@@ -259,6 +261,15 @@ struct RecipeSearchView: View {
                                         .simultaneousGesture(TapGesture().onEnded {
                                             HapticManager.shared.light()
                                         })
+                                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                            Button(role: .destructive) {
+                                                recipeToDelete = recipe
+                                                showDeleteAlert = true
+                                                HapticManager.shared.warning()
+                                            } label: {
+                                                Label("Delete", systemImage: "trash.fill")
+                                            }
+                                        }
                                     }
                                 }
                                 .padding(.horizontal, AppTheme.cardHorizontalPadding)
@@ -279,6 +290,15 @@ struct RecipeSearchView: View {
                                         .simultaneousGesture(TapGesture().onEnded {
                                             HapticManager.shared.light()
                                         })
+                                        .contextMenu {
+                                            Button(role: .destructive) {
+                                                recipeToDelete = recipe
+                                                showDeleteAlert = true
+                                                HapticManager.shared.warning()
+                                            } label: {
+                                                Label("Delete Recipe", systemImage: "trash.fill")
+                                            }
+                                        }
                                     }
                                 }
                                 .padding(.horizontal, 16)
@@ -330,6 +350,19 @@ struct RecipeSearchView: View {
             .onChange(of: selectedCookTimes) { _, _ in updateFilterCache() }
             .onChange(of: showFavoritesOnly) { _, _ in updateFilterCache() }
             .onChange(of: recipes) { _, _ in updateFilterCache() }
+            .alert("Delete Recipe?", isPresented: $showDeleteAlert) {
+                Button("Cancel", role: .cancel) {
+                    recipeToDelete = nil
+                }
+                Button("Delete", role: .destructive) {
+                    if let recipe = recipeToDelete {
+                        deleteRecipe(recipe)
+                    }
+                    recipeToDelete = nil
+                }
+            } message: {
+                Text("This will permanently delete '\(recipeToDelete?.name ?? "this recipe")'. This action cannot be reversed.")
+            }
         }
     }
     
@@ -340,6 +373,15 @@ struct RecipeSearchView: View {
             cachedFilteredRecipes = filteredRecipes
             lastFilterHash = newHash
         }
+    }
+    
+    // Delete recipe
+    private func deleteRecipe(_ recipe: RecipeModel) {
+        withAnimation {
+            recipes.removeAll { $0.id == recipe.id }
+        }
+        PersistenceController.shared.deleteRecipe(withId: recipe.id)
+        HapticManager.shared.success()
     }
     
     private var emptyStateView: some View {
@@ -408,7 +450,7 @@ struct FilterSheet: View {
     @Binding var selectedCookTimes: Set<Int>
     @Binding var showFavoritesOnly: Bool
     
-    let cookTimeOptions = [15, 30, 45, 60, 90, 120, 150]
+    let cookTimeOptions = [15, 30, 45, 60, 90, 121] // 121 represents "> 120"
     
     private let columns = [
         GridItem(.adaptive(minimum: 100, maximum: 120), spacing: 8, alignment: .center)
@@ -490,7 +532,7 @@ struct FilterSheet: View {
                             LazyVGrid(columns: columns, spacing: 8) {
                                 ForEach(cookTimeOptions, id: \.self) { time in
                                     RecipeFilterButton(
-                                        label: "≤ \(time) min",
+                                        label: time > 120 ? "> 120 min" : "≤ \(time) min",
                                         isSelected: selectedCookTimes.contains(time)
                                     ) {
                                         toggleSelection(time, in: $selectedCookTimes)

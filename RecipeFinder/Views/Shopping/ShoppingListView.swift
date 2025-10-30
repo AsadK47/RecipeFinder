@@ -614,35 +614,79 @@ struct ShoppingListItemRow: View {
                     
                     Spacer()
                     
-                    HStack(spacing: 8) {
-                        // Quantity display on the right
-                        if item.quantity > 1 {
-                            Text("\(item.quantity)")
-                                .font(.subheadline)
-                                .fontWeight(.bold)
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
-                                .frame(minWidth: 20)
+                    HStack(spacing: 12) {
+                        // Decrement button
+                        Button(action: {
+                            if item.quantity > 1 {
+                                onQuantityChange(item.quantity - 1)
+                            }
+                        }) {
+                            Image(systemName: "minus")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(item.quantity > 1 ? (colorScheme == .dark ? .white : .black) : .gray)
+                                .frame(width: 32, height: 32)
+                                .background {
+                                    if cardStyle == .solid {
+                                        Circle()
+                                            .fill(colorScheme == .dark ? Color(white: 0.2) : Color(white: 0.95))
+                                    } else {
+                                        Circle()
+                                            .fill(.ultraThinMaterial)
+                                    }
+                                }
                         }
+                        .disabled(item.quantity <= 1)
                         
-                        Stepper("", value: Binding(
-                            get: { item.quantity },
-                            set: { onQuantityChange($0) }
-                        ), in: 1...99)
-                        .labelsHidden()
-                        .opacity(item.isChecked ? 0.5 : 1)
-                        .fixedSize()
+                        // Quantity display
+                        Text("\(item.quantity)")
+                            .font(.subheadline)
+                            .fontWeight(.bold)
+                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                            .frame(minWidth: 20)
+                        
+                        // Increment button
+                        Button(action: {
+                            if item.quantity < 99 {
+                                onQuantityChange(item.quantity + 1)
+                            }
+                        }) {
+                            Image(systemName: "plus")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(item.quantity < 99 ? (colorScheme == .dark ? .white : .black) : .gray)
+                                .frame(width: 32, height: 32)
+                                .background {
+                                    if cardStyle == .solid {
+                                        Circle()
+                                            .fill(colorScheme == .dark ? Color(white: 0.2) : Color(white: 0.95))
+                                    } else {
+                                        Circle()
+                                            .fill(.ultraThinMaterial)
+                                    }
+                                }
+                        }
+                        .disabled(item.quantity >= 99)
                     }
+                    .opacity(item.isChecked ? 0.5 : 1)
                 }
                 .padding(14)
             }
             .opacity(item.isChecked ? 0.6 : 1)
+        }
+        .swipeActions(edge: .leading, allowsFullSwipe: false) {
+            Button(
+                action: onToggle,
+                label: {
+                    Label(item.isChecked ? "Uncheck" : "Check", systemImage: item.isChecked ? "xmark.circle" : "checkmark.circle")
+                }
+            )
+            .tint(item.isChecked ? .orange : .green)
         }
         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
             Button(
                 role: .destructive,
                 action: onDelete,
                 label: {
-                    Image(systemName: "trash")
+                    Label("Delete", systemImage: "trash")
                 }
             )
         }

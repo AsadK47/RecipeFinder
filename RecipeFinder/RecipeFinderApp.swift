@@ -1,10 +1,3 @@
-//
-//  RecipeFinderApp.swift
-//  RecipeFinder
-//
-//  Created by asad.e.khan on 10/12/2024.
-//
-
 import SwiftData
 import SwiftUI
 import UIKit
@@ -13,6 +6,7 @@ import UIKit
 struct RecipeFinderApp: App {
     // Initialize PersistenceController
     let persistenceController = PersistenceController.shared
+    @StateObject private var authManager = AuthenticationManager.shared
     
     init() {
         configureAppearance()
@@ -30,8 +24,23 @@ struct RecipeFinderApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+            Group {
+                if authManager.isAuthenticated {
+                    ContentView()
+                        .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                        .onAppear {
+                            authManager.updateLastActiveTimestamp()
+                        }
+                } else {
+                    NavigationStack {
+                        AuthenticationView()
+                    }
+                }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                // Check if session expired when app comes back to foreground
+                authManager.checkSessionExpiration()
+            }
         }
     }
     

@@ -1,147 +1,201 @@
-# RecipeFinder™
+# RecipeFinder
 
-**Enterprise-Grade Recipe Management System for iOS**  
-*Architected for Privacy-First, On-Device Data Processing*
+![Swift](https://img.shields.io/badge/Swift-5.7+-FA7343?style=flat-square&logo=swift&logoColor=white)
+![iOS](https://img.shields.io/badge/iOS-15.0+-000000?style=flat-square&logo=apple&logoColor=white)
+![SwiftUI](https://img.shields.io/badge/SwiftUI-Declarative-0071E3?style=flat-square&logo=swift&logoColor=white)
+![License](https://img.shields.io/badge/License-Proprietary-red?style=flat-square&logo=key&logoColor=white)
+[![Build Status](https://github.com/AsadK47/RecipeFinder/workflows/CI/badge.svg)](https://github.com/AsadK47/RecipeFinder/actions)
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Swift-5.7+-FA7343?style=for-the-badge&logo=swift&logoColor=white" alt="Swift Version"/>
-  <img src="https://img.shields.io/badge/iOS-15.0+-000000?style=for-the-badge&logo=apple&logoColor=white" alt="iOS Version"/>
-  <img src="https://img.shields.io/badge/Platform-iPhone%20%7C%20iPad-lightgrey?style=for-the-badge&logo=apple&logoColor=white" alt="Platform"/>
-  <img src="https://img.shields.io/badge/SwiftUI-Declarative_UI-0071E3?style=for-the-badge&logo=swift&logoColor=white" alt="SwiftUI"/>
-  <img src="https://img.shields.io/badge/License-Proprietary-red?style=for-the-badge" alt="License"/>
-  <img src="https://img.shields.io/github/actions/workflow/status/AsadK47/RecipeFinder/ci.yml?branch=main&style=for-the-badge&label=Build&logo=xcode&logoColor=white" alt="Build Status"/>
-</p>
+A native iOS recipe management app with intelligent categorization, shopping list automation, and kitchen inventory tracking.
 
-<p align="center">
-  <strong>Built With</strong>
-</p>
+## Overview
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Made_with-Swift-FA7343?style=flat-square&logo=swift&logoColor=white" alt="Made with Swift"/>
-  <img src="https://img.shields.io/badge/Built_on-macOS-000000?style=flat-square&logo=apple&logoColor=white" alt="Built on macOS"/>
-  <img src="https://img.shields.io/badge/Developed_in-Xcode-147EFB?style=flat-square&logo=xcode&logoColor=white" alt="Developed in Xcode"/>
-  <img src="https://img.shields.io/badge/Designed_for-iPhone-000000?style=flat-square&logo=apple&logoColor=white" alt="Designed for iPhone"/>
-  <img src="https://img.shields.io/badge/Edited_with-VS_Code-007ACC?style=flat-square&logo=visualstudiocode&logoColor=white" alt="Edited with VS Code"/>
-  <img src="https://img.shields.io/badge/Quality-SwiftLint-00A99D?style=flat-square&logo=swift&logoColor=white" alt="SwiftLint"/>
-  <img src="https://img.shields.io/badge/Engineering-Best_Practices-success?style=flat-square" alt="Best Practices"/>
-</p>
+RecipeFinder provides comprehensive recipe management with local-only data storage. Built with SwiftUI and Core Data, the app features automatic ingredient categorization, meal planning, and PDF export capabilities—all while maintaining complete user privacy.
+
+### Key Features
+
+- **Recipe Management**: Create, import, and organize recipes with Schema.org support
+- **Smart Shopping Lists**: Automatically categorized shopping lists with 500+ ingredient recognition
+- **Kitchen Inventory**: Track ingredients with expiration monitoring
+- **Meal Planning**: Calendar-based meal scheduling with recipe integration
+- **Cook Timer**: Native iOS timer with notification support
+- **Theme System**: Eight customizable color themes with gradient backgrounds
+- **Export Options**: Generate PDFs and share recipes via text
+
+## Requirements
+
+- iOS 15.0 or later
+- Xcode 14.0 or later
+- Swift 5.7 or later
+
+## Getting Started
+
+### Installation
+
+Clone the repository and open in Xcode:
+
+```zsh
+git clone https://github.com/AsadK47/RecipeFinder.git
+cd RecipeFinder
+open RecipeFinder.xcodeproj
+```
+
+Build and run using ⌘R or:
+
+```zsh
+xcodebuild build -scheme RecipeFinder
+```
+
+### Project Structure
+
+```
+RecipeFinder/
+├── Components/         # Reusable UI components
+├── Models/            # Data models and Core Data schema
+├── Persistence/       # Core Data stack and managers
+├── Services/          # External integrations
+├── Theme/             # App theming system
+├── Utilities/         # Helper functions and extensions
+└── Views/             # SwiftUI views organized by feature
+```
+
+## Architecture
+
+RecipeFinder follows the MVVM (Model-View-ViewModel) architectural pattern with clear separation of concerns:
+
+- **Views**: SwiftUI declarative interfaces
+- **ViewModels**: Observable state managers
+- **Models**: Core Data entities and domain models
+- **Utilities**: Shared functionality and extensions
+
+### Core Components
+
+#### CategoryClassifier
+
+Intelligent ingredient categorization with 500+ keyword database supporting 20 shopping categories and 14 kitchen categories. Includes support for international ingredients across Asian, Middle Eastern, Latin American, and European cuisines.
+
+```swift
+let category = CategoryClassifier.categorize("chicken breast")
+// Returns: "Poultry"
+```
+
+#### Theme System
+
+Eight pre-configured themes with mathematical color harmonies (Teal, Purple, Gold, Orange, Pink, Red, Green, Yellow).
+
+```swift
+AppTheme.backgroundGradient(for: .teal, colorScheme: .dark)
+```
+
+#### Persistence Layer
+
+Core Data stack with background context for optimal performance:
+
+```swift
+let controller = PersistenceController.shared
+let manager = ShoppingListManager(context: controller.container.viewContext)
+```
+
+## Development
+
+### Code Quality
+
+Maintain code standards with SwiftLint:
+
+```zsh
+./scripts/lint.sh
+```
+
+### Testing
+
+Run the test suite:
+
+```zsh
+./scripts/test.sh
+```
+
+Run specific tests:
+
+```zsh
+xcodebuild test -scheme RecipeFinder \
+  -only-testing:RecipeFinderTests/RecipeModelTests
+```
+
+### Code Style
+
+Follow Apple's Swift API Design Guidelines:
+
+- Use clear, concise names
+- Prefer methods and properties over free functions
+- Follow case conventions (UpperCamelCase for types, lowerCamelCase for variables)
+- Include documentation for public APIs
+
+### Commit Messages
+
+Use conventional commits format:
+
+```
+feat(shopping): add bulk delete functionality
+fix(kitchen): resolve ingredient search crash
+refactor(theme): extract gradient calculations
+```
+
+## Privacy and Security
+
+RecipeFinder is designed with privacy as a core principle:
+
+- **Local Storage**: All data stored locally using Core Data
+- **No Analytics**: Zero tracking or telemetry
+- **No Third-Party SDKs**: Built entirely with native Apple frameworks
+- **Data Protection**: iOS-level encryption for all stored data
+
+## Documentation
+
+- [Commands Reference](docs/COMMANDS.md) - CLI commands and scripts
+- [Design Aesthetic](docs/DESIGN_AESTHETIC.md) - UI/UX guidelines
+- [Theme Colors](docs/THEME_COLORS.md) - Color palette reference
+- [Category System](docs/CATEGORY_CLASSIFIER_EXPANSION.md) - Ingredient taxonomy
+
+## Roadmap
+
+### Version 1.1 (In Progress)
+
+- Enhanced meal planning with recipe assignments
+- Biometric authentication
+- Improved loading states
+- Onboarding flow
+
+### Version 1.2
+
+- iCloud sync (optional)
+- Internationalization (ES, FR, DE)
+- Siri Shortcuts
+- iOS 18 widgets
+
+### Version 2.0
+
+- AI-powered recipe suggestions
+- Nutritional analysis
+- Grocery cost tracking
+- Social sharing features
+
+## License
+
+© 2024-2025 Asad Khan. All Rights Reserved.
+
+This software is proprietary and confidential. Unauthorized copying, distribution, or use is strictly prohibited.
+
+See [LICENSE](LICENSE) for full terms.
+
+## Contact
+
+**Developer**: Asad Khan  
+**Email**: asadkhanruby@gmail.com  
+**Issues**: [GitHub Issues](https://github.com/AsadK47/RecipeFinder/issues)
 
 ---
 
-## ⚖️ License & Legal Status
-
-**LICENSE TYPE:** Proprietary Software License v2.0  
-**COPYRIGHT:** © 2024-2025 Asad Khan. All Rights Reserved.  
-**CLASSIFICATION:** Closed-Source, All Rights Reserved
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│  ⚠️  PROPRIETARY SOFTWARE - UNAUTHORIZED USE PROHIBITED      │
-│                                                              │
-│  This software and all associated materials are the          │
-│  exclusive intellectual property of Asad Khan.               │
-│                                                              │
-│  NO RIGHTS ARE GRANTED to use, copy, modify, distribute,    │
-│  reverse engineer, or create derivative works without        │
-│  explicit written permission from the copyright holder.      │
-│                                                              │
-│  Violators will be prosecuted under UK/US copyright law.    │
-└─────────────────────────────────────────────────────────────┘
-```
-
-**Protected Elements:**
-- ✓ Source code and algorithms
-- ✓ User interface designs and layouts  
-- ✓ Database schemas and data models
-- ✓ Documentation and specifications
-- ✓ Trade secrets and proprietary methodologies
-- ✓ RecipeFinder™ trademark and branding
-
-**Legal Documentation:**  
-→ [Full License](LICENSE) | [Terms of Service](legal/TERMS_OF_SERVICE.md) | [IP Protection Notice](legal/IP_PROTECTION.md) | [Privacy Policy](legal/PRIVACY_POLICY.md)
-
----
-
-## Executive Summary
-
-RecipeFinder is a native iOS application implementing a **client-side recipe management system** with **zero-trust architecture** for user data. The system employs **declarative UI patterns** (SwiftUI), **persistence abstraction** (Core Data), and **algorithmic categorization** for ingredient classification.
-
-**Engineering Paradigm:** Privacy-by-design, offline-first, local-only data processing  
-**Target Platform:** iOS 15.0+ (iPhone, iPad)  
-**Deployment Model:** Single-tenant, on-device execution
-
----
-
-## System Architecture
-
-### Architectural Patterns
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    PRESENTATION LAYER                        │
-│  ┌──────────────────────────────────────────────────────┐   │
-│  │  SwiftUI Views (Declarative UI Components)          │   │
-│  │  • RecipeSearchView   • ShoppingListView             │   │
-│  │  • KitchenView        • MealPlanningView             │   │
-│  │  • AccountView        • SettingsView                 │   │
-│  └──────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────┘
-                            ↕
-┌─────────────────────────────────────────────────────────────┐
-│                   BUSINESS LOGIC LAYER                       │
-│  ┌──────────────────────────────────────────────────────┐   │
-│  │  ObservableObject ViewModels / Managers              │   │
-│  │  • ShoppingListManager   • KitchenInventoryManager   │   │
-│  │  • AccountManager        • RecipeImporter            │   │
-│  └──────────────────────────────────────────────────────┘   │
-│  ┌──────────────────────────────────────────────────────┐   │
-│  │  Domain Models & Business Rules                      │   │
-│  │  • RecipeModel           • ShoppingListItem          │   │
-│  │  • CategoryClassifier    • UnitConversion            │   │
-│  └──────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────┘
-                            ↕
-┌─────────────────────────────────────────────────────────────┐
-│                   PERSISTENCE LAYER                          │
-│  ┌──────────────────────────────────────────────────────┐   │
-│  │  Core Data Stack (SQLite Backend)                    │   │
-│  │  • PersistenceController  • RecipeEntity             │   │
-│  │  • NSManagedObjectContext • RecipeDataExtensions     │   │
-│  └──────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────┘
-                            ↕
-┌─────────────────────────────────────────────────────────────┐
-│                      DATA LAYER                              │
-│  ┌──────────────────────────────────────────────────────┐   │
-│  │  Local SQLite Database (On-Device Storage)           │   │
-│  │  • Zero cloud synchronization                        │   │
-│  │  • Zero external data transmission                   │   │
-│  │  • Encrypted with iOS Data Protection API            │   │
-│  └──────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### Technology Stack
-
-| Layer | Technology | Purpose | Design Pattern |
-|-------|-----------|---------|----------------|
-| **UI** | SwiftUI 3.0+ | Declarative interface rendering | MVVM, Compositional Layouts |
-| **State** | Combine, @Published | Reactive data binding | Observer Pattern |
-| **Persistence** | Core Data | Object-relational mapping (ORM) | Repository Pattern |
-| **Storage** | SQLite | Embedded relational database | ACID compliance |
-| **Testing** | XCTest | Unit/integration testing | AAA Pattern (Arrange-Act-Assert) |
-| **Quality** | SwiftLint | Static code analysis | Style enforcement |
-| **Concurrency** | async/await | Asynchronous operations | Structured concurrency |
-
-### Design Principles
-
-✓ **Separation of Concerns (SoC):** Strict layer isolation  
-✓ **Single Responsibility Principle (SRP):** Component-level cohesion  
-✓ **Dependency Injection (DI):** Constructor-based injection  
-✓ **Protocol-Oriented Programming (POP):** Interface abstraction  
-✓ **Immutability:** Value semantics for data models  
-✓ **Reactive Programming:** Observable state propagation
-
+**Built with SwiftUI and Core Data on Apple platforms**
 ---
 
 ## Core Subsystems

@@ -103,7 +103,6 @@ class RecipeImporter: ObservableObject {
     /// Match ingredient texts against USDA food database
     private func matchUSDAIngredients(from texts: [String]) -> [String] {
         let usdaFoods = USDAFoodsList.getAllFoods()
-        let usdaFoodSet = Set(usdaFoods.map { $0.lowercased() })
         
         var matched: [String] = []
         

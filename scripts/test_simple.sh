@@ -1,45 +1,23 @@
 #!/bin/bash
 
-# RecipeFinder - Production-Grade Test Runner
-# Follows Apple's testing best practices
-# Runs unit tests with comprehensive reporting
-
-set -e
-
-# Cleanup function
-cleanup() {
-    cd "$PROJECT_ROOT" 2>/dev/null || true
-    rm -f ref.0* data.0* 2>/dev/null || true
-}
-
-# Set trap to cleanup on exit
-trap cleanup EXIT INT TERM
+# Simple test runner that works with limited terminal environment
 
 echo "🧪 Running RecipeFinder Unit Tests"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-# Get project root
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-cd "$PROJECT_ROOT"
-
 # Configuration
 SCHEME="RecipeFinder"
-DESTINATION="platform=iOS Simulator,name=iPhone 17 Pro"
+DESTINATION="platform=iOS Simulator,name=iPhone 15,OS=latest"
 DERIVED_DATA="DerivedData"
 
-# Clean up old results and temp files
+# Clean up old results
 echo "🧹 Cleaning previous test results..."
-rm -rf TestResults.xcresult 2>/dev/null || true
-rm -f ref.0* data.0* 2>/dev/null || true
-
-# Find all test files
-TEST_FILES=$(find RecipeFinderTests -name "*Tests.swift" -type f 2>/dev/null | wc -l | tr -d ' ')
-echo "📋 Found $TEST_FILES test files"
+/bin/rm -rf TestResults.xcresult 2>/dev/null || true
+/bin/rm -f ref.0* data.0* 2>/dev/null || true
 
 # Build test bundle
 echo "🔨 Building test bundle..."
-xcodebuild build-for-testing \
+/usr/bin/xcodebuild build-for-testing \
     -scheme "$SCHEME" \
     -destination "$DESTINATION" \
     -derivedDataPath "$DERIVED_DATA" \
@@ -55,7 +33,7 @@ fi
 
 # Run tests
 echo "🧪 Executing unit tests..."
-xcodebuild test-without-building \
+/usr/bin/xcodebuild test-without-building \
     -scheme "$SCHEME" \
     -destination "$DESTINATION" \
     -only-testing:RecipeFinderTests \
@@ -74,6 +52,7 @@ if [ $TEST_EXIT_CODE -eq 0 ]; then
     echo "   • Coverage report: TestResults.xcresult"
     echo "   • View in Xcode: xed TestResults.xcresult"
     echo ""
+    exit 0
 else
     echo "❌ Tests failed with exit code $TEST_EXIT_CODE"
     echo ""
@@ -81,6 +60,6 @@ else
     echo "   • Check TestResults.xcresult for detailed failure information"
     echo "   • Run individual test files to isolate failures"
     echo "   • Ensure all dependencies are up to date"
+    echo ""
     exit $TEST_EXIT_CODE
 fi
-

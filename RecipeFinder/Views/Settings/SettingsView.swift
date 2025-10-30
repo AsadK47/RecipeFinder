@@ -1,4 +1,5 @@
 import SwiftUI
+import UserNotifications
 
 // Card Style Enum
 enum CardStyle: String, CaseIterable {
@@ -9,6 +10,8 @@ enum CardStyle: String, CaseIterable {
 struct SettingsView: View {
     @State private var confettiTrigger: Int = 0
     @State private var showResetAlert: Bool = false
+    @State private var notificationsEnabled: Bool = false
+    @State private var cookModeEnabled: Bool = true
     @AppStorage("appearanceMode") private var appearanceMode: AppearanceMode = .system
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
@@ -57,12 +60,9 @@ struct SettingsView: View {
                     
                     ScrollView {
                         VStack(spacing: 16) {
+                            // Appearance Section
                             CardView {
                                 VStack(alignment: .leading, spacing: 16) {
-                                    settingRow(icon: "bell.fill", title: "Notifications", color: .orange)
-                                    
-                                    Divider()
-                                    
                                     // Theme Picker
                                     HStack(spacing: 16) {
                                         Image(systemName: "paintpalette.fill")
@@ -190,33 +190,152 @@ struct SettingsView: View {
                                 .padding()
                             }
                             
+                            // Cooking Features Section
                             CardView {
                                 VStack(alignment: .leading, spacing: 16) {
-                                    settingRow(icon: "person.fill", title: "Account", color: .green)
+                                    // Notifications Toggle
+                                    HStack(spacing: 16) {
+                                        Image(systemName: "bell.fill")
+                                            .foregroundColor(.orange)
+                                            .frame(width: 30)
+                                        
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text("Notifications")
+                                                .font(.subheadline)
+                                                .fontWeight(.medium)
+                                            Text("Enable timer alerts")
+                                                .font(.caption)
+                                                .foregroundColor(.gray)
+                                        }
+                                        
+                                        Spacer()
+                                        
+                                        Toggle("", isOn: $notificationsEnabled)
+                                            .labelsHidden()
+                                            .onChange(of: notificationsEnabled) { _, newValue in
+                                                HapticManager.shared.light()
+                                                if newValue {
+                                                    requestNotificationPermission()
+                                                }
+                                            }
+                                    }
+                                    
                                     Divider()
+                                    
+                                    // Cook Mode Toggle
+                                    HStack(spacing: 16) {
+                                        Image(systemName: "flame.fill")
+                                            .foregroundColor(.red)
+                                            .frame(width: 30)
+                                        
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text("Cook Mode")
+                                                .font(.subheadline)
+                                                .fontWeight(.medium)
+                                            Text("Keep screen on while cooking")
+                                                .font(.caption)
+                                                .foregroundColor(.gray)
+                                        }
+                                        
+                                        Spacer()
+                                        
+                                        Toggle("", isOn: $cookModeEnabled)
+                                            .labelsHidden()
+                                            .onChange(of: cookModeEnabled) { _, _ in
+                                                HapticManager.shared.light()
+                                                UIApplication.shared.isIdleTimerDisabled = cookModeEnabled
+                                            }
+                                    }
+                                }
+                                .padding()
+                            }
+                            
+                            // Account & Privacy Section
+                            CardView {
+                                VStack(alignment: .leading, spacing: 16) {
+                                    NavigationLink(destination: AccountView()) {
+                                        HStack(spacing: 16) {
+                                            Image(systemName: "person.fill")
+                                                .foregroundColor(.green)
+                                                .frame(width: 30)
+                                            
+                                            Text("Account")
+                                                .font(.subheadline)
+                                                .fontWeight(.medium)
+                                            
+                                            Spacer()
+                                            
+                                            Image(systemName: "chevron.right")
+                                                .foregroundColor(.gray)
+                                                .font(.caption)
+                                        }
+                                    }
+                                    
+                                    Divider()
+                                    
                                     settingRow(icon: "lock.fill", title: "Privacy", color: .red)
                                 }
                                 .padding()
                             }
                             
-                            // Debug Section
-                            #if DEBUG
+                            // About Section
                             CardView {
                                 VStack(alignment: .leading, spacing: 16) {
-                                    Text("Developer Options")
-                                        .font(.headline)
-                                        .foregroundColor(AppTheme.secondaryText)
+                                    HStack(spacing: 16) {
+                                        Image(systemName: "app.badge")
+                                            .foregroundColor(.blue)
+                                            .frame(width: 30)
+                                        
+                                        Text("Version")
+                                            .font(.subheadline)
+                                            .fontWeight(.medium)
+                                        
+                                        Spacer()
+                                        
+                                        Text("1.0.0")
+                                            .font(.subheadline)
+                                            .foregroundColor(.gray)
+                                    }
                                     
+                                    Divider()
+                                    
+                                    HStack(spacing: 16) {
+                                        Image(systemName: "hammer")
+                                            .foregroundColor(.purple)
+                                            .frame(width: 30)
+                                        
+                                        Text("Build")
+                                            .font(.subheadline)
+                                            .fontWeight(.medium)
+                                        
+                                        Spacer()
+                                        
+                                        Text("2025.10.30")
+                                            .font(.subheadline)
+                                            .foregroundColor(.gray)
+                                    }
+                                }
+                                .padding()
+                            }
+                            
+                            // Data Management Section
+                            CardView {
+                                VStack(alignment: .leading, spacing: 16) {
                                     Button(action: { showResetAlert = true }, label: {
                                         HStack(spacing: 16) {
-                                            Image(systemName: "arrow.clockwise.circle.fill")
+                                            Image(systemName: "arrow.triangle.2.circlepath.circle.fill")
                                                 .foregroundColor(.orange)
                                                 .frame(width: 30)
                                             
-                                            Text("Reset Database")
-                                                .font(.subheadline)
-                                                .fontWeight(.medium)
-                                                .foregroundColor(.primary)
+                                            VStack(alignment: .leading, spacing: 2) {
+                                                Text("Reset to Sample Recipes")
+                                                    .font(.subheadline)
+                                                    .fontWeight(.medium)
+                                                    .foregroundColor(.primary)
+                                                Text("Restore default recipe collection")
+                                                    .font(.caption)
+                                                    .foregroundColor(.gray)
+                                            }
                                             
                                             Spacer()
                                             
@@ -229,7 +348,6 @@ struct SettingsView: View {
                                 }
                                 .padding()
                             }
-                            #endif
                             
                             Button(
                                 action: {
@@ -269,9 +387,34 @@ struct SettingsView: View {
             Button("Cancel", role: .cancel) { }
             Button("Reset", role: .destructive) {
                 PersistenceController.shared.resetDatabase()
+                HapticManager.shared.success()
             }
         } message: {
-            Text("This will delete all recipes and reload the sample data. This action cannot be undone.")
+            Text("This will delete all your recipes and reload the original sample recipes. This action cannot be undone.")
+        }
+        .onAppear {
+            // Set cook mode on appear
+            UIApplication.shared.isIdleTimerDisabled = cookModeEnabled
+            // Check notification permission status
+            checkNotificationStatus()
+        }
+    }
+    
+    private func requestNotificationPermission() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
+            DispatchQueue.main.async {
+                if !granted {
+                    notificationsEnabled = false
+                }
+            }
+        }
+    }
+    
+    private func checkNotificationStatus() {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            DispatchQueue.main.async {
+                notificationsEnabled = settings.authorizationStatus == .authorized
+            }
         }
     }
     

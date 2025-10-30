@@ -1,394 +1,534 @@
 import SwiftUI
 
+/// Account view following Apple's native iOS Settings design patterns
+/// Uses grouped list style with native navigation and animations
 struct AccountView: View {
     @StateObject private var accountManager = AccountManager.shared
+    @StateObject private var authManager = AuthenticationManager.shared
     @State private var showingEditProfile = false
-    @Environment(\.colorScheme) var colorScheme
-    @Environment(\.appTheme) var appTheme
+    @State private var showingDeleteAlert = false
+    @State private var showingSignOutAlert = false
+    @State private var showingDeleteAccountAlert = false
+    @State private var showingUpgradeFromGuest = false
+    @Environment(\.colorScheme) private var colorScheme
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
+    
+    // Check if user is in guest mode
+    private var isGuestMode: Bool {
+        UserDefaults.standard.bool(forKey: "isGuestMode")
+    }
     
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
+                // Themed background gradient
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
                 
                 ScrollView {
-                    VStack(spacing: 24) {
-                        // Profile Header
-                        profileHeader
-                        
-                        // Stats Section
-                        statsSection
-                        
-                        // Account Actions
-                        accountActionsSection
-                        
-                        // Data Management
-                        dataManagementSection
-                        
-                        // About Section
-                        aboutSection
-                    }
-                    .padding(.vertical, 20)
-                    .padding(.horizontal, 20)
-                }
-            }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    Text("Account")
-                        .font(.system(size: 34, weight: .bold))
-                        .foregroundColor(.white)
-                }
-                
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: { showingEditProfile = true }) {
-                        Image(systemName: "pencil.circle")
-                            .font(.title3)
+                    VStack(spacing: 20) {
+                        // Header
+                        Text("Account")
+                            .font(.system(size: 34, weight: .bold))
                             .foregroundColor(.white)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, 20)
+                            .padding(.top, 20)
+                        
+                        VStack(spacing: 16) {
+                            // Profile Header Card
+                            CardView {
+                                profileHeaderRow
+                            }
+                            
+                            // Stats Grid Card
+                            CardView {
+                                statsGrid
+                                    .padding(.vertical, 8)
+                            }
+                            
+                            // Profile Details (if not default user)
+                            if accountManager.fullName != "Recipe Chef" {
+                                CardView {
+                                    VStack(spacing: 0) {
+                                        sectionHeader("Profile Information")
+                                        
+                                        DetailRow(
+                                            label: "Name",
+                                            value: accountManager.fullName,
+                                            icon: "person.fill"
+                                        )
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 12)
+                                        
+                                        Divider()
+                                            .padding(.horizontal, 16)
+                                        
+                                        if !accountManager.email.isEmpty {
+                                            DetailRow(
+                                                label: "Email",
+                                                value: accountManager.email,
+                                                icon: "envelope.fill"
+                                            )
+                                            .padding(.horizontal, 16)
+                                            .padding(.vertical, 12)
+                                            
+                                            Divider()
+                                                .padding(.horizontal, 16)
+                                        }
+                                        
+                                        DetailRow(
+                                            label: "Chef Type",
+                                            value: accountManager.chefType.rawValue,
+                                            icon: accountManager.chefType.icon
+                                        )
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 12)
+                                        
+                                        if !accountManager.address.isEmpty {
+                                            Divider()
+                                                .padding(.horizontal, 16)
+                                            
+                                            DetailRow(
+                                                label: "Address",
+                                                value: accountManager.address,
+                                                icon: "location.fill"
+                                            )
+                                            .padding(.horizontal, 16)
+                                            .padding(.vertical, 12)
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            // Settings Card
+                            CardView {
+                                VStack(spacing: 0) {
+                                    sectionHeader("Settings")
+                                    
+                                    NavigationLink {
+                                        SettingsView()
+                                    } label: {
+                                        SettingsRowLabel(
+                                            icon: "gear",
+                                            iconColor: AppTheme.accentColor(for: selectedTheme),
+                                            title: "Preferences"
+                                        )
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 12)
+                                    }
+                                }
+                            }
+                            
+                            // Data Management Card
+                            CardView {
+                                VStack(spacing: 0) {
+                                    sectionHeader("Data")
+                                    
+                                    Button {
+                                        exportData()
+                                    } label: {
+                                        SettingsRowLabel(
+                                            icon: "square.and.arrow.up",
+                                            iconColor: .blue,
+                                            title: "Export Data"
+                                        )
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 12)
+                                    }
+                                    
+                                    Divider()
+                                        .padding(.horizontal, 16)
+                                    
+                                    Button(role: .destructive) {
+                                        showingDeleteAlert = true
+                                    } label: {
+                                        SettingsRowLabel(
+                                            icon: "trash",
+                                            iconColor: .red,
+                                            title: "Clear All Data"
+                                        )
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 12)
+                                    }
+                                    
+                                    Text("Clearing all data will reset the app to its default state and restore sample recipes.")
+                                        .font(.caption)
+                                        .foregroundStyle(.white.opacity(0.7))
+                                        .padding(.horizontal, 16)
+                                        .padding(.top, 8)
+                                        .padding(.bottom, 12)
+                                    
+                                    if !accountManager.uuid.isEmpty {
+                                        Text("Account ID: \(accountManager.uuid)")
+                                            .font(.caption2)
+                                            .foregroundStyle(.white.opacity(0.5))
+                                            .padding(.horizontal, 16)
+                                            .padding(.bottom, 12)
+                                    }
+                                }
+                            }
+                            
+                            // Account Actions Card
+                            CardView {
+                                VStack(spacing: 0) {
+                                    sectionHeader("Account")
+                                    
+                                    // Show "Create Account" if in guest mode
+                                    if isGuestMode {
+                                        Button {
+                                            showingUpgradeFromGuest = true
+                                        } label: {
+                                            HStack {
+                                                Spacer()
+                                                Label("Create Account", systemImage: "person.badge.plus")
+                                                    .fontWeight(.semibold)
+                                                    .foregroundStyle(.green)
+                                                Spacer()
+                                            }
+                                            .padding(.horizontal, 16)
+                                            .padding(.vertical, 12)
+                                        }
+                                        
+                                        Divider()
+                                            .padding(.horizontal, 16)
+                                    }
+                                    
+                                    Button {
+                                        showingSignOutAlert = true
+                                    } label: {
+                                        HStack {
+                                            Spacer()
+                                            Text(isGuestMode ? "Exit Guest Mode" : "Sign Out")
+                                                .fontWeight(.semibold)
+                                                .foregroundStyle(.red)
+                                            Spacer()
+                                        }
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 12)
+                                    }
+                                    
+                                    if !isGuestMode {
+                                        Divider()
+                                            .padding(.horizontal, 16)
+                                        
+                                        Button(role: .destructive) {
+                                            showingDeleteAccountAlert = true
+                                        } label: {
+                                            HStack {
+                                                Spacer()
+                                                Text("Delete Account")
+                                                    .fontWeight(.semibold)
+                                                Spacer()
+                                            }
+                                            .padding(.horizontal, 16)
+                                            .padding(.vertical, 12)
+                                        }
+                                    }
+                                    
+                                    if isGuestMode {
+                                        Text("You're currently using guest mode. Create an account to sync your data and access all features.")
+                                            .font(.caption)
+                                            .foregroundStyle(.white.opacity(0.7))
+                                            .padding(.horizontal, 16)
+                                            .padding(.top, 8)
+                                            .padding(.bottom, 12)
+                                    } else {
+                                        Text("Deleting your account will permanently remove all your data and cannot be undone.")
+                                            .font(.caption)
+                                            .foregroundStyle(.white.opacity(0.7))
+                                            .padding(.horizontal, 16)
+                                            .padding(.top, 8)
+                                            .padding(.bottom, 12)
+                                    }
+                                }
+                            }
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 100)
                     }
                 }
             }
+            .navigationBarHidden(true)
             .sheet(isPresented: $showingEditProfile) {
                 EditProfileSheet(accountManager: accountManager)
             }
-        }
-    }
-    
-    // MARK: - Profile Header
-    private var profileHeader: some View {
-        VStack(spacing: 16) {
-            // Avatar
-            Circle()
-                .fill(AppTheme.accentColor(for: appTheme))
-                .frame(width: 100, height: 100)
-                .overlay(
-                    Text(accountManager.initials)
-                        .font(.system(size: 40, weight: .bold))
-                        .foregroundColor(.white)
-                )
-                .shadow(color: AppTheme.accentColor(for: appTheme).opacity(0.3), radius: 10)
-            
-            VStack(spacing: 4) {
-                Text(accountManager.fullName)
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
-                
-                HStack(spacing: 6) {
-                    Image(systemName: accountManager.chefType.icon)
-                        .font(.caption)
-                    Text(accountManager.chefType.rawValue)
-                        .font(.subheadline)
-                }
-                .foregroundColor(.white.opacity(0.8))
-                
-                if !accountManager.email.isEmpty {
-                    Text(accountManager.email)
-                        .font(.caption)
-                        .foregroundColor(.white.opacity(0.6))
-                }
+            .sheet(isPresented: $showingUpgradeFromGuest) {
+                SignUpView()
             }
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 24)
-    }
-    
-    // MARK: - Stats Section
-    private var statsSection: some View {
-        HStack(spacing: 16) {
-            StatCard(
-                title: "Recipes",
-                value: "\(accountManager.recipeCount)",
-                icon: "book.fill",
-                color: .purple
-            )
-            
-            StatCard(
-                title: "Kitchen Items",
-                value: "\(accountManager.kitchenItemCount)",
-                icon: "refrigerator.fill",
-                color: .green
-            )
-            
-            StatCard(
-                title: "Shopping List",
-                value: "\(accountManager.shoppingListCount)",
-                icon: "cart.fill",
-                color: .orange
-            )
-        }
-    }
-    
-    // MARK: - Account Actions
-    private var accountActionsSection: some View {
-        VStack(spacing: 12) {
-            SectionHeader(title: "Account", icon: "person.fill")
-            
-            AccountActionCard(
-                title: "Edit Profile",
-                subtitle: "Update your personal information",
-                icon: "person.circle",
-                iconColor: .blue,
-                action: { showingEditProfile = true }
-            )
-            
-            // Profile Details Card
-            VStack(spacing: 0) {
-                if !accountManager.uuid.isEmpty {
-                    ProfileDetailRow(icon: "number", label: "UUID", value: String(accountManager.uuid.prefix(8)) + "...")
-                    Divider().padding(.leading, 52)
+            .alert("Clear All Data?", isPresented: $showingDeleteAlert) {
+                Button("Cancel", role: .cancel) { }
+                Button("Clear", role: .destructive) {
+                    withAnimation {
+                        accountManager.clearAllData()
+                    }
+                    HapticManager.shared.success()
                 }
-                
-                if !accountManager.address.isEmpty {
-                    ProfileDetailRow(icon: "location.fill", label: "Address", value: accountManager.address)
-                    Divider().padding(.leading, 52)
-                }
-                
-                ProfileDetailRow(icon: accountManager.chefType.icon, label: "Chef Type", value: accountManager.chefType.rawValue)
+            } message: {
+                Text("This will delete all your data and restore sample recipes. This action cannot be undone.")
             }
-            .background {
-                if cardStyle == .solid {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+            .alert("Sign Out?", isPresented: $showingSignOutAlert) {
+                Button("Cancel", role: .cancel) { }
+                Button(isGuestMode ? "Exit" : "Sign Out", role: .destructive) {
+                    if isGuestMode {
+                        UserDefaults.standard.set(false, forKey: "isGuestMode")
+                    }
+                    authManager.signOut()
+                    HapticManager.shared.success()
+                }
+            } message: {
+                if isGuestMode {
+                    Text("Exit guest mode? Your local data will remain on this device.")
                 } else {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(.regularMaterial)
+                    Text("Are you sure you want to sign out?")
                 }
             }
-            
-            AccountActionCard(
-                title: "Preferences",
-                subtitle: "Manage app settings",
-                icon: "slider.horizontal.3",
-                iconColor: .purple,
-                destination: AnyView(SettingsView())
-            )
+            .alert("Delete Account?", isPresented: $showingDeleteAccountAlert) {
+                Button("Cancel", role: .cancel) { }
+                Button("Delete", role: .destructive) {
+                    Task {
+                        try? await authManager.deleteAccount()
+                        HapticManager.shared.success()
+                    }
+                }
+            } message: {
+                Text("This will permanently delete your account and all associated data. This action cannot be undone.")
+            }
         }
     }
     
-    // MARK: - Data Management
-    private var dataManagementSection: some View {
-        VStack(spacing: 12) {
-            SectionHeader(title: "Data", icon: "externaldrive.fill")
-            
-            AccountActionCard(
-                title: "Export Data",
-                subtitle: "Save your recipes and lists",
-                icon: "square.and.arrow.up",
-                iconColor: .green,
-                action: { accountManager.exportData() }
-            )
-            
-            AccountActionCard(
-                title: "Clear All Data",
-                subtitle: "Reset app to default state",
-                icon: "trash.fill",
-                iconColor: .red,
-                showAlert: true,
-                action: { accountManager.clearAllData() }
-            )
-        }
+    // MARK: - Section Header
+    
+    @ViewBuilder
+    private func sectionHeader(_ title: String) -> some View {
+        Text(title)
+            .font(.subheadline)
+            .fontWeight(.semibold)
+            .foregroundStyle(.white.opacity(0.7))
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 16)
+            .padding(.top, 12)
+            .padding(.bottom, 8)
     }
     
-    // MARK: - About Section
-    private var aboutSection: some View {
-        VStack(spacing: 12) {
-            SectionHeader(title: "About", icon: "info.circle.fill")
-            
-            AccountInfoCard(
-                title: "Version",
-                value: "1.0.0",
-                icon: "app.badge"
-            )
-            
-            AccountInfoCard(
-                title: "Build",
-                value: "2025.10.30",
-                icon: "hammer"
-            )
+    // MARK: - Profile Header Row
+    
+    private var profileHeaderRow: some View {
+        Button {
+            showingEditProfile = true
+        } label: {
+            HStack(spacing: 16) {
+                // Avatar Circle with theme colors
+                Circle()
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                AppTheme.accentColor(for: selectedTheme),
+                                AppTheme.accentColor(for: selectedTheme).opacity(0.7)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 72, height: 72)
+                    .overlay {
+                        Text(accountManager.initials)
+                            .font(.system(size: 28, weight: .semibold))
+                            .foregroundStyle(.white)
+                    }
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: 8) {
+                        Text(accountManager.fullName)
+                            .font(.title3)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(colorScheme == .dark ? .white : .primary)
+                        
+                        if isGuestMode {
+                            Text("GUEST")
+                                .font(.caption2)
+                                .fontWeight(.bold)
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 3)
+                                .background(
+                                    Capsule()
+                                        .fill(.orange.gradient)
+                                )
+                        }
+                    }
+                    
+                    HStack(spacing: 4) {
+                        Image(systemName: accountManager.chefType.icon)
+                            .font(.caption)
+                        Text(accountManager.chefType.rawValue)
+                            .font(.subheadline)
+                    }
+                    .foregroundStyle(colorScheme == .dark ? .white.opacity(0.7) : .secondary)
+                    
+                    Text("Edit Profile")
+                        .font(.callout)
+                        .foregroundStyle(AppTheme.accentColor(for: selectedTheme))
+                }
+                
+                Spacer()
+                
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.5) : .gray)
+            }
+            .padding(16)
         }
+        .buttonStyle(.plain)
+    }
+    
+    // MARK: - Stats Grid
+    
+    private var statsGrid: some View {
+        VStack(spacing: 12) {
+            HStack(spacing: 12) {
+                StatTile(
+                    title: "Recipes",
+                    value: "\(accountManager.recipeCount)",
+                    icon: "book.fill",
+                    color: .orange,
+                    colorScheme: colorScheme
+                )
+                
+                StatTile(
+                    title: "Kitchen",
+                    value: "\(accountManager.kitchenItemCount)",
+                    icon: "refrigerator.fill",
+                    color: .green,
+                    colorScheme: colorScheme
+                )
+            }
+            
+            HStack(spacing: 12) {
+                StatTile(
+                    title: "Shopping",
+                    value: "\(accountManager.shoppingListCount)",
+                    icon: "cart.fill",
+                    color: .blue,
+                    colorScheme: colorScheme
+                )
+                
+                StatTile(
+                    title: "Level",
+                    value: accountManager.chefType == .homeCook ? "Beginner" : "Expert",
+                    icon: "star.fill",
+                    color: AppTheme.accentColor(for: selectedTheme),
+                    colorScheme: colorScheme
+                )
+            }
+        }
+        .padding(4)
+    }
+    
+    // MARK: - Helper Methods
+    
+    private func exportData() {
+        accountManager.exportData()
+        HapticManager.shared.success()
     }
 }
 
 // MARK: - Supporting Views
 
-struct SectionHeader: View {
-    let title: String
+/// Native iOS Settings-style row label with colored icon
+struct SettingsRowLabel: View {
     let icon: String
+    let iconColor: Color
+    let title: String
     
     var body: some View {
-        HStack(spacing: 8) {
-            Image(systemName: icon)
-                .foregroundColor(.white.opacity(0.6))
+        HStack(spacing: 12) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                    .fill(iconColor)
+                    .frame(width: 28, height: 28)
+                
+                Image(systemName: icon)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(.white)
+            }
             
-            Text(title.uppercased())
-                .font(.caption)
-                .fontWeight(.semibold)
-                .foregroundColor(.white.opacity(0.6))
-            
-            Spacer()
+            Text(title)
+                .foregroundStyle(.primary)
         }
     }
 }
 
-struct StatCard: View {
+/// Detail row showing label-value pairs
+struct DetailRow: View {
+    let label: String
+    let value: String
+    let icon: String
+    @Environment(\.colorScheme) var colorScheme
+    
+    var body: some View {
+        HStack {
+            Label {
+                Text(label)
+                    .foregroundStyle(colorScheme == .dark ? .white : .primary)
+            } icon: {
+                Image(systemName: icon)
+                    .foregroundStyle(.blue)
+                    .frame(width: 20)
+            }
+            
+            Spacer()
+            
+            Text(value)
+                .foregroundStyle(colorScheme == .dark ? .white.opacity(0.7) : .secondary)
+                .lineLimit(1)
+        }
+    }
+}
+
+/// Stat tile showing metric with icon and color
+struct StatTile: View {
     let title: String
     let value: String
     let icon: String
     let color: Color
-    @Environment(\.colorScheme) var colorScheme
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
+    let colorScheme: ColorScheme
     
     var body: some View {
         VStack(spacing: 8) {
-            Image(systemName: icon)
-                .font(.title2)
-                .foregroundColor(color)
+            ZStack {
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(color.opacity(0.2))
+                    .frame(width: 48, height: 48)
+                
+                Image(systemName: icon)
+                    .font(.system(size: 20))
+                    .foregroundStyle(color)
+            }
             
             Text(value)
-                .font(.title)
+                .font(.title3)
                 .fontWeight(.bold)
-                .foregroundColor(colorScheme == .dark ? .white : .black)
+                .foregroundStyle(colorScheme == .dark ? .white : .primary)
             
             Text(title)
                 .font(.caption)
-                .foregroundColor(.gray)
+                .foregroundStyle(colorScheme == .dark ? .white.opacity(0.7) : .secondary)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 20)
+        .padding(.vertical, 16)
         .background {
-            if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
-            } else {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(.regularMaterial)
-            }
-        }
-    }
-}
-
-struct AccountActionCard: View {
-    let title: String
-    let subtitle: String
-    let icon: String
-    let iconColor: Color
-    var destination: AnyView?
-    var showAlert: Bool = false
-    var action: (() -> Void)?
-    
-    @State private var showingAlert = false
-    @Environment(\.colorScheme) var colorScheme
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
-    
-    var body: some View {
-        Group {
-            if let destination = destination {
-                NavigationLink(destination: destination) {
-                    cardContent
-                }
-            } else {
-                Button(action: {
-                    if showAlert {
-                        showingAlert = true
-                    } else {
-                        action?()
-                    }
-                }) {
-                    cardContent
-                }
-            }
-        }
-        .alert("Are you sure?", isPresented: $showingAlert) {
-            Button("Cancel", role: .cancel) { }
-            Button("Confirm", role: .destructive) {
-                action?()
-            }
-        } message: {
-            Text("This action cannot be undone.")
-        }
-    }
-    
-    private var cardContent: some View {
-        HStack(spacing: 16) {
-            Circle()
-                .fill(iconColor.opacity(0.2))
-                .frame(width: 48, height: 48)
-                .overlay(
-                    Image(systemName: icon)
-                        .foregroundColor(iconColor)
-                )
-            
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title)
-                    .font(.headline)
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
-                
-                Text(subtitle)
-                    .font(.caption)
-                    .foregroundColor(.gray)
-            }
-            
-            Spacer()
-            
-            Image(systemName: "chevron.right")
-                .foregroundColor(.gray)
-                .font(.caption)
-        }
-        .padding(16)
-        .background {
-            if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
-            } else {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(.regularMaterial)
-            }
-        }
-    }
-}
-
-struct AccountInfoCard: View {
-    let title: String
-    let value: String
-    let icon: String
-    @Environment(\.colorScheme) var colorScheme
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
-    
-    var body: some View {
-        HStack(spacing: 16) {
-            Image(systemName: icon)
-                .foregroundColor(.gray)
-                .font(.title3)
-            
-            Text(title)
-                .font(.body)
-                .foregroundColor(colorScheme == .dark ? .white : .black)
-            
-            Spacer()
-            
-            Text(value)
-                .font(.body)
-                .foregroundColor(.gray)
-        }
-        .padding(16)
-        .background {
-            if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
-            } else {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(.regularMaterial)
-            }
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(colorScheme == .dark ? Color(white: 0.15) : .white.opacity(0.9))
         }
     }
 }
 
 // MARK: - Edit Profile Sheet
 
+/// Native iOS-style profile editor using Form
 struct EditProfileSheet: View {
     @ObservedObject var accountManager: AccountManager
     @State private var firstName: String = ""
@@ -397,138 +537,126 @@ struct EditProfileSheet: View {
     @State private var email: String = ""
     @State private var address: String = ""
     @State private var chefType: ChefType = .homeCook
-    @Environment(\.dismiss) var dismiss
-    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.dismiss) private var dismiss
+    
+    private var canSave: Bool {
+        !firstName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
     
     var body: some View {
         NavigationStack {
-            ZStack {
-                Color(colorScheme == .dark ? .black : .white)
-                    .ignoresSafeArea()
-                
-                Form {
-                    Section("Basic Information") {
-                        TextField("First Name", text: $firstName)
-                        TextField("Middle Name (Optional)", text: $middleName)
-                        TextField("Last Name", text: $lastName)
-                    }
+            Form {
+                // Name Section
+                Section {
+                    TextField("First Name", text: $firstName)
+                        .textContentType(.givenName)
                     
-                    Section("Contact Information") {
-                        TextField("Email", text: $email)
-                            .keyboardType(.emailAddress)
-                            .textInputAutocapitalization(.never)
-                        
-                        TextField("Address", text: $address, axis: .vertical)
-                            .lineLimit(3...5)
-                    }
+                    TextField("Middle Name", text: $middleName)
+                        .textContentType(.middleName)
                     
-                    Section("Chef Profile") {
-                        Picker("Chef Type", selection: $chefType) {
-                            ForEach(ChefType.allCases, id: \.self) { type in
-                                HStack {
-                                    Image(systemName: type.icon)
-                                    Text(type.rawValue)
-                                }
-                                .tag(type)
-                            }
-                        }
-                        .pickerStyle(.navigationLink)
-                        
-                        if chefType != .homeCook {
-                            HStack {
-                                Image(systemName: "info.circle")
-                                    .foregroundColor(.blue)
-                                Text(chefType.description)
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-                        }
-                    }
-                    
-                    Section("Account ID") {
-                        HStack {
-                            Text("UUID")
-                                .foregroundColor(.secondary)
-                            Spacer()
-                            Text(accountManager.uuid)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                                .lineLimit(1)
-                                .truncationMode(.middle)
-                        }
-                    }
+                    TextField("Last Name", text: $lastName)
+                        .textContentType(.familyName)
+                } header: {
+                    Text("Name")
+                } footer: {
+                    Text("Your first name is required.")
                 }
-                .scrollContentBackground(.hidden)
+                
+                // Contact Section
+                Section {
+                    TextField("Email", text: $email)
+                        .textContentType(.emailAddress)
+                        .keyboardType(.emailAddress)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                    
+                    TextField("Address", text: $address, axis: .vertical)
+                        .textContentType(.fullStreetAddress)
+                        .lineLimit(2...4)
+                } header: {
+                    Text("Contact")
+                }
+                
+                // Chef Profile Section
+                Section {
+                    Picker("Type", selection: $chefType) {
+                        ForEach(ChefType.allCases, id: \.self) { type in
+                            Label(type.rawValue, systemImage: type.icon)
+                                .tag(type)
+                        }
+                    }
+                } header: {
+                    Text("Chef Profile")
+                } footer: {
+                    Text(chefType.description)
+                }
+                
+                // Account ID Section
+                Section {
+                    HStack {
+                        Text("Account ID")
+                            .foregroundStyle(.secondary)
+                        
+                        Spacer()
+                        
+                        Text(accountManager.uuid.prefix(8) + "...")
+                            .font(.system(.caption, design: .monospaced))
+                            .foregroundStyle(.tertiary)
+                    }
+                } footer: {
+                    Text("Your unique account identifier for data management.")
+                }
             }
             .navigationTitle("Edit Profile")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
+                ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
                         dismiss()
                     }
                 }
                 
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
-                        accountManager.updateProfile(
-                            firstName: firstName,
-                            middleName: middleName,
-                            lastName: lastName,
-                            email: email,
-                            address: address,
-                            chefType: chefType
-                        )
-                        dismiss()
+                        saveProfile()
                     }
                     .fontWeight(.semibold)
-                    .disabled(firstName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    .disabled(!canSave)
                 }
             }
-            .onAppear {
-                firstName = accountManager.firstName
-                middleName = accountManager.middleName
-                lastName = accountManager.lastName
-                email = accountManager.email
-                address = accountManager.address
-                chefType = accountManager.chefType
-            }
+            .onAppear(perform: loadProfile)
         }
     }
-}
-
-// MARK: - Profile Detail Row
-
-struct ProfileDetailRow: View {
-    let icon: String
-    let label: String
-    let value: String
-    @Environment(\.colorScheme) var colorScheme
     
-    var body: some View {
-        HStack(spacing: 12) {
-            Image(systemName: icon)
-                .foregroundColor(.gray)
-                .font(.body)
-                .frame(width: 24)
-            
-            Text(label)
-                .font(.body)
-                .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.7))
-            
-            Spacer()
-            
-            Text(value)
-                .font(.body)
-                .foregroundColor(colorScheme == .dark ? .white : .black)
-                .lineLimit(1)
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
+    private func loadProfile() {
+        firstName = accountManager.firstName
+        middleName = accountManager.middleName
+        lastName = accountManager.lastName
+        email = accountManager.email
+        address = accountManager.address
+        chefType = accountManager.chefType
+    }
+    
+    private func saveProfile() {
+        accountManager.updateProfile(
+            firstName: firstName,
+            middleName: middleName,
+            lastName: lastName,
+            email: email,
+            address: address,
+            chefType: chefType
+        )
+        
+        HapticManager.shared.success()
+        dismiss()
     }
 }
 
-#Preview {
+#Preview("Account View") {
     AccountView()
-        .environment(\.appTheme, .teal)
 }
+
+#Preview("Edit Profile") {
+    EditProfileSheet(accountManager: .shared)
+}
+

@@ -167,7 +167,14 @@ struct MealPlanningView: View {
                 .padding(.horizontal, 4)
             
             ForEach(Array(selectedMealTimes), id: \.self) { mealTime in
-                MealTimeCard(mealTime: mealTime, cardStyle: cardStyle, colorScheme: colorScheme)
+                Button(action: {
+                    currentMealTime = mealTime
+                    showRecipeSelector = true
+                    HapticManager.shared.light()
+                }) {
+                    MealTimeCard(mealTime: mealTime, cardStyle: cardStyle, colorScheme: colorScheme)
+                }
+                .buttonStyle(.plain)
             }
         }
     }
@@ -265,15 +272,25 @@ struct MealTimeCard: View {
                     .font(.headline)
                     .foregroundColor(cardStyle == .solid && colorScheme == .light ? Color.black : .white)
                 
+                HStack(spacing: 4) {
+                    Text(mealTime.timeRange)
+                        .font(.caption2)
+                        .foregroundColor((cardStyle == .solid && colorScheme == .light ? Color.black : .white).opacity(0.5))
+                    
+                Text("•")
+                    .font(.caption2)
+                    .foregroundColor((cardStyle == .solid && colorScheme == .light ? Color.black : Color.white).opacity(0.5))
+                
                 Text("No recipe planned")
                     .font(.caption)
-                    .foregroundColor((cardStyle == .solid && colorScheme == .light ? Color.black : .white).opacity(0.6))
+                    .foregroundColor((cardStyle == .solid && colorScheme == .light ? Color.black : Color.white).opacity(0.6))
+                }
             }
             
             Spacer()
             
             Image(systemName: "chevron.right")
-                .foregroundColor(cardStyle == .solid && colorScheme == .light ? .black : .white).opacity(0.4)
+                .foregroundColor((cardStyle == .solid && colorScheme == .light ? Color.black : Color.white).opacity(0.4))
         }
         .padding(16)
         .background {
@@ -306,6 +323,17 @@ enum MealTime: String, CaseIterable {
         case .snack: return "🍿"
         case .dinner: return "🌙"
         case .lateNight: return "🌃"
+        }
+    }
+    
+    var timeRange: String {
+        switch self {
+        case .breakfast: return "6:00 AM - 10:00 AM"
+        case .brunch: return "10:00 AM - 12:00 PM"
+        case .lunch: return "12:00 PM - 2:00 PM"
+        case .snack: return "2:00 PM - 5:00 PM"
+        case .dinner: return "5:00 PM - 9:00 PM"
+        case .lateNight: return "9:00 PM - 12:00 AM"
         }
     }
 }

@@ -179,7 +179,8 @@ struct RecipeWizardView: View {
             stepHeader(
                 title: "Let's start with a name",
                 subtitle: "What would you like to call this recipe?",
-                stepNumber: 1
+                stepNumber: 1,
+                illustration: "doc.text.fill"
             )
             
             cardContainer {
@@ -199,9 +200,10 @@ struct RecipeWizardView: View {
     private var basicInfoStep: some View {
         VStack(alignment: .leading, spacing: 20) {
             stepHeader(
-                title: "Basic Information",
-                subtitle: "Tell us about the cooking times and details",
-                stepNumber: 2
+                title: "Tell us more",
+                subtitle: "Add some details about your recipe",
+                stepNumber: 2,
+                illustration: "slider.horizontal.3"
             )
             
             cardContainer {
@@ -275,7 +277,8 @@ struct RecipeWizardView: View {
             stepHeader(
                 title: "How many servings?",
                 subtitle: "This will help with ingredient quantities",
-                stepNumber: 3
+                stepNumber: 3,
+                illustration: "person.2.fill"
             )
             
             cardContainer {
@@ -306,7 +309,8 @@ struct RecipeWizardView: View {
             stepHeader(
                 title: "Ingredients",
                 subtitle: "Add your ingredients with quantities",
-                stepNumber: 4
+                stepNumber: 4,
+                illustration: "cart.fill"
             )
             
             cardContainer {
@@ -376,7 +380,8 @@ struct RecipeWizardView: View {
             stepHeader(
                 title: "Pre-prep Instructions",
                 subtitle: "Any prep work before cooking? (Optional)",
-                stepNumber: 5
+                stepNumber: 5,
+                illustration: "list.bullet.clipboard.fill"
             )
             
             cardContainer {
@@ -432,7 +437,8 @@ struct RecipeWizardView: View {
             stepHeader(
                 title: "Cooking Instructions",
                 subtitle: "Walk us through the cooking process",
-                stepNumber: 6
+                stepNumber: 6,
+                illustration: "flame.fill"
             )
             
             cardContainer {
@@ -488,7 +494,8 @@ struct RecipeWizardView: View {
             stepHeader(
                 title: "Final Notes",
                 subtitle: "Any tips, variations, or additional notes? (Optional)",
-                stepNumber: 7
+                stepNumber: 7,
+                illustration: "note.text"
             )
             
             cardContainer {
@@ -521,25 +528,41 @@ struct RecipeWizardView: View {
     }
     
     // MARK: - Helper Views
-    private func stepHeader(title: String, subtitle: String, stepNumber: Int) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text("Step \(stepNumber) of \(totalSteps)")
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .foregroundColor(.white.opacity(0.8))
+    private func stepHeader(title: String, subtitle: String, stepNumber: Int, illustration: String) -> some View {
+        VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Text("Step \(stepNumber) of \(totalSteps)")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .foregroundColor(.white.opacity(0.8))
+                    
+                    Spacer()
+                }
                 
-                Spacer()
+                Text(title)
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+                
+                Text(subtitle)
+                    .font(.subheadline)
+                    .foregroundColor(.white.opacity(0.9))
             }
             
-            Text(title)
-                .font(.title2)
-                .fontWeight(.bold)
-                .foregroundColor(.white)
-            
-            Text(subtitle)
-                .font(.subheadline)
-                .foregroundColor(.white.opacity(0.9))
+            // SF Symbol Illustration below the text
+            HStack {
+                Spacer()
+                Image(systemName: illustration)
+                    .font(.system(size: 50))
+                    .foregroundStyle(
+                        .white.opacity(0.15),
+                        .white.opacity(0.05)
+                    )
+                    .symbolRenderingMode(.palette)
+                    .frame(width: 60, height: 60)
+                Spacer()
+            }
         }
     }
     

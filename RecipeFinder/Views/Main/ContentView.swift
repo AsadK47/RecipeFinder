@@ -36,17 +36,23 @@ struct ContentView: View {
                     }
                     .tag(2)
                 
+                CookTimerView()
+                    .tabItem {
+                        Label("Timer", systemImage: "timer")
+                    }
+                    .tag(3)
+                
                 MealPlanningView(recipes: $recipes)
                     .tabItem {
                         Label("Meals", systemImage: "calendar")
                     }
-                    .tag(3)
+                    .tag(4)
                 
                 MoreView()
                     .tabItem {
-                        Label("More", systemImage: "ellipsis")
+                        Label("Settings", systemImage: "gearshape.fill")
                     }
-                    .tag(4)
+                    .tag(5)
             }
             .environment(\.appTheme, themeBinding)
             .tint(AppTheme.accentColor(for: themeBinding))
