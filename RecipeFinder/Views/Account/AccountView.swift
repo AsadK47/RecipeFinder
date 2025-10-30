@@ -72,15 +72,23 @@ struct AccountView: View {
                 .shadow(color: AppTheme.accentColor(for: appTheme).opacity(0.3), radius: 10)
             
             VStack(spacing: 4) {
-                Text(accountManager.name)
+                Text(accountManager.fullName)
                     .font(.title2)
                     .fontWeight(.bold)
                     .foregroundColor(.white)
                 
+                HStack(spacing: 6) {
+                    Image(systemName: accountManager.chefType.icon)
+                        .font(.caption)
+                    Text(accountManager.chefType.rawValue)
+                        .font(.subheadline)
+                }
+                .foregroundColor(.white.opacity(0.8))
+                
                 if !accountManager.email.isEmpty {
                     Text(accountManager.email)
-                        .font(.subheadline)
-                        .foregroundColor(.white.opacity(0.7))
+                        .font(.caption)
+                        .foregroundColor(.white.opacity(0.6))
                 }
             }
         }
@@ -121,11 +129,35 @@ struct AccountView: View {
             
             AccountActionCard(
                 title: "Edit Profile",
-                subtitle: "Update your name and email",
+                subtitle: "Update your personal information",
                 icon: "person.circle",
                 iconColor: .blue,
                 action: { showingEditProfile = true }
             )
+            
+            // Profile Details Card
+            VStack(spacing: 0) {
+                if !accountManager.uuid.isEmpty {
+                    ProfileDetailRow(icon: "number", label: "UUID", value: String(accountManager.uuid.prefix(8)) + "...")
+                    Divider().padding(.leading, 52)
+                }
+                
+                if !accountManager.address.isEmpty {
+                    ProfileDetailRow(icon: "location.fill", label: "Address", value: accountManager.address)
+                    Divider().padding(.leading, 52)
+                }
+                
+                ProfileDetailRow(icon: accountManager.chefType.icon, label: "Chef Type", value: accountManager.chefType.rawValue)
+            }
+            .background {
+                if cardStyle == .solid {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                } else {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(.regularMaterial)
+                }
+            }
             
             AccountActionCard(
                 title: "Preferences",
@@ -244,9 +276,9 @@ struct AccountActionCard: View {
     let subtitle: String
     let icon: String
     let iconColor: Color
-    var destination: AnyView? = nil
+    var destination: AnyView?
     var showAlert: Bool = false
-    var action: (() -> Void)? = nil
+    var action: (() -> Void)?
     
     @State private var showingAlert = false
     @Environment(\.colorScheme) var colorScheme
@@ -359,8 +391,12 @@ struct AccountInfoCard: View {
 
 struct EditProfileSheet: View {
     @ObservedObject var accountManager: AccountManager
-    @State private var name: String = ""
+    @State private var firstName: String = ""
+    @State private var middleName: String = ""
+    @State private var lastName: String = ""
     @State private var email: String = ""
+    @State private var address: String = ""
+    @State private var chefType: ChefType = .homeCook
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
     
@@ -371,11 +407,55 @@ struct EditProfileSheet: View {
                     .ignoresSafeArea()
                 
                 Form {
-                    Section("Profile Information") {
-                        TextField("Name", text: $name)
+                    Section("Basic Information") {
+                        TextField("First Name", text: $firstName)
+                        TextField("Middle Name (Optional)", text: $middleName)
+                        TextField("Last Name", text: $lastName)
+                    }
+                    
+                    Section("Contact Information") {
                         TextField("Email", text: $email)
                             .keyboardType(.emailAddress)
                             .textInputAutocapitalization(.never)
+                        
+                        TextField("Address", text: $address, axis: .vertical)
+                            .lineLimit(3...5)
+                    }
+                    
+                    Section("Chef Profile") {
+                        Picker("Chef Type", selection: $chefType) {
+                            ForEach(ChefType.allCases, id: \.self) { type in
+                                HStack {
+                                    Image(systemName: type.icon)
+                                    Text(type.rawValue)
+                                }
+                                .tag(type)
+                            }
+                        }
+                        .pickerStyle(.navigationLink)
+                        
+                        if chefType != .homeCook {
+                            HStack {
+                                Image(systemName: "info.circle")
+                                    .foregroundColor(.blue)
+                                Text(chefType.description)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    }
+                    
+                    Section("Account ID") {
+                        HStack {
+                            Text("UUID")
+                                .foregroundColor(.secondary)
+                            Spacer()
+                            Text(accountManager.uuid)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .lineLimit(1)
+                                .truncationMode(.middle)
+                        }
                     }
                 }
                 .scrollContentBackground(.hidden)
@@ -391,18 +471,60 @@ struct EditProfileSheet: View {
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save") {
-                        accountManager.updateProfile(name: name, email: email)
+                        accountManager.updateProfile(
+                            firstName: firstName,
+                            middleName: middleName,
+                            lastName: lastName,
+                            email: email,
+                            address: address,
+                            chefType: chefType
+                        )
                         dismiss()
                     }
                     .fontWeight(.semibold)
-                    .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    .disabled(firstName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
             }
             .onAppear {
-                name = accountManager.name
+                firstName = accountManager.firstName
+                middleName = accountManager.middleName
+                lastName = accountManager.lastName
                 email = accountManager.email
+                address = accountManager.address
+                chefType = accountManager.chefType
             }
         }
+    }
+}
+
+// MARK: - Profile Detail Row
+
+struct ProfileDetailRow: View {
+    let icon: String
+    let label: String
+    let value: String
+    @Environment(\.colorScheme) var colorScheme
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .foregroundColor(.gray)
+                .font(.body)
+                .frame(width: 24)
+            
+            Text(label)
+                .font(.body)
+                .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.7))
+            
+            Spacer()
+            
+            Text(value)
+                .font(.body)
+                .foregroundColor(colorScheme == .dark ? .white : .black)
+                .lineLimit(1)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
     }
 }
 

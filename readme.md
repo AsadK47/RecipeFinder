@@ -3,12 +3,28 @@
 **Enterprise-Grade Recipe Management System for iOS**  
 *Architected for Privacy-First, On-Device Data Processing*
 
-![Swift](https://img.shields.io/badge/Swift-5.7+-FA7343?logo=swift&logoColor=white)
-![iOS](https://img.shields.io/badge/iOS-15.0+-000000?logo=apple&logoColor=white)
-![SwiftUI](https://img.shields.io/badge/SwiftUI-Declarative_UI-blue?logo=swift&logoColor=white)
-![License](https://img.shields.io/badge/License-Proprietary-red)
-![Architecture](https://img.shields.io/badge/Architecture-MVC--VM-green)
-![Testing](https://img.shields.io/badge/Test_Coverage-Business_Logic-brightgreen)
+<p align="center">
+  <img src="https://img.shields.io/badge/Swift-5.7+-FA7343?style=for-the-badge&logo=swift&logoColor=white" alt="Swift Version"/>
+  <img src="https://img.shields.io/badge/iOS-15.0+-000000?style=for-the-badge&logo=apple&logoColor=white" alt="iOS Version"/>
+  <img src="https://img.shields.io/badge/Platform-iPhone%20%7C%20iPad-lightgrey?style=for-the-badge&logo=apple&logoColor=white" alt="Platform"/>
+  <img src="https://img.shields.io/badge/SwiftUI-Declarative_UI-0071E3?style=for-the-badge&logo=swift&logoColor=white" alt="SwiftUI"/>
+  <img src="https://img.shields.io/badge/License-Proprietary-red?style=for-the-badge" alt="License"/>
+  <img src="https://img.shields.io/github/actions/workflow/status/AsadK47/RecipeFinder/ci.yml?branch=main&style=for-the-badge&label=Build&logo=xcode&logoColor=white" alt="Build Status"/>
+</p>
+
+<p align="center">
+  <strong>Built With</strong>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Made_with-Swift-FA7343?style=flat-square&logo=swift&logoColor=white" alt="Made with Swift"/>
+  <img src="https://img.shields.io/badge/Built_on-macOS-000000?style=flat-square&logo=apple&logoColor=white" alt="Built on macOS"/>
+  <img src="https://img.shields.io/badge/Developed_in-Xcode-147EFB?style=flat-square&logo=xcode&logoColor=white" alt="Developed in Xcode"/>
+  <img src="https://img.shields.io/badge/Designed_for-iPhone-000000?style=flat-square&logo=apple&logoColor=white" alt="Designed for iPhone"/>
+  <img src="https://img.shields.io/badge/Edited_with-VS_Code-007ACC?style=flat-square&logo=visualstudiocode&logoColor=white" alt="Edited with VS Code"/>
+  <img src="https://img.shields.io/badge/Quality-SwiftLint-00A99D?style=flat-square&logo=swift&logoColor=white" alt="SwiftLint"/>
+  <img src="https://img.shields.io/badge/Engineering-Best_Practices-success?style=flat-square" alt="Best Practices"/>
+</p>
 
 ---
 
@@ -55,8 +71,6 @@ RecipeFinder is a native iOS application implementing a **client-side recipe man
 **Deployment Model:** Single-tenant, on-device execution
 
 ---
-
-## System Architecture
 
 ## System Architecture
 
@@ -612,6 +626,399 @@ xcodebuild -scheme RecipeFinder -configuration Release \
 xcodebuild clean -scheme RecipeFinder
 # Or in Xcode: ⌘ + Shift + K
 ```
+
+---
+
+## 👨‍💻 For Developers
+
+### Development Stack
+
+This project is built using Apple's native development ecosystem with industry best practices.
+
+#### Core Technologies
+
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| **Swift** | 5.7+ | Primary programming language |
+| **SwiftUI** | iOS 15.0+ | Declarative UI framework |
+| **Core Data** | iOS 15.0+ | Local persistence & ORM |
+| **Combine** | iOS 15.0+ | Reactive programming |
+| **XCTest** | iOS 15.0+ | Unit testing framework |
+
+#### Development Tools
+
+| Tool | Version | Purpose |
+|------|---------|---------|
+| **Xcode** | 14.0+ | Primary IDE for iOS development |
+| **Visual Studio Code** | Latest | Markdown editing & documentation |
+| **SwiftLint** | Latest | Code style enforcement & linting |
+| **Git** | 2.0+ | Version control |
+| **Homebrew** | Latest | macOS package manager |
+
+#### Hardware Requirements
+
+| Component | Requirement | Recommended |
+|-----------|-------------|-------------|
+| **Mac** | Intel or Apple Silicon | Apple Silicon (M1/M2/M3) |
+| **macOS** | 13.0 (Ventura)+ | 14.0 (Sonoma)+ |
+| **RAM** | 8GB | 16GB+ |
+| **Storage** | 10GB free | 50GB+ free |
+| **iPhone/iPad** | iOS 15.0+ for testing | iOS 17.0+ |
+
+### Development Dependencies
+
+#### Runtime Dependencies
+**None!** 🎉 - This app has **zero external dependencies** for maximum privacy, security, and maintainability.
+
+All functionality is built using:
+- Apple's native frameworks (SwiftUI, Core Data, Combine, Foundation)
+- Custom-built utilities and components
+- No third-party SDKs or libraries
+
+#### Development-Only Dependencies
+
+```bash
+# SwiftLint - Code style and quality enforcement
+brew install swiftlint
+
+# Xcode Command Line Tools (if not already installed)
+xcode-select --install
+
+# Optional: Xcode Previews requires simulator runtimes
+# These are installed through Xcode Settings > Platforms
+```
+
+### Project Setup Guide
+
+#### 1. Prerequisites Check
+
+```bash
+# Verify Xcode installation
+xcodebuild -version
+# Should show: Xcode 14.0 or later
+
+# Verify Swift version
+swift --version
+# Should show: Swift 5.7 or later
+
+# Verify Git
+git --version
+
+# Install SwiftLint (required for development)
+brew install swiftlint
+swiftlint version
+```
+
+#### 2. Clone & Open Project
+
+```bash
+# Clone repository
+git clone https://github.com/AsadK47/RecipeFinder.git
+cd RecipeFinder
+
+# Open in Xcode
+open RecipeFinder.xcodeproj
+
+# Or use command line
+xed .
+```
+
+#### 3. Build Configuration
+
+**Select a simulator:**
+- In Xcode, click the device selector (top left)
+- Choose any iPhone running iOS 15.0+
+- Recommended: iPhone 15 Pro (iOS 17.0+)
+
+**Build shortcuts:**
+- **⌘R** - Build and run
+- **⌘B** - Build only
+- **⌘U** - Run tests
+- **⌘⇧K** - Clean build folder
+
+#### 4. Verify Setup
+
+```bash
+# Run linter (should pass with warnings only)
+./scripts/lint.sh
+
+# Run tests (should all pass)
+./scripts/test.sh
+
+# Or run both
+./scripts/lint.sh && ./scripts/test.sh
+```
+
+### Code Architecture Overview
+
+#### Design Patterns Used
+
+| Pattern | Usage | Files |
+|---------|-------|-------|
+| **MVVM** | View-ViewModel separation | All Views + Managers |
+| **Repository** | Data access abstraction | PersistenceController |
+| **Observer** | State management | @Published, Combine |
+| **Singleton** | Shared instances | PersistenceController, managers |
+| **Strategy** | Categorization algorithm | CategoryClassifier |
+| **Builder** | Recipe creation | RecipeWizardView |
+
+#### Key Directories Explained
+
+```
+RecipeFinder/
+├── 📱 Components/          # Reusable UI components
+│   ├── AnimatedHeartButton.swift    # Favorite button with animation
+│   ├── RecipeCard.swift             # Recipe display card
+│   └── ModernSearchBar.swift        # Custom search UI
+│
+├── 📦 Models/              # Data models (structs/classes)
+│   ├── RecipeModel.swift            # Recipe entity (Core Data)
+│   └── ShoppingListItem.swift       # Shopping item model
+│
+├── 💾 Persistence/         # Database layer
+│   ├── PersistenceController.swift  # Core Data stack setup
+│   ├── ShoppingListManager.swift    # Shopping list CRUD
+│   └── KitchenInventoryManager.swift # Kitchen inventory CRUD
+│
+├── 🔌 Services/            # External API integrations (empty)
+│
+├── 🎨 Theme/               # App theming system
+│   └── AppTheme.swift               # 8 color themes + gradients
+│
+├── 🛠️ Utilities/           # Helper functions
+│   ├── CategoryClassifier.swift     # Ingredient categorization
+│   ├── RecipeImporter.swift         # Schema.org parser
+│   └── UnitConversion.swift         # Measurement conversions
+│
+└── 📺 Views/               # SwiftUI views (screens)
+    ├── Main/ContentView.swift       # Tab bar container
+    ├── Recipes/RecipeSearchView.swift
+    ├── Shopping/ShoppingListView.swift
+    └── Kitchen/KitchenView.swift
+```
+
+#### Core Data Schema
+
+**Entities:**
+- `RecipeEntity`: Stores recipe data (title, ingredients, instructions, etc.)
+- Managed by: `PersistenceController.swift`
+- Storage: Local SQLite database
+
+**Relationships:**
+- One-to-many: Recipe → Instructions
+- One-to-many: Recipe → Ingredients
+- Cascade delete: Deleting recipe removes all related data
+
+### Development Workflow
+
+#### 1. Making Changes
+
+```bash
+# Create a feature branch
+git checkout -b feature/your-feature-name
+
+# Make your changes in Xcode
+
+# Run linter
+./scripts/lint.sh
+
+# Fix any linting errors
+swiftlint --fix --path RecipeFinder/
+
+# Run tests
+./scripts/test.sh
+
+# Commit changes
+git add .
+git commit -m "feat(scope): your descriptive commit message"
+
+# Push to remote
+git push origin feature/your-feature-name
+```
+
+#### 2. Commit Message Convention
+
+Format: `<type>(<scope>): <description>`
+
+**Types:**
+- `feat`: New feature
+- `fix`: Bug fix
+- `refactor`: Code refactoring
+- `test`: Adding/updating tests
+- `docs`: Documentation changes
+- `style`: Code style changes (formatting)
+- `perf`: Performance improvements
+- `chore`: Build process, dependencies
+
+**Example:**
+```bash
+git commit -m "feat(shopping): add bulk delete functionality"
+git commit -m "fix(kitchen): resolve ingredient search crash"
+git commit -m "refactor(theme): extract gradient calculations"
+```
+
+#### 3. Code Review Checklist
+
+Before submitting changes:
+
+- [ ] Code compiles without errors
+- [ ] SwiftLint passes (`./scripts/lint.sh`)
+- [ ] All tests pass (`./scripts/test.sh`)
+- [ ] No force unwraps (`!`) without good reason
+- [ ] Added comments for complex logic
+- [ ] Updated documentation if needed
+- [ ] Tested on both light and dark mode
+- [ ] Tested with different themes
+- [ ] No memory leaks (use Instruments)
+- [ ] Accessibility labels added
+
+### Testing Guide
+
+#### Running Tests
+
+```bash
+# All tests
+./scripts/test.sh
+
+# Specific test file
+xcodebuild test -scheme RecipeFinder \
+  -only-testing:RecipeFinderTests/RecipeModelTests
+
+# With code coverage
+xcodebuild test -scheme RecipeFinder \
+  -enableCodeCoverage YES
+```
+
+#### Test Structure
+
+```
+RecipeFinderTests/
+├── Models/                  # Model unit tests
+├── Persistence/             # Database tests
+├── Utilities/               # Algorithm tests
+└── Theme/                   # Theme system tests
+```
+
+#### Writing Tests
+
+Follow the **AAA Pattern** (Arrange-Act-Assert):
+
+```swift
+func testRecipeCategorization() {
+    // Arrange
+    let ingredient = "chicken breast"
+    
+    // Act
+    let category = CategoryClassifier.categorize(ingredient)
+    
+    // Assert
+    XCTAssertEqual(category, "Poultry")
+}
+```
+
+### Common Development Tasks
+
+#### Adding a New Feature
+
+1. **Plan**: Identify affected files
+2. **Create branch**: `git checkout -b feature/new-feature`
+3. **Implement**: Write code with comments
+4. **Test**: Add unit tests
+5. **Lint**: Run SwiftLint
+6. **Commit**: Use conventional commits
+7. **Push**: Submit for review
+
+#### Debugging Tips
+
+```swift
+// Use debugLog() instead of print() (stripped in Release)
+debugLog("User tapped recipe: \(recipe.title)")
+
+// Set breakpoints in Xcode (⌘\)
+// Use LLDB console for inspection
+po recipe
+po recipe.ingredients.count
+
+// Memory debugging
+// Product > Profile > Leaks/Allocations
+```
+
+#### Performance Profiling
+
+1. **Time Profiler**: Find slow code
+   - Product → Profile → Time Profiler
+   - Record while using the app
+   - Look for hot spots
+
+2. **Allocations**: Find memory issues
+   - Product → Profile → Allocations
+   - Watch for memory growth
+   - Check for leaks
+
+### Troubleshooting
+
+#### Common Issues
+
+**Build Errors:**
+```bash
+# Clean derived data
+rm -rf ~/Library/Developer/Xcode/DerivedData
+
+# Reset package caches (if using SPM packages)
+File > Packages > Reset Package Caches
+
+# Clean build folder
+⌘⇧K or xcodebuild clean
+```
+
+**Simulator Issues:**
+```bash
+# Reset simulator
+xcrun simctl erase all
+
+# Kill and restart simulator
+killall Simulator
+
+# Boot specific simulator
+xcrun simctl boot "iPhone 15 Pro"
+```
+
+**SwiftLint Errors:**
+```bash
+# Update SwiftLint
+brew upgrade swiftlint
+
+# Check version
+swiftlint version
+
+# Verify config
+swiftlint lint --config .swiftlint.yml --path RecipeFinder/
+```
+
+### Best Practices Enforced
+
+✅ **Code Style**: SwiftLint with custom rules  
+✅ **Architecture**: MVVM pattern throughout  
+✅ **Testing**: Unit tests for business logic  
+✅ **Documentation**: Inline comments for complex code  
+✅ **Git**: Conventional commits  
+✅ **Performance**: LazyVStack for lists, background contexts  
+✅ **Accessibility**: VoiceOver labels, Dynamic Type support  
+✅ **Security**: No hardcoded secrets, local-only data  
+
+### Resources for Contributors
+
+**Apple Documentation:**
+- [Swift Programming Language](https://docs.swift.org/swift-book/)
+- [SwiftUI Documentation](https://developer.apple.com/documentation/swiftui/)
+- [Core Data Programming Guide](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/CoreData/)
+- [Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/)
+
+**Project-Specific Docs:**
+- [Commands Reference](docs/COMMANDS.md) - Complete CLI command list
+- [Category Classifier Guide](docs/CATEGORY_CLASSIFIER_EXPANSION.md) - Taxonomy extension
+- [Design Aesthetic](docs/DESIGN_AESTHETIC.md) - UI/UX guidelines
+- [Theme Colors](docs/THEME_COLORS.md) - Color palette reference
 
 ---
 

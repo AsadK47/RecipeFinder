@@ -92,13 +92,16 @@ struct KitchenView: View {
                             } else if !searchText.isEmpty {
                                 searchResultsView
                             } else {
-                                // Quick Add section at the TOP when there are items
-                                quickAddSection
-                                
+                                // Recipe Matches at the TOP (most important)
                                 if !quickMatchRecipes.isEmpty {
                                     quickRecipeMatchesView
-                                        .padding(.top, 8)
+                                        .padding(.bottom, 8)
                                 }
+                                
+                                // Quick Add section below recipe matches
+                                quickAddSection
+                                
+                                // Kitchen items at the bottom
                                 kitchenItemsView
                             }
                         }
@@ -260,38 +263,46 @@ struct KitchenView: View {
     
     private var quickRecipeMatchesView: some View {
         VStack(alignment: .leading, spacing: 16) {
-            VStack(alignment: .leading, spacing: 6) {
-                HStack(spacing: 8) {
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 10) {
                     Image(systemName: "sparkles")
-                        .font(.title3)
+                        .font(.system(size: 28))
                         .foregroundColor(.yellow)
                     
                     Text("Quick Recipe Matches")
-                        .font(.title2)
-                        .fontWeight(.bold)
+                        .font(.system(size: 26, weight: .bold))
                         .foregroundColor(.white)
                 }
                 
                 Text(matchCountText)
-                    .font(.subheadline)
-                    .foregroundColor(.white.opacity(0.8))
+                    .font(.body)
+                    .foregroundColor(.white.opacity(0.9))
+                
+                Text("Tap any recipe to view full details and cooking instructions")
+                    .font(.caption)
+                    .foregroundColor(.white.opacity(0.7))
             }
             .padding(.horizontal, 20)
-            .padding(.vertical, 16)
+            .padding(.vertical, 20)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: 20)
                     .fill(
                         LinearGradient(
-                            colors: [Color.purple.opacity(0.3), Color.pink.opacity(0.2)],
+                            colors: [
+                                Color.purple.opacity(0.4),
+                                Color.pink.opacity(0.3),
+                                Color.orange.opacity(0.2)
+                            ],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
                     )
+                    .shadow(color: Color.purple.opacity(0.3), radius: 10, x: 0, y: 5)
             )
             .padding(.horizontal, 20)
             
-                ScrollView(.horizontal, showsIndicators: false) {
+            ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 16) {
                     ForEach(quickMatchRecipes.prefix(10)) { recipe in
                         NavigationLink(destination: RecipeDetailView(recipe: recipe, shoppingListManager: shoppingListManager, onFavoriteToggle: {
@@ -343,27 +354,53 @@ struct KitchenView: View {
             }
             .padding(.horizontal, 20)
             
-            // Show top 3 popular categories expanded by default
-            ForEach(Array(categorizedIngredients.prefix(3).enumerated()), id: \.element.category) { index, element in
+            // Show top 5 most important categories
+            ForEach(Array(categorizedIngredients.prefix(5).enumerated()), id: \.element.category) { index, element in
                 KitchenQuickAddCategoryCard(
                     category: element.category,
                     ingredients: element.ingredients,
                     kitchenManager: kitchenManager,
-                    defaultExpanded: true
+                    defaultExpanded: false
                 )
             }
             .padding(.horizontal, 20)
             
-            // Show rest collapsed
-            if categorizedIngredients.count > 3 {
-                ForEach(Array(categorizedIngredients.dropFirst(3)), id: \.category) { category, ingredients in
-                    KitchenQuickAddCategoryCard(
-                        category: category,
-                        ingredients: ingredients,
-                        kitchenManager: kitchenManager,
-                        defaultExpanded: false
-                    )
+            // Show "More Categories" button if there are more than 5 categories
+            if categorizedIngredients.count > 5 {
+                Button(action: {
+                    showAddIngredientSheet = true
+                }) {
+                    HStack {
+                        Image(systemName: "ellipsis.circle.fill")
+                            .font(.title3)
+                            .foregroundColor(AppTheme.accentColor(for: appTheme))
+                        
+                        Text("More Categories")
+                            .font(.headline)
+                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                        
+                        Spacer()
+                        
+                        Text("\(categorizedIngredients.count - 5) more")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                        
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                    }
+                    .padding(16)
+                    .background {
+                        if cardStyle == .solid {
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                        } else {
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(.regularMaterial)
+                        }
+                    }
                 }
+                .buttonStyle(PlainButtonStyle())
                 .padding(.horizontal, 20)
             }
         }

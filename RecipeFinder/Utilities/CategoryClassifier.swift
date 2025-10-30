@@ -280,7 +280,7 @@ enum CategoryClassifier {
             "stevia", "monk fruit"
         ]
     ]
-    
+
     
     // MARK: - Category Helpers
     
@@ -315,7 +315,7 @@ enum CategoryClassifier {
         case "Kitchen": return "cabinet.fill"
         case "Grains & Noodles": return "takeoutbag.and.cup.and.straw.fill"
         case "Spices & Herbs": return "leaf.fill"
-        default: return "basket.fill"
+        default: return "shippingbox.fill"
         }
     }
     
@@ -358,7 +358,7 @@ enum CategoryClassifier {
     
     // MARK: - Categorization Logic
     
-    // swiftlint:disable:next cyclomatic_complexity function_body_length
+    // swiftlint:disable cyclomatic_complexity function_body_length
     static func categorize(_ itemName: String) -> String {
         let lowercased = itemName.lowercased()
         
@@ -473,6 +473,7 @@ enum CategoryClassifier {
         // Default: Other
         return "Other"
     }
+    // swiftlint:enable cyclomatic_complexity function_body_length
     
     // Get suggested categories based on partial input (for autocomplete)
     static func suggestCategory(for partialInput: String) -> String {

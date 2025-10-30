@@ -299,13 +299,13 @@ struct ShoppingListView: View {
                 .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
                 .padding(.bottom, 6)
             
-            VStack(alignment: .leading, spacing: 11) {
+            VStack(alignment: .leading, spacing: 16) {
                 HStack(spacing: 12) {
                     Image(systemName: "sparkles")
                         .foregroundColor(AppTheme.accentColor)
                         .font(.title3)
                         .frame(width: 24)
-                    VStack(alignment: .leading, spacing: 2) {
+                    VStack(alignment: .leading, spacing: 3) {
                         Text("Smart Categories")
                             .font(.subheadline)
                             .fontWeight(.semibold)
@@ -322,7 +322,7 @@ struct ShoppingListView: View {
                         .foregroundColor(AppTheme.accentColor)
                         .font(.title3)
                         .frame(width: 24)
-                    VStack(alignment: .leading, spacing: 2) {
+                    VStack(alignment: .leading, spacing: 3) {
                         Text("Auto Grouping")
                             .font(.subheadline)
                             .fontWeight(.semibold)
@@ -339,7 +339,7 @@ struct ShoppingListView: View {
                         .foregroundColor(AppTheme.accentColor)
                         .font(.title3)
                         .frame(width: 24)
-                    VStack(alignment: .leading, spacing: 2) {
+                    VStack(alignment: .leading, spacing: 3) {
                         Text("Tap to Collapse")
                             .font(.subheadline)
                             .fontWeight(.semibold)
@@ -356,7 +356,7 @@ struct ShoppingListView: View {
                         .foregroundColor(AppTheme.accentColor)
                         .font(.title3)
                         .frame(width: 24)
-                    VStack(alignment: .leading, spacing: 2) {
+                    VStack(alignment: .leading, spacing: 3) {
                         Text("Check Off Items")
                             .font(.subheadline)
                             .fontWeight(.semibold)
@@ -373,7 +373,7 @@ struct ShoppingListView: View {
                         .foregroundColor(AppTheme.accentColor)
                         .font(.title3)
                         .frame(width: 24)
-                    VStack(alignment: .leading, spacing: 2) {
+                    VStack(alignment: .leading, spacing: 3) {
                         Text("Delete Items")
                             .font(.subheadline)
                             .fontWeight(.semibold)
@@ -390,7 +390,7 @@ struct ShoppingListView: View {
                         .foregroundColor(AppTheme.accentColor)
                         .font(.title3)
                         .frame(width: 24)
-                    VStack(alignment: .leading, spacing: 2) {
+                    VStack(alignment: .leading, spacing: 3) {
                         Text("Bulk Actions")
                             .font(.subheadline)
                             .fontWeight(.semibold)

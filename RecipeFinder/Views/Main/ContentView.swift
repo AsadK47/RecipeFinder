@@ -81,61 +81,72 @@ struct ContentView: View {
         let themeColor = UIColor(AppTheme.accentColor(for: themeBinding))
         
         if cardStyle == .solid {
-            // Solid mode: Use opaque backgrounds with theme tint
+            // Solid mode: Use opaque backgrounds
             appearance.configureWithOpaqueBackground()
             let tabBarBgColor: UIColor = {
                 if colorScheme == .dark {
-                    // Dark mode: Dark background with subtle theme tint
-                    return UIColor(white: 0.15, alpha: 1.0).withAlphaComponent(0.95)
+                    // Dark mode: Rich dark background
+                    return UIColor(white: 0.12, alpha: 0.98)
                 } else {
-                    // Light mode: Light background with very subtle theme tint
+                    // Light mode: Clean light background
                     return UIColor(white: 0.98, alpha: 0.98)
                 }
             }()
             appearance.backgroundColor = tabBarBgColor
         } else {
-            // Frosted Glass mode: Colored blur for readability
+            // Frosted Glass mode: Enhanced blur with theme-tinted background
             appearance.configureWithDefaultBackground()
             
-            // Add theme-colored tint to the blur for better readability
+            // Create a rich, readable background with theme color
             let tintedBackground: UIColor = {
                 if colorScheme == .dark {
-                    // Dark mode: Dark blur with theme tint
-                    return themeColor.withAlphaComponent(0.15)
+                    // Dark mode: Deep tinted background for better readability
+                    // Mix theme color with dark base for subtle branded effect
+                    return themeColor
+                        .withAlphaComponent(0.25)
+                        .blended(with: UIColor(white: 0.1, alpha: 0.85))
                 } else {
-                    // Light mode: Light blur with stronger theme tint for readability
-                    return themeColor.withAlphaComponent(0.12)
+                    // Light mode: Light tinted background
+                    // Stronger tint in light mode for contrast with colorful content
+                    return themeColor
+                        .withAlphaComponent(0.20)
+                        .blended(with: UIColor(white: 0.95, alpha: 0.90))
                 }
             }()
             appearance.backgroundColor = tintedBackground
             
-            // Add blur effect for frosted glass look
+            // Enhanced blur effect for premium frosted glass look
             let blurStyle: UIBlurEffect.Style = colorScheme == .dark 
-                ? .systemMaterialDark 
-                : .systemMaterialLight
+                ? .systemUltraThinMaterialDark 
+                : .systemUltraThinMaterialLight
             
             appearance.backgroundEffect = UIBlurEffect(style: blurStyle)
         }
         
-        // Icon colors - stronger contrast for readability
+        // Icon colors - optimized for readability over colored backgrounds
         let accentColor = UIColor(AppTheme.accentColor(for: themeBinding))
-        appearance.stackedLayoutAppearance.selected.iconColor = accentColor
+        let selectedIconColor = colorScheme == .dark 
+            ? accentColor.lighter(by: 0.1) // Slightly brighter in dark mode
+            : accentColor
+        
+        appearance.stackedLayoutAppearance.selected.iconColor = selectedIconColor
         appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
-            .foregroundColor: accentColor,
+            .foregroundColor: selectedIconColor,
             .font: UIFont.systemFont(ofSize: 11, weight: .semibold)
         ]
         
-        // Unselected icons - better contrast
+        // Unselected icons - high contrast for readability
         let unselectedColor: UIColor = colorScheme == .dark 
-            ? UIColor.white.withAlphaComponent(0.6)
-            : UIColor.black.withAlphaComponent(0.5)
+            ? UIColor.white.withAlphaComponent(0.7)  // Increased from 0.6
+            : UIColor.black.withAlphaComponent(0.6)  // Increased from 0.5
         
         appearance.stackedLayoutAppearance.normal.iconColor = unselectedColor
         appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
             .foregroundColor: unselectedColor,
-            .font: UIFont.systemFont(ofSize: 11, weight: .regular)
+            .font: UIFont.systemFont(ofSize: 11, weight: .medium)  // Medium instead of regular
         ]
         
+        // Apply to all tab bar states
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
     }
