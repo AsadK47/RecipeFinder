@@ -140,7 +140,7 @@ Limited exceptions exist for:
 
 If you discover unauthorized use of RecipeFinder intellectual property:
 
-**Contact**: asad.e.khan@outlook.com  
+**Contact**: asadkhanruby@gmail.com  
 **Subject**: "IP Violation Report - RecipeFinder"
 
 Please include:
@@ -157,7 +157,7 @@ For copyright infringement claims under the Digital Millennium Copyright Act (DM
 
 **DMCA Agent**:  
 Asad Khan  
-Email: asad.e.khan@outlook.com  
+Email: asadkhanruby@gmail.com  
 GitHub: @AsadK47
 
 Include in your notice:
@@ -182,7 +182,7 @@ GitHub: https://github.com/AsadK47/RecipeFinder
 
 For licensing, partnership, or commercial use inquiries:
 
-**Email**: asad.e.khan@outlook.com  
+**Email**: asadkhanruby@gmail.com  
 **Subject**: "Commercial Licensing Inquiry - RecipeFinder"
 
 ### Licensing Options
@@ -231,7 +231,7 @@ The Owner reserves the right to:
 ## Contact Information
 
 **Owner**: Asad Khan  
-**Email**: asad.e.khan@outlook.com  
+**Email**: asadkhanruby@gmail.com  
 **GitHub**: https://github.com/AsadK47  
 **Repository**: https://github.com/AsadK47/RecipeFinder
 

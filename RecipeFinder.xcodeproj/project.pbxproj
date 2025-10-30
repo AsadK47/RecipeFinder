@@ -37,6 +37,7 @@
 		9E51C3972EB3E6540064B917 /* MealPlanningView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E51C3952EB3E6540064B917 /* MealPlanningView.swift */; };
 		9E51C39A2EB3E9C20064B917 /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E51C3982EB3E9C20064B917 /* AccountView.swift */; };
 		9E51C39C2EB3EAA10064B917 /* AccountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E51C39B2EB3EAA10064B917 /* AccountManager.swift */; };
+		9E51C39E2EB3EF0C0064B917 /* MoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E51C39D2EB3EF0C0064B917 /* MoreView.swift */; };
 		9E5447AF2EAA867600AD6D0A /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5447AD2EAA867600AD6D0A /* Constants.swift */; };
 		9E5447B02EAA867600AD6D0A /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5447AE2EAA867600AD6D0A /* Extensions.swift */; };
 		9E5447B22EAA92B900AD6D0A /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5447B12EAA92B900AD6D0A /* HapticManager.swift */; };
@@ -113,6 +114,7 @@
 		9E51C3952EB3E6540064B917 /* MealPlanningView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlanningView.swift; sourceTree = "<group>"; };
 		9E51C3982EB3E9C20064B917 /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
 		9E51C39B2EB3EAA10064B917 /* AccountManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountManager.swift; sourceTree = "<group>"; };
+		9E51C39D2EB3EF0C0064B917 /* MoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreView.swift; sourceTree = "<group>"; };
 		9E5447AD2EAA867600AD6D0A /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		9E5447AE2EAA867600AD6D0A /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		9E5447B12EAA92B900AD6D0A /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
@@ -287,6 +289,7 @@
 		9E7B9A802E9BEC95007E1786 /* Main */ = {
 			isa = PBXGroup;
 			children = (
+				9E51C39D2EB3EF0C0064B917 /* MoreView.swift */,
 				9EE5AADA2D08FCBE00C1B736 /* ContentView.swift */,
 			);
 			path = Main;
@@ -548,6 +551,7 @@
 				9EE5AAD92D08FCBE00C1B736 /* RecipeFinderApp.swift in Sources */,
 				9E2E34212E9D9F8500E2E49F /* KitchenView.swift in Sources */,
 				9E51C39C2EB3EAA10064B917 /* AccountManager.swift in Sources */,
+				9E51C39E2EB3EF0C0064B917 /* MoreView.swift in Sources */,
 				9E51C3922EB3DE580064B917 /* RecipeWizardView.swift in Sources */,
 				9E605FFE2D0985BD00236896 /* PersistenceController.swift in Sources */,
 				9E4DC7402E9C10F000E17DDF /* RecipeCard.swift in Sources */,

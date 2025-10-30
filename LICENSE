@@ -1,10 +1,217 @@
-                                 Apache License
-                           Version 2.0, January 2004
-                        http://www.apache.org/licenses/
+═══════════════════════════════════════════════════════════════════════════════
+                        PROPRIETARY SOFTWARE LICENSE
+                              RecipeFinder™
+                         All Rights Reserved
+═══════════════════════════════════════════════════════════════════════════════
 
-   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+Copyright © 2024-2025 Asad Khan. All Rights Reserved.
 
-   1. Definitions.
+PROPRIETARY AND CONFIDENTIAL
+
+═══════════════════════════════════════════════════════════════════════════════
+1. GRANT OF LICENSE
+═══════════════════════════════════════════════════════════════════════════════
+
+NO LICENSE IS GRANTED. This software and all associated materials, including but
+not limited to source code, object code, documentation, algorithms, user interface
+designs, graphics, databases, and any derivative works, are the exclusive and
+proprietary property of Asad Khan ("the Owner").
+
+═══════════════════════════════════════════════════════════════════════════════
+2. RESTRICTIONS AND PROHIBITED USES
+═══════════════════════════════════════════════════════════════════════════════
+
+Without express written permission from the Owner, you are STRICTLY PROHIBITED from:
+
+a) Copying, reproducing, or duplicating the Software in any form
+b) Modifying, adapting, translating, or creating derivative works
+c) Reverse engineering, decompiling, or disassembling the Software
+d) Distributing, publishing, transmitting, or sharing the Software
+e) Sublicensing, selling, renting, leasing, or lending the Software
+f) Removing or altering any proprietary notices, labels, or marks
+g) Using the Software for any commercial purpose
+h) Extracting, copying, or using any algorithms or business logic
+i) Creating competing products or services based on the Software
+j) Using the RecipeFinder name, logo, or trademarks
+k) Disclosing any confidential or proprietary information
+l) Granting access to the Software to any third party
+m) Using the Software in any manner not expressly authorized
+
+═══════════════════════════════════════════════════════════════════════════════
+3. INTELLECTUAL PROPERTY RIGHTS
+═══════════════════════════════════════════════════════════════════════════════
+
+The Software contains trade secrets and proprietary information that constitute
+valuable intellectual property of the Owner. All rights, title, and interest in
+and to the Software, including all intellectual property rights, are and shall
+remain the exclusive property of the Owner.
+
+This includes, but is not limited to:
+• Source code and object code
+• Algorithms and technical implementations
+• User interface designs and layouts
+• Database structures and schemas
+• Documentation and specifications
+• Trade secrets and know-how
+• Trademarks, service marks, and logos
+• Patents and patent applications
+
+═══════════════════════════════════════════════════════════════════════════════
+4. CONFIDENTIALITY
+═══════════════════════════════════════════════════════════════════════════════
+
+The Software and all related materials are confidential and proprietary to the
+Owner. Any person who gains access to the Software agrees to:
+
+a) Maintain the Software in strict confidence
+b) Not disclose the Software to any third party
+c) Use the Software only as expressly authorized
+d) Protect the Software with the same degree of care used for their own
+   confidential information, but no less than reasonable care
+e) Report any unauthorized disclosure or use immediately to the Owner
+
+═══════════════════════════════════════════════════════════════════════════════
+5. OWNERSHIP AND TITLE
+═══════════════════════════════════════════════════════════════════════════════
+
+The Owner retains all right, title, and interest in and to the Software. This
+License does not grant you any ownership rights. The Software is licensed, not
+sold, and you receive only the limited rights expressly granted herein.
+
+═══════════════════════════════════════════════════════════════════════════════
+6. TERM AND TERMINATION
+═══════════════════════════════════════════════════════════════════════════════
+
+This License is effective until terminated. The Owner may terminate this License
+immediately without notice if you breach any term. Upon termination:
+
+a) All rights granted herein immediately cease
+b) You must destroy all copies of the Software
+c) You must cease all use of the Software
+d) Confidentiality obligations continue indefinitely
+e) The Owner reserves all legal remedies
+
+═══════════════════════════════════════════════════════════════════════════════
+7. NO WARRANTY
+═══════════════════════════════════════════════════════════════════════════════
+
+THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR
+A PARTICULAR PURPOSE, NON-INFRINGEMENT, OR PERFORMANCE.
+
+THE OWNER DOES NOT WARRANT THAT:
+• The Software will meet your requirements
+• The Software will be uninterrupted, timely, secure, or error-free
+• Results obtained will be accurate or reliable
+• Defects will be corrected
+
+═══════════════════════════════════════════════════════════════════════════════
+8. LIMITATION OF LIABILITY
+═══════════════════════════════════════════════════════════════════════════════
+
+IN NO EVENT SHALL THE OWNER BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL,
+CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING BUT NOT LIMITED TO LOSS OF PROFITS,
+DATA, USE, GOODWILL, OR OTHER INTANGIBLE LOSSES, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGES.
+
+═══════════════════════════════════════════════════════════════════════════════
+9. INDEMNIFICATION
+═══════════════════════════════════════════════════════════════════════════════
+
+You agree to indemnify, defend, and hold harmless the Owner from and against any
+and all claims, liabilities, damages, losses, costs, and expenses (including
+reasonable attorneys' fees) arising from or relating to your use or misuse of the
+Software or breach of this License.
+
+═══════════════════════════════════════════════════════════════════════════════
+10. ENFORCEMENT AND REMEDIES
+═══════════════════════════════════════════════════════════════════════════════
+
+Unauthorized use of the Software constitutes copyright infringement and breach of
+contract, giving rise to legal remedies including:
+
+a) Injunctive relief to prevent continued infringement
+b) Monetary damages (actual and statutory)
+c) Disgorgement of profits obtained through infringement
+d) Recovery of attorneys' fees and costs
+e) Criminal prosecution where applicable
+
+The Owner actively monitors and enforces its intellectual property rights and
+will pursue all available legal remedies against violators.
+
+═══════════════════════════════════════════════════════════════════════════════
+11. APPLICABLE LAW AND JURISDICTION
+═══════════════════════════════════════════════════════════════════════════════
+
+This License shall be governed by and construed in accordance with the laws of
+the United Kingdom, without regard to conflict of law principles. Any legal
+action or proceeding shall be brought exclusively in the courts of competent
+jurisdiction in the United Kingdom.
+
+═══════════════════════════════════════════════════════════════════════════════
+12. EXPORT COMPLIANCE
+═══════════════════════════════════════════════════════════════════════════════
+
+You agree to comply with all applicable export and import laws and regulations.
+You shall not export or re-export the Software to any prohibited country, entity,
+or person.
+
+═══════════════════════════════════════════════════════════════════════════════
+13. GENERAL PROVISIONS
+═══════════════════════════════════════════════════════════════════════════════
+
+Severability: If any provision is found unenforceable, the remaining provisions
+shall remain in full force and effect.
+
+Entire Agreement: This License constitutes the entire agreement between the
+parties and supersedes all prior agreements or understandings.
+
+Amendments: This License may only be amended by written agreement signed by the
+Owner.
+
+Waiver: Failure to enforce any provision does not constitute a waiver of future
+enforcement.
+
+Assignment: You may not assign or transfer any rights or obligations without
+written consent from the Owner.
+
+═══════════════════════════════════════════════════════════════════════════════
+14. CONTACT INFORMATION
+═══════════════════════════════════════════════════════════════════════════════
+
+For licensing inquiries, permissions, or legal notices:
+
+Owner: Asad Khan
+Email: asadkhanruby@gmail.com
+GitHub: https://github.com/AsadK47
+
+═══════════════════════════════════════════════════════════════════════════════
+15. ACKNOWLEDGMENT
+═══════════════════════════════════════════════════════════════════════════════
+
+BY ACCESSING, DOWNLOADING, OR USING THE SOFTWARE, YOU ACKNOWLEDGE THAT YOU HAVE
+READ THIS LICENSE, UNDERSTAND IT, AND AGREE TO BE BOUND BY ITS TERMS AND
+CONDITIONS.
+
+IF YOU DO NOT AGREE, YOU ARE NOT AUTHORIZED TO USE THE SOFTWARE AND MUST
+IMMEDIATELY CEASE ALL USE AND DESTROY ALL COPIES.
+
+═══════════════════════════════════════════════════════════════════════════════
+
+⚠️  WARNING: UNAUTHORIZED USE CONSTITUTES COPYRIGHT INFRINGEMENT AND THEFT OF
+    TRADE SECRETS, SUBJECT TO CIVIL AND CRIMINAL PENALTIES.
+
+═══════════════════════════════════════════════════════════════════════════════
+
+RecipeFinder™ is a registered trademark of Asad Khan.
+
+UNAUTHORIZED COPYING, DISTRIBUTION, MODIFICATION, OR USE IS STRICTLY PROHIBITED
+AND WILL BE PROSECUTED TO THE FULLEST EXTENT OF THE LAW.
+
+═══════════════════════════════════════════════════════════════════════════════
+
+Last Updated: October 30, 2025
+Version: 2.0
 
       "License" shall mean the terms and conditions for use, reproduction,
       and distribution as defined by Sections 1 through 9 of this document.

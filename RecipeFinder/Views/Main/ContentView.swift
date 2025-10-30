@@ -42,17 +42,11 @@ struct ContentView: View {
                     }
                     .tag(3)
                 
-                AccountView()
+                MoreView()
                     .tabItem {
-                        Label("Account", systemImage: "person.fill")
+                        Label("More", systemImage: "ellipsis")
                     }
                     .tag(4)
-
-                SettingsView()
-                    .tabItem {
-                        Label("Settings", systemImage: "gearshape.fill")
-                    }
-                    .tag(5)
             }
             .environment(\.appTheme, themeBinding)
             .tint(AppTheme.accentColor(for: themeBinding))

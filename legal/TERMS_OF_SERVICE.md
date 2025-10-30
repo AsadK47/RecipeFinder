@@ -102,7 +102,7 @@ These Terms shall be governed by the laws of United Kingdom, without regard to c
 ## 13. Contact Information
 
 For questions about these Terms, contact:
-- **Email**: asad.e.khan@outlook.com
+- **Email**: asadkhanruby@gmail.com
 - **GitHub**: https://github.com/AsadK47/RecipeFinder
 
 ## 14. Severability
