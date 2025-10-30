@@ -53,11 +53,118 @@ RecipeFinder/
 | Component | Function | Test Coverage |
 |-----------|----------|---------------|
 | `RecipeModel` | Recipe data structure with serving calculations | ✓ |
-| `CategoryClassifier` | ML-based ingredient categorization | ✓ |
+| `CategoryClassifier` | World-class ingredient categorization (20 shopping + 14 kitchen categories) | ✓ |
 | `RecipeImporter` | Schema.org JSON-LD parser | ✓ |
 | `ShoppingListManager` | Shopping list CRUD operations | ✓ |
 | `KitchenInventoryManager` | Inventory state management | ✓ |
 | `AppTheme` | Theme system with 8 color schemes | ✓ |
+
+---
+
+## 🏷️ Intelligent Categorization System
+
+### CategoryClassifier Overview
+
+RecipeFinder features a **world-class food categorization system** with **500+ ingredient keywords** covering international cuisines and professional culinary standards.
+
+#### Categories
+
+**Shopping List (20 categories)**:
+- 🍃 Produce
+- 🍴 Meat  
+- 🐦 **Poultry** (separated from Meat)
+- 🐟 Seafood
+- 💧 Dairy & Eggs
+- 🎂 Bakery
+- 🥡 **Grains & Pasta**
+- ⊗ **Legumes & Pulses**
+- 🌿 **Nuts & Seeds**
+- 🍃 **Herbs & Fresh Spices** (separated from dried)
+- ✨ **Dried Spices & Seasonings**
+- 💧 **Oils & Fats**
+- 🍾 **Sauces & Condiments**
+- 🥫 **Canned & Jarred**
+- ❄️ Frozen
+- ☕ Beverages
+- ⭐ **Sweeteners**
+- ⚖️ **Baking Supplies**
+- 📷 Snacks
+- 🧺 Other
+
+**Kitchen Inventory (14 categories)**:
+- Meat, **Poultry**, Seafood, Vegetables, **Fruits**, **Grains & Pasta**, **Legumes & Pulses**, **Nuts & Seeds**, Dairy & Eggs, **Herbs & Fresh Spices**, **Dried Spices & Seasonings**, **Oils & Fats**, Sauces & Condiments, **Sweeteners**
+
+### International Cuisine Coverage
+
+The system comprehensively supports:
+
+**Asian**: Japanese (miso, dashi, yuzu), Chinese (five spice, bok choy), Korean (gochujang, kimchi), Thai (fish sauce, lemongrass, galangal), Indian (garam masala, curry leaf, paneer)
+
+**Middle Eastern**: Za'atar, sumac, tahini, harissa, pomegranate molasses, baharat, dukkah
+
+**Latin American**: Chipotle, ancho, guajillo, adobo, plantain, yucca, queso fresco
+
+**European**: Italian (parmigiano reggiano, balsamic), French (gruyère, herbes de provence), Spanish (manchego, smoked paprika)
+
+**Mediterranean**: Olive oil, feta, halloumi, oregano, capers, anchovies
+
+### Example Categorizations
+
+```swift
+// Proteins
+"chicken breast"        → Poultry
+"ribeye steak"          → Meat
+"salmon fillet"         → Seafood
+
+// Vegetables & Fruits
+"cherry tomatoes"       → Produce
+"fresh mango"           → Fruits
+"baby bok choy"         → Produce
+
+// Grains & Legumes
+"basmati rice"          → Grains & Pasta
+"black beans"           → Legumes & Pulses
+"almond butter"         → Nuts & Seeds
+
+// Seasonings
+"fresh basil"           → Herbs & Fresh Spices
+"garam masala"          → Dried Spices & Seasonings
+"sesame oil"            → Oils & Fats
+
+// International
+"gochujang"             → Sauces & Condiments
+"za'atar"               → Dried Spices & Seasonings
+"ponzu"                 → Sauces & Condiments
+```
+
+### Coverage Statistics
+
+- **Total Keywords**: 500+
+- **Shopping Categories**: 20
+- **Kitchen Categories**: 14
+- **Meat Varieties**: 45+ (beef, pork, lamb, veal, venison, bison, wild boar)
+- **Poultry Types**: 20+ (chicken, turkey, duck, goose, quail)
+- **Seafood Types**: 40+ (salmon, tuna, shrimp, scallop, octopus, caviar)
+- **Vegetables**: 70+ (alliums, nightshades, roots, brassicas, greens, squashes, mushrooms)
+- **Fruits**: 40+ (citrus, berries, tropical, stone fruits, melons)
+- **Grains & Pasta**: 60+ (rice varieties, breads, Italian pasta, Asian noodles)
+- **Cheeses**: 30+ (fresh, soft, semi-hard, hard, blue, goat)
+- **Spice Blends**: 25+ (Indian, Middle Eastern, Asian, Caribbean)
+- **Sauces**: 80+ (Asian, Western, European, fermented, vinegars, stocks)
+
+### Technical Implementation
+
+**Research Sources**: Bon Appétit, Serious Eats, Food Network, USDA Food Categories
+
+**Features**:
+- Priority-based categorization (most specific first)
+- Comprehensive keyword matching (500+ ingredients)
+- Smart descriptor filtering (removes "fresh", "organic", "boneless", etc.)
+- SF Symbol icons for all categories
+- Semantic color coding
+- Legacy support for backward compatibility
+
+For complete details, see [Category Classifier Expansion](docs/CATEGORY_CLASSIFIER_EXPANSION.md) and [Category Quick Reference](docs/CATEGORY_QUICK_REFERENCE.md).
 
 ---
 
@@ -137,7 +244,7 @@ open RecipeFinder.xcodeproj
 
 Build and run: `⌘R`
 
-### Quality Assurance
+##### Quality Assurance
 
 ```bash
 # Code quality check
@@ -150,44 +257,91 @@ Build and run: `⌘R`
 ./scripts/test-single.sh <TestFileName>
 ```
 
-### Developer Commands
+---
 
-**Build Commands**:
+## 🛠️ Developer Commands
+
+### Linting
 
 ```bash
-# Resolve package dependencies
-xcodebuild -resolvePackageDependencies -scheme RecipeFinder
+# Run SwiftLint on entire project
+./scripts/lint.sh
 
-# Build for simulator (iOS 26.0 - iPhone 17 Pro)
-xcodebuild -scheme RecipeFinder -sdk iphonesimulator \
-  -destination 'platform=iOS Simulator,OS=26.0,name=iPhone 17 Pro' build
+# Or manually
+swiftlint lint --path RecipeFinder/ --config .swiftlint.yml
 
-# Build for simulator (iOS 18.2 - iPhone 16)
-xcodebuild -scheme RecipeFinder -sdk iphonesimulator \
-  -destination 'platform=iOS Simulator,OS=18.2,name=iPhone 16' build
+# Auto-fix issues (where possible)
+swiftlint --fix --path RecipeFinder/
 
-# Build for any iOS Simulator (recommended)
-xcodebuild -scheme RecipeFinder -sdk iphonesimulator \
-  -destination 'platform=iOS Simulator,name=Any iOS Simulator Device' build
+# Install SwiftLint (if not installed)
+brew install swiftlint
+```
 
-# Clean build folder
+### Testing
+
+```bash
+# Run all tests
+./scripts/test.sh
+
+# Or using xcodebuild
+xcodebuild test \
+    -scheme RecipeFinder \
+    -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=latest'
+
+# Run specific test
+xcodebuild test \
+    -scheme RecipeFinder \
+    -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+    -only-testing:RecipeFinderTests/RecipeModelTests
+
+# In Xcode: ⌘ + U
+```
+
+### Building
+
+```bash
+# Build for simulator
+xcodebuild build \
+    -scheme RecipeFinder \
+    -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
+
+# Build for device
+xcodebuild build \
+    -scheme RecipeFinder \
+    -destination 'generic/platform=iOS'
+
+# Clean build
 xcodebuild clean -scheme RecipeFinder
-
-# Build and run tests
-xcodebuild test -scheme RecipeFinder -sdk iphonesimulator \
-  -destination 'platform=iOS Simulator,OS=26.0,name=iPhone 17 Pro'
+# Or in Xcode: ⌘ + Shift + K
 ```
 
-**Firebase Setup** (if using authentication):
+### Code Quality Checks
 
 ```bash
-# Verify Firebase packages are resolved
-grep -A 5 "firebase-ios-sdk" RecipeFinder.xcodeproj/project.pbxproj
+# Count lines of code
+find RecipeFinder -name '*.swift' | xargs wc -l
 
-# Check Firebase version compatibility
-# Firebase 11.5.0 = Xcode 16+ required (current version)
-# Firebase 10.29.0 = Xcode 15.4 compatible (legacy)
+# Find TODO/FIXME comments
+grep -rn "TODO\|FIXME" RecipeFinder/
+
+# Check for force unwraps
+grep -rn "!" RecipeFinder/ | grep -v "//"
 ```
+
+### Troubleshooting
+
+```bash
+# List available simulators
+xcrun simctl list devices
+
+# Boot a simulator
+xcrun simctl boot "iPhone 17 Pro"
+
+# Clean Derived Data
+rm -rf ~/Library/Developer/Xcode/DerivedData
+```
+
+For complete command reference, see [Commands Documentation](docs/COMMANDS.md).
 
 ---
 
@@ -245,9 +399,15 @@ Contact: 📧 asad.e.khan@outlook.com
 
 ## Documentation
 
+### Design & Aesthetics
 - 📖 [Design Aesthetic](docs/DESIGN_AESTHETIC.md)
 - 📄 [PDF Design Specification](docs/PDF_DESIGN_GUIDE.md)
 - 🎨 [Theme Colors](docs/THEME_COLORS.md)
+
+### Development & Technical
+- 🛠️ [Commands Reference](docs/COMMANDS.md)
+- 🏷️ [Category Classifier Expansion](docs/CATEGORY_CLASSIFIER_EXPANSION.md)
+- 📋 [Category Quick Reference](docs/CATEGORY_QUICK_REFERENCE.md)
 
 ---
 

@@ -15,7 +15,7 @@ cleanup() {
 # Set trap to cleanup on exit
 trap cleanup EXIT INT TERM
 
-echo "🧪 Running RecipeFinder Unit Tests (Fast Mode)..."
+echo "🧪 Running RecipeFinder Unit Tests "
 
 # Get project root
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

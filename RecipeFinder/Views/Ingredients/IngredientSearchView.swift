@@ -389,7 +389,9 @@ struct IngredientSearchView: View {
     private func categoryIcon(for category: String) -> String {
         switch category {
         case "Produce": return "leaf.fill"
-        case "Meat & Seafood": return "fish.fill"
+        case "Meat": return "fork.knife.circle.fill"
+        case "Seafood": return "fish.fill"
+        case "Meat & Seafood": return "fish.fill" // Legacy support
         case "Dairy & Eggs": return "drop.fill"
         case "Bakery": return "birthday.cake.fill"
         case "Kitchen": return "cabinet.fill"
@@ -403,7 +405,9 @@ struct IngredientSearchView: View {
     private func categoryColor(for category: String) -> Color {
         switch category {
         case "Produce": return .green
-        case "Meat & Seafood": return .red
+        case "Meat": return .red
+        case "Seafood": return .blue
+        case "Meat & Seafood": return .red // Legacy support
         case "Dairy & Eggs": return .blue
         case "Bakery": return .orange
         case "Kitchen": return .brown
@@ -680,7 +684,9 @@ struct CategoryCard: View {
     
     var categoryIcon: String {
         switch category {
-        case "Proteins": return "fork.knife"
+        case "Meat": return "fork.knife.circle.fill"
+        case "Seafood": return "fish.fill"
+        case "Proteins": return "fork.knife" // Legacy support
         case "Vegetables": return "carrot.fill"
         case "Spices & Herbs": return "leaf.fill"
         case "Dairy & Eggs": return "cup.and.saucer.fill"
@@ -692,7 +698,9 @@ struct CategoryCard: View {
     
     var categoryColor: Color {
         switch category {
-        case "Proteins": return .red
+        case "Meat": return .red
+        case "Seafood": return .blue
+        case "Proteins": return .red // Legacy support
         case "Vegetables": return .green
         case "Spices & Herbs": return .orange
         case "Dairy & Eggs": return .blue
@@ -994,7 +1002,9 @@ struct IngredientFilterSheet: View {
     private func categoryIcon(for category: String) -> String {
         switch category.lowercased() {
         case "produce": return "leaf.fill"
-        case "meat & seafood": return "fish.fill"
+        case "meat": return "fork.knife.circle.fill"
+        case "seafood": return "fish.fill"
+        case "meat & seafood": return "fish.fill" // Legacy support
         case "dairy & eggs": return "drop.fill"
         case "bakery": return "birthday.cake.fill"
         case "kitchen": return "shippingbox.fill"
@@ -1008,7 +1018,9 @@ struct IngredientFilterSheet: View {
     private func categoryColor(for category: String) -> Color {
         switch category.lowercased() {
         case "produce": return .green
-        case "meat & seafood": return .red
+        case "meat": return .red
+        case "seafood": return .blue
+        case "meat & seafood": return .red // Legacy support
         case "dairy & eggs": return .blue
         case "bakery": return .orange
         case "kitchen": return .brown

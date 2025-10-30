@@ -123,6 +123,39 @@ class RecipeImporter: ObservableObject {
     @Published var debugInfo: String?
     @Published var importedRecipe: RecipeModel?
     
+    // Debug logging
+    private func debugLog(_ message: String) {
+        #if DEBUG
+        print("[RecipeImporter] \(message)")
+        #endif
+    }
+    
+    // Static method to parse ISO 8601 duration strings (PT15M, PT1H30M, etc.)
+    static func parseISO8601Duration(_ isoTime: String?) -> String? {
+        guard let time = isoTime else { return nil }
+        
+        // Parse ISO 8601 duration (PT15M, PT1H30M, etc.)
+        let pattern = #"PT(?:(\d+)H)?(?:(\d+)M)?"#
+        guard let regex = try? NSRegularExpression(pattern: pattern),
+              let match = regex.firstMatch(in: time, range: NSRange(time.startIndex..., in: time)) else {
+            return nil
+        }
+        
+        var totalMinutes = 0
+        
+        if let hoursRange = Range(match.range(at: 1), in: time),
+           let hours = Int(time[hoursRange]) {
+            totalMinutes += hours * 60
+        }
+        
+        if let minutesRange = Range(match.range(at: 2), in: time),
+           let minutes = Int(time[minutesRange]) {
+            totalMinutes += minutes
+        }
+        
+        return "\(totalMinutes) minutes"
+    }
+    
     // swiftlint:disable:next function_body_length
     func importRecipe(from urlString: String) async {
         await MainActor.run {
@@ -441,28 +474,7 @@ class RecipeImporter: ObservableObject {
     }
     
     private func parseTime(_ isoTime: String?) -> String? {
-        guard let time = isoTime else { return nil }
-        
-        // Parse ISO 8601 duration (PT15M, PT1H30M, etc.)
-        let pattern = #"PT(?:(\d+)H)?(?:(\d+)M)?"#
-        guard let regex = try? NSRegularExpression(pattern: pattern),
-              let match = regex.firstMatch(in: time, range: NSRange(time.startIndex..., in: time)) else {
-            return nil
-        }
-        
-        var totalMinutes = 0
-        
-        if let hoursRange = Range(match.range(at: 1), in: time),
-           let hours = Int(time[hoursRange]) {
-            totalMinutes += hours * 60
-        }
-        
-        if let minutesRange = Range(match.range(at: 2), in: time),
-           let minutes = Int(time[minutesRange]) {
-            totalMinutes += minutes
-        }
-        
-        return "\(totalMinutes) minutes"
+        return RecipeImporter.parseISO8601Duration(isoTime)
     }
     
     private func determineCategory(from schema: SchemaRecipe) -> String {

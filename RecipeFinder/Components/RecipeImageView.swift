@@ -19,13 +19,13 @@ struct RecipeImageView: View {
                 Image(uiImage: cachedImage)
                     .resizable()
                     .scaledToFill()
-                    .frame(width: .infinity, height: height)
+                    .frame(height: height)
                     .clipped()
             } else if let imageName = imageName, let uiImage = UIImage(named: imageName) {
                 Image(uiImage: uiImage)
                     .resizable()
                     .scaledToFill()
-                    .frame(width: .infinity, height: height)
+                    .frame(height: height)
                     .clipped()
                     .onAppear {
                         cachedImage = uiImage
@@ -35,7 +35,7 @@ struct RecipeImageView: View {
                 Image("food_icon")
                     .resizable()
                     .scaledToFill()
-                    .frame(width: .infinity, height: height)
+                    .frame(height: height)
                     .clipped()
                     .overlay(
                         Circle()

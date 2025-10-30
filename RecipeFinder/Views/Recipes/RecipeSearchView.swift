@@ -11,6 +11,7 @@ struct RecipeSearchView: View {
     @State private var selectedCookTimes: Set<Int> = []
     @State private var showFavoritesOnly = false
     @State private var showImportSheet = false
+    @State private var showRecipeWizard = false
     @State private var cachedFilteredRecipes: [RecipeModel] = []
     @State private var lastFilterHash: Int = 0
     @Environment(\.colorScheme) var colorScheme
@@ -155,25 +156,16 @@ struct RecipeSearchView: View {
                                     }
                                 )
                                 
-                                Divider()
-                                
-                                // View mode options
-                                ForEach(RecipeViewMode.allCases, id: \.self) { mode in
-                                    Button(
-                                        action: {
-                                            HapticManager.shared.selection()
-                                            withAnimation(.spring(response: 0.3)) {
-                                                viewMode = mode
-                                            }
-                                        },
-                                        label: {
-                                            Label(mode.rawValue, systemImage: mode.icon)
-                                            if viewMode == mode {
-                                                Image(systemName: "checkmark")
-                                            }
-                                        }
-                                    )
-                                }
+                                // Recipe Wizard option
+                                Button(
+                                    action: {
+                                        HapticManager.shared.selection()
+                                        showRecipeWizard = true
+                                    },
+                                    label: {
+                                        Label("Recipe Wizard", systemImage: "wand.and.stars")
+                                    }
+                                )
                             } label: {
                                 Image(systemName: "ellipsis.circle.fill")
                                     .font(.title2)
@@ -317,6 +309,17 @@ struct RecipeSearchView: View {
                     
                     // Save to Core Data
                     PersistenceController.shared.saveRecipeModel(importedRecipe)
+                    
+                    HapticManager.shared.success()
+                }
+            }
+            .sheet(isPresented: $showRecipeWizard) {
+                RecipeWizardView { newRecipe in
+                    // Add the new recipe to the list
+                    recipes.append(newRecipe)
+                    
+                    // Save to Core Data
+                    PersistenceController.shared.saveRecipeModel(newRecipe)
                     
                     HapticManager.shared.success()
                 }

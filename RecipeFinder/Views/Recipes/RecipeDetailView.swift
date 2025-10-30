@@ -559,9 +559,27 @@ struct RecipeDetailView: View {
         // Generate text immediately (it's fast)
         let text = RecipeShareUtility.generateTextFormat(recipe: recipe, measurementSystem: measurementSystem)
         
-        // Wrap in an array for the share sheet
-        shareItems = [text as NSString]
-        showShareSheet = true
+        // Create a temporary text file for better sharing compatibility
+        let fileName = "\(recipe.name.replacingOccurrences(of: "/", with: "-")).txt"
+        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
+        
+        do {
+            try text.write(to: tempURL, atomically: true, encoding: .utf8)
+            
+            // Share the file URL (works better than raw string)
+            DispatchQueue.main.async {
+                self.shareItems = [tempURL]
+                self.showShareSheet = true
+                HapticManager.shared.success()
+            }
+        } catch {
+            debugLog("❌ Failed to create text file: \(error)")
+            // Fallback: share as plain string
+            DispatchQueue.main.async {
+                self.shareItems = [text]
+                self.showShareSheet = true
+            }
+        }
     }
     
     private func shareAsPDF() {
@@ -628,8 +646,19 @@ struct ShareSheet: UIViewControllerRepresentable {
     
     func makeUIViewController(context: Context) -> UIActivityViewController {
         let controller = UIActivityViewController(activityItems: items, applicationActivities: nil)
+        
+        // Configure for iPad if needed
+        if let popover = controller.popoverPresentationController {
+            popover.sourceView = UIApplication.shared.windows.first
+            popover.sourceRect = CGRect(x: UIScreen.main.bounds.midX, y: UIScreen.main.bounds.midY, width: 0, height: 0)
+            popover.permittedArrowDirections = []
+        }
+        
         return controller
     }
     
-    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {
+        // Update items if needed
+        uiViewController.setValue(items, forKey: "activityItems")
+    }
 }

@@ -18,59 +18,66 @@ class RecipeShareUtility {
     
     // Text Format Export (Blazing Fast)
     
-    /// Generate a clean text version of the recipe (optimized)
+    /// Generate a beautiful, well-formatted text version of the recipe
     static func generateTextFormat(recipe: RecipeModel, measurementSystem: MeasurementSystem = .metric) -> String {
         var text = ""
-        text.reserveCapacity(2000) // Pre-allocate for performance
+        text.reserveCapacity(2500) // Pre-allocate for performance
         
-        // Title
-        text += "\(recipe.name)\n"
-        text += String(repeating: "=", count: recipe.name.count) + "\n\n"
+        let divider = String(repeating: "━", count: 50)
+        let sectionDivider = String(repeating: "─", count: 50)
         
-        // Recipe info
-        text += "RECIPE INFORMATION\n"
-        text += "Category: \(recipe.category)\n"
-        text += "Difficulty: \(recipe.difficulty)\n"
-        text += "Prep Time: \(recipe.prepTime)\n"
-        text += "Cook Time: \(recipe.cookingTime)\n"
-        text += "Servings: \(recipe.baseServings)\n\n"
+        // Title with decorative border
+        text += divider + "\n"
+        text += "🍽️  \(recipe.name.uppercased())\n"
+        text += divider + "\n\n"
         
-        // Ingredients
-        text += "INGREDIENTS\n"
-        text += String(repeating: "-", count: 11) + "\n"
+        // Recipe info in a clean box format
+        text += "📋 RECIPE INFORMATION\n"
+        text += sectionDivider + "\n"
+        text += "📁 Category    : \(recipe.category)\n"
+        text += "⭐ Difficulty  : \(recipe.difficulty)\n"
+        text += "⏱️  Prep Time   : \(recipe.prepTime)\n"
+        text += "🔥 Cook Time   : \(recipe.cookingTime)\n"
+        text += "👥 Servings    : \(recipe.baseServings)\n"
+        text += "\n"
+        
+        // Ingredients with prettier formatting
+        text += "🥘 INGREDIENTS\n"
+        text += sectionDivider + "\n"
         for ingredient in recipe.ingredients {
             let formatted = ingredient.formattedWithUnit(for: 1.0, system: measurementSystem)
-            text += "- \(formatted) \(ingredient.name)\n"
+            text += "  ✓ \(formatted) \(ingredient.name)\n"
         }
         text += "\n"
         
         // Pre-prep instructions
         if !recipe.prePrepInstructions.isEmpty {
-            text += "PREPARATION\n"
-            text += String(repeating: "-", count: 11) + "\n"
+            text += "🔪 PREPARATION STEPS\n"
+            text += sectionDivider + "\n"
             for (index, instruction) in recipe.prePrepInstructions.enumerated() {
-                text += "\(index + 1). \(instruction)\n"
+                text += "  \(index + 1). \(instruction)\n\n"
             }
-            text += "\n"
         }
         
-        // Instructions
-        text += "INSTRUCTIONS\n"
-        text += String(repeating: "-", count: 12) + "\n"
+        // Instructions with clear numbering
+        text += "👨‍🍳 COOKING INSTRUCTIONS\n"
+        text += sectionDivider + "\n"
         for (index, instruction) in recipe.instructions.enumerated() {
-            text += "\(index + 1). \(instruction)\n\n"
+            text += "Step \(index + 1):\n"
+            text += "\(instruction)\n\n"
         }
         
-        // Notes
+        // Notes in a highlighted section
         if !recipe.notes.isEmpty {
-            text += "NOTES\n"
-            text += String(repeating: "-", count: 5) + "\n"
+            text += "📝 CHEF'S NOTES\n"
+            text += sectionDivider + "\n"
             text += recipe.notes + "\n\n"
         }
         
-        // Footer
-        text += "\n" + String(repeating: "=", count: 40) + "\n"
-        text += "Shared from RecipeFinder\n"
+        // Footer with branding
+        text += divider + "\n"
+        text += "Created with ❤️ using RecipeFinder\n"
+        text += divider + "\n"
         
         return text
     }

@@ -20,20 +20,39 @@ struct KitchenView: View {
             return cachedCategorizedIngredients
         }
         
-        // Compute and cache
-        let result: [(category: String, ingredients: [String])] =
-            CategoryClassifier.kitchenCategories.compactMap { category -> (category: String, ingredients: [String])? in
-            guard let keywords = CategoryClassifier.kitchenIngredientKeywords[category] else { return nil }
-            let matchedIngredients = allIngredients.filter { ingredient in
-                // Filter out descriptor-only words
-                guard CategoryClassifier.isValidIngredient(ingredient) else { return false }
+        // Build a smart category map from actual recipe ingredients
+        var categoryMap: [String: Set<String>] = [:]
+        
+        for recipe in recipes {
+            for ingredient in recipe.ingredients {
+                let ingredientName = ingredient.name
                 
-                return keywords.contains { keyword in
-                    ingredient.localizedCaseInsensitiveContains(keyword)
+                // Determine category based on keywords
+                var assigned = false
+                for (category, keywords) in CategoryClassifier.kitchenIngredientKeywords {
+                    if keywords.contains(where: { ingredientName.localizedCaseInsensitiveContains($0) }) {
+                        categoryMap[category, default: Set()].insert(ingredientName)
+                        assigned = true
+                        break
+                    }
+                }
+                
+                // If no category matched, put in "Other"
+                if !assigned {
+                    categoryMap["Other", default: Set()].insert(ingredientName)
                 }
             }
-            let grouped = CategoryClassifier.groupSimilarIngredients(matchedIngredients)
-            return grouped.isEmpty ? nil : (category, grouped.sorted())
+        }
+        
+        // Convert to sorted array format
+        let result = CategoryClassifier.kitchenCategories.compactMap { category -> (category: String, ingredients: [String])? in
+            guard let ingredients = categoryMap[category], !ingredients.isEmpty else { return nil }
+            return (category, ingredients.sorted())
+        }
+        
+        // Add "Other" category at the end if it has items
+        if let otherIngredients = categoryMap["Other"], !otherIngredients.isEmpty {
+            return result + [("Other", otherIngredients.sorted())]
         }
         
         return result
@@ -112,10 +131,16 @@ struct KitchenView: View {
         }
         .onAppear {
             // Cache categorized ingredients on first load
-            if cachedCategorizedIngredients.isEmpty {
-                cachedCategorizedIngredients = categorizedIngredients
-            }
+            refreshCategorizedIngredients()
         }
+        .onChange(of: recipes.count) { _ in
+            // Refresh when recipes change
+            refreshCategorizedIngredients()
+        }
+    }
+    
+    private func refreshCategorizedIngredients() {
+        cachedCategorizedIngredients = categorizedIngredients
     }
     
     private var header: some View {
@@ -124,30 +149,50 @@ struct KitchenView: View {
                 HStack {
                     Spacer()
                     if !kitchenManager.items.isEmpty {
-                        Menu {
-                            Button(
-                                role: .destructive,
-                                action: {
-                                    kitchenManager.clearAll()
-                                },
-                                label: {
-                                    Label("Clear All", systemImage: "trash")
-                                }
-                            )
-                        } label: {
-                            Image(systemName: "ellipsis.circle")
-                                .font(.title2)
-                                .foregroundColor(cardStyle == .solid && colorScheme == .light ? .black : .white)
-                                .padding(12)
-                                .background {
-                                    if cardStyle == .solid {
-                                        Circle()
-                                            .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
-                                    } else {
-                                        Circle()
-                                            .fill(.regularMaterial)
+                        HStack(spacing: 12) {
+                            // Share button
+                            Button(action: shareKitchenInventory) {
+                                Image(systemName: "square.and.arrow.up")
+                                    .font(.title2)
+                                    .foregroundColor(cardStyle == .solid && colorScheme == .light ? .black : .white)
+                                    .padding(12)
+                                    .background {
+                                        if cardStyle == .solid {
+                                            Circle()
+                                                .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
+                                        } else {
+                                            Circle()
+                                                .fill(.regularMaterial)
+                                        }
                                     }
-                                }
+                            }
+                            
+                            // Options menu
+                            Menu {
+                                Button(
+                                    role: .destructive,
+                                    action: {
+                                        kitchenManager.clearAll()
+                                    },
+                                    label: {
+                                        Label("Clear All", systemImage: "trash")
+                                    }
+                                )
+                            } label: {
+                                Image(systemName: "ellipsis.circle")
+                                    .font(.title2)
+                                    .foregroundColor(cardStyle == .solid && colorScheme == .light ? .black : .white)
+                                    .padding(12)
+                                    .background {
+                                        if cardStyle == .solid {
+                                            Circle()
+                                                .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
+                                        } else {
+                                            Circle()
+                                                .fill(.regularMaterial)
+                                        }
+                                    }
+                            }
                         }
                     }
                 }
@@ -176,11 +221,19 @@ struct KitchenView: View {
                 .fontWeight(.bold)
                 .foregroundColor(.white)
             
-            Text("Add ingredients you have at home to see recipe suggestions")
-                .font(.body)
-                .foregroundColor(.white.opacity(0.7))
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
+            if recipes.isEmpty {
+                Text("Add recipes first to see ingredients you can track")
+                    .font(.body)
+                    .foregroundColor(.white.opacity(0.7))
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 40)
+            } else {
+                Text("Add ingredients from your recipes below to track what's in your kitchen")
+                    .font(.body)
+                    .foregroundColor(.white.opacity(0.7))
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 40)
+            }
         }
         .frame(maxWidth: .infinity)
     }
@@ -296,11 +349,17 @@ struct KitchenView: View {
     
     private var quickAddSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Quick Add to Kitchen")
-                .font(.title3)
-                .fontWeight(.bold)
-                .foregroundColor(.white)
-                .padding(.horizontal, 20)
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Quick Add to Kitchen")
+                    .font(.title3)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+                
+                Text("Ingredients from your \(recipes.count) recipe\(recipes.count == 1 ? "" : "s")")
+                    .font(.caption)
+                    .foregroundColor(.white.opacity(0.7))
+            }
+            .padding(.horizontal, 20)
             
             ForEach(categorizedIngredients, id: \.category) { category, ingredients in
                 KitchenQuickAddCategoryCard(
@@ -361,6 +420,43 @@ struct KitchenView: View {
     
     private func categoryColor(for category: String) -> Color {
         CategoryClassifier.categoryColor(for: category)
+    }
+    
+    private func shareKitchenInventory() {
+        var text = "🏠 MY KITCHEN INVENTORY\n"
+        text += String(repeating: "━", count: 40) + "\n\n"
+        
+        for group in kitchenManager.groupedItems {
+            let icon = CategoryClassifier.categoryIcon(for: group.category)
+            text += "\(icon) \(group.category.uppercased())\n"
+            text += String(repeating: "─", count: 40) + "\n"
+            
+            for item in group.items {
+                text += "  • \(item.name)\n"
+            }
+            text += "\n"
+        }
+        
+        text += String(repeating: "━", count: 40) + "\n"
+        text += "Created with RecipeFinder\n"
+        
+        let activityController = UIActivityViewController(
+            activityItems: [text],
+            applicationActivities: nil
+        )
+        
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first,
+           let rootViewController = window.rootViewController {
+            activityController.popoverPresentationController?.sourceView = window
+            activityController.popoverPresentationController?.sourceRect = CGRect(
+                x: window.bounds.midX,
+                y: window.bounds.midY,
+                width: 0,
+                height: 0
+            )
+            rootViewController.present(activityController, animated: true)
+        }
     }
 }
 

@@ -1,4 +1,5 @@
 import UIKit
+import AudioToolbox
 
 /// Centralized haptic feedback manager for consistent tactile responses throughout the app
 class HapticManager {
@@ -70,9 +71,15 @@ class HapticManager {
         }
     }
     
-    // Success celebration - success + light
+    // Success celebration - uses native vibration pattern
     func celebrate() {
+        // Trigger success haptic
         success()
+        
+        // Add a native vibration for emphasis
+        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+        
+        // Follow up with light haptic
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
             self.light()
         }

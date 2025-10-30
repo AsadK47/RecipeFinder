@@ -12,12 +12,45 @@ struct ShoppingListView: View {
     @Environment(\.appTheme) var appTheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
-    var sortedGroupedItems: [(category: String, items: [ShoppingListItem])] {
-        let grouped = Dictionary(grouping: manager.items) { $0.category }
-        return CategoryClassifier.categoryOrder.compactMap { category in
-            guard let items = grouped[category], !items.isEmpty else { return nil }
-            let sortedItems = items.sorted { !$0.isChecked && $1.isChecked }
-            return (category, sortedItems)
+    private var sortedGroupedItems: [(key: String, value: [ShoppingListItem])] {
+        manager.groupedItems.map { (key: $0.category, value: $0.items) }
+    }
+    
+    private func shareShoppingList() {
+        var text = "🛒 MY SHOPPING LIST\n"
+        text += String(repeating: "━", count: 40) + "\n\n"
+        
+        for group in sortedGroupedItems {
+            let icon = CategoryClassifier.categoryIcon(for: group.key)
+            text += "\(icon) \(group.key.uppercased())\n"
+            text += String(repeating: "─", count: 40) + "\n"
+            
+            for item in group.value {
+                let checkbox = item.isChecked ? "☑" : "☐"
+                text += "  \(checkbox) \(item.name)\n"
+            }
+            text += "\n"
+        }
+        
+        text += String(repeating: "━", count: 40) + "\n"
+        text += "Created with RecipeFinder\n"
+        
+        let activityController = UIActivityViewController(
+            activityItems: [text],
+            applicationActivities: nil
+        )
+        
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first,
+           let rootViewController = window.rootViewController {
+            activityController.popoverPresentationController?.sourceView = window
+            activityController.popoverPresentationController?.sourceRect = CGRect(
+                x: window.bounds.midX,
+                y: window.bounds.midY,
+                width: 0,
+                height: 0
+            )
+            rootViewController.present(activityController, animated: true)
         }
     }
     
@@ -30,65 +63,82 @@ struct ShoppingListView: View {
                 VStack(spacing: 0) {
                     // Header
                     VStack(spacing: 16) {
-                        HStack {
-                            // Options menu
-                            Menu {
-                Button(
-                    action: { 
-                        withAnimation {
-                            if collapsedCategories.count == CategoryClassifier.categoryOrder.count {
-                                collapsedCategories.removeAll()
-                            } else {
-                                collapsedCategories = Set(CategoryClassifier.categoryOrder)
-                            }
-                        }
-                    },
-                    label: {
-                        Label(
-                            collapsedCategories.count == CategoryClassifier.categoryOrder.count ? "Expand All" : "Collapse All",
-                            systemImage: collapsedCategories.count == CategoryClassifier.categoryOrder.count ? "chevron.down.circle" : "chevron.up.circle"
-                        )
-                    }
-                )
+                        ZStack {
+                            HStack {
+                                Spacer()
                                 
-                                Divider()
-                                
-                                Button(
-                                    role: .destructive,
-                                    action: { 
-                                        showClearConfirmation = true 
-                                    },
-                                    label: {
-                                        Label("Clear Items", systemImage: "trash")
-                                    }
-                                )
-                            } label: {
-                                Image(systemName: "ellipsis.circle")
-                                    .font(.title2)
-                                    .foregroundColor(cardStyle == .solid && colorScheme == .light ? .black : .white)
-                                    .padding(12)
-                                    .background {
-                                        if cardStyle == .solid {
-                                            Circle()
-                                                .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
-                                        } else {
-                                            Circle()
-                                                .fill(.regularMaterial)
+                                if !manager.items.isEmpty {
+                                    HStack(spacing: 12) {
+                                        // Share button
+                                        Button(action: shareShoppingList) {
+                                            Image(systemName: "square.and.arrow.up")
+                                                .font(.title2)
+                                                .foregroundColor(cardStyle == .solid && colorScheme == .light ? .black : .white)
+                                                .padding(12)
+                                                .background {
+                                                    if cardStyle == .solid {
+                                                        Circle()
+                                                            .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
+                                                    } else {
+                                                        Circle()
+                                                            .fill(.regularMaterial)
+                                                    }
+                                                }
+                                        }
+                                        
+                                        // Options menu
+                                        Menu {
+                                            Button(
+                                                action: { 
+                                                    withAnimation {
+                                                        if collapsedCategories.count == CategoryClassifier.categoryOrder.count {
+                                                            collapsedCategories.removeAll()
+                                                        } else {
+                                                            collapsedCategories = Set(CategoryClassifier.categoryOrder)
+                                                        }
+                                                    }
+                                                },
+                                                label: {
+                                                    Label(
+                                                        collapsedCategories.count == CategoryClassifier.categoryOrder.count ? "Expand All" : "Collapse All",
+                                                        systemImage: collapsedCategories.count == CategoryClassifier.categoryOrder.count ? "chevron.down.circle" : "chevron.up.circle"
+                                                    )
+                                                }
+                                            )
+                                            
+                                            Divider()
+                                            
+                                            Button(
+                                                role: .destructive,
+                                                action: { 
+                                                    showClearConfirmation = true 
+                                                },
+                                                label: {
+                                                    Label("Clear Items", systemImage: "trash")
+                                                }
+                                            )
+                                        } label: {
+                                            Image(systemName: "ellipsis.circle")
+                                                .font(.title2)
+                                                .foregroundColor(cardStyle == .solid && colorScheme == .light ? .black : .white)
+                                                .padding(12)
+                                                .background {
+                                                    if cardStyle == .solid {
+                                                        Circle()
+                                                            .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
+                                                    } else {
+                                                        Circle()
+                                                            .fill(.regularMaterial)
+                                                    }
+                                                }
                                         }
                                     }
+                                }
                             }
-                            
-                            Spacer()
                             
                             Text("Shopping List")
                                 .font(.system(size: 34, weight: .bold))
                                 .foregroundColor(.white)
-                            
-                            Spacer()
-                            
-                            // Balance spacer for centering
-                            Color.clear
-                                .frame(width: 48, height: 48)
                         }
                         .padding(.horizontal, 20)
                         
@@ -378,102 +428,122 @@ struct ShoppingListView: View {
     }
     
     private var shoppingListContent: some View {
+        listView
+            .listStyle(.plain)
+            .scrollContentBackground(.hidden)
+            .background(Color.clear)
+            .environment(\.defaultMinListHeaderHeight, 0)
+    }
+    
+    private var listView: some View {
         List {
-            ForEach(sortedGroupedItems, id: \.category) { group in
-                Section {
-                    // Items in category
-                    if !collapsedCategories.contains(group.category) {
-                        ForEach(group.items) { item in
-                            if let index = manager.items.firstIndex(where: { $0.id == item.id }) {
-                                ShoppingListItemRow(
-                                    item: item,
-                                    onToggle: { 
-                                        withAnimation(.spring(response: 0.3)) {
-                                            manager.toggleItem(at: index)
-                                        }
-                                    },
-                                    onQuantityChange: { newQuantity in
-                                        manager.updateQuantity(at: index, quantity: newQuantity)
-                                    },
-                                    onDelete: { 
-                                        withAnimation(.spring(response: 0.3)) {
-                                            manager.deleteItem(at: index)
-                                        }
-                                    },
-                                    onCategoryChange: { newCategory in
-                                        withAnimation(.spring(response: 0.3)) {
-                                            manager.updateCategory(at: index, category: newCategory)
-                                        }
-                                    },
-                                    allCategories: CategoryClassifier.categoryOrder
-                                )
-                                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
-                                .listRowSeparator(.hidden)
-                                .listRowBackground(Color.clear)
-                            }
-                        }
-                    }
-                } header: {
-                    // Category Header - Tappable
-                    Button(
-                        action: {
-                            withAnimation(.spring(response: 0.3)) {
-                                if collapsedCategories.contains(group.category) {
-                                    collapsedCategories.remove(group.category)
-                                } else {
-                                    collapsedCategories.insert(group.category)
-                                }
-                            }
-                        },
-                        label: {
-                            HStack(spacing: 12) {
-                                Image(systemName: categoryIcon(for: group.category))
-                                    .font(.title3)
-                                    .foregroundColor(categoryColor(for: group.category))
-                                    .frame(width: 28)
-                                
-                                Text(group.category)
-                                    .font(.title3)
-                                    .fontWeight(.bold)
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
-                                
-                                Text("(\(group.items.filter { !$0.isChecked }.count)/\(group.items.count))")
-                                    .font(.subheadline)
-                                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.4))
-                                
-                                Spacer()
-                                
-                                Image(systemName: collapsedCategories.contains(group.category) ? "chevron.down" : "chevron.up")
-                                    .font(.caption)
-                                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.4))
-                                    .rotationEffect(.degrees(collapsedCategories.contains(group.category) ? 0 : 180))
-                            }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 12)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background {
-                                if cardStyle == .solid {
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
-                                } else {
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .fill(.regularMaterial)
-                                }
-                            }
-                            .padding(.horizontal, 16)
-                            .padding(.top, 8)
-                        }
-                    )
-                    .buttonStyle(.plain)
-                    .textCase(nil)
-                    .listRowInsets(EdgeInsets())
-                }
-                .headerProminence(.standard)
+            ForEach(sortedGroupedItems, id: \.key) { group in
+                categorySection(for: group.key, items: group.value)
             }
         }
-        .listStyle(.plain)
-        .scrollContentBackground(.hidden)
-        .environment(\.defaultMinListHeaderHeight, 0)
+    }
+    
+    @ViewBuilder
+    private func categorySection(for category: String, items: [ShoppingListItem]) -> some View {
+        Section {
+            if !collapsedCategories.contains(category) {
+                categoryItems(for: items)
+            }
+        } header: {
+            categorySectionHeader(category: category, items: items)
+        }
+    }
+    
+    @ViewBuilder
+    private func categoryItems(for items: [ShoppingListItem]) -> some View {
+        ForEach(items) { item in
+            if let index = manager.items.firstIndex(where: { $0.id == item.id }) {
+                itemRow(for: item, at: index)
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func itemRow(for item: ShoppingListItem, at index: Int) -> some View {
+        ShoppingListItemRow(
+            item: item,
+            onToggle: { 
+                withAnimation(.spring(response: 0.3)) {
+                    manager.toggleItem(at: index)
+                }
+            },
+            onQuantityChange: { newQuantity in
+                manager.updateQuantity(at: index, quantity: newQuantity)
+            },
+            onDelete: { 
+                withAnimation(.spring(response: 0.3)) {
+                    manager.deleteItem(at: index)
+                }
+            },
+            onCategoryChange: { newCategory in
+                withAnimation(.spring(response: 0.3)) {
+                    manager.updateCategory(at: index, category: newCategory)
+                }
+            },
+            allCategories: CategoryClassifier.categoryOrder
+        )
+        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+        .listRowSeparator(.hidden)
+        .listRowBackground(Color.clear)
+    }
+    
+    @ViewBuilder
+    private func categorySectionHeader(category: String, items: [ShoppingListItem]) -> some View {
+        Button(
+            action: {
+                withAnimation(.spring(response: 0.3)) {
+                    if collapsedCategories.contains(category) {
+                        collapsedCategories.remove(category)
+                    } else {
+                        collapsedCategories.insert(category)
+                    }
+                }
+            },
+            label: {
+                HStack(spacing: 12) {
+                    Image(systemName: categoryIcon(for: category))
+                        .font(.title3)
+                        .foregroundColor(categoryColor(for: category))
+                        .frame(width: 28)
+                    
+                    Text(category)
+                        .font(.title3)
+                        .fontWeight(.bold)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                    
+                    Text("(\(items.filter { !$0.isChecked }.count)/\(items.count))")
+                        .font(.subheadline)
+                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.4))
+                    
+                    Spacer()
+                    
+                    Image(systemName: collapsedCategories.contains(category) ? "chevron.down" : "chevron.up")
+                        .font(.caption)
+                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.4))
+                        .rotationEffect(.degrees(collapsedCategories.contains(category) ? 0 : 180))
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background {
+                    if cardStyle == .solid {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 8)
+            }
+        )
+        .buttonStyle(.plain)
+        .textCase(nil)
+        .listRowInsets(EdgeInsets())
+        .headerProminence(.standard)
     }
     
     private func addItem() {
