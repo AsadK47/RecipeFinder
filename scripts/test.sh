@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # RecipeFinder - Fast Unit Test Runner
+# Runs all unit tests regardless of folder structure
 # Optimized for speed
 
 set -e
@@ -25,13 +26,17 @@ cd "$PROJECT_ROOT"
 rm -rf TestResults.xcresult 2>/dev/null || true
 rm -f ref.0* data.0* 2>/dev/null || true
 
+# Find all test files recursively
+TEST_FILES=$(find RecipeFinderTests -name "*Tests.swift" -type f 2>/dev/null | wc -l | tr -d ' ')
+echo "📋 Found $TEST_FILES test files"
+
 # Run tests with optimizations:
 # - Build test bundle first to ensure it's available
 # - Use -parallel-testing-enabled YES for faster execution
 # - Use -quiet to reduce output overhead
 # - Use existing DerivedData to avoid rebuilding
-# - Only run unit tests, not UI tests
-echo "Building test bundle..."
+# - Run all tests in RecipeFinderTests target (regardless of folder structure)
+echo "🔨 Building test bundle..."
 xcodebuild build-for-testing \
     -scheme RecipeFinder \
     -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
@@ -45,7 +50,7 @@ if [ $BUILD_EXIT_CODE -ne 0 ]; then
     exit $BUILD_EXIT_CODE
 fi
 
-echo "Running unit tests..."
+echo "🧪 Running unit tests..."
 xcodebuild test-without-building \
     -scheme RecipeFinder \
     -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
@@ -60,4 +65,4 @@ if [ $TEST_EXIT_CODE -ne 0 ]; then
 fi
 
 echo ""
-echo "✅ Unit tests completed!"
+echo "✅ All unit tests completed successfully!"

@@ -41,3 +41,6 @@ Package.resolved
 # Temporary files
 *.tmp
 *~
+
+# Firebase/Google Services 
+GoogleService-Info.plist
