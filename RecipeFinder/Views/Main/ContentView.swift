@@ -5,6 +5,7 @@ struct ContentView: View {
     @State private var recipes: [RecipeModel] = []
     @State private var selectedTab: Int = 0
     @StateObject private var shoppingListManager = ShoppingListManager()
+    @StateObject private var kitchenManager = KitchenInventoryManager()
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @Environment(\.colorScheme) var colorScheme
@@ -31,6 +32,7 @@ struct ContentView: View {
                     .tag(1)
 
                 KitchenView(recipes: $recipes, shoppingListManager: shoppingListManager)
+                    .environmentObject(kitchenManager)
                     .tabItem {
                         Label("Kitchen", systemImage: "refrigerator.fill")
                     }
@@ -43,6 +45,8 @@ struct ContentView: View {
                     .tag(3)
                 
                 MoreView(recipes: $recipes)
+                    .environmentObject(kitchenManager)
+                    .environmentObject(shoppingListManager)
                     .tabItem {
                         Label("More", systemImage: "ellipsis.circle")
                     }

@@ -606,39 +606,33 @@ struct RecipeWizardView: View {
     
     // MARK: - Helper Views
     private func stepHeader(title: String, subtitle: String, stepNumber: Int, illustration: String) -> some View {
-        VStack(alignment: .leading, spacing: 16) {
-            VStack(alignment: .leading, spacing: 8) {
-                HStack {
-                    Text("Step \(stepNumber) of \(totalSteps)")
-                        .font(.caption)
-                        .fontWeight(.medium)
-                        .foregroundColor(.white.opacity(0.8))
+        VStack(alignment: .leading, spacing: 12) {
+            // Step indicator
+            Text("Step \(stepNumber) of \(totalSteps)")
+                .font(.caption)
+                .fontWeight(.medium)
+                .foregroundColor(.white.opacity(0.8))
+            
+            // Title with icon overlay
+            HStack(alignment: .firstTextBaseline, spacing: 0) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(title)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
                     
-                    Spacer()
+                    Text(subtitle)
+                        .font(.subheadline)
+                        .foregroundColor(.white.opacity(0.9))
                 }
                 
-                Text(title)
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
-                
-                Text(subtitle)
-                    .font(.subheadline)
-                    .foregroundColor(.white.opacity(0.9))
+                Spacer()
             }
-            
-            // SF Symbol Illustration below the text
-            HStack {
-                Spacer()
+            .overlay(alignment: .topTrailing) {
+                // Icon positioned absolutely, doesn't affect layout
                 Image(systemName: illustration)
-                    .font(.system(size: 50))
-                    .foregroundStyle(
-                        .white.opacity(0.15),
-                        .white.opacity(0.05)
-                    )
-                    .symbolRenderingMode(.palette)
-                    .frame(width: 60, height: 60)
-                Spacer()
+                    .font(.system(size: 44, weight: .medium))
+                    .foregroundColor(.white.opacity(0.6))
             }
         }
     }

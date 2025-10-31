@@ -16,6 +16,8 @@ struct SettingsTabView: View {
     @State private var notificationsEnabled: Bool = false
     @State private var cookModeEnabled: Bool = true
     @StateObject private var accountManager = AccountManager.shared
+    @EnvironmentObject var kitchenManager: KitchenInventoryManager
+    @EnvironmentObject var shoppingListManager: ShoppingListManager
     
     enum AppearanceMode: String, CaseIterable {
         case system = "System"
@@ -161,7 +163,10 @@ struct SettingsTabView: View {
                                     Divider()
                                         .padding(.leading, 60)
                                     
-                                    NavigationLink(destination: DataManagementSettingsView()) {
+                                    NavigationLink(destination: DataManagementSettingsView()
+                                        .environmentObject(kitchenManager)
+                                        .environmentObject(shoppingListManager)
+                                    ) {
                                         SettingsRow(icon: "externaldrive.fill", iconColor: .gray, title: "Data Management")
                                             .padding(20)
                                     }
@@ -1941,5 +1946,7 @@ struct FeatureRow: View {
 
 #Preview {
     SettingsTabView()
+        .environmentObject(KitchenInventoryManager())
+        .environmentObject(ShoppingListManager())
         .environment(\.appTheme, AppTheme.ThemeType.teal)
 }

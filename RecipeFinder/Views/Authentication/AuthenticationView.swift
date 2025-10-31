@@ -209,6 +209,17 @@ struct EmailSignInView: View {
     private let masterEmail = "admin@recipefinder.com"
     private let masterPassword = "RecipeAdmin2024!"
     
+    // Email validation
+    private var isValidEmail: Bool {
+        let emailRegex = "^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
+        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
+        return emailPredicate.evaluate(with: email)
+    }
+    
+    private var canSignIn: Bool {
+        !email.isEmpty && !password.isEmpty && isValidEmail
+    }
+    
     var body: some View {
         ZStack {
             AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
@@ -248,6 +259,12 @@ struct EmailSignInView: View {
                                 .textContentType(.emailAddress)
                                 .autocapitalization(.none)
                                 .autocorrectionDisabled()
+                            
+                            if !email.isEmpty && !isValidEmail {
+                                Text("Please enter a valid email address")
+                                    .font(.caption)
+                                    .foregroundColor(.orange.opacity(0.9))
+                            }
                         }
                         
                         // Password Field
@@ -281,8 +298,8 @@ struct EmailSignInView: View {
                                     .fill(AppTheme.accentColor(for: selectedTheme))
                             )
                         }
-                        .disabled(email.isEmpty || password.isEmpty || isLoading)
-                        .opacity((email.isEmpty || password.isEmpty || isLoading) ? 0.6 : 1.0)
+                        .disabled(!canSignIn || isLoading)
+                        .opacity((!canSignIn || isLoading) ? 0.6 : 1.0)
                         .padding(.top, 8)
                         
                         #if DEBUG
@@ -367,9 +384,17 @@ struct SignUpView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismiss
     
+    // Email validation
+    private var isValidEmail: Bool {
+        let emailRegex = "^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
+        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
+        return emailPredicate.evaluate(with: email)
+    }
+    
     var isFormValid: Bool {
         !fullName.isEmpty &&
         !email.isEmpty &&
+        isValidEmail &&
         !password.isEmpty &&
         password == confirmPassword &&
         password.count >= 6
@@ -428,6 +453,12 @@ struct SignUpView: View {
                                     .textContentType(.emailAddress)
                                     .autocapitalization(.none)
                                     .autocorrectionDisabled()
+                                
+                                if !email.isEmpty && !isValidEmail {
+                                    Text("Please enter a valid email address")
+                                        .font(.caption)
+                                        .foregroundColor(.orange.opacity(0.9))
+                                }
                             }
                             
                             // Password Field

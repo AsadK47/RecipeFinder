@@ -3,7 +3,7 @@ import SwiftUI
 struct KitchenView: View {
     @Binding var recipes: [RecipeModel]
     @ObservedObject var shoppingListManager: ShoppingListManager
-    @StateObject private var kitchenManager = KitchenInventoryManager()
+    @EnvironmentObject var kitchenManager: KitchenInventoryManager
     @State private var searchText = ""
     @State private var showAddIngredientSheet = false
     @State private var cachedCategorizedIngredients: [(category: String, ingredients: [String])] = []

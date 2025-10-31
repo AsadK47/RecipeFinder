@@ -4,14 +4,13 @@ struct RecipeSearchView: View {
     @Binding var recipes: [RecipeModel]
     @ObservedObject var shoppingListManager: ShoppingListManager
     @State private var searchText = ""
-    @State private var viewMode: RecipeViewMode = .list
     @State private var showFilters = false
     @State private var selectedCategories: Set<String> = []
     @State private var selectedDifficulties: Set<String> = []
     @State private var selectedCookTimes: Set<Int> = []
     @State private var showFavoritesOnly = false
     @State private var showImportSheet = false
-        @State private var showRecipeWizard: Bool = false
+    @State private var showRecipeWizard: Bool = false
     @State private var recipeToDelete: RecipeModel?
     @State private var showDeleteAlert: Bool = false
     @State private var dontAskAgainDelete: Bool = false
@@ -89,10 +88,6 @@ struct RecipeSearchView: View {
     
     var difficulties: [String] {
         ["Basic", "Expert", "Intermediate"]
-    }
-    
-    var gridColumns: [GridItem] {
-        [GridItem(.flexible(), spacing: 16), GridItem(.flexible(), spacing: 16)]
     }
 
     var body: some View {
@@ -226,78 +221,37 @@ struct RecipeSearchView: View {
                         emptyStateView
                     } else {
                         ScrollView {
-                            if viewMode == .list {
-                                LazyVStack(spacing: AppTheme.cardVerticalSpacing) {
-                                    ForEach(filteredRecipes) { recipe in
-                                        NavigationLink(
-                                            destination: RecipeDetailView(
-                                                recipe: recipe,
-                                                shoppingListManager: shoppingListManager,
-                                                onFavoriteToggle: {
-                                            refreshRecipes()
-                                        })) {
-                                            RecipeCard(recipe: recipe, viewMode: .list)
-                                        }
-                                        .buttonStyle(PlainButtonStyle())
-                                        .simultaneousGesture(TapGesture().onEnded {
-                                            HapticManager.shared.light()
-                                        })
-                                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                            Button(role: .destructive) {
-                                                recipeToDelete = recipe
-                                                if skipDeleteConfirmation {
-                                                    deleteRecipe(recipe)
-                                                    recipeToDelete = nil
-                                                } else {
-                                                    showDeleteAlert = true
-                                                    HapticManager.shared.warning()
-                                                }
-                                            } label: {
-                                                Label("Delete", systemImage: "trash.fill")
+                            LazyVStack(spacing: AppTheme.cardVerticalSpacing) {
+                                ForEach(filteredRecipes) { recipe in
+                                    NavigationLink(
+                                        destination: RecipeDetailView(
+                                            recipe: recipe,
+                                            shoppingListManager: shoppingListManager,
+                                            onFavoriteToggle: {
+                                        refreshRecipes()
+                                    })) {
+                                        RecipeCard(recipe: recipe, viewMode: .list)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                    .contextMenu {
+                                        Button(role: .destructive) {
+                                            recipeToDelete = recipe
+                                            if skipDeleteConfirmation {
+                                                deleteRecipe(recipe)
+                                                recipeToDelete = nil
+                                            } else {
+                                                showDeleteAlert = true
+                                                HapticManager.shared.warning()
                                             }
+                                        } label: {
+                                            Label("Delete Recipe", systemImage: "trash.fill")
                                         }
                                     }
                                 }
-                                .padding(.horizontal, AppTheme.cardHorizontalPadding)
-                                .padding(.bottom, AppTheme.cardHorizontalPadding)
-                            } else {
-                                LazyVGrid(columns: gridColumns, spacing: 16) {
-                                    ForEach(filteredRecipes) { recipe in
-                                        NavigationLink(
-                                            destination: RecipeDetailView(
-                                                recipe: recipe,
-                                                shoppingListManager: shoppingListManager,
-                                                onFavoriteToggle: {
-                                            refreshRecipes()
-                                        })) {
-                                            CompactRecipeCard(recipe: recipe)
-                                        }
-                                        .buttonStyle(PlainButtonStyle())
-                                        .simultaneousGesture(TapGesture().onEnded {
-                                            HapticManager.shared.light()
-                                        })
-                                        .contextMenu {
-                                            Button(role: .destructive) {
-                                                recipeToDelete = recipe
-                                                if skipDeleteConfirmation {
-                                                    deleteRecipe(recipe)
-                                                    recipeToDelete = nil
-                                                } else {
-                                                    showDeleteAlert = true
-                                                    HapticManager.shared.warning()
-                                                }
-                                            } label: {
-                                                Label("Delete Recipe", systemImage: "trash.fill")
-                                            }
-                                        }
-                                    }
-                                }
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 8)
-                                .padding(.bottom, 20)
                             }
+                            .padding(.horizontal, AppTheme.cardHorizontalPadding)
+                            .padding(.bottom, AppTheme.cardHorizontalPadding)
                         }
-                        .id(viewMode) // Force refresh when view mode changes
                     }
                 }
             }
@@ -354,10 +308,12 @@ struct RecipeSearchView: View {
                         }
                         recipeToDelete = nil
                         dontAskAgainDelete = false
+                        showDeleteAlert = false
                     },
                     onCancel: {
                         recipeToDelete = nil
                         dontAskAgainDelete = false
+                        showDeleteAlert = false
                     }
                 )
             }
@@ -616,104 +572,112 @@ struct RecipeDeleteConfirmationSheet: View {
     @Environment(\.appTheme) var appTheme
     
     var body: some View {
-        ZStack {
-            AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
-                .ignoresSafeArea()
-            
-            VStack(spacing: 0) {
-                // Handle bar
-                RoundedRectangle(cornerRadius: 3)
-                    .fill(Color.white.opacity(0.3))
-                    .frame(width: 40, height: 5)
-                    .padding(.top, 12)
+        GeometryReader { geometry in
+            ZStack {
+                AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
+                    .ignoresSafeArea()
                 
-                VStack(spacing: 24) {
-                    // Warning Icon
-                    ZStack {
-                        Circle()
-                            .fill(Color.red.opacity(0.15))
-                            .frame(width: 80, height: 80)
-                        
-                        Image(systemName: "trash.circle.fill")
-                            .font(.system(size: 50))
-                            .foregroundColor(.red)
-                    }
-                    .padding(.top, 20)
+                VStack(spacing: 0) {
+                    // Handle bar
+                    RoundedRectangle(cornerRadius: 3)
+                        .fill(Color.white.opacity(0.3))
+                        .frame(width: 40, height: 5)
+                        .padding(.top, 12)
                     
-                    // Title and Message
-                    VStack(spacing: 12) {
-                        Text("Delete Recipe?")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                        
-                        Text("This will permanently delete '\(recipeName)'.")
-                            .font(.body)
-                            .foregroundColor(.white.opacity(0.9))
-                            .multilineTextAlignment(.center)
-                        
-                        Text("⚠️ This action cannot be undone.")
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.red.opacity(0.9))
-                            .padding(.top, 4)
-                    }
-                    .padding(.horizontal, 24)
-                    
-                    // Don't ask again checkbox
-                    Button(action: {
-                        dontAskAgain.toggle()
-                        HapticManager.shared.selection()
-                    }) {
-                        HStack(spacing: 12) {
-                            Image(systemName: dontAskAgain ? "checkmark.square.fill" : "square")
-                                .font(.title3)
-                                .foregroundColor(dontAskAgain ? AppTheme.accentColor : .white.opacity(0.6))
+                    VStack(spacing: 24) {
+                        // Icon
+                        ZStack {
+                            Circle()
+                                .fill(Color.orange.opacity(0.15))
+                                .frame(width: 80, height: 80)
                             
-                            Text("Don't ask me again")
-                                .font(.subheadline)
+                            Image(systemName: "fork.knife.circle.fill")
+                                .font(.system(size: 50))
+                                .foregroundColor(.orange)
+                        }
+                        .padding(.top, 20)
+                        
+                        // Title and Message
+                        VStack(spacing: 12) {
+                            Text("Remove this recipe?")
+                                .font(.title2)
+                                .fontWeight(.bold)
                                 .foregroundColor(.white)
+                                .fixedSize(horizontal: false, vertical: true)
                             
-                            Spacer()
+                            Text(recipeName.isEmpty ? "This recipe will be removed from your collection." : "\(recipeName) will be removed from your collection.")
+                                .font(.body)
+                                .foregroundColor(.white.opacity(0.85))
+                                .multilineTextAlignment(.center)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .frame(maxWidth: geometry.size.width - 48)
+                            
+                            Text("This can't be undone, but you can always import it again! 📖")
+                                .font(.subheadline)
+                                .foregroundColor(.white.opacity(0.7))
+                                .multilineTextAlignment(.center)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .frame(maxWidth: geometry.size.width - 48)
+                                .padding(.top, 4)
                         }
                         .padding(.horizontal, 24)
-                    }
-                    .buttonStyle(PlainButtonStyle())
                     
-                    // Action Buttons
-                    VStack(spacing: 12) {
+                        // Don't ask again checkbox
                         Button(action: {
-                            HapticManager.shared.error()
-                            onConfirm()
+                            dontAskAgain.toggle()
+                            HapticManager.shared.selection()
                         }) {
-                            Text("Delete Recipe")
-                                .font(.headline)
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 16)
-                                .background(Color.red)
-                                .cornerRadius(14)
+                            HStack(spacing: 12) {
+                                Image(systemName: dontAskAgain ? "checkmark.square.fill" : "square")
+                                    .font(.title3)
+                                    .foregroundColor(dontAskAgain ? AppTheme.accentColor : .white.opacity(0.6))
+                                
+                                Text("Don't ask me again")
+                                    .font(.subheadline)
+                                    .foregroundColor(.white)
+                                
+                                Spacer()
+                            }
+                            .frame(maxWidth: geometry.size.width - 48)
+                            .padding(.horizontal, 24)
                         }
                         .buttonStyle(PlainButtonStyle())
                         
-                        Button(action: {
-                            HapticManager.shared.light()
-                            onCancel()
-                        }) {
-                            Text("Cancel")
-                                .font(.headline)
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 16)
-                                .background(Color.white.opacity(0.15))
-                                .cornerRadius(14)
+                        // Action Buttons
+                        VStack(spacing: 12) {
+                            Button(action: {
+                                HapticManager.shared.light()
+                                onConfirm()
+                            }) {
+                                Text("Remove Recipe")
+                                    .font(.headline)
+                                    .foregroundColor(.white)
+                                    .frame(maxWidth: geometry.size.width - 48)
+                                    .padding(.vertical, 16)
+                                    .background(Color.orange)
+                                    .cornerRadius(14)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                            
+                            Button(action: {
+                                HapticManager.shared.light()
+                                onCancel()
+                            }) {
+                                Text("Keep It")
+                                    .font(.headline)
+                                    .foregroundColor(.white)
+                                    .frame(maxWidth: geometry.size.width - 48)
+                                    .padding(.vertical, 16)
+                                    .background(Color.white.opacity(0.15))
+                                    .cornerRadius(14)
+                            }
+                            .buttonStyle(PlainButtonStyle())
                         }
-                        .buttonStyle(PlainButtonStyle())
+                        .padding(.horizontal, 24)
+                        .padding(.top, 8)
                     }
-                    .padding(.horizontal, 24)
-                    .padding(.top, 8)
+                    .padding(.bottom, 40)
                 }
-                .padding(.bottom, 40)
             }
         }
         .presentationDetents([.height(480)])
