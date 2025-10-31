@@ -379,7 +379,7 @@ struct AppearanceSettingsView: View {
                                     Toggle("", isOn: $autoCardStyle)
                                         .labelsHidden()
                                         .tint(AppTheme.accentColor)
-                                        .onChange(of: autoCardStyle) { newValue in
+                                        .onChange(of: autoCardStyle) { _, newValue in
                                             if newValue {
                                                 cardStyle = colorScheme == .dark ? .solid : .frosted
                                             }
@@ -1632,7 +1632,11 @@ struct AboutView: View {
                                 .font(.headline)
                                 .foregroundColor(colorScheme == .dark ? .white : .black)
                             
-                            Text("RecipeFinder is your ultimate kitchen companion, designed to make cooking easier, more organized, and enjoyable. Discover new recipes, manage your kitchen inventory, plan meals, and never forget an ingredient with our smart shopping lists.")
+                            Text("""
+                                RecipeFinder is your ultimate kitchen companion, designed to make cooking easier, \
+                                more organized, and enjoyable. Discover new recipes, manage your kitchen inventory, \
+                                plan meals, and never forget an ingredient with our smart shopping lists.
+                                """)
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                                 .fixedSize(horizontal: false, vertical: true)

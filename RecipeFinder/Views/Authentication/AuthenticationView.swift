@@ -474,19 +474,23 @@ struct SignUpView: View {
 // MARK: - Custom Text Field Style
 
 struct AuthTextFieldStyle: TextFieldStyle {
-    func _body(configuration: TextField<Self._Label>) -> some View {
-        configuration
-            .padding()
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.white.opacity(0.15))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.white.opacity(0.3), lineWidth: 1)
-                    )
-            )
-            .foregroundColor(.white)
-            .accentColor(.white)
+    typealias _Body = AnyView
+    
+    func _body(configuration: TextField<Self._Label>) -> AnyView {
+        AnyView(
+            configuration
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color.white.opacity(0.15))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color.white.opacity(0.3), lineWidth: 1)
+                        )
+                )
+                .foregroundColor(.white)
+                .accentColor(.white)
+        )
     }
 }
 

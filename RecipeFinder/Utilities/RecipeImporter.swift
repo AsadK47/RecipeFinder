@@ -251,7 +251,7 @@ class RecipeImporter: ObservableObject {
         var inIngredientSection = false
         var foundIngredientHeader = false
         
-        for (index, line) in lines.enumerated() {
+        for line in lines {
             let lowercased = line.lowercased()
             
             // Check if this is an ingredient section header
