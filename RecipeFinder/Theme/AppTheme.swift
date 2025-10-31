@@ -127,49 +127,49 @@ enum AppTheme {
         switch theme {
         case .teal:
             return LinearGradient(
-                colors: [tealBright, tealMedium, tealDeep, tealRich],
+                gradient: Gradient(colors: [tealBright, tealMedium, tealDeep, tealRich]),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
         case .purple:
             return LinearGradient(
-                colors: [purpleRich, purpleVibrant, purpleDeep, purpleTeal],
+                gradient: Gradient(colors: [purpleRich, purpleVibrant, purpleDeep, purpleTeal]),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
         case .red:
             return LinearGradient(
-                colors: [redCrimson, redWarm, redBurnt, redOrange],
+                gradient: Gradient(colors: [redCrimson, redWarm, redBurnt, redOrange]),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
         case .orange:
             return LinearGradient(
-                colors: [orangeBright, orangeWarm, coralDeep, coralRich],
+                gradient: Gradient(colors: [orangeBright, orangeWarm, coralDeep, coralRich]),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
         case .yellow:
             return LinearGradient(
-                colors: [yellowBright, yellowGold, yellowAmber, yellowDeep],
+                gradient: Gradient(colors: [yellowBright, yellowGold, yellowAmber, yellowDeep]),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
         case .green:
             return LinearGradient(
-                colors: [greenVibrant, greenMedium, greenTeal, greenDeep],
+                gradient: Gradient(colors: [greenVibrant, greenMedium, greenTeal, greenDeep]),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
         case .pink:
             return LinearGradient(
-                colors: [pinkHot, pinkVibrant, pinkPurple, pinkBlue],
+                gradient: Gradient(colors: [pinkHot, pinkVibrant, pinkPurple, pinkBlue]),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
         case .gold:
             return LinearGradient(
-                colors: [goldBrilliant, goldShiny, goldRich, silverCool, goldBronze, goldCharcoal, goldBlack],
+                gradient: Gradient(colors: [goldBrilliant, goldShiny, goldRich, silverCool, goldBronze, goldCharcoal, goldBlack]),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )

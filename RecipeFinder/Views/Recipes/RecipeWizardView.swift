@@ -717,5 +717,5 @@ struct RecipeWizardView: View {
 
 #Preview {
     RecipeWizardView(prefilledData: nil) { _ in }
-        .environment(\.appTheme, .teal)
+        .environment(\.appTheme, AppTheme.ThemeType.teal)
 }

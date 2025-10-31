@@ -1,12 +1,11 @@
-# RecipeFinder
+# RecipeFinder 🍽️
 
 ![Swift](https://img.shields.io/badge/Swift-5.7+-FA7343?style=flat-square&logo=swift&logoColor=white)
 ![iOS](https://img.shields.io/badge/iOS-15.0+-000000?style=flat-square&logo=apple&logoColor=white)
 ![SwiftUI](https://img.shields.io/badge/SwiftUI-Declarative-0071E3?style=flat-square&logo=swift&logoColor=white)
 ![License](https://img.shields.io/badge/License-Proprietary-red?style=flat-square&logo=key&logoColor=white)
-[![Build Status](https://github.com/AsadK47/RecipeFinder/workflows/CI/badge.svg)](https://github.com/AsadK47/RecipeFinder/actions)
 
-A native iOS recipe management app with intelligent categorization, shopping list automation, and kitchen inventory tracking.
+Your personal recipe manager with smart categorization, automatic shopping lists, and kitchen inventory tracking. All your data stays on your device—no accounts, no tracking, complete privacy.
 
 ## Overview
 

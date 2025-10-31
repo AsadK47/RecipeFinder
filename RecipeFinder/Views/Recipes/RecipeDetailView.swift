@@ -27,7 +27,7 @@ struct RecipeDetailView: View {
     var onFavoriteToggle: (() -> Void)?
     
     init(recipe: RecipeModel, shoppingListManager: ShoppingListManager, onFavoriteToggle: (() -> Void)? = nil) {
-        self.recipe = recipe
+        _recipe = State(initialValue: recipe)
         self.shoppingListManager = shoppingListManager
         self.onFavoriteToggle = onFavoriteToggle
         
@@ -503,16 +503,19 @@ struct RecipeDetailView: View {
         // Haptic feedback
         HapticManager.shared.light()
         
-        // Create item with ingredient name including quantity and unit as part of the name
+        // Normalize ingredient name to USDA standard (e.g., "beef slices" -> "Beef Steak")
+        let normalizedName = IngredientNormalizer.normalize(ingredient.name)
+        
+        // Create item with normalized name and measurements
         let formattedWithUnit = ingredient.formattedWithUnit(for: recipe.scaleFactor, system: measurementSystem)
-        let fullName = "\(ingredient.name) (\(formattedWithUnit))"
+        let fullName = "\(normalizedName) (\(formattedWithUnit))"
         shoppingListManager.addItem(name: fullName, quantity: 1, category: nil)
         
         // Mark as added immediately for UI update
         addedIngredients.insert(ingredient.name)
         
-        // Show feedback with gradual fade
-        showAddedFeedback = ingredient.name
+        // Show feedback with normalized name
+        showAddedFeedback = normalizedName
         
         // Keep basket purple and start fading after 1.5 seconds
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
@@ -560,13 +563,16 @@ struct RecipeDetailView: View {
         let text = RecipeShareUtility.generateTextFormat(recipe: recipe, measurementSystem: measurementSystem)
         
         // Create a temporary text file for better sharing compatibility
-        let fileName = "\(recipe.name.replacingOccurrences(of: "/", with: "-")).txt"
+        let fileName = "\(recipe.name.replacingOccurrences(of: "/", with: "-").replacingOccurrences(of: ":", with: "-")).txt"
         let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
         
         do {
+            // Write to temporary file
             try text.write(to: tempURL, atomically: true, encoding: .utf8)
             
-            // Share the file URL (works better than raw string)
+            debugLog("✅ Created temp file: \(tempURL.path)")
+            
+            // Share the file URL
             DispatchQueue.main.async {
                 self.shareItems = [tempURL]
                 self.showShareSheet = true
@@ -574,10 +580,12 @@ struct RecipeDetailView: View {
             }
         } catch {
             debugLog("❌ Failed to create text file: \(error)")
-            // Fallback: share as plain string
+            // Fallback: share as plain string (this should work for most apps)
             DispatchQueue.main.async {
-                self.shareItems = [text]
+                // Create an NSString for better compatibility
+                self.shareItems = [text as NSString]
                 self.showShareSheet = true
+                HapticManager.shared.success()
             }
         }
     }

@@ -536,7 +536,8 @@ struct IngredientSearchView: View {
 // Quick Match Recipe Card Component
 struct QuickMatchRecipeCard: View {
     let recipe: RecipeModel
-    let matchPercentage: Double
+    let matchCount: Int
+    let totalIngredients: Int
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
@@ -599,7 +600,7 @@ struct QuickMatchRecipeCard: View {
                 .font(.caption2)
                 .foregroundColor(.white)
             
-            Text("\(Int(matchPercentage * 100))%")
+            Text("\(matchCount)/\(totalIngredients)")
                 .font(.caption2)
                 .fontWeight(.bold)
                 .foregroundColor(.white)

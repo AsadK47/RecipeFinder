@@ -182,7 +182,7 @@ final class AuthenticationManager: NSObject, ObservableObject {
         }
     }
     
-    private func verifyAndRetrieveUser(email: String, password: String) throws -> CredentialManager.UserInfo {
+    private func verifyAndRetrieveUser(email: String, password: String) throws -> (email: String, fullName: String) {
         let isValid = credentialManager.verifyCredentials(email: email, password: password)
         guard isValid else {
             throw AuthError.invalidCredentials
@@ -198,7 +198,7 @@ final class AuthenticationManager: NSObject, ObservableObject {
         return userInfo
     }
     
-    private func createUser(from userInfo: CredentialManager.UserInfo, email: String) -> User {
+    private func createUser(from userInfo: (email: String, fullName: String), email: String) -> User {
         let components = userInfo.fullName.components(separatedBy: " ")
         let givenName = components.first
         let familyName = components.count > 1 ? components.dropFirst().joined(separator: " ") : nil

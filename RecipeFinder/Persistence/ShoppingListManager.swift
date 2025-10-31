@@ -1,7 +1,7 @@
 import Foundation
 
 final class ShoppingListManager: ObservableObject {
-    @Published private(set) var items: [ShoppingListItem] = []
+    @Published var items: [ShoppingListItem] = []
     
     private let saveKey = Constants.UserDefaultsKeys.shoppingListItems
     
@@ -24,10 +24,14 @@ final class ShoppingListManager: ObservableObject {
     
     func addItem(name: String, quantity: Int = 1, category: String? = nil) {
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmedName.isEmpty else { return }
+        guard !trimmedName.isEmpty else {
+            print("❌ ShoppingListManager: Empty item name")
+            return
+        }
         
         // Validate quantity
         guard quantity > 0 else {
+            print("❌ ShoppingListManager: Invalid quantity for '\(trimmedName)'")
             debugLog("⚠️ Invalid quantity for item '\(trimmedName)'. Must be greater than 0.")
             HapticManager.shared.error()
             return
@@ -35,6 +39,7 @@ final class ShoppingListManager: ObservableObject {
         
         // Check for duplicates - if exists, just increase quantity
         if let existingIndex = items.firstIndex(where: { $0.name.lowercased() == trimmedName.lowercased() }) {
+            print("✅ ShoppingListManager: Updating existing item '\(trimmedName)'")
             items[existingIndex].quantity += quantity
             saveItems()
             HapticManager.shared.light()
@@ -44,6 +49,7 @@ final class ShoppingListManager: ObservableObject {
         let detectedCategory = category ?? CategoryClassifier.categorize(trimmedName)
         let newItem = ShoppingListItem(name: trimmedName, quantity: quantity, category: detectedCategory)
         items.append(newItem)
+        print("✅ ShoppingListManager: Added '\(trimmedName)' in category '\(detectedCategory)'. Total items: \(items.count)")
         saveItems()
         HapticManager.shared.medium()
     }
@@ -79,7 +85,9 @@ final class ShoppingListManager: ObservableObject {
     
     func updateQuantity(at index: Int, quantity: Int) {
         guard index < items.count else { return }
+        guard quantity > 0 else { return }
         items[index].quantity = quantity
+        HapticManager.shared.light()
         saveItems()
     }
     

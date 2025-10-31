@@ -347,12 +347,13 @@ struct MealTimeSelectorSheet: View {
     
     @Environment(\.dismiss) var dismiss
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         NavigationView {
             ZStack {
-                Color.black.opacity(0.9)
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
                 
                 VStack(spacing: 24) {
@@ -374,13 +375,19 @@ struct MealTimeSelectorSheet: View {
                                     onContinue(mealTime)
                                     HapticManager.shared.light()
                                 }) {
-                                    HStack {
+                                    HStack(spacing: 16) {
                                         Text(mealTime.icon)
                                             .font(.title2)
                                         
-                                        Text(mealTime.rawValue)
-                                            .font(.headline)
-                                            .foregroundColor(.white)
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            Text(mealTime.rawValue)
+                                                .font(.headline)
+                                                .foregroundColor(.white)
+                                            
+                                            Text(mealTime.timeRange)
+                                                .font(.caption)
+                                                .foregroundColor(.white.opacity(0.6))
+                                        }
                                         
                                         Spacer()
                                         
@@ -391,8 +398,13 @@ struct MealTimeSelectorSheet: View {
                                     }
                                     .padding(16)
                                     .background {
-                                        RoundedRectangle(cornerRadius: 16)
-                                            .fill(Color.white.opacity(0.1))
+                                        if cardStyle == .solid {
+                                            RoundedRectangle(cornerRadius: 16)
+                                                .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                                        } else {
+                                            RoundedRectangle(cornerRadius: 16)
+                                                .fill(.ultraThinMaterial)
+                                        }
                                     }
                                 }
                             }
@@ -426,6 +438,9 @@ struct RecipeSelectionSheet: View {
     
     @Environment(\.dismiss) var dismiss
     @State private var searchText = ""
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
+    @Environment(\.colorScheme) var colorScheme
     
     var filteredRecipes: [RecipeModel] {
         if searchText.isEmpty {
@@ -437,7 +452,7 @@ struct RecipeSelectionSheet: View {
     var body: some View {
         NavigationView {
             ZStack {
-                Color.black.opacity(0.9)
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
                 
                 VStack(spacing: 16) {
@@ -471,8 +486,13 @@ struct RecipeSelectionSheet: View {
                         .foregroundColor(.white)
                         .padding(20)
                         .background {
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(Color.blue)
+                            if cardStyle == .solid {
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(AppTheme.accentColor(for: selectedTheme))
+                            } else {
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(AppTheme.accentColor(for: selectedTheme).opacity(0.8))
+                            }
                         }
                     }
                     .padding(.horizontal)
@@ -531,8 +551,13 @@ struct RecipeSelectionSheet: View {
                                     }
                                     .padding(12)
                                     .background {
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .fill(Color.white.opacity(0.1))
+                                        if cardStyle == .solid {
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                                        } else {
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .fill(.ultraThinMaterial)
+                                        }
                                     }
                                 }
                             }

@@ -121,14 +121,19 @@ struct RecipeImportView: View {
                                 subtitle: "AllRecipes"
                             )
                             exampleButton(
-                                url: "https://www.foodnetwork.com/recipes/ree-drummond/perfect-pot-roast-recipe-2118771",
-                                title: "Perfect Pot Roast",
-                                subtitle: "Food Network"
+                                url: "https://www.bbcgoodfood.com/recipes/spaghetti-carbonara-recipe",
+                                title: "Spaghetti Carbonara",
+                                subtitle: "BBC Good Food"
                             )
                             exampleButton(
-                                url: "https://www.seriouseats.com/easy-pressure-cooker-pork-chile-verde-recipe",
-                                title: "Pork Chile Verde",
+                                url: "https://www.seriouseats.com/classic-lasagna-meat-sauce-bechamel-recipe",
+                                title: "Classic Lasagna",
                                 subtitle: "Serious Eats"
+                            )
+                            exampleButton(
+                                url: "https://www.bonappetit.com/recipe/bas-best-chocolate-chip-cookies",
+                                title: "Chocolate Chip Cookies",
+                                subtitle: "Bon Appétit"
                             )
                         }
                         .padding(.horizontal)

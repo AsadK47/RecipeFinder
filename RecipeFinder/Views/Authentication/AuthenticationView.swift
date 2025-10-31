@@ -28,7 +28,7 @@ struct AuthenticationView: View {
                         .font(.system(size: 80))
                         .foregroundStyle(
                             LinearGradient(
-                                colors: [.white, .white.opacity(0.8)],
+                                gradient: Gradient(colors: [.white, .white.opacity(0.8)]),
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
@@ -474,7 +474,7 @@ struct SignUpView: View {
 // MARK: - Custom Text Field Style
 
 struct AuthTextFieldStyle: TextFieldStyle {
-    func makeBody(configuration: Configuration) -> some View {
+    func _body(configuration: TextField<Self._Label>) -> some View {
         configuration
             .padding()
             .background(

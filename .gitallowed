@@ -1,0 +1,8 @@
+# Allow legitimate password parameter and variable names in code
+password: String
+@State private var password
+private var password
+private let masterPassword
+password == confirmPassword
+confirmPassword
+generateSessionToken

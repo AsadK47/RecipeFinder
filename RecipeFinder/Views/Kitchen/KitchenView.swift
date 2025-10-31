@@ -7,6 +7,7 @@ struct KitchenView: View {
     @State private var searchText = ""
     @State private var showAddIngredientSheet = false
     @State private var cachedCategorizedIngredients: [(category: String, ingredients: [String])] = []
+    @State private var collapsedCategories: Set<String> = []
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
@@ -49,27 +50,25 @@ struct KitchenView: View {
         
         return recipes.filter { recipe in
             let recipeIngredients = recipe.ingredients.map { $0.name.lowercased() }
-            let matchCount = recipeIngredients.filter { recipeIng in
+            // Show as soon as even 1 ingredient matches
+            return recipeIngredients.contains { recipeIng in
                 kitchenIngredients.contains { kitchenIng in
                     recipeIng.contains(kitchenIng) || kitchenIng.contains(recipeIng)
                 }
-            }.count
-            let percentage = Double(matchCount) / Double(recipeIngredients.count)
-            return matchCount >= 2 || percentage >= 0.2
+            }
         }.sorted { recipe1, recipe2 in
-            matchPercentage(recipe: recipe1, kitchenIngredients: kitchenIngredients) >
-            matchPercentage(recipe: recipe2, kitchenIngredients: kitchenIngredients)
+            matchCount(recipe: recipe1, kitchenIngredients: kitchenIngredients) >
+            matchCount(recipe: recipe2, kitchenIngredients: kitchenIngredients)
         }
     }
     
-    private func matchPercentage(recipe: RecipeModel, kitchenIngredients: Set<String>) -> Double {
+    private func matchCount(recipe: RecipeModel, kitchenIngredients: Set<String>) -> Int {
         let recipeIngredients = recipe.ingredients.map { $0.name.lowercased() }
-        let matchCount = recipeIngredients.filter { recipeIng in
+        return recipeIngredients.filter { recipeIng in
             kitchenIngredients.contains { kitchenIng in
                 recipeIng.contains(kitchenIng) || kitchenIng.contains(recipeIng)
             }
         }.count
-        return Double(matchCount) / Double(recipeIngredients.count)
     }
     
     var body: some View {
@@ -85,23 +84,15 @@ struct KitchenView: View {
                         VStack(alignment: .leading, spacing: 24) {
                             if kitchenManager.items.isEmpty && searchText.isEmpty {
                                 emptyStateView
-                                
-                                // Quick Add section prominently shown when empty
-                                quickAddSection
-                                    .padding(.top, 16)
                             } else if !searchText.isEmpty {
                                 searchResultsView
                             } else {
-                                // Recipe Matches at the TOP (most important)
+                                // Recipe Matches at the TOP
                                 if !quickMatchRecipes.isEmpty {
                                     quickRecipeMatchesView
-                                        .padding(.bottom, 8)
                                 }
                                 
-                                // Quick Add section below recipe matches
-                                quickAddSection
-                                
-                                // Kitchen items at the bottom
+                                // Kitchen items grouped by category (collapsible)
                                 kitchenItemsView
                             }
                         }
@@ -127,71 +118,129 @@ struct KitchenView: View {
     
     private var header: some View {
         VStack(spacing: 16) {
-            ZStack {
-                HStack {
-                    // Add Ingredient button on the LEFT
-                    Button(action: {
-                        showAddIngredientSheet = true
-                    }) {
-                        Image(systemName: "plus.circle.fill")
-                            .font(.title2)
-                            .foregroundColor(cardStyle == .solid && colorScheme == .light ? .black : .white)
-                            .padding(12)
-                            .background {
-                                if cardStyle == .solid {
-                                    Circle()
-                                        .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
-                                } else {
-                                    Circle()
-                                        .fill(.regularMaterial)
-                                }
-                            }
-                    }
-                    
-                    Spacer()
-                    
-                    // Options menu on the RIGHT (only show when kitchen has items)
-                    if !kitchenManager.items.isEmpty {
-                        Menu {
-                            Button(action: shareKitchenInventory) {
-                                Label("Share Kitchen", systemImage: "square.and.arrow.up")
-                            }
-                            
-                            Button(
-                                role: .destructive,
-                                action: {
-                                    kitchenManager.clearAll()
-                                },
-                                label: {
-                                    Label("Clear All", systemImage: "trash")
-                                }
-                            )
-                        } label: {
-                            Image(systemName: "ellipsis.circle")
-                                .font(.title2)
-                                .foregroundColor(cardStyle == .solid && colorScheme == .light ? .black : .white)
-                                .padding(12)
-                                .background {
-                                    if cardStyle == .solid {
-                                        Circle()
-                                            .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
-                                    } else {
-                                        Circle()
-                                            .fill(.regularMaterial)
-                                    }
-                                }
-                        }
-                    }
+            // Top navigation bar
+            HStack {
+                // Add Ingredient button - Apple style
+                Button(action: {
+                    HapticManager.shared.light()
+                    showAddIngredientSheet = true
+                }) {
+                    Image(systemName: "plus.circle.fill")
+                        .font(.system(size: 28))
+                        .foregroundStyle(AppTheme.accentColor(for: appTheme))
                 }
+                .buttonStyle(PlainButtonStyle())
+                
+                Spacer()
                 
                 Text("Kitchen")
                     .font(.system(size: 34, weight: .bold))
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
+                
+                Spacer()
+                
+                // Options menu (only show when kitchen has items)
+                if !kitchenManager.items.isEmpty {
+                    Menu {
+                        Button(action: shareKitchenInventory) {
+                            Label("Share Kitchen", systemImage: "square.and.arrow.up")
+                        }
+                        
+                        Button(
+                            role: .destructive,
+                            action: {
+                                HapticManager.shared.light()
+                                kitchenManager.clearAll()
+                            },
+                            label: {
+                                Label("Clear All", systemImage: "trash")
+                            }
+                        )
+                    } label: {
+                        Image(systemName: "ellipsis.circle")
+                            .font(.system(size: 28))
+                            .foregroundStyle(AppTheme.accentColor(for: appTheme))
+                    }
+                } else {
+                    // Spacer for balance when no menu
+                    Color.clear
+                        .frame(width: 28, height: 28)
+                }
             }
             .padding(.horizontal, 20)
             
-            ModernSearchBar(text: $searchText, placeholder: "Search kitchen ingredients...")
+            // Search bar
+            ModernSearchBar(text: $searchText, placeholder: "Search ingredients...")
                 .padding(.horizontal, 20)
+            
+            // Selected Ingredients Display - Only show when items exist
+            if !kitchenManager.items.isEmpty {
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack {
+                        Text("In Your Kitchen")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.white)
+                        
+                        Spacer()
+                        
+                        Text("\(kitchenManager.items.count)")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.white.opacity(0.9))
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 4)
+                            .background(
+                                Capsule()
+                                    .fill(AppTheme.accentColor(for: appTheme).opacity(0.3))
+                            )
+                    }
+                    
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(kitchenManager.items) { item in
+                                HStack(spacing: 6) {
+                                    Text(item.name)
+                                        .font(.subheadline)
+                                        .foregroundStyle(.white)
+                                    
+                                    Button(action: {
+                                        withAnimation(.spring(response: 0.3)) {
+                                            kitchenManager.removeItem(item)
+                                            HapticManager.shared.light()
+                                        }
+                                    }) {
+                                        Image(systemName: "xmark.circle.fill")
+                                            .font(.caption)
+                                            .foregroundStyle(.white.opacity(0.6))
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                }
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                                .background {
+                                    Capsule()
+                                        .fill(AppTheme.accentColor(for: appTheme).opacity(0.25))
+                                        .overlay(
+                                            Capsule()
+                                                .strokeBorder(Color.white.opacity(0.2), lineWidth: 1)
+                                        )
+                                }
+                            }
+                        }
+                    }
+                }
+                .padding(16)
+                .background {
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(.ultraThinMaterial)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .strokeBorder(Color.white.opacity(0.1), lineWidth: 1)
+                        )
+                }
+                .padding(.horizontal, 20)
+            }
         }
         .padding(.top, 20)
         .padding(.bottom, 16)
@@ -219,17 +268,21 @@ struct KitchenView: View {
     
     private var kitchenItemsView: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Items in Your Kitchen")
-                .font(.title3)
-                .fontWeight(.bold)
-                .foregroundColor(.white)
-                .padding(.horizontal, 20)
-            
             ForEach(kitchenManager.groupedItems, id: \.category) { group in
                 KitchenCategoryCard(
                     category: group.category,
                     items: group.items,
-                    kitchenManager: kitchenManager
+                    kitchenManager: kitchenManager,
+                    isCollapsed: collapsedCategories.contains(group.category),
+                    onToggleCollapse: {
+                        withAnimation {
+                            if collapsedCategories.contains(group.category) {
+                                collapsedCategories.remove(group.category)
+                            } else {
+                                collapsedCategories.insert(group.category)
+                            }
+                        }
+                    }
                 )
             }
             .padding(.horizontal, 20)
@@ -289,11 +342,11 @@ struct KitchenView: View {
                 RoundedRectangle(cornerRadius: 20)
                     .fill(
                         LinearGradient(
-                            colors: [
+                            gradient: Gradient(colors: [
                                 Color.purple.opacity(0.4),
                                 Color.pink.opacity(0.3),
                                 Color.orange.opacity(0.2)
-                            ],
+                            ]),
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
@@ -311,10 +364,11 @@ struct KitchenView: View {
                         })) {
                             QuickMatchRecipeCard(
                                 recipe: recipe,
-                                matchPercentage: matchPercentage(
+                                matchCount: matchCount(
                                     recipe: recipe,
                                     kitchenIngredients: Set(kitchenManager.items.map { $0.name.lowercased() })
-                                )
+                                ),
+                                totalIngredients: recipe.ingredients.count
                             )
                         }
                         .buttonStyle(PlainButtonStyle())
@@ -334,78 +388,6 @@ struct KitchenView: View {
         }
     }
     
-    private var quickAddSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            VStack(alignment: .leading, spacing: 4) {
-                HStack {
-                    Image(systemName: "bolt.fill")
-                        .foregroundColor(.yellow)
-                        .font(.title3)
-                    
-                    Text("Quick Add")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                }
-                
-                Text("Browse \(USDAFoodsList.getAllFoods().count)+ USDA-approved ingredients")
-                    .font(.caption)
-                    .foregroundColor(.white.opacity(0.7))
-            }
-            .padding(.horizontal, 20)
-            
-            // Show top 5 most important categories
-            ForEach(Array(categorizedIngredients.prefix(5).enumerated()), id: \.element.category) { index, element in
-                KitchenQuickAddCategoryCard(
-                    category: element.category,
-                    ingredients: element.ingredients,
-                    kitchenManager: kitchenManager,
-                    defaultExpanded: false
-                )
-            }
-            .padding(.horizontal, 20)
-            
-            // Show "More Categories" button if there are more than 5 categories
-            if categorizedIngredients.count > 5 {
-                Button(action: {
-                    showAddIngredientSheet = true
-                }) {
-                    HStack {
-                        Image(systemName: "ellipsis.circle.fill")
-                            .font(.title3)
-                            .foregroundColor(AppTheme.accentColor(for: appTheme))
-                        
-                        Text("More Categories")
-                            .font(.headline)
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
-                        
-                        Spacer()
-                        
-                        Text("\(categorizedIngredients.count - 5) more")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                        
-                        Image(systemName: "chevron.right")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                    }
-                    .padding(16)
-                    .background {
-                        if cardStyle == .solid {
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
-                        } else {
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(.regularMaterial)
-                        }
-                    }
-                }
-                .buttonStyle(PlainButtonStyle())
-                .padding(.horizontal, 20)
-            }
-        }
-    }
-    
     private func kitchenIngredientButton(_ ingredient: String) -> some View {
         let isInKitchen = kitchenManager.hasItem(ingredient)
         let category = CategoryClassifier.suggestCategory(for: ingredient)
@@ -414,34 +396,30 @@ struct KitchenView: View {
             action: {
                 withAnimation(.spring(response: 0.3)) {
                     kitchenManager.toggleItem(ingredient)
+                    HapticManager.shared.light()
                 }
             },
             label: {
                 HStack(spacing: 12) {
                     Image(systemName: categoryIcon(for: category))
-                        .foregroundColor(categoryColor(for: category))
+                        .foregroundStyle(categoryColor(for: category))
                         .font(.body)
                     
                     Text(ingredient)
                         .font(.body)
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .foregroundStyle(colorScheme == .dark ? .white : .black)
                     
                     Spacer()
                     
                     Image(systemName: isInKitchen ? "checkmark.circle.fill" : "plus.circle")
-                        .foregroundColor(isInKitchen ? .green : AppTheme.accentColor)
+                        .foregroundStyle(isInKitchen ? .green : AppTheme.accentColor(for: appTheme))
                         .font(.title3)
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 14)
                 .background {
-                    if cardStyle == .solid {
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
-                    } else {
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(.regularMaterial)
-                    }
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(.regularMaterial)
                 }
             }
         )
@@ -507,36 +485,47 @@ struct KitchenCategoryCard: View {
     let category: String
     let items: [KitchenItem]
     @ObservedObject var kitchenManager: KitchenInventoryManager
+    let isCollapsed: Bool
+    let onToggleCollapse: () -> Void
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 12) {
-                Circle()
-                    .fill(CategoryClassifier.categoryColor(for: category).opacity(0.2))
-                    .frame(width: 40, height: 40)
-                    .overlay(
-                        Image(systemName: CategoryClassifier.categoryIcon(for: category))
-                            .foregroundColor(CategoryClassifier.categoryColor(for: category))
-                    )
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(category)
-                        .font(.headline)
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+            Button(action: onToggleCollapse) {
+                HStack(spacing: 12) {
+                    Circle()
+                        .fill(CategoryClassifier.categoryColor(for: category).opacity(0.2))
+                        .frame(width: 40, height: 40)
+                        .overlay(
+                            Image(systemName: CategoryClassifier.categoryIcon(for: category))
+                                .foregroundColor(CategoryClassifier.categoryColor(for: category))
+                        )
                     
-                    Text("\(items.count) items")
-                        .font(.caption)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(category)
+                            .font(.headline)
+                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                        
+                        Text("\(items.count) items")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: isCollapsed ? "chevron.down" : "chevron.up")
                         .foregroundColor(.gray)
+                        .font(.caption)
                 }
-                
-                Spacer()
             }
+            .buttonStyle(PlainButtonStyle())
             
-            FlowLayout(spacing: 8) {
-                ForEach(items) { item in
-                    KitchenItemChip(item: item, kitchenManager: kitchenManager)
+            if !isCollapsed {
+                FlowLayout(spacing: 8) {
+                    ForEach(items) { item in
+                        KitchenItemChip(item: item, kitchenManager: kitchenManager)
+                    }
                 }
             }
         }
@@ -583,115 +572,6 @@ struct KitchenItemChip: View {
             Capsule()
                 .fill(AppTheme.accentColor.opacity(0.2))
         )
-    }
-}
-
-struct KitchenQuickAddCategoryCard: View {
-    let category: String
-    let ingredients: [String]
-    @ObservedObject var kitchenManager: KitchenInventoryManager
-    let defaultExpanded: Bool
-    @State private var isExpanded = false
-    @Environment(\.colorScheme) var colorScheme
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Button(
-                action: {
-                    withAnimation(.spring(response: 0.3)) {
-                        isExpanded.toggle()
-                    }
-                },
-                label: {
-                    HStack(spacing: 12) {
-                        Circle()
-                            .fill(CategoryClassifier.categoryColor(for: category).opacity(0.2))
-                            .frame(width: 40, height: 40)
-                            .overlay(
-                                Image(systemName: CategoryClassifier.categoryIcon(for: category))
-                                    .foregroundColor(CategoryClassifier.categoryColor(for: category))
-                            )
-                        
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(category)
-                                .font(.headline)
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
-                            
-                            Text("\(ingredients.count) ingredients")
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                        }
-                        
-                        Spacer()
-                        
-                        Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                            .foregroundColor(.gray)
-                    }
-                }
-            )
-            .buttonStyle(PlainButtonStyle())
-            
-            if isExpanded {
-                FlowLayout(spacing: 8) {
-                    ForEach(ingredients, id: \.self) { ingredient in
-                        KitchenQuickAddChip(ingredient: ingredient, kitchenManager: kitchenManager)
-                    }
-                }
-            }
-        }
-        .padding(16)
-        .background {
-            if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
-            } else {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(.regularMaterial)
-            }
-        }
-        .onAppear {
-            isExpanded = defaultExpanded
-        }
-    }
-}
-
-// Kitchen Quick Add Chip
-struct KitchenQuickAddChip: View {
-    let ingredient: String
-    @ObservedObject var kitchenManager: KitchenInventoryManager
-    @Environment(\.colorScheme) var colorScheme
-    
-    var isInKitchen: Bool {
-        kitchenManager.hasItem(ingredient)
-    }
-    
-    var body: some View {
-        Button(
-            action: {
-                withAnimation(.spring(response: 0.3)) {
-                    kitchenManager.toggleItem(ingredient)
-                }
-            },
-            label: {
-                HStack(spacing: 6) {
-                    Text(ingredient)
-                        .font(.subheadline)
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
-                    
-                    Image(systemName: isInKitchen ? "checkmark.circle.fill" : "plus.circle")
-                        .font(.caption)
-                        .foregroundColor(isInKitchen ? .green : .gray)
-                }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .background(
-                    Capsule()
-                        .fill(isInKitchen ? Color.green.opacity(0.2) : Color.gray.opacity(0.1))
-                )
-            }
-        )
-        .buttonStyle(PlainButtonStyle())
     }
 }
 
@@ -750,6 +630,7 @@ struct AddIngredientSheet: View {
                                 Button(action: {
                                     withAnimation {
                                         selectedCategory = nil
+                                        HapticManager.shared.light()
                                     }
                                 }) {
                                     HStack {
@@ -807,6 +688,7 @@ struct AddIngredientSheet: View {
         Button(action: {
             withAnimation {
                 selectedCategory = category
+                HapticManager.shared.light()
             }
         }) {
             HStack(spacing: 12) {

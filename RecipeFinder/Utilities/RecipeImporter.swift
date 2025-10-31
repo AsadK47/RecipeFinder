@@ -100,78 +100,270 @@ class RecipeImporter: ObservableObject {
         }
     }
     
-    /// Match ingredient texts against USDA food database
+    /// Match ingredient texts against USDA food database - ENHANCED VERSION
     private func matchUSDAIngredients(from texts: [String]) -> [String] {
         let usdaFoods = USDAFoodsList.getAllFoods()
+        let usdaLowercased = usdaFoods.map { $0.lowercased() }
         
         var matched: [String] = []
+        var matchedLower: Set<String> = []
+        
+        // Common cooking words to skip
+        let skipWords = Set(["and", "the", "with", "for", "into", "from", "about", "approximately", "roughly", "optional", "fresh", "dried", "chopped", "diced", "sliced", "minced", "grated", "shredded", "melted", "softened", "room", "temperature", "large", "small", "medium", "to", "taste", "as", "needed", "cup", "cups", "tbsp", "tsp", "tablespoon", "tablespoons", "teaspoon", "teaspoons", "ounce", "ounces", "oz", "pound", "pounds", "lb", "lbs", "gram", "grams", "g", "kg", "kilogram", "ml", "milliliter", "liter", "l", "pinch", "dash", "clove", "cloves"])
         
         for text in texts {
             let cleanText = text.lowercased()
-                .replacingOccurrences(of: "[^a-z ]", with: "", options: .regularExpression)
+                .replacingOccurrences(of: #"[^\w\s]"#, with: " ", options: .regularExpression)
+                .replacingOccurrences(of: #"\d+\.?\d*"#, with: "", options: .regularExpression)
+                .trimmingCharacters(in: .whitespaces)
             
-            // Try exact match first
-            if let exactMatch = usdaFoods.first(where: { cleanText.contains($0.lowercased()) }) {
-                if !matched.contains(exactMatch) {
-                    matched.append(exactMatch)
-                    debugLog("  ✓ Exact: \(exactMatch)")
-                    continue
+            let words = cleanText.components(separatedBy: .whitespaces)
+                .filter { !$0.isEmpty && $0.count > 2 && !skipWords.contains($0) }
+            
+            // Strategy 1: Try exact multi-word matches first (e.g., "chicken breast")
+            if words.count >= 2 {
+                for i in 0..<words.count-1 {
+                    let twoWords = "\(words[i]) \(words[i+1])"
+                    if let matchIndex = usdaLowercased.firstIndex(where: { $0 == twoWords || $0.contains(twoWords) }) {
+                        let match = usdaFoods[matchIndex]
+                        if !matchedLower.contains(match.lowercased()) {
+                            matched.append(match)
+                            matchedLower.insert(match.lowercased())
+                            debugLog("  ✓ Multi-word: \(match) from '\(twoWords)'")
+                            break
+                        }
+                    }
                 }
             }
             
-            // Try fuzzy matching - look for any USDA food mentioned
-            let words = cleanText.components(separatedBy: .whitespaces).filter { $0.count > 2 }
-            for word in words {
-                if let fuzzyMatch = usdaFoods.first(where: { 
-                    let food = $0.lowercased()
-                    return food.contains(word) || word.contains(food)
-                }) {
-                    if !matched.contains(fuzzyMatch) {
-                        matched.append(fuzzyMatch)
-                        debugLog("  ≈ Fuzzy: \(fuzzyMatch) (from '\(word)')")
+            // Strategy 2: Try exact single food match
+            for food in usdaFoods {
+                let foodLower = food.lowercased()
+                if cleanText == foodLower || cleanText.contains(" \(foodLower) ") || cleanText.starts(with: "\(foodLower) ") || cleanText.hasSuffix(" \(foodLower)") {
+                    if !matchedLower.contains(foodLower) {
+                        matched.append(food)
+                        matchedLower.insert(foodLower)
+                        debugLog("  ✓ Exact: \(food)")
                         break
+                    }
+                }
+            }
+            
+            // Strategy 3: Look through individual words for food matches
+            for word in words {
+                // Skip if already found a match for this ingredient text
+                if matched.count > matchedLower.count { break }
+                
+                // Try to find a food that matches or contains this word
+                if let matchIndex = usdaLowercased.firstIndex(where: { foodLower in
+                    let foodWords = foodLower.components(separatedBy: .whitespaces)
+                    return foodWords.contains(word) || word.contains(foodLower) || foodLower.contains(word)
+                }) {
+                    let match = usdaFoods[matchIndex]
+                    if !matchedLower.contains(match.lowercased()) {
+                        matched.append(match)
+                        matchedLower.insert(match.lowercased())
+                        debugLog("  ≈ Fuzzy: \(match) from word '\(word)'")
+                        break
+                    }
+                }
+            }
+            
+            // Strategy 4: Partial matching - look for foods contained in the text
+            if matched.count == matchedLower.count { // No match yet
+                for (index, foodLower) in usdaLowercased.enumerated() {
+                    if cleanText.contains(foodLower) && foodLower.count > 3 {
+                        let match = usdaFoods[index]
+                        if !matchedLower.contains(foodLower) {
+                            matched.append(match)
+                            matchedLower.insert(foodLower)
+                            debugLog("  ~ Partial: \(match)")
+                            break
+                        }
                     }
                 }
             }
         }
         
+        debugLog("✅ Total matched: \(matched.count) unique ingredients")
         return matched
     }
     
-    /// Extract from HTML when no Schema.org data available
+    /// Extract from HTML when no Schema.org data available - ENHANCED VERSION
     private func extractFromHTML(_ html: String) -> (name: String, ingredients: [String], instructions: [String]) {
-        // Strip HTML tags
-        let text = html.replacingOccurrences(of: "<[^>]+>", with: " ", options: .regularExpression)
-            .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+        // Strip HTML tags but preserve line breaks
+        var text = html.replacingOccurrences(of: "<br[^>]*>", with: "\n", options: .regularExpression)
+        text = text.replacingOccurrences(of: "</p>", with: "\n", options: .regularExpression)
+        text = text.replacingOccurrences(of: "</li>", with: "\n", options: .regularExpression)
+        text = text.replacingOccurrences(of: "</div>", with: "\n", options: .regularExpression)
+        text = text.replacingOccurrences(of: "<[^>]+>", with: " ", options: .regularExpression)
+        text = text.replacingOccurrences(of: "&nbsp;", with: " ", options: .regularExpression)
+        text = text.replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
         
-        // Try to find recipe name (look for common patterns)
-        let namePatterns = ["Recipe:", "recipe:", "RECIPE:"]
+        let lines = text.components(separatedBy: .newlines)
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty && $0.count > 3 }
+        
+        // SMART RECIPE NAME EXTRACTION
         var name = "Imported Recipe"
-        for pattern in namePatterns {
-            if let range = text.range(of: pattern) {
-                let start = text.index(range.upperBound, offsetBy: 1, limitedBy: text.endIndex) ?? range.upperBound
-                let end = text.index(start, offsetBy: 100, limitedBy: text.endIndex) ?? text.endIndex
-                let extracted = text[start..<end]
-                if let lineEnd = extracted.firstIndex(of: "\n") {
-                    name = String(extracted[..<lineEnd]).trimmingCharacters(in: .whitespaces)
-                    break
+        
+        // Try <title> tag first
+        if let titleRange = html.range(of: "<title[^>]*>([^<]+)</title>", options: .regularExpression) {
+            let titleText = String(html[titleRange])
+            if let extracted = titleText.range(of: ">([^<]+)<", options: .regularExpression) {
+                let rawTitle = String(titleText[extracted])
+                    .replacingOccurrences(of: ">", with: "")
+                    .replacingOccurrences(of: "<", with: "")
+                    .trimmingCharacters(in: .whitespaces)
+                
+                // Clean up title (remove site names, separators)
+                let cleaned = rawTitle
+                    .components(separatedBy: ["|", "-", "–", "—"])
+                    .first?
+                    .trimmingCharacters(in: .whitespaces) ?? rawTitle
+                
+                if cleaned.count > 3 && cleaned.count < 100 {
+                    name = cleaned
                 }
             }
         }
         
-        // Extract ingredient-like lines (lines with numbers, units, food words)
-        let lines = text.components(separatedBy: .newlines)
-        let ingredientLines = lines.filter { line in
-            let hasNumber = line.range(of: #"\d"#, options: .regularExpression) != nil
-            let hasCommonUnits = ["cup", "tbsp", "tsp", "oz", "lb", "gram", "ml"].contains(where: { line.lowercased().contains($0) })
-            return hasNumber || hasCommonUnits || line.count < 100 // Short lines likely ingredients
-        }.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
-        
-        // Extract instruction-like lines (longer sentences)
-        let instructionLines = lines.filter { line in
-            let words = line.components(separatedBy: .whitespaces)
-            return words.count > 5 && words.count < 50 // Instructions are medium length
+        // Fallback: Look for <h1> tags
+        if name == "Imported Recipe" {
+            if let h1Range = html.range(of: "<h1[^>]*>([^<]+)</h1>", options: .regularExpression) {
+                let h1Text = String(html[h1Range])
+                if let extracted = h1Text.range(of: ">([^<]+)<", options: .regularExpression) {
+                    let rawH1 = String(h1Text[extracted])
+                        .replacingOccurrences(of: ">", with: "")
+                        .replacingOccurrences(of: "<", with: "")
+                        .trimmingCharacters(in: .whitespaces)
+                    if rawH1.count > 3 && rawH1.count < 100 {
+                        name = rawH1
+                    }
+                }
+            }
         }
+        
+        // SMART INGREDIENT EXTRACTION
+        var ingredientLines: [String] = []
+        
+        // Look for sections with "ingredient" in nearby text
+        var inIngredientSection = false
+        var foundIngredientHeader = false
+        
+        for (index, line) in lines.enumerated() {
+            let lowercased = line.lowercased()
+            
+            // Check if this is an ingredient section header
+            if lowercased.contains("ingredient") && line.count < 50 {
+                inIngredientSection = true
+                foundIngredientHeader = true
+                continue
+            }
+            
+            // Check if we've left the ingredient section
+            if inIngredientSection && 
+               (lowercased.contains("instruction") || 
+                lowercased.contains("direction") || 
+                lowercased.contains("preparation") ||
+                lowercased.contains("method")) {
+                inIngredientSection = false
+            }
+            
+            // Extract ingredient-like lines
+            if inIngredientSection || !foundIngredientHeader {
+                let hasNumber = line.range(of: #"[\d/]"#, options: .regularExpression) != nil
+                let hasUnit = ["cup", "cups", "tbsp", "tsp", "teaspoon", "tablespoon", "oz", "ounce", "lb", "pound", "gram", "g", "kg", "ml", "liter", "clove", "pinch", "dash", "slice"].contains(where: { lowercased.contains($0) })
+                let hasFoodWord = ["chicken", "beef", "pork", "fish", "egg", "flour", "sugar", "salt", "pepper", "oil", "butter", "cheese", "milk", "cream", "tomato", "onion", "garlic", "rice", "pasta", "bread"].contains(where: { lowercased.contains($0) })
+                let isShort = line.count < 150
+                
+                if (hasNumber && hasUnit) || (hasNumber && hasFoodWord) || (hasFoodWord && isShort) {
+                    // Skip if it looks like a title or instruction
+                    if !lowercased.contains("step") && !lowercased.contains("preheat") {
+                        ingredientLines.append(line)
+                    }
+                }
+            }
+            
+            if ingredientLines.count >= 30 { break }
+        }
+        
+        // SMART INSTRUCTION EXTRACTION
+        var instructionLines: [String] = []
+        var inInstructionSection = false
+        var currentInstruction = ""
+        
+        for line in lines {
+            let lowercased = line.lowercased()
+            
+            // Check if this is an instruction section header
+            if (lowercased.contains("instruction") || 
+                lowercased.contains("direction") || 
+                lowercased.contains("preparation") ||
+                lowercased.contains("method") ||
+                lowercased.contains("step")) && line.count < 50 {
+                inInstructionSection = true
+                continue
+            }
+            
+            if inInstructionSection {
+                // Look for instruction-like content
+                let hasVerb = ["add", "mix", "stir", "cook", "heat", "bake", "boil", "fry", "season", "place", "pour", "combine", "whisk", "blend", "chop", "cut", "slice", "dice", "preheat", "serve"].contains(where: { lowercased.contains($0) })
+                let isReasonableLength = line.count > 20 && line.count < 500
+                let startsWithNumber = line.first?.isNumber == true
+                
+                if (hasVerb && isReasonableLength) || startsWithNumber {
+                    // If previous instruction was building up, save it
+                    if !currentInstruction.isEmpty {
+                        instructionLines.append(currentInstruction)
+                        currentInstruction = ""
+                    }
+                    
+                    currentInstruction = line
+                    
+                    // If line seems complete, add it
+                    if line.hasSuffix(".") || line.hasSuffix("!") || startsWithNumber {
+                        instructionLines.append(currentInstruction)
+                        currentInstruction = ""
+                    }
+                } else if !currentInstruction.isEmpty && isReasonableLength {
+                    // Continue building current instruction
+                    currentInstruction += " " + line
+                    if line.hasSuffix(".") || line.hasSuffix("!") {
+                        instructionLines.append(currentInstruction)
+                        currentInstruction = ""
+                    }
+                }
+            }
+            
+            if instructionLines.count >= 25 { break }
+        }
+        
+        // Add any remaining instruction
+        if !currentInstruction.isEmpty {
+            instructionLines.append(currentInstruction)
+        }
+        
+        // If we didn't find enough, try broader search
+        if ingredientLines.count < 3 {
+            ingredientLines = lines.filter { line in
+                let lowercased = line.lowercased()
+                let hasNumber = line.range(of: #"[\d/]"#, options: .regularExpression) != nil
+                let hasUnit = ["cup", "tbsp", "tsp", "oz", "gram", "ml"].contains(where: { lowercased.contains($0) })
+                return hasNumber && hasUnit && line.count < 150
+            }
+        }
+        
+        if instructionLines.count < 3 {
+            instructionLines = lines.filter { line in
+                let lowercased = line.lowercased()
+                let hasVerb = ["add", "mix", "cook", "heat", "bake", "place"].contains(where: { lowercased.contains($0) })
+                let words = line.components(separatedBy: .whitespaces)
+                return hasVerb && words.count > 8 && words.count < 60
+            }
+        }
+        
+        debugLog("📝 Extracted: name='\(name)', \(ingredientLines.count) ingredients, \(instructionLines.count) instructions")
         
         return (name, Array(ingredientLines.prefix(30)), Array(instructionLines.prefix(20)))
     }

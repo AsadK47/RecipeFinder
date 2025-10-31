@@ -18,12 +18,12 @@ struct AnimatedHeartButton: View {
     
     // Instagram-style gradient colors (pink to red to orange)
     private let heartGradient = LinearGradient(
-        colors: [
+        gradient: Gradient(colors: [
             Color(red: 1.0, green: 0.2, blue: 0.4),      // Pink-red
             Color(red: 0.96, green: 0.26, blue: 0.21),   // Red
             Color(red: 1.0, green: 0.38, blue: 0.27),    // Red-orange
             Color(red: 1.0, green: 0.5, blue: 0.0)       // Orange
-        ],
+        ]),
         startPoint: .topLeading,
         endPoint: .bottomTrailing
     )
@@ -46,7 +46,7 @@ struct AnimatedHeartButton: View {
                 // Heart icon
                 Image(systemName: isFavorite ? "heart.fill" : "heart")
                     .font(.title3)
-                    .foregroundStyle(isFavorite ? heartGradient : LinearGradient(colors: [.white], startPoint: .top, endPoint: .bottom))
+                    .foregroundStyle(isFavorite ? heartGradient : LinearGradient(gradient: Gradient(colors: [.white]), startPoint: .top, endPoint: .bottom))
                     .scaleEffect(scale)
                     .animation(.spring(response: 0.3, dampingFraction: 0.6), value: scale)
             }
@@ -116,7 +116,7 @@ struct AnimatedHeartButton: View {
 // Preview
 #Preview {
     ZStack {
-        AppTheme.backgroundGradient(for: .teal, colorScheme: .dark)
+        AppTheme.backgroundGradient(for: AppTheme.ThemeType.teal, colorScheme: .dark)
             .ignoresSafeArea()
         
         VStack(spacing: 40) {

@@ -41,12 +41,12 @@ struct RecipeCard: View {
                             .font(.system(size: 12))
                             .foregroundStyle(
                                 LinearGradient(
-                                    colors: [
+                                    gradient: Gradient(colors: [
                                         Color(red: 1.0, green: 0.2, blue: 0.4),
                                         Color(red: 0.96, green: 0.26, blue: 0.21),
                                         Color(red: 1.0, green: 0.38, blue: 0.27),
                                         Color(red: 1.0, green: 0.5, blue: 0.0)
-                                    ],
+                                    ]),
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
                                 )

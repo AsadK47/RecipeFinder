@@ -108,7 +108,7 @@ struct AccountView: View {
                                     sectionHeader("Settings")
                                     
                                     NavigationLink {
-                                        SettingsView()
+                                        SettingsTabView()
                                     } label: {
                                         SettingsRowLabel(
                                             icon: "gear",
@@ -323,10 +323,10 @@ struct AccountView: View {
                 Circle()
                     .fill(
                         LinearGradient(
-                            colors: [
+                            gradient: Gradient(colors: [
                                 AppTheme.accentColor(for: selectedTheme),
                                 AppTheme.accentColor(for: selectedTheme).opacity(0.7)
-                            ],
+                            ]),
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )

@@ -48,7 +48,7 @@ struct ContentView: View {
                     }
                     .tag(4)
                 
-                MoreView()
+                SettingsTabView()
                     .tabItem {
                         Label("Settings", systemImage: "gearshape.fill")
                     }

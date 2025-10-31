@@ -7,6 +7,7 @@ struct ShoppingListView: View {
     @State private var showClearConfirmation = false
     @State private var collapsedCategories: Set<String> = []
     @State private var confettiTrigger = 0
+    @State private var showHelp = false
     @FocusState private var isSearchFocused: Bool
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
@@ -71,82 +72,95 @@ struct ShoppingListView: View {
                 VStack(spacing: 0) {
                     // Header
                     VStack(spacing: 16) {
-                        ZStack {
-                            HStack {
-                                Spacer()
-                                
-                                if !manager.items.isEmpty {
-                                    HStack(spacing: 12) {
-                                        // Share button
-                                        Button(action: shareShoppingList) {
-                                            Image(systemName: "square.and.arrow.up")
-                                                .font(.title2)
-                                                .foregroundColor(cardStyle == .solid && colorScheme == .light ? .black : .white)
-                                                .padding(12)
-                                                .background {
-                                                    if cardStyle == .solid {
-                                                        Circle()
-                                                            .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
-                                                    } else {
-                                                        Circle()
-                                                            .fill(.regularMaterial)
-                                                    }
-                                                }
-                                        }
-                                        
-                                        // Options menu
-                                        Menu {
-                                            Button(
-                                                action: { 
-                                                    withAnimation {
-                                                        if collapsedCategories.count == CategoryClassifier.categoryOrder.count {
-                                                            collapsedCategories.removeAll()
-                                                        } else {
-                                                            collapsedCategories = Set(CategoryClassifier.categoryOrder)
-                                                        }
-                                                    }
-                                                },
-                                                label: {
-                                                    Label(
-                                                        collapsedCategories.count == CategoryClassifier.categoryOrder.count ? "Expand All" : "Collapse All",
-                                                        systemImage: collapsedCategories.count == CategoryClassifier.categoryOrder.count ? "chevron.down.circle" : "chevron.up.circle"
-                                                    )
-                                                }
-                                            )
-                                            
-                                            Divider()
-                                            
-                                            Button(
-                                                role: .destructive,
-                                                action: { 
-                                                    showClearConfirmation = true 
-                                                },
-                                                label: {
-                                                    Label("Clear Items", systemImage: "trash")
-                                                }
-                                            )
-                                        } label: {
-                                            Image(systemName: "ellipsis.circle")
-                                                .font(.title2)
-                                                .foregroundColor(cardStyle == .solid && colorScheme == .light ? .black : .white)
-                                                .padding(12)
-                                                .background {
-                                                    if cardStyle == .solid {
-                                                        Circle()
-                                                            .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
-                                                    } else {
-                                                        Circle()
-                                                            .fill(.regularMaterial)
-                                                    }
-                                                }
+                        HStack {
+                            // Left button - Help
+                            Button(action: { 
+                                withAnimation {
+                                    showHelp.toggle()
+                                }
+                            }) {
+                                Image(systemName: "questionmark.circle")
+                                    .font(.title3)
+                                    .foregroundColor(cardStyle == .solid && colorScheme == .light ? .black : .white)
+                                    .frame(width: 44, height: 44)
+                                    .background {
+                                        if cardStyle == .solid {
+                                            Circle()
+                                                .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
+                                        } else {
+                                            Circle()
+                                                .fill(.regularMaterial)
                                         }
                                     }
-                                }
                             }
                             
+                            Spacer()
+                            
+                            // Title in center
                             Text("Shopping List")
                                 .font(.system(size: 34, weight: .bold))
                                 .foregroundColor(.white)
+                            
+                            Spacer()
+                            
+                            // Right button - Options menu (only if items exist)
+                            if !manager.items.isEmpty {
+                                Menu {
+                                    Button(action: shareShoppingList) {
+                                        Label("Share List", systemImage: "square.and.arrow.up")
+                                    }
+                                    
+                                    Divider()
+                                    
+                                    Button(
+                                        action: { 
+                                            withAnimation {
+                                                if collapsedCategories.count == CategoryClassifier.categoryOrder.count {
+                                                    collapsedCategories.removeAll()
+                                                } else {
+                                                    collapsedCategories = Set(CategoryClassifier.categoryOrder)
+                                                }
+                                            }
+                                        },
+                                        label: {
+                                            Label(
+                                                collapsedCategories.count == CategoryClassifier.categoryOrder.count ? "Expand All" : "Collapse All",
+                                                systemImage: collapsedCategories.count == CategoryClassifier.categoryOrder.count ? "chevron.down.circle" : "chevron.up.circle"
+                                            )
+                                        }
+                                    )
+                                    
+                                    Divider()
+                                    
+                                    Button(
+                                        role: .destructive,
+                                        action: { 
+                                            showClearConfirmation = true 
+                                        },
+                                        label: {
+                                            Label("Clear Items", systemImage: "trash")
+                                        }
+                                    )
+                                } label: {
+                                    Image(systemName: "ellipsis.circle")
+                                        .font(.title3)
+                                        .foregroundColor(cardStyle == .solid && colorScheme == .light ? .black : .white)
+                                        .frame(width: 44, height: 44)
+                                        .background {
+                                            if cardStyle == .solid {
+                                                Circle()
+                                                    .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
+                                            } else {
+                                                Circle()
+                                                    .fill(.regularMaterial)
+                                            }
+                                        }
+                                }
+                            } else {
+                                // Empty spacer to balance layout
+                                Color.clear
+                                    .frame(width: 44, height: 44)
+                            }
                         }
                         .padding(.horizontal, 20)
                         
@@ -279,160 +293,58 @@ struct ShoppingListView: View {
             } message: {
                 Text("Choose which items to remove from your shopping list")
             }
+            .sheet(isPresented: $showHelp) {
+                HelpSheetView()
+            }
         }
     }
     
     private var emptyStateView: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "cart")
-                .font(.system(size: 65))
-                .foregroundColor(colorScheme == .dark ? .white.opacity(0.5) : .black.opacity(0.3))
-                .padding(.top, 16)
-            
-            Text("Your shopping list is empty")
-                .font(.title3)
-                .fontWeight(.semibold)
-                .foregroundColor(colorScheme == .dark ? .white : .black)
-            
-            Text("Items are automatically categorized")
-                .font(.subheadline)
-                .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
-                .padding(.bottom, 6)
-            
-            VStack(alignment: .leading, spacing: 16) {
-                HStack(spacing: 12) {
-                    Image(systemName: "sparkles")
-                        .foregroundColor(AppTheme.accentColor)
-                        .font(.title3)
-                        .frame(width: 24)
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text("Smart Categories")
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
-                        Text("Type 'milk' → Dairy, 'chicken' → Meat")
-                            .font(.caption)
-                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
-                    }
-                    Spacer()
+        ScrollView {
+            VStack(spacing: 24) {
+                VStack(spacing: 16) {
+                    Image(systemName: "cart.circle.fill")
+                        .font(.system(size: 80))
+                        .foregroundColor(.white.opacity(0.6))
+                        .padding(.top, 48)
+                    
+                    Text("Start Your Shopping List")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                    
+                    Text("Add items using the search bar above or tap the + button on any recipe")
+                        .font(.subheadline)
+                        .foregroundColor(.white.opacity(0.7))
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 32)
                 }
+                .padding(.bottom, 24)
                 
-                HStack(spacing: 12) {
-                    Image(systemName: "list.bullet.indent")
-                        .foregroundColor(AppTheme.accentColor)
-                        .font(.title3)
-                        .frame(width: 24)
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text("Auto Grouping")
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
-                        Text("Items group by category automatically")
-                            .font(.caption)
-                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
-                    }
-                    Spacer()
+                // Always show features card
+                VStack(alignment: .leading, spacing: 16) {
+                    FeatureRow(icon: "sparkles", title: "Smart Categories", description: "Type 'milk' → Dairy, 'chicken' → Meat", appTheme: appTheme)
+                    FeatureRow(icon: "list.bullet.indent", title: "Auto Grouping", description: "Items group by category automatically", appTheme: appTheme)
+                    FeatureRow(icon: "hand.tap", title: "Tap to Collapse", description: "Hide completed categories while shopping", appTheme: appTheme)
+                    FeatureRow(icon: "checkmark.circle", title: "Check Off Items", description: "Tap checkbox or swipe to mark as purchased", appTheme: appTheme)
+                    FeatureRow(icon: "trash", title: "Delete Items", description: "Swipe left on any item to remove it", appTheme: appTheme)
+                    FeatureRow(icon: "ellipsis.circle", title: "Bulk Actions", description: "Use menu (⋯) to clear checked or all items", appTheme: appTheme)
+                    FeatureRow(icon: "square.and.pencil", title: "Edit Quantity", description: "Tap item to change amount or category", appTheme: appTheme)
                 }
-                
-                HStack(spacing: 12) {
-                    Image(systemName: "hand.tap")
-                        .foregroundColor(AppTheme.accentColor)
-                        .font(.title3)
-                        .frame(width: 24)
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text("Tap to Collapse")
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
-                        Text("Hide completed categories while shopping")
-                            .font(.caption)
-                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
+                .padding(20)
+                .background {
+                    if cardStyle == .solid {
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(colorScheme == .dark ? Color(white: 0.15).opacity(0.6) : Color.white.opacity(0.85))
+                    } else {
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(.ultraThinMaterial.opacity(0.85))
                     }
-                    Spacer()
                 }
-                
-                HStack(spacing: 12) {
-                    Image(systemName: "checkmark.circle")
-                        .foregroundColor(AppTheme.accentColor)
-                        .font(.title3)
-                        .frame(width: 24)
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text("Check Off Items")
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
-                        Text("Tap checkbox or swipe to mark as purchased")
-                            .font(.caption)
-                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
-                    }
-                    Spacer()
-                }
-                
-                HStack(spacing: 12) {
-                    Image(systemName: "trash")
-                        .foregroundColor(AppTheme.accentColor)
-                        .font(.title3)
-                        .frame(width: 24)
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text("Delete Items")
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
-                        Text("Swipe left on any item to remove it")
-                            .font(.caption)
-                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
-                    }
-                    Spacer()
-                }
-                
-                HStack(spacing: 12) {
-                    Image(systemName: "ellipsis.circle")
-                        .foregroundColor(AppTheme.accentColor)
-                        .font(.title3)
-                        .frame(width: 24)
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text("Bulk Actions")
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
-                        Text("Use menu (⋯) to clear checked or all items")
-                            .font(.caption)
-                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
-                    }
-                    Spacer()
-                }
-                
-                HStack(spacing: 12) {
-                    Image(systemName: "square.and.pencil")
-                        .foregroundColor(AppTheme.accentColor)
-                        .font(.title3)
-                        .frame(width: 24)
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Edit Quantity")
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
-                        Text("Tap item to change amount or category")
-                            .font(.caption)
-                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
-                            .lineSpacing(2)
-                    }
-                    Spacer()
-                }
+                .padding(.horizontal, 20)
             }
-            .padding(16)
-            .background {
-                if cardStyle == .solid {
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
-                } else {
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(.regularMaterial)
-                }
-            }
-            .padding(.horizontal, 30)
+            .padding(.bottom, 40)
         }
-        .frame(maxHeight: .infinity)
     }
     
     private var shoppingListContent: some View {
@@ -555,11 +467,18 @@ struct ShoppingListView: View {
     }
     
     private func addItem() {
-        guard !searchText.trimmingCharacters(in: .whitespaces).isEmpty else { return }
+        guard !searchText.trimmingCharacters(in: .whitespaces).isEmpty else {
+            print("❌ ShoppingListView: Empty search text")
+            return
+        }
+        print("🔍 ShoppingListView: Adding item '\(searchText)'")
         withAnimation(.spring(response: 0.3)) {
             manager.addItem(name: searchText)
             searchText = ""
+            isSearchFocused = false
+            HapticManager.shared.success()
         }
+        print("📊 ShoppingListView: Manager now has \(manager.items.count) items")
     }
     
     private func categoryIcon(for category: String) -> String {
@@ -605,6 +524,7 @@ struct ShoppingListItemRow: View {
                             }
                         }
                     })
+                    .buttonStyle(PlainButtonStyle())
                     
                     Text(item.name)
                         .font(.subheadline)
@@ -635,6 +555,7 @@ struct ShoppingListItemRow: View {
                                     }
                                 }
                         }
+                        .buttonStyle(PlainButtonStyle())
                         .disabled(item.quantity <= 1)
                         
                         // Quantity display
@@ -664,6 +585,7 @@ struct ShoppingListItemRow: View {
                                     }
                                 }
                         }
+                        .buttonStyle(PlainButtonStyle())
                         .disabled(item.quantity >= 99)
                     }
                     .opacity(item.isChecked ? 0.5 : 1)
@@ -715,3 +637,119 @@ struct ShoppingListItemRow: View {
 }
 
 // Edit Item Sheet
+
+// MARK: - Feature Row Component
+struct FeatureRow: View {
+    let icon: String
+    let title: String
+    let description: String
+    let appTheme: AppTheme.ThemeType
+    @Environment(\.colorScheme) var colorScheme
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .foregroundColor(AppTheme.accentColor(for: appTheme))
+                .font(.body)
+                .frame(width: 24)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                Text(description)
+                    .font(.caption)
+                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
+            }
+            Spacer()
+        }
+    }
+}
+
+// MARK: - Help Sheet View
+struct HelpSheetView: View {
+    @Environment(\.dismiss) var dismiss
+    @Environment(\.appTheme) var appTheme
+    @Environment(\.colorScheme) var colorScheme
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
+    
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                // Beautiful gradient background
+                AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
+                    .ignoresSafeArea()
+                
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 0) {
+                        // Hero section with seamless header
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Shopping List Features")
+                                .font(.system(size: 34, weight: .bold))
+                                .foregroundColor(.white)
+                            
+                            Text("Learn how to make the most of your shopping list with these powerful features.")
+                                .font(.system(size: 17))
+                                .foregroundColor(.white.opacity(0.85))
+                                .lineSpacing(4)
+                        }
+                        .padding(.horizontal, 24)
+                        .padding(.top, 60)
+                        .padding(.bottom, 32)
+                        
+                        // Feature cards with beautiful styling
+                        VStack(alignment: .leading, spacing: 16) {
+                            FeatureRow(icon: "sparkles", title: "Smart Categories", description: "Type 'milk' → Dairy, 'chicken' → Meat", appTheme: appTheme)
+                            FeatureRow(icon: "list.bullet.indent", title: "Auto Grouping", description: "Items group by category automatically", appTheme: appTheme)
+                            FeatureRow(icon: "hand.tap", title: "Tap to Collapse", description: "Hide completed categories while shopping", appTheme: appTheme)
+                            FeatureRow(icon: "checkmark.circle", title: "Check Off Items", description: "Tap checkbox or swipe to mark as purchased", appTheme: appTheme)
+                            FeatureRow(icon: "trash", title: "Delete Items", description: "Swipe left on any item to remove it", appTheme: appTheme)
+                            FeatureRow(icon: "ellipsis.circle", title: "Bulk Actions", description: "Use menu (⋯) to clear checked or all items", appTheme: appTheme)
+                            FeatureRow(icon: "square.and.pencil", title: "Edit Quantity", description: "Tap item to change amount or category", appTheme: appTheme)
+                        }
+                        .padding(24)
+                        .background {
+                            if cardStyle == .solid {
+                                RoundedRectangle(cornerRadius: 20)
+                                    .fill(colorScheme == .dark ? Color(white: 0.15).opacity(0.6) : Color.white.opacity(0.85))
+                            } else {
+                                RoundedRectangle(cornerRadius: 20)
+                                    .fill(.ultraThinMaterial.opacity(0.85))
+                            }
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 40)
+                    }
+                }
+                .ignoresSafeArea(edges: .top)
+                
+                // Floating Done button
+                VStack {
+                    HStack {
+                        Spacer()
+                        Button {
+                            dismiss()
+                        } label: {
+                            Text("Done")
+                                .font(.system(size: 17, weight: .semibold))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 8)
+                                .background(
+                                    Capsule()
+                                        .fill(Color.white.opacity(0.15))
+                                        .overlay(
+                                            Capsule()
+                                                .stroke(Color.white.opacity(0.2), lineWidth: 0.5)
+                                        )
+                                )
+                        }
+                        .padding(.trailing, 20)
+                        .padding(.top, 12)
+                    }
+                    Spacer()
+                }
+            }
+        }
+    }
+}
