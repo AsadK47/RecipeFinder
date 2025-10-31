@@ -8,6 +8,7 @@ struct KitchenView: View {
     @State private var showAddIngredientSheet = false
     @State private var cachedCategorizedIngredients: [(category: String, ingredients: [String])] = []
     @State private var collapsedCategories: Set<String> = []
+    @FocusState private var isSearchFocused: Bool
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
@@ -77,7 +78,7 @@ struct KitchenView: View {
                 AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
                 
-                VStack(spacing: 0) {
+                    VStack(spacing: 0) {
                     header
                     
                     ScrollView {
@@ -117,15 +118,8 @@ struct KitchenView: View {
     }
     
     private var header: some View {
-        VStack(spacing: 0) {
-            // Top navigation bar
+        VStack(spacing: 12) {
             HStack {
-                // Add Ingredient button
-                ModernCircleButton(icon: "plus.circle.fill") {
-                    HapticManager.shared.light()
-                    showAddIngredientSheet = true
-                }
-                
                 Spacer()
                 
                 Text("Kitchen")
@@ -133,111 +127,15 @@ struct KitchenView: View {
                     .foregroundStyle(.white)
                 
                 Spacer()
-                
-                // Options menu (only show when kitchen has items)
-                if !kitchenManager.items.isEmpty {
-                    Menu {
-                        Button(action: shareKitchenInventory) {
-                            Label("Share Kitchen", systemImage: "square.and.arrow.up")
-                        }
-                        
-                        Button(
-                            role: .destructive,
-                            action: {
-                                HapticManager.shared.light()
-                                kitchenManager.clearAll()
-                            },
-                            label: {
-                                Label("Clear All", systemImage: "trash")
-                            }
-                        )
-                    } label: {
-                        ModernCircleButton(icon: "ellipsis.circle.fill") {}
-                            .allowsHitTesting(false)
-                    }
-                } else {
-                    // Spacer for balance when no menu
-                    Color.clear
-                        .frame(width: 56, height: 56)
-                }
             }
             .padding(.horizontal, 20)
-            .padding(.top, 20)
-            .padding(.bottom, 16)
+            .padding(.top, 16)
             
             // Search bar
             ModernSearchBar(text: $searchText, placeholder: "Search ingredients...")
+                .focused($isSearchFocused)
                 .padding(.horizontal, 20)
-                .padding(.bottom, 16)
-            
-            // Selected Ingredients Display - Only show when items exist
-            if !kitchenManager.items.isEmpty {
-                VStack(alignment: .leading, spacing: 12) {
-                    HStack {
-                        Text("In Your Kitchen")
-                            .font(.headline)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(.white)
-                        
-                        Spacer()
-                        
-                        Text("\(kitchenManager.items.count)")
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(.white.opacity(0.9))
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 4)
-                            .background(
-                                Capsule()
-                                    .fill(AppTheme.accentColor(for: appTheme).opacity(0.3))
-                            )
-                    }
-                    
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 8) {
-                            ForEach(kitchenManager.items) { item in
-                                HStack(spacing: 6) {
-                                    Text(item.name)
-                                        .font(.subheadline)
-                                        .foregroundStyle(.white)
-                                    
-                                    Button(action: {
-                                        withAnimation(.spring(response: 0.3)) {
-                                            kitchenManager.removeItem(item)
-                                            HapticManager.shared.light()
-                                        }
-                                    }) {
-                                        Image(systemName: "xmark.circle.fill")
-                                            .font(.caption)
-                                            .foregroundStyle(.white.opacity(0.6))
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                }
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 8)
-                                .background {
-                                    Capsule()
-                                        .fill(AppTheme.accentColor(for: appTheme).opacity(0.25))
-                                        .overlay(
-                                            Capsule()
-                                                .strokeBorder(Color.white.opacity(0.2), lineWidth: 1)
-                                        )
-                                }
-                            }
-                        }
-                    }
-                }
-                .padding(16)
-                .background {
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(.ultraThinMaterial)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 16)
-                                .strokeBorder(Color.white.opacity(0.1), lineWidth: 1)
-                        )
-                }
-                .padding(.horizontal, 20)
-            }
+                .padding(.bottom, 12)
         }
         .background(
             LinearGradient(
@@ -252,48 +150,41 @@ struct KitchenView: View {
     }
     
     private var emptyStateView: some View {
-        VStack(spacing: 24) {
-            // Arrow pointing to + button
-            VStack(spacing: 12) {
-                Image(systemName: "arrow.up")
-                    .font(.system(size: 40, weight: .bold))
-                    .foregroundColor(.white)
-                    .shadow(color: .black.opacity(0.3), radius: 3, x: 0, y: 2)
+        VStack(spacing: 32) {
+            VStack(spacing: 16) {
+                Image(systemName: "refrigerator")
+                    .font(.system(size: 80))
+                    .foregroundColor(.white.opacity(0.3))
                 
-                Text("Tap the + button")
-                    .font(.headline)
+                Text("Your Kitchen is Empty")
+                    .font(.title2)
                     .fontWeight(.bold)
                     .foregroundColor(.white)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 10)
-                    .background(
-                        Capsule()
-                            .fill(AppTheme.accentColor(for: appTheme).opacity(0.3))
-                            .overlay(
-                                Capsule()
-                                    .strokeBorder(Color.white.opacity(0.4), lineWidth: 2)
-                            )
-                    )
+                
+                Text("Search to add ingredients")
+                    .font(.subheadline)
+                    .foregroundColor(.white.opacity(0.7))
+                    .multilineTextAlignment(.center)
             }
-            .padding(.bottom, 20)
             
-            Image(systemName: "refrigerator")
-                .font(.system(size: 80))
-                .foregroundColor(.white.opacity(0.3))
-            
-            Text("Your Kitchen is Empty")
-                .font(.title2)
-                .fontWeight(.bold)
-                .foregroundColor(.white)
-            
-            Text("Add ingredients from the USDA-approved foods list to start finding recipes you can make!")
-                .font(.body)
-                .foregroundColor(.white.opacity(0.8))
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
+            // Suggestions
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Popular Ingredients")
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 20)
+                
+                LazyVStack(spacing: 8) {
+                    ForEach(["Chicken", "Rice", "Tomato", "Onion", "Garlic", "Olive Oil"], id: \.self) { ingredient in
+                        kitchenIngredientButton(ingredient)
+                    }
+                }
+                .padding(.horizontal, 20)
+            }
         }
         .frame(maxWidth: .infinity)
-        .padding(.top, 40)
+        .padding(.top, 20)
     }
     
     private var kitchenItemsView: some View {
@@ -342,6 +233,44 @@ struct KitchenView: View {
                 .padding(.horizontal, 20)
             }
         }
+    }
+    
+    private func kitchenIngredientButton(_ ingredient: String) -> some View {
+        let isInKitchen = kitchenManager.hasItem(ingredient)
+        let category = CategoryClassifier.suggestCategory(for: ingredient)
+        
+        return Button(
+            action: {
+                withAnimation(.spring(response: 0.3)) {
+                    kitchenManager.toggleItem(ingredient)
+                    HapticManager.shared.light()
+                }
+            },
+            label: {
+                HStack(spacing: 12) {
+                    Image(systemName: CategoryClassifier.categoryIcon(for: category))
+                        .foregroundStyle(CategoryClassifier.categoryColor(for: category))
+                        .font(.body)
+                    
+                    Text(ingredient)
+                        .font(.body)
+                        .foregroundStyle(colorScheme == .dark ? .white : .black)
+                    
+                    Spacer()
+                    
+                    Image(systemName: isInKitchen ? "checkmark.circle.fill" : "plus.circle")
+                        .foregroundStyle(isInKitchen ? .green : AppTheme.accentColor(for: appTheme))
+                        .font(.title3)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 14)
+                .background {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(.regularMaterial)
+                }
+            }
+        )
+        .buttonStyle(PlainButtonStyle())
     }
     
     private var quickRecipeMatchesView: some View {
@@ -416,52 +345,6 @@ struct KitchenView: View {
         } else {
             return "You can make \(count) recipes right now!"
         }
-    }
-    
-    private func kitchenIngredientButton(_ ingredient: String) -> some View {
-        let isInKitchen = kitchenManager.hasItem(ingredient)
-        let category = CategoryClassifier.suggestCategory(for: ingredient)
-        
-        return Button(
-            action: {
-                withAnimation(.spring(response: 0.3)) {
-                    kitchenManager.toggleItem(ingredient)
-                    HapticManager.shared.light()
-                }
-            },
-            label: {
-                HStack(spacing: 12) {
-                    Image(systemName: categoryIcon(for: category))
-                        .foregroundStyle(categoryColor(for: category))
-                        .font(.body)
-                    
-                    Text(ingredient)
-                        .font(.body)
-                        .foregroundStyle(colorScheme == .dark ? .white : .black)
-                    
-                    Spacer()
-                    
-                    Image(systemName: isInKitchen ? "checkmark.circle.fill" : "plus.circle")
-                        .foregroundStyle(isInKitchen ? .green : AppTheme.accentColor(for: appTheme))
-                        .font(.title3)
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 14)
-                .background {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(.regularMaterial)
-                }
-            }
-        )
-        .buttonStyle(PlainButtonStyle())
-    }
-    
-    private func categoryIcon(for category: String) -> String {
-        CategoryClassifier.categoryIcon(for: category)
-    }
-    
-    private func categoryColor(for category: String) -> Color {
-        CategoryClassifier.categoryColor(for: category)
     }
     
     private func shareKitchenInventory() {

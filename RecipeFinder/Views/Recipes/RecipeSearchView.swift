@@ -102,30 +102,6 @@ struct RecipeSearchView: View {
                 VStack(spacing: 20) {
                     VStack(spacing: 16) {
                         HStack {
-                            // Filter button
-                            Button(
-                                action: {
-                                    HapticManager.shared.light()
-                                    showFilters.toggle()
-                                },
-                                label: {
-                                    ZStack(alignment: .topTrailing) {
-                                        ModernCircleButton(icon: "line.3.horizontal.decrease.circle") {}
-                                            .allowsHitTesting(false)
-                                        
-                                        if activeFilterCount > 0 {
-                                            Text("\(activeFilterCount)")
-                                                .font(.caption2)
-                                                .fontWeight(.bold)
-                                                .foregroundColor(.white)
-                                                .frame(width: 18, height: 18)
-                                                .background(Circle().fill(Color.red))
-                                                .offset(x: 4, y: -4)
-                                        }
-                                    }
-                                }
-                            )
-                            
                             Spacer()
                             
                             Text("Recipe Finder")
@@ -136,6 +112,19 @@ struct RecipeSearchView: View {
                             
                             // Combined actions menu
                             Menu {
+                                // Filter option
+                                Button(
+                                    action: {
+                                        HapticManager.shared.light()
+                                        showFilters.toggle()
+                                    },
+                                    label: {
+                                        Label(activeFilterCount > 0 ? "Filters (\(activeFilterCount))" : "Filters", systemImage: "line.3.horizontal.decrease.circle")
+                                    }
+                                )
+                                
+                                Divider()
+                                
                                 // Import option
                                 Button(
                                     action: {

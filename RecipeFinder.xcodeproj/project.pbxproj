@@ -58,9 +58,6 @@
 		9E77ABFE2EB4564400666BB0 /* MoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E77ABFC2EB4564400666BB0 /* MoreView.swift */; };
 		9E7B9A862E9BED16007E1786 /* RecipeSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E7B9A852E9BED12007E1786 /* RecipeSearchView.swift */; };
 		9E83ED8F2EA78A3900425CC0 /* KitchenInventoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E83ED8E2EA78A3900425CC0 /* KitchenInventoryManager.swift */; };
-		9EA9CC392EB2D58100ED12E4 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 9EA9CC382EB2D58100ED12E4 /* FirebaseAnalytics */; };
-		9EA9CC3B2EB2D58100ED12E4 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 9EA9CC3A2EB2D58100ED12E4 /* FirebaseAuth */; };
-		9EA9CC3D2EB2D58100ED12E4 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 9EA9CC3C2EB2D58100ED12E4 /* FirebaseFirestore */; };
 		9EE5AAD92D08FCBE00C1B736 /* RecipeFinderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EE5AAD82D08FCBE00C1B736 /* RecipeFinderApp.swift */; };
 		9EE5AADB2D08FCBE00C1B736 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EE5AADA2D08FCBE00C1B736 /* ContentView.swift */; };
 		9EE5AADF2D08FCBF00C1B736 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9EE5AADE2D08FCBF00C1B736 /* Assets.xcassets */; };
@@ -164,9 +161,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9EA9CC392EB2D58100ED12E4 /* FirebaseAnalytics in Frameworks */,
-				9EA9CC3D2EB2D58100ED12E4 /* FirebaseFirestore in Frameworks */,
-				9EA9CC3B2EB2D58100ED12E4 /* FirebaseAuth in Frameworks */,
 				9E6CF3AA2D83092A00D79DD6 /* ConfettiSwiftUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -528,7 +522,6 @@
 			mainGroup = 9EE5AACC2D08FCBE00C1B736;
 			packageReferences = (
 				9E6CF3A72D83087300D79DD6 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
-				9EA9CC372EB2D58100ED12E4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			productRefGroup = 9EE5AAD62D08FCBE00C1B736 /* Products */;
 			projectDirPath = "";
@@ -960,14 +953,6 @@
 				minimumVersion = 2.0.2;
 			};
 		};
-		9EA9CC372EB2D58100ED12E4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 11.5.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -975,21 +960,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 9E6CF3A72D83087300D79DD6 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
 			productName = ConfettiSwiftUI;
-		};
-		9EA9CC382EB2D58100ED12E4 /* FirebaseAnalytics */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9EA9CC372EB2D58100ED12E4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAnalytics;
-		};
-		9EA9CC3A2EB2D58100ED12E4 /* FirebaseAuth */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9EA9CC372EB2D58100ED12E4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAuth;
-		};
-		9EA9CC3C2EB2D58100ED12E4 /* FirebaseFirestore */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9EA9CC372EB2D58100ED12E4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseFirestore;
 		};
 /* End XCSwiftPackageProductDependency section */
 

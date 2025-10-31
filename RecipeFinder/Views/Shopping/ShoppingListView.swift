@@ -7,7 +7,6 @@ struct ShoppingListView: View {
     @State private var showClearConfirmation = false
     @State private var collapsedCategories: Set<String> = []
     @State private var confettiTrigger = 0
-    @State private var showHelp = false
     @FocusState private var isSearchFocused: Bool
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
@@ -18,30 +17,18 @@ struct ShoppingListView: View {
     }
     
     private func shareShoppingList() {
-        var text = "🛒 MY SHOPPING LIST\n"
-        text += String(repeating: "━", count: 40) + "\n\n"
+        var text = "🛒 Shopping List\n\n"
         
         for group in sortedGroupedItems {
-            let icon = CategoryClassifier.categoryIcon(for: group.key)
-            text += "\(icon) \(group.key.uppercased())\n"
-            text += String(repeating: "─", count: 40) + "\n"
-            
+            text += "\(group.key)\n"
             for item in group.value {
-                let checkbox = item.isChecked ? "☑" : "☐"
-                text += "  \(checkbox) \(item.name)\n"
+                let checkbox = item.isChecked ? "✓" : "○"
+                text += "\(checkbox) \(item.name)\n"
             }
             text += "\n"
         }
         
-        text += String(repeating: "━", count: 40) + "\n"
-        text += "Created with RecipeFinder\n"
-        
-        let activityController = UIActivityViewController(
-            activityItems: [text],
-            applicationActivities: nil
-        )
-        
-        // Use proper window scene access (iOS 15+)
+        // Use proper window scene access
         guard let windowScene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
               let rootViewController = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController else {
             return
@@ -52,6 +39,11 @@ struct ShoppingListView: View {
         while let presented = topController.presentedViewController {
             topController = presented
         }
+        
+        let activityController = UIActivityViewController(
+            activityItems: [text],
+            applicationActivities: nil
+        )
         
         // Configure for iPad
         if let popover = activityController.popoverPresentationController {
@@ -71,18 +63,8 @@ struct ShoppingListView: View {
                 
                 VStack(spacing: 0) {
                     // Header
-                    VStack(spacing: 16) {
+                    VStack(spacing: 12) {
                         HStack {
-                            // Left button - Help
-                            Button(action: { 
-                                withAnimation {
-                                    showHelp.toggle()
-                                }
-                            }) {
-                                ModernCircleButton(icon: "questionmark.circle") {}
-                                    .allowsHitTesting(false)
-                            }
-                            
                             Spacer()
                             
                             // Title in center
@@ -198,7 +180,7 @@ struct ShoppingListView: View {
                         
                         // Progress bar below search
                         if !manager.items.isEmpty {
-                            VStack(spacing: 8) {
+                            VStack(spacing: 6) {
                                 ProgressView(value: Double(manager.checkedCount), total: Double(manager.items.count))
                                     .progressViewStyle(LinearProgressViewStyle(tint: AppTheme.accentColor))
                                     .frame(height: 8)
@@ -213,8 +195,8 @@ struct ShoppingListView: View {
                             .padding(.horizontal, 20)
                         }
                     }
-                    .padding(.top, 20)
-                    .padding(.bottom, 16)
+                    .padding(.top, 16)
+                    .padding(.bottom, 12)
                     
                     // Content
                     if manager.items.isEmpty {
@@ -265,9 +247,6 @@ struct ShoppingListView: View {
                 Button("Cancel", role: .cancel) {}
             } message: {
                 Text("Choose which items to remove from your shopping list")
-            }
-            .sheet(isPresented: $showHelp) {
-                HelpSheetView()
             }
         }
     }
