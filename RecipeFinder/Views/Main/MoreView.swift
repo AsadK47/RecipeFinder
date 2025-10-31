@@ -12,9 +12,8 @@ struct MoreView: View {
                 AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
                 
-                ScrollView {
-                    VStack(spacing: 0) {
-                        // Header
+                VStack(spacing: 0) {
+                    VStack(spacing: 12) {
                         GeometryReader { geometry in
                             HStack(spacing: 0) {
                                 Spacer()
@@ -30,19 +29,10 @@ struct MoreView: View {
                         }
                         .frame(height: 44)
                         .padding(.horizontal, 20)
-                        .padding(.top, 20)
-                        .padding(.bottom, 24)
-                        .background(
-                            LinearGradient(
-                                gradient: Gradient(stops: [
-                                    .init(color: Color.clear, location: 0),
-                                    .init(color: Color.black.opacity(0.1), location: 1)
-                                ]),
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                        )
-                        
+                        .padding(.top, 16)
+                    }
+                    
+                    ScrollView {
                         VStack(spacing: 24) {
                             // Features Section
                             VStack(alignment: .leading, spacing: 12) {
@@ -88,6 +78,7 @@ struct MoreView: View {
                                 .padding(.horizontal, 20)
                             }
                         }
+                        .padding(.top, 16)
                         .padding(.bottom, 40)
                     }
                 }

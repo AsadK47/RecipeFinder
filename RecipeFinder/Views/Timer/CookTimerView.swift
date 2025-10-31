@@ -40,8 +40,7 @@ struct CookTimerView: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                    // Header
-                    VStack(spacing: 16) {
+                    VStack(spacing: 12) {
                         GeometryReader { geometry in
                             HStack(spacing: 0) {
                                 // Left spacer for balance - 15% of width or fixed size
@@ -86,9 +85,8 @@ struct CookTimerView: View {
                         }
                         .frame(height: 44)
                         .padding(.horizontal, 20)
+                        .padding(.top, 16)
                     }
-                    .padding(.top, 20)
-                    .padding(.bottom, 16)
                     
                     ScrollView {
                         VStack(spacing: 24) {
@@ -108,6 +106,7 @@ struct CookTimerView: View {
                                 activeTimersSection
                             }
                         }
+                        .padding(.top, 16)
                         .padding(.horizontal, 20)
                         .padding(.bottom, 100)
                     }

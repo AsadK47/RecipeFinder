@@ -71,7 +71,6 @@ struct ShoppingListView: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                    // Header
                     VStack(spacing: 12) {
                         GeometryReader { geometry in
                             HStack(spacing: 0) {
@@ -81,7 +80,6 @@ struct ShoppingListView: View {
                                 
                                 Spacer(minLength: 8)
                                 
-                                // Title in center
                                 Text("Shopping List")
                                     .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
                                     .foregroundColor(.white)
@@ -212,8 +210,6 @@ struct ShoppingListView: View {
                             .padding(.horizontal, 20)
                         }
                     }
-                    .padding(.top, 16)
-                    .padding(.bottom, 4)
                     
                     // Content
                     if showingSearchResults {

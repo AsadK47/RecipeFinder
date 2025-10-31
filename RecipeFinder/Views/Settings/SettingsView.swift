@@ -38,32 +38,23 @@ struct SettingsTabView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header
-                HStack {
-                    Spacer()
-                    Text("Settings")
-                        .font(.system(size: 34, weight: .bold))
-                        .foregroundColor(.white)
-                    Spacer()
+                VStack(spacing: 12) {
+                    HStack {
+                        Spacer()
+                        Text("Settings")
+                            .font(.system(size: 34, weight: .bold))
+                            .foregroundColor(.white)
+                        Spacer()
+                    }
+                    .frame(height: 44)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 16)
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 20)
-                .padding(.bottom, 16)
-                .background(
-                    LinearGradient(
-                        gradient: Gradient(stops: [
-                            .init(color: Color.clear, location: 0),
-                            .init(color: Color.black.opacity(0.1), location: 1)
-                        ]),
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
                     
-                    ScrollView {
-                        VStack(spacing: 24) {
-                            // Account Section
-                            SettingsCard {
+                ScrollView {
+                    VStack(spacing: 24) {
+                        // Account Section
+                        SettingsCard {
                                 NavigationLink(destination: AccountView()) {
                                     HStack(spacing: 16) {
                                         Circle()
@@ -202,7 +193,7 @@ struct SettingsTabView: View {
                                     .font(.caption2)
                                     .foregroundColor(.white.opacity(0.5))
                             }
-                            .padding(.top, 8)
+                            .padding(.top, 24)
                             .padding(.bottom, 40)
                         }
                         .padding(.horizontal, 20)
