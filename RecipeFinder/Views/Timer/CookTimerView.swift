@@ -167,7 +167,7 @@ struct CookTimerView: View {
                     .font(.subheadline)
                     .fontWeight(.semibold)
             }
-            .foregroundColor(isDisabled ? .white.opacity(0.3) : .white)
+            .foregroundColor(isDisabled ? (colorScheme == .dark ? .white.opacity(0.3) : .black.opacity(0.3)) : (colorScheme == .dark ? .white : .black))
             .frame(maxWidth: .infinity)
             .padding(.vertical, 20)
             .background {
@@ -198,7 +198,7 @@ struct CookTimerView: View {
                 Text("Custom Timer")
                     .fontWeight(.semibold)
             }
-            .foregroundColor(isDisabled ? .white.opacity(0.3) : .white)
+            .foregroundColor(isDisabled ? (colorScheme == .dark ? .white.opacity(0.3) : .black.opacity(0.3)) : (colorScheme == .dark ? .white : .black))
             .frame(maxWidth: .infinity)
             .padding(.vertical, 18)
             .background {

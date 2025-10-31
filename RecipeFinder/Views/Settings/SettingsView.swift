@@ -53,6 +53,7 @@ struct SettingsTabView: View {
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 16)
+                .padding(.bottom, 8)
                     
                 ScrollView {
                     VStack(spacing: 24) {
