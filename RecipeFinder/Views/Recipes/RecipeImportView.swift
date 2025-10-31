@@ -119,37 +119,27 @@ struct RecipeImportView: View {
                         .fontWeight(.semibold)
                         .foregroundColor(.primary)
                         .padding(.horizontal)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 12) {
-                            exampleButton(
-                                url: "https://www.allrecipes.com/recipe/223042/chicken-parmesan/", 
-                                title: "Chicken Parmesan",
-                                subtitle: "AllRecipes"
-                            )
-                            exampleButton(
-                                url: "https://www.bbcgoodfood.com/recipes/spaghetti-carbonara-recipe",
-                                title: "Spaghetti Carbonara",
-                                subtitle: "BBC Good Food"
-                            )
-                            exampleButton(
-                                url: "https://www.seriouseats.com/classic-lasagna-meat-sauce-bechamel-recipe",
-                                title: "Classic Lasagna",
-                                subtitle: "Serious Eats"
-                            )
-                            exampleButton(
-                                url: "https://www.bonappetit.com/recipe/bas-best-chocolate-chip-cookies",
-                                title: "Chocolate Chip Cookies",
-                                subtitle: "Bon Appétit"
-                            )
-                            exampleButton(
-                                url: "https://www.tamingtwins.com/mexican-chicken-and-rice-one-pot/#wprm-recipe-container-22976",
-                                title: "Mexican Chicken and Rice",
-                                subtitle: "Taming Twins"
-                            )
-                        }
-                        .padding(.horizontal)
+                    VStack(alignment: .leading, spacing: 8) {
+                        exampleButton(
+                            url: "https://www.allrecipes.com/recipe/223042/chicken-parmesan/", 
+                            title: "Chicken Parmesan",
+                            subtitle: "AllRecipes"
+                        )
+                        exampleButton(
+                            url: "https://www.bbcgoodfood.com/recipes/spaghetti-carbonara-recipe",
+                            title: "Spaghetti Carbonara",
+                            subtitle: "BBC Good Food"
+                        )
+                        exampleButton(
+                            url: "https://www.tamingtwins.com/mexican-chicken-and-rice-one-pot/",
+                            title: "Mexican Chicken and Rice",
+                            subtitle: "Taming Twins"
+                        )
                     }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
                 }
                 
                 Spacer()
@@ -253,6 +243,7 @@ struct RecipeImportView: View {
                         .font(.caption2)
                         .foregroundColor(.secondary)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
                 .background(

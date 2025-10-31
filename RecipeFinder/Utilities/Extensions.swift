@@ -36,6 +36,19 @@ extension String {
     var isBlank: Bool {
         trimmed.isEmpty
     }
+    
+    /// Find all ranges matching a pattern
+    func ranges(of pattern: String, options: NSString.CompareOptions = []) -> [Range<String.Index>] {
+        var ranges: [Range<String.Index>] = []
+        var searchRange = startIndex..<endIndex
+        
+        while let range = self.range(of: pattern, options: options, range: searchRange) {
+            ranges.append(range)
+            searchRange = range.upperBound..<endIndex
+        }
+        
+        return ranges
+    }
 }
 
 // UIColor Extensions for Tab Bar Styling

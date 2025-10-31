@@ -180,10 +180,10 @@ struct RecipeWizardView: View {
             }
         }
         
-        // Pre-fill ingredients (USDA-matched ingredients from import)
+        // Pre-fill ingredients (parse full ingredient strings from import)
         if let ingredients = data.ingredients, !ingredients.isEmpty {
-            ingredientItems = ingredients.map { ingredientName in
-                IngredientItem(quantity: "1", unit: "", name: ingredientName)
+            ingredientItems = ingredients.map { fullIngredient in
+                parseIngredientString(fullIngredient)
             }
             // Add one empty row for user to add more
             if !ingredients.isEmpty {
@@ -387,54 +387,41 @@ struct RecipeWizardView: View {
             cardContainer {
                 VStack(spacing: 16) {
                     ForEach(Array(ingredientItems.enumerated()), id: \.offset) { index, _ in
-                        VStack(alignment: .leading, spacing: 8) {
-                            HStack {
-                                Text("Ingredient \(index + 1)")
-                                    .font(.caption)
+                        HStack(spacing: 12) {
+                            // Combined Quantity field (amount + unit)
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Quantity")
+                                    .font(.caption2)
                                     .foregroundColor(.secondary)
-                                
-                                Spacer()
-                                
-                                if ingredientItems.count > 1 {
-                                    Button(action: {
-                                        HapticManager.shared.light()
-                                        ingredientItems.remove(at: index)
-                                    }) {
-                                        Image(systemName: "minus.circle.fill")
-                                            .foregroundColor(.red)
-                                    }
+                                HStack(spacing: 4) {
+                                    TextField("1", text: $ingredientItems[index].quantity)
+                                        .keyboardType(.decimalPad)
+                                        .textFieldStyle(.roundedBorder)
+                                        .frame(width: 50)
+                                    TextField("tbsp", text: $ingredientItems[index].unit)
+                                        .textFieldStyle(.roundedBorder)
+                                        .frame(width: 60)
                                 }
                             }
                             
-                            HStack(spacing: 12) {
-                                // Quantity with icon
-                                HStack(spacing: 6) {
-                                    Image(systemName: "number.circle.fill")
-                                        .font(.system(size: 16))
-                                        .foregroundColor(AppTheme.accentColor(for: appTheme).opacity(0.7))
-                                    TextField("Qty", text: $ingredientItems[index].quantity)
-                                        .keyboardType(.decimalPad)
-                                        .textFieldStyle(.roundedBorder)
-                                }
-                                .frame(width: 85)
-                                
-                                // Unit with icon
-                                HStack(spacing: 6) {
-                                    Image(systemName: "scalemass.fill")
-                                        .font(.system(size: 16))
-                                        .foregroundColor(AppTheme.accentColor(for: appTheme).opacity(0.7))
-                                    TextField("cup/g/oz", text: $ingredientItems[index].unit)
-                                        .textFieldStyle(.roundedBorder)
-                                }
-                                .frame(width: 110)
-                                
-                                // Name with icon
-                                HStack(spacing: 6) {
-                                    Image(systemName: "carrot.fill")
-                                        .font(.system(size: 16))
-                                        .foregroundColor(AppTheme.accentColor(for: appTheme).opacity(0.7))
-                                    TextField("Ingredient", text: $ingredientItems[index].name)
-                                        .textFieldStyle(.roundedBorder)
+                            // Ingredient Name
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Ingredient")
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                                TextField("Name", text: $ingredientItems[index].name)
+                                    .textFieldStyle(.roundedBorder)
+                            }
+                            
+                            // Delete button
+                            if ingredientItems.count > 1 {
+                                Button(action: {
+                                    HapticManager.shared.light()
+                                    ingredientItems.remove(at: index)
+                                }) {
+                                    Image(systemName: "minus.circle.fill")
+                                        .foregroundColor(.red)
+                                        .font(.system(size: 24))
                                 }
                             }
                         }
@@ -798,6 +785,56 @@ struct RecipeWizardView: View {
         HapticManager.shared.success()
         onComplete(recipe)
         dismiss()
+    }
+    
+    // Parse ingredient string like "1 tbsp Sunflower oil" or "600 g Chicken breast, Cut into cubes"
+    private func parseIngredientString(_ fullIngredient: String) -> IngredientItem {
+        let trimmed = fullIngredient.trimmingCharacters(in: .whitespaces)
+        
+        // Pattern: [quantity] [unit] [name][, notes]
+        // Try to extract quantity (number or fraction at start)
+        let quantityPattern = #"^([\d\./\-]+)\s+"#
+        var quantity = ""
+        var remaining = trimmed
+        
+        if let regex = try? NSRegularExpression(pattern: quantityPattern, options: []) {
+            let nsString = trimmed as NSString
+            if let match = regex.firstMatch(in: trimmed, options: [], range: NSRange(location: 0, length: nsString.length)) {
+                let quantityRange = match.range(at: 1)
+                quantity = nsString.substring(with: quantityRange)
+                remaining = nsString.substring(from: match.range.location + match.range.length)
+            }
+        }
+        
+        // Try to extract unit (common cooking units)
+        let unitPattern = #"^(tbsp|tsp|cup|cups|ml|g|kg|oz|lb|lbs|cloves?|pieces?|pinch)\s+"#
+        var unit = ""
+        
+        if let regex = try? NSRegularExpression(pattern: unitPattern, options: .caseInsensitive) {
+            let nsString = remaining as NSString
+            if let match = regex.firstMatch(in: remaining, options: [], range: NSRange(location: 0, length: nsString.length)) {
+                let unitRange = match.range(at: 1)
+                unit = nsString.substring(with: unitRange)
+                remaining = nsString.substring(from: match.range.location + match.range.length)
+            }
+        }
+        
+        // The rest is the name (and optional notes after comma)
+        var name = remaining
+        
+        // Remove notes if present (after comma)
+        if let commaIndex = remaining.firstIndex(of: ",") {
+            name = String(remaining[..<commaIndex])
+        }
+        
+        name = name.trimmingCharacters(in: .whitespaces)
+        
+        // If we didn't find quantity/unit, treat entire string as name
+        if quantity.isEmpty && unit.isEmpty && name.isEmpty {
+            name = trimmed
+        }
+        
+        return IngredientItem(quantity: quantity, unit: unit, name: name)
     }
 }
 

@@ -30,6 +30,11 @@ struct RecipeParser {
         var confidenceScore = 0.0
         let maxScore = 8.0 // Total number of extraction attempts
         
+        // Check for WPRM (WP Recipe Maker) plugin format first
+        if let wprm = extractWPRM(from: html) {
+            return wprm
+        }
+        
         // Clean HTML to plain text
         let text = cleanHTML(html)
         let lines = text.components(separatedBy: .newlines).filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
@@ -88,6 +93,285 @@ struct RecipeParser {
         return result
     }
     
+    // WPRM Plugin Support
+    
+    /// Extract recipe from WPRM (WP Recipe Maker) plugin format
+    /// This plugin is used by many WordPress recipe sites
+    private static func extractWPRM(from html: String) -> ParsedRecipe? {
+        // Check if this is a WPRM recipe
+        guard html.contains("wprm-recipe") || html.contains("wp-recipe-maker") else {
+            return nil
+        }
+        
+        var result = ParsedRecipe()
+        result.confidence = 0.95 // High confidence for structured data
+        
+        // Extract recipe name from wprm-recipe-name class
+        if let nameMatch = html.range(of: "class=\"wprm-recipe-name[^\"]*\">([^<]+)<", options: .regularExpression) {
+            let matched = String(html[nameMatch])
+            if let contentRange = matched.range(of: ">([^<]+)<", options: .regularExpression) {
+                var name = String(matched[contentRange])
+                    .replacingOccurrences(of: ">", with: "")
+                    .replacingOccurrences(of: "<", with: "")
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                // Decode HTML entities
+                name = decodeHTMLEntities(name)
+                result.name = name
+            }
+        }
+        
+        // Extract times - look for the time values in the class structure
+        // The actual time value is in a span like: <span class="wprm-recipe-prep_time-minutes">15</span>
+        let prepTimePattern = #"wprm-recipe-prep_time-minutes[^>]*>(\d+)<"#
+        if let regex = try? NSRegularExpression(pattern: prepTimePattern, options: []) {
+            let nsString = html as NSString
+            if let match = regex.firstMatch(in: html, options: [], range: NSRange(location: 0, length: nsString.length)) {
+                let minutesRange = match.range(at: 1)
+                let minutesStr = nsString.substring(with: minutesRange)
+                if let minutes = Int(minutesStr) {
+                    result.prepTime = minutes
+                }
+            }
+        }
+        
+        let cookTimePattern = #"wprm-recipe-cook_time-minutes[^>]*>(\d+)<"#
+        if let regex = try? NSRegularExpression(pattern: cookTimePattern, options: []) {
+            let nsString = html as NSString
+            if let match = regex.firstMatch(in: html, options: [], range: NSRange(location: 0, length: nsString.length)) {
+                let minutesRange = match.range(at: 1)
+                let minutesStr = nsString.substring(with: minutesRange)
+                if let minutes = Int(minutesStr) {
+                    result.cookTime = minutes
+                }
+            }
+        }
+        
+        // Fallback: Try data-minutes attribute if above patterns don't work
+        if result.prepTime == nil {
+            let prepDataPattern = #"wprm-recipe-prep[^>]*?data-minutes="(\d+)""#
+            if let regex = try? NSRegularExpression(pattern: prepDataPattern, options: []) {
+                let nsString = html as NSString
+                if let match = regex.firstMatch(in: html, options: [], range: NSRange(location: 0, length: nsString.length)) {
+                    let minutesRange = match.range(at: 1)
+                    let minutesStr = nsString.substring(with: minutesRange)
+                    if let minutes = Int(minutesStr) {
+                        result.prepTime = minutes
+                    }
+                }
+            }
+        }
+        
+        if result.cookTime == nil {
+            let cookDataPattern = #"wprm-recipe-cook[^>]*?data-minutes="(\d+)""#
+            if let regex = try? NSRegularExpression(pattern: cookDataPattern, options: []) {
+                let nsString = html as NSString
+                if let match = regex.firstMatch(in: html, options: [], range: NSRange(location: 0, length: nsString.length)) {
+                    let minutesRange = match.range(at: 1)
+                    let minutesStr = nsString.substring(with: minutesRange)
+                    if let minutes = Int(minutesStr) {
+                        result.cookTime = minutes
+                    }
+                }
+            }
+        }
+        
+        // Extract servings - the value is in the text content of the servings span
+        // Pattern: <span class="wprm-recipe-servings..." data-recipe="22976">4</span>
+        let servingsPattern = #"wprm-recipe-servings[^>]*data-recipe="\d+"[^>]*>(\d+)<"#
+        if let regex = try? NSRegularExpression(pattern: servingsPattern, options: []) {
+            let nsString = html as NSString
+            if let match = regex.firstMatch(in: html, options: [], range: NSRange(location: 0, length: nsString.length)) {
+                let servingsRange = match.range(at: 1)
+                let servingsStr = nsString.substring(with: servingsRange)
+                if let servings = Int(servingsStr), servings >= 1 && servings <= 100 {
+                    result.servings = servings
+                }
+            }
+        }
+        
+        // Fallback: Try data-servings attribute
+        if result.servings == nil {
+            let dataServingsPattern = #"wprm-recipe-servings[^>]*?data-servings="(\d+)""#
+            if let regex = try? NSRegularExpression(pattern: dataServingsPattern, options: []) {
+                let nsString = html as NSString
+                if let match = regex.firstMatch(in: html, options: [], range: NSRange(location: 0, length: nsString.length)) {
+                    let servingsRange = match.range(at: 1)
+                    let servingsStr = nsString.substring(with: servingsRange)
+                    if let servings = Int(servingsStr), servings >= 1 && servings <= 100 {
+                        result.servings = servings
+                    }
+                }
+            }
+        }
+        
+        // Extract ingredients from wprm-recipe-ingredient with proper parsing
+        var ingredients: [String] = []
+        
+        // Pattern to match each ingredient <li> tag
+        let ingredientPattern = #"<li[^>]*class="[^"]*wprm-recipe-ingredient[^"]*"[^>]*>([\s\S]*?)</li>"#
+        
+        if let regex = try? NSRegularExpression(pattern: ingredientPattern, options: []) {
+            let nsString = html as NSString
+            let matches = regex.matches(in: html, options: [], range: NSRange(location: 0, length: nsString.length))
+            
+            for match in matches {
+                let liContent = nsString.substring(with: match.range)
+                
+                var amount = ""
+                var unit = ""
+                var name = ""
+                var notes = ""
+                
+                // Extract amount from wprm-recipe-ingredient-amount
+                let amountPattern = #"class="wprm-recipe-ingredient-amount">([^<]+)<"#
+                if let amountRegex = try? NSRegularExpression(pattern: amountPattern, options: []) {
+                    let amountMatches = amountRegex.matches(in: liContent, options: [], range: NSRange(location: 0, length: (liContent as NSString).length))
+                    if let firstMatch = amountMatches.first, firstMatch.numberOfRanges > 1 {
+                        let amountRange = firstMatch.range(at: 1)
+                        amount = (liContent as NSString).substring(with: amountRange).trimmingCharacters(in: .whitespaces)
+                    }
+                }
+                
+                // Extract unit from wprm-recipe-ingredient-unit
+                let unitPattern = #"class="wprm-recipe-ingredient-unit">([^<]+)<"#
+                if let unitRegex = try? NSRegularExpression(pattern: unitPattern, options: []) {
+                    let unitMatches = unitRegex.matches(in: liContent, options: [], range: NSRange(location: 0, length: (liContent as NSString).length))
+                    if let firstMatch = unitMatches.first, firstMatch.numberOfRanges > 1 {
+                        let unitRange = firstMatch.range(at: 1)
+                        unit = (liContent as NSString).substring(with: unitRange).trimmingCharacters(in: .whitespaces)
+                    }
+                }
+                
+                // Extract name from wprm-recipe-ingredient-name
+                let namePattern = #"class="wprm-recipe-ingredient-name">([^<]+)<"#
+                if let nameRegex = try? NSRegularExpression(pattern: namePattern, options: []) {
+                    let nameMatches = nameRegex.matches(in: liContent, options: [], range: NSRange(location: 0, length: (liContent as NSString).length))
+                    if let firstMatch = nameMatches.first, firstMatch.numberOfRanges > 1 {
+                        let nameRange = firstMatch.range(at: 1)
+                        name = (liContent as NSString).substring(with: nameRange).trimmingCharacters(in: .whitespaces)
+                    }
+                }
+                
+                // Extract notes from wprm-recipe-ingredient-notes (optional)
+                let notesPattern = #"class="wprm-recipe-ingredient-notes[^\"]*\">([^<]+)<"#
+                if let notesRegex = try? NSRegularExpression(pattern: notesPattern, options: []) {
+                    let notesMatches = notesRegex.matches(in: liContent, options: [], range: NSRange(location: 0, length: (liContent as NSString).length))
+                    if let firstMatch = notesMatches.first, firstMatch.numberOfRanges > 1 {
+                        let notesRange = firstMatch.range(at: 1)
+                        notes = (liContent as NSString).substring(with: notesRange).trimmingCharacters(in: .whitespaces)
+                    }
+                }
+                
+                // Build the full ingredient string
+                
+                var fullIngredient = ""
+                if !amount.isEmpty {
+                    fullIngredient += amount + " "
+                }
+                if !unit.isEmpty {
+                    fullIngredient += unit + " "
+                }
+                if !name.isEmpty {
+                    fullIngredient += name
+                }
+                if !notes.isEmpty {
+                    fullIngredient += ", " + notes
+                }
+                
+                // Decode HTML entities
+                fullIngredient = decodeHTMLEntities(fullIngredient.trimmingCharacters(in: .whitespaces))
+                
+                if !fullIngredient.isEmpty && !ingredients.contains(fullIngredient) {
+                    ingredients.append(fullIngredient)
+                }
+            }
+        }
+        
+        result.ingredients = ingredients
+        
+        // Extract instructions from wprm-recipe-instruction-text
+        var instructions: [String] = []
+        
+        // Pattern to match the entire instruction list item
+        let instructionPattern = #"<li[^>]*class="[^"]*wprm-recipe-instruction[^"]*"[^>]*>([\s\S]*?)</li>"#
+        
+        if let regex = try? NSRegularExpression(pattern: instructionPattern, options: []) {
+            let nsString = html as NSString
+            let matches = regex.matches(in: html, options: [], range: NSRange(location: 0, length: nsString.length))
+            
+            for match in matches {
+                let liContent = nsString.substring(with: match.range)
+                
+                // Look for the instruction-text div and extract its content
+                let textPattern = #"wprm-recipe-instruction-text[^>]*>([\s\S]*?)</div>"#
+                if let textRegex = try? NSRegularExpression(pattern: textPattern, options: []) {
+                    let textMatches = textRegex.matches(in: liContent, options: [], range: NSRange(location: 0, length: (liContent as NSString).length))
+                    
+                    if let textMatch = textMatches.first {
+                        let textRange = textMatch.range(at: 1)
+                        var instruction = (liContent as NSString).substring(with: textRange)
+                        
+                        // Clean up: remove HTML tags, normalize whitespace, decode entities
+                        instruction = instruction.replacingOccurrences(of: "<[^>]+>", with: " ", options: .regularExpression)
+                        instruction = instruction.replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+                        instruction = decodeHTMLEntities(instruction)
+                        instruction = instruction.trimmingCharacters(in: .whitespacesAndNewlines)
+                        
+                        if !instruction.isEmpty && instruction.count >= 10 {
+                            instructions.append(instruction)
+                        }
+                    }
+                }
+            }
+        }
+        
+        result.instructions = instructions
+        
+        // Extract cuisine
+        if let cuisineMatch = html.range(of: "wprm-recipe-cuisine[^>]*>([^<]+)<", options: .regularExpression) {
+            let matched = String(html[cuisineMatch])
+            if let contentRange = matched.range(of: ">([^<]+)<", options: .regularExpression) {
+                let cuisine = String(matched[contentRange])
+                    .replacingOccurrences(of: ">", with: "")
+                    .replacingOccurrences(of: "<", with: "")
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                result.cuisine = cuisine
+            }
+        }
+        
+        // Extract course (category)
+        if let courseMatch = html.range(of: "wprm-recipe-course[^>]*>([^<]+)<", options: .regularExpression) {
+            let matched = String(html[courseMatch])
+            if let contentRange = matched.range(of: ">([^<]+)<", options: .regularExpression) {
+                let course = String(matched[contentRange])
+                    .replacingOccurrences(of: ">", with: "")
+                    .replacingOccurrences(of: "<", with: "")
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                result.category = course
+            }
+        }
+        
+        // Only return if we found the essential data
+        if result.name != nil && !result.ingredients.isEmpty && !result.instructions.isEmpty {
+            return result
+        }
+        
+        // If we found some data but not instructions, try fallback extraction
+        if result.name != nil && !result.ingredients.isEmpty {
+            // Try to extract instructions using general method
+            let text = cleanHTML(html)
+            let lines = text.components(separatedBy: .newlines).filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+            let fallbackInstructions = extractInstructions(from: text, lines: lines)
+            
+            if !fallbackInstructions.isEmpty {
+                result.instructions = fallbackInstructions
+                return result
+            }
+        }
+        
+        return nil
+    }
+    
     // Clean HTML to plain text
     private static func cleanHTML(_ html: String) -> String {
         var text = html
@@ -118,21 +402,47 @@ struct RecipeParser {
     // Decode HTML entities
     private static func decodeHTMLEntities(_ text: String) -> String {
         var result = text
+        
+        // Common named entities
         let entities: [String: String] = [
             "&amp;": "&",
             "&lt;": "<",
             "&gt;": ">",
             "&quot;": "\"",
-            "&#039;": "'",
             "&apos;": "'",
             "&nbsp;": " ",
             "&frac12;": "½",
             "&frac14;": "¼",
-            "&frac34;": "¾"
+            "&frac34;": "¾",
+            "&ndash;": "–",
+            "&mdash;": "—",
+            "&hellip;": "…"
         ]
         
         for (entity, replacement) in entities {
             result = result.replacingOccurrences(of: entity, with: replacement)
+        }
+        
+        // Decode numeric entities like &#39; and &#039;
+        // Pattern: &#\d+;
+        let numericPattern = "&#(\\d+);"
+        if let regex = try? NSRegularExpression(pattern: numericPattern, options: []) {
+            let nsString = result as NSString
+            let matches = regex.matches(in: result, options: [], range: NSRange(location: 0, length: nsString.length))
+            
+            // Process matches in reverse to avoid index issues
+            for match in matches.reversed() {
+                let fullRange = match.range
+                let numberRange = match.range(at: 1)
+                let numberStr = nsString.substring(with: numberRange)
+                
+                if let charCode = Int(numberStr),
+                   let unicode = UnicodeScalar(charCode) {
+                    let char = String(Character(unicode))
+                    let fullMatch = nsString.substring(with: fullRange)
+                    result = result.replacingOccurrences(of: fullMatch, with: char)
+                }
+            }
         }
         
         return result
