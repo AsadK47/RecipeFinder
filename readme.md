@@ -1,5 +1,6 @@
 # RecipeFinder 🍽️
 
+[![Build iOS App](https://github.com/AsadK47/RecipeFinder/actions/workflows/build.yml/badge.svg)](https://github.com/AsadK47/RecipeFinder/actions/workflows/build.yml)
 ![Swift](https://img.shields.io/badge/Swift-5.7+-FA7343?style=flat-square&logo=swift&logoColor=white)
 ![iOS](https://img.shields.io/badge/iOS-15.0+-000000?style=flat-square&logo=apple&logoColor=white)
 ![SwiftUI](https://img.shields.io/badge/SwiftUI-Declarative-0071E3?style=flat-square&logo=swift&logoColor=white)
