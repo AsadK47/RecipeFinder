@@ -182,8 +182,12 @@ struct RecipeWizardView: View {
         
         // Pre-fill ingredients (parse full ingredient strings from import)
         if let ingredients = data.ingredients, !ingredients.isEmpty {
+            print("🔍 DEBUG: Parsing \(ingredients.count) ingredients:")
             ingredientItems = ingredients.map { fullIngredient in
-                parseIngredientString(fullIngredient)
+                print("  Input: '\(fullIngredient)'")
+                let parsed = parseIngredientString(fullIngredient)
+                print("  Output: qty='\(parsed.quantity)' unit='\(parsed.unit)' name='\(parsed.name)'")
+                return parsed
             }
             // Add one empty row for user to add more
             if !ingredients.isEmpty {
@@ -806,8 +810,8 @@ struct RecipeWizardView: View {
             }
         }
         
-        // Try to extract unit (common cooking units)
-        let unitPattern = #"^(tbsp|tsp|cup|cups|ml|g|kg|oz|lb|lbs|cloves?|pieces?|pinch)\s+"#
+        // Try to extract unit (common cooking units) - must be followed by a space or end of string
+        let unitPattern = #"^(tbsp|tsp|cup|cups|ml|l|liter|liters|g|kg|oz|lb|lbs|cloves|clove|pieces|piece|pinch|dash)(\s+|$)"#
         var unit = ""
         
         if let regex = try? NSRegularExpression(pattern: unitPattern, options: .caseInsensitive) {
@@ -815,16 +819,18 @@ struct RecipeWizardView: View {
             if let match = regex.firstMatch(in: remaining, options: [], range: NSRange(location: 0, length: nsString.length)) {
                 let unitRange = match.range(at: 1)
                 unit = nsString.substring(with: unitRange)
-                remaining = nsString.substring(from: match.range.location + match.range.length)
+                // Move past the unit and any following space
+                let afterUnit = match.range.location + match.range.length
+                remaining = nsString.substring(from: afterUnit)
             }
         }
         
         // The rest is the name (and optional notes after comma)
-        var name = remaining
+        var name = remaining.trimmingCharacters(in: .whitespaces)
         
         // Remove notes if present (after comma)
-        if let commaIndex = remaining.firstIndex(of: ",") {
-            name = String(remaining[..<commaIndex])
+        if let commaIndex = name.firstIndex(of: ",") {
+            name = String(name[..<commaIndex])
         }
         
         name = name.trimmingCharacters(in: .whitespaces)

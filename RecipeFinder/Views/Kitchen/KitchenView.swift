@@ -12,8 +12,8 @@ struct KitchenView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
-    
-    // Use USDA foods list instead of recipe ingredients
+
+    // Use categorized foods list instead of recipe ingredients
     var allIngredients: [String] {
         FoodsList.getAllFoods()
     }
@@ -24,7 +24,7 @@ struct KitchenView: View {
             return cachedCategorizedIngredients
         }
         
-        // Use USDA categorized foods
+        // Use categorized foods
         var result: [(category: String, ingredients: [String])] = []
         
         for category in FoodsList.categories {
@@ -544,7 +544,7 @@ struct AddIngredientSheet: View {
                 
                 VStack(spacing: 0) {
                     // Search Bar
-                    ModernSearchBar(text: $searchText, placeholder: "Search USDA foods...")
+                    ModernSearchBar(text: $searchText, placeholder: "Search foods...")
                         .padding(.horizontal, 20)
                         .padding(.top, 16)
                         .padding(.bottom, 12)

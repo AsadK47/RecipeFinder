@@ -11,7 +11,8 @@ class RecipeImporter: ObservableObject {
     struct ExtractedRecipeData: Equatable {
         let name: String
         let description: String?
-        let matchedIngredients: [String]  // USDA-matched ingredients
+        let matchedIngredients: [String]  // Ingredients
+        let rawIngredients: [String]  // Raw ingredient strings with quantities
         let rawText: String  // For preview/editing
         let instructions: [String]
         let sourceURL: URL
@@ -79,16 +80,17 @@ class RecipeImporter: ObservableObject {
                 throw ImportError.missingRequiredData("No instructions found")
             }
             
-            // Match ingredients against USDA database
+            // Match ingredients against database
             let matchedIngredients = matchIngredientsWithUSDA(parsed.ingredients)
             
-            debugLog("✅ Matched \(matchedIngredients.count)/\(parsed.ingredients.count) ingredients with USDA")
+            debugLog("✅ Matched \(matchedIngredients.count)/\(parsed.ingredients.count) ingredients")
             
             // Create extracted data
             let extractedData = ExtractedRecipeData(
                 name: name,
                 description: parsed.description,
                 matchedIngredients: matchedIngredients,
+                rawIngredients: parsed.ingredients,
                 rawText: parsed.ingredients.joined(separator: "\n"),
                 instructions: parsed.instructions,
                 sourceURL: url,
@@ -665,16 +667,17 @@ class RecipeImporter: ObservableObject {
                 debugLog("✅ Extracted from HTML: \(ingredientTexts.count) ingredient lines")
             }
             
-            // 3. Match ingredients against USDA food list
-            debugLog("🎯 Matching ingredients against USDA foods...")
+            // 3. Match ingredients against food list
+            debugLog("🎯 Matching ingredients against foods...")
             let matchedIngredients = matchUSDAIngredients(from: ingredientTexts)
-            debugLog("✅ Matched \(matchedIngredients.count) USDA ingredients")
+            debugLog("✅ Matched \(matchedIngredients.count) ingredients")
             
             // 4. Return extracted data for Recipe Wizard
             let extracted = ExtractedRecipeData(
                 name: recipeName,
                 description: nil,
                 matchedIngredients: matchedIngredients,
+                rawIngredients: ingredientTexts,
                 rawText: ingredientTexts.joined(separator: "\n"),
                 instructions: instructions,
                 sourceURL: url,

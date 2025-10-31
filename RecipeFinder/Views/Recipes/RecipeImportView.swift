@@ -208,7 +208,7 @@ struct RecipeImportView: View {
                     prefilledData: RecipeWizardView.PrefilledRecipeData(
                         name: data.name,
                         description: data.description,
-                        ingredients: data.matchedIngredients,
+                        ingredients: data.rawIngredients,
                         instructions: data.instructions,
                         prepTime: data.prepTimeMinutes,
                         cookTime: data.cookTimeMinutes,

@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 
 /// Comprehensive World Food Classification System
-/// Based on research from USDA, culinary standards, and international cuisine analysis
+/// Based on research from food, culinary standards, and international cuisine analysis
 /// Sources: Bon Appétit, Serious Eats, Food Network, USDA Food Categories
 enum CategoryClassifier {
     

@@ -14,11 +14,13 @@ struct RecipeSearchView: View {
         @State private var showRecipeWizard: Bool = false
     @State private var recipeToDelete: RecipeModel?
     @State private var showDeleteAlert: Bool = false
+    @State private var dontAskAgainDelete: Bool = false
     @State private var cachedFilteredRecipes: [RecipeModel] = []
     @State private var lastFilterHash: Int = 0
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
+    @AppStorage("skipRecipeDeleteConfirmation") private var skipDeleteConfirmation: Bool = false
 
     // Optimized filtered recipes with caching
     private var filteredRecipes: [RecipeModel] {
@@ -243,8 +245,13 @@ struct RecipeSearchView: View {
                                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                                             Button(role: .destructive) {
                                                 recipeToDelete = recipe
-                                                showDeleteAlert = true
-                                                HapticManager.shared.warning()
+                                                if skipDeleteConfirmation {
+                                                    deleteRecipe(recipe)
+                                                    recipeToDelete = nil
+                                                } else {
+                                                    showDeleteAlert = true
+                                                    HapticManager.shared.warning()
+                                                }
                                             } label: {
                                                 Label("Delete", systemImage: "trash.fill")
                                             }
@@ -272,8 +279,13 @@ struct RecipeSearchView: View {
                                         .contextMenu {
                                             Button(role: .destructive) {
                                                 recipeToDelete = recipe
-                                                showDeleteAlert = true
-                                                HapticManager.shared.warning()
+                                                if skipDeleteConfirmation {
+                                                    deleteRecipe(recipe)
+                                                    recipeToDelete = nil
+                                                } else {
+                                                    showDeleteAlert = true
+                                                    HapticManager.shared.warning()
+                                                }
                                             } label: {
                                                 Label("Delete Recipe", systemImage: "trash.fill")
                                             }
@@ -329,18 +341,25 @@ struct RecipeSearchView: View {
             .onChange(of: selectedCookTimes) { _, _ in updateFilterCache() }
             .onChange(of: showFavoritesOnly) { _, _ in updateFilterCache() }
             .onChange(of: recipes) { _, _ in updateFilterCache() }
-            .alert("Delete Recipe?", isPresented: $showDeleteAlert) {
-                Button("Cancel", role: .cancel) {
-                    recipeToDelete = nil
-                }
-                Button("Delete", role: .destructive) {
-                    if let recipe = recipeToDelete {
-                        deleteRecipe(recipe)
+            .sheet(isPresented: $showDeleteAlert) {
+                RecipeDeleteConfirmationSheet(
+                    recipeName: recipeToDelete?.name ?? "",
+                    dontAskAgain: $dontAskAgainDelete,
+                    onConfirm: {
+                        if dontAskAgainDelete {
+                            skipDeleteConfirmation = true
+                        }
+                        if let recipe = recipeToDelete {
+                            deleteRecipe(recipe)
+                        }
+                        recipeToDelete = nil
+                        dontAskAgainDelete = false
+                    },
+                    onCancel: {
+                        recipeToDelete = nil
+                        dontAskAgainDelete = false
                     }
-                    recipeToDelete = nil
-                }
-            } message: {
-                Text("This will permanently delete '\(recipeToDelete?.name ?? "this recipe")'. This action cannot be reversed.")
+                )
             }
         }
     }
@@ -583,5 +602,121 @@ struct RecipeFilterButton: View {
                 )
         })
         .buttonStyle(.plain)
+    }
+}
+
+// Recipe Delete Confirmation Sheet
+struct RecipeDeleteConfirmationSheet: View {
+    let recipeName: String
+    @Binding var dontAskAgain: Bool
+    let onConfirm: () -> Void
+    let onCancel: () -> Void
+    
+    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.appTheme) var appTheme
+    
+    var body: some View {
+        ZStack {
+            AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
+                .ignoresSafeArea()
+            
+            VStack(spacing: 0) {
+                // Handle bar
+                RoundedRectangle(cornerRadius: 3)
+                    .fill(Color.white.opacity(0.3))
+                    .frame(width: 40, height: 5)
+                    .padding(.top, 12)
+                
+                VStack(spacing: 24) {
+                    // Warning Icon
+                    ZStack {
+                        Circle()
+                            .fill(Color.red.opacity(0.15))
+                            .frame(width: 80, height: 80)
+                        
+                        Image(systemName: "trash.circle.fill")
+                            .font(.system(size: 50))
+                            .foregroundColor(.red)
+                    }
+                    .padding(.top, 20)
+                    
+                    // Title and Message
+                    VStack(spacing: 12) {
+                        Text("Delete Recipe?")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                        
+                        Text("This will permanently delete '\(recipeName)'.")
+                            .font(.body)
+                            .foregroundColor(.white.opacity(0.9))
+                            .multilineTextAlignment(.center)
+                        
+                        Text("⚠️ This action cannot be undone.")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.red.opacity(0.9))
+                            .padding(.top, 4)
+                    }
+                    .padding(.horizontal, 24)
+                    
+                    // Don't ask again checkbox
+                    Button(action: {
+                        dontAskAgain.toggle()
+                        HapticManager.shared.selection()
+                    }) {
+                        HStack(spacing: 12) {
+                            Image(systemName: dontAskAgain ? "checkmark.square.fill" : "square")
+                                .font(.title3)
+                                .foregroundColor(dontAskAgain ? AppTheme.accentColor : .white.opacity(0.6))
+                            
+                            Text("Don't ask me again")
+                                .font(.subheadline)
+                                .foregroundColor(.white)
+                            
+                            Spacer()
+                        }
+                        .padding(.horizontal, 24)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    
+                    // Action Buttons
+                    VStack(spacing: 12) {
+                        Button(action: {
+                            HapticManager.shared.error()
+                            onConfirm()
+                        }) {
+                            Text("Delete Recipe")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 16)
+                                .background(Color.red)
+                                .cornerRadius(14)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        
+                        Button(action: {
+                            HapticManager.shared.light()
+                            onCancel()
+                        }) {
+                            Text("Cancel")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 16)
+                                .background(Color.white.opacity(0.15))
+                                .cornerRadius(14)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.top, 8)
+                }
+                .padding(.bottom, 40)
+            }
+        }
+        .presentationDetents([.height(480)])
+        .presentationDragIndicator(.hidden)
     }
 }

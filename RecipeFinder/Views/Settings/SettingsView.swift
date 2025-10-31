@@ -1108,6 +1108,8 @@ enum TemperatureUnit: String, CaseIterable {
 struct PrivacySettingsView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
+    @AppStorage("skipRecipeDeleteConfirmation") private var skipDeleteConfirmation: Bool = false
+    @State private var showResetSuccess = false
     
     var body: some View {
         ZStack {
@@ -1115,11 +1117,119 @@ struct PrivacySettingsView: View {
                 .ignoresSafeArea()
             
             ScrollView {
-                VStack(spacing: 16) {
+                VStack(spacing: 24) {
+                    // Confirmation Preferences
                     SettingsCard {
-                        Text("Privacy settings coming soon")
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
-                            .padding()
+                        VStack(alignment: .leading, spacing: 20) {
+                            Text("Confirmation Dialogs")
+                                .font(.headline)
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                            
+                            VStack(spacing: 16) {
+                                HStack(spacing: 16) {
+                                    Image(systemName: "exclamationmark.triangle.fill")
+                                        .font(.title3)
+                                        .foregroundColor(.orange)
+                                        .frame(width: 30)
+                                    
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("Delete Confirmations")
+                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        Text("Currently: \(skipDeleteConfirmation ? "Disabled" : "Enabled")")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                    }
+                                    
+                                    Spacer()
+                                }
+                                
+                                if skipDeleteConfirmation {
+                                    VStack(alignment: .leading, spacing: 8) {
+                                        Text("⚠️ Delete confirmations are disabled")
+                                            .font(.caption)
+                                            .foregroundColor(.orange)
+                                        
+                                        Text("Recipes will be deleted immediately when you swipe without asking for confirmation.")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                            .fixedSize(horizontal: false, vertical: true)
+                                    }
+                                    .padding(.leading, 46)
+                                    
+                                    Button(action: {
+                                        skipDeleteConfirmation = false
+                                        showResetSuccess = true
+                                        HapticManager.shared.success()
+                                        
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                            showResetSuccess = false
+                                        }
+                                    }) {
+                                        HStack {
+                                            Image(systemName: "arrow.clockwise")
+                                            Text("Re-enable Delete Confirmations")
+                                        }
+                                        .font(.subheadline)
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.white)
+                                        .frame(maxWidth: .infinity)
+                                        .padding(.vertical, 12)
+                                        .background(AppTheme.accentColor)
+                                        .cornerRadius(10)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                    .padding(.leading, 46)
+                                } else {
+                                    Text("You will be asked to confirm before deleting recipes.")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                        .padding(.leading, 46)
+                                }
+                                
+                                if showResetSuccess {
+                                    HStack(spacing: 8) {
+                                        Image(systemName: "checkmark.circle.fill")
+                                            .foregroundColor(.green)
+                                        Text("Delete confirmations re-enabled")
+                                            .font(.caption)
+                                            .foregroundColor(.green)
+                                    }
+                                    .padding(.leading, 46)
+                                    .transition(.opacity.combined(with: .move(edge: .top)))
+                                }
+                            }
+                        }
+                        .padding(20)
+                    }
+                    
+                    // Data Privacy Info
+                    SettingsCard {
+                        VStack(alignment: .leading, spacing: 16) {
+                            Text("Data Privacy")
+                                .font(.headline)
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                            
+                            VStack(alignment: .leading, spacing: 12) {
+                                PrivacyInfoRow(
+                                    icon: "iphone",
+                                    title: "All Local Storage",
+                                    description: "Your recipes, shopping lists, and kitchen inventory are stored only on your device"
+                                )
+                                
+                                PrivacyInfoRow(
+                                    icon: "lock.shield.fill",
+                                    title: "No Cloud Sync",
+                                    description: "We don't collect or sync your data to any servers"
+                                )
+                                
+                                PrivacyInfoRow(
+                                    icon: "eye.slash.fill",
+                                    title: "No Tracking",
+                                    description: "No analytics, no tracking, no third-party services"
+                                )
+                            }
+                        }
+                        .padding(20)
                     }
                 }
                 .padding(20)
@@ -1128,6 +1238,35 @@ struct PrivacySettingsView: View {
         .navigationTitle("Privacy")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
+        .animation(.spring(response: 0.3), value: showResetSuccess)
+    }
+}
+
+struct PrivacyInfoRow: View {
+    let icon: String
+    let title: String
+    let description: String
+    
+    @Environment(\.colorScheme) var colorScheme
+    
+    var body: some View {
+        HStack(alignment: .top, spacing: 12) {
+            Image(systemName: icon)
+                .foregroundColor(.green)
+                .frame(width: 24)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                
+                Text(description)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
     }
 }
 
@@ -1753,7 +1892,7 @@ struct AboutView: View {
                             
                             VStack(alignment: .leading, spacing: 8) {
                                 FeatureRow(icon: "shield.fill", text: "Privacy-first: All data stored locally", color: .blue)
-                                FeatureRow(icon: "doc.text.fill", text: "USDA-approved ingredient database", color: .green)
+                                FeatureRow(icon: "doc.text.fill", text: "Ingredient database", color: .green)
                                 FeatureRow(icon: "heart.fill", text: "Made with love for home cooks", color: .red)
                             }
                         }

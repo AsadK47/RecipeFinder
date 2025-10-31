@@ -28,20 +28,20 @@ final class KitchenInventoryManager: ObservableObject {
 		migrateOldDataIfNeeded()
 	}
 	
-	// Data Migration - Remove non-USDA items automatically on first app launch after update
+	// Data Migration - Remove food items automatically on first app launch after update
 	private func migrateOldDataIfNeeded() {
 		guard !UserDefaults.standard.bool(forKey: migrationKey) else { return }
 		
-		// Get all valid USDA foods
+		// Get all valid food items
 		let validFoods = Set(FoodsList.getAllFoods().map { $0.lowercased() })
 		
-		// Filter out items that don't match USDA foods
+		// Filter out items that don't match food items
 		let oldCount = items.count
 		items = items.filter { validFoods.contains($0.name.lowercased()) }
 		
 		let removedCount = oldCount - items.count
 		if removedCount > 0 {
-			print("🔄 Kitchen Migration: Removed \(removedCount) non-USDA items")
+			print("🔄 Kitchen Migration: Removed \(removedCount) non-food items")
 			saveItems()
 		}
 		

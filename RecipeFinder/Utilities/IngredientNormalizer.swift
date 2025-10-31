@@ -2,7 +2,7 @@
 //  IngredientNormalizer.swift
 //  RecipeFinder
 //
-//  Normalizes recipe ingredients to USDA-approved standard names
+//  Normalizes recipe ingredients 
 
 import Foundation
 
@@ -10,7 +10,7 @@ struct IngredientNormalizer {
     
     // MARK: - Normalization Mappings
     
-    /// Maps common ingredient variations to USDA standard names
+    /// Maps common ingredient variations
     private static let normalizationMap: [String: String] = [
         // Beef variations
         "beef slices": "Beef Steak",
@@ -173,9 +173,9 @@ struct IngredientNormalizer {
     
     // MARK: - Public Methods
     
-    /// Normalizes an ingredient name to USDA standard
+    /// Normalizes an ingredient name to a set standard
     /// - Parameter ingredient: Raw ingredient name from recipe
-    /// - Returns: Normalized USDA-approved ingredient name
+    /// - Returns: Normalized ingredient name
     static func normalize(_ ingredient: String) -> String {
         let cleaned = ingredient
             .trimmingCharacters(in: .whitespacesAndNewlines)
@@ -223,7 +223,7 @@ struct IngredientNormalizer {
     
     /// Normalizes a list of ingredients
     /// - Parameter ingredients: Array of raw ingredient names
-    /// - Returns: Array of normalized USDA-approved ingredient names
+    /// - Returns: Array of normalized ingredient names
     static func normalize(_ ingredients: [String]) -> [String] {
         return ingredients.map { normalize($0) }
     }
