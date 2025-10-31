@@ -65,6 +65,7 @@ final class AuthenticationManager: NSObject, ObservableObject {
         case biometricsNotAvailable
         case biometricsFailed
         case userCreationFailed
+        case accountAlreadyExists
         
         var errorDescription: String? {
             switch self {
@@ -80,6 +81,8 @@ final class AuthenticationManager: NSObject, ObservableObject {
                 return "Biometric authentication failed."
             case .userCreationFailed:
                 return "Failed to create user account."
+            case .accountAlreadyExists:
+                return "An account with this email already exists."
             }
         }
     }
@@ -132,31 +135,37 @@ final class AuthenticationManager: NSObject, ObservableObject {
         }
     }
     
-    // MARK: - Guest Mode
+    // Guest Mode
     
     func skipLoginAsGuest() {
-        let guestUser = User(
-            id: UUID().uuidString,
-            email: nil,
-            fullName: "Guest User",
-            givenName: "Guest",
-            familyName: nil,
-            appleUserID: nil,
-            createdAt: Date(),
-            lastLoginAt: Date()
-        )
+        // Post notification to show splash screen
+        NotificationCenter.default.post(name: NSNotification.Name("ShowGuestSplash"), object: nil)
         
-        currentUser = guestUser
-        isAuthenticated = true
-        isGuestMode = true
-        
-        UserDefaults.standard.set(true, forKey: isAuthenticatedKey)
-        UserDefaults.standard.set(true, forKey: guestModeKey)
-        
-        HapticManager.shared.light()
+        // Delay authentication to allow splash screen to show
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            let guestUser = User(
+                id: UUID().uuidString,
+                email: nil,
+                fullName: "Guest User",
+                givenName: "Guest",
+                familyName: nil,
+                appleUserID: nil,
+                createdAt: Date(),
+                lastLoginAt: Date()
+            )
+            
+            self.currentUser = guestUser
+            self.isAuthenticated = true
+            self.isGuestMode = true
+            
+            UserDefaults.standard.set(true, forKey: self.isAuthenticatedKey)
+            UserDefaults.standard.set(true, forKey: self.guestModeKey)
+            
+            HapticManager.shared.light()
+        }
     }
     
-    // MARK: - Apple Sign In
+    // Apple Sign In
     
     func signInWithApple() async throws {
         let request = ASAuthorizationAppleIDProvider().createRequest()
@@ -231,7 +240,7 @@ final class AuthenticationManager: NSObject, ObservableObject {
         }
     }
     
-    // MARK: - Sign Up (with Secure Password Storage)
+    // Sign Up (with Secure Password Storage)
     
     func signUp(email: String, password: String, fullName: String) async throws {
         guard !email.isEmpty, !password.isEmpty, password.count >= 6 else {
@@ -295,7 +304,33 @@ final class AuthenticationManager: NSObject, ObservableObject {
         }
     }
     
-    // MARK: - Biometric Authentication
+    // Sign Up Without Auto-Login (Defensive Programming)
+    func signUpWithoutLogin(email: String, password: String, fullName: String) async throws {
+        guard !email.isEmpty, !password.isEmpty, password.count >= 6 else {
+            throw AuthError.invalidCredentials
+        }
+        
+        // Check if user already exists
+        if credentialManager.getUserInfo(email: email) != nil {
+            throw AuthError.accountAlreadyExists
+        }
+        
+        // Save hashed credentials to Keychain
+        let saved = credentialManager.saveCredentials(
+            email: email,
+            password: password,
+            fullName: fullName.isEmpty ? "User" : fullName
+        )
+        
+        guard saved else {
+            throw AuthError.userCreationFailed
+        }
+        
+        // Don't authenticate - user must sign in manually (defensive)
+        debugLog("✅ Account created for \(email) - user must sign in manually")
+    }
+    
+    // Biometric Authentication
     
     func authenticateWithBiometrics() async throws {
         let context = LAContext()

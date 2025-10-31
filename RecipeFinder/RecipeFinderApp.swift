@@ -6,6 +6,7 @@ import UIKit
 struct RecipeFinderApp: App {
     let persistenceController = PersistenceController.shared
     @StateObject private var authManager = AuthenticationManager.shared
+    @State private var showGuestSplash = false
     
     init() {
         configureAppearance()
@@ -19,6 +20,9 @@ struct RecipeFinderApp: App {
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
                     authManager.checkSessionExpiration()
                 }
+                .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ShowGuestSplash"))) { _ in
+                    showGuestSplash = true
+                }
         }
     }
     
@@ -26,7 +30,12 @@ struct RecipeFinderApp: App {
     
     @ViewBuilder
     private var rootView: some View {
-        if authManager.isAuthenticated {
+        if showGuestSplash {
+            GuestModeSplashView {
+                showGuestSplash = false
+            }
+            .transition(.opacity.combined(with: .scale(scale: 0.95)))
+        } else if authManager.isAuthenticated {
             ContentView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .onAppear { authManager.updateLastActiveTimestamp() }

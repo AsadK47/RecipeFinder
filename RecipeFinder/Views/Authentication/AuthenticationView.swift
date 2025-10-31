@@ -6,12 +6,12 @@
 //
 
 import SwiftUI
-import AuthenticationServices
 
 struct AuthenticationView: View {
     @StateObject private var authManager = AuthenticationManager.shared
     @State private var showSignUp = false
     @State private var showOnboarding = false
+    @State private var showAppleSignInInfo = false
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     @Environment(\.colorScheme) var colorScheme
@@ -76,24 +76,22 @@ struct AuthenticationView: View {
                         .background(Color.white.opacity(0.3))
                         .padding(.vertical, 8)
                     
-                    // Sign in with Apple Button
-                    SignInWithAppleButton(
-                        onRequest: { request in
-                            request.requestedScopes = [.fullName, .email]
-                        },
-                        onCompletion: { result in
-                            switch result {
-                            case .success(let authorization):
-                                // AuthenticationManager delegate handles the credential
-                                print("✅ Apple Sign In initiated")
-                            case .failure(let error):
-                                print("❌ Apple Sign In failed: \(error.localizedDescription)")
-                            }
+                    // Apple Sign In Placeholder
+                    Button(action: { showAppleSignInInfo = true }) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "applelogo")
+                                .font(.system(size: 20))
+                            Text("Sign In with Apple")
+                                .fontWeight(.semibold)
                         }
-                    )
-                    .signInWithAppleButtonStyle(colorScheme == .dark ? .white : .black)
-                    .frame(height: 50)
-                    .cornerRadius(12)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 50)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color.black.opacity(colorScheme == .dark ? 0.3 : 0.8))
+                        )
+                    }
                     
                     // Biometric Sign In (if available and user exists)
                     if authManager.biometricsAvailable && UserDefaults.standard.bool(forKey: "isAuthenticated") {
@@ -169,6 +167,11 @@ struct AuthenticationView: View {
             if let error = authManager.authError {
                 Text(error.localizedDescription)
             }
+        }
+        .alert("Sign In with Apple", isPresented: $showAppleSignInInfo) {
+            Button("Got it!", role: .cancel) {}
+        } message: {
+            Text("🍎 An Apple ID a day keeps the doctor away!\n\nLooking to implement soon. Hold on to your hats!")
         }
         .onChange(of: authManager.isAuthenticated) { oldValue, newValue in
             if newValue && !hasSeenOnboarding && !authManager.isGuestMode {
@@ -359,8 +362,7 @@ struct SignUpView: View {
     @State private var isLoading = false
     @State private var showError = false
     @State private var errorMessage = ""
-    @State private var showSignIn = false
-    @State private var showOnboarding = false
+    @State private var showPasswordReminder = false
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismiss
@@ -508,8 +510,11 @@ struct SignUpView: View {
             } message: {
                 Text(errorMessage)
             }
-            .fullScreenCover(isPresented: $showOnboarding) {
-                OnboardingView()
+            .fullScreenCover(isPresented: $showPasswordReminder) {
+                PasswordReminderSplashView(email: email) {
+                    showPasswordReminder = false
+                    dismiss()
+                }
             }
         }
     }
@@ -520,15 +525,13 @@ struct SignUpView: View {
         
         Task {
             do {
-                try await authManager.signUp(email: email, password: password, fullName: fullName)
+                // Create account WITHOUT auto-login (defensive programming)
+                try await authManager.signUpWithoutLogin(email: email, password: password, fullName: fullName)
                 await MainActor.run {
                     HapticManager.shared.success()
                     isLoading = false
-                    dismiss()
-                    // Show onboarding after successful sign up
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        showOnboarding = true
-                    }
+                    // Show password reminder splash
+                    showPasswordReminder = true
                 }
             } catch {
                 await MainActor.run {

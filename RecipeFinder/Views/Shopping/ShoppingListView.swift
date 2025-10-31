@@ -18,7 +18,7 @@ struct ShoppingListView: View {
     
     private var searchResults: [String] {
         guard !searchText.isEmpty else { return [] }
-        return USDAFoodsList.searchFoods(query: searchText)
+        return FoodsList.searchFoods(query: searchText)
     }
     
     private var showingSearchResults: Bool {

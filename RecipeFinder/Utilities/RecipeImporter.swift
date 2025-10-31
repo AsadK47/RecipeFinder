@@ -1,15 +1,16 @@
 import Foundation
 import SwiftUI
 
-/// Smart Recipe Importer - Extracts text from HTML and matches against USDA foods
-/// Then feeds clean data into Recipe Wizard for guaranteed quality
+/// Smart Recipe Importer - Now powered by RecipeParser engine
 class RecipeImporter: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
     @Published var extractedData: ExtractedRecipeData?
+    @Published var parseConfidence: Double = 0.0
     
     struct ExtractedRecipeData: Equatable {
         let name: String
+        let description: String?
         let matchedIngredients: [String]  // USDA-matched ingredients
         let rawText: String  // For preview/editing
         let instructions: [String]
@@ -18,11 +19,10 @@ class RecipeImporter: ObservableObject {
         // Enhanced metadata
         let cookTimeMinutes: Int?
         let prepTimeMinutes: Int?
-        let totalTimeMinutes: Int?
-        let category: String?
-        let cuisine: String?
         let servings: Int?
         let difficulty: String?
+        let category: String?
+        let cuisine: String?
     }
     
     private func debugLog(_ message: String) {
@@ -31,7 +31,170 @@ class RecipeImporter: ObservableObject {
         #endif
     }
     
-    // MARK: - ISO 8601 Duration Parser
+    // MARK: - Main Import Function with RecipeParser
+    
+    /// Import recipe from URL using intelligent RecipeParser
+    func importRecipe(from url: URL) async {
+        await MainActor.run {
+            isLoading = true
+            errorMessage = nil
+            extractedData = nil
+        }
+        
+        do {
+            debugLog("🌐 Fetching recipe from: \(url.absoluteString)")
+            
+            // Fetch HTML
+            let (data, response) = try await URLSession.shared.data(from: url)
+            
+            guard let httpResponse = response as? HTTPURLResponse,
+                  (200...299).contains(httpResponse.statusCode) else {
+                throw ImportError.invalidResponse
+            }
+            
+            guard let html = String(data: data, encoding: .utf8) else {
+                throw ImportError.invalidEncoding
+            }
+            
+            debugLog("✅ HTML fetched (\(html.count) chars)")
+            
+            // Use RecipeParser to extract structured data
+            let parsed = RecipeParser.parse(html: html)
+            
+            await MainActor.run {
+                self.parseConfidence = parsed.confidence
+                debugLog("🎯 Parse confidence: \(Int(parsed.confidence * 100))%")
+            }
+            
+            // Validate minimum requirements
+            guard let name = parsed.name, !name.isEmpty else {
+                throw ImportError.missingRequiredData("Recipe name not found")
+            }
+            
+            guard !parsed.ingredients.isEmpty else {
+                throw ImportError.missingRequiredData("No ingredients found")
+            }
+            
+            guard !parsed.instructions.isEmpty else {
+                throw ImportError.missingRequiredData("No instructions found")
+            }
+            
+            // Match ingredients against USDA database
+            let matchedIngredients = matchIngredientsWithUSDA(parsed.ingredients)
+            
+            debugLog("✅ Matched \(matchedIngredients.count)/\(parsed.ingredients.count) ingredients with USDA")
+            
+            // Create extracted data
+            let extractedData = ExtractedRecipeData(
+                name: name,
+                description: parsed.description,
+                matchedIngredients: matchedIngredients,
+                rawText: parsed.ingredients.joined(separator: "\n"),
+                instructions: parsed.instructions,
+                sourceURL: url,
+                cookTimeMinutes: parsed.cookTime,
+                prepTimeMinutes: parsed.prepTime,
+                servings: parsed.servings,
+                difficulty: parsed.difficulty,
+                category: parsed.category,
+                cuisine: parsed.cuisine
+            )
+            
+            await MainActor.run {
+                self.extractedData = extractedData
+                self.isLoading = false
+                debugLog("🎉 Import complete!")
+            }
+            
+        } catch {
+            await MainActor.run {
+                self.isLoading = false
+                self.errorMessage = error.localizedDescription
+                debugLog("❌ Import failed: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    // MARK: - USDA Ingredient Matching
+    
+    /// Match parsed ingredients against USDA food database
+    private func matchIngredientsWithUSDA(_ ingredients: [String]) -> [String] {
+        var matched: [String] = []
+        
+        for ingredient in ingredients {
+            // Normalize the ingredient using IngredientNormalizer
+            let normalized = IngredientNormalizer.normalize(ingredient)
+            
+            // Check if normalized ingredient exists in USDA database
+            let usdaFoods = FoodsList.getAllFoods()
+            if usdaFoods.contains(normalized) {
+                matched.append(normalized)
+            } else {
+                // Try to extract just the food name (remove quantities/modifiers)
+                let foodName = extractFoodName(from: ingredient)
+                let normalizedFoodName = IngredientNormalizer.normalize(foodName)
+                
+                if usdaFoods.contains(normalizedFoodName) {
+                    matched.append(normalizedFoodName)
+                } else {
+                    // Include the normalized version anyway for user review
+                    matched.append(normalized)
+                }
+            }
+        }
+        
+        return matched
+    }
+    
+    /// Extract food name from ingredient line (remove quantities, units, modifiers)
+    private func extractFoodName(from ingredient: String) -> String {
+        var cleaned = ingredient.lowercased()
+        
+        // Remove quantities and units
+        let quantityPattern = #"\b\d+[\d\/\.\s]*\s*(cup|tbsp|tsp|oz|lb|g|kg|ml|l)s?\b"#
+        cleaned = cleaned.replacingOccurrences(of: quantityPattern, with: "", options: .regularExpression)
+        
+        // Remove modifiers
+        let modifiers = ["diced", "chopped", "sliced", "minced", "crushed", "grated", "fresh", "dried", "frozen"]
+        for modifier in modifiers {
+            cleaned = cleaned.replacingOccurrences(of: "\\b\(modifier)\\b", with: "", options: .regularExpression)
+        }
+        
+        return cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
+    // MARK: - Error Types
+    
+    enum ImportError: LocalizedError {
+        case invalidURL
+        case invalidResponse
+        case invalidEncoding
+        case missingRequiredData(String)
+        case parsingFailed(String)
+        case invalidHTML
+        case noData
+        
+        var errorDescription: String? {
+            switch self {
+            case .invalidURL:
+                return "Invalid URL provided"
+            case .invalidResponse:
+                return "Invalid response from server"
+            case .invalidEncoding:
+                return "Could not decode webpage content"
+            case .missingRequiredData(let detail):
+                return "Missing required data: \(detail)"
+            case .parsingFailed(let detail):
+                return "Failed to parse recipe: \(detail)"
+            case .invalidHTML:
+                return "Could not read webpage content"
+            case .noData:
+                return "No recipe data found on this page"
+            }
+        }
+    }
+    
+    // MARK: - Legacy code below (kept for reference)
     
     /// Parse ISO 8601 duration format (e.g., "PT45M", "PT1H30M", "P1DT2H")
     /// Reference: https://en.wikipedia.org/wiki/ISO_8601#Durations
@@ -510,17 +673,17 @@ class RecipeImporter: ObservableObject {
             // 4. Return extracted data for Recipe Wizard
             let extracted = ExtractedRecipeData(
                 name: recipeName,
+                description: nil,
                 matchedIngredients: matchedIngredients,
                 rawText: ingredientTexts.joined(separator: "\n"),
                 instructions: instructions,
                 sourceURL: url,
                 cookTimeMinutes: nil,
                 prepTimeMinutes: nil,
-                totalTimeMinutes: nil,
-                category: nil,
-                cuisine: nil,
                 servings: nil,
-                difficulty: nil
+                difficulty: nil,
+                category: nil,
+                cuisine: nil
             )
             
             await MainActor.run {
@@ -539,7 +702,7 @@ class RecipeImporter: ObservableObject {
     
     /// Match ingredient texts against USDA food database - ENHANCED VERSION
     private func matchUSDAIngredients(from texts: [String]) -> [String] {
-        let usdaFoods = USDAFoodsList.getAllFoods()
+        let usdaFoods = FoodsList.getAllFoods()
         let usdaLowercased = usdaFoods.map { $0.lowercased() }
         
         var matched: [String] = []
@@ -948,20 +1111,5 @@ struct SchemaRecipe: Codable {
     
     struct InstructionStep: Codable {
         let text: String?
-    }
-}
-
-// Errors
-enum ImportError: LocalizedError {
-    case invalidHTML
-    case noData
-    
-    var errorDescription: String? {
-        switch self {
-        case .invalidHTML:
-            return "Could not read webpage content"
-        case .noData:
-            return "No recipe data found on this page"
-        }
     }
 }

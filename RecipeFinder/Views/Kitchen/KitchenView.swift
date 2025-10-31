@@ -15,7 +15,7 @@ struct KitchenView: View {
     
     // Use USDA foods list instead of recipe ingredients
     var allIngredients: [String] {
-        USDAFoodsList.getAllFoods()
+        FoodsList.getAllFoods()
     }
     
     var categorizedIngredients: [(category: String, ingredients: [String])] {
@@ -27,8 +27,8 @@ struct KitchenView: View {
         // Use USDA categorized foods
         var result: [(category: String, ingredients: [String])] = []
         
-        for category in USDAFoodsList.categories {
-            let foods = USDAFoodsList.getFoods(forCategory: category)
+        for category in FoodsList.categories {
+            let foods = FoodsList.getFoods(forCategory: category)
             if !foods.isEmpty {
                 result.append((category, foods))
             }
@@ -41,7 +41,7 @@ struct KitchenView: View {
         if searchText.isEmpty {
             return []
         }
-        return USDAFoodsList.searchFoods(query: searchText)
+        return FoodsList.searchFoods(query: searchText)
     }
     
     var quickMatchRecipes: [RecipeModel] {
@@ -526,14 +526,14 @@ struct AddIngredientSheet: View {
         if !searchText.isEmpty {
             return []
         }
-        return USDAFoodsList.categories
+        return FoodsList.categories
     }
     
     var searchResults: [String] {
         if searchText.isEmpty {
             return []
         }
-        return USDAFoodsList.searchFoods(query: searchText)
+        return FoodsList.searchFoods(query: searchText)
     }
     
     var body: some View {
@@ -586,7 +586,7 @@ struct AddIngredientSheet: View {
                                     .padding(.horizontal, 20)
                                 
                                 LazyVStack(spacing: 8) {
-                                    ForEach(USDAFoodsList.getFoods(forCategory: category), id: \.self) { food in
+                                    ForEach(FoodsList.getFoods(forCategory: category), id: \.self) { food in
                                         foodButton(food)
                                     }
                                 }
@@ -639,7 +639,7 @@ struct AddIngredientSheet: View {
                         .font(.headline)
                         .foregroundColor(colorScheme == .dark ? .white : .black)
                     
-                    Text("\(USDAFoodsList.getFoods(forCategory: category).count) items")
+                    Text("\(FoodsList.getFoods(forCategory: category).count) items")
                         .font(.caption)
                         .foregroundColor(.gray)
                 }
@@ -666,7 +666,7 @@ struct AddIngredientSheet: View {
     
     private func foodButton(_ food: String) -> some View {
         let isInKitchen = kitchenManager.hasItem(food)
-        let category = USDAFoodsList.getCategoryForFood(food) ?? "Other"
+        let category = FoodsList.getCategoryForFood(food) ?? "Other"
         
         return Button(action: {
             withAnimation(.spring(response: 0.3)) {

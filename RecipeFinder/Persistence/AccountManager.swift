@@ -35,7 +35,7 @@ final class AccountManager: ObservableObject {
         if !lastName.isEmpty {
             name += " \(lastName)"
         }
-        return name.isEmpty ? "Recipe Chef" : name
+        return name.trimmingCharacters(in: .whitespaces)
     }
     
     var initials: String {

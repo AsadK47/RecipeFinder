@@ -34,28 +34,6 @@ struct MoreView: View {
                     
                     ScrollView {
                         VStack(spacing: 24) {
-                            // Features Section
-                            VStack(alignment: .leading, spacing: 12) {
-                                Text("Features")
-                                    .font(.title3)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.white.opacity(0.9))
-                                    .padding(.horizontal, 20)
-                                
-                                MoreCard {
-                                    NavigationLink(destination: MealPlanningView(recipes: $recipes)) {
-                                        MoreRow(
-                                            icon: "calendar.circle.fill",
-                                            iconColor: .green,
-                                            title: "Meal Planner",
-                                            subtitle: "Plan your weekly meals"
-                                        )
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                }
-                                .padding(.horizontal, 20)
-                            }
-                            
                             // Settings Section
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("Settings")
@@ -71,6 +49,28 @@ struct MoreView: View {
                                             iconColor: AppTheme.accentColor(for: appTheme),
                                             title: "Settings",
                                             subtitle: "Customize your experience"
+                                        )
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                }
+                                .padding(.horizontal, 20)
+                            }
+                            
+                            // Features Section
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("Features")
+                                    .font(.title3)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.white.opacity(0.9))
+                                    .padding(.horizontal, 20)
+                                
+                                MoreCard {
+                                    NavigationLink(destination: MealPlanningView(recipes: $recipes)) {
+                                        MoreRow(
+                                            icon: "calendar.circle.fill",
+                                            iconColor: .green,
+                                            title: "Meal Planner",
+                                            subtitle: "Plan your weekly meals"
                                         )
                                     }
                                     .buttonStyle(PlainButtonStyle())

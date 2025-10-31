@@ -257,30 +257,6 @@ struct AccountView: View {
     
     private var accountActionsSection: some View {
         VStack(spacing: 12) {
-            if isGuestMode {
-                Button {
-                    Task {
-                        do {
-                            try await authManager.signInWithApple()
-                        } catch {
-                            authErrorMessage = error.localizedDescription
-                            showingAuthError = true
-                        }
-                    }
-                } label: {
-                    HStack {
-                        Image(systemName: "applelogo")
-                        Text("Sign In with Apple")
-                            .fontWeight(.semibold)
-                    }
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
-                    .background(Color.black)
-                    .cornerRadius(12)
-                }
-            }
-            
             Button {
                 showingSignOutAlert = true
                 HapticManager.shared.light()
@@ -396,50 +372,7 @@ struct ActionButton: View {
     }
 }
 
-// Supporting Views (Simplified)
-struct EditProfileView: View {
-    @Environment(\.dismiss) private var dismiss
-    @StateObject private var accountManager = AccountManager.shared
-    @State private var name: String = ""
-    @State private var address: String = ""
-    
-    var body: some View {
-        NavigationStack {
-            Form {
-                Section("Personal Information") {
-                    TextField("Full Name", text: $name)
-                    TextField("Address (Optional)", text: $address)
-                }
-            }
-            .navigationTitle("Edit Profile")
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarItems(
-                leading: Button("Cancel") { dismiss() },
-                trailing: Button("Save") {
-                    // Parse the full name into first/middle/last
-                    let components = name.split(separator: " ").map(String.init)
-                    let firstName = components.first ?? ""
-                    let lastName = components.count > 1 ? components.last ?? "" : ""
-                    let middleName = components.count > 2 ? components.dropFirst().dropLast().joined(separator: " ") : ""
-                    
-                    accountManager.updateProfile(
-                        firstName: firstName,
-                        middleName: middleName,
-                        lastName: lastName,
-                        email: accountManager.email,
-                        address: address,
-                        chefType: accountManager.chefType
-                    )
-                    dismiss()
-                }
-            )
-            .onAppear {
-                name = accountManager.fullName
-                address = accountManager.address
-            }
-        }
-    }
-}
+// Privacy Policy View
 
 struct PrivacyPolicyView: View {
     @Environment(\.dismiss) private var dismiss

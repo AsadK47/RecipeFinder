@@ -33,7 +33,7 @@ final class KitchenInventoryManager: ObservableObject {
 		guard !UserDefaults.standard.bool(forKey: migrationKey) else { return }
 		
 		// Get all valid USDA foods
-		let validFoods = Set(USDAFoodsList.getAllFoods().map { $0.lowercased() })
+		let validFoods = Set(FoodsList.getAllFoods().map { $0.lowercased() })
 		
 		// Filter out items that don't match USDA foods
 		let oldCount = items.count

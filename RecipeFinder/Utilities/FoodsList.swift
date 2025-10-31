@@ -1,13 +1,6 @@
-//
-//  USDAFoodsList.swift
-//  RecipeFinder
-//
-//  USDA-approved food categories and ingredients
-//  Based on USDA FoodData Central database
-
 import Foundation
 
-struct USDAFoodsList {
+struct FoodsList {
     
     // MARK: - Food Categories
     static let categories = [

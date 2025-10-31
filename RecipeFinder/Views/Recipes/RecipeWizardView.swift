@@ -8,12 +8,18 @@ struct RecipeWizardView: View {
     
     let onComplete: (RecipeModel) -> Void
     let prefilledData: PrefilledRecipeData?
+    let autoFillMode: Bool
     
     // Struct for pre-filling wizard with imported data
     struct PrefilledRecipeData {
         let name: String?
+        let description: String?
         let ingredients: [String]?
         let instructions: [String]?
+        let prepTime: Int?
+        let cookTime: Int?
+        let servings: Int?
+        let difficulty: String?
         let notes: String?
     }
     
@@ -46,9 +52,15 @@ struct RecipeWizardView: View {
     @State private var notes = ""
     
     // Initializer with optional prefilled data
-    init(prefilledData: PrefilledRecipeData? = nil, onComplete: @escaping (RecipeModel) -> Void) {
+    init(prefilledData: PrefilledRecipeData? = nil, autoFillMode: Bool = false, onComplete: @escaping (RecipeModel) -> Void) {
         self.prefilledData = prefilledData
+        self.autoFillMode = autoFillMode
         self.onComplete = onComplete
+        
+        // If auto-fill mode, start at review step (last step)
+        if autoFillMode && prefilledData != nil {
+            _currentStep = State(initialValue: totalSteps - 1)
+        }
     }
     
     let difficulties = ["Basic", "Intermediate", "Expert"]
@@ -140,6 +152,32 @@ struct RecipeWizardView: View {
         // Pre-fill recipe name
         if let name = data.name, !name.isEmpty {
             recipeName = name
+        }
+        
+        // Pre-fill times
+        if let prepTime = data.prepTime {
+            self.prepTime = prepTime
+        }
+        if let cookTime = data.cookTime {
+            self.cookTime = cookTime
+        }
+        
+        // Pre-fill servings
+        if let servings = data.servings {
+            self.servings = servings
+        }
+        
+        // Pre-fill difficulty
+        if let difficulty = data.difficulty, !difficulty.isEmpty {
+            // Normalize to match our options
+            let normalized = difficulty.lowercased()
+            if normalized.contains("easy") || normalized.contains("basic") || normalized.contains("beginner") {
+                self.difficulty = "Basic"
+            } else if normalized.contains("hard") || normalized.contains("expert") || normalized.contains("advanced") {
+                self.difficulty = "Expert"
+            } else {
+                self.difficulty = "Intermediate"
+            }
         }
         
         // Pre-fill ingredients (USDA-matched ingredients from import)
@@ -368,21 +406,36 @@ struct RecipeWizardView: View {
                                 }
                             }
                             
-                            HStack(spacing: 8) {
-                                // Quantity
-                                TextField("Qty", text: $ingredientItems[index].quantity)
-                                    .keyboardType(.decimalPad)
-                                    .textFieldStyle(.roundedBorder)
-                                    .frame(width: 60)
+                            HStack(spacing: 12) {
+                                // Quantity with icon
+                                HStack(spacing: 6) {
+                                    Image(systemName: "number.circle.fill")
+                                        .font(.system(size: 16))
+                                        .foregroundColor(AppTheme.accentColor(for: appTheme).opacity(0.7))
+                                    TextField("Qty", text: $ingredientItems[index].quantity)
+                                        .keyboardType(.decimalPad)
+                                        .textFieldStyle(.roundedBorder)
+                                }
+                                .frame(width: 85)
                                 
-                                // Unit
-                                TextField("Unit", text: $ingredientItems[index].unit)
-                                    .textFieldStyle(.roundedBorder)
-                                    .frame(width: 80)
+                                // Unit with icon
+                                HStack(spacing: 6) {
+                                    Image(systemName: "scalemass.fill")
+                                        .font(.system(size: 16))
+                                        .foregroundColor(AppTheme.accentColor(for: appTheme).opacity(0.7))
+                                    TextField("cup/g/oz", text: $ingredientItems[index].unit)
+                                        .textFieldStyle(.roundedBorder)
+                                }
+                                .frame(width: 110)
                                 
-                                // Name
-                                TextField("Name", text: $ingredientItems[index].name)
-                                    .textFieldStyle(.roundedBorder)
+                                // Name with icon
+                                HStack(spacing: 6) {
+                                    Image(systemName: "carrot.fill")
+                                        .font(.system(size: 16))
+                                        .foregroundColor(AppTheme.accentColor(for: appTheme).opacity(0.7))
+                                    TextField("Ingredient", text: $ingredientItems[index].name)
+                                        .textFieldStyle(.roundedBorder)
+                                }
                             }
                         }
                         .padding(.vertical, 8)

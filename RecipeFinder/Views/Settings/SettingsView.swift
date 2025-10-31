@@ -57,7 +57,10 @@ struct SettingsTabView: View {
                     
                 ScrollView {
                     VStack(spacing: 24) {
-                        // Account Section
+                        // Account Section Header
+                        SettingsSectionHeader(title: "Account")
+                        
+                        // Account Card
                         SettingsCard {
                                 NavigationLink(destination: AccountView()) {
                                     HStack(spacing: 16) {
@@ -71,7 +74,7 @@ struct SettingsTabView: View {
                                             }
                                         
                                         VStack(alignment: .leading, spacing: 2) {
-                                            Text(accountManager.fullName)
+                                            Text(accountManager.fullName.isEmpty ? accountManager.email : accountManager.fullName)
                                                 .font(.headline)
                                                 .foregroundColor(colorScheme == .dark ? .white : .black)
                                             
