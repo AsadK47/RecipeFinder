@@ -103,7 +103,7 @@ struct MealPlanningView: View {
         }
     }
     
-    // MARK: - Meal Plan Management
+    // Meal Plan Management
     
     private func saveMealPlan(recipe: RecipeModel, for date: Date, mealTime: MealTime) {
         let normalizedDate = Calendar.current.startOfDay(for: date)
@@ -498,7 +498,7 @@ struct MealPlanningView: View {
         .padding(40)
     }
     
-    // MARK: - Helper Properties
+    // Helper Properties
     
     private var monthYearString: String {
         let formatter = DateFormatter()
@@ -602,7 +602,7 @@ struct MealPlanningView: View {
         return days
     }
     
-    // MARK: - Helper Methods
+    // Helper Methods
     
     private func previousMonth() {
         selectedDate = Calendar.current.date(byAdding: .month, value: -1, to: selectedDate) ?? selectedDate
@@ -625,7 +625,7 @@ struct MealPlanningView: View {
     }
 }
 
-// MARK: - Supporting Views
+// Supporting Views
 
 struct CalendarDayView: View {
     let date: Date
@@ -750,7 +750,7 @@ struct MealTimeCard: View {
     }
 }
 
-// MARK: - Supporting Types
+// Supporting Types
 
 enum MealTime: String, CaseIterable {
     case breakfast = "Breakfast"
@@ -783,7 +783,7 @@ enum MealTime: String, CaseIterable {
     }
 }
 
-// MARK: - Sheets
+// Sheets
 
 struct MealTimeSelectorSheet: View {
     let selectedDate: Date

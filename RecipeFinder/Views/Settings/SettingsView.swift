@@ -1,6 +1,6 @@
 import SwiftUI
 
-// MARK: - Card Style Enum
+// Card Style Enum
 enum CardStyle: String, CaseIterable {
     case frosted = "Frost Light"
     case solid = "Solid Dark"
@@ -210,7 +210,7 @@ struct SettingsTabView: View {
         }
     }
 
-// MARK: - Settings Components
+// Settings Components
 
 struct SettingsCard<Content: View>: View {
     @Environment(\.colorScheme) var colorScheme
@@ -280,7 +280,7 @@ struct SettingsRow: View {
     }
 }
 
-// MARK: - Settings Detail Views
+// Settings Detail Views
 
 struct AppearanceSettingsView: View {
     @AppStorage("appearanceMode") private var appearanceMode: SettingsTabView.AppearanceMode = .system

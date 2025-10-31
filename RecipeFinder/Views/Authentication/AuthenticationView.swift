@@ -180,7 +180,7 @@ struct AuthenticationView: View {
         }
     }
     
-    // MARK: - Helper Methods
+    // Helper Methods
     
     /// Skip login and continue as guest
     private func skipLogin() {
@@ -189,7 +189,7 @@ struct AuthenticationView: View {
     }
 }
 
-// MARK: - Email Sign In View
+// Email Sign In View
 
 struct EmailSignInView: View {
     @StateObject private var authManager = AuthenticationManager.shared
@@ -348,7 +348,7 @@ struct EmailSignInView: View {
     }
 }
 
-// MARK: - Sign Up View
+// Sign Up View
 
 struct SignUpView: View {
     @StateObject private var authManager = AuthenticationManager.shared
@@ -542,7 +542,7 @@ struct SignUpView: View {
     }
 }
 
-// MARK: - Custom Text Field Style
+// Custom Text Field Style
 
 struct AuthTextFieldStyle: TextFieldStyle {
     typealias _Body = AnyView

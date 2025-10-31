@@ -4,120 +4,113 @@ import UIKit
 
 @main
 struct RecipeFinderApp: App {
-    // Initialize PersistenceController
     let persistenceController = PersistenceController.shared
     @StateObject private var authManager = AuthenticationManager.shared
     
     init() {
         configureAppearance()
-        
-        // Populate database with sample data on first launch only
-        if !UserDefaults.standard.bool(forKey: Constants.UserDefaultsKeys.hasPopulatedDatabase) {
-            debugLog("🔄 First launch detected - populating database with sample recipes...")
-            persistenceController.populateDatabase()
-            UserDefaults.standard.set(true, forKey: Constants.UserDefaultsKeys.hasPopulatedDatabase)
-            debugLog("✅ Database populated successfully")
-        } else {
-            debugLog("✅ Database already populated - skipping initialization")
-        }
-        
-        #if DEBUG
-        // Seed test accounts for easy testing (Debug only)
-        if !UserDefaults.standard.bool(forKey: "hasSeededTestAccounts") {
-            AuthTestHelper.seedTestAccounts()
-            UserDefaults.standard.set(true, forKey: "hasSeededTestAccounts")
-        }
-        #endif
+        initializeDatabase()
     }
     
     var body: some Scene {
         WindowGroup {
-            Group {
-                if authManager.isAuthenticated {
-                    ContentView()
-                        .environment(\.managedObjectContext, persistenceController.container.viewContext)
-                        .onAppear {
-                            authManager.updateLastActiveTimestamp()
-                        }
-                        .transition(.opacity.combined(with: .scale(scale: 0.95)))
-                } else {
-                    NavigationStack {
-                        AuthenticationView()
-                    }
-                    .transition(.opacity.combined(with: .scale(scale: 1.05)))
+            rootView
+                .animation(.easeInOut(duration: 0.3), value: authManager.isAuthenticated)
+                .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                    authManager.checkSessionExpiration()
                 }
-            }
-            .animation(.easeInOut(duration: 0.3), value: authManager.isAuthenticated)
-            .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-                // Check if session expired when app comes back to foreground
-                authManager.checkSessionExpiration()
-            }
         }
     }
     
-    // UI Configuration
-    private func configureAppearance() {
-        // Configure tab bar appearance
-        let tabAppearance = UITabBarAppearance()
-        tabAppearance.configureWithTransparentBackground()
-        tabAppearance.backgroundColor = UIColor.black.withAlphaComponent(0.1)
-        
-        // Style unselected tabs
-        tabAppearance.stackedLayoutAppearance.normal.iconColor = .gray
-        tabAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [
-            .foregroundColor: UIColor.gray
-        ]
-        
-        // Style selected tabs
-        tabAppearance.stackedLayoutAppearance.selected.iconColor = UIColor(red: 0.8, green: 0.2, blue: 0.6, alpha: 1.0)
-        tabAppearance.stackedLayoutAppearance.selected.titleTextAttributes = [
-            .foregroundColor: UIColor(red: 0.8, green: 0.2, blue: 0.6, alpha: 1.0)
-        ]
-        
-        UITabBar.appearance().standardAppearance = tabAppearance
-        if #available(iOS 15.0, *) {
-            UITabBar.appearance().scrollEdgeAppearance = tabAppearance
+    // Views
+    
+    @ViewBuilder
+    private var rootView: some View {
+        if authManager.isAuthenticated {
+            ContentView()
+                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .onAppear { authManager.updateLastActiveTimestamp() }
+                .transition(.opacity.combined(with: .scale(scale: 0.95)))
+        } else {
+            NavigationStack {
+                AuthenticationView()
+            }
+            .transition(.opacity.combined(with: .scale(scale: 1.05)))
+        }
+    }
+    
+    // Initialization
+    
+    private func initializeDatabase() {
+        guard !UserDefaults.standard.bool(forKey: Constants.UserDefaultsKeys.hasPopulatedDatabase) else {
+            debugLog("✅ Database already populated")
+            return
         }
         
-        // Configure navigation bar appearance
-        let navAppearance = UINavigationBarAppearance()
-        navAppearance.configureWithTransparentBackground()
-        navAppearance.backgroundColor = UIColor.black.withAlphaComponent(0.1)
+        debugLog("🔄 First launch - populating database...")
+        persistenceController.populateDatabase()
+        UserDefaults.standard.set(true, forKey: Constants.UserDefaultsKeys.hasPopulatedDatabase)
+        debugLog("✅ Database ready")
+    }
+    
+    // Appearance Configuration
+    
+    private func configureAppearance() {
+        configureTabBar()
+        configureNavigationBar()
+        configureSearchBar()
+    }
+    
+    private func configureTabBar() {
+        let appearance = UITabBarAppearance()
+        appearance.configureWithTransparentBackground()
+        appearance.backgroundColor = .black.withAlphaComponent(0.1)
         
-        // Style navigation bar text
-        navAppearance.titleTextAttributes = [
+        let accentColor = UIColor(red: 0.8, green: 0.2, blue: 0.6, alpha: 1.0)
+        
+        appearance.stackedLayoutAppearance.normal.iconColor = .gray
+        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.gray]
+        
+        appearance.stackedLayoutAppearance.selected.iconColor = accentColor
+        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: accentColor]
+        
+        UITabBar.appearance().standardAppearance = appearance
+        if #available(iOS 15.0, *) {
+            UITabBar.appearance().scrollEdgeAppearance = appearance
+        }
+    }
+    
+    private func configureNavigationBar() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithTransparentBackground()
+        appearance.backgroundColor = .black.withAlphaComponent(0.1)
+        
+        appearance.titleTextAttributes = [
             .foregroundColor: UIColor.white,
             .font: UIFont.systemFont(ofSize: 18, weight: .semibold)
         ]
-        navAppearance.largeTitleTextAttributes = [
+        
+        appearance.largeTitleTextAttributes = [
             .foregroundColor: UIColor.white,
             .font: UIFont.systemFont(ofSize: 34, weight: .bold)
         ]
         
-        // Style back button
-        navAppearance.backButtonAppearance.normal.titleTextAttributes = [
-            .foregroundColor: UIColor.white
-        ]
+        appearance.backButtonAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.white]
+        
         UINavigationBar.appearance().tintColor = .white
-        
-        UINavigationBar.appearance().standardAppearance = navAppearance
-        UINavigationBar.appearance().compactAppearance = navAppearance
-        UINavigationBar.appearance().scrollEdgeAppearance = navAppearance
-        
-        // Configure search bar appearance
-        let searchTextField = UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self])
-        searchTextField.backgroundColor = UIColor.white.withAlphaComponent(0.1)
-        searchTextField.tintColor = UIColor(red: 0.8, green: 0.2, blue: 0.6, alpha: 1.0)
-        
-        // Set text color that adapts to dark/light mode
-        searchTextField.textColor = .label // System label color adapts automatically
-        
-        // Set placeholder text color attributes
-        searchTextField.attributedPlaceholder = NSAttributedString(
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().compactAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
+    }
+    
+    private func configureSearchBar() {
+        let textField = UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self])
+        textField.backgroundColor = .white.withAlphaComponent(0.1)
+        textField.tintColor = UIColor(red: 0.8, green: 0.2, blue: 0.6, alpha: 1.0)
+        textField.textColor = .label
+        textField.attributedPlaceholder = NSAttributedString(
             string: "",
-            attributes: [
-                .foregroundColor: UIColor.secondaryLabel // Adapts to dark/light mode
-            ]
+            attributes: [.foregroundColor: UIColor.secondaryLabel]
         )
     }
 }

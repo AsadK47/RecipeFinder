@@ -447,7 +447,7 @@ struct CookTimerView: View {
         }
     }
     
-    // MARK: - Timer Functions
+    // Timer Functions
     private func addTimer(name: String, seconds: Int) {
         guard timers.count < maxTimers else { return }
         

@@ -105,7 +105,7 @@ struct AccountView: View {
         }
     }
     
-    // MARK: - Profile Card
+    // Profile Card
     
     private var profileCard: some View {
         VStack(spacing: 16) {
@@ -170,7 +170,7 @@ struct AccountView: View {
         }
     }
     
-    // MARK: - Quick Actions
+    // Quick Actions
     
     private var quickActionsSection: some View {
         VStack(spacing: 0) {
@@ -204,7 +204,7 @@ struct AccountView: View {
         }
     }
     
-    // MARK: - Privacy Section
+    // Privacy Section
     
     private var privacySection: some View {
         VStack(spacing: 0) {
@@ -253,7 +253,7 @@ struct AccountView: View {
         }
     }
     
-    // MARK: - Account Actions
+    // Account Actions
     
     private var accountActionsSection: some View {
         VStack(spacing: 12) {
@@ -327,7 +327,7 @@ struct AccountView: View {
         }
     }
     
-    // MARK: - Helper Functions
+    // Helper Functions
     
     private func signOut() {
         #if DEBUG
@@ -350,7 +350,7 @@ struct AccountView: View {
     }
 }
 
-// MARK: - Action Button Component
+// Action Button Component
 
 struct ActionButton: View {
     let icon: String
@@ -396,7 +396,7 @@ struct ActionButton: View {
     }
 }
 
-// MARK: - Supporting Views (Simplified)
+// Supporting Views (Simplified)
 struct EditProfileView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var accountManager = AccountManager.shared
