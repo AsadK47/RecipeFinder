@@ -1,4 +1,5 @@
 import SwiftUI
+import AudioToolbox
 
 // Card Style Enum
 enum CardStyle: String, CaseIterable {
@@ -143,6 +144,15 @@ struct SettingsTabView: View {
                                     
                                     NavigationLink(destination: UnitsSettingsView()) {
                                         SettingsRow(icon: "ruler.fill", iconColor: .blue, title: "Units & Measurements")
+                                            .padding(20)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                    
+                                    Divider()
+                                        .padding(.leading, 60)
+                                    
+                                    NavigationLink(destination: PartyTimeView()) {
+                                        SettingsRow(icon: "party.popper.fill", iconColor: .purple, title: "Party Time")
                                             .padding(20)
                                     }
                                     .buttonStyle(PlainButtonStyle())
@@ -292,17 +302,20 @@ struct SettingsRow: View {
 
 struct AppearanceSettingsView: View {
     @AppStorage("appearanceMode") private var appearanceMode: SettingsTabView.AppearanceMode = .system
-    @AppStorage("autoCardStyle") private var autoCardStyle: Bool = true
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
-    // Computed property that returns the effective card style
+    // Computed property that returns the effective card style based on mode
     private var effectiveCardStyle: CardStyle {
-        if autoCardStyle {
+        switch appearanceMode {
+        case .system:
             return colorScheme == .dark ? .solid : .frosted
+        case .light:
+            return .frosted
+        case .dark:
+            return .solid
         }
-        return cardStyle
     }
     
     var body: some View {
@@ -312,154 +325,203 @@ struct AppearanceSettingsView: View {
             
             ScrollView {
                 VStack(spacing: 24) {
+                    // Header Info
                     SettingsCard {
-                        VStack(alignment: .leading, spacing: 20) {
-                            Text("Appearance Mode")
-                                .font(.headline)
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
-                            
-                            ForEach(SettingsTabView.AppearanceMode.allCases, id: \.self) { mode in
-                                Button(action: {
-                                    appearanceMode = mode
-                                    HapticManager.shared.selection()
-                                }) {
-                                    HStack(spacing: 16) {
-                                        Image(systemName: mode.icon)
-                                            .font(.title3)
-                                            .foregroundColor(AppTheme.accentColor)
-                                            .frame(width: 30)
-                                        
-                                        Text(mode.rawValue)
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
-                                        
-                                        Spacer()
-                                        
-                                        if appearanceMode == mode {
-                                            Image(systemName: "checkmark.circle.fill")
-                                                .foregroundColor(AppTheme.accentColor)
-                                        }
-                                    }
-                                    .padding(16)
-                                    .background(appearanceMode == mode ? Color.gray.opacity(0.2) : Color.clear)
-                                    .cornerRadius(12)
-                                }
-                                .buttonStyle(PlainButtonStyle())
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack {
+                                Image(systemName: "paintpalette.fill")
+                                    .font(.title2)
+                                    .foregroundColor(AppTheme.accentColor(for: appTheme))
+                                
+                                Text("Appearance")
+                                    .font(.title3)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(colorScheme == .dark ? .white : .black)
                             }
+                            
+                            Text("Choose your preferred appearance mode. Each mode automatically applies the best card style.")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
                         }
                         .padding(20)
                     }
                     
+                    // Appearance Modes
                     SettingsCard {
-                        VStack(alignment: .leading, spacing: 20) {
-                            Text("Card Style")
-                                .font(.headline)
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
-                            
-                            // Auto-switch toggle
+                        VStack(spacing: 0) {
+                            // System
                             Button(action: {
-                                autoCardStyle.toggle()
+                                appearanceMode = .system
+                                // Update card style based on current system scheme
+                                cardStyle = colorScheme == .dark ? .solid : .frosted
                                 HapticManager.shared.selection()
-                                // If turning on auto mode, sync the card style to current scheme
-                                if autoCardStyle {
-                                    cardStyle = colorScheme == .dark ? .solid : .frosted
-                                }
                             }) {
-                                HStack(spacing: 16) {
-                                    Image(systemName: "wand.and.stars")
-                                        .font(.title3)
-                                        .foregroundColor(AppTheme.accentColor)
-                                        .frame(width: 30)
-                                    
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("Auto Switch")
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
-                                Text("Frost Light for light mode, Solid Dark for dark mode")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-                                    
-                                    Spacer()
-                                    
-                                    Toggle("", isOn: $autoCardStyle)
-                                        .labelsHidden()
-                                        .tint(AppTheme.accentColor)
-                                        .onChange(of: autoCardStyle) { _, newValue in
-                                            if newValue {
-                                                cardStyle = colorScheme == .dark ? .solid : .frosted
-                                            }
+                                VStack(spacing: 0) {
+                                    HStack(spacing: 16) {
+                                        ZStack {
+                                            Circle()
+                                                .fill(AppTheme.accentColor(for: appTheme).opacity(0.2))
+                                                .frame(width: 50, height: 50)
+                                            
+                                            Image(systemName: "circle.lefthalf.filled")
+                                                .font(.title3)
+                                                .foregroundColor(AppTheme.accentColor(for: appTheme))
                                         }
+                                        
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            Text("System")
+                                                .font(.headline)
+                                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                            
+                                            Text("Follows device settings")
+                                                .font(.caption)
+                                                .foregroundColor(.secondary)
+                                            
+                                            Text(colorScheme == .dark ? "Currently: Fire Dark" : "Currently: Frost Light")
+                                                .font(.caption2)
+                                                .foregroundColor(AppTheme.accentColor(for: appTheme))
+                                        }
+                                        
+                                        Spacer()
+                                        
+                                        if appearanceMode == .system {
+                                            Image(systemName: "checkmark.circle.fill")
+                                                .font(.title3)
+                                                .foregroundColor(AppTheme.accentColor(for: appTheme))
+                                        }
+                                    }
+                                    .padding(20)
                                 }
-                                .padding(16)
-                                .background(Color.gray.opacity(0.1))
-                                .cornerRadius(12)
                             }
                             .buttonStyle(PlainButtonStyle())
                             
-                            if !autoCardStyle {
-                                Divider()
-                                    .padding(.vertical, 4)
-                                
-                                ForEach(CardStyle.allCases, id: \.self) { style in
-                                    Button(action: {
-                                        cardStyle = style
-                                        HapticManager.shared.selection()
-                                    }) {
-                                        HStack(spacing: 16) {
-                                            Image(systemName: style == .frosted ? "sparkles" : "square.fill")
-                                                .font(.title3)
-                                                .foregroundColor(AppTheme.accentColor)
-                                                .frame(width: 30)
-                                            
-                                            VStack(alignment: .leading, spacing: 4) {
-                                                Text(style.rawValue)
-                                                    .foregroundColor(colorScheme == .dark ? .white : .black)
-                                                Text(style == .frosted ? "Translucent glass effect" : "Solid background")
-                                                    .font(.caption)
-                                                    .foregroundColor(.secondary)
-                                            }
-                                            
-                                            Spacer()
-                                            
-                                            if cardStyle == style {
-                                                Image(systemName: "checkmark.circle.fill")
-                                                    .foregroundColor(AppTheme.accentColor)
-                                            }
-                                        }
-                                        .padding(16)
-                                        .background(cardStyle == style ? Color.gray.opacity(0.2) : Color.clear)
-                                        .cornerRadius(12)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                }
-                            } else {
-                                // Show current effective style when auto mode is on
-                                VStack(spacing: 12) {
-                                    Divider()
-                                        .padding(.vertical, 4)
-                                    
+                            Divider()
+                                .padding(.leading, 86)
+                            
+                            // Frost Light
+                            Button(action: {
+                                appearanceMode = .light
+                                cardStyle = .frosted
+                                HapticManager.shared.selection()
+                            }) {
+                                VStack(spacing: 0) {
                                     HStack(spacing: 16) {
-                                        Image(systemName: effectiveCardStyle == .frosted ? "sparkles" : "square.fill")
-                                            .font(.title3)
-                                            .foregroundColor(AppTheme.accentColor)
-                                            .frame(width: 30)
+                                        ZStack {
+                                            Circle()
+                                                .fill(Color.cyan.opacity(0.2))
+                                                .frame(width: 50, height: 50)
+                                            
+                                            Image(systemName: "sparkles")
+                                                .font(.title3)
+                                                .foregroundColor(.cyan)
+                                        }
                                         
                                         VStack(alignment: .leading, spacing: 4) {
-                                            Text("Current: \(effectiveCardStyle.rawValue)")
+                                            Text("Frost Light")
+                                                .font(.headline)
                                                 .foregroundColor(colorScheme == .dark ? .white : .black)
-                                            Text(effectiveCardStyle == .frosted ? "Translucent glass effect" : "Solid background")
+                                            
+                                            Text("Translucent frosted glass cards")
                                                 .font(.caption)
                                                 .foregroundColor(.secondary)
                                         }
                                         
                                         Spacer()
+                                        
+                                        if appearanceMode == .light {
+                                            Image(systemName: "checkmark.circle.fill")
+                                                .font(.title3)
+                                                .foregroundColor(.cyan)
+                                        }
                                     }
-                                    .padding(16)
-                                    .background(Color.gray.opacity(0.1))
-                                    .cornerRadius(12)
+                                    .padding(20)
                                 }
                             }
+                            .buttonStyle(PlainButtonStyle())
+                            
+                            Divider()
+                                .padding(.leading, 86)
+                            
+                            // Fire Dark
+                            Button(action: {
+                                appearanceMode = .dark
+                                cardStyle = .solid
+                                HapticManager.shared.selection()
+                            }) {
+                                VStack(spacing: 0) {
+                                    HStack(spacing: 16) {
+                                        ZStack {
+                                            Circle()
+                                                .fill(Color.orange.opacity(0.2))
+                                                .frame(width: 50, height: 50)
+                                            
+                                            Image(systemName: "flame.fill")
+                                                .font(.title3)
+                                                .foregroundColor(.orange)
+                                        }
+                                        
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            Text("Fire Dark")
+                                                .font(.headline)
+                                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                            
+                                            Text("Solid dark cards")
+                                                .font(.caption)
+                                                .foregroundColor(.secondary)
+                                        }
+                                        
+                                        Spacer()
+                                        
+                                        if appearanceMode == .dark {
+                                            Image(systemName: "checkmark.circle.fill")
+                                                .font(.title3)
+                                                .foregroundColor(.orange)
+                                        }
+                                    }
+                                    .padding(20)
+                                }
+                            }
+                            .buttonStyle(PlainButtonStyle())
                         }
-                        .padding(20)
+                    }
+                    
+                    // Preview Card
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Preview")
+                            .font(.caption)
+                            .foregroundColor(.white.opacity(0.7))
+                            .padding(.leading, 4)
+                        
+                        SettingsCard {
+                            VStack(alignment: .leading, spacing: 12) {
+                                HStack {
+                                    Image(systemName: "square.stack.3d.up.fill")
+                                        .font(.title2)
+                                        .foregroundColor(AppTheme.accentColor(for: appTheme))
+                                    
+                                    Text("Card Preview")
+                                        .font(.headline)
+                                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                                }
+                                
+                                Text("This is how cards will appear throughout the app with your selected appearance mode.")
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                
+                                HStack(spacing: 8) {
+                                    Image(systemName: effectiveCardStyle == .frosted ? "sparkles" : "flame.fill")
+                                        .foregroundColor(effectiveCardStyle == .frosted ? .cyan : .orange)
+                                    
+                                    Text("Style: \(effectiveCardStyle.rawValue)")
+                                        .font(.caption)
+                                        .foregroundColor(AppTheme.accentColor(for: appTheme))
+                                }
+                                .padding(.top, 4)
+                            }
+                            .padding(20)
+                        }
                     }
                 }
                 .padding(20)
@@ -468,6 +530,17 @@ struct AppearanceSettingsView: View {
         .navigationTitle("Appearance")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
+        .onChange(of: appearanceMode) { _, newMode in
+            // Auto-update card style when mode changes
+            switch newMode {
+            case .system:
+                cardStyle = colorScheme == .dark ? .solid : .frosted
+            case .light:
+                cardStyle = .frosted
+            case .dark:
+                cardStyle = .solid
+            }
+        }
     }
 }
 
@@ -1944,9 +2017,178 @@ struct FeatureRow: View {
     }
 }
 
+// MARK: - Party Time View
+struct PartyTimeView: View {
+    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.appTheme) var appTheme
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
+    @State private var isVibrating = false
+    @State private var vibrationTimer: Timer?
+    
+    var body: some View {
+        ZStack {
+            AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
+                .ignoresSafeArea()
+            
+            VStack(spacing: 0) {
+                ScrollView {
+                    VStack(spacing: 32) {
+                        // Header Info
+                        VStack(spacing: 12) {
+                            Image(systemName: "party.popper.fill")
+                                .font(.system(size: 60))
+                                .foregroundColor(AppTheme.accentColor(for: appTheme))
+                                .symbolEffect(.bounce, value: isVibrating)
+                            
+                            Text("Party Time")
+                                .font(.title)
+                                .fontWeight(.bold)
+                                .foregroundColor(.white)
+                            
+                            Text("Press and hold the button below for continuous vibration")
+                                .font(.subheadline)
+                                .foregroundColor(.white.opacity(0.7))
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, 40)
+                        }
+                        .padding(.top, 40)
+                        
+                        // Vibration Button
+                        VStack(spacing: 16) {
+                            ZStack {
+                                // Animated rings when vibrating
+                                if isVibrating {
+                                    ForEach(0..<3) { index in
+                                        Circle()
+                                            .stroke(AppTheme.accentColor(for: appTheme).opacity(0.3), lineWidth: 2)
+                                            .frame(width: 200, height: 200)
+                                            .scaleEffect(isVibrating ? 1.3 : 1.0)
+                                            .opacity(isVibrating ? 0 : 0.8)
+                                            .animation(
+                                                .easeOut(duration: 1.5)
+                                                .repeatForever(autoreverses: false)
+                                                .delay(Double(index) * 0.3),
+                                                value: isVibrating
+                                            )
+                                    }
+                                }
+                                
+                                // Main button
+                                Circle()
+                                    .fill(
+                                        LinearGradient(
+                                            colors: isVibrating ? 
+                                                [AppTheme.accentColor(for: appTheme), AppTheme.accentColor(for: appTheme).opacity(0.7)] :
+                                                [AppTheme.accentColor(for: appTheme).opacity(0.8), AppTheme.accentColor(for: appTheme).opacity(0.6)],
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        )
+                                    )
+                                    .frame(width: 200, height: 200)
+                                    .shadow(color: AppTheme.accentColor(for: appTheme).opacity(0.5), radius: isVibrating ? 30 : 15)
+                                    .scaleEffect(isVibrating ? 1.05 : 1.0)
+                                    .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: isVibrating)
+                                
+                                VStack(spacing: 8) {
+                                    Image(systemName: isVibrating ? "iphone.radiowaves.left.and.right" : "hand.tap.fill")
+                                        .font(.system(size: 50))
+                                        .foregroundColor(.white)
+                                        .symbolEffect(.bounce, options: .repeating, value: isVibrating)
+                                    
+                                    Text(isVibrating ? "Vibrating..." : "Hold Me")
+                                        .font(.title3)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(.white)
+                                }
+                            }
+                            .onLongPressGesture(minimumDuration: .infinity, pressing: { pressing in
+                                if pressing {
+                                    startVibration()
+                                } else {
+                                    stopVibration()
+                                }
+                            }, perform: {})
+                            
+                            Text(isVibrating ? "Release to stop" : "Press and hold to start")
+                                .font(.caption)
+                                .foregroundColor(.white.opacity(0.6))
+                        }
+                        .padding(.vertical, 40)
+                        
+                        // Info Card
+                        SettingsCard {
+                            VStack(alignment: .leading, spacing: 16) {
+                                HStack {
+                                    Image(systemName: "info.circle.fill")
+                                        .foregroundColor(.blue)
+                                    Text("How it works")
+                                        .font(.headline)
+                                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                                }
+                                
+                                VStack(alignment: .leading, spacing: 8) {
+                                    BulletPoint(text: "Press and hold the button")
+                                    BulletPoint(text: "Your device will vibrate continuously")
+                                    BulletPoint(text: "Release to stop the vibration")
+                                    BulletPoint(text: "Perfect for getting attention or just having fun!")
+                                }
+                            }
+                            .padding(20)
+                        }
+                        
+                        Spacer(minLength: 40)
+                    }
+                    .padding(.horizontal, 20)
+                }
+            }
+        }
+        .navigationTitle("Party Time")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
+        .onDisappear {
+            stopVibration()
+        }
+    }
+    
+    private func startVibration() {
+        isVibrating = true
+        
+        // Use AudioServicesPlaySystemSound for continuous vibration
+        // Vibrate immediately
+        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+        
+        // Continue vibrating every 0.4 seconds for smooth continuous feel
+        vibrationTimer = Timer.scheduledTimer(withTimeInterval: 0.4, repeats: true) { _ in
+            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+        }
+    }
+    
+    private func stopVibration() {
+        isVibrating = false
+        vibrationTimer?.invalidate()
+        vibrationTimer = nil
+    }
+}
+
+struct BulletPoint: View {
+    let text: String
+    @Environment(\.colorScheme) var colorScheme
+    
+    var body: some View {
+        HStack(alignment: .top, spacing: 8) {
+            Text("•")
+                .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .primary)
+            Text(text)
+                .font(.subheadline)
+                .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .primary)
+        }
+    }
+}
+
 #Preview {
     SettingsTabView()
         .environmentObject(KitchenInventoryManager())
         .environmentObject(ShoppingListManager())
         .environment(\.appTheme, AppTheme.ThemeType.teal)
 }
+

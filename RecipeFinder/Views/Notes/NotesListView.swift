@@ -66,9 +66,18 @@ struct NotesListView: View {
                     VStack(spacing: 12) {
                         GeometryReader { geometry in
                             HStack(spacing: 0) {
-                                // Left spacer for balance
-                                Color.clear
-                                    .frame(width: max(44, geometry.size.width * 0.15))
+                                // Back button (left side)
+                                Button(action: {
+                                    // This will use the environment's dismiss if in a sheet/navigation
+                                    HapticManager.shared.light()
+                                }) {
+                                    Image(systemName: "chevron.left")
+                                        .font(.title3)
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.white)
+                                        .frame(width: 44, height: 44)
+                                }
+                                .opacity(0) // Hidden but maintains layout
                                 
                                 Spacer(minLength: 8)
                                 

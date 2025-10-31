@@ -12,14 +12,23 @@ struct TimerInstance: Identifiable {
     var startTime: Date?
 }
 
+// Completed Timer Banner Model
+struct CompletedTimerBanner: Identifiable {
+    let id = UUID()
+    let timerName: String
+    let completionDate: Date = Date()
+}
+
 struct CookTimerView: View {
     @State private var timers: [TimerInstance] = []
+    @State private var completedTimers: [CompletedTimerBanner] = []
     @State private var showCustomInput = false
     @State private var customHours: Int = 0
     @State private var customMinutes: Int = 0
     @State private var customSeconds: Int = 0
     @State private var customName: String = ""
     @State private var timer: Timer?
+    @State private var vibrationTimer: Timer?
     
     @AppStorage("cardStyle") private var cardStyleString: String = "frosted"
     @AppStorage("cookModeEnabled") private var cookModeEnabled: Bool = true
@@ -67,6 +76,22 @@ struct CookTimerView: View {
                                     }
                                     
                                     if !timers.isEmpty {
+                                        Divider()
+                                        
+                                        Button(action: {
+                                            pauseAllTimers()
+                                            HapticManager.shared.light()
+                                        }) {
+                                            Label("Pause All", systemImage: "pause.circle")
+                                        }
+                                        
+                                        Button(action: {
+                                            resumeAllTimers()
+                                            HapticManager.shared.light()
+                                        }) {
+                                            Label("Resume All", systemImage: "play.circle")
+                                        }
+                                        
                                         Divider()
                                         
                                         Button(role: .destructive, action: {
@@ -117,6 +142,26 @@ struct CookTimerView: View {
             .sheet(isPresented: $showCustomInput) {
                 customTimeInputSheet
             }
+            .overlay(alignment: .top) {
+                // Stackable completion banners
+                VStack(spacing: 8) {
+                    ForEach(completedTimers) { completedTimer in
+                        CompletedTimerBannerView(
+                            timerName: completedTimer.timerName,
+                            onDismiss: {
+                                withAnimation {
+                                    dismissCompletedTimer(completedTimer)
+                                }
+                            },
+                            appTheme: appTheme,
+                            colorScheme: colorScheme
+                        )
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                    }
+                }
+                .padding(.top, 60)
+                .padding(.horizontal, 20)
+            }
         }
         .onAppear {
             if cookModeEnabled {
@@ -127,6 +172,7 @@ struct CookTimerView: View {
         .onDisappear {
             UIApplication.shared.isIdleTimerDisabled = false
             timer?.invalidate()
+            stopVibration()
         }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {
@@ -462,6 +508,18 @@ struct CookTimerView: View {
         HapticManager.shared.success()
     }
     
+    private func pauseAllTimers() {
+        for index in timers.indices {
+            timers[index].isPaused = true
+        }
+    }
+    
+    private func resumeAllTimers() {
+        for index in timers.indices {
+            timers[index].isPaused = false
+        }
+    }
+    
     private func togglePause(_ id: UUID) {
         guard let index = timers.firstIndex(where: { $0.id == id }) else { return }
         timers[index].isPaused.toggle()
@@ -496,8 +554,51 @@ struct CookTimerView: View {
     }
     
     private func timerCompleted(_ timer: TimerInstance) {
-        HapticManager.shared.celebrate()
+        // Add to completed timers list
+        let completedTimer = CompletedTimerBanner(timerName: timer.name)
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+            completedTimers.append(completedTimer)
+        }
+        
+        // Start vibration if not already vibrating
+        if vibrationTimer == nil {
+            startContinuousVibration()
+        }
+        
+        // Send notification
         sendNotification(for: timer)
+        
+        // Auto-dismiss after 5 seconds
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+            withAnimation {
+                dismissCompletedTimer(completedTimer)
+            }
+        }
+    }
+    
+    private func dismissCompletedTimer(_ completedTimer: CompletedTimerBanner) {
+        completedTimers.removeAll { $0.id == completedTimer.id }
+        
+        // Stop vibration if no more completed timers
+        if completedTimers.isEmpty {
+            stopVibration()
+        }
+    }
+    
+    private func startContinuousVibration() {
+        // Initial strong vibration
+        HapticManager.shared.celebrate()
+        
+        // Continue vibrating every 2 seconds until stopped
+        vibrationTimer?.invalidate()
+        vibrationTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { _ in
+            HapticManager.shared.celebrate()
+        }
+    }
+    
+    private func stopVibration() {
+        vibrationTimer?.invalidate()
+        vibrationTimer = nil
     }
     
     private func sendNotification(for timer: TimerInstance) {
@@ -627,6 +728,58 @@ struct TimerCard: View {
                     .fill(.ultraThinMaterial)
             }
         }
+    }
+}
+
+// MARK: - Completed Timer Banner
+struct CompletedTimerBannerView: View {
+    let timerName: String
+    let onDismiss: () -> Void
+    let appTheme: AppTheme.ThemeType
+    let colorScheme: ColorScheme
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            // Animated checkmark icon
+            ZStack {
+                Circle()
+                    .fill(Color.green)
+                    .frame(width: 40, height: 40)
+                
+                Image(systemName: "checkmark")
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundColor(.white)
+            }
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Timer Complete!")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                
+                Text(timerName)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            
+            Spacer()
+            
+            Button(action: onDismiss) {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.title3)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .padding(16)
+        .background {
+            RoundedRectangle(cornerRadius: 16)
+                .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white)
+                .shadow(color: .black.opacity(0.2), radius: 10, y: 5)
+        }
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .strokeBorder(Color.green.opacity(0.3), lineWidth: 2)
+        )
     }
 }
 
