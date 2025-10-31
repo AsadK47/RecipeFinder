@@ -70,30 +70,61 @@ struct RecipeWizardView: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
+                    // Header Section
+                    VStack(spacing: 12) {
+                        GeometryReader { geometry in
+                            HStack {
+                                Button(action: {
+                                    HapticManager.shared.selection()
+                                    dismiss()
+                                }) {
+                                    Text("Cancel")
+                                        .font(.body)
+                                        .foregroundColor(.white)
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 8)
+                                        .background(.ultraThinMaterial)
+                                        .cornerRadius(12)
+                                }
+                                
+                                Spacer()
+                                
+                                Text("Recipe Wizard")
+                                    .font(.system(size: min(24, geometry.size.width * 0.06), weight: .bold))
+                                    .foregroundColor(.white)
+                                
+                                Spacer()
+                                
+                                // Invisible button for balance
+                                Button(action: {}) {
+                                    Text("Cancel")
+                                        .font(.body)
+                                        .foregroundColor(.clear)
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 8)
+                                }
+                                .disabled(true)
+                            }
+                        }
+                        .frame(height: 44)
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 16)
+                    
                     // Progress indicator
                     progressBar
                     
                     // Content
                     ScrollView {
-                        VStack(spacing: 20) {
+                        VStack(spacing: 24) {
                             stepContent
                         }
-                        .padding()
+                        .padding(.top, 16)
+                        .padding(.horizontal, 20)
                     }
                     
                     // Navigation buttons
                     navigationButtons
-                }
-            }
-            .navigationTitle("Recipe Wizard")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
-                        HapticManager.shared.selection()
-                        dismiss()
-                    }
-                    .foregroundColor(.white)
                 }
             }
             .onAppear {
@@ -149,6 +180,8 @@ struct RecipeWizardView: View {
             }
         }
         .frame(height: 4)
+        .padding(.horizontal, 20)
+        .padding(.top, 8)
     }
     
     @ViewBuilder

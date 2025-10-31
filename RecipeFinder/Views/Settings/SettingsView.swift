@@ -38,18 +38,21 @@ struct SettingsTabView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
+                // Header Section
                 VStack(spacing: 12) {
-                    HStack {
-                        Spacer()
-                        Text("Settings")
-                            .font(.system(size: 34, weight: .bold))
-                            .foregroundColor(.white)
-                        Spacer()
+                    GeometryReader { geometry in
+                        HStack {
+                            Spacer()
+                            Text("Settings")
+                                .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
+                                .foregroundColor(.white)
+                            Spacer()
+                        }
                     }
                     .frame(height: 44)
-                    .padding(.horizontal, 20)
-                    .padding(.top, 16)
                 }
+                .padding(.horizontal, 20)
+                .padding(.top, 16)
                     
                 ScrollView {
                     VStack(spacing: 24) {
@@ -196,6 +199,7 @@ struct SettingsTabView: View {
                             .padding(.top, 24)
                             .padding(.bottom, 40)
                         }
+                        .padding(.top, 16)
                         .padding(.horizontal, 20)
                     }
                 }

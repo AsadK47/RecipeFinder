@@ -29,6 +29,7 @@ struct MealPlanningView: View {
                             selectedMealsSection
                         }
                     }
+                    .padding(.top, 16)
                     .padding(.horizontal, 20)
                     .padding(.bottom, 100)
                 }
@@ -71,46 +72,48 @@ struct MealPlanningView: View {
     }
     
     private var header: some View {
-        VStack(spacing: 16) {
-            HStack {
-                // Left spacer for balance
-                Color.clear
-                    .frame(width: 44)
-                
-                Spacer()
-                
-                Text("Meal Planner")
-                    .font(.system(size: 34, weight: .bold))
-                    .foregroundColor(.white)
-                
-                Spacer()
-                
-                // Menu for all options
-                Menu {
-                    Button(action: {
-                        HapticManager.shared.light()
-                        showMealTimeSelector = true
-                    }) {
-                        Label("Add Meal", systemImage: "plus.circle")
-                    }
+        VStack(spacing: 12) {
+            GeometryReader { geometry in
+                HStack {
+                    // Left spacer for balance
+                    Color.clear
+                        .frame(width: 44)
                     
-                    Divider()
+                    Spacer()
                     
-                    Button(role: .destructive, action: {
-                        selectedMealTimes.removeAll()
-                        HapticManager.shared.light()
-                    }) {
-                        Label("Clear All Plans", systemImage: "trash")
+                    Text("Meal Planner")
+                        .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
+                        .foregroundColor(.white)
+                    
+                    Spacer()
+                    
+                    // Menu for all options
+                    Menu {
+                        Button(action: {
+                            HapticManager.shared.light()
+                            showMealTimeSelector = true
+                        }) {
+                            Label("Add Meal", systemImage: "plus.circle")
+                        }
+                        
+                        Divider()
+                        
+                        Button(role: .destructive, action: {
+                            selectedMealTimes.removeAll()
+                            HapticManager.shared.light()
+                        }) {
+                            Label("Clear All Plans", systemImage: "trash")
+                        }
+                    } label: {
+                        ModernCircleButton(icon: "line.3.horizontal") {}
+                            .allowsHitTesting(false)
                     }
-                } label: {
-                    ModernCircleButton(icon: "line.3.horizontal") {}
-                        .allowsHitTesting(false)
                 }
             }
-            .padding(.horizontal, 20)
+            .frame(height: 44)
         }
-        .padding(.top, 20)
-        .padding(.bottom, 16)
+        .padding(.horizontal, 20)
+        .padding(.top, 16)
     }
     
     private var calendarView: some View {
