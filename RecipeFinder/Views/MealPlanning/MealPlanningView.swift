@@ -73,11 +73,9 @@ struct MealPlanningView: View {
     private var header: some View {
         VStack(spacing: 16) {
             HStack {
-                // Add Meal button
-                ModernCircleButton(icon: "plus.circle.fill") {
-                    HapticManager.shared.light()
-                    showMealTimeSelector = true
-                }
+                // Left spacer for balance
+                Color.clear
+                    .frame(width: 44)
                 
                 Spacer()
                 
@@ -87,8 +85,17 @@ struct MealPlanningView: View {
                 
                 Spacer()
                 
-                // Menu for clearing/options
+                // Menu for all options
                 Menu {
+                    Button(action: {
+                        HapticManager.shared.light()
+                        showMealTimeSelector = true
+                    }) {
+                        Label("Add Meal", systemImage: "plus.circle")
+                    }
+                    
+                    Divider()
+                    
                     Button(role: .destructive, action: {
                         selectedMealTimes.removeAll()
                         HapticManager.shared.light()
@@ -96,7 +103,7 @@ struct MealPlanningView: View {
                         Label("Clear All Plans", systemImage: "trash")
                     }
                 } label: {
-                    ModernCircleButton(icon: "ellipsis.circle.fill") {}
+                    ModernCircleButton(icon: "line.3.horizontal") {}
                         .allowsHitTesting(false)
                 }
             }

@@ -119,15 +119,49 @@ struct KitchenView: View {
     
     private var header: some View {
         VStack(spacing: 12) {
-            HStack {
-                Spacer()
-                
-                Text("Kitchen")
-                    .font(.system(size: 34, weight: .bold))
-                    .foregroundStyle(.white)
-                
-                Spacer()
+            GeometryReader { geometry in
+                HStack(spacing: 0) {
+                    // Left spacer for balance - 15% of width or fixed size
+                    Color.clear
+                        .frame(width: max(44, geometry.size.width * 0.15))
+                    
+                    Spacer(minLength: 8)
+                    
+                    Text("Kitchen")
+                        .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
+                        .foregroundStyle(.white)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                    
+                    Spacer(minLength: 8)
+                    
+                    // Right menu - 15% of width or fixed size
+                    Menu {
+                        Button(action: {
+                            isSearchFocused = true
+                            HapticManager.shared.light()
+                        }) {
+                            Label("Search Ingredients", systemImage: "magnifyingglass")
+                        }
+                        
+                        if !kitchenManager.items.isEmpty {
+                            Divider()
+                            
+                            Button(role: .destructive, action: {
+                                kitchenManager.clearAll()
+                                HapticManager.shared.light()
+                            }) {
+                                Label("Clear Kitchen", systemImage: "trash")
+                            }
+                        }
+                    } label: {
+                        ModernCircleButton(icon: "line.3.horizontal") {}
+                            .allowsHitTesting(false)
+                    }
+                    .frame(width: max(44, geometry.size.width * 0.15))
+                }
             }
+            .frame(height: 44)
             .padding(.horizontal, 20)
             .padding(.top, 16)
             
@@ -137,16 +171,6 @@ struct KitchenView: View {
                 .padding(.horizontal, 20)
                 .padding(.bottom, 12)
         }
-        .background(
-            LinearGradient(
-                gradient: Gradient(stops: [
-                    .init(color: Color.clear, location: 0),
-                    .init(color: Color.black.opacity(0.1), location: 1)
-                ]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-        )
     }
     
     private var emptyStateView: some View {

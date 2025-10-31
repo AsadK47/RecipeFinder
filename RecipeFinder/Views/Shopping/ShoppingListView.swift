@@ -16,6 +16,15 @@ struct ShoppingListView: View {
         manager.groupedItems.map { (key: $0.category, value: $0.items) }
     }
     
+    private var searchResults: [String] {
+        guard !searchText.isEmpty else { return [] }
+        return USDAFoodsList.searchFoods(query: searchText)
+    }
+    
+    private var showingSearchResults: Bool {
+        !searchText.isEmpty && isSearchFocused && !searchResults.isEmpty
+    }
+    
     private func shareShoppingList() {
         var text = "🛒 Shopping List\n\n"
         
@@ -63,66 +72,73 @@ struct ShoppingListView: View {
                 
                 VStack(spacing: 0) {
                     // Header
-                    VStack(spacing: 12) {
-                        HStack {
-                            Spacer()
-                            
-                            // Title in center
-                            Text("Shopping List")
-                                .font(.system(size: 34, weight: .bold))
-                                .foregroundColor(.white)
-                            
-                            Spacer()
-                            
-                            // Right button - Options menu (only if items exist)
-                            if !manager.items.isEmpty {
+                    VStack(spacing: 8) {
+                        GeometryReader { geometry in
+                            HStack(spacing: 0) {
+                                // Left spacer for balance - 15% of width or fixed size
+                                Color.clear
+                                    .frame(width: max(44, geometry.size.width * 0.15))
+                                
+                                Spacer(minLength: 8)
+                                
+                                // Title in center
+                                Text("Shopping List")
+                                    .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
+                                    .foregroundColor(.white)
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.7)
+                                
+                                Spacer(minLength: 8)
+                                
+                                // Right button - 15% of width or fixed size
                                 Menu {
                                     Button(action: shareShoppingList) {
                                         Label("Share List", systemImage: "square.and.arrow.up")
                                     }
                                     
-                                    Divider()
-                                    
-                                    Button(
-                                        action: { 
-                                            withAnimation {
-                                                if collapsedCategories.count == CategoryClassifier.categoryOrder.count {
-                                                    collapsedCategories.removeAll()
-                                                } else {
-                                                    collapsedCategories = Set(CategoryClassifier.categoryOrder)
+                                    if !manager.items.isEmpty {
+                                        Divider()
+                                        
+                                        Button(
+                                            action: { 
+                                                withAnimation {
+                                                    if collapsedCategories.count == CategoryClassifier.categoryOrder.count {
+                                                        collapsedCategories.removeAll()
+                                                    } else {
+                                                        collapsedCategories = Set(CategoryClassifier.categoryOrder)
+                                                    }
                                                 }
+                                            },
+                                            label: {
+                                                Label(
+                                                    collapsedCategories.count == CategoryClassifier.categoryOrder.count ? "Expand All" : "Collapse All",
+                                                    systemImage: collapsedCategories.count == CategoryClassifier.categoryOrder.count ? "chevron.down.circle" : "chevron.up.circle"
+                                                )
                                             }
-                                        },
-                                        label: {
-                                            Label(
-                                                collapsedCategories.count == CategoryClassifier.categoryOrder.count ? "Expand All" : "Collapse All",
-                                                systemImage: collapsedCategories.count == CategoryClassifier.categoryOrder.count ? "chevron.down.circle" : "chevron.up.circle"
-                                            )
-                                        }
-                                    )
-                                    
-                                    Divider()
-                                    
-                                    Button(
-                                        role: .destructive,
-                                        action: { 
-                                            showClearConfirmation = true 
-                                        },
-                                        label: {
-                                            Label("Clear Items", systemImage: "trash")
-                                        }
-                                    )
+                                        )
+                                        
+                                        Divider()
+                                        
+                                        Button(
+                                            role: .destructive,
+                                            action: { 
+                                                showClearConfirmation = true 
+                                            },
+                                            label: {
+                                                Label("Clear Items", systemImage: "trash")
+                                            }
+                                        )
+                                    }
                                 } label: {
-                                    ModernCircleButton(icon: "ellipsis.circle") {}
+                                    ModernCircleButton(icon: "line.3.horizontal") {}
                                         .allowsHitTesting(false)
                                 }
-                            } else {
-                                // Empty spacer to balance layout
-                                Color.clear
-                                    .frame(width: 44, height: 44)
+                                .frame(width: max(44, geometry.size.width * 0.15))
                             }
                         }
+                        .frame(height: 44)
                         .padding(.horizontal, 20)
+                        .padding(.bottom, 12)
                         
                         // Search bar with cancel option
                         HStack(spacing: 12) {
@@ -196,10 +212,12 @@ struct ShoppingListView: View {
                         }
                     }
                     .padding(.top, 16)
-                    .padding(.bottom, 12)
+                    .padding(.bottom, 4)
                     
                     // Content
-                    if manager.items.isEmpty {
+                    if showingSearchResults {
+                        searchResultsView
+                    } else if manager.items.isEmpty {
                         emptyStateView
                     } else {
                         shoppingListContent
@@ -251,14 +269,43 @@ struct ShoppingListView: View {
         }
     }
     
+    private var searchResultsView: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Suggested Ingredients")
+                    .font(.title3)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 20)
+                
+                if searchResults.isEmpty {
+                    Text("No ingredients found")
+                        .font(.body)
+                        .foregroundColor(.white.opacity(0.7))
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 20)
+                } else {
+                    LazyVStack(spacing: 8) {
+                        ForEach(searchResults, id: \.self) { ingredient in
+                            ingredientButton(ingredient)
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 20)
+                }
+            }
+        }
+    }
+    
     private var emptyStateView: some View {
         ScrollView {
-            VStack(spacing: 24) {
-                VStack(spacing: 16) {
+            VStack(spacing: 16) {
+                VStack(spacing: 12) {
                     Image(systemName: "cart.circle.fill")
                         .font(.system(size: 80))
                         .foregroundColor(.white.opacity(0.6))
-                        .padding(.top, 48)
+                        .padding(.top, 12)
                     
                     Text("Start Your Shopping List")
                         .font(.title2)
@@ -271,7 +318,7 @@ struct ShoppingListView: View {
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 32)
                 }
-                .padding(.bottom, 24)
+                .padding(.bottom, 6)
                 
                 // Always show features card
                 VStack(alignment: .leading, spacing: 16) {
@@ -431,6 +478,55 @@ struct ShoppingListView: View {
             HapticManager.shared.success()
         }
         print("📊 ShoppingListView: Manager now has \(manager.items.count) items")
+    }
+    
+    private func addItemFromSearch(_ ingredient: String) {
+        print("🔍 ShoppingListView: Adding item from search '\(ingredient)'")
+        withAnimation(.spring(response: 0.3)) {
+            manager.addItem(name: ingredient)
+            // Reset state to allow continuous adding
+            searchText = ""
+            // Keep focus so user can continue typing
+            isSearchFocused = true
+            HapticManager.shared.success()
+        }
+        print("📊 ShoppingListView: Manager now has \(manager.items.count) items")
+    }
+    
+    private func ingredientButton(_ ingredient: String) -> some View {
+        let category = CategoryClassifier.suggestCategory(for: ingredient)
+        let isInList = manager.items.contains { $0.name.lowercased() == ingredient.lowercased() }
+        
+        return Button(
+            action: {
+                addItemFromSearch(ingredient)
+            },
+            label: {
+                HStack(spacing: 12) {
+                    Image(systemName: CategoryClassifier.categoryIcon(for: category))
+                        .foregroundStyle(CategoryClassifier.categoryColor(for: category))
+                        .font(.body)
+                    
+                    Text(ingredient)
+                        .font(.body)
+                        .foregroundStyle(colorScheme == .dark ? .white : .black)
+                    
+                    Spacer()
+                    
+                    Image(systemName: isInList ? "checkmark.circle.fill" : "plus.circle")
+                        .foregroundStyle(isInList ? .green : AppTheme.accentColor(for: appTheme))
+                        .font(.title3)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 14)
+                .background {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(.regularMaterial)
+                }
+            }
+        )
+        .buttonStyle(PlainButtonStyle())
+        .disabled(isInList)
     }
     
     private func categoryIcon(for category: String) -> String {

@@ -101,56 +101,66 @@ struct RecipeSearchView: View {
                 
                 VStack(spacing: 20) {
                     VStack(spacing: 16) {
-                        HStack {
-                            Spacer()
-                            
-                            Text("Recipe Finder")
-                                .font(.system(size: 34, weight: .bold))
-                                .foregroundColor(.white)
-                            
-                            Spacer()
-                            
-                            // Combined actions menu
-                            Menu {
-                                // Filter option
-                                Button(
-                                    action: {
-                                        HapticManager.shared.light()
-                                        showFilters.toggle()
-                                    },
-                                    label: {
-                                        Label(activeFilterCount > 0 ? "Filters (\(activeFilterCount))" : "Filters", systemImage: "line.3.horizontal.decrease.circle")
-                                    }
-                                )
+                        GeometryReader { geometry in
+                            HStack(spacing: 0) {
+                                // Left spacer for balance - 15% of width or fixed size
+                                Color.clear
+                                    .frame(width: max(44, geometry.size.width * 0.15))
                                 
-                                Divider()
+                                Spacer(minLength: 8)
                                 
-                                // Import option
-                                Button(
-                                    action: {
-                                        HapticManager.shared.selection()
-                                        showImportSheet = true
-                                    },
-                                    label: {
-                                        Label("Import Recipe", systemImage: "plus.circle")
-                                    }
-                                )
+                                Text("Recipe Finder")
+                                    .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
+                                    .foregroundColor(.white)
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.7)
                                 
-                                // Recipe Wizard option
-                                Button(
-                                    action: {
-                                        HapticManager.shared.selection()
-                                        showRecipeWizard = true
-                                    },
-                                    label: {
-                                        Label("Recipe Wizard", systemImage: "wand.and.stars")
-                                    }
-                                )
-                            } label: {
-                                ModernCircleButton(icon: "ellipsis.circle.fill") {}
-                                    .allowsHitTesting(false)
+                                Spacer(minLength: 8)
+                                
+                                // Right menu - 15% of width or fixed size
+                                Menu {
+                                    // Filter option
+                                    Button(
+                                        action: {
+                                            HapticManager.shared.light()
+                                            showFilters.toggle()
+                                        },
+                                        label: {
+                                            Label(activeFilterCount > 0 ? "Filters (\(activeFilterCount))" : "Filters", systemImage: "line.3.horizontal.decrease.circle")
+                                        }
+                                    )
+                                    
+                                    Divider()
+                                    
+                                    // Import option
+                                    Button(
+                                        action: {
+                                            HapticManager.shared.selection()
+                                            showImportSheet = true
+                                        },
+                                        label: {
+                                            Label("Import Recipe", systemImage: "plus.circle")
+                                        }
+                                    )
+                                    
+                                    // Recipe Wizard option
+                                    Button(
+                                        action: {
+                                            HapticManager.shared.selection()
+                                            showRecipeWizard = true
+                                        },
+                                        label: {
+                                            Label("Recipe Wizard", systemImage: "wand.and.stars")
+                                        }
+                                    )
+                                } label: {
+                                    ModernCircleButton(icon: "line.3.horizontal") {}
+                                        .allowsHitTesting(false)
+                                }
+                                .frame(width: max(44, geometry.size.width * 0.15))
                             }
                         }
+                        .frame(height: 44)
                         .padding(.horizontal, 20)
                         
                         ModernSearchBar(text: $searchText, placeholder: "What would you like to eat...?")

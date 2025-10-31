@@ -42,10 +42,50 @@ struct CookTimerView: View {
                 VStack(spacing: 0) {
                     // Header
                     VStack(spacing: 16) {
-                        Text("Cook Timers")
-                            .font(.system(size: 34, weight: .bold))
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 20)
+                        GeometryReader { geometry in
+                            HStack(spacing: 0) {
+                                // Left spacer for balance - 15% of width or fixed size
+                                Color.clear
+                                    .frame(width: max(44, geometry.size.width * 0.15))
+                                
+                                Spacer(minLength: 8)
+                                
+                                Text("Cook Timers")
+                                    .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
+                                    .foregroundColor(.white)
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.7)
+                                
+                                Spacer(minLength: 8)
+                                
+                                // Right menu - 15% of width or fixed size
+                                Menu {
+                                    Button(action: {
+                                        HapticManager.shared.light()
+                                        showCustomInput = true
+                                    }) {
+                                        Label("Custom Timer", systemImage: "timer")
+                                    }
+                                    
+                                    if !timers.isEmpty {
+                                        Divider()
+                                        
+                                        Button(role: .destructive, action: {
+                                            timers.removeAll()
+                                            HapticManager.shared.light()
+                                        }) {
+                                            Label("Clear All Timers", systemImage: "trash")
+                                        }
+                                    }
+                                } label: {
+                                    ModernCircleButton(icon: "line.3.horizontal") {}
+                                        .allowsHitTesting(false)
+                                }
+                                .frame(width: max(44, geometry.size.width * 0.15))
+                            }
+                        }
+                        .frame(height: 44)
+                        .padding(.horizontal, 20)
                     }
                     .padding(.top, 20)
                     .padding(.bottom, 16)
@@ -101,12 +141,6 @@ struct CookTimerView: View {
     // Quick Presets
     private var quickPresetsSection: some View {
         VStack(spacing: 16) {
-            Text("Quick Start")
-                .font(.title3)
-                .fontWeight(.semibold)
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                 presetButton(minutes: 1, title: "1 min")
                 presetButton(minutes: 5, title: "5 min")

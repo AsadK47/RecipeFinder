@@ -15,13 +15,20 @@ struct MoreView: View {
                 ScrollView {
                     VStack(spacing: 0) {
                         // Header
-                        HStack {
-                            Spacer()
-                            Text("More")
-                                .font(.system(size: 34, weight: .bold))
-                                .foregroundColor(.white)
-                            Spacer()
+                        GeometryReader { geometry in
+                            HStack(spacing: 0) {
+                                Spacer()
+                                
+                                Text("More")
+                                    .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
+                                    .foregroundColor(.white)
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.7)
+                                
+                                Spacer()
+                            }
                         }
+                        .frame(height: 44)
                         .padding(.horizontal, 20)
                         .padding(.top, 20)
                         .padding(.bottom, 24)
