@@ -99,8 +99,8 @@ struct RecipeSearchView: View {
                 AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
                 
-                VStack(spacing: 20) {
-                    VStack(spacing: 16) {
+                VStack(spacing: 0) {
+                    VStack(spacing: 12) {
                         GeometryReader { geometry in
                             HStack(spacing: 0) {
                                 // Left spacer for balance - 15% of width or fixed size
@@ -162,61 +162,63 @@ struct RecipeSearchView: View {
                         }
                         .frame(height: 44)
                         .padding(.horizontal, 20)
+                        .padding(.top, 16)
                         
                         ModernSearchBar(text: $searchText, placeholder: "What would you like to eat...?")
                             .padding(.horizontal, 20)
+                            .padding(.bottom, 12)
                         
-                        // Active filters chips
-                        if activeFilterCount > 0 {
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 8) {
-                                    if showFavoritesOnly {
-                                        FilterChip(label: "Favorites", icon: "heart.fill") {
-                                            HapticManager.shared.light()
-                                            showFavoritesOnly = false
-                                        }
-                                    }
-                                    
-                                    ForEach(Array(selectedCategories), id: \.self) { category in
-                                        FilterChip(label: category, icon: "fork.knife") {
-                                            HapticManager.shared.light()
-                                            selectedCategories.remove(category)
-                                        }
-                                    }
-                                    
-                                    ForEach(Array(selectedDifficulties), id: \.self) { difficulty in
-                                        FilterChip(label: difficulty, icon: "chart.bar.fill") {
-                                            HapticManager.shared.light()
-                                            selectedDifficulties.remove(difficulty)
-                                        }
-                                    }
-                                    
-                                    ForEach(Array(selectedCookTimes), id: \.self) { time in
-                                        FilterChip(label: time > 120 ? "> 120 min" : "≤ \(time) min", icon: "clock.fill") {
-                                            HapticManager.shared.light()
-                                            selectedCookTimes.remove(time)
-                                        }
-                                    }
-                                    
-                                    Button(action: clearAllFilters, label: {
-                                        Text("Clear All")
-                                            .font(.caption)
-                                            .fontWeight(.semibold)
-                                            .foregroundColor(.white)
-                                            .padding(.horizontal, 12)
-                                            .padding(.vertical, 6)
-                                            .background(
-                                                Capsule()
-                                                    .fill(Color.red.opacity(0.8))
-                                            )
-                                    })
-                                }
-                                .padding(.horizontal, 20)
-                            }
-                            .transition(.move(edge: .top).combined(with: .opacity))
-                        }
                     }
-                    .padding(.top, 20)
+                    
+                    // Active filters chips
+                    if activeFilterCount > 0 {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 8) {
+                                if showFavoritesOnly {
+                                    FilterChip(label: "Favorites", icon: "heart.fill") {
+                                        HapticManager.shared.light()
+                                        showFavoritesOnly = false
+                                    }
+                                }
+                                
+                                ForEach(Array(selectedCategories), id: \.self) { category in
+                                    FilterChip(label: category, icon: "fork.knife") {
+                                        HapticManager.shared.light()
+                                        selectedCategories.remove(category)
+                                    }
+                                }
+                                
+                                ForEach(Array(selectedDifficulties), id: \.self) { difficulty in
+                                    FilterChip(label: difficulty, icon: "chart.bar.fill") {
+                                        HapticManager.shared.light()
+                                        selectedDifficulties.remove(difficulty)
+                                    }
+                                }
+                                
+                                ForEach(Array(selectedCookTimes), id: \.self) { time in
+                                    FilterChip(label: time > 120 ? "> 120 min" : "≤ \(time) min", icon: "clock.fill") {
+                                        HapticManager.shared.light()
+                                        selectedCookTimes.remove(time)
+                                    }
+                                }
+                                
+                                Button(action: clearAllFilters, label: {
+                                    Text("Clear All")
+                                        .font(.caption)
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.white)
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 6)
+                                        .background(
+                                            Capsule()
+                                                .fill(Color.red.opacity(0.8))
+                                        )
+                                })
+                            }
+                            .padding(.horizontal, 20)
+                        }
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                    }
                     
                     if filteredRecipes.isEmpty {
                         emptyStateView

@@ -72,7 +72,7 @@ struct ShoppingListView: View {
                 
                 VStack(spacing: 0) {
                     // Header
-                    VStack(spacing: 8) {
+                    VStack(spacing: 12) {
                         GeometryReader { geometry in
                             HStack(spacing: 0) {
                                 // Left spacer for balance - 15% of width or fixed size
@@ -138,7 +138,7 @@ struct ShoppingListView: View {
                         }
                         .frame(height: 44)
                         .padding(.horizontal, 20)
-                        .padding(.bottom, 12)
+                        .padding(.top, 16)
                         
                         // Search bar with cancel option
                         HStack(spacing: 12) {
@@ -192,6 +192,7 @@ struct ShoppingListView: View {
                             }
                         }
                         .padding(.horizontal, 20)
+                        .padding(.bottom, 12)
                         .animation(.spring(response: 0.3), value: isSearchFocused)
                         
                         // Progress bar below search
