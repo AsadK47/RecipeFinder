@@ -6,7 +6,7 @@ import SwiftUI
 /// Sources: Bon Appétit, Serious Eats, Food Network, USDA Food Categories
 enum CategoryClassifier {
     
-    // MARK: - Shopping List Categories
+    // Shopping List Categories
     
     /// Complete shopping list categorization covering all known food types
     static let categoryOrder = [
@@ -109,15 +109,14 @@ enum CategoryClassifier {
             // Stalks & Shoots
             "celery", "asparagus", "artichoke", "fennel", "bamboo shoot",
             // Pods & Seeds
-            "green bean", "snap pea", "snow pea", "pea", "edamame", "lima bean",
-            "fava bean", "okra", "corn", "sweet corn",
+            "green bean", "snap pea", "snow pea", "pea", "okra", "corn", "sweet corn",
             // Mushrooms
             "mushroom", "button mushroom", "cremini", "portobello", "shiitake",
             "oyster mushroom", "enoki", "maitake", "chanterelle", "porcini",
             // Asian Vegetables
             "water chestnut", "bean sprout", "seaweed", "nori", "wakame", "kombu",
             // Others
-            "cucumber", "pickle", "olive", "kalamata", "green olive", "caper"
+            "cucumber", "pickle"
         ],
         
         // MARK: Fruits
@@ -169,7 +168,8 @@ enum CategoryClassifier {
             "bean", "black bean", "kidney bean", "pinto bean", "white bean",
             "cannellini", "navy bean", "lima bean", "fava bean", "chickpea",
             "garbanzo", "lentil", "red lentil", "green lentil", "split pea",
-            "tofu", "tempeh", "edamame", "peanut", "peanut butter"
+            "tofu", "tempeh", "edamame", "soybean", "mung bean",
+            "peanut", "peanut butter"
         ],
         
         // MARK: Nuts & Seeds
@@ -186,11 +186,11 @@ enum CategoryClassifier {
             // Milk & Cream
             "milk", "whole milk", "skim milk", "buttermilk", "evaporated milk",
             "condensed milk", "powdered milk",
-            "almond milk", "soy milk", "oat milk", "coconut milk", "rice milk",
+            "almond milk", "soy milk", "oat milk", "rice milk",
             "cream", "heavy cream", "whipping cream", "half and half",
             "sour cream", "crème fraîche", "whipped cream",
             // Butter
-            "butter", "unsalted butter", "salted butter", "ghee", "clarified butter",
+            "butter", "unsalted butter", "salted butter",
             // Cheese
             "cheese", "ricotta", "cottage cheese", "cream cheese", "mascarpone",
             "mozzarella", "burrata", "paneer", "queso fresco",
@@ -243,7 +243,7 @@ enum CategoryClassifier {
             "peanut oil", "sesame oil", "toasted sesame oil", "walnut oil",
             "coconut oil", "avocado oil", "truffle oil", "chili oil",
             "lard", "duck fat", "chicken fat", "schmaltz", "tallow",
-            "shortening", "butter", "ghee", "margarine", "cooking spray"
+            "shortening", "ghee", "clarified butter", "margarine", "cooking spray"
         ],
         
         // MARK: Sauces & Condiments
@@ -268,9 +268,12 @@ enum CategoryClassifier {
             "tomato paste", "tomato puree", "curry paste", "ginger paste",
             "stock", "broth", "chicken stock", "beef stock", "vegetable stock",
             "dashi", "bouillon",
-            // Others
+            // Brined/Pickled Items
+            "olive", "kalamata", "green olive", "black olive",
             "relish", "capers", "kimchi", "sauerkraut", "pickled ginger",
-            "wasabi", "horseradish"
+            "wasabi", "horseradish",
+            // Coconut Products (cooking liquids)
+            "coconut milk", "coconut cream"
         ],
         
         // MARK: Sweeteners
@@ -421,9 +424,9 @@ enum CategoryClassifier {
             return "Legumes & Pulses"
         }
         
-        // 11. Fruits (before Produce to separate)
+        // 11. Fruits (map to Produce for shopping list)
         if let keywords = kitchenIngredientKeywords["Fruits"], matchesCategory(keywords) {
-            return "Fruits"
+            return "Produce"  // Map fruits to Produce category for shopping
         }
         
         // 12. Vegetables / Produce

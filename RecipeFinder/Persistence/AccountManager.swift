@@ -119,19 +119,24 @@ final class AccountManager: ObservableObject {
     // MARK: - Stats
     
     @objc func updateStats() {
-        // Update recipe count from Core Data
-        recipeCount = PersistenceController.shared.fetchRecipeCount()
-        
-        // Update kitchen items count
-        if let data = UserDefaults.standard.data(forKey: Constants.UserDefaultsKeys.kitchenItems),
-           let items = try? JSONDecoder().decode([KitchenItem].self, from: data) {
-            kitchenItemCount = items.count
-        }
-        
-        // Update shopping list count
-        if let data = UserDefaults.standard.data(forKey: Constants.UserDefaultsKeys.shoppingListItems),
-           let items = try? JSONDecoder().decode([ShoppingListItem].self, from: data) {
-            shoppingListCount = items.count
+        // Ensure UI updates happen on main thread
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            
+            // Update recipe count from Core Data
+            self.recipeCount = PersistenceController.shared.fetchRecipeCount()
+            
+            // Update kitchen items count
+            if let data = UserDefaults.standard.data(forKey: Constants.UserDefaultsKeys.kitchenItems),
+               let items = try? JSONDecoder().decode([KitchenItem].self, from: data) {
+                self.kitchenItemCount = items.count
+            }
+            
+            // Update shopping list count
+            if let data = UserDefaults.standard.data(forKey: Constants.UserDefaultsKeys.shoppingListItems),
+               let items = try? JSONDecoder().decode([ShoppingListItem].self, from: data) {
+                self.shoppingListCount = items.count
+            }
         }
     }
     

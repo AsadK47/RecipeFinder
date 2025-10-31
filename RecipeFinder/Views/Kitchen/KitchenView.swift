@@ -117,19 +117,14 @@ struct KitchenView: View {
     }
     
     private var header: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 0) {
             // Top navigation bar
             HStack {
-                // Add Ingredient button - Apple style
-                Button(action: {
+                // Add Ingredient button
+                ModernCircleButton(icon: "plus.circle.fill") {
                     HapticManager.shared.light()
                     showAddIngredientSheet = true
-                }) {
-                    Image(systemName: "plus.circle.fill")
-                        .font(.system(size: 28))
-                        .foregroundStyle(AppTheme.accentColor(for: appTheme))
                 }
-                .buttonStyle(PlainButtonStyle())
                 
                 Spacer()
                 
@@ -157,21 +152,23 @@ struct KitchenView: View {
                             }
                         )
                     } label: {
-                        Image(systemName: "ellipsis.circle")
-                            .font(.system(size: 28))
-                            .foregroundStyle(AppTheme.accentColor(for: appTheme))
+                        ModernCircleButton(icon: "ellipsis.circle.fill") {}
+                            .allowsHitTesting(false)
                     }
                 } else {
                     // Spacer for balance when no menu
                     Color.clear
-                        .frame(width: 28, height: 28)
+                        .frame(width: 56, height: 56)
                 }
             }
             .padding(.horizontal, 20)
+            .padding(.top, 20)
+            .padding(.bottom, 16)
             
             // Search bar
             ModernSearchBar(text: $searchText, placeholder: "Search ingredients...")
                 .padding(.horizontal, 20)
+                .padding(.bottom, 16)
             
             // Selected Ingredients Display - Only show when items exist
             if !kitchenManager.items.isEmpty {
@@ -242,12 +239,44 @@ struct KitchenView: View {
                 .padding(.horizontal, 20)
             }
         }
-        .padding(.top, 20)
-        .padding(.bottom, 16)
+        .background(
+            LinearGradient(
+                gradient: Gradient(stops: [
+                    .init(color: Color.clear, location: 0),
+                    .init(color: Color.black.opacity(0.1), location: 1)
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        )
     }
     
     private var emptyStateView: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 24) {
+            // Arrow pointing to + button
+            VStack(spacing: 12) {
+                Image(systemName: "arrow.up")
+                    .font(.system(size: 40, weight: .bold))
+                    .foregroundColor(.white)
+                    .shadow(color: .black.opacity(0.3), radius: 3, x: 0, y: 2)
+                
+                Text("Tap the + button")
+                    .font(.headline)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 10)
+                    .background(
+                        Capsule()
+                            .fill(AppTheme.accentColor(for: appTheme).opacity(0.3))
+                            .overlay(
+                                Capsule()
+                                    .strokeBorder(Color.white.opacity(0.4), lineWidth: 2)
+                            )
+                    )
+            }
+            .padding(.bottom, 20)
+            
             Image(systemName: "refrigerator")
                 .font(.system(size: 80))
                 .foregroundColor(.white.opacity(0.3))
@@ -257,13 +286,14 @@ struct KitchenView: View {
                 .fontWeight(.bold)
                 .foregroundColor(.white)
             
-            Text("Tap the + button above to add ingredients from the USDA-approved foods list")
+            Text("Add ingredients from the USDA-approved foods list to start finding recipes you can make!")
                 .font(.body)
-                .foregroundColor(.white.opacity(0.7))
+                .foregroundColor(.white.opacity(0.8))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
         }
         .frame(maxWidth: .infinity)
+        .padding(.top, 40)
     }
     
     private var kitchenItemsView: some View {

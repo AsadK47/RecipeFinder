@@ -52,24 +52,20 @@ struct CookTimerView: View {
                     
                     ScrollView {
                         VStack(spacing: 24) {
-                            // Quick Presets
-                            if timers.count < maxTimers {
-                                quickPresetsSection
-                            }
+                            // Quick Presets - Always show, but disable when max reached
+                            quickPresetsSection
                             
-                            // Custom Time Input Button
-                            if timers.count < maxTimers {
-                                customTimeButton
+                            // Custom Time Input Button - Always show, but disable when max reached
+                            customTimeButton
+                            
+                            // Max timers warning (show when at max)
+                            if timers.count >= maxTimers {
+                                maxTimersWarning
                             }
                             
                             // Active Timers
                             if !timers.isEmpty {
                                 activeTimersSection
-                            }
-                            
-                            // Max timers message
-                            if timers.count >= maxTimers {
-                                maxTimersReachedMessage
                             }
                         }
                         .padding(.horizontal, 20)
@@ -123,7 +119,10 @@ struct CookTimerView: View {
     }
     
     private func presetButton(minutes: Int, title: String) -> some View {
-        Button(action: {
+        let isDisabled = timers.count >= maxTimers
+        
+        return Button(action: {
+            guard !isDisabled else { return }
             addTimer(name: title, seconds: minutes * 60)
             HapticManager.shared.light()
         }) {
@@ -135,26 +134,28 @@ struct CookTimerView: View {
                     .font(.subheadline)
                     .fontWeight(.semibold)
             }
-            .foregroundColor(.white)
+            .foregroundColor(isDisabled ? .white.opacity(0.3) : .white)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 20)
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.3))
+                        .fill(colorScheme == .dark ? Color(white: 0.2).opacity(isDisabled ? 0.5 : 1.0) : Color.white.opacity(isDisabled ? 0.15 : 0.3))
                 } else {
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(.regularMaterial)
+                        .fill(.regularMaterial.opacity(isDisabled ? 0.5 : 1.0))
                 }
             }
         }
-        .disabled(timers.count >= maxTimers)
-        .opacity(timers.count >= maxTimers ? 0.5 : 1.0)
+        .disabled(isDisabled)
     }
     
     // Custom Time Button
     private var customTimeButton: some View {
-        Button(action: {
+        let isDisabled = timers.count >= maxTimers
+        
+        return Button(action: {
+            guard !isDisabled else { return }
             showCustomInput = true
             HapticManager.shared.light()
         }) {
@@ -164,19 +165,20 @@ struct CookTimerView: View {
                 Text("Custom Timer")
                     .fontWeight(.semibold)
             }
-            .foregroundColor(.white)
+            .foregroundColor(isDisabled ? .white.opacity(0.3) : .white)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 18)
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.3))
+                        .fill(colorScheme == .dark ? Color(white: 0.2).opacity(isDisabled ? 0.5 : 1.0) : Color.white.opacity(isDisabled ? 0.15 : 0.3))
                 } else {
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(.regularMaterial)
+                        .fill(.regularMaterial.opacity(isDisabled ? 0.5 : 1.0))
                 }
             }
         }
+        .disabled(isDisabled)
     }
     
     // Custom Time Input Sheet
@@ -348,21 +350,37 @@ struct CookTimerView: View {
         }
     }
     
-    private var maxTimersReachedMessage: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "timer.square")
-                .font(.system(size: 48))
-                .foregroundColor(.white.opacity(0.5))
+    // Max timers warning banner
+    private var maxTimersWarning: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .font(.body)
+                .foregroundColor(.orange)
             
-            Text("Maximum Timers Reached")
-                .font(.headline)
-                .foregroundColor(.white)
+            Text("Maximum timers reached (\(maxTimers)/\(maxTimers))")
+                .font(.subheadline)
+                .foregroundColor(.white.opacity(0.9))
             
-            Text("Stop a timer to start a new one")
-                .font(.caption)
-                .foregroundColor(.white.opacity(0.7))
+            Spacer()
         }
-        .padding(.vertical, 32)
+        .padding(16)
+        .background {
+            if cardStyle == .solid {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.orange.opacity(0.2))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .strokeBorder(Color.orange.opacity(0.3), lineWidth: 1)
+                    )
+            } else {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(.ultraThinMaterial)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .strokeBorder(Color.orange.opacity(0.3), lineWidth: 1)
+                    )
+            }
+        }
     }
     
     // MARK: - Timer Functions

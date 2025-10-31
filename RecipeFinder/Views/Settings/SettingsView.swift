@@ -2,8 +2,8 @@ import SwiftUI
 
 // MARK: - Card Style Enum
 enum CardStyle: String, CaseIterable {
-    case frosted = "Frosted Glass"
-    case solid = "Solid"
+    case frosted = "Frost Light"
+    case solid = "Solid Dark"
 }
 
 /// Beautiful Settings View with app's gradient background aesthetic  
@@ -32,24 +32,33 @@ struct SettingsTabView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                // Beautiful gradient background like rest of app
-                AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
-                    .ignoresSafeArea()
-                
-                VStack(spacing: 0) {
-                    // Header
-                    HStack {
-                        Spacer()
-                        Text("Settings")
-                            .font(.system(size: 34, weight: .bold))
-                            .foregroundColor(.white)
-                        Spacer()
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 20)
-                    .padding(.bottom, 16)
+        ZStack {
+            // Beautiful gradient background like rest of app
+            AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
+                .ignoresSafeArea()
+            
+            VStack(spacing: 0) {
+                // Header
+                HStack {
+                    Spacer()
+                    Text("Settings")
+                        .font(.system(size: 34, weight: .bold))
+                        .foregroundColor(.white)
+                    Spacer()
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 20)
+                .padding(.bottom, 16)
+                .background(
+                    LinearGradient(
+                        gradient: Gradient(stops: [
+                            .init(color: Color.clear, location: 0),
+                            .init(color: Color.black.opacity(0.1), location: 1)
+                        ]),
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
                     
                     ScrollView {
                         VStack(spacing: 24) {
@@ -83,17 +92,6 @@ struct SettingsTabView: View {
                                             .font(.caption)
                                     }
                                     .padding(20)
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                            }
-                            
-                            // Planning
-                            SettingsSectionHeader(title: "Planning")
-                            
-                            SettingsCard {
-                                NavigationLink(destination: MealPlanningView(recipes: .constant(PersistenceController.shared.fetchRecipes()))) {
-                                    SettingsRow(icon: "calendar", iconColor: .green, title: "Meal Planning")
-                                        .padding(20)
                                 }
                                 .buttonStyle(PlainButtonStyle())
                             }
@@ -215,7 +213,6 @@ struct SettingsTabView: View {
             .toolbarBackground(.hidden, for: .navigationBar)
         }
     }
-}
 
 // MARK: - Settings Components
 
@@ -291,9 +288,18 @@ struct SettingsRow: View {
 
 struct AppearanceSettingsView: View {
     @AppStorage("appearanceMode") private var appearanceMode: SettingsTabView.AppearanceMode = .system
+    @AppStorage("autoCardStyle") private var autoCardStyle: Bool = true
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
+    
+    // Computed property that returns the effective card style
+    private var effectiveCardStyle: CardStyle {
+        if autoCardStyle {
+            return colorScheme == .dark ? .solid : .frosted
+        }
+        return cardStyle
+    }
     
     var body: some View {
         ZStack {
@@ -345,37 +351,108 @@ struct AppearanceSettingsView: View {
                                 .font(.headline)
                                 .foregroundColor(colorScheme == .dark ? .white : .black)
                             
-                            ForEach(CardStyle.allCases, id: \.self) { style in
-                                Button(action: {
-                                    cardStyle = style
-                                    HapticManager.shared.selection()
-                                }) {
+                            // Auto-switch toggle
+                            Button(action: {
+                                autoCardStyle.toggle()
+                                HapticManager.shared.selection()
+                                // If turning on auto mode, sync the card style to current scheme
+                                if autoCardStyle {
+                                    cardStyle = colorScheme == .dark ? .solid : .frosted
+                                }
+                            }) {
+                                HStack(spacing: 16) {
+                                    Image(systemName: "wand.and.stars")
+                                        .font(.title3)
+                                        .foregroundColor(AppTheme.accentColor)
+                                        .frame(width: 30)
+                                    
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Auto Switch")
+                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                Text("Frost Light for light mode, Solid Dark for dark mode")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                                    
+                                    Spacer()
+                                    
+                                    Toggle("", isOn: $autoCardStyle)
+                                        .labelsHidden()
+                                        .tint(AppTheme.accentColor)
+                                        .onChange(of: autoCardStyle) { newValue in
+                                            if newValue {
+                                                cardStyle = colorScheme == .dark ? .solid : .frosted
+                                            }
+                                        }
+                                }
+                                .padding(16)
+                                .background(Color.gray.opacity(0.1))
+                                .cornerRadius(12)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                            
+                            if !autoCardStyle {
+                                Divider()
+                                    .padding(.vertical, 4)
+                                
+                                ForEach(CardStyle.allCases, id: \.self) { style in
+                                    Button(action: {
+                                        cardStyle = style
+                                        HapticManager.shared.selection()
+                                    }) {
+                                        HStack(spacing: 16) {
+                                            Image(systemName: style == .frosted ? "sparkles" : "square.fill")
+                                                .font(.title3)
+                                                .foregroundColor(AppTheme.accentColor)
+                                                .frame(width: 30)
+                                            
+                                            VStack(alignment: .leading, spacing: 4) {
+                                                Text(style.rawValue)
+                                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                                Text(style == .frosted ? "Translucent glass effect" : "Solid background")
+                                                    .font(.caption)
+                                                    .foregroundColor(.secondary)
+                                            }
+                                            
+                                            Spacer()
+                                            
+                                            if cardStyle == style {
+                                                Image(systemName: "checkmark.circle.fill")
+                                                    .foregroundColor(AppTheme.accentColor)
+                                            }
+                                        }
+                                        .padding(16)
+                                        .background(cardStyle == style ? Color.gray.opacity(0.2) : Color.clear)
+                                        .cornerRadius(12)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                }
+                            } else {
+                                // Show current effective style when auto mode is on
+                                VStack(spacing: 12) {
+                                    Divider()
+                                        .padding(.vertical, 4)
+                                    
                                     HStack(spacing: 16) {
-                                        Image(systemName: style == .frosted ? "sparkles" : "square.fill")
+                                        Image(systemName: effectiveCardStyle == .frosted ? "sparkles" : "square.fill")
                                             .font(.title3)
                                             .foregroundColor(AppTheme.accentColor)
                                             .frame(width: 30)
                                         
                                         VStack(alignment: .leading, spacing: 4) {
-                                            Text(style.rawValue)
+                                            Text("Current: \(effectiveCardStyle.rawValue)")
                                                 .foregroundColor(colorScheme == .dark ? .white : .black)
-                                            Text(style == .frosted ? "Translucent glass effect" : "Solid background")
+                                            Text(effectiveCardStyle == .frosted ? "Translucent glass effect" : "Solid background")
                                                 .font(.caption)
                                                 .foregroundColor(.secondary)
                                         }
                                         
                                         Spacer()
-                                        
-                                        if cardStyle == style {
-                                            Image(systemName: "checkmark.circle.fill")
-                                                .foregroundColor(AppTheme.accentColor)
-                                        }
                                     }
                                     .padding(16)
-                                    .background(cardStyle == style ? Color.gray.opacity(0.2) : Color.clear)
+                                    .background(Color.gray.opacity(0.1))
                                     .cornerRadius(12)
                                 }
-                                .buttonStyle(PlainButtonStyle())
                             }
                         }
                         .padding(20)
@@ -506,36 +583,47 @@ struct NotificationSettingsView: View {
                 VStack(spacing: 24) {
                     if notificationPermission != .authorized {
                         SettingsCard {
-                            VStack(alignment: .leading, spacing: 12) {
-                                HStack {
-                                    Image(systemName: "exclamationmark.triangle.fill")
-                                        .foregroundColor(.orange)
-                                    Text("Notifications Disabled")
-                                        .font(.headline)
-                                        .foregroundColor(colorScheme == .dark ? .white : .black)
-                                }
+                            VStack(alignment: .center, spacing: 20) {
+                                Image(systemName: "bell.slash.fill")
+                                    .font(.system(size: 60))
+                                    .foregroundColor(.orange)
+                                    .padding(.top, 10)
                                 
-                                Text("Enable notifications in Settings to receive reminders and alerts.")
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
+                                VStack(spacing: 8) {
+                                    Text("Notifications Disabled")
+                                        .font(.title2)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    
+                                    Text("Enable notifications in Settings to receive reminders and alerts for timers, meal plans, and shopping lists.")
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                        .multilineTextAlignment(.center)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                }
                                 
                                 Button(action: {
                                     if let url = URL(string: UIApplication.openSettingsURLString) {
                                         UIApplication.shared.open(url)
                                     }
                                 }) {
-                                    Text("Open Settings")
-                                        .font(.subheadline)
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(.white)
-                                        .padding(.horizontal, 20)
-                                        .padding(.vertical, 10)
-                                        .background(AppTheme.accentColor)
-                                        .cornerRadius(8)
+                                    HStack {
+                                        Image(systemName: "gear")
+                                        Text("Open Settings")
+                                    }
+                                    .font(.headline)
+                                    .foregroundColor(.white)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 14)
+                                    .background(AppTheme.accentColor)
+                                    .cornerRadius(12)
                                 }
                                 .buttonStyle(PlainButtonStyle())
+                                .padding(.bottom, 10)
                             }
-                            .padding(20)
+                            .padding(.horizontal, 24)
+                            .padding(.vertical, 20)
+                            .frame(maxWidth: .infinity)
                         }
                     }
                     
@@ -700,8 +788,22 @@ struct TimePickerSheet: View {
 }
 
 struct TimerSettingsView: View {
+    @AppStorage("defaultTimerDuration") private var defaultTimerDuration: Int = 300 // 5 minutes in seconds
+    @AppStorage("timerSound") private var timerSound: TimerSound = .default
+    @AppStorage("timerVibration") private var timerVibration: Bool = true
+    @AppStorage("keepScreenAwake") private var keepScreenAwake: Bool = true
+    @AppStorage("showTimerInNotifications") private var showTimerInNotifications: Bool = true
+    
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
+    
+    enum TimerSound: String, CaseIterable {
+        case `default` = "Default"
+        case chime = "Chime"
+        case bell = "Bell"
+        case buzz = "Buzz"
+        case silent = "Silent"
+    }
     
     var body: some View {
         ZStack {
@@ -709,11 +811,161 @@ struct TimerSettingsView: View {
                 .ignoresSafeArea()
             
             ScrollView {
-                VStack(spacing: 16) {
+                VStack(spacing: 24) {
+                    // Default Duration
                     SettingsCard {
-                        Text("Timer settings coming soon")
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
-                            .padding()
+                        VStack(alignment: .leading, spacing: 20) {
+                            Text("Default Timer Duration")
+                                .font(.headline)
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                            
+                            VStack(spacing: 12) {
+                                ForEach([60, 300, 600, 900, 1800, 3600], id: \.self) { seconds in
+                                    let label = formatDuration(seconds)
+                                    Button(action: {
+                                        defaultTimerDuration = seconds
+                                        HapticManager.shared.selection()
+                                    }) {
+                                        HStack {
+                                            Image(systemName: "timer")
+                                                .foregroundColor(AppTheme.accentColor)
+                                                .frame(width: 30)
+                                            
+                                            Text(label)
+                                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                            
+                                            Spacer()
+                                            
+                                            if defaultTimerDuration == seconds {
+                                                Image(systemName: "checkmark.circle.fill")
+                                                    .foregroundColor(AppTheme.accentColor)
+                                            }
+                                        }
+                                        .padding(12)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 10)
+                                                .fill(defaultTimerDuration == seconds ? Color.gray.opacity(0.2) : Color.clear)
+                                        )
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                }
+                            }
+                        }
+                        .padding(20)
+                    }
+                    
+                    // Sound Settings
+                    SettingsCard {
+                        VStack(alignment: .leading, spacing: 20) {
+                            Text("Sound & Alerts")
+                                .font(.headline)
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                            
+                            // Timer Sound
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("Completion Sound")
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                                
+                                ForEach(TimerSound.allCases, id: \.self) { sound in
+                                    Button(action: {
+                                        timerSound = sound
+                                        HapticManager.shared.selection()
+                                    }) {
+                                        HStack {
+                                            Image(systemName: sound == .silent ? "speaker.slash" : "speaker.wave.2")
+                                                .foregroundColor(AppTheme.accentColor)
+                                                .frame(width: 30)
+                                            
+                                            Text(sound.rawValue)
+                                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                            
+                                            Spacer()
+                                            
+                                            if timerSound == sound {
+                                                Image(systemName: "checkmark.circle.fill")
+                                                    .foregroundColor(AppTheme.accentColor)
+                                            }
+                                        }
+                                        .padding(12)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 10)
+                                                .fill(timerSound == sound ? Color.gray.opacity(0.2) : Color.clear)
+                                        )
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                }
+                            }
+                            
+                            Divider()
+                                .padding(.vertical, 4)
+                            
+                            // Vibration
+                            Toggle(isOn: $timerVibration) {
+                                HStack(spacing: 12) {
+                                    Image(systemName: "iphone.radiowaves.left.and.right")
+                                        .foregroundColor(AppTheme.accentColor)
+                                        .frame(width: 30)
+                                    
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("Vibration")
+                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        Text("Vibrate when timer completes")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                    }
+                                }
+                            }
+                            .tint(AppTheme.accentColor)
+                        }
+                        .padding(20)
+                    }
+                    
+                    // Behavior Settings
+                    SettingsCard {
+                        VStack(alignment: .leading, spacing: 20) {
+                            Text("Behavior")
+                                .font(.headline)
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                            
+                            Toggle(isOn: $keepScreenAwake) {
+                                HStack(spacing: 12) {
+                                    Image(systemName: "light.max")
+                                        .foregroundColor(AppTheme.accentColor)
+                                        .frame(width: 30)
+                                    
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("Keep Screen Awake")
+                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        Text("Prevent screen from dimming during cooking")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                    }
+                                }
+                            }
+                            .tint(AppTheme.accentColor)
+                            
+                            Divider()
+                                .padding(.vertical, 4)
+                            
+                            Toggle(isOn: $showTimerInNotifications) {
+                                HStack(spacing: 12) {
+                                    Image(systemName: "app.badge")
+                                        .foregroundColor(AppTheme.accentColor)
+                                        .frame(width: 30)
+                                    
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("Show in Notifications")
+                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        Text("Display running timers in notification center")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                    }
+                                }
+                            }
+                            .tint(AppTheme.accentColor)
+                        }
+                        .padding(20)
                     }
                 }
                 .padding(20)
@@ -721,6 +973,18 @@ struct TimerSettingsView: View {
         }
         .navigationTitle("Timers")
         .navigationBarTitleDisplayMode(.inline)
+    }
+    
+    private func formatDuration(_ seconds: Int) -> String {
+        if seconds < 60 {
+            return "\(seconds) seconds"
+        } else if seconds < 3600 {
+            let minutes = seconds / 60
+            return "\(minutes) minute\(minutes == 1 ? "" : "s")"
+        } else {
+            let hours = seconds / 3600
+            return "\(hours) hour\(hours == 1 ? "" : "s")"
+        }
     }
 }
 
@@ -1317,30 +1581,110 @@ struct AboutView: View {
                 .ignoresSafeArea()
             
             ScrollView {
-                VStack(spacing: 16) {
+                VStack(spacing: 32) {
+                    // App Icon & Name
+                    VStack(spacing: 16) {
+                        Image(systemName: "book.circle.fill")
+                            .font(.system(size: 80))
+                            .foregroundColor(AppTheme.accentColor(for: appTheme))
+                        
+                        Text("RecipeFinder")
+                            .font(.system(size: 32, weight: .bold))
+                            .foregroundColor(.white)
+                        
+                        Text("Your Personal Cooking Companion")
+                            .font(.subheadline)
+                            .foregroundColor(.white.opacity(0.8))
+                            .multilineTextAlignment(.center)
+                    }
+                    .padding(.top, 40)
+                    
+                    // Version Info
+                    SettingsCard {
+                        VStack(spacing: 16) {
+                            HStack {
+                                Text("Version")
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                                Text("1.0.0 (Build 1)")
+                                    .fontWeight(.medium)
+                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                            }
+                            
+                            Divider()
+                            
+                            HStack {
+                                Text("Release Date")
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                                Text("October 2025")
+                                    .fontWeight(.medium)
+                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                            }
+                        }
+                        .padding(20)
+                    }
+                    
+                    // Description
                     SettingsCard {
                         VStack(alignment: .leading, spacing: 12) {
-                            Text("RecipeFinder")
-                                .font(.title2)
-                                .fontWeight(.bold)
+                            Text("About RecipeFinder")
+                                .font(.headline)
                                 .foregroundColor(colorScheme == .dark ? .white : .black)
                             
-                            Text("Version 1.0.0 (Build 1)")
+                            Text("RecipeFinder is your ultimate kitchen companion, designed to make cooking easier, more organized, and enjoyable. Discover new recipes, manage your kitchen inventory, plan meals, and never forget an ingredient with our smart shopping lists.")
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
                             
-                            Text("© 2025 RecipeFinder")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
+                            Divider()
+                                .padding(.vertical, 4)
+                            
+                            VStack(alignment: .leading, spacing: 8) {
+                                FeatureRow(icon: "shield.fill", text: "Privacy-first: All data stored locally", color: .blue)
+                                FeatureRow(icon: "doc.text.fill", text: "USDA-approved ingredient database", color: .green)
+                                FeatureRow(icon: "heart.fill", text: "Made with love for home cooks", color: .red)
+                            }
                         }
-                        .padding()
+                        .padding(20)
                     }
+                    
+                    // Legal
+                    VStack(spacing: 8) {
+                        Text("© 2025 RecipeFinder")
+                            .font(.caption)
+                            .foregroundColor(.white.opacity(0.6))
+                        
+                        Text("All rights reserved")
+                            .font(.caption2)
+                            .foregroundColor(.white.opacity(0.5))
+                    }
+                    .padding(.bottom, 40)
                 }
-                .padding(20)
+                .padding(.horizontal, 20)
             }
         }
         .navigationTitle("About")
         .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+struct FeatureRow: View {
+    let icon: String
+    let text: String
+    let color: Color
+    @Environment(\.colorScheme) var colorScheme
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .foregroundColor(color)
+                .frame(width: 20)
+            
+            Text(text)
+                .font(.subheadline)
+                .foregroundColor(colorScheme == .dark ? .white.opacity(0.9) : .primary)
+        }
     }
 }
 

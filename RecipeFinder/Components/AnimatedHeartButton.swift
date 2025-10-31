@@ -1,11 +1,3 @@
-//
-//  AnimatedHeartButton.swift
-//  RecipeFinder
-//
-//  Created by GitHub Copilot
-//  Instagram-style multicolored heart animation
-//
-
 import SwiftUI
 
 struct AnimatedHeartButton: View {
@@ -107,8 +99,8 @@ struct AnimatedHeartButton: View {
         let angle = Double(index) * .pi / 4.0  // 8 particles, 45° apart
         let radius: CGFloat = 25
         return CGSize(
-            width: cos(angle) * radius,
-            height: sin(angle) * radius
+            width: Foundation.cos(angle) * radius,
+            height: Foundation.sin(angle) * radius
         )
     }
 }

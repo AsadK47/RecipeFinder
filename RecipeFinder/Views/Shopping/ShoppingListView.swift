@@ -79,19 +79,8 @@ struct ShoppingListView: View {
                                     showHelp.toggle()
                                 }
                             }) {
-                                Image(systemName: "questionmark.circle")
-                                    .font(.title3)
-                                    .foregroundColor(cardStyle == .solid && colorScheme == .light ? .black : .white)
-                                    .frame(width: 44, height: 44)
-                                    .background {
-                                        if cardStyle == .solid {
-                                            Circle()
-                                                .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
-                                        } else {
-                                            Circle()
-                                                .fill(.regularMaterial)
-                                        }
-                                    }
+                                ModernCircleButton(icon: "questionmark.circle") {}
+                                    .allowsHitTesting(false)
                             }
                             
                             Spacer()
@@ -142,19 +131,8 @@ struct ShoppingListView: View {
                                         }
                                     )
                                 } label: {
-                                    Image(systemName: "ellipsis.circle")
-                                        .font(.title3)
-                                        .foregroundColor(cardStyle == .solid && colorScheme == .light ? .black : .white)
-                                        .frame(width: 44, height: 44)
-                                        .background {
-                                            if cardStyle == .solid {
-                                                Circle()
-                                                    .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
-                                            } else {
-                                                Circle()
-                                                    .fill(.regularMaterial)
-                                            }
-                                        }
+                                    ModernCircleButton(icon: "ellipsis.circle") {}
+                                        .allowsHitTesting(false)
                                 }
                             } else {
                                 // Empty spacer to balance layout
@@ -200,18 +178,14 @@ struct ShoppingListView: View {
                                 }
                             }
                             
-                            if isSearchFocused || !searchText.isEmpty {
+                            if isSearchFocused {
                                 Button(
                                     action: {
-                                        if !searchText.isEmpty {
-                                            addItem()
-                                        } else {
-                                            searchText = ""
-                                            isSearchFocused = false
-                                        }
+                                        searchText = ""
+                                        isSearchFocused = false
                                     },
                                     label: {
-                                        Text(searchText.isEmpty ? "Cancel" : "Add")
+                                        Text("Cancel")
                                             .foregroundColor(.white)
                                             .fontWeight(.semibold)
                                     }
@@ -221,7 +195,6 @@ struct ShoppingListView: View {
                         }
                         .padding(.horizontal, 20)
                         .animation(.spring(response: 0.3), value: isSearchFocused)
-                        .animation(.spring(response: 0.3), value: searchText.isEmpty)
                         
                         // Progress bar below search
                         if !manager.items.isEmpty {
@@ -323,13 +296,13 @@ struct ShoppingListView: View {
                 
                 // Always show features card
                 VStack(alignment: .leading, spacing: 16) {
-                    FeatureRow(icon: "sparkles", title: "Smart Categories", description: "Type 'milk' → Dairy, 'chicken' → Meat", appTheme: appTheme)
-                    FeatureRow(icon: "list.bullet.indent", title: "Auto Grouping", description: "Items group by category automatically", appTheme: appTheme)
-                    FeatureRow(icon: "hand.tap", title: "Tap to Collapse", description: "Hide completed categories while shopping", appTheme: appTheme)
-                    FeatureRow(icon: "checkmark.circle", title: "Check Off Items", description: "Tap checkbox or swipe to mark as purchased", appTheme: appTheme)
-                    FeatureRow(icon: "trash", title: "Delete Items", description: "Swipe left on any item to remove it", appTheme: appTheme)
-                    FeatureRow(icon: "ellipsis.circle", title: "Bulk Actions", description: "Use menu (⋯) to clear checked or all items", appTheme: appTheme)
-                    FeatureRow(icon: "square.and.pencil", title: "Edit Quantity", description: "Tap item to change amount or category", appTheme: appTheme)
+                    ShoppingFeatureRow(icon: "sparkles", title: "Smart Categories", description: "Type 'milk' → Dairy, 'chicken' → Meat", appTheme: appTheme)
+                    ShoppingFeatureRow(icon: "list.bullet.indent", title: "Auto Grouping", description: "Items group by category automatically", appTheme: appTheme)
+                    ShoppingFeatureRow(icon: "hand.tap", title: "Tap to Collapse", description: "Hide completed categories while shopping", appTheme: appTheme)
+                    ShoppingFeatureRow(icon: "checkmark.circle", title: "Check Off Items", description: "Tap checkbox or swipe to mark as purchased", appTheme: appTheme)
+                    ShoppingFeatureRow(icon: "trash", title: "Delete Items", description: "Swipe left on any item to remove it", appTheme: appTheme)
+                    ShoppingFeatureRow(icon: "ellipsis.circle", title: "Bulk Actions", description: "Use menu (⋯) to clear checked or all items", appTheme: appTheme)
+                    ShoppingFeatureRow(icon: "square.and.pencil", title: "Edit Quantity", description: "Tap item to change amount or category", appTheme: appTheme)
                 }
                 .padding(20)
                 .background {
@@ -594,21 +567,12 @@ struct ShoppingListItemRow: View {
             }
             .opacity(item.isChecked ? 0.6 : 1)
         }
-        .swipeActions(edge: .leading, allowsFullSwipe: false) {
-            Button(
-                action: onToggle,
-                label: {
-                    Label(item.isChecked ? "Uncheck" : "Check", systemImage: item.isChecked ? "xmark.circle" : "checkmark.circle")
-                }
-            )
-            .tint(item.isChecked ? .orange : .green)
-        }
         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
             Button(
                 role: .destructive,
                 action: onDelete,
                 label: {
-                    Label("Delete", systemImage: "trash")
+                    Image(systemName: "trash")
                 }
             )
         }
@@ -639,7 +603,7 @@ struct ShoppingListItemRow: View {
 // Edit Item Sheet
 
 // MARK: - Feature Row Component
-struct FeatureRow: View {
+struct ShoppingFeatureRow: View {
     let icon: String
     let title: String
     let description: String
@@ -699,13 +663,13 @@ struct HelpSheetView: View {
                         
                         // Feature cards with beautiful styling
                         VStack(alignment: .leading, spacing: 16) {
-                            FeatureRow(icon: "sparkles", title: "Smart Categories", description: "Type 'milk' → Dairy, 'chicken' → Meat", appTheme: appTheme)
-                            FeatureRow(icon: "list.bullet.indent", title: "Auto Grouping", description: "Items group by category automatically", appTheme: appTheme)
-                            FeatureRow(icon: "hand.tap", title: "Tap to Collapse", description: "Hide completed categories while shopping", appTheme: appTheme)
-                            FeatureRow(icon: "checkmark.circle", title: "Check Off Items", description: "Tap checkbox or swipe to mark as purchased", appTheme: appTheme)
-                            FeatureRow(icon: "trash", title: "Delete Items", description: "Swipe left on any item to remove it", appTheme: appTheme)
-                            FeatureRow(icon: "ellipsis.circle", title: "Bulk Actions", description: "Use menu (⋯) to clear checked or all items", appTheme: appTheme)
-                            FeatureRow(icon: "square.and.pencil", title: "Edit Quantity", description: "Tap item to change amount or category", appTheme: appTheme)
+                            ShoppingFeatureRow(icon: "sparkles", title: "Smart Categories", description: "Type 'milk' → Dairy, 'chicken' → Meat", appTheme: appTheme)
+                            ShoppingFeatureRow(icon: "list.bullet.indent", title: "Auto Grouping", description: "Items group by category automatically", appTheme: appTheme)
+                            ShoppingFeatureRow(icon: "hand.tap", title: "Tap to Collapse", description: "Hide completed categories while shopping", appTheme: appTheme)
+                            ShoppingFeatureRow(icon: "checkmark.circle", title: "Check Off Items", description: "Tap checkbox or swipe to mark as purchased", appTheme: appTheme)
+                            ShoppingFeatureRow(icon: "trash", title: "Delete Items", description: "Swipe left on any item to remove it", appTheme: appTheme)
+                            ShoppingFeatureRow(icon: "ellipsis.circle", title: "Bulk Actions", description: "Use menu (⋯) to clear checked or all items", appTheme: appTheme)
+                            ShoppingFeatureRow(icon: "square.and.pencil", title: "Edit Quantity", description: "Tap item to change amount or category", appTheme: appTheme)
                         }
                         .padding(24)
                         .background {

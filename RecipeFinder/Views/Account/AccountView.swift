@@ -20,21 +20,50 @@ struct AccountView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                // Themed background gradient
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                    .ignoresSafeArea()
-                
-                ScrollView {
-                    VStack(spacing: 20) {
-                        // Header
+        ZStack {
+            // Themed background gradient
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
+                .ignoresSafeArea()
+            
+            ScrollView {
+                VStack(spacing: 20) {
+                    // Header with back button
+                    HStack {
+                        // Custom back button
+                        Button(action: {
+                            // This will be handled by the NavigationStack
+                        }) {
+                            Image(systemName: "chevron.left.circle.fill")
+                                .font(.title2)
+                                .foregroundColor(cardStyle == .solid && colorScheme == .light ? .black : .white)
+                                .padding(12)
+                                .background {
+                                    if cardStyle == .solid {
+                                        Circle()
+                                            .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
+                                    } else {
+                                        Circle()
+                                            .fill(.regularMaterial)
+                                    }
+                                }
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        .opacity(0) // Hidden but keeps spacing
+                        
+                        Spacer()
+                        
                         Text("Account")
                             .font(.system(size: 34, weight: .bold))
                             .foregroundColor(.white)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.horizontal, 20)
-                            .padding(.top, 20)
+                        
+                        Spacer()
+                        
+                        // Balance spacer
+                        Color.clear
+                            .frame(width: 56, height: 56)
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 20)
                         
                         VStack(spacing: 16) {
                             // Profile Header Card
@@ -250,7 +279,9 @@ struct AccountView: View {
                     }
                 }
             }
-            .navigationBarHidden(true)
+            .navigationBarHidden(false)
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(false)
             .sheet(isPresented: $showingEditProfile) {
                 EditProfileSheet(accountManager: accountManager)
             }
@@ -296,7 +327,6 @@ struct AccountView: View {
                 Text("This will permanently delete your account and all associated data. This action cannot be undone.")
             }
         }
-    }
     
     // MARK: - Section Header
     

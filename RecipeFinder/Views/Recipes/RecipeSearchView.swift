@@ -110,19 +110,8 @@ struct RecipeSearchView: View {
                                 },
                                 label: {
                                     ZStack(alignment: .topTrailing) {
-                                        Image(systemName: "line.3.horizontal.decrease.circle")
-                                            .font(.title2)
-                                            .foregroundColor(cardStyle == .solid && colorScheme == .light ? .black : .white)
-                                            .padding(12)
-                                            .background {
-                                                if cardStyle == .solid {
-                                                    Circle()
-                                                        .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
-                                                } else {
-                                                    Circle()
-                                                        .fill(.regularMaterial)
-                                                }
-                                            }
+                                        ModernCircleButton(icon: "line.3.horizontal.decrease.circle") {}
+                                            .allowsHitTesting(false)
                                         
                                         if activeFilterCount > 0 {
                                             Text("\(activeFilterCount)")
@@ -169,19 +158,8 @@ struct RecipeSearchView: View {
                                     }
                                 )
                             } label: {
-                                Image(systemName: "ellipsis.circle.fill")
-                                    .font(.title2)
-                                    .foregroundColor(cardStyle == .solid && colorScheme == .light ? .black : .white)
-                                    .padding(12)
-                                    .background {
-                                        if cardStyle == .solid {
-                                            Circle()
-                                                .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
-                                        } else {
-                                            Circle()
-                                                .fill(.regularMaterial)
-                                        }
-                                    }
+                                ModernCircleButton(icon: "ellipsis.circle.fill") {}
+                                    .allowsHitTesting(false)
                             }
                         }
                         .padding(.horizontal, 20)

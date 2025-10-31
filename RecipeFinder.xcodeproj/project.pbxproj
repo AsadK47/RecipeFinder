@@ -53,6 +53,9 @@
 		9E77ABF02EB4309A00666BB0 /* IngredientNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E77ABEF2EB4309A00666BB0 /* IngredientNormalizer.swift */; };
 		9E77ABF22EB430BC00666BB0 /* DeveloperDocumentationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E77ABF12EB430BC00666BB0 /* DeveloperDocumentationView.swift */; };
 		9E77ABF42EB4483100666BB0 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E77ABF32EB4483100666BB0 /* SettingsView.swift */; };
+		9E77ABF82EB4553400666BB0 /* ModernCircleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E77ABF72EB4553400666BB0 /* ModernCircleButton.swift */; };
+		9E77ABFA2EB4554000666BB0 /* AnimatedHeartButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E77ABF92EB4554000666BB0 /* AnimatedHeartButton.swift */; };
+		9E77ABFE2EB4564400666BB0 /* MoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E77ABFC2EB4564400666BB0 /* MoreView.swift */; };
 		9E7B9A862E9BED16007E1786 /* RecipeSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E7B9A852E9BED12007E1786 /* RecipeSearchView.swift */; };
 		9E83ED8F2EA78A3900425CC0 /* KitchenInventoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E83ED8E2EA78A3900425CC0 /* KitchenInventoryManager.swift */; };
 		9EA9CC392EB2D58100ED12E4 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 9EA9CC382EB2D58100ED12E4 /* FirebaseAnalytics */; };
@@ -134,6 +137,9 @@
 		9E77ABEF2EB4309A00666BB0 /* IngredientNormalizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientNormalizer.swift; sourceTree = "<group>"; };
 		9E77ABF12EB430BC00666BB0 /* DeveloperDocumentationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperDocumentationView.swift; sourceTree = "<group>"; };
 		9E77ABF32EB4483100666BB0 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		9E77ABF72EB4553400666BB0 /* ModernCircleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModernCircleButton.swift; sourceTree = "<group>"; };
+		9E77ABF92EB4554000666BB0 /* AnimatedHeartButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedHeartButton.swift; sourceTree = "<group>"; };
+		9E77ABFC2EB4564400666BB0 /* MoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreView.swift; sourceTree = "<group>"; };
 		9E7B9A852E9BED12007E1786 /* RecipeSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeSearchView.swift; sourceTree = "<group>"; };
 		9E83ED8E2EA78A3900425CC0 /* KitchenInventoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KitchenInventoryManager.swift; sourceTree = "<group>"; };
 		9EA777B82D09F1E000C3422A /* RecipeModel 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 3.xcdatamodel"; sourceTree = "<group>"; };
@@ -193,6 +199,8 @@
 		9E4DC7322E9BF10900E17DDF /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				9E77ABF92EB4554000666BB0 /* AnimatedHeartButton.swift */,
+				9E77ABF72EB4553400666BB0 /* ModernCircleButton.swift */,
 				9E5447B32EABEDB200AD6D0A /* DifficultyBarsView.swift */,
 				9E2E34232E9DA10000E2E49F /* FlowLayout.swift */,
 				9E4DC7682E9D738500E17DDF /* FilterComponents.swift */,
@@ -294,6 +302,14 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
+		9E77ABFD2EB4564400666BB0 /* More */ = {
+			isa = PBXGroup;
+			children = (
+				9E77ABFC2EB4564400666BB0 /* MoreView.swift */,
+			);
+			path = More;
+			sourceTree = "<group>";
+		};
 		9E7B9A7C2E9BC2CB007E1786 /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -308,6 +324,7 @@
 		9E7B9A7F2E9BEC3D007E1786 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				9E77ABFD2EB4564400666BB0 /* More */,
 				9E51C3A72EB40DC90064B917 /* Authentication */,
 				9E51C3A02EB406AD0064B917 /* Timer */,
 				9E51C3992EB3E9C20064B917 /* Account */,
@@ -558,6 +575,7 @@
 				9E51C3A82EB40DC90064B917 /* AuthenticationView.swift in Sources */,
 				9E51C3972EB3E6540064B917 /* MealPlanningView.swift in Sources */,
 				9E5447B62EB0270700AD6D0A /* UnitConversion.swift in Sources */,
+				9E77ABFE2EB4564400666BB0 /* MoreView.swift in Sources */,
 				9E83ED8F2EA78A3900425CC0 /* KitchenInventoryManager.swift in Sources */,
 				9E4DC75C2E9C198300E17DDF /* RecipeDataExtensions.swift in Sources */,
 				9E4DC7382E9BF19700E17DDF /* AppTheme.swift in Sources */,
@@ -580,6 +598,8 @@
 				9E51C3A52EB40DA20064B917 /* AuthenticationManager.swift in Sources */,
 				9E4DC7672E9C603B00E17DDF /* CategoryClassifier.swift in Sources */,
 				9E4DC7582E9C136E00E17DDF /* RecipeViewMode.swift in Sources */,
+				9E77ABF82EB4553400666BB0 /* ModernCircleButton.swift in Sources */,
+				9E77ABFA2EB4554000666BB0 /* AnimatedHeartButton.swift in Sources */,
 				9E212D722EB12375005743F7 /* RecipeShareUtility.swift in Sources */,
 				9E51C3A12EB406AD0064B917 /* CookTimerView.swift in Sources */,
 				9E5447B22EAA92B900AD6D0A /* HapticManager.swift in Sources */,

@@ -72,14 +72,33 @@ struct MealPlanningView: View {
     
     private var header: some View {
         VStack(spacing: 16) {
-            ZStack {
-                HStack {
-                    Spacer()
+            HStack {
+                // Add Meal button
+                ModernCircleButton(icon: "plus.circle.fill") {
+                    HapticManager.shared.light()
+                    showMealTimeSelector = true
                 }
                 
-                Text("Meal Planning")
+                Spacer()
+                
+                Text("Meal Planner")
                     .font(.system(size: 34, weight: .bold))
                     .foregroundColor(.white)
+                
+                Spacer()
+                
+                // Menu for clearing/options
+                Menu {
+                    Button(role: .destructive, action: {
+                        selectedMealTimes.removeAll()
+                        HapticManager.shared.light()
+                    }) {
+                        Label("Clear All Plans", systemImage: "trash")
+                    }
+                } label: {
+                    ModernCircleButton(icon: "ellipsis.circle.fill") {}
+                        .allowsHitTesting(false)
+                }
             }
             .padding(.horizontal, 20)
         }
@@ -476,22 +495,24 @@ struct RecipeSelectionSheet: View {
                         onCreateNew()
                         HapticManager.shared.light()
                     }) {
-                        HStack {
+                        HStack(spacing: 12) {
                             Image(systemName: "plus.circle.fill")
                                 .font(.title2)
                             Text("Create New Recipe")
                                 .font(.headline)
                             Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.caption)
                         }
-                        .foregroundColor(.white)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
                         .padding(20)
                         .background {
                             if cardStyle == .solid {
                                 RoundedRectangle(cornerRadius: 16)
-                                    .fill(AppTheme.accentColor(for: selectedTheme))
+                                    .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
                             } else {
                                 RoundedRectangle(cornerRadius: 16)
-                                    .fill(AppTheme.accentColor(for: selectedTheme).opacity(0.8))
+                                    .fill(.ultraThinMaterial)
                             }
                         }
                     }
