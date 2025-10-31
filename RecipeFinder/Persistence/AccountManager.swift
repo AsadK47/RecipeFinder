@@ -11,6 +11,7 @@ final class AccountManager: ObservableObject {
     @Published private(set) var lastName: String = ""
     @Published private(set) var email: String = ""
     @Published private(set) var address: String = ""
+    @Published private(set) var dateOfBirth: Date?
     @Published private(set) var chefType: ChefType = .homeCook
     
     // Stats
@@ -25,6 +26,7 @@ final class AccountManager: ObservableObject {
     private let lastNameKey = "accountLastName"
     private let emailKey = "accountEmail"
     private let addressKey = "accountAddress"
+    private let dateOfBirthKey = "accountDateOfBirth"
     private let chefTypeKey = "accountChefType"
     
     var fullName: String {
@@ -79,6 +81,11 @@ final class AccountManager: ObservableObject {
         email = UserDefaults.standard.string(forKey: emailKey) ?? ""
         address = UserDefaults.standard.string(forKey: addressKey) ?? ""
         
+        // Load date of birth if exists
+        if let dobTimestamp = UserDefaults.standard.object(forKey: dateOfBirthKey) as? Double {
+            dateOfBirth = Date(timeIntervalSince1970: dobTimestamp)
+        }
+        
         if let chefTypeRaw = UserDefaults.standard.string(forKey: chefTypeKey),
            let savedChefType = ChefType(rawValue: chefTypeRaw) {
             chefType = savedChefType
@@ -91,6 +98,7 @@ final class AccountManager: ObservableObject {
         lastName: String,
         email: String,
         address: String,
+        dateOfBirth: Date?,
         chefType: ChefType
     ) {
         let trimmedFirstName = firstName.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -104,6 +112,7 @@ final class AccountManager: ObservableObject {
         self.lastName = trimmedLastName
         self.email = trimmedEmail
         self.address = trimmedAddress
+        self.dateOfBirth = dateOfBirth
         self.chefType = chefType
         
         UserDefaults.standard.set(trimmedFirstName, forKey: firstNameKey)
@@ -111,6 +120,14 @@ final class AccountManager: ObservableObject {
         UserDefaults.standard.set(trimmedLastName, forKey: lastNameKey)
         UserDefaults.standard.set(trimmedEmail, forKey: emailKey)
         UserDefaults.standard.set(trimmedAddress, forKey: addressKey)
+        
+        // Save date of birth as timestamp
+        if let dob = dateOfBirth {
+            UserDefaults.standard.set(dob.timeIntervalSince1970, forKey: dateOfBirthKey)
+        } else {
+            UserDefaults.standard.removeObject(forKey: dateOfBirthKey)
+        }
+        
         UserDefaults.standard.set(chefType.rawValue, forKey: chefTypeKey)
         
         HapticManager.shared.success()
@@ -181,43 +198,42 @@ final class AccountManager: ObservableObject {
 
 enum ChefType: String, CaseIterable {
     case homeCook = "Home Cook"
-    case aspiring = "Aspiring Chef"
-    case hobbyist = "Hobbyist"
-    case professional = "Professional Chef"
+    case foodie = "Foodie"
     case baker = "Baker"
     case grillMaster = "Grill Master"
-    case sousChef = "Sous Chef"
-    case executiveChef = "Executive Chef"
-    case pastryChef = "Pastry Chef"
-    case foodEnthusiast = "Food Enthusiast"
+    case healthNut = "Health Nut"
+    case adventurousEater = "Adventurous Eater"
     
     var icon: String {
         switch self {
         case .homeCook: return "house.fill"
-        case .aspiring: return "star.fill"
-        case .hobbyist: return "heart.fill"
-        case .professional: return "chef.hat"
+        case .foodie: return "heart.circle.fill"
         case .baker: return "birthday.cake.fill"
         case .grillMaster: return "flame.fill"
-        case .sousChef: return "person.2.fill"
-        case .executiveChef: return "crown.fill"
-        case .pastryChef: return "gift.fill"
-        case .foodEnthusiast: return "fork.knife"
+        case .healthNut: return "leaf.fill"
+        case .adventurousEater: return "globe.americas.fill"
         }
     }
     
     var description: String {
         switch self {
         case .homeCook: return "Cooking delicious meals at home"
-        case .aspiring: return "Learning and growing every day"
-        case .hobbyist: return "Cooking for fun and passion"
-        case .professional: return "Expert culinary professional"
-        case .baker: return "Master of breads and pastries"
+        case .foodie: return "Passionate about discovering great food"
+        case .baker: return "Master of breads, cakes & pastries"
         case .grillMaster: return "BBQ and grilling expert"
-        case .sousChef: return "Second-in-command in the kitchen"
-        case .executiveChef: return "Leading the culinary team"
-        case .pastryChef: return "Specialist in desserts and sweets"
-        case .foodEnthusiast: return "Passionate about all things food"
+        case .healthNut: return "Focused on nutritious & wholesome meals"
+        case .adventurousEater: return "Always trying new cuisines & flavors"
+        }
+    }
+    
+    var emoji: String {
+        switch self {
+        case .homeCook: return "🏠"
+        case .foodie: return "😋"
+        case .baker: return "🧁"
+        case .grillMaster: return "🔥"
+        case .healthNut: return "🥗"
+        case .adventurousEater: return "🌍"
         }
     }
 }

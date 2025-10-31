@@ -64,6 +64,9 @@ struct MealPlanningView: View {
                 }
             }
         }
+        .navigationBarHidden(true)
+        .toolbarBackground(.hidden, for: .navigationBar)
+        .toolbarColorScheme(.dark, for: .navigationBar)
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: selectedMealTimes)
         .animation(.spring(response: 0.3, dampingFraction: 0.8), value: viewMode)
         .sheet(isPresented: $showMealTimeSelector) {
@@ -145,52 +148,55 @@ struct MealPlanningView: View {
     }
     
     private var header: some View {
-        HStack {
-            // Left spacer for balance
-            Color.clear
-                .frame(width: 44)
-            
-            Spacer()
-            
-            Text("Meal Planner")
-                .font(.system(size: 34, weight: .bold))
-                .foregroundColor(.white)
-            
-            Spacer()
-            
-            // Menu for all options
-            Menu {
-                Button(action: {
-                    HapticManager.shared.light()
-                    showMealTimeSelector = true
-                }) {
-                    Label("Add Meal", systemImage: "plus.circle")
+        VStack(spacing: 12) {
+            GeometryReader { geometry in
+                HStack(spacing: 0) {
+                    Spacer(minLength: 8)
+                    
+                    Text("Meal Planner")
+                        .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
+                        .foregroundColor(.white)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                    
+                    Spacer(minLength: 8)
+                    
+                    // Burger menu
+                    Menu {
+                        Button(action: {
+                            HapticManager.shared.light()
+                            showMealTimeSelector = true
+                        }) {
+                            Label("Add Meal", systemImage: "plus.circle")
+                        }
+                        
+                        Button(action: {
+                            HapticManager.shared.light()
+                            showNutritionTips = true
+                        }) {
+                            Label("Nutrition Tips", systemImage: "heart.text.square")
+                        }
+                        
+                        Divider()
+                        
+                        Button(role: .destructive, action: {
+                            selectedMealTimes.removeAll()
+                            mealPlanningManager.clearOldMealPlans()
+                            HapticManager.shared.light()
+                        }) {
+                            Label("Clear Old Plans", systemImage: "trash")
+                        }
+                    } label: {
+                        ModernCircleButton(icon: "line.3.horizontal") {}
+                            .allowsHitTesting(false)
+                    }
+                    .frame(width: max(44, geometry.size.width * 0.15))
                 }
-                
-                Button(action: {
-                    HapticManager.shared.light()
-                    showNutritionTips = true
-                }) {
-                    Label("Nutrition Tips", systemImage: "heart.text.square")
-                }
-                
-                Divider()
-                
-                Button(role: .destructive, action: {
-                    selectedMealTimes.removeAll()
-                    mealPlanningManager.clearOldMealPlans()
-                    HapticManager.shared.light()
-                }) {
-                    Label("Clear Old Plans", systemImage: "trash")
-                }
-            } label: {
-                ModernCircleButton(icon: "line.3.horizontal") {}
-                    .allowsHitTesting(false)
             }
+            .frame(height: 44)
+            .padding(.horizontal, 20)
+            .padding(.top, 16)
         }
-        .frame(height: 44)
-        .padding(.horizontal, 20)
-        .padding(.top, 16)
         .padding(.bottom, 8)
     }
     

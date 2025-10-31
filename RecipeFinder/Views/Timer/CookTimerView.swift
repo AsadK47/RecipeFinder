@@ -32,6 +32,7 @@ struct CookTimerView: View {
     
     @AppStorage("cardStyle") private var cardStyleString: String = "frosted"
     @AppStorage("cookModeEnabled") private var cookModeEnabled: Bool = true
+    @AppStorage("defaultTimerDuration") private var defaultTimerDuration: Int = 300 // 5 minutes in seconds
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
     @Environment(\.scenePhase) var scenePhase
@@ -187,7 +188,7 @@ struct CookTimerView: View {
     private var quickPresetsSection: some View {
         VStack(spacing: 16) {
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                presetButton(minutes: 1, title: "1 min")
+                defaultPresetButton()
                 presetButton(minutes: 5, title: "5 min")
                 presetButton(minutes: 10, title: "10 min")
                 presetButton(minutes: 15, title: "15 min")
@@ -195,6 +196,43 @@ struct CookTimerView: View {
                 presetButton(minutes: 60, title: "1 hour")
             }
         }
+    }
+    
+    private func defaultPresetButton() -> some View {
+        let isDisabled = timers.count >= maxTimers
+        let minutes = defaultTimerDuration / 60
+        let title = minutes < 60 ? "\(minutes) min" : "\(minutes / 60) hr"
+        
+        return Button(action: {
+            guard !isDisabled else { return }
+            addTimer(name: "Default (\(title))", seconds: defaultTimerDuration)
+            HapticManager.shared.light()
+        }) {
+            VStack(spacing: 8) {
+                Image(systemName: "star.fill")
+                    .font(.title2)
+                
+                Text("Default")
+                    .font(.caption2)
+                    .fontWeight(.bold)
+                Text(title)
+                    .font(.caption)
+                    .fontWeight(.semibold)
+            }
+            .foregroundColor(isDisabled ? (colorScheme == .dark ? .white.opacity(0.3) : .black.opacity(0.3)) : AppTheme.accentColor(for: appTheme))
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 16)
+            .background {
+                if cardStyle == .solid {
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(colorScheme == .dark ? Color(white: 0.2).opacity(isDisabled ? 0.5 : 1.0) : Color.white.opacity(isDisabled ? 0.15 : 0.3))
+                } else {
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(.ultraThinMaterial.opacity(isDisabled ? 0.5 : 1.0))
+                }
+            }
+        }
+        .disabled(isDisabled)
     }
     
     private func presetButton(minutes: Int, title: String) -> some View {

@@ -19,6 +19,7 @@ struct EditProfileView: View {
     @State private var middleName: String = ""
     @State private var lastName: String = ""
     @State private var address: String = ""
+    @State private var dateOfBirth: Date?
     @State private var selectedChefType: ChefType = .homeCook
     
     // Password protection
@@ -92,6 +93,7 @@ struct EditProfileView: View {
             .onChange(of: middleName) { _, _ in checkForChanges() }
             .onChange(of: lastName) { _, _ in checkForChanges() }
             .onChange(of: address) { _, _ in checkForChanges() }
+            .onChange(of: dateOfBirth) { _, _ in checkForChanges() }
             .onChange(of: selectedChefType) { _, _ in checkForChanges() }
         }
     }
@@ -292,6 +294,7 @@ struct EditProfileView: View {
         middleName = accountManager.middleName
         lastName = accountManager.lastName
         address = accountManager.address
+        dateOfBirth = accountManager.dateOfBirth
         selectedChefType = accountManager.chefType
     }
     
@@ -370,6 +373,7 @@ struct EditProfileView: View {
             lastName: lastName,
             email: accountManager.email,
             address: address,
+            dateOfBirth: dateOfBirth,
             chefType: selectedChefType
         )
         

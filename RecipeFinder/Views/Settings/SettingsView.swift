@@ -1,5 +1,6 @@
 import SwiftUI
 import AudioToolbox
+import CoreData
 
 // Card Style Enum
 enum CardStyle: String, CaseIterable {
@@ -241,6 +242,7 @@ struct SettingsCard<Content: View>: View {
     
     var body: some View {
         content
+            .frame(maxWidth: .infinity)
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 16)
@@ -483,44 +485,6 @@ struct AppearanceSettingsView: View {
                                 }
                             }
                             .buttonStyle(PlainButtonStyle())
-                        }
-                    }
-                    
-                    // Preview Card
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("Preview")
-                            .font(.caption)
-                            .foregroundColor(.white.opacity(0.7))
-                            .padding(.leading, 4)
-                        
-                        SettingsCard {
-                            VStack(alignment: .leading, spacing: 12) {
-                                HStack {
-                                    Image(systemName: "square.stack.3d.up.fill")
-                                        .font(.title2)
-                                        .foregroundColor(AppTheme.accentColor(for: appTheme))
-                                    
-                                    Text("Card Preview")
-                                        .font(.headline)
-                                        .foregroundColor(colorScheme == .dark ? .white : .black)
-                                }
-                                
-                                Text("This is how cards will appear throughout the app with your selected appearance mode.")
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
-                                    .fixedSize(horizontal: false, vertical: true)
-                                
-                                HStack(spacing: 8) {
-                                    Image(systemName: effectiveCardStyle == .frosted ? "sparkles" : "flame.fill")
-                                        .foregroundColor(effectiveCardStyle == .frosted ? .cyan : .orange)
-                                    
-                                    Text("Style: \(effectiveCardStyle.rawValue)")
-                                        .font(.caption)
-                                        .foregroundColor(AppTheme.accentColor(for: appTheme))
-                                }
-                                .padding(.top, 4)
-                            }
-                            .padding(20)
                         }
                     }
                 }
@@ -1452,7 +1416,7 @@ struct DataManagementSettingsView: View {
                                     VStack(alignment: .leading, spacing: 4) {
                                         Text("Reset to Default")
                                             .foregroundColor(colorScheme == .dark ? .white : .black)
-                                        Text("Restore sample recipes and reset preferences")
+                                        Text("Clear everything and restore sample recipes + default settings")
                                             .font(.caption)
                                             .foregroundColor(.secondary)
                                     }
@@ -1479,9 +1443,9 @@ struct DataManagementSettingsView: View {
                                         .frame(width: 30)
                                     
                                     VStack(alignment: .leading, spacing: 4) {
-                                        Text("Clear All Data")
+                                        Text("Clear User Content")
                                             .foregroundColor(.red)
-                                        Text("Delete all data permanently")
+                                        Text("Delete recipes, lists, and notes (keeps your settings)")
                                             .font(.caption)
                                             .foregroundColor(.secondary)
                                     }
@@ -1513,13 +1477,13 @@ struct DataManagementSettingsView: View {
         .navigationTitle("Data Management")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
-        .alert("Clear All Data", isPresented: $showingClearAlert) {
+        .alert("Clear User Content", isPresented: $showingClearAlert) {
             Button("Cancel", role: .cancel) { }
             Button("Clear", role: .destructive) {
                 clearAllData()
             }
         } message: {
-            Text("This will permanently delete all your saved recipes, kitchen inventory, shopping lists, and preferences. This action cannot be undone.")
+            Text("This will delete all your recipes, kitchen inventory, shopping lists, meal plans, and notes. Your app settings and preferences will be preserved. This action cannot be undone.")
         }
         .alert("Reset to Default", isPresented: $showingResetAlert) {
             Button("Cancel", role: .cancel) { }
@@ -1527,7 +1491,7 @@ struct DataManagementSettingsView: View {
                 resetToDefault()
             }
         } message: {
-            Text("This will clear your data and restore the default sample recipes and settings.")
+            Text("This will delete ALL your data including recipes, settings, preferences, and restore the app to a fresh install state. Sample recipes will be restored. This action cannot be undone!")
         }
         .sheet(isPresented: $showingExportSheet) {
             ExportDataView()
@@ -1538,16 +1502,32 @@ struct DataManagementSettingsView: View {
     }
     
     private func resetToDefault() {
-        // Clear existing data
+        let context = PersistenceController.shared.container.viewContext
+        
+        // 1. Clear Core Data (all recipes)
+        let recipeFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "RecipeData")
+        let recipeBatchDelete = NSBatchDeleteRequest(fetchRequest: recipeFetch)
+        try? context.execute(recipeBatchDelete)
+        try? context.save()
+        
+        // 2. Clear all managers
         kitchenManager.clearAll()
         shoppingListManager.clearAllItems()
         
-        // Restore sample recipes
-        PersistenceController.shared.populateDatabase()
+        // 3. Clear all UserDefaults except critical ones
+        let defaults = UserDefaults.standard
+        let domain = Bundle.main.bundleIdentifier!
+        defaults.removePersistentDomain(forName: domain)
+        defaults.synchronize()
         
-        // Reset settings to defaults
-        UserDefaults.standard.set("teal", forKey: "appTheme")
-        UserDefaults.standard.set("frosted", forKey: "cardStyle")
+        // 4. Restore default settings
+        defaults.set("teal", forKey: "appTheme")
+        defaults.set("frosted", forKey: "cardStyle")
+        defaults.set("metric", forKey: "measurementSystem")
+        defaults.set(300, forKey: "defaultTimerDuration") // 5 minutes
+        
+        // 5. Restore sample recipes
+        PersistenceController.shared.populateDatabase()
         
         dataCleared = true
         HapticManager.shared.success()
@@ -1558,16 +1538,24 @@ struct DataManagementSettingsView: View {
     }
     
     private func clearAllData() {
-        // Clear kitchen inventory
-        kitchenManager.clearAll()
+        let context = PersistenceController.shared.container.viewContext
         
-        // Clear shopping list
+        // 1. Clear Core Data (all recipes)
+        let recipeFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "RecipeData")
+        let recipeBatchDelete = NSBatchDeleteRequest(fetchRequest: recipeFetch)
+        try? context.execute(recipeBatchDelete)
+        try? context.save()
+        
+        // 2. Clear all managers
+        kitchenManager.clearAll()
         shoppingListManager.clearAllItems()
         
-        // Clear UserDefaults
-        if let bundleID = Bundle.main.bundleIdentifier {
-            UserDefaults.standard.removePersistentDomain(forName: bundleID)
-        }
+        // 3. Clear specific UserDefaults data (keep settings)
+        UserDefaults.standard.removeObject(forKey: "favoriteRecipeIDs")
+        UserDefaults.standard.removeObject(forKey: "shoppingListItems")
+        UserDefaults.standard.removeObject(forKey: "kitchenInventory")
+        UserDefaults.standard.removeObject(forKey: "mealPlans")
+        UserDefaults.standard.removeObject(forKey: "recipeNotes")
         
         dataCleared = true
         HapticManager.shared.success()
@@ -1624,10 +1612,31 @@ struct ExportDataView: View {
             }
             .sheet(isPresented: $showingShareSheet) {
                 if let url = exportURL {
-                    ShareSheet(items: [url])
+                    ActivityViewController(items: [url])
                 }
             }
         }
+    }
+    
+    // Private share sheet for this view only
+    private struct ActivityViewController: UIViewControllerRepresentable {
+        let items: [Any]
+        
+        func makeUIViewController(context: Context) -> UIActivityViewController {
+            let controller = UIActivityViewController(activityItems: items, applicationActivities: nil)
+            
+            if let popover = controller.popoverPresentationController,
+               let windowScene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
+               let window = windowScene.windows.first(where: { $0.isKeyWindow }) {
+                popover.sourceView = window
+                popover.sourceRect = CGRect(x: window.bounds.midX, y: window.bounds.midY, width: 0, height: 0)
+                popover.permittedArrowDirections = []
+            }
+            
+            return controller
+        }
+        
+        func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
     }
     
     private func exportData() {
@@ -1763,25 +1772,76 @@ struct HelpView: View {
                             HelpItem(
                                 icon: "magnifyingglass",
                                 title: "Finding Recipes",
-                                description: "Search by name, ingredients, or browse categories to discover delicious recipes"
+                                description: "Search by name, ingredients, or browse categories. Use the burger menu to access filters and sorting options."
+                            )
+                            
+                            HelpItem(
+                                icon: "heart.fill",
+                                title: "Saving Favorites",
+                                description: "Tap the heart icon on any recipe to add it to your favorites for quick access later."
+                            )
+                            
+                            HelpItem(
+                                icon: "calendar",
+                                title: "Meal Planning",
+                                description: "Plan your weekly meals by tapping dates and assigning recipes to breakfast, lunch, or dinner."
                             )
                             
                             HelpItem(
                                 icon: "refrigerator",
                                 title: "Managing Your Kitchen",
-                                description: "Add ingredients you have on hand to get personalized recipe suggestions"
+                                description: "Track ingredients you have on hand, set expiration dates, and manage storage locations."
                             )
                             
                             HelpItem(
                                 icon: "cart",
                                 title: "Shopping Lists",
-                                description: "Create shopping lists from recipes or add items manually"
+                                description: "Create shopping lists from recipes or add items manually. Check them off as you shop!"
                             )
                             
                             HelpItem(
                                 icon: "timer",
                                 title: "Cooking Timers",
-                                description: "Set multiple timers to keep track of different cooking steps"
+                                description: "Set multiple timers while cooking. Use preset buttons or create custom timers with names."
+                            )
+                            
+                            HelpItem(
+                                icon: "note.text",
+                                title: "Recipe Notes",
+                                description: "Add personal notes, modifications, and ratings to any recipe to remember what worked."
+                            )
+                        }
+                        .padding(20)
+                    }
+                    
+                    SettingsCard {
+                        VStack(alignment: .leading, spacing: 20) {
+                            Text("Tips & Tricks")
+                                .font(.headline)
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                            
+                            HelpItem(
+                                icon: "square.and.arrow.up",
+                                title: "Sharing Recipes",
+                                description: "Tap the share button on any recipe to send as text or beautiful PDF."
+                            )
+                            
+                            HelpItem(
+                                icon: "paintpalette",
+                                title: "Customize Appearance",
+                                description: "Choose between System, Frost Light, or Fire Dark modes in Settings > Appearance."
+                            )
+                            
+                            HelpItem(
+                                icon: "arrow.counterclockwise",
+                                title: "Backup Your Data",
+                                description: "Export your data regularly from Account > Download Your Data for safekeeping."
+                            )
+                            
+                            HelpItem(
+                                icon: "star",
+                                title: "Default Timer",
+                                description: "Set your preferred timer duration in Settings > Cook Timer for quick access."
                             )
                         }
                         .padding(20)
@@ -2157,8 +2217,8 @@ struct PartyTimeView: View {
         // Vibrate immediately
         AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
         
-        // Continue vibrating every 0.4 seconds for smooth continuous feel
-        vibrationTimer = Timer.scheduledTimer(withTimeInterval: 0.4, repeats: true) { _ in
+        // Continue vibrating every 0.3 seconds for truly continuous feel (shorter interval = more continuous)
+        vibrationTimer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true) { _ in
             AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
         }
     }

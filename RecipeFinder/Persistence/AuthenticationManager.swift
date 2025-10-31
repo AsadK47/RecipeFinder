@@ -296,6 +296,7 @@ final class AuthenticationManager: NSObject, ObservableObject {
                     lastName: familyName ?? "",
                     email: email,
                     address: "",
+                    dateOfBirth: nil,
                     chefType: .homeCook
                 )
             }
@@ -443,6 +444,7 @@ final class AuthenticationManager: NSObject, ObservableObject {
             lastName: user.familyName ?? "",
             email: user.email ?? "",
             address: "",
+            dateOfBirth: nil,
             chefType: .homeCook
         )
     }
@@ -543,6 +545,7 @@ extension AuthenticationManager: ASAuthorizationControllerDelegate {
                         lastName: user.familyName ?? "",
                         email: user.email ?? "",
                         address: "",
+                        dateOfBirth: nil,
                         chefType: .homeCook
                     )
                     

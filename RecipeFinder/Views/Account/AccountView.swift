@@ -1,5 +1,6 @@
 import SwiftUI
 import AuthenticationServices
+import UniformTypeIdentifiers
 
 struct AccountView: View {
     @StateObject private var accountManager = AccountManager.shared
@@ -13,6 +14,7 @@ struct AccountView: View {
     @State private var showingDeleteAccountAlert = false
     @State private var showingPrivacyPolicy = false
     @State private var showingDataDownload = false
+    @State private var showingDataImport = false
     @State private var showingAuthError = false
     @State private var authErrorMessage = ""
     
@@ -48,16 +50,16 @@ struct AccountView: View {
             
             ScrollView {
                 VStack(spacing: 20) {
-                    // Profile Card
-                    profileCard
+                    // Profile Card with Avatar
+                    profileHeader
                     
-                    // Quick Actions
+                    // Personal Information Section
                     if !isGuestMode {
-                        quickActionsSection
+                        personalInfoSection
                     }
                     
-                    // Privacy Section
-                    privacySection
+                    // Privacy & Data Section
+                    privacyDataSection
                     
                     // Account Actions
                     accountActionsSection
@@ -79,6 +81,9 @@ struct AccountView: View {
         }
         .sheet(isPresented: $showingDataDownload) {
             DataDownloadView()
+        }
+        .sheet(isPresented: $showingDataImport) {
+            DataImportView()
         }
         .alert("Sign Out", isPresented: $showingSignOutAlert) {
             Button("Cancel", role: .cancel) {}
@@ -105,90 +110,77 @@ struct AccountView: View {
         }
     }
     
-    // Profile Card
+    // MARK: - Profile Header
     
-    private var profileCard: some View {
-        VStack(spacing: 16) {
+    private var profileHeader: some View {
+        HStack(spacing: 16) {
             // Avatar
             ZStack {
                 Circle()
                     .fill(AppTheme.accentColor(for: selectedTheme))
-                    .frame(width: 80, height: 80)
+                    .frame(width: 64, height: 64)
                 
                 Text(displayInitials)
-                    .font(.system(size: 32, weight: .bold))
+                    .font(.system(size: 26, weight: .semibold))
                     .foregroundColor(.white)
             }
             
-            // Name
-            Text(displayName)
-                .font(.title2)
-                .fontWeight(.bold)
-                .foregroundColor(colorScheme == .dark ? .white : .primary)
-            
-            // Chef Badge
-            HStack(spacing: 6) {
-                Image(systemName: accountManager.chefType.icon)
-                    .font(.caption)
-                Text(accountManager.chefType.rawValue)
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
-            .background(AppTheme.accentColor(for: selectedTheme).opacity(0.15))
-            .foregroundColor(AppTheme.accentColor(for: selectedTheme))
-            .cornerRadius(20)
-            
-            // Edit Button
-            if !isGuestMode {
-                Button {
-                    showingEditProfile = true
-                    HapticManager.shared.light()
-                } label: {
-                    Text("Edit Profile")
+            VStack(alignment: .leading, spacing: 4) {
+                Text(displayName)
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(colorScheme == .dark ? .white : .primary)
+                
+                HStack(spacing: 6) {
+                    Image(systemName: accountManager.chefType.icon)
+                        .font(.caption2)
+                    Text(accountManager.chefType.rawValue)
                         .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(AppTheme.accentColor(for: selectedTheme))
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 10)
-                        .background(AppTheme.accentColor(for: selectedTheme).opacity(0.15))
-                        .cornerRadius(20)
                 }
+                .foregroundColor(.secondary)
             }
+            
+            Spacer()
         }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 24)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 16)
         .background {
             if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: 20)
+                RoundedRectangle(cornerRadius: 16)
                     .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white)
             } else {
-                RoundedRectangle(cornerRadius: 20)
+                RoundedRectangle(cornerRadius: 16)
                     .fill(.ultraThinMaterial)
             }
         }
     }
     
-    // Quick Actions
+    // MARK: - Personal Information
     
-    private var quickActionsSection: some View {
+    private var personalInfoSection: some View {
         VStack(spacing: 0) {
-            ActionButton(
-                icon: "person.fill",
-                title: "Personal Info",
+            AccountRowButton(
+                icon: "person.circle.fill",
+                iconColor: .blue,
+                title: "Name, Photo & Date of Birth",
                 subtitle: displayName,
-                action: { showingEditProfile = true }
+                showChevron: true,
+                action: { 
+                    showingEditProfile = true 
+                    HapticManager.shared.light()
+                }
             )
             
             if !displayEmail.isEmpty {
                 Divider()
                     .padding(.leading, 60)
                 
-                ActionButton(
+                AccountRowButton(
                     icon: "envelope.fill",
+                    iconColor: .blue,
                     title: "Email",
                     subtitle: displayEmail,
+                    showChevron: false,
                     action: {}
                 )
             }
@@ -204,27 +196,49 @@ struct AccountView: View {
         }
     }
     
-    // Privacy Section
+    // MARK: - Privacy & Data
     
-    private var privacySection: some View {
+    private var privacyDataSection: some View {
         VStack(spacing: 0) {
-            ActionButton(
+            AccountRowButton(
                 icon: "hand.raised.fill",
                 iconColor: .blue,
                 title: "Privacy Policy",
                 showChevron: true,
-                action: { showingPrivacyPolicy = true }
+                action: { 
+                    showingPrivacyPolicy = true 
+                    HapticManager.shared.light()
+                }
             )
             
             Divider()
                 .padding(.leading, 60)
             
-            ActionButton(
-                icon: "square.and.arrow.down",
+            AccountRowButton(
+                icon: "square.and.arrow.down.fill",
                 iconColor: .green,
                 title: "Download Your Data",
+                subtitle: "Export all your recipes and preferences",
                 showChevron: true,
-                action: { showingDataDownload = true }
+                action: { 
+                    showingDataDownload = true 
+                    HapticManager.shared.light()
+                }
+            )
+            
+            Divider()
+                .padding(.leading, 60)
+            
+            AccountRowButton(
+                icon: "square.and.arrow.up.fill",
+                iconColor: .orange,
+                title: "Import Your Data",
+                subtitle: "Restore from backup",
+                showChevron: true,
+                action: { 
+                    showingDataImport = true 
+                    HapticManager.shared.light()
+                }
             )
             
             Divider()
@@ -233,10 +247,11 @@ struct AccountView: View {
             NavigationLink {
                 DataPrivacyView()
             } label: {
-                ActionButton(
+                AccountRowButton(
                     icon: "shield.fill",
                     iconColor: .purple,
                     title: "Data & Privacy",
+                    subtitle: "Manage your privacy settings",
                     showChevron: true,
                     action: {}
                 )
@@ -253,7 +268,7 @@ struct AccountView: View {
         }
     }
     
-    // Account Actions
+    // MARK: - Account Actions
     
     private var accountActionsSection: some View {
         VStack(spacing: 12) {
@@ -303,7 +318,9 @@ struct AccountView: View {
         }
     }
     
-    // Helper Functions
+    // MARK: - Helper Functions
+    
+    // MARK: - Helper Functions
     
     private func signOut() {
         #if DEBUG
@@ -326,11 +343,11 @@ struct AccountView: View {
     }
 }
 
-// Action Button Component
+// MARK: - Account Row Button Component
 
-struct ActionButton: View {
+struct AccountRowButton: View {
     let icon: String
-    var iconColor: Color?
+    var iconColor: Color = .blue
     let title: String
     var subtitle: String?
     var showChevron: Bool = false
@@ -341,10 +358,16 @@ struct ActionButton: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: 16) {
-                Image(systemName: icon)
-                    .font(.title3)
-                    .foregroundColor(iconColor ?? (colorScheme == .dark ? .white : .primary))
-                    .frame(width: 28)
+                // Icon with background circle
+                ZStack {
+                    Circle()
+                        .fill(iconColor)
+                        .frame(width: 28, height: 28)
+                    
+                    Image(systemName: icon)
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(.white)
+                }
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
@@ -355,6 +378,7 @@ struct ActionButton: View {
                         Text(subtitle)
                             .font(.caption)
                             .foregroundColor(.secondary)
+                            .lineLimit(1)
                     }
                 }
                 
@@ -367,8 +391,10 @@ struct ActionButton: View {
                 }
             }
             .padding(.horizontal, 20)
-            .padding(.vertical, 16)
+            .padding(.vertical, 14)
+            .contentShape(Rectangle())
         }
+        .buttonStyle(PlainButtonStyle())
     }
 }
 
@@ -429,13 +455,20 @@ struct PrivacyPolicyView: View {
     }
 }
 
+// MARK: - Data Download View
+
 struct DataDownloadView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var isExporting = false
+    @State private var shareItems: [Any] = []
+    @State private var showShareSheet = false
+    @State private var exportError: String?
     
     var body: some View {
         NavigationView {
             VStack(spacing: 24) {
+                Spacer()
+                
                 Image(systemName: "arrow.down.doc.fill")
                     .font(.system(size: 60))
                     .foregroundColor(.blue)
@@ -444,10 +477,17 @@ struct DataDownloadView: View {
                     .font(.title2)
                     .fontWeight(.bold)
                 
-                Text("In compliance with GDPR, you can download all your personal data. This includes recipes, preferences, and account information.")
+                Text("In compliance with GDPR, you can download all your personal data. This includes recipes, preferences, and account information in JSON format.")
                     .multilineTextAlignment(.center)
                     .foregroundColor(.secondary)
                     .padding(.horizontal)
+                
+                if let error = exportError {
+                    Text(error)
+                        .font(.caption)
+                        .foregroundColor(.red)
+                        .padding(.horizontal)
+                }
                 
                 Button {
                     exportData()
@@ -481,38 +521,535 @@ struct DataDownloadView: View {
                     Button("Done") { dismiss() }
                 }
             }
+            .sheet(isPresented: $showShareSheet) {
+                AccountShareSheet(items: shareItems)
+            }
         }
     }
     
     private func exportData() {
         isExporting = true
-        // Implement actual export logic
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            isExporting = false
-            dismiss()
+        exportError = nil
+        
+        // Run export on background thread
+        DispatchQueue.global(qos: .userInitiated).async {
+            do {
+                // Gather all user data
+                let accountManager = AccountManager.shared
+                let authManager = AuthenticationManager.shared
+                
+                var userData: [String: Any] = [:]
+                
+                // Account Info
+                userData["accountInfo"] = [
+                    "fullName": accountManager.fullName,
+                    "email": accountManager.email,
+                    "dateOfBirth": accountManager.dateOfBirth?.ISO8601Format() ?? "",
+                    "chefType": accountManager.chefType.rawValue,
+                    "accountCreated": Date().ISO8601Format()
+                ]
+                
+                // App Preferences
+                let measurementSystem = UserDefaults.standard.string(forKey: "measurementSystem") ?? "metric"
+                let appTheme = UserDefaults.standard.string(forKey: "appTheme") ?? "teal"
+                let cardStyle = UserDefaults.standard.string(forKey: "cardStyle") ?? "frosted"
+                
+                userData["preferences"] = [
+                    "measurementSystem": measurementSystem,
+                    "theme": appTheme,
+                    "cardStyle": cardStyle
+                ]
+                
+                // Favorites (recipe IDs)
+                if let favorites = UserDefaults.standard.array(forKey: "favoriteRecipeIDs") as? [String] {
+                    userData["favoriteRecipes"] = favorites
+                }
+                
+                // Shopping List Items
+                if let shoppingListData = UserDefaults.standard.data(forKey: "shoppingListItems"),
+                   let shoppingList = try? JSONDecoder().decode([ShoppingListItem].self, from: shoppingListData) {
+                    userData["shoppingList"] = shoppingList.map { item in
+                        [
+                            "id": item.id.uuidString,
+                            "name": item.name,
+                            "quantity": item.quantity,
+                            "unit": item.unit,
+                            "isCompleted": item.isCompleted,
+                            "category": item.category,
+                            "dateAdded": item.dateAdded.ISO8601Format()
+                        ]
+                    }
+                }
+                
+                // Kitchen Inventory
+                if let inventoryData = UserDefaults.standard.data(forKey: "kitchenInventory"),
+                   let inventory = try? JSONDecoder().decode([KitchenInventoryItemModel].self, from: inventoryData) {
+                    userData["kitchenInventory"] = inventory.map { item in
+                        [
+                            "id": item.id.uuidString,
+                            "name": item.name,
+                            "quantity": item.quantity,
+                            "category": item.category.rawValue,
+                            "storageLocation": item.storageLocation.rawValue,
+                            "expiryDate": item.expiryDate?.ISO8601Format() ?? "",
+                            "purchaseDate": item.purchaseDate.ISO8601Format(),
+                            "needsRestock": item.needsRestock
+                        ]
+                    }
+                }
+                
+                // Meal Plans
+                if let mealPlanData = UserDefaults.standard.data(forKey: "mealPlans"),
+                   let mealPlans = try? JSONDecoder().decode([MealPlanModel].self, from: mealPlanData) {
+                    userData["mealPlans"] = mealPlans.map { plan in
+                        [
+                            "id": plan.id.uuidString,
+                            "recipeId": plan.recipeId.uuidString,
+                            "recipeName": plan.recipeName,
+                            "date": plan.date.ISO8601Format(),
+                            "mealTime": plan.mealTime.rawValue,
+                            "servings": plan.servings,
+                            "isCompleted": plan.isCompleted
+                        ]
+                    }
+                }
+                
+                // Notes
+                if let notesData = UserDefaults.standard.data(forKey: "recipeNotes"),
+                   let notesDict = try? JSONDecoder().decode([String: String].self, from: notesData) {
+                    userData["recipeNotes"] = notesDict
+                }
+                
+                // Convert to JSON
+                let jsonData = try JSONSerialization.data(withJSONObject: userData, options: [.prettyPrinted, .sortedKeys])
+                
+                // Create temporary file
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "yyyy-MM-dd"
+                let dateString = dateFormatter.string(from: Date())
+                let fileName = "RecipeFinder_Data_\(dateString).json"
+                let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
+                
+                // Write to file
+                try jsonData.write(to: tempURL)
+                
+                // Update UI on main thread
+                DispatchQueue.main.async {
+                    self.isExporting = false
+                    self.shareItems = [tempURL]
+                    self.showShareSheet = true
+                    HapticManager.shared.success()
+                }
+                
+            } catch {
+                DispatchQueue.main.async {
+                    self.isExporting = false
+                    self.exportError = "Failed to export data: \(error.localizedDescription)"
+                    HapticManager.shared.error()
+                }
+            }
         }
     }
 }
 
+// MARK: - Data Privacy View
+
 struct DataPrivacyView: View {
+    @AppStorage("shareUsageData") private var shareUsageData = false
+    @AppStorage("personalizedRecommendations") private var personalizedRecommendations = true
+    @AppStorage("analyticsEnabled") private var analyticsEnabled = false
+    
     var body: some View {
         List {
+            Section {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Image(systemName: "shield.fill")
+                            .foregroundColor(.blue)
+                        Text("Your Privacy Matters")
+                            .font(.headline)
+                    }
+                    
+                    Text("RecipeFinder is designed to protect your privacy. All data is stored locally on your device and never shared without your explicit permission.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                .padding(.vertical, 8)
+            }
+            
             Section("Data Collection") {
-                Toggle("Share Usage Data", isOn: .constant(false))
-                Toggle("Personalized Recommendations", isOn: .constant(true))
+                Toggle(isOn: $shareUsageData) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Share Usage Data")
+                        Text("Help improve RecipeFinder by sharing anonymous usage statistics")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                
+                Toggle(isOn: $personalizedRecommendations) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Personalized Recommendations")
+                        Text("Use your recipe history to suggest relevant content")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                
+                Toggle(isOn: $analyticsEnabled) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Analytics")
+                        Text("Allow collection of app performance data")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
             }
             
             Section("Data Storage") {
-                Text("All data is stored locally on your device")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                HStack {
+                    Image(systemName: "lock.shield.fill")
+                        .foregroundColor(.green)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Local Storage")
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                        Text("All your recipes and preferences are stored securely on your device")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                .padding(.vertical, 4)
+                
+                HStack {
+                    Image(systemName: "key.fill")
+                        .foregroundColor(.orange)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("End-to-End Encryption")
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                        Text("Your account credentials are encrypted and stored in the iOS Keychain")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                .padding(.vertical, 4)
             }
             
-            Section(footer: Text("Changes to these settings will take effect immediately.")) {
-                EmptyView()
+            Section("Your Rights") {
+                Label("Access your data anytime", systemImage: "eye.fill")
+                Label("Request data deletion", systemImage: "trash.fill")
+                Label("Export your data", systemImage: "square.and.arrow.up.fill")
+                Label("Withdraw consent", systemImage: "hand.raised.fill")
+            }
+            .font(.subheadline)
+            
+            Section {
+                Text("Changes to these settings will take effect immediately. RecipeFinder complies with UK GDPR and Data Protection Act 2018.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
             }
         }
         .navigationTitle("Data & Privacy")
         .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+// Account Share Sheet
+
+struct AccountShareSheet: UIViewControllerRepresentable {
+    let items: [Any]
+    
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        let controller = UIActivityViewController(activityItems: items, applicationActivities: nil)
+        
+        // Configure for iPad if needed
+        if let popover = controller.popoverPresentationController,
+           let windowScene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
+           let window = windowScene.windows.first(where: { $0.isKeyWindow }) {
+            popover.sourceView = window
+            popover.sourceRect = CGRect(x: window.bounds.midX, y: window.bounds.midY, width: 0, height: 0)
+            popover.permittedArrowDirections = []
+        }
+        
+        return controller
+    }
+    
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
+}
+
+// MARK: - Data Import View
+
+struct DataImportView: View {
+    @Environment(\.dismiss) private var dismiss
+    @State private var showingDocumentPicker = false
+    @State private var isImporting = false
+    @State private var importResult: ImportResult?
+    @State private var mergeMode: MergeMode = .replace
+    
+    enum ImportResult {
+        case success(String)
+        case error(String)
+    }
+    
+    enum MergeMode: String, CaseIterable {
+        case replace = "Replace All"
+        case merge = "Merge (Keep Both)"
+    }
+    
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 24) {
+                Spacer()
+                
+                Image(systemName: "square.and.arrow.up.fill")
+                    .font(.system(size: 60))
+                    .foregroundColor(.orange)
+                
+                Text("Import Your Data")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                
+                Text("Restore your recipes, preferences, and data from a previous backup. Select a JSON file exported from RecipeFinder.")
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(.secondary)
+                    .padding(.horizontal)
+                
+                // Merge Mode Picker
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Import Mode")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                    
+                    ForEach(MergeMode.allCases, id: \.self) { mode in
+                        Button(action: {
+                            mergeMode = mode
+                            HapticManager.shared.selection()
+                        }) {
+                            HStack {
+                                Image(systemName: mergeMode == mode ? "checkmark.circle.fill" : "circle")
+                                    .foregroundColor(mergeMode == mode ? .orange : .secondary)
+                                
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(mode.rawValue)
+                                        .font(.body)
+                                        .foregroundColor(.primary)
+                                    
+                                    Text(mode == .replace ? "Delete existing data and replace with imported data" : "Keep existing data and add imported data")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                
+                                Spacer()
+                            }
+                            .padding()
+                            .background(Color.secondary.opacity(0.1))
+                            .cornerRadius(12)
+                        }
+                    }
+                }
+                .padding(.horizontal)
+                
+                if let result = importResult {
+                    switch result {
+                    case .success(let message):
+                        HStack {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.green)
+                            Text(message)
+                                .font(.caption)
+                                .foregroundColor(.green)
+                        }
+                        .padding(.horizontal)
+                    case .error(let message):
+                        HStack {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundColor(.red)
+                            Text(message)
+                                .font(.caption)
+                                .foregroundColor(.red)
+                        }
+                        .padding(.horizontal)
+                    }
+                }
+                
+                Button {
+                    showingDocumentPicker = true
+                } label: {
+                    HStack {
+                        if isImporting {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        } else {
+                            Image(systemName: "doc.badge.arrow.up")
+                            Text("Select JSON File")
+                        }
+                    }
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.orange)
+                    .cornerRadius(12)
+                }
+                .disabled(isImporting)
+                .padding(.horizontal)
+                
+                Spacer()
+            }
+            .padding(.top, 40)
+            .navigationTitle("Data Import")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") { dismiss() }
+                }
+            }
+            .fileImporter(
+                isPresented: $showingDocumentPicker,
+                allowedContentTypes: [.json],
+                allowsMultipleSelection: false
+            ) { result in
+                handleFileImport(result)
+            }
+        }
+    }
+    
+    private func handleFileImport(_ result: Result<[URL], Error>) {
+        isImporting = true
+        importResult = nil
+        
+        DispatchQueue.global(qos: .userInitiated).async {
+            do {
+                guard let url = try result.get().first else {
+                    throw NSError(domain: "ImportError", code: 1, userInfo: [NSLocalizedDescriptionKey: "No file selected"])
+                }
+                
+                guard url.startAccessingSecurityScopedResource() else {
+                    throw NSError(domain: "ImportError", code: 2, userInfo: [NSLocalizedDescriptionKey: "Cannot access file"])
+                }
+                
+                defer { url.stopAccessingSecurityScopedResource() }
+                
+                let data = try Data(contentsOf: url)
+                guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+                    throw NSError(domain: "ImportError", code: 3, userInfo: [NSLocalizedDescriptionKey: "Invalid JSON format"])
+                }
+                
+                // Import preferences
+                if let preferences = json["preferences"] as? [String: Any] {
+                    if let theme = preferences["theme"] as? String {
+                        UserDefaults.standard.set(theme, forKey: "appTheme")
+                    }
+                    if let measurement = preferences["measurementSystem"] as? String {
+                        UserDefaults.standard.set(measurement, forKey: "measurementSystem")
+                    }
+                    if let cardStyle = preferences["cardStyle"] as? String {
+                        UserDefaults.standard.set(cardStyle, forKey: "cardStyle")
+                    }
+                }
+                
+                // Import favorites
+                if mergeMode == .replace {
+                    if let favorites = json["favoriteRecipes"] as? [String] {
+                        UserDefaults.standard.set(favorites, forKey: "favoriteRecipeIDs")
+                    }
+                } else {
+                    if let newFavorites = json["favoriteRecipes"] as? [String],
+                       var existingFavorites = UserDefaults.standard.array(forKey: "favoriteRecipeIDs") as? [String] {
+                        existingFavorites.append(contentsOf: newFavorites)
+                        let uniqueFavorites = Array(Set(existingFavorites))
+                        UserDefaults.standard.set(uniqueFavorites, forKey: "favoriteRecipeIDs")
+                    }
+                }
+                
+                // Import shopping list
+                if let shoppingListArray = json["shoppingList"] as? [[String: Any]] {
+                    let jsonData = try JSONSerialization.data(withJSONObject: shoppingListArray)
+                    if let newItems = try? JSONDecoder().decode([ShoppingListItem].self, from: jsonData) {
+                        if mergeMode == .replace {
+                            let encoded = try JSONEncoder().encode(newItems)
+                            UserDefaults.standard.set(encoded, forKey: "shoppingListItems")
+                        } else {
+                            if let existingData = UserDefaults.standard.data(forKey: "shoppingListItems"),
+                               var existingItems = try? JSONDecoder().decode([ShoppingListItem].self, from: existingData) {
+                                existingItems.append(contentsOf: newItems)
+                                let encoded = try JSONEncoder().encode(existingItems)
+                                UserDefaults.standard.set(encoded, forKey: "shoppingListItems")
+                            }
+                        }
+                    }
+                }
+                
+                // Import kitchen inventory
+                if let inventoryArray = json["kitchenInventory"] as? [[String: Any]] {
+                    let jsonData = try JSONSerialization.data(withJSONObject: inventoryArray)
+                    if let newItems = try? JSONDecoder().decode([KitchenInventoryItemModel].self, from: jsonData) {
+                        if mergeMode == .replace {
+                            let encoded = try JSONEncoder().encode(newItems)
+                            UserDefaults.standard.set(encoded, forKey: "kitchenInventory")
+                        } else {
+                            if let existingData = UserDefaults.standard.data(forKey: "kitchenInventory"),
+                               var existingItems = try? JSONDecoder().decode([KitchenInventoryItemModel].self, from: existingData) {
+                                existingItems.append(contentsOf: newItems)
+                                let encoded = try JSONEncoder().encode(existingItems)
+                                UserDefaults.standard.set(encoded, forKey: "kitchenInventory")
+                            }
+                        }
+                    }
+                }
+                
+                // Import meal plans
+                if let mealPlansArray = json["mealPlans"] as? [[String: Any]] {
+                    let jsonData = try JSONSerialization.data(withJSONObject: mealPlansArray)
+                    if let newPlans = try? JSONDecoder().decode([MealPlanModel].self, from: jsonData) {
+                        if mergeMode == .replace {
+                            let encoded = try JSONEncoder().encode(newPlans)
+                            UserDefaults.standard.set(encoded, forKey: "mealPlans")
+                        } else {
+                            if let existingData = UserDefaults.standard.data(forKey: "mealPlans"),
+                               var existingPlans = try? JSONDecoder().decode([MealPlanModel].self, from: existingData) {
+                                existingPlans.append(contentsOf: newPlans)
+                                let encoded = try JSONEncoder().encode(existingPlans)
+                                UserDefaults.standard.set(encoded, forKey: "mealPlans")
+                            }
+                        }
+                    }
+                }
+                
+                // Import notes
+                if let notes = json["recipeNotes"] as? [String: String] {
+                    if mergeMode == .replace {
+                        let encoded = try JSONEncoder().encode(notes)
+                        UserDefaults.standard.set(encoded, forKey: "recipeNotes")
+                    } else {
+                        if let existingData = UserDefaults.standard.data(forKey: "recipeNotes"),
+                           var existingNotes = try? JSONDecoder().decode([String: String].self, from: existingData) {
+                            existingNotes.merge(notes) { _, new in new }
+                            let encoded = try JSONEncoder().encode(existingNotes)
+                            UserDefaults.standard.set(encoded, forKey: "recipeNotes")
+                        }
+                    }
+                }
+                
+                DispatchQueue.main.async {
+                    self.isImporting = false
+                    self.importResult = .success("Data imported successfully!")
+                    HapticManager.shared.success()
+                    
+                    // Auto-dismiss after 2 seconds
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                        dismiss()
+                    }
+                }
+                
+            } catch {
+                DispatchQueue.main.async {
+                    self.isImporting = false
+                    self.importResult = .error("Failed to import: \(error.localizedDescription)")
+                    HapticManager.shared.error()
+                }
+            }
+        }
     }
 }

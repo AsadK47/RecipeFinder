@@ -21,7 +21,7 @@ struct RecipeImageView: View {
                     .scaledToFill()
                     .frame(height: height)
                     .clipped()
-            } else if let imageName = imageName, let uiImage = UIImage(named: imageName) {
+            } else if let imageName = imageName, !imageName.isEmpty, let uiImage = UIImage(named: imageName) {
                 Image(uiImage: uiImage)
                     .resizable()
                     .scaledToFill()

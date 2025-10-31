@@ -367,9 +367,9 @@ struct RecipeDetailView: View {
         }
         .sheet(isPresented: $showShareSheet) {
             if #available(iOS 16.0, *) {
-                ShareSheet(items: shareItems)
+                RecipeShareSheet(items: shareItems)
             } else {
-                ShareSheet(items: shareItems)
+                RecipeShareSheet(items: shareItems)
             }
         }
         .overlay(alignment: .bottom) {
@@ -559,7 +559,7 @@ struct RecipeDetailView: View {
     private func shareAsText() {
         HapticManager.shared.light()
         
-        // Generate text immediately (it's fast)
+        // Generate text format
         let text = RecipeShareUtility.generateTextFormat(recipe: recipe, measurementSystem: measurementSystem)
         
         // Create a temporary text file for better sharing compatibility
@@ -570,22 +570,27 @@ struct RecipeDetailView: View {
             // Write to temporary file
             try text.write(to: tempURL, atomically: true, encoding: .utf8)
             
-            debugLog("✅ Created temp file: \(tempURL.path)")
+            debugLog("✅ Created temp file for sharing: \(tempURL.path)")
             
-            // Share the file URL
+            // Important: Set shareItems BEFORE showing the sheet
+            // Add a small delay to ensure state is properly set
             DispatchQueue.main.async {
                 self.shareItems = [tempURL]
-                self.showShareSheet = true
-                HapticManager.shared.success()
+                // Use another async to ensure shareItems is fully set before showing sheet
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    self.showShareSheet = true
+                    HapticManager.shared.success()
+                }
             }
         } catch {
-            debugLog("❌ Failed to create text file: \(error)")
-            // Fallback: share as plain string (this should work for most apps)
+            debugLog("❌ Failed to create text file: \(error.localizedDescription)")
+            // Fallback: share as plain text string
             DispatchQueue.main.async {
-                // Create an NSString for better compatibility
                 self.shareItems = [text as NSString]
-                self.showShareSheet = true
-                HapticManager.shared.success()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    self.showShareSheet = true
+                    HapticManager.shared.success()
+                }
             }
         }
     }
@@ -649,7 +654,7 @@ struct RecipeDetailView: View {
 }
 
 // Share Sheet
-struct ShareSheet: UIViewControllerRepresentable {
+struct RecipeShareSheet: UIViewControllerRepresentable {
     let items: [Any]
     
     func makeUIViewController(context: Context) -> UIActivityViewController {

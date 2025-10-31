@@ -55,39 +55,38 @@ struct NotesListView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                // Background
-                AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
-                    .ignoresSafeArea()
-                
-                VStack(spacing: 0) {
-                    // Header - Blended design like RecipeSearchView
-                    VStack(spacing: 12) {
-                        GeometryReader { geometry in
-                            HStack(spacing: 0) {
-                                // Back button (left side)
-                                Button(action: {
-                                    // This will use the environment's dismiss if in a sheet/navigation
-                                    HapticManager.shared.light()
-                                }) {
-                                    Image(systemName: "chevron.left")
-                                        .font(.title3)
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(.white)
-                                        .frame(width: 44, height: 44)
-                                }
-                                .opacity(0) // Hidden but maintains layout
-                                
-                                Spacer(minLength: 8)
-                                
-                                Text("Notes")
-                                    .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
+        ZStack {
+            // Background
+            AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
+                .ignoresSafeArea()
+            
+            VStack(spacing: 0) {
+                // Header - Blended design like RecipeSearchView
+                VStack(spacing: 12) {
+                    GeometryReader { geometry in
+                        HStack(spacing: 0) {
+                            // Back button (left side)
+                            Button(action: {
+                                // This will use the environment's dismiss if in a sheet/navigation
+                                HapticManager.shared.light()
+                            }) {
+                                Image(systemName: "chevron.left")
+                                    .font(.title3)
+                                    .fontWeight(.semibold)
                                     .foregroundColor(.white)
-                                    .lineLimit(1)
-                                    .minimumScaleFactor(0.7)
-                                
-                                Spacer(minLength: 8)
+                                    .frame(width: 44, height: 44)
+                            }
+                            .opacity(0) // Hidden but maintains layout
+                            
+                            Spacer(minLength: 8)
+                            
+                            Text("Notes")
+                                .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
+                                .foregroundColor(.white)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.7)
+                            
+                            Spacer(minLength: 8)
                                 
                                 // Right menu - burger menu like RecipeSearchView
                                 Menu {
@@ -176,8 +175,6 @@ struct NotesListView: View {
                             }
                             .padding(.horizontal, 20)
                             .padding(.bottom, 8)
-                        }
-                        .transition(.move(edge: .top).combined(with: .opacity))
                     }
                     
                     // Notes List

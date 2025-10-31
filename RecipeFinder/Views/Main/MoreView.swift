@@ -120,6 +120,7 @@ struct MoreCard<Content: View>: View {
     
     var body: some View {
         content
+            .frame(maxWidth: .infinity)
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 16)
