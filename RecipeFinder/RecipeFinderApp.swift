@@ -105,7 +105,19 @@ struct RecipeFinderApp: App {
         UINavigationBar.appearance().scrollEdgeAppearance = navAppearance
         
         // Configure search bar appearance
-        UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self]).backgroundColor = UIColor.white.withAlphaComponent(0.1)
-        UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = UIColor(red: 0.8, green: 0.2, blue: 0.6, alpha: 1.0)
+        let searchTextField = UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self])
+        searchTextField.backgroundColor = UIColor.white.withAlphaComponent(0.1)
+        searchTextField.tintColor = UIColor(red: 0.8, green: 0.2, blue: 0.6, alpha: 1.0)
+        
+        // Set text color that adapts to dark/light mode
+        searchTextField.textColor = .label // System label color adapts automatically
+        
+        // Set placeholder text color attributes
+        searchTextField.attributedPlaceholder = NSAttributedString(
+            string: "",
+            attributes: [
+                .foregroundColor: UIColor.secondaryLabel // Adapts to dark/light mode
+            ]
+        )
     }
 }
