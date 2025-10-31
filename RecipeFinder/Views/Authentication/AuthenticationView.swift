@@ -11,7 +11,9 @@ import AuthenticationServices
 struct AuthenticationView: View {
     @StateObject private var authManager = AuthenticationManager.shared
     @State private var showSignUp = false
+    @State private var showOnboarding = false
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
+    @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
@@ -80,12 +82,12 @@ struct AuthenticationView: View {
                             request.requestedScopes = [.fullName, .email]
                         },
                         onCompletion: { result in
-                            Task {
-                                do {
-                                    try await authManager.signInWithApple()
-                                } catch {
-                                    print("❌ Sign in failed: \(error)")
-                                }
+                            switch result {
+                            case .success(let authorization):
+                                // AuthenticationManager delegate handles the credential
+                                print("✅ Apple Sign In initiated")
+                            case .failure(let error):
+                                print("❌ Apple Sign In failed: \(error.localizedDescription)")
                             }
                         }
                     )
@@ -156,6 +158,9 @@ struct AuthenticationView: View {
         .sheet(isPresented: $showSignUp) {
             SignUpView()
         }
+        .fullScreenCover(isPresented: $showOnboarding) {
+            OnboardingView()
+        }
         .alert("Authentication Error", isPresented: .constant(authManager.authError != nil)) {
             Button("OK") {
                 authManager.authError = nil
@@ -163,6 +168,14 @@ struct AuthenticationView: View {
         } message: {
             if let error = authManager.authError {
                 Text(error.localizedDescription)
+            }
+        }
+        .onChange(of: authManager.isAuthenticated) { oldValue, newValue in
+            if newValue && !hasSeenOnboarding && !authManager.isGuestMode {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    showOnboarding = true
+                    hasSeenOnboarding = true
+                }
             }
         }
     }
@@ -183,6 +196,8 @@ struct EmailSignInView: View {
     @State private var email = ""
     @State private var password = ""
     @State private var isLoading = false
+    @State private var showError = false
+    @State private var errorMessage = ""
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismiss
@@ -266,6 +281,34 @@ struct EmailSignInView: View {
                         .disabled(email.isEmpty || password.isEmpty || isLoading)
                         .opacity((email.isEmpty || password.isEmpty || isLoading) ? 0.6 : 1.0)
                         .padding(.top, 8)
+                        
+                        #if DEBUG
+                        // Quick Test Button (Debug Only)
+                        Button(action: {
+                            email = masterEmail
+                            password = masterPassword
+                        }) {
+                            HStack(spacing: 8) {
+                                Image(systemName: "bolt.fill")
+                                    .font(.caption)
+                                Text("Quick Fill (Test)")
+                                    .font(.caption)
+                                    .fontWeight(.medium)
+                            }
+                            .foregroundColor(.yellow)
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 16)
+                            .background(
+                                Capsule()
+                                    .fill(Color.yellow.opacity(0.2))
+                                    .overlay(
+                                        Capsule()
+                                            .stroke(Color.yellow.opacity(0.4), lineWidth: 1)
+                                    )
+                            )
+                        }
+                        .padding(.top, 8)
+                        #endif
                     }
                     .padding(.horizontal, 32)
                     
@@ -275,6 +318,11 @@ struct EmailSignInView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
+        .alert("Sign In Error", isPresented: $showError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(errorMessage)
+        }
     }
     
     private func signIn() {
@@ -291,6 +339,8 @@ struct EmailSignInView: View {
             } catch {
                 await MainActor.run {
                     isLoading = false
+                    errorMessage = error.localizedDescription
+                    showError = true
                     HapticManager.shared.error()
                 }
             }
@@ -307,6 +357,10 @@ struct SignUpView: View {
     @State private var password = ""
     @State private var confirmPassword = ""
     @State private var isLoading = false
+    @State private var showError = false
+    @State private var errorMessage = ""
+    @State private var showSignIn = false
+    @State private var showOnboarding = false
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismiss
@@ -449,6 +503,14 @@ struct SignUpView: View {
                 }
             }
             .toolbarBackground(.hidden, for: .navigationBar)
+            .alert("Sign Up Error", isPresented: $showError) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(errorMessage)
+            }
+            .fullScreenCover(isPresented: $showOnboarding) {
+                OnboardingView()
+            }
         }
     }
     
@@ -460,11 +522,20 @@ struct SignUpView: View {
             do {
                 try await authManager.signUp(email: email, password: password, fullName: fullName)
                 await MainActor.run {
+                    HapticManager.shared.success()
+                    isLoading = false
                     dismiss()
+                    // Show onboarding after successful sign up
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        showOnboarding = true
+                    }
                 }
             } catch {
                 await MainActor.run {
                     isLoading = false
+                    errorMessage = error.localizedDescription
+                    showError = true
+                    HapticManager.shared.error()
                 }
             }
         }

@@ -459,6 +459,7 @@ struct AppearanceSettingsView: View {
         }
         .navigationTitle("Appearance")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
     }
 }
 
@@ -528,6 +529,7 @@ struct ThemeSettingsView: View {
         }
         .navigationTitle("Theme")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
     }
     
     private func themeDescription(for theme: AppTheme.ThemeType) -> String {
@@ -730,6 +732,7 @@ struct NotificationSettingsView: View {
         }
         .navigationTitle("Notifications")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
         .sheet(isPresented: $showingTimePicker) {
             TimePickerSheet(selectedTime: reminderTime) { newTime in
                 let formatter = DateFormatter()
@@ -969,6 +972,7 @@ struct TimerSettingsView: View {
         }
         .navigationTitle("Timers")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
     }
     
     private func formatDuration(_ seconds: Int) -> String {
@@ -1087,6 +1091,7 @@ struct UnitsSettingsView: View {
         }
         .navigationTitle("Units & Measurements")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
     }
 }
 
@@ -1119,11 +1124,13 @@ struct PrivacySettingsView: View {
         }
         .navigationTitle("Privacy")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
     }
 }
 
 struct DataManagementSettingsView: View {
     @State private var showingClearAlert = false
+    @State private var showingResetAlert = false
     @State private var showingExportSheet = false
     @State private var showingImportSheet = false
     @State private var dataCleared = false
@@ -1209,9 +1216,38 @@ struct DataManagementSettingsView: View {
                     
                     SettingsCard {
                         VStack(alignment: .leading, spacing: 20) {
-                            Text("Clear Data")
+                            Text("Reset Options")
                                 .font(.headline)
                                 .foregroundColor(colorScheme == .dark ? .white : .black)
+                            
+                            Button(action: {
+                                showingResetAlert = true
+                            }) {
+                                HStack(spacing: 16) {
+                                    Image(systemName: "arrow.counterclockwise")
+                                        .font(.title3)
+                                        .foregroundColor(.orange)
+                                        .frame(width: 30)
+                                    
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("Reset to Default")
+                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        Text("Restore sample recipes and reset preferences")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                    }
+                                    
+                                    Spacer()
+                                    
+                                    Image(systemName: "chevron.right")
+                                        .foregroundColor(.secondary)
+                                        .font(.caption)
+                                }
+                                .padding(16)
+                                .background(Color.orange.opacity(0.1))
+                                .cornerRadius(12)
+                            }
+                            .buttonStyle(PlainButtonStyle())
                             
                             Button(action: {
                                 showingClearAlert = true
@@ -1225,7 +1261,7 @@ struct DataManagementSettingsView: View {
                                     VStack(alignment: .leading, spacing: 4) {
                                         Text("Clear All Data")
                                             .foregroundColor(.red)
-                                        Text("This will delete all your data permanently")
+                                        Text("Delete all data permanently")
                                             .font(.caption)
                                             .foregroundColor(.secondary)
                                     }
@@ -1256,6 +1292,7 @@ struct DataManagementSettingsView: View {
         }
         .navigationTitle("Data Management")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
         .alert("Clear All Data", isPresented: $showingClearAlert) {
             Button("Cancel", role: .cancel) { }
             Button("Clear", role: .destructive) {
@@ -1264,11 +1301,39 @@ struct DataManagementSettingsView: View {
         } message: {
             Text("This will permanently delete all your saved recipes, kitchen inventory, shopping lists, and preferences. This action cannot be undone.")
         }
+        .alert("Reset to Default", isPresented: $showingResetAlert) {
+            Button("Cancel", role: .cancel) { }
+            Button("Reset", role: .destructive) {
+                resetToDefault()
+            }
+        } message: {
+            Text("This will clear your data and restore the default sample recipes and settings.")
+        }
         .sheet(isPresented: $showingExportSheet) {
             ExportDataView()
         }
         .sheet(isPresented: $showingImportSheet) {
             ImportDataView()
+        }
+    }
+    
+    private func resetToDefault() {
+        // Clear existing data
+        kitchenManager.clearAll()
+        shoppingListManager.clearAllItems()
+        
+        // Restore sample recipes
+        PersistenceController.shared.populateDatabase()
+        
+        // Reset settings to defaults
+        UserDefaults.standard.set("teal", forKey: "appTheme")
+        UserDefaults.standard.set("frosted", forKey: "cardStyle")
+        
+        dataCleared = true
+        HapticManager.shared.success()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            dataCleared = false
         }
     }
     
@@ -1422,6 +1487,7 @@ struct ImportDataView: View {
 struct HelpView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
+    @State private var showOnboarding = false
     
     var body: some View {
         ZStack {
@@ -1430,6 +1496,44 @@ struct HelpView: View {
             
             ScrollView {
                 VStack(spacing: 24) {
+                    // App Tour Section
+                    SettingsCard {
+                        Button(action: {
+                            showOnboarding = true
+                            HapticManager.shared.light()
+                        }) {
+                            HStack(spacing: 16) {
+                                ZStack {
+                                    Circle()
+                                        .fill(Color.purple.opacity(0.15))
+                                        .frame(width: 50, height: 50)
+                                    
+                                    Image(systemName: "play.circle.fill")
+                                        .font(.title2)
+                                        .foregroundColor(.purple)
+                                }
+                                
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Take the App Tour")
+                                        .font(.headline)
+                                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    
+                                    Text("Learn how to use RecipeFinder")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                
+                                Spacer()
+                                
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.gray)
+                                    .font(.caption)
+                            }
+                            .padding(20)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
+                    
                     SettingsCard {
                         VStack(alignment: .leading, spacing: 20) {
                             Text("Getting Started")
@@ -1535,6 +1639,10 @@ struct HelpView: View {
         }
         .navigationTitle("Help & Support")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
+        .fullScreenCover(isPresented: $showOnboarding) {
+            OnboardingView()
+        }
     }
 }
 
@@ -1666,6 +1774,7 @@ struct AboutView: View {
         }
         .navigationTitle("About")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
     }
 }
 

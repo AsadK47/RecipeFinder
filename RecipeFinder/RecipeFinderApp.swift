@@ -20,6 +20,14 @@ struct RecipeFinderApp: App {
         } else {
             debugLog("✅ Database already populated - skipping initialization")
         }
+        
+        #if DEBUG
+        // Seed test accounts for easy testing (Debug only)
+        if !UserDefaults.standard.bool(forKey: "hasSeededTestAccounts") {
+            AuthTestHelper.seedTestAccounts()
+            UserDefaults.standard.set(true, forKey: "hasSeededTestAccounts")
+        }
+        #endif
     }
     
     var body: some Scene {
@@ -31,12 +39,15 @@ struct RecipeFinderApp: App {
                         .onAppear {
                             authManager.updateLastActiveTimestamp()
                         }
+                        .transition(.opacity.combined(with: .scale(scale: 0.95)))
                 } else {
                     NavigationStack {
                         AuthenticationView()
                     }
+                    .transition(.opacity.combined(with: .scale(scale: 1.05)))
                 }
             }
+            .animation(.easeInOut(duration: 0.3), value: authManager.isAuthenticated)
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
                 // Check if session expired when app comes back to foreground
                 authManager.checkSessionExpiration()

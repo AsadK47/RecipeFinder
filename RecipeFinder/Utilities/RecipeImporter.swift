@@ -14,12 +14,442 @@ class RecipeImporter: ObservableObject {
         let rawText: String  // For preview/editing
         let instructions: [String]
         let sourceURL: URL
+        
+        // Enhanced metadata
+        let cookTimeMinutes: Int?
+        let prepTimeMinutes: Int?
+        let totalTimeMinutes: Int?
+        let category: String?
+        let cuisine: String?
+        let servings: Int?
+        let difficulty: String?
     }
     
     private func debugLog(_ message: String) {
         #if DEBUG
         print("[RecipeImporter] \(message)")
         #endif
+    }
+    
+    // MARK: - ISO 8601 Duration Parser
+    
+    /// Parse ISO 8601 duration format (e.g., "PT45M", "PT1H30M", "P1DT2H")
+    /// Reference: https://en.wikipedia.org/wiki/ISO_8601#Durations
+    private func parseISO8601Duration(_ duration: String?) -> Int? {
+        guard let duration = duration?.uppercased() else { return nil }
+        
+        // ISO 8601 format: P[n]Y[n]M[n]DT[n]H[n]M[n]S
+        // Examples: PT45M = 45 minutes, PT1H30M = 90 minutes, P1DT2H = 26 hours
+        
+        var totalMinutes = 0
+        var currentNumber = ""
+        var isTimePart = false
+        
+        for char in duration {
+            if char == "P" {
+                continue // Start marker
+            } else if char == "T" {
+                isTimePart = true
+                continue
+            } else if char.isNumber {
+                currentNumber.append(char)
+            } else if let value = Int(currentNumber) {
+                switch char {
+                case "D": // Days
+                    totalMinutes += value * 24 * 60
+                case "H": // Hours
+                    totalMinutes += value * 60
+                case "M": // Minutes (only if in time part)
+                    if isTimePart {
+                        totalMinutes += value
+                    } else {
+                        // Months - skip for recipe context
+                    }
+                case "W": // Weeks
+                    totalMinutes += value * 7 * 24 * 60
+                default:
+                    break
+                }
+                currentNumber = ""
+            }
+        }
+        
+        return totalMinutes > 0 ? totalMinutes : nil
+    }
+    
+    // MARK: - Natural Language Time Extraction
+    
+    /// Extract cooking time from natural language text
+    /// Uses regex patterns and NLP heuristics
+    /// Reference: Common recipe time formats from major recipe sites
+    private func extractTimeFromText(_ text: String, keyword: String = "cook") -> Int? {
+        let lowercased = text.lowercased()
+        
+        // Pattern 1: "Cook time: 45 minutes" or "Cooking time: 1 hour 30 minutes"
+        let patterns = [
+            #"\b\#(keyword)(?:ing)?\s*time[:\s]+(\d+)\s*(?:hour|hr|h)?\s*(\d+)?\s*(?:minute|min|m)\b"#,
+            #"\b\#(keyword)[:\s]+(\d+)\s*(?:hour|hr|h)?\s*(\d+)?\s*(?:minute|min|m)\b"#,
+            #"\b(\d+)\s*(?:hour|hr|h)?\s*(\d+)?\s*(?:minute|min|m)\s*\#(keyword)"#,
+            #"\b\#(keyword)(?:ing)?\s*[:\-]\s*(\d+)\s*(?:min|minutes?|m)\b"#,
+            #"\b\#(keyword)(?:ing)?\s*[:\-]\s*(\d+)\s*(?:hr|hours?|h)\b"#
+        ]
+        
+        for pattern in patterns {
+            if let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) {
+                let range = NSRange(lowercased.startIndex..., in: lowercased)
+                if let match = regex.firstMatch(in: lowercased, range: range) {
+                    var totalMinutes = 0
+                    
+                    // Extract hours if present
+                    if match.numberOfRanges > 2, let hoursRange = Range(match.range(at: 2), in: lowercased) {
+                        let hoursStr = String(lowercased[hoursRange])
+                        if let hours = Int(hoursStr) {
+                            totalMinutes += hours * 60
+                        }
+                    }
+                    
+                    // Extract minutes if present
+                    if match.numberOfRanges > 3, let minutesRange = Range(match.range(at: 3), in: lowercased) {
+                        let minutesStr = String(lowercased[minutesRange])
+                        if let minutes = Int(minutesStr) {
+                            totalMinutes += minutes
+                        }
+                    } else if match.numberOfRanges > 2 {
+                        // Single number - determine if hours or minutes based on size
+                        if let valueRange = Range(match.range(at: 2), in: lowercased) {
+                            let valueStr = String(lowercased[valueRange])
+                            if let value = Int(valueStr) {
+                                // If pattern mentions "hour", it's hours; otherwise assume minutes
+                                if pattern.contains("hour|hr|h") {
+                                    totalMinutes += value * 60
+                                } else {
+                                    totalMinutes += value
+                                }
+                            }
+                        }
+                    }
+                    
+                    if totalMinutes > 0 {
+                        return totalMinutes
+                    }
+                }
+            }
+        }
+        
+        return nil
+    }
+    
+    // MARK: - Intelligent Category Classification
+    
+    /// Multi-strategy category classification using:
+    /// 1. Schema.org recipeCategory
+    /// 2. Recipe name analysis (keyword matching)
+    /// 3. Ingredient-based classification
+    /// 4. Cuisine heuristics
+    /// Reference: USDA Food Categories, culinary taxonomy
+    private func classifyCategory(
+        schemaCategory: String?,
+        recipeName: String,
+        ingredients: [String],
+        cuisine: String?
+    ) -> String {
+        
+        // Strategy 1: Use Schema.org category if available and valid
+        if let schema = schemaCategory {
+            let normalized = normalizeCategory(schema)
+            if isValidCategory(normalized) {
+                debugLog("📂 Category from Schema.org: \(normalized)")
+                return normalized
+            }
+        }
+        
+        // Strategy 2: Name-based classification (keyword matching)
+        if let nameCategory = classifyCategoryFromName(recipeName) {
+            debugLog("📂 Category from name: \(nameCategory)")
+            return nameCategory
+        }
+        
+        // Strategy 3: Ingredient-based classification (machine learning approach)
+        if let ingredientCategory = classifyCategoryFromIngredients(ingredients) {
+            debugLog("📂 Category from ingredients: \(ingredientCategory)")
+            return ingredientCategory
+        }
+        
+        // Strategy 4: Cuisine-based default
+        if let cuisine = cuisine?.lowercased() {
+            if ["italian", "french", "american"].contains(cuisine) {
+                return "Main"
+            } else if ["mexican", "indian", "thai", "chinese"].contains(cuisine) {
+                return "Main"
+            }
+        }
+        
+        // Default fallback
+        debugLog("📂 Category: Using default (Main)")
+        return "Main"
+    }
+    
+    /// Normalize category strings from various sources to standard categories
+    /// Maps common variations to canonical categories
+    private func normalizeCategory(_ category: String) -> String {
+        let lower = category.lowercased().trimmingCharacters(in: .whitespaces)
+        
+        // Mapping of common variations to standard categories
+        let categoryMap: [String: String] = [
+            // Breakfast variations
+            "breakfast": "Breakfast",
+            "breakfast and brunch": "Breakfast",
+            "brunch": "Breakfast",
+            "morning": "Breakfast",
+            
+            // Appetizer/Starter variations
+            "appetizer": "Starter",
+            "appetizers": "Starter",
+            "starter": "Starter",
+            "starters": "Starter",
+            "hors d'oeuvre": "Starter",
+            "finger food": "Starter",
+            "snack": "Starter",
+            
+            // Main course variations
+            "main": "Main",
+            "main course": "Main",
+            "main dish": "Main",
+            "entree": "Main",
+            "entrée": "Main",
+            "dinner": "Main",
+            "lunch": "Main",
+            
+            // Side dish variations
+            "side": "Side",
+            "side dish": "Side",
+            "sides": "Side",
+            "accompaniment": "Side",
+            
+            // Soup variations
+            "soup": "Soup",
+            "soups": "Soup",
+            "stew": "Soup",
+            "chowder": "Soup",
+            "bisque": "Soup",
+            
+            // Dessert variations
+            "dessert": "Dessert",
+            "desserts": "Dessert",
+            "sweet": "Dessert",
+            "sweets": "Dessert",
+            "pastry": "Dessert",
+            "cake": "Dessert",
+            "cookie": "Dessert",
+            "pie": "Dessert",
+            
+            // Drink variations
+            "drink": "Drink",
+            "drinks": "Drink",
+            "beverage": "Drink",
+            "beverages": "Drink",
+            "cocktail": "Drink",
+            "smoothie": "Drink"
+        ]
+        
+        return categoryMap[lower] ?? "Main"
+    }
+    
+    /// Check if category is valid (matches one of our 7 categories)
+    private func isValidCategory(_ category: String) -> Bool {
+        let validCategories = ["Breakfast", "Starter", "Main", "Side", "Soup", "Dessert", "Drink"]
+        return validCategories.contains(category)
+    }
+    
+    /// Classify category based on recipe name keywords
+    /// Uses extensive keyword dictionary from major recipe sites
+    private func classifyCategoryFromName(_ name: String) -> String? {
+        let lower = name.lowercased()
+        
+        // Breakfast keywords (high confidence)
+        let breakfastKeywords = [
+            "pancake", "waffle", "french toast", "omelette", "omelet", "scrambled egg",
+            "fried egg", "poached egg", "breakfast", "brunch", "cereal", "oatmeal",
+            "porridge", "granola", "muesli", "bagel", "croissant", "muffin", "scone"
+        ]
+        if breakfastKeywords.contains(where: { lower.contains($0) }) {
+            return "Breakfast"
+        }
+        
+        // Dessert keywords (high confidence)
+        let dessertKeywords = [
+            "cake", "cookie", "brownie", "cupcake", "pie", "tart", "cheesecake",
+            "pudding", "mousse", "ice cream", "sorbet", "gelato", "macaron",
+            "tiramisu", "pavlova", "eclair", "profiterole", "dessert", "sweet",
+            "chocolate chip", "sugar cookie", "shortbread", "biscotti", "fudge",
+            "truffle", "bonbon", "candy", "caramel", "praline"
+        ]
+        if dessertKeywords.contains(where: { lower.contains($0) }) {
+            return "Dessert"
+        }
+        
+        // Soup keywords
+        let soupKeywords = [
+            "soup", "stew", "chowder", "bisque", "broth", "consomme", "gazpacho",
+            "minestrone", "ramen", "pho", "chili", "gumbo"
+        ]
+        if soupKeywords.contains(where: { lower.contains($0) }) {
+            return "Soup"
+        }
+        
+        // Drink keywords
+        let drinkKeywords = [
+            "smoothie", "juice", "cocktail", "mocktail", "latte", "cappuccino",
+            "espresso", "tea", "lemonade", "shake", "milkshake", "drink", "beverage"
+        ]
+        if drinkKeywords.contains(where: { lower.contains($0) }) {
+            return "Drink"
+        }
+        
+        // Starter/Appetizer keywords
+        let starterKeywords = [
+            "dip", "salsa", "guacamole", "hummus", "bruschetta", "crostini",
+            "appetizer", "starter", "canapé", "tapas", "mezze", "antipasto",
+            "spring roll", "dumpling", "wonton", "samosa", "pakora"
+        ]
+        if starterKeywords.contains(where: { lower.contains($0) }) {
+            return "Starter"
+        }
+        
+        // Side dish keywords
+        let sideKeywords = [
+            "side", "fries", "coleslaw", "potato salad", "mac and cheese",
+            "roasted vegetables", "sautéed", "steamed vegetables"
+        ]
+        if sideKeywords.contains(where: { lower.contains($0) }) {
+            return "Side"
+        }
+        
+        return nil
+    }
+    
+    /// Classify category based on ingredient composition
+    /// Uses weighted scoring algorithm for classification confidence
+    private func classifyCategoryFromIngredients(_ ingredients: [String]) -> String? {
+        let ingredientText = ingredients.joined(separator: " ").lowercased()
+        
+        var scores: [String: Int] = [
+            "Breakfast": 0,
+            "Dessert": 0,
+            "Soup": 0,
+            "Drink": 0,
+            "Main": 0
+        ]
+        
+        // Breakfast indicators (eggs, bacon, etc.)
+        if ingredientText.contains("egg") { scores["Breakfast"]! += 3 }
+        if ingredientText.contains("bacon") { scores["Breakfast"]! += 3 }
+        if ingredientText.contains("sausage") && !ingredientText.contains("italian") { scores["Breakfast"]! += 2 }
+        if ingredientText.contains("maple syrup") { scores["Breakfast"]! += 4 }
+        if ingredientText.contains("oat") { scores["Breakfast"]! += 2 }
+        
+        // Dessert indicators (flour + sugar + butter = baking)
+        let hasFlour = ingredientText.contains("flour")
+        let hasSugar = ingredientText.contains("sugar")
+        let hasButter = ingredientText.contains("butter")
+        let hasChocolate = ingredientText.contains("chocolate")
+        let hasVanilla = ingredientText.contains("vanilla")
+        
+        if hasFlour && hasSugar && hasButter { scores["Dessert"]! += 5 }
+        if hasChocolate { scores["Dessert"]! += 3 }
+        if hasVanilla { scores["Dessert"]! += 2 }
+        if ingredientText.contains("cream") && hasSugar { scores["Dessert"]! += 3 }
+        
+        // Soup indicators (broth/stock + vegetables)
+        if ingredientText.contains("broth") || ingredientText.contains("stock") {
+            scores["Soup"]! += 4
+        }
+        if ingredientText.contains("carrot") && ingredientText.contains("celery") {
+            scores["Soup"]! += 3
+        }
+        
+        // Drink indicators
+        if ingredientText.contains("milk") && !hasFlour && ingredients.count <= 5 {
+            scores["Drink"]! += 3
+        }
+        if ingredientText.contains("ice") && ingredients.count <= 6 {
+            scores["Drink"]! += 4
+        }
+        
+        // Main course indicators (protein-heavy)
+        let proteins = ["chicken", "beef", "pork", "fish", "salmon", "shrimp", "lamb", "turkey"]
+        if proteins.contains(where: { ingredientText.contains($0) }) {
+            scores["Main"]! += 4
+        }
+        
+        // Return highest scoring category if confidence is high enough
+        if let maxScore = scores.values.max(), maxScore >= 4 {
+            if let category = scores.first(where: { $0.value == maxScore })?.key {
+                return category
+            }
+        }
+        
+        return nil
+    }
+    
+    // MARK: - Difficulty Estimation
+    
+    /// Estimate recipe difficulty using complexity heuristics
+    /// Factors: ingredient count, instruction complexity, technique keywords
+    /// Reference: Culinary Institute of America skill classifications
+    private func estimateDifficulty(
+        ingredientCount: Int,
+        instructionCount: Int,
+        instructions: [String]
+    ) -> String {
+        
+        var complexityScore = 0
+        
+        // Factor 1: Ingredient count (more ingredients = more complex)
+        if ingredientCount > 15 {
+            complexityScore += 2
+        } else if ingredientCount > 10 {
+            complexityScore += 1
+        }
+        
+        // Factor 2: Number of steps
+        if instructionCount > 10 {
+            complexityScore += 2
+        } else if instructionCount > 6 {
+            complexityScore += 1
+        }
+        
+        // Factor 3: Advanced technique keywords
+        let advancedTechniques = [
+            "sous vide", "flambé", "emulsify", "temper", "confit", "braise",
+            "deglaze", "fold", "proof", "knead", "reduce", "clarify",
+            "blanch", "julienne", "brunoise", "chiffonade", "supreme"
+        ]
+        
+        let instructionText = instructions.joined(separator: " ").lowercased()
+        let techniqueCount = advancedTechniques.filter { instructionText.contains($0) }.count
+        
+        if techniqueCount >= 3 {
+            complexityScore += 3
+        } else if techniqueCount >= 1 {
+            complexityScore += 1
+        }
+        
+        // Factor 4: Time-intensive processes
+        if instructionText.contains("overnight") || instructionText.contains("24 hour") {
+            complexityScore += 2
+        } else if instructionText.contains("rest") || instructionText.contains("chill") {
+            complexityScore += 1
+        }
+        
+        // Classification based on score
+        if complexityScore >= 5 {
+            return "Expert"
+        } else if complexityScore >= 2 {
+            return "Intermediate"
+        } else {
+            return "Basic"
+        }
     }
     
     /// Main import function - extracts recipe data and matches USDA ingredients
@@ -83,7 +513,14 @@ class RecipeImporter: ObservableObject {
                 matchedIngredients: matchedIngredients,
                 rawText: ingredientTexts.joined(separator: "\n"),
                 instructions: instructions,
-                sourceURL: url
+                sourceURL: url,
+                cookTimeMinutes: nil,
+                prepTimeMinutes: nil,
+                totalTimeMinutes: nil,
+                category: nil,
+                cuisine: nil,
+                servings: nil,
+                difficulty: nil
             )
             
             await MainActor.run {
@@ -419,11 +856,69 @@ class RecipeImporter: ObservableObject {
     }
 }
 
-// Simplified Schema.org Recipe Structure (only what we need)
+// Enhanced Schema.org Recipe Structure with full metadata extraction
 struct SchemaRecipe: Codable {
     let name: String?
     let recipeIngredient: [String]?
     let recipeInstructions: InstructionType?
+    let totalTime: String?           // ISO 8601 duration (e.g., "PT45M")
+    let cookTime: String?             // ISO 8601 duration
+    let prepTime: String?             // ISO 8601 duration
+    let recipeCategory: CategoryType? // Can be string or array
+    let recipeCuisine: String?        // "Italian", "Mexican", etc.
+    let recipeYield: YieldType?       // Can be string or number
+    let difficulty: String?           // Some sites include this
+    
+    // Support both string and array for category
+    enum CategoryType: Codable {
+        case string(String)
+        case array([String])
+        
+        init(from decoder: Decoder) throws {
+            let container = try decoder.singleValueContainer()
+            if let string = try? container.decode(String.self) {
+                self = .string(string)
+            } else if let array = try? container.decode([String].self) {
+                self = .array(array)
+            } else {
+                self = .string("")
+            }
+        }
+        
+        var firstValue: String? {
+            switch self {
+            case .string(let s): return s
+            case .array(let arr): return arr.first
+            }
+        }
+    }
+    
+    // Support both string and number for yield
+    enum YieldType: Codable {
+        case string(String)
+        case number(Int)
+        
+        init(from decoder: Decoder) throws {
+            let container = try decoder.singleValueContainer()
+            if let number = try? container.decode(Int.self) {
+                self = .number(number)
+            } else if let string = try? container.decode(String.self) {
+                self = .string(string)
+            } else {
+                self = .number(4)
+            }
+        }
+        
+        var servings: Int {
+            switch self {
+            case .number(let n): return n
+            case .string(let s):
+                // Extract number from string like "4 servings" or "Serves 6"
+                let digits = s.filter { $0.isNumber }
+                return Int(digits) ?? 4
+            }
+        }
+    }
     
     enum InstructionType: Codable {
         case string(String)

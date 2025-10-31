@@ -20,6 +20,7 @@ final class AuthenticationManager: NSObject, ObservableObject {
     private let guestModeKey = "guestMode"
     private let currentEmailKey = "currentUserEmail"
     private let lastActiveTimestampKey = "lastActiveTimestamp"
+    private let appleUserCacheKey = "appleUserCache" // Cache Apple ID user data
     private let sessionTimeoutSeconds: TimeInterval = 300 // 5 minutes
     
     // User Model
@@ -352,21 +353,30 @@ final class AuthenticationManager: NSObject, ObservableObject {
     // MARK: - Sign Out
     
     func signOut() {
+        debugLog("🚪 Sign out initiated")
+        
         // Delete session token
         if let email = UserDefaults.standard.string(forKey: currentEmailKey) {
             credentialManager.deleteSessionToken(for: email)
+            debugLog("🗑️ Deleted session token for: \(email)")
         }
         
-        isAuthenticated = false
-        currentUser = nil
-        isGuestMode = false
-        
-        UserDefaults.standard.set(false, forKey: isAuthenticatedKey)
-        UserDefaults.standard.set(false, forKey: guestModeKey)
-        UserDefaults.standard.removeObject(forKey: currentEmailKey)
-        UserDefaults.standard.removeObject(forKey: lastActiveTimestampKey)
-        
-        HapticManager.shared.light()
+        // Ensure UI updates happen immediately on main thread
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            
+            self.isAuthenticated = false
+            self.currentUser = nil
+            self.isGuestMode = false
+            
+            UserDefaults.standard.set(false, forKey: self.isAuthenticatedKey)
+            UserDefaults.standard.set(false, forKey: self.guestModeKey)
+            UserDefaults.standard.removeObject(forKey: self.currentEmailKey)
+            UserDefaults.standard.removeObject(forKey: self.lastActiveTimestampKey)
+            
+            self.debugLog("✅ Sign out complete - UI should now show login screen")
+            HapticManager.shared.light()
+        }
     }
     
     // MARK: - User Persistence
@@ -440,12 +450,40 @@ extension AuthenticationManager: ASAuthorizationControllerDelegate {
             return
         }
         
+        // Try to get cached user data first (for returning users)
+        var cachedUserData: (email: String?, fullName: String?, givenName: String?, familyName: String?)?
+        if let cachedData = UserDefaults.standard.data(forKey: appleUserCacheKey),
+           let cached = try? JSONDecoder().decode(AppleUserCache.self, from: cachedData),
+           cached.appleUserID == appleIDCredential.user {
+            cachedUserData = (cached.email, cached.fullName, cached.givenName, cached.familyName)
+        }
+        
+        // Use fresh data if available, otherwise fall back to cached data
+        let email = appleIDCredential.email ?? cachedUserData?.email
+        let givenName = appleIDCredential.fullName?.givenName ?? cachedUserData?.givenName
+        let familyName = appleIDCredential.fullName?.familyName ?? cachedUserData?.familyName
+        let fullName = appleIDCredential.fullName?.formatted() ?? cachedUserData?.fullName ?? "Apple User"
+        
+        // Cache the user data for future sign-ins
+        if appleIDCredential.email != nil || appleIDCredential.fullName != nil {
+            let cache = AppleUserCache(
+                appleUserID: appleIDCredential.user,
+                email: email,
+                fullName: fullName,
+                givenName: givenName,
+                familyName: familyName
+            )
+            if let encoded = try? JSONEncoder().encode(cache) {
+                UserDefaults.standard.set(encoded, forKey: appleUserCacheKey)
+            }
+        }
+        
         let user = User(
             id: UUID().uuidString,
-            email: appleIDCredential.email,
-            fullName: appleIDCredential.fullName?.formatted(),
-            givenName: appleIDCredential.fullName?.givenName,
-            familyName: appleIDCredential.fullName?.familyName,
+            email: email,
+            fullName: fullName,
+            givenName: givenName,
+            familyName: familyName,
             appleUserID: appleIDCredential.user,
             createdAt: Date(),
             lastLoginAt: Date()
@@ -458,7 +496,10 @@ extension AuthenticationManager: ASAuthorizationControllerDelegate {
                 await MainActor.run {
                     self.currentUser = user
                     self.isAuthenticated = true
+                    self.isGuestMode = false
                     UserDefaults.standard.set(true, forKey: isAuthenticatedKey)
+                    UserDefaults.standard.set(false, forKey: guestModeKey)
+                    updateLastActiveTimestamp()
                     
                     // Update AccountManager
                     AccountManager.shared.updateProfile(
@@ -494,6 +535,16 @@ extension AuthenticationManager: ASAuthorizationControllerDelegate {
     }
 }
 
+// MARK: - Apple User Cache Model
+
+private struct AppleUserCache: Codable {
+    let appleUserID: String
+    let email: String?
+    let fullName: String?
+    let givenName: String?
+    let familyName: String?
+}
+
 // MARK: - ASAuthorizationControllerPresentationContextProviding
 
 extension AuthenticationManager: ASAuthorizationControllerPresentationContextProviding {
@@ -511,5 +562,15 @@ extension PersonNameComponents {
         if let givenName = givenName { parts.append(givenName) }
         if let familyName = familyName { parts.append(familyName) }
         return parts.joined(separator: " ")
+    }
+}
+
+// MARK: - Debug Logging
+
+extension AuthenticationManager {
+    private func debugLog(_ message: String) {
+        #if DEBUG
+        print("[AuthenticationManager] \(message)")
+        #endif
     }
 }

@@ -52,19 +52,13 @@ open RecipeFinder.xcodeproj
 ## Core Subsystems
 
 ### Recipe Management
-- CRUD operations with Core Data persistence and Schema.org JSON-LD parsing
-- PDF/text export with ingredient scaling and serving size calculations
-- Import from web URLs with automatic metadata extraction
+The recipe subsystem provides full CRUD (Create, Read, Update, Delete) operations with Core Data as the persistence layer. Recipes can be imported via web URLs using Schema.org JSON-LD parsing for automatic metadata extraction. The system supports PDF and text export with dynamic ingredient scaling based on serving size calculations. All recipe data is stored in a normalized relational schema optimized for query performance.
 
 ### Shopping & Kitchen
-- Auto-categorized shopping lists with 20 shopping categories and smart ingredient matching
-- Kitchen inventory tracking with expiration monitoring
-- Intelligent categorization using 500+ keyword database for ingredient classification
+The shopping subsystem implements automatic categorization using a keyword-based classification algorithm with a 500+ term database mapping ingredients to 20 predefined categories (e.g., Dairy, Produce, Meat & Seafood). The kitchen inventory module tracks ingredient quantities with expiration date monitoring and provides real-time availability checking against recipe requirements. Both systems share a common ingredient normalization layer to handle unit conversions and naming variations.
 
 ### Meal Planning
-- Interactive calendar with date selection and meal time categorization (Breakfast, Lunch, Dinner, etc.)
-- Recipe integration allowing creation or selection from existing library
-- Persistent meal plans with Core Data storage
+The meal planning subsystem features an interactive calendar interface with Core Data persistence for meal schedules. Users can assign recipes to specific dates and meal times (Breakfast, Brunch, Lunch, Snack, Dinner, Late Night) through either recipe selection from the existing library or in-line creation via the Recipe Wizard. The system maintains referential integrity between meal plans and recipes through Core Data relationships, supporting cascading updates and deletions.
 
 ---
 

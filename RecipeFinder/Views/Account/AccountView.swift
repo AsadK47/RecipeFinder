@@ -5,7 +5,6 @@ struct AccountView: View {
     @StateObject private var accountManager = AccountManager.shared
     @StateObject private var authManager = AuthenticationManager.shared
     @Environment(\.colorScheme) private var colorScheme
-    @Environment(\.dismiss) private var dismiss
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
@@ -14,9 +13,32 @@ struct AccountView: View {
     @State private var showingDeleteAccountAlert = false
     @State private var showingPrivacyPolicy = false
     @State private var showingDataDownload = false
+    @State private var showingAuthError = false
+    @State private var authErrorMessage = ""
     
     private var isGuestMode: Bool {
         authManager.isGuestMode
+    }
+    
+    private var displayName: String {
+        if let user = authManager.currentUser {
+            return user.displayName
+        }
+        return accountManager.fullName
+    }
+    
+    private var displayEmail: String {
+        if let user = authManager.currentUser {
+            return user.email ?? ""
+        }
+        return accountManager.email
+    }
+    
+    private var displayInitials: String {
+        if let user = authManager.currentUser {
+            return user.initials
+        }
+        return accountManager.initials
     }
     
     var body: some View {
@@ -24,32 +46,31 @@ struct AccountView: View {
             AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
-            VStack(spacing: 0) {
-                // Header
-                header
-                
-                ScrollView {
-                    VStack(spacing: 20) {
-                        // Profile Card
-                        profileCard
-                        
-                        // Quick Actions
-                        if !isGuestMode {
-                            quickActionsSection
-                        }
-                        
-                        // Privacy Section
-                        privacySection
-                        
-                        // Account Actions
-                        accountActionsSection
+            ScrollView {
+                VStack(spacing: 20) {
+                    // Profile Card
+                    profileCard
+                    
+                    // Quick Actions
+                    if !isGuestMode {
+                        quickActionsSection
                     }
-                    .padding(.top, 20)
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 100)
+                    
+                    // Privacy Section
+                    privacySection
+                    
+                    // Account Actions
+                    accountActionsSection
                 }
+                .padding(.top, 20)
+                .padding(.horizontal, 20)
+                .padding(.bottom, 100)
             }
         }
+        .navigationTitle("Account")
+        .navigationBarTitleDisplayMode(.large)
+        .toolbarBackground(.hidden, for: .navigationBar)
+        .toolbarColorScheme(.dark, for: .navigationBar)
         .sheet(isPresented: $showingEditProfile) {
             EditProfileView()
         }
@@ -77,36 +98,11 @@ struct AccountView: View {
         } message: {
             Text("This action cannot be undone. All your data will be permanently deleted.")
         }
-    }
-    
-    // MARK: - Header
-    
-    private var header: some View {
-        HStack {
-            Button(action: { dismiss() }) {
-                Image(systemName: "chevron.left")
-                    .font(.title3)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.white)
-                    .frame(width: 44, height: 44)
-                    .background(.ultraThinMaterial)
-                    .clipShape(Circle())
-            }
-            
-            Spacer()
-            
-            Text("Account")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .foregroundColor(.white)
-            
-            Spacer()
-            
-            Color.clear
-                .frame(width: 44, height: 44)
+        .alert("Sign In Error", isPresented: $showingAuthError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(authErrorMessage)
         }
-        .padding(.horizontal, 20)
-        .padding(.top, 16)
     }
     
     // MARK: - Profile Card
@@ -119,13 +115,13 @@ struct AccountView: View {
                     .fill(AppTheme.accentColor(for: selectedTheme))
                     .frame(width: 80, height: 80)
                 
-                Text(accountManager.initials)
+                Text(displayInitials)
                     .font(.system(size: 32, weight: .bold))
                     .foregroundColor(.white)
             }
             
             // Name
-            Text(accountManager.fullName)
+            Text(displayName)
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundColor(colorScheme == .dark ? .white : .primary)
@@ -181,18 +177,18 @@ struct AccountView: View {
             ActionButton(
                 icon: "person.fill",
                 title: "Personal Info",
-                subtitle: accountManager.fullName,
+                subtitle: displayName,
                 action: { showingEditProfile = true }
             )
             
-            if !accountManager.email.isEmpty {
+            if !displayEmail.isEmpty {
                 Divider()
                     .padding(.leading, 60)
                 
                 ActionButton(
                     icon: "envelope.fill",
                     title: "Email",
-                    subtitle: accountManager.email,
+                    subtitle: displayEmail,
                     action: {}
                 )
             }
@@ -264,7 +260,12 @@ struct AccountView: View {
             if isGuestMode {
                 Button {
                     Task {
-                        try? await authManager.signInWithApple()
+                        do {
+                            try await authManager.signInWithApple()
+                        } catch {
+                            authErrorMessage = error.localizedDescription
+                            showingAuthError = true
+                        }
                     }
                 } label: {
                     HStack {
@@ -329,14 +330,20 @@ struct AccountView: View {
     // MARK: - Helper Functions
     
     private func signOut() {
+        #if DEBUG
+        print("🔓 [AccountView] Sign out button tapped")
+        #endif
         authManager.signOut()
-        dismiss()
+        // Navigation handled automatically by app root view
     }
     
     private func deleteAccount() async {
         do {
+            #if DEBUG
+            print("🗑️ [AccountView] Delete account requested")
+            #endif
             try await authManager.deleteAccount()
-            dismiss()
+            // Navigation handled automatically by app root view
         } catch {
             print("Error deleting account: \(error)")
         }
