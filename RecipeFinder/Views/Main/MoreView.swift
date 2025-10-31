@@ -69,16 +69,30 @@ struct MoreView: View {
                                     .foregroundColor(.white.opacity(0.9))
                                     .padding(.horizontal, 20)
                                 
-                                MoreCard {
-                                    NavigationLink(destination: MealPlanningView(recipes: $recipes)) {
-                                        MoreRow(
-                                            icon: "calendar.circle.fill",
-                                            iconColor: .green,
-                                            title: "Meal Planner",
-                                            subtitle: "Plan your weekly meals"
-                                        )
+                                VStack(spacing: 12) {
+                                    MoreCard {
+                                        NavigationLink(destination: MealPlanningView(recipes: $recipes)) {
+                                            MoreRow(
+                                                icon: "calendar.circle.fill",
+                                                iconColor: .green,
+                                                title: "Meal Planner",
+                                                subtitle: "Plan your weekly meals"
+                                            )
+                                        }
+                                        .buttonStyle(PlainButtonStyle())
                                     }
-                                    .buttonStyle(PlainButtonStyle())
+                                    
+                                    MoreCard {
+                                        NavigationLink(destination: NotesListView()) {
+                                            MoreRow(
+                                                icon: "note.text.badge.plus",
+                                                iconColor: .orange,
+                                                title: "Notes",
+                                                subtitle: "Capture your cooking ideas"
+                                            )
+                                        }
+                                        .buttonStyle(PlainButtonStyle())
+                                    }
                                 }
                                 .padding(.horizontal, 20)
                             }

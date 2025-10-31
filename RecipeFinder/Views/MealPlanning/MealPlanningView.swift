@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MealPlanningView: View {
     @Binding var recipes: [RecipeModel]
+    @StateObject private var mealPlanningManager = MealPlanningManager()
     @State private var selectedDate: Date = Date()
     @State private var showMealTimeSelector = false
     @State private var selectedMealTimes: Set<MealTime> = []
@@ -10,9 +11,6 @@ struct MealPlanningView: View {
     @State private var currentMealTime: MealTime?
     @State private var viewMode: ViewMode = .calendar
     @State private var showNutritionTips = false
-    
-    // Meal plan storage: [date: [mealTime: recipe]]
-    @State private var mealPlans: [Date: [MealTime: RecipeModel]] = [:]
     
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
@@ -51,6 +49,10 @@ struct MealPlanningView: View {
                         if !selectedMealTimes.isEmpty {
                             selectedMealsSection
                                 .transition(.move(edge: .bottom).combined(with: .opacity))
+                        } else if Calendar.current.isDate(selectedDate, inSameDayAs: Date()) || hasMealPlans(for: selectedDate) || selectedDate > Date().addingTimeInterval(-86400) {
+                            // Show empty state for selected day (today or future or recently viewed)
+                            selectedDayEmptyState
+                                .transition(.opacity)
                         } else {
                             emptyStateView
                                 .transition(.opacity)
@@ -106,12 +108,14 @@ struct MealPlanningView: View {
     // Meal Plan Management
     
     private func saveMealPlan(recipe: RecipeModel, for date: Date, mealTime: MealTime) {
-        let normalizedDate = Calendar.current.startOfDay(for: date)
-        
-        if mealPlans[normalizedDate] == nil {
-            mealPlans[normalizedDate] = [:]
-        }
-        mealPlans[normalizedDate]?[mealTime] = recipe
+        let mealPlan = MealPlanModel(
+            recipeId: recipe.id,
+            recipeName: recipe.name,
+            date: date,
+            mealTime: mealTime,
+            servings: recipe.currentServings
+        )
+        mealPlanningManager.addMealPlan(mealPlan)
         
         // Add to selected meal times for display
         selectedMealTimes.insert(mealTime)
@@ -120,23 +124,24 @@ struct MealPlanningView: View {
     }
     
     private func getRecipe(for date: Date, mealTime: MealTime) -> RecipeModel? {
-        let normalizedDate = Calendar.current.startOfDay(for: date)
-        return mealPlans[normalizedDate]?[mealTime]
+        guard let mealPlan = mealPlanningManager.mealPlan(for: date, mealTime: mealTime) else {
+            return nil
+        }
+        // Find the recipe by ID
+        return recipes.first { $0.id == mealPlan.recipeId }
     }
     
     private func removeMealPlan(for date: Date, mealTime: MealTime) {
-        let normalizedDate = Calendar.current.startOfDay(for: date)
-        mealPlans[normalizedDate]?[mealTime] = nil
+        mealPlanningManager.removeMealPlan(for: date, mealTime: mealTime)
         
         // Remove from selected meal times if no recipe
-        if mealPlans[normalizedDate]?[mealTime] == nil {
+        if mealPlanningManager.mealPlan(for: date, mealTime: mealTime) == nil {
             selectedMealTimes.remove(mealTime)
         }
     }
     
     private func hasMealPlans(for date: Date) -> Bool {
-        let normalizedDate = Calendar.current.startOfDay(for: date)
-        return mealPlans[normalizedDate]?.isEmpty == false
+        return mealPlanningManager.hasMealPlans(for: date)
     }
     
     private var header: some View {
@@ -173,9 +178,10 @@ struct MealPlanningView: View {
                 
                 Button(role: .destructive, action: {
                     selectedMealTimes.removeAll()
+                    mealPlanningManager.clearOldMealPlans()
                     HapticManager.shared.light()
                 }) {
-                    Label("Clear All Plans", systemImage: "trash")
+                    Label("Clear Old Plans", systemImage: "trash")
                 }
             } label: {
                 ModernCircleButton(icon: "line.3.horizontal") {}
@@ -382,9 +388,6 @@ struct MealPlanningView: View {
                                 // Load meal times for selected date
                                 updateSelectedMealTimes(for: date)
                             }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                showMealTimeSelector = true
-                            }
                             HapticManager.shared.light()
                         }
                     } else {
@@ -407,12 +410,8 @@ struct MealPlanningView: View {
     }
     
     private func updateSelectedMealTimes(for date: Date) {
-        let normalizedDate = Calendar.current.startOfDay(for: date)
-        if let mealsForDate = mealPlans[normalizedDate] {
-            selectedMealTimes = Set(mealsForDate.keys)
-        } else {
-            selectedMealTimes = []
-        }
+        let mealsForDate = mealPlanningManager.mealPlans(for: date)
+        selectedMealTimes = Set(mealsForDate.map { $0.mealTime })
     }
     
     private var selectedMealsSection: some View {
@@ -455,6 +454,99 @@ struct MealPlanningView: View {
                             Label("Remove Recipe", systemImage: "trash")
                         }
                     }
+                }
+            }
+            
+            // Add more meals button
+            Button(action: {
+                showMealTimeSelector = true
+                HapticManager.shared.light()
+            }) {
+                HStack(spacing: 12) {
+                    Image(systemName: "plus.circle.fill")
+                        .font(.title3)
+                        .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                    
+                    Text("Add Another Meal")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.white)
+                    
+                    Spacer()
+                }
+                .padding(16)
+                .background {
+                    if cardStyle == .solid {
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(colorScheme == .dark ? Color.white.opacity(0.05) : Color.white.opacity(0.15))
+                    } else {
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(.ultraThinMaterial)
+                    }
+                }
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(Color.white.opacity(0.1), style: StrokeStyle(lineWidth: 1, dash: [5]))
+                )
+            }
+        }
+    }
+    
+    private var selectedDayEmptyState: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                Text("Meals for")
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundColor(.white)
+                
+                Spacer()
+                
+                Text(selectedDateString)
+                    .font(.subheadline)
+                    .foregroundColor(.white.opacity(0.7))
+            }
+            .padding(.horizontal, 4)
+            
+            VStack(spacing: 16) {
+                Image(systemName: "calendar.badge.plus")
+                    .font(.system(size: 48))
+                    .foregroundColor(.white.opacity(0.3))
+                
+                Text("No meals planned for this day")
+                    .font(.headline)
+                    .foregroundColor(.white.opacity(0.8))
+                
+                Text("Tap below to add meals for \(shortDateString)")
+                    .font(.subheadline)
+                    .foregroundColor(.white.opacity(0.6))
+                    .multilineTextAlignment(.center)
+                
+                Button(action: {
+                    showMealTimeSelector = true
+                    HapticManager.shared.light()
+                }) {
+                    HStack {
+                        Image(systemName: "plus.circle.fill")
+                        Text("Add Meal")
+                            .fontWeight(.semibold)
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 14)
+                    .background(
+                        Capsule()
+                            .fill(Color.white.opacity(0.2))
+                    )
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding(32)
+            .background {
+                if cardStyle == .solid {
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(colorScheme == .dark ? Color.white.opacity(0.05) : Color.white.opacity(0.15))
+                } else {
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(.ultraThinMaterial)
                 }
             }
         }
@@ -509,6 +601,12 @@ struct MealPlanningView: View {
     private var selectedDateString: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM d, yyyy"
+        return formatter.string(from: selectedDate)
+    }
+    
+    private var shortDateString: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM d"
         return formatter.string(from: selectedDate)
     }
     
@@ -747,39 +845,6 @@ struct MealTimeCard: View {
             RoundedRectangle(cornerRadius: 16)
                 .stroke(recipe != nil ? Color.green.opacity(0.3) : Color.white.opacity(0.1), lineWidth: 1)
         )
-    }
-}
-
-// Supporting Types
-
-enum MealTime: String, CaseIterable {
-    case breakfast = "Breakfast"
-    case brunch = "Brunch"
-    case lunch = "Lunch"
-    case snack = "Snack"
-    case dinner = "Dinner"
-    case lateNight = "Late Night"
-    
-    var icon: String {
-        switch self {
-        case .breakfast: return "☀️"
-        case .brunch: return "🥐"
-        case .lunch: return "🍽️"
-        case .snack: return "🍿"
-        case .dinner: return "🌙"
-        case .lateNight: return "🌃"
-        }
-    }
-    
-    var timeRange: String {
-        switch self {
-        case .breakfast: return "6:00 AM - 10:00 AM"
-        case .brunch: return "10:00 AM - 12:00 PM"
-        case .lunch: return "12:00 PM - 2:00 PM"
-        case .snack: return "2:00 PM - 5:00 PM"
-        case .dinner: return "5:00 PM - 9:00 PM"
-        case .lateNight: return "9:00 PM - 12:00 AM"
-        }
     }
 }
 
