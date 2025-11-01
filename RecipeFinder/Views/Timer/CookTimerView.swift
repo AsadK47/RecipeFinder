@@ -196,11 +196,11 @@ struct CookTimerView: View {
         VStack(spacing: 16) {
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                 defaultPresetButton()
-                presetButton(minutes: 5, title: "5 min")
+                presetButton(seconds: 30, title: "30 sec")
+                presetButton(minutes: 1, title: "1 min")
                 presetButton(minutes: 10, title: "10 min")
                 presetButton(minutes: 15, title: "15 min")
                 presetButton(minutes: 30, title: "30 min")
-                presetButton(minutes: 60, title: "1 hour")
             }
         }
     }
@@ -242,12 +242,13 @@ struct CookTimerView: View {
         .disabled(isDisabled)
     }
     
-    private func presetButton(minutes: Int, title: String) -> some View {
+    private func presetButton(seconds: Int = 0, minutes: Int = 0, title: String) -> some View {
         let isDisabled = timers.count >= maxTimers
+        let totalSeconds = minutes * 60 + seconds
         
         return Button(action: {
             guard !isDisabled else { return }
-            addTimer(name: title, seconds: minutes * 60)
+            addTimer(name: title, seconds: totalSeconds)
             HapticManager.shared.light()
         }) {
             VStack(spacing: 8) {

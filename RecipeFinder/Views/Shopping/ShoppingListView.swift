@@ -317,46 +317,55 @@ struct ShoppingListView: View {
                 }
                 .padding(.bottom, 6)
                 
-                // Always show features card
-                VStack(alignment: .leading, spacing: 16) {
-                    ShoppingFeatureRow(icon: "sparkles", title: "Smart Categories", description: "Type 'milk' → Dairy, 'chicken' → Meat", appTheme: appTheme)
-                    ShoppingFeatureRow(icon: "list.bullet.indent", title: "Auto Grouping", description: "Items group by category automatically", appTheme: appTheme)
-                    ShoppingFeatureRow(icon: "hand.tap", title: "Tap to Collapse", description: "Hide completed categories while shopping", appTheme: appTheme)
-                    ShoppingFeatureRow(icon: "checkmark.circle", title: "Check Off Items", description: "Tap checkbox or swipe to mark as purchased", appTheme: appTheme)
-                    ShoppingFeatureRow(icon: "trash", title: "Delete Items", description: "Swipe left on any item to remove it", appTheme: appTheme)
-                    ShoppingFeatureRow(icon: "ellipsis.circle", title: "Bulk Actions", description: "Use menu (⋯) to clear checked or all items", appTheme: appTheme)
-                    ShoppingFeatureRow(icon: "square.and.pencil", title: "Edit Quantity", description: "Tap item to change amount or category", appTheme: appTheme)
-                }
-                .padding(20)
-                .background {
-                    if cardStyle == .solid {
-                        RoundedRectangle(cornerRadius: 20)
-                            .fill(colorScheme == .dark ? Color(white: 0.15).opacity(0.6) : Color.white.opacity(0.85))
-                    } else {
-                        RoundedRectangle(cornerRadius: 20)
-                            .fill(.ultraThinMaterial.opacity(0.85))
-                    }
-                }
-                .padding(.horizontal, 20)
+                // Reusable features card
+                shoppingFeaturesCard
             }
             .padding(.bottom, 40)
         }
     }
     
-    private var shoppingListContent: some View {
-        listView
-            .listStyle(.plain)
-            .scrollContentBackground(.hidden)
-            .background(Color.clear)
-            .environment(\.defaultMinListHeaderHeight, 0)
+    // Shared Features Card Component
+    private var shoppingFeaturesCard: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            ShoppingFeatureRow(icon: "sparkles", title: "Smart Categories", description: "Type 'milk' → Dairy, 'chicken' → Meat", appTheme: appTheme)
+            ShoppingFeatureRow(icon: "list.bullet.indent", title: "Auto Grouping", description: "Items group by category automatically", appTheme: appTheme)
+            ShoppingFeatureRow(icon: "hand.tap", title: "Tap to Collapse", description: "Hide completed categories while shopping", appTheme: appTheme)
+            ShoppingFeatureRow(icon: "checkmark.circle", title: "Check Off Items", description: "Tap checkbox or swipe to mark as purchased", appTheme: appTheme)
+            ShoppingFeatureRow(icon: "trash", title: "Delete Items", description: "Swipe left on any item to remove it", appTheme: appTheme)
+            ShoppingFeatureRow(icon: "ellipsis.circle", title: "Bulk Actions", description: "Use menu (⋯) to clear checked or all items", appTheme: appTheme)
+            ShoppingFeatureRow(icon: "square.and.pencil", title: "Edit Quantity", description: "Tap item to change amount or category", appTheme: appTheme)
+        }
+        .padding(20)
+        .background {
+            if cardStyle == .solid {
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(colorScheme == .dark ? Color(white: 0.15).opacity(0.6) : Color.white.opacity(0.85))
+            } else {
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(.ultraThinMaterial.opacity(0.85))
+            }
+        }
+        .padding(.horizontal, 20)
     }
     
-    private var listView: some View {
+    private var shoppingListContent: some View {
         List {
             ForEach(sortedGroupedItems, id: \.key) { group in
                 categorySection(for: group.key, items: group.value)
             }
+            
+            // Reuse the same features card component
+            Section {
+                shoppingFeaturesCard
+                    .listRowInsets(EdgeInsets(top: 12, leading: 0, bottom: 12, trailing: 0))
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
+            }
         }
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
+        .background(Color.clear)
+        .environment(\.defaultMinListHeaderHeight, 0)
     }
     
     @ViewBuilder

@@ -2284,17 +2284,10 @@ struct PartyTimeView: View {
                                     .scaleEffect(isVibrating ? 1.05 : 1.0)
                                     .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: isVibrating)
                                 
-                                VStack(spacing: 8) {
-                                    Image(systemName: isVibrating ? "iphone.radiowaves.left.and.right" : "hand.tap.fill")
-                                        .font(.system(size: 50))
-                                        .foregroundColor(.white)
-                                        .symbolEffect(.bounce, options: .repeating, value: isVibrating)
-                                    
-                                    Text(isVibrating ? "Vibrating..." : "Hold Me")
-                                        .font(.title3)
-                                        .fontWeight(.bold)
-                                        .foregroundColor(.white)
-                                }
+                                Image(systemName: isVibrating ? "iphone.radiowaves.left.and.right" : "hand.tap.fill")
+                                    .font(.system(size: 70))
+                                    .foregroundColor(.white)
+                                    .symbolEffect(.bounce, options: .repeating, value: isVibrating)
                             }
                             .onLongPressGesture(minimumDuration: .infinity, pressing: { pressing in
                                 if pressing {

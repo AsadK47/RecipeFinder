@@ -7,6 +7,7 @@ struct KitchenView: View {
     @State private var searchText = ""
     @State private var showAddIngredientSheet = false
     @State private var cachedCategorizedIngredients: [(category: String, ingredients: [String])] = []
+    @State private var selectedCategory: String? = nil
     @State private var collapsedCategories: Set<String> = []
     @FocusState private var isSearchFocused: Bool
     @Environment(\.colorScheme) var colorScheme
@@ -83,8 +84,14 @@ struct KitchenView: View {
                     
                     ScrollView {
                         VStack(alignment: .leading, spacing: 24) {
-                            if kitchenManager.items.isEmpty && searchText.isEmpty {
-                                emptyStateView
+                            // Always show Quick Add section
+                            quickAddSection
+                            
+                            if let category = selectedCategory {
+                                // Show ingredients from selected category
+                                categoryIngredientsView(for: category)
+                            } else if kitchenManager.items.isEmpty && searchText.isEmpty {
+                                emptyPromptView
                             } else if !searchText.isEmpty {
                                 searchResultsView
                             } else {
@@ -173,8 +180,35 @@ struct KitchenView: View {
         }
     }
     
-    private var emptyStateView: some View {
-        VStack(spacing: 32) {
+    
+    // MARK: - Quick Add Section (Always Visible)
+    private var quickAddSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 8) {
+                Image(systemName: "star.fill")
+                    .font(.caption)
+                    .foregroundColor(.yellow)
+                Text("Quick Add")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.white)
+            }
+            .padding(.horizontal, 20)
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    ForEach(["🥚 Eggs", "🍞 Bread", "🥛 Milk", "🍅 Tomatoes", "🧅 Onions", "🧄 Garlic", "🧈 Butter", "🧀 Cheese"], id: \.self) { item in
+                        quickAddChip(item)
+                    }
+                }
+                .padding(.horizontal, 20)
+            }
+        }
+    }
+    
+    // MARK: - Empty Prompt (without Quick Add)
+    private var emptyPromptView: some View {
+        VStack(spacing: 24) {
             VStack(spacing: 16) {
                 Image(systemName: "refrigerator")
                     .font(.system(size: 80))
@@ -185,34 +219,318 @@ struct KitchenView: View {
                     .fontWeight(.bold)
                     .foregroundColor(.white)
                 
-                Text("Search to add ingredients")
+                Text("Add ingredients using Quick Add above or browse categories below")
+                    .font(.subheadline)
+                    .foregroundColor(.white.opacity(0.7))
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 40)
+            }
+            .padding(.top, 20)
+            
+            // Browse Categories Grid
+            browseCategoriesSection
+        }
+        .frame(maxWidth: .infinity)
+    }
+    
+    // MARK: - Browse Categories Section
+    private var browseCategoriesSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(spacing: 8) {
+                Image(systemName: "square.grid.2x2")
+                    .font(.caption)
+                    .foregroundColor(AppTheme.accentColor(for: appTheme))
+                Text("Browse by Category")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.white)
+            }
+            .padding(.horizontal, 20)
+            
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                ForEach(FoodsList.categories.prefix(6), id: \.self) { category in
+                    categoryCard(category)
+                }
+            }
+            .padding(.horizontal, 20)
+        }
+    }
+    
+    private var emptyStateView: some View {
+        VStack(spacing: 24) {
+            VStack(spacing: 16) {
+                Image(systemName: "refrigerator")
+                    .font(.system(size: 80))
+                    .foregroundColor(.white.opacity(0.3))
+                
+                Text("Your Kitchen is Empty")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+                
+                Text("Add ingredients to see recipe matches")
                     .font(.subheadline)
                     .foregroundColor(.white.opacity(0.7))
                     .multilineTextAlignment(.center)
             }
+            .padding(.top, 40)
             
-            // Suggestions
+            // Quick Add Section
             VStack(alignment: .leading, spacing: 16) {
-                Text("Popular Ingredients")
-                    .font(.headline)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 20)
+                HStack(spacing: 8) {
+                    Image(systemName: "star.fill")
+                        .font(.caption)
+                        .foregroundColor(.yellow)
+                    Text("Quick Add")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                }
+                .padding(.horizontal, 20)
                 
-                LazyVStack(spacing: 8) {
-                    ForEach(["Chicken", "Rice", "Tomato", "Onion", "Garlic", "Olive Oil"], id: \.self) { ingredient in
-                        kitchenIngredientButton(ingredient)
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 12) {
+                        ForEach(["🥚 Eggs", "🍞 Bread", "🥛 Milk", "🍅 Tomatoes", "🧅 Onions", "🧄 Garlic", "🧈 Butter", "🧀 Cheese"], id: \.self) { item in
+                            quickAddChip(item)
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                }
+            }
+            
+            // Browse Categories Grid
+            VStack(alignment: .leading, spacing: 16) {
+                HStack(spacing: 8) {
+                    Image(systemName: "square.grid.2x2")
+                        .font(.caption)
+                        .foregroundColor(AppTheme.accentColor(for: appTheme))
+                    Text("Browse by Category")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                }
+                .padding(.horizontal, 20)
+                
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                    ForEach(FoodsList.categories.prefix(6), id: \.self) { category in
+                        categoryCard(category)
                     }
                 }
                 .padding(.horizontal, 20)
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(.top, 20)
+    }
+    
+    private func quickAddChip(_ item: String) -> some View {
+        let ingredient = item.split(separator: " ").dropFirst().joined(separator: " ")
+        let isInKitchen = kitchenManager.hasItem(String(ingredient))
+        
+        return Button(action: {
+            withAnimation(.spring(response: 0.3)) {
+                kitchenManager.toggleItem(String(ingredient))
+                HapticManager.shared.success()
+            }
+        }) {
+            HStack(spacing: 6) {
+                Text(item)
+                    .font(.subheadline)
+                    .foregroundColor(.white)
+                
+                if isInKitchen {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.caption)
+                        .foregroundColor(.green)
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .background(
+                Capsule()
+                    .fill(isInKitchen ? Color.green.opacity(0.3) : Color.white.opacity(0.15))
+                    .overlay(
+                        Capsule()
+                            .stroke(isInKitchen ? Color.green.opacity(0.5) : Color.white.opacity(0.3), lineWidth: 1)
+                    )
+            )
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+    
+    private func categoryCard(_ category: String) -> some View {
+        Button(action: {
+            withAnimation {
+                selectedCategory = category
+                HapticManager.shared.light()
+            }
+        }) {
+            VStack(spacing: 12) {
+                ZStack {
+                    Circle()
+                        .fill(CategoryClassifier.categoryColor(for: category).opacity(0.2))
+                        .frame(width: 60, height: 60)
+                    
+                    Image(systemName: CategoryClassifier.categoryIcon(for: category))
+                        .font(.system(size: 28))
+                        .foregroundColor(CategoryClassifier.categoryColor(for: category))
+                }
+                
+                Text(category)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.white)
+                    .lineLimit(1)
+                
+                Text("\(FoodsList.getFoods(forCategory: category).count) items")
+                    .font(.caption2)
+                    .foregroundColor(.white.opacity(0.6))
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 16)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(.ultraThinMaterial)
+            )
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+    
+    // MARK: - Category Ingredients View
+    private func categoryIngredientsView(for category: String) -> some View {
+        VStack(alignment: .leading, spacing: 16) {
+            // Header with back button and category info
+            HStack(spacing: 12) {
+                Button(action: {
+                    withAnimation {
+                        selectedCategory = nil
+                        HapticManager.shared.light()
+                    }
+                }) {
+                    Image(systemName: "chevron.left.circle.fill")
+                        .font(.title2)
+                        .foregroundColor(.white)
+                }
+                
+                Circle()
+                    .fill(CategoryClassifier.categoryColor(for: category).opacity(0.2))
+                    .frame(width: 50, height: 50)
+                    .overlay(
+                        Image(systemName: CategoryClassifier.categoryIcon(for: category))
+                            .font(.title3)
+                            .foregroundColor(CategoryClassifier.categoryColor(for: category))
+                    )
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(category)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                    
+                    Text("\(FoodsList.getFoods(forCategory: category).count) items")
+                        .font(.caption)
+                        .foregroundColor(.white.opacity(0.7))
+                }
+                
+                Spacer()
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 8)
+            
+            // List of ingredients
+            LazyVStack(spacing: 8) {
+                ForEach(FoodsList.getFoods(forCategory: category), id: \.self) { ingredient in
+                    categoryIngredientButton(ingredient)
+                }
+            }
+            .padding(.horizontal, 20)
+        }
+    }
+    
+    private func categoryIngredientButton(_ ingredient: String) -> some View {
+        let isInKitchen = kitchenManager.hasItem(ingredient)
+        let category = CategoryClassifier.suggestCategory(for: ingredient)
+        
+        return Button(
+            action: {
+                withAnimation(.spring(response: 0.3)) {
+                    kitchenManager.toggleItem(ingredient)
+                    HapticManager.shared.light()
+                    
+                    // Go back to main view after adding
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        withAnimation {
+                            selectedCategory = nil
+                        }
+                    }
+                }
+            },
+            label: {
+                HStack(spacing: 12) {
+                    Image(systemName: CategoryClassifier.categoryIcon(for: category))
+                        .foregroundStyle(CategoryClassifier.categoryColor(for: category))
+                        .font(.body)
+                    
+                    Text(ingredient)
+                        .font(.body)
+                        .foregroundStyle(colorScheme == .dark ? .white : .black)
+                    
+                    Spacer()
+                    
+                    Image(systemName: isInKitchen ? "checkmark.circle.fill" : "plus.circle")
+                        .foregroundStyle(isInKitchen ? .green : AppTheme.accentColor(for: appTheme))
+                        .font(.title3)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 14)
+                .background {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(.regularMaterial)
+                }
+            }
+        )
+        .buttonStyle(PlainButtonStyle())
     }
     
     private var kitchenItemsView: some View {
         VStack(alignment: .leading, spacing: 16) {
+            // Compact header with count and add button
+            HStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("My Kitchen")
+                        .font(.title3)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                    
+                    Text("\(kitchenManager.items.count) ingredients")
+                        .font(.caption)
+                        .foregroundColor(.white.opacity(0.7))
+                }
+                
+                Spacer()
+                
+                Button(action: {
+                    showAddIngredientSheet = true
+                    HapticManager.shared.light()
+                }) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.caption)
+                        Text("Add More")
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(
+                        Capsule()
+                            .fill(AppTheme.accentColor(for: appTheme))
+                    )
+                }
+            }
+            .padding(.horizontal, 20)
+            
+            // Category Groups
             ForEach(kitchenManager.groupedItems, id: \.category) { group in
                 KitchenCategoryCard(
                     category: group.category,
@@ -231,6 +549,10 @@ struct KitchenView: View {
                 )
             }
             .padding(.horizontal, 20)
+            
+            // Browse more categories
+            browseCategoriesSection
+                .padding(.top, 8)
         }
     }
     
