@@ -198,6 +198,16 @@ struct MealPlanningView: View {
             .padding(.top, 16)
         }
         .padding(.bottom, 8)
+        .background(
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color.black.opacity(0.2),
+                    Color.clear
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        )
     }
     
     private var viewModePicker: some View {
@@ -793,8 +803,9 @@ struct MealTimeCard: View {
                     .fill(Color.white.opacity(0.15))
                     .frame(width: 52, height: 52)
                 
-                Text(mealTime.icon)
-                    .font(.title2)
+                Image(systemName: mealTime.icon)
+                    .font(.system(size: 22, weight: .semibold))
+                    .foregroundColor(.white.opacity(0.9))
             }
             
             VStack(alignment: .leading, spacing: 6) {
@@ -815,7 +826,7 @@ struct MealTimeCard: View {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.caption2)
                             .foregroundColor(.green)
-                        Text(recipe.name ?? "Recipe")
+                        Text(recipe.name)
                             .font(.caption)
                             .lineLimit(1)
                     }
@@ -908,8 +919,9 @@ struct MealTimeSelectorSheet: View {
                                                       : Color.white.opacity(0.1))
                                                 .frame(width: 50, height: 50)
                                             
-                                            Text(mealTime.icon)
-                                                .font(.title2)
+                                            Image(systemName: mealTime.icon)
+                                                .font(.system(size: 22, weight: .semibold))
+                                                .foregroundColor(selectedMealTimes.contains(mealTime) ? .green : .white.opacity(0.9))
                                         }
                                         
                                         VStack(alignment: .leading, spacing: 6) {

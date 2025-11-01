@@ -257,6 +257,28 @@ final class AuthenticationManager: NSObject, ObservableObject {
             UserDefaults.standard.set(false, forKey: guestModeKey)
             UserDefaults.standard.set(email, forKey: currentEmailKey)
             updateLastActiveTimestamp()
+            
+            // Sync user data to AccountManager if not already set
+            let accountManager = AccountManager.shared
+            if accountManager.email.isEmpty || accountManager.email != email {
+                // Parse full name into components
+                let fullName = user.fullName ?? ""
+                let nameComponents = fullName.components(separatedBy: " ").filter { !$0.isEmpty }
+                let firstName = nameComponents.first ?? ""
+                let lastName = nameComponents.count > 1 ? nameComponents.last ?? "" : ""
+                let middleName = nameComponents.count > 2 ? nameComponents[1..<nameComponents.count-1].joined(separator: " ") : ""
+                
+                accountManager.updateProfile(
+                    firstName: firstName,
+                    middleName: middleName,
+                    lastName: lastName,
+                    email: email,
+                    address: accountManager.address, // Keep existing address
+                    dateOfBirth: accountManager.dateOfBirth, // Keep existing DOB
+                    chefType: accountManager.chefType // Keep existing chef type
+                )
+            }
+            
             HapticManager.shared.success()
         }
     }
@@ -346,6 +368,25 @@ final class AuthenticationManager: NSObject, ObservableObject {
         
         guard saved else {
             throw AuthError.userCreationFailed
+        }
+        
+        // Parse full name into components and populate AccountManager
+        let nameComponents = fullName.components(separatedBy: " ").filter { !$0.isEmpty }
+        let firstName = nameComponents.first ?? ""
+        let lastName = nameComponents.count > 1 ? nameComponents.last ?? "" : ""
+        let middleName = nameComponents.count > 2 ? nameComponents[1..<nameComponents.count-1].joined(separator: " ") : ""
+        
+        // Update AccountManager with parsed name and email
+        await MainActor.run {
+            AccountManager.shared.updateProfile(
+                firstName: firstName,
+                middleName: middleName,
+                lastName: lastName,
+                email: email,
+                address: "",
+                dateOfBirth: nil,
+                chefType: .homeCook
+            )
         }
         
         // Don't authenticate - user must sign in manually (defensive)

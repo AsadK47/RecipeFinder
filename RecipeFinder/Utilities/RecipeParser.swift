@@ -493,14 +493,12 @@ struct RecipeParser {
     private static func extractDescription(from text: String, lines: [String]) -> String? {
         // Look for lines that seem like descriptions (after title, before ingredients)
         var descriptionLines: [String] = []
-        var foundIngredients = false
         
         for (index, line) in lines.enumerated() {
             if index == 0 { continue } // Skip title
             
             // Stop if we hit ingredients
             if line.lowercased().contains("ingredient") || isIngredientLine(line) {
-                foundIngredients = true
                 break
             }
             

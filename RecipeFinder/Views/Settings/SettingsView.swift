@@ -152,6 +152,15 @@ struct SettingsTabView: View {
                                     Divider()
                                         .padding(.leading, 60)
                                     
+                                    NavigationLink(destination: DisplaySettingsView()) {
+                                        SettingsRow(icon: "display", iconColor: .cyan, title: "Display")
+                                            .padding(20)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                    
+                                    Divider()
+                                        .padding(.leading, 60)
+                                    
                                     NavigationLink(destination: PartyTimeView()) {
                                         SettingsRow(icon: "party.popper.fill", iconColor: .purple, title: "Party Time")
                                             .padding(20)
@@ -835,7 +844,6 @@ struct TimerSettingsView: View {
     @AppStorage("defaultTimerDuration") private var defaultTimerDuration: Int = 300 // 5 minutes in seconds
     @AppStorage("timerSound") private var timerSound: TimerSound = .default
     @AppStorage("timerVibration") private var timerVibration: Bool = true
-    @AppStorage("keepScreenAwake") private var keepScreenAwake: Bool = false
     @AppStorage("showTimerInNotifications") private var showTimerInNotifications: Bool = true
     
     @Environment(\.colorScheme) var colorScheme
@@ -971,26 +979,6 @@ struct TimerSettingsView: View {
                             Text("Behavior")
                                 .font(.headline)
                                 .foregroundColor(colorScheme == .dark ? .white : .black)
-                            
-                            Toggle(isOn: $keepScreenAwake) {
-                                HStack(spacing: 12) {
-                                    Image(systemName: "light.max")
-                                        .foregroundColor(AppTheme.accentColor)
-                                        .frame(width: 30)
-                                    
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text("Keep Screen Awake")
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
-                                        Text("Prevent screen from dimming during cooking")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                    }
-                                }
-                            }
-                            .tint(AppTheme.accentColor)
-                            
-                            Divider()
-                                .padding(.vertical, 4)
                             
                             Toggle(isOn: $showTimerInNotifications) {
                                 HStack(spacing: 12) {
@@ -1140,6 +1128,90 @@ struct UnitsSettingsView: View {
     }
 }
 
+struct DisplaySettingsView: View {
+    @AppStorage("keepScreenAwake") private var keepScreenAwake: Bool = false
+    @AppStorage("brightnessBoost") private var brightnessBoost: Bool = false
+    
+    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.appTheme) var appTheme
+    
+    var body: some View {
+        ZStack {
+            AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
+                .ignoresSafeArea()
+            
+            ScrollView {
+                VStack(spacing: 24) {
+                    // Screen Settings
+                    SettingsCard {
+                        VStack(alignment: .leading, spacing: 20) {
+                            Text("Screen Settings")
+                                .font(.headline)
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                            
+                            Toggle(isOn: $keepScreenAwake) {
+                                HStack(spacing: 12) {
+                                    Image(systemName: "light.max")
+                                        .foregroundColor(AppTheme.accentColor)
+                                        .frame(width: 30)
+                                    
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("Keep Screen Awake")
+                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        Text("Prevent screen from dimming while cooking")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                    }
+                                }
+                            }
+                            .tint(AppTheme.accentColor)
+                        }
+                        .padding(20)
+                    }
+                    
+                    // Information Card
+                    SettingsCard {
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack(spacing: 12) {
+                                Image(systemName: "info.circle.fill")
+                                    .foregroundColor(.blue)
+                                    .font(.title3)
+                                
+                                Text("About This Setting")
+                                    .font(.headline)
+                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                            }
+                            
+                            Text("When enabled, your screen will stay on while you're viewing recipes or using timers. This is helpful when cooking and you need to reference instructions without constantly touching your device.")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                            
+                            Divider()
+                                .padding(.vertical, 4)
+                            
+                            HStack(spacing: 8) {
+                                Image(systemName: "battery.100")
+                                    .foregroundColor(.green)
+                                    .font(.caption)
+                                
+                                Text("Note: Keeping the screen on may use more battery")
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        .padding(20)
+                    }
+                }
+                .padding(20)
+            }
+        }
+        .navigationTitle("Display")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
+    }
+}
+
 // MeasurementSystem enum is defined in UnitConversion.swift
 
 enum TemperatureUnit: String, CaseIterable {
@@ -1152,6 +1224,7 @@ struct PrivacySettingsView: View {
     @Environment(\.appTheme) var appTheme
     @AppStorage("skipRecipeDeleteConfirmation") private var skipDeleteConfirmation: Bool = false
     @State private var showResetSuccess = false
+    @State private var showPrivacyPolicy = false
     
     var body: some View {
         ZStack {
@@ -1160,6 +1233,65 @@ struct PrivacySettingsView: View {
             
             ScrollView {
                 VStack(spacing: 24) {
+                    // Privacy Documents
+                    SettingsCard {
+                        VStack(spacing: 0) {
+                            Button(action: {
+                                showPrivacyPolicy = true
+                                HapticManager.shared.light()
+                            }) {
+                                HStack(spacing: 12) {
+                                    Image(systemName: "hand.raised.fill")
+                                        .foregroundColor(.blue)
+                                        .frame(width: 30)
+                                    
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("Privacy Policy")
+                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        Text("View our privacy and data practices")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                    }
+                                    
+                                    Spacer()
+                                    
+                                    Image(systemName: "chevron.right")
+                                        .foregroundColor(.gray)
+                                        .font(.caption)
+                                }
+                                .padding(20)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                            
+                            Divider()
+                                .padding(.leading, 62)
+                            
+                            NavigationLink(destination: DataPrivacyView()) {
+                                HStack(spacing: 12) {
+                                    Image(systemName: "lock.doc.fill")
+                                        .foregroundColor(.purple)
+                                        .frame(width: 30)
+                                    
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("Data & Privacy")
+                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        Text("Control your data and privacy settings")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                    }
+                                    
+                                    Spacer()
+                                    
+                                    Image(systemName: "chevron.right")
+                                        .foregroundColor(.gray)
+                                        .font(.caption)
+                                }
+                                .padding(20)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
+                    }
+                    
                     // Confirmation Preferences
                     SettingsCard {
                         VStack(alignment: .leading, spacing: 20) {
@@ -1281,6 +1413,9 @@ struct PrivacySettingsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
         .animation(.spring(response: 0.3), value: showResetSuccess)
+        .sheet(isPresented: $showPrivacyPolicy) {
+            PrivacyPolicyView()
+        }
     }
 }
 
@@ -1507,8 +1642,8 @@ struct DataManagementSettingsView: View {
         // 1. Clear Core Data (all recipes)
         let recipeFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "RecipeData")
         let recipeBatchDelete = NSBatchDeleteRequest(fetchRequest: recipeFetch)
-        try? context.execute(recipeBatchDelete)
-        try? context.save()
+        _ = try? context.execute(recipeBatchDelete)
+        _ = try? context.save()
         
         // 2. Clear all managers
         kitchenManager.clearAll()
@@ -1543,8 +1678,8 @@ struct DataManagementSettingsView: View {
         // 1. Clear Core Data (all recipes)
         let recipeFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "RecipeData")
         let recipeBatchDelete = NSBatchDeleteRequest(fetchRequest: recipeFetch)
-        try? context.execute(recipeBatchDelete)
-        try? context.save()
+        _ = try? context.execute(recipeBatchDelete)
+        _ = try? context.save()
         
         // 2. Clear all managers
         kitchenManager.clearAll()

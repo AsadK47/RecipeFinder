@@ -211,25 +211,24 @@ struct OnboardingSlideView: View {
             }
             
             // Features Grid
-            HStack(spacing: 24) {
+            VStack(spacing: 16) {
                 ForEach(slide.features, id: \.icon) { feature in
-                    VStack(spacing: 8) {
+                    HStack(spacing: 12) {
                         Image(systemName: feature.icon)
-                            .font(.system(size: 24, weight: .medium))
+                            .font(.system(size: 20, weight: .semibold))
                             .foregroundColor(slide.accentColor)
-                            .frame(width: 50, height: 50)
+                            .frame(width: 40, height: 40)
                             .background(
                                 Circle()
                                     .fill(Color.white.opacity(0.15))
                             )
                         
                         Text(feature.label)
-                            .font(.caption)
-                            .fontWeight(.medium)
-                            .foregroundColor(.white.opacity(0.9))
-                            .multilineTextAlignment(.center)
-                            .frame(width: 80)
+                            .font(.system(size: 15, weight: .medium))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                     }
+                    .padding(.horizontal, 40)
                 }
             }
             .padding(.top, 20)

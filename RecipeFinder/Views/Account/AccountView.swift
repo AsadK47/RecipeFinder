@@ -59,8 +59,8 @@ struct AccountView: View {
                         personalInfoSection
                     }
                     
-                    // Privacy & Data Section
-                    privacyDataSection
+                    // Data Management Section
+                    dataManagementSection
                     
                     // Account Actions
                     accountActionsSection
@@ -202,25 +202,10 @@ struct AccountView: View {
         }
     }
     
-    // MARK: - Privacy & Data
+    // MARK: - Data Management
     
-    private var privacyDataSection: some View {
+    private var dataManagementSection: some View {
         VStack(spacing: 0) {
-            AccountRowButton(
-                icon: "hand.raised.fill",
-                iconColor: .blue,
-                title: "Privacy Policy",
-                subtitle: "View our privacy and data practices",
-                showChevron: true,
-                action: { 
-                    showingPrivacyPolicy = true 
-                    HapticManager.shared.light()
-                }
-            )
-            
-            Divider()
-                .padding(.leading, 60)
-            
             AccountRowButton(
                 icon: "square.and.arrow.down.fill",
                 iconColor: .green,
@@ -568,7 +553,6 @@ struct DataDownloadView: View {
             do {
                 // Gather all user data
                 let accountManager = AccountManager.shared
-                let authManager = AuthenticationManager.shared
                 
                 var userData: [String: Any] = [:]
                 
@@ -652,18 +636,134 @@ struct DataDownloadView: View {
                     userData["recipeNotes"] = notesDict
                 }
                 
-                // Convert to JSON
-                let jsonData = try JSONSerialization.data(withJSONObject: userData, options: [.prettyPrinted, .sortedKeys])
+                // Convert to pretty, readable JSON
+                let jsonData = try JSONSerialization.data(
+                    withJSONObject: userData, 
+                    options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+                )
                 
-                // Create temporary file
+                // Create a more readable text format
                 let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "yyyy-MM-dd"
+                dateFormatter.dateFormat = "yyyy-MM-dd_HH-mm"
                 let dateString = dateFormatter.string(from: Date())
-                let fileName = "RecipeFinder_Data_\(dateString).json"
+                let fileName = "RecipeFinder_Export_\(dateString).txt"
                 let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
                 
+                // Format as readable text
+                var readableText = """
+                ═══════════════════════════════════════════════════
+                        RecipeFinder Data Export
+                ═══════════════════════════════════════════════════
+                Export Date: \(DateFormatter.localizedString(from: Date(), dateStyle: .long, timeStyle: .medium))
+                
+                
+                ───────────────────────────────────────────────────
+                📋 ACCOUNT INFORMATION
+                ───────────────────────────────────────────────────
+                Name: \(accountManager.fullName)
+                Email: \(accountManager.email)
+                Chef Type: \(accountManager.chefType.rawValue) \(accountManager.chefType.emoji)
+                Date of Birth: \(accountManager.dateOfBirth != nil ? DateFormatter.localizedString(from: accountManager.dateOfBirth!, dateStyle: .long, timeStyle: .none) : "Not set")
+                
+                
+                ───────────────────────────────────────────────────
+                ⚙️ APP PREFERENCES
+                ───────────────────────────────────────────────────
+                Measurement System: \(measurementSystem.capitalized)
+                Theme: \(appTheme.capitalized)
+                Card Style: \(cardStyle.capitalized)
+                
+                
+                """
+                
+                // Add Shopping List
+                if let shoppingListData = UserDefaults.standard.data(forKey: "shoppingListItems"),
+                   let shoppingList = try? JSONDecoder().decode([ShoppingListItem].self, from: shoppingListData),
+                   !shoppingList.isEmpty {
+                    readableText += """
+                    ───────────────────────────────────────────────────
+                    🛒 SHOPPING LIST (\(shoppingList.count) items)
+                    ───────────────────────────────────────────────────
+                    
+                    """
+                    for item in shoppingList {
+                        let status = item.isCompleted ? "✓" : "○"
+                        readableText += "\(status) \(item.name) - \(item.quantity) \(item.unit)\n"
+                    }
+                    readableText += "\n\n"
+                }
+                
+                // Add Kitchen Inventory
+                if let inventoryData = UserDefaults.standard.data(forKey: "kitchenInventory"),
+                   let inventory = try? JSONDecoder().decode([KitchenInventoryItemModel].self, from: inventoryData),
+                   !inventory.isEmpty {
+                    readableText += """
+                    ───────────────────────────────────────────────────
+                    🥘 KITCHEN INVENTORY (\(inventory.count) items)
+                    ───────────────────────────────────────────────────
+                    
+                    """
+                    for item in inventory {
+                        let expiry = item.expiryDate != nil ? " (Expires: \(DateFormatter.localizedString(from: item.expiryDate!, dateStyle: .short, timeStyle: .none)))" : ""
+                        readableText += "• \(item.name) - \(item.quantity) (\(item.category.rawValue))\(expiry)\n"
+                    }
+                    readableText += "\n\n"
+                }
+                
+                // Add Meal Plans
+                if let mealPlanData = UserDefaults.standard.data(forKey: "mealPlans"),
+                   let mealPlans = try? JSONDecoder().decode([MealPlanModel].self, from: mealPlanData),
+                   !mealPlans.isEmpty {
+                    readableText += """
+                    ───────────────────────────────────────────────────
+                    📅 MEAL PLANS (\(mealPlans.count) planned meals)
+                    ───────────────────────────────────────────────────
+                    
+                    """
+                    let sortedPlans = mealPlans.sorted { $0.date < $1.date }
+                    for plan in sortedPlans {
+                        let dateStr = DateFormatter.localizedString(from: plan.date, dateStyle: .medium, timeStyle: .none)
+                        let status = plan.isCompleted ? "✓" : "○"
+                        readableText += "\(status) \(dateStr) - \(plan.mealTime.rawValue): \(plan.recipeName)\n"
+                    }
+                    readableText += "\n\n"
+                }
+                
+                // Add Favorites
+                if let favorites = UserDefaults.standard.array(forKey: "favoriteRecipeIDs") as? [String],
+                   !favorites.isEmpty {
+                    readableText += """
+                    ───────────────────────────────────────────────────
+                    ⭐️ FAVORITE RECIPES (\(favorites.count) favorites)
+                    ───────────────────────────────────────────────────
+                    (Recipe IDs saved - import this file to restore)
+                    
+                    
+                    """
+                }
+                
+                // Add footer with JSON data
+                readableText += """
+                ═══════════════════════════════════════════════════
+                        RAW DATA (JSON Format)
+                ═══════════════════════════════════════════════════
+                
+                """
+                
+                if let jsonString = String(data: jsonData, encoding: .utf8) {
+                    readableText += jsonString
+                }
+                
+                readableText += """
+                
+                
+                ═══════════════════════════════════════════════════
+                End of Export
+                ═══════════════════════════════════════════════════
+                """
+                
                 // Write to file
-                try jsonData.write(to: tempURL)
+                try readableText.write(to: tempURL, atomically: true, encoding: .utf8)
                 
                 // Update UI on main thread
                 DispatchQueue.main.async {
