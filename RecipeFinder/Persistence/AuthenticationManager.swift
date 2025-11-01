@@ -89,7 +89,28 @@ final class AuthenticationManager: NSObject, ObservableObject {
     
     private override init() {
         super.init()
+        setupTestUser()
         checkAuthenticationStatus()
+    }
+    
+    // MARK: - Test User Setup
+    
+    private func setupTestUser() {
+        // Create a test user if it doesn't exist
+        let testEmail = "test@recipefinder.com"
+        let testPassword = "test123"
+        let testFullName = "Test Chef"
+        
+        // Check if test user already exists
+        if credentialManager.getUserInfo(email: testEmail) == nil {
+            // Save test user credentials
+            _ = credentialManager.saveCredentials(
+                email: testEmail,
+                password: testPassword,
+                fullName: testFullName
+            )
+            debugLog("✅ Test user created: \(testEmail) / \(testPassword)")
+        }
     }
     
     // MARK: - Authentication Status

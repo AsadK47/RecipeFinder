@@ -835,7 +835,7 @@ struct TimerSettingsView: View {
     @AppStorage("defaultTimerDuration") private var defaultTimerDuration: Int = 300 // 5 minutes in seconds
     @AppStorage("timerSound") private var timerSound: TimerSound = .default
     @AppStorage("timerVibration") private var timerVibration: Bool = true
-    @AppStorage("keepScreenAwake") private var keepScreenAwake: Bool = true
+    @AppStorage("keepScreenAwake") private var keepScreenAwake: Bool = false
     @AppStorage("showTimerInNotifications") private var showTimerInNotifications: Bool = true
     
     @Environment(\.colorScheme) var colorScheme

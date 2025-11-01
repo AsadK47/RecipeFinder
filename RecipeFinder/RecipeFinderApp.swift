@@ -6,7 +6,8 @@ import UIKit
 struct RecipeFinderApp: App {
     let persistenceController = PersistenceController.shared
     @StateObject private var authManager = AuthenticationManager.shared
-    @State private var showGuestSplash = false
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    @State private var showOnboarding = false
     
     init() {
         configureAppearance()
@@ -17,11 +18,30 @@ struct RecipeFinderApp: App {
         WindowGroup {
             rootView
                 .animation(.easeInOut(duration: 0.3), value: authManager.isAuthenticated)
+                .fullScreenCover(isPresented: $showOnboarding) {
+                    OnboardingView()
+                        .onDisappear {
+                            hasCompletedOnboarding = true
+                        }
+                }
+                .onAppear {
+                    // Show onboarding on first launch after authentication
+                    if authManager.isAuthenticated && !hasCompletedOnboarding {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            showOnboarding = true
+                        }
+                    }
+                }
+                .onChange(of: authManager.isAuthenticated) { _, isAuthenticated in
+                    // Show onboarding when user first signs in
+                    if isAuthenticated && !hasCompletedOnboarding {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            showOnboarding = true
+                        }
+                    }
+                }
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
                     authManager.checkSessionExpiration()
-                }
-                .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ShowGuestSplash"))) { _ in
-                    showGuestSplash = true
                 }
         }
     }
@@ -30,12 +50,7 @@ struct RecipeFinderApp: App {
     
     @ViewBuilder
     private var rootView: some View {
-        if showGuestSplash {
-            GuestModeSplashView {
-                showGuestSplash = false
-            }
-            .transition(.opacity.combined(with: .scale(scale: 0.95)))
-        } else if authManager.isAuthenticated {
+        if authManager.isAuthenticated {
             ContentView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .onAppear { authManager.updateLastActiveTimestamp() }

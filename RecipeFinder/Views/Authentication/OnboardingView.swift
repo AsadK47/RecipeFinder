@@ -17,36 +17,36 @@ struct OnboardingView: View {
     
     private let slides = [
         OnboardingSlide(
-            icon: "magnifyingglass.circle.fill",
-            title: "Discover Recipes",
-            description: "Browse thousands of delicious recipes from around the world. Filter by cuisine, difficulty, and dietary preferences.",
+            icon: "book.pages.fill",
+            title: "Discover & Save Recipes",
+            description: "Browse our curated collection of recipes. Search by name, ingredient, or cuisine. Save your favorites with a simple tap for quick access anytime.",
             accentColor: .blue,
             features: [
-                ("star.fill", "Smart Search"),
-                ("tag.fill", "Categories"),
-                ("heart.fill", "Favorites")
+                ("magnifyingglass", "Smart Search"),
+                ("heart.fill", "Save Favorites"),
+                ("tag.fill", "Filter & Sort")
             ]
         ),
         OnboardingSlide(
-            icon: "calendar.badge.plus",
-            title: "Plan Your Meals",
-            description: "Organize your week with our intuitive meal planner. Add recipes to any day and meal time with just a tap.",
+            icon: "calendar.badge.clock",
+            title: "Plan Your Week",
+            description: "Organize meals ahead of time with the weekly meal planner. Assign recipes to any day and meal time. Get reminders so nothing gets forgotten.",
             accentColor: .green,
             features: [
-                ("calendar.circle.fill", "Weekly Planning"),
-                ("bell.fill", "Reminders"),
-                ("chart.bar.fill", "Nutrition Tips")
+                ("calendar.circle.fill", "Weekly View"),
+                ("fork.knife", "Meal Times"),
+                ("bell.fill", "Reminders")
             ]
         ),
         OnboardingSlide(
-            icon: "cart.fill",
-            title: "Shop Smarter",
-            description: "Generate shopping lists automatically from your planned meals. Check off items as you shop.",
+            icon: "timer",
+            title: "Cook with Confidence",
+            description: "Set multiple cooking timers to keep track of everything on the stove. Name each timer and get notifications when they're done.",
             accentColor: .orange,
             features: [
-                ("list.bullet.clipboard.fill", "Auto Lists"),
-                ("checkmark.circle.fill", "Easy Tracking"),
-                ("square.and.arrow.up.fill", "Share Lists")
+                ("timer.circle.fill", "Multiple Timers"),
+                ("speaker.wave.2.fill", "Sound Alerts"),
+                ("chart.bar.fill", "Track Progress")
             ]
         )
     ]

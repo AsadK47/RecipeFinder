@@ -205,9 +205,9 @@ struct EmailSignInView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismiss
     
-    // Master credentials for auto-fill
-    private let masterEmail = "admin@recipefinder.com"
-    private let masterPassword = "RecipeAdmin2024!"
+    // Test credentials for easy sign-in
+    private let testEmail = "test@recipefinder.com"
+    private let testPassword = "test123"
     
     // Email validation
     private var isValidEmail: Bool {
@@ -305,13 +305,13 @@ struct EmailSignInView: View {
                         #if DEBUG
                         // Quick Test Button (Debug Only)
                         Button(action: {
-                            email = masterEmail
-                            password = masterPassword
+                            email = testEmail
+                            password = testPassword
                         }) {
                             HStack(spacing: 8) {
                                 Image(systemName: "bolt.fill")
                                     .font(.caption)
-                                Text("Quick Fill (Test)")
+                                Text("Use Test Account")
                                     .font(.caption)
                                     .fontWeight(.medium)
                             }
@@ -329,6 +329,47 @@ struct EmailSignInView: View {
                         }
                         .padding(.top, 8)
                         #endif
+                        
+                        // Test Account Info
+                        VStack(spacing: 8) {
+                            Text("Test Account")
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.white.opacity(0.7))
+                            
+                            VStack(alignment: .leading, spacing: 4) {
+                                HStack(spacing: 4) {
+                                    Text("Email:")
+                                        .font(.caption2)
+                                        .foregroundColor(.white.opacity(0.6))
+                                    Text("test@recipefinder.com")
+                                        .font(.caption2)
+                                        .fontWeight(.medium)
+                                        .foregroundColor(.white.opacity(0.9))
+                                }
+                                
+                                HStack(spacing: 4) {
+                                    Text("Password:")
+                                        .font(.caption2)
+                                        .foregroundColor(.white.opacity(0.6))
+                                    Text("test123")
+                                        .font(.caption2)
+                                        .fontWeight(.medium)
+                                        .foregroundColor(.white.opacity(0.9))
+                                }
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 8)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(Color.white.opacity(0.1))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                                    )
+                            )
+                        }
+                        .padding(.top, 16)
                     }
                     .padding(.horizontal, 32)
                     

@@ -17,6 +17,7 @@ struct AccountView: View {
     @State private var showingDataImport = false
     @State private var showingAuthError = false
     @State private var authErrorMessage = ""
+    @State private var showingGuestSplash = false
     
     private var isGuestMode: Bool {
         authManager.isGuestMode
@@ -84,6 +85,11 @@ struct AccountView: View {
         }
         .sheet(isPresented: $showingDataImport) {
             DataImportView()
+        }
+        .fullScreenCover(isPresented: $showingGuestSplash) {
+            GuestModeSplashView {
+                showingGuestSplash = false
+            }
         }
         .alert("Sign Out", isPresented: $showingSignOutAlert) {
             Button("Cancel", role: .cancel) {}
@@ -204,6 +210,7 @@ struct AccountView: View {
                 icon: "hand.raised.fill",
                 iconColor: .blue,
                 title: "Privacy Policy",
+                subtitle: "View our privacy and data practices",
                 showChevron: true,
                 action: { 
                     showingPrivacyPolicy = true 
@@ -247,15 +254,40 @@ struct AccountView: View {
             NavigationLink {
                 DataPrivacyView()
             } label: {
-                AccountRowButton(
-                    icon: "shield.fill",
-                    iconColor: .purple,
-                    title: "Data & Privacy",
-                    subtitle: "Manage your privacy settings",
-                    showChevron: true,
-                    action: {}
-                )
+                HStack(spacing: 16) {
+                    // Icon with background circle
+                    ZStack {
+                        Circle()
+                            .fill(Color.purple)
+                            .frame(width: 28, height: 28)
+                        
+                        Image(systemName: "shield.fill")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(.white)
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Data & Privacy")
+                            .font(.body)
+                            .foregroundColor(colorScheme == .dark ? .white : .primary)
+                        
+                        Text("Manage your privacy settings")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .lineLimit(1)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 14)
+                .contentShape(Rectangle())
             }
+            .buttonStyle(PlainButtonStyle())
         }
         .background {
             if cardStyle == .solid {

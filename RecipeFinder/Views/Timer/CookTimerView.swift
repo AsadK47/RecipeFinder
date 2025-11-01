@@ -31,7 +31,7 @@ struct CookTimerView: View {
     @State private var vibrationTimer: Timer?
     
     @AppStorage("cardStyle") private var cardStyleString: String = "frosted"
-    @AppStorage("cookModeEnabled") private var cookModeEnabled: Bool = true
+    @AppStorage("keepScreenAwake") private var keepScreenAwake: Bool = false
     @AppStorage("defaultTimerDuration") private var defaultTimerDuration: Int = 300 // 5 minutes in seconds
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
@@ -165,7 +165,7 @@ struct CookTimerView: View {
             }
         }
         .onAppear {
-            if cookModeEnabled {
+            if keepScreenAwake {
                 UIApplication.shared.isIdleTimerDisabled = true
             }
             startTimerUpdates()
@@ -174,6 +174,13 @@ struct CookTimerView: View {
             UIApplication.shared.isIdleTimerDisabled = false
             timer?.invalidate()
             stopVibration()
+        }
+        .onChange(of: keepScreenAwake) { _, newValue in
+            if newValue {
+                UIApplication.shared.isIdleTimerDisabled = true
+            } else {
+                UIApplication.shared.isIdleTimerDisabled = false
+            }
         }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {

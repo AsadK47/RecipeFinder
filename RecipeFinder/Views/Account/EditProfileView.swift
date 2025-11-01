@@ -18,7 +18,11 @@ struct EditProfileView: View {
     @State private var firstName: String = ""
     @State private var middleName: String = ""
     @State private var lastName: String = ""
-    @State private var address: String = ""
+    @State private var addressLine1: String = ""
+    @State private var addressLine2: String = ""
+    @State private var city: String = ""
+    @State private var county: String = ""
+    @State private var postcode: String = ""
     @State private var dateOfBirth: Date?
     @State private var selectedChefType: ChefType = .homeCook
     
@@ -92,7 +96,11 @@ struct EditProfileView: View {
             .onChange(of: firstName) { _, _ in checkForChanges() }
             .onChange(of: middleName) { _, _ in checkForChanges() }
             .onChange(of: lastName) { _, _ in checkForChanges() }
-            .onChange(of: address) { _, _ in checkForChanges() }
+            .onChange(of: addressLine1) { _, _ in checkForChanges() }
+            .onChange(of: addressLine2) { _, _ in checkForChanges() }
+            .onChange(of: city) { _, _ in checkForChanges() }
+            .onChange(of: county) { _, _ in checkForChanges() }
+            .onChange(of: postcode) { _, _ in checkForChanges() }
             .onChange(of: dateOfBirth) { _, _ in checkForChanges() }
             .onChange(of: selectedChefType) { _, _ in checkForChanges() }
         }
@@ -201,14 +209,63 @@ struct EditProfileView: View {
             .padding(.vertical, 12)
             .background(Color.white.opacity(0.1))
             
-            // Address Field
-            ProfileTextField(
-                icon: "house.fill",
-                label: "Address",
-                text: $address,
-                placeholder: "123 Main Street, City, Country",
-                multiline: true
-            )
+            VStack(spacing: 0) {
+                // Address Line 1
+                ProfileTextField(
+                    icon: "house.fill",
+                    label: "Address Line 1",
+                    text: $addressLine1,
+                    placeholder: "House number and street name"
+                )
+                
+                Divider()
+                    .background(Color.white.opacity(0.1))
+                    .padding(.leading, 60)
+                
+                // Address Line 2
+                ProfileTextField(
+                    icon: "building.2.fill",
+                    label: "Address Line 2",
+                    text: $addressLine2,
+                    placeholder: "Apartment, suite, etc. (optional)"
+                )
+                
+                Divider()
+                    .background(Color.white.opacity(0.1))
+                    .padding(.leading, 60)
+                
+                // City
+                ProfileTextField(
+                    icon: "building.columns.fill",
+                    label: "Town/City",
+                    text: $city,
+                    placeholder: "e.g. London"
+                )
+                
+                Divider()
+                    .background(Color.white.opacity(0.1))
+                    .padding(.leading, 60)
+                
+                // County
+                ProfileTextField(
+                    icon: "map.fill",
+                    label: "County",
+                    text: $county,
+                    placeholder: "e.g. Greater London (optional)"
+                )
+                
+                Divider()
+                    .background(Color.white.opacity(0.1))
+                    .padding(.leading, 60)
+                
+                // Postcode
+                ProfileTextField(
+                    icon: "envelope.fill",
+                    label: "Postcode",
+                    text: $postcode,
+                    placeholder: "e.g. SW1A 1AA"
+                )
+            }
         }
         .background(
             RoundedRectangle(cornerRadius: 16)
@@ -293,9 +350,21 @@ struct EditProfileView: View {
         firstName = accountManager.firstName
         middleName = accountManager.middleName
         lastName = accountManager.lastName
-        address = accountManager.address
         dateOfBirth = accountManager.dateOfBirth
         selectedChefType = accountManager.chefType
+        
+        // Parse stored address (stored as comma-separated string)
+        let addressComponents = accountManager.address.components(separatedBy: ", ")
+        if addressComponents.count >= 5 {
+            addressLine1 = addressComponents[0]
+            addressLine2 = addressComponents[1]
+            city = addressComponents[2]
+            county = addressComponents[3]
+            postcode = addressComponents[4]
+        } else if !accountManager.address.isEmpty {
+            // If address doesn't match expected format, put it in line 1
+            addressLine1 = accountManager.address
+        }
     }
     
     private func getInitials() -> String {
@@ -313,10 +382,14 @@ struct EditProfileView: View {
     }
     
     private func checkForChanges() {
+        let currentAddress = [addressLine1, addressLine2, city, county, postcode]
+            .filter { !$0.isEmpty }
+            .joined(separator: ", ")
+        
         hasChanges = firstName != accountManager.firstName ||
                      middleName != accountManager.middleName ||
                      lastName != accountManager.lastName ||
-                     address != accountManager.address ||
+                     currentAddress != accountManager.address ||
                      selectedChefType != accountManager.chefType
     }
     
@@ -367,12 +440,17 @@ struct EditProfileView: View {
     }
     
     private func saveProfile() {
+        // Combine address fields into a single formatted string
+        let fullAddress = [addressLine1, addressLine2, city, county, postcode]
+            .filter { !$0.isEmpty }
+            .joined(separator: ", ")
+        
         accountManager.updateProfile(
             firstName: firstName,
             middleName: middleName,
             lastName: lastName,
             email: accountManager.email,
-            address: address,
+            address: fullAddress,
             dateOfBirth: dateOfBirth,
             chefType: selectedChefType
         )
