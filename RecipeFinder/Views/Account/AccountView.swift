@@ -11,7 +11,6 @@ struct AccountView: View {
     
     @State private var editingName = false
     @State private var tempName = ""
-    @State private var showingEditProfile = false
     @State private var showingSignOutAlert = false
     @State private var showingDeleteAccountAlert = false
     @State private var showingPrivacyPolicy = false
@@ -21,6 +20,18 @@ struct AccountView: View {
     @State private var showSuccessFeedback = false
     @State private var showImagePicker = false
     @State private var profileImage: UIImage?
+    
+    // Profile fields from EditProfileView
+    @State private var firstName: String = ""
+    @State private var middleName: String = ""
+    @State private var lastName: String = ""
+    @State private var addressLine1: String = ""
+    @State private var addressLine2: String = ""
+    @State private var city: String = ""
+    @State private var county: String = ""
+    @State private var postcode: String = ""
+    @State private var dateOfBirth: Date?
+    @State private var selectedChefType: ChefType = .homeCook
     
     private var isGuestMode: Bool {
         authManager.isGuestMode
@@ -72,47 +83,49 @@ struct AccountView: View {
                 
                 ScrollView {
                     VStack(spacing: 20) {
-                        // Profile Card with Avatar
-                        profileHeader
+                        // Profile Avatar
+                        profileAvatar
                         
                         // Personal Information Section
-                        if !isGuestMode {
-                            personalInfoSection
-                            
-                            // Edit Profile Button
-                            Button(action: {
-                                showingEditProfile = true
-                                HapticManager.shared.light()
-                            }) {
-                                HStack {
-                                    Image(systemName: "pencil.circle.fill")
-                                        .font(.title3)
-                                        .foregroundColor(AppTheme.accentColor(for: selectedTheme))
-                                    
-                                    Text("Edit Profile")
-                                        .font(.body)
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(colorScheme == .dark ? .white : .primary)
-                                    
-                                    Spacer()
-                                    
-                                    Image(systemName: "chevron.right")
-                                        .font(.caption)
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(.secondary)
-                                }
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 16)
-                                .background {
-                                    if cardStyle == .solid {
-                                        RoundedRectangle(cornerRadius: 16)
-                                            .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white)
-                                    } else {
-                                        RoundedRectangle(cornerRadius: 16)
-                                            .fill(.ultraThinMaterial)
-                                    }
-                                }
+                        personalInfoSection
+                        
+                        // Address Section
+                        addressSection
+                        
+                        // Chef Type Section
+                        chefTypeSection
+                        
+                        // Save Button
+                        Button(action: {
+                            saveProfile()
+                        }) {
+                            HStack {
+                                Image(systemName: "checkmark.circle.fill")
+                                Text("Save Profile")
+                                    .fontWeight(.semibold)
                             }
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(AppTheme.accentColor(for: selectedTheme))
+                            .foregroundColor(.white)
+                            .cornerRadius(12)
+                        }
+                        .opacity(showSuccessFeedback ? 0.6 : 1)
+                        .disabled(showSuccessFeedback)
+                        .padding(.top, 8)
+                        
+                        // Success Feedback
+                        if showSuccessFeedback {
+                            HStack(spacing: 8) {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(.green)
+                                Text("Profile saved successfully!")
+                                    .fontWeight(.medium)
+                            }
+                            .padding()
+                            .background(Color.green.opacity(0.1))
+                            .cornerRadius(10)
+                            .transition(.scale.combined(with: .opacity))
                         }
                         
                         // Account Actions
@@ -130,9 +143,6 @@ struct AccountView: View {
         .toolbarColorScheme(.dark, for: .navigationBar)
         .sheet(isPresented: $showingPrivacyPolicy) {
             PrivacyPolicyView()
-        }
-        .sheet(isPresented: $showingEditProfile) {
-            EditProfileView()
         }
         .sheet(isPresented: $showImagePicker) {
             ImagePicker(image: $profileImage)
@@ -167,81 +177,141 @@ struct AccountView: View {
         }
         .animation(.spring(response: 0.3), value: editingName)
         .animation(.spring(response: 0.3), value: showSuccessFeedback)
+        .onAppear {
+            loadCurrentProfile()
+        }
     }
     
-    // MARK: - Profile Header
+    // MARK: - Profile Avatar
     
-    private var profileHeader: some View {
-        VStack(spacing: 16) {
-            HStack(spacing: 16) {
-                // Avatar with Edit Button
-                Button(action: {
-                    showImagePicker = true
-                    HapticManager.shared.light()
-                }) {
-                    ZStack(alignment: .bottomTrailing) {
-                        if let profileImage = profileImage {
-                            Image(uiImage: profileImage)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 64, height: 64)
-                                .clipShape(Circle())
-                        } else {
-                            ZStack {
-                                Circle()
-                                    .fill(AppTheme.accentColor(for: selectedTheme))
-                                    .frame(width: 64, height: 64)
-                                
-                                Text(displayInitials)
-                                    .font(.system(size: 26, weight: .semibold))
-                                    .foregroundColor(.white)
-                            }
-                        }
-                        
-                        // Edit icon overlay
+    private var profileAvatar: some View {
+        VStack(spacing: 12) {
+            Button(action: {
+                showImagePicker = true
+                HapticManager.shared.light()
+            }) {
+                ZStack(alignment: .bottomTrailing) {
+                    if let profileImage = profileImage {
+                        Image(uiImage: profileImage)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 100, height: 100)
+                            .clipShape(Circle())
+                    } else {
                         ZStack {
                             Circle()
-                                .fill(colorScheme == .dark ? Color(white: 0.15) : .white)
-                                .frame(width: 22, height: 22)
+                                .fill(AppTheme.accentColor(for: selectedTheme))
+                                .frame(width: 100, height: 100)
                             
-                            Image(systemName: "camera.fill")
-                                .font(.system(size: 10, weight: .semibold))
-                                .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                            Text(getInitials())
+                                .font(.system(size: 40, weight: .bold))
+                                .foregroundColor(.white)
                         }
                     }
-                }
-                
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(displayName.isEmpty ? "Set Your Name" : displayName)
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundColor(colorScheme == .dark ? .white : .primary)
                     
-                    HStack(spacing: 6) {
-                        Image(systemName: accountManager.chefType.icon)
-                            .font(.caption2)
-                        Text(accountManager.chefType.rawValue)
-                            .font(.subheadline)
+                    ZStack {
+                        Circle()
+                            .fill(colorScheme == .dark ? Color(white: 0.15) : .white)
+                            .frame(width: 28, height: 28)
+                        
+                        Image(systemName: "camera.fill")
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                     }
-                    .foregroundColor(.secondary)
                 }
-                
-                Spacer()
             }
             
-            // Quick Stats Row
-            HStack(spacing: 20) {
-                StatBadge(icon: "book.fill", count: accountManager.recipeCount, label: "Recipes")
-                StatBadge(icon: "cart.fill", count: accountManager.shoppingListCount, label: "Shopping")
-                StatBadge(icon: "refrigerator.fill", count: accountManager.kitchenItemCount, label: "Kitchen")
+            HStack(spacing: 6) {
+                Image(systemName: selectedChefType.icon)
+                    .font(.caption)
+                Text(selectedChefType.rawValue)
+                    .font(.subheadline)
+            }
+            .foregroundColor(.secondary)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 20)
+    }
+    
+    // MARK: - Personal Information Section
+    
+    private var personalInfoSection: some View {
+        VStack(spacing: 0) {
+            // Section Header
+            HStack {
+                Image(systemName: "person.fill")
+                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                Text("Personal Information")
+                    .font(.headline)
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                Spacer()
+            }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 12)
+            .background(Color.secondary.opacity(0.1))
+            
+            VStack(spacing: 0) {
+                ProfileTextField(
+                    icon: "person.circle",
+                    label: "First Name",
+                    text: $firstName,
+                    placeholder: "John",
+                    colorScheme: colorScheme
+                )
+                
+                Divider()
+                    .background(Color.secondary.opacity(0.1))
+                    .padding(.leading, 60)
+                
+                ProfileTextField(
+                    icon: "person.circle.fill",
+                    label: "Middle Name",
+                    text: $middleName,
+                    placeholder: "Optional",
+                    colorScheme: colorScheme
+                )
+                
+                Divider()
+                    .background(Color.secondary.opacity(0.1))
+                    .padding(.leading, 60)
+                
+                ProfileTextField(
+                    icon: "person.crop.circle",
+                    label: "Last Name",
+                    text: $lastName,
+                    placeholder: "Doe",
+                    colorScheme: colorScheme
+                )
+                
+                if !displayEmail.isEmpty {
+                    Divider()
+                        .background(Color.secondary.opacity(0.1))
+                        .padding(.leading, 60)
+                    
+                    HStack(spacing: 16) {
+                        Image(systemName: "envelope.fill")
+                            .font(.title3)
+                            .foregroundColor(.secondary)
+                            .frame(width: 28)
+                        
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Email")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            
+                            Text(displayEmail)
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 16)
+                }
             }
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 16)
         .background {
             if cardStyle == .solid {
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white)
+                    .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
             } else {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(.ultraThinMaterial)
@@ -249,138 +319,87 @@ struct AccountView: View {
         }
     }
     
-    // MARK: - Personal Information
+    // MARK: - Address Section
     
-    private var personalInfoSection: some View {
+    private var addressSection: some View {
         VStack(spacing: 0) {
-            // Name Editor Row
-            HStack(spacing: 16) {
-                // Icon
-                ZStack {
-                    Circle()
-                        .fill(Color.blue)
-                        .frame(width: 40, height: 40)
-                    
-                    Image(systemName: "person.circle.fill")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundStyle(.white)
-                }
-                
-                // Content
-                if editingName {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Name")
-                            .font(.body)
-                            .foregroundStyle(.primary)
-                        
-                        TextField("Enter your name", text: $tempName)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                            .textFieldStyle(.roundedBorder)
-                    }
-                    
-                    Spacer()
-                    
-                    // Save/Cancel Buttons
-                    HStack(spacing: 8) {
-                        Button {
-                            editingName = false
-                            tempName = displayName
-                            HapticManager.shared.light()
-                        } label: {
-                            Image(systemName: "xmark.circle.fill")
-                                .font(.system(size: 24))
-                                .foregroundStyle(.secondary)
-                        }
-                        
-                        Button {
-                            // Parse the full name into first, middle, and last name
-                            let nameParts = tempName.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: " ").filter { !$0.isEmpty }
-                            
-                            let firstName = nameParts.first ?? ""
-                            let lastName = nameParts.count > 1 ? nameParts.last ?? "" : ""
-                            let middleName = nameParts.count > 2 ? nameParts[1..<nameParts.count-1].joined(separator: " ") : ""
-                            
-                            // Update using the proper method
-                            accountManager.updateProfile(
-                                firstName: firstName,
-                                middleName: middleName,
-                                lastName: lastName,
-                                email: accountManager.email,
-                                address: accountManager.address,
-                                dateOfBirth: accountManager.dateOfBirth,
-                                chefType: accountManager.chefType
-                            )
-                            
-                            editingName = false
-                            showSuccessFeedback = true
-                            HapticManager.shared.success()
-                            
-                            // Auto-hide success feedback
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                                showSuccessFeedback = false
-                            }
-                        } label: {
-                            Image(systemName: "checkmark.circle.fill")
-                                .font(.system(size: 24))
-                                .foregroundStyle(.green)
-                        }
-                    }
-                } else {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Name")
-                            .font(.body)
-                            .foregroundStyle(.primary)
-                        
-                        if showSuccessFeedback {
-                            HStack(spacing: 6) {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .font(.caption)
-                                    .foregroundStyle(.green)
-                                Text("Saved")
-                                    .font(.subheadline)
-                                    .foregroundStyle(.green)
-                            }
-                        } else {
-                            Text(displayName)
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    Button {
-                        tempName = displayName
-                        editingName = true
-                        HapticManager.shared.light()
-                    } label: {
-                        Image(systemName: "pencil.circle.fill")
-                            .font(.system(size: 20))
-                            .foregroundStyle(.blue)
-                    }
-                }
+            HStack {
+                Image(systemName: "mappin.and.ellipse")
+                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                Text("Address")
+                    .font(.headline)
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                Spacer()
+                Text("Optional")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 20)
             .padding(.vertical, 12)
+            .background(Color.secondary.opacity(0.1))
             
-            if !displayEmail.isEmpty {
-                Divider()
-                    .padding(.leading, 72)
+            VStack(spacing: 0) {
+                ProfileTextField(
+                    icon: "house.fill",
+                    label: "Address Line 1",
+                    text: $addressLine1,
+                    placeholder: "House number and street name",
+                    colorScheme: colorScheme
+                )
                 
-                AccountRowButton(
+                Divider()
+                    .background(Color.secondary.opacity(0.1))
+                    .padding(.leading, 60)
+                
+                ProfileTextField(
+                    icon: "building.2.fill",
+                    label: "Address Line 2",
+                    text: $addressLine2,
+                    placeholder: "Apartment, suite, etc.",
+                    colorScheme: colorScheme
+                )
+                
+                Divider()
+                    .background(Color.secondary.opacity(0.1))
+                    .padding(.leading, 60)
+                
+                ProfileTextField(
+                    icon: "building.columns.fill",
+                    label: "Town/City",
+                    text: $city,
+                    placeholder: "e.g. London",
+                    colorScheme: colorScheme
+                )
+                
+                Divider()
+                    .background(Color.secondary.opacity(0.1))
+                    .padding(.leading, 60)
+                
+                ProfileTextField(
+                    icon: "map.fill",
+                    label: "County",
+                    text: $county,
+                    placeholder: "e.g. Greater London",
+                    colorScheme: colorScheme
+                )
+                
+                Divider()
+                    .background(Color.secondary.opacity(0.1))
+                    .padding(.leading, 60)
+                
+                ProfileTextField(
                     icon: "envelope.fill",
-                    iconColor: .blue,
-                    title: "Email",
-                    subtitle: displayEmail,
-                    showChevron: false,
-                    action: {}
+                    label: "Postcode",
+                    text: $postcode,
+                    placeholder: "e.g. SW1A 1AA",
+                    colorScheme: colorScheme
                 )
             }
         }
         .background {
             if cardStyle == .solid {
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white)
+                    .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
             } else {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(.ultraThinMaterial)
@@ -388,7 +407,127 @@ struct AccountView: View {
         }
     }
     
-    // MARK: - Data Management
+    // MARK: - Chef Type Section
+    
+    private var chefTypeSection: some View {
+        VStack(spacing: 12) {
+            HStack {
+                Image(systemName: "fork.knife.circle.fill")
+                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                Text("Chef Type")
+                    .font(.headline)
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                Spacer()
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 16)
+            
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                ForEach(ChefType.allCases, id: \.self) { type in
+                    ChefTypeCard(
+                        chefType: type,
+                        isSelected: selectedChefType == type,
+                        selectedTheme: selectedTheme
+                    ) {
+                        withAnimation(.spring(response: 0.3)) {
+                            selectedChefType = type
+                            HapticManager.shared.light()
+                        }
+                    }
+                }
+            }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 16)
+        }
+        .background {
+            if cardStyle == .solid {
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+            } else {
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(.ultraThinMaterial)
+            }
+        }
+    }
+    
+    // MARK: - Profile Display Card
+    
+    private var profileDisplayCard: some View {
+        Button(action: {
+            HapticManager.shared.light()
+        }) {
+            VStack(spacing: 20) {
+                // Avatar
+                ZStack(alignment: .bottomTrailing) {
+                    if let profileImage = profileImage {
+                        Image(uiImage: profileImage)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 100, height: 100)
+                            .clipShape(Circle())
+                    } else {
+                        ZStack {
+                            Circle()
+                                .fill(AppTheme.accentColor(for: selectedTheme))
+                                .frame(width: 100, height: 100)
+                            
+                            Text(displayInitials)
+                                .font(.system(size: 40, weight: .semibold))
+                                .foregroundColor(.white)
+                        }
+                    }
+                    
+                    ZStack {
+                        Circle()
+                            .fill(colorScheme == .dark ? Color(white: 0.15) : .white)
+                            .frame(width: 32, height: 32)
+                        
+                        Image(systemName: "pencil")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                    }
+                }
+                
+                // Name & Chef Type
+                VStack(spacing: 8) {
+                    Text(displayName.isEmpty ? "Set Your Name" : displayName)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                    
+                    HStack(spacing: 8) {
+                        Image(systemName: accountManager.chefType.icon)
+                            .font(.caption)
+                        Text(accountManager.chefType.rawValue)
+                            .font(.subheadline)
+                    }
+                    .foregroundColor(.secondary)
+                }
+                
+                // Edit Hint
+                HStack(spacing: 6) {
+                    Image(systemName: "info.circle.fill")
+                        .font(.caption)
+                    Text("Tap to edit profile")
+                        .font(.caption)
+                }
+                .foregroundColor(.secondary)
+                .padding(.top, 4)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 32)
+        }
+        .buttonStyle(PlainButtonStyle())
+        .background {
+            if cardStyle == .solid {
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+            } else {
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(.ultraThinMaterial)
+            }
+        }
+    }
     
     // MARK: - Account Actions
     
@@ -442,8 +581,6 @@ struct AccountView: View {
     
     // MARK: - Helper Functions
     
-    // MARK: - Helper Functions
-    
     private func signOut() {
         #if DEBUG
         print("🔓 [AccountView] Sign out button tapped")
@@ -461,6 +598,81 @@ struct AccountView: View {
             // Navigation handled automatically by app root view
         } catch {
             print("Error deleting account: \(error)")
+        }
+    }
+    
+    private func getInitials() -> String {
+        let firstInitial = firstName.first.map(String.init) ?? ""
+        let lastInitial = lastName.first.map(String.init) ?? ""
+        return "\(firstInitial)\(lastInitial)".uppercased()
+    }
+    
+    private func loadCurrentProfile() {
+        // Load current values from AccountManager
+        firstName = accountManager.firstName
+        middleName = accountManager.middleName
+        lastName = accountManager.lastName
+        dateOfBirth = accountManager.dateOfBirth
+        selectedChefType = accountManager.chefType
+        
+        // Parse stored address (stored as comma-separated string)
+        let addressComponents = accountManager.address.components(separatedBy: ", ")
+        if addressComponents.count >= 5 {
+            addressLine1 = addressComponents[0]
+            addressLine2 = addressComponents[1]
+            city = addressComponents[2]
+            county = addressComponents[3]
+            postcode = addressComponents[4]
+        } else if !accountManager.address.isEmpty {
+            // If address doesn't match expected format, put it in line 1
+            addressLine1 = accountManager.address
+        }
+    }
+    
+    private func saveProfile() {
+        // Combine address fields into a single formatted string
+        let fullAddress = [addressLine1, addressLine2, city, county, postcode]
+            .filter { !$0.isEmpty }
+            .joined(separator: ", ")
+        
+        // Save to AccountManager using the updateProfile method
+        accountManager.updateProfile(
+            firstName: firstName,
+            middleName: middleName,
+            lastName: lastName,
+            email: accountManager.email,
+            address: fullAddress,
+            dateOfBirth: dateOfBirth,
+            chefType: selectedChefType
+        )
+        
+        // Update AuthManager if signed in
+        if let currentUser = authManager.currentUser {
+            let fullName = [firstName, middleName, lastName]
+                .filter { !$0.isEmpty }
+                .joined(separator: " ")
+            
+            let updatedUser = AuthenticationManager.User(
+                id: currentUser.id,
+                email: currentUser.email,
+                fullName: fullName,
+                givenName: firstName,
+                familyName: lastName,
+                appleUserID: currentUser.appleUserID,
+                createdAt: currentUser.createdAt,
+                lastLoginAt: Date()
+            )
+            
+            authManager.updateCurrentUser(updatedUser)
+        }
+        
+        // Show success feedback
+        showSuccessFeedback = true
+        HapticManager.shared.success()
+        
+        // Hide after 2 seconds
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            showSuccessFeedback = false
         }
     }
 }
@@ -991,7 +1203,7 @@ struct DataPrivacyView: View {
     }
 }
 
-// MARK: - Stat Badge Component
+// MARK: - Data Download View
 
 struct StatBadge: View {
     let icon: String
@@ -1320,5 +1532,73 @@ struct DataImportView: View {
                 }
             }
         }
+    }
+}
+
+// MARK: - Supporting Components
+
+struct ProfileTextField: View {
+    let icon: String
+    let label: String
+    @Binding var text: String
+    let placeholder: String
+    let colorScheme: ColorScheme
+    
+    var body: some View {
+        HStack(spacing: 16) {
+            Image(systemName: icon)
+                .font(.title3)
+                .foregroundColor(.secondary)
+                .frame(width: 28)
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text(label)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                
+                TextField(placeholder, text: $text)
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .autocapitalization(.words)
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 16)
+    }
+}
+
+struct ChefTypeCard: View {
+    let chefType: ChefType
+    let isSelected: Bool
+    let selectedTheme: AppTheme.ThemeType
+    let action: () -> Void
+    
+    @Environment(\.colorScheme) var colorScheme
+    
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 8) {
+                Image(systemName: chefType.icon)
+                    .font(.system(size: 32))
+                    .foregroundColor(isSelected ? AppTheme.accentColor(for: selectedTheme) : .secondary)
+                
+                Text(chefType.rawValue)
+                    .font(.caption)
+                    .fontWeight(isSelected ? .semibold : .regular)
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 16)
+            .background {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(isSelected ? AppTheme.accentColor(for: selectedTheme).opacity(0.15) : Color.secondary.opacity(0.1))
+            }
+            .overlay {
+                if isSelected {
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(AppTheme.accentColor(for: selectedTheme), lineWidth: 2)
+                }
+            }
+        }
+        .buttonStyle(PlainButtonStyle())
     }
 }

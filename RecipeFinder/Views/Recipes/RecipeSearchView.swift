@@ -368,10 +368,10 @@ struct RecipeSearchView: View {
                         Group {
                             if cardStyle == .solid {
                                 Capsule()
-                                    .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                                    .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
                             } else {
                                 Capsule()
-                                    .fill(.regularMaterial)
+                                    .fill(.ultraThinMaterial)
                             }
                         }
                     )

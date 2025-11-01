@@ -24,7 +24,7 @@ struct MealPlanningView: View {
     
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {

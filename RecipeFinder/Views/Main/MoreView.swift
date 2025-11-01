@@ -160,13 +160,13 @@ struct MoreRow: View {
                 
                 Text(subtitle)
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             
             Image(systemName: "chevron.right")
                 .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(.secondary)
+                .foregroundColor(colorScheme == .dark ? .white.opacity(0.5) : .black.opacity(0.4))
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)

@@ -421,10 +421,10 @@ struct KitchenView: View {
                 .background {
                     if cardStyle == .solid {
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                            .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
                     } else {
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(.regularMaterial)
+                            .fill(.ultraThinMaterial)
                     }
                 }
             }
@@ -551,10 +551,10 @@ struct KitchenView: View {
                 .background {
                     if cardStyle == .solid {
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                            .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
                     } else {
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(.regularMaterial)
+                            .fill(.ultraThinMaterial)
                     }
                 }
             }
@@ -734,10 +734,10 @@ struct KitchenCategoryCard: View {
         .background {
             if cardStyle == .solid {
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                    .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
             } else {
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(.regularMaterial)
+                    .fill(.ultraThinMaterial)
             }
         }
     }
@@ -918,10 +918,10 @@ struct AddIngredientSheet: View {
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                        .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
                 } else {
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(.regularMaterial)
+                        .fill(.ultraThinMaterial)
                 }
             }
         }
@@ -958,10 +958,10 @@ struct AddIngredientSheet: View {
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                        .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
                 } else {
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(.regularMaterial)
+                        .fill(.ultraThinMaterial)
                 }
             }
         }

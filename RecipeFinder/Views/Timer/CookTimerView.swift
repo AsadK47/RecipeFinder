@@ -229,10 +229,10 @@ struct CookTimerView: View {
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 16)
-                        .fill((colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground).opacity(isDisabled ? 0.5 : 1.0))
+                        .fill((colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9)).opacity(isDisabled ? 0.5 : 1.0))
                 } else {
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(.regularMaterial.opacity(isDisabled ? 0.5 : 1.0))
+                        .fill(.ultraThinMaterial.opacity(isDisabled ? 0.5 : 1.0))
                 }
             }
         }
@@ -262,10 +262,10 @@ struct CookTimerView: View {
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 16)
-                        .fill((colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground).opacity(isDisabled ? 0.5 : 1.0))
+                        .fill((colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9)).opacity(isDisabled ? 0.5 : 1.0))
                 } else {
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(.regularMaterial.opacity(isDisabled ? 0.5 : 1.0))
+                        .fill(.ultraThinMaterial.opacity(isDisabled ? 0.5 : 1.0))
                 }
             }
         }
@@ -293,10 +293,10 @@ struct CookTimerView: View {
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 16)
-                        .fill((colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground).opacity(isDisabled ? 0.5 : 1.0))
+                        .fill((colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9)).opacity(isDisabled ? 0.5 : 1.0))
                 } else {
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(.regularMaterial.opacity(isDisabled ? 0.5 : 1.0))
+                        .fill(.ultraThinMaterial.opacity(isDisabled ? 0.5 : 1.0))
                 }
             }
         }

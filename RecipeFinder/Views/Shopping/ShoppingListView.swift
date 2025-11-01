@@ -172,10 +172,10 @@ struct ShoppingListView: View {
                             .background {
                                 if cardStyle == .solid {
                                     RoundedRectangle(cornerRadius: 12)
-                                        .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                                        .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
                                 } else {
                                     RoundedRectangle(cornerRadius: 12)
-                                        .fill(.regularMaterial)
+                                        .fill(.ultraThinMaterial)
                                 }
                             }
                             
@@ -378,11 +378,11 @@ struct ShoppingListView: View {
         .background {
             if cardStyle == .solid {
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                    .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
                     .shadow(color: Color.black.opacity(0.25), radius: 8, x: 0, y: 4)
             } else {
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(.regularMaterial)
+                    .fill(.ultraThinMaterial)
                     .shadow(color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.15), radius: 10, x: 0, y: 4)
             }
         }
@@ -493,7 +493,10 @@ struct ShoppingListView: View {
                 .background {
                     if cardStyle == .solid {
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                            .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+                    } else {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(.ultraThinMaterial)
                     }
                 }
                 .padding(.horizontal, 16)
@@ -559,10 +562,10 @@ struct ShoppingListView: View {
                 .background {
                     if cardStyle == .solid {
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                            .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
                     } else {
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(.regularMaterial)
+                            .fill(.ultraThinMaterial)
                     }
                 }
             }

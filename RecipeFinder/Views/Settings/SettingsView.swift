@@ -352,7 +352,7 @@ struct AppearanceAndThemeSettingsView: View {
                                             .font(.body)
                                             .foregroundColor(colorScheme == .dark ? .white : .black)
                                         
-                                        Text(colorScheme == .dark ? "Currently: Fire Dark" : "Currently: Frost Light")
+                                        Text(colorScheme == .dark ? "Currently: Ember Dark" : "Currently: Frost Light")
                                             .font(.caption)
                                             .foregroundColor(.secondary)
                                     }
@@ -412,7 +412,7 @@ struct AppearanceAndThemeSettingsView: View {
                             }
                             .buttonStyle(PlainButtonStyle())
                             
-                            // Fire Dark
+                            // Ember Dark
                             Button(action: {
                                 appearanceMode = .dark
                                 cardStyle = .solid
@@ -430,7 +430,7 @@ struct AppearanceAndThemeSettingsView: View {
                                     }
                                     
                                     VStack(alignment: .leading, spacing: 4) {
-                                        Text("Fire Dark")
+                                        Text("Ember Dark")
                                             .font(.body)
                                             .foregroundColor(colorScheme == .dark ? .white : .black)
                                         
@@ -448,7 +448,7 @@ struct AppearanceAndThemeSettingsView: View {
                                     }
                                 }
                                 .padding(12)
-                                .background(appearanceMode == .dark ? Color.gray.opacity(0.15) : Color.clear)
+                                .background(appearanceMode == .dark ? Color.gray.opacity(0.5) : Color.clear)
                                 .cornerRadius(12)
                             }
                             .buttonStyle(PlainButtonStyle())
@@ -617,7 +617,7 @@ struct AppearanceSettingsView: View {
                                                 .font(.caption)
                                                 .foregroundColor(.secondary)
                                             
-                                            Text(colorScheme == .dark ? "Currently: Fire Dark" : "Currently: Frost Light")
+                                            Text(colorScheme == .dark ? "Currently: Ember Dark" : "Currently: Frost Light")
                                                 .font(.caption2)
                                                 .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                                         }
@@ -682,7 +682,7 @@ struct AppearanceSettingsView: View {
                             Divider()
                                 .padding(.leading, 86)
                             
-                            // Fire Dark
+                            // Ember Dark
                             Button(action: {
                                 appearanceMode = .dark
                                 cardStyle = .solid
@@ -701,7 +701,7 @@ struct AppearanceSettingsView: View {
                                         }
                                         
                                         VStack(alignment: .leading, spacing: 4) {
-                                            Text("Fire Dark")
+                                            Text("Ember Dark")
                                                 .font(.headline)
                                                 .foregroundColor(colorScheme == .dark ? .white : .black)
                                             
@@ -2318,7 +2318,7 @@ struct HelpView: View {
                             HelpItem(
                                 icon: "paintpalette",
                                 title: "Customize Appearance",
-                                description: "Choose between System, Frost Light, or Fire Dark modes in Settings > Appearance."
+                                description: "Choose between System, Frost Light, or Ember Dark modes in Settings > Appearance."
                             )
                             
                             HelpItem(
