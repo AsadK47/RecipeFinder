@@ -6,6 +6,7 @@ struct KitchenView: View {
     @EnvironmentObject var kitchenManager: KitchenInventoryManager
     @State private var searchText = ""
     @State private var showAddIngredientSheet = false
+    @State private var showQuickAdd = false
     @State private var cachedCategorizedIngredients: [(category: String, ingredients: [String])] = []
     @State private var selectedCategory: String? = nil
     @State private var collapsedCategories: Set<String> = []
@@ -84,9 +85,6 @@ struct KitchenView: View {
                     
                     ScrollView {
                         VStack(alignment: .leading, spacing: 24) {
-                            // Always show Quick Add section
-                            quickAddSection
-                            
                             if let category = selectedCategory {
                                 // Show ingredients from selected category
                                 categoryIngredientsView(for: category)
@@ -110,6 +108,9 @@ struct KitchenView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)
+        }
+        .sheet(isPresented: $showQuickAdd) {
+            KitchenQuickAddSheet(kitchenManager: kitchenManager)
         }
         .sheet(isPresented: $showAddIngredientSheet) {
             AddIngredientSheet(kitchenManager: kitchenManager)
@@ -144,6 +145,13 @@ struct KitchenView: View {
                     
                     // Right menu - 15% of width or fixed size
                     Menu {
+                        Button(action: {
+                            showQuickAdd = true
+                            HapticManager.shared.light()
+                        }) {
+                            Label("Quick Add", systemImage: "plus.circle")
+                        }
+                        
                         Button(action: {
                             isSearchFocused = true
                             HapticManager.shared.light()
@@ -181,32 +189,7 @@ struct KitchenView: View {
     }
     
     
-    // MARK: - Quick Add Section (Always Visible)
-    private var quickAddSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 8) {
-                Image(systemName: "star.fill")
-                    .font(.caption)
-                    .foregroundColor(.yellow)
-                Text("Quick Add")
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.white)
-            }
-            .padding(.horizontal, 20)
-            
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 12) {
-                    ForEach(["🥚 Eggs", "🍞 Bread", "🥛 Milk", "🍅 Tomatoes", "🧅 Onions", "🧄 Garlic", "🧈 Butter", "🧀 Cheese"], id: \.self) { item in
-                        quickAddChip(item)
-                    }
-                }
-                .padding(.horizontal, 20)
-            }
-        }
-    }
-    
-    // MARK: - Empty Prompt (without Quick Add)
+    // MARK: - Empty Prompt
     private var emptyPromptView: some View {
         VStack(spacing: 24) {
             VStack(spacing: 16) {
@@ -218,10 +201,12 @@ struct KitchenView: View {
                     .font(.title2)
                     .fontWeight(.bold)
                     .foregroundColor(.white)
+                    .shadow(color: .black.opacity(0.5), radius: 3, x: 0, y: 2)
                 
-                Text("Add ingredients using Quick Add above or browse categories below")
+                Text("Add ingredients using Quick Add from the menu or browse categories below")
                     .font(.subheadline)
-                    .foregroundColor(.white.opacity(0.7))
+                    .foregroundColor(.white.opacity(0.9))
+                    .shadow(color: .black.opacity(0.4), radius: 2, x: 0, y: 1)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 40)
             }
@@ -240,10 +225,12 @@ struct KitchenView: View {
                 Image(systemName: "square.grid.2x2")
                     .font(.caption)
                     .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                    .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
                 Text("Browse by Category")
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .foregroundColor(.white)
+                    .shadow(color: .black.opacity(0.5), radius: 3, x: 0, y: 2)
             }
             .padding(.horizontal, 20)
             
@@ -275,39 +262,18 @@ struct KitchenView: View {
             }
             .padding(.top, 40)
             
-            // Quick Add Section
-            VStack(alignment: .leading, spacing: 16) {
-                HStack(spacing: 8) {
-                    Image(systemName: "star.fill")
-                        .font(.caption)
-                        .foregroundColor(.yellow)
-                    Text("Quick Add")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
-                }
-                .padding(.horizontal, 20)
-                
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 12) {
-                        ForEach(["🥚 Eggs", "🍞 Bread", "🥛 Milk", "🍅 Tomatoes", "🧅 Onions", "🧄 Garlic", "🧈 Butter", "🧀 Cheese"], id: \.self) { item in
-                            quickAddChip(item)
-                        }
-                    }
-                    .padding(.horizontal, 20)
-                }
-            }
-            
             // Browse Categories Grid
             VStack(alignment: .leading, spacing: 16) {
                 HStack(spacing: 8) {
                     Image(systemName: "square.grid.2x2")
                         .font(.caption)
                         .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                        .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
                     Text("Browse by Category")
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .foregroundColor(.white)
+                        .shadow(color: .black.opacity(0.5), radius: 3, x: 0, y: 2)
                 }
                 .padding(.horizontal, 20)
                 
@@ -320,41 +286,6 @@ struct KitchenView: View {
             }
         }
         .frame(maxWidth: .infinity)
-    }
-    
-    private func quickAddChip(_ item: String) -> some View {
-        let ingredient = item.split(separator: " ").dropFirst().joined(separator: " ")
-        let isInKitchen = kitchenManager.hasItem(String(ingredient))
-        
-        return Button(action: {
-            withAnimation(.spring(response: 0.3)) {
-                kitchenManager.toggleItem(String(ingredient))
-                HapticManager.shared.success()
-            }
-        }) {
-            HStack(spacing: 6) {
-                Text(item)
-                    .font(.subheadline)
-                    .foregroundColor(.white)
-                
-                if isInKitchen {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.caption)
-                        .foregroundColor(.green)
-                }
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 10)
-            .background(
-                Capsule()
-                    .fill(isInKitchen ? Color.green.opacity(0.3) : Color.white.opacity(0.15))
-                    .overlay(
-                        Capsule()
-                            .stroke(isInKitchen ? Color.green.opacity(0.5) : Color.white.opacity(0.3), lineWidth: 1)
-                    )
-            )
-        }
-        .buttonStyle(PlainButtonStyle())
     }
     
     private func categoryCard(_ category: String) -> some View {
@@ -378,12 +309,12 @@ struct KitchenView: View {
                 Text(category)
                     .font(.subheadline)
                     .fontWeight(.semibold)
-                    .foregroundColor(.white)
+                    .foregroundColor(.black)
                     .lineLimit(1)
                 
                 Text("\(FoodsList.getFoods(forCategory: category).count) items")
                     .font(.caption2)
-                    .foregroundColor(.white.opacity(0.6))
+                    .foregroundColor(.black.opacity(0.6))
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 16)

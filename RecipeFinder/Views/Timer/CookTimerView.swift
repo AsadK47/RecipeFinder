@@ -195,9 +195,9 @@ struct CookTimerView: View {
     private var quickPresetsSection: some View {
         VStack(spacing: 16) {
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                defaultPresetButton()
                 presetButton(seconds: 30, title: "30 sec")
                 presetButton(minutes: 1, title: "1 min")
+                defaultPresetButton()
                 presetButton(minutes: 10, title: "10 min")
                 presetButton(minutes: 15, title: "15 min")
                 presetButton(minutes: 30, title: "30 min")
@@ -490,7 +490,7 @@ struct CookTimerView: View {
                     .foregroundColor(.white.opacity(0.7))
             }
             
-            ForEach(timers) { timer in
+            ForEach(timers.sorted(by: { $0.timeRemaining < $1.timeRemaining })) { timer in
                 TimerCard(
                     timer: timer,
                     onTogglePause: { togglePause(timer.id) },

@@ -59,6 +59,7 @@
 		9E83ED8F2EA78A3900425CC0 /* KitchenInventoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E83ED8E2EA78A3900425CC0 /* KitchenInventoryManager.swift */; };
 		9E87D3292EB6722300FFA1D1 /* BiometricSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E87D3282EB6722300FFA1D1 /* BiometricSetupView.swift */; };
 		9E87D32B2EB67CEA00FFA1D1 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E87D32A2EB67CEA00FFA1D1 /* ImagePicker.swift */; };
+		9E87D32D2EB6909700FFA1D1 /* QuickAddSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E87D32C2EB6909700FFA1D1 /* QuickAddSheet.swift */; };
 		9EA778FD2EB4A4B00028F064 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA778FC2EB4A4B00028F064 /* OnboardingView.swift */; };
 		9EA779002EB4C36A0028F064 /* GuestModeSplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA778FF2EB4C36A0028F064 /* GuestModeSplashView.swift */; };
 		9EA779012EB4C36A0028F064 /* EmailConfirmationSplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA778FE2EB4C36A0028F064 /* EmailConfirmationSplashView.swift */; };
@@ -157,6 +158,7 @@
 		9E83ED8E2EA78A3900425CC0 /* KitchenInventoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KitchenInventoryManager.swift; sourceTree = "<group>"; };
 		9E87D3282EB6722300FFA1D1 /* BiometricSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricSetupView.swift; sourceTree = "<group>"; };
 		9E87D32A2EB67CEA00FFA1D1 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
+		9E87D32C2EB6909700FFA1D1 /* QuickAddSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddSheet.swift; sourceTree = "<group>"; };
 		9EA777B82D09F1E000C3422A /* RecipeModel 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 3.xcdatamodel"; sourceTree = "<group>"; };
 		9EA778FC2EB4A4B00028F064 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		9EA778FE2EB4C36A0028F064 /* EmailConfirmationSplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailConfirmationSplashView.swift; sourceTree = "<group>"; };
@@ -227,6 +229,7 @@
 		9E4DC7322E9BF10900E17DDF /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				9E87D32C2EB6909700FFA1D1 /* QuickAddSheet.swift */,
 				9EA779282EB57D900028F064 /* StandardAppHeader.swift */,
 				9E77ABF92EB4554000666BB0 /* AnimatedHeartButton.swift */,
 				9E77ABF72EB4553400666BB0 /* ModernCircleButton.swift */,
@@ -677,6 +680,7 @@
 				9E77ABF42EB4483100666BB0 /* SettingsView.swift in Sources */,
 				9EE5AADB2D08FCBE00C1B736 /* ContentView.swift in Sources */,
 				9E4DC74B2E9C118300E17DDF /* IngredientButton.swift in Sources */,
+				9E87D32D2EB6909700FFA1D1 /* QuickAddSheet.swift in Sources */,
 				9E4DC75A2E9C197A00E17DDF /* SampleRecipeData.swift in Sources */,
 				9E4DC7462E9C111000E17DDF /* InfoPairView.swift in Sources */,
 				9E51C39A2EB3E9C20064B917 /* AccountView.swift in Sources */,
