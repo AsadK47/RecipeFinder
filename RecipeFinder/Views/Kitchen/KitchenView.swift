@@ -389,7 +389,7 @@ struct KitchenView: View {
             .padding(.vertical, 16)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(.ultraThinMaterial)
+                    .fill(.regularMaterial)
             )
         }
         .buttonStyle(PlainButtonStyle())

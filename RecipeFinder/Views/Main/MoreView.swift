@@ -142,30 +142,34 @@ struct MoreRow: View {
     
     var body: some View {
         HStack(spacing: 16) {
-            Image(systemName: icon)
-                .font(.system(size: 32))
-                .foregroundColor(iconColor)
-                .frame(width: 50, height: 50)
+            ZStack {
+                Circle()
+                    .fill(iconColor)
+                    .frame(width: 40, height: 40)
+                
+                Image(systemName: icon)
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(.white)
+            }
             
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
-                    .font(.title3)
+                    .font(.body)
                     .fontWeight(.semibold)
                     .foregroundColor(colorScheme == .dark ? .white : .black)
                 
                 Text(subtitle)
-                    .font(.subheadline)
-                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .secondary)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
             }
-            
-            Spacer()
+            .frame(maxWidth: .infinity, alignment: .leading)
             
             Image(systemName: "chevron.right")
-                .font(.body)
-                .fontWeight(.semibold)
-                .foregroundColor(.gray)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundColor(.secondary)
         }
-        .padding(20)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
     }
 }
 

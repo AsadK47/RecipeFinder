@@ -2,16 +2,13 @@ import SwiftUI
 import AudioToolbox
 import CoreData
 
-// Card Style Enum
 enum CardStyle: String, CaseIterable {
     case frosted = "Frost Light"
     case solid = "Solid Dark"
 }
 
-/// Beautiful Settings View with app's gradient background aesthetic  
 struct SettingsTabView: View {
     @Environment(\.colorScheme) var colorScheme
-    @Environment(\.appTheme) var appTheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("appearanceMode") private var appearanceMode: AppearanceMode = .system
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
@@ -37,13 +34,12 @@ struct SettingsTabView: View {
     
     var body: some View {
         ZStack {
-            // Beautiful gradient background like rest of app
-            AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
                 // Header Section
-                VStack(spacing: 12) {
+                VStack(spacing: 8) {
                     GeometryReader { geometry in
                         HStack {
                             Spacer()
@@ -56,8 +52,7 @@ struct SettingsTabView: View {
                     .frame(height: 44)
                 }
                 .padding(.horizontal, 20)
-                .padding(.top, 16)
-                .padding(.bottom, 8)
+                .padding(.top, 12)
                     
                 ScrollView {
                     VStack(spacing: 24) {
@@ -69,7 +64,7 @@ struct SettingsTabView: View {
                                 NavigationLink(destination: AccountView()) {
                                     HStack(spacing: 16) {
                                         Circle()
-                                            .fill(AppTheme.accentColor(for: appTheme))
+                                            .fill(AppTheme.accentColor(for: selectedTheme))
                                             .frame(width: 56, height: 56)
                                             .overlay {
                                                 Text(accountManager.initials)
@@ -102,22 +97,11 @@ struct SettingsTabView: View {
                             SettingsSectionHeader(title: "Personalization")
                             
                             SettingsCard {
-                                VStack(spacing: 0) {
-                                    NavigationLink(destination: AppearanceSettingsView()) {
-                                        SettingsRow(icon: "paintpalette.fill", iconColor: .pink, title: "Appearance")
-                                            .padding(20)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                    
-                                    Divider()
-                                        .padding(.leading, 60)
-                                    
-                                    NavigationLink(destination: ThemeSettingsView()) {
-                                        SettingsRow(icon: "sparkles", iconColor: AppTheme.accentColor(for: appTheme), title: "Theme")
-                                            .padding(20)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
+                                NavigationLink(destination: AppearanceAndThemeSettingsView()) {
+                                    SettingsRow(icon: "paintpalette.fill", iconColor: .pink, title: "Appearance & Theme")
+                                        .padding(20)
                                 }
+                                .buttonStyle(PlainButtonStyle())
                             }
                             
                             // Cooking
@@ -311,10 +295,254 @@ struct SettingsRow: View {
 
 // Settings Detail Views
 
+struct AppearanceAndThemeSettingsView: View {
+    @AppStorage("appearanceMode") private var appearanceMode: SettingsTabView.AppearanceMode = .system
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
+    @Environment(\.colorScheme) var colorScheme
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
+    
+    var body: some View {
+        ZStack {
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
+                .ignoresSafeArea()
+            
+            ScrollView {
+                VStack(spacing: 24) {
+                    // Appearance Mode Section
+                    SettingsCard {
+                        VStack(alignment: .leading, spacing: 20) {
+                            HStack {
+                                Image(systemName: "circle.lefthalf.filled")
+                                    .font(.title2)
+                                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                                
+                                Text("Appearance Mode")
+                                    .font(.title3)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                            }
+                            
+                            Text("Choose between light and dark mode, or follow system settings.")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                            
+                            Divider()
+                                .padding(.vertical, 4)
+                            
+                            // System
+                            Button(action: {
+                                appearanceMode = .system
+                                cardStyle = colorScheme == .dark ? .solid : .frosted
+                                HapticManager.shared.selection()
+                            }) {
+                                HStack(spacing: 16) {
+                                    ZStack {
+                                        Circle()
+                                            .fill(Color.blue.opacity(0.15))
+                                            .frame(width: 44, height: 44)
+                                        
+                                        Image(systemName: "circle.lefthalf.filled")
+                                            .font(.title3)
+                                            .foregroundColor(.blue)
+                                    }
+                                    
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("System")
+                                            .font(.body)
+                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        
+                                        Text(colorScheme == .dark ? "Currently: Fire Dark" : "Currently: Frost Light")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                    }
+                                    
+                                    Spacer()
+                                    
+                                    if appearanceMode == .system {
+                                        Image(systemName: "checkmark.circle.fill")
+                                            .font(.title3)
+                                            .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                                    }
+                                }
+                                .padding(12)
+                                .background(appearanceMode == .system ? Color.gray.opacity(0.15) : Color.clear)
+                                .cornerRadius(12)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                            
+                            // Frost Light
+                            Button(action: {
+                                appearanceMode = .light
+                                cardStyle = .frosted
+                                HapticManager.shared.selection()
+                            }) {
+                                HStack(spacing: 16) {
+                                    ZStack {
+                                        Circle()
+                                            .fill(Color.cyan.opacity(0.15))
+                                            .frame(width: 44, height: 44)
+                                        
+                                        Image(systemName: "sparkles")
+                                            .font(.title3)
+                                            .foregroundColor(.cyan)
+                                    }
+                                    
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("Frost Light")
+                                            .font(.body)
+                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        
+                                        Text("Translucent frosted glass cards")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                    }
+                                    
+                                    Spacer()
+                                    
+                                    if appearanceMode == .light {
+                                        Image(systemName: "checkmark.circle.fill")
+                                            .font(.title3)
+                                            .foregroundColor(.cyan)
+                                    }
+                                }
+                                .padding(12)
+                                .background(appearanceMode == .light ? Color.gray.opacity(0.15) : Color.clear)
+                                .cornerRadius(12)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                            
+                            // Fire Dark
+                            Button(action: {
+                                appearanceMode = .dark
+                                cardStyle = .solid
+                                HapticManager.shared.selection()
+                            }) {
+                                HStack(spacing: 16) {
+                                    ZStack {
+                                        Circle()
+                                            .fill(Color.orange.opacity(0.15))
+                                            .frame(width: 44, height: 44)
+                                        
+                                        Image(systemName: "flame.fill")
+                                            .font(.title3)
+                                            .foregroundColor(.orange)
+                                    }
+                                    
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("Fire Dark")
+                                            .font(.body)
+                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        
+                                        Text("Solid dark cards")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                    }
+                                    
+                                    Spacer()
+                                    
+                                    if appearanceMode == .dark {
+                                        Image(systemName: "checkmark.circle.fill")
+                                            .font(.title3)
+                                            .foregroundColor(.orange)
+                                    }
+                                }
+                                .padding(12)
+                                .background(appearanceMode == .dark ? Color.gray.opacity(0.15) : Color.clear)
+                                .cornerRadius(12)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
+                        .padding(20)
+                    }
+                    
+                    // Color Theme Section
+                    SettingsCard {
+                        VStack(alignment: .leading, spacing: 20) {
+                            HStack {
+                                Image(systemName: "sparkles")
+                                    .font(.title2)
+                                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                                
+                                Text("Color Theme")
+                                    .font(.title3)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                            }
+                            
+                            Text("Choose your favorite accent color for the app.")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                            
+                            Divider()
+                                .padding(.vertical, 4)
+                            
+                            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                                ForEach(AppTheme.ThemeType.allCases) { theme in
+                                    Button(action: {
+                                        selectedTheme = theme
+                                        HapticManager.shared.selection()
+                                    }) {
+                                        HStack(spacing: 12) {
+                                            Circle()
+                                                .fill(AppTheme.accentColor(for: theme))
+                                                .frame(width: 32, height: 32)
+                                                .overlay(
+                                                    Circle()
+                                                        .strokeBorder(selectedTheme == theme ? Color.white : Color.clear, lineWidth: 2)
+                                                )
+                                            
+                                            VStack(alignment: .leading, spacing: 2) {
+                                                Text(theme.rawValue)
+                                                    .font(.subheadline)
+                                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                                
+                                                if selectedTheme == theme {
+                                                    Image(systemName: "checkmark")
+                                                        .font(.caption2)
+                                                        .foregroundColor(AppTheme.accentColor(for: theme))
+                                                }
+                                            }
+                                            
+                                            Spacer()
+                                        }
+                                        .padding(12)
+                                        .background(selectedTheme == theme ? AppTheme.accentColor(for: theme).opacity(0.15) : Color.gray.opacity(0.05))
+                                        .cornerRadius(12)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                }
+                            }
+                        }
+                        .padding(20)
+                    }
+                }
+                .padding(20)
+            }
+        }
+        .navigationTitle("Appearance & Theme")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
+        .onChange(of: appearanceMode) { _, newMode in
+            // Auto-update card style when mode changes
+            switch newMode {
+            case .system:
+                cardStyle = colorScheme == .dark ? .solid : .frosted
+            case .light:
+                cardStyle = .frosted
+            case .dark:
+                cardStyle = .solid
+            }
+        }
+    }
+}
+
+// Keep old views for backwards compatibility but mark as deprecated
 struct AppearanceSettingsView: View {
     @AppStorage("appearanceMode") private var appearanceMode: SettingsTabView.AppearanceMode = .system
     @Environment(\.colorScheme) var colorScheme
-    @Environment(\.appTheme) var appTheme
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
     // Computed property that returns the effective card style based on mode
@@ -331,7 +559,7 @@ struct AppearanceSettingsView: View {
     
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
                 .ignoresSafeArea()
             
             ScrollView {
@@ -342,7 +570,7 @@ struct AppearanceSettingsView: View {
                             HStack {
                                 Image(systemName: "paintpalette.fill")
                                     .font(.title2)
-                                    .foregroundColor(AppTheme.accentColor(for: appTheme))
+                                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                                 
                                 Text("Appearance")
                                     .font(.title3)
@@ -372,12 +600,12 @@ struct AppearanceSettingsView: View {
                                     HStack(spacing: 16) {
                                         ZStack {
                                             Circle()
-                                                .fill(AppTheme.accentColor(for: appTheme).opacity(0.2))
+                                                .fill(AppTheme.accentColor(for: selectedTheme).opacity(0.2))
                                                 .frame(width: 50, height: 50)
                                             
                                             Image(systemName: "circle.lefthalf.filled")
                                                 .font(.title3)
-                                                .foregroundColor(AppTheme.accentColor(for: appTheme))
+                                                .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                                         }
                                         
                                         VStack(alignment: .leading, spacing: 4) {
@@ -391,7 +619,7 @@ struct AppearanceSettingsView: View {
                                             
                                             Text(colorScheme == .dark ? "Currently: Fire Dark" : "Currently: Frost Light")
                                                 .font(.caption2)
-                                                .foregroundColor(AppTheme.accentColor(for: appTheme))
+                                                .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                                         }
                                         
                                         Spacer()
@@ -399,7 +627,7 @@ struct AppearanceSettingsView: View {
                                         if appearanceMode == .system {
                                             Image(systemName: "checkmark.circle.fill")
                                                 .font(.title3)
-                                                .foregroundColor(AppTheme.accentColor(for: appTheme))
+                                                .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                                         }
                                     }
                                     .padding(20)
@@ -519,12 +747,12 @@ struct AppearanceSettingsView: View {
 
 struct ThemeSettingsView: View {
     @Environment(\.colorScheme) var colorScheme
-    @Environment(\.appTheme) var appTheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
                 .ignoresSafeArea()
             
             ScrollView {
@@ -618,7 +846,8 @@ struct NotificationSettingsView: View {
     @State private var notificationPermission: UNAuthorizationStatus = .notDetermined
     
     @Environment(\.colorScheme) var colorScheme
-    @Environment(\.appTheme) var appTheme
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
     var reminderTime: Date {
         let formatter = DateFormatter()
@@ -628,7 +857,7 @@ struct NotificationSettingsView: View {
     
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
                 .ignoresSafeArea()
             
             ScrollView {
@@ -847,7 +1076,8 @@ struct TimerSettingsView: View {
     @AppStorage("showTimerInNotifications") private var showTimerInNotifications: Bool = true
     
     @Environment(\.colorScheme) var colorScheme
-    @Environment(\.appTheme) var appTheme
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
     enum TimerSound: String, CaseIterable {
         case `default` = "Default"
@@ -859,7 +1089,7 @@ struct TimerSettingsView: View {
     
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
                 .ignoresSafeArea()
             
             ScrollView {
@@ -880,7 +1110,7 @@ struct TimerSettingsView: View {
                                     }) {
                                         HStack {
                                             Image(systemName: "timer")
-                                                .foregroundColor(AppTheme.accentColor)
+                                                .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                                                 .frame(width: 30)
                                             
                                             Text(label)
@@ -890,7 +1120,7 @@ struct TimerSettingsView: View {
                                             
                                             if defaultTimerDuration == seconds {
                                                 Image(systemName: "checkmark.circle.fill")
-                                                    .foregroundColor(AppTheme.accentColor)
+                                                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                                             }
                                         }
                                         .padding(12)
@@ -1026,11 +1256,12 @@ struct UnitsSettingsView: View {
     @AppStorage("temperatureUnit") private var temperatureUnit: TemperatureUnit = .celsius
     
     @Environment(\.colorScheme) var colorScheme
-    @Environment(\.appTheme) var appTheme
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
                 .ignoresSafeArea()
             
             ScrollView {
@@ -1133,11 +1364,12 @@ struct DisplaySettingsView: View {
     @AppStorage("brightnessBoost") private var brightnessBoost: Bool = false
     
     @Environment(\.colorScheme) var colorScheme
-    @Environment(\.appTheme) var appTheme
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
                 .ignoresSafeArea()
             
             ScrollView {
@@ -1221,18 +1453,64 @@ enum TemperatureUnit: String, CaseIterable {
 
 struct PrivacySettingsView: View {
     @Environment(\.colorScheme) var colorScheme
-    @Environment(\.appTheme) var appTheme
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
+    @StateObject private var authManager = AuthenticationManager.shared
     @AppStorage("skipRecipeDeleteConfirmation") private var skipDeleteConfirmation: Bool = false
+    @AppStorage("biometricsEnabled") private var biometricsEnabled: Bool = false
     @State private var showResetSuccess = false
     @State private var showPrivacyPolicy = false
+    @State private var showBiometricError = false
+    @State private var biometricErrorMessage = ""
     
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
                 .ignoresSafeArea()
             
             ScrollView {
                 VStack(spacing: 24) {
+                    // Biometric Authentication (if available and not in guest mode)
+                    if authManager.biometricsAvailable && !authManager.isGuestMode {
+                        SettingsCard {
+                            VStack(alignment: .leading, spacing: 20) {
+                                Text("Security")
+                                    .font(.headline)
+                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                
+                                Toggle(isOn: Binding(
+                                    get: { biometricsEnabled },
+                                    set: { newValue in
+                                        if newValue {
+                                            // Enable biometrics
+                                            enableBiometrics()
+                                        } else {
+                                            // Disable biometrics
+                                            biometricsEnabled = false
+                                            HapticManager.shared.light()
+                                        }
+                                    }
+                                )) {
+                                    HStack(spacing: 12) {
+                                        Image(systemName: authManager.biometricType == "Face ID" ? "faceid" : "touchid")
+                                            .foregroundColor(AppTheme.accentColor)
+                                            .frame(width: 30)
+                                        
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text("\(authManager.biometricType)")
+                                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                            Text("Sign in with \(authManager.biometricType) instead of password")
+                                                .font(.caption)
+                                                .foregroundColor(.secondary)
+                                        }
+                                    }
+                                }
+                                .tint(AppTheme.accentColor)
+                            }
+                            .padding(20)
+                        }
+                    }
+                    
                     // Privacy Documents
                     SettingsCard {
                         VStack(spacing: 0) {
@@ -1294,41 +1572,45 @@ struct PrivacySettingsView: View {
                     
                     // Confirmation Preferences
                     SettingsCard {
-                        VStack(alignment: .leading, spacing: 20) {
+                        VStack(alignment: .leading, spacing: 16) {
                             Text("Confirmation Dialogs")
                                 .font(.headline)
                                 .foregroundColor(colorScheme == .dark ? .white : .black)
                             
-                            VStack(spacing: 16) {
-                                HStack(spacing: 16) {
+                            HStack(spacing: 16) {
+                                ZStack {
+                                    Circle()
+                                        .fill(.orange)
+                                        .frame(width: 40, height: 40)
+                                    
                                     Image(systemName: "exclamationmark.triangle.fill")
-                                        .font(.title3)
-                                        .foregroundColor(.orange)
-                                        .frame(width: 30)
-                                    
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text("Delete Confirmations")
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
-                                        Text("Currently: \(skipDeleteConfirmation ? "Disabled" : "Enabled")")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                    }
-                                    
-                                    Spacer()
+                                        .font(.system(size: 18, weight: .semibold))
+                                        .foregroundColor(.white)
                                 }
                                 
-                                if skipDeleteConfirmation {
-                                    VStack(alignment: .leading, spacing: 8) {
-                                        Text("⚠️ Delete confirmations are disabled")
-                                            .font(.caption)
-                                            .foregroundColor(.orange)
-                                        
-                                        Text("Recipes will be deleted immediately when you swipe without asking for confirmation.")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                            .fixedSize(horizontal: false, vertical: true)
-                                    }
-                                    .padding(.leading, 46)
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Delete Confirmations")
+                                        .font(.body)
+                                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    
+                                    Text("Currently: \(skipDeleteConfirmation ? "Disabled" : "Enabled")")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                
+                                Spacer()
+                            }
+                            
+                            if skipDeleteConfirmation {
+                                VStack(alignment: .leading, spacing: 12) {
+                                    Text("⚠️ Delete confirmations are disabled")
+                                        .font(.caption)
+                                        .foregroundColor(.orange)
+                                    
+                                    Text("Recipes will be deleted immediately when you swipe without asking for confirmation.")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                        .fixedSize(horizontal: false, vertical: true)
                                     
                                     Button(action: {
                                         skipDeleteConfirmation = false
@@ -1352,25 +1634,24 @@ struct PrivacySettingsView: View {
                                         .cornerRadius(10)
                                     }
                                     .buttonStyle(PlainButtonStyle())
-                                    .padding(.leading, 46)
-                                } else {
-                                    Text("You will be asked to confirm before deleting recipes.")
+                                }
+                                .padding(.top, 4)
+                            } else {
+                                Text("You will be asked to confirm before deleting recipes.")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                    .padding(.top, 4)
+                            }
+                            
+                            if showResetSuccess {
+                                HStack(spacing: 8) {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .foregroundColor(.green)
+                                    Text("Delete confirmations re-enabled")
                                         .font(.caption)
-                                        .foregroundColor(.secondary)
-                                        .padding(.leading, 46)
+                                        .foregroundColor(.green)
                                 }
-                                
-                                if showResetSuccess {
-                                    HStack(spacing: 8) {
-                                        Image(systemName: "checkmark.circle.fill")
-                                            .foregroundColor(.green)
-                                        Text("Delete confirmations re-enabled")
-                                            .font(.caption)
-                                            .foregroundColor(.green)
-                                    }
-                                    .padding(.leading, 46)
-                                    .transition(.opacity.combined(with: .move(edge: .top)))
-                                }
+                                .transition(.opacity.combined(with: .move(edge: .top)))
                             }
                         }
                         .padding(20)
@@ -1383,24 +1664,65 @@ struct PrivacySettingsView: View {
                                 .font(.headline)
                                 .foregroundColor(colorScheme == .dark ? .white : .black)
                             
-                            VStack(alignment: .leading, spacing: 12) {
+                            VStack(spacing: 16) {
                                 PrivacyInfoRow(
-                                    icon: "iphone",
-                                    title: "All Local Storage",
-                                    description: "Your recipes, shopping lists, and kitchen inventory are stored only on your device"
+                                    icon: "externaldrive.fill",
+                                    iconColor: .green,
+                                    title: "Local Storage Only",
+                                    description: "All your recipes, lists, and preferences are stored locally on your device using Core Data"
                                 )
                                 
                                 PrivacyInfoRow(
-                                    icon: "lock.shield.fill",
-                                    title: "No Cloud Sync",
-                                    description: "We don't collect or sync your data to any servers"
+                                    icon: "cloud.slash.fill",
+                                    iconColor: .blue,
+                                    title: "No Cloud Services",
+                                    description: "RecipeFinder doesn't use any cloud services or remote servers. Your data never leaves your device"
                                 )
                                 
                                 PrivacyInfoRow(
-                                    icon: "eye.slash.fill",
-                                    title: "No Tracking",
-                                    description: "No analytics, no tracking, no third-party services"
+                                    icon: "chart.bar.xaxis",
+                                    iconColor: .purple,
+                                    title: "No Analytics or Tracking",
+                                    description: "We don't collect usage data, analytics, crash reports, or any telemetry. Your privacy is paramount"
                                 )
+                                
+                                PrivacyInfoRow(
+                                    icon: "network.slash",
+                                    iconColor: .orange,
+                                    title: "No Third-Party SDKs",
+                                    description: "No advertising networks, no social media trackers, no third-party libraries with data collection"
+                                )
+                                
+                                PrivacyInfoRow(
+                                    icon: "person.badge.shield.checkmark.fill",
+                                    iconColor: .indigo,
+                                    title: "GDPR & DPA 2018 Compliant",
+                                    description: "Built with UK GDPR and Data Protection Act 2018 compliance as a core principle"
+                                )
+                            }
+                            
+                            // Export & Import reminder
+                            VStack(alignment: .leading, spacing: 8) {
+                                Divider()
+                                    .padding(.vertical, 4)
+                                
+                                HStack(alignment: .top, spacing: 12) {
+                                    Image(systemName: "info.circle.fill")
+                                        .foregroundColor(AppTheme.accentColor)
+                                        .font(.system(size: 16))
+                                    
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("Backup Your Data")
+                                            .font(.subheadline)
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        
+                                        Text("Since data is stored locally, we recommend regularly exporting your data from the Account tab for safekeeping")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                            .fixedSize(horizontal: false, vertical: true)
+                                    }
+                                }
                             }
                         }
                         .padding(20)
@@ -1416,25 +1738,55 @@ struct PrivacySettingsView: View {
         .sheet(isPresented: $showPrivacyPolicy) {
             PrivacyPolicyView()
         }
+        .alert("Biometric Error", isPresented: $showBiometricError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(biometricErrorMessage)
+        }
+    }
+    
+    private func enableBiometrics() {
+        Task {
+            do {
+                try await authManager.authenticateWithBiometrics()
+                await MainActor.run {
+                    biometricsEnabled = true
+                    HapticManager.shared.success()
+                }
+            } catch {
+                await MainActor.run {
+                    biometricErrorMessage = error.localizedDescription
+                    showBiometricError = true
+                    HapticManager.shared.error()
+                }
+            }
+        }
     }
 }
 
 struct PrivacyInfoRow: View {
     let icon: String
+    var iconColor: Color = .green
     let title: String
     let description: String
     
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            Image(systemName: icon)
-                .foregroundColor(.green)
-                .frame(width: 24)
+        HStack(alignment: .top, spacing: 16) {
+            ZStack {
+                Circle()
+                    .fill(iconColor.opacity(0.15))
+                    .frame(width: 40, height: 40)
+                
+                Image(systemName: icon)
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(iconColor)
+            }
             
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(title)
-                    .font(.subheadline)
+                    .font(.body)
                     .fontWeight(.semibold)
                     .foregroundColor(colorScheme == .dark ? .white : .black)
                 
@@ -1443,6 +1795,7 @@ struct PrivacyInfoRow: View {
                     .foregroundColor(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 }
@@ -1455,13 +1808,14 @@ struct DataManagementSettingsView: View {
     @State private var dataCleared = false
     
     @Environment(\.colorScheme) var colorScheme
-    @Environment(\.appTheme) var appTheme
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @EnvironmentObject var kitchenManager: KitchenInventoryManager
     @EnvironmentObject var shoppingListManager: ShoppingListManager
     
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
                 .ignoresSafeArea()
             
             ScrollView {

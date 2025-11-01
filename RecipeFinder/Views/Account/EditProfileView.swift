@@ -455,6 +455,25 @@ struct EditProfileView: View {
             chefType: selectedChefType
         )
         
+        if let currentUser = authManager.currentUser {
+            let fullName = [firstName, middleName, lastName]
+                .filter { !$0.isEmpty }
+                .joined(separator: " ")
+            
+            let updatedUser = AuthenticationManager.User(
+                id: currentUser.id,
+                email: currentUser.email,
+                fullName: fullName,
+                givenName: firstName,
+                familyName: lastName,
+                appleUserID: currentUser.appleUserID,
+                createdAt: currentUser.createdAt,
+                lastLoginAt: Date()
+            )
+            
+            authManager.updateCurrentUser(updatedUser)
+        }
+        
         HapticManager.shared.success()
         dismiss()
     }

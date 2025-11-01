@@ -48,11 +48,18 @@ enum AppTheme {
     private static let blueUndertone = Color(red: 59/255, green: 130/255, blue: 246/255)    // Medium Blue
     private static let lightBlueUndertone = Color(red: 96/255, green: 165/255, blue: 250/255) // Light Blue
     
-    // 1. Teal Theme - Bright Teal to Deep Ocean Blue (enhanced depth)
-    private static let tealBright = Color(red: 20/255, green: 184/255, blue: 166/255)       // Bright Teal
-    private static let tealMedium = Color(red: 45/255, green: 155/255, blue: 180/255)       // Medium Teal-Blue
-    private static let tealDeep = Color(red: 59/255, green: 130/255, blue: 246/255)         // Deep Ocean Blue
-    private static let tealRich = Color(red: 67/255, green: 97/255, blue: 238/255)          // Rich Royal Blue
+    // 1. Teal Theme - Darker teal for light mode, even darker ocean for dark mode
+    // Frost Light mode colors (the darker teal version)
+    private static let tealBrightLight = Color(red: 20/255, green: 184/255, blue: 166/255)   // Bright Teal
+    private static let tealMediumLight = Color(red: 45/255, green: 155/255, blue: 180/255)   // Medium Teal-Blue
+    private static let tealDeepLight = Color(red: 59/255, green: 130/255, blue: 246/255)     // Deep Ocean Blue
+    private static let tealRichLight = Color(red: 67/255, green: 97/255, blue: 238/255)      // Rich Royal Blue
+    
+    // Fire Dark mode colors (even darker ocean teal)
+    private static let tealBrightDark = Color(red: 15/255, green: 120/255, blue: 110/255)    // Dark Teal
+    private static let tealMediumDark = Color(red: 25/255, green: 95/255, blue: 120/255)     // Dark Teal-Blue
+    private static let tealDeepDark = Color(red: 30/255, green: 70/255, blue: 150/255)       // Deep Dark Ocean
+    private static let tealRichDark = Color(red: 35/255, green: 50/255, blue: 130/255)       // Rich Dark Blue
     
     // 2. Purple Theme - Rich Purple to Electric Teal (enhanced vibrancy)
     private static let purpleRich = Color(red: 131/255, green: 58/255, blue: 180/255)       // Rich Purple
@@ -107,7 +114,7 @@ enum AppTheme {
     // Dynamic accent color based on theme
     static func accentColor(for theme: ThemeType) -> Color {
         switch theme {
-        case .teal:     return tealBright
+        case .teal:     return tealBrightLight  // Use light teal for accent
         case .purple:   return purpleRich
         case .red:      return redCrimson
         case .orange:   return orangeBright
@@ -120,56 +127,92 @@ enum AppTheme {
     
     // Computed property for environment-based access
     static var accentColor: Color {
-        return tealBright // Teal default
+        return tealBrightLight // Teal default
     }
     
-    static func backgroundGradient(for theme: ThemeType, colorScheme: ColorScheme) -> LinearGradient {
+    static func backgroundGradient(for theme: ThemeType, colorScheme: ColorScheme, cardStyle: CardStyle? = nil) -> LinearGradient {
+        // Determine if we should use dark colors based on either:
+        // 1. The cardStyle (if provided) - .solid = dark, .frosted = light
+        // 2. The system colorScheme (if cardStyle not provided)
+        let useDarkColors: Bool
+        if let cardStyle = cardStyle {
+            useDarkColors = (cardStyle == .solid)
+        } else {
+            useDarkColors = (colorScheme == .dark)
+        }
+        
         switch theme {
         case .teal:
             return LinearGradient(
-                gradient: Gradient(colors: [tealBright, tealMedium, tealDeep, tealRich]),
+                gradient: Gradient(colors: useDarkColors ? 
+                    // Dark mode/Fire Dark: New darker ocean teal
+                    [tealBrightDark, tealMediumDark, tealDeepDark, tealRichDark] :
+                    // Light mode/Frost Light: Original bright teal
+                    [tealBrightLight, tealMediumLight, tealDeepLight, tealRichLight]
+                ),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
         case .purple:
             return LinearGradient(
-                gradient: Gradient(colors: [purpleRich, purpleVibrant, purpleDeep, purpleTeal]),
+                gradient: Gradient(colors: useDarkColors ?
+                    [purpleRich.opacity(0.6), purpleVibrant.opacity(0.5), purpleDeep.opacity(0.5), Color(red: 30/255, green: 40/255, blue: 80/255)] :
+                    [purpleRich, purpleVibrant, purpleDeep, purpleTeal]
+                ),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
         case .red:
             return LinearGradient(
-                gradient: Gradient(colors: [redCrimson, redWarm, redBurnt, redOrange]),
+                gradient: Gradient(colors: useDarkColors ?
+                    [redCrimson.opacity(0.6), redWarm.opacity(0.5), redBurnt.opacity(0.5), Color(red: 60/255, green: 20/255, blue: 20/255)] :
+                    [redCrimson, redWarm, redBurnt, redOrange]
+                ),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
         case .orange:
             return LinearGradient(
-                gradient: Gradient(colors: [orangeBright, orangeWarm, coralDeep, coralRich]),
+                gradient: Gradient(colors: useDarkColors ?
+                    [orangeBright.opacity(0.5), orangeWarm.opacity(0.5), coralDeep.opacity(0.6), Color(red: 60/255, green: 30/255, blue: 30/255)] :
+                    [orangeBright, orangeWarm, coralDeep, coralRich]
+                ),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
         case .yellow:
             return LinearGradient(
-                gradient: Gradient(colors: [yellowBright, yellowGold, yellowAmber, yellowDeep]),
+                gradient: Gradient(colors: useDarkColors ?
+                    [yellowGold.opacity(0.4), yellowAmber.opacity(0.5), yellowDeep.opacity(0.6), Color(red: 80/255, green: 50/255, blue: 20/255)] :
+                    [yellowBright, yellowGold, yellowAmber, yellowDeep]
+                ),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
         case .green:
             return LinearGradient(
-                gradient: Gradient(colors: [greenVibrant, greenMedium, greenTeal, greenDeep]),
+                gradient: Gradient(colors: useDarkColors ?
+                    [greenVibrant.opacity(0.5), greenMedium.opacity(0.5), greenTeal.opacity(0.6), Color(red: 20/255, green: 50/255, blue: 60/255)] :
+                    [greenVibrant, greenMedium, greenTeal, greenDeep]
+                ),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
         case .pink:
             return LinearGradient(
-                gradient: Gradient(colors: [pinkHot, pinkVibrant, pinkPurple, pinkBlue]),
+                gradient: Gradient(colors: useDarkColors ?
+                    [pinkHot.opacity(0.5), pinkVibrant.opacity(0.5), pinkPurple.opacity(0.5), Color(red: 40/255, green: 30/255, blue: 70/255)] :
+                    [pinkHot, pinkVibrant, pinkPurple, pinkBlue]
+                ),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
         case .gold:
             return LinearGradient(
-                gradient: Gradient(colors: [goldBrilliant, goldShiny, goldRich, silverCool, goldBronze, goldCharcoal, goldBlack]),
+                gradient: Gradient(colors: useDarkColors ?
+                    [goldRich.opacity(0.4), goldBronze.opacity(0.6), goldCharcoal, goldBlack] :
+                    [goldBrilliant, goldShiny, goldRich, silverCool, goldBronze, goldCharcoal, goldBlack]
+                ),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )

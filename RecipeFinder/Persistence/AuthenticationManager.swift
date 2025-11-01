@@ -511,6 +511,20 @@ final class AuthenticationManager: NSObject, ObservableObject {
         )
     }
     
+    // Update Current User
+    
+    /// Update the current user's information (called when editing profile)
+    func updateCurrentUser(_ user: User) {
+        currentUser = user
+        
+        // Save to persistent storage
+        if let encoded = try? JSONEncoder().encode(user) {
+            UserDefaults.standard.set(encoded, forKey: userDataKey)
+        }
+        
+        debugLog("✅ Current user updated: \(user.displayName)")
+    }
+    
     func deleteAccount() async throws {
         // Delete from Keychain
         if let email = UserDefaults.standard.string(forKey: currentEmailKey) {

@@ -232,10 +232,10 @@ struct CookTimerView: View {
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(colorScheme == .dark ? Color(white: 0.2).opacity(isDisabled ? 0.5 : 1.0) : Color.white.opacity(isDisabled ? 0.15 : 0.3))
+                        .fill((colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground).opacity(isDisabled ? 0.5 : 1.0))
                 } else {
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(.ultraThinMaterial.opacity(isDisabled ? 0.5 : 1.0))
+                        .fill(.regularMaterial.opacity(isDisabled ? 0.5 : 1.0))
                 }
             }
         }
@@ -265,7 +265,7 @@ struct CookTimerView: View {
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(colorScheme == .dark ? Color(white: 0.2).opacity(isDisabled ? 0.5 : 1.0) : Color.white.opacity(isDisabled ? 0.15 : 0.3))
+                        .fill((colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground).opacity(isDisabled ? 0.5 : 1.0))
                 } else {
                     RoundedRectangle(cornerRadius: 16)
                         .fill(.regularMaterial.opacity(isDisabled ? 0.5 : 1.0))
@@ -292,11 +292,11 @@ struct CookTimerView: View {
             }
             .foregroundColor(isDisabled ? (colorScheme == .dark ? .white.opacity(0.3) : .black.opacity(0.3)) : (colorScheme == .dark ? .white : .black))
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 18)
+            .padding(.vertical, 16)
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(colorScheme == .dark ? Color(white: 0.2).opacity(isDisabled ? 0.5 : 1.0) : Color.white.opacity(isDisabled ? 0.15 : 0.3))
+                        .fill((colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground).opacity(isDisabled ? 0.5 : 1.0))
                 } else {
                     RoundedRectangle(cornerRadius: 16)
                         .fill(.regularMaterial.opacity(isDisabled ? 0.5 : 1.0))
@@ -326,7 +326,7 @@ struct CookTimerView: View {
                                         .foregroundColor(.white)
                                         .padding(.horizontal, 16)
                                         .padding(.vertical, 8)
-                                        .background(.ultraThinMaterial)
+                                        .background(.regularMaterial)
                                         .cornerRadius(12)
                                 }
                                 
@@ -431,10 +431,10 @@ struct CookTimerView: View {
                     .background {
                         if cardStyle == .solid {
                             RoundedRectangle(cornerRadius: 20)
-                                .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.3))
+                                .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
                         } else {
                             RoundedRectangle(cornerRadius: 20)
-                                .fill(.ultraThinMaterial)
+                                .fill(.regularMaterial)
                         }
                     }
                     
@@ -530,7 +530,7 @@ struct CookTimerView: View {
                     )
             } else {
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(.ultraThinMaterial)
+                    .fill(.regularMaterial)
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
                             .strokeBorder(Color.orange.opacity(0.3), lineWidth: 1)
@@ -768,10 +768,10 @@ struct TimerCard: View {
         .background {
             if cardStyle == .solid {
                 RoundedRectangle(cornerRadius: 20)
-                    .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+                    .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
             } else {
                 RoundedRectangle(cornerRadius: 20)
-                    .fill(.ultraThinMaterial)
+                    .fill(.regularMaterial)
             }
         }
     }

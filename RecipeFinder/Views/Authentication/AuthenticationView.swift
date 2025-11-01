@@ -12,8 +12,11 @@ struct AuthenticationView: View {
     @State private var showSignUp = false
     @State private var showOnboarding = false
     @State private var showAppleSignInInfo = false
+    @State private var showBiometricSetup = false
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
+    @AppStorage("hasBeenPromptedForBiometrics") private var hasBeenPromptedForBiometrics = false
+    @AppStorage("biometricsEnabled") private var biometricsEnabled: Bool = false
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
@@ -159,6 +162,9 @@ struct AuthenticationView: View {
         .fullScreenCover(isPresented: $showOnboarding) {
             OnboardingView()
         }
+        .sheet(isPresented: $showBiometricSetup) {
+            BiometricSetupView()
+        }
         .alert("Authentication Error", isPresented: .constant(authManager.authError != nil)) {
             Button("OK") {
                 authManager.authError = nil
@@ -178,6 +184,14 @@ struct AuthenticationView: View {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     showOnboarding = true
                     hasSeenOnboarding = true
+                }
+            } else if newValue && !authManager.isGuestMode && !hasBeenPromptedForBiometrics && !biometricsEnabled {
+                // After successful sign in, prompt for biometrics if available and not yet enabled
+                if authManager.biometricsAvailable {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        showBiometricSetup = true
+                        hasBeenPromptedForBiometrics = true
+                    }
                 }
             }
         }
