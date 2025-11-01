@@ -62,6 +62,8 @@
 		9E87D32D2EB6909700FFA1D1 /* QuickAddSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E87D32C2EB6909700FFA1D1 /* QuickAddSheet.swift */; };
 		9E87D3302EB696A400FFA1D1 /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E87D32F2EB696A400FFA1D1 /* ThemeManager.swift */; };
 		9E87D3322EB6B53C00FFA1D1 /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 9E87D3312EB6B53C00FFA1D1 /* ConfettiSwiftUI */; };
+		9E87D3342EB6C05700FFA1D1 /* WelcomeSplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E87D3332EB6C05700FFA1D1 /* WelcomeSplashView.swift */; };
+		9E87D3362EB6C0E900FFA1D1 /* PasswordVerificationSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E87D3352EB6C0E900FFA1D1 /* PasswordVerificationSheet.swift */; };
 		9EA778FD2EB4A4B00028F064 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA778FC2EB4A4B00028F064 /* OnboardingView.swift */; };
 		9EA779002EB4C36A0028F064 /* GuestModeSplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA778FF2EB4C36A0028F064 /* GuestModeSplashView.swift */; };
 		9EA779012EB4C36A0028F064 /* EmailConfirmationSplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA778FE2EB4C36A0028F064 /* EmailConfirmationSplashView.swift */; };
@@ -161,6 +163,8 @@
 		9E87D32A2EB67CEA00FFA1D1 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		9E87D32C2EB6909700FFA1D1 /* QuickAddSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddSheet.swift; sourceTree = "<group>"; };
 		9E87D32F2EB696A400FFA1D1 /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
+		9E87D3332EB6C05700FFA1D1 /* WelcomeSplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeSplashView.swift; sourceTree = "<group>"; };
+		9E87D3352EB6C0E900FFA1D1 /* PasswordVerificationSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordVerificationSheet.swift; sourceTree = "<group>"; };
 		9EA777B82D09F1E000C3422A /* RecipeModel 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 3.xcdatamodel"; sourceTree = "<group>"; };
 		9EA778FC2EB4A4B00028F064 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		9EA778FE2EB4C36A0028F064 /* EmailConfirmationSplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailConfirmationSplashView.swift; sourceTree = "<group>"; };
@@ -305,6 +309,7 @@
 		9E51C3992EB3E9C20064B917 /* Account */ = {
 			isa = PBXGroup;
 			children = (
+				9E87D3352EB6C0E900FFA1D1 /* PasswordVerificationSheet.swift */,
 				9E87D32A2EB67CEA00FFA1D1 /* ImagePicker.swift */,
 				9E51C3982EB3E9C20064B917 /* AccountView.swift */,
 			);
@@ -322,6 +327,7 @@
 		9E51C3A72EB40DC90064B917 /* Authentication */ = {
 			isa = PBXGroup;
 			children = (
+				9E87D3332EB6C05700FFA1D1 /* WelcomeSplashView.swift */,
 				9E87D3282EB6722300FFA1D1 /* BiometricSetupView.swift */,
 				9EA779022EB4C6C90028F064 /* PasswordReminderSplashView.swift */,
 				9EA778FE2EB4C36A0028F064 /* EmailConfirmationSplashView.swift */,
@@ -686,6 +692,7 @@
 				9E4DC75A2E9C197A00E17DDF /* SampleRecipeData.swift in Sources */,
 				9E4DC7462E9C111000E17DDF /* InfoPairView.swift in Sources */,
 				9E51C39A2EB3E9C20064B917 /* AccountView.swift in Sources */,
+				9E87D3362EB6C0E900FFA1D1 /* PasswordVerificationSheet.swift in Sources */,
 				9E7B9A862E9BED16007E1786 /* RecipeSearchView.swift in Sources */,
 				9EA779202EB570D50028F064 /* CookTimer.swift in Sources */,
 				9EA779002EB4C36A0028F064 /* GuestModeSplashView.swift in Sources */,
@@ -715,6 +722,7 @@
 				9E51C3922EB3DE580064B917 /* RecipeWizardView.swift in Sources */,
 				9EA778FD2EB4A4B00028F064 /* OnboardingView.swift in Sources */,
 				9E605FFE2D0985BD00236896 /* PersistenceController.swift in Sources */,
+				9E87D3342EB6C05700FFA1D1 /* WelcomeSplashView.swift in Sources */,
 				9E77ABEE2EB412C600666BB0 /* SecureCredentialManager.swift in Sources */,
 				9E4DC7402E9C10F000E17DDF /* RecipeCard.swift in Sources */,
 				9E5447AF2EAA867600AD6D0A /* Constants.swift in Sources */,

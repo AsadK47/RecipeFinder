@@ -16,6 +16,7 @@ struct RecipeSearchView: View {
     @State private var dontAskAgainDelete: Bool = false
     @State private var cachedFilteredRecipes: [RecipeModel] = []
     @State private var lastFilterHash: Int = 0
+    @FocusState private var isSearchFocused: Bool
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
@@ -93,201 +94,36 @@ struct RecipeSearchView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
-                    .ignoresSafeArea()
+                backgroundView
                 
                 VStack(spacing: 0) {
-                    VStack(spacing: 12) {
-                        GeometryReader { geometry in
-                            HStack(spacing: 0) {
-                                // Left spacer for balance - 15% of width or fixed size
-                                Color.clear
-                                    .frame(width: max(44, geometry.size.width * 0.15))
-                                
-                                Spacer(minLength: 8)
-                                
-                                Text("Recipe Finder")
-                                    .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                                    .foregroundColor(.white)
-                                    .lineLimit(1)
-                                    .minimumScaleFactor(0.7)
-                                
-                                Spacer(minLength: 8)
-                                
-                                // Right menu - 15% of width or fixed size
-                                Menu {
-                                    // Filter option
-                                    Button(
-                                        action: {
-                                            HapticManager.shared.light()
-                                            showFilters.toggle()
-                                        },
-                                        label: {
-                                            Label(activeFilterCount > 0 ? "Filters (\(activeFilterCount))" : "Filters", systemImage: "line.3.horizontal.decrease.circle")
-                                        }
-                                    )
-                                    
-                                    Divider()
-                                    
-                                    // Import option
-                                    Button(
-                                        action: {
-                                            HapticManager.shared.selection()
-                                            showImportSheet = true
-                                        },
-                                        label: {
-                                            Label("Import Recipe", systemImage: "plus.circle")
-                                        }
-                                    )
-                                    
-                                    // Recipe Wizard option
-                                    Button(
-                                        action: {
-                                            HapticManager.shared.selection()
-                                            showRecipeWizard = true
-                                        },
-                                        label: {
-                                            Label("Recipe Wizard", systemImage: "wand.and.stars")
-                                        }
-                                    )
-                                } label: {
-                                    ModernCircleButton(icon: "line.3.horizontal") {}
-                                        .allowsHitTesting(false)
-                                }
-                                .frame(width: max(44, geometry.size.width * 0.15))
-                            }
-                        }
-                        .frame(height: 44)
-                        .padding(.horizontal, 20)
-                        .padding(.top, 16)
-                        
-                        ModernSearchBar(text: $searchText, placeholder: "What would you like to eat...?")
-                            .padding(.horizontal, 20)
-                            .padding(.bottom, 12)
-                        
-                    }
+                    headerSection
+                    
+                    // Search bar with cancel option
+                    searchBarSection
                     
                     // Active filters chips
                     if activeFilterCount > 0 {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 8) {
-                                if showFavoritesOnly {
-                                    FilterChip(label: "Favorites", icon: "heart.fill") {
-                                        HapticManager.shared.light()
-                                        showFavoritesOnly = false
-                                    }
-                                }
-                                
-                                ForEach(Array(selectedCategories), id: \.self) { category in
-                                    FilterChip(label: category, icon: "fork.knife") {
-                                        HapticManager.shared.light()
-                                        selectedCategories.remove(category)
-                                    }
-                                }
-                                
-                                ForEach(Array(selectedDifficulties), id: \.self) { difficulty in
-                                    FilterChip(label: difficulty, icon: "chart.bar.fill") {
-                                        HapticManager.shared.light()
-                                        selectedDifficulties.remove(difficulty)
-                                    }
-                                }
-                                
-                                ForEach(Array(selectedCookTimes), id: \.self) { time in
-                                    FilterChip(label: time > 120 ? "> 120 min" : "≤ \(time) min", icon: "clock.fill") {
-                                        HapticManager.shared.light()
-                                        selectedCookTimes.remove(time)
-                                    }
-                                }
-                                
-                                Button(action: clearAllFilters, label: {
-                                    Text("Clear All")
-                                        .font(.caption)
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(.white)
-                                        .padding(.horizontal, 12)
-                                        .padding(.vertical, 6)
-                                        .background(
-                                            Capsule()
-                                                .fill(Color.red.opacity(0.8))
-                                        )
-                                })
-                            }
-                            .padding(.horizontal, 20)
-                        }
-                        .transition(.move(edge: .top).combined(with: .opacity))
+                        activeFiltersView
                     }
                     
                     if filteredRecipes.isEmpty {
                         emptyStateView
                     } else {
-                        ScrollView {
-                            LazyVStack(spacing: AppTheme.cardVerticalSpacing) {
-                                ForEach(filteredRecipes) { recipe in
-                                    NavigationLink(
-                                        destination: RecipeDetailView(
-                                            recipe: recipe,
-                                            shoppingListManager: shoppingListManager,
-                                            onFavoriteToggle: {
-                                        refreshRecipes()
-                                    })) {
-                                        RecipeCard(recipe: recipe, viewMode: .list)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                    .contextMenu {
-                                        Button(role: .destructive) {
-                                            recipeToDelete = recipe
-                                            if skipDeleteConfirmation {
-                                                deleteRecipe(recipe)
-                                                recipeToDelete = nil
-                                            } else {
-                                                showDeleteAlert = true
-                                                HapticManager.shared.warning()
-                                            }
-                                        } label: {
-                                            Label("Delete Recipe", systemImage: "trash.fill")
-                                        }
-                                    }
-                                }
-                            }
-                            .padding(.horizontal, AppTheme.cardHorizontalPadding)
-                            .padding(.bottom, AppTheme.cardHorizontalPadding)
-                        }
+                        recipeListView
                     }
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)
             .sheet(isPresented: $showFilters) {
-                FilterSheet(
-                    categories: categories,
-                    difficulties: difficulties,
-                    selectedCategories: $selectedCategories,
-                    selectedDifficulties: $selectedDifficulties,
-                    selectedCookTimes: $selectedCookTimes,
-                    showFavoritesOnly: $showFavoritesOnly
-                )
+                filterSheet
             }
             .sheet(isPresented: $showImportSheet) {
-                RecipeImportView { importedRecipe in
-                    // Add the imported recipe to the list
-                    recipes.append(importedRecipe)
-                    
-                    // Save to Core Data
-                    PersistenceController.shared.saveRecipeModel(importedRecipe)
-                    
-                    HapticManager.shared.success()
-                }
+                recipeImportSheet
             }
             .sheet(isPresented: $showRecipeWizard) {
-                RecipeWizardView(prefilledData: nil) { newRecipe in
-                    // Add the new recipe to the list
-                    recipes.append(newRecipe)
-                    
-                    // Save to Core Data
-                    PersistenceController.shared.saveRecipeModel(newRecipe)
-                    
-                    HapticManager.shared.success()
-                }
+                recipeWizardSheet
             }
             .onChange(of: searchText) { _, _ in updateFilterCache() }
             .onChange(of: selectedCategories) { _, _ in updateFilterCache() }
@@ -296,28 +132,292 @@ struct RecipeSearchView: View {
             .onChange(of: showFavoritesOnly) { _, _ in updateFilterCache() }
             .onChange(of: recipes) { _, _ in updateFilterCache() }
             .sheet(isPresented: $showDeleteAlert) {
-                RecipeDeleteConfirmationSheet(
-                    recipeName: recipeToDelete?.name ?? "",
-                    dontAskAgain: $dontAskAgainDelete,
-                    onConfirm: {
-                        if dontAskAgainDelete {
-                            skipDeleteConfirmation = true
-                        }
-                        if let recipe = recipeToDelete {
-                            deleteRecipe(recipe)
-                        }
-                        recipeToDelete = nil
-                        dontAskAgainDelete = false
-                        showDeleteAlert = false
-                    },
-                    onCancel: {
-                        recipeToDelete = nil
-                        dontAskAgainDelete = false
-                        showDeleteAlert = false
-                    }
-                )
+                deleteConfirmationSheet
             }
         }
+    }
+    
+    // MARK: - View Components
+    
+    private var backgroundView: some View {
+        AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
+            .ignoresSafeArea()
+    }
+    
+    private var headerSection: some View {
+        VStack(spacing: 12) {
+            GeometryReader { geometry in
+                HStack(spacing: 0) {
+                    // Left spacer for balance - 15% of width or fixed size
+                    Color.clear
+                        .frame(width: max(44, geometry.size.width * 0.15))
+                    
+                    Spacer(minLength: 8)
+                    
+                    Text("Recipe Finder")
+                        .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                    
+                    Spacer(minLength: 8)
+                    
+                    // Right menu - 15% of width or fixed size
+                    Menu {
+                        menuContent
+                    } label: {
+                        ModernCircleButton(icon: "line.3.horizontal") {}
+                            .allowsHitTesting(false)
+                    }
+                    .frame(width: max(44, geometry.size.width * 0.15))
+                }
+            }
+            .frame(height: 44)
+            .padding(.horizontal, 20)
+            .padding(.top, 16)
+        }
+    }
+    
+    private var searchBarSection: some View {
+        HStack(spacing: 12) {
+            HStack(spacing: 12) {
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.6))
+                    .font(.body)
+                
+                TextField("What would you like to eat...?", text: $searchText)
+                    .focused($isSearchFocused)
+                    .autocorrectionDisabled()
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                
+                if !searchText.isEmpty {
+                    Button(
+                        action: { 
+                            searchText = ""
+                        },
+                        label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
+                        }
+                    )
+                }
+            }
+            .padding(14)
+            .background {
+                if cardStyle == .solid {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+                } else {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(.ultraThinMaterial)
+                }
+            }
+            
+            if isSearchFocused {
+                Button(
+                    action: {
+                        searchText = ""
+                        isSearchFocused = false
+                    },
+                    label: {
+                        Text("Cancel")
+                            .foregroundColor(.white)
+                            .fontWeight(.semibold)
+                    }
+                )
+                .transition(.move(edge: .trailing).combined(with: .opacity))
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.bottom, 12)
+        .animation(.spring(response: 0.3), value: isSearchFocused)
+    }
+    
+    private var menuContent: some View {
+        Group {
+            // Filter option
+            Button(
+                action: {
+                    HapticManager.shared.light()
+                    showFilters.toggle()
+                },
+                label: {
+                    Label(activeFilterCount > 0 ? "Filters (\(activeFilterCount))" : "Filters", systemImage: "line.3.horizontal.decrease.circle")
+                }
+            )
+            
+            Divider()
+            
+            // Import option
+            Button(
+                action: {
+                    HapticManager.shared.selection()
+                    showImportSheet = true
+                },
+                label: {
+                    Label("Import Recipe", systemImage: "plus.circle")
+                }
+            )
+            
+            // Recipe Wizard option
+            Button(
+                action: {
+                    HapticManager.shared.selection()
+                    showRecipeWizard = true
+                },
+                label: {
+                    Label("Recipe Wizard", systemImage: "wand.and.stars")
+                }
+            )
+        }
+    }
+    
+    private var activeFiltersView: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                if showFavoritesOnly {
+                    FilterChip(label: "Favorites", icon: "heart.fill") {
+                        HapticManager.shared.light()
+                        showFavoritesOnly = false
+                    }
+                }
+                
+                ForEach(Array(selectedCategories), id: \.self) { category in
+                    FilterChip(label: category, icon: "fork.knife") {
+                        HapticManager.shared.light()
+                        selectedCategories.remove(category)
+                    }
+                }
+                
+                ForEach(Array(selectedDifficulties), id: \.self) { difficulty in
+                    FilterChip(label: difficulty, icon: "chart.bar.fill") {
+                        HapticManager.shared.light()
+                        selectedDifficulties.remove(difficulty)
+                    }
+                }
+                
+                ForEach(Array(selectedCookTimes), id: \.self) { time in
+                    FilterChip(label: time > 120 ? "> 120 min" : "≤ \(time) min", icon: "clock.fill") {
+                        HapticManager.shared.light()
+                        selectedCookTimes.remove(time)
+                    }
+                }
+                
+                Button(action: clearAllFilters, label: {
+                    Text("Clear All")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(
+                            Capsule()
+                                .fill(Color.red.opacity(0.8))
+                        )
+                })
+            }
+            .padding(.horizontal, 20)
+        }
+        .transition(.move(edge: .top).combined(with: .opacity))
+    }
+    
+    private var recipeListView: some View {
+        ScrollView {
+            LazyVStack(spacing: AppTheme.cardVerticalSpacing) {
+                ForEach(filteredRecipes) { recipe in
+                    recipeNavigationLink(for: recipe)
+                }
+            }
+            .padding(.horizontal, AppTheme.cardHorizontalPadding)
+            .padding(.bottom, AppTheme.cardHorizontalPadding)
+        }
+    }
+    
+    private func recipeNavigationLink(for recipe: RecipeModel) -> some View {
+        NavigationLink(
+            destination: RecipeDetailView(
+                recipe: recipe,
+                shoppingListManager: shoppingListManager,
+                onFavoriteToggle: {
+                    refreshRecipes()
+                }
+            )
+        ) {
+            RecipeCard(recipe: recipe, viewMode: .list)
+        }
+        .buttonStyle(PlainButtonStyle())
+        .contextMenu {
+            Button(role: .destructive) {
+                recipeToDelete = recipe
+                if skipDeleteConfirmation {
+                    deleteRecipe(recipe)
+                    recipeToDelete = nil
+                } else {
+                    showDeleteAlert = true
+                    HapticManager.shared.warning()
+                }
+            } label: {
+                Label("Delete Recipe", systemImage: "trash.fill")
+            }
+        }
+    }
+    
+    private var filterSheet: some View {
+        FilterSheet(
+            categories: categories,
+            difficulties: difficulties,
+            selectedCategories: $selectedCategories,
+            selectedDifficulties: $selectedDifficulties,
+            selectedCookTimes: $selectedCookTimes,
+            showFavoritesOnly: $showFavoritesOnly
+        )
+    }
+    
+    private var recipeImportSheet: some View {
+        RecipeImportView { importedRecipe in
+            // Add the imported recipe to the list
+            recipes.append(importedRecipe)
+            
+            // Save to Core Data
+            PersistenceController.shared.saveRecipeModel(importedRecipe)
+            
+            HapticManager.shared.success()
+        }
+    }
+    
+    private var recipeWizardSheet: some View {
+        RecipeWizardView(prefilledData: nil) { newRecipe in
+            // Add the new recipe to the list
+            recipes.append(newRecipe)
+            
+            // Save to Core Data
+            PersistenceController.shared.saveRecipeModel(newRecipe)
+            
+            HapticManager.shared.success()
+        }
+    }
+    
+    private var deleteConfirmationSheet: some View {
+        RecipeDeleteConfirmationSheet(
+            recipeName: recipeToDelete?.name ?? "",
+            dontAskAgain: $dontAskAgainDelete,
+            onConfirm: {
+                if dontAskAgainDelete {
+                    skipDeleteConfirmation = true
+                }
+                if let recipe = recipeToDelete {
+                    deleteRecipe(recipe)
+                }
+                recipeToDelete = nil
+                dontAskAgainDelete = false
+                showDeleteAlert = false
+            },
+            onCancel: {
+                recipeToDelete = nil
+                dontAskAgainDelete = false
+                showDeleteAlert = false
+            }
+        )
     }
     
     // Update cache when filters change
@@ -421,7 +521,7 @@ struct FilterSheet: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
                 
                 ScrollView {
@@ -583,7 +683,7 @@ struct RecipeDeleteConfirmationSheet: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {

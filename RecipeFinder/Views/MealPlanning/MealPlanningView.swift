@@ -24,7 +24,7 @@ struct MealPlanningView: View {
     
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
@@ -168,7 +168,7 @@ struct MealPlanningView: View {
                     
                     Text("Meal Planner")
                         .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                        .foregroundColor(.white)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
                     

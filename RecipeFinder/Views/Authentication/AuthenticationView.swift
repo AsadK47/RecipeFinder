@@ -54,31 +54,6 @@ struct AuthenticationView: View {
                 
                 // Authentication Options
                 VStack(spacing: 16) {
-                    // Skip Login Button (Guest Mode)
-                    Button(action: skipLogin) {
-                        HStack {
-                            Image(systemName: "arrow.right.circle.fill")
-                                .font(.system(size: 20))
-                            Text("Continue as Guest")
-                                .fontWeight(.semibold)
-                        }
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 50)
-                        .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color.white.opacity(0.15))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .stroke(Color.white.opacity(0.3), lineWidth: 1)
-                                )
-                        )
-                    }
-                    
-                    Divider()
-                        .background(Color.white.opacity(0.3))
-                        .padding(.vertical, 8)
-                    
                     // Apple Sign In Placeholder
                     Button(action: { showAppleSignInInfo = true }) {
                         HStack(spacing: 8) {
@@ -196,14 +171,6 @@ struct AuthenticationView: View {
             }
         }
     }
-    
-    // Helper Methods
-    
-    /// Skip login and continue as guest
-    private func skipLogin() {
-        HapticManager.shared.light()
-        authManager.skipLoginAsGuest()
-    }
 }
 
 // Email Sign In View
@@ -315,75 +282,6 @@ struct EmailSignInView: View {
                         .disabled(!canSignIn || isLoading)
                         .opacity((!canSignIn || isLoading) ? 0.6 : 1.0)
                         .padding(.top, 8)
-                        
-                        #if DEBUG
-                        // Quick Test Button (Debug Only)
-                        Button(action: {
-                            email = testEmail
-                            password = testPassword
-                        }) {
-                            HStack(spacing: 8) {
-                                Image(systemName: "bolt.fill")
-                                    .font(.caption)
-                                Text("Use Test Account")
-                                    .font(.caption)
-                                    .fontWeight(.medium)
-                            }
-                            .foregroundColor(.yellow)
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 16)
-                            .background(
-                                Capsule()
-                                    .fill(Color.yellow.opacity(0.2))
-                                    .overlay(
-                                        Capsule()
-                                            .stroke(Color.yellow.opacity(0.4), lineWidth: 1)
-                                    )
-                            )
-                        }
-                        .padding(.top, 8)
-                        #endif
-                        
-                        // Test Account Info
-                        VStack(spacing: 8) {
-                            Text("Test Account")
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.white.opacity(0.7))
-                            
-                            VStack(alignment: .leading, spacing: 4) {
-                                HStack(spacing: 4) {
-                                    Text("Email:")
-                                        .font(.caption2)
-                                        .foregroundColor(.white.opacity(0.6))
-                                    Text("test@recipefinder.com")
-                                        .font(.caption2)
-                                        .fontWeight(.medium)
-                                        .foregroundColor(.white.opacity(0.9))
-                                }
-                                
-                                HStack(spacing: 4) {
-                                    Text("Password:")
-                                        .font(.caption2)
-                                        .foregroundColor(.white.opacity(0.6))
-                                    Text("test123")
-                                        .font(.caption2)
-                                        .fontWeight(.medium)
-                                        .foregroundColor(.white.opacity(0.9))
-                                }
-                            }
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 8)
-                            .background(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(Color.white.opacity(0.1))
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .stroke(Color.white.opacity(0.2), lineWidth: 1)
-                                    )
-                            )
-                        }
-                        .padding(.top, 16)
                     }
                     .padding(.horizontal, 32)
                     
@@ -434,7 +332,7 @@ struct SignUpView: View {
     @State private var isLoading = false
     @State private var showError = false
     @State private var errorMessage = ""
-    @State private var showPasswordReminder = false
+    @State private var showWelcomeSplash = false
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismiss
@@ -596,9 +494,9 @@ struct SignUpView: View {
             } message: {
                 Text(errorMessage)
             }
-            .fullScreenCover(isPresented: $showPasswordReminder) {
-                PasswordReminderSplashView(email: email) {
-                    showPasswordReminder = false
+            .fullScreenCover(isPresented: $showWelcomeSplash) {
+                WelcomeSplashView(email: email) {
+                    showWelcomeSplash = false
                     dismiss()
                 }
             }
@@ -616,8 +514,8 @@ struct SignUpView: View {
                 await MainActor.run {
                     HapticManager.shared.success()
                     isLoading = false
-                    // Show password reminder splash
-                    showPasswordReminder = true
+                    // Show welcome splash screen
+                    showWelcomeSplash = true
                 }
             } catch {
                 await MainActor.run {

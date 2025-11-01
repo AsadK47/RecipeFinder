@@ -68,7 +68,7 @@ struct ShoppingListView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
@@ -83,7 +83,7 @@ struct ShoppingListView: View {
                                 
                                 Text("Shopping List")
                                     .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                                    .foregroundColor(.white)
+                                    .foregroundColor(colorScheme == .dark ? .white : .black)
                                     .lineLimit(1)
                                     .minimumScaleFactor(0.7)
                                 
@@ -310,17 +310,17 @@ struct ShoppingListView: View {
                 VStack(spacing: 12) {
                     Image(systemName: "cart.circle.fill")
                         .font(.system(size: 80))
-                        .foregroundColor(.white.opacity(0.6))
+                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.4))
                         .padding(.top, 12)
                     
                     Text("Start Your Shopping List")
                         .font(.title2)
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
                     
                     Text("Use the menu button or search bar, or tap + on any recipe")
                         .font(.subheadline)
-                        .foregroundColor(.white.opacity(0.7))
+                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 32)
                 }
@@ -340,17 +340,17 @@ struct ShoppingListView: View {
                 VStack(spacing: 12) {
                     Image(systemName: "cart.circle.fill")
                         .font(.system(size: 80))
-                        .foregroundColor(.white.opacity(0.6))
+                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.4))
                         .padding(.top, 12)
                     
                     Text("Start Your Shopping List")
                         .font(.title2)
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
                     
                     Text("Add items using the search bar above or tap the + button on any recipe")
                         .font(.subheadline)
-                        .foregroundColor(.white.opacity(0.7))
+                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 32)
                 }

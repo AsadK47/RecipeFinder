@@ -63,7 +63,7 @@ struct ShoppingQuickAddSheet: View {
     var body: some View {
         ZStack {
             // Background gradient
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
@@ -153,7 +153,7 @@ struct KitchenQuickAddSheet: View {
     var body: some View {
         ZStack {
             // Background gradient
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {

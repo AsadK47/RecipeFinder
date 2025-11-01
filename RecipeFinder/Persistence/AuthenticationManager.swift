@@ -89,11 +89,24 @@ final class AuthenticationManager: NSObject, ObservableObject {
     
     private override init() {
         super.init()
+        clearAllUsersExceptTest() // Clear DB except test user on init
         setupTestUser()
         checkAuthenticationStatus()
     }
     
     // MARK: - Test User Setup
+    
+    /// Clear all users except the master test user
+    private func clearAllUsersExceptTest() {
+        #if DEBUG
+        let success = credentialManager.clearAllUsersExceptTest()
+        if success {
+            debugLog("✅ Cleared all users except test user")
+        } else {
+            debugLog("⚠️ Failed to clear users")
+        }
+        #endif
+    }
     
     private func setupTestUser() {
         // Create a test user if it doesn't exist

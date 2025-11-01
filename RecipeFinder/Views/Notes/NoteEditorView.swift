@@ -111,6 +111,7 @@ struct NoteEditorView: View {
             TextField("Note Title", text: $title, axis: .vertical)
                 .font(.title3)
                 .fontWeight(.semibold)
+                .foregroundColor(colorScheme == .dark ? .white : .black)
                 .focused($isTitleFocused)
                 .lineLimit(2...3)
                 .padding()
@@ -120,13 +121,14 @@ struct NoteEditorView: View {
     private var contentSection: some View {
         cardContainer {
             VStack(alignment: .leading, spacing: 8) {
-                Text("Content")
+                Text("CONTENT")
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.5))
                     .textCase(.uppercase)
                 
                 TextField("Write your note here...", text: $content, axis: .vertical)
                     .font(.body)
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
                     .focused($isContentFocused)
                     .lineLimit(10...30)
             }
@@ -137,9 +139,9 @@ struct NoteEditorView: View {
     private var categorySection: some View {
         cardContainer {
             VStack(alignment: .leading, spacing: 16) {
-                Text("Category")
+                Text("CATEGORY")
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.5))
                     .textCase(.uppercase)
                 
                 // Top 3 Categories (prominent)
@@ -163,12 +165,12 @@ struct NoteEditorView: View {
                             Text("More Categories")
                                 .font(.subheadline)
                                 .fontWeight(.medium)
-                                .foregroundColor(.primary)
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
                             
                             Spacer()
                             
                             Image(systemName: showMoreCategories ? "chevron.up" : "chevron.down")
-                                .foregroundColor(.secondary)
+                                .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.5))
                                 .font(.caption)
                         }
                     }
@@ -203,7 +205,7 @@ struct NoteEditorView: View {
                 Text(category.rawValue)
                     .font(.body)
                     .fontWeight(isSelected ? .semibold : .regular)
-                    .foregroundColor(isSelected ? .white : .primary)
+                    .foregroundColor(isSelected ? .white : (colorScheme == .dark ? .white : .black))
                 
                 Spacer()
                 
@@ -224,14 +226,15 @@ struct NoteEditorView: View {
     private var tagsSection: some View {
         cardContainer {
             VStack(alignment: .leading, spacing: 12) {
-                Text("Tags")
+                Text("TAGS")
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.5))
                     .textCase(.uppercase)
                 
                 // Tag input
                 HStack {
                     TextField("Add tag...", text: $currentTag)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
                         .onSubmit {
                             addTag()
                         }

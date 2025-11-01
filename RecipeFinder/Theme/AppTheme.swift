@@ -130,24 +130,19 @@ enum AppTheme {
         return tealBrightLight // Teal default
     }
     
-    static func backgroundGradient(for theme: ThemeType, colorScheme: ColorScheme, cardStyle: CardStyle? = nil) -> LinearGradient {
-        // Determine if we should use dark colors based on either:
-        // 1. The cardStyle (if provided) - .solid = dark, .frosted = light
-        // 2. The system colorScheme (if cardStyle not provided)
-        let useDarkColors: Bool
-        if let cardStyle = cardStyle {
-            useDarkColors = (cardStyle == .solid)
-        } else {
-            useDarkColors = (colorScheme == .dark)
-        }
+    static func backgroundGradient(for theme: ThemeType, colorScheme: ColorScheme) -> LinearGradient {
+        // Use system color scheme directly
+        // Light mode = Frost Light (bright gradients)
+        // Dark mode = Ember Dark (dark gradients)
+        let useDarkColors = (colorScheme == .dark)
         
         switch theme {
         case .teal:
             return LinearGradient(
                 gradient: Gradient(colors: useDarkColors ? 
-                    // Dark mode/Fire Dark: New darker ocean teal
+                    // Dark mode/Ember Dark: Darker ocean teal
                     [tealBrightDark, tealMediumDark, tealDeepDark, tealRichDark] :
-                    // Light mode/Frost Light: Original bright teal
+                    // Light mode/Frost Light: Bright teal
                     [tealBrightLight, tealMediumLight, tealDeepLight, tealRichLight]
                 ),
                 startPoint: .topLeading,

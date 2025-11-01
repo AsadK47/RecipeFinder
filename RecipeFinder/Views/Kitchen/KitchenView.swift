@@ -77,7 +77,7 @@ struct KitchenView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
                 
                     VStack(spacing: 0) {
@@ -137,7 +137,7 @@ struct KitchenView: View {
                     
                     Text("Kitchen")
                         .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                        .foregroundStyle(.white)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
                     
@@ -180,11 +180,59 @@ struct KitchenView: View {
             .padding(.horizontal, 20)
             .padding(.top, 16)
             
-            // Search bar
-            ModernSearchBar(text: $searchText, placeholder: "Search ingredients...")
-                .focused($isSearchFocused)
-                .padding(.horizontal, 20)
-                .padding(.bottom, 12)
+            // Search bar with cancel option
+            HStack(spacing: 12) {
+                HStack(spacing: 12) {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.6))
+                        .font(.body)
+                    
+                    TextField("Search ingredients...", text: $searchText)
+                        .focused($isSearchFocused)
+                        .autocorrectionDisabled()
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                    
+                    if !searchText.isEmpty {
+                        Button(
+                            action: { 
+                                searchText = ""
+                            },
+                            label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
+                            }
+                        )
+                    }
+                }
+                .padding(14)
+                .background {
+                    if cardStyle == .solid {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+                    } else {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(.ultraThinMaterial)
+                    }
+                }
+                
+                if isSearchFocused {
+                    Button(
+                        action: {
+                            searchText = ""
+                            isSearchFocused = false
+                        },
+                        label: {
+                            Text("Cancel")
+                                .foregroundColor(.white)
+                                .fontWeight(.semibold)
+                        }
+                    )
+                    .transition(.move(edge: .trailing).combined(with: .opacity))
+                }
+            }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 12)
+            .animation(.spring(response: 0.3), value: isSearchFocused)
         }
     }
     
@@ -309,26 +357,26 @@ struct KitchenView: View {
                 Text(category)
                     .font(.subheadline)
                     .fontWeight(.semibold)
-                    .foregroundColor(.black)
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
                     .lineLimit(1)
                 
                 Text("\(FoodsList.getFoods(forCategory: category).count) items")
                     .font(.caption2)
-                    .foregroundColor(.black.opacity(0.6))
+                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.5))
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 16)
-            .background(
-                Group {
-                    if cardStyle == .solid {
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
-                    } else {
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(.regularMaterial)
-                    }
+            .background {
+                if cardStyle == .solid {
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+                        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                } else {
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(.ultraThinMaterial)
+                        .shadow(color: Color.black.opacity(colorScheme == .dark ? 0.2 : 0.08), radius: 6, x: 0, y: 2)
                 }
-            )
+            }
         }
         .buttonStyle(PlainButtonStyle())
     }
@@ -803,7 +851,7 @@ struct AddIngredientSheet: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {

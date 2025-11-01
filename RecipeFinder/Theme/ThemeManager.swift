@@ -65,7 +65,7 @@ class ThemeManager: ObservableObject {
     
     /// Get the background gradient for the current theme
     func backgroundGradient(for colorScheme: ColorScheme) -> LinearGradient {
-        return AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
+        return AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
     }
     
     /// Get the accent color for the current theme

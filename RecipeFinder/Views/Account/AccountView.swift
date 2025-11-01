@@ -20,6 +20,7 @@ struct AccountView: View {
     @State private var showSuccessFeedback = false
     @State private var showImagePicker = false
     @State private var profileImage: UIImage?
+    @State private var showPasswordVerification = false
     
     // Profile fields from EditProfileView
     @State private var firstName: String = ""
@@ -60,7 +61,7 @@ struct AccountView: View {
     
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
@@ -97,7 +98,8 @@ struct AccountView: View {
                         
                         // Save Button
                         Button(action: {
-                            saveProfile()
+                            // Show password verification first
+                            showPasswordVerification = true
                         }) {
                             HStack {
                                 Image(systemName: "checkmark.circle.fill")
@@ -147,6 +149,11 @@ struct AccountView: View {
         .sheet(isPresented: $showImagePicker) {
             ImagePicker(image: $profileImage)
         }
+        .sheet(isPresented: $showPasswordVerification) {
+            PasswordVerificationSheet(email: displayEmail) {
+                saveProfile()
+            }
+        }
         .fullScreenCover(isPresented: $showingGuestSplash) {
             GuestModeSplashView {
                 showingGuestSplash = false
@@ -179,6 +186,10 @@ struct AccountView: View {
         .animation(.spring(response: 0.3), value: showSuccessFeedback)
         .onAppear {
             loadCurrentProfile()
+        }
+        .onChange(of: profileImage) { _, newImage in
+            // Save profile image whenever it changes
+            accountManager.saveProfileImage(newImage)
         }
     }
     
@@ -614,6 +625,9 @@ struct AccountView: View {
         lastName = accountManager.lastName
         dateOfBirth = accountManager.dateOfBirth
         selectedChefType = accountManager.chefType
+        
+        // Load profile image
+        profileImage = accountManager.loadProfileImage()
         
         // Parse stored address (stored as comma-separated string)
         let addressComponents = accountManager.address.components(separatedBy: ", ")

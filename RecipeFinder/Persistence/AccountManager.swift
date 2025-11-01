@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 import Combine
 
 final class AccountManager: ObservableObject {
@@ -28,6 +29,7 @@ final class AccountManager: ObservableObject {
     private let addressKey = "accountAddress"
     private let dateOfBirthKey = "accountDateOfBirth"
     private let chefTypeKey = "accountChefType"
+    private let profileImageKey = "accountProfileImage"
     
     var fullName: String {
         var name = firstName
@@ -64,7 +66,7 @@ final class AccountManager: ObservableObject {
         )
     }
     
-    // MARK: - Profile Management
+    // Profile Management
     
     func loadProfile() {
         // Load or generate UUID
@@ -133,7 +135,29 @@ final class AccountManager: ObservableObject {
         HapticManager.shared.success()
     }
     
-    // MARK: - Stats
+    // Profile Image Management
+    
+    func saveProfileImage(_ image: UIImage?) {
+        if let image = image,
+           let imageData = image.jpegData(compressionQuality: 0.8) {
+            UserDefaults.standard.set(imageData, forKey: profileImageKey)
+        } else {
+            UserDefaults.standard.removeObject(forKey: profileImageKey)
+        }
+    }
+    
+    func loadProfileImage() -> UIImage? {
+        guard let imageData = UserDefaults.standard.data(forKey: profileImageKey) else {
+            return nil
+        }
+        return UIImage(data: imageData)
+    }
+    
+    func clearProfileImage() {
+        UserDefaults.standard.removeObject(forKey: profileImageKey)
+    }
+    
+    // Stats
     
     @objc func updateStats() {
         // Ensure UI updates happen on main thread

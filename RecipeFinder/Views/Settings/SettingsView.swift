@@ -34,7 +34,7 @@ struct SettingsTabView: View {
     
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
@@ -45,7 +45,7 @@ struct SettingsTabView: View {
                             Spacer()
                             Text("Settings")
                                 .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                                .foregroundColor(.white)
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
                             Spacer()
                         }
                     }
@@ -219,6 +219,14 @@ struct SettingsTabView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)
+            .onAppear {
+                // Sync cardStyle with system colorScheme on appear
+                cardStyle = colorScheme == .dark ? .solid : .frosted
+            }
+            .onChange(of: colorScheme) { _, newColorScheme in
+                // Automatically update cardStyle when system appearance changes
+                cardStyle = newColorScheme == .dark ? .solid : .frosted
+            }
         }
     }
 
@@ -303,159 +311,11 @@ struct AppearanceAndThemeSettingsView: View {
     
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
             ScrollView {
                 VStack(spacing: 24) {
-                    // Appearance Mode Section
-                    SettingsCard {
-                        VStack(alignment: .leading, spacing: 20) {
-                            HStack {
-                                Image(systemName: "circle.lefthalf.filled")
-                                    .font(.title2)
-                                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
-                                
-                                Text("Appearance Mode")
-                                    .font(.title3)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
-                            }
-                            
-                            Text("Choose between light and dark mode, or follow system settings.")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                                .fixedSize(horizontal: false, vertical: true)
-                            
-                            Divider()
-                                .padding(.vertical, 4)
-                            
-                            // System
-                            Button(action: {
-                                appearanceMode = .system
-                                cardStyle = colorScheme == .dark ? .solid : .frosted
-                                HapticManager.shared.selection()
-                            }) {
-                                HStack(spacing: 16) {
-                                    ZStack {
-                                        Circle()
-                                            .fill(Color.blue.opacity(0.15))
-                                            .frame(width: 44, height: 44)
-                                        
-                                        Image(systemName: "circle.lefthalf.filled")
-                                            .font(.title3)
-                                            .foregroundColor(.blue)
-                                    }
-                                    
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text("System")
-                                            .font(.body)
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
-                                        
-                                        Text(colorScheme == .dark ? "Currently: Ember Dark" : "Currently: Frost Light")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                    }
-                                    
-                                    Spacer()
-                                    
-                                    if appearanceMode == .system {
-                                        Image(systemName: "checkmark.circle.fill")
-                                            .font(.title3)
-                                            .foregroundColor(AppTheme.accentColor(for: selectedTheme))
-                                    }
-                                }
-                                .padding(12)
-                                .background(appearanceMode == .system ? Color.gray.opacity(0.15) : Color.clear)
-                                .cornerRadius(12)
-                            }
-                            .buttonStyle(PlainButtonStyle())
-                            
-                            // Frost Light
-                            Button(action: {
-                                appearanceMode = .light
-                                cardStyle = .frosted
-                                HapticManager.shared.selection()
-                            }) {
-                                HStack(spacing: 16) {
-                                    ZStack {
-                                        Circle()
-                                            .fill(Color.cyan.opacity(0.15))
-                                            .frame(width: 44, height: 44)
-                                        
-                                        Image(systemName: "sparkles")
-                                            .font(.title3)
-                                            .foregroundColor(.cyan)
-                                    }
-                                    
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text("Frost Light")
-                                            .font(.body)
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
-                                        
-                                        Text("Translucent frosted glass cards")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                    }
-                                    
-                                    Spacer()
-                                    
-                                    if appearanceMode == .light {
-                                        Image(systemName: "checkmark.circle.fill")
-                                            .font(.title3)
-                                            .foregroundColor(.cyan)
-                                    }
-                                }
-                                .padding(12)
-                                .background(appearanceMode == .light ? Color.gray.opacity(0.15) : Color.clear)
-                                .cornerRadius(12)
-                            }
-                            .buttonStyle(PlainButtonStyle())
-                            
-                            // Ember Dark
-                            Button(action: {
-                                appearanceMode = .dark
-                                cardStyle = .solid
-                                HapticManager.shared.selection()
-                            }) {
-                                HStack(spacing: 16) {
-                                    ZStack {
-                                        Circle()
-                                            .fill(Color.orange.opacity(0.15))
-                                            .frame(width: 44, height: 44)
-                                        
-                                        Image(systemName: "flame.fill")
-                                            .font(.title3)
-                                            .foregroundColor(.orange)
-                                    }
-                                    
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text("Ember Dark")
-                                            .font(.body)
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
-                                        
-                                        Text("Solid dark cards")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                    }
-                                    
-                                    Spacer()
-                                    
-                                    if appearanceMode == .dark {
-                                        Image(systemName: "checkmark.circle.fill")
-                                            .font(.title3)
-                                            .foregroundColor(.orange)
-                                    }
-                                }
-                                .padding(12)
-                                .background(appearanceMode == .dark ? Color.gray.opacity(0.5) : Color.clear)
-                                .cornerRadius(12)
-                            }
-                            .buttonStyle(PlainButtonStyle())
-                        }
-                        .padding(20)
-                    }
-                    
                     // Color Theme Section
                     SettingsCard {
                         VStack(alignment: .leading, spacing: 20) {
@@ -559,7 +419,7 @@ struct AppearanceSettingsView: View {
     
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
             ScrollView {
@@ -752,7 +612,7 @@ struct ThemeSettingsView: View {
     
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
             ScrollView {
@@ -857,7 +717,7 @@ struct NotificationSettingsView: View {
     
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
             ScrollView {
@@ -1089,7 +949,7 @@ struct TimerSettingsView: View {
     
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
             ScrollView {
@@ -1261,7 +1121,7 @@ struct UnitsSettingsView: View {
     
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
             ScrollView {
@@ -1369,7 +1229,7 @@ struct DisplaySettingsView: View {
     
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
             ScrollView {
@@ -1465,7 +1325,7 @@ struct PrivacySettingsView: View {
     
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
             ScrollView {
@@ -1815,7 +1675,7 @@ struct DataManagementSettingsView: View {
     
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
             ScrollView {
@@ -2733,4 +2593,3 @@ struct BulletPoint: View {
         .environmentObject(ShoppingListManager())
         .environment(\.appTheme, AppTheme.ThemeType.teal)
 }
-
