@@ -97,25 +97,23 @@ struct ShoppingListView: View {
                                     if !manager.items.isEmpty {
                                         Divider()
                                         
-                                        Button(
-                                            action: { 
-                                                withAnimation {
-                                                    if collapsedCategories.count == CategoryClassifier.categoryOrder.count {
-                                                        collapsedCategories.removeAll()
-                                                    } else {
-                                                        collapsedCategories = Set(CategoryClassifier.categoryOrder)
-                                                    }
-                                                }
-                                            },
-                                            label: {
-                                                Label(
-                                                    collapsedCategories.count == CategoryClassifier.categoryOrder.count ? "Expand All" : "Collapse All",
-                                                    systemImage: collapsedCategories.count == CategoryClassifier.categoryOrder.count ? "chevron.down.circle" : "chevron.up.circle"
-                                                )
-                                            }
+                                Button(
+                                    action: {
+                                        if collapsedCategories.count == CategoryClassifier.categoryOrder.count {
+                                            collapsedCategories.removeAll()
+                                        } else {
+                                            collapsedCategories = Set(CategoryClassifier.categoryOrder)
+                                        }
+                                    },
+                                    label: {
+                                        Label(
+                                            collapsedCategories.count == CategoryClassifier.categoryOrder.count ? "Expand All" : "Collapse All",
+                                            systemImage: collapsedCategories.count == CategoryClassifier.categoryOrder.count ? "chevron.down.circle" : "chevron.up.circle"
                                         )
-                                        
-                                        Divider()
+                                    }
+                                )
+                                
+                                Divider()
                                         
                                         Button(
                                             role: .destructive,
@@ -214,10 +212,17 @@ struct ShoppingListView: View {
                     // Content
                     if showingSearchResults {
                         searchResultsView
-                    } else if manager.items.isEmpty {
-                        emptyStateView
                     } else {
-                        shoppingListContent
+                        VStack(spacing: 0) {
+                            // Always show Quick Add section
+                            quickAddSection
+                            
+                            if manager.items.isEmpty {
+                                emptyPromptView
+                            } else {
+                                shoppingListContent
+                            }
+                        }
                     }
                 }
                 .toolbar {
@@ -249,15 +254,11 @@ struct ShoppingListView: View {
             .confirmationDialog("Clear Items", isPresented: $showClearConfirmation) {
                 if manager.checkedCount > 0 {
                     Button("Clear Checked Items (\(manager.checkedCount))", role: .destructive) {
-                        withAnimation {
-                            manager.clearCheckedItems()
-                        }
+                        manager.clearCheckedItems()
                     }
                 }
                 Button("Clear All Items (\(manager.items.count))", role: .destructive) {
-                    withAnimation {
-                        manager.clearAllItems()
-                    }
+                    manager.clearAllItems()
                 }
                 Button("Cancel", role: .cancel) {}
             } message: {
@@ -292,6 +293,98 @@ struct ShoppingListView: View {
                     .padding(.bottom, 20)
                 }
             }
+        }
+    }
+    
+    
+    // MARK: - Quick Add Section (Always Visible)
+    private var quickAddSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 8) {
+                Image(systemName: "star.fill")
+                    .font(.caption)
+                    .foregroundColor(.yellow)
+                Text("Quick Add")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.white)
+            }
+            .padding(.horizontal, 20)
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    ForEach(["🥛 Milk", "🥚 Eggs", "🍞 Bread", "🧀 Cheese", "🍗 Chicken", "🍅 Tomatoes", "🧅 Onions", "🥔 Potatoes", "🥕 Carrots", "🍎 Apples"], id: \.self) { item in
+                        quickAddChip(item)
+                    }
+                }
+                .padding(.horizontal, 20)
+            }
+        }
+        .padding(.top, 16)
+        .padding(.bottom, 12)
+    }
+    
+    private func quickAddChip(_ item: String) -> some View {
+        let ingredient = item.split(separator: " ").dropFirst().joined(separator: " ")
+        let isInList = manager.items.contains { $0.name.lowercased() == ingredient.lowercased() }
+        
+        return Button(action: {
+            manager.addItem(name: String(ingredient))
+            HapticManager.shared.success()
+        }) {
+            HStack(spacing: 6) {
+                Text(item)
+                    .font(.subheadline)
+                    .foregroundColor(.white)
+                
+                if isInList {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.caption)
+                        .foregroundColor(.green)
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .background(
+                Capsule()
+                    .fill(isInList ? Color.green.opacity(0.3) : Color.white.opacity(0.15))
+                    .overlay(
+                        Capsule()
+                            .stroke(isInList ? Color.green.opacity(0.5) : Color.white.opacity(0.3), lineWidth: 1)
+                    )
+            )
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+    
+    // MARK: - Empty Prompt (without Quick Add)
+    private var emptyPromptView: some View {
+        ScrollView {
+            VStack(spacing: 16) {
+                VStack(spacing: 12) {
+                    Image(systemName: "cart.circle.fill")
+                        .font(.system(size: 80))
+                        .foregroundColor(.white.opacity(0.6))
+                        .padding(.top, 12)
+                    
+                    Text("Start Your Shopping List")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                    
+                    Text("Use Quick Add above, search bar, or tap + on any recipe")
+                        .font(.subheadline)
+                        .foregroundColor(.white.opacity(0.7))
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 32)
+                }
+                .padding(.bottom, 6)
+                
+                // Reusable features card
+                shoppingFeaturesCard
+                    .padding(.horizontal, 16)
+            }
+            .padding(.bottom, 40)
         }
     }
     
@@ -338,14 +431,16 @@ struct ShoppingListView: View {
         .padding(20)
         .background {
             if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(colorScheme == .dark ? Color(white: 0.15).opacity(0.6) : Color.white.opacity(0.85))
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                    .shadow(color: Color.black.opacity(0.25), radius: 8, x: 0, y: 4)
             } else {
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(.ultraThinMaterial.opacity(0.85))
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(.regularMaterial)
+                    .shadow(color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.15), radius: 10, x: 0, y: 4)
             }
         }
-        .padding(.horizontal, 20)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
     }
     
     private var shoppingListContent: some View {
@@ -355,9 +450,10 @@ struct ShoppingListView: View {
             }
             
             // Reuse the same features card component
+            // Features card at bottom
             Section {
                 shoppingFeaturesCard
-                    .listRowInsets(EdgeInsets(top: 12, leading: 0, bottom: 12, trailing: 0))
+                    .listRowInsets(EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))
                     .listRowBackground(Color.clear)
                     .listRowSeparator(.hidden)
             }
@@ -366,6 +462,7 @@ struct ShoppingListView: View {
         .scrollContentBackground(.hidden)
         .background(Color.clear)
         .environment(\.defaultMinListHeaderHeight, 0)
+        .animation(nil, value: manager.items.count) // Disable automatic list animations
     }
     
     @ViewBuilder
@@ -393,22 +490,16 @@ struct ShoppingListView: View {
         ShoppingListItemRow(
             item: item,
             onToggle: { 
-                withAnimation(.spring(response: 0.3)) {
-                    manager.toggleItem(at: index)
-                }
+                manager.toggleItem(at: index)
             },
             onQuantityChange: { newQuantity in
                 manager.updateQuantity(at: index, quantity: newQuantity)
             },
             onDelete: { 
-                withAnimation(.spring(response: 0.3)) {
-                    manager.deleteItem(at: index)
-                }
+                manager.deleteItem(at: index)
             },
             onCategoryChange: { newCategory in
-                withAnimation(.spring(response: 0.3)) {
-                    manager.updateCategory(at: index, category: newCategory)
-                }
+                manager.updateCategory(at: index, category: newCategory)
             },
             allCategories: CategoryClassifier.categoryOrder
         )
@@ -421,12 +512,10 @@ struct ShoppingListView: View {
     private func categorySectionHeader(category: String, items: [ShoppingListItem]) -> some View {
         Button(
             action: {
-                withAnimation(.spring(response: 0.3)) {
-                    if collapsedCategories.contains(category) {
-                        collapsedCategories.remove(category)
-                    } else {
-                        collapsedCategories.insert(category)
-                    }
+                if collapsedCategories.contains(category) {
+                    collapsedCategories.remove(category)
+                } else {
+                    collapsedCategories.insert(category)
                 }
             },
             label: {
@@ -477,25 +566,21 @@ struct ShoppingListView: View {
             return
         }
         print("🔍 ShoppingListView: Adding item '\(searchText)'")
-        withAnimation(.spring(response: 0.3)) {
-            manager.addItem(name: searchText)
-            searchText = ""
-            isSearchFocused = false
-            HapticManager.shared.success()
-        }
+        manager.addItem(name: searchText)
+        searchText = ""
+        isSearchFocused = false
+        HapticManager.shared.success()
         print("📊 ShoppingListView: Manager now has \(manager.items.count) items")
     }
     
     private func addItemFromSearch(_ ingredient: String) {
         print("🔍 ShoppingListView: Adding item from search '\(ingredient)'")
-        withAnimation(.spring(response: 0.3)) {
-            manager.addItem(name: ingredient)
-            // Reset state to allow continuous adding
-            searchText = ""
-            // Keep focus so user can continue typing
-            isSearchFocused = true
-            HapticManager.shared.success()
-        }
+        manager.addItem(name: ingredient)
+        // Reset state to allow continuous adding
+        searchText = ""
+        // Keep focus so user can continue typing
+        isSearchFocused = true
+        HapticManager.shared.success()
         print("📊 ShoppingListView: Manager now has \(manager.items.count) items")
     }
     
