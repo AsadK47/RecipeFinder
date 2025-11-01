@@ -323,8 +323,15 @@ struct CookTimerView: View {
                                         .foregroundColor(.white)
                                         .padding(.horizontal, 16)
                                         .padding(.vertical, 8)
-                                        .background(.regularMaterial)
-                                        .cornerRadius(12)
+                                        .background {
+                                            if cardStyle == .solid {
+                                                RoundedRectangle(cornerRadius: 12)
+                                                    .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                                            } else {
+                                                RoundedRectangle(cornerRadius: 12)
+                                                    .fill(.regularMaterial)
+                                            }
+                                        }
                                 }
                                 
                                 Spacer()

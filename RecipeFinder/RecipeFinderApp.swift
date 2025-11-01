@@ -6,6 +6,7 @@ import UIKit
 struct RecipeFinderApp: App {
     let persistenceController = PersistenceController.shared
     @StateObject private var authManager = AuthenticationManager.shared
+    @StateObject private var themeManager = ThemeManager.shared
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @State private var showOnboarding = false
     
@@ -53,12 +54,14 @@ struct RecipeFinderApp: App {
         if authManager.isAuthenticated {
             ContentView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .environmentObject(themeManager)
                 .onAppear { authManager.updateLastActiveTimestamp() }
                 .transition(.opacity.combined(with: .scale(scale: 0.95)))
         } else {
             NavigationStack {
                 AuthenticationView()
             }
+            .environmentObject(themeManager)
             .transition(.opacity.combined(with: .scale(scale: 1.05)))
         }
     }

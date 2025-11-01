@@ -557,8 +557,13 @@ struct ShoppingListView: View {
                 .padding(.horizontal, 16)
                 .padding(.vertical, 14)
                 .background {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(.regularMaterial)
+                    if cardStyle == .solid {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                    } else {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(.regularMaterial)
+                    }
                 }
             }
         )

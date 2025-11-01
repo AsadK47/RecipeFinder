@@ -88,105 +88,105 @@ struct NotesListView: View {
                             
                             Spacer(minLength: 8)
                                 
-                                // Right menu - burger menu like RecipeSearchView
-                                Menu {
-                                    // Filter option
-                                    Button(
-                                        action: {
-                                            HapticManager.shared.light()
-                                            showFilterMenu.toggle()
-                                        },
-                                        label: {
-                                            Label(activeFilterCount > 0 ? "Filters (\(activeFilterCount))" : "Filters", systemImage: "line.3.horizontal.decrease.circle")
-                                        }
-                                    )
-                                    
-                                    Divider()
-                                    
-                                    // New Note option
-                                    Button(
-                                        action: {
-                                            HapticManager.shared.selection()
-                                            showNewNoteSheet = true
-                                        },
-                                        label: {
-                                            Label("New Note", systemImage: "square.and.pencil")
-                                        }
-                                    )
-                                } label: {
-                                    ModernCircleButton(icon: "line.3.horizontal") {}
-                                        .allowsHitTesting(false)
-                                }
-                                .frame(width: max(44, geometry.size.width * 0.15))
+                            // Right menu - burger menu like RecipeSearchView
+                            Menu {
+                                // Filter option
+                                Button(
+                                    action: {
+                                        HapticManager.shared.light()
+                                        showFilterMenu.toggle()
+                                    },
+                                    label: {
+                                        Label(activeFilterCount > 0 ? "Filters (\(activeFilterCount))" : "Filters", systemImage: "line.3.horizontal.decrease.circle")
+                                    }
+                                )
+                                
+                                Divider()
+                                
+                                // New Note option
+                                Button(
+                                    action: {
+                                        HapticManager.shared.selection()
+                                        showNewNoteSheet = true
+                                    },
+                                    label: {
+                                        Label("New Note", systemImage: "square.and.pencil")
+                                    }
+                                )
+                            } label: {
+                                ModernCircleButton(icon: "line.3.horizontal") {}
+                                    .allowsHitTesting(false)
                             }
+                            .frame(width: max(44, geometry.size.width * 0.15))
                         }
-                        .frame(height: 44)
-                        .padding(.horizontal, 20)
-                        .padding(.top, 16)
-                        
-                        // Search Bar
-                        ModernSearchBar(text: $searchText, placeholder: "Search notes...")
-                            .padding(.horizontal, 20)
-                            .padding(.bottom, 12)
                     }
+                    .frame(height: 44)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 16)
                     
-                    // Active filters chips
-                    if activeFilterCount > 0 {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 8) {
-                                if showPinnedOnly {
-                                    FilterChip(label: "Pinned", icon: "pin.fill") {
-                                        HapticManager.shared.light()
-                                        showPinnedOnly = false
-                                    }
+                    // Search Bar
+                    ModernSearchBar(text: $searchText, placeholder: "Search notes...")
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 12)
+                }
+                
+                // Active filters chips
+                if activeFilterCount > 0 {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            if showPinnedOnly {
+                                FilterChip(label: "Pinned", icon: "pin.fill") {
+                                    HapticManager.shared.light()
+                                    showPinnedOnly = false
                                 }
-                                
-                                if let category = selectedCategory {
-                                    FilterChip(label: category.rawValue, icon: category.icon) {
-                                        HapticManager.shared.light()
-                                        selectedCategory = nil
-                                    }
-                                }
-                                
-                                if let tag = selectedTag {
-                                    FilterChip(label: "#\(tag)", icon: "tag.fill") {
-                                        HapticManager.shared.light()
-                                        selectedTag = nil
-                                    }
-                                }
-                                
-                                Button(action: {
+                            }
+                            
+                            if let category = selectedCategory {
+                                FilterChip(label: category.rawValue, icon: category.icon) {
                                     HapticManager.shared.light()
                                     selectedCategory = nil
-                                    selectedTag = nil
-                                    showPinnedOnly = false
-                                }, label: {
-                                    Text("Clear All")
-                                        .font(.caption)
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(.white)
-                                        .padding(.horizontal, 12)
-                                        .padding(.vertical, 6)
-                                        .background(
-                                            Capsule()
-                                                .fill(Color.red.opacity(0.8))
-                                        )
-                                })
+                                }
                             }
-                            .padding(.horizontal, 20)
-                            .padding(.bottom, 8)
-                    }
-                    
-                    // Notes List
-                    if filteredNotes.isEmpty {
-                        emptyStateView
-                    } else {
-                        notesList
+                            
+                            if let tag = selectedTag {
+                                FilterChip(label: "#\(tag)", icon: "tag.fill") {
+                                    HapticManager.shared.light()
+                                    selectedTag = nil
+                                }
+                            }
+                            
+                            Button(action: {
+                                HapticManager.shared.light()
+                                selectedCategory = nil
+                                selectedTag = nil
+                                showPinnedOnly = false
+                            }, label: {
+                                Text("Clear All")
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 6)
+                                    .background(
+                                        Capsule()
+                                            .fill(Color.red.opacity(0.8))
+                                    )
+                            })
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 8)
                     }
                 }
+                
+                // Notes List
+                if filteredNotes.isEmpty {
+                    emptyStateView
+                } else {
+                    notesList
+                }
             }
-            .navigationBarHidden(true)
         }
+        .navigationBarHidden(true)
         .sheet(isPresented: $showNewNoteSheet) {
             NoteEditorView(note: nil) { note in
                 notesManager.addNote(note)
@@ -427,7 +427,7 @@ struct FilterMenuView: View {
                 
                 Text(category.rawValue)
                     .font(.body)
-                    .foregroundColor(.primary)
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
                 
                 Spacer()
                 
@@ -460,10 +460,10 @@ struct FilterMenuView: View {
                 selectedTag = tag
             }
         }) {
-            Text("#\(tag)")
+                Text("#\(tag)")
                 .font(.subheadline)
                 .fontWeight(.medium)
-                .foregroundColor(selectedTag == tag ? .white : .primary)
+                .foregroundColor(selectedTag == tag ? .white : (colorScheme == .dark ? .white : .black))
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
                 .background(

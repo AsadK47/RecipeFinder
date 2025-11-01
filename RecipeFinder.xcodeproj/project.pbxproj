@@ -60,6 +60,7 @@
 		9E87D3292EB6722300FFA1D1 /* BiometricSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E87D3282EB6722300FFA1D1 /* BiometricSetupView.swift */; };
 		9E87D32B2EB67CEA00FFA1D1 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E87D32A2EB67CEA00FFA1D1 /* ImagePicker.swift */; };
 		9E87D32D2EB6909700FFA1D1 /* QuickAddSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E87D32C2EB6909700FFA1D1 /* QuickAddSheet.swift */; };
+		9E87D3302EB696A400FFA1D1 /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E87D32F2EB696A400FFA1D1 /* ThemeManager.swift */; };
 		9EA778FD2EB4A4B00028F064 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA778FC2EB4A4B00028F064 /* OnboardingView.swift */; };
 		9EA779002EB4C36A0028F064 /* GuestModeSplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA778FF2EB4C36A0028F064 /* GuestModeSplashView.swift */; };
 		9EA779012EB4C36A0028F064 /* EmailConfirmationSplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA778FE2EB4C36A0028F064 /* EmailConfirmationSplashView.swift */; };
@@ -159,6 +160,7 @@
 		9E87D3282EB6722300FFA1D1 /* BiometricSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricSetupView.swift; sourceTree = "<group>"; };
 		9E87D32A2EB67CEA00FFA1D1 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		9E87D32C2EB6909700FFA1D1 /* QuickAddSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddSheet.swift; sourceTree = "<group>"; };
+		9E87D32F2EB696A400FFA1D1 /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
 		9EA777B82D09F1E000C3422A /* RecipeModel 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 3.xcdatamodel"; sourceTree = "<group>"; };
 		9EA778FC2EB4A4B00028F064 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		9EA778FE2EB4C36A0028F064 /* EmailConfirmationSplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailConfirmationSplashView.swift; sourceTree = "<group>"; };
@@ -252,6 +254,7 @@
 		9E4DC7332E9BF14400E17DDF /* Theme */ = {
 			isa = PBXGroup;
 			children = (
+				9E87D32F2EB696A400FFA1D1 /* ThemeManager.swift */,
 				9E4DC7372E9BF19700E17DDF /* AppTheme.swift */,
 			);
 			path = Theme;
@@ -687,6 +690,7 @@
 				9E7B9A862E9BED16007E1786 /* RecipeSearchView.swift in Sources */,
 				9EA779202EB570D50028F064 /* CookTimer.swift in Sources */,
 				9EA779002EB4C36A0028F064 /* GuestModeSplashView.swift in Sources */,
+				9E87D3302EB696A400FFA1D1 /* ThemeManager.swift in Sources */,
 				9EA779012EB4C36A0028F064 /* EmailConfirmationSplashView.swift in Sources */,
 				9E4DC7522E9C12A900E17DDF /* IngredientSearchView.swift in Sources */,
 				9EA7790C2EB56B630028F064 /* NoteModel.swift in Sources */,

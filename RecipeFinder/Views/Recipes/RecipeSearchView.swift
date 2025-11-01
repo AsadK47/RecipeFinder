@@ -365,8 +365,15 @@ struct RecipeSearchView: View {
                     .padding(.horizontal, 20)
                     .padding(.vertical, 12)
                     .background(
-                        Capsule()
-                            .fill(.regularMaterial)
+                        Group {
+                            if cardStyle == .solid {
+                                Capsule()
+                                    .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                            } else {
+                                Capsule()
+                                    .fill(.regularMaterial)
+                            }
+                        }
                     )
                 })
             }

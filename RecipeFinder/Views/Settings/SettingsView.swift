@@ -4,7 +4,7 @@ import CoreData
 
 enum CardStyle: String, CaseIterable {
     case frosted = "Frost Light"
-    case solid = "Solid Dark"
+    case solid = "Ember Dark"
 }
 
 struct SettingsTabView: View {

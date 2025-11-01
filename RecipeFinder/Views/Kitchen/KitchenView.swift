@@ -319,8 +319,15 @@ struct KitchenView: View {
             .frame(maxWidth: .infinity)
             .padding(.vertical, 16)
             .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(.regularMaterial)
+                Group {
+                    if cardStyle == .solid {
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                    } else {
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(.regularMaterial)
+                    }
+                }
             )
         }
         .buttonStyle(PlainButtonStyle())
@@ -381,22 +388,20 @@ struct KitchenView: View {
         let isInKitchen = kitchenManager.hasItem(ingredient)
         let category = CategoryClassifier.suggestCategory(for: ingredient)
         
-        return Button(
-            action: {
-                withAnimation(.spring(response: 0.3)) {
-                    kitchenManager.toggleItem(ingredient)
-                    HapticManager.shared.light()
-                    
-                    // Go back to main view after adding
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        withAnimation {
-                            selectedCategory = nil
-                        }
+        return Button {
+            withAnimation(.spring(response: 0.3)) {
+                kitchenManager.toggleItem(ingredient)
+                HapticManager.shared.light()
+                
+                // Go back to main view after adding
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    withAnimation {
+                        selectedCategory = nil
                     }
                 }
-            },
-            label: {
-                HStack(spacing: 12) {
+            }
+        } label: {
+            HStack(spacing: 12) {
                     Image(systemName: CategoryClassifier.categoryIcon(for: category))
                         .foregroundStyle(CategoryClassifier.categoryColor(for: category))
                         .font(.body)
@@ -414,11 +419,15 @@ struct KitchenView: View {
                 .padding(.horizontal, 16)
                 .padding(.vertical, 14)
                 .background {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(.regularMaterial)
+                    if cardStyle == .solid {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                    } else {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(.regularMaterial)
+                    }
                 }
             }
-        )
         .buttonStyle(PlainButtonStyle())
     }
     
@@ -516,15 +525,13 @@ struct KitchenView: View {
         let isInKitchen = kitchenManager.hasItem(ingredient)
         let category = CategoryClassifier.suggestCategory(for: ingredient)
         
-        return Button(
-            action: {
-                withAnimation(.spring(response: 0.3)) {
-                    kitchenManager.toggleItem(ingredient)
-                    HapticManager.shared.light()
-                }
-            },
-            label: {
-                HStack(spacing: 12) {
+        return Button {
+            withAnimation(.spring(response: 0.3)) {
+                kitchenManager.toggleItem(ingredient)
+                HapticManager.shared.light()
+            }
+        } label: {
+            HStack(spacing: 12) {
                     Image(systemName: CategoryClassifier.categoryIcon(for: category))
                         .foregroundStyle(CategoryClassifier.categoryColor(for: category))
                         .font(.body)
@@ -542,11 +549,15 @@ struct KitchenView: View {
                 .padding(.horizontal, 16)
                 .padding(.vertical, 14)
                 .background {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(.regularMaterial)
+                    if cardStyle == .solid {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                    } else {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(.regularMaterial)
+                    }
                 }
             }
-        )
         .buttonStyle(PlainButtonStyle())
     }
     

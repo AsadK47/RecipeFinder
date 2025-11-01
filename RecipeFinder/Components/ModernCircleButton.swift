@@ -13,7 +13,7 @@ struct ModernCircleButton: View {
         Button(action: action) {
             Image(systemName: icon)
                 .font(.title2)
-                .foregroundColor(cardStyle == .solid && colorScheme == .light ? .black : .white)
+                .foregroundColor(colorScheme == .dark ? .white : .black)
                 .padding(12)
                 .background {
                     if cardStyle == .solid {
