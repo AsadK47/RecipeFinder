@@ -5,11 +5,12 @@ struct ShoppingListView: View {
     @ObservedObject var manager: ShoppingListManager
     @State private var searchText: String = ""
     @State private var showClearConfirmation = false
+    @State private var showQuickAdd = false
     @State private var collapsedCategories: Set<String> = []
     @State private var confettiTrigger = 0
     @FocusState private var isSearchFocused: Bool
     @Environment(\.colorScheme) var colorScheme
-    @Environment(\.appTheme) var appTheme
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
     private var sortedGroupedItems: [(key: String, value: [ShoppingListItem])] {
@@ -67,7 +68,7 @@ struct ShoppingListView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
@@ -90,6 +91,12 @@ struct ShoppingListView: View {
                                 
                                 // Right button - 15% of width or fixed size
                                 Menu {
+                                    Button(action: {
+                                        showQuickAdd = true
+                                    }) {
+                                        Label("Quick Add", systemImage: "plus.circle")
+                                    }
+                                    
                                     Button(action: shareShoppingList) {
                                         Label("Share List", systemImage: "square.and.arrow.up")
                                     }
@@ -213,15 +220,10 @@ struct ShoppingListView: View {
                     if showingSearchResults {
                         searchResultsView
                     } else {
-                        VStack(spacing: 0) {
-                            // Always show Quick Add section
-                            quickAddSection
-                            
-                            if manager.items.isEmpty {
-                                emptyPromptView
-                            } else {
-                                shoppingListContent
-                            }
+                        if manager.items.isEmpty {
+                            emptyPromptView
+                        } else {
+                            shoppingListContent
                         }
                     }
                 }
@@ -264,6 +266,9 @@ struct ShoppingListView: View {
             } message: {
                 Text("Choose which items to remove from your shopping list")
             }
+            .sheet(isPresented: $showQuickAdd) {
+                QuickAddSheet(manager: manager)
+            }
         }
     }
     
@@ -296,66 +301,7 @@ struct ShoppingListView: View {
         }
     }
     
-    
-    // MARK: - Quick Add Section (Always Visible)
-    private var quickAddSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 8) {
-                Image(systemName: "star.fill")
-                    .font(.caption)
-                    .foregroundColor(.yellow)
-                Text("Quick Add")
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.white)
-            }
-            .padding(.horizontal, 20)
-            
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 12) {
-                    ForEach(["🥛 Milk", "🥚 Eggs", "🍞 Bread", "🧀 Cheese", "🍗 Chicken", "🍅 Tomatoes", "🧅 Onions", "🥔 Potatoes", "🥕 Carrots", "🍎 Apples"], id: \.self) { item in
-                        quickAddChip(item)
-                    }
-                }
-                .padding(.horizontal, 20)
-            }
-        }
-        .padding(.top, 16)
-        .padding(.bottom, 12)
-    }
-    
-    private func quickAddChip(_ item: String) -> some View {
-        let ingredient = item.split(separator: " ").dropFirst().joined(separator: " ")
-        let isInList = manager.items.contains { $0.name.lowercased() == ingredient.lowercased() }
-        
-        return Button(action: {
-            manager.addItem(name: String(ingredient))
-            HapticManager.shared.success()
-        }) {
-            HStack(spacing: 6) {
-                Text(item)
-                    .font(.subheadline)
-                    .foregroundColor(.white)
-                
-                if isInList {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.caption)
-                        .foregroundColor(.green)
-                }
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 10)
-            .background(
-                Capsule()
-                    .fill(isInList ? Color.green.opacity(0.3) : Color.white.opacity(0.15))
-                    .overlay(
-                        Capsule()
-                            .stroke(isInList ? Color.green.opacity(0.5) : Color.white.opacity(0.3), lineWidth: 1)
-                    )
-            )
-        }
-        .buttonStyle(PlainButtonStyle())
-    }
+
     
     // MARK: - Empty Prompt (without Quick Add)
     private var emptyPromptView: some View {
@@ -372,7 +318,7 @@ struct ShoppingListView: View {
                         .fontWeight(.bold)
                         .foregroundColor(.white)
                     
-                    Text("Use Quick Add above, search bar, or tap + on any recipe")
+                    Text("Use the menu button or search bar, or tap + on any recipe")
                         .font(.subheadline)
                         .foregroundColor(.white.opacity(0.7))
                         .multilineTextAlignment(.center)
@@ -420,13 +366,13 @@ struct ShoppingListView: View {
     // Shared Features Card Component
     private var shoppingFeaturesCard: some View {
         VStack(alignment: .leading, spacing: 16) {
-            ShoppingFeatureRow(icon: "sparkles", title: "Smart Categories", description: "Type 'milk' → Dairy, 'chicken' → Meat", appTheme: appTheme)
-            ShoppingFeatureRow(icon: "list.bullet.indent", title: "Auto Grouping", description: "Items group by category automatically", appTheme: appTheme)
-            ShoppingFeatureRow(icon: "hand.tap", title: "Tap to Collapse", description: "Hide completed categories while shopping", appTheme: appTheme)
-            ShoppingFeatureRow(icon: "checkmark.circle", title: "Check Off Items", description: "Tap checkbox or swipe to mark as purchased", appTheme: appTheme)
-            ShoppingFeatureRow(icon: "trash", title: "Delete Items", description: "Swipe left on any item to remove it", appTheme: appTheme)
-            ShoppingFeatureRow(icon: "ellipsis.circle", title: "Bulk Actions", description: "Use menu (⋯) to clear checked or all items", appTheme: appTheme)
-            ShoppingFeatureRow(icon: "square.and.pencil", title: "Edit Quantity", description: "Tap item to change amount or category", appTheme: appTheme)
+            ShoppingFeatureRow(icon: "sparkles", title: "Smart Categories", description: "Type 'milk' → Dairy, 'chicken' → Meat", appTheme: selectedTheme)
+            ShoppingFeatureRow(icon: "list.bullet.indent", title: "Auto Grouping", description: "Items group by category automatically", appTheme: selectedTheme)
+            ShoppingFeatureRow(icon: "hand.tap", title: "Tap to Collapse", description: "Hide completed categories while shopping", appTheme: selectedTheme)
+            ShoppingFeatureRow(icon: "checkmark.circle", title: "Check Off Items", description: "Tap checkbox or swipe to mark as purchased", appTheme: selectedTheme)
+            ShoppingFeatureRow(icon: "trash", title: "Delete Items", description: "Swipe left on any item to remove it", appTheme: selectedTheme)
+            ShoppingFeatureRow(icon: "ellipsis.circle", title: "Bulk Actions", description: "Use menu (⋯) to clear checked or all items", appTheme: selectedTheme)
+            ShoppingFeatureRow(icon: "square.and.pencil", title: "Edit Quantity", description: "Tap item to change amount or category", appTheme: selectedTheme)
         }
         .padding(20)
         .background {
@@ -605,7 +551,7 @@ struct ShoppingListView: View {
                     Spacer()
                     
                     Image(systemName: isInList ? "checkmark.circle.fill" : "plus.circle")
-                        .foregroundStyle(isInList ? .green : AppTheme.accentColor(for: appTheme))
+                        .foregroundStyle(isInList ? .green : AppTheme.accentColor(for: selectedTheme))
                         .font(.title3)
                 }
                 .padding(.horizontal, 16)
@@ -881,5 +827,96 @@ struct HelpSheetView: View {
                 }
             }
         }
+    }
+}
+
+// MARK: - Quick Add Sheet
+struct QuickAddSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) var colorScheme
+    @ObservedObject var manager: ShoppingListManager
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
+    
+    let quickAddItems = ["🥛 Milk", "🥚 Eggs", "🍞 Bread", "🧀 Cheese", "🍗 Chicken", "🍅 Tomatoes", "🧅 Onions", "🥔 Potatoes", "🥕 Carrots", "🍎 Apples", "🥩 Beef", "🍚 Rice", "🍝 Pasta", "🥓 Bacon"]
+    
+    var body: some View {
+        ZStack {
+            // Background gradient
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
+                .ignoresSafeArea()
+            
+            VStack(spacing: 0) {
+                // Header
+                HStack {
+                    Text("Quick Add")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                    
+                    Spacer()
+                    
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.title2)
+                            .foregroundColor(.white.opacity(0.7))
+                    }
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 20)
+                .padding(.bottom, 16)
+                
+                // Content
+                ScrollView {
+                    LazyVGrid(columns: [
+                        GridItem(.flexible()),
+                        GridItem(.flexible())
+                    ], spacing: 12) {
+                        ForEach(quickAddItems, id: \.self) { item in
+                            quickAddButton(item)
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 40)
+                }
+            }
+        }
+    }
+    
+    private func quickAddButton(_ item: String) -> some View {
+        let ingredient = item.split(separator: " ").dropFirst().joined(separator: " ")
+        let isInList = manager.items.contains { $0.name.lowercased() == ingredient.lowercased() }
+        
+        return Button(action: {
+            manager.addItem(name: String(ingredient))
+            HapticManager.shared.success()
+        }) {
+            HStack(spacing: 8) {
+                Text(item)
+                    .font(.subheadline)
+                    .foregroundColor(.white)
+                
+                Spacer()
+                
+                if isInList {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.body)
+                        .foregroundColor(.green)
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(isInList ? Color.green.opacity(0.3) : Color.white.opacity(0.15))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(isInList ? Color.green.opacity(0.5) : Color.white.opacity(0.3), lineWidth: 1)
+                    )
+            )
+        }
+        .buttonStyle(PlainButtonStyle())
     }
 }

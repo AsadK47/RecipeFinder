@@ -11,15 +11,16 @@ struct AccountView: View {
     
     @State private var editingName = false
     @State private var tempName = ""
+    @State private var showingEditProfile = false
     @State private var showingSignOutAlert = false
     @State private var showingDeleteAccountAlert = false
     @State private var showingPrivacyPolicy = false
-    @State private var showingDataDownload = false
-    @State private var showingDataImport = false
     @State private var showingAuthError = false
     @State private var authErrorMessage = ""
     @State private var showingGuestSplash = false
     @State private var showSuccessFeedback = false
+    @State private var showImagePicker = false
+    @State private var profileImage: UIImage?
     
     private var isGuestMode: Bool {
         authManager.isGuestMode
@@ -48,7 +49,7 @@ struct AccountView: View {
     
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
@@ -77,10 +78,42 @@ struct AccountView: View {
                         // Personal Information Section
                         if !isGuestMode {
                             personalInfoSection
+                            
+                            // Edit Profile Button
+                            Button(action: {
+                                showingEditProfile = true
+                                HapticManager.shared.light()
+                            }) {
+                                HStack {
+                                    Image(systemName: "pencil.circle.fill")
+                                        .font(.title3)
+                                        .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                                    
+                                    Text("Edit Profile")
+                                        .font(.body)
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(colorScheme == .dark ? .white : .primary)
+                                    
+                                    Spacer()
+                                    
+                                    Image(systemName: "chevron.right")
+                                        .font(.caption)
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.secondary)
+                                }
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 16)
+                                .background {
+                                    if cardStyle == .solid {
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white)
+                                    } else {
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .fill(.ultraThinMaterial)
+                                    }
+                                }
+                            }
                         }
-                        
-                        // Data Management Section
-                        dataManagementSection
                         
                         // Account Actions
                         accountActionsSection
@@ -98,11 +131,11 @@ struct AccountView: View {
         .sheet(isPresented: $showingPrivacyPolicy) {
             PrivacyPolicyView()
         }
-        .sheet(isPresented: $showingDataDownload) {
-            DataDownloadView()
+        .sheet(isPresented: $showingEditProfile) {
+            EditProfileView()
         }
-        .sheet(isPresented: $showingDataImport) {
-            DataImportView()
+        .sheet(isPresented: $showImagePicker) {
+            ImagePicker(image: $profileImage)
         }
         .fullScreenCover(isPresented: $showingGuestSplash) {
             GuestModeSplashView {
@@ -141,15 +174,41 @@ struct AccountView: View {
     private var profileHeader: some View {
         VStack(spacing: 16) {
             HStack(spacing: 16) {
-                // Avatar
-                ZStack {
-                    Circle()
-                        .fill(AppTheme.accentColor(for: selectedTheme))
-                        .frame(width: 64, height: 64)
-                    
-                    Text(displayInitials)
-                        .font(.system(size: 26, weight: .semibold))
-                        .foregroundColor(.white)
+                // Avatar with Edit Button
+                Button(action: {
+                    showImagePicker = true
+                    HapticManager.shared.light()
+                }) {
+                    ZStack(alignment: .bottomTrailing) {
+                        if let profileImage = profileImage {
+                            Image(uiImage: profileImage)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 64, height: 64)
+                                .clipShape(Circle())
+                        } else {
+                            ZStack {
+                                Circle()
+                                    .fill(AppTheme.accentColor(for: selectedTheme))
+                                    .frame(width: 64, height: 64)
+                                
+                                Text(displayInitials)
+                                    .font(.system(size: 26, weight: .semibold))
+                                    .foregroundColor(.white)
+                            }
+                        }
+                        
+                        // Edit icon overlay
+                        ZStack {
+                            Circle()
+                                .fill(colorScheme == .dark ? Color(white: 0.15) : .white)
+                                .frame(width: 22, height: 22)
+                            
+                            Image(systemName: "camera.fill")
+                                .font(.system(size: 10, weight: .semibold))
+                                .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                        }
+                    }
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {
@@ -330,46 +389,6 @@ struct AccountView: View {
     }
     
     // MARK: - Data Management
-    
-    private var dataManagementSection: some View {
-        VStack(spacing: 0) {
-            AccountRowButton(
-                icon: "square.and.arrow.down.fill",
-                iconColor: .green,
-                title: "Download Your Data",
-                subtitle: "Export all your recipes and preferences",
-                showChevron: true,
-                action: { 
-                    showingDataDownload = true 
-                    HapticManager.shared.light()
-                }
-            )
-            
-            Divider()
-                .padding(.leading, 72)
-            
-            AccountRowButton(
-                icon: "square.and.arrow.up.fill",
-                iconColor: .orange,
-                title: "Import Your Data",
-                subtitle: "Restore from backup",
-                showChevron: true,
-                action: { 
-                    showingDataImport = true 
-                    HapticManager.shared.light()
-                }
-            )
-        }
-        .background {
-            if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white)
-            } else {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(.ultraThinMaterial)
-            }
-        }
-    }
     
     // MARK: - Account Actions
     

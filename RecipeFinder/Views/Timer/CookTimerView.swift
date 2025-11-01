@@ -34,7 +34,7 @@ struct CookTimerView: View {
     @AppStorage("keepScreenAwake") private var keepScreenAwake: Bool = false
     @AppStorage("defaultTimerDuration") private var defaultTimerDuration: Int = 300 // 5 minutes in seconds
     @Environment(\.colorScheme) var colorScheme
-    @Environment(\.appTheme) var appTheme
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @Environment(\.scenePhase) var scenePhase
     
     let maxTimers = 5
@@ -46,7 +46,7 @@ struct CookTimerView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
@@ -154,7 +154,7 @@ struct CookTimerView: View {
                                     dismissCompletedTimer(completedTimer)
                                 }
                             },
-                            appTheme: appTheme,
+                            appTheme: selectedTheme,
                             colorScheme: colorScheme
                         )
                         .transition(.move(edge: .top).combined(with: .opacity))
@@ -219,16 +219,13 @@ struct CookTimerView: View {
                 Image(systemName: "star.fill")
                     .font(.title2)
                 
-                Text("Default")
-                    .font(.caption2)
-                    .fontWeight(.bold)
                 Text(title)
-                    .font(.caption)
+                    .font(.subheadline)
                     .fontWeight(.semibold)
             }
-            .foregroundColor(isDisabled ? (colorScheme == .dark ? .white.opacity(0.3) : .black.opacity(0.3)) : AppTheme.accentColor(for: appTheme))
+            .foregroundColor(isDisabled ? (colorScheme == .dark ? .white.opacity(0.3) : .black.opacity(0.3)) : AppTheme.accentColor(for: selectedTheme))
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
+            .padding(.vertical, 20)
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 16)
@@ -310,7 +307,7 @@ struct CookTimerView: View {
     private var customTimeInputSheet: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
@@ -459,7 +456,7 @@ struct CookTimerView: View {
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 18)
-                        .background(AppTheme.accentColor(for: appTheme))
+                        .background(AppTheme.accentColor(for: selectedTheme))
                         .cornerRadius(16)
                     }
                     .disabled(customHours == 0 && customMinutes == 0 && customSeconds == 0)
@@ -500,7 +497,7 @@ struct CookTimerView: View {
                     onStop: { stopTimer(timer.id) },
                     cardStyle: cardStyle,
                     colorScheme: colorScheme,
-                    appTheme: appTheme
+                    appTheme: selectedTheme
                 )
             }
         }

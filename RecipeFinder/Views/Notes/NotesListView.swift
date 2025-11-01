@@ -1,8 +1,9 @@
 import SwiftUI
 
 struct NotesListView: View {
+    @Environment(\.dismiss) private var dismiss
     @StateObject private var notesManager = NotesManager()
-    @Environment(\.appTheme) var appTheme
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
@@ -57,7 +58,7 @@ struct NotesListView: View {
     var body: some View {
         ZStack {
             // Background
-            AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
@@ -67,8 +68,8 @@ struct NotesListView: View {
                         HStack(spacing: 0) {
                             // Back button (left side)
                             Button(action: {
-                                // This will use the environment's dismiss if in a sheet/navigation
                                 HapticManager.shared.light()
+                                dismiss()
                             }) {
                                 Image(systemName: "chevron.left")
                                     .font(.title3)
@@ -76,7 +77,6 @@ struct NotesListView: View {
                                     .foregroundColor(.white)
                                     .frame(width: 44, height: 44)
                             }
-                            .opacity(0) // Hidden but maintains layout
                             
                             Spacer(minLength: 8)
                             
@@ -236,7 +236,7 @@ struct NotesListView: View {
                             } label: {
                                 Label(note.isPinned ? "Unpin" : "Pin", systemImage: note.isPinned ? "pin.slash" : "pin")
                             }
-                            .tint(AppTheme.accentColor(for: appTheme))
+                            .tint(AppTheme.accentColor(for: selectedTheme))
                         }
                         .contextMenu {
                             Button(action: {
@@ -284,7 +284,7 @@ struct NotesListView: View {
 // MARK: - Filter Menu View
 struct FilterMenuView: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.appTheme) var appTheme
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
@@ -299,7 +299,7 @@ struct FilterMenuView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
                     .ignoresSafeArea()
                 
                 ScrollView {
@@ -309,11 +309,11 @@ struct FilterMenuView: View {
                             Toggle(isOn: $showPinnedOnly) {
                                 HStack {
                                     Image(systemName: "pin.fill")
-                                        .foregroundColor(AppTheme.accentColor(for: appTheme))
+                                        .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                                     Text("Show Pinned Only")
                                 }
                             }
-                            .tint(AppTheme.accentColor(for: appTheme))
+                            .tint(AppTheme.accentColor(for: selectedTheme))
                         }
                         
                         // Top 3 Categories
@@ -387,7 +387,7 @@ struct FilterMenuView: View {
             }
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarBackground(
-                AppTheme.accentColor(for: appTheme).opacity(0.8),
+                AppTheme.accentColor(for: selectedTheme).opacity(0.8),
                 for: .navigationBar
             )
         }
@@ -422,7 +422,7 @@ struct FilterMenuView: View {
             HStack(spacing: 12) {
                 Image(systemName: category.icon)
                     .font(.title3)
-                    .foregroundColor(AppTheme.accentColor(for: appTheme))
+                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                     .frame(width: 32)
                 
                 Text(category.rawValue)
@@ -433,7 +433,7 @@ struct FilterMenuView: View {
                 
                 if selectedCategory == category {
                     Image(systemName: "checkmark")
-                        .foregroundColor(AppTheme.accentColor(for: appTheme))
+                        .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                         .fontWeight(.semibold)
                 }
                 
@@ -468,7 +468,7 @@ struct FilterMenuView: View {
                 .padding(.vertical, 6)
                 .background(
                     Capsule()
-                        .fill(selectedTag == tag ? AppTheme.accentColor(for: appTheme) : Color.secondary.opacity(0.1))
+                        .fill(selectedTag == tag ? AppTheme.accentColor(for: selectedTheme) : Color.secondary.opacity(0.1))
                 )
         }
     }

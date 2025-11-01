@@ -2,7 +2,7 @@ import SwiftUI
 
 struct MoreView: View {
     @Environment(\.colorScheme) var colorScheme
-    @Environment(\.appTheme) var appTheme
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @Binding var recipes: [RecipeModel]
     @EnvironmentObject var kitchenManager: KitchenInventoryManager
@@ -11,7 +11,7 @@ struct MoreView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
@@ -51,7 +51,7 @@ struct MoreView: View {
                                     ) {
                                         MoreRow(
                                             icon: "gearshape.circle.fill",
-                                            iconColor: AppTheme.accentColor(for: appTheme),
+                                            iconColor: AppTheme.accentColor(for: selectedTheme),
                                             title: "Settings",
                                             subtitle: "Customize your experience"
                                         )

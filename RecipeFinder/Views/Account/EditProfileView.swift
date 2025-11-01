@@ -12,6 +12,7 @@ struct EditProfileView: View {
     @StateObject private var accountManager = AccountManager.shared
     @StateObject private var authManager = AuthenticationManager.shared
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @Environment(\.colorScheme) private var colorScheme
     
     // Profile fields
@@ -38,7 +39,7 @@ struct EditProfileView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
                     .ignoresSafeArea()
                 
                 ScrollView {

@@ -15,7 +15,7 @@ struct ContentView: View {
     
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: themeBinding, colorScheme: colorScheme)
+            AppTheme.backgroundGradient(for: themeBinding, colorScheme: colorScheme, cardStyle: cardStyle)
                 .ignoresSafeArea()
             
             TabView(selection: $selectedTab) {

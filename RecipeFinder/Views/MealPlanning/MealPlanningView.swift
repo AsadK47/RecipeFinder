@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct MealPlanningView: View {
+    @Environment(\.dismiss) private var dismiss
     @Binding var recipes: [RecipeModel]
     @StateObject private var mealPlanningManager = MealPlanningManager()
     @State private var selectedDate: Date = Date()
@@ -151,6 +152,18 @@ struct MealPlanningView: View {
         VStack(spacing: 12) {
             GeometryReader { geometry in
                 HStack(spacing: 0) {
+                    // Back button
+                    Button(action: {
+                        HapticManager.shared.light()
+                        dismiss()
+                    }) {
+                        Image(systemName: "chevron.left")
+                            .font(.title3)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.white)
+                            .frame(width: 44, height: 44)
+                    }
+                    
                     Spacer(minLength: 8)
                     
                     Text("Meal Planner")
@@ -445,7 +458,7 @@ struct MealPlanningView: View {
             }
             .padding(.horizontal, 4)
             
-            ForEach(Array(selectedMealTimes), id: \.self) { mealTime in
+            ForEach(Array(selectedMealTimes).sorted(by: { $0.sortOrder < $1.sortOrder }), id: \.self) { mealTime in
                 Button(action: {
                     currentMealTime = mealTime
                     showRecipeSelector = true

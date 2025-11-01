@@ -11,7 +11,7 @@ struct KitchenView: View {
     @State private var collapsedCategories: Set<String> = []
     @FocusState private var isSearchFocused: Bool
     @Environment(\.colorScheme) var colorScheme
-    @Environment(\.appTheme) var appTheme
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
 
     // Use categorized foods list instead of recipe ingredients
@@ -76,7 +76,7 @@ struct KitchenView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
                     .ignoresSafeArea()
                 
                     VStack(spacing: 0) {
@@ -239,7 +239,7 @@ struct KitchenView: View {
             HStack(spacing: 8) {
                 Image(systemName: "square.grid.2x2")
                     .font(.caption)
-                    .foregroundColor(AppTheme.accentColor(for: appTheme))
+                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                 Text("Browse by Category")
                     .font(.subheadline)
                     .fontWeight(.semibold)
@@ -303,7 +303,7 @@ struct KitchenView: View {
                 HStack(spacing: 8) {
                     Image(systemName: "square.grid.2x2")
                         .font(.caption)
-                        .foregroundColor(AppTheme.accentColor(for: appTheme))
+                        .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                     Text("Browse by Category")
                         .font(.subheadline)
                         .fontWeight(.semibold)
@@ -477,7 +477,7 @@ struct KitchenView: View {
                     Spacer()
                     
                     Image(systemName: isInKitchen ? "checkmark.circle.fill" : "plus.circle")
-                        .foregroundStyle(isInKitchen ? .green : AppTheme.accentColor(for: appTheme))
+                        .foregroundStyle(isInKitchen ? .green : AppTheme.accentColor(for: selectedTheme))
                         .font(.title3)
                 }
                 .padding(.horizontal, 16)
@@ -524,7 +524,7 @@ struct KitchenView: View {
                     .padding(.vertical, 6)
                     .background(
                         Capsule()
-                            .fill(AppTheme.accentColor(for: appTheme))
+                            .fill(AppTheme.accentColor(for: selectedTheme))
                     )
                 }
             }
@@ -605,7 +605,7 @@ struct KitchenView: View {
                     Spacer()
                     
                     Image(systemName: isInKitchen ? "checkmark.circle.fill" : "plus.circle")
-                        .foregroundStyle(isInKitchen ? .green : AppTheme.accentColor(for: appTheme))
+                        .foregroundStyle(isInKitchen ? .green : AppTheme.accentColor(for: selectedTheme))
                         .font(.title3)
                 }
                 .padding(.horizontal, 16)
@@ -839,7 +839,7 @@ struct AddIngredientSheet: View {
     @ObservedObject var kitchenManager: KitchenInventoryManager
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
-    @Environment(\.appTheme) var appTheme
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @State private var searchText = ""
     @State private var selectedCategory: String? = nil
@@ -861,7 +861,7 @@ struct AddIngredientSheet: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme, cardStyle: cardStyle)
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
@@ -896,7 +896,7 @@ struct AddIngredientSheet: View {
                                         Image(systemName: "chevron.left")
                                         Text("Back to Categories")
                                     }
-                                    .foregroundColor(AppTheme.accentColor(for: appTheme))
+                                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                                     .padding(.horizontal, 20)
                                     .padding(.vertical, 8)
                                 }
@@ -937,7 +937,7 @@ struct AddIngredientSheet: View {
                     Button("Done") {
                         dismiss()
                     }
-                    .foregroundColor(AppTheme.accentColor(for: appTheme))
+                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                 }
             }
         }
@@ -1008,7 +1008,7 @@ struct AddIngredientSheet: View {
                 Spacer()
                 
                 Image(systemName: isInKitchen ? "checkmark.circle.fill" : "plus.circle")
-                    .foregroundColor(isInKitchen ? .green : AppTheme.accentColor(for: appTheme))
+                    .foregroundColor(isInKitchen ? .green : AppTheme.accentColor(for: selectedTheme))
                     .font(.title3)
             }
             .padding(.horizontal, 16)

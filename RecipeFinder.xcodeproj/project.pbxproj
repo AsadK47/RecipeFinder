@@ -58,6 +58,7 @@
 		9E7B9A862E9BED16007E1786 /* RecipeSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E7B9A852E9BED12007E1786 /* RecipeSearchView.swift */; };
 		9E83ED8F2EA78A3900425CC0 /* KitchenInventoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E83ED8E2EA78A3900425CC0 /* KitchenInventoryManager.swift */; };
 		9E87D3292EB6722300FFA1D1 /* BiometricSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E87D3282EB6722300FFA1D1 /* BiometricSetupView.swift */; };
+		9E87D32B2EB67CEA00FFA1D1 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E87D32A2EB67CEA00FFA1D1 /* ImagePicker.swift */; };
 		9EA778FD2EB4A4B00028F064 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA778FC2EB4A4B00028F064 /* OnboardingView.swift */; };
 		9EA779002EB4C36A0028F064 /* GuestModeSplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA778FF2EB4C36A0028F064 /* GuestModeSplashView.swift */; };
 		9EA779012EB4C36A0028F064 /* EmailConfirmationSplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA778FE2EB4C36A0028F064 /* EmailConfirmationSplashView.swift */; };
@@ -155,6 +156,7 @@
 		9E7B9A852E9BED12007E1786 /* RecipeSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeSearchView.swift; sourceTree = "<group>"; };
 		9E83ED8E2EA78A3900425CC0 /* KitchenInventoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KitchenInventoryManager.swift; sourceTree = "<group>"; };
 		9E87D3282EB6722300FFA1D1 /* BiometricSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricSetupView.swift; sourceTree = "<group>"; };
+		9E87D32A2EB67CEA00FFA1D1 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		9EA777B82D09F1E000C3422A /* RecipeModel 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 3.xcdatamodel"; sourceTree = "<group>"; };
 		9EA778FC2EB4A4B00028F064 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		9EA778FE2EB4C36A0028F064 /* EmailConfirmationSplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailConfirmationSplashView.swift; sourceTree = "<group>"; };
@@ -297,6 +299,7 @@
 		9E51C3992EB3E9C20064B917 /* Account */ = {
 			isa = PBXGroup;
 			children = (
+				9E87D32A2EB67CEA00FFA1D1 /* ImagePicker.swift */,
 				9EA779082EB534CA0028F064 /* EditProfileView.swift */,
 				9E51C3982EB3E9C20064B917 /* AccountView.swift */,
 			);
@@ -683,6 +686,7 @@
 				9EA779012EB4C36A0028F064 /* EmailConfirmationSplashView.swift in Sources */,
 				9E4DC7522E9C12A900E17DDF /* IngredientSearchView.swift in Sources */,
 				9EA7790C2EB56B630028F064 /* NoteModel.swift in Sources */,
+				9E87D32B2EB67CEA00FFA1D1 /* ImagePicker.swift in Sources */,
 				9E51C3A52EB40DA20064B917 /* AuthenticationManager.swift in Sources */,
 				9E4DC7672E9C603B00E17DDF /* CategoryClassifier.swift in Sources */,
 				9E4DC7582E9C136E00E17DDF /* RecipeViewMode.swift in Sources */,

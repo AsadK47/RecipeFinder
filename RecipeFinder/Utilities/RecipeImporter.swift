@@ -45,11 +45,33 @@ class RecipeImporter: ObservableObject {
         do {
             debugLog("🌐 Fetching recipe from: \(url.absoluteString)")
             
-            // Fetch HTML
-            let (data, response) = try await URLSession.shared.data(from: url)
+            // Create request with user agent to avoid blocking
+            var request = URLRequest(url: url)
+            request.setValue("Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1", forHTTPHeaderField: "User-Agent")
+            request.setValue("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", forHTTPHeaderField: "Accept")
+            request.setValue("en-US,en;q=0.9", forHTTPHeaderField: "Accept-Language")
+            request.timeoutInterval = 30
             
-            guard let httpResponse = response as? HTTPURLResponse,
-                  (200...299).contains(httpResponse.statusCode) else {
+            // Fetch HTML
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw ImportError.invalidResponse
+            }
+            
+            debugLog("📊 HTTP Status: \(httpResponse.statusCode)")
+            
+            // Handle redirects and different status codes
+            if httpResponse.statusCode == 301 || httpResponse.statusCode == 302 {
+                if let location = httpResponse.value(forHTTPHeaderField: "Location"),
+                   let redirectURL = URL(string: location, relativeTo: url) {
+                    debugLog("↪️ Following redirect to: \(redirectURL.absoluteString)")
+                    await importRecipe(from: redirectURL)
+                    return
+                }
+            }
+            
+            guard (200...299).contains(httpResponse.statusCode) else {
                 throw ImportError.invalidResponse
             }
             
@@ -181,9 +203,9 @@ class RecipeImporter: ObservableObject {
             case .invalidURL:
                 return "Invalid URL provided"
             case .invalidResponse:
-                return "Invalid response from server"
+                return "Could not connect to the website. The site may be blocking automated requests or experiencing issues. Please try copying the recipe manually."
             case .invalidEncoding:
-                return "Could not decode webpage content"
+                return "Could not read the webpage content"
             case .missingRequiredData(let detail):
                 return "Missing required data: \(detail)"
             case .parsingFailed(let detail):

@@ -562,37 +562,10 @@ struct RecipeDetailView: View {
         // Generate text format
         let text = RecipeShareUtility.generateTextFormat(recipe: recipe, measurementSystem: measurementSystem)
         
-        // Create a temporary text file for better sharing compatibility
-        let fileName = "\(recipe.name.replacingOccurrences(of: "/", with: "-").replacingOccurrences(of: ":", with: "-")).txt"
-        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
-        
-        do {
-            // Write to temporary file
-            try text.write(to: tempURL, atomically: true, encoding: .utf8)
-            
-            debugLog("✅ Created temp file for sharing: \(tempURL.path)")
-            
-            // Important: Set shareItems BEFORE showing the sheet
-            // Add a small delay to ensure state is properly set
-            DispatchQueue.main.async {
-                self.shareItems = [tempURL]
-                // Use another async to ensure shareItems is fully set before showing sheet
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    self.showShareSheet = true
-                    HapticManager.shared.success()
-                }
-            }
-        } catch {
-            debugLog("❌ Failed to create text file: \(error.localizedDescription)")
-            // Fallback: share as plain text string
-            DispatchQueue.main.async {
-                self.shareItems = [text as NSString]
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    self.showShareSheet = true
-                    HapticManager.shared.success()
-                }
-            }
-        }
+        // Share directly as text string
+        shareItems = [text]
+        showShareSheet = true
+        HapticManager.shared.success()
     }
     
     private func shareAsPDF() {
