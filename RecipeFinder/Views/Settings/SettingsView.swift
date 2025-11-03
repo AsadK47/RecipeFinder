@@ -2,11 +2,6 @@ import SwiftUI
 import AudioToolbox
 import CoreData
 
-enum CardStyle: String, CaseIterable {
-    case frosted = "Frost Light"
-    case solid = "Ember Dark"
-}
-
 struct SettingsTabView: View {
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
@@ -17,20 +12,6 @@ struct SettingsTabView: View {
     @StateObject private var accountManager = AccountManager.shared
     @EnvironmentObject var kitchenManager: KitchenInventoryManager
     @EnvironmentObject var shoppingListManager: ShoppingListManager
-    
-    enum AppearanceMode: String, CaseIterable {
-        case system = "System"
-        case light = "Light"
-        case dark = "Dark"
-        
-        var icon: String {
-            switch self {
-            case .system: return "circle.lefthalf.filled"
-            case .light: return "sun.max.fill"
-            case .dark: return "moon.fill"
-            }
-        }
-    }
     
     var body: some View {
         ZStack {
@@ -321,7 +302,7 @@ struct SettingsRow: View {
 // Settings Detail Views
 
 struct AppearanceAndThemeSettingsView: View {
-    @AppStorage("appearanceMode") private var appearanceMode: SettingsTabView.AppearanceMode = .system
+    @AppStorage("appearanceMode") private var appearanceMode: AppearanceMode = .system
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
@@ -417,7 +398,7 @@ struct AppearanceAndThemeSettingsView: View {
 
 // Keep old views for backwards compatibility but mark as deprecated
 struct AppearanceSettingsView: View {
-    @AppStorage("appearanceMode") private var appearanceMode: SettingsTabView.AppearanceMode = .system
+    @AppStorage("appearanceMode") private var appearanceMode: AppearanceMode = .system
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted

@@ -8,6 +8,31 @@
 import SwiftUI
 import Combine
 
+// Card Style
+
+enum CardStyle: String, CaseIterable {
+    case frosted = "Frost Light"
+    case solid = "Ember Dark"
+}
+
+// Appearance Mode
+
+enum AppearanceMode: String, CaseIterable {
+    case system = "System"
+    case light = "Light"
+    case dark = "Dark"
+    
+    var icon: String {
+        switch self {
+        case .system: return "circle.lefthalf.filled"
+        case .light: return "sun.max.fill"
+        case .dark: return "moon.fill"
+        }
+    }
+}
+
+// MARK: - Theme Manager
+
 /// Centralized theme manager that controls app-wide theme and card style settings
 /// Use as @EnvironmentObject to access throughout the app
 class ThemeManager: ObservableObject {
@@ -84,21 +109,6 @@ extension Color {
     /// Secondary text color that adapts to light/dark mode
     static func adaptiveSecondaryText(for colorScheme: ColorScheme) -> Color {
         return colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6)
-    }
-}
-
-// Appearance Mode enum (moved from SettingsView if needed)
-enum AppearanceMode: String, CaseIterable {
-    case system = "System"
-    case light = "Light"
-    case dark = "Dark"
-    
-    var icon: String {
-        switch self {
-        case .system: return "circle.lefthalf.filled"
-        case .light: return "sun.max.fill"
-        case .dark: return "moon.fill"
-        }
     }
 }
 
