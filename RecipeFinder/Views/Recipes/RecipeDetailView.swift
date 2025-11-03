@@ -53,7 +53,7 @@ struct RecipeDetailView: View {
                         // Title directly on gradient
                         Text(recipe.name)
                             .font(.system(size: 28, weight: .bold))
-                            .foregroundColor(.white)
+                            .foregroundColor(colorScheme == .dark ? .white : .black)
                             .multilineTextAlignment(.center)
                             .frame(maxWidth: .infinity, alignment: .center)
                             .padding(.horizontal, 20)
@@ -160,12 +160,12 @@ struct RecipeDetailView: View {
                                 label: {
                                     HStack(spacing: 8) {
                                         Image(systemName: "leaf.fill")
-                                            .foregroundColor(.white)
+                                            .foregroundColor(colorScheme == .dark ? .white : .black)
                                             .font(.title3)
                                         Text("Ingredients")
                                             .font(.title2)
                                             .fontWeight(.bold)
-                                            .foregroundColor(.white)
+                                            .foregroundColor(colorScheme == .dark ? .white : .black)
                                     }
                                 }
                             )
@@ -189,12 +189,12 @@ struct RecipeDetailView: View {
                                             .font(.subheadline)
                                             .fontWeight(.medium)
                                     }
-                                    .foregroundColor(.white)
+                                    .foregroundColor(colorScheme == .dark ? .white : .black)
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 6)
                                     .background(
                                         RoundedRectangle(cornerRadius: 8)
-                                            .fill(Color.white.opacity(0.2))
+                                            .fill(colorScheme == .dark ? Color.white.opacity(0.2) : Color.black.opacity(0.1))
                                     )
                                 }
                             )
@@ -215,7 +215,7 @@ struct RecipeDetailView: View {
                                     Image(systemName: "chevron.down")
                                         .font(.title3)
                                         .fontWeight(.semibold)
-                                        .foregroundColor(.white.opacity(0.8))
+                                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.6))
                                         .rotationEffect(.degrees(expandedSections.contains("Ingredients") ? 0 : -90))
                                         .animation(.spring(response: 0.3), value: expandedSections.contains("Ingredients"))
                                 }
@@ -427,12 +427,12 @@ struct RecipeDetailView: View {
                 label: {
                     HStack(spacing: 8) {
                         Image(systemName: icon)
-                            .foregroundColor(.white)
+                            .foregroundColor(colorScheme == .dark ? .white : .black)
                             .font(.title3)
                         Text(title)
                             .font(.title2)
                             .fontWeight(.bold)
-                            .foregroundColor(.white)
+                            .foregroundColor(colorScheme == .dark ? .white : .black)
                         
                         Spacer()
                         
@@ -440,7 +440,7 @@ struct RecipeDetailView: View {
                         Image(systemName: "chevron.down")
                             .font(.title3)
                             .fontWeight(.semibold)
-                            .foregroundColor(.white.opacity(0.8))
+                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.6))
                             .rotationEffect(.degrees(isExpanded ? 0 : -90))
                             .animation(.spring(response: 0.3), value: isExpanded)
                     }

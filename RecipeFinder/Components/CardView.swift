@@ -19,7 +19,7 @@ struct CardView<Content: View>: View {
                 } else {
                     // Pure frosted glass - exactly like Settings
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(.regularMaterial)
+                        .fill(.ultraThinMaterial)
                         .shadow(color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.15), radius: 10, x: 0, y: 4)
                 }
             }
@@ -46,7 +46,7 @@ struct GlassCard<Content: View>: View {
                 } else {
                     // Pure frosted glass - exactly like Settings
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(.regularMaterial)
+                        .fill(.ultraThinMaterial)
                         .shadow(color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.15), radius: 10, x: 0, y: 4)
                 }
             }

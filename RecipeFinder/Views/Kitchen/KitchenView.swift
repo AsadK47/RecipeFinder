@@ -248,13 +248,11 @@ struct KitchenView: View {
                 Text("Your Kitchen is Empty")
                     .font(.title2)
                     .fontWeight(.bold)
-                    .foregroundColor(.white)
-                    .shadow(color: .black.opacity(0.5), radius: 3, x: 0, y: 2)
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
                 
                 Text("Add ingredients using Quick Add from the menu or browse categories below")
                     .font(.subheadline)
-                    .foregroundColor(.white.opacity(0.9))
-                    .shadow(color: .black.opacity(0.4), radius: 2, x: 0, y: 1)
+                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.9) : .black.opacity(0.8))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 40)
             }
@@ -277,7 +275,7 @@ struct KitchenView: View {
                 Text("Browse by Category")
                     .font(.subheadline)
                     .fontWeight(.semibold)
-                    .foregroundColor(.white)
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
                     .shadow(color: .black.opacity(0.5), radius: 3, x: 0, y: 2)
             }
             .padding(.horizontal, 20)
@@ -301,11 +299,11 @@ struct KitchenView: View {
                 Text("Your Kitchen is Empty")
                     .font(.title2)
                     .fontWeight(.bold)
-                    .foregroundColor(.white)
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
                 
                 Text("Add ingredients to see recipe matches")
                     .font(.subheadline)
-                    .foregroundColor(.white.opacity(0.7))
+                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
                     .multilineTextAlignment(.center)
             }
             .padding(.top, 40)
@@ -381,7 +379,7 @@ struct KitchenView: View {
         .buttonStyle(PlainButtonStyle())
     }
     
-    // MARK: - Category Ingredients View
+    // Category Ingredients View
     private func categoryIngredientsView(for category: String) -> some View {
         VStack(alignment: .leading, spacing: 16) {
             // Header with back button and category info
@@ -410,11 +408,11 @@ struct KitchenView: View {
                     Text(category)
                         .font(.title2)
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
                     
                     Text("\(FoodsList.getFoods(forCategory: category).count) items")
                         .font(.caption)
-                        .foregroundColor(.white.opacity(0.7))
+                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
                 }
                 
                 Spacer()
@@ -487,11 +485,11 @@ struct KitchenView: View {
                     Text("My Kitchen")
                         .font(.title3)
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
                     
                     Text("\(kitchenManager.items.count) ingredients")
                         .font(.caption)
-                        .foregroundColor(.white.opacity(0.7))
+                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
                 }
                 
                 Spacer()
@@ -549,13 +547,13 @@ struct KitchenView: View {
             Text("Search Results")
                 .font(.title3)
                 .fontWeight(.bold)
-                .foregroundColor(.white)
+                .foregroundColor(colorScheme == .dark ? .white : .black)
                 .padding(.horizontal, 20)
             
             if searchResults.isEmpty {
                 Text("No ingredients found")
                     .font(.body)
-                    .foregroundColor(.white.opacity(0.7))
+                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
                     .padding(.horizontal, 20)
                     .padding(.vertical, 20)
             } else {
@@ -619,16 +617,16 @@ struct KitchenView: View {
                     
                     Text("Quick Recipe Matches")
                         .font(.system(size: 26, weight: .bold))
-                        .foregroundColor(.white)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
                 }
                 
                 Text(matchCountText)
                     .font(.body)
-                    .foregroundColor(.white.opacity(0.9))
+                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.9) : .black.opacity(0.8))
                 
                 Text("Tap any recipe to view full details and cooking instructions")
                     .font(.caption)
-                    .foregroundColor(.white.opacity(0.7))
+                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 20)
@@ -894,7 +892,7 @@ struct AddIngredientSheet: View {
                                 Text(category)
                                     .font(.title2)
                                     .fontWeight(.bold)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(colorScheme == .dark ? .white : .black)
                                     .padding(.horizontal, 20)
                                 
                                 LazyVStack(spacing: 8) {

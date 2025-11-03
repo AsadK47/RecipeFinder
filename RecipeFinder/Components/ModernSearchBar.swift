@@ -38,7 +38,7 @@ struct ModernSearchBar: View {
                 } else {
                     // Pure frosted glass - exactly like Settings
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(.regularMaterial)
+                        .fill(.ultraThinMaterial)
                 }
             }
             
