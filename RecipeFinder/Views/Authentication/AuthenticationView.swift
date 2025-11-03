@@ -10,9 +10,12 @@ import SwiftUI
 struct AuthenticationView: View {
     @StateObject private var authManager = AuthenticationManager.shared
     @State private var showSignUp = false
+    @State private var showSignIn = false
     @State private var showOnboarding = false
     @State private var showAppleSignInInfo = false
     @State private var showBiometricSetup = false
+    @State private var newUserEmail = ""
+    @State private var showWelcomeSplash = false
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     @AppStorage("hasBeenPromptedForBiometrics") private var hasBeenPromptedForBiometrics = false
@@ -132,7 +135,22 @@ struct AuthenticationView: View {
             }
         }
         .sheet(isPresented: $showSignUp) {
-            SignUpView()
+            SignUpView(onSignUpSuccess: { email in
+                newUserEmail = email
+                showWelcomeSplash = true
+            })
+        }
+        .sheet(isPresented: $showSignIn) {
+            EmailSignInView(prefillEmail: newUserEmail)
+        }
+        .fullScreenCover(isPresented: $showWelcomeSplash) {
+            WelcomeSplashView(email: newUserEmail) {
+                showWelcomeSplash = false
+                // Small delay then show sign-in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                    showSignIn = true
+                }
+            }
         }
         .fullScreenCover(isPresented: $showOnboarding) {
             OnboardingView()
@@ -182,6 +200,7 @@ struct EmailSignInView: View {
     @State private var isLoading = false
     @State private var showError = false
     @State private var errorMessage = ""
+    let prefillEmail: String
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismiss
@@ -199,6 +218,10 @@ struct EmailSignInView: View {
     
     private var canSignIn: Bool {
         !email.isEmpty && !password.isEmpty && isValidEmail
+    }
+    
+    init(prefillEmail: String = "") {
+        self.prefillEmail = prefillEmail
     }
     
     var body: some View {
@@ -296,6 +319,11 @@ struct EmailSignInView: View {
         } message: {
             Text(errorMessage)
         }
+        .onAppear {
+            if !prefillEmail.isEmpty {
+                email = prefillEmail
+            }
+        }
     }
     
     private func signIn() {
@@ -332,7 +360,7 @@ struct SignUpView: View {
     @State private var isLoading = false
     @State private var showError = false
     @State private var errorMessage = ""
-    @State private var showWelcomeSplash = false
+    let onSignUpSuccess: (String) -> Void
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismiss
@@ -494,12 +522,6 @@ struct SignUpView: View {
             } message: {
                 Text(errorMessage)
             }
-            .fullScreenCover(isPresented: $showWelcomeSplash) {
-                WelcomeSplashView(email: email) {
-                    showWelcomeSplash = false
-                    dismiss()
-                }
-            }
         }
     }
     
@@ -514,8 +536,9 @@ struct SignUpView: View {
                 await MainActor.run {
                     HapticManager.shared.success()
                     isLoading = false
-                    // Show welcome splash screen
-                    showWelcomeSplash = true
+                    dismiss()
+                    // Notify parent with email for welcome splash
+                    onSignUpSuccess(email)
                 }
             } catch {
                 await MainActor.run {

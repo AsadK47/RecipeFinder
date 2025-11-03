@@ -4,6 +4,7 @@ struct ShoppingListInputBar: View {
     @Binding var text: String
     var onAdd: () -> Void
     @FocusState private var isFocused: Bool
+    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         HStack(spacing: 12) {
@@ -11,12 +12,19 @@ struct ShoppingListInputBar: View {
                 Image(systemName: "plus.circle.fill")
                     .foregroundColor(AppTheme.accentColor)
                 
-                TextField("Add item...", text: $text)
-                    .focused($isFocused)
-                    .autocorrectionDisabled()
-                    .onSubmit {
-                        onAdd()
+                ZStack(alignment: .leading) {
+                    if text.isEmpty {
+                        Text("Add item...")
+                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6))
                     }
+                    TextField("", text: $text)
+                        .focused($isFocused)
+                        .autocorrectionDisabled()
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .onSubmit {
+                            onAdd()
+                        }
+                }
                 
                 if !text.isEmpty {
                     Button(action: { text = "" }, label: {

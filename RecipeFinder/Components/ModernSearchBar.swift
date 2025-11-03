@@ -20,7 +20,7 @@ struct ModernSearchBar: View {
                     .foregroundColor(colorScheme == .dark ? .white : .black)
                     .placeholder(when: text.isEmpty) {
                         Text(placeholder)
-                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.4))
+                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6))
                     }
                 
                 if !text.isEmpty {

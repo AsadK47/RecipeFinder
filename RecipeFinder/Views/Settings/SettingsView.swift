@@ -2325,6 +2325,15 @@ struct AboutView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
     
+    // Get real app version info from Info.plist
+    private var appVersion: String {
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
+    }
+    
+    private var buildNumber: String {
+        Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "Unknown"
+    }
+    
     var body: some View {
         ZStack {
             AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
@@ -2356,7 +2365,7 @@ struct AboutView: View {
                                 Text("Version")
                                     .foregroundColor(.secondary)
                                 Spacer()
-                                Text("1.0.0 (Build 1)")
+                                Text(appVersion)
                                     .fontWeight(.medium)
                                     .foregroundColor(colorScheme == .dark ? .white : .black)
                             }
@@ -2364,10 +2373,10 @@ struct AboutView: View {
                             Divider()
                             
                             HStack {
-                                Text("Release Date")
+                                Text("Build")
                                     .foregroundColor(.secondary)
                                 Spacer()
-                                Text("October 2025")
+                                Text(buildNumber)
                                     .fontWeight(.medium)
                                     .foregroundColor(colorScheme == .dark ? .white : .black)
                             }

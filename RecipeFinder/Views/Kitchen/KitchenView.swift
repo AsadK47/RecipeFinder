@@ -187,10 +187,16 @@ struct KitchenView: View {
                         .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.6))
                         .font(.body)
                     
-                    TextField("Search ingredients...", text: $searchText)
-                        .focused($isSearchFocused)
-                        .autocorrectionDisabled()
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                    ZStack(alignment: .leading) {
+                        if searchText.isEmpty {
+                            Text("Search ingredients...")
+                                .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6))
+                        }
+                        TextField("", text: $searchText)
+                            .focused($isSearchFocused)
+                            .autocorrectionDisabled()
+                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                    }
                     
                     if !searchText.isEmpty {
                         Button(

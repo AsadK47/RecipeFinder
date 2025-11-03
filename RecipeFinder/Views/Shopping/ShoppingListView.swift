@@ -150,11 +150,17 @@ struct ShoppingListView: View {
                                     .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.6))
                                     .font(.body)
                                 
-                                TextField("Add item (e.g., milk, chicken, apples)...", text: $searchText)
-                                    .focused($isSearchFocused)
-                                    .autocorrectionDisabled()
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
-                                    .onSubmit(addItem)
+                                ZStack(alignment: .leading) {
+                                    if searchText.isEmpty {
+                                        Text("Add item (e.g., milk, chicken, apples)...")
+                                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6))
+                                    }
+                                    TextField("", text: $searchText)
+                                        .focused($isSearchFocused)
+                                        .autocorrectionDisabled()
+                                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        .onSubmit(addItem)
+                                }
                                 
                                 if !searchText.isEmpty {
                                     Button(

@@ -3,9 +3,10 @@ import SwiftUI
 struct WelcomeSplashView: View {
     @Environment(\.appTheme) var appTheme
     @Environment(\.colorScheme) var colorScheme
-    @State private var scale: CGFloat = 0.8
+    @State private var scale: CGFloat = 0.5
     @State private var opacity: Double = 0
-    @State private var iconRotation: Double = 0
+    @State private var checkmarkScale: CGFloat = 0
+    @State private var contentOpacity: Double = 0
     let email: String
     let onContinue: () -> Void
     
@@ -14,126 +15,90 @@ struct WelcomeSplashView: View {
             AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
-            VStack(spacing: 32) {
+            VStack(spacing: 0) {
                 Spacer()
                 
-                // App Icon
+                // Success Icon - Apple style
                 ZStack {
+                    // Background circle with subtle pulsing
                     Circle()
-                        .fill(Color.white.opacity(0.1))
-                        .frame(width: 120, height: 120)
+                        .fill(Color.white.opacity(0.15))
+                        .frame(width: 100, height: 100)
                         .scaleEffect(scale)
                     
-                    Image(systemName: "fork.knife.circle.fill")
-                        .font(.system(size: 60))
-                        .foregroundStyle(
-                            LinearGradient(
-                                gradient: Gradient(colors: [
-                                    AppTheme.accentColor(for: appTheme),
-                                    AppTheme.accentColor(for: appTheme).opacity(0.7)
-                                ]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .rotationEffect(.degrees(iconRotation))
-                        .opacity(opacity)
-                    
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 35))
-                        .foregroundColor(.green)
-                        .background(
-                            Circle()
-                                .fill(Color.white)
-                                .frame(width: 40, height: 40)
-                        )
-                        .offset(x: 40, y: 40)
-                        .scaleEffect(scale)
+                    // Checkmark
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 50, weight: .semibold))
+                        .foregroundColor(.white)
+                        .scaleEffect(checkmarkScale)
                 }
+                .padding(.bottom, 40)
                 
-                VStack(spacing: 20) {
-                    Text("Thanks for signing up to RecipeFinder!")
-                        .font(.system(size: 28, weight: .bold))
+                // Welcome Message - Clean and minimal
+                VStack(spacing: 16) {
+                    Text("Welcome to RecipeFinder")
+                        .font(.system(size: 34, weight: .bold, design: .default))
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)
-                        .opacity(opacity)
-                        .padding(.horizontal, 32)
+                        .opacity(contentOpacity)
                     
-                    VStack(spacing: 12) {
-                        Text("Your one stop shop for all your recipe related needs")
-                            .font(.system(size: 17))
-                            .foregroundColor(.white.opacity(0.9))
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, 40)
-                        
-                        VStack(spacing: 8) {
-                            Text("Let's get started!")
-                                .font(.system(size: 20, weight: .semibold))
-                                .foregroundColor(.white)
-                            
-                            Text("Sign in to continue :)")
-                                .font(.system(size: 16))
-                                .foregroundColor(.white.opacity(0.85))
-                        }
-                        .padding(.top, 8)
-                    }
-                    .opacity(opacity)
-                    
-                    // Email Display
-                    HStack(spacing: 8) {
-                        Image(systemName: "envelope.fill")
-                            .font(.caption)
-                            .foregroundColor(.white.opacity(0.7))
-                        Text(email)
-                            .font(.system(size: 15, weight: .medium))
-                            .foregroundColor(.white.opacity(0.9))
-                    }
-                    .padding(.horizontal, 20)
+                    Text("Your account has been created")
+                        .font(.system(size: 19, weight: .regular))
+                        .foregroundColor(.white.opacity(0.85))
+                        .multilineTextAlignment(.center)
+                        .opacity(contentOpacity)
+                }
+                .padding(.horizontal, 40)
+                .padding(.bottom, 24)
+                
+                // Email confirmation - Subtle
+                Text(email)
+                    .font(.system(size: 17, weight: .medium))
+                    .foregroundColor(.white.opacity(0.7))
+                    .padding(.horizontal, 24)
                     .padding(.vertical, 12)
                     .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color.white.opacity(0.15))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.white.opacity(0.3), lineWidth: 1)
-                            )
+                        Capsule()
+                            .fill(Color.white.opacity(0.12))
                     )
-                    .opacity(opacity)
-                }
+                    .opacity(contentOpacity)
                 
                 Spacer()
+                Spacer()
                 
-                // Continue Button
+                // Sign In Button - Prominent
                 Button(action: {
-                    HapticManager.shared.medium()
+                    HapticManager.shared.light()
                     onContinue()
                 }) {
-                    HStack(spacing: 12) {
-                        Text("Continue to Sign In")
-                            .fontWeight(.semibold)
-                        Image(systemName: "arrow.right.circle.fill")
-                    }
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 54)
-                    .background(
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(AppTheme.accentColor(for: appTheme))
-                            .shadow(color: AppTheme.accentColor(for: appTheme).opacity(0.4), radius: 10, x: 0, y: 5)
-                    )
+                    Text("Sign In")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 56)
+                        .background(
+                            RoundedRectangle(cornerRadius: 14)
+                                .fill(AppTheme.accentColor(for: appTheme))
+                        )
                 }
                 .padding(.horizontal, 32)
-                .padding(.bottom, 40)
-                .opacity(opacity)
+                .padding(.bottom, 50)
+                .opacity(contentOpacity)
             }
         }
         .onAppear {
-            withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
+            // Smooth entrance animation sequence
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
                 scale = 1.0
-                iconRotation = 360
             }
-            withAnimation(.easeOut(duration: 0.6).delay(0.1)) {
+            
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.6).delay(0.15)) {
+                checkmarkScale = 1.0
                 opacity = 1.0
+            }
+            
+            withAnimation(.easeOut(duration: 0.6).delay(0.3)) {
+                contentOpacity = 1.0
             }
         }
     }

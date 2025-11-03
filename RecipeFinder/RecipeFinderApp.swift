@@ -143,5 +143,11 @@ struct RecipeFinderApp: App {
             string: "",
             attributes: [.foregroundColor: UIColor.secondaryLabel]
         )
+        
+        // Make all TextField placeholders more readable
+        UITextField.appearance().attributedPlaceholder = NSAttributedString(
+            string: "",
+            attributes: [.foregroundColor: UIColor.label.withAlphaComponent(0.6)]
+        )
     }
 }
