@@ -63,19 +63,36 @@ struct SettingsTabView: View {
                         SettingsCard {
                                 NavigationLink(destination: AccountView()) {
                                     HStack(spacing: 16) {
-                                        Circle()
-                                            .fill(AppTheme.accentColor(for: selectedTheme))
-                                            .frame(width: 56, height: 56)
-                                            .overlay {
-                                                Text(accountManager.initials)
-                                                    .font(.system(size: 22, weight: .semibold))
-                                                    .foregroundStyle(.white)
+                                        // Profile picture or initials
+                                        ZStack {
+                                            if let profileImage = accountManager.loadProfileImage() {
+                                                Image(uiImage: profileImage)
+                                                    .resizable()
+                                                    .scaledToFill()
+                                                    .frame(width: 56, height: 56)
+                                                    .clipShape(Circle())
+                                            } else {
+                                                Circle()
+                                                    .fill(AppTheme.accentColor(for: selectedTheme))
+                                                    .frame(width: 56, height: 56)
+                                                    .overlay {
+                                                        Text(accountManager.initials)
+                                                            .font(.system(size: 22, weight: .semibold))
+                                                            .foregroundStyle(.white)
+                                                    }
                                             }
+                                        }
                                         
-                                        VStack(alignment: .leading, spacing: 2) {
-                                            Text(accountManager.fullName.isEmpty ? accountManager.email : accountManager.fullName)
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            Text(accountManager.fullName.isEmpty ? "Account" : accountManager.fullName)
                                                 .font(.headline)
                                                 .foregroundColor(colorScheme == .dark ? .white : .black)
+                                            
+                                            if !accountManager.email.isEmpty {
+                                                Text(accountManager.email)
+                                                    .font(.subheadline)
+                                                    .foregroundColor(.secondary)
+                                            }
                                             
                                             Text("Apple ID, iCloud & More")
                                                 .font(.caption)
