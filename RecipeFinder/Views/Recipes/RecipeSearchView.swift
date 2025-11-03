@@ -97,10 +97,12 @@ struct RecipeSearchView: View {
                 backgroundView
                 
                 VStack(spacing: 0) {
-                    headerSection
-                    
-                    // Search bar with cancel option
-                    searchBarSection
+                    VStack(spacing: 12) {
+                        headerSection
+                        
+                        // Search bar with cancel option
+                        searchBarSection
+                    }
                     
                     // Active filters chips
                     if activeFilterCount > 0 {
@@ -116,6 +118,17 @@ struct RecipeSearchView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)
+            .toolbar {
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button {
+                        isSearchFocused = false
+                    } label: {
+                        Image(systemName: "keyboard.chevron.compact.down")
+                            .foregroundColor(.gray)
+                    }
+                }
+            }
             .sheet(isPresented: $showFilters) {
                 filterSheet
             }
@@ -145,37 +158,35 @@ struct RecipeSearchView: View {
     }
     
     private var headerSection: some View {
-        VStack(spacing: 12) {
-            GeometryReader { geometry in
-                HStack(spacing: 0) {
-                    // Left spacer for balance - 15% of width or fixed size
-                    Color.clear
-                        .frame(width: max(44, geometry.size.width * 0.15))
-                    
-                    Spacer(minLength: 8)
-                    
-                    Text("Recipe Finder")
-                        .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.7)
-                    
-                    Spacer(minLength: 8)
-                    
-                    // Right menu - 15% of width or fixed size
-                    Menu {
-                        menuContent
-                    } label: {
-                        ModernCircleButton(icon: "line.3.horizontal") {}
-                            .allowsHitTesting(false)
-                    }
+        GeometryReader { geometry in
+            HStack(spacing: 0) {
+                // Left spacer for balance - 15% of width or fixed size
+                Color.clear
                     .frame(width: max(44, geometry.size.width * 0.15))
+                
+                Spacer(minLength: 8)
+                
+                Text("Recipe Finder")
+                    .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+                
+                Spacer(minLength: 8)
+                
+                // Right menu - 15% of width or fixed size
+                Menu {
+                    menuContent
+                } label: {
+                    ModernCircleButton(icon: "line.3.horizontal") {}
+                        .allowsHitTesting(false)
                 }
+                .frame(width: max(44, geometry.size.width * 0.15))
             }
-            .frame(height: 44)
-            .padding(.horizontal, 20)
-            .padding(.top, 16)
         }
+        .frame(height: 44)
+        .padding(.horizontal, 20)
+        .padding(.top, 16)
     }
     
     private var searchBarSection: some View {

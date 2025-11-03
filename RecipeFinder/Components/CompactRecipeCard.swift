@@ -96,7 +96,7 @@ struct CompactRecipeCard: View {
         } else {
             // Frosted glass - exactly like Shopping List
             RoundedRectangle(cornerRadius: Self.cornerRadius)
-                .fill(.regularMaterial)
+                .fill(.ultraThinMaterial)
         }
     }
 }
