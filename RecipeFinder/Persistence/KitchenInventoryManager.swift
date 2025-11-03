@@ -2,11 +2,11 @@ import Combine
 import Foundation
 
 // MARK: - Kitchen Inventory Manager
-// Uses the KitchenInventoryItemModel for full inventory tracking with expiration dates
+// Uses the KitchenInventoryItem for full inventory tracking with expiration dates
 
 final class KitchenInventoryManager: ObservableObject {
 	@Published private(set) var items: [KitchenItem] = []
-	@Published private(set) var inventoryItems: [KitchenInventoryItemModel] = []
+	@Published private(set) var inventoryItems: [KitchenInventoryItem] = []
     
 	private let saveKey = Constants.UserDefaultsKeys.kitchenItems
 	private let inventorySaveKey = "kitchenInventoryItems"
@@ -20,7 +20,7 @@ final class KitchenInventoryManager: ObservableObject {
 	
 	// MARK: - Full Inventory Item Management (New Model)
 	
-	func addInventoryItem(_ item: KitchenInventoryItemModel) {
+	func addInventoryItem(_ item: KitchenInventoryItem) {
 		// Don't add duplicates by name
 		guard !inventoryItems.contains(where: { $0.name.lowercased() == item.name.lowercased() }) else {
 			HapticManager.shared.warning()
@@ -32,7 +32,7 @@ final class KitchenInventoryManager: ObservableObject {
 		saveInventoryItems()
 	}
 	
-	func updateInventoryItem(_ item: KitchenInventoryItemModel) {
+	func updateInventoryItem(_ item: KitchenInventoryItem) {
 		if let index = inventoryItems.firstIndex(where: { $0.id == item.id }) {
 			inventoryItems[index] = item
 			HapticManager.shared.light()
@@ -40,7 +40,7 @@ final class KitchenInventoryManager: ObservableObject {
 		}
 	}
 	
-	func removeInventoryItem(_ item: KitchenInventoryItemModel) {
+	func removeInventoryItem(_ item: KitchenInventoryItem) {
 		inventoryItems.removeAll { $0.id == item.id }
 		HapticManager.shared.light()
 		saveInventoryItems()
@@ -51,19 +51,19 @@ final class KitchenInventoryManager: ObservableObject {
 	}
 	
 	// Computed properties for filtering
-	var expiredItems: [KitchenInventoryItemModel] {
+	var expiredItems: [KitchenInventoryItem] {
 		inventoryItems.filter { $0.isExpired }
 	}
 	
-	var expiringSoonItems: [KitchenInventoryItemModel] {
+	var expiringSoonItems: [KitchenInventoryItem] {
 		inventoryItems.filter { $0.isExpiringSoon }
 	}
 	
-	var lowStockItems: [KitchenInventoryItemModel] {
+	var lowStockItems: [KitchenInventoryItem] {
 		inventoryItems.filter { $0.needsRestock }
 	}
 	
-	var itemsByCategory: [(category: IngredientCategory, items: [KitchenInventoryItemModel])] {
+	var itemsByCategory: [(category: IngredientCategory, items: [KitchenInventoryItem])] {
 		let categories = IngredientCategory.allCases
 		return categories.compactMap { category in
 			let categoryItems = inventoryItems.filter { $0.category == category }
@@ -71,7 +71,7 @@ final class KitchenInventoryManager: ObservableObject {
 		}
 	}
 	
-	var itemsByStorageLocation: [(location: StorageLocation, items: [KitchenInventoryItemModel])] {
+	var itemsByStorageLocation: [(location: StorageLocation, items: [KitchenInventoryItem])] {
 		let locations = StorageLocation.allCases
 		return locations.compactMap { location in
 			let locationItems = inventoryItems.filter { $0.storageLocation == location }
@@ -184,7 +184,7 @@ final class KitchenInventoryManager: ObservableObject {
 	
 	private func loadInventoryItems() {
 		if let data = UserDefaults.standard.data(forKey: inventorySaveKey),
-		   let decoded = try? JSONDecoder().decode([KitchenInventoryItemModel].self, from: data) {
+		   let decoded = try? JSONDecoder().decode([KitchenInventoryItem].self, from: data) {
 			inventoryItems = decoded
 		}
 	}

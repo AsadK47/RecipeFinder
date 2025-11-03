@@ -929,7 +929,7 @@ struct DataDownloadView: View {
                 
                 // Kitchen Inventory
                 if let inventoryData = UserDefaults.standard.data(forKey: "kitchenInventory"),
-                   let inventory = try? JSONDecoder().decode([KitchenInventoryItemModel].self, from: inventoryData) {
+                   let inventory = try? JSONDecoder().decode([KitchenInventoryItem].self, from: inventoryData) {
                     userData["kitchenInventory"] = inventory.map { item in
                         [
                             "id": item.id.uuidString,
@@ -1025,7 +1025,7 @@ struct DataDownloadView: View {
                 
                 // Add Kitchen Inventory
                 if let inventoryData = UserDefaults.standard.data(forKey: "kitchenInventory"),
-                   let inventory = try? JSONDecoder().decode([KitchenInventoryItemModel].self, from: inventoryData),
+                   let inventory = try? JSONDecoder().decode([KitchenInventoryItem].self, from: inventoryData),
                    !inventory.isEmpty {
                     readableText += """
                     ───────────────────────────────────────────────────
@@ -1479,13 +1479,13 @@ struct DataImportView: View {
                 // Import kitchen inventory
                 if let inventoryArray = json["kitchenInventory"] as? [[String: Any]] {
                     let jsonData = try JSONSerialization.data(withJSONObject: inventoryArray)
-                    if let newItems = try? JSONDecoder().decode([KitchenInventoryItemModel].self, from: jsonData) {
+                    if let newItems = try? JSONDecoder().decode([KitchenInventoryItem].self, from: jsonData) {
                         if mergeMode == .replace {
                             let encoded = try JSONEncoder().encode(newItems)
                             UserDefaults.standard.set(encoded, forKey: "kitchenInventory")
                         } else {
                             if let existingData = UserDefaults.standard.data(forKey: "kitchenInventory"),
-                               var existingItems = try? JSONDecoder().decode([KitchenInventoryItemModel].self, from: existingData) {
+                               var existingItems = try? JSONDecoder().decode([KitchenInventoryItem].self, from: existingData) {
                                 existingItems.append(contentsOf: newItems)
                                 let encoded = try JSONEncoder().encode(existingItems)
                                 UserDefaults.standard.set(encoded, forKey: "kitchenInventory")

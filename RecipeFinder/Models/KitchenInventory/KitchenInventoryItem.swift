@@ -1,7 +1,7 @@
 import Foundation
 
 /// Represents an item in the kitchen inventory with expiration tracking and storage location
-struct KitchenInventoryItemModel: Identifiable, Codable, Hashable {
+struct KitchenInventoryItem: Identifiable, Codable, Hashable {
     var id: UUID
     var name: String
     var category: IngredientCategory
@@ -160,9 +160,9 @@ enum StorageLocation: String, Codable, CaseIterable {
 
 // MARK: - Sample Data
 
-extension KitchenInventoryItemModel {
+extension KitchenInventoryItem {
     static let samples = [
-        KitchenInventoryItemModel(
+        KitchenInventoryItem(
             name: "Milk",
             category: .dairy,
             quantity: 1,
@@ -170,7 +170,7 @@ extension KitchenInventoryItemModel {
             storageLocation: .fridge,
             expiryDate: Calendar.current.date(byAdding: .day, value: 5, to: Date())
         ),
-        KitchenInventoryItemModel(
+        KitchenInventoryItem(
             name: "Chicken Breast",
             category: .meat,
             quantity: 2,
@@ -178,7 +178,7 @@ extension KitchenInventoryItemModel {
             storageLocation: .fridge,
             expiryDate: Calendar.current.date(byAdding: .day, value: 2, to: Date())
         ),
-        KitchenInventoryItemModel(
+        KitchenInventoryItem(
             name: "Rice",
             category: .grains,
             quantity: 5,
@@ -186,7 +186,7 @@ extension KitchenInventoryItemModel {
             storageLocation: .pantry,
             expiryDate: Calendar.current.date(byAdding: .day, value: 365, to: Date())
         ),
-        KitchenInventoryItemModel(
+        KitchenInventoryItem(
             name: "Tomatoes",
             category: .produce,
             quantity: 6,
