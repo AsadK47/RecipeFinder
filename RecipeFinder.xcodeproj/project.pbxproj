@@ -77,7 +77,6 @@
 		9EA779152EB56BA00028F064 /* NoteCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA7790F2EB56BA00028F064 /* NoteCardView.swift */; };
 		9EA779182EB56F4F0028F064 /* KitchenInventoryItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA779162EB56F4F0028F064 /* KitchenInventoryItem.swift */; };
 		9EA7791B2EB570BC0028F064 /* MealPlanningManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA7791A2EB570BC0028F064 /* MealPlanningManager.swift */; };
-		9EA779202EB570D50028F064 /* CookTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA7791C2EB570D50028F064 /* CookTimer.swift */; };
 		9EA779272EB5725D0028F064 /* MealPlanModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA779252EB5725D0028F064 /* MealPlanModel.swift */; };
 		9EA779292EB57D900028F064 /* StandardAppHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA779282EB57D900028F064 /* StandardAppHeader.swift */; };
 		9EB04E5B2EB4704F0033C093 /* MoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EB04E5A2EB4704F0033C093 /* MoreView.swift */; };
@@ -179,7 +178,6 @@
 		9EA779112EB56BA00028F064 /* NotesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesListView.swift; sourceTree = "<group>"; };
 		9EA779162EB56F4F0028F064 /* KitchenInventoryItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KitchenInventoryItem.swift; sourceTree = "<group>"; };
 		9EA7791A2EB570BC0028F064 /* MealPlanningManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlanningManager.swift; sourceTree = "<group>"; };
-		9EA7791C2EB570D50028F064 /* CookTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookTimer.swift; sourceTree = "<group>"; };
 		9EA779252EB5725D0028F064 /* MealPlanModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlanModel.swift; sourceTree = "<group>"; };
 		9EA779282EB57D900028F064 /* StandardAppHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandardAppHeader.swift; sourceTree = "<group>"; };
 		9EB04E5A2EB4704F0033C093 /* MoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreView.swift; sourceTree = "<group>"; };
@@ -359,7 +357,6 @@
 				9EA779262EB5725D0028F064 /* MealPlanning */,
 				9EA779242EB5711E0028F064 /* ShoppingList */,
 				9EA779232EB571110028F064 /* Recipe */,
-				9EA779212EB570EC0028F064 /* CookTimer */,
 				9EA7791E2EB570D50028F064 /* KitchenInventory */,
 				9EA7790B2EB56B630028F064 /* Notes */,
 				9E6060002D09CB6400236896 /* RecipeModel.xcdatamodeld */,
@@ -454,14 +451,6 @@
 				9EA779162EB56F4F0028F064 /* KitchenInventoryItem.swift */,
 			);
 			path = KitchenInventory;
-			sourceTree = "<group>";
-		};
-		9EA779212EB570EC0028F064 /* CookTimer */ = {
-			isa = PBXGroup;
-			children = (
-				9EA7791C2EB570D50028F064 /* CookTimer.swift */,
-			);
-			path = CookTimer;
 			sourceTree = "<group>";
 		};
 		9EA779232EB571110028F064 /* Recipe */ = {
@@ -694,7 +683,6 @@
 				9E51C39A2EB3E9C20064B917 /* AccountView.swift in Sources */,
 				9E87D3362EB6C0E900FFA1D1 /* PasswordVerificationSheet.swift in Sources */,
 				9E7B9A862E9BED16007E1786 /* RecipeSearchView.swift in Sources */,
-				9EA779202EB570D50028F064 /* CookTimer.swift in Sources */,
 				9EA779002EB4C36A0028F064 /* GuestModeSplashView.swift in Sources */,
 				9E87D3302EB696A400FFA1D1 /* ThemeManager.swift in Sources */,
 				9EA779012EB4C36A0028F064 /* EmailConfirmationSplashView.swift in Sources */,
