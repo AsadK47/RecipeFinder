@@ -223,7 +223,7 @@ struct CookTimerView: View {
                     .font(.subheadline)
                     .fontWeight(.semibold)
             }
-            .foregroundColor(isDisabled ? (colorScheme == .dark ? .white.opacity(0.3) : .black.opacity(0.3)) : AppTheme.accentColor(for: selectedTheme))
+            .foregroundColor(isDisabled ? (colorScheme == .dark ? .white.opacity(0.3) : .black.opacity(0.3)) : (colorScheme == .dark ? .white : .black))
             .frame(maxWidth: .infinity)
             .padding(.vertical, 20)
             .background {

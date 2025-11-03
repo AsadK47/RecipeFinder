@@ -129,9 +129,11 @@ struct ContentView: View {
         
         // Icon colors - optimized for readability over colored backgrounds
         let accentColor = UIColor(AppTheme.accentColor(for: themeBinding))
-        let selectedIconColor = colorScheme == .dark 
-            ? accentColor.lighter(by: 0.1) // Slightly brighter in dark mode
-            : accentColor
+        
+        // Selected icon: Use high contrast color instead of theme color for better visibility
+        let selectedIconColor: UIColor = colorScheme == .dark 
+            ? .white  // Pure white in dark mode
+            : .black  // Pure black in light mode
         
         appearance.stackedLayoutAppearance.selected.iconColor = selectedIconColor
         appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
