@@ -194,16 +194,18 @@ struct RecipeSearchView: View {
             HStack(spacing: 12) {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.6))
-                    .font(.body)
+                    .font(.system(size: 18, weight: .medium))
                 
                 ZStack(alignment: .leading) {
                     if searchText.isEmpty {
                         Text("What would you like to eat...?")
-                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6))
+                            .font(.system(size: 16))
+                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.65) : .black.opacity(0.65))
                     }
                     TextField("", text: $searchText)
                         .focused($isSearchFocused)
                         .autocorrectionDisabled()
+                        .font(.system(size: 16))
                         .foregroundColor(colorScheme == .dark ? .white : .black)
                         .tint(colorScheme == .dark ? .white : .black)
                 }
@@ -215,12 +217,14 @@ struct RecipeSearchView: View {
                         },
                         label: {
                             Image(systemName: "xmark.circle.fill")
+                                .font(.system(size: 18))
                                 .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
                         }
                     )
                 }
             }
-            .padding(14)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 12)
@@ -239,8 +243,8 @@ struct RecipeSearchView: View {
                     },
                     label: {
                         Text("Cancel")
+                            .font(.system(size: 16, weight: .semibold))
                             .foregroundColor(.white)
-                            .fontWeight(.semibold)
                     }
                 )
                 .transition(.move(edge: .trailing).combined(with: .opacity))

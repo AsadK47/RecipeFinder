@@ -311,8 +311,11 @@ struct AccountView: View {
                                 .foregroundColor(.secondary)
                             
                             Text(displayEmail)
+                                .font(.body)
                                 .foregroundColor(colorScheme == .dark ? .white : .black)
                         }
+                        
+                        Spacer()
                     }
                     .padding(.horizontal, 20)
                     .padding(.vertical, 16)

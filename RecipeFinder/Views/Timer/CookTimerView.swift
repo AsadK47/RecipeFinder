@@ -652,13 +652,12 @@ struct CookTimerView: View {
     }
     
     private func sendNotification(for timer: TimerInstance) {
-        let content = UNMutableNotificationContent()
-        content.title = "Timer Complete!"
-        content.body = "\(timer.name) has finished"
-        content.sound = .default
-        
-        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
-        UNUserNotificationCenter.current().add(request)
+        // Use the new NotificationManager for better notification handling
+        NotificationManager.shared.sendImmediateNotification(
+            title: "⏰ Timer Complete!",
+            body: "\(timer.name) has finished",
+            identifier: "timer-\(timer.id.uuidString)"
+        )
     }
     
     private func formatTime(_ seconds: Int) -> String {

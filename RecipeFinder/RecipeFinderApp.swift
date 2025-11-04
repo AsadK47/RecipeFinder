@@ -7,12 +7,28 @@ struct RecipeFinderApp: App {
     let persistenceController = PersistenceController.shared
     @StateObject private var authManager = AuthenticationManager.shared
     @StateObject private var themeManager = ThemeManager.shared
+    @StateObject private var notificationManager = NotificationManager.shared
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @State private var showOnboarding = false
     
     init() {
         configureAppearance()
         initializeDatabase()
+        requestNotificationPermissions()
+    }
+    
+    /// Request notification permissions on app launch
+    private func requestNotificationPermissions() {
+        // Request after a short delay to let the app fully load
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            NotificationManager.shared.requestPermission { granted in
+                if granted {
+                    print("✅ User granted notification permissions")
+                } else {
+                    print("⚠️ User denied notification permissions")
+                }
+            }
+        }
     }
     
     var body: some Scene {

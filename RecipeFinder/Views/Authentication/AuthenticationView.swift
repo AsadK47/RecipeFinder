@@ -12,7 +12,6 @@ struct AuthenticationView: View {
     @State private var showSignUp = false
     @State private var showSignIn = false
     @State private var showOnboarding = false
-    @State private var showAppleSignInInfo = false
     @State private var showBiometricSetup = false
     @State private var newUserEmail = ""
     @State private var showWelcomeSplash = false
@@ -57,8 +56,18 @@ struct AuthenticationView: View {
                 
                 // Authentication Options
                 VStack(spacing: 16) {
-                    // Apple Sign In Placeholder
-                    Button(action: { showAppleSignInInfo = true }) {
+                    // Apple Sign In Button
+                    Button(action: {
+                        Task {
+                            do {
+                                try await authManager.signInWithApple()
+                                HapticManager.shared.success()
+                            } catch {
+                                print("Apple Sign In Error: \(error.localizedDescription)")
+                                HapticManager.shared.error()
+                            }
+                        }
+                    }) {
                         HStack(spacing: 8) {
                             Image(systemName: "applelogo")
                                 .font(.system(size: 20))
@@ -166,11 +175,6 @@ struct AuthenticationView: View {
             if let error = authManager.authError {
                 Text(error.localizedDescription)
             }
-        }
-        .alert("Sign In with Apple", isPresented: $showAppleSignInInfo) {
-            Button("Got it!", role: .cancel) {}
-        } message: {
-            Text("🍎 An Apple ID a day keeps the doctor away!\n\nLooking to implement soon. Hold on to your hats!")
         }
         .onChange(of: authManager.isAuthenticated) { oldValue, newValue in
             if newValue && !hasSeenOnboarding && !authManager.isGuestMode {

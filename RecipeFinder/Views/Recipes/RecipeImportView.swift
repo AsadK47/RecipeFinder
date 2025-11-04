@@ -219,7 +219,7 @@ struct RecipeImportView: View {
                         cookTime: data.cookTimeMinutes,
                         servings: data.servings,
                         difficulty: data.difficulty,
-                        notes: "Imported from: \(data.sourceURL.absoluteString)\nParse confidence: \(Int(importer.parseConfidence * 100))%"
+                        notes: generateImportNotes(from: data)
                     ),
                     autoFillMode: importMode == .autoFill
                 ) { newRecipe in
@@ -229,6 +229,65 @@ struct RecipeImportView: View {
                 }
             }
         }
+    }
+    
+    // MARK: - Helper Functions
+    
+    /// Generate comprehensive notes from imported recipe data
+    private func generateImportNotes(from data: RecipeImporter.ExtractedRecipeData) -> String {
+        var notes: [String] = []
+        
+        // 1. Source information
+        let domain = data.sourceURL.host ?? "Unknown"
+        let cleanDomain = domain.replacingOccurrences(of: "www.", with: "")
+        notes.append("📍 Source: \(cleanDomain)")
+        notes.append("🔗 \(data.sourceURL.absoluteString)")
+        
+        // 2. Import metadata
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .short
+        notes.append("📅 Imported: \(dateFormatter.string(from: Date()))")
+        
+        // 3. Parse confidence
+        let confidence = Int(importer.parseConfidence * 100)
+        let confidenceEmoji: String
+        if confidence >= 90 {
+            confidenceEmoji = "✅"
+        } else if confidence >= 70 {
+            confidenceEmoji = "⚠️"
+        } else {
+            confidenceEmoji = "❓"
+        }
+        notes.append("\(confidenceEmoji) Parse Confidence: \(confidence)%")
+        
+        // 4. Description if available
+        if let description = data.description, !description.isEmpty {
+            notes.append("")  // Blank line for separation
+            notes.append("📝 About This Recipe:")
+            notes.append(description)
+        }
+        
+        // 5. Tips based on cuisine
+        if let cuisine = data.cuisine, !cuisine.isEmpty {
+            notes.append("")
+            notes.append("🌍 Cuisine: \(cuisine)")
+        }
+        
+        // 6. Helpful reminders
+        notes.append("")
+        notes.append("💡 Tips:")
+        notes.append("• Review and adjust ingredient quantities if needed")
+        notes.append("• Verify cooking times for your equipment")
+        notes.append("• Check seasonings to taste")
+        
+        // 7. Original recipe note
+        if confidence < 90 {
+            notes.append("")
+            notes.append("⚠️ Note: Some details may need verification against the original recipe")
+        }
+        
+        return notes.joined(separator: "\n")
     }
     
     private func exampleButton(url: String, title: String, subtitle: String) -> some View {

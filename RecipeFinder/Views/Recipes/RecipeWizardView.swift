@@ -575,16 +575,84 @@ struct RecipeWizardView: View {
         VStack(alignment: .leading, spacing: 20) {
             stepHeader(
                 title: "Final Notes",
-                subtitle: "Any tips, variations, or additional notes? (Optional)",
+                subtitle: autoFillMode && !notes.isEmpty ? "Review imported notes or add your own" : "Any tips, variations, or additional notes? (Optional)",
                 stepNumber: 7,
                 illustration: "note.text"
             )
             
             cardContainer {
                 VStack(spacing: 20) {
-                    TextField("Add any notes, tips, or variations here...", text: $notes, axis: .vertical)
-                        .textFieldStyle(.roundedBorder)
-                        .lineLimit(5...10)
+                    // Show a preview label if there are existing notes from import
+                    if autoFillMode && !notes.isEmpty {
+                        HStack {
+                            Image(systemName: "info.circle.fill")
+                                .foregroundColor(.blue)
+                            Text("Auto-imported notes from source recipe")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            Spacer()
+                        }
+                        .padding(.bottom, 8)
+                    }
+                    
+                    // Notes text editor with better styling
+                    ZStack(alignment: .topLeading) {
+                        if notes.isEmpty {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Add your notes here...")
+                                    .foregroundColor(.secondary.opacity(0.5))
+                                    .padding(.horizontal, 4)
+                                    .padding(.vertical, 8)
+                                
+                                Text("Try adding:")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary.opacity(0.4))
+                                    .padding(.horizontal, 4)
+                                
+                                Text("• Substitution ideas")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary.opacity(0.4))
+                                    .padding(.horizontal, 4)
+                                Text("• Storage tips")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary.opacity(0.4))
+                                    .padding(.horizontal, 4)
+                                Text("• Serving suggestions")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary.opacity(0.4))
+                                    .padding(.horizontal, 4)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .allowsHitTesting(false)
+                        }
+                        
+                        TextField("", text: $notes, axis: .vertical)
+                            .textFieldStyle(.plain)
+                            .lineLimit(8...15)
+                            .padding(4)
+                    }
+                    .padding(8)
+                    .background(Color(.systemGray6))
+                    .cornerRadius(8)
+                    
+                    // Quick add buttons for common note types
+                    if notes.isEmpty || !autoFillMode {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Quick Add:")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 8) {
+                                    quickNoteButton(icon: "leaf.fill", text: "Make it healthier", template: "💚 Healthier Option:\n• ")
+                                    quickNoteButton(icon: "clock.fill", text: "Save time", template: "⏰ Time-Saving Tip:\n• ")
+                                    quickNoteButton(icon: "arrow.triangle.swap", text: "Substitutions", template: "🔄 Substitutions:\n• ")
+                                    quickNoteButton(icon: "snowflake", text: "Storage", template: "❄️ Storage:\n• ")
+                                    quickNoteButton(icon: "star.fill", text: "Pro tip", template: "✨ Pro Tip:\n• ")
+                                }
+                            }
+                        }
+                    }
                     
                     Divider()
                     
@@ -607,6 +675,29 @@ struct RecipeWizardView: View {
                 .padding()
             }
         }
+    }
+    
+    // Quick note button helper
+    private func quickNoteButton(icon: String, text: String, template: String) -> some View {
+        Button(action: {
+            HapticManager.shared.light()
+            if !notes.isEmpty {
+                notes += "\n\n"
+            }
+            notes += template
+        }) {
+            HStack(spacing: 4) {
+                Image(systemName: icon)
+                    .font(.caption)
+                Text(text)
+                    .font(.caption)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(Color(.systemGray5))
+            .cornerRadius(16)
+        }
+        .buttonStyle(PlainButtonStyle())
     }
     
     // MARK: - Helper Views

@@ -15,7 +15,7 @@ struct AuthTestHelper {
     // MARK: - Test Credentials
     
     static let testEmail = "test@recipefinder.com"
-    static let testPassword = "Test123456"
+    static let testPassword = "Test!1*"
     static let testFullName = "Test User"
     
     static let adminEmail = "admin@recipefinder.com"

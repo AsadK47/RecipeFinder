@@ -113,10 +113,49 @@ enum AppTheme {
     private static let goldCharcoal = Color(red: 45/255, green: 45/255, blue: 45/255)       // Deep Charcoal
     private static let goldBlack = Color(red: 15/255, green: 15/255, blue: 15/255)          // Velvety Black
     
+    // MARK: - Starling-Inspired Eye-Friendly Colors
+    
+    // Soft background colors (dark toned, easy on eyes)
     static let cardBackground = Color.white.opacity(0.95)
-    static let cardBackgroundDark = Color(white: 0.15)
-    static let secondaryText = Color.gray
-    static let dividerColor = Color.gray.opacity(0.3)
+    static let cardBackgroundDark = Color(red: 28/255, green: 28/255, blue: 30/255) // Softer dark background
+    
+    // Elevated card backgrounds (slightly lighter for depth)
+    static let elevatedCardLight = Color.white
+    static let elevatedCardDark = Color(red: 38/255, green: 38/255, blue: 40/255) // Soft elevated surface
+    
+    // Secondary background (for sections, grouped content)
+    static let secondaryBackgroundLight = Color(red: 242/255, green: 242/255, blue: 247/255)
+    static let secondaryBackgroundDark = Color(red: 18/255, green: 18/255, blue: 20/255) // Deeper background
+    
+    // Text colors (optimized for readability)
+    static let primaryText = Color.primary // Adaptive
+    static let secondaryText = Color(red: 142/255, green: 142/255, blue: 147/255) // Softer gray
+    static let tertiaryText = Color(red: 99/255, green: 99/255, blue: 102/255) // Even softer
+    
+    // Dividers and borders (subtle, not harsh)
+    static let dividerColor = Color(red: 60/255, green: 60/255, blue: 67/255).opacity(0.36)
+    static let borderColor = Color(red: 72/255, green: 72/255, blue: 74/255)
+    
+    // Shadows and overlays
+    static let shadowColor = Color.black.opacity(0.08) // Subtle shadow
+    static let overlayColor = Color.black.opacity(0.4) // For modals/sheets
+    
+    // MARK: - Dynamic Color Helpers (Starling-Style)
+    
+    /// Returns appropriate card background based on color scheme
+    static func cardBackground(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark ? cardBackgroundDark : cardBackground
+    }
+    
+    /// Returns elevated card background (slightly lighter than base)
+    static func elevatedCard(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark ? elevatedCardDark : elevatedCardLight
+    }
+    
+    /// Returns secondary background for grouped content
+    static func secondaryBackground(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark ? secondaryBackgroundDark : secondaryBackgroundLight
+    }
     
     // Dynamic accent color based on theme
     static func accentColor(for theme: ThemeType) -> Color {
@@ -155,8 +194,13 @@ enum AppTheme {
         case .teal:
             gradient = LinearGradient(
                 gradient: Gradient(colors: useDarkColors ? 
-                    // Dark mode/Ember Dark: Darker ocean teal
-                    [tealBrightDark, tealMediumDark, tealDeepDark, tealRichDark] :
+                    // Dark mode: Softer, more subtle teal (Starling-inspired)
+                    [
+                        tealBrightDark.opacity(0.7),
+                        tealMediumDark.opacity(0.6),
+                        tealDeepDark.opacity(0.5),
+                        Color(red: 25/255, green: 25/255, blue: 28/255) // Very dark base
+                    ] :
                     // Light mode/Frost Light: Bright teal
                     [tealBrightLight, tealMediumLight, tealDeepLight, tealRichLight]
                 ),
@@ -166,7 +210,12 @@ enum AppTheme {
         case .purple:
             gradient = LinearGradient(
                 gradient: Gradient(colors: useDarkColors ?
-                    [purpleRich.opacity(0.6), purpleVibrant.opacity(0.5), purpleDeep.opacity(0.5), Color(red: 30/255, green: 40/255, blue: 80/255)] :
+                    [
+                        purpleRich.opacity(0.5),
+                        purpleVibrant.opacity(0.4),
+                        purpleDeep.opacity(0.35),
+                        Color(red: 22/255, green: 22/255, blue: 25/255)
+                    ] :
                     [purpleRich, purpleVibrant, purpleDeep, purpleTeal]
                 ),
                 startPoint: .topLeading,
@@ -175,7 +224,12 @@ enum AppTheme {
         case .red:
             gradient = LinearGradient(
                 gradient: Gradient(colors: useDarkColors ?
-                    [redCrimson.opacity(0.6), redWarm.opacity(0.5), redBurnt.opacity(0.5), Color(red: 60/255, green: 20/255, blue: 20/255)] :
+                    [
+                        redCrimson.opacity(0.5),
+                        redWarm.opacity(0.4),
+                        redBurnt.opacity(0.35),
+                        Color(red: 28/255, green: 20/255, blue: 20/255)
+                    ] :
                     [redCrimson, redWarm, redBurnt, redOrange]
                 ),
                 startPoint: .topLeading,
@@ -184,7 +238,12 @@ enum AppTheme {
         case .orange:
             gradient = LinearGradient(
                 gradient: Gradient(colors: useDarkColors ?
-                    [orangeBright.opacity(0.5), orangeWarm.opacity(0.5), coralDeep.opacity(0.6), Color(red: 60/255, green: 30/255, blue: 30/255)] :
+                    [
+                        orangeBright.opacity(0.4),
+                        orangeWarm.opacity(0.35),
+                        coralDeep.opacity(0.4),
+                        Color(red: 30/255, green: 25/255, blue: 22/255)
+                    ] :
                     [orangeBright, orangeWarm, coralDeep, coralRich]
                 ),
                 startPoint: .topLeading,
@@ -193,7 +252,12 @@ enum AppTheme {
         case .yellow:
             gradient = LinearGradient(
                 gradient: Gradient(colors: useDarkColors ?
-                    [yellowGold.opacity(0.4), yellowAmber.opacity(0.5), yellowDeep.opacity(0.6), Color(red: 80/255, green: 50/255, blue: 20/255)] :
+                    [
+                        yellowGold.opacity(0.3),
+                        yellowAmber.opacity(0.35),
+                        yellowDeep.opacity(0.4),
+                        Color(red: 35/255, green: 30/255, blue: 22/255)
+                    ] :
                     [yellowBright, yellowGold, yellowAmber, yellowDeep]
                 ),
                 startPoint: .topLeading,
@@ -202,7 +266,12 @@ enum AppTheme {
         case .green:
             gradient = LinearGradient(
                 gradient: Gradient(colors: useDarkColors ?
-                    [greenVibrant.opacity(0.5), greenMedium.opacity(0.5), greenTeal.opacity(0.6), Color(red: 20/255, green: 50/255, blue: 60/255)] :
+                    [
+                        greenVibrant.opacity(0.4),
+                        greenMedium.opacity(0.35),
+                        greenTeal.opacity(0.4),
+                        Color(red: 20/255, green: 28/255, blue: 25/255)
+                    ] :
                     [greenVibrant, greenMedium, greenTeal, greenDeep]
                 ),
                 startPoint: .topLeading,
@@ -211,7 +280,12 @@ enum AppTheme {
         case .pink:
             gradient = LinearGradient(
                 gradient: Gradient(colors: useDarkColors ?
-                    [pinkHot.opacity(0.5), pinkVibrant.opacity(0.5), pinkPurple.opacity(0.5), Color(red: 40/255, green: 30/255, blue: 70/255)] :
+                    [
+                        pinkHot.opacity(0.4),
+                        pinkVibrant.opacity(0.35),
+                        pinkPurple.opacity(0.35),
+                        Color(red: 25/255, green: 22/255, blue: 28/255)
+                    ] :
                     [pinkHot, pinkVibrant, pinkPurple, pinkBlue]
                 ),
                 startPoint: .topLeading,
@@ -220,7 +294,12 @@ enum AppTheme {
         case .gold:
             gradient = LinearGradient(
                 gradient: Gradient(colors: useDarkColors ?
-                    [goldRich.opacity(0.4), goldBronze.opacity(0.6), goldCharcoal, goldBlack] :
+                    [
+                        goldRich.opacity(0.3),
+                        goldBronze.opacity(0.4),
+                        goldCharcoal.opacity(0.8),
+                        Color(red: 18/255, green: 18/255, blue: 18/255) // Near black
+                    ] :
                     [goldBrilliant, goldShiny, goldRich, silverCool, goldBronze, goldCharcoal, goldBlack]
                 ),
                 startPoint: .topLeading,

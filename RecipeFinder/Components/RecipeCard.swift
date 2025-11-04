@@ -57,41 +57,41 @@ struct RecipeCard: View {
             }
             
             // Content in the middle
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: 8) {
                 // Title 
                 Text(recipe.name)
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
+                    .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(colorScheme == .dark ? .white : .black)
                     .lineLimit(2)
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .minimumScaleFactor(0.9)
                 
                 // Time and difficulty on same line
-                HStack(spacing: contentSpacing) {
-                    HStack(spacing: 4) {
+                HStack(spacing: 10) {
+                    HStack(spacing: 5) {
                         Image(systemName: "clock.fill")
-                            .font(.system(size: 10))
+                            .font(.system(size: 12, weight: .medium))
                             .foregroundColor(.orange)
                         Text(recipe.totalTime)
-                            .font(.caption)
-                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.9) : .black.opacity(0.7))
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.95) : .black.opacity(0.75))
                     }
                     
                     HStack(spacing: 6) {
-                        DifficultyBarsView(difficulty: recipe.difficulty, size: 3)
+                        DifficultyBarsView(difficulty: recipe.difficulty, size: 3.5)
                         Text(recipe.difficulty)
-                            .font(.caption)
-                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.9) : .black.opacity(0.7))
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.95) : .black.opacity(0.75))
                     }
                 }
             }
             
             // Chevron on the right
             Image(systemName: "chevron.right")
-                .font(.caption)
-                .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.4))
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
         }
-        .padding(contentSpacing)
+        .padding(16)
         .background {
             cardBackground
         }

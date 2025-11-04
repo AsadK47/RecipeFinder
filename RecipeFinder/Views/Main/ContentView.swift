@@ -128,7 +128,7 @@ struct ContentView: View {
         }
         
         // Icon colors - optimized for readability over colored backgrounds
-        let accentColor = UIColor(AppTheme.accentColor(for: themeBinding))
+        _ = UIColor(AppTheme.accentColor(for: themeBinding))
         
         // Selected icon: Use high contrast color instead of theme color for better visibility
         let selectedIconColor: UIColor = colorScheme == .dark 
