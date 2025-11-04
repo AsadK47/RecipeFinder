@@ -282,7 +282,7 @@ struct CookTimerView: View {
             HapticManager.shared.light()
         }) {
             HStack {
-                Image(systemName: "clock.badge.plus")
+                Image(systemName: "clock.badge.checkmark")
                     .font(.title3)
                 Text("Custom Timer")
                     .fontWeight(.semibold)
