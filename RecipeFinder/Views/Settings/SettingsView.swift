@@ -12,6 +12,8 @@ struct SettingsTabView: View {
     @StateObject private var accountManager = AccountManager.shared
     @EnvironmentObject var kitchenManager: KitchenInventoryManager
     @EnvironmentObject var shoppingListManager: ShoppingListManager
+    @State private var profileImage: UIImage?
+    @State private var refreshID = UUID()
     
     var body: some View {
         ZStack {
@@ -46,7 +48,7 @@ struct SettingsTabView: View {
                                     HStack(spacing: 16) {
                                         // Profile picture or initials
                                         ZStack {
-                                            if let profileImage = accountManager.loadProfileImage() {
+                                            if let profileImage = profileImage {
                                                 Image(uiImage: profileImage)
                                                     .resizable()
                                                     .scaledToFill()
@@ -63,6 +65,7 @@ struct SettingsTabView: View {
                                                     }
                                             }
                                         }
+                                        .id(refreshID)
                                         
                                         VStack(alignment: .leading, spacing: 4) {
                                             Text(accountManager.fullName.isEmpty ? "Account" : accountManager.fullName)
@@ -220,6 +223,10 @@ struct SettingsTabView: View {
             .onAppear {
                 // Sync cardStyle with system colorScheme on appear
                 cardStyle = colorScheme == .dark ? .solid : .frosted
+                
+                // Load profile image
+                profileImage = accountManager.loadProfileImage()
+                refreshID = UUID()
             }
             .onChange(of: colorScheme) { _, newColorScheme in
                 // Automatically update cardStyle when system appearance changes
