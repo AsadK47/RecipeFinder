@@ -1,7 +1,7 @@
 import Foundation
 
 final class ShoppingListManager: ObservableObject {
-    @Published var items: [ShoppingListItem] = []
+    @Published var items: [ShoppingListModel] = []
     
     private let saveKey = Constants.UserDefaultsKeys.shoppingListItems
     
@@ -11,7 +11,7 @@ final class ShoppingListManager: ObservableObject {
     
     private func loadItems() {
         if let data = UserDefaults.standard.data(forKey: saveKey),
-           let decoded = try? JSONDecoder().decode([ShoppingListItem].self, from: data) {
+           let decoded = try? JSONDecoder().decode([ShoppingListModel].self, from: data) {
             items = decoded
         }
     }
@@ -47,7 +47,7 @@ final class ShoppingListManager: ObservableObject {
         }
         
         let detectedCategory = category ?? CategoryClassifier.categorize(trimmedName)
-        let newItem = ShoppingListItem(name: trimmedName, quantity: quantity, category: detectedCategory)
+        let newItem = ShoppingListModel(name: trimmedName, quantity: quantity, category: detectedCategory)
         items.append(newItem)
         print("✅ ShoppingListManager: Added '\(trimmedName)' in category '\(detectedCategory)'. Total items: \(items.count)")
         saveItems()
@@ -110,11 +110,10 @@ final class ShoppingListManager: ObservableObject {
         saveItems()
     }
     
-    var groupedItems: [(category: String, items: [ShoppingListItem])] {
-        return CategoryClassifier.categoryOrder.compactMap { category in
-            let categoryItems = items.filter { $0.category == category }
-            return categoryItems.isEmpty ? nil : (category, categoryItems)
-        }
+    var groupedItems: [(category: String, items: [ShoppingListModel])] {
+        Dictionary(grouping: items, by: { $0.category })
+            .map { (category: $0.key, items: $0.value) }
+            .sorted { $0.category < $1.category }
     }
     
     var uncheckedCount: Int {

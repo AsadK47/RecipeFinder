@@ -1,7 +1,7 @@
 import Foundation
 
 /// Represents an item in the kitchen inventory with expiration tracking and storage location
-struct KitchenInventoryItem: Identifiable, Codable, Hashable {
+struct KitchenInventoryModel: Identifiable, Codable, Hashable {
     var id: UUID
     var name: String
     var category: IngredientCategory
@@ -158,41 +158,42 @@ enum StorageLocation: String, Codable, CaseIterable {
     }
 }
 
-// MARK: - Sample Data
-
-extension KitchenInventoryItem {
-    static let samples = [
-        KitchenInventoryItem(
-            name: "Milk",
-            category: .dairy,
-            quantity: 1,
-            unit: "gallon",
-            storageLocation: .fridge,
-            expiryDate: Calendar.current.date(byAdding: .day, value: 5, to: Date())
-        ),
-        KitchenInventoryItem(
-            name: "Chicken Breast",
-            category: .meat,
-            quantity: 2,
-            unit: "lbs",
-            storageLocation: .fridge,
-            expiryDate: Calendar.current.date(byAdding: .day, value: 2, to: Date())
-        ),
-        KitchenInventoryItem(
-            name: "Rice",
-            category: .grains,
-            quantity: 5,
-            unit: "lbs",
-            storageLocation: .pantry,
-            expiryDate: Calendar.current.date(byAdding: .day, value: 365, to: Date())
-        ),
-        KitchenInventoryItem(
-            name: "Tomatoes",
-            category: .produce,
-            quantity: 6,
-            unit: "count",
-            storageLocation: .counter,
-            expiryDate: Calendar.current.date(byAdding: .day, value: 4, to: Date())
-        )
-    ]
+// MARK: - Extensions
+extension KitchenInventoryModel {
+    static var placeholderIngredients: [KitchenInventoryModel] {
+        [
+            KitchenInventoryModel(
+                name: "Milk",
+                category: .dairy,
+                quantity: 1,
+                unit: "gallon",
+                storageLocation: .fridge,
+                expiryDate: Calendar.current.date(byAdding: .day, value: 5, to: Date())
+            ),
+            KitchenInventoryModel(
+                name: "Chicken Breast",
+                category: .meat,
+                quantity: 2,
+                unit: "lbs",
+                storageLocation: .fridge,
+                expiryDate: Calendar.current.date(byAdding: .day, value: 2, to: Date())
+            ),
+            KitchenInventoryModel(
+                name: "Rice",
+                category: .grains,
+                quantity: 5,
+                unit: "lbs",
+                storageLocation: .pantry,
+                expiryDate: Calendar.current.date(byAdding: .day, value: 365, to: Date())
+            ),
+            KitchenInventoryModel(
+                name: "Tomatoes",
+                category: .produce,
+                quantity: 6,
+                unit: "count",
+                storageLocation: .counter,
+                expiryDate: Calendar.current.date(byAdding: .day, value: 4, to: Date())
+            )
+        ]
+    }
 }

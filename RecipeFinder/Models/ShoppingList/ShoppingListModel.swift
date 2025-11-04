@@ -1,6 +1,6 @@
 import Foundation
 
-struct ShoppingListItem: Identifiable, Codable, Hashable {
+struct ShoppingListModel: Identifiable, Codable, Hashable {
     var id: UUID = UUID()
     var name: String
     var quantity: Int

@@ -13,7 +13,7 @@ struct ShoppingListView: View {
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
-    private var sortedGroupedItems: [(key: String, value: [ShoppingListItem])] {
+    private var sortedGroupedItems: [(key: String, value: [ShoppingListModel])] {
         manager.groupedItems.map { (key: $0.category, value: $0.items) }
     }
     
@@ -418,7 +418,7 @@ struct ShoppingListView: View {
     }
     
     @ViewBuilder
-    private func categorySection(for category: String, items: [ShoppingListItem]) -> some View {
+    private func categorySection(for category: String, items: [ShoppingListModel]) -> some View {
         Section {
             if !collapsedCategories.contains(category) {
                 categoryItems(for: items)
@@ -429,7 +429,7 @@ struct ShoppingListView: View {
     }
     
     @ViewBuilder
-    private func categoryItems(for items: [ShoppingListItem]) -> some View {
+    private func categoryItems(for items: [ShoppingListModel]) -> some View {
         ForEach(items) { item in
             if let index = manager.items.firstIndex(where: { $0.id == item.id }) {
                 itemRow(for: item, at: index)
@@ -438,7 +438,7 @@ struct ShoppingListView: View {
     }
     
     @ViewBuilder
-    private func itemRow(for item: ShoppingListItem, at index: Int) -> some View {
+    private func itemRow(for item: ShoppingListModel, at index: Int) -> some View {
         ShoppingListItemRow(
             item: item,
             onToggle: { 
@@ -461,7 +461,7 @@ struct ShoppingListView: View {
     }
     
     @ViewBuilder
-    private func categorySectionHeader(category: String, items: [ShoppingListItem]) -> some View {
+    private func categorySectionHeader(category: String, items: [ShoppingListModel]) -> some View {
         Button(
             action: {
                 if collapsedCategories.contains(category) {
@@ -591,7 +591,7 @@ struct ShoppingListView: View {
 
 // Shopping List Item Row
 struct ShoppingListItemRow: View {
-    let item: ShoppingListItem
+    let item: ShoppingListModel
     let onToggle: () -> Void
     let onQuantityChange: (Int) -> Void
     let onDelete: () -> Void

@@ -175,7 +175,7 @@ final class AccountManager: ObservableObject {
             
             // Update shopping list count
             if let data = UserDefaults.standard.data(forKey: Constants.UserDefaultsKeys.shoppingListItems),
-               let items = try? JSONDecoder().decode([ShoppingListItem].self, from: data) {
+               let items = try? JSONDecoder().decode([ShoppingListModel].self, from: data) {
                 self.shoppingListCount = items.count
             }
         }
