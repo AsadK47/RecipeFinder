@@ -1661,8 +1661,6 @@ struct PrivacyInfoRow: View {
 struct DataManagementSettingsView: View {
     @State private var showingClearAlert = false
     @State private var showingResetAlert = false
-    @State private var showingExportSheet = false
-    @State private var showingImportSheet = false
     @State private var dataCleared = false
     
     @Environment(\.colorScheme) var colorScheme
@@ -1678,73 +1676,6 @@ struct DataManagementSettingsView: View {
             
             ScrollView {
                 VStack(spacing: 24) {
-                    SettingsCard {
-                        VStack(alignment: .leading, spacing: 20) {
-                            Text("Data Management")
-                                .font(.headline)
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
-                            
-                            Button(action: {
-                                showingExportSheet = true
-                            }) {
-                                HStack(spacing: 16) {
-                                    Image(systemName: "square.and.arrow.up")
-                                        .font(.title3)
-                                        .foregroundColor(.blue)
-                                        .frame(width: 30)
-                                    
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text("Export Data")
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
-                                        Text("Save your recipes, kitchen inventory, and shopping lists")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                    }
-                                    
-                                    Spacer()
-                                    
-                                    Image(systemName: "chevron.right")
-                                        .foregroundColor(.secondary)
-                                        .font(.caption)
-                                }
-                                .padding(16)
-                                .background(Color.gray.opacity(0.1))
-                                .cornerRadius(12)
-                            }
-                            .buttonStyle(PlainButtonStyle())
-                            
-                            Button(action: {
-                                showingImportSheet = true
-                            }) {
-                                HStack(spacing: 16) {
-                                    Image(systemName: "square.and.arrow.down")
-                                        .font(.title3)
-                                        .foregroundColor(.green)
-                                        .frame(width: 30)
-                                    
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text("Import Data")
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
-                                        Text("Restore from a previous export")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                    }
-                                    
-                                    Spacer()
-                                    
-                                    Image(systemName: "chevron.right")
-                                        .foregroundColor(.secondary)
-                                        .font(.caption)
-                                }
-                                .padding(16)
-                                .background(Color.gray.opacity(0.1))
-                                .cornerRadius(12)
-                            }
-                            .buttonStyle(PlainButtonStyle())
-                        }
-                        .padding(20)
-                    }
-                    
                     SettingsCard {
                         VStack(alignment: .leading, spacing: 20) {
                             Text("Reset Options")
@@ -1840,12 +1771,6 @@ struct DataManagementSettingsView: View {
         } message: {
             Text("This will delete ALL your data including recipes, settings, preferences, and restore the app to a fresh install state. Sample recipes will be restored. This action cannot be undone!")
         }
-        .sheet(isPresented: $showingExportSheet) {
-            ExportDataView()
-        }
-        .sheet(isPresented: $showingImportSheet) {
-            ImportDataView()
-        }
     }
     
     private func resetToDefault() {
@@ -1909,151 +1834,6 @@ struct DataManagementSettingsView: View {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             dataCleared = false
-        }
-    }
-}
-
-struct ExportDataView: View {
-    @Environment(\.dismiss) var dismiss
-    @State private var showingShareSheet = false
-    @State private var exportURL: URL?
-    
-    var body: some View {
-        NavigationStack {
-            VStack(spacing: 20) {
-                Image(systemName: "square.and.arrow.up.circle.fill")
-                    .font(.system(size: 60))
-                    .foregroundColor(AppTheme.accentColor)
-                
-                Text("Export Your Data")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                
-                Text("Your data will be exported as a JSON file that you can save or share.")
-                    .multilineTextAlignment(.center)
-                    .foregroundColor(.secondary)
-                    .padding(.horizontal)
-                
-                Button(action: {
-                    exportData()
-                }) {
-                    Text("Export Now")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(AppTheme.accentColor)
-                        .cornerRadius(12)
-                }
-                .padding(.horizontal)
-            }
-            .padding()
-            .navigationTitle("Export Data")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
-                }
-            }
-            .sheet(isPresented: $showingShareSheet) {
-                if let url = exportURL {
-                    ActivityViewController(items: [url])
-                }
-            }
-        }
-    }
-    
-    // Private share sheet for this view only
-    private struct ActivityViewController: UIViewControllerRepresentable {
-        let items: [Any]
-        
-        func makeUIViewController(context: Context) -> UIActivityViewController {
-            let controller = UIActivityViewController(activityItems: items, applicationActivities: nil)
-            
-            if let popover = controller.popoverPresentationController,
-               let windowScene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
-               let window = windowScene.windows.first(where: { $0.isKeyWindow }) {
-                popover.sourceView = window
-                popover.sourceRect = CGRect(x: window.bounds.midX, y: window.bounds.midY, width: 0, height: 0)
-                popover.permittedArrowDirections = []
-            }
-            
-            return controller
-        }
-        
-        func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
-    }
-    
-    private func exportData() {
-        // Create export data dictionary
-        let exportData: [String: Any] = [
-            "version": "1.0",
-            "exportDate": ISO8601DateFormatter().string(from: Date()),
-            "kitchen": UserDefaults.standard.dictionary(forKey: "kitchenItems") ?? [:],
-            "shoppingList": UserDefaults.standard.array(forKey: "shoppingListItems") ?? [],
-            "preferences": [
-                "theme": UserDefaults.standard.string(forKey: "selectedTheme") ?? "ocean",
-                "appearanceMode": UserDefaults.standard.string(forKey: "appearanceMode") ?? "system"
-            ]
-        ]
-        
-        do {
-            let jsonData = try JSONSerialization.data(withJSONObject: exportData, options: .prettyPrinted)
-            let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("RecipeFinder_Export_\(Date().timeIntervalSince1970).json")
-            try jsonData.write(to: tempURL)
-            exportURL = tempURL
-            showingShareSheet = true
-        } catch {
-            print("Export failed: \(error)")
-        }
-    }
-}
-
-struct ImportDataView: View {
-    @Environment(\.dismiss) var dismiss
-    @State private var showingFilePicker = false
-    
-    var body: some View {
-        NavigationStack {
-            VStack(spacing: 20) {
-                Image(systemName: "square.and.arrow.down.circle.fill")
-                    .font(.system(size: 60))
-                    .foregroundColor(.green)
-                
-                Text("Import Your Data")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                
-                Text("Select a previously exported JSON file to restore your data.")
-                    .multilineTextAlignment(.center)
-                    .foregroundColor(.secondary)
-                    .padding(.horizontal)
-                
-                Button(action: {
-                    showingFilePicker = true
-                }) {
-                    Text("Choose File")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.green)
-                        .cornerRadius(12)
-                }
-                .padding(.horizontal)
-            }
-            .padding()
-            .navigationTitle("Import Data")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
-                }
-            }
         }
     }
 }

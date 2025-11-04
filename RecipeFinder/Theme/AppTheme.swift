@@ -30,6 +30,13 @@ enum AppTheme {
     static let cardCornerRadius: CGFloat = 16
     static let cardImageSize: CGFloat = 70
     
+    // Gradient cache
+    private static var gradientCache: [String: LinearGradient] = [:]
+    
+    private static func cacheKey(theme: ThemeType, colorScheme: ColorScheme) -> String {
+        return "\(theme.rawValue)-\(colorScheme == .dark ? "dark" : "light")"
+    }
+    
     // Theme Options
     enum ThemeType: String, CaseIterable, Identifiable {
         case teal = "Teal"
@@ -131,14 +138,22 @@ enum AppTheme {
     }
     
     static func backgroundGradient(for theme: ThemeType, colorScheme: ColorScheme) -> LinearGradient {
+        // Check cache first (performance optimization)
+        let key = cacheKey(theme: theme, colorScheme: colorScheme)
+        if let cached = gradientCache[key] {
+            return cached
+        }
+        
         // Use system color scheme directly
         // Light mode = Frost Light (bright gradients)
         // Dark mode = Ember Dark (dark gradients)
         let useDarkColors = (colorScheme == .dark)
         
+        let gradient: LinearGradient
+        
         switch theme {
         case .teal:
-            return LinearGradient(
+            gradient = LinearGradient(
                 gradient: Gradient(colors: useDarkColors ? 
                     // Dark mode/Ember Dark: Darker ocean teal
                     [tealBrightDark, tealMediumDark, tealDeepDark, tealRichDark] :
@@ -149,7 +164,7 @@ enum AppTheme {
                 endPoint: .bottomTrailing
             )
         case .purple:
-            return LinearGradient(
+            gradient = LinearGradient(
                 gradient: Gradient(colors: useDarkColors ?
                     [purpleRich.opacity(0.6), purpleVibrant.opacity(0.5), purpleDeep.opacity(0.5), Color(red: 30/255, green: 40/255, blue: 80/255)] :
                     [purpleRich, purpleVibrant, purpleDeep, purpleTeal]
@@ -158,7 +173,7 @@ enum AppTheme {
                 endPoint: .bottomTrailing
             )
         case .red:
-            return LinearGradient(
+            gradient = LinearGradient(
                 gradient: Gradient(colors: useDarkColors ?
                     [redCrimson.opacity(0.6), redWarm.opacity(0.5), redBurnt.opacity(0.5), Color(red: 60/255, green: 20/255, blue: 20/255)] :
                     [redCrimson, redWarm, redBurnt, redOrange]
@@ -167,7 +182,7 @@ enum AppTheme {
                 endPoint: .bottomTrailing
             )
         case .orange:
-            return LinearGradient(
+            gradient = LinearGradient(
                 gradient: Gradient(colors: useDarkColors ?
                     [orangeBright.opacity(0.5), orangeWarm.opacity(0.5), coralDeep.opacity(0.6), Color(red: 60/255, green: 30/255, blue: 30/255)] :
                     [orangeBright, orangeWarm, coralDeep, coralRich]
@@ -176,7 +191,7 @@ enum AppTheme {
                 endPoint: .bottomTrailing
             )
         case .yellow:
-            return LinearGradient(
+            gradient = LinearGradient(
                 gradient: Gradient(colors: useDarkColors ?
                     [yellowGold.opacity(0.4), yellowAmber.opacity(0.5), yellowDeep.opacity(0.6), Color(red: 80/255, green: 50/255, blue: 20/255)] :
                     [yellowBright, yellowGold, yellowAmber, yellowDeep]
@@ -185,7 +200,7 @@ enum AppTheme {
                 endPoint: .bottomTrailing
             )
         case .green:
-            return LinearGradient(
+            gradient = LinearGradient(
                 gradient: Gradient(colors: useDarkColors ?
                     [greenVibrant.opacity(0.5), greenMedium.opacity(0.5), greenTeal.opacity(0.6), Color(red: 20/255, green: 50/255, blue: 60/255)] :
                     [greenVibrant, greenMedium, greenTeal, greenDeep]
@@ -194,7 +209,7 @@ enum AppTheme {
                 endPoint: .bottomTrailing
             )
         case .pink:
-            return LinearGradient(
+            gradient = LinearGradient(
                 gradient: Gradient(colors: useDarkColors ?
                     [pinkHot.opacity(0.5), pinkVibrant.opacity(0.5), pinkPurple.opacity(0.5), Color(red: 40/255, green: 30/255, blue: 70/255)] :
                     [pinkHot, pinkVibrant, pinkPurple, pinkBlue]
@@ -203,7 +218,7 @@ enum AppTheme {
                 endPoint: .bottomTrailing
             )
         case .gold:
-            return LinearGradient(
+            gradient = LinearGradient(
                 gradient: Gradient(colors: useDarkColors ?
                     [goldRich.opacity(0.4), goldBronze.opacity(0.6), goldCharcoal, goldBlack] :
                     [goldBrilliant, goldShiny, goldRich, silverCool, goldBronze, goldCharcoal, goldBlack]
@@ -212,6 +227,10 @@ enum AppTheme {
                 endPoint: .bottomTrailing
             )
         }
+        
+        // Cache the gradient before returning (performance optimization)
+        gradientCache[key] = gradient
+        return gradient
     }
 }
 

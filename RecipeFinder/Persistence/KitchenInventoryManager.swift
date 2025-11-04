@@ -12,6 +12,10 @@ final class KitchenInventoryManager: ObservableObject {
 	private let inventorySaveKey = "kitchenInventoryItems"
 	private let migrationKey = "kitchenItemsMigrationCompleted_v1"
     
+    // Cache for expensive grouping operations (performance optimization)
+    private var cachedGroupedItems: [(category: String, items: [KitchenItem])] = []
+    private var lastItemsCount: Int = 0
+    
 	init() {
 		loadItems()
 		loadInventoryItems()
@@ -152,14 +156,25 @@ final class KitchenInventoryManager: ObservableObject {
 		saveItems()
 	}
     
-	// Grouped Items
+	// Grouped Items (memoized for performance)
 	var groupedItems: [(category: String, items: [KitchenItem])] {
+        // Return cached result if items haven't changed
+        if items.count == lastItemsCount && !cachedGroupedItems.isEmpty {
+            return cachedGroupedItems
+        }
+        
 		let categories = Set(items.map { $0.category }).sorted()
         
-		return categories.compactMap { category in
+		let result = categories.compactMap { category in
 			let categoryItems = items.filter { $0.category == category }
 			return categoryItems.isEmpty ? nil : (category, categoryItems)
 		}
+        
+        // Update cache
+        cachedGroupedItems = result
+        lastItemsCount = items.count
+        
+        return result
 	}
     
 	// Persistence

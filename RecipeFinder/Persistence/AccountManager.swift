@@ -183,12 +183,6 @@ final class AccountManager: ObservableObject {
     
     // MARK: - Data Management
     
-    func exportData() {
-        // TODO: Implement data export
-        HapticManager.shared.success()
-        print("📤 Data export initiated")
-    }
-    
     func clearAllData() {
         // Clear all UserDefaults data (except account info)
         let keysToRemove = [

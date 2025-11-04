@@ -162,17 +162,11 @@ class SecureCredentialManager {
     /// Clear all users except the test master user
     @discardableResult
     func clearAllUsersExceptTest() -> Bool {
-        let testEmail = "test@recipefinder.com"
-        let testPassword = "test123"
-        let testFullName = "Test Chef"
+        let testEmail = "e@mail.com"
+        let testPassword = "password"
+        let testFullName = "Test User"
         
-        // First, save the test user credentials temporarily
-        let testUserInfo = getUserInfo(email: testEmail)
-        
-        // Delete all credentials
         _ = deleteAllCredentials()
-        
-        // Recreate the test user
         return saveCredentials(email: testEmail, password: testPassword, fullName: testFullName)
     }
     

@@ -16,9 +16,17 @@ struct NotesListView: View {
     @State private var showCategoryExpanded = false
     @State private var showFilterMenu = false
     
-    // All unique tags from all notes
+    // Cache for expensive tag extraction (performance optimization)
+    @State private var cachedTags: [String] = []
+    @State private var lastNotesCount: Int = 0
+    
+    // All unique tags from all notes (memoized)
     var allTags: [String] {
-        Array(Set(notesManager.notes.flatMap { $0.tags })).sorted()
+        // Only recompute if notes have changed
+        if notesManager.notes.count != lastNotesCount {
+            return Array(Set(notesManager.notes.flatMap { $0.tags })).sorted()
+        }
+        return cachedTags
     }
     
     var filteredNotes: [NoteModel] {
@@ -207,6 +215,18 @@ struct NotesListView: View {
                 notesManager: notesManager
             )
         }
+        .onAppear {
+            updateTagCache()
+        }
+        .onChange(of: notesManager.notes.count) { _, _ in
+            updateTagCache()
+        }
+    }
+    
+    // Update tag cache (performance optimization)
+    private func updateTagCache() {
+        cachedTags = Array(Set(notesManager.notes.flatMap { $0.tags })).sorted()
+        lastNotesCount = notesManager.notes.count
     }
     
     // MARK: - Notes List

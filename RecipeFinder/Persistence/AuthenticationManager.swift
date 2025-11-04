@@ -21,7 +21,7 @@ final class AuthenticationManager: NSObject, ObservableObject {
     private let currentEmailKey = "currentUserEmail"
     private let lastActiveTimestampKey = "lastActiveTimestamp"
     private let appleUserCacheKey = "appleUserCache" // Cache Apple ID user data
-    private let sessionTimeoutSeconds: TimeInterval = 300 // 5 minutes
+    private let sessionTimeoutSeconds: TimeInterval = 1800 // 30 minutes
     
     // User Model
     struct User: Codable {
@@ -96,33 +96,25 @@ final class AuthenticationManager: NSObject, ObservableObject {
     
     // MARK: - Test User Setup
     
-    /// Clear all users except the master test user
     private func clearAllUsersExceptTest() {
-        #if DEBUG
         let success = credentialManager.clearAllUsersExceptTest()
         if success {
             debugLog("✅ Cleared all users except test user")
-        } else {
-            debugLog("⚠️ Failed to clear users")
         }
-        #endif
     }
     
     private func setupTestUser() {
-        // Create a test user if it doesn't exist
-        let testEmail = "test@recipefinder.com"
-        let testPassword = "test123"
-        let testFullName = "Test Chef"
+        let testEmail = "e@mail.com"
+        let testPassword = "password"
+        let testFullName = "Test User"
         
-        // Check if test user already exists
         if credentialManager.getUserInfo(email: testEmail) == nil {
-            // Save test user credentials
             _ = credentialManager.saveCredentials(
                 email: testEmail,
                 password: testPassword,
                 fullName: testFullName
             )
-            debugLog("✅ Test user created: \(testEmail) / \(testPassword)")
+            debugLog("✅ Test user: \(testEmail) / \(testPassword)")
         }
     }
     
