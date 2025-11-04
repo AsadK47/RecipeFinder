@@ -181,10 +181,12 @@ struct RecipeParser {
         if let regex = try? NSRegularExpression(pattern: servingsPattern, options: []) {
             let nsString = html as NSString
             if let match = regex.firstMatch(in: html, options: [], range: NSRange(location: 0, length: nsString.length)) {
-                let servingsRange = match.range(at: 1)
-                let servingsStr = nsString.substring(with: servingsRange)
-                if let servings = Int(servingsStr), servings >= 1 && servings <= 100 {
-                    result.servings = servings
+                if match.numberOfRanges > 1 {
+                    let servingsRange = match.range(at: 1)
+                    let servingsStr = nsString.substring(with: servingsRange)
+                    if let servings = Int(servingsStr), servings >= 1 && servings <= 100 {
+                        result.servings = servings
+                    }
                 }
             }
         }
@@ -195,10 +197,12 @@ struct RecipeParser {
             if let regex = try? NSRegularExpression(pattern: dataServingsPattern, options: []) {
                 let nsString = html as NSString
                 if let match = regex.firstMatch(in: html, options: [], range: NSRange(location: 0, length: nsString.length)) {
-                    let servingsRange = match.range(at: 1)
-                    let servingsStr = nsString.substring(with: servingsRange)
-                    if let servings = Int(servingsStr), servings >= 1 && servings <= 100 {
-                        result.servings = servings
+                    if match.numberOfRanges > 1 {
+                        let servingsRange = match.range(at: 1)
+                        let servingsStr = nsString.substring(with: servingsRange)
+                        if let servings = Int(servingsStr), servings >= 1 && servings <= 100 {
+                            result.servings = servings
+                        }
                     }
                 }
             }
@@ -399,51 +403,85 @@ struct RecipeParser {
         return text.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
-    // Decode HTML entities
+    // Decode HTML entities - OPTIMIZED with memoization and better string manipulation
+    private static var entityCache: [String: String] = [:]
+    private static let entityCacheLock = NSLock()
+    
     private static func decodeHTMLEntities(_ text: String) -> String {
+        // Check cache first
+        entityCacheLock.lock()
+        if let cached = entityCache[text] {
+            entityCacheLock.unlock()
+            return cached
+        }
+        entityCacheLock.unlock()
+        
         var result = text
         
-        // Common named entities
-        let entities: [String: String] = [
-            "&amp;": "&",
-            "&lt;": "<",
-            "&gt;": ">",
-            "&quot;": "\"",
-            "&apos;": "'",
-            "&nbsp;": " ",
-            "&frac12;": "½",
-            "&frac14;": "¼",
-            "&frac34;": "¾",
-            "&ndash;": "–",
-            "&mdash;": "—",
-            "&hellip;": "…"
+        // Common named entities - ordered by frequency
+        let entities: [(String, String)] = [
+            ("&nbsp;", " "),
+            ("&amp;", "&"),
+            ("&quot;", "\""),
+            ("&#39;", "'"),
+            ("&apos;", "'"),
+            ("&lt;", "<"),
+            ("&gt;", ">"),
+            ("&frac12;", "½"),
+            ("&frac14;", "¼"),
+            ("&frac34;", "¾"),
+            ("&ndash;", "–"),
+            ("&mdash;", "—"),
+            ("&hellip;", "…")
         ]
         
+        // Use array instead of dictionary for faster iteration
         for (entity, replacement) in entities {
-            result = result.replacingOccurrences(of: entity, with: replacement)
+            if result.contains(entity) {
+                result = result.replacingOccurrences(of: entity, with: replacement)
+            }
         }
         
-        // Decode numeric entities like &#39; and &#039;
-        // Pattern: &#\d+;
+        // Decode numeric entities like &#39; and &#039; - OPTIMIZED
         let numericPattern = "&#(\\d+);"
-        if let regex = try? NSRegularExpression(pattern: numericPattern, options: []) {
+        if result.contains("&#"), let regex = try? NSRegularExpression(pattern: numericPattern, options: []) {
+            // Build replacement string in one pass
+            var replacements: [(NSRange, String)] = []
             let nsString = result as NSString
             let matches = regex.matches(in: result, options: [], range: NSRange(location: 0, length: nsString.length))
             
-            // Process matches in reverse to avoid index issues
-            for match in matches.reversed() {
-                let fullRange = match.range
+            for match in matches {
                 let numberRange = match.range(at: 1)
                 let numberStr = nsString.substring(with: numberRange)
                 
                 if let charCode = Int(numberStr),
+                   charCode > 0,
+                   charCode < 0x10FFFF,
                    let unicode = UnicodeScalar(charCode) {
                     let char = String(Character(unicode))
-                    let fullMatch = nsString.substring(with: fullRange)
-                    result = result.replacingOccurrences(of: fullMatch, with: char)
+                    replacements.append((match.range, char))
                 }
             }
+            
+            // Apply replacements in reverse to maintain indices
+            for (range, replacement) in replacements.reversed() {
+                let start = result.index(result.startIndex, offsetBy: range.location)
+                let end = result.index(start, offsetBy: range.length)
+                result.replaceSubrange(start..<end, with: replacement)
+            }
         }
+        
+        // Cache result for future use (limit cache size)
+        entityCacheLock.lock()
+        if entityCache.count < 100 {
+            entityCache[text] = result
+        } else if entityCache.count > 150 {
+            // Clear half the cache when it gets too large
+            let keepCount = 75
+            let keysToKeep = Array(entityCache.keys.prefix(keepCount))
+            entityCache = entityCache.filter { keysToKeep.contains($0.key) }
+        }
+        entityCacheLock.unlock()
         
         return result
     }

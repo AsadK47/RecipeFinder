@@ -361,9 +361,22 @@ enum CategoryClassifier {
     
     // MARK: - Categorization Logic
     
+    // Memoization cache for category lookups
+    private static var categoryCache: [String: String] = [:]
+    private static let cacheLock = NSLock()
+    
     // swiftlint:disable cyclomatic_complexity function_body_length
     static func categorize(_ itemName: String) -> String {
-        let lowercased = itemName.lowercased()
+        // Check cache first
+        let cacheKey = itemName.lowercased()
+        cacheLock.lock()
+        if let cached = categoryCache[cacheKey] {
+            cacheLock.unlock()
+            return cached
+        }
+        cacheLock.unlock()
+        
+        let lowercased = cacheKey
         
         // Helper function to check if lowercased contains any keyword
         func matchesCategory(_ keywords: [String]) -> Bool {
@@ -372,109 +385,111 @@ enum CategoryClassifier {
         
         // Priority order matters! Check most specific categories first
         
+        let category: String
+        
         // 1. Frozen (check first to avoid conflicts)
         if lowercased.contains("frozen") || lowercased.contains("ice cream") {
-            return "Frozen"
+            category = "Frozen"
         }
-        
         // 2. Bakery (before grains to catch bread products)
-        let bakeryKeywords = ["bread", "baguette", "croissant", "bagel", "muffin", "donut",
-                             "pastry", "cake", "cookie", "pie", "tart", "scone"]
-        if matchesCategory(bakeryKeywords) {
-            return "Bakery"
+        else {
+            let bakeryKeywords = ["bread", "baguette", "croissant", "bagel", "muffin", "donut",
+                                 "pastry", "cake", "cookie", "pie", "tart", "scone"]
+            if matchesCategory(bakeryKeywords) {
+                category = "Bakery"
+            }
+            // 3. Sweeteners (before other categories that might contain sugar terms)
+            else if let keywords = kitchenIngredientKeywords["Sweeteners"], matchesCategory(keywords) {
+                category = "Sweeteners"
+            }
+            // 4. Poultry (before Meat to prioritize correctly)
+            else if let keywords = kitchenIngredientKeywords["Poultry"], matchesCategory(keywords) {
+                category = "Poultry"
+            }
+            // 5. Seafood (before general proteins)
+            else if let keywords = kitchenIngredientKeywords["Seafood"], matchesCategory(keywords) {
+                category = "Seafood"
+            }
+            // 6. Meat
+            else if let keywords = kitchenIngredientKeywords["Meat"], matchesCategory(keywords) {
+                category = "Meat"
+            }
+            // 7. Herbs & Fresh Spices (before Vegetables to catch fresh herbs)
+            else if let keywords = kitchenIngredientKeywords["Herbs & Fresh Spices"], matchesCategory(keywords) {
+                category = "Herbs & Fresh Spices"
+            }
+            // 8. Dried Spices & Seasonings
+            else if let keywords = kitchenIngredientKeywords["Dried Spices & Seasonings"], matchesCategory(keywords) {
+                category = "Dried Spices & Seasonings"
+            }
+            // 9. Nuts & Seeds (before legumes)
+            else if let keywords = kitchenIngredientKeywords["Nuts & Seeds"], matchesCategory(keywords) {
+                category = "Nuts & Seeds"
+            }
+            // 10. Legumes & Pulses
+            else if let keywords = kitchenIngredientKeywords["Legumes & Pulses"], matchesCategory(keywords) {
+                category = "Legumes & Pulses"
+            }
+            // 11. Fruits (map to Produce for shopping list)
+            else if let keywords = kitchenIngredientKeywords["Fruits"], matchesCategory(keywords) {
+                category = "Produce"  // Map fruits to Produce category for shopping
+            }
+            // 12. Vegetables / Produce
+            else if let keywords = kitchenIngredientKeywords["Vegetables"], matchesCategory(keywords) {
+                category = "Produce"  // Shopping category
+            }
+            // 13. Dairy & Eggs
+            else if let keywords = kitchenIngredientKeywords["Dairy & Eggs"], matchesCategory(keywords) {
+                category = "Dairy & Eggs"
+            }
+            // 14. Oils & Fats (before Sauces)
+            else if let keywords = kitchenIngredientKeywords["Oils & Fats"], matchesCategory(keywords) {
+                category = "Oils & Fats"
+            }
+            // 15. Sauces & Condiments
+            else if let keywords = kitchenIngredientKeywords["Sauces & Condiments"], matchesCategory(keywords) {
+                category = "Sauces & Condiments"
+            }
+            // 16. Grains & Pasta
+            else if let keywords = kitchenIngredientKeywords["Grains & Pasta"], matchesCategory(keywords) {
+                category = "Grains & Pasta"
+            }
+            // 17. Beverages
+            else {
+                let beverageKeywords = ["water", "juice", "soda", "coffee", "tea", "beer", "wine",
+                                       "vodka", "whiskey", "rum", "lemonade", "smoothie"]
+                if matchesCategory(beverageKeywords) {
+                    category = "Beverages"
+                }
+                // 18. Canned & Jarred
+                else if lowercased.contains("canned") || lowercased.contains("jar") {
+                    category = "Canned & Jarred"
+                }
+                // 19. Baking Supplies
+                else {
+                    let bakingKeywords = ["baking powder", "baking soda", "yeast", "cornstarch",
+                                         "gelatin", "cocoa powder"]
+                    if matchesCategory(bakingKeywords) {
+                        category = "Baking Supplies"
+                    } else {
+                        // Default: Other
+                        category = "Other"
+                    }
+                }
+            }
+        }        // Cache the result
+        cacheLock.lock()
+        if categoryCache.count < 200 {
+            categoryCache[cacheKey] = category
+        } else if categoryCache.count > 250 {
+            // Clear cache when it gets too large
+            let keepCount = 100
+            let keysToKeep = Array(categoryCache.keys.prefix(keepCount))
+            categoryCache = categoryCache.filter { keysToKeep.contains($0.key) }
         }
+        cacheLock.unlock()
         
-        // 3. Sweeteners (before other categories that might contain sugar terms)
-        if let keywords = kitchenIngredientKeywords["Sweeteners"], matchesCategory(keywords) {
-            return "Sweeteners"
-        }
-        
-        // 4. Poultry (before Meat to prioritize correctly)
-        if let keywords = kitchenIngredientKeywords["Poultry"], matchesCategory(keywords) {
-            return "Poultry"
-        }
-        
-        // 5. Seafood (before general proteins)
-        if let keywords = kitchenIngredientKeywords["Seafood"], matchesCategory(keywords) {
-            return "Seafood"
-        }
-        
-        // 6. Meat
-        if let keywords = kitchenIngredientKeywords["Meat"], matchesCategory(keywords) {
-            return "Meat"
-        }
-        
-        // 7. Herbs & Fresh Spices (before Vegetables to catch fresh herbs)
-        if let keywords = kitchenIngredientKeywords["Herbs & Fresh Spices"], matchesCategory(keywords) {
-            return "Herbs & Fresh Spices"
-        }
-        
-        // 8. Dried Spices & Seasonings
-        if let keywords = kitchenIngredientKeywords["Dried Spices & Seasonings"], matchesCategory(keywords) {
-            return "Dried Spices & Seasonings"
-        }
-        
-        // 9. Nuts & Seeds (before legumes)
-        if let keywords = kitchenIngredientKeywords["Nuts & Seeds"], matchesCategory(keywords) {
-            return "Nuts & Seeds"
-        }
-        
-        // 10. Legumes & Pulses
-        if let keywords = kitchenIngredientKeywords["Legumes & Pulses"], matchesCategory(keywords) {
-            return "Legumes & Pulses"
-        }
-        
-        // 11. Fruits (map to Produce for shopping list)
-        if let keywords = kitchenIngredientKeywords["Fruits"], matchesCategory(keywords) {
-            return "Produce"  // Map fruits to Produce category for shopping
-        }
-        
-        // 12. Vegetables / Produce
-        if let keywords = kitchenIngredientKeywords["Vegetables"], matchesCategory(keywords) {
-            return "Produce"  // Shopping category
-        }
-        
-        // 13. Dairy & Eggs
-        if let keywords = kitchenIngredientKeywords["Dairy & Eggs"], matchesCategory(keywords) {
-            return "Dairy & Eggs"
-        }
-        
-        // 14. Oils & Fats (before Sauces)
-        if let keywords = kitchenIngredientKeywords["Oils & Fats"], matchesCategory(keywords) {
-            return "Oils & Fats"
-        }
-        
-        // 15. Sauces & Condiments
-        if let keywords = kitchenIngredientKeywords["Sauces & Condiments"], matchesCategory(keywords) {
-            return "Sauces & Condiments"
-        }
-        
-        // 16. Grains & Pasta
-        if let keywords = kitchenIngredientKeywords["Grains & Pasta"], matchesCategory(keywords) {
-            return "Grains & Pasta"
-        }
-        
-        // 17. Beverages
-        let beverageKeywords = ["water", "juice", "soda", "coffee", "tea", "beer", "wine",
-                               "vodka", "whiskey", "rum", "lemonade", "smoothie"]
-        if matchesCategory(beverageKeywords) {
-            return "Beverages"
-        }
-        
-        // 18. Canned & Jarred
-        if lowercased.contains("canned") || lowercased.contains("jar") {
-            return "Canned & Jarred"
-        }
-        
-        // 19. Baking Supplies
-        let bakingKeywords = ["baking powder", "baking soda", "yeast", "cornstarch",
-                             "gelatin", "cocoa powder"]
-        if matchesCategory(bakingKeywords) {
-            return "Baking Supplies"
-        }
-        
-        // Default: Other
-        return "Other"
+        return category
     }
     // swiftlint:enable cyclomatic_complexity function_body_length
     

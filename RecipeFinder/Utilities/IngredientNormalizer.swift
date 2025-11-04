@@ -171,12 +171,26 @@ struct IngredientNormalizer {
         "canned coconut milk": "Coconut Milk"
     ]
     
+    // MARK: - Memoization Cache
+    
+    private static var normalizationCache: [String: String] = [:]
+    private static let cacheLock = NSLock()
+    private static let maxCacheSize = 200
+    
     // MARK: - Public Methods
     
-    /// Normalizes an ingredient name to a set standard
+    /// Normalizes an ingredient name to a set standard - OPTIMIZED with memoization
     /// - Parameter ingredient: Raw ingredient name from recipe
     /// - Returns: Normalized ingredient name
     static func normalize(_ ingredient: String) -> String {
+        // Check cache first for performance
+        cacheLock.lock()
+        if let cached = normalizationCache[ingredient] {
+            cacheLock.unlock()
+            return cached
+        }
+        cacheLock.unlock()
+        
         let cleaned = ingredient
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .lowercased()
@@ -218,7 +232,21 @@ struct IngredientNormalizer {
         }
         
         // If no mapping found, capitalize properly and return
-        return normalized.capitalized
+        let result = normalized.capitalized
+        
+        // Cache the result for future lookups
+        cacheLock.lock()
+        if normalizationCache.count < maxCacheSize {
+            normalizationCache[ingredient] = result
+        } else if normalizationCache.count > maxCacheSize + 50 {
+            // Clear half the cache when it gets too large
+            let keepCount = maxCacheSize / 2
+            let keysToKeep = Array(normalizationCache.keys.prefix(keepCount))
+            normalizationCache = normalizationCache.filter { keysToKeep.contains($0.key) }
+        }
+        cacheLock.unlock()
+        
+        return result
     }
     
     /// Normalizes a list of ingredients
