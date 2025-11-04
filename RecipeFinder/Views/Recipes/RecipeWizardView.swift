@@ -51,6 +51,10 @@ struct RecipeWizardView: View {
     // Step 7: Notes
     @State private var notes = ""
     
+    // Validation
+    @State private var showError = false
+    @State private var errorMessage = ""
+    
     // Initializer with optional prefilled data
     init(prefilledData: PrefilledRecipeData? = nil, autoFillMode: Bool = false, onComplete: @escaping (RecipeModel) -> Void) {
         self.prefilledData = prefilledData
@@ -142,6 +146,11 @@ struct RecipeWizardView: View {
             .onAppear {
                 applyPrefilledData()
             }
+        }
+        .alert("Validation Error", isPresented: $showError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(errorMessage)
         }
     }
     
@@ -744,6 +753,26 @@ struct RecipeWizardView: View {
     
     // MARK: - Recipe Creation
     private func createRecipe() {
+        // Validate recipe name
+        do {
+            try Validator.validateRecipeName(recipeName)
+        } catch {
+            errorMessage = error.localizedDescription
+            showError = true
+            HapticManager.shared.error()
+            return
+        }
+        
+        // Validate servings
+        do {
+            try Validator.validateServings(servings)
+        } catch {
+            errorMessage = error.localizedDescription
+            showError = true
+            HapticManager.shared.error()
+            return
+        }
+        
         // Convert ingredient items to Ingredient objects
         let ingredients = ingredientItems
             .filter { !$0.name.isEmpty }
@@ -756,9 +785,25 @@ struct RecipeWizardView: View {
                 )
             }
         
+        // Ensure at least one ingredient
+        guard !ingredients.isEmpty else {
+            errorMessage = "Please add at least one ingredient"
+            showError = true
+            HapticManager.shared.error()
+            return
+        }
+        
         // Filter out empty steps
         let filteredPrePrep = prePrepSteps.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
         let filteredInstructions = mainInstructions.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+        
+        // Ensure at least one instruction
+        guard !filteredInstructions.isEmpty else {
+            errorMessage = "Please add at least one cooking instruction"
+            showError = true
+            HapticManager.shared.error()
+            return
+        }
         
         let recipe = RecipeModel(
             name: recipeName,

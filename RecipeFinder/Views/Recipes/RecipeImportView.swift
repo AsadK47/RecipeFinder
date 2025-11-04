@@ -19,12 +19,13 @@ struct RecipeImportView: View {
     
     var body: some View {
         NavigationView {
-            VStack(spacing: 24) {
-                // Header
-                VStack(spacing: 12) {
-                    Image(systemName: "arrow.down.doc.fill")
-                        .font(.system(size: 60))
-                        .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+            ZStack(alignment: .top) {
+                VStack(spacing: 24) {
+                    // Header
+                    VStack(spacing: 12) {
+                        Image(systemName: "arrow.down.doc.fill")
+                            .font(.system(size: 60))
+                            .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                     
                     Text("Import Recipe")
                         .font(.title2)
@@ -169,6 +170,10 @@ struct RecipeImportView: View {
                 }
                 .foregroundColor(.secondary)
                 .padding(.bottom, 40)
+            }
+            
+            // Offline Banner on top of content
+            OfflineBanner()
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

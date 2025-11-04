@@ -213,8 +213,17 @@ final class AuthenticationManager: NSObject, ObservableObject {
     }
     
     private func validateSignInInput(email: String, password: String) throws {
-        guard !email.isEmpty, !password.isEmpty else {
-            throw AuthError.invalidCredentials
+        // Validate email and password are not empty
+        guard !email.isEmpty else {
+            throw AppError.emptyField(field: "Email")
+        }
+        guard !password.isEmpty else {
+            throw AppError.emptyField(field: "Password")
+        }
+        
+        // Validate email format
+        guard Validator.isValidEmail(email) else {
+            throw AppError.invalidEmail
         }
     }
     
@@ -291,8 +300,17 @@ final class AuthenticationManager: NSObject, ObservableObject {
     // Sign Up (with Secure Password Storage)
     
     func signUp(email: String, password: String, fullName: String) async throws {
-        guard !email.isEmpty, !password.isEmpty, password.count >= 6 else {
-            throw AuthError.invalidCredentials
+        // Validate email format
+        guard Validator.isValidEmail(email) else {
+            throw AppError.invalidEmail
+        }
+        
+        // Validate password strength
+        try Validator.validatePassword(password)
+        
+        // Validate full name
+        guard !fullName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            throw AppError.emptyField(field: "Full name")
         }
         
         // Save hashed credentials to Keychain

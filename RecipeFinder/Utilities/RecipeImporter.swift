@@ -42,6 +42,15 @@ class RecipeImporter: ObservableObject {
             extractedData = nil
         }
         
+        // Check network connectivity first
+        guard NetworkMonitor.shared.isConnected else {
+            await MainActor.run {
+                self.isLoading = false
+                self.errorMessage = AppError.networkUnavailable.localizedDescription
+            }
+            return
+        }
+        
         do {
             debugLog("🌐 Fetching recipe from: \(url.absoluteString)")
             
