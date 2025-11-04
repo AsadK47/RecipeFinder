@@ -182,12 +182,8 @@ struct RecipeWizardView: View {
         
         // Pre-fill ingredients (parse full ingredient strings from import)
         if let ingredients = data.ingredients, !ingredients.isEmpty {
-            print("🔍 DEBUG: Parsing \(ingredients.count) ingredients:")
             ingredientItems = ingredients.map { fullIngredient in
-                print("  Input: '\(fullIngredient)'")
-                let parsed = parseIngredientString(fullIngredient)
-                print("  Output: qty='\(parsed.quantity)' unit='\(parsed.unit)' name='\(parsed.name)'")
-                return parsed
+                return parseIngredientString(fullIngredient)
             }
             // Add one empty row for user to add more
             if !ingredients.isEmpty {
