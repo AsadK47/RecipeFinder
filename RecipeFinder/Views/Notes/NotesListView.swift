@@ -95,8 +95,17 @@ struct NotesListView: View {
                                 .minimumScaleFactor(0.7)
                             
                             Spacer(minLength: 8)
+                            
+                            // Add Note Button - Prominent and clickable
+                            Button(action: {
+                                HapticManager.shared.medium()
+                                showNewNoteSheet = true
+                            }) {
+                                ModernCircleButton(icon: "plus") {}
+                                    .allowsHitTesting(false)
+                            }
                                 
-                            // Right menu - burger menu like RecipeSearchView
+                            // Right menu - burger menu for filters
                             Menu {
                                 // Filter option
                                 Button(
@@ -106,19 +115,6 @@ struct NotesListView: View {
                                     },
                                     label: {
                                         Label(activeFilterCount > 0 ? "Filters (\(activeFilterCount))" : "Filters", systemImage: "line.3.horizontal.decrease.circle")
-                                    }
-                                )
-                                
-                                Divider()
-                                
-                                // New Note option
-                                Button(
-                                    action: {
-                                        HapticManager.shared.selection()
-                                        showNewNoteSheet = true
-                                    },
-                                    label: {
-                                        Label("New Note", systemImage: "square.and.pencil")
                                     }
                                 )
                             } label: {
@@ -281,8 +277,8 @@ struct NotesListView: View {
     
     // MARK: - Empty State
     private var emptyStateView: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "note.text")
+        VStack(spacing: 20) {
+            Image(systemName: searchText.isEmpty ? "note.text" : "magnifyingglass")
                 .font(.system(size: 64))
                 .foregroundColor(.white.opacity(0.3))
             
@@ -291,10 +287,25 @@ struct NotesListView: View {
                 .fontWeight(.semibold)
                 .foregroundColor(.white)
             
-            Text(searchText.isEmpty ? "Tap the menu to create your first note" : "Try a different search")
+            Text(searchText.isEmpty ? "Tap the + button at the top to create your first note" : "Try a different search")
                 .font(.subheadline)
                 .foregroundColor(.white.opacity(0.7))
                 .multilineTextAlignment(.center)
+            
+            if searchText.isEmpty {
+                // Show animated arrow pointing upward to the + button
+                VStack(spacing: 12) {
+                    Image(systemName: "arrow.up")
+                        .font(.title)
+                        .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                    
+                    Text("Tap the + icon above")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                }
+                .padding(.top, 20)
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(40)
