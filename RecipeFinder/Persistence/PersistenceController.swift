@@ -9,7 +9,7 @@ class PersistenceController {
     private(set) var loadError: Error?
     private(set) var isStoreLoaded = false
     
-    private init() {
+    nonisolated private init() {
         container = NSPersistentContainer(name: "RecipeModel")
         
         let description = container.persistentStoreDescriptions.first

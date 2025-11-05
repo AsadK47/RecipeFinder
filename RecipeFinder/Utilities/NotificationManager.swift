@@ -44,10 +44,12 @@ class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterD
     
     private let notificationCenter = UNUserNotificationCenter.current()
     
-    private override init() {
+    private nonisolated override init() {
         super.init()
-        notificationCenter.delegate = self
-        checkAuthorizationStatus()
+        Task { @MainActor in
+            notificationCenter.delegate = self
+            checkAuthorizationStatus()
+        }
     }
     
     // MARK: - Permission Management
@@ -73,14 +75,20 @@ class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterD
     
     /// Check current notification permission status
     func checkAuthorizationStatus() {
-        notificationCenter.getNotificationSettings { settings in
+        notificationCenter.getNotificationSettings { @Sendable settings in
+            // Extract values before crossing actor boundary
+            let authStatus = settings.authorizationStatus
+            let alertSetting = settings.alertSetting
+            let soundSetting = settings.soundSetting
+            let badgeSetting = settings.badgeSetting
+            
             Task { @MainActor in
-                self.isAuthorized = settings.authorizationStatus == .authorized
+                self.isAuthorized = authStatus == .authorized
                 
-                debugLog("📱 Notification Status: \(settings.authorizationStatus.rawValue)")
-                debugLog("   - Alert: \(settings.alertSetting.rawValue)")
-                debugLog("   - Sound: \(settings.soundSetting.rawValue)")
-                debugLog("   - Badge: \(settings.badgeSetting.rawValue)")
+                debugLog("📱 Notification Status: \(authStatus.rawValue)")
+                debugLog("   - Alert: \(alertSetting.rawValue)")
+                debugLog("   - Sound: \(soundSetting.rawValue)")
+                debugLog("   - Badge: \(badgeSetting.rawValue)")
             }
         }
     }
@@ -285,7 +293,7 @@ class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterD
     
     /// Cancel all timer notifications
     func cancelAllTimerNotifications() {
-        notificationCenter.getPendingNotificationRequests { requests in
+        notificationCenter.getPendingNotificationRequests { @Sendable requests in
             let timerIds = requests
                 .filter { ($0.content.userInfo["type"] as? String) == "timer" }
                 .map { $0.identifier }
@@ -305,7 +313,7 @@ class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterD
     
     /// Get list of all pending notifications
     func getPendingNotifications(completion: @escaping @Sendable ([UNNotificationRequest]) -> Void) {
-        notificationCenter.getPendingNotificationRequests { requests in
+        notificationCenter.getPendingNotificationRequests { @Sendable requests in
             Task { @MainActor in
                 completion(requests)
             }

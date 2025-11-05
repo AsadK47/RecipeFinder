@@ -6,7 +6,7 @@ import AudioToolbox
 class HapticManager: Sendable {
     nonisolated(unsafe) static let shared = HapticManager()
     
-    private init() {}
+    nonisolated private init() {}
     
     // Light tap - for subtle interactions
     func light() {

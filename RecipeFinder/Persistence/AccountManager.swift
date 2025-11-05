@@ -54,17 +54,19 @@ final class AccountManager: ObservableObject {
         return initialsString.isEmpty ? "RC" : initialsString.uppercased()
     }
     
-    private init() {
-        loadProfile()
-        updateStats()
-        
-        // Observe data changes to update stats
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(updateStats),
-            name: NSNotification.Name("DataDidChange"),
-            object: nil
-        )
+    nonisolated private init() {
+        Task { @MainActor in
+            loadProfile()
+            updateStats()
+            
+            // Observe data changes to update stats
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(updateStats),
+                name: NSNotification.Name("DataDidChange"),
+                object: nil
+            )
+        }
     }
     
     // Profile Management

@@ -268,7 +268,7 @@ extension View {
 class ErrorLogger {
     nonisolated(unsafe) static let shared = ErrorLogger()
     
-    private init() {}
+    nonisolated private init() {}
     
     func log(_ error: RecipeFinderError, file: String = #file, function: String = #function, line: Int = #line) {
         #if DEBUG

@@ -88,11 +88,13 @@ final class AuthenticationManager: NSObject, ObservableObject {
         }
     }
     
-    private override init() {
+    nonisolated private override init() {
         super.init()
-        clearAllUsersExceptTest() // Clear DB except test user on init
-        setupTestUser()
-        checkAuthenticationStatus()
+        Task { @MainActor in
+            clearAllUsersExceptTest() // Clear DB except test user on init
+            setupTestUser()
+            checkAuthenticationStatus()
+        }
     }
     
     // MARK: - Test User Setup

@@ -27,8 +27,10 @@ class NetworkMonitor: ObservableObject {
         case unknown
     }
     
-    private init() {
-        startMonitoring()
+    nonisolated private init() {
+        Task { @MainActor in
+            startMonitoring()
+        }
     }
     
     func startMonitoring() {

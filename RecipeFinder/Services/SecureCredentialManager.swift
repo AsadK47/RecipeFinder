@@ -10,7 +10,7 @@ import CryptoKit
 class SecureCredentialManager {
     nonisolated(unsafe) static let shared = SecureCredentialManager()
     
-    private init() {}
+    nonisolated private init() {}
     
     // MARK: - Password Hashing
     

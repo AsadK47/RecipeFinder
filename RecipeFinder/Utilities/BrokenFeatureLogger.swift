@@ -32,10 +32,12 @@ class BrokenFeatureLogger: ObservableObject {
     private let fileManager = FileManager.default
     private var logFileURL: URL?
     
-    private init() {
-        setupLogFile()
-        initializeFeatureStatuses()
-        performSystemHealthCheck()
+    nonisolated private init() {
+        Task { @MainActor in
+            setupLogFile()
+            initializeFeatureStatuses()
+            performSystemHealthCheck()
+        }
     }
     
     // MARK: - Feature Status Management

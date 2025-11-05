@@ -887,7 +887,7 @@ struct NotificationSettingsView: View {
     }
     
     private func checkNotificationPermission() {
-        UNUserNotificationCenter.current().getNotificationSettings { settings in
+        UNUserNotificationCenter.current().getNotificationSettings { @Sendable settings in
             Task { @MainActor in
                 notificationPermission = settings.authorizationStatus
             }
