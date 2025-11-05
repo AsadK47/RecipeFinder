@@ -15,6 +15,34 @@
 **© 2024-2025 Asad Khan & RECIPEFINDER LIMITED. ALL RIGHTS RESERVED.**  
 **PROPRIETARY AND CONFIDENTIAL SOFTWARE**
 
+### 🏢 UK COMPANY INFORMATION (Companies Act 2006 Compliance)
+
+**Legal Entity:** RECIPEFINDER LIMITED  
+**Company Number:** 16833243  
+**Registered:** England and Wales  
+**Date of Incorporation:** 5 November 2025  
+**Company Type:** Private Limited Company by Shares  
+**Director:** Asad Khan  
+**Shareholder:** Asad Khan (100% shareholding)  
+**Person with Significant Control (PSC):** Asad Khan  
+
+**Registered in accordance with:**
+- Companies Act 2006
+- UK Company Law
+- Companies House Registration Requirements
+
+**Ongoing Compliance Obligations:**
+- ✅ Annual Accounts Filing (within 9 months of year-end)
+- ✅ Confirmation Statement Filing (annually)
+- ✅ Corporation Tax Registration (HMRC)
+- ✅ Statutory Registers Maintenance (Directors, Shareholders, PSCs)
+- ✅ PSC Register Disclosure Requirements
+- ✅ Companies House Notification of Changes
+
+For official company records: [Companies House Service](https://find-and-update.company-information.service.gov.uk/company/16833243)
+
+---
+
 **This software is the exclusive intellectual property of Asad Khan and RECIPEFINDER LIMITED** and is protected under:
 - **United Kingdom**: Copyright, Designs and Patents Act 1988 (as amended)
 - **United States**: U.S. Copyright Act (17 U.S.C. §§ 101-1332), Digital Millennium Copyright Act (DMCA)

@@ -1,10 +1,29 @@
 # Intellectual Property Protection Notice
 
-**RecipeFinder - Copyright © 2024-2025 Asad Khan. All Rights Reserved.**
+**RecipeFinder - Copyright © 2024-2025 Asad Khan & RECIPEFINDER LIMITED. All Rights Reserved.**
+
+---
+
+## UK COMPANY INFORMATION (Companies Act 2006 Compliance)
+
+**Legal Entity:** RECIPEFINDER LIMITED  
+**Company Number:** 16833243  
+**Registered:** England and Wales  
+**Date of Incorporation:** 5 November 2025  
+**Company Type:** Private Limited Company by Shares  
+**Director & Shareholder:** Asad Khan (100% ownership)  
+**Person with Significant Control (PSC):** Asad Khan
+
+**Certificate of Incorporation:** Filed and maintained at `docs/PDFs/certicate_of_incorporation.pdf`  
+**Official Record:** [Companies House Register](https://find-and-update.company-information.service.gov.uk/company/16833243)
+
+**LEGAL STATUS:** This company is a validly incorporated legal entity under UK law with the full power and authority to own property, enter contracts, and pursue legal action to protect its rights worldwide.
+
+---
 
 ## Copyright Notice
 
-This software and all associated materials, including but not limited to source code, documentation, design assets, algorithms, user interface elements, and branding, are the exclusive intellectual property of **Asad Khan** ("the Owner").
+This software and all associated materials, including but not limited to source code, documentation, design assets, algorithms, user interface elements, and branding, are the exclusive intellectual property of **Asad Khan and RECIPEFINDER LIMITED** ("the Owners").
 
 ### Protected Elements
 
@@ -109,22 +128,83 @@ This work is protected under:
 - Trade secret protection
 - Unfair competition laws
 
-## Enforcement
+## Enforcement - Company's Absolute Right to Sue
 
-The Owner actively monitors and enforces intellectual property rights. Violations will result in:
+### Comprehensive Enforcement Authority
 
-1. **Immediate cease and desist notice**
-2. **Legal action for copyright infringement**
-3. **Damages claims** (statutory and actual)
-4. **Injunctive relief** to stop unauthorized use
-5. **Recovery of legal fees and costs**
+RECIPEFINDER LIMITED and Asad Khan possess the ABSOLUTE, UNRESTRICTED RIGHT to enforce intellectual property rights through all available legal mechanisms worldwide. This includes but is not limited to:
 
-### Statutory Damages
+**Civil Actions:**
+1. **Immediate cease and desist notices** with 24-hour compliance deadlines
+2. **Emergency injunctive relief** (ex parte TROs, preliminary injunctions)
+3. **Copyright infringement lawsuits** in any jurisdiction where violation occurred
+4. **Trademark infringement actions** for unauthorized use of RecipeFinder marks
+5. **Patent infringement claims** for protected inventions
+6. **Trade secret misappropriation suits** with punitive damages
+7. **Breach of contract actions** for Terms of Service violations
+8. **Tortious interference claims** for business harm
+9. **Unfair competition actions** under UK and international law
+10. **Damages claims** seeking maximum compensation:
+    - Statutory damages (£50,000 per work in UK; $150,000 per work in US)
+    - Actual damages for all losses suffered
+    - Consequential damages for business interruption and lost profits
+    - Punitive/exemplary damages for willful violations
+    - Treble damages where applicable
+    - Account of all profits derived from infringement
+11. **Attorneys' fees and costs recovery** - prevailing party entitled to full reimbursement
+12. **Pre-judgment and post-judgment interest** at maximum legal rates
 
-Under applicable law, copyright infringement may result in:
-- Up to £50,000 per infringement (UK)
-- Up to $150,000 per work infringed (US)
-- Criminal penalties for willful infringement
+**Equitable Remedies:**
+- Preliminary and permanent injunctions
+- Asset freezing orders (Mareva injunctions)
+- Search and seizure orders (Anton Piller orders)
+- Delivery up and destruction of infringing materials
+- Specific performance of obligations
+- Constructive trust over misappropriated property
+
+**Criminal Prosecution:**
+The Company will report violations to law enforcement and pursue criminal prosecution where applicable:
+- Copyright infringement: Up to 10 years imprisonment (UK)
+- Trademark counterfeiting: Up to 10 years imprisonment (UK)
+- Computer Misuse Act violations: Up to 10 years imprisonment (UK)
+- Fraud and theft offenses: Up to 10 years imprisonment
+- Proceeds of Crime Act confiscation proceedings
+
+**International Enforcement:**
+- Pursue violators in any country where they reside or operate
+- Enforce UK judgments internationally under treaty obligations
+- Utilize Berne Convention, WIPO, and TRIPS Agreement protections
+- Coordinate with law enforcement agencies globally (Interpol, EUROPOL, FBI)
+
+### Enforcement Guarantee
+
+**THE COMPANY GUARANTEES IT WILL:**
+✅ Pursue every violation discovered  
+✅ Seek maximum damages and penalties  
+✅ Never settle for less than full restitution  
+✅ Prosecute criminally where possible  
+✅ Enforce judgments internationally  
+✅ Publicly disclose violations  
+✅ Blacklist violators from all services  
+✅ Spare no expense in enforcement  
+
+**THE COMPANY WILL NOT:**
+❌ Issue warnings before suing  
+❌ Accept excuses or apologies  
+❌ Consider financial hardship  
+❌ Limit enforcement to single jurisdiction  
+❌ Tolerate any infringement  
+
+### Zero Tolerance Policy
+
+RECIPEFINDER LIMITED maintains an absolute **ZERO TOLERANCE** policy for intellectual property violations. Every infringement will be met with immediate and overwhelming legal action designed to:
+- Obtain maximum financial recovery
+- Establish deterrent precedents
+- Eliminate competition from infringers
+- Protect Company reputation and market position
+- Send clear message to would-be violators
+
+For complete details on enforcement rights and remedies, see `ENFORCEMENT_RIGHTS.md`.
 
 ## Fair Use and Exceptions
 
@@ -253,4 +333,6 @@ This is not open-source software. This is proprietary software with all rights r
 
 ---
 
-*Last Updated: October 28, 2025*
+*Last Updated: 5 November 2025*
+
+**FOR COMPREHENSIVE ENFORCEMENT RIGHTS AND LEGAL REMEDIES, SEE `ENFORCEMENT_RIGHTS.md`**

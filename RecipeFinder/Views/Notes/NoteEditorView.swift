@@ -91,11 +91,7 @@ struct NoteEditorView: View {
                     }
                 }
             }
-            .toolbarBackground(.visible, for: .navigationBar)
-            .toolbarBackground(
-                AppTheme.accentColor(for: appTheme).opacity(0.8),
-                for: .navigationBar
-            )
+            .toolbarBackground(.hidden, for: .navigationBar)
             .alert("Cannot Save Empty Note", isPresented: $showValidationError) {
                 Button("OK", role: .cancel) {}
             } message: {
