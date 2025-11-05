@@ -21,7 +21,7 @@ final class AuthenticationManager: NSObject, ObservableObject {
     private let currentEmailKey = "currentUserEmail"
     private let lastActiveTimestampKey = "lastActiveTimestamp"
     private let appleUserCacheKey = "appleUserCache" // Cache Apple ID user data
-    private let sessionTimeoutSeconds: TimeInterval = 1800 // 30 minutes
+    private let sessionTimeoutSeconds: TimeInterval = 86400 // 24 hours (24 * 60 * 60)
     
     // User Model
     struct User: Codable {

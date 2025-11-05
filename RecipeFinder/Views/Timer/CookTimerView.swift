@@ -29,6 +29,7 @@ struct CookTimerView: View {
     @State private var customName: String = ""
     @State private var timer: Timer?
     @State private var vibrationTimer: Timer?
+    @ObservedObject private var notificationManager = NotificationManager.shared
     
     @AppStorage("cardStyle") private var cardStyleString: String = "frosted"
     @AppStorage("keepScreenAwake") private var keepScreenAwake: Bool = false
@@ -652,7 +653,6 @@ struct CookTimerView: View {
     }
     
     private func sendNotification(for timer: TimerInstance) {
-        // Use the new NotificationManager for better notification handling
         NotificationManager.shared.sendImmediateNotification(
             title: "⏰ Timer Complete!",
             body: "\(timer.name) has finished",

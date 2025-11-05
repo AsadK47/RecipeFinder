@@ -4,9 +4,13 @@ import UserNotifications
 /// Example view demonstrating notification usage in RecipeFinder
 /// This is a reference/testing view - you can use these patterns in your actual features
 struct NotificationExamplesView: View {
-    @StateObject private var notificationManager = NotificationManager.shared
     @State private var showPermissionAlert = false
     @State private var pendingNotifications: [UNNotificationRequest] = []
+    @State private var isAuthorized = false
+    
+    private var notificationManager: NotificationManager {
+        NotificationManager.shared
+    }
     
     var body: some View {
         NavigationStack {
@@ -49,6 +53,7 @@ struct NotificationExamplesView: View {
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {
                 notificationManager.checkAuthorizationStatus()
+                isAuthorized = notificationManager.isAuthorized
                 loadPendingNotifications()
             }
             .alert("Enable Notifications", isPresented: $showPermissionAlert) {
@@ -69,8 +74,8 @@ struct NotificationExamplesView: View {
     private var permissionStatusCard: some View {
         VStack(spacing: 12) {
             HStack {
-                Image(systemName: notificationManager.isAuthorized ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
-                    .foregroundColor(notificationManager.isAuthorized ? .green : .orange)
+                Image(systemName: isAuthorized ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
+                    .foregroundColor(isAuthorized ? .green : .orange)
                     .font(.title2)
                 
                 VStack(alignment: .leading, spacing: 4) {
@@ -78,7 +83,7 @@ struct NotificationExamplesView: View {
                         .font(.headline)
                         .foregroundColor(.white)
                     
-                    Text(notificationManager.isAuthorized ? "Enabled ✓" : "Disabled")
+                    Text(isAuthorized ? "Enabled ✓" : "Disabled")
                         .font(.subheadline)
                         .foregroundColor(.white.opacity(0.8))
                 }
@@ -86,9 +91,10 @@ struct NotificationExamplesView: View {
                 Spacer()
             }
             
-            if !notificationManager.isAuthorized {
+            if !isAuthorized {
                 Button(action: {
                     notificationManager.requestPermission { granted in
+                        isAuthorized = granted
                         if !granted {
                             showPermissionAlert = true
                         }

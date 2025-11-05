@@ -15,6 +15,7 @@ env:
   SCHEME: RecipeFinder
   CONFIGURATION: Debug
   DESTINATION: 'platform=iOS Simulator,name=iPhone 15 Pro,OS=17.5'
+  XCODE_VERSION: '15.4'
 
 jobs:
   build:
@@ -28,16 +29,33 @@ jobs:
       
       - name: Select Xcode version
         run: |
-          if [ -d "/Applications/Xcode_15.4.app" ]; then
-            sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
+          if [ -d "/Applications/Xcode_${{ env.XCODE_VERSION }}.app" ]; then
+            sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app/Contents/Developer
           elif [ -d "/Applications/Xcode_15.3.app" ]; then
             sudo xcode-select -s /Applications/Xcode_15.3.app/Contents/Developer
           else
             sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
           fi
+          xcodebuild -version
+          swift --version
       
-      - name: Show Xcode version
-        run: xcodebuild -version
+      - name: Cache Swift Package Manager
+        uses: actions/cache@v4
+        with:
+          path: |
+            .build
+            ~/Library/Developer/Xcode/DerivedData/**/SourcePackages
+          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+      
+      - name: Cache DerivedData
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Developer/Xcode/DerivedData
+          key: ${{ runner.os }}-deriveddata-${{ hashFiles('**/*.swift', '**/*.xcodeproj') }}
+          restore-keys: |
+            ${{ runner.os }}-deriveddata-
       
       - name: Clean Package.resolved if exists
         run: |
@@ -47,21 +65,84 @@ jobs:
             rm -f "$RESOLVED_FILE"
           fi
       
+      - name: Resolve Swift Package Dependencies
+        run: |
+          xcodebuild -resolvePackageDependencies \
+            -scheme ${{ env.SCHEME }} \
+            -destination '${{ env.DESTINATION }}'
+      
       - name: Build project
         run: |
+          set -o pipefail
           xcodebuild build \
             -scheme ${{ env.SCHEME }} \
             -destination '${{ env.DESTINATION }}' \
             -configuration ${{ env.CONFIGURATION }} \
+            -derivedDataPath ./DerivedData \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGNING_ALLOWED=NO
+            CODE_SIGNING_ALLOWED=NO \
+            | tee build.log \
+            | xcpretty --color --simple
+        continue-on-error: false
+      
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: build.log
+          retention-days: 7
+
+  test:
+    name: 🧪 Test
+    runs-on: macos-14
+    timeout-minutes: 30
+    needs: [build]
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Select Xcode version
+        run: |
+          if [ -d "/Applications/Xcode_${{ env.XCODE_VERSION }}.app" ]; then
+            sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app/Contents/Developer
+          else
+            sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          fi
+      
+      - name: Run tests
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -scheme ${{ env.SCHEME }} \
+            -destination '${{ env.DESTINATION }}' \
+            -configuration ${{ env.CONFIGURATION }} \
+            -enableCodeCoverage YES \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            | tee test.log \
+            | xcpretty --color --report html --output ./test-results.html
+        continue-on-error: true
+      
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            test.log
+            test-results.html
+          retention-days: 30
 
   summary:
     name: 📊 Summary
     runs-on: macos-14
     timeout-minutes: 5
-    needs: [build]
+    needs: [build, test]
     if: always()
     
     steps:
@@ -72,3 +153,14 @@ jobs:
           echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
           echo "| 🔨 Build | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🧪 Test | ${{ needs.test.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [[ "${{ needs.build.result }}" == "failure" ]]; then
+            echo "❌ Build failed" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          elif [[ "${{ needs.test.result }}" == "failure" ]]; then
+            echo "⚠️ Build succeeded but tests failed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ All checks passed!" >> $GITHUB_STEP_SUMMARY
+          fi

@@ -264,7 +264,7 @@ struct EmailSignInView: View {
                             TextField("", text: $email)
                                 .textFieldStyle(AuthTextFieldStyle())
                                 .keyboardType(.emailAddress)
-                                .textContentType(.emailAddress)
+                                .textContentType(.username) // Changed from .emailAddress for better autofill
                                 .autocapitalization(.none)
                                 .autocorrectionDisabled()
                             
@@ -285,6 +285,12 @@ struct EmailSignInView: View {
                             SecureField("", text: $password)
                                 .textFieldStyle(AuthTextFieldStyle())
                                 .textContentType(.password)
+                                .submitLabel(.go) // Allow quick submission with keyboard
+                                .onSubmit {
+                                    if canSignIn {
+                                        signIn()
+                                    }
+                                }
                         }
                         
                         // Sign In Button
@@ -435,7 +441,7 @@ struct SignUpView: View {
                                 TextField("", text: $email)
                                     .textFieldStyle(AuthTextFieldStyle())
                                     .keyboardType(.emailAddress)
-                                    .textContentType(.emailAddress)
+                                    .textContentType(.username) // Changed for better autofill on new accounts
                                     .autocapitalization(.none)
                                     .autocorrectionDisabled()
                                 
@@ -474,6 +480,12 @@ struct SignUpView: View {
                                 SecureField("", text: $confirmPassword)
                                     .textFieldStyle(AuthTextFieldStyle())
                                     .textContentType(.newPassword)
+                                    .submitLabel(.go) // Allow quick submission with keyboard
+                                    .onSubmit {
+                                        if canSignUp {
+                                            signUp()
+                                        }
+                                    }
                                 
                                 if !confirmPassword.isEmpty && password != confirmPassword {
                                     Text("Passwords do not match")

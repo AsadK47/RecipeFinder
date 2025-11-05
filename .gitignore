@@ -12,8 +12,6 @@ TestResults.xcresult/
 # Test artifacts
 test_output.log
 build_output.log
-ref.0*
-data.0*
 
 # Xcode project files that shouldn't be committed
 *.xcuserstate
@@ -41,6 +39,3 @@ Package.resolved
 # Temporary files
 *.tmp
 *~
-
-# Firebase/Google Services 
-GoogleService-Info.plist
