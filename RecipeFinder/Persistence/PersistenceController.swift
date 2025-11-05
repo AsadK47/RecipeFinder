@@ -3,7 +3,7 @@ import Foundation
 
 @MainActor
 class PersistenceController {
-    nonisolated(unsafe) static let shared = PersistenceController()
+    static let shared = PersistenceController()
     
     let container: NSPersistentContainer
     private(set) var loadError: Error?
@@ -39,7 +39,7 @@ class PersistenceController {
         
         // Enable automatic merging of changes
         container.viewContext.automaticallyMergesChangesFromParent = true
-        container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy()
+        container.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
     }
     
     /// Attempts to recover from a store loading failure by removing corrupted data

@@ -91,8 +91,7 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
-            | tee build.log \
-            | xcpretty --color --simple
+            2>&1 | tee build.log
         continue-on-error: false
       
       - name: Upload build logs
@@ -139,8 +138,7 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
-            | tee test.log \
-            | xcpretty --color --report html --output ./test-results.html
+            2>&1 | tee test.log
         continue-on-error: true
       
       - name: Upload test results

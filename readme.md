@@ -5,8 +5,10 @@
 
 [![Build](https://github.com/AsadK47/RecipeFinder/actions/workflows/build.yml/badge.svg)](https://github.com/AsadK47/RecipeFinder/actions/workflows/build.yml)
 [![Platform](https://img.shields.io/badge/platform-iOS%2015.0%2B-blue.svg)](https://www.apple.com/ios/)
-[![Swift](https://img.shields.io/badge/Swift-5.7%2B-orange.svg)](https://swift.org)
+[![Swift](https://img.shields.io/badge/Swift-6.0-orange.svg)](https://swift.org)
+[![Xcode](https://img.shields.io/badge/Xcode-16.0%2B-blue.svg)](https://developer.apple.com/xcode/)
 [![License](https://img.shields.io/badge/license-Proprietary-red.svg)](./LICENSE)
+[![Website](https://img.shields.io/badge/website-recipefinder.uk-teal.svg)](https://recipefinder.uk)
 
 ---
 
@@ -212,19 +214,19 @@ RecipeFinder brings **premium design** and **powerful features** together in a c
 
 ## 🌐 Official Website
 
-**LIVE NOW**: [recipefinder.uk](https://recipefinder.uk) - *Coming Soon Teaser*
+**🚀 LIVE NOW**: [recipefinder.uk](https://recipefinder.uk)
 
-A beautiful iOS-inspired landing page showcasing RecipeFinder with:
-- 📱 iPhone mockup with screenshot slideshow
-- ✨ Animated logo with glowing effects
-- 🎨 Your app's teal gradient theme
-- 📧 Email notification signup
-- 🔒 GDPR-compliant cookie consent
+A beautiful iOS-inspired landing page showcasing RecipeFinder:
+- 📱 Interactive iPhone mockup with live screenshots
+- ✨ Animated logo with smooth effects  
+- 🎨 Gorgeous teal gradient theme
+- 📧 Coming soon email notifications
+- 🔒 GDPR-compliant & privacy-focused
 - 📱 Fully responsive design
 
-**Website Code**: See `website/` directory  
-**Deployment Guide**: `website/DEPLOYMENT.md`  
-**Quick Start**: `website/QUICKSTART.md`
+**Deployment**: Hosted on GitHub Pages via Cloudflare DNS  
+**Stack**: Pure HTML/CSS/JavaScript - No frameworks needed  
+**Setup Guide**: See [`GITHUB_PAGES_CLOUDFLARE_SETUP.md`](GITHUB_PAGES_CLOUDFLARE_SETUP.md) for DNS configuration
 
 ---
 
@@ -275,7 +277,7 @@ cd RecipeFinder
 open RecipeFinder.xcodeproj
 ```
 
-**System Requirements**: iOS 15.0+ • Xcode 14.0+ • Swift 5.7+
+**System Requirements**: iOS 15.0+ • Xcode 16.0+ • Swift 6.0 • macOS 15.0+
 
 Press **⌘+R** to run (personal use only - no redistribution permitted)
 
