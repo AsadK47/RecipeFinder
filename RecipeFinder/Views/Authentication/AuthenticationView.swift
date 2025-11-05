@@ -482,7 +482,7 @@ struct SignUpView: View {
                                     .textContentType(.newPassword)
                                     .submitLabel(.go) // Allow quick submission with keyboard
                                     .onSubmit {
-                                        if canSignUp {
+                                        if isFormValid {
                                             signUp()
                                         }
                                     }
