@@ -50,6 +50,7 @@
 		9E5447B62EB0270700AD6D0A /* UnitConversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5447B52EB0270700AD6D0A /* UnitConversion.swift */; };
 		9E5447B82EB0407F00AD6D0A /* RecipeImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5447B72EB0407F00AD6D0A /* RecipeImporter.swift */; };
 		9E5447BA2EB0409700AD6D0A /* RecipeImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5447B92EB0409700AD6D0A /* RecipeImportView.swift */; };
+		9E5804832EBB08F10045D13F /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 9E5804822EBB08F10045D13F /* ConfettiSwiftUI */; };
 		9E605FFE2D0985BD00236896 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E605FFD2D0985BD00236896 /* PersistenceController.swift */; };
 		9E6060032D09CB6400236896 /* RecipeModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9E6060002D09CB6400236896 /* RecipeModel.xcdatamodeld */; };
 		9E6CF3AA2D83092A00D79DD6 /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 9E6CF3A92D83092A00D79DD6 /* ConfettiSwiftUI */; };
@@ -208,6 +209,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9E5804832EBB08F10045D13F /* ConfettiSwiftUI in Frameworks */,
 				9E87D3322EB6B53C00FFA1D1 /* ConfettiSwiftUI in Frameworks */,
 				9E6CF3AA2D83092A00D79DD6 /* ConfettiSwiftUI in Frameworks */,
 			);
@@ -1072,6 +1074,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		9E5804822EBB08F10045D13F /* ConfettiSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9E6CF3A72D83087300D79DD6 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
+			productName = ConfettiSwiftUI;
+		};
 		9E6CF3A92D83092A00D79DD6 /* ConfettiSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 9E6CF3A72D83087300D79DD6 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
