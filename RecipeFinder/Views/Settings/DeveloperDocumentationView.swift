@@ -67,9 +67,9 @@ struct DeveloperDocumentationView: View {
                         icon: "hammer.fill",
                         iconColor: .orange,
                         content: [
-                            DocPoint(title: "Swift 5.7+", description: "Modern Swift with async/await support"),
+                            DocPoint(title: "Swift 6.0", description: "Modern Swift with complete concurrency support"),
                             DocPoint(title: "iOS 15.0+", description: "Target deployment for modern iOS features"),
-                            DocPoint(title: "Xcode 14.0+", description: "Development environment"),
+                            DocPoint(title: "Xcode 16.0+", description: "Latest development environment"),
                             DocPoint(title: "XCTest", description: "Unit testing framework with 85% coverage")
                         ],
                         appTheme: appTheme,

@@ -18,6 +18,10 @@ class PersistenceController {
         
         container.loadPersistentStores { [weak self] storeDescription, error in
             guard let self = self else { return }
+            
+            // Extract values before crossing actor boundary
+            let storeURL = storeDescription.url?.absoluteString ?? "unknown location"
+            
             Task { @MainActor in
                 if let error = error as NSError? {
                     debugLog("❌ Failed to load persistent store: \(error.localizedDescription)")
@@ -30,7 +34,7 @@ class PersistenceController {
                     // Attempt recovery: try to delete and recreate the store
                     self.attemptStoreRecovery()
                 } else {
-                    debugLog("✅ Core Data store loaded successfully at: \(storeDescription.url?.absoluteString ?? "unknown location")")
+                    debugLog("✅ Core Data store loaded successfully at: \(storeURL)")
                     self.isStoreLoaded = true
                     self.loadError = nil
                 }
