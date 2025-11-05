@@ -460,8 +460,26 @@ body {
 
 .business-info {
     color: var(--teal-start);
-    font-weight: 500;
+    font-weight: 600;
     margin-top: 10px;
+    font-size: 0.95rem;
+}
+
+.business-details {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 5px;
+}
+
+.legal-jurisdictions {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 8px;
+}
+
+.website-info {
+    font-size: 0.85rem;
+    margin-top: 8px;
 }
 
 .footer-section ul {
