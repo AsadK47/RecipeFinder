@@ -345,13 +345,6 @@
 			path = Authentication;
 			sourceTree = "<group>";
 		};
-		9E6CF3A82D83092A00D79DD6 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		9E77ABED2EB412C600666BB0 /* Services */ = {
 			isa = PBXGroup;
 			children = (
@@ -492,7 +485,6 @@
 			children = (
 				9E37D12A2D09082C005BC8FA /* readme.md */,
 				9EE5AAD72D08FCBE00C1B736 /* RecipeFinder */,
-				9E6CF3A82D83092A00D79DD6 /* Frameworks */,
 				9EE5AAD62D08FCBE00C1B736 /* Products */,
 			);
 			sourceTree = "<group>";
