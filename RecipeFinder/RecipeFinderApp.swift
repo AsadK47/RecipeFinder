@@ -25,9 +25,9 @@ struct RecipeFinderApp: App {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             NotificationManager.shared.requestPermission { granted in
                 if granted {
-                    print("✅ User granted notification permissions")
+                    debugLog("✅ User granted notification permissions")
                 } else {
-                    print("⚠️ User denied notification permissions")
+                    debugLog("⚠️ User denied notification permissions")
                 }
             }
         }

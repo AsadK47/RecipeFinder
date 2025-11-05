@@ -55,11 +55,11 @@ class NotificationManager: NSObject, ObservableObject {
                 self.isAuthorized = granted
                 
                 if let error = error {
-                    print("❌ Notification permission error: \(error.localizedDescription)")
+                    debugLog("❌ Notification permission error: \(error.localizedDescription)")
                 } else if granted {
-                    print("✅ Notification permission granted")
+                    debugLog("✅ Notification permission granted")
                 } else {
-                    print("⚠️ Notification permission denied")
+                    debugLog("⚠️ Notification permission denied")
                 }
                 
                 completion(granted)
@@ -73,12 +73,10 @@ class NotificationManager: NSObject, ObservableObject {
             DispatchQueue.main.async {
                 self.isAuthorized = settings.authorizationStatus == .authorized
                 
-                #if DEBUG
-                print("📱 Notification Status: \(settings.authorizationStatus.rawValue)")
-                print("   - Alert: \(settings.alertSetting.rawValue)")
-                print("   - Sound: \(settings.soundSetting.rawValue)")
-                print("   - Badge: \(settings.badgeSetting.rawValue)")
-                #endif
+                debugLog("📱 Notification Status: \(settings.authorizationStatus.rawValue)")
+                debugLog("   - Alert: \(settings.alertSetting.rawValue)")
+                debugLog("   - Sound: \(settings.soundSetting.rawValue)")
+                debugLog("   - Badge: \(settings.badgeSetting.rawValue)")
             }
         }
     }

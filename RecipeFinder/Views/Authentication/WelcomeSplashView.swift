@@ -294,7 +294,7 @@ struct WelcomeSplashView: View {
     
     // MARK: - Actions
     private func handleContinueAction() {
-        print("🔘 WelcomeSplash: Continue button tapped")
+        debugLog("🔘 WelcomeSplash: Continue button tapped")
         HapticManager.shared.success()
         withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
             buttonScale = 0.95
@@ -303,7 +303,7 @@ struct WelcomeSplashView: View {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
                 buttonScale = 1.0
             }
-            print("🔘 WelcomeSplash: Calling onContinue callback")
+            debugLog("🔘 WelcomeSplash: Calling onContinue callback")
             onContinue()
         }
     }
@@ -363,12 +363,6 @@ struct FeatureRow: View {
         }
     }
 }
-
-#Preview {
-    WelcomeSplashView(email: "user@example.com", onContinue: {})
-        .environment(\.appTheme, .teal)
-}
-
 
 #Preview {
     WelcomeSplashView(email: "user@example.com", onContinue: {})

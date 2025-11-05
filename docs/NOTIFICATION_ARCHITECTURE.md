@@ -196,9 +196,9 @@ RecipeFinder App
 │   ├── Timer/
 │   │   └── CookTimerView.swift ─── Timer notifications ✓
 │   ├── MealPlanning/
-│   │   └── MealPlanView.swift ──── Meal reminders (TODO)
+│   │   └── MealPlanView.swift ──── Meal reminders (v0.2)
 │   └── Settings/
-│       └── SettingsView.swift ──── Notification preferences (TODO)
+│       └── SettingsView.swift ──── Notification preferences (v0.2)
 └── docs/
     ├── NOTIFICATIONS_GUIDE.md ──── Full documentation
     └── NOTIFICATIONS_SUMMARY.md ─ Quick reference

@@ -5,6 +5,8 @@ class PersistenceController {
     static let shared = PersistenceController()
     
     let container: NSPersistentContainer
+    private(set) var loadError: Error?
+    private(set) var isStoreLoaded = false
     
     private init() {
         container = NSPersistentContainer(name: "RecipeModel")
@@ -17,9 +19,17 @@ class PersistenceController {
             if let error = error as NSError? {
                 debugLog("❌ Failed to load persistent store: \(error.localizedDescription)")
                 debugLog("❌ Error details: \(error.userInfo)")
-                fatalError("Unresolved error \(error), \(error.userInfo)")
+                
+                // Store the error instead of crashing
+                self.loadError = error
+                self.isStoreLoaded = false
+                
+                // Attempt recovery: try to delete and recreate the store
+                self.attemptStoreRecovery()
             } else {
                 debugLog("✅ Core Data store loaded successfully at: \(storeDescription.url?.absoluteString ?? "unknown location")")
+                self.isStoreLoaded = true
+                self.loadError = nil
             }
         }
         
@@ -28,7 +38,53 @@ class PersistenceController {
         container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
     }
     
+    /// Attempts to recover from a store loading failure by removing corrupted data
+    private func attemptStoreRecovery() {
+        debugLog("🔄 Attempting to recover from Core Data store failure...")
+        
+        guard let storeURL = container.persistentStoreDescriptions.first?.url else {
+            debugLog("❌ Cannot recover: store URL not found")
+            return
+        }
+        
+        do {
+            // Remove the corrupted store
+            try FileManager.default.removeItem(at: storeURL)
+            debugLog("✅ Removed corrupted store file")
+            
+            // Try loading the store again
+            container.loadPersistentStores { storeDescription, error in
+                if let error = error {
+                    debugLog("❌ Recovery failed: \(error.localizedDescription)")
+                    self.loadError = error
+                    self.isStoreLoaded = false
+                } else {
+                    debugLog("✅ Store recovered successfully")
+                    self.isStoreLoaded = true
+                    self.loadError = nil
+                    
+                    // Repopulate with default data
+                    self.populateDatabase()
+                }
+            }
+        } catch {
+            debugLog("❌ Failed to remove corrupted store: \(error.localizedDescription)")
+            self.loadError = error
+        }
+    }
+    
+    /// Checks if the persistent store is ready for operations
+    private func ensureStoreIsReady() -> Bool {
+        guard isStoreLoaded else {
+            debugLog("⚠️ Store not loaded. Cannot perform operation.")
+            return false
+        }
+        return true
+    }
+    
     func clearDatabase() {
+        guard ensureStoreIsReady() else { return }
+        
         let context = container.viewContext
         let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Recipe")
         let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
@@ -71,6 +127,8 @@ class PersistenceController {
     }
     
     func saveRecipe(parameters: RecipeSaveParameters) {
+        guard ensureStoreIsReady() else { return }
+        
         let context = container.viewContext
         
         guard let entity = NSEntityDescription.entity(forEntityName: "Recipe", in: context) else {
@@ -131,6 +189,8 @@ class PersistenceController {
     }
     
     func fetchRecipes() -> [RecipeModel] {
+        guard ensureStoreIsReady() else { return [] }
+        
         let context = container.viewContext
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Recipe")
         
@@ -201,6 +261,8 @@ class PersistenceController {
     }
     
     func deleteRecipe(withId id: UUID) {
+        guard ensureStoreIsReady() else { return }
+        
         let context = container.viewContext
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Recipe")
         fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
@@ -218,6 +280,8 @@ class PersistenceController {
     }
     
     func toggleFavorite(withId id: UUID) {
+        guard ensureStoreIsReady() else { return }
+        
         let context = container.viewContext
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Recipe")
         fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
@@ -236,6 +300,8 @@ class PersistenceController {
     }
     
     func fetchRecipeCount() -> Int {
+        guard ensureStoreIsReady() else { return 0 }
+        
         let context = container.viewContext
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Recipe")
         

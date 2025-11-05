@@ -63,7 +63,7 @@ struct AuthenticationView: View {
                                 try await authManager.signInWithApple()
                                 HapticManager.shared.success()
                             } catch {
-                                print("Apple Sign In Error: \(error.localizedDescription)")
+                                debugLog("Apple Sign In Error: \(error.localizedDescription)")
                                 HapticManager.shared.error()
                             }
                         }

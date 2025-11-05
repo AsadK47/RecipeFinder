@@ -33,13 +33,8 @@ struct ModernCircleButton: View {
     ZStack {
         Color.blue
         HStack {
-            ModernCircleButton(icon: "plus.circle.fill") {
-                print("Tapped")
-            }
-            
-            ModernCircleButton(icon: "ellipsis.circle.fill") {
-                print("Tapped")
-            }
+            ModernCircleButton(icon: "plus.circle.fill") {}
+            ModernCircleButton(icon: "ellipsis.circle.fill") {}
         }
     }
 }

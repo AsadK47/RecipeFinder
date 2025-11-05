@@ -657,22 +657,18 @@ struct AccountView: View {
     // MARK: - Helper Functions
     
     private func signOut() {
-        #if DEBUG
-        print("🔓 [AccountView] Sign out button tapped")
-        #endif
+        debugLog("🔓 [AccountView] Sign out button tapped")
         authManager.signOut()
         // Navigation handled automatically by app root view
     }
     
     private func deleteAccount() async {
         do {
-            #if DEBUG
-            print("🗑️ [AccountView] Delete account requested")
-            #endif
+            debugLog("🗑️ [AccountView] Delete account requested")
             try await authManager.deleteAccount()
             // Navigation handled automatically by app root view
         } catch {
-            print("Error deleting account: \(error)")
+            debugLog("Error deleting account: \(error)")
         }
     }
     
