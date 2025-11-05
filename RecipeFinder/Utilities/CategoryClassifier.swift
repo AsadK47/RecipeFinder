@@ -362,19 +362,17 @@ enum CategoryClassifier {
     // MARK: - Categorization Logic
     
     // Memoization cache for category lookups
+    @MainActor
     private static var categoryCache: [String: String] = [:]
-    private static let cacheLock = NSLock()
     
     // swiftlint:disable cyclomatic_complexity function_body_length
+    @MainActor
     static func categorize(_ itemName: String) -> String {
-        // Check cache first
+        // Check cache first (thread-safe with @MainActor)
         let cacheKey = itemName.lowercased()
-        cacheLock.lock()
         if let cached = categoryCache[cacheKey] {
-            cacheLock.unlock()
             return cached
         }
-        cacheLock.unlock()
         
         let lowercased = cacheKey
         
@@ -477,8 +475,7 @@ enum CategoryClassifier {
                     }
                 }
             }
-        }        // Cache the result
-        cacheLock.lock()
+        }        // Cache the result (thread-safe with @MainActor)
         if categoryCache.count < 200 {
             categoryCache[cacheKey] = category
         } else if categoryCache.count > 250 {
@@ -487,13 +484,13 @@ enum CategoryClassifier {
             let keysToKeep = Array(categoryCache.keys.prefix(keepCount))
             categoryCache = categoryCache.filter { keysToKeep.contains($0.key) }
         }
-        cacheLock.unlock()
         
         return category
     }
     // swiftlint:enable cyclomatic_complexity function_body_length
     
     // Get suggested categories based on partial input (for autocomplete)
+    @MainActor
     static func suggestCategory(for partialInput: String) -> String {
         if partialInput.count < 3 {
             return "Other"

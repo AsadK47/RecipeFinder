@@ -35,6 +35,7 @@ enum AppearanceMode: String, CaseIterable {
 
 /// Centralized theme manager that controls app-wide theme and card style settings
 /// Use as @EnvironmentObject to access throughout the app
+@MainActor
 class ThemeManager: ObservableObject {
     static let shared = ThemeManager()
     

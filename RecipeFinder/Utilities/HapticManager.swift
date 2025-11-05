@@ -2,6 +2,7 @@ import UIKit
 import AudioToolbox
 
 /// Centralized haptic feedback manager for consistent tactile responses throughout the app
+@MainActor
 class HapticManager {
     static let shared = HapticManager()
     

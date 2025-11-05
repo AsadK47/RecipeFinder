@@ -1,6 +1,7 @@
 import CoreData
 import Foundation
 
+@MainActor
 class PersistenceController {
     static let shared = PersistenceController()
     

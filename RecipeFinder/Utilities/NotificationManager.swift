@@ -32,6 +32,7 @@ import UserNotifications
 /// )
 /// ```
 
+@MainActor
 class NotificationManager: NSObject, ObservableObject {
     static let shared = NotificationManager()
     

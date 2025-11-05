@@ -173,8 +173,8 @@ struct IngredientNormalizer {
     
     // MARK: - Memoization Cache
     
+    @MainActor
     private static var normalizationCache: [String: String] = [:]
-    private static let cacheLock = NSLock()
     private static let maxCacheSize = 200
     
     // MARK: - Public Methods
@@ -182,14 +182,12 @@ struct IngredientNormalizer {
     /// Normalizes an ingredient name to a set standard - OPTIMIZED with memoization
     /// - Parameter ingredient: Raw ingredient name from recipe
     /// - Returns: Normalized ingredient name
+    @MainActor
     static func normalize(_ ingredient: String) -> String {
-        // Check cache first for performance
-        cacheLock.lock()
+        // Check cache first for performance (thread-safe with @MainActor)
         if let cached = normalizationCache[ingredient] {
-            cacheLock.unlock()
             return cached
         }
-        cacheLock.unlock()
         
         let cleaned = ingredient
             .trimmingCharacters(in: .whitespacesAndNewlines)
@@ -234,8 +232,7 @@ struct IngredientNormalizer {
         // If no mapping found, capitalize properly and return
         let result = normalized.capitalized
         
-        // Cache the result for future lookups
-        cacheLock.lock()
+        // Cache the result for future lookups (thread-safe with @MainActor)
         if normalizationCache.count < maxCacheSize {
             normalizationCache[ingredient] = result
         } else if normalizationCache.count > maxCacheSize + 50 {
@@ -244,7 +241,6 @@ struct IngredientNormalizer {
             let keysToKeep = Array(normalizationCache.keys.prefix(keepCount))
             normalizationCache = normalizationCache.filter { keysToKeep.contains($0.key) }
         }
-        cacheLock.unlock()
         
         return result
     }
@@ -252,6 +248,7 @@ struct IngredientNormalizer {
     /// Normalizes a list of ingredients
     /// - Parameter ingredients: Array of raw ingredient names
     /// - Returns: Array of normalized ingredient names
+    @MainActor
     static func normalize(_ ingredients: [String]) -> [String] {
         return ingredients.map { normalize($0) }
     }

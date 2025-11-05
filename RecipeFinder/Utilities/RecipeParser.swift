@@ -404,17 +404,15 @@ struct RecipeParser {
     }
     
     // Decode HTML entities - OPTIMIZED with memoization and better string manipulation
+    @MainActor
     private static var entityCache: [String: String] = [:]
-    private static let entityCacheLock = NSLock()
     
+    @MainActor
     private static func decodeHTMLEntities(_ text: String) -> String {
-        // Check cache first
-        entityCacheLock.lock()
+        // Check cache first (thread-safe with @MainActor)
         if let cached = entityCache[text] {
-            entityCacheLock.unlock()
             return cached
         }
-        entityCacheLock.unlock()
         
         var result = text
         
@@ -471,8 +469,7 @@ struct RecipeParser {
             }
         }
         
-        // Cache result for future use (limit cache size)
-        entityCacheLock.lock()
+        // Cache result for future use (limit cache size) - thread-safe with @MainActor
         if entityCache.count < 100 {
             entityCache[text] = result
         } else if entityCache.count > 150 {
@@ -481,7 +478,6 @@ struct RecipeParser {
             let keysToKeep = Array(entityCache.keys.prefix(keepCount))
             entityCache = entityCache.filter { keysToKeep.contains($0.key) }
         }
-        entityCacheLock.unlock()
         
         return result
     }

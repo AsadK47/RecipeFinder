@@ -201,6 +201,17 @@ struct SettingsTabView: View {
                                 }
                             }
                             
+                            // Legal & Company
+                            SettingsSectionHeader(title: "Legal & Company")
+                            
+                            SettingsCard {
+                                NavigationLink(destination: LegalInformationView()) {
+                                    SettingsRow(icon: "building.2.fill", iconColor: .indigo, title: "Legal Information")
+                                        .padding(20)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                            }
+                            
                             // App Info
                             VStack(spacing: 4) {
                                 Text("RecipeFinder")

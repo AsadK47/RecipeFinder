@@ -6,6 +6,7 @@ import CryptoKit
 
 /// Manages secure storage of user credentials using iOS Keychain
 /// Never stores passwords in plain text - uses SHA256 hashing
+@MainActor
 class SecureCredentialManager {
     static let shared = SecureCredentialManager()
     

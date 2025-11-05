@@ -35,6 +35,8 @@
 		9E4DC7622E9C5D8A00E17DDF /* ShoppingListManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E4DC7612E9C5D8A00E17DDF /* ShoppingListManager.swift */; };
 		9E4DC7672E9C603B00E17DDF /* CategoryClassifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E4DC7652E9C603B00E17DDF /* CategoryClassifier.swift */; };
 		9E4DC7692E9D738500E17DDF /* FilterComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E4DC7682E9D738500E17DDF /* FilterComponents.swift */; };
+		9E4EF5D22EBB6A0600C3C0E7 /* QueenEasterEggView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E4EF5D12EBB6A0600C3C0E7 /* QueenEasterEggView.swift */; };
+		9E4EF5D32EBB6A0600C3C0E7 /* LegalInformationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E4EF5D02EBB6A0600C3C0E7 /* LegalInformationView.swift */; };
 		9E51C3922EB3DE580064B917 /* RecipeWizardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E51C3912EB3DE580064B917 /* RecipeWizardView.swift */; };
 		9E51C3942EB3E3200064B917 /* FoodsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E51C3932EB3E3200064B917 /* FoodsList.swift */; };
 		9E51C3972EB3E6540064B917 /* MealPlanningView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E51C3952EB3E6540064B917 /* MealPlanningView.swift */; };
@@ -141,6 +143,8 @@
 		9E4DC7612E9C5D8A00E17DDF /* ShoppingListManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListManager.swift; sourceTree = "<group>"; };
 		9E4DC7652E9C603B00E17DDF /* CategoryClassifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryClassifier.swift; sourceTree = "<group>"; };
 		9E4DC7682E9D738500E17DDF /* FilterComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterComponents.swift; sourceTree = "<group>"; };
+		9E4EF5D02EBB6A0600C3C0E7 /* LegalInformationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegalInformationView.swift; sourceTree = "<group>"; };
+		9E4EF5D12EBB6A0600C3C0E7 /* QueenEasterEggView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueenEasterEggView.swift; sourceTree = "<group>"; };
 		9E51C3912EB3DE580064B917 /* RecipeWizardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeWizardView.swift; sourceTree = "<group>"; };
 		9E51C3932EB3E3200064B917 /* FoodsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodsList.swift; sourceTree = "<group>"; };
 		9E51C3952EB3E6540064B917 /* MealPlanningView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlanningView.swift; sourceTree = "<group>"; };
@@ -429,6 +433,8 @@
 		9E7B9A842E9BECFE007E1786 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				9E4EF5D02EBB6A0600C3C0E7 /* LegalInformationView.swift */,
+				9E4EF5D12EBB6A0600C3C0E7 /* QueenEasterEggView.swift */,
 				9E77ABF32EB4483100666BB0 /* SettingsView.swift */,
 				9E77ABF12EB430BC00666BB0 /* DeveloperDocumentationView.swift */,
 			);
@@ -674,6 +680,8 @@
 				9E40CAF12EB9891700ED9594 /* ShoppingListModel.swift in Sources */,
 				9E40CAEF2EB9882700ED9594 /* KitchenInventoryModel.swift in Sources */,
 				9E0C88662EBAEB1E00D707E3 /* FaceIDOnboardingSplash.swift in Sources */,
+				9E4EF5D22EBB6A0600C3C0E7 /* QueenEasterEggView.swift in Sources */,
+				9E4EF5D32EBB6A0600C3C0E7 /* LegalInformationView.swift in Sources */,
 				9EA779152EB56BA00028F064 /* NoteCardView.swift in Sources */,
 				9E4DC7382E9BF19700E17DDF /* AppTheme.swift in Sources */,
 				9E4DC7502E9C11FB00E17DDF /* RecipeDetailView.swift in Sources */,
@@ -906,6 +914,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"RecipeFinder/Preview Content\"";
+				DEVELOPMENT_TEAM = A6BJYF9NCW;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Use Face ID or Touch ID to securely and seamlessly sign in to your account";
@@ -922,7 +931,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.asadkhan.recipefinder;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -936,6 +945,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"RecipeFinder/Preview Content\"";
+				DEVELOPMENT_TEAM = A6BJYF9NCW;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Use Face ID or Touch ID to securely and seamlessly sign in to your account";
@@ -952,7 +962,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.asadkhan.recipefinder;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

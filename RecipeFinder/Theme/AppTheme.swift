@@ -30,9 +30,11 @@ enum AppTheme {
     static let cardCornerRadius: CGFloat = 16
     static let cardImageSize: CGFloat = 70
     
-    // Gradient cache
+    // Gradient cache (thread-safe with @MainActor)
+    @MainActor
     private static var gradientCache: [String: LinearGradient] = [:]
     
+    @MainActor
     private static func cacheKey(theme: ThemeType, colorScheme: ColorScheme) -> String {
         return "\(theme.rawValue)-\(colorScheme == .dark ? "dark" : "light")"
     }

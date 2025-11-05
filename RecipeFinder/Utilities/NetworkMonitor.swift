@@ -10,6 +10,7 @@ import Network
 
 /// Monitors network connectivity and provides offline/online status
 /// This helps show users when recipe import features won't work
+@MainActor
 class NetworkMonitor: ObservableObject {
     static let shared = NetworkMonitor()
     
