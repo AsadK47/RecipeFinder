@@ -15,6 +15,8 @@ struct RecipeDetailView: View {
     @State private var shareItems: [Any] = []
     @State private var isGeneratingPDF = false
     @AppStorage("measurementSystem") private var measurementSystem: MeasurementSystem = .metric
+    @AppStorage("hasSeenServingEditWarning") private var hasSeenServingEditWarning: Bool = false
+    @State private var showServingEditWarning = false
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
     
@@ -103,6 +105,7 @@ struct RecipeDetailView: View {
                                     Button(
                                         action: {
                                             if recipe.currentServings > 1 {
+                                                showWarningIfNeeded()
                                                 HapticManager.shared.light()
                                                 recipe.currentServings -= 1
                                             }
@@ -121,6 +124,7 @@ struct RecipeDetailView: View {
                                     
                                     Button(
                                         action: {
+                                            showWarningIfNeeded()
                                             HapticManager.shared.light()
                                             recipe.currentServings += 1
                                         },
@@ -371,6 +375,13 @@ struct RecipeDetailView: View {
                 RecipeShareSheet(items: shareItems)
             }
         }
+        .alert("💡 Tip: Edit Recipe Instead", isPresented: $showServingEditWarning) {
+            Button("Got It!", role: .cancel) {
+                HapticManager.shared.light()
+            }
+        } message: {
+            Text("You're adjusting servings on-the-fly! This is fine for quick changes, but for permanent adjustments, consider editing the recipe itself. This way your changes are saved for next time. 👨‍🍳")
+        }
         .overlay(alignment: .bottom) {
             if let feedback = showAddedFeedback {
                 HStack(spacing: 12) {
@@ -604,6 +615,14 @@ struct RecipeDetailView: View {
                     isGeneratingPDF = false
                 }
             }
+        }
+    }
+    
+    // Show one-time warning about editing servings
+    private func showWarningIfNeeded() {
+        if !hasSeenServingEditWarning {
+            showServingEditWarning = true
+            hasSeenServingEditWarning = true
         }
     }
     
