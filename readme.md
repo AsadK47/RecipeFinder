@@ -179,6 +179,24 @@ RecipeFinder brings **premium design** and **powerful features** together in a c
 
 ---
 
+## 🌐 Official Website
+
+**LIVE NOW**: [recipefinder.uk](https://recipefinder.uk) - *Coming Soon Teaser*
+
+A beautiful iOS-inspired landing page showcasing RecipeFinder with:
+- 📱 iPhone mockup with screenshot slideshow
+- ✨ Animated logo with glowing effects
+- 🎨 Your app's teal gradient theme
+- 📧 Email notification signup
+- 🔒 GDPR-compliant cookie consent
+- 📱 Fully responsive design
+
+**Website Code**: See `website/` directory  
+**Deployment Guide**: `website/DEPLOYMENT.md`  
+**Quick Start**: `website/QUICKSTART.md`
+
+---
+
 ## 📸 Screenshots
 
 <div align="center">
