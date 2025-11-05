@@ -547,64 +547,89 @@ struct AccountView: View {
     
     private var accountActionsSection: some View {
         VStack(spacing: 12) {
-            // Sign in with Apple (if not already using it)
+            // Sign in with Apple (if not already using it) - Under Construction
             if authManager.currentUser?.appleUserID == nil && !isGuestMode {
-                Button {
-                    Task {
-                        try? await authManager.signInWithApple()
-                    }
-                    HapticManager.shared.light()
-                } label: {
-                    HStack(spacing: 12) {
-                        Image(systemName: "applelogo")
-                            .font(.system(size: 18, weight: .semibold))
-                        Text("Link Apple ID")
-                            .font(.body)
-                            .fontWeight(.semibold)
-                    }
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
-                    .background {
-                        if cardStyle == .solid {
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color.black)
-                        } else {
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color.black.opacity(0.9))
+                VStack(spacing: 8) {
+                    Button {
+                        // Disabled during testing
+                        HapticManager.shared.light()
+                    } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: "applelogo")
+                                .font(.system(size: 18, weight: .semibold))
+                            Text("Link Apple ID")
+                                .font(.body)
+                                .fontWeight(.semibold)
                         }
+                        .foregroundColor(.white.opacity(0.5))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background {
+                            if cardStyle == .solid {
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color.black.opacity(0.3))
+                            } else {
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color.black.opacity(0.4))
+                            }
+                        }
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color.orange.opacity(0.4), lineWidth: 1)
+                        )
                     }
+                    .disabled(true)
+                    
+                    HStack(spacing: 4) {
+                        Image(systemName: "wrench.and.screwdriver.fill")
+                            .font(.system(size: 11))
+                        Text("Under Construction • Please Wait Patiently")
+                            .font(.system(size: 11, weight: .medium))
+                    }
+                    .foregroundColor(.orange.opacity(0.8))
                 }
             }
             
-            // Face ID / Touch ID Settings
+            // Face ID / Touch ID Settings - Under Construction
             if authManager.biometricsAvailable {
-                Button {
-                    // Show biometric setup
-                    Task {
-                        try? await authManager.authenticateWithBiometrics()
-                    }
-                    HapticManager.shared.light()
-                } label: {
-                    HStack(spacing: 12) {
-                        Image(systemName: authManager.biometricType == "Face ID" ? "faceid" : "touchid")
-                            .font(.system(size: 18, weight: .semibold))
-                        Text("Configure \(authManager.biometricType)")
-                            .font(.body)
-                            .fontWeight(.semibold)
-                    }
-                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
-                    .background {
-                        if cardStyle == .solid {
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white)
-                        } else {
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(.ultraThinMaterial)
+                VStack(spacing: 8) {
+                    Button {
+                        // Disabled during testing
+                        HapticManager.shared.light()
+                    } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: authManager.biometricType == "Face ID" ? "faceid" : "touchid")
+                                .font(.system(size: 18, weight: .semibold))
+                            Text("Configure \(authManager.biometricType)")
+                                .font(.body)
+                                .fontWeight(.semibold)
                         }
+                        .foregroundColor(AppTheme.accentColor(for: selectedTheme).opacity(0.5))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background {
+                            if cardStyle == .solid {
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(colorScheme == .dark ? Color(white: 0.1) : Color.white.opacity(0.3))
+                            } else {
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(.ultraThinMaterial.opacity(0.5))
+                            }
+                        }
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color.orange.opacity(0.4), lineWidth: 1)
+                        )
                     }
+                    .disabled(true)
+                    
+                    HStack(spacing: 4) {
+                        Image(systemName: "wrench.and.screwdriver.fill")
+                            .font(.system(size: 11))
+                        Text("Feature In Testing • Coming Soon")
+                            .font(.system(size: 11, weight: .medium))
+                    }
+                    .foregroundColor(.orange.opacity(0.8))
                 }
             }
             

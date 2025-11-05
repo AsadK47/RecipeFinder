@@ -81,6 +81,7 @@ struct FaceIDOnboardingSplash: View {
                 
                 VStack(spacing: 0) {
                     Spacer()
+                        .frame(minHeight: 80, maxHeight: 120)
                     
                     // Enhanced Icon with animations
                     ZStack {
@@ -178,11 +179,11 @@ struct FaceIDOnboardingSplash: View {
                             .rotationEffect(.degrees(iconRotation))
                     }
                     .frame(height: 240)
-                    .padding(.bottom, 60)
+                    .padding(.bottom, 50)
                     .opacity(contentOpacity)
                     
                     // Title and Description with enhanced styling
-                    VStack(spacing: 28) {
+                    VStack(spacing: 24) {
                         VStack(spacing: 12) {
                             Text("Set Up \(biometricName)")
                                 .font(.system(size: 38, weight: .bold, design: .rounded))
@@ -214,7 +215,7 @@ struct FaceIDOnboardingSplash: View {
                                 .padding(.horizontal, 20)
                             
                             // Enhanced Benefits list
-                            VStack(spacing: 14) {
+                            VStack(spacing: 12) {
                                 BiometricBenefitRow(
                                     icon: "bolt.fill",
                                     title: "Lightning Fast",
@@ -231,16 +232,17 @@ struct FaceIDOnboardingSplash: View {
                                     description: "Never type again"
                                 )
                             }
-                            .padding(.top, 12)
+                            .padding(.top, 8)
                         }
                     }
                     .padding(.horizontal, 36)
                     .opacity(contentOpacity)
                     
                     Spacer()
+                        .frame(minHeight: 50)
                     
                     // Enhanced Buttons
-                    VStack(spacing: 16) {
+                    VStack(spacing: 14) {
                         // Enable Button
                         Button(action: enableBiometrics) {
                             HStack(spacing: 12) {
@@ -298,7 +300,7 @@ struct FaceIDOnboardingSplash: View {
                                 .font(.system(size: 17, weight: .semibold))
                                 .foregroundColor(.white.opacity(0.9))
                                 .frame(maxWidth: .infinity)
-                                .frame(height: 58)
+                                .frame(height: 56)
                                 .background(
                                     RoundedRectangle(cornerRadius: 18)
                                         .fill(Color.white.opacity(0.18))
@@ -310,7 +312,7 @@ struct FaceIDOnboardingSplash: View {
                         }
                     }
                     .padding(.horizontal, 32)
-                    .padding(.bottom, 60)
+                    .padding(.bottom, geometry.safeAreaInsets.bottom > 0 ? 40 : 50)
                     .opacity(contentOpacity)
                 }
             }
