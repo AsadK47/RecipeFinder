@@ -36,7 +36,7 @@ class PersistenceController {
         
         // Enable automatic merging of changes
         container.viewContext.automaticallyMergesChangesFromParent = true
-        container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy()
     }
     
     /// Attempts to recover from a store loading failure by removing corrupted data

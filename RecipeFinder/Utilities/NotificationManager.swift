@@ -32,9 +32,12 @@ import UserNotifications
 /// )
 /// ```
 
-@MainActor
-class NotificationManager: NSObject, ObservableObject {
-    static let shared = NotificationManager()
+import Foundation
+import UserNotifications
+import SwiftUI
+
+class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterDelegate {
+    nonisolated(unsafe) static let shared = NotificationManager()
     
     @Published var isAuthorized = false
     

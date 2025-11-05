@@ -830,63 +830,6 @@ struct AccountRowButton: View {
     }
 }
 
-// Privacy Policy View
-
-struct PrivacyPolicyView: View {
-    @Environment(\.dismiss) private var dismiss
-    
-    var body: some View {
-        NavigationView {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("Privacy Policy")
-                        .font(.title)
-                        .fontWeight(.bold)
-                    
-                    Text("Last updated: \(Date().formatted(date: .long, time: .omitted))")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    
-                    Text("""
-                    RecipeFinder is committed to protecting your privacy and complying with UK GDPR and Data Protection Act 2018.
-                    
-                    **Data We Collect:**
-                    • Account information (name, email)
-                    • Recipe data and preferences
-                    • App usage information
-                    
-                    **How We Use Your Data:**
-                    • To provide and improve our services
-                    • To personalize your experience
-                    • To communicate with you about the app
-                    
-                    **Your Rights:**
-                    • Access your personal data
-                    • Request data correction or deletion
-                    • Export your data
-                    • Withdraw consent
-                    
-                    **Data Security:**
-                    All data is encrypted and stored securely on your device. We do not share your personal information with third parties.
-                    
-                    **Contact:**
-                    For privacy concerns, contact us within the app.
-                    """)
-                    .font(.body)
-                }
-                .padding()
-            }
-            .navigationTitle("Privacy Policy")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") { dismiss() }
-                }
-            }
-        }
-    }
-}
-
 // MARK: - Data Privacy View
 
 struct DataPrivacyView: View {

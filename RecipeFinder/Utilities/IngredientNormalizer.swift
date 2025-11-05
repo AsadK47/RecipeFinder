@@ -173,8 +173,7 @@ struct IngredientNormalizer {
     
     // MARK: - Memoization Cache
     
-    @MainActor
-    private static var normalizationCache: [String: String] = [:]
+    nonisolated(unsafe) private static var normalizationCache: [String: String] = [:]
     private static let maxCacheSize = 200
     
     // MARK: - Public Methods
@@ -182,9 +181,8 @@ struct IngredientNormalizer {
     /// Normalizes an ingredient name to a set standard - OPTIMIZED with memoization
     /// - Parameter ingredient: Raw ingredient name from recipe
     /// - Returns: Normalized ingredient name
-    @MainActor
     static func normalize(_ ingredient: String) -> String {
-        // Check cache first for performance (thread-safe with @MainActor)
+        // Check cache first for performance
         if let cached = normalizationCache[ingredient] {
             return cached
         }
@@ -232,7 +230,7 @@ struct IngredientNormalizer {
         // If no mapping found, capitalize properly and return
         let result = normalized.capitalized
         
-        // Cache the result for future lookups (thread-safe with @MainActor)
+        // Cache the result for future lookups
         if normalizationCache.count < maxCacheSize {
             normalizationCache[ingredient] = result
         } else if normalizationCache.count > maxCacheSize + 50 {
@@ -248,7 +246,6 @@ struct IngredientNormalizer {
     /// Normalizes a list of ingredients
     /// - Parameter ingredients: Array of raw ingredient names
     /// - Returns: Array of normalized ingredient names
-    @MainActor
     static func normalize(_ ingredients: [String]) -> [String] {
         return ingredients.map { normalize($0) }
     }

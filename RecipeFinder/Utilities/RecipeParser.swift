@@ -404,12 +404,10 @@ struct RecipeParser {
     }
     
     // Decode HTML entities - OPTIMIZED with memoization and better string manipulation
-    @MainActor
-    private static var entityCache: [String: String] = [:]
+    nonisolated(unsafe) private static var entityCache: [String: String] = [:]
     
-    @MainActor
     private static func decodeHTMLEntities(_ text: String) -> String {
-        // Check cache first (thread-safe with @MainActor)
+        // Check cache first
         if let cached = entityCache[text] {
             return cached
         }
@@ -469,7 +467,7 @@ struct RecipeParser {
             }
         }
         
-        // Cache result for future use (limit cache size) - thread-safe with @MainActor
+        // Cache result for future use (limit cache size)
         if entityCache.count < 100 {
             entityCache[text] = result
         } else if entityCache.count > 150 {
