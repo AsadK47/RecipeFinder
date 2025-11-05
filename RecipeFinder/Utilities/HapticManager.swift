@@ -4,7 +4,7 @@ import AudioToolbox
 /// Centralized haptic feedback manager for consistent tactile responses throughout the app
 @MainActor
 class HapticManager: Sendable {
-    nonisolated(unsafe) static let shared = HapticManager()
+    static let shared = HapticManager()
     
     nonisolated private init() {}
     

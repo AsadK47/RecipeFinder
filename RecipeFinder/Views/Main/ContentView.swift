@@ -97,7 +97,9 @@ struct ContentView: View {
                 object: nil,
                 queue: .main
             ) { _ in
-                configureTabBarAppearance()
+                Task { @MainActor in
+                    configureTabBarAppearance()
+                }
             }
             
             NotificationCenter.default.addObserver(
@@ -105,7 +107,9 @@ struct ContentView: View {
                 object: nil,
                 queue: .main
             ) { _ in
-                configureTabBarAppearance()
+                Task { @MainActor in
+                    configureTabBarAppearance()
+                }
             }
         }
     }

@@ -8,7 +8,7 @@ import CryptoKit
 /// Never stores passwords in plain text - uses SHA256 hashing
 @MainActor
 class SecureCredentialManager {
-    nonisolated(unsafe) static let shared = SecureCredentialManager()
+    static let shared = SecureCredentialManager()
     
     nonisolated private init() {}
     

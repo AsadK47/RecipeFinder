@@ -39,7 +39,7 @@ import SwiftUI
 import Combine
 
 class ThemeManager: ObservableObject {
-    nonisolated(unsafe) static let shared = ThemeManager()
+    static let shared = ThemeManager()
     
     @AppStorage("appTheme") var selectedTheme: AppTheme.ThemeType = .teal {
         didSet {
@@ -120,7 +120,7 @@ extension Color {
 
 // Environment key for ThemeManager
 private struct ThemeManagerKey: EnvironmentKey {
-    nonisolated(unsafe) static let defaultValue = ThemeManager.shared
+    static let defaultValue = ThemeManager.shared
 }
 
 extension EnvironmentValues {

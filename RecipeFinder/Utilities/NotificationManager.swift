@@ -38,7 +38,7 @@ import SwiftUI
 
 @MainActor
 class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterDelegate {
-    nonisolated(unsafe) static let shared = NotificationManager()
+    static let shared = NotificationManager()
     
     @Published var isAuthorized = false
     
