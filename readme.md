@@ -475,7 +475,7 @@ Import recipes from anywhere • Create shopping lists instantly • Track kitch
 
 # Build for simulator
 xcodebuild -scheme RecipeFinder \
-  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+  -destination 'platform=iOS Simulator,name=iPhone 1 Pro' \
   clean build
 
 # Build for device  

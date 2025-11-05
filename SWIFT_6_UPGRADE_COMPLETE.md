@@ -151,7 +151,7 @@ xcodebuild build \
   -project RecipeFinder.xcodeproj \
   -scheme RecipeFinder \
   -configuration Debug \
-  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+  -destination 'platform=iOS Simulator,name=iphone 16 pro' \
   SWIFT_VERSION=6.0 \
   SWIFT_STRICT_CONCURRENCY=complete
 
@@ -159,7 +159,7 @@ xcodebuild build \
 xcodebuild test \
   -project RecipeFinder.xcodeproj \
   -scheme RecipeFinder \
-  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+  -destination 'platform=iOS Simulator,name=iphone 16 pro' \
   SWIFT_VERSION=6.0
 ```
 
@@ -316,7 +316,7 @@ Already configured in `.github/workflows/build.yml`:
    # Run full test suite
    xcodebuild test \
      -scheme RecipeFinder \
-     -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
+     -destination 'platform=iOS Simulator,name=iphone 16 pro'
    ```
 
 2. **Push to GitHub**

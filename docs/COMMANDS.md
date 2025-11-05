@@ -39,7 +39,7 @@ Or using xcodebuild:
 ```bash
 xcodebuild test \
     -scheme RecipeFinder \
-    -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=latest'
+    -destination 'platform=iOS Simulator,name=iphone 16 pro,OS=latest'
 ```
 
 ### Run Tests in Xcode
@@ -50,7 +50,7 @@ xcodebuild test \
 ```bash
 xcodebuild test \
     -scheme RecipeFinder \
-    -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+    -destination 'platform=iOS Simulator,name=iphone 16 pro' \
     -only-testing:RecipeFinderTests/RecipeModelTests
 ```
 
@@ -70,7 +70,7 @@ In Xcode:
 ```bash
 xcodebuild build \
     -scheme RecipeFinder \
-    -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
+    -destination 'platform=iOS Simulator,name=iphone 16 pro'
 ```
 
 ### Build for Device
@@ -112,7 +112,7 @@ Or in Xcode: **File → Packages → Update to Latest Package Versions**
 # Build + Test + Lint
 xcodebuild clean build test \
     -scheme RecipeFinder \
-    -destination 'platform=iOS Simulator,name=iPhone 17 Pro' && \
+    -destination 'platform=iOS Simulator,name=iphone 16 pro' && \
 ./scripts/lint.sh
 ```
 
@@ -175,7 +175,7 @@ brew upgrade swiftlint
 xcrun simctl list devices
 
 # Boot a simulator
-xcrun simctl boot "iPhone 17 Pro"
+xcrun simctl boot "iphone 16 pro"
 ```
 
 ### Clean Derived Data

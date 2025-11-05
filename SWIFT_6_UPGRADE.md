@@ -16,7 +16,7 @@ All targets now use Swift 6.0:
 Updated to use Xcode 16 and macOS 15:
 - ✅ Runner: `macos-15` (was `macos-14`)
 - ✅ Xcode version: `16.0` (was `15.4`)
-- ✅ iOS Simulator: `iPhone 16 Pro, iOS 18.0` (was `iPhone 17 Pro, iOS 17.5`)
+- ✅ iOS Simulator: `iPhone 16 Pro, iOS 18.0` (was `iphone 16 pro, iOS 17.5`)
 - ✅ Fallback Xcode versions: Added `16.1` and `16.0` in selection logic
 
 ### 3. **Code Already Compliant**
