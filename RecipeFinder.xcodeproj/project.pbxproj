@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9E0C88662EBAEB1E00D707E3 /* FaceIDOnboardingSplash.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E0C88652EBAEB1E00D707E3 /* FaceIDOnboardingSplash.swift */; };
 		9E212D722EB12375005743F7 /* RecipeShareUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E212D712EB12375005743F7 /* RecipeShareUtility.swift */; };
 		9E2E34212E9D9F8500E2E49F /* KitchenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E2E34202E9D9F8500E2E49F /* KitchenView.swift */; };
 		9E2E34242E9DA10000E2E49F /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E2E34232E9DA10000E2E49F /* FlowLayout.swift */; };
@@ -107,6 +108,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9E0C88652EBAEB1E00D707E3 /* FaceIDOnboardingSplash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceIDOnboardingSplash.swift; sourceTree = "<group>"; };
 		9E212D6F2EB12315005743F7 /* RecipeModel 9.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 9.xcdatamodel"; sourceTree = "<group>"; };
 		9E212D702EB12315005743F7 /* RecipeModel 10.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 10.xcdatamodel"; sourceTree = "<group>"; };
 		9E212D712EB12375005743F7 /* RecipeShareUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeShareUtility.swift; sourceTree = "<group>"; };
@@ -334,6 +336,7 @@
 		9E51C3A72EB40DC90064B917 /* Authentication */ = {
 			isa = PBXGroup;
 			children = (
+				9E0C88652EBAEB1E00D707E3 /* FaceIDOnboardingSplash.swift */,
 				9E87D3332EB6C05700FFA1D1 /* WelcomeSplashView.swift */,
 				9E87D3282EB6722300FFA1D1 /* BiometricSetupView.swift */,
 				9EA779022EB4C6C90028F064 /* PasswordReminderSplashView.swift */,
@@ -666,6 +669,7 @@
 				9EA779142EB56BA00028F064 /* NotesListView.swift in Sources */,
 				9E40CAF12EB9891700ED9594 /* ShoppingListModel.swift in Sources */,
 				9E40CAEF2EB9882700ED9594 /* KitchenInventoryModel.swift in Sources */,
+				9E0C88662EBAEB1E00D707E3 /* FaceIDOnboardingSplash.swift in Sources */,
 				9EA779152EB56BA00028F064 /* NoteCardView.swift in Sources */,
 				9E4DC7382E9BF19700E17DDF /* AppTheme.swift in Sources */,
 				9E4DC7502E9C11FB00E17DDF /* RecipeDetailView.swift in Sources */,

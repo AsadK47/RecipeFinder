@@ -52,6 +52,7 @@ struct WelcomeSplashView: View {
                 .frame(width: particle.size, height: particle.size)
                 .position(x: particle.x, y: particle.y)
                 .opacity(particlesOpacity)
+                .allowsHitTesting(false) // Particles should not block touches
                 .animation(
                     .easeInOut(duration: Double.random(in: 2...4))
                     .repeatForever(autoreverses: true)
@@ -253,10 +254,12 @@ struct WelcomeSplashView: View {
         Button(action: handleContinueAction) {
             buttonContent
         }
+        .buttonStyle(.plain) // Ensure button responds to taps
         .scaleEffect(buttonScale)
         .padding(.horizontal, 32)
         .padding(.bottom, 50)
         .opacity(contentOpacity)
+        .allowsHitTesting(true) // Explicitly allow hit testing
     }
     
     private var buttonContent: some View {
@@ -291,6 +294,7 @@ struct WelcomeSplashView: View {
     
     // MARK: - Actions
     private func handleContinueAction() {
+        print("🔘 WelcomeSplash: Continue button tapped")
         HapticManager.shared.success()
         withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
             buttonScale = 0.95
@@ -299,6 +303,7 @@ struct WelcomeSplashView: View {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
                 buttonScale = 1.0
             }
+            print("🔘 WelcomeSplash: Calling onContinue callback")
             onContinue()
         }
     }

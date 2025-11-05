@@ -547,6 +547,67 @@ struct AccountView: View {
     
     private var accountActionsSection: some View {
         VStack(spacing: 12) {
+            // Sign in with Apple (if not already using it)
+            if authManager.currentUser?.appleUserID == nil && !isGuestMode {
+                Button {
+                    Task {
+                        try? await authManager.signInWithApple()
+                    }
+                    HapticManager.shared.light()
+                } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "applelogo")
+                            .font(.system(size: 18, weight: .semibold))
+                        Text("Link Apple ID")
+                            .font(.body)
+                            .fontWeight(.semibold)
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background {
+                        if cardStyle == .solid {
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color.black)
+                        } else {
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color.black.opacity(0.9))
+                        }
+                    }
+                }
+            }
+            
+            // Face ID / Touch ID Settings
+            if authManager.biometricsAvailable {
+                Button {
+                    // Show biometric setup
+                    Task {
+                        try? await authManager.authenticateWithBiometrics()
+                    }
+                    HapticManager.shared.light()
+                } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: authManager.biometricType == "Face ID" ? "faceid" : "touchid")
+                            .font(.system(size: 18, weight: .semibold))
+                        Text("Configure \(authManager.biometricType)")
+                            .font(.body)
+                            .fontWeight(.semibold)
+                    }
+                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background {
+                        if cardStyle == .solid {
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white)
+                        } else {
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(.ultraThinMaterial)
+                        }
+                    }
+                }
+            }
+            
             Button {
                 showingSignOutAlert = true
                 HapticManager.shared.light()

@@ -9,7 +9,9 @@ struct RecipeFinderApp: App {
     @StateObject private var themeManager = ThemeManager.shared
     @StateObject private var notificationManager = NotificationManager.shared
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    @AppStorage("hasSeenBiometricOnboarding") private var hasSeenBiometricOnboarding = false
     @State private var showOnboarding = false
+    @State private var showFaceIDOnboarding = false
     
     init() {
         configureAppearance()
@@ -35,6 +37,17 @@ struct RecipeFinderApp: App {
         WindowGroup {
             rootView
                 .animation(.easeInOut(duration: 0.3), value: authManager.isAuthenticated)
+                .fullScreenCover(isPresented: $showFaceIDOnboarding) {
+                    FaceIDOnboardingSplash {
+                        showFaceIDOnboarding = false
+                        // Show main onboarding after Face ID setup
+                        if !hasCompletedOnboarding {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                showOnboarding = true
+                            }
+                        }
+                    }
+                }
                 .fullScreenCover(isPresented: $showOnboarding) {
                     OnboardingView()
                         .onDisappear {
@@ -42,24 +55,37 @@ struct RecipeFinderApp: App {
                         }
                 }
                 .onAppear {
-                    // Show onboarding on first launch after authentication
-                    if authManager.isAuthenticated && !hasCompletedOnboarding {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            showOnboarding = true
-                        }
+                    // Check what to show on first launch after authentication
+                    if authManager.isAuthenticated {
+                        handleOnboardingFlow()
                     }
                 }
                 .onChange(of: authManager.isAuthenticated) { _, isAuthenticated in
-                    // Show onboarding when user first signs in
-                    if isAuthenticated && !hasCompletedOnboarding {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            showOnboarding = true
-                        }
+                    // Handle onboarding flow when user first signs in
+                    if isAuthenticated {
+                        handleOnboardingFlow()
                     }
                 }
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
                     authManager.checkSessionExpiration()
                 }
+        }
+    }
+    
+    // MARK: - Onboarding Flow
+    
+    private func handleOnboardingFlow() {
+        // Priority 1: Face ID onboarding (if biometrics available and not seen)
+        if authManager.biometricsAvailable && !hasSeenBiometricOnboarding {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                showFaceIDOnboarding = true
+            }
+        }
+        // Priority 2: Main app onboarding
+        else if !hasCompletedOnboarding {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                showOnboarding = true
+            }
         }
     }
     

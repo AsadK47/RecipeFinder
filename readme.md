@@ -16,6 +16,19 @@ RecipeFinder brings **premium design** and **powerful features** together in a c
 
 **Built with SwiftUI.** Powered by Core Data. Designed for those who care about both form and function.
 
+---
+
+## 📸 Screenshots
+
+<div align="center">
+
+<img src="docs/screenshots/CreateAccountPage.png" alt="Create Account" width="250"/>
+<img src="docs/screenshots/HomePage.png" alt="Home Page" width="250"/>
+<img src="docs/screenshots/SplashScreenAfterSigningInPage.png" alt="Welcome Splash" width="250"/>
+
+*Elegant sign-up • Beautiful recipe browsing • Delightful onboarding*
+
+</div>
 
 ---
 
@@ -85,7 +98,7 @@ Import recipes from anywhere • Create shopping lists instantly • Track kitch
 
 ---
 
-## ## 🏗 Technical Excellence
+## 🏗 Technical Excellence
 
 ### Architecture
 - **SwiftUI + MVVM**: Clean, reactive, testable
