@@ -5,7 +5,7 @@ import LocalAuthentication
 
 @MainActor
 final class AuthenticationManager: NSObject, ObservableObject {
-    static let shared = AuthenticationManager()
+    nonisolated(unsafe) static let shared = AuthenticationManager()
     private let credentialManager = SecureCredentialManager.shared
     
     // Authentication State

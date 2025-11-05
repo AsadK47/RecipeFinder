@@ -266,7 +266,7 @@ extension View {
 /// Error Logger for debugging
 @MainActor
 class ErrorLogger {
-    static let shared = ErrorLogger()
+    nonisolated(unsafe) static let shared = ErrorLogger()
     
     private init() {}
     

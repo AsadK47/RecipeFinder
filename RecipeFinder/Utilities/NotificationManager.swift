@@ -38,7 +38,7 @@ import SwiftUI
 
 @MainActor
 class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterDelegate {
-    static let shared = NotificationManager()
+    nonisolated(unsafe) static let shared = NotificationManager()
     
     @Published var isAuthorized = false
     
@@ -54,9 +54,9 @@ class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterD
     
     /// Request permission to send notifications
     /// Call this when the app launches or when user enables notifications in settings
-    func requestPermission(completion: @escaping (Bool) -> Void) {
+    func requestPermission(completion: @escaping @Sendable (Bool) -> Void) {
         notificationCenter.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 self.isAuthorized = granted
                 
                 if let error = error {
@@ -66,7 +66,6 @@ class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterD
                 } else {
                     debugLog("⚠️ Notification permission denied")
                 }
-                
                 completion(granted)
             }
         }
@@ -75,7 +74,7 @@ class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterD
     /// Check current notification permission status
     func checkAuthorizationStatus() {
         notificationCenter.getNotificationSettings { settings in
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 self.isAuthorized = settings.authorizationStatus == .authorized
                 
                 debugLog("📱 Notification Status: \(settings.authorizationStatus.rawValue)")
@@ -286,8 +285,7 @@ class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterD
     
     /// Cancel all timer notifications
     func cancelAllTimerNotifications() {
-        notificationCenter.getPendingNotificationRequests { [weak self] requests in
-            guard let self = self else { return }
+        notificationCenter.getPendingNotificationRequests { requests in
             let timerIds = requests
                 .filter { ($0.content.userInfo["type"] as? String) == "timer" }
                 .map { $0.identifier }
@@ -308,7 +306,7 @@ class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterD
     /// Get list of all pending notifications
     func getPendingNotifications(completion: @escaping @Sendable ([UNNotificationRequest]) -> Void) {
         notificationCenter.getPendingNotificationRequests { requests in
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 completion(requests)
             }
         }

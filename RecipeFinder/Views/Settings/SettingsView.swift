@@ -888,7 +888,7 @@ struct NotificationSettingsView: View {
     
     private func checkNotificationPermission() {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 notificationPermission = settings.authorizationStatus
             }
         }
@@ -1475,7 +1475,8 @@ struct PrivacySettingsView: View {
                                         showResetSuccess = true
                                         HapticManager.shared.success()
                                         
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                        Task { @MainActor in
+                                            try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
                                             showResetSuccess = false
                                         }
                                     }) {
@@ -1804,7 +1805,8 @@ struct DataManagementSettingsView: View {
         dataCleared = true
         HapticManager.shared.success()
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
             dataCleared = false
         }
     }
@@ -1832,7 +1834,8 @@ struct DataManagementSettingsView: View {
         dataCleared = true
         HapticManager.shared.success()
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
             dataCleared = false
         }
     }

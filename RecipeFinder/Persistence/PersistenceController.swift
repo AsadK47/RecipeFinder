@@ -3,7 +3,7 @@ import Foundation
 
 @MainActor
 class PersistenceController {
-    static let shared = PersistenceController()
+    nonisolated(unsafe) static let shared = PersistenceController()
     
     let container: NSPersistentContainer
     private(set) var loadError: Error?

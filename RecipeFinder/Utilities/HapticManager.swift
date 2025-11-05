@@ -2,7 +2,8 @@ import UIKit
 import AudioToolbox
 
 /// Centralized haptic feedback manager for consistent tactile responses throughout the app
-class HapticManager {
+@MainActor
+class HapticManager: Sendable {
     nonisolated(unsafe) static let shared = HapticManager()
     
     private init() {}
@@ -66,7 +67,8 @@ class HapticManager {
     // Double tap pattern - light-light quickly
     func doubleTap() {
         light()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
             self.light()
         }
     }
@@ -80,7 +82,8 @@ class HapticManager {
         AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
         
         // Follow up with light haptic
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 150_000_000) // 0.15 seconds
             self.light()
         }
     }
@@ -88,7 +91,8 @@ class HapticManager {
     // Delete pattern - warning + rigid
     func delete() {
         warning()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
             self.rigid()
         }
     }

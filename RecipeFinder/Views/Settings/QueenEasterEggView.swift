@@ -215,12 +215,13 @@ struct QueenEasterEggView: View {
                 
                 // Close button
                 Button(action: {
-                    HapticManager.shared.success()
-                    withAnimation(.easeOut(duration: 0.3)) {
-                        contentOpacity = 0
-                        crownScale = 0.3
-                    }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    Task { @MainActor in
+                        HapticManager.shared.success()
+                        withAnimation(.easeOut(duration: 0.3)) {
+                            contentOpacity = 0
+                            crownScale = 0.3
+                        }
+                        try? await Task.sleep(nanoseconds: 300_000_000) // 0.3 seconds
                         dismiss()
                     }
                 }) {
@@ -293,7 +294,8 @@ struct QueenEasterEggView: View {
             }
             
             // Trigger confetti after a delay
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
                 confettiCounter += 1
                 HapticManager.shared.celebrate()
             }
