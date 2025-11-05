@@ -2,6 +2,7 @@ import Foundation
 import SwiftUI
 
 /// Smart Recipe Importer - Now powered by RecipeParser engine
+@MainActor
 class RecipeImporter: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?

@@ -10,8 +10,9 @@ import Network
 
 /// Monitors network connectivity and provides offline/online status
 /// This helps show users when recipe import features won't work
+@MainActor
 class NetworkMonitor: ObservableObject {
-    nonisolated(unsafe) static let shared = NetworkMonitor()
+    static let shared = NetworkMonitor()
     
     private let monitor = NWPathMonitor()
     private let queue = DispatchQueue(label: "NetworkMonitor")

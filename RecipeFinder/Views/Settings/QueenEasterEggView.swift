@@ -36,8 +36,8 @@ struct QueenEasterEggView: View {
     
     var body: some View {
         ZStack {
-            // Background gradient with royal purple/pink theme
-            LinearGradient(
+            // Romantic gradient background
+            let backgroundGradient = LinearGradient(
                 gradient: Gradient(colors: [
                     Color.purple.opacity(0.8),
                     Color.pink.opacity(0.6),
@@ -46,7 +46,9 @@ struct QueenEasterEggView: View {
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
-            .ignoresSafeArea()
+            
+            backgroundGradient
+                .ignoresSafeArea()
             
             // Floating romantic particles
             ForEach(Array(particleData.enumerated()), id: \.offset) { index, particle in
@@ -94,19 +96,19 @@ struct QueenEasterEggView: View {
                     }
                     
                     // Glow background
+                    let glowGradient = RadialGradient(
+                        gradient: Gradient(colors: [
+                            Color.yellow.opacity(glowIntensity),
+                            Color.orange.opacity(glowIntensity * 0.6),
+                            Color.clear
+                        ]),
+                        center: .center,
+                        startRadius: 0,
+                        endRadius: 120
+                    )
+                    
                     Circle()
-                        .fill(
-                            RadialGradient(
-                                gradient: Gradient(colors: [
-                                    Color.yellow.opacity(glowIntensity),
-                                    Color.orange.opacity(glowIntensity * 0.6),
-                                    Color.clear
-                                ]),
-                                center: .center,
-                                startRadius: 0,
-                                endRadius: 120
-                            )
-                        )
+                        .fill(glowGradient)
                         .frame(width: 240, height: 240)
                         .blur(radius: 30)
                     

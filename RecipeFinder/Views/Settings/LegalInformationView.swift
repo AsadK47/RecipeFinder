@@ -828,7 +828,7 @@ struct BodyText: View {
     }
 }
 
-struct BulletPoint: View {
+private struct BulletPoint: View {
     let text: String
     @Environment(\.colorScheme) var colorScheme
     

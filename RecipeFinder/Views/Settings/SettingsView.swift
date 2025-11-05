@@ -2316,10 +2316,10 @@ struct PartyTimeView: View {
                                 }
                                 
                                 VStack(alignment: .leading, spacing: 8) {
-                                    BulletPoint(text: "Press and hold the button")
-                                    BulletPoint(text: "Your device will vibrate continuously")
-                                    BulletPoint(text: "Release to stop the vibration")
-                                    BulletPoint(text: "Perfect for getting attention or just having fun!")
+                                    BulletPoint("Press and hold the button")
+                                    BulletPoint("Your device will vibrate continuously")
+                                    BulletPoint("Release to stop the vibration")
+                                    BulletPoint("Perfect for getting attention or just having fun!")
                                 }
                             }
                             .padding(20)
@@ -2359,9 +2359,13 @@ struct PartyTimeView: View {
     }
 }
 
-struct BulletPoint: View {
+private struct BulletPoint: View {
     let text: String
     @Environment(\.colorScheme) var colorScheme
+    
+    init(_ text: String) {
+        self.text = text
+    }
     
     var body: some View {
         HStack(alignment: .top, spacing: 8) {
