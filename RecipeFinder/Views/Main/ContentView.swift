@@ -58,13 +58,28 @@ struct ContentView: View {
                 configureTabBarAppearance()
             }
             .onChange(of: selectedTheme) { _, _ in
-                configureTabBarAppearance()
+                // Force immediate refresh
+                DispatchQueue.main.async {
+                    configureTabBarAppearance()
+                }
             }
             .onChange(of: cardStyle) { _, _ in
-                configureTabBarAppearance()
+                // Force immediate refresh
+                DispatchQueue.main.async {
+                    configureTabBarAppearance()
+                }
             }
-            .onChange(of: colorScheme) { _, _ in
-                configureTabBarAppearance()
+            .onChange(of: colorScheme) { _, newScheme in
+                // Force immediate refresh when color scheme changes
+                DispatchQueue.main.async {
+                    configureTabBarAppearance()
+                    // Force all windows to refresh their appearance
+                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+                        windowScene.windows.forEach { window in
+                            window.overrideUserInterfaceStyle = .unspecified
+                        }
+                    }
+                }
             }
             .onChange(of: selectedTab) { _, _ in
                 HapticManager.shared.selection()
@@ -74,6 +89,23 @@ struct ContentView: View {
             // Load recipes only once on appear
             if recipes.isEmpty {
                 loadRecipes()
+            }
+            
+            // Listen for theme/card style changes
+            NotificationCenter.default.addObserver(
+                forName: .cardStyleDidChange,
+                object: nil,
+                queue: .main
+            ) { _ in
+                configureTabBarAppearance()
+            }
+            
+            NotificationCenter.default.addObserver(
+                forName: .themeDidChange,
+                object: nil,
+                queue: .main
+            ) { _ in
+                configureTabBarAppearance()
             }
         }
     }
@@ -155,6 +187,20 @@ struct ContentView: View {
         // Apply to all tab bar states
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
+        
+        // Force immediate update of all existing tab bars in the app
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+            windowScene.windows.forEach { window in
+                window.subviews.forEach { view in
+                    if let tabBar = view as? UITabBar {
+                        tabBar.standardAppearance = appearance
+                        tabBar.scrollEdgeAppearance = appearance
+                        tabBar.setNeedsLayout()
+                        tabBar.layoutIfNeeded()
+                    }
+                }
+            }
+        }
     }
 
     private func loadRecipes() {

@@ -221,16 +221,9 @@ struct SettingsTabView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)
             .onAppear {
-                // Sync cardStyle with system colorScheme on appear
-                cardStyle = colorScheme == .dark ? .solid : .frosted
-                
                 // Load profile image
                 profileImage = accountManager.loadProfileImage()
                 refreshID = UUID()
-            }
-            .onChange(of: colorScheme) { _, newColorScheme in
-                // Automatically update cardStyle when system appearance changes
-                cardStyle = newColorScheme == .dark ? .solid : .frosted
             }
         }
     }
@@ -389,17 +382,6 @@ struct AppearanceAndThemeSettingsView: View {
         .navigationTitle("Appearance & Theme")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
-        .onChange(of: appearanceMode) { _, newMode in
-            // Auto-update card style when mode changes
-            switch newMode {
-            case .system:
-                cardStyle = colorScheme == .dark ? .solid : .frosted
-            case .light:
-                cardStyle = .frosted
-            case .dark:
-                cardStyle = .solid
-            }
-        }
     }
 }
 
@@ -2172,9 +2154,9 @@ struct AboutView: View {
                                 .padding(.vertical, 4)
                             
                             VStack(alignment: .leading, spacing: 8) {
-                                FeatureRow(icon: "shield.fill", text: "Privacy-first: All data stored locally", color: .blue)
-                                FeatureRow(icon: "doc.text.fill", text: "Ingredient database", color: .green)
-                                FeatureRow(icon: "heart.fill", text: "Made with love for home cooks", color: .red)
+                                AboutFeatureRow(icon: "shield.fill", text: "Privacy-first: All data stored locally", color: .blue)
+                                AboutFeatureRow(icon: "doc.text.fill", text: "Ingredient database", color: .green)
+                                AboutFeatureRow(icon: "heart.fill", text: "Made with love for home cooks", color: .red)
                             }
                         }
                         .padding(20)
@@ -2201,7 +2183,7 @@ struct AboutView: View {
     }
 }
 
-struct FeatureRow: View {
+struct AboutFeatureRow: View {
     let icon: String
     let text: String
     let color: Color

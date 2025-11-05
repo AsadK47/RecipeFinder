@@ -41,18 +41,21 @@ class ThemeManager: ObservableObject {
     @AppStorage("appTheme") var selectedTheme: AppTheme.ThemeType = .teal {
         didSet {
             objectWillChange.send()
+            NotificationCenter.default.post(name: .themeDidChange, object: nil)
         }
     }
     
     @AppStorage("cardStyle") var cardStyle: CardStyle = .frosted {
         didSet {
             objectWillChange.send()
+            NotificationCenter.default.post(name: .cardStyleDidChange, object: nil)
         }
     }
     
     @AppStorage("appearanceMode") var appearanceMode: AppearanceMode = .system {
         didSet {
             objectWillChange.send()
+            NotificationCenter.default.post(name: .appearanceModeDidChange, object: nil)
         }
     }
     
@@ -129,4 +132,11 @@ extension View {
     func withThemeManager() -> some View {
         self.environmentObject(ThemeManager.shared)
     }
+}
+
+// Notification names for theme changes
+extension Notification.Name {
+    static let themeDidChange = Notification.Name("themeDidChange")
+    static let cardStyleDidChange = Notification.Name("cardStyleDidChange")
+    static let appearanceModeDidChange = Notification.Name("appearanceModeDidChange")
 }
