@@ -314,9 +314,7 @@ class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterD
     /// Get list of all pending notifications
     func getPendingNotifications(completion: @escaping @Sendable ([UNNotificationRequest]) -> Void) {
         notificationCenter.getPendingNotificationRequests { @Sendable requests in
-            Task { @MainActor in
-                completion(requests)
-            }
+            completion(requests)
         }
     }
     
