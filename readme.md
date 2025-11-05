@@ -12,10 +12,10 @@
 
 ## ⚠️ LEGAL NOTICE & COPYRIGHT DECLARATION
 
-**© 2024-2025 Asad Khan. ALL RIGHTS RESERVED.**  
+**© 2024-2025 Asad Khan & RECIPEFINDER LIMITED. ALL RIGHTS RESERVED.**  
 **PROPRIETARY AND CONFIDENTIAL SOFTWARE**
 
-**This software is the exclusive intellectual property of Asad Khan** and is protected under:
+**This software is the exclusive intellectual property of Asad Khan and RECIPEFINDER LIMITED** and is protected under:
 - **United Kingdom**: Copyright, Designs and Patents Act 1988 (as amended)
 - **United States**: U.S. Copyright Act (17 U.S.C. §§ 101-1332), Digital Millennium Copyright Act (DMCA)
 - **International**: Berne Convention for the Protection of Literary and Artistic Works
@@ -41,6 +41,9 @@
 **Date of First Publication**: October 2024  
 **Copyright Registration**: Pending with UK Intellectual Property Office & U.S. Copyright Office  
 **Author**: Asad Khan (asadkhanruby@gmail.com)  
+**Company**: RECIPEFINDER LIMITED  
+**Company Number**: 16833243  
+**Registered**: England and Wales (5 November 2025)  
 **GitHub**: [@AsadK47](https://github.com/AsadK47)
 
 ### ⚖️ LEGAL PROTECTIONS & ENFORCEMENT
