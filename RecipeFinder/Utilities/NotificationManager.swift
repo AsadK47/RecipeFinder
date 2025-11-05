@@ -36,8 +36,9 @@ import Foundation
 import UserNotifications
 import SwiftUI
 
+@MainActor
 class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterDelegate {
-    nonisolated(unsafe) static let shared = NotificationManager()
+    static let shared = NotificationManager()
     
     @Published var isAuthorized = false
     
@@ -285,13 +286,16 @@ class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterD
     
     /// Cancel all timer notifications
     func cancelAllTimerNotifications() {
-        notificationCenter.getPendingNotificationRequests { requests in
+        notificationCenter.getPendingNotificationRequests { [weak self] requests in
+            guard let self = self else { return }
             let timerIds = requests
                 .filter { ($0.content.userInfo["type"] as? String) == "timer" }
                 .map { $0.identifier }
             
-            self.notificationCenter.removePendingNotificationRequests(withIdentifiers: timerIds)
-            print("🗑️ Canceled \(timerIds.count) timer notifications")
+            Task { @MainActor in
+                self.notificationCenter.removePendingNotificationRequests(withIdentifiers: timerIds)
+                print("🗑️ Canceled \(timerIds.count) timer notifications")
+            }
         }
     }
     
@@ -302,7 +306,7 @@ class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterD
     }
     
     /// Get list of all pending notifications
-    func getPendingNotifications(completion: @escaping ([UNNotificationRequest]) -> Void) {
+    func getPendingNotifications(completion: @escaping @Sendable ([UNNotificationRequest]) -> Void) {
         notificationCenter.getPendingNotificationRequests { requests in
             DispatchQueue.main.async {
                 completion(requests)
@@ -318,10 +322,10 @@ class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterD
 
 // MARK: - UNUserNotificationCenterDelegate
 
-extension NotificationManager: UNUserNotificationCenterDelegate {
+extension NotificationManager {
     /// Called when notification is received while app is in FOREGROUND
     /// By default, notifications don't show when app is open - this allows them to show
-    func userNotificationCenter(
+    nonisolated func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
@@ -333,7 +337,7 @@ extension NotificationManager: UNUserNotificationCenterDelegate {
     }
     
     /// Called when user TAPS on a notification
-    func userNotificationCenter(
+    nonisolated func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse,
         withCompletionHandler completionHandler: @escaping () -> Void

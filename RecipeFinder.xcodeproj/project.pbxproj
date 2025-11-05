@@ -86,6 +86,7 @@
 		9EA779272EB5725D0028F064 /* MealPlanModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA779252EB5725D0028F064 /* MealPlanModel.swift */; };
 		9EA779292EB57D900028F064 /* StandardAppHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA779282EB57D900028F064 /* StandardAppHeader.swift */; };
 		9EB04E5B2EB4704F0033C093 /* MoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EB04E5A2EB4704F0033C093 /* MoreView.swift */; };
+		9EB629022EBB910C005FD6FC /* SystemHealthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EB629012EBB910B005FD6FC /* SystemHealthView.swift */; };
 		9EE5AAD92D08FCBE00C1B736 /* RecipeFinderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EE5AAD82D08FCBE00C1B736 /* RecipeFinderApp.swift */; };
 		9EE5AADB2D08FCBE00C1B736 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EE5AADA2D08FCBE00C1B736 /* ContentView.swift */; };
 		9EE5AADF2D08FCBF00C1B736 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9EE5AADE2D08FCBF00C1B736 /* Assets.xcassets */; };
@@ -193,6 +194,7 @@
 		9EA779252EB5725D0028F064 /* MealPlanModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlanModel.swift; sourceTree = "<group>"; };
 		9EA779282EB57D900028F064 /* StandardAppHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandardAppHeader.swift; sourceTree = "<group>"; };
 		9EB04E5A2EB4704F0033C093 /* MoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreView.swift; sourceTree = "<group>"; };
+		9EB629012EBB910B005FD6FC /* SystemHealthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemHealthView.swift; sourceTree = "<group>"; };
 		9EC3AE5E2D0B772D006C30E1 /* RecipeModel 5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 5.xcdatamodel"; sourceTree = "<group>"; };
 		9EC3AE5F2D0BA3C8006C30E1 /* RecipeModel 6.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 6.xcdatamodel"; sourceTree = "<group>"; };
 		9EC3AE602D0BA9A4006C30E1 /* RecipeModel 7.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 7.xcdatamodel"; sourceTree = "<group>"; };
@@ -433,6 +435,7 @@
 		9E7B9A842E9BECFE007E1786 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				9EB629012EBB910B005FD6FC /* SystemHealthView.swift */,
 				9E4EF5D02EBB6A0600C3C0E7 /* LegalInformationView.swift */,
 				9E4EF5D12EBB6A0600C3C0E7 /* QueenEasterEggView.swift */,
 				9E77ABF32EB4483100666BB0 /* SettingsView.swift */,
@@ -725,6 +728,7 @@
 				9EE5AAD92D08FCBE00C1B736 /* RecipeFinderApp.swift in Sources */,
 				9E2E34212E9D9F8500E2E49F /* KitchenView.swift in Sources */,
 				9E51C39C2EB3EAA10064B917 /* AccountManager.swift in Sources */,
+				9EB629022EBB910C005FD6FC /* SystemHealthView.swift in Sources */,
 				9EA779052EB533230028F064 /* RecipeParser.swift in Sources */,
 				9E51C3922EB3DE580064B917 /* RecipeWizardView.swift in Sources */,
 				9EA778FD2EB4A4B00028F064 /* OnboardingView.swift in Sources */,
@@ -839,6 +843,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
+				NEW_SETTING = "";
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -898,6 +903,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				NEW_SETTING = "";
 				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
