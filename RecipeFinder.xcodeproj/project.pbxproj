@@ -54,7 +54,6 @@
 		9E5447BA2EB0409700AD6D0A /* RecipeImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5447B92EB0409700AD6D0A /* RecipeImportView.swift */; };
 		9E605FFE2D0985BD00236896 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E605FFD2D0985BD00236896 /* PersistenceController.swift */; };
 		9E6060032D09CB6400236896 /* RecipeModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9E6060002D09CB6400236896 /* RecipeModel.xcdatamodeld */; };
-		9E6CF3AA2D83092A00D79DD6 /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 9E6CF3A92D83092A00D79DD6 /* ConfettiSwiftUI */; };
 		9E77ABEE2EB412C600666BB0 /* SecureCredentialManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E77ABEC2EB412C600666BB0 /* SecureCredentialManager.swift */; };
 		9E77ABF02EB4309A00666BB0 /* IngredientNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E77ABEF2EB4309A00666BB0 /* IngredientNormalizer.swift */; };
 		9E77ABF22EB430BC00666BB0 /* DeveloperDocumentationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E77ABF12EB430BC00666BB0 /* DeveloperDocumentationView.swift */; };
@@ -89,8 +88,6 @@
 		9EC7284D2EBC247B00299DAD /* BrokenFeatureLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EC7284B2EBC247B00299DAD /* BrokenFeatureLogger.swift */; };
 		9EE5AAD92D08FCBE00C1B736 /* RecipeFinderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EE5AAD82D08FCBE00C1B736 /* RecipeFinderApp.swift */; };
 		9EE5AADB2D08FCBE00C1B736 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EE5AADA2D08FCBE00C1B736 /* ContentView.swift */; };
-		9EE5AADF2D08FCBF00C1B736 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9EE5AADE2D08FCBF00C1B736 /* Assets.xcassets */; };
-		9EE5AAE22D08FCBF00C1B736 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9EE5AAE12D08FCBF00C1B736 /* Preview Assets.xcassets */; };
 		9EFB6CC02EBAD4EA00686A61 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EFB6CBF2EBAD4EA00686A61 /* NotificationManager.swift */; };
 /* End PBXBuildFile section */
 
@@ -200,6 +197,7 @@
 		9EC3AE612D0F430F006C30E1 /* RecipeModel 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 2.xcdatamodel"; sourceTree = "<group>"; };
 		9EC7284A2EBC247B00299DAD /* AppErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppErrorHandler.swift; sourceTree = "<group>"; };
 		9EC7284B2EBC247B00299DAD /* BrokenFeatureLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrokenFeatureLogger.swift; sourceTree = "<group>"; };
+		9EC7284E2EBC263000299DAD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		9ED480102EBB5F9800F0C7A9 /* RecipeFinder.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RecipeFinder.entitlements; sourceTree = "<group>"; };
 		9EE5AAD52D08FCBE00C1B736 /* RecipeFinder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RecipeFinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9EE5AAD82D08FCBE00C1B736 /* RecipeFinderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeFinderApp.swift; sourceTree = "<group>"; };
@@ -218,7 +216,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				9EB629042EBB9FEE005FD6FC /* ConfettiSwiftUI in Frameworks */,
-				9E6CF3AA2D83092A00D79DD6 /* ConfettiSwiftUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -526,6 +523,7 @@
 		9EE5AAD72D08FCBE00C1B736 /* RecipeFinder */ = {
 			isa = PBXGroup;
 			children = (
+				9EC7284E2EBC263000299DAD /* Info.plist */,
 				9ED480102EBB5F9800F0C7A9 /* RecipeFinder.entitlements */,
 				9E77ABED2EB412C600666BB0 /* Services */,
 				9E4DC7662E9C603B00E17DDF /* Utilities */,
@@ -656,8 +654,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9EE5AAE22D08FCBF00C1B736 /* Preview Assets.xcassets in Resources */,
-				9EE5AADF2D08FCBF00C1B736 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -933,6 +929,7 @@
 				DEVELOPMENT_TEAM = A6BJYF9NCW;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RecipeFinder/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Use Face ID or Touch ID to securely and seamlessly sign in to your account";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -965,6 +962,7 @@
 				DEVELOPMENT_TEAM = A6BJYF9NCW;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RecipeFinder/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Use Face ID or Touch ID to securely and seamlessly sign in to your account";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -1106,11 +1104,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		9E6CF3A92D83092A00D79DD6 /* ConfettiSwiftUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9E6CF3A72D83087300D79DD6 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
-			productName = ConfettiSwiftUI;
-		};
 		9EB629032EBB9FEE005FD6FC /* ConfettiSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 9E6CF3A72D83087300D79DD6 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;

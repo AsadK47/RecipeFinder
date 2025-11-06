@@ -10,6 +10,7 @@ import UIKit
 import SwiftUI
 
 /// System Health Monitor - Detects and tracks broken/unavailable features
+@MainActor
 class BrokenFeatureLogger: ObservableObject {
     static let shared = BrokenFeatureLogger()
     
@@ -31,12 +32,10 @@ class BrokenFeatureLogger: ObservableObject {
     private let fileManager = FileManager.default
     private var logFileURL: URL?
     
-    nonisolated private init() {
-        Task { @MainActor in
-            setupLogFile()
-            initializeFeatureStatuses()
-            performSystemHealthCheck()
-        }
+    private init() {
+        setupLogFile()
+        initializeFeatureStatuses()
+        performSystemHealthCheck()
     }
     
     // MARK: - Feature Status Management
@@ -93,12 +92,22 @@ class BrokenFeatureLogger: ObservableObject {
     /// Perform automatic health checks
     func performSystemHealthCheck() {
         // Check Core Data
-        let persistenceHealthy = PersistenceController.shared.isStoreLoaded
-        setFeatureStatus(.recipes, status: persistenceHealthy ? .operational : .broken)
+        let persistenceHealthy = Task { @MainActor in
+            PersistenceController.shared.isStoreLoaded
+        }
+        Task {
+            let isHealthy = await persistenceHealthy.value
+            setFeatureStatus(.recipes, status: isHealthy ? .operational : .broken)
+        }
         
         // Check Authentication
-        let authHealthy = AuthenticationManager.shared.isAuthenticated || AuthenticationManager.shared.isGuestMode
-        setFeatureStatus(.authentication, status: authHealthy ? .operational : .degraded)
+        let authHealthy = Task { @MainActor in
+            AuthenticationManager.shared.isAuthenticated || AuthenticationManager.shared.isGuestMode
+        }
+        Task {
+            let isHealthy = await authHealthy.value
+            setFeatureStatus(.authentication, status: isHealthy ? .operational : .degraded)
+        }
         
         // Other features default to operational unless explicitly marked
     }
@@ -401,7 +410,7 @@ enum FeatureCategory: String {
     case notes = "Notes"
     case timer = "Timer"
     case settings = "Settings"
-    case import = "Import"
+    case importing = "Import"
     case export = "Export"
     case ui = "UI/UX"
     case performance = "Performance"
