@@ -51,7 +51,7 @@ extension PersistenceController {
                 "Garnish with cilantro and serve."
             ],
             notes: "A flavorful and tangy chicken curry, perfect for pairing with naan or rice.",
-            imageName: "achari_chicken_curry",
+            imageName: "default",
             isFavorite: false
         ))
         

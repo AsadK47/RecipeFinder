@@ -32,7 +32,7 @@ struct RecipeImageView: View {
                     }
             } else {
                 // Default placeholder image
-                Image("food_icon")
+                Image("default_food")
                     .resizable()
                     .scaledToFill()
                     .frame(height: height)

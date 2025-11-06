@@ -3,35 +3,64 @@ import Foundation
 
 @MainActor
 final class PersistenceController {
-    static let shared = PersistenceController()
+    nonisolated(unsafe) static let shared = PersistenceController()
     
     let container: NSPersistentContainer
     private(set) var loadError: Error?
     private(set) var isStoreLoaded = false
     
+    // Constants for entity and keys
+    private enum Entity {
+        static let recipe = "Recipe"
+    }
+    
+    private enum RecipeKey {
+        static let id = "id"
+        static let name = "name"
+        static let category = "category"
+        static let difficulty = "difficulty"
+        static let prepTime = "prepTime"
+        static let cookingTime = "cookingTime"
+        static let baseServings = "baseServings"
+        static let currentServings = "currentServings"
+        static let ingredients = "ingredients"
+        static let prePrepInstructions = "prePrepInstructions"
+        static let instructions = "instructions"
+        static let notes = "notes"
+        static let imageName = "imageName"
+        static let isFavorite = "isFavorite"
+    }
+    
     private init() {
         container = NSPersistentContainer(name: "RecipeModel")
+        configureStore()
+        loadStore()
+    }
+    
+    private func configureStore() {
+        guard let description = container.persistentStoreDescriptions.first else { return }
         
-        let description = container.persistentStoreDescriptions.first
-        description?.setOption(true as NSNumber, forKey: NSMigratePersistentStoresAutomaticallyOption)
-        description?.setOption(true as NSNumber, forKey: NSInferMappingModelAutomaticallyOption)
+        description.setOption(true as NSNumber, forKey: NSMigratePersistentStoresAutomaticallyOption)
+        description.setOption(true as NSNumber, forKey: NSInferMappingModelAutomaticallyOption)
         
+        // Enable automatic merging of changes
+        container.viewContext.automaticallyMergesChangesFromParent = true
+        container.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+    }
+    
+    private func loadStore() {
         container.loadPersistentStores { [weak self] storeDescription, error in
-            // Extract values before crossing actor boundary
             let storeURL = storeDescription.url?.absoluteString ?? "unknown location"
             
-            Task { @MainActor in
-                guard let self = self else { return }
+            Task { @MainActor [weak self] in
+                guard let self else { return }
                 
                 if let error = error as NSError? {
                     debugLog("❌ Failed to load persistent store: \(error.localizedDescription)")
                     debugLog("❌ Error details: \(error.userInfo)")
                     
-                    // Store the error instead of crashing
                     self.loadError = error
                     self.isStoreLoaded = false
-                    
-                    // Attempt recovery: try to delete and recreate the store
                     self.attemptStoreRecovery()
                 } else {
                     debugLog("✅ Core Data store loaded successfully at: \(storeURL)")
@@ -40,10 +69,6 @@ final class PersistenceController {
                 }
             }
         }
-        
-        // Enable automatic merging of changes
-        container.viewContext.automaticallyMergesChangesFromParent = true
-        container.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
     }
     
     /// Attempts to recover from a store loading failure by removing corrupted data
@@ -56,16 +81,14 @@ final class PersistenceController {
         }
         
         do {
-            // Remove the corrupted store
             try FileManager.default.removeItem(at: storeURL)
             debugLog("✅ Removed corrupted store file")
             
-            // Try loading the store again
-            container.loadPersistentStores { [weak self] storeDescription, error in
-                Task { @MainActor in
-                    guard let self = self else { return }
+            container.loadPersistentStores { [weak self] _, error in
+                Task { @MainActor [weak self] in
+                    guard let self else { return }
                     
-                    if let error = error {
+                    if let error {
                         debugLog("❌ Recovery failed: \(error.localizedDescription)")
                         self.loadError = error
                         self.isStoreLoaded = false
@@ -73,8 +96,6 @@ final class PersistenceController {
                         debugLog("✅ Store recovered successfully")
                         self.isStoreLoaded = true
                         self.loadError = nil
-                        
-                        // Repopulate with default data
                         self.populateDatabase()
                     }
                 }
@@ -86,6 +107,7 @@ final class PersistenceController {
     }
     
     /// Checks if the persistent store is ready for operations
+    @discardableResult
     private func ensureStoreIsReady() -> Bool {
         guard isStoreLoaded else {
             debugLog("⚠️ Store not loaded. Cannot perform operation.")
@@ -98,7 +120,7 @@ final class PersistenceController {
         guard ensureStoreIsReady() else { return }
         
         let context = container.viewContext
-        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Recipe")
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: Entity.recipe)
         let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
         
         do {
@@ -111,7 +133,6 @@ final class PersistenceController {
     }
     
     /// Resets the database by clearing all data and repopulating with sample recipes
-    /// This also resets the UserDefaults flag to allow repopulation
     func resetDatabase() {
         debugLog("🔄 Resetting database...")
         clearDatabase()
@@ -121,7 +142,8 @@ final class PersistenceController {
         debugLog("✅ Database reset complete")
     }
     
-    // Struct to encapsulate recipe save parameters
+    // MARK: - Recipe Save Parameters
+    
     struct RecipeSaveParameters {
         let name: String
         let category: String
@@ -136,14 +158,32 @@ final class PersistenceController {
         let notes: String
         let imageName: String
         let isFavorite: Bool
+        
+        init(from recipe: RecipeModel) {
+            self.name = recipe.name
+            self.category = recipe.category
+            self.difficulty = recipe.difficulty
+            self.prepTime = recipe.prepTime
+            self.cookingTime = recipe.cookingTime
+            self.baseServings = recipe.baseServings
+            self.currentServings = recipe.currentServings
+            self.ingredients = recipe.ingredients
+            self.prePrepInstructions = recipe.prePrepInstructions
+            self.instructions = recipe.instructions
+            self.notes = recipe.notes
+            self.imageName = recipe.imageName ?? ""
+            self.isFavorite = recipe.isFavorite
+        }
     }
+    
+    // MARK: - Save Operations
     
     func saveRecipe(parameters: RecipeSaveParameters) {
         guard ensureStoreIsReady() else { return }
         
         let context = container.viewContext
         
-        guard let entity = NSEntityDescription.entity(forEntityName: "Recipe", in: context) else {
+        guard let entity = NSEntityDescription.entity(forEntityName: Entity.recipe, in: context) else {
             debugLog("❌ Failed to find Recipe entity")
             return
         }
@@ -156,21 +196,21 @@ final class PersistenceController {
             return
         }
         
-        // Set values
-        recipe.setValue(UUID(), forKey: "id")
-        recipe.setValue(parameters.name, forKey: "name")
-        recipe.setValue(parameters.category, forKey: "category")
-        recipe.setValue(parameters.difficulty, forKey: "difficulty")
-        recipe.setValue(parameters.prepTime, forKey: "prepTime")
-        recipe.setValue(parameters.cookingTime, forKey: "cookingTime")
-        recipe.setValue(parameters.baseServings, forKey: "baseServings")
-        recipe.setValue(parameters.currentServings, forKey: "currentServings")
-        recipe.setValue(ingredientData, forKey: "ingredients")
-        recipe.setValue(parameters.prePrepInstructions, forKey: "prePrepInstructions")
-        recipe.setValue(parameters.instructions, forKey: "instructions")
-        recipe.setValue(parameters.notes, forKey: "notes")
-        recipe.setValue(parameters.imageName, forKey: "imageName")
-        recipe.setValue(parameters.isFavorite, forKey: "isFavorite")
+        // Set values using constants
+        recipe.setValue(UUID(), forKey: RecipeKey.id)
+        recipe.setValue(parameters.name, forKey: RecipeKey.name)
+        recipe.setValue(parameters.category, forKey: RecipeKey.category)
+        recipe.setValue(parameters.difficulty, forKey: RecipeKey.difficulty)
+        recipe.setValue(parameters.prepTime, forKey: RecipeKey.prepTime)
+        recipe.setValue(parameters.cookingTime, forKey: RecipeKey.cookingTime)
+        recipe.setValue(parameters.baseServings, forKey: RecipeKey.baseServings)
+        recipe.setValue(parameters.currentServings, forKey: RecipeKey.currentServings)
+        recipe.setValue(ingredientData, forKey: RecipeKey.ingredients)
+        recipe.setValue(parameters.prePrepInstructions, forKey: RecipeKey.prePrepInstructions)
+        recipe.setValue(parameters.instructions, forKey: RecipeKey.instructions)
+        recipe.setValue(parameters.notes, forKey: RecipeKey.notes)
+        recipe.setValue(parameters.imageName, forKey: RecipeKey.imageName)
+        recipe.setValue(parameters.isFavorite, forKey: RecipeKey.isFavorite)
         
         do {
             try context.save()
@@ -180,79 +220,80 @@ final class PersistenceController {
         }
     }
     
-    // Helper method to save a RecipeModel directly
     func saveRecipeModel(_ recipe: RecipeModel) {
-        let parameters = RecipeSaveParameters(
-            name: recipe.name,
-            category: recipe.category,
-            difficulty: recipe.difficulty,
-            prepTime: recipe.prepTime,
-            cookingTime: recipe.cookingTime,
-            baseServings: recipe.baseServings,
-            currentServings: recipe.currentServings,
-            ingredients: recipe.ingredients,
-            prePrepInstructions: recipe.prePrepInstructions,
-            instructions: recipe.instructions,
-            notes: recipe.notes,
-            imageName: recipe.imageName ?? "",
-            isFavorite: recipe.isFavorite
-        )
+        let parameters = RecipeSaveParameters(from: recipe)
         saveRecipe(parameters: parameters)
     }
+    
+    // MARK: - Fetch Operations
     
     func fetchRecipes() -> [RecipeModel] {
         guard ensureStoreIsReady() else { return [] }
         
         let context = container.viewContext
-        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Recipe")
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
         
-        let sortDescriptor = NSSortDescriptor(
-            key: "name",
-            ascending: true,
-            selector: #selector(NSString.localizedCaseInsensitiveCompare(_:))
-        )
-        fetchRequest.sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = [
+            NSSortDescriptor(
+                key: RecipeKey.name,
+                ascending: true,
+                selector: #selector(NSString.localizedCaseInsensitiveCompare(_:))
+            )
+        ]
         
         do {
             let results = try context.fetch(fetchRequest)
             debugLog("✅ Fetched \(results.count) recipes from database")
-            
-            return results.compactMap { mapToRecipeModel($0) }
+            return results.compactMap(mapToRecipeModel)
         } catch {
             debugLog("❌ Failed to fetch recipes: \(error.localizedDescription)")
             return []
         }
     }
     
-    // Helper method to map NSManagedObject to RecipeModel
-    private func mapToRecipeModel(_ result: NSManagedObject) -> RecipeModel? {
-        guard let id = result.value(forKey: "id") as? UUID,
-              let name = result.value(forKey: "name") as? String,
-              let ingredientsData = result.value(forKey: "ingredients") as? Data else {
+    func fetchRecipeCount() -> Int {
+        guard ensureStoreIsReady() else { return 0 }
+        
+        let context = container.viewContext
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
+        
+        do {
+            return try context.count(for: fetchRequest)
+        } catch {
+            debugLog("❌ Failed to fetch recipe count: \(error.localizedDescription)")
+            return 0
+        }
+    }
+    
+    // MARK: - Mapping
+    
+    private func mapToRecipeModel(_ object: NSManagedObject) -> RecipeModel? {
+        guard 
+            let id = object.value(forKey: RecipeKey.id) as? UUID,
+            let name = object.value(forKey: RecipeKey.name) as? String,
+            let ingredientsData = object.value(forKey: RecipeKey.ingredients) as? Data
+        else {
             debugLog("⚠️ Skipping recipe with missing required fields")
             return nil
         }
         
-        let category = result.value(forKey: "category") as? String ?? "Uncategorized"
-        let difficulty = result.value(forKey: "difficulty") as? String ?? "Unknown"
-        let prepTime = result.value(forKey: "prepTime") as? String ?? "Unknown"
-        let cookingTime = result.value(forKey: "cookingTime") as? String ?? "Unknown"
-        let baseServings = result.value(forKey: "baseServings") as? Int ?? 1
-        let currentServings = result.value(forKey: "currentServings") as? Int ?? baseServings
-        let prePrepInstructions = result.value(forKey: "prePrepInstructions") as? [String] ?? []
-        let instructions = result.value(forKey: "instructions") as? [String] ?? []
-        let notes = result.value(forKey: "notes") as? String ?? ""
-        let imageName = result.value(forKey: "imageName") as? String
-        let isFavorite = result.value(forKey: "isFavorite") as? Bool ?? false
-        
         // Decode ingredients
-        let ingredients: [Ingredient]
-        do {
-            ingredients = try JSONDecoder().decode([Ingredient].self, from: ingredientsData)
-        } catch {
-            debugLog("❌ Failed to decode ingredients for '\(name)': \(error.localizedDescription)")
+        guard let ingredients = try? JSONDecoder().decode([Ingredient].self, from: ingredientsData) else {
+            debugLog("❌ Failed to decode ingredients for '\(name)'")
             return nil
         }
+        
+        let category = object.value(forKey: RecipeKey.category) as? String ?? "Uncategorized"
+        let difficulty = object.value(forKey: RecipeKey.difficulty) as? String ?? "Unknown"
+        let prepTime = object.value(forKey: RecipeKey.prepTime) as? String ?? "Unknown"
+        let cookingTime = object.value(forKey: RecipeKey.cookingTime) as? String ?? "Unknown"
+        let baseServings = object.value(forKey: RecipeKey.baseServings) as? Int ?? 1
+        let currentServings = object.value(forKey: RecipeKey.currentServings) as? Int ?? baseServings
+        let prePrepInstructions = object.value(forKey: RecipeKey.prePrepInstructions) as? [String] ?? []
+        let instructions = object.value(forKey: RecipeKey.instructions) as? [String] ?? []
+        let notes = object.value(forKey: RecipeKey.notes) as? String ?? ""
+        let imageName = object.value(forKey: RecipeKey.imageName) as? String
+        let isFavorite = object.value(forKey: RecipeKey.isFavorite) as? Bool ?? false
         
         return RecipeModel(
             id: id,
@@ -272,18 +313,23 @@ final class PersistenceController {
         )
     }
     
+    // MARK: - Delete Operations
+    
     func deleteRecipe(withId id: UUID) {
         guard ensureStoreIsReady() else { return }
         
         let context = container.viewContext
-        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Recipe")
-        fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
+        fetchRequest.predicate = NSPredicate(format: "\(RecipeKey.id) == %@", id as CVarArg)
+        fetchRequest.fetchLimit = 1
         
         do {
-            let results = try context.fetch(fetchRequest)
-            for object in results {
-                context.delete(object)
+            guard let recipe = try context.fetch(fetchRequest).first else {
+                debugLog("⚠️ Recipe with id \(id) not found")
+                return
             }
+            
+            context.delete(recipe)
             try context.save()
             debugLog("✅ Recipe deleted successfully")
         } catch {
@@ -291,42 +337,34 @@ final class PersistenceController {
         }
     }
     
+    func clearAllRecipes() {
+        clearDatabase()
+    }
+    
+    // MARK: - Update Operations
+    
     func toggleFavorite(withId id: UUID) {
         guard ensureStoreIsReady() else { return }
         
         let context = container.viewContext
-        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Recipe")
-        fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
+        fetchRequest.predicate = NSPredicate(format: "\(RecipeKey.id) == %@", id as CVarArg)
+        fetchRequest.fetchLimit = 1
         
         do {
-            let results = try context.fetch(fetchRequest)
-            if let recipe = results.first {
-                let currentFavorite = recipe.value(forKey: "isFavorite") as? Bool ?? false
-                recipe.setValue(!currentFavorite, forKey: "isFavorite")
-                try context.save()
-                debugLog("✅ Recipe favorite status toggled to \(!currentFavorite)")
+            guard let recipe = try context.fetch(fetchRequest).first else {
+                debugLog("⚠️ Recipe with id \(id) not found")
+                return
             }
+            
+            let currentFavorite = recipe.value(forKey: RecipeKey.isFavorite) as? Bool ?? false
+            let newFavorite = !currentFavorite
+            recipe.setValue(newFavorite, forKey: RecipeKey.isFavorite)
+            
+            try context.save()
+            debugLog("✅ Recipe favorite status toggled to \(newFavorite)")
         } catch {
             debugLog("❌ Failed to toggle favorite: \(error.localizedDescription)")
         }
-    }
-    
-    func fetchRecipeCount() -> Int {
-        guard ensureStoreIsReady() else { return 0 }
-        
-        let context = container.viewContext
-        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Recipe")
-        
-        do {
-            let count = try context.count(for: fetchRequest)
-            return count
-        } catch {
-            debugLog("❌ Failed to fetch recipe count: \(error.localizedDescription)")
-            return 0
-        }
-    }
-    
-    func clearAllRecipes() {
-        clearDatabase()
     }
 }

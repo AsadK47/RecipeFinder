@@ -887,9 +887,9 @@ struct NotificationSettingsView: View {
     }
     
     private func checkNotificationPermission() {
-        UNUserNotificationCenter.current().getNotificationSettings { @Sendable settings in
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
             Task { @MainActor in
-                notificationPermission = settings.authorizationStatus
+                self.notificationPermission = settings.authorizationStatus
             }
         }
     }
@@ -1475,9 +1475,11 @@ struct PrivacySettingsView: View {
                                         showResetSuccess = true
                                         HapticManager.shared.success()
                                         
-                                        Task { @MainActor in
+                                        Task {
                                             try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
-                                            showResetSuccess = false
+                                            await MainActor.run {
+                                                showResetSuccess = false
+                                            }
                                         }
                                     }) {
                                         HStack {
@@ -1805,9 +1807,11 @@ struct DataManagementSettingsView: View {
         dataCleared = true
         HapticManager.shared.success()
         
-        Task { @MainActor in
+        Task {
             try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
-            dataCleared = false
+            await MainActor.run {
+                dataCleared = false
+            }
         }
     }
     
@@ -1834,9 +1838,11 @@ struct DataManagementSettingsView: View {
         dataCleared = true
         HapticManager.shared.success()
         
-        Task { @MainActor in
+        Task {
             try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
-            dataCleared = false
+            await MainActor.run {
+                dataCleared = false
+            }
         }
     }
 }

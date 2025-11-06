@@ -14,7 +14,6 @@ concurrency:
 env:
   SCHEME: RecipeFinder
   CONFIGURATION: Debug
-  DESTINATION: 'platform=iOS Simulator,name=iPhone 15 Pro'
   XCODE_VERSION: '16.1'
   SWIFT_VERSION: '6.0'
 
@@ -46,6 +45,30 @@ jobs:
           echo "=== Available Simulators ==="
           xcrun simctl list devices available | grep "iPhone" | head -5
       
+      - name: Detect Available Simulator
+        id: simulator
+        run: |
+          # List available iPhone simulators
+          SIMULATORS=$(xcrun simctl list devices available iPhone | grep "iPhone" | grep -v "unavailable" | head -1)
+          echo "Available simulators:"
+          echo "$SIMULATORS"
+          
+          # Try to find iPhone 15 Pro first, then iPhone 15, then any iPhone
+          if xcrun simctl list devices available | grep -q "iPhone 15 Pro"; then
+            DEVICE_NAME="iPhone 15 Pro"
+          elif xcrun simctl list devices available | grep -q "iPhone 15"; then
+            DEVICE_NAME="iPhone 15"
+          elif xcrun simctl list devices available | grep -q "iPhone 14"; then
+            DEVICE_NAME="iPhone 14"
+          else
+            # Extract the first available iPhone name
+            DEVICE_NAME=$(xcrun simctl list devices available | grep "iPhone" | grep -v "unavailable" | head -1 | sed -E 's/^[[:space:]]+([^(]+).*/\1/' | xargs)
+          fi
+          
+          echo "Selected device: $DEVICE_NAME"
+          echo "DESTINATION=platform=iOS Simulator,name=$DEVICE_NAME" >> $GITHUB_OUTPUT
+          echo "DEVICE_NAME=$DEVICE_NAME" >> $GITHUB_OUTPUT
+      
       - name: Cache Swift Package Manager
         uses: actions/cache@v4
         with:
@@ -76,14 +99,14 @@ jobs:
         run: |
           xcodebuild -resolvePackageDependencies \
             -scheme ${{ env.SCHEME }} \
-            -destination '${{ env.DESTINATION }}'
+            -destination '${{ steps.simulator.outputs.DESTINATION }}'
       
       - name: Build project
         run: |
           set -o pipefail
           xcodebuild build \
             -scheme ${{ env.SCHEME }} \
-            -destination '${{ env.DESTINATION }}' \
+            -destination '${{ steps.simulator.outputs.DESTINATION }}' \
             -configuration ${{ env.CONFIGURATION }} \
             -derivedDataPath ./DerivedData \
             SWIFT_VERSION=${{ env.SWIFT_VERSION }} \
@@ -125,12 +148,29 @@ jobs:
             sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
           fi
       
+      - name: Detect Available Simulator
+        id: simulator
+        run: |
+          # Try to find iPhone 15 Pro first, then iPhone 15, then any iPhone
+          if xcrun simctl list devices available | grep -q "iPhone 15 Pro"; then
+            DEVICE_NAME="iPhone 15 Pro"
+          elif xcrun simctl list devices available | grep -q "iPhone 15"; then
+            DEVICE_NAME="iPhone 15"
+          elif xcrun simctl list devices available | grep -q "iPhone 14"; then
+            DEVICE_NAME="iPhone 14"
+          else
+            DEVICE_NAME=$(xcrun simctl list devices available | grep "iPhone" | grep -v "unavailable" | head -1 | sed -E 's/^[[:space:]]+([^(]+).*/\1/' | xargs)
+          fi
+          
+          echo "Selected device: $DEVICE_NAME"
+          echo "DESTINATION=platform=iOS Simulator,name=$DEVICE_NAME" >> $GITHUB_OUTPUT
+      
       - name: Run tests
         run: |
           set -o pipefail
           xcodebuild test \
             -scheme ${{ env.SCHEME }} \
-            -destination '${{ env.DESTINATION }}' \
+            -destination '${{ steps.simulator.outputs.DESTINATION }}' \
             -configuration ${{ env.CONFIGURATION }} \
             -enableCodeCoverage YES \
             SWIFT_VERSION=${{ env.SWIFT_VERSION }} \
@@ -167,7 +207,7 @@ jobs:
           echo "- Xcode: ${{ env.XCODE_VERSION }}" >> $GITHUB_STEP_SUMMARY
           echo "- Swift: ${{ env.SWIFT_VERSION }}" >> $GITHUB_STEP_SUMMARY
           echo "- iOS: Latest available" >> $GITHUB_STEP_SUMMARY
-          echo "- Device: iPhone 15 Pro Simulator" >> $GITHUB_STEP_SUMMARY
+          echo "- Device: Auto-detected iPhone Simulator" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
