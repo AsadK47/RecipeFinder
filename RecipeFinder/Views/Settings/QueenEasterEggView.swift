@@ -37,12 +37,11 @@ struct QueenEasterEggView: View {
     var body: some View {
         ZStack {
             // Romantic gradient background
+            let color1 = Color.purple.opacity(0.8)
+            let color2 = Color.pink.opacity(0.6)
+            let color3 = Color.red.opacity(0.5)
             let backgroundGradient = LinearGradient(
-                gradient: Gradient(colors: [
-                    Color.purple.opacity(0.8),
-                    Color.pink.opacity(0.6),
-                    Color.red.opacity(0.5)
-                ]),
+                gradient: Gradient(colors: [color1, color2, color3]),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
@@ -96,12 +95,10 @@ struct QueenEasterEggView: View {
                     }
                     
                     // Glow background
+                    let glowColor1 = Color.yellow.opacity(glowIntensity)
+                    let glowColor2 = Color.orange.opacity(glowIntensity * 0.6)
                     let glowGradient = RadialGradient(
-                        gradient: Gradient(colors: [
-                            Color.yellow.opacity(glowIntensity),
-                            Color.orange.opacity(glowIntensity * 0.6),
-                            Color.clear
-                        ]),
+                        gradient: Gradient(colors: [glowColor1, glowColor2, Color.clear]),
                         center: .center,
                         startRadius: 0,
                         endRadius: 120

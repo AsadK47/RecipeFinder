@@ -11,7 +11,7 @@ import Network
 /// Monitors network connectivity and provides offline/online status
 /// This helps show users when recipe import features won't work
 @MainActor
-class NetworkMonitor: ObservableObject {
+final class NetworkMonitor: ObservableObject {
     static let shared = NetworkMonitor()
     
     private let monitor = NWPathMonitor()
@@ -27,15 +27,13 @@ class NetworkMonitor: ObservableObject {
         case unknown
     }
     
-    nonisolated private init() {
-        Task { @MainActor in
-            startMonitoring()
-        }
+    init() {
+        startMonitoring()
     }
     
     func startMonitoring() {
         monitor.pathUpdateHandler = { [weak self] path in
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 self?.isConnected = path.status == .satisfied
                 self?.updateConnectionType(path)
             }

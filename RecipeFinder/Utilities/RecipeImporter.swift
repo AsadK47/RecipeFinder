@@ -3,7 +3,7 @@ import SwiftUI
 
 /// Smart Recipe Importer - Now powered by RecipeParser engine
 @MainActor
-class RecipeImporter: ObservableObject {
+final class RecipeImporter: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
     @Published var extractedData: ExtractedRecipeData?
@@ -37,18 +37,14 @@ class RecipeImporter: ObservableObject {
     
     /// Import recipe from URL using intelligent RecipeParser
     func importRecipe(from url: URL) async {
-        await MainActor.run {
-            isLoading = true
-            errorMessage = nil
-            extractedData = nil
-        }
+        isLoading = true
+        errorMessage = nil
+        extractedData = nil
         
         // Check network connectivity first
-        guard NetworkMonitor.shared.isConnected else {
-            await MainActor.run {
-                self.isLoading = false
-                self.errorMessage = AppError.networkUnavailable.localizedDescription
-            }
+        guard await NetworkMonitor.shared.isConnected else {
+            self.isLoading = false
+            self.errorMessage = AppError.networkUnavailable.localizedDescription
             return
         }
         
@@ -94,10 +90,8 @@ class RecipeImporter: ObservableObject {
             // Use RecipeParser to extract structured data
             let parsed = RecipeParser.parse(html: html)
             
-            await MainActor.run {
-                self.parseConfidence = parsed.confidence
-                debugLog("🎯 Parse confidence: \(Int(parsed.confidence * 100))%")
-            }
+            self.parseConfidence = parsed.confidence
+            debugLog("🎯 Parse confidence: \(Int(parsed.confidence * 100))%")
             
             // Validate minimum requirements
             guard let name = parsed.name, !name.isEmpty else {
@@ -134,18 +128,14 @@ class RecipeImporter: ObservableObject {
                 cuisine: parsed.cuisine
             )
             
-            await MainActor.run {
-                self.extractedData = extractedData
-                self.isLoading = false
-                debugLog("🎉 Import complete!")
-            }
+            self.extractedData = extractedData
+            self.isLoading = false
+            debugLog("🎉 Import complete!")
             
         } catch {
-            await MainActor.run {
-                self.isLoading = false
-                self.errorMessage = error.localizedDescription
-                debugLog("❌ Import failed: \(error.localizedDescription)")
-            }
+            self.isLoading = false
+            self.errorMessage = error.localizedDescription
+            debugLog("❌ Import failed: \(error.localizedDescription)")
         }
     }
     
@@ -543,19 +533,15 @@ class RecipeImporter: ObservableObject {
     
     /// Main import function - extracts recipe data and matches USDA ingredients
     func importRecipe(from urlString: String) async {
-        await MainActor.run {
-            isLoading = true
-            errorMessage = nil
-            extractedData = nil
-        }
+        isLoading = true
+        errorMessage = nil
+        extractedData = nil
         
         debugLog("🌐 Starting smart import from: \(urlString)")
         
         guard let url = URL(string: urlString) else {
-            await MainActor.run {
-                errorMessage = "Invalid URL"
-                isLoading = false
-            }
+            errorMessage = "Invalid URL"
+            isLoading = false
             return
         }
         
@@ -613,17 +599,13 @@ class RecipeImporter: ObservableObject {
                 cuisine: nil
             )
             
-            await MainActor.run {
-                extractedData = extracted
-                isLoading = false
-            }
+            extractedData = extracted
+            isLoading = false
             
         } catch {
             debugLog("❌ Import failed: \(error)")
-            await MainActor.run {
-                errorMessage = "Failed to import: \(error.localizedDescription)"
-                isLoading = false
-            }
+            errorMessage = "Failed to import: \(error.localizedDescription)"
+            isLoading = false
         }
     }
     

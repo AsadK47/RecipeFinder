@@ -2,14 +2,14 @@ import CoreData
 import Foundation
 
 @MainActor
-class PersistenceController {
+final class PersistenceController {
     static let shared = PersistenceController()
     
     let container: NSPersistentContainer
     private(set) var loadError: Error?
     private(set) var isStoreLoaded = false
     
-    nonisolated private init() {
+    private init() {
         container = NSPersistentContainer(name: "RecipeModel")
         
         let description = container.persistentStoreDescriptions.first
@@ -17,12 +17,12 @@ class PersistenceController {
         description?.setOption(true as NSNumber, forKey: NSInferMappingModelAutomaticallyOption)
         
         container.loadPersistentStores { [weak self] storeDescription, error in
-            guard let self = self else { return }
-            
             // Extract values before crossing actor boundary
             let storeURL = storeDescription.url?.absoluteString ?? "unknown location"
             
             Task { @MainActor in
+                guard let self = self else { return }
+                
                 if let error = error as NSError? {
                     debugLog("❌ Failed to load persistent store: \(error.localizedDescription)")
                     debugLog("❌ Error details: \(error.userInfo)")
@@ -62,8 +62,9 @@ class PersistenceController {
             
             // Try loading the store again
             container.loadPersistentStores { [weak self] storeDescription, error in
-                guard let self = self else { return }
                 Task { @MainActor in
+                    guard let self = self else { return }
+                    
                     if let error = error {
                         debugLog("❌ Recovery failed: \(error.localizedDescription)")
                         self.loadError = error

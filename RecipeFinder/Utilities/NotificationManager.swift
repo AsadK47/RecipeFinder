@@ -37,19 +37,17 @@ import UserNotifications
 import SwiftUI
 
 @MainActor
-class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterDelegate {
-    static let shared = NotificationManager()
+final class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterDelegate {
+    static let notificationManager = NotificationManager.shared
     
     @Published var isAuthorized = false
     
     private let notificationCenter = UNUserNotificationCenter.current()
     
-    private nonisolated override init() {
+    override init() {
         super.init()
-        Task { @MainActor in
-            notificationCenter.delegate = self
-            checkAuthorizationStatus()
-        }
+        notificationCenter.delegate = self
+        checkAuthorizationStatus()
     }
     
     // MARK: - Permission Management

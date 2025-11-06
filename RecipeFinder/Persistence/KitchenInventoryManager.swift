@@ -4,7 +4,6 @@ import Foundation
 // MARK: - Kitchen Inventory Manager
 // Uses the KitchenInventoryItem for full inventory tracking with expiration dates
 
-@MainActor
 final class KitchenInventoryManager: ObservableObject {
 	@Published private(set) var items: [KitchenItem] = []
 	@Published private(set) var inventoryItems: [KitchenInventoryModel] = []

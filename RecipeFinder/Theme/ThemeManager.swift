@@ -38,6 +38,7 @@ enum AppearanceMode: String, CaseIterable {
 import SwiftUI
 import Combine
 
+@MainActor
 class ThemeManager: ObservableObject {
     static let shared = ThemeManager()
     

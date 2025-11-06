@@ -88,13 +88,11 @@ final class AuthenticationManager: NSObject, ObservableObject {
         }
     }
     
-    nonisolated private override init() {
+    override init() {
         super.init()
-        Task { @MainActor in
-            clearAllUsersExceptTest() // Clear DB except test user on init
-            setupTestUser()
-            checkAuthenticationStatus()
-        }
+        clearAllUsersExceptTest() // Clear DB except test user on init
+        setupTestUser()
+        checkAuthenticationStatus()
     }
     
     // MARK: - Test User Setup
@@ -266,38 +264,36 @@ final class AuthenticationManager: NSObject, ObservableObject {
     private func completeSignIn(user: User, email: String) async throws {
         try await saveUser(user)
         
-        await MainActor.run {
-            self.currentUser = user
-            self.isAuthenticated = true
-            self.isGuestMode = false
-            UserDefaults.standard.set(true, forKey: isAuthenticatedKey)
-            UserDefaults.standard.set(false, forKey: guestModeKey)
-            UserDefaults.standard.set(email, forKey: currentEmailKey)
-            updateLastActiveTimestamp()
+        self.currentUser = user
+        self.isAuthenticated = true
+        self.isGuestMode = false
+        UserDefaults.standard.set(true, forKey: isAuthenticatedKey)
+        UserDefaults.standard.set(false, forKey: guestModeKey)
+        UserDefaults.standard.set(email, forKey: currentEmailKey)
+        updateLastActiveTimestamp()
+        
+        // Sync user data to AccountManager if not already set
+        let accountManager = AccountManager.shared
+        if accountManager.email.isEmpty || accountManager.email != email {
+            // Parse full name into components
+            let fullName = user.fullName ?? ""
+            let nameComponents = fullName.components(separatedBy: " ").filter { !$0.isEmpty }
+            let firstName = nameComponents.first ?? ""
+            let lastName = nameComponents.count > 1 ? nameComponents.last ?? "" : ""
+            let middleName = nameComponents.count > 2 ? nameComponents[1..<nameComponents.count-1].joined(separator: " ") : ""
             
-            // Sync user data to AccountManager if not already set
-            let accountManager = AccountManager.shared
-            if accountManager.email.isEmpty || accountManager.email != email {
-                // Parse full name into components
-                let fullName = user.fullName ?? ""
-                let nameComponents = fullName.components(separatedBy: " ").filter { !$0.isEmpty }
-                let firstName = nameComponents.first ?? ""
-                let lastName = nameComponents.count > 1 ? nameComponents.last ?? "" : ""
-                let middleName = nameComponents.count > 2 ? nameComponents[1..<nameComponents.count-1].joined(separator: " ") : ""
-                
-                accountManager.updateProfile(
-                    firstName: firstName,
-                    middleName: middleName,
-                    lastName: lastName,
-                    email: email,
-                    address: accountManager.address, // Keep existing address
-                    dateOfBirth: accountManager.dateOfBirth, // Keep existing DOB
-                    chefType: accountManager.chefType // Keep existing chef type
-                )
-            }
-            
-            HapticManager.shared.success()
+            accountManager.updateProfile(
+                firstName: firstName,
+                middleName: middleName,
+                lastName: lastName,
+                email: email,
+                address: accountManager.address, // Keep existing address
+                dateOfBirth: accountManager.dateOfBirth, // Keep existing DOB
+                chefType: accountManager.chefType // Keep existing chef type
+            )
         }
+        
+        HapticManager.shared.success()
     }
     
     // Sign Up (with Secure Password Storage)
@@ -348,30 +344,28 @@ final class AuthenticationManager: NSObject, ObservableObject {
         
         try await saveUser(user)
         
-        await MainActor.run {
-            self.currentUser = user
-            self.isAuthenticated = true
-            self.isGuestMode = false
-            UserDefaults.standard.set(true, forKey: isAuthenticatedKey)
-            UserDefaults.standard.set(false, forKey: guestModeKey)
-            UserDefaults.standard.set(email, forKey: currentEmailKey)
-            updateLastActiveTimestamp()
-            
-            // Update AccountManager with user info
-            if let givenName = givenName {
-                AccountManager.shared.updateProfile(
-                    firstName: givenName,
-                    middleName: "",
-                    lastName: familyName ?? "",
-                    email: email,
-                    address: "",
-                    dateOfBirth: nil,
-                    chefType: .homeCook
-                )
-            }
-            
-            HapticManager.shared.success()
+        self.currentUser = user
+        self.isAuthenticated = true
+        self.isGuestMode = false
+        UserDefaults.standard.set(true, forKey: isAuthenticatedKey)
+        UserDefaults.standard.set(false, forKey: guestModeKey)
+        UserDefaults.standard.set(email, forKey: currentEmailKey)
+        updateLastActiveTimestamp()
+        
+        // Update AccountManager with user info
+        if let givenName = givenName {
+            AccountManager.shared.updateProfile(
+                firstName: givenName,
+                middleName: "",
+                lastName: familyName ?? "",
+                email: email,
+                address: "",
+                dateOfBirth: nil,
+                chefType: .homeCook
+            )
         }
+        
+        HapticManager.shared.success()
     }
     
     // Sign Up Without Auto-Login (Defensive Programming)
@@ -403,17 +397,15 @@ final class AuthenticationManager: NSObject, ObservableObject {
         let middleName = nameComponents.count > 2 ? nameComponents[1..<nameComponents.count-1].joined(separator: " ") : ""
         
         // Update AccountManager with parsed name and email
-        await MainActor.run {
-            AccountManager.shared.updateProfile(
-                firstName: firstName,
-                middleName: middleName,
-                lastName: lastName,
-                email: email,
-                address: "",
-                dateOfBirth: nil,
-                chefType: .homeCook
-            )
-        }
+        AccountManager.shared.updateProfile(
+            firstName: firstName,
+            middleName: middleName,
+            lastName: lastName,
+            email: email,
+            address: "",
+            dateOfBirth: nil,
+            chefType: .homeCook
+        )
         
         // Don't authenticate - user must sign in manually (defensive)
         debugLog("✅ Account created for \(email) - user must sign in manually")
@@ -438,13 +430,11 @@ final class AuthenticationManager: NSObject, ObservableObject {
             )
             
             if success {
-                await MainActor.run {
-                    self.isAuthenticated = true
-                    UserDefaults.standard.set(true, forKey: isAuthenticatedKey)
-                    updateLastActiveTimestamp()
-                    loadUser()
-                    HapticManager.shared.success()
-                }
+                self.isAuthenticated = true
+                UserDefaults.standard.set(true, forKey: isAuthenticatedKey)
+                updateLastActiveTimestamp()
+                loadUser()
+                HapticManager.shared.success()
             }
         } catch {
             throw AuthError.biometricsFailed
@@ -486,21 +476,17 @@ final class AuthenticationManager: NSObject, ObservableObject {
         }
         
         // Ensure UI updates happen immediately on main thread
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            
-            self.isAuthenticated = false
-            self.currentUser = nil
-            self.isGuestMode = false
-            
-            UserDefaults.standard.set(false, forKey: self.isAuthenticatedKey)
-            UserDefaults.standard.set(false, forKey: self.guestModeKey)
-            UserDefaults.standard.removeObject(forKey: self.currentEmailKey)
-            UserDefaults.standard.removeObject(forKey: self.lastActiveTimestampKey)
-            
-            self.debugLog("✅ Sign out complete - UI should now show login screen")
-            HapticManager.shared.light()
-        }
+        self.isAuthenticated = false
+        self.currentUser = nil
+        self.isGuestMode = false
+        
+        UserDefaults.standard.set(false, forKey: self.isAuthenticatedKey)
+        UserDefaults.standard.set(false, forKey: self.guestModeKey)
+        UserDefaults.standard.removeObject(forKey: self.currentEmailKey)
+        UserDefaults.standard.removeObject(forKey: self.lastActiveTimestampKey)
+        
+        self.debugLog("✅ Sign out complete - UI should now show login screen")
+        HapticManager.shared.light()
     }
     
     // MARK: - User Persistence
@@ -568,12 +554,10 @@ final class AuthenticationManager: NSObject, ObservableObject {
         // Clear all app data
         AccountManager.shared.clearAllData()
         
-        await MainActor.run {
-            isAuthenticated = false
-            currentUser = nil
-            isGuestMode = false
-            HapticManager.shared.success()
-        }
+        isAuthenticated = false
+        currentUser = nil
+        isGuestMode = false
+        HapticManager.shared.success()
     }
 }
 
@@ -632,31 +616,27 @@ extension AuthenticationManager: ASAuthorizationControllerDelegate {
             do {
                 try await saveUser(user)
                 
-                await MainActor.run {
-                    self.currentUser = user
-                    self.isAuthenticated = true
-                    self.isGuestMode = false
-                    UserDefaults.standard.set(true, forKey: isAuthenticatedKey)
-                    UserDefaults.standard.set(false, forKey: guestModeKey)
-                    updateLastActiveTimestamp()
-                    
-                    // Update AccountManager
-                    AccountManager.shared.updateProfile(
-                        firstName: user.givenName ?? "",
-                        middleName: "",
-                        lastName: user.familyName ?? "",
-                        email: user.email ?? "",
-                        address: "",
-                        dateOfBirth: nil,
-                        chefType: .homeCook
-                    )
-                    
-                    HapticManager.shared.success()
-                }
+                self.currentUser = user
+                self.isAuthenticated = true
+                self.isGuestMode = false
+                UserDefaults.standard.set(true, forKey: isAuthenticatedKey)
+                UserDefaults.standard.set(false, forKey: guestModeKey)
+                updateLastActiveTimestamp()
+                
+                // Update AccountManager
+                AccountManager.shared.updateProfile(
+                    firstName: user.givenName ?? "",
+                    middleName: "",
+                    lastName: user.familyName ?? "",
+                    email: user.email ?? "",
+                    address: "",
+                    dateOfBirth: nil,
+                    chefType: .homeCook
+                )
+                
+                HapticManager.shared.success()
             } catch {
-                await MainActor.run {
-                    self.authError = .signInFailed
-                }
+                self.authError = .signInFailed
             }
         }
     }

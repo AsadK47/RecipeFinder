@@ -54,19 +54,17 @@ final class AccountManager: ObservableObject {
         return initialsString.isEmpty ? "RC" : initialsString.uppercased()
     }
     
-    nonisolated private init() {
-        Task { @MainActor in
-            loadProfile()
-            updateStats()
-            
-            // Observe data changes to update stats
-            NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(updateStats),
-                name: NSNotification.Name("DataDidChange"),
-                object: nil
-            )
-        }
+    private init() {
+        loadProfile()
+        updateStats()
+        
+        // Observe data changes to update stats
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(updateStats),
+            name: NSNotification.Name("DataDidChange"),
+            object: nil
+        )
     }
     
     // Profile Management
@@ -163,24 +161,19 @@ final class AccountManager: ObservableObject {
     // Stats
     
     @objc func updateStats() {
-        // Ensure UI updates happen on main thread
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            
-            // Update recipe count from Core Data
-            self.recipeCount = PersistenceController.shared.fetchRecipeCount()
-            
-            // Update kitchen items count
-            if let data = UserDefaults.standard.data(forKey: Constants.UserDefaultsKeys.kitchenItems),
-               let items = try? JSONDecoder().decode([KitchenItem].self, from: data) {
-                self.kitchenItemCount = items.count
-            }
-            
-            // Update shopping list count
-            if let data = UserDefaults.standard.data(forKey: Constants.UserDefaultsKeys.shoppingListItems),
-               let items = try? JSONDecoder().decode([ShoppingListModel].self, from: data) {
-                self.shoppingListCount = items.count
-            }
+        // Update recipe count from Core Data
+        self.recipeCount = PersistenceController.shared.fetchRecipeCount()
+        
+        // Update kitchen items count
+        if let data = UserDefaults.standard.data(forKey: Constants.UserDefaultsKeys.kitchenItems),
+           let items = try? JSONDecoder().decode([KitchenItem].self, from: data) {
+            self.kitchenItemCount = items.count
+        }
+        
+        // Update shopping list count
+        if let data = UserDefaults.standard.data(forKey: Constants.UserDefaultsKeys.shoppingListItems),
+           let items = try? JSONDecoder().decode([ShoppingListModel].self, from: data) {
+            self.shoppingListCount = items.count
         }
     }
     

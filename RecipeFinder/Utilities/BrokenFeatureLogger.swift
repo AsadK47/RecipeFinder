@@ -10,7 +10,6 @@ import UIKit
 import SwiftUI
 
 /// System Health Monitor - Detects and tracks broken/unavailable features
-@MainActor
 class BrokenFeatureLogger: ObservableObject {
     static let shared = BrokenFeatureLogger()
     

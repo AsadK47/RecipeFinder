@@ -2,7 +2,6 @@ import Combine
 import Foundation
 
 /// Manages meal plans using the MealPlanModel for structured meal planning
-@MainActor
 final class MealPlanningManager: ObservableObject {
     @Published private(set) var mealPlans: [MealPlanModel] = []
     

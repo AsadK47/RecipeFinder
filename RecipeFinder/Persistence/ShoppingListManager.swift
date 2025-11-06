@@ -1,6 +1,5 @@
 import Foundation
 
-@MainActor
 final class ShoppingListManager: ObservableObject {
     @Published var items: [ShoppingListModel] = []
     
