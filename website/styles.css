@@ -36,13 +36,31 @@
 
 /* Light mode - respects system preference */
 @media (prefers-color-scheme: light) {
-    :root {
+    :root:not([data-theme="dark"]) {
         --bg: var(--bg-light);
         --bg-card: var(--bg-card-light);
         --text-primary: var(--text-primary-light);
         --text-secondary: var(--text-secondary-light);
         --shadow: var(--shadow-light);
     }
+}
+
+/* Manual dark mode override */
+:root[data-theme="dark"] {
+    --bg: var(--bg-dark);
+    --bg-card: var(--bg-card-dark);
+    --text-primary: var(--text-primary-dark);
+    --text-secondary: var(--text-secondary-dark);
+    --shadow: var(--shadow-dark);
+}
+
+/* Manual light mode override */
+:root[data-theme="light"] {
+    --bg: var(--bg-light);
+    --bg-card: var(--bg-card-light);
+    --text-primary: var(--text-primary-light);
+    --text-secondary: var(--text-secondary-light);
+    --shadow: var(--shadow-light);
 }
 
 * {
@@ -74,6 +92,10 @@ body {
     text-align: center;
     z-index: 1000;
     box-shadow: 0 4px 20px var(--shadow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
 }
 
 .banner-content {
@@ -81,6 +103,29 @@ body {
     align-items: center;
     justify-content: center;
     gap: 12px;
+}
+
+.theme-toggle {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 18px;
+}
+
+.theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-50%) scale(1.1);
 }
 
 .banner-text {

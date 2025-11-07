@@ -3,11 +3,46 @@
 // ============================================
 
 document.addEventListener('DOMContentLoaded', () => {
+    initThemeToggle();
     initNotifyForm();
     initScrollAnimations();
     initCookieConsent();
     initSmoothScroll();
 });
+
+// ============================================
+// Theme Toggle
+// ============================================
+
+function initThemeToggle() {
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = themeToggle.querySelector('.theme-icon');
+    const root = document.documentElement;
+    
+    // Check for saved theme preference or default to dark
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        root.setAttribute('data-theme', savedTheme);
+        updateThemeIcon(savedTheme, themeIcon);
+    } else {
+        // Default to dark mode
+        root.setAttribute('data-theme', 'dark');
+        updateThemeIcon('dark', themeIcon);
+    }
+    
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = root.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        
+        root.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        updateThemeIcon(newTheme, themeIcon);
+    });
+}
+
+function updateThemeIcon(theme, iconElement) {
+    iconElement.textContent = theme === 'dark' ? '☀️' : '🌙';
+}
 
 // ============================================
 // Notify Form

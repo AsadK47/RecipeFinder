@@ -37,9 +37,9 @@ import UserNotifications
 import SwiftUI
 
  
-final class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterDelegate, @unchecked Sendable {
+final class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterDelegate, Sendable {
     /// Shared singleton instance for global access
-    nonisolated(unsafe) static let shared = NotificationManager()
+    static let shared = NotificationManager()
 
     /// Backwards-compatible alias used in some files
     static var notificationManager: NotificationManager { shared }
