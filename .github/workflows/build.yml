@@ -19,13 +19,9 @@ env:
 
 jobs:
   build:
-    name: 🔨 Build
+    name: Build
     runs-on: macos-15
     timeout-minutes: 30
-    strategy:
-      matrix:
-        ios-version: ['17.0', '17.2', '17.4', '17.5', '18.0', '18.1', 'latest']
-      fail-fast: false
     
     steps:
       - name: Checkout code
@@ -37,16 +33,7 @@ jobs:
       - name: Detect Available Simulator
         id: simulator
         run: |
-          IOS_VERSION="${{ matrix.ios-version }}"
-          
-          # Find first available iPhone with requested iOS version
-          if [ "$IOS_VERSION" = "latest" ]; then
-            DEVICE=$(xcrun simctl list devices available iPhone | grep "iPhone" | head -1)
-          else
-            DEVICE=$(xcrun simctl list devices available iPhone | grep "($IOS_VERSION)" | head -1)
-            [ -z "$DEVICE" ] && DEVICE=$(xcrun simctl list devices available iPhone | grep "iPhone" | head -1)
-          fi
-          
+          DEVICE=$(xcrun simctl list devices available iPhone | grep "iPhone" | head -1)
           DEVICE_NAME=$(echo "$DEVICE" | sed -E 's/^[[:space:]]+([^(]+) .*/\1/' | xargs)
           echo "DESTINATION=platform=iOS Simulator,name=$DEVICE_NAME" >> $GITHUB_OUTPUT
       
@@ -64,25 +51,21 @@ jobs:
           xcodebuild build \
             -scheme ${{ env.SCHEME }} \
             -destination '${{ steps.simulator.outputs.DESTINATION }}' \
-            CODE_SIGNING_ALLOWED=NO | tee build-${{ matrix.ios-version }}.log
+            CODE_SIGNING_ALLOWED=NO | tee build.log
       
       - name: Upload build logs
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: build-logs-${{ matrix.ios-version }}
-          path: build-${{ matrix.ios-version }}.log
+          name: build-logs
+          path: build.log
 
   test:
-    name: 🧪 Test
+    name: Test
     runs-on: macos-15
     timeout-minutes: 30
     needs: [build]
     if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
-    strategy:
-      matrix:
-        ios-version: ['17.0', '17.2', '17.4', '17.5', '18.0', '18.1', 'latest']
-      fail-fast: false
     
     steps:
       - name: Checkout code
@@ -94,15 +77,7 @@ jobs:
       - name: Detect Available Simulator
         id: simulator
         run: |
-          IOS_VERSION="${{ matrix.ios-version }}"
-          
-          if [ "$IOS_VERSION" = "latest" ]; then
-            DEVICE=$(xcrun simctl list devices available iPhone | grep "iPhone" | head -1)
-          else
-            DEVICE=$(xcrun simctl list devices available iPhone | grep "($IOS_VERSION)" | head -1)
-            [ -z "$DEVICE" ] && DEVICE=$(xcrun simctl list devices available iPhone | grep "iPhone" | head -1)
-          fi
-          
+          DEVICE=$(xcrun simctl list devices available iPhone | grep "iPhone" | head -1)
           DEVICE_NAME=$(echo "$DEVICE" | sed -E 's/^[[:space:]]+([^(]+) .*/\1/' | xargs)
           echo "DESTINATION=platform=iOS Simulator,name=$DEVICE_NAME" >> $GITHUB_OUTPUT
       
@@ -111,18 +86,18 @@ jobs:
           xcodebuild test \
             -scheme ${{ env.SCHEME }} \
             -destination '${{ steps.simulator.outputs.DESTINATION }}' \
-            CODE_SIGNING_ALLOWED=NO | tee test-${{ matrix.ios-version }}.log
+            CODE_SIGNING_ALLOWED=NO | tee test.log
         continue-on-error: true
       
       - name: Upload test results
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-${{ matrix.ios-version }}
-          path: test-${{ matrix.ios-version }}.log
+          name: test-results
+          path: test.log
 
   summary:
-    name: 📊 Summary
+    name: Summary
     runs-on: macos-15
     timeout-minutes: 5
     needs: [build, test]
@@ -133,7 +108,7 @@ jobs:
         run: |
           echo "## Build Results" >> $GITHUB_STEP_SUMMARY
           echo "- Swift ${{ env.SWIFT_VERSION }}" >> $GITHUB_STEP_SUMMARY
-          echo "- iOS: 17.0, 17.2, 17.4, 17.5, 18.0, 18.1, latest" >> $GITHUB_STEP_SUMMARY
+          echo "- iOS: latest" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Build: ${{ needs.build.result }}" >> $GITHUB_STEP_SUMMARY
           echo "Test: ${{ needs.test.result }}" >> $GITHUB_STEP_SUMMARY
