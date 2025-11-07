@@ -888,8 +888,9 @@ struct NotificationSettingsView: View {
     
     private func checkNotificationPermission() {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
+            let status = settings.authorizationStatus
             Task { @MainActor in
-                self.notificationPermission = settings.authorizationStatus
+                self.notificationPermission = status
             }
         }
     }

@@ -2,8 +2,8 @@ import Foundation
 import SwiftUI
 
 /// Smart Recipe Importer - Now powered by RecipeParser engine
-@MainActor
-final class RecipeImporter: ObservableObject {
+ 
+final class RecipeImporter: ObservableObject, @unchecked Sendable {
     @Published var isLoading = false
     @Published var errorMessage: String?
     @Published var extractedData: ExtractedRecipeData?

@@ -332,8 +332,10 @@ struct RecipeImportView: View {
             return
         }
         
+        let importerRef = importer
+        
         Task {
-            await importer.importRecipe(from: url)
+            await importerRef.importRecipe(from: url)
         }
     }
 }

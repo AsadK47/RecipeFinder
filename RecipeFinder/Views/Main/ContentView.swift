@@ -90,27 +90,6 @@ struct ContentView: View {
             if recipes.isEmpty {
                 loadRecipes()
             }
-            
-            // Listen for theme/card style changes
-            NotificationCenter.default.addObserver(
-                forName: .cardStyleDidChange,
-                object: nil,
-                queue: .main
-            ) { _ in
-                Task { @MainActor in
-                    configureTabBarAppearance()
-                }
-            }
-            
-            NotificationCenter.default.addObserver(
-                forName: .themeDidChange,
-                object: nil,
-                queue: .main
-            ) { _ in
-                Task { @MainActor in
-                    configureTabBarAppearance()
-                }
-            }
         }
     }
 

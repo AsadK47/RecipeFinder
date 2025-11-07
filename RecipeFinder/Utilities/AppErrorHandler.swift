@@ -264,7 +264,7 @@ extension View {
 }
 
 /// Error Logger for debugging
-class ErrorLogger {
+final class ErrorLogger: @unchecked Sendable {
     static let shared = ErrorLogger()
     
     private init() {}

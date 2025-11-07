@@ -26,7 +26,7 @@ struct AuthTestHelper {
     
     /// Create test accounts for easy testing
     /// Call this once during development to seed test accounts
-    @MainActor
+     
     static func seedTestAccounts() {
         let credentialManager = SecureCredentialManager.shared
         
@@ -56,7 +56,7 @@ struct AuthTestHelper {
     // MARK: - Clear All Auth Data
     
     /// Clear all authentication data for clean testing
-    @MainActor
+     
     static func clearAllAuthData() {
         // Clear UserDefaults
         UserDefaults.standard.removeObject(forKey: "isAuthenticated")
@@ -100,7 +100,7 @@ struct AuthTestHelper {
 extension AuthTestHelper {
     
     /// Print current authentication state
-    @MainActor
+     
     static func printAuthState() {
         let authManager = AuthenticationManager.shared
         print("📊 === Authentication State ===")

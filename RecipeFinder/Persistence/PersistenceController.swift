@@ -1,7 +1,6 @@
 import CoreData
 import Foundation
 
-@MainActor
 final class PersistenceController {
     nonisolated(unsafe) static let shared = PersistenceController()
     
@@ -50,23 +49,20 @@ final class PersistenceController {
     
     private func loadStore() {
         container.loadPersistentStores { [weak self] storeDescription, error in
+            guard let self = self else { return }
             let storeURL = storeDescription.url?.absoluteString ?? "unknown location"
             
-            Task { @MainActor [weak self] in
-                guard let self else { return }
+            if let error = error as NSError? {
+                debugLog("❌ Failed to load persistent store: \(error.localizedDescription)")
+                debugLog("❌ Error details: \(error.userInfo)")
                 
-                if let error = error as NSError? {
-                    debugLog("❌ Failed to load persistent store: \(error.localizedDescription)")
-                    debugLog("❌ Error details: \(error.userInfo)")
-                    
-                    self.loadError = error
-                    self.isStoreLoaded = false
-                    self.attemptStoreRecovery()
-                } else {
-                    debugLog("✅ Core Data store loaded successfully at: \(storeURL)")
-                    self.isStoreLoaded = true
-                    self.loadError = nil
-                }
+                self.loadError = error
+                self.isStoreLoaded = false
+                self.attemptStoreRecovery()
+            } else {
+                debugLog("✅ Core Data store loaded successfully at: \(storeURL)")
+                self.isStoreLoaded = true
+                self.loadError = nil
             }
         }
     }
@@ -85,19 +81,17 @@ final class PersistenceController {
             debugLog("✅ Removed corrupted store file")
             
             container.loadPersistentStores { [weak self] _, error in
-                Task { @MainActor [weak self] in
-                    guard let self else { return }
-                    
-                    if let error {
-                        debugLog("❌ Recovery failed: \(error.localizedDescription)")
-                        self.loadError = error
-                        self.isStoreLoaded = false
-                    } else {
-                        debugLog("✅ Store recovered successfully")
-                        self.isStoreLoaded = true
-                        self.loadError = nil
-                        self.populateDatabase()
-                    }
+                guard let self = self else { return }
+                
+                if let error {
+                    debugLog("❌ Recovery failed: \(error.localizedDescription)")
+                    self.loadError = error
+                    self.isStoreLoaded = false
+                } else {
+                    debugLog("✅ Store recovered successfully")
+                    self.isStoreLoaded = true
+                    self.loadError = nil
+                    self.populateDatabase()
                 }
             }
         } catch {
@@ -159,6 +153,38 @@ final class PersistenceController {
         let imageName: String
         let isFavorite: Bool
         
+        // Memberwise initializer for direct parameter passing
+        init(
+            name: String,
+            category: String,
+            difficulty: String,
+            prepTime: String,
+            cookingTime: String,
+            baseServings: Int,
+            currentServings: Int,
+            ingredients: [Ingredient],
+            prePrepInstructions: [String],
+            instructions: [String],
+            notes: String,
+            imageName: String,
+            isFavorite: Bool
+        ) {
+            self.name = name
+            self.category = category
+            self.difficulty = difficulty
+            self.prepTime = prepTime
+            self.cookingTime = cookingTime
+            self.baseServings = baseServings
+            self.currentServings = currentServings
+            self.ingredients = ingredients
+            self.prePrepInstructions = prePrepInstructions
+            self.instructions = instructions
+            self.notes = notes
+            self.imageName = imageName
+            self.isFavorite = isFavorite
+        }
+        
+        // Convenience initializer from RecipeModel
         init(from recipe: RecipeModel) {
             self.name = recipe.name
             self.category = recipe.category

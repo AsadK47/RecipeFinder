@@ -3,8 +3,8 @@ import AuthenticationServices
 import SwiftUI
 import LocalAuthentication
 
-@MainActor
-final class AuthenticationManager: NSObject, ObservableObject {
+ 
+final class AuthenticationManager: NSObject, ObservableObject, @unchecked Sendable {
     static let shared = AuthenticationManager()
     private let credentialManager = SecureCredentialManager.shared
     

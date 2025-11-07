@@ -36,10 +36,10 @@ import Foundation
 import UserNotifications
 import SwiftUI
 
-@MainActor
-final class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterDelegate {
+ 
+final class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterDelegate, @unchecked Sendable {
     /// Shared singleton instance for global access
-    static let shared = NotificationManager()
+    nonisolated(unsafe) static let shared = NotificationManager()
 
     /// Backwards-compatible alias used in some files
     static var notificationManager: NotificationManager { shared }
@@ -300,7 +300,7 @@ final class NotificationManager: NSObject, ObservableObject, UNUserNotificationC
                 .filter { ($0.content.userInfo["type"] as? String) == "timer" }
                 .map { $0.identifier }
             
-            Task { @MainActor in
+            Task {
                 self.notificationCenter.removePendingNotificationRequests(withIdentifiers: timerIds)
                 print("🗑️ Canceled \(timerIds.count) timer notifications")
             }

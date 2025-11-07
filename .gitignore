@@ -39,3 +39,37 @@ Package.resolved
 # Temporary files
 *.tmp
 *~
+
+# ==============================================
+# SENSITIVE FILES - NEVER COMMIT THESE
+# ==============================================
+
+# Certificates and Signing
+*.p12
+*.cer
+*.certSigningRequest
+*.mobileprovision
+*.provisionprofile
+**/certificate*.pdf
+**/Certificate*.pdf
+**/certicate*.pdf
+**/Certicate*.pdf
+
+# API Keys and Secrets
+.env
+.env.*
+secrets.json
+config/secrets.*
+**/api_keys.*
+**/secrets.*
+
+# Personal Information
+**/personal_info.*
+**/bank_details.*
+**/passport.*
+**/identity.*
+
+# Company Documents (keep templates, remove filled versions)
+**/filled_*
+**/signed_*
+**/confidential_*

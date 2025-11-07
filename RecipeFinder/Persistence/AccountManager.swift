@@ -2,9 +2,8 @@ import Foundation
 import UIKit
 import Combine
 
-@MainActor
-final class AccountManager: ObservableObject {
-    static let shared = AccountManager()
+final class AccountManager: ObservableObject, @unchecked Sendable {
+    nonisolated(unsafe) static let shared = AccountManager()
     
     // Profile fields
     @Published private(set) var uuid: String = ""

@@ -31,15 +31,14 @@ enum AppearanceMode: String, CaseIterable {
     }
 }
 
-// MARK: - Theme Manager
+// Theme Manager
 
 /// Centralized theme manager that controls app-wide theme and card style settings
 /// Use as @EnvironmentObject to access throughout the app
 import SwiftUI
 import Combine
 
-@MainActor
-class ThemeManager: ObservableObject {
+final class ThemeManager: ObservableObject, @unchecked Sendable {
     static let shared = ThemeManager()
     
     @AppStorage("appTheme") var selectedTheme: AppTheme.ThemeType = .teal {

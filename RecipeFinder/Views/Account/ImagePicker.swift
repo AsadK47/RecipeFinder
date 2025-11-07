@@ -29,16 +29,12 @@ struct ImagePicker: UIViewControllerRepresentable {
         }
         
         func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-            parent.dismiss()
+            picker.dismiss(animated: true)
             
-            guard let provider = results.first?.itemProvider else { return }
-            
-            if provider.canLoadObject(ofClass: UIImage.self) {
-                // Capture the binding outside the sendable closure to avoid data races
-                let imageBinding = parent.$image
-                provider.loadObject(ofClass: UIImage.self) { image, _ in
-                    Task { @MainActor in
-                        imageBinding.wrappedValue = image as? UIImage
+            results.first?.itemProvider.loadObject(ofClass: UIImage.self) { object, _ in
+                if let image = object as? UIImage {
+                    DispatchQueue.main.async {
+                        self.parent.image = image
                     }
                 }
             }

@@ -66,7 +66,7 @@ final class HapticManager: @unchecked Sendable {
     // Double tap pattern - light-light quickly
     func doubleTap() {
         light()
-        Task { @MainActor in
+        Task {
             try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
             self.light()
         }
@@ -81,7 +81,7 @@ final class HapticManager: @unchecked Sendable {
         AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
         
         // Follow up with light haptic
-        Task { @MainActor in
+        Task {
             try? await Task.sleep(nanoseconds: 150_000_000) // 0.15 seconds
             self.light()
         }
@@ -90,7 +90,7 @@ final class HapticManager: @unchecked Sendable {
     // Delete pattern - warning + rigid
     func delete() {
         warning()
-        Task { @MainActor in
+        Task {
             try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
             self.rigid()
         }
