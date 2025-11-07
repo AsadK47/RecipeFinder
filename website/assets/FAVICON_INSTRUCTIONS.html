@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Favicons</title>
+    <style>
+        body {
+            font-family: system-ui;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #0a0a0a;
+            color: white;
+        }
+        .info {
+            background: #1a1a1a;
+            padding: 30px;
+            border-radius: 12px;
+            border: 2px solid rgb(20, 184, 166);
+        }
+        h1 {
+            color: rgb(20, 184, 166);
+        }
+        code {
+            background: #2a2a2a;
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: rgb(96, 165, 250);
+        }
+        a {
+            color: rgb(20, 184, 166);
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        ol {
+            line-height: 2;
+        }
+    </style>
+</head>
+<body>
+    <div class="info">
+        <h1>🎨 Generate Proper Favicons</h1>
+        <p>To create proper favicon files from your app icon:</p>
+        
+        <h2>Option 1: Online Tool (Easiest)</h2>
+        <ol>
+            <li>Go to <a href="https://realfavicongenerator.net/" target="_blank">RealFaviconGenerator.net</a></li>
+            <li>Upload your app icon (from <code>RecipeFinder/Assets.xcassets/AppIcon.appiconset/</code>)</li>
+            <li>Download the generated package</li>
+            <li>Copy all files to <code>Website/assets/</code></li>
+        </ol>
+
+        <h2>Option 2: Manual Export</h2>
+        <ol>
+            <li>Export your app icon as PNG (1024x1024)</li>
+            <li>Use ImageMagick or Photoshop to resize:
+                <ul>
+                    <li><code>favicon-16x16.png</code> (16x16)</li>
+                    <li><code>favicon-32x32.png</code> (32x32)</li>
+                    <li><code>apple-touch-icon.png</code> (180x180)</li>
+                    <li><code>og-image.png</code> (1200x630 for social media)</li>
+                </ul>
+            </li>
+        </ol>
+
+        <h2>Current Status</h2>
+        <p>✅ Temporary SVG favicon created at <code>assets/favicon.svg</code></p>
+        <p>⚠️ For production, replace with proper PNG/ICO files</p>
+        
+        <h2>For Now</h2>
+        <p>The website works fine without favicons. You can deploy to Cloudflare and add them later!</p>
+    </div>
+</body>
+</html>

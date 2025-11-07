@@ -3,67 +3,11 @@
 // ============================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    initSlideshow();
     initNotifyForm();
     initScrollAnimations();
     initCookieConsent();
     initSmoothScroll();
 });
-
-// ============================================
-// Screenshot Slideshow
-// ============================================
-
-function initSlideshow() {
-    const screenshots = document.querySelectorAll('.screenshot');
-    const dots = document.querySelectorAll('.dot');
-    let currentSlide = 0;
-    const slideInterval = 4000; // 4 seconds
-
-    function showSlide(index) {
-        // Remove active class from all
-        screenshots.forEach(img => img.classList.remove('active'));
-        dots.forEach(dot => dot.classList.remove('active'));
-
-        // Add active class to current
-        screenshots[index].classList.add('active');
-        dots[index].classList.add('active');
-    }
-
-    function nextSlide() {
-        currentSlide = (currentSlide + 1) % screenshots.length;
-        showSlide(currentSlide);
-    }
-
-    // Auto advance slides
-    let autoSlide = setInterval(nextSlide, slideInterval);
-
-    // Manual control via dots
-    dots.forEach((dot, index) => {
-        dot.addEventListener('click', () => {
-            currentSlide = index;
-            showSlide(currentSlide);
-            
-            // Reset auto-advance timer
-            clearInterval(autoSlide);
-            autoSlide = setInterval(nextSlide, slideInterval);
-        });
-    });
-
-    // Keyboard navigation
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowLeft') {
-            currentSlide = (currentSlide - 1 + screenshots.length) % screenshots.length;
-            showSlide(currentSlide);
-            clearInterval(autoSlide);
-            autoSlide = setInterval(nextSlide, slideInterval);
-        } else if (e.key === 'ArrowRight') {
-            nextSlide();
-            clearInterval(autoSlide);
-            autoSlide = setInterval(nextSlide, slideInterval);
-        }
-    });
-}
 
 // ============================================
 // Notify Form
@@ -186,14 +130,7 @@ function switchTheme(themeName) {
 // Performance Optimization
 // ============================================
 
-// Preload images
-window.addEventListener('load', () => {
-    const screenshots = document.querySelectorAll('.screenshot');
-    screenshots.forEach(img => {
-        const image = new Image();
-        image.src = img.src;
-    });
-});
+// Add any performance optimizations here as needed
 
 // ============================================
 // Cookie Consent

@@ -2,63 +2,81 @@ import UIKit
 import AudioToolbox
 
 /// Centralized haptic feedback manager for consistent tactile responses throughout the app
-final class HapticManager: @unchecked Sendable {
+final class HapticManager: Sendable {
     static let shared = HapticManager()
     
     private init() {}
     
     // Light tap - for subtle interactions
     func light() {
-        let generator = UIImpactFeedbackGenerator(style: .light)
-        generator.impactOccurred()
+        DispatchQueue.main.async {
+            let generator = UIImpactFeedbackGenerator(style: .light)
+            generator.impactOccurred()
+        }
     }
     
     // Medium impact - for standard interactions
     func medium() {
-        let generator = UIImpactFeedbackGenerator(style: .medium)
-        generator.impactOccurred()
+        DispatchQueue.main.async {
+            let generator = UIImpactFeedbackGenerator(style: .medium)
+            generator.impactOccurred()
+        }
     }
     
     // Heavy impact - for important actions
     func heavy() {
-        let generator = UIImpactFeedbackGenerator(style: .heavy)
-        generator.impactOccurred()
+        DispatchQueue.main.async {
+            let generator = UIImpactFeedbackGenerator(style: .heavy)
+            generator.impactOccurred()
+        }
     }
     
     // Soft impact - for very gentle feedback
     func soft() {
-        let generator = UIImpactFeedbackGenerator(style: .soft)
-        generator.impactOccurred()
+        DispatchQueue.main.async {
+            let generator = UIImpactFeedbackGenerator(style: .soft)
+            generator.impactOccurred()
+        }
     }
     
     // Rigid impact - for firm, definitive actions
     func rigid() {
-        let generator = UIImpactFeedbackGenerator(style: .rigid)
-        generator.impactOccurred()
+        DispatchQueue.main.async {
+            let generator = UIImpactFeedbackGenerator(style: .rigid)
+            generator.impactOccurred()
+        }
     }
     
     // Success notification - for successful operations
     func success() {
-        let generator = UINotificationFeedbackGenerator()
-        generator.notificationOccurred(.success)
+        DispatchQueue.main.async {
+            let generator = UINotificationFeedbackGenerator()
+            generator.notificationOccurred(.success)
+        }
     }
     
     // Warning notification - for warnings
     func warning() {
-        let generator = UINotificationFeedbackGenerator()
-        generator.notificationOccurred(.warning)
+        DispatchQueue.main.async {
+            let generator = UINotificationFeedbackGenerator()
+            generator.notificationOccurred(.warning)
+        }
     }
     
     // Error notification - for errors
     func error() {
-        let generator = UINotificationFeedbackGenerator()
-        generator.notificationOccurred(.error)
+        DispatchQueue.main.async {
+            let generator = UINotificationFeedbackGenerator()
+            generator.notificationOccurred(.error)
+        }
     }
     
     // Selection changed - for picker/selection changes
     func selection() {
-        let generator = UISelectionFeedbackGenerator()
-        generator.selectionChanged()
+        DispatchQueue.main.async {
+            let generator = UISelectionFeedbackGenerator()
+            generator.selectionChanged()
+        }
     }
     
     // Custom patterns for special interactions
@@ -66,23 +84,20 @@ final class HapticManager: @unchecked Sendable {
     // Double tap pattern - light-light quickly
     func doubleTap() {
         light()
-        Task {
-            try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             self.light()
         }
     }
     
     // Success celebration - uses native vibration pattern
     func celebrate() {
-        // Trigger success haptic
-        success()
+        DispatchQueue.main.async {
+            let generator = UINotificationFeedbackGenerator()
+            generator.notificationOccurred(.success)
+            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+        }
         
-        // Add a native vibration for emphasis
-        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
-        
-        // Follow up with light haptic
-        Task {
-            try? await Task.sleep(nanoseconds: 150_000_000) // 0.15 seconds
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
             self.light()
         }
     }
@@ -90,8 +105,7 @@ final class HapticManager: @unchecked Sendable {
     // Delete pattern - warning + rigid
     func delete() {
         warning()
-        Task {
-            try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             self.rigid()
         }
     }
