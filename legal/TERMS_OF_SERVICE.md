@@ -1,179 +1,355 @@
-# Terms of Service
+# Terms of Service# Terms of Service
 
-**Last Updated: 5 November 2025**
 
-**IMPORTANT LEGAL NOTICE:** These Terms of Service constitute a legally binding agreement. By accessing or using RecipeFinder, you accept these terms in their entirety and waive certain legal rights. READ CAREFULLY BEFORE PROCEEDING.
 
-## 1. Acceptance of Terms and Binding Agreement
+**Last Updated: 7 November 2025****Last Updated: 7 November 2025**
 
-By accessing, downloading, installing, or using RecipeFinder ("the App"), you:
+
+
+Welcome to RecipeFinder! These Terms of Service explain your rights and responsibilities when using our app. By using RecipeFinder, you agree to these terms.
+
+
+
+## 1. About RecipeFinder## 1. Acceptance of Terms and Binding Agreement
+
+
+
+RecipeFinder is a recipe management app developed and operated by RECIPEFINDER LIMITED (Company Number: 16833243), registered in England and Wales.By accessing, downloading, installing, or using RecipeFinder ("the App"), you:
+
 - Acknowledge that you have read, understood, and agree to be bound by these Terms of Service
-- Consent to the formation of a legally binding contract with RECIPEFINDER LIMITED (Company Number 16833243) and its director Asad Khan ("we," "us," "our," or "the Company")
-- Waive any right to claim you did not have adequate notice of these terms
-- Agree to submit to the exclusive jurisdiction of courts in England and Wales
+
+**Developer:** Asad Khan  - Consent to the formation of a legally binding contract with RECIPEFINDER LIMITED (Company Number 16833243) and its director Asad Khan ("we," "us," "our," or "the Company")
+
+**Contact:** recipefinderlimited@icloud.com  - Waive any right to claim you did not have adequate notice of these terms
+
+**GitHub:** https://github.com  - Agree to submit to the exclusive jurisdiction of courts in England and Wales
+
 - Acknowledge that your continued use constitutes ongoing acceptance of these terms and any amendments
+
+## 2. Using the App
 
 **IF YOU DO NOT AGREE TO THESE TERMS, YOU ARE NOT AUTHORIZED TO USE THE APP AND MUST IMMEDIATELY CEASE ALL USE AND DELETE ALL COPIES.**
 
-## 2. Ownership and Company Information
+### What You Can Do
 
-### 2.1 Legal Entity
-RecipeFinder is owned and operated by:
+- Browse, search, and save recipes## 2. Ownership and Company Information
+
+- Create and manage shopping lists
+
+- Track your kitchen inventory### 2.1 Legal Entity
+
+- Import recipes from websitesRecipeFinder is owned and operated by:
+
+- Export and share recipes
 
 **Legal Name:** RECIPEFINDER LIMITED  
-**Company Number:** 16833243  
-**Registered:** England and Wales  
-**Date of Incorporation:** 5 November 2025  
-**Company Type:** Private Limited Company by Shares  
-**Director:** Asad Khan  
-**Sole Shareholder:** Asad Khan (100% beneficial ownership)  
+
+### What You Should Not Do**Company Number:** 16833243  
+
+- Don't use the app for illegal purposes**Registered:** England and Wales  
+
+- Don't attempt to reverse engineer or hack the app**Date of Incorporation:** 5 November 2025  
+
+- Don't distribute malware or harmful content**Company Type:** Private Limited Company by Shares  
+
+- Don't violate others' intellectual property rights**Director:** Asad Khan  
+
+- Don't abuse or spam the recipe import feature**Sole Shareholder:** Asad Khan (100% beneficial ownership)  
+
 **Person with Significant Control (PSC):** Asad Khan  
+
+## 3. Your Content
 
 **Official Record:** https://find-and-update.company-information.service.gov.uk/company/16833243
 
-### 2.2 Description of Service
+### Recipes You Create
 
-RecipeFinder is a proprietary mobile application that allows authorized users to:
+- You own the recipes you create in the app### 2.2 Description of Service
+
+- Your recipes are stored locally on your device
+
+- We don't claim ownership of your personal recipesRecipeFinder is a proprietary mobile application that allows authorized users to:
+
 - Browse and search recipes
-- Manage shopping lists
-- Track kitchen inventory
-- Import recipes from websites
-- Share recipes via text and PDF
+
+### Imported Recipes- Manage shopping lists
+
+- Recipes imported from websites belong to their original creators- Track kitchen inventory
+
+- You're responsible for respecting copyright when importing recipes- Import recipes from websites
+
+- Only import recipes for personal, non-commercial use- Share recipes via text and PDF
+
+- Respect website terms of service when importing
 
 All services are provided at our sole discretion and may be modified or discontinued at any time without notice.
 
+## 4. Our Intellectual Property
+
 ## 3. User Responsibilities and Prohibited Conduct
 
-### 3.1 Mandatory Obligations
-You MUST:
-- Use the App only for lawful purposes in accordance with all applicable laws
+RecipeFinder's source code, design, and branding are owned by RECIPEFINDER LIMITED and protected by:
+
+- UK Copyright, Designs and Patents Act 1988### 3.1 Mandatory Obligations
+
+- International copyright treatiesYou MUST:
+
+- Other applicable intellectual property laws- Use the App only for lawful purposes in accordance with all applicable laws
+
 - Maintain the confidentiality of any proprietary information
-- Immediately report any unauthorized access or security breaches
+
+The app is provided for your personal use only. You may not copy, modify, or redistribute the app without permission.- Immediately report any unauthorized access or security breaches
+
 - Comply with all terms and conditions at all times
-- Accept full responsibility for your actions while using the App
 
-### 3.2 Strict Prohibitions
-You are ABSOLUTELY PROHIBITED from:
-- Reverse engineering, decompiling, or disassembling any part of the App
-- Copying, modifying, or creating derivative works based on the App
-- Distributing malware, viruses, or harmful content
+## 5. Privacy & Data- Accept full responsibility for your actions while using the App
+
+
+
+Your privacy is important to us:### 3.2 Strict Prohibitions
+
+- All your data is stored locally on your deviceYou are ABSOLUTELY PROHIBITED from:
+
+- We don't collect or transmit your personal information- Reverse engineering, decompiling, or disassembling any part of the App
+
+- We don't track your usage or behavior- Copying, modifying, or creating derivative works based on the App
+
+- See our [Privacy Policy](PRIVACY_POLICY.md) for full details- Distributing malware, viruses, or harmful content
+
 - Violating intellectual property rights of the Company or third parties
-- Using automated systems, bots, or scrapers to access or harvest data
-- Circumventing any security features or access controls
-- Interfering with or disrupting the App's functionality
-- Making false statements or misrepresentations about the App
-- Using the App to compete with or harm the Company
-- Engaging in any fraudulent, deceptive, or unlawful activity
-- Attempting to gain unauthorized access to systems or data
 
-### 3.3 Breach and Consequences
-Any violation of these prohibitions constitutes a material breach of this agreement and may result in:
+## 6. No Warranties (Important!)- Using automated systems, bots, or scrapers to access or harvest data
+
+- Circumventing any security features or access controls
+
+RecipeFinder is provided "as is" without warranties of any kind. This means:- Interfering with or disrupting the App's functionality
+
+- Making false statements or misrepresentations about the App
+
+- **Recipe Accuracy:** We don't guarantee recipe information is accurate or safe- Using the App to compete with or harm the Company
+
+- **Food Safety:** You're responsible for food safety and checking ingredients- Engaging in any fraudulent, deceptive, or unlawful activity
+
+- **Allergies:** Always verify ingredients if you have allergies- Attempting to gain unauthorized access to systems or data
+
+- **Nutritional Info:** Nutritional data may contain errors
+
+- **Availability:** The app may not always be available or work perfectly### 3.3 Breach and Consequences
+
+- **Data Loss:** While we try to prevent it, data loss can happen (please back up!)Any violation of these prohibitions constitutes a material breach of this agreement and may result in:
+
 - Immediate termination of access without notice
-- Legal action for damages, injunctive relief, and specific performance
+
+**Important for Your Health:** Always use your own judgment with recipes. Check ingredients for allergies, verify cooking instructions, and follow food safety practices.- Legal action for damages, injunctive relief, and specific performance
+
 - Criminal prosecution where applicable
-- Financial liability for all damages, costs, and attorney's fees
+
+## 7. Limitation of Liability- Financial liability for all damages, costs, and attorney's fees
+
 - Permanent ban from all Company services
+
+**To the maximum extent permitted by law:**
 
 ## 4. Intellectual Property Rights - Absolute and Exclusive Ownership
 
-### 4.1 Complete Ownership by RECIPEFINDER LIMITED
-RecipeFinder and ALL its components, including but not limited to:
-- Source code, object code, and executable files
-- Algorithms, processes, and methodologies
-- User interface designs, layouts, and visual elements
-- Database structures, schemas, and architectures
-- Documentation, manuals, and specifications
-- Trade secrets and proprietary information
-- Trademarks, service marks, and branding elements
-- Patents, patent applications, and inventions
-- All derivative works and improvements
+We (RECIPEFINDER LIMITED and Asad Khan) are not liable for:
 
-Are the EXCLUSIVE and ABSOLUTE property of RECIPEFINDER LIMITED and Asad Khan, protected by:
+- Any damages arising from your use of the app### 4.1 Complete Ownership by RECIPEFINDER LIMITED
+
+- Loss of data or contentRecipeFinder and ALL its components, including but not limited to:
+
+- Food-related issues (allergies, illness, etc.)- Source code, object code, and executable files
+
+- Problems with imported recipes- Algorithms, processes, and methodologies
+
+- Device damage or technical issues- User interface designs, layouts, and visual elements
+
+- Database structures, schemas, and architectures
+
+**Maximum Liability:** If we are found liable for anything, our total liability is limited to £50 or the amount you paid for the app (whichever is greater).- Documentation, manuals, and specifications
+
+- Trade secrets and proprietary information
+
+**Your Responsibility:** You use RecipeFinder at your own risk. You're responsible for:- Trademarks, service marks, and branding elements
+
+- Verifying recipe accuracy and safety- Patents, patent applications, and inventions
+
+- Checking ingredients for allergies- All derivative works and improvements
+
+- Following proper food handling practices
+
+- Backing up your dataAre the EXCLUSIVE and ABSOLUTE property of RECIPEFINDER LIMITED and Asad Khan, protected by:
+
 - UK Copyright, Designs and Patents Act 1988
-- Trade Marks Act 1994
+
+## 8. Changes to These Terms- Trade Marks Act 1994
+
 - Patent Act 1977
-- Common law rights
-- International treaties and conventions
-- All other applicable intellectual property laws worldwide
+
+We may update these Terms from time to time. We'll update the "Last Updated" date at the top. Significant changes will be notified through:- Common law rights
+
+- The app (if possible)- International treaties and conventions
+
+- Our GitHub repository- All other applicable intellectual property laws worldwide
+
+- Email (if we have your contact)
 
 ### 4.2 No Rights Granted to Users
-**YOU ARE GRANTED NO OWNERSHIP RIGHTS WHATSOEVER.** Your use of the App is a revocable license only. You acknowledge and agree that:
+
+Continued use of the app after changes means you accept the new terms.**YOU ARE GRANTED NO OWNERSHIP RIGHTS WHATSOEVER.** Your use of the App is a revocable license only. You acknowledge and agree that:
+
 - All intellectual property belongs exclusively to the Company
-- You acquire no rights, title, or interest in any Company property
+
+## 9. Termination- You acquire no rights, title, or interest in any Company property
+
 - Any suggestions, feedback, or ideas you provide become Company property
-- You waive any moral rights or similar rights worldwide
+
+You can stop using RecipeFinder anytime by deleting the app.- You waive any moral rights or similar rights worldwide
+
 - You will not challenge Company ownership or validity of IP rights
 
-### 4.3 Recipe Content and User Data
-- The Company claims no ownership of recipes you create independently
-- However, by using the App, you grant the Company a perpetual, irrevocable, worldwide, royalty-free, sublicensable license to use, reproduce, modify, and distribute your content
-- Third-party recipes belong to their respective owners
-- You represent and warrant you have rights to all content you import or upload
+We may suspend or terminate access if you:
 
-### 4.4 Enforcement of IP Rights
-The Company actively monitors and enforces its intellectual property rights. Any infringement will result in immediate legal action seeking:
+- Violate these terms### 4.3 Recipe Content and User Data
+
+- Use the app illegally- The Company claims no ownership of recipes you create independently
+
+- Harm the app or other users- However, by using the App, you grant the Company a perpetual, irrevocable, worldwide, royalty-free, sublicensable license to use, reproduce, modify, and distribute your content
+
+- Third-party recipes belong to their respective owners
+
+## 10. Legal Stuff- You represent and warrant you have rights to all content you import or upload
+
+
+
+### Governing Law### 4.4 Enforcement of IP Rights
+
+These Terms are governed by the laws of England and Wales.The Company actively monitors and enforces its intellectual property rights. Any infringement will result in immediate legal action seeking:
+
 - Preliminary and permanent injunctive relief
-- Actual damages and/or statutory damages up to the maximum allowed by law
-- Disgorgement of all profits derived from infringement
+
+### Disputes- Actual damages and/or statutory damages up to the maximum allowed by law
+
+If we have a dispute, let's try to resolve it friendly first by contacting asadkhanruby@gmail.com. - Disgorgement of all profits derived from infringement
+
 - Recovery of all attorney's fees and costs
-- Destruction of all infringing materials
+
+If that doesn't work, any legal proceedings must be brought in the courts of England and Wales.- Destruction of all infringing materials
+
 - Criminal prosecution where applicable
 
-## 5. Privacy and Data Collection
+### Severability
 
-**Please refer to our Privacy Policy for complete information.**
+If any part of these Terms is found invalid, the rest remains in effect.## 5. Privacy and Data Collection
+
+
+
+### Entire Agreement**Please refer to our Privacy Policy for complete information.**
+
+These Terms, together with our Privacy Policy, make up the complete agreement between you and us.
 
 Summary:
-- Recipes, shopping lists, and kitchen inventory are stored locally on your device
+
+## 11. Third-Party Services- Recipes, shopping lists, and kitchen inventory are stored locally on your device
+
 - We collect minimal data necessary to provide services
-- No personal data is transmitted to external servers without your explicit action
-- Data protection compliance with UK GDPR and Data Protection Act 2018
-- You are responsible for backing up your local data
 
-**IMPORTANT:** While we make reasonable efforts to protect data, you acknowledge that electronic data transmission and storage can never be 100% secure. You use the App at your own risk.
+When you import recipes from websites:- No personal data is transmitted to external servers without your explicit action
 
-## 6. Disclaimer of Warranties - USE AT YOUR OWN RISK
+- You're connecting directly to those websites- Data protection compliance with UK GDPR and Data Protection Act 2018
 
-**TO THE MAXIMUM EXTENT PERMITTED BY LAW:**
+- Those sites have their own terms and privacy policies- You are responsible for backing up your local data
 
-THE APP AND ALL SERVICES ARE PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTY OF ANY KIND, WHETHER EXPRESS, IMPLIED, OR STATUTORY, INCLUDING BUT NOT LIMITED TO:
+- We're not responsible for third-party content or services
 
-- **NO WARRANTY OF MERCHANTABILITY** - The App may not be suitable for your particular purpose
+- Respect their terms when using their content**IMPORTANT:** While we make reasonable efforts to protect data, you acknowledge that electronic data transmission and storage can never be 100% secure. You use the App at your own risk.
+
+
+
+## 12. Open Source## 6. Disclaimer of Warranties - USE AT YOUR OWN RISK
+
+
+
+RecipeFinder is open source! You can:**TO THE MAXIMUM EXTENT PERMITTED BY LAW:**
+
+- View the source code on GitHub
+
+- Report issues and bugsTHE APP AND ALL SERVICES ARE PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTY OF ANY KIND, WHETHER EXPRESS, IMPLIED, OR STATUTORY, INCLUDING BUT NOT LIMITED TO:
+
+- Contribute improvements (subject to our approval)
+
+- Fork for personal use (commercial use requires permission)- **NO WARRANTY OF MERCHANTABILITY** - The App may not be suitable for your particular purpose
+
 - **NO WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE** - We make no guarantees the App will meet your needs
-- **NO WARRANTY OF NON-INFRINGEMENT** - We do not warrant against third-party IP claims
+
+See our LICENSE file for details on code usage rights.- **NO WARRANTY OF NON-INFRINGEMENT** - We do not warrant against third-party IP claims
+
 - **NO WARRANTY OF ACCURACY** - Recipe information, nutritional data, and content may contain errors
-- **NO WARRANTY OF SECURITY** - Electronic systems can be compromised
+
+## 13. App Store Terms- **NO WARRANTY OF SECURITY** - Electronic systems can be compromised
+
 - **NO WARRANTY OF AVAILABILITY** - The App may be unavailable at any time
-- **NO WARRANTY OF COMPATIBILITY** - The App may not work with your device or system
-- **NO WARRANTY OF ERROR-FREE OPERATION** - Bugs and defects may exist
-- **NO WARRANTY OF DATA INTEGRITY** - Data loss or corruption may occur
+
+If you downloaded RecipeFinder from the Apple App Store, you also agree to:- **NO WARRANTY OF COMPATIBILITY** - The App may not work with your device or system
+
+- Apple's Terms and Conditions- **NO WARRANTY OF ERROR-FREE OPERATION** - Bugs and defects may exist
+
+- Apple's End User License Agreement (EULA)- **NO WARRANTY OF DATA INTEGRITY** - Data loss or corruption may occur
+
+- Your agreement with Apple, not us, regarding app performance
 
 ### 6.1 Health and Safety Disclaimer
-- Recipes are for informational purposes only
+
+## 14. Contact Us- Recipes are for informational purposes only
+
 - We do not guarantee accuracy of ingredients, quantities, or nutritional information
-- You are solely responsible for verifying food safety and suitability
+
+Questions about these Terms?- You are solely responsible for verifying food safety and suitability
+
 - Consult healthcare professionals for dietary restrictions and allergies
-- Follow proper food handling and safety practices
-- The Company assumes no liability for adverse reactions, illness, or injury
+
+**Email:** asadkhanruby@gmail.com  - Follow proper food handling and safety practices
+
+**GitHub Issues:** https://github.com/AsadK47/RecipeFinder/issues  - The Company assumes no liability for adverse reactions, illness, or injury
+
+**Company:** RECIPEFINDER LIMITED (16833243)
 
 ### 6.2 Third-Party Content Disclaimer
-- Imported recipes and external links are not verified or endorsed by the Company
+
+---- Imported recipes and external links are not verified or endorsed by the Company
+
 - We make no representations about third-party content accuracy or safety
-- Third-party websites and services are subject to their own terms
 
-### 6.3 Your Acknowledgment
-You expressly acknowledge and agree that use of the App is at your sole risk. You will be solely responsible for any damage to your device, loss of data, or any other harm resulting from your use of the App.
+## Summary (TL;DR)- Third-party websites and services are subject to their own terms
 
-## 7. Limitation of Liability and Indemnification
 
-### 7.1 Comprehensive Limitation of Company Liability
 
-**TO THE MAXIMUM EXTENT PERMITTED BY LAW, IN NO EVENT SHALL RECIPEFINDER LIMITED, ASAD KHAN, OR ANY ASSOCIATED PARTIES BE LIABLE FOR:**
+✅ Use RecipeFinder for personal recipe management  ### 6.3 Your Acknowledgment
 
-**Consequential Damages:**
+✅ You own your recipes; respect others' recipes  You expressly acknowledge and agree that use of the App is at your sole risk. You will be solely responsible for any damage to your device, loss of data, or any other harm resulting from your use of the App.
+
+✅ We protect your privacy (no tracking, local storage)  
+
+✅ Use common sense with food safety and allergies  ## 7. Limitation of Liability and Indemnification
+
+✅ App provided "as is" - use at your own risk  
+
+✅ Be nice, don't break the law  ### 7.1 Comprehensive Limitation of Company Liability
+
+
+
+---**TO THE MAXIMUM EXTENT PERMITTED BY LAW, IN NO EVENT SHALL RECIPEFINDER LIMITED, ASAD KHAN, OR ANY ASSOCIATED PARTIES BE LIABLE FOR:**
+
+
+
+**Thank you for using RecipeFinder!****Consequential Damages:**
+
 - Loss of profits, revenue, or business opportunities
-- Loss of data or information
-- Loss of goodwill or reputation
+
+*RecipeFinder is developed with ❤️ by RECIPEFINDER LIMITED*  - Loss of data or information
+
+*Company Number: 16833243 | Registered in England and Wales*- Loss of goodwill or reputation
+
 - Business interruption
 - Cost of substitute goods or services
 - Loss of savings or expected income

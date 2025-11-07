@@ -69,7 +69,7 @@ struct LegalInformationView: View {
                                 .padding(.vertical, 4)
                             
                             Button(action: {
-                                if let url = URL(string: "mailto:AsadK47@users.noreply.github.com") {
+                                if let url = URL(string: "mailto:recipefinderlimited@icloud.com") {
                                     UIApplication.shared.open(url)
                                 }
                             }) {
@@ -79,10 +79,10 @@ struct LegalInformationView: View {
                                         .font(.title3)
                                     
                                     VStack(alignment: .leading, spacing: 4) {
-                                        Text("Registered Email")
+                                        Text("Company Email")
                                             .font(.caption)
                                             .foregroundColor(.secondary)
-                                        Text("AsadK47@users.noreply.github.com")
+                                        Text("recipefinderlimited@icloud.com")
                                             .font(.subheadline)
                                             .foregroundColor(colorScheme == .dark ? .white : .black)
                                     }
@@ -126,37 +126,6 @@ struct LegalInformationView: View {
                                 }
                                 .padding(12)
                                 .background(Color.purple.opacity(0.1))
-                                .cornerRadius(10)
-                            }
-                            .buttonStyle(PlainButtonStyle())
-                            
-                            Button(action: {
-                                if let url = URL(string: "https://github.com/AsadK47/RecipeFinder") {
-                                    UIApplication.shared.open(url)
-                                }
-                            }) {
-                                HStack(spacing: 12) {
-                                    Image(systemName: "chevron.left.forwardslash.chevron.right")
-                                        .foregroundColor(.orange)
-                                        .font(.title3)
-                                    
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text("Source Code")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                        Text("GitHub Repository")
-                                            .font(.subheadline)
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
-                                    }
-                                    
-                                    Spacer()
-                                    
-                                    Image(systemName: "arrow.up.right.square")
-                                        .foregroundColor(.secondary)
-                                        .font(.caption)
-                                }
-                                .padding(12)
-                                .background(Color.orange.opacity(0.1))
                                 .cornerRadius(10)
                             }
                             .buttonStyle(PlainButtonStyle())
@@ -572,7 +541,7 @@ struct PrivacyPolicyView: View {
                                 .font(.system(size: 32, weight: .bold))
                                 .foregroundColor(colorScheme == .dark ? .white : .black)
                             
-                            Text("Last Updated: 5 November 2025")
+                            Text("Last Updated: 7 November 2025")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                             
@@ -621,7 +590,7 @@ struct PrivacyPolicyView: View {
                             
                             SectionTitle("Contact Us")
                             BodyText("If you have questions about this Privacy Policy, contact us at:")
-                            BodyText("AsadK47@users.noreply.github.com")
+                            BodyText("recipefinderlimited@icloud.com")
                         }
                     }
                     .padding(24)
@@ -657,45 +626,63 @@ struct TermsOfServiceView: View {
                                 .font(.system(size: 32, weight: .bold))
                                 .foregroundColor(colorScheme == .dark ? .white : .black)
                             
-                            Text("Last Updated: 5 November 2025")
+                            Text("Last Updated: 7 November 2025")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                             
                             Divider()
                             
-                            SectionTitle("1. Acceptance of Terms")
-                            BodyText("By downloading, installing, or using RecipeFinder, you agree to be bound by these Terms of Service.")
+                            BodyText("Welcome to RecipeFinder! These Terms explain your rights and responsibilities when using our app.")
                             
-                            SectionTitle("2. License")
-                            BodyText("RECIPEFINDER LIMITED grants you a non-exclusive, non-transferable license to use this app for personal, non-commercial purposes.")
+                            SectionTitle("1. About RecipeFinder")
+                            BodyText("RecipeFinder is developed and operated by RECIPEFINDER LIMITED (Company Number: 16833243), registered in England and Wales.")
                             
-                            SectionTitle("3. User Content")
-                            BodyText("All recipes, notes, and data you create remain yours. We do not claim ownership of your content.")
+                            SectionTitle("2. Using the App")
+                            BodyText("You can browse recipes, manage shopping lists, track inventory, import recipes from websites, and export/share recipes.")
+                            BodyText("Please don't use the app for illegal purposes, attempt to hack it, distribute malware, or violate others' intellectual property rights.")
+                            
+                            SectionTitle("3. Your Content")
+                            BodyText("You own the recipes you create. Your recipes are stored locally on your device. We don't claim ownership of your personal recipes.")
+                            BodyText("Recipes imported from websites belong to their original creators. You're responsible for respecting copyright when importing recipes.")
                         }
                         
                         Group {
-                            SectionTitle("4. Prohibited Uses")
-                            BodyText("You agree not to:")
-                            BulletPoint("Reverse engineer or decompile the app")
-                            BulletPoint("Use the app for commercial purposes without permission")
-                            BulletPoint("Attempt to circumvent any security features")
+                            SectionTitle("4. Our Intellectual Property")
+                            BodyText("RecipeFinder's source code, design, and branding are owned by RECIPEFINDER LIMITED and protected by UK Copyright, Designs and Patents Act 1988.")
                             
-                            SectionTitle("5. Disclaimer")
-                            BodyText("The app is provided \"as is\" without warranties of any kind. Recipes are for informational purposes only. Always follow proper food safety guidelines.")
+                            SectionTitle("5. Privacy & Data")
+                            BodyText("All your data is stored locally on your device. We don't collect or transmit your personal information. See our Privacy Policy for full details.")
                             
-                            SectionTitle("6. Limitation of Liability")
-                            BodyText("RECIPEFINDER LIMITED shall not be liable for any damages arising from use of this app.")
+                            SectionTitle("6. No Warranties (Important!)")
+                            BodyText("RecipeFinder is provided \"as is\" without warranties. We don't guarantee recipe accuracy or safety. You're responsible for food safety and checking ingredients, especially for allergies.")
+                            BodyText("Always use your own judgment with recipes. Verify cooking instructions and follow food safety practices.")
                         }
                         
                         Group {
-                            SectionTitle("7. Governing Law")
-                            BodyText("These terms are governed by the laws of England and Wales.")
+                            SectionTitle("7. Limitation of Liability")
+                            BodyText("To the maximum extent permitted by law, we (RECIPEFINDER LIMITED and Asad Khan) are not liable for any damages arising from your use of the app, including loss of data, food-related issues, or device problems.")
+                            BodyText("Maximum Liability: If we are found liable for anything, our total liability is limited to £50 or the amount you paid for the app (whichever is greater).")
                             
-                            SectionTitle("8. Contact")
-                            BodyText("For questions about these Terms, contact:")
-                            BodyText("RECIPEFINDER LIMITED")
-                            BodyText("Company Number: 16833243")
-                            BodyText("Email: AsadK47@users.noreply.github.com")
+                            SectionTitle("8. Changes to These Terms")
+                            BodyText("We may update these Terms from time to time. Check the \"Last Updated\" date above. Continued use means you accept the new terms.")
+                            
+                            SectionTitle("9. Legal Stuff")
+                            BodyText("These Terms are governed by the laws of England and Wales. If we have a dispute, let's try to resolve it friendly first. If needed, legal proceedings must be brought in the courts of England and Wales.")
+                        }
+                        
+                        Group {
+                            SectionTitle("10. Contact Us")
+                            BodyText("Questions about these Terms?")
+                            BodyText("Email: recipefinderlimited@icloud.com")
+                            BodyText("Company: RECIPEFINDER LIMITED (16833243)")
+                            
+                            Divider()
+                                .padding(.vertical, 8)
+                            
+                            Text("Thank you for using RecipeFinder!")
+                                .font(.headline)
+                                .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                                .padding(.top, 8)
                         }
                     }
                     .padding(24)

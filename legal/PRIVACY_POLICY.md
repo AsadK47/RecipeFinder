@@ -95,10 +95,7 @@ Your data security is ensured by:
 
 ## Changes to This Privacy Policy
 
-We may update this Privacy Policy from time to time. Changes will be posted:
-- In the app (if significant)
-- On GitHub: https://github.com/AsadK47/RecipeFinder
-- Effective date will be updated at the top
+We may update this Privacy Policy from time to time. Changes will be posted in the app and effective date will be updated at the top.
 
 ## International Users
 
@@ -112,17 +109,14 @@ RecipeFinder can be used anywhere in the world. Since no data is collected:
 
 If you have questions about this Privacy Policy:
 
-**GitHub:** https://github.com/AsadK47/RecipeFinder/issues  
-**Email:** [Your Email]  
-**Repository:** https://github.com/AsadK47/RecipeFinder
+**Email:** recipefinderlimited@icloud.com  
+**Company:** RECIPEFINDER LIMITED (16833243)
 
 ## Transparency
 
-This app is open source:
-- View the code: https://github.com/AsadK47/RecipeFinder
-- Verify our privacy claims
-- Contribute improvements
-- Report issues
+**For questions or concerns:**
+- Email: recipefinderlimited@icloud.com
+- Company: RECIPEFINDER LIMITED (16833243)
 
 ---
 
