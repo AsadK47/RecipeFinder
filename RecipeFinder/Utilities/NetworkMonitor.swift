@@ -33,7 +33,7 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
     
     func startMonitoring() {
         monitor.pathUpdateHandler = { @Sendable [weak self] path in
-            Task { @MainActor in
+            DispatchQueue.main.async {
                 self?.isConnected = path.status == .satisfied
                 self?.updateConnectionType(path)
             }

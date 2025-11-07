@@ -60,7 +60,7 @@ final class NotificationManager: NSObject, ObservableObject, UNUserNotificationC
     /// Call this when the app launches or when user enables notifications in settings
     func requestPermission(completion: @escaping @Sendable (Bool) -> Void) {
         notificationCenter.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-            Task { @MainActor in
+            DispatchQueue.main.async {
                 self.isAuthorized = granted
                 
                 if let error = error {
@@ -84,7 +84,7 @@ final class NotificationManager: NSObject, ObservableObject, UNUserNotificationC
             let soundSetting = settings.soundSetting
             let badgeSetting = settings.badgeSetting
             
-            Task { @MainActor in
+            DispatchQueue.main.async {
                 self.isAuthorized = authStatus == .authorized
                 
                 debugLog("📱 Notification Status: \(authStatus.rawValue)")

@@ -351,12 +351,12 @@ struct EmailSignInView: View {
         Task {
             do {
                 try await authManager.signIn(email: email, password: password)
-                await MainActor.run {
+                DispatchQueue.main.async {
                     HapticManager.shared.success()
                     dismiss()
                 }
             } catch {
-                await MainActor.run {
+                DispatchQueue.main.async {
                     isLoading = false
                     errorMessage = error.localizedDescription
                     showError = true
@@ -557,7 +557,7 @@ struct SignUpView: View {
             do {
                 // Create account WITHOUT auto-login (defensive programming)
                 try await authManager.signUpWithoutLogin(email: email, password: password, fullName: fullName)
-                await MainActor.run {
+                DispatchQueue.main.async {
                     HapticManager.shared.success()
                     isLoading = false
                     dismiss()
@@ -565,7 +565,7 @@ struct SignUpView: View {
                     onSignUpSuccess(email)
                 }
             } catch {
-                await MainActor.run {
+                DispatchQueue.main.async {
                     isLoading = false
                     errorMessage = error.localizedDescription
                     showError = true

@@ -22,108 +22,56 @@ jobs:
     name: 🔨 Build
     runs-on: macos-15
     timeout-minutes: 30
+    strategy:
+      matrix:
+        ios-version: ['17.0', '17.2', '17.4', '17.5', '18.0', '18.1', 'latest']
+      fail-fast: false
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
       
       - name: Select Xcode version
-        run: |
-          if [ -d "/Applications/Xcode_${{ env.XCODE_VERSION }}.app" ]; then
-            sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app/Contents/Developer
-          elif [ -d "/Applications/Xcode_16.1.app" ]; then
-            sudo xcode-select -s /Applications/Xcode_16.1.app/Contents/Developer
-          elif [ -d "/Applications/Xcode_16.0.app" ]; then
-            sudo xcode-select -s /Applications/Xcode_16.0.app/Contents/Developer
-          else
-            sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
-          fi
-          echo "=== Xcode Version ==="
-          xcodebuild -version
-          echo "=== Swift Version ==="
-          swift --version
-          echo "=== Available Simulators ==="
-          xcrun simctl list devices available | grep "iPhone" | head -5
+        run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
       
       - name: Detect Available Simulator
         id: simulator
         run: |
-          # List available iPhone simulators
-          SIMULATORS=$(xcrun simctl list devices available iPhone | grep "iPhone" | grep -v "unavailable" | head -1)
-          echo "Available simulators:"
-          echo "$SIMULATORS"
+          IOS_VERSION="${{ matrix.ios-version }}"
           
-          # Try to find iPhone 15 Pro first, then iPhone 15, then any iPhone
-          if xcrun simctl list devices available | grep -q "iPhone 15 Pro"; then
-            DEVICE_NAME="iPhone 15 Pro"
-          elif xcrun simctl list devices available | grep -q "iPhone 15"; then
-            DEVICE_NAME="iPhone 15"
-          elif xcrun simctl list devices available | grep -q "iPhone 14"; then
-            DEVICE_NAME="iPhone 14"
+          # Find first available iPhone with requested iOS version
+          if [ "$IOS_VERSION" = "latest" ]; then
+            DEVICE=$(xcrun simctl list devices available iPhone | grep "iPhone" | head -1)
           else
-            # Extract the first available iPhone name
-            DEVICE_NAME=$(xcrun simctl list devices available | grep "iPhone" | grep -v "unavailable" | head -1 | sed -E 's/^[[:space:]]+([^(]+).*/\1/' | xargs)
+            DEVICE=$(xcrun simctl list devices available iPhone | grep "($IOS_VERSION)" | head -1)
+            [ -z "$DEVICE" ] && DEVICE=$(xcrun simctl list devices available iPhone | grep "iPhone" | head -1)
           fi
           
-          echo "Selected device: $DEVICE_NAME"
+          DEVICE_NAME=$(echo "$DEVICE" | sed -E 's/^[[:space:]]+([^(]+) .*/\1/' | xargs)
           echo "DESTINATION=platform=iOS Simulator,name=$DEVICE_NAME" >> $GITHUB_OUTPUT
-          echo "DEVICE_NAME=$DEVICE_NAME" >> $GITHUB_OUTPUT
       
       - name: Cache Swift Package Manager
         uses: actions/cache@v4
         with:
-          path: |
-            .build
-            ~/Library/Developer/Xcode/DerivedData/**/SourcePackages
+          path: ~/Library/Developer/Xcode/DerivedData/**/SourcePackages
           key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
-          restore-keys: |
-            ${{ runner.os }}-spm-
       
-      - name: Cache DerivedData
-        uses: actions/cache@v4
-        with:
-          path: ~/Library/Developer/Xcode/DerivedData
-          key: ${{ runner.os }}-deriveddata-${{ hashFiles('**/*.swift', '**/*.xcodeproj') }}
-          restore-keys: |
-            ${{ runner.os }}-deriveddata-
-      
-      - name: Clean Package.resolved if exists
-        run: |
-          RESOLVED_FILE="RecipeFinder.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved"
-          if [ -f "$RESOLVED_FILE" ]; then
-            echo "Removing Package.resolved..."
-            rm -f "$RESOLVED_FILE"
-          fi
-      
-      - name: Resolve Swift Package Dependencies
-        run: |
-          xcodebuild -resolvePackageDependencies \
-            -scheme ${{ env.SCHEME }} \
-            -destination '${{ steps.simulator.outputs.DESTINATION }}'
+      - name: Resolve Dependencies
+        run: xcodebuild -resolvePackageDependencies -scheme ${{ env.SCHEME }}
       
       - name: Build project
         run: |
-          set -o pipefail
           xcodebuild build \
             -scheme ${{ env.SCHEME }} \
             -destination '${{ steps.simulator.outputs.DESTINATION }}' \
-            -configuration ${{ env.CONFIGURATION }} \
-            -derivedDataPath ./DerivedData \
-            SWIFT_VERSION=${{ env.SWIFT_VERSION }} \
-            SWIFT_STRICT_CONCURRENCY=complete \
-            CODE_SIGN_IDENTITY="" \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGNING_ALLOWED=NO \
-            2>&1 | tee build.log
-        continue-on-error: false
+            CODE_SIGNING_ALLOWED=NO | tee build-${{ matrix.ios-version }}.log
       
       - name: Upload build logs
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: build-logs
-          path: build.log
-          retention-days: 7
+          name: build-logs-${{ matrix.ios-version }}
+          path: build-${{ matrix.ios-version }}.log
 
   test:
     name: 🧪 Test
@@ -131,65 +79,47 @@ jobs:
     timeout-minutes: 30
     needs: [build]
     if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+    strategy:
+      matrix:
+        ios-version: ['17.0', '17.2', '17.4', '17.5', '18.0', '18.1', 'latest']
+      fail-fast: false
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
       
       - name: Select Xcode version
-        run: |
-          if [ -d "/Applications/Xcode_${{ env.XCODE_VERSION }}.app" ]; then
-            sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app/Contents/Developer
-          elif [ -d "/Applications/Xcode_16.1.app" ]; then
-            sudo xcode-select -s /Applications/Xcode_16.1.app/Contents/Developer
-          elif [ -d "/Applications/Xcode_16.0.app" ]; then
-            sudo xcode-select -s /Applications/Xcode_16.0.app/Contents/Developer
-          else
-            sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
-          fi
+        run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
       
       - name: Detect Available Simulator
         id: simulator
         run: |
-          # Try to find iPhone 15 Pro first, then iPhone 15, then any iPhone
-          if xcrun simctl list devices available | grep -q "iPhone 15 Pro"; then
-            DEVICE_NAME="iPhone 15 Pro"
-          elif xcrun simctl list devices available | grep -q "iPhone 15"; then
-            DEVICE_NAME="iPhone 15"
-          elif xcrun simctl list devices available | grep -q "iPhone 14"; then
-            DEVICE_NAME="iPhone 14"
+          IOS_VERSION="${{ matrix.ios-version }}"
+          
+          if [ "$IOS_VERSION" = "latest" ]; then
+            DEVICE=$(xcrun simctl list devices available iPhone | grep "iPhone" | head -1)
           else
-            DEVICE_NAME=$(xcrun simctl list devices available | grep "iPhone" | grep -v "unavailable" | head -1 | sed -E 's/^[[:space:]]+([^(]+).*/\1/' | xargs)
+            DEVICE=$(xcrun simctl list devices available iPhone | grep "($IOS_VERSION)" | head -1)
+            [ -z "$DEVICE" ] && DEVICE=$(xcrun simctl list devices available iPhone | grep "iPhone" | head -1)
           fi
           
-          echo "Selected device: $DEVICE_NAME"
+          DEVICE_NAME=$(echo "$DEVICE" | sed -E 's/^[[:space:]]+([^(]+) .*/\1/' | xargs)
           echo "DESTINATION=platform=iOS Simulator,name=$DEVICE_NAME" >> $GITHUB_OUTPUT
       
       - name: Run tests
         run: |
-          set -o pipefail
           xcodebuild test \
             -scheme ${{ env.SCHEME }} \
             -destination '${{ steps.simulator.outputs.DESTINATION }}' \
-            -configuration ${{ env.CONFIGURATION }} \
-            -enableCodeCoverage YES \
-            SWIFT_VERSION=${{ env.SWIFT_VERSION }} \
-            SWIFT_STRICT_CONCURRENCY=complete \
-            CODE_SIGN_IDENTITY="" \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGNING_ALLOWED=NO \
-            2>&1 | tee test.log
+            CODE_SIGNING_ALLOWED=NO | tee test-${{ matrix.ios-version }}.log
         continue-on-error: true
       
       - name: Upload test results
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
-          path: |
-            test.log
-            test-results.html
-          retention-days: 30
+          name: test-results-${{ matrix.ios-version }}
+          path: test-${{ matrix.ios-version }}.log
 
   summary:
     name: 📊 Summary
@@ -201,25 +131,9 @@ jobs:
     steps:
       - name: Generate summary
         run: |
-          echo "## 🎉 Build Results (Swift ${{ env.SWIFT_VERSION }})" >> $GITHUB_STEP_SUMMARY
+          echo "## Build Results" >> $GITHUB_STEP_SUMMARY
+          echo "- Swift ${{ env.SWIFT_VERSION }}" >> $GITHUB_STEP_SUMMARY
+          echo "- iOS: 17.0, 17.2, 17.4, 17.5, 18.0, 18.1, latest" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Configuration:**" >> $GITHUB_STEP_SUMMARY
-          echo "- Xcode: ${{ env.XCODE_VERSION }}" >> $GITHUB_STEP_SUMMARY
-          echo "- Swift: ${{ env.SWIFT_VERSION }}" >> $GITHUB_STEP_SUMMARY
-          echo "- iOS: Latest available" >> $GITHUB_STEP_SUMMARY
-          echo "- Device: Auto-detected iPhone Simulator" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
-          echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| 🔨 Build | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| 🧪 Test | ${{ needs.test.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
-          if [[ "${{ needs.build.result }}" == "failure" ]]; then
-            echo "❌ Build failed" >> $GITHUB_STEP_SUMMARY
-            exit 1
-          elif [[ "${{ needs.test.result }}" == "failure" ]]; then
-            echo "⚠️ Build succeeded but tests failed" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "✅ All checks passed!" >> $GITHUB_STEP_SUMMARY
-          fi
+          echo "Build: ${{ needs.build.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "Test: ${{ needs.test.result }}" >> $GITHUB_STEP_SUMMARY

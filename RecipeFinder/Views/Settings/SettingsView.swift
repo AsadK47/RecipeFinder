@@ -889,7 +889,7 @@ struct NotificationSettingsView: View {
     private func checkNotificationPermission() {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             let status = settings.authorizationStatus
-            Task { @MainActor in
+            DispatchQueue.main.async {
                 self.notificationPermission = status
             }
         }
@@ -1476,11 +1476,8 @@ struct PrivacySettingsView: View {
                                         showResetSuccess = true
                                         HapticManager.shared.success()
                                         
-                                        Task {
-                                            try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
-                                            await MainActor.run {
-                                                showResetSuccess = false
-                                            }
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                                            showResetSuccess = false
                                         }
                                     }) {
                                         HStack {
@@ -1611,12 +1608,12 @@ struct PrivacySettingsView: View {
         Task {
             do {
                 try await authManager.authenticateWithBiometrics()
-                await MainActor.run {
+                DispatchQueue.main.async {
                     biometricsEnabled = true
                     HapticManager.shared.success()
                 }
             } catch {
-                await MainActor.run {
+                DispatchQueue.main.async {
                     biometricErrorMessage = error.localizedDescription
                     showBiometricError = true
                     HapticManager.shared.error()
@@ -1808,11 +1805,8 @@ struct DataManagementSettingsView: View {
         dataCleared = true
         HapticManager.shared.success()
         
-        Task {
-            try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
-            await MainActor.run {
-                dataCleared = false
-            }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            dataCleared = false
         }
     }
     
@@ -1839,11 +1833,8 @@ struct DataManagementSettingsView: View {
         dataCleared = true
         HapticManager.shared.success()
         
-        Task {
-            try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
-            await MainActor.run {
-                dataCleared = false
-            }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            dataCleared = false
         }
     }
 }

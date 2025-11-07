@@ -178,7 +178,7 @@ struct PasswordVerificationSheet: View {
             let credentialManager = SecureCredentialManager.shared
             let isValid = credentialManager.verifyCredentials(email: email, password: password)
             
-            await MainActor.run {
+            DispatchQueue.main.async {
                 isVerifying = false
                 
                 if isValid {

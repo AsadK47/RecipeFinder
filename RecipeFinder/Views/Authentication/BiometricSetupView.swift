@@ -318,7 +318,7 @@ struct BiometricSetupView: View {
                 try await authManager.authenticateWithBiometrics()
                 
                 // If successful, enable it
-                await MainActor.run {
+                DispatchQueue.main.async {
                     biometricsEnabled = true
                     HapticManager.shared.success()
                     
@@ -331,7 +331,7 @@ struct BiometricSetupView: View {
                     }
                 }
             } catch {
-                await MainActor.run {
+                DispatchQueue.main.async {
                     isEnabling = false
                     errorMessage = error.localizedDescription
                     showError = true
