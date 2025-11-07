@@ -34,23 +34,18 @@ import UserNotifications
 
 import Foundation
 import UserNotifications
-import SwiftUI
 
  
-final class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterDelegate, Sendable {
+final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sendable {
     /// Shared singleton instance for global access
     static let shared = NotificationManager()
 
     /// Backwards-compatible alias used in some files
     static var notificationManager: NotificationManager { shared }
     
-    @Published var isAuthorized = false
-    
-    private let notificationCenter = UNUserNotificationCenter.current()
-    
     override init() {
         super.init()
-        notificationCenter.delegate = self
+        UNUserNotificationCenter.current().delegate = self
         checkAuthorizationStatus()
     }
     
@@ -59,10 +54,8 @@ final class NotificationManager: NSObject, ObservableObject, UNUserNotificationC
     /// Request permission to send notifications
     /// Call this when the app launches or when user enables notifications in settings
     func requestPermission(completion: @escaping @Sendable (Bool) -> Void) {
-        notificationCenter.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             DispatchQueue.main.async {
-                self.isAuthorized = granted
-                
                 if let error = error {
                     debugLog("❌ Notification permission error: \(error.localizedDescription)")
                 } else if granted {
@@ -77,7 +70,7 @@ final class NotificationManager: NSObject, ObservableObject, UNUserNotificationC
     
     /// Check current notification permission status
     func checkAuthorizationStatus() {
-        notificationCenter.getNotificationSettings { @Sendable settings in
+        UNUserNotificationCenter.current().getNotificationSettings { @Sendable settings in
             // Extract values before crossing actor boundary
             let authStatus = settings.authorizationStatus
             let alertSetting = settings.alertSetting
@@ -85,8 +78,6 @@ final class NotificationManager: NSObject, ObservableObject, UNUserNotificationC
             let badgeSetting = settings.badgeSetting
             
             DispatchQueue.main.async {
-                self.isAuthorized = authStatus == .authorized
-                
                 debugLog("📱 Notification Status: \(authStatus.rawValue)")
                 debugLog("   - Alert: \(alertSetting.rawValue)")
                 debugLog("   - Sound: \(soundSetting.rawValue)")
@@ -137,7 +128,7 @@ final class NotificationManager: NSObject, ObservableObject, UNUserNotificationC
         )
         
         // 4. Schedule it!
-        notificationCenter.add(request) { error in
+        UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
                 print("❌ Failed to schedule notification: \(error.localizedDescription)")
             } else {
@@ -165,7 +156,7 @@ final class NotificationManager: NSObject, ObservableObject, UNUserNotificationC
             trigger: nil
         )
         
-        notificationCenter.add(request) { error in
+        UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
                 print("❌ Failed to send immediate notification: \(error)")
             }
@@ -212,7 +203,7 @@ final class NotificationManager: NSObject, ObservableObject, UNUserNotificationC
             trigger: trigger
         )
         
-        notificationCenter.add(request) { error in
+        UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
                 print("❌ Failed to schedule meal reminder: \(error)")
             } else {
@@ -256,7 +247,7 @@ final class NotificationManager: NSObject, ObservableObject, UNUserNotificationC
             trigger: trigger
         )
         
-        notificationCenter.add(request) { error in
+        UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
                 print("❌ Failed to schedule daily reminder: \(error)")
             } else {
@@ -282,26 +273,26 @@ final class NotificationManager: NSObject, ObservableObject, UNUserNotificationC
             trigger: nil
         )
         
-        notificationCenter.add(request)
+        UNUserNotificationCenter.current().add(request)
     }
     
     // MARK: - Notification Management
     
     /// Cancel a specific notification by ID
     func cancelNotification(identifier: String) {
-        notificationCenter.removePendingNotificationRequests(withIdentifiers: [identifier])
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [identifier])
         print("🗑️ Canceled notification: \(identifier)")
     }
     
     /// Cancel all timer notifications
     func cancelAllTimerNotifications() {
-        notificationCenter.getPendingNotificationRequests { @Sendable requests in
+        UNUserNotificationCenter.current().getPendingNotificationRequests { @Sendable requests in
             let timerIds = requests
                 .filter { ($0.content.userInfo["type"] as? String) == "timer" }
                 .map { $0.identifier }
             
             Task {
-                self.notificationCenter.removePendingNotificationRequests(withIdentifiers: timerIds)
+                UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: timerIds)
                 print("🗑️ Canceled \(timerIds.count) timer notifications")
             }
         }
@@ -309,13 +300,13 @@ final class NotificationManager: NSObject, ObservableObject, UNUserNotificationC
     
     /// Cancel ALL pending notifications
     func cancelAllNotifications() {
-        notificationCenter.removeAllPendingNotificationRequests()
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         print("🗑️ Canceled all notifications")
     }
     
     /// Get list of all pending notifications
     func getPendingNotifications(completion: @escaping @Sendable ([UNNotificationRequest]) -> Void) {
-        notificationCenter.getPendingNotificationRequests { @Sendable requests in
+        UNUserNotificationCenter.current().getPendingNotificationRequests { @Sendable requests in
             completion(requests)
         }
     }

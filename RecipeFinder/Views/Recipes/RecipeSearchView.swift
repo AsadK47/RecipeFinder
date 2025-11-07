@@ -2,7 +2,6 @@ import SwiftUI
 
 struct RecipeSearchView: View {
     @Binding var recipes: [RecipeModel]
-    @ObservedObject var shoppingListManager: ShoppingListManager
     @State private var searchText = ""
     @State private var showFilters = false
     @State private var selectedCategories: Set<String> = []
@@ -359,7 +358,6 @@ struct RecipeSearchView: View {
         NavigationLink(
             destination: RecipeDetailView(
                 recipe: recipe,
-                shoppingListManager: shoppingListManager,
                 onFavoriteToggle: {
                     refreshRecipes()
                 }

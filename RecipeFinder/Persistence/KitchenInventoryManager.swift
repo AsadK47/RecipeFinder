@@ -1,30 +1,40 @@
-import Combine
 import Foundation
 
 // MARK: - Kitchen Inventory Manager
-// Uses the KitchenInventoryItem for full inventory tracking with expiration dates
 
 final class KitchenInventoryManager: ObservableObject {
-	@Published private(set) var items: [KitchenItem] = []
-	@Published private(set) var inventoryItems: [KitchenInventoryModel] = []
+	nonisolated(unsafe) static let shared = KitchenInventoryManager()
     
 	private let saveKey = Constants.UserDefaultsKeys.kitchenItems
 	private let inventorySaveKey = "kitchenInventoryItems"
 	private let migrationKey = "kitchenItemsMigrationCompleted_v1"
     
-    // Cache for expensive grouping operations (performance optimization)
-    private var cachedGroupedItems: [(category: String, items: [KitchenItem])] = []
-    private var lastItemsCount: Int = 0
-    
-	init() {
-		loadItems()
-		loadInventoryItems()
+	private init() {
 		migrateOldDataIfNeeded()
+	}
+	
+	// MARK: - Getters
+	
+	func getItems() -> [KitchenItem] {
+		if let data = UserDefaults.standard.data(forKey: saveKey),
+		   let decoded = try? JSONDecoder().decode([KitchenItem].self, from: data) {
+			return decoded
+		}
+		return []
+	}
+	
+	func getInventoryItems() -> [KitchenInventoryModel] {
+		if let data = UserDefaults.standard.data(forKey: inventorySaveKey),
+		   let decoded = try? JSONDecoder().decode([KitchenInventoryModel].self, from: data) {
+			return decoded
+		}
+		return []
 	}
 	
 	// MARK: - Full Inventory Item Management (New Model)
 	
 	func addInventoryItem(_ item: KitchenInventoryModel) {
+		var inventoryItems = getInventoryItems()
 		// Don't add duplicates by name
 		guard !inventoryItems.contains(where: { $0.name.lowercased() == item.name.lowercased() }) else {
 			HapticManager.shared.warning()
@@ -33,41 +43,44 @@ final class KitchenInventoryManager: ObservableObject {
 		
 		inventoryItems.append(item)
 		HapticManager.shared.medium()
-		saveInventoryItems()
+		saveInventoryItems(inventoryItems)
 	}
 	
 	func updateInventoryItem(_ item: KitchenInventoryModel) {
+		var inventoryItems = getInventoryItems()
 		if let index = inventoryItems.firstIndex(where: { $0.id == item.id }) {
 			inventoryItems[index] = item
 			HapticManager.shared.light()
-			saveInventoryItems()
+			saveInventoryItems(inventoryItems)
 		}
 	}
 	
 	func removeInventoryItem(_ item: KitchenInventoryModel) {
+		var inventoryItems = getInventoryItems()
 		inventoryItems.removeAll { $0.id == item.id }
 		HapticManager.shared.light()
-		saveInventoryItems()
+		saveInventoryItems(inventoryItems)
 	}
 	
 	func hasInventoryItem(_ name: String) -> Bool {
-		inventoryItems.contains { $0.name.lowercased() == name.lowercased() }
+		getInventoryItems().contains { $0.name.lowercased() == name.lowercased() }
 	}
 	
 	// Computed properties for filtering
-	var expiredItems: [KitchenInventoryModel] {
-		inventoryItems.filter { $0.isExpired }
+	func expiredItems() -> [KitchenInventoryModel] {
+		getInventoryItems().filter { $0.isExpired }
 	}
 	
-	var expiringSoonItems: [KitchenInventoryModel] {
-		inventoryItems.filter { $0.isExpiringSoon }
+	func expiringSoonItems() -> [KitchenInventoryModel] {
+		getInventoryItems().filter { $0.isExpiringSoon }
 	}
 	
-	var lowStockItems: [KitchenInventoryModel] {
-		inventoryItems.filter { $0.needsRestock }
+	func lowStockItems() -> [KitchenInventoryModel] {
+		getInventoryItems().filter { $0.needsRestock }
 	}
 	
-	var itemsByCategory: [(category: IngredientCategory, items: [KitchenInventoryModel])] {
+	func itemsByCategory() -> [(category: IngredientCategory, items: [KitchenInventoryModel])] {
+		let inventoryItems = getInventoryItems()
 		let categories = IngredientCategory.allCases
 		return categories.compactMap { category in
 			let categoryItems = inventoryItems.filter { $0.category == category }
@@ -75,7 +88,8 @@ final class KitchenInventoryManager: ObservableObject {
 		}
 	}
 	
-	var itemsByStorageLocation: [(location: StorageLocation, items: [KitchenInventoryModel])] {
+	func itemsByStorageLocation() -> [(location: StorageLocation, items: [KitchenInventoryModel])] {
+		let inventoryItems = getInventoryItems()
 		let locations = StorageLocation.allCases
 		return locations.compactMap { location in
 			let locationItems = inventoryItems.filter { $0.storageLocation == location }
@@ -89,6 +103,7 @@ final class KitchenInventoryManager: ObservableObject {
 	private func migrateOldDataIfNeeded() {
 		guard !UserDefaults.standard.bool(forKey: migrationKey) else { return }
 		
+		var items = getItems()
 		// Get all valid food items
 		let validFoods = Set(FoodsList.getAllFoods().map { $0.lowercased() })
 		
@@ -99,7 +114,7 @@ final class KitchenInventoryManager: ObservableObject {
 		let removedCount = oldCount - items.count
 		if removedCount > 0 {
 			print("🔄 Kitchen Migration: Removed \(removedCount) non-food items")
-			saveItems()
+			saveItems(items)
 		}
 		
 		// Mark migration as complete
@@ -108,6 +123,7 @@ final class KitchenInventoryManager: ObservableObject {
     
 	// Add/Remove Items
 	func addItem(name: String, category: String? = nil) {
+		var items = getItems()
 		let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
 		guard !trimmedName.isEmpty else { return }
 		
@@ -122,85 +138,67 @@ final class KitchenInventoryManager: ObservableObject {
         
 		items.append(newItem)
 		HapticManager.shared.medium()
-		saveItems()
+		saveItems(items)
 	}
     
 	func removeItem(at index: Int) {
+		var items = getItems()
 		guard index < items.count else { return }
 		items.remove(at: index)
 		HapticManager.shared.light()
-		saveItems()
+		saveItems(items)
 	}
     
 	func removeItem(_ item: KitchenItem) {
+		var items = getItems()
 		items.removeAll { $0.id == item.id }
 		HapticManager.shared.light()
-		saveItems()
+		saveItems(items)
 	}
     
 	func toggleItem(_ name: String, category: String? = nil) {
+		var items = getItems()
 		if let index = items.firstIndex(where: { $0.name.lowercased() == name.lowercased() }) {
-			removeItem(at: index)
+			items.remove(at: index)
+			HapticManager.shared.light()
+			saveItems(items)
 		} else {
 			addItem(name: name, category: category)
 		}
 	}
     
 	func hasItem(_ name: String) -> Bool {
-		items.contains { $0.name.lowercased() == name.lowercased() }
+		getItems().contains { $0.name.lowercased() == name.lowercased() }
 	}
     
 	func clearAll() {
+		var items = getItems()
 		items.removeAll()
 		HapticManager.shared.rigid()
-		saveItems()
+		saveItems(items)
 	}
     
-	// Grouped Items (memoized for performance)
-	var groupedItems: [(category: String, items: [KitchenItem])] {
-        // Return cached result if items haven't changed
-        if items.count == lastItemsCount && !cachedGroupedItems.isEmpty {
-            return cachedGroupedItems
-        }
-        
+	// Grouped Items
+	func groupedItems() -> [(category: String, items: [KitchenItem])] {
+		let items = getItems()
 		let categories = Set(items.map { $0.category }).sorted()
         
-		let result = categories.compactMap { category in
+		return categories.compactMap { category in
 			let categoryItems = items.filter { $0.category == category }
 			return categoryItems.isEmpty ? nil : (category, categoryItems)
 		}
-        
-        // Update cache
-        cachedGroupedItems = result
-        lastItemsCount = items.count
-        
-        return result
 	}
     
 	// Persistence
-	private func saveItems() {
+	private func saveItems(_ items: [KitchenItem]) {
 		if let encoded = try? JSONEncoder().encode(items) {
 			UserDefaults.standard.set(encoded, forKey: saveKey)
 		}
 	}
-    
-	private func loadItems() {
-		if let data = UserDefaults.standard.data(forKey: saveKey),
-		   let decoded = try? JSONDecoder().decode([KitchenItem].self, from: data) {
-			items = decoded
-		}
-	}
 	
-	private func saveInventoryItems() {
+	private func saveInventoryItems(_ inventoryItems: [KitchenInventoryModel]) {
 		if let encoded = try? JSONEncoder().encode(inventoryItems) {
 			UserDefaults.standard.set(encoded, forKey: inventorySaveKey)
-		}
-	}
-	
-	private func loadInventoryItems() {
-		if let data = UserDefaults.standard.data(forKey: inventorySaveKey),
-		   let decoded = try? JSONDecoder().decode([KitchenInventoryModel].self, from: data) {
-			inventoryItems = decoded
 		}
 	}
 }

@@ -3,8 +3,6 @@ import SwiftUI
 
 struct IngredientSearchView: View {
     @Binding var recipes: [RecipeModel]
-    @ObservedObject var shoppingListManager: ShoppingListManager
-    @ObservedObject var pantryManager: KitchenInventoryManager
     @State private var searchText = ""
     @State private var viewMode: RecipeViewMode = .list
     @State private var selectedIngredient: String?
@@ -275,8 +273,6 @@ struct IngredientSearchView: View {
                         CategoryCard(
                             category: category,
                             ingredients: ingredients,
-                            shoppingListManager: shoppingListManager,
-                            pantryManager: pantryManager,
                             addedIngredients: $addedIngredients,
                             onSelectIngredient: { ingredient in
                                 withAnimation(.spring(response: 0.3)) {
@@ -363,7 +359,7 @@ struct IngredientSearchView: View {
     }
     
     private func addToShoppingList(_ ingredient: String) {
-        shoppingListManager.addItem(name: ingredient)
+        ShoppingListManager.shared.addItem(name: ingredient)
         addedIngredients.insert(ingredient)
         showAddedFeedback = ingredient
         
@@ -509,7 +505,7 @@ struct IngredientSearchView: View {
                 if viewMode == .list {
                     LazyVStack(spacing: 16) {
                         ForEach(filteredRecipes) { recipe in
-                            NavigationLink(destination: RecipeDetailView(recipe: recipe, shoppingListManager: shoppingListManager)) {
+                            NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
                                 RecipeCard(recipe: recipe, viewMode: .list)
                             }
                             .buttonStyle(PlainButtonStyle())
@@ -519,7 +515,7 @@ struct IngredientSearchView: View {
                 } else {
                     LazyVGrid(columns: gridColumns, spacing: 16) {
                         ForEach(filteredRecipes) { recipe in
-                            NavigationLink(destination: RecipeDetailView(recipe: recipe, shoppingListManager: shoppingListManager)) {
+                            NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
                                 CompactRecipeCard(recipe: recipe)
                             }
                             .buttonStyle(PlainButtonStyle())
@@ -672,8 +668,6 @@ struct QuickMatchRecipeCard: View {
 struct CategoryCard: View {
     let category: String
     let ingredients: [String]
-    @ObservedObject var shoppingListManager: ShoppingListManager
-    @ObservedObject var pantryManager: KitchenInventoryManager
     @Binding var addedIngredients: Set<String>
     let onSelectIngredient: (String) -> Void
     let onAddToShoppingList: (String) -> Void
@@ -803,7 +797,7 @@ struct CategoryCard: View {
                             .foregroundColor(colorScheme == .dark ? .white.opacity(0.95) : .black.opacity(0.9))
                         
                         // Kitchen indicator
-                        if variations.contains(where: { pantryManager.hasItem($0) }) {
+                        if variations.contains(where: { KitchenInventoryManager.shared.hasItem($0) }) {
                             Image(systemName: "checkmark.circle.fill")
                                 .font(.caption)
                                 .foregroundColor(.green)

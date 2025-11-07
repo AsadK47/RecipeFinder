@@ -29,7 +29,6 @@ struct CookTimerView: View {
     @State private var customName: String = ""
     @State private var timer: Timer?
     @State private var vibrationTimer: Timer?
-    @ObservedObject private var notificationManager = NotificationManager.shared
     
     @AppStorage("cardStyle") private var cardStyleString: String = "frosted"
     @AppStorage("keepScreenAwake") private var keepScreenAwake: Bool = false
@@ -585,7 +584,9 @@ struct CookTimerView: View {
     private func startTimerUpdates() {
         timer?.invalidate()
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-            updateTimers()
+            DispatchQueue.main.async {
+                self.updateTimers()
+            }
         }
     }
     

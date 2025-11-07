@@ -1,28 +1,28 @@
 import Foundation
 
 final class ShoppingListManager: ObservableObject {
-    @Published var items: [ShoppingListModel] = []
+    nonisolated(unsafe) static let shared = ShoppingListManager()
     
     private let saveKey = Constants.UserDefaultsKeys.shoppingListItems
     
-    init() {
-        loadItems()
-    }
+    private init() {}
     
-    private func loadItems() {
+    func getItems() -> [ShoppingListModel] {
         if let data = UserDefaults.standard.data(forKey: saveKey),
            let decoded = try? JSONDecoder().decode([ShoppingListModel].self, from: data) {
-            items = decoded
+            return decoded
         }
+        return []
     }
     
-    private func saveItems() {
+    private func saveItems(_ items: [ShoppingListModel]) {
         if let encoded = try? JSONEncoder().encode(items) {
             UserDefaults.standard.set(encoded, forKey: saveKey)
         }
     }
     
     func addItem(name: String, quantity: Int = 1, category: String? = nil) {
+        var items = getItems()
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedName.isEmpty else {
             print("❌ ShoppingListManager: Empty item name")
@@ -41,7 +41,7 @@ final class ShoppingListManager: ObservableObject {
         if let existingIndex = items.firstIndex(where: { $0.name.lowercased() == trimmedName.lowercased() }) {
             print("✅ ShoppingListManager: Updating existing item '\(trimmedName)'")
             items[existingIndex].quantity += quantity
-            saveItems()
+            saveItems(items)
             HapticManager.shared.light()
             return
         }
@@ -50,26 +50,29 @@ final class ShoppingListManager: ObservableObject {
         let newItem = ShoppingListModel(name: trimmedName, quantity: quantity, category: detectedCategory)
         items.append(newItem)
         print("✅ ShoppingListManager: Added '\(trimmedName)' in category '\(detectedCategory)'. Total items: \(items.count)")
-        saveItems()
+        saveItems(items)
         HapticManager.shared.medium()
     }
     
     func updateCategory(at index: Int, category: String) {
+        var items = getItems()
         guard index < items.count else { return }
         items[index].category = category
-        saveItems()
+        saveItems(items)
     }
     
     func updateName(at index: Int, name: String) {
+        var items = getItems()
         guard index < items.count else { return }
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedName.isEmpty else { return }
         
         items[index].name = trimmedName
-        saveItems()
+        saveItems(items)
     }
     
     func toggleItem(at index: Int) {
+        var items = getItems()
         guard index < items.count else { return }
         items[index].isChecked.toggle()
         
@@ -80,47 +83,52 @@ final class ShoppingListManager: ObservableObject {
             HapticManager.shared.light()
         }
         
-        saveItems()
+        saveItems(items)
     }
     
     func updateQuantity(at index: Int, quantity: Int) {
+        var items = getItems()
         guard index < items.count else { return }
         guard quantity > 0 else { return }
         items[index].quantity = quantity
         HapticManager.shared.light()
-        saveItems()
+        saveItems(items)
     }
     
     func deleteItem(at index: Int) {
+        var items = getItems()
         guard index < items.count else { return }
         items.remove(at: index)
         HapticManager.shared.delete()
-        saveItems()
+        saveItems(items)
     }
     
     func clearCheckedItems() {
+        var items = getItems()
         items.removeAll { $0.isChecked }
         HapticManager.shared.celebrate()
-        saveItems()
+        saveItems(items)
     }
     
     func clearAllItems() {
+        var items = getItems()
         items.removeAll()
         HapticManager.shared.rigid()
-        saveItems()
+        saveItems(items)
     }
     
-    var groupedItems: [(category: String, items: [ShoppingListModel])] {
-        Dictionary(grouping: items, by: { $0.category })
+    func groupedItems() -> [(category: String, items: [ShoppingListModel])] {
+        let items = getItems()
+        return Dictionary(grouping: items, by: { $0.category })
             .map { (category: $0.key, items: $0.value) }
             .sorted { $0.category < $1.category }
     }
     
-    var uncheckedCount: Int {
-        items.filter { !$0.isChecked }.count
+    func uncheckedCount() -> Int {
+        getItems().filter { !$0.isChecked }.count
     }
     
-    var checkedCount: Int {
-        items.filter { $0.isChecked }.count
+    func checkedCount() -> Int {
+        getItems().filter { $0.isChecked }.count
     }
 }

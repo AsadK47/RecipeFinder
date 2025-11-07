@@ -5,8 +5,6 @@ struct MoreView: View {
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @Binding var recipes: [RecipeModel]
-    @EnvironmentObject var kitchenManager: KitchenInventoryManager
-    @EnvironmentObject var shoppingListManager: ShoppingListManager
     
     var body: some View {
         NavigationStack {
@@ -46,8 +44,6 @@ struct MoreView: View {
                                 
                                 MoreCard {
                                     NavigationLink(destination: SettingsTabView()
-                                        .environmentObject(kitchenManager)
-                                        .environmentObject(shoppingListManager)
                                     ) {
                                         MoreRow(
                                             icon: "gearshape.circle.fill",
@@ -175,7 +171,7 @@ struct MoreRow: View {
 
 #Preview {
     MoreView(recipes: .constant([]))
-        .environmentObject(KitchenInventoryManager())
-        .environmentObject(ShoppingListManager())
+        .environmentObject(KitchenInventoryManager.shared)
+        .environmentObject(ShoppingListManager.shared)
         .environment(\.appTheme, .teal)
 }

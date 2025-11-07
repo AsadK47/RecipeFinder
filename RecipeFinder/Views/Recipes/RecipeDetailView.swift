@@ -7,7 +7,6 @@ struct RecipeDetailView: View {
     @State private var instructionsState: [Bool]
     @State private var prePrepState: [Bool]
     @State private var expandedSections: Set<String> = ["Ingredients", "Pre-Prep", "Instructions", "Notes"]
-    @ObservedObject var shoppingListManager: ShoppingListManager
     @State private var addedIngredients: Set<String> = []
     @State private var showAddedFeedback: String?
     @State private var confettiCounter = 0
@@ -28,9 +27,8 @@ struct RecipeDetailView: View {
     // Callback to refresh recipes list when favorite is toggled
     var onFavoriteToggle: (() -> Void)?
     
-    init(recipe: RecipeModel, shoppingListManager: ShoppingListManager, onFavoriteToggle: (() -> Void)? = nil) {
+    init(recipe: RecipeModel, onFavoriteToggle: (() -> Void)? = nil) {
         _recipe = State(initialValue: recipe)
-        self.shoppingListManager = shoppingListManager
         self.onFavoriteToggle = onFavoriteToggle
         
         // Pre-compute state arrays
@@ -519,7 +517,7 @@ struct RecipeDetailView: View {
         // Create item with normalized name and measurements
         let formattedWithUnit = ingredient.formattedWithUnit(for: recipe.scaleFactor, system: measurementSystem)
         let fullName = "\(normalizedName) (\(formattedWithUnit))"
-        shoppingListManager.addItem(name: fullName, quantity: 1, category: nil)
+        ShoppingListManager.shared.addItem(name: fullName, quantity: 1, category: nil)
         
         // Mark as added immediately for UI update
         addedIngredients.insert(ingredient.name)

@@ -2,8 +2,6 @@ import SwiftUI
 
 struct KitchenView: View {
     @Binding var recipes: [RecipeModel]
-    @ObservedObject var shoppingListManager: ShoppingListManager
-    @EnvironmentObject var kitchenManager: KitchenInventoryManager
     @State private var searchText = ""
     @State private var showAddIngredientSheet = false
     @State private var showQuickAdd = false
@@ -47,9 +45,10 @@ struct KitchenView: View {
     }
     
     var quickMatchRecipes: [RecipeModel] {
-        guard !kitchenManager.items.isEmpty else { return [] }
+        let items = KitchenInventoryManager.shared.getItems()
+        guard !items.isEmpty else { return [] }
         
-        let kitchenIngredients = Set(kitchenManager.items.map { $0.name.lowercased() })
+        let kitchenIngredients = Set(items.map { $0.name.lowercased() })
         
         return recipes.filter { recipe in
             let recipeIngredients = recipe.ingredients.map { $0.name.lowercased() }
@@ -88,7 +87,7 @@ struct KitchenView: View {
                             if let category = selectedCategory {
                                 // Show ingredients from selected category
                                 categoryIngredientsView(for: category)
-                            } else if kitchenManager.items.isEmpty && searchText.isEmpty {
+                            } else if KitchenInventoryManager.shared.getItems().isEmpty && searchText.isEmpty {
                                 emptyPromptView
                             } else if !searchText.isEmpty {
                                 searchResultsView
@@ -110,10 +109,10 @@ struct KitchenView: View {
             .toolbarBackground(.hidden, for: .navigationBar)
         }
         .sheet(isPresented: $showQuickAdd) {
-            KitchenQuickAddSheet(kitchenManager: kitchenManager)
+            KitchenQuickAddSheet()
         }
         .sheet(isPresented: $showAddIngredientSheet) {
-            AddIngredientSheet(kitchenManager: kitchenManager)
+            AddIngredientSheet()
         }
         .onAppear {
             // Cache categorized ingredients on first load
@@ -159,11 +158,11 @@ struct KitchenView: View {
                             Label("Search Ingredients", systemImage: "magnifyingglass")
                         }
                         
-                        if !kitchenManager.items.isEmpty {
+                        if !KitchenInventoryManager.shared.getItems().isEmpty {
                             Divider()
                             
                             Button(role: .destructive, action: {
-                                kitchenManager.clearAll()
+                                KitchenInventoryManager.shared.clearAll()
                                 HapticManager.shared.light()
                             }) {
                                 Label("Clear Kitchen", systemImage: "trash")
@@ -436,12 +435,12 @@ struct KitchenView: View {
     }
     
     private func categoryIngredientButton(_ ingredient: String) -> some View {
-        let isInKitchen = kitchenManager.hasItem(ingredient)
+        let isInKitchen = KitchenInventoryManager.shared.hasItem(ingredient)
         let category = CategoryClassifier.suggestCategory(for: ingredient)
         
         return Button {
             withAnimation(.spring(response: 0.3)) {
-                kitchenManager.toggleItem(ingredient)
+                KitchenInventoryManager.shared.toggleItem(ingredient)
                 HapticManager.shared.light()
                 
                 // Go back to main view after adding
@@ -492,7 +491,7 @@ struct KitchenView: View {
                         .fontWeight(.bold)
                         .foregroundColor(colorScheme == .dark ? .white : .black)
                     
-                    Text("\(kitchenManager.items.count) ingredients")
+                    Text("\(KitchenInventoryManager.shared.getItems().count) ingredients")
                         .font(.caption)
                         .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
                 }
@@ -522,11 +521,10 @@ struct KitchenView: View {
             .padding(.horizontal, 20)
             
             // Category Groups
-            ForEach(kitchenManager.groupedItems, id: \.category) { group in
+            ForEach(KitchenInventoryManager.shared.groupedItems(), id: \.category) { group in
                 KitchenCategoryCard(
                     category: group.category,
                     items: group.items,
-                    kitchenManager: kitchenManager,
                     isCollapsed: collapsedCategories.contains(group.category),
                     onToggleCollapse: {
                         withAnimation {
@@ -573,12 +571,12 @@ struct KitchenView: View {
     }
     
     private func kitchenIngredientButton(_ ingredient: String) -> some View {
-        let isInKitchen = kitchenManager.hasItem(ingredient)
+        let isInKitchen = KitchenInventoryManager.shared.hasItem(ingredient)
         let category = CategoryClassifier.suggestCategory(for: ingredient)
         
         return Button {
             withAnimation(.spring(response: 0.3)) {
-                kitchenManager.toggleItem(ingredient)
+                KitchenInventoryManager.shared.toggleItem(ingredient)
                 HapticManager.shared.light()
             }
         } label: {
@@ -656,7 +654,7 @@ struct KitchenView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 16) {
                     ForEach(quickMatchRecipes.prefix(10)) { recipe in
-                        NavigationLink(destination: RecipeDetailView(recipe: recipe, shoppingListManager: shoppingListManager, onFavoriteToggle: {
+                        NavigationLink(destination: RecipeDetailView(recipe: recipe, onFavoriteToggle: {
                             // Refresh recipes when favorite is toggled
                             recipes = PersistenceController.shared.fetchRecipes()
                         })) {
@@ -664,7 +662,7 @@ struct KitchenView: View {
                                 recipe: recipe,
                                 matchCount: matchCount(
                                     recipe: recipe,
-                                    kitchenIngredients: Set(kitchenManager.items.map { $0.name.lowercased() })
+                                    kitchenIngredients: Set(KitchenInventoryManager.shared.getItems().map { $0.name.lowercased() })
                                 ),
                                 totalIngredients: recipe.ingredients.count
                             )
@@ -690,7 +688,7 @@ struct KitchenView: View {
         var text = "🏠 MY KITCHEN INVENTORY\n"
         text += String(repeating: "━", count: 40) + "\n\n"
         
-        for group in kitchenManager.groupedItems {
+        for group in KitchenInventoryManager.shared.groupedItems() {
             let icon = CategoryClassifier.categoryIcon(for: group.category)
             text += "\(icon) \(group.category.uppercased())\n"
             text += String(repeating: "─", count: 40) + "\n"
@@ -736,7 +734,6 @@ struct KitchenView: View {
 struct KitchenCategoryCard: View {
     let category: String
     let items: [KitchenItem]
-    @ObservedObject var kitchenManager: KitchenInventoryManager
     let isCollapsed: Bool
     let onToggleCollapse: () -> Void
     @Environment(\.colorScheme) var colorScheme
@@ -776,7 +773,7 @@ struct KitchenCategoryCard: View {
             if !isCollapsed {
                 FlowLayout(spacing: 8) {
                     ForEach(items) { item in
-                        KitchenItemChip(item: item, kitchenManager: kitchenManager)
+                        KitchenItemChip(item: item)
                     }
                 }
             }
@@ -796,7 +793,6 @@ struct KitchenCategoryCard: View {
 
 struct KitchenItemChip: View {
     let item: KitchenItem
-    @ObservedObject var kitchenManager: KitchenInventoryManager
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
@@ -808,7 +804,7 @@ struct KitchenItemChip: View {
             Button(
                 action: {
                     withAnimation(.spring(response: 0.3)) {
-                        kitchenManager.removeItem(item)
+                        KitchenInventoryManager.shared.removeItem(item)
                     }
                 },
                 label: {
@@ -829,7 +825,6 @@ struct KitchenItemChip: View {
 
 // MARK: - Add Ingredient Sheet
 struct AddIngredientSheet: View {
-    @ObservedObject var kitchenManager: KitchenInventoryManager
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
@@ -980,12 +975,12 @@ struct AddIngredientSheet: View {
     }
     
     private func foodButton(_ food: String) -> some View {
-        let isInKitchen = kitchenManager.hasItem(food)
+        let isInKitchen = KitchenInventoryManager.shared.hasItem(food)
         let category = FoodsList.getCategoryForFood(food) ?? "Other"
         
         return Button(action: {
             withAnimation(.spring(response: 0.3)) {
-                kitchenManager.toggleItem(food)
+                KitchenInventoryManager.shared.toggleItem(food)
                 HapticManager.shared.light()
             }
         }) {

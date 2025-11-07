@@ -7,7 +7,6 @@ struct RecipeFinderApp: App {
     let persistenceController = PersistenceController.shared
     @StateObject private var authManager = AuthenticationManager.shared
     @StateObject private var themeManager = ThemeManager.shared
-    @StateObject private var notificationManager = NotificationManager.shared
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @AppStorage("hasSeenBiometricOnboarding") private var hasSeenBiometricOnboarding = false
     @State private var showOnboarding = false

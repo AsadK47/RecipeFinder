@@ -10,10 +10,8 @@ import SwiftUI
 /// Shows when the device is offline - useful for recipe import features
 /// This explains to users why certain features may not work
 struct OfflineBanner: View {
-    @ObservedObject var networkMonitor = NetworkMonitor.shared
-    
     var body: some View {
-        if !networkMonitor.isConnected {
+        if !NetworkMonitor.shared.isConnected {
             HStack(spacing: 8) {
                 Image(systemName: "wifi.slash")
                     .font(.subheadline)

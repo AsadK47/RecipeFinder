@@ -10,8 +10,6 @@ struct SettingsTabView: View {
     @State private var notificationsEnabled: Bool = false
     @State private var cookModeEnabled: Bool = true
     @StateObject private var accountManager = AccountManager.shared
-    @EnvironmentObject var kitchenManager: KitchenInventoryManager
-    @EnvironmentObject var shoppingListManager: ShoppingListManager
     @State private var profileImage: UIImage?
     @State private var refreshID = UUID()
     
@@ -169,8 +167,6 @@ struct SettingsTabView: View {
                                         .padding(.leading, 60)
                                     
                                     NavigationLink(destination: DataManagementSettingsView()
-                                        .environmentObject(kitchenManager)
-                                        .environmentObject(shoppingListManager)
                                     ) {
                                         SettingsRow(icon: "externaldrive.fill", iconColor: .gray, title: "Data Management")
                                             .padding(20)
@@ -1667,8 +1663,6 @@ struct DataManagementSettingsView: View {
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
-    @EnvironmentObject var kitchenManager: KitchenInventoryManager
-    @EnvironmentObject var shoppingListManager: ShoppingListManager
     
     var body: some View {
         ZStack {
@@ -1784,8 +1778,8 @@ struct DataManagementSettingsView: View {
         _ = try? context.save()
         
         // 2. Clear all managers
-        kitchenManager.clearAll()
-        shoppingListManager.clearAllItems()
+        KitchenInventoryManager.shared.clearAll()
+        ShoppingListManager.shared.clearAllItems()
         
         // 3. Clear all UserDefaults except critical ones
         let defaults = UserDefaults.standard
@@ -1820,8 +1814,8 @@ struct DataManagementSettingsView: View {
         _ = try? context.save()
         
         // 2. Clear all managers
-        kitchenManager.clearAll()
-        shoppingListManager.clearAllItems()
+        KitchenInventoryManager.shared.clearAll()
+        ShoppingListManager.shared.clearAllItems()
         
         // 3. Clear specific UserDefaults data (keep settings)
         UserDefaults.standard.removeObject(forKey: "favoriteRecipeIDs")
@@ -2381,7 +2375,7 @@ private struct BulletPoint: View {
 
 #Preview {
     SettingsTabView()
-        .environmentObject(KitchenInventoryManager())
-        .environmentObject(ShoppingListManager())
+        .environmentObject(KitchenInventoryManager.shared)
+        .environmentObject(ShoppingListManager.shared)
         .environment(\.appTheme, AppTheme.ThemeType.teal)
 }
