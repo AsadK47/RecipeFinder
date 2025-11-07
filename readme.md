@@ -234,9 +234,9 @@ A beautiful iOS-inspired landing page showcasing RecipeFinder:
 
 <div align="center">
 
-<img src="docs/screenshots/CreateAccountPage.png" alt="Create Account" width="250"/>
-<img src="docs/screenshots/HomePage.png" alt="Home Page" width="250"/>
-<img src="docs/screenshots/SplashScreenAfterSigningInPage.png" alt="Welcome Splash" width="250"/>
+<img src="docs/screenshots/create_account.png" alt="Create Account" width="250"/>
+<img src="docs/screenshots/home_page.png" alt="Home Page" width="250"/>
+<img src="docs/screenshots/splash_1.png" alt="Welcome Splash" width="250"/>
 
 *Elegant sign-up • Beautiful recipe browsing • Delightful onboarding*
 
