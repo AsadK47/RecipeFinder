@@ -852,6 +852,11 @@ body {
 }
 
 @media (max-width: 768px) {
+    /* Make banner scroll with page on mobile instead of staying fixed */
+    .coming-soon-banner {
+        position: sticky;
+    }
+    
     .app-name {
         font-size: 2.8rem;
     }

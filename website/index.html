@@ -162,28 +162,8 @@
                 <input type="hidden" name="subject" value="New RecipeFinder Launch Signup">
                 <input type="hidden" name="from_name" value="RecipeFinder Website">
                 
-                <!-- Autoresponse Configuration -->
-                <input type="hidden" name="autoresponse" value="true">
-                <input type="hidden" name="autoresponse_subject" value="Thanks for joining RecipeFinder! 🎉">
-                <input type="hidden" name="autoresponse_message" value="Hi there!
-
-Thank you for signing up to be notified about RecipeFinder's launch! We're thrilled to have you join us on this culinary journey.
-
-RecipeFinder is your personal cooking companion that helps you:
-🍳 Discover delicious recipes from around the world
-📅 Plan your weekly meals effortlessly  
-⏱️ Master your timing with smart cooking timers
-🛒 Manage your shopping lists and kitchen inventory
-
-We'll send you an email as soon as RecipeFinder launches on the App Store. In the meantime, feel free to explore our website at recipefinder.uk.
-
-Stay hungry,
-The RecipeFinder Team
-
----
-RecipeFinder™ Limited
-Company No. 16833243
-recipefinder.uk">
+                <!-- Honeypot for spam protection (bots will fill this, humans won't see it) -->
+                <input type="text" name="botcheck" style="display: none;" tabindex="-1" autocomplete="off">
                 
                 <div class="h-captcha" data-captcha="true"></div>
                 <input type="email" name="email" placeholder="Enter your email" required>
