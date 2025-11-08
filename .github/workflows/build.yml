@@ -2,9 +2,12 @@ name: Build iOS App
 
 on:
   push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main, develop ]
+    branches: [ main ]
+    paths:
+      - 'RecipeFinder/**'
+      - '*.xcodeproj/**'
+      - 'Package.swift'
+      - '.github/workflows/build.yml'
   workflow_dispatch:
 
 concurrency:
@@ -21,7 +24,7 @@ jobs:
   build:
     name: Build
     runs-on: macos-15
-    timeout-minutes: 30
+    timeout-minutes: 15  # Reduced from 30
     outputs:
       destination: ${{ steps.simulator.outputs.DESTINATION }}
     
@@ -66,9 +69,9 @@ jobs:
   test:
     name: Test
     runs-on: macos-15
-    timeout-minutes: 30
+    timeout-minutes: 15  # Reduced from 30
     needs: [build]
-    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+    if: github.event_name == 'workflow_dispatch'  # Only run manually
     
     steps:
       - name: Checkout code
@@ -94,7 +97,7 @@ jobs:
 
   summary:
     name: Summary
-    runs-on: macos-15
+    runs-on: ubuntu-latest  # Changed from macos-15 (FREE!)
     timeout-minutes: 5
     needs: [build, test]
     if: always()
