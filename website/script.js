@@ -84,16 +84,17 @@ function initNotifyForm() {
         message.textContent = '';
         
         try {
-            // Submit to Cloudflare Pages Forms
-            const response = await fetch('/', {
+            // Submit to Web3Forms
+            const response = await fetch('https://api.web3forms.com/submit', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams(formData).toString()
+                body: formData
             });
             
-            if (response.ok) {
+            const data = await response.json();
+            
+            if (data.success) {
                 message.textContent = '✓ Success! We\'ll notify you when RecipeFinder launches.';
-                message.style.color = 'var(--accent)';
+                message.style.color = 'var(--text-primary)';
                 form.reset();
                 
                 // Clear message after 6 seconds
@@ -101,7 +102,7 @@ function initNotifyForm() {
                     message.textContent = '';
                 }, 6000);
             } else {
-                throw new Error('Form submission failed');
+                throw new Error(data.message || 'Form submission failed');
             }
             
             // Reset button

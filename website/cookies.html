@@ -12,7 +12,7 @@
             padding: 40px 20px;
         }
         .legal-page h1 {
-            color: var(--teal-start);
+            color: var(--text-primary);
             margin-bottom: 10px;
         }
         .legal-page .last-updated {
@@ -46,14 +46,30 @@
             background: var(--bg-card);
             color: var(--text-primary);
         }
+        .highlight-box {
+            background: var(--bg-card);
+            border-left: 4px solid var(--text-primary);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+        .highlight-box a {
+            color: var(--text-primary);
+            text-decoration: underline;
+            font-weight: 500;
+        }
+        .highlight-box a:hover {
+            opacity: 0.7;
+        }
         .back-link {
             display: inline-block;
-            color: var(--teal-start);
-            text-decoration: none;
+            color: var(--text-primary);
+            text-decoration: underline;
             margin-bottom: 20px;
+            font-weight: 500;
         }
         .back-link:hover {
-            text-decoration: underline;
+            opacity: 0.7;
         }
     </style>
 </head>
@@ -64,6 +80,9 @@
             <span class="banner-text">Coming Soon to the App Store</span>
             <span class="pulse-dot"></span>
         </div>
+        <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
+            <span class="theme-icon">🌙</span>
+        </button>
     </div>
 
     <div class="legal-page">
@@ -114,19 +133,24 @@
         </table>
 
         <h2>4. Third-Party Cookies</h2>
-        <p>We use Google Analytics, which sets cookies to help us analyze website traffic. Google's privacy policy: <a href="https://policies.google.com/privacy" target="_blank">https://policies.google.com/privacy</a></p>
+        <div class="highlight-box">
+            <p>We use Google Analytics, which sets cookies to help us analyze website traffic.</p>
+            <p><strong>Google's privacy policy:</strong> <a href="https://policies.google.com/privacy" target="_blank">https://policies.google.com/privacy</a></p>
+        </div>
 
         <h2>5. Managing Cookies</h2>
-        <p>You can control cookies through:</p>
-        <ul>
-            <li><strong>Browser Settings</strong>: Most browsers allow you to refuse or delete cookies</li>
-            <li><strong>Opt-Out Links</strong>: 
-                <ul>
-                    <li>Google Analytics: <a href="https://tools.google.com/dlpage/gaoptout" target="_blank">Opt-out</a></li>
-                </ul>
-            </li>
-            <li><strong>Our Cookie Banner</strong>: You can change your consent anytime</li>
-        </ul>
+        <div class="highlight-box">
+            <p>You can control cookies through:</p>
+            <ul>
+                <li><strong>Browser Settings</strong>: Most browsers allow you to refuse or delete cookies</li>
+                <li><strong>Opt-Out Links</strong>: 
+                    <ul>
+                        <li>Google Analytics: <a href="https://tools.google.com/dlpage/gaoptout" target="_blank">Opt-out</a></li>
+                    </ul>
+                </li>
+                <li><strong>Our Cookie Banner</strong>: You can change your consent anytime</li>
+            </ul>
+        </div>
 
         <h2>6. Browser Controls</h2>
         <p>Manage cookies in your browser:</p>
@@ -149,15 +173,16 @@
         <p>We may update this Cookie Policy. Check this page periodically for changes.</p>
 
         <h2>9. Contact Us</h2>
-        <p>Questions about our use of cookies? Contact us:</p>
-        <p>
-            <strong>Email</strong>: <a href="mailto:recipefinderlimited@icloud.com">recipefinderlimited@icloud.com</a><br>
-            <strong>Company</strong>: RECIPEFINDER LIMITED<br>
-            <strong>Company Number</strong>: 16833243<br>
-            <strong>Registered</strong>: England and Wales<br>
-            <strong>Registered</strong>: United Kingdom<br>
-            <strong>Website</strong>: <a href="https://recipefinder.uk">recipefinder.uk</a>
-        </p>
+        <div class="highlight-box">
+            <p>Questions about our use of cookies? Contact us:</p>
+            <p>
+                <strong>Email</strong>: <a href="mailto:recipefinderlimited@icloud.com">recipefinderlimited@icloud.com</a><br>
+                <strong>Company</strong>: RECIPEFINDER LIMITED<br>
+                <strong>Company Number</strong>: 16833243<br>
+                <strong>Registered</strong>: England and Wales<br>
+                <strong>Website</strong>: <a href="https://recipefinder.uk">recipefinder.uk</a>
+            </p>
+        </div>
     </div>
 
     <footer class="footer">
@@ -165,5 +190,6 @@
             <p>&copy; 2025 RecipeFinder™ Limited. All rights reserved. Registered in the United Kingdom.</p>
         </div>
     </footer>
+    <script src="script.js?v=0.1"></script>
 </body>
 </html>

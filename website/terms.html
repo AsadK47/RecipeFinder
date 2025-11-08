@@ -12,7 +12,7 @@
             padding: 40px 20px;
         }
         .legal-page h1 {
-            color: var(--teal-start);
+            color: var(--text-primary);
             margin-bottom: 10px;
         }
         .legal-page .last-updated {
@@ -32,14 +32,30 @@
         .legal-page ul {
             margin-left: 20px;
         }
+        .highlight-box {
+            background: var(--bg-card);
+            border-left: 4px solid var(--text-primary);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+        .highlight-box a {
+            color: var(--text-primary);
+            text-decoration: underline;
+            font-weight: 500;
+        }
+        .highlight-box a:hover {
+            opacity: 0.7;
+        }
         .back-link {
             display: inline-block;
-            color: var(--teal-start);
-            text-decoration: none;
+            color: var(--text-primary);
+            text-decoration: underline;
             margin-bottom: 20px;
+            font-weight: 500;
         }
         .back-link:hover {
-            text-decoration: underline;
+            opacity: 0.7;
         }
     </style>
 </head>
@@ -50,6 +66,9 @@
             <span class="banner-text">Coming Soon to the App Store</span>
             <span class="pulse-dot"></span>
         </div>
+        <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
+            <span class="theme-icon">🌙</span>
+        </button>
     </div>
 
     <div class="legal-page">
@@ -61,17 +80,19 @@
         <h2>1. Acceptance of Terms</h2>
         <p>By accessing and using RecipeFinder's website (recipefinder.uk) and mobile application, you accept and agree to be bound by these Terms of Service.</p>
         
-        <p><strong>Service Provider:</strong></p>
-        <ul>
-            <li><strong>Legal Entity:</strong> RECIPEFINDER LIMITED</li>
-            <li><strong>Company Number:</strong> 16833243</li>
-            <li><strong>Registered:</strong> England and Wales</li>
-            <li><strong>Date of Incorporation:</strong> 5 November 2025</li>
-            <li><strong>Company Type:</strong> Private Limited by Shares</li>
-            <li><strong>Director & Shareholder:</strong> Asad Khan (100% ownership)</li>
-            <li><strong>Contact:</strong> <a href="mailto:recipefinderlimited@icloud.com">recipefinderlimited@icloud.com</a></li>
-            <li><strong>Website:</strong> <a href="https://recipefinder.uk">recipefinder.uk</a></li>
-        </ul>
+        <div class="highlight-box">
+            <p><strong>Service Provider:</strong></p>
+            <ul>
+                <li><strong>Legal Entity:</strong> RECIPEFINDER LIMITED</li>
+                <li><strong>Company Number:</strong> 16833243</li>
+                <li><strong>Registered:</strong> England and Wales</li>
+                <li><strong>Date of Incorporation:</strong> 5 November 2025</li>
+                <li><strong>Company Type:</strong> Private Limited by Shares</li>
+                <li><strong>Director & Shareholder:</strong> Asad Khan (100% ownership)</li>
+                <li><strong>Contact:</strong> <a href="mailto:recipefinderlimited@icloud.com">recipefinderlimited@icloud.com</a></li>
+                <li><strong>Website:</strong> <a href="https://recipefinder.uk">recipefinder.uk</a></li>
+            </ul>
+        </div>
 
         <h2>2. Service Description</h2>
         <p>RecipeFinder is a mobile application and web service that helps users discover, organize, and manage recipes. The service is provided by RecipeFinder™ Limited and is currently in development and will be available soon on the iOS App Store.</p>
@@ -141,25 +162,29 @@
         <h2>11. Governing Law</h2>
         <p>These Terms shall be governed by and construed in accordance with the laws of England and Wales, United Kingdom, with secondary jurisdiction in the United States where applicable.</p>
         
-        <p><strong>Jurisdiction & Venue:</strong></p>
-        <ul>
-            <li><strong>Primary:</strong> Courts of England and Wales, United Kingdom</li>
-            <li><strong>Secondary:</strong> US Federal and State courts where applicable</li>
-        </ul>
-        
-        <p><strong>Dispute Resolution:</strong> Before initiating litigation, we encourage parties to contact us at <a href="mailto:recipefinderlimited@icloud.com">recipefinderlimited@icloud.com</a> to attempt good-faith resolution. However, we reserve the right to pursue legal action when necessary to protect our intellectual property and business interests.</p>
+        <div class="highlight-box">
+            <p><strong>Jurisdiction & Venue:</strong></p>
+            <ul>
+                <li><strong>Primary:</strong> Courts of England and Wales, United Kingdom</li>
+                <li><strong>Secondary:</strong> US Federal and State courts where applicable</li>
+            </ul>
+            
+            <p><strong>Dispute Resolution:</strong> Before initiating litigation, we encourage parties to contact us at <a href="mailto:recipefinderlimited@icloud.com">recipefinderlimited@icloud.com</a> to attempt good-faith resolution. However, we reserve the right to pursue legal action when necessary to protect our intellectual property and business interests.</p>
+        </div>
 
         <h2>12. Contact Information</h2>
-        <p>For questions about these Terms, contact:</p>
-        <p>
-            <strong>Email</strong>: <a href="mailto:recipefinderlimited@icloud.com">recipefinderlimited@icloud.com</a><br>
-            <strong>Company</strong>: RECIPEFINDER LIMITED<br>
-            <strong>Company Number</strong>: 16833243<br>
-            <strong>Registered</strong>: England and Wales<br>
-            <strong>Director & Shareholder</strong>: Asad Khan (100% ownership)<br>
-            <strong>Website</strong>: <a href="https://recipefinder.uk">recipefinder.uk</a><br>
-            <strong>Legal Notice</strong>: <a href="legal-notice.html">View Full Legal Notice</a>
-        </p>
+        <div class="highlight-box">
+            <p>For questions about these Terms, contact:</p>
+            <p>
+                <strong>Email</strong>: <a href="mailto:recipefinderlimited@icloud.com">recipefinderlimited@icloud.com</a><br>
+                <strong>Company</strong>: RECIPEFINDER LIMITED<br>
+                <strong>Company Number</strong>: 16833243<br>
+                <strong>Registered</strong>: England and Wales<br>
+                <strong>Director & Shareholder</strong>: Asad Khan (100% ownership)<br>
+                <strong>Website</strong>: <a href="https://recipefinder.uk">recipefinder.uk</a><br>
+                <strong>Legal Notice</strong>: <a href="legal-notice.html">View Full Legal Notice</a>
+            </p>
+        </div>
     </div>
 
     <footer class="footer">
@@ -168,5 +193,6 @@
             <p style="font-size: 0.85em; opacity: 0.8; margin-top: 5px;">Company Number: 16833243 | Registered in England and Wales</p>
         </div>
     </footer>
+    <script src="script.js?v=0.1"></script>
 </body>
 </html>

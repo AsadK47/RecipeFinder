@@ -12,7 +12,7 @@
             padding: 40px 20px;
         }
         .legal-page h1 {
-            color: var(--teal-start);
+            color: var(--text-primary);
             margin-bottom: 10px;
         }
         .legal-page .last-updated {
@@ -37,19 +37,28 @@
         }
         .highlight-box {
             background: var(--bg-card);
-            border-left: 4px solid var(--teal-start);
+            border-left: 4px solid var(--text-primary);
             padding: 20px;
             margin: 25px 0;
             border-radius: 8px;
         }
+        .highlight-box a {
+            color: var(--text-primary);
+            text-decoration: underline;
+            font-weight: 500;
+        }
+        .highlight-box a:hover {
+            opacity: 0.7;
+        }
         .back-link {
             display: inline-block;
-            color: var(--teal-start);
-            text-decoration: none;
+            color: var(--text-primary);
+            text-decoration: underline;
             margin-bottom: 20px;
+            font-weight: 500;
         }
         .back-link:hover {
-            text-decoration: underline;
+            opacity: 0.7;
         }
     </style>
 </head>
@@ -60,6 +69,9 @@
             <span class="banner-text">Coming Soon to the App Store</span>
             <span class="pulse-dot"></span>
         </div>
+        <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
+            <span class="theme-icon">🌙</span>
+        </button>
     </div>
 
     <div class="legal-page">
@@ -251,5 +263,6 @@
             <p>&copy; 2025 RecipeFinder™ Limited. All rights reserved. Registered in the United Kingdom.</p>
         </div>
     </footer>
+    <script src="script.js?v=0.1"></script>
 </body>
 </html>

@@ -12,7 +12,7 @@
             padding: 40px 20px;
         }
         .legal-page h1 {
-            color: var(--teal-start);
+            color: var(--text-primary);
             margin-bottom: 10px;
         }
         .legal-page .last-updated {
@@ -32,14 +32,30 @@
         .legal-page ul {
             margin-left: 20px;
         }
+        .highlight-box {
+            background: var(--bg-card);
+            border-left: 4px solid var(--text-primary);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+        .highlight-box a {
+            color: var(--text-primary);
+            text-decoration: underline;
+            font-weight: 500;
+        }
+        .highlight-box a:hover {
+            opacity: 0.7;
+        }
         .back-link {
             display: inline-block;
-            color: var(--teal-start);
-            text-decoration: none;
+            color: var(--text-primary);
+            text-decoration: underline;
             margin-bottom: 20px;
+            font-weight: 500;
         }
         .back-link:hover {
-            text-decoration: underline;
+            opacity: 0.7;
         }
     </style>
 </head>
@@ -50,6 +66,9 @@
             <span class="banner-text">Coming Soon to the App Store</span>
             <span class="pulse-dot"></span>
         </div>
+        <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
+            <span class="theme-icon">🌙</span>
+        </button>
     </div>
 
     <div class="legal-page">
@@ -61,17 +80,19 @@
         <h2>1. Introduction</h2>
         <p>RecipeFinder™ Limited ("we", "our", or "us"), a company registered in the United Kingdom and wholly owned by Asad Khan, is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use our website (recipefinder.uk) and mobile application.</p>
         
-        <p><strong>Company Details:</strong></p>
-        <ul>
-            <li><strong>Legal Name:</strong> RECIPEFINDER LIMITED</li>
-            <li><strong>Company Number:</strong> 16833243</li>
-            <li><strong>Registered:</strong> England and Wales</li>
-            <li><strong>Date of Incorporation:</strong> 5 November 2025</li>
-            <li><strong>Company Type:</strong> Private Limited by Shares</li>
-            <li><strong>Director & Shareholder:</strong> Asad Khan (100% ownership)</li>
-            <li><strong>Contact:</strong> <a href="mailto:recipefinderlimited@icloud.com">recipefinderlimited@icloud.com</a></li>
-            <li><strong>Website:</strong> <a href="https://recipefinder.uk">recipefinder.uk</a></li>
-        </ul>
+        <div class="highlight-box">
+            <p><strong>Company Details:</strong></p>
+            <ul>
+                <li><strong>Legal Name:</strong> RECIPEFINDER LIMITED</li>
+                <li><strong>Company Number:</strong> 16833243</li>
+                <li><strong>Registered:</strong> England and Wales</li>
+                <li><strong>Date of Incorporation:</strong> 5 November 2025</li>
+                <li><strong>Company Type:</strong> Private Limited by Shares</li>
+                <li><strong>Director & Shareholder:</strong> Asad Khan (100% ownership)</li>
+                <li><strong>Contact:</strong> <a href="mailto:recipefinderlimited@icloud.com">recipefinderlimited@icloud.com</a></li>
+                <li><strong>Website:</strong> <a href="https://recipefinder.uk">recipefinder.uk</a></li>
+            </ul>
+        </div>
 
         <h2>2. Information We Collect</h2>
         <p>We may collect the following types of information:</p>
@@ -124,16 +145,18 @@
         <p>We may update this policy from time to time. We will notify you of significant changes via email or website notice.</p>
 
         <h2>10. Contact Us</h2>
-        <p>For privacy concerns or data requests, contact us at:</p>
-        <p>
-            <strong>Email</strong>: <a href="mailto:recipefinderlimited@icloud.com">recipefinderlimited@icloud.com</a><br>
-            <strong>Company</strong>: RECIPEFINDER LIMITED<br>
-            <strong>Company Number</strong>: 16833243<br>
-            <strong>Registered</strong>: England and Wales<br>
-            <strong>Director & Shareholder</strong>: Asad Khan (100% ownership)<br>
-            <strong>Website</strong>: <a href="https://recipefinder.uk">recipefinder.uk</a><br>
-            <strong>Jurisdiction</strong>: UK (Primary), US (Secondary)
-        </p>
+        <div class="highlight-box">
+            <p>For privacy concerns or data requests, contact us at:</p>
+            <p>
+                <strong>Email</strong>: <a href="mailto:recipefinderlimited@icloud.com">recipefinderlimited@icloud.com</a><br>
+                <strong>Company</strong>: RECIPEFINDER LIMITED<br>
+                <strong>Company Number</strong>: 16833243<br>
+                <strong>Registered</strong>: England and Wales<br>
+                <strong>Director & Shareholder</strong>: Asad Khan (100% ownership)<br>
+                <strong>Website</strong>: <a href="https://recipefinder.uk">recipefinder.uk</a><br>
+                <strong>Jurisdiction</strong>: UK (Primary), US (Secondary)
+            </p>
+        </div>
     </div>
 
     <footer class="footer">
@@ -142,5 +165,6 @@
             <p style="font-size: 0.85em; opacity: 0.8; margin-top: 5px;">Company Number: 16833243 | Registered in England and Wales</p>
         </div>
     </footer>
+    <script src="script.js?v=0.1"></script>
 </body>
 </html>
