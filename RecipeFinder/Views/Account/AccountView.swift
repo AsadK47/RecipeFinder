@@ -590,47 +590,34 @@ struct AccountView: View {
                 }
             }
             
-            // Face ID / Touch ID Settings - Under Construction
-            if authManager.biometricsAvailable {
-                VStack(spacing: 8) {
-                    Button {
-                        // Disabled during testing
-                        HapticManager.shared.light()
-                    } label: {
-                        HStack(spacing: 12) {
-                            Image(systemName: authManager.biometricType == "Face ID" ? "faceid" : "touchid")
-                                .font(.system(size: 18, weight: .semibold))
-                            Text("Configure \(authManager.biometricType)")
-                                .font(.body)
-                                .fontWeight(.semibold)
-                        }
-                        .foregroundColor(AppTheme.accentColor(for: selectedTheme).opacity(0.5))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background {
-                            if cardStyle == .solid {
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(colorScheme == .dark ? Color(white: 0.1) : Color.white.opacity(0.3))
-                            } else {
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(.ultraThinMaterial.opacity(0.5))
-                            }
-                        }
-                        .overlay(
+            // Face ID / Touch ID Settings
+            if authManager.biometricsAvailable && !authManager.isGuestMode {
+                NavigationLink(destination: PrivacySettingsView()) {
+                    HStack(spacing: 12) {
+                        Image(systemName: authManager.biometricType == "Face ID" ? "faceid" : "touchid")
+                            .font(.system(size: 18, weight: .semibold))
+                        Text("Configure \(authManager.biometricType)")
+                            .font(.body)
+                            .fontWeight(.semibold)
+                    }
+                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background {
+                        if cardStyle == .solid {
                             RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color.orange.opacity(0.4), lineWidth: 1)
-                        )
+                                .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.8))
+                        } else {
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(.ultraThinMaterial)
+                        }
                     }
-                    .disabled(true)
-                    
-                    HStack(spacing: 4) {
-                        Image(systemName: "wrench.and.screwdriver.fill")
-                            .font(.system(size: 11))
-                        Text("Feature In Testing • Coming Soon")
-                            .font(.system(size: 11, weight: .medium))
-                    }
-                    .foregroundColor(.orange.opacity(0.8))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(AppTheme.accentColor(for: selectedTheme).opacity(0.3), lineWidth: 1)
+                    )
                 }
+                .buttonStyle(PlainButtonStyle())
             }
             
             Button {

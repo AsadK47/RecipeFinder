@@ -84,6 +84,7 @@
 		9EA779292EB57D900028F064 /* StandardAppHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA779282EB57D900028F064 /* StandardAppHeader.swift */; };
 		9EB04E5B2EB4704F0033C093 /* MoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EB04E5A2EB4704F0033C093 /* MoreView.swift */; };
 		9EB629042EBB9FEE005FD6FC /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 9EB629032EBB9FEE005FD6FC /* ConfettiSwiftUI */; };
+		9EC0DFA12EBEE6E8001A1D7F /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 9EC0DFA02EBEE6E8001A1D7F /* ConfettiSwiftUI */; };
 		9EC7284C2EBC247B00299DAD /* AppErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EC7284A2EBC247B00299DAD /* AppErrorHandler.swift */; };
 		9EE5AAD92D08FCBE00C1B736 /* RecipeFinderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EE5AAD82D08FCBE00C1B736 /* RecipeFinderApp.swift */; };
 		9EE5AADB2D08FCBE00C1B736 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EE5AADA2D08FCBE00C1B736 /* ContentView.swift */; };
@@ -213,6 +214,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9EC0DFA12EBEE6E8001A1D7F /* ConfettiSwiftUI in Frameworks */,
 				9EB629042EBB9FEE005FD6FC /* ConfettiSwiftUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1101,6 +1103,11 @@
 
 /* Begin XCSwiftPackageProductDependency section */
 		9EB629032EBB9FEE005FD6FC /* ConfettiSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9E6CF3A72D83087300D79DD6 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
+			productName = ConfettiSwiftUI;
+		};
+		9EC0DFA02EBEE6E8001A1D7F /* ConfettiSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 9E6CF3A72D83087300D79DD6 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
 			productName = ConfettiSwiftUI;
