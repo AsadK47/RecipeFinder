@@ -91,30 +91,42 @@ struct AuthenticationView: View {
                         .foregroundColor(.orange.opacity(0.9))
                     }
                     
-                    // Biometric Sign In (if available and user exists)
-                    if authManager.biometricsAvailable && UserDefaults.standard.bool(forKey: "isAuthenticated") {
+                    // Biometric Sign In (preferred if available and enabled)
+                    if authManager.biometricsAvailable && biometricsEnabled {
                         Button(action: {
                             Task {
                                 try? await authManager.authenticateWithBiometrics()
                             }
                         }) {
-                            HStack {
+                            HStack(spacing: 12) {
                                 Image(systemName: authManager.biometricType == "Face ID" ? "faceid" : "touchid")
-                                    .font(.system(size: 20))
+                                    .font(.system(size: 22))
                                 Text("Sign In with \(authManager.biometricType)")
-                                    .fontWeight(.semibold)
+                                    .fontWeight(.bold)
+                                    .font(.system(size: 17))
                             }
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
-                            .frame(height: 50)
+                            .frame(height: 56)
                             .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color.white.opacity(0.2))
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .stroke(Color.white.opacity(0.3), lineWidth: 1)
-                                    )
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 14)
+                                        .fill(
+                                            LinearGradient(
+                                                gradient: Gradient(colors: [
+                                                    AppTheme.accentColor(for: selectedTheme),
+                                                    AppTheme.accentColor(for: selectedTheme).opacity(0.85)
+                                                ]),
+                                                startPoint: .leading,
+                                                endPoint: .trailing
+                                            )
+                                        )
+                                    
+                                    RoundedRectangle(cornerRadius: 14)
+                                        .stroke(Color.white.opacity(0.3), lineWidth: 1.5)
+                                }
                             )
+                            .shadow(color: AppTheme.accentColor(for: selectedTheme).opacity(0.4), radius: 15, x: 0, y: 8)
                         }
                     }
                     
@@ -354,6 +366,14 @@ struct EmailSignInView: View {
                 DispatchQueue.main.async {
                     HapticManager.shared.success()
                     dismiss()
+                    
+                    // Prompt for biometric setup if not already enabled
+                    if authManager.biometricsAvailable && !UserDefaults.standard.bool(forKey: "biometricsEnabled") {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            // This will be caught by the parent view's onChange
+                            UserDefaults.standard.set(true, forKey: "shouldPromptBiometrics")
+                        }
+                    }
                 }
             } catch {
                 DispatchQueue.main.async {

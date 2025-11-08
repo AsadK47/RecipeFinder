@@ -142,8 +142,8 @@ struct ContentView: View {
         
         // Selected icon: Use high contrast colours
         let selectedIconColor: UIColor = colorScheme == .dark 
-            ? .black  // Black text in dark mode on teal background
-            : .white  // White text in light mode on teal background
+            ? .white  // White text in dark mode
+            : .black  // Black text in light mode
         
         appearance.stackedLayoutAppearance.selected.iconColor = selectedIconColor
         appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
@@ -153,8 +153,8 @@ struct ContentView: View {
         
         // Unselected icons - high contrast for readability
         let unselectedColor: UIColor = colorScheme == .dark 
-            ? UIColor.black.withAlphaComponent(0.7)  // Black in dark mode on teal
-            : UIColor.white.withAlphaComponent(0.7)  // White in light mode on teal
+            ? UIColor.white.withAlphaComponent(0.6)  // White with transparency in dark mode
+            : UIColor.black.withAlphaComponent(0.6)  // Black with transparency in light mode
         
         appearance.stackedLayoutAppearance.normal.iconColor = unselectedColor
         appearance.stackedLayoutAppearance.normal.titleTextAttributes = [

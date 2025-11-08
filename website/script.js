@@ -76,39 +76,37 @@ function initNotifyForm() {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        const email = input.value;
+        const formData = new FormData(form);
         
         // Disable button and show loading state
         button.disabled = true;
         button.textContent = 'Adding...';
         message.textContent = '';
         
-        // Simulate API call (replace with actual endpoint when ready)
         try {
-            await new Promise(resolve => setTimeout(resolve, 1200));
+            // Submit to Cloudflare Pages Forms
+            const response = await fetch('/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams(formData).toString()
+            });
             
-            message.textContent = '✓ Success! We\'ll notify you when RecipeFinder launches.';
-            message.style.color = 'var(--accent)';
-            form.reset();
+            if (response.ok) {
+                message.textContent = '✓ Success! We\'ll notify you when RecipeFinder launches.';
+                message.style.color = 'var(--accent)';
+                form.reset();
+                
+                // Clear message after 6 seconds
+                setTimeout(() => {
+                    message.textContent = '';
+                }, 6000);
+            } else {
+                throw new Error('Form submission failed');
+            }
             
             // Reset button
             button.disabled = false;
             button.textContent = 'Notify Me';
-            
-            // Clear message after 6 seconds
-            setTimeout(() => {
-                message.textContent = '';
-            }, 6000);
-            
-            // Store email locally (for demo - replace with backend call)
-            console.log('Email submitted:', email);
-            
-            // Optional: Send to backend
-            // await fetch('/api/subscribe', {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify({ email })
-            // });
             
         } catch (error) {
             message.textContent = '⚠ Oops! Something went wrong. Please try again.';

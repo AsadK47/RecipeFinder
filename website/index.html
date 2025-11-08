@@ -157,8 +157,9 @@
         <section id="notify" class="notify-section">
             <h2>Get Notified on Launch</h2>
             <p>Be the first to know when RecipeFinder launches on the App Store</p>
-            <form class="notify-form" id="notifyForm">
-                <input type="email" placeholder="Enter your email" required>
+            <form class="notify-form" id="notifyForm" name="launch-notifications" method="POST" data-netlify="true">
+                <input type="hidden" name="form-name" value="launch-notifications">
+                <input type="email" name="email" placeholder="Enter your email" required>
                 <button type="submit">Notify Me</button>
             </form>
             <p class="form-message" id="formMessage"></p>
