@@ -1,10 +1,3 @@
-//
-//  FaceIDOnboardingSplash.swift
-//  RecipeFinder
-//
-//  Splash screen shown on first app launch to set up Face ID/Touch ID
-//
-
 import SwiftUI
 import LocalAuthentication
 
@@ -59,6 +52,8 @@ struct FaceIDOnboardingSplash: View {
     
     var body: some View {
         GeometryReader { geometry in
+            let spacing = AdaptiveSpacing(geometry: geometry)
+            
             ZStack {
                 // Background gradient
                 AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
@@ -80,8 +75,9 @@ struct FaceIDOnboardingSplash: View {
                 }
                 
                 VStack(spacing: 0) {
+                    // Adaptive top spacing based on screen height
                     Spacer()
-                        .frame(minHeight: 80, maxHeight: 120)
+                        .frame(height: spacing.heightPercent(0.05, min: 30))
                     
                     // Enhanced Icon with animations
                     ZStack {
@@ -99,7 +95,7 @@ struct FaceIDOnboardingSplash: View {
                                     ),
                                     lineWidth: 3
                                 )
-                                .frame(width: 160 + CGFloat(index * 40), height: 160 + CGFloat(index * 40))
+                                .frame(width: spacing.imageLarge + CGFloat(index * 40), height: spacing.imageLarge + CGFloat(index * 40))
                                 .scaleEffect(iconScale + CGFloat(index) * 0.15)
                                 .opacity(1.0 - Double(index) * 0.3)
                                 .animation(
@@ -124,7 +120,7 @@ struct FaceIDOnboardingSplash: View {
                                     endRadius: 120
                                 )
                             )
-                            .frame(width: 240, height: 240)
+                            .frame(width: spacing.imageHero, height: spacing.imageHero)
                             .blur(radius: 30)
                             .animation(
                                 .easeInOut(duration: 2.0)
@@ -144,7 +140,7 @@ struct FaceIDOnboardingSplash: View {
                                     endPoint: .bottomTrailing
                                 )
                             )
-                            .frame(width: 160, height: 160)
+                            .frame(width: spacing.imageLarge, height: spacing.imageLarge)
                             .overlay(
                                 Circle()
                                     .stroke(
@@ -178,13 +174,13 @@ struct FaceIDOnboardingSplash: View {
                             .scaleEffect(iconScale)
                             .rotationEffect(.degrees(iconRotation))
                     }
-                    .frame(height: 240)
-                    .padding(.bottom, 50)
+                    .frame(height: spacing.imageHero)
+                    .padding(.bottom, spacing.xl + spacing.xxl)
                     .opacity(contentOpacity)
                     
                     // Title and Description with enhanced styling
-                    VStack(spacing: 24) {
-                        VStack(spacing: 12) {
+                    VStack(spacing: spacing.xxl) {
+                        VStack(spacing: spacing.md) {
                             Text("Set Up \(biometricName)")
                                 .font(.system(size: 38, weight: .bold, design: .rounded))
                                 .foregroundStyle(
@@ -206,46 +202,50 @@ struct FaceIDOnboardingSplash: View {
                                 .multilineTextAlignment(.center)
                         }
                         
-                        VStack(spacing: 16) {
+                        VStack(spacing: spacing.lg) {
                             Text("Sign in with just a glance or touch")
                                 .font(.system(size: 17, weight: .medium))
                                 .foregroundColor(.white.opacity(0.9))
                                 .multilineTextAlignment(.center)
                                 .lineSpacing(4)
-                                .padding(.horizontal, 20)
+                                .padding(.horizontal, spacing.xl)
                             
                             // Enhanced Benefits list
-                            VStack(spacing: 12) {
+                            VStack(spacing: spacing.md) {
                                 BiometricBenefitRow(
                                     icon: "bolt.fill",
                                     title: "Lightning Fast",
-                                    description: "Sign in instantly"
+                                    description: "Sign in instantly",
+                                    spacing: spacing
                                 )
                                 BiometricBenefitRow(
                                     icon: "lock.shield.fill",
                                     title: "Military Grade",
-                                    description: "Enhanced security"
+                                    description: "Enhanced security",
+                                    spacing: spacing
                                 )
                                 BiometricBenefitRow(
                                     icon: "hand.raised.fill",
                                     title: "No Passwords",
-                                    description: "Never type again"
+                                    description: "Never type again",
+                                    spacing: spacing
                                 )
                             }
-                            .padding(.top, 8)
+                            .padding(.top, spacing.sm)
                         }
                     }
-                    .padding(.horizontal, 36)
+                    .padding(.horizontal, spacing.screenEdge + spacing.xl)
                     .opacity(contentOpacity)
                     
+                    // Adaptive bottom spacing - smaller on compact devices
                     Spacer()
-                        .frame(minHeight: 50)
+                        .frame(height: spacing.heightPercent(0.02, min: 15))
                     
                     // Enhanced Buttons
-                    VStack(spacing: 14) {
+                    VStack(spacing: spacing.md + 2) {
                         // Enable Button
                         Button(action: enableBiometrics) {
-                            HStack(spacing: 12) {
+                            HStack(spacing: spacing.md) {
                                 if isEnabling {
                                     ProgressView()
                                         .progressViewStyle(CircularProgressViewStyle(tint: .white))
@@ -258,7 +258,7 @@ struct FaceIDOnboardingSplash: View {
                             }
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
-                            .frame(height: 62)
+                            .frame(height: spacing.buttonHeightLarge)
                             .background(
                                 ZStack {
                                     RoundedRectangle(cornerRadius: 18)
@@ -300,7 +300,7 @@ struct FaceIDOnboardingSplash: View {
                                 .font(.system(size: 17, weight: .semibold))
                                 .foregroundColor(.white.opacity(0.9))
                                 .frame(maxWidth: .infinity)
-                                .frame(height: 56)
+                                .frame(height: spacing.buttonHeight)
                                 .background(
                                     RoundedRectangle(cornerRadius: 18)
                                         .fill(Color.white.opacity(0.18))
@@ -311,8 +311,8 @@ struct FaceIDOnboardingSplash: View {
                                 )
                         }
                     }
-                    .padding(.horizontal, 32)
-                    .padding(.bottom, geometry.safeAreaInsets.bottom > 0 ? 40 : 50)
+                    .padding(.horizontal, spacing.screenEdge + spacing.lg)
+                    .padding(.bottom, geometry.safeAreaInsets.bottom > 0 ? spacing.xxl + spacing.lg : spacing.xl + spacing.xxl)
                     .opacity(contentOpacity)
                 }
             }
@@ -410,13 +410,14 @@ struct FaceIDOnboardingSplash: View {
 }
 
 // Enhanced benefit row component
-struct BiometricBenefitRow: View {
+private struct BiometricBenefitRow: View {
     let icon: String
     let title: String
     let description: String
+    let spacing: AdaptiveSpacing
     
     var body: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: spacing.lg) {
             // Icon with gradient background
             ZStack {
                 Circle()
@@ -430,14 +431,14 @@ struct BiometricBenefitRow: View {
                             endPoint: .bottomTrailing
                         )
                     )
-                    .frame(width: 44, height: 44)
+                    .frame(width: spacing.touchTarget, height: spacing.touchTarget)
                 
                 Image(systemName: icon)
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.white.opacity(0.95))
             }
             
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: spacing.xxs) {
                 Text(title)
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(.white.opacity(0.95))
@@ -448,7 +449,7 @@ struct BiometricBenefitRow: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(.horizontal, 4)
+        .padding(.horizontal, spacing.xxs)
     }
 }
 

@@ -29,10 +29,12 @@ struct WelcomeSplashView: View {
     
     var body: some View {
         GeometryReader { geometry in
+            let spacing = AdaptiveSpacing(geometry: geometry)
+            
             ZStack {
                 backgroundLayer
                 particleLayer
-                contentLayer
+                contentLayer(spacing: spacing)
             }
         }
         .onAppear(perform: startAnimations)
@@ -63,35 +65,35 @@ struct WelcomeSplashView: View {
     }
     
     // MARK: - Content Layer
-    private var contentLayer: some View {
+    private func contentLayer(spacing: AdaptiveSpacing) -> some View {
         VStack(spacing: 0) {
             Spacer()
-            successIconSection
-            welcomeMessageSection
-            featureHighlightsSection
+            successIconSection(spacing: spacing)
+            welcomeMessageSection(spacing: spacing)
+            featureHighlightsSection(spacing: spacing)
             Spacer()
-            continueButton
+            continueButton(spacing: spacing)
         }
     }
     
     // MARK: - Success Icon Section
-    private var successIconSection: some View {
+    private func successIconSection(spacing: AdaptiveSpacing) -> some View {
         ZStack {
-            pulsingRings
-            gradientBackgroundCircle
-            mainSuccessCircle
+            pulsingRings(spacing: spacing)
+            gradientBackgroundCircle(spacing: spacing)
+            mainSuccessCircle(spacing: spacing)
             checkmarkIcon
         }
-        .frame(height: 200)
-        .padding(.bottom, 50)
+        .frame(height: spacing.imageXLarge)
+        .padding(.bottom, spacing.xl + spacing.xxl)
         .confettiCannon(trigger: $confettiCounter, num: 50, radius: 400)
     }
     
-    private var pulsingRings: some View {
+    private func pulsingRings(spacing: AdaptiveSpacing) -> some View {
         ForEach(0..<3) { index in
             Circle()
                 .stroke(Color.white.opacity(0.2 - Double(index) * 0.05), lineWidth: 2)
-                .frame(width: 140 + CGFloat(index * 30), height: 140 + CGFloat(index * 30))
+                .frame(width: spacing.imageMedium + spacing.xxl + CGFloat(index * 30), height: spacing.imageMedium + spacing.xxl + CGFloat(index * 30))
                 .scaleEffect(ringScale)
                 .opacity(ringOpacity)
                 .animation(
@@ -103,10 +105,10 @@ struct WelcomeSplashView: View {
         }
     }
     
-    private var gradientBackgroundCircle: some View {
+    private func gradientBackgroundCircle(spacing: AdaptiveSpacing) -> some View {
         Circle()
             .fill(radialGradient)
-            .frame(width: 140, height: 140)
+            .frame(width: spacing.imageMedium + spacing.xxl, height: spacing.imageMedium + spacing.xxl)
             .scaleEffect(scale)
             .blur(radius: 1)
     }
@@ -124,10 +126,10 @@ struct WelcomeSplashView: View {
         )
     }
     
-    private var mainSuccessCircle: some View {
+    private func mainSuccessCircle(spacing: AdaptiveSpacing) -> some View {
         Circle()
             .fill(successCircleGradient)
-            .frame(width: 120, height: 120)
+            .frame(width: spacing.imageMedium + spacing.xl, height: spacing.imageMedium + spacing.xl)
             .scaleEffect(scale)
             .shadow(color: AppTheme.accentColor(for: appTheme).opacity(0.5), radius: 20, x: 0, y: 10)
     }
@@ -160,14 +162,14 @@ struct WelcomeSplashView: View {
     }
     
     // MARK: - Welcome Message Section
-    private var welcomeMessageSection: some View {
-        VStack(spacing: 20) {
+    private func welcomeMessageSection(spacing: AdaptiveSpacing) -> some View {
+        VStack(spacing: spacing.xl) {
             titleText
             subtitleText
-            successMessageCard
+            successMessageCard(spacing: spacing)
         }
-        .padding(.horizontal, 40)
-        .padding(.bottom, 40)
+        .padding(.horizontal, spacing.xxl + spacing.lg)
+        .padding(.bottom, spacing.xxl + spacing.xl)
     }
     
     private var titleText: some View {
@@ -195,14 +197,14 @@ struct WelcomeSplashView: View {
             .opacity(contentOpacity)
     }
     
-    private var successMessageCard: some View {
-        VStack(spacing: 12) {
+    private func successMessageCard(spacing: AdaptiveSpacing) -> some View {
+        VStack(spacing: spacing.md) {
             successMessageRow
             emailConfirmationRow
         }
-        .padding(.horizontal, 24)
-        .padding(.vertical, 20)
-        .background(cardBackground)
+        .padding(.horizontal, spacing.iconMedium)
+        .padding(.vertical, spacing.xl)
+        .background(cardBackground(spacing: spacing))
         .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
         .opacity(contentOpacity)
     }
@@ -229,41 +231,41 @@ struct WelcomeSplashView: View {
         }
     }
     
-    private var cardBackground: some View {
-        RoundedRectangle(cornerRadius: 16)
+    private func cardBackground(spacing: AdaptiveSpacing) -> some View {
+        RoundedRectangle(cornerRadius: spacing.lg)
             .fill(Color.white.opacity(0.15))
             .overlay(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: spacing.lg)
                     .stroke(Color.white.opacity(0.2), lineWidth: 1)
             )
     }
     
     // MARK: - Feature Highlights Section
-    private var featureHighlightsSection: some View {
-        VStack(spacing: 16) {
-            FeatureRow(icon: "fork.knife.circle.fill", text: "Discover amazing recipes")
-            FeatureRow(icon: "calendar.badge.plus", text: "Plan your weekly meals")
-            FeatureRow(icon: "cart.fill", text: "Smart shopping lists")
+    private func featureHighlightsSection(spacing: AdaptiveSpacing) -> some View {
+        VStack(spacing: spacing.lg) {
+            FeatureRow(icon: "fork.knife.circle.fill", text: "Discover amazing recipes", spacing: spacing)
+            FeatureRow(icon: "calendar.badge.plus", text: "Plan your weekly meals", spacing: spacing)
+            FeatureRow(icon: "cart.fill", text: "Smart shopping lists", spacing: spacing)
         }
         .opacity(contentOpacity)
-        .padding(.horizontal, 40)
+        .padding(.horizontal, spacing.xxl + spacing.lg)
     }
     
     // MARK: - Continue Button
-    private var continueButton: some View {
+    private func continueButton(spacing: AdaptiveSpacing) -> some View {
         Button(action: handleContinueAction) {
-            buttonContent
+            buttonContent(spacing: spacing)
         }
         .buttonStyle(.plain) // Ensure button responds to taps
         .scaleEffect(buttonScale)
-        .padding(.horizontal, 32)
-        .padding(.bottom, 50)
+        .padding(.horizontal, spacing.screenEdge + spacing.lg)
+        .padding(.bottom, spacing.xl + spacing.xxl)
         .opacity(contentOpacity)
         .allowsHitTesting(true) // Explicitly allow hit testing
     }
     
-    private var buttonContent: some View {
-        HStack(spacing: 12) {
+    private func buttonContent(spacing: AdaptiveSpacing) -> some View {
+        HStack(spacing: spacing.md) {
             Text("Continue to Sign In")
                 .font(.system(size: 18, weight: .semibold))
             Image(systemName: "arrow.right.circle.fill")
@@ -271,12 +273,12 @@ struct WelcomeSplashView: View {
         }
         .foregroundColor(.white)
         .frame(maxWidth: .infinity)
-        .frame(height: 58)
-        .background(buttonBackground)
+        .frame(height: spacing.buttonHeight + spacing.md)
+        .background(buttonBackground(spacing: spacing))
     }
     
-    private var buttonBackground: some View {
-        RoundedRectangle(cornerRadius: 16)
+    private func buttonBackground(spacing: AdaptiveSpacing) -> some View {
+        RoundedRectangle(cornerRadius: spacing.lg)
             .fill(buttonGradient)
             .shadow(color: AppTheme.accentColor(for: appTheme).opacity(0.4), radius: 20, x: 0, y: 10)
     }
@@ -348,13 +350,14 @@ struct WelcomeSplashView: View {
 struct FeatureRow: View {
     let icon: String
     let text: String
+    let spacing: AdaptiveSpacing
     
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: spacing.md) {
             Image(systemName: icon)
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundColor(.white.opacity(0.9))
-                .frame(width: 24)
+                .frame(width: spacing.iconMedium)
             
             Text(text)
                 .font(.system(size: 15, weight: .medium))

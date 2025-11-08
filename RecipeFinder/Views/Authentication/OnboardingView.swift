@@ -53,84 +53,89 @@ struct OnboardingView: View {
     ]
     
     var body: some View {
-        ZStack {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                .ignoresSafeArea()
+        GeometryReader { geometry in
+            let spacing = AdaptiveSpacing(geometry: geometry)
             
-            VStack(spacing: 0) {
-                // Top bar with skip button
-                HStack {
-                    Spacer()
-                    if currentPage < slides.count - 1 {
-                        Button(action: { 
-                            HapticManager.shared.light()
-                            withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
-                                currentPage = slides.count - 1
-                            }
-                        }) {
-                            Text("Skip")
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundColor(.white.opacity(0.9))
-                                .padding(.horizontal, 20)
-                                .padding(.vertical, 10)
-                                .background(
-                                    Capsule()
-                                        .fill(Color.white.opacity(0.2))
-                                        .overlay(
-                                            Capsule()
-                                                .stroke(Color.white.opacity(0.3), lineWidth: 1)
-                                        )
-                                )
-                        }
-                        .transition(.scale.combined(with: .opacity))
-                    }
-                }
-                .frame(height: 60)
-                .padding(.horizontal, 20)
+            ZStack {
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
+                    .ignoresSafeArea()
                 
-                // Slides with enhanced transitions
-                TabView(selection: $currentPage) {
-                    ForEach(0..<slides.count, id: \.self) { index in
-                        OnboardingSlideView(
-                            slide: slides[index],
-                            isLastSlide: index == slides.count - 1,
-                            onGetStarted: {
-                                withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
-                                    showGetStarted = true
+                VStack(spacing: 0) {
+                    // Top bar with skip button
+                    HStack {
+                        Spacer()
+                        if currentPage < slides.count - 1 {
+                            Button(action: { 
+                                HapticManager.shared.light()
+                                withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                                    currentPage = slides.count - 1
                                 }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                    dismiss()
-                                }
+                            }) {
+                                Text("Skip")
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundColor(.white.opacity(0.9))
+                                    .padding(.horizontal, spacing.xl)
+                                    .padding(.vertical, spacing.sm + 2)
+                                    .background(
+                                        Capsule()
+                                            .fill(Color.white.opacity(0.2))
+                                            .overlay(
+                                                Capsule()
+                                                    .stroke(Color.white.opacity(0.3), lineWidth: 1)
+                                            )
+                                    )
                             }
-                        )
-                        .tag(index)
-                    }
-                }
-                .tabViewStyle(.page(indexDisplayMode: .never))
-                .animation(.spring(response: 0.5, dampingFraction: 0.8), value: currentPage)
-                .onChange(of: currentPage) { _, _ in
-                    HapticManager.shared.light()
-                }
-                
-                // Enhanced page indicators
-                HStack(spacing: 10) {
-                    ForEach(0..<slides.count, id: \.self) { index in
-                        if currentPage == index {
-                            // Active indicator - elongated capsule
-                            Capsule()
-                                .fill(Color.white)
-                                .frame(width: 24, height: 8)
-                                .shadow(color: .white.opacity(0.5), radius: 4, x: 0, y: 2)
-                        } else {
-                            // Inactive indicator - small circle
-                            Circle()
-                                .fill(Color.white.opacity(0.4))
-                                .frame(width: 8, height: 8)
+                            .transition(.scale.combined(with: .opacity))
                         }
                     }
+                    .frame(height: spacing.imageSmall)
+                    .padding(.horizontal, spacing.xl)
+                
+                    // Slides with enhanced transitions
+                    TabView(selection: $currentPage) {
+                        ForEach(0..<slides.count, id: \.self) { index in
+                            OnboardingSlideView(
+                                slide: slides[index],
+                                isLastSlide: index == slides.count - 1,
+                                spacing: spacing,
+                                onGetStarted: {
+                                    withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                                        showGetStarted = true
+                                    }
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                        dismiss()
+                                    }
+                                }
+                            )
+                            .tag(index)
+                        }
+                    }
+                    .tabViewStyle(.page(indexDisplayMode: .never))
+                    .animation(.spring(response: 0.5, dampingFraction: 0.8), value: currentPage)
+                    .onChange(of: currentPage) { _, _ in
+                        HapticManager.shared.light()
+                    }
+                    
+                    // Enhanced page indicators
+                    HStack(spacing: spacing.sm + 2) {
+                        ForEach(0..<slides.count, id: \.self) { index in
+                            if currentPage == index {
+                                // Active indicator - elongated capsule
+                                Capsule()
+                                    .fill(Color.white)
+                                    .frame(width: spacing.iconMedium, height: spacing.xs + 2)
+                                    .shadow(color: .white.opacity(0.5), radius: 4, x: 0, y: 2)
+                            } else {
+                                // Inactive indicator - small circle
+                                Circle()
+                                    .fill(Color.white.opacity(0.4))
+                                    .frame(width: spacing.xs + 2, height: spacing.xs + 2)
+                            }
+                        }
+                    }
+                    .padding(.vertical, spacing.xxl + spacing.xs)
+                    .animation(.spring(response: 0.4, dampingFraction: 0.8), value: currentPage)
                 }
-                .padding(.vertical, 30)
-                .animation(.spring(response: 0.4, dampingFraction: 0.8), value: currentPage)
             }
         }
         .interactiveDismissDisabled()
@@ -152,6 +157,7 @@ struct OnboardingSlide {
 struct OnboardingSlideView: View {
     let slide: OnboardingSlide
     let isLastSlide: Bool
+    let spacing: AdaptiveSpacing
     let onGetStarted: () -> Void
     
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
@@ -179,7 +185,7 @@ struct OnboardingSlideView: View {
                                 ),
                                 lineWidth: 2
                             )
-                            .frame(width: 180 + CGFloat(index * 40), height: 180 + CGFloat(index * 40))
+                            .frame(width: spacing.imageLarge + spacing.xl + CGFloat(index * 40), height: spacing.imageLarge + spacing.xl + CGFloat(index * 40))
                             .scaleEffect(isAnimating ? 1.3 : 1.0)
                             .opacity(isAnimating ? 0 : 0.6)
                             .animation(
@@ -204,7 +210,7 @@ struct OnboardingSlideView: View {
                                 endRadius: 100
                             )
                         )
-                        .frame(width: 200, height: 200)
+                        .frame(width: spacing.imageXLarge, height: spacing.imageXLarge)
                         .blur(radius: 2)
                     
                     // Icon background circle
@@ -219,7 +225,7 @@ struct OnboardingSlideView: View {
                                 endPoint: .bottomTrailing
                             )
                         )
-                        .frame(width: 180, height: 180)
+                        .frame(width: spacing.imageLarge + spacing.xl, height: spacing.imageLarge + spacing.xl)
                         .overlay(
                             Circle()
                                 .stroke(Color.white.opacity(0.3), lineWidth: 1.5)
@@ -247,13 +253,13 @@ struct OnboardingSlideView: View {
                             value: isAnimating
                         )
                 }
-                .frame(height: 260)
-                .padding(.top, 20)
+                .frame(height: spacing.heightPercent(0.32, min: 260))
+                .padding(.top, spacing.xl)
                 .scaleEffect(contentScale)
                 .opacity(contentOpacity)
                 
                 // Title and Description
-                VStack(spacing: 20) {
+                VStack(spacing: spacing.xl) {
                     Text(slide.title)
                         .font(.system(size: 36, weight: .bold, design: .rounded))
                         .foregroundStyle(
@@ -275,16 +281,16 @@ struct OnboardingSlideView: View {
                         .foregroundColor(.white.opacity(0.9))
                         .multilineTextAlignment(.center)
                         .lineSpacing(6)
-                        .padding(.horizontal, 32)
+                        .padding(.horizontal, spacing.screenEdge + spacing.lg)
                 }
-                .padding(.bottom, 40)
+                .padding(.bottom, spacing.xxl + spacing.lg)
                 .scaleEffect(contentScale)
                 .opacity(contentOpacity)
                 
                 // Enhanced Features Grid with cards
-                VStack(spacing: 16) {
+                VStack(spacing: spacing.lg) {
                     ForEach(Array(slide.features.enumerated()), id: \.offset) { index, feature in
-                        HStack(spacing: 16) {
+                        HStack(spacing: spacing.lg) {
                             // Icon container
                             ZStack {
                                 Circle()
@@ -298,7 +304,7 @@ struct OnboardingSlideView: View {
                                             endPoint: .bottomTrailing
                                         )
                                     )
-                                    .frame(width: 52, height: 52)
+                                    .frame(width: spacing.touchTarget + spacing.xs, height: spacing.touchTarget + spacing.xs)
                                 
                                 Image(systemName: feature.icon)
                                     .font(.system(size: 24, weight: .semibold))
@@ -315,7 +321,7 @@ struct OnboardingSlideView: View {
                             }
                             
                             // Text content
-                            VStack(alignment: .leading, spacing: 4) {
+                            VStack(alignment: .leading, spacing: spacing.xxs) {
                                 Text(feature.title)
                                     .font(.system(size: 17, weight: .semibold))
                                     .foregroundColor(.white)
@@ -327,12 +333,12 @@ struct OnboardingSlideView: View {
                             
                             Spacer()
                         }
-                        .padding(16)
+                        .padding(spacing.lg)
                         .background(
-                            RoundedRectangle(cornerRadius: 16)
+                            RoundedRectangle(cornerRadius: spacing.lg)
                                 .fill(Color.white.opacity(0.12))
                                 .overlay(
-                                    RoundedRectangle(cornerRadius: 16)
+                                    RoundedRectangle(cornerRadius: spacing.lg)
                                         .stroke(Color.white.opacity(0.2), lineWidth: 1)
                                 )
                         )
@@ -342,8 +348,8 @@ struct OnboardingSlideView: View {
                         .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(Double(index) * 0.1), value: contentOpacity)
                     }
                 }
-                .padding(.horizontal, 32)
-                .padding(.bottom, 40)
+                .padding(.horizontal, spacing.screenEdge + spacing.lg)
+                .padding(.bottom, spacing.xxl + spacing.xl)
                 
                 // Action button area
                 if isLastSlide {
@@ -352,7 +358,7 @@ struct OnboardingSlideView: View {
                         HapticManager.shared.success()
                         onGetStarted()
                     }) {
-                        HStack(spacing: 12) {
+                        HStack(spacing: spacing.md) {
                             Text("Get Started")
                                 .font(.system(size: 19, weight: .bold))
                             Image(systemName: "arrow.right.circle.fill")
@@ -360,9 +366,9 @@ struct OnboardingSlideView: View {
                         }
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
-                        .frame(height: 58)
+                        .frame(height: spacing.buttonHeight + spacing.md)
                         .background(
-                            RoundedRectangle(cornerRadius: 16)
+                            RoundedRectangle(cornerRadius: spacing.lg)
                                 .fill(
                                     LinearGradient(
                                         gradient: Gradient(colors: [
@@ -376,21 +382,21 @@ struct OnboardingSlideView: View {
                                 .shadow(color: AppTheme.accentColor(for: selectedTheme).opacity(0.5), radius: 20, x: 0, y: 10)
                         )
                     }
-                    .padding(.horizontal, 32)
-                    .padding(.bottom, 20)
+                    .padding(.horizontal, spacing.screenEdge + spacing.lg)
+                    .padding(.bottom, spacing.xl)
                     .scaleEffect(contentScale)
                     .opacity(contentOpacity)
                 } else {
                     // Swipe hint - More prominent
-                    HStack(spacing: 10) {
+                    HStack(spacing: spacing.sm + 2) {
                         Text("Swipe to continue")
                             .font(.system(size: 15, weight: .medium))
                             .foregroundColor(.white.opacity(0.7))
                         
-                        HStack(spacing: 4) {
+                        HStack(spacing: spacing.xxs) {
                             Circle()
                                 .fill(Color.white.opacity(0.7))
-                                .frame(width: 6, height: 6)
+                                .frame(width: spacing.xs, height: spacing.xs)
                                 .offset(x: isAnimating ? 8 : 0)
                             
                             Image(systemName: "chevron.right")
@@ -404,11 +410,11 @@ struct OnboardingSlideView: View {
                             value: isAnimating
                         )
                     }
-                    .padding(.bottom, 20)
+                    .padding(.bottom, spacing.xl)
                     .opacity(contentOpacity)
                 }
             }
-            .padding(.vertical, 20)
+            .padding(.vertical, spacing.xl)
         }
         .onAppear {
             withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {

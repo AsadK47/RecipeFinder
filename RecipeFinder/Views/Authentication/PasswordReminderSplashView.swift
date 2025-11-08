@@ -10,47 +10,50 @@ struct PasswordReminderSplashView: View {
     let onContinue: () -> Void
     
     var body: some View {
-        ZStack {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                .ignoresSafeArea()
+        GeometryReader { geometry in
+            let spacing = AdaptiveSpacing(geometry: geometry)
             
-            VStack(spacing: 32) {
-                Spacer()
+            ZStack {
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
+                    .ignoresSafeArea()
                 
-                // Key Icon
-                ZStack {
-                    Circle()
-                        .fill(Color.white.opacity(0.1))
-                        .frame(width: 120, height: 120)
-                        .scaleEffect(scale)
+                VStack(spacing: spacing.screenEdge + spacing.lg) {
+                    Spacer()
                     
-                    Image(systemName: "key.fill")
-                        .font(.system(size: 50))
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [.yellow, .orange],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
+                    // Key Icon
+                    ZStack {
+                        Circle()
+                            .fill(Color.white.opacity(0.1))
+                            .frame(width: spacing.imageMedium + spacing.xl, height: spacing.imageMedium + spacing.xl)
+                            .scaleEffect(scale)
+                        
+                        Image(systemName: "key.fill")
+                            .font(.system(size: 50))
+                            .foregroundStyle(
+                                LinearGradient(
+                                    colors: [.yellow, .orange],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
                             )
-                        )
-                        .rotationEffect(.degrees(keyRotation))
-                        .opacity(opacity)
-                }
-                
-                VStack(spacing: 16) {
-                    Text("Remember Your Password!")
-                        .font(.system(size: 28, weight: .bold))
-                        .foregroundColor(.white)
-                        .multilineTextAlignment(.center)
-                        .opacity(opacity)
+                            .rotationEffect(.degrees(keyRotation))
+                            .opacity(opacity)
+                    }
                     
-                    VStack(spacing: 12) {
-                        HStack(spacing: 12) {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(.green)
-                                .font(.system(size: 24))
-                            
-                            VStack(alignment: .leading, spacing: 4) {
+                    VStack(spacing: spacing.lg) {
+                        Text("Remember Your Password!")
+                            .font(.system(size: 28, weight: .bold))
+                            .foregroundColor(.white)
+                            .multilineTextAlignment(.center)
+                            .opacity(opacity)
+                        
+                        VStack(spacing: spacing.md) {
+                            HStack(spacing: spacing.md) {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(.green)
+                                    .font(.system(size: spacing.iconMedium))
+                                
+                                VStack(alignment: .leading, spacing: spacing.xxs) {
                                 Text("Account Created!")
                                     .font(.system(size: 17, weight: .semibold))
                                     .foregroundColor(.white)
@@ -59,86 +62,87 @@ struct PasswordReminderSplashView: View {
                                     .font(.system(size: 15))
                                     .foregroundColor(.white.opacity(0.8))
                             }
-                            
-                            Spacer()
-                        }
-                        .padding(16)
-                        .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color.white.opacity(0.1))
-                        )
-                        
-                        VStack(alignment: .leading, spacing: 12) {
-                            HStack(spacing: 10) {
-                                Image(systemName: "lock.icloud.fill")
-                                    .foregroundColor(.blue)
-                                    .font(.system(size: 20))
                                 
-                                Text("Use iOS Password Manager")
-                                    .font(.system(size: 16, weight: .medium))
-                                    .foregroundColor(.white)
+                                Spacer()
                             }
+                            .padding(spacing.lg)
+                            .background(
+                                RoundedRectangle(cornerRadius: spacing.md)
+                                    .fill(Color.white.opacity(0.1))
+                            )
                             
-                            Text("Your password is saved in iCloud Keychain and will auto-fill when you sign in.")
-                                .font(.system(size: 14))
-                                .foregroundColor(.white.opacity(0.8))
-                                .lineSpacing(2)
-                        }
-                        .padding(16)
-                        .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color.blue.opacity(0.2))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .stroke(Color.blue.opacity(0.3), lineWidth: 1)
-                                )
-                        )
-                        
-                        HStack(spacing: 10) {
+                            VStack(alignment: .leading, spacing: spacing.md) {
+                                HStack(spacing: spacing.sm + 2) {
+                                    Image(systemName: "lock.icloud.fill")
+                                        .foregroundColor(.blue)
+                                        .font(.system(size: spacing.xl))
+                                    
+                                    Text("Use iOS Password Manager")
+                                        .font(.system(size: 16, weight: .medium))
+                                        .foregroundColor(.white)
+                                }
+                                
+                                Text("Your password is saved in iCloud Keychain and will auto-fill when you sign in.")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.white.opacity(0.8))
+                                    .lineSpacing(2)
+                            }
+                            .padding(spacing.lg)
+                            .background(
+                                RoundedRectangle(cornerRadius: spacing.md)
+                                    .fill(Color.blue.opacity(0.2))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: spacing.md)
+                                            .stroke(Color.blue.opacity(0.3), lineWidth: 1)
+                                    )
+                            )
+                            
+                            HStack(spacing: spacing.sm + 2) {
                             Image(systemName: "exclamationmark.triangle.fill")
                                 .foregroundColor(.orange)
-                            
-                            Text("You'll need to sign in each time you log out")
-                                .font(.system(size: 14))
-                                .foregroundColor(.white.opacity(0.9))
+                                
+                                Text("You'll need to sign in each time you log out")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.white.opacity(0.9))
+                            }
+                            .padding(spacing.md)
+                            .background(
+                                RoundedRectangle(cornerRadius: spacing.sm)
+                                    .fill(Color.orange.opacity(0.15))
+                            )
                         }
-                        .padding(12)
+                        .opacity(opacity)
+                        .padding(.horizontal, spacing.screenEdge + spacing.lg)
+                    }
+                    
+                    Spacer()
+                    
+                    // Continue Button
+                    Button(action: {
+                        HapticManager.shared.medium()
+                        onContinue()
+                    }) {
+                        HStack(spacing: spacing.md) {
+                            Text("Got it, let's sign in!")
+                                .fontWeight(.semibold)
+                            Image(systemName: "arrow.right.circle.fill")
+                        }
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: spacing.buttonHeight)
                         .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.orange.opacity(0.15))
+                            RoundedRectangle(cornerRadius: spacing.lg)
+                                .fill(Color.white.opacity(0.2))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: spacing.lg)
+                                        .stroke(Color.white.opacity(0.4), lineWidth: 1.5)
+                                )
                         )
                     }
+                    .padding(.horizontal, spacing.screenEdge + spacing.lg)
+                    .padding(.bottom, spacing.xxl + spacing.xl)
                     .opacity(opacity)
-                    .padding(.horizontal, 32)
                 }
-                
-                Spacer()
-                
-                // Continue Button
-                Button(action: {
-                    HapticManager.shared.medium()
-                    onContinue()
-                }) {
-                    HStack(spacing: 12) {
-                        Text("Got it, let's sign in!")
-                            .fontWeight(.semibold)
-                        Image(systemName: "arrow.right.circle.fill")
-                    }
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 54)
-                    .background(
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(Color.white.opacity(0.2))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .stroke(Color.white.opacity(0.4), lineWidth: 1.5)
-                            )
-                    )
-                }
-                .padding(.horizontal, 32)
-                .padding(.bottom, 40)
-                .opacity(opacity)
             }
         }
         .onAppear {
