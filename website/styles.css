@@ -342,7 +342,7 @@ body {
 .feature:hover {
     transform: translateY(-8px);
     box-shadow: 0 12px 40px var(--shadow);
-    border-color: var(--accent);
+    border-color: var(--text-primary);
 }
 
 .feature:hover::before {
@@ -545,7 +545,7 @@ body {
 
 .notify-form input:focus {
     outline: none;
-    border-color: var(--accent);
+    border-color: var(--text-primary);
     box-shadow: 0 0 0 4px var(--shadow);
     transform: translateY(-2px);
 }
@@ -573,7 +573,7 @@ body {
 }
 
 .form-message {
-    color: var(--accent);
+    color: var(--text-primary);
     font-size: 0.95rem;
     min-height: 24px;
     font-weight: 500;
@@ -641,14 +641,14 @@ body {
 }
 
 .website-info a {
-    color: var(--accent);
-    text-decoration: none;
+    color: var(--text-primary);
+    text-decoration: underline;
     transition: opacity 0.2s ease;
+    font-weight: 500;
 }
 
 .website-info a:hover {
-    opacity: 0.8;
-    text-decoration: underline;
+    opacity: 0.7;
 }
 
 .footer-section ul {
@@ -682,7 +682,7 @@ body {
 }
 
 .footer-section a:hover {
-    color: var(--accent);
+    color: var(--text-primary);
     transform: translateX(4px);
 }
 
@@ -750,15 +750,14 @@ body {
 }
 
 .footer-bottom a {
-    color: var(--accent);
-    text-decoration: none;
+    color: var(--text-primary);
+    text-decoration: underline;
     font-weight: 500;
     transition: opacity 0.2s ease;
 }
 
 .footer-bottom a:hover {
-    opacity: 0.8;
-    text-decoration: underline;
+    opacity: 0.7;
 }
 
 /* ============================================
