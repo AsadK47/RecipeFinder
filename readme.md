@@ -12,198 +12,6 @@
 
 ---
 
-## ⚠️ LEGAL NOTICE & COPYRIGHT DECLARATION
-
-**© 2024-2025 Asad Khan & RECIPEFINDER LIMITED. ALL RIGHTS RESERVED.**  
-**PROPRIETARY AND CONFIDENTIAL SOFTWARE**
-
-### 🏢 UK COMPANY INFORMATION (Companies Act 2006 Compliance)
-
-**Legal Entity:** RECIPEFINDER LIMITED  
-**Company Number:** 16833243  
-**Registered:** England and Wales  
-**Date of Incorporation:** 5 November 2025  
-**Company Type:** Private Limited Company by Shares  
-**Director:** Asad Khan  
-**Shareholder:** Asad Khan (100% shareholding)  
-**Person with Significant Control (PSC):** Asad Khan  
-
-**Registered in accordance with:**
-- Companies Act 2006
-- UK Company Law
-- Companies House Registration Requirements
-
-**Ongoing Compliance Obligations:**
-- ✅ Annual Accounts Filing (within 9 months of year-end)
-- ✅ Confirmation Statement Filing (annually)
-- ✅ Corporation Tax Registration (HMRC)
-- ✅ Statutory Registers Maintenance (Directors, Shareholders, PSCs)
-- ✅ PSC Register Disclosure Requirements
-- ✅ Companies House Notification of Changes
-
-For official company records: [Companies House Service](https://find-and-update.company-information.service.gov.uk/company/16833243)
-
----
-
-**This software is the exclusive intellectual property of Asad Khan and RECIPEFINDER LIMITED** and is protected under:
-- **United Kingdom**: Copyright, Designs and Patents Act 1988 (as amended)
-- **United States**: U.S. Copyright Act (17 U.S.C. §§ 101-1332), Digital Millennium Copyright Act (DMCA)
-- **International**: Berne Convention for the Protection of Literary and Artistic Works
-- **Trade Secrets**: UK Trade Secrets Regulations 2018, U.S. Defend Trade Secrets Act (18 U.S.C. § 1836)
-
-### 🔒 AUTHORSHIP & OWNERSHIP DECLARATION
-
-**I, Asad Khan, hereby declare under penalty of perjury that:**
-
-1. I am the **sole and original author** of RecipeFinder™ and all associated software, code, documentation, designs, and materials
-2. I created this work **entirely through my own independent efforts** with no contributions from any third party
-3. I retain **complete and exclusive ownership** of all intellectual property rights, including but not limited to:
-   - All source code, object code, and compiled binaries
-   - All algorithms, data structures, and technical implementations
-   - All user interface designs, graphics, and visual elements
-   - All documentation, comments, and technical specifications
-   - All trade secrets, know-how, and proprietary methodologies
-   - The RecipeFinder™ trademark and all associated branding
-4. This work is **NOT a work-made-for-hire** and was created on my own time with my own resources
-5. No employer, organization, or third party has any claim to this work
-6. I have not licensed, assigned, or transferred any rights to this work to any other party
-
-**Date of First Publication**: October 2024  
-**Copyright Registration**: Pending with UK Intellectual Property Office & U.S. Copyright Office  
-**Author**: Asad Khan (asadkhanruby@gmail.com)  
-**Company**: RECIPEFINDER LIMITED  
-**Company Number**: 16833243  
-**Registered**: England and Wales (5 November 2025)  
-**GitHub**: [@AsadK47](https://github.com/AsadK47)
-
-### ⚖️ LEGAL PROTECTIONS & ENFORCEMENT
-
-**UNAUTHORIZED USE IS A CRIMINAL OFFENSE** and will result in immediate legal action under:
-
-**United Kingdom Law:**
-- Copyright, Designs and Patents Act 1988 - Criminal penalties up to 10 years imprisonment (s.107)
-- Computer Misuse Act 1990 - Unauthorized access (s.1-3)
-- Fraud Act 2006 - Fraud by false representation (s.2)
-- Theft Act 1968 - Theft of intellectual property (s.1)
-
-**United States Law:**
-- 18 U.S.C. § 1831-1839 - Economic Espionage Act (up to 10 years imprisonment)
-- 18 U.S.C. § 2319 - Criminal copyright infringement (up to 5 years imprisonment)
-- 17 U.S.C. § 506 - Willful copyright infringement for commercial advantage
-- 18 U.S.C. § 1030 - Computer Fraud and Abuse Act
-
-**Civil Remedies Available:**
-- ✅ Immediate injunctive relief and cease & desist orders
-- ✅ Statutory damages up to £50,000 (UK) / $150,000 per infringement (US)
-- ✅ Actual damages plus disgorgement of all profits derived from infringement
-- ✅ Treble damages for willful infringement
-- ✅ Recovery of all attorneys' fees and court costs
-- ✅ Destruction of all infringing copies and materials
-- ✅ Public correction and attribution orders
-
-### 🚫 STRICTLY PROHIBITED ACTIVITIES
-
-**WITHOUT EXPLICIT WRITTEN PERMISSION**, you are **ABSOLUTELY FORBIDDEN** from:
-
-❌ Copying, reproducing, or duplicating any portion of this software  
-❌ Modifying, adapting, or creating derivative works  
-❌ Reverse engineering, decompiling, or disassembling  
-❌ Distributing, publishing, or transmitting in any form  
-❌ Commercial use or incorporation into commercial products  
-❌ Removing, altering, or obscuring copyright notices  
-❌ Claiming authorship or misrepresenting the source  
-❌ Using in any competing product or service  
-❌ Sublicensing, selling, renting, or leasing  
-❌ Using the RecipeFinder™ name, trademark, or branding  
-❌ Extracting algorithms, business logic, or trade secrets  
-❌ Publishing benchmarks or analysis without written consent  
-❌ Granting access to any unauthorized third party
-
-### 📜 EVIDENCE OF OWNERSHIP
-
-**This repository contains irrefutable evidence of my exclusive ownership:**
-- Complete Git commit history showing sole authorship
-- Timestamped commits dating back to initial creation
-- Exclusive access to repository and deployment credentials
-- Original design files and documentation
-- Development notes and planning materials
-- Email correspondence and domain registrations
-- Financial records showing sole investment
-
-**Digital Fingerprints:**
-- Git commits signed with GPG key: `asadkhanruby@gmail.com`
-- Repository: `https://github.com/AsadK47/RecipeFinder`
-- Initial commit: October 2024
-- All commits traceable to Asad Khan (@AsadK47)
-
-### 🔐 CONFIDENTIALITY & TRADE SECRETS
-
-This software contains **valuable trade secrets and proprietary information** protected under UK Trade Secrets Regulations 2018 and the U.S. Defend Trade Secrets Act. Unauthorized disclosure or use constitutes **theft of trade secrets** and subjects the violator to:
-- Criminal prosecution with imprisonment up to 10 years
-- Civil liability for all economic damages
-- Punitive damages for willful and malicious misappropriation
-- Permanent injunction against use or disclosure
-
-**By accessing this repository, you acknowledge:**
-1. You have received access to confidential information
-2. You agree to maintain strict confidentiality
-3. You will not disclose or use this information for any unauthorized purpose
-4. You understand that violation will result in immediate legal action
-
-### 📞 REPORTING VIOLATIONS
-
-**If you become aware of any unauthorized use, copying, or distribution of this software:**
-
-**Immediate Reporting Required:**
-- Email: asadkhanruby@gmail.com
-- Subject: "URGENT: Copyright Infringement Report"
-- Include: URLs, usernames, descriptions, and evidence
-
-**Law Enforcement Contacts:**
-- UK: Action Fraud (0300 123 2040) - UK Police fraud reporting
-- US: FBI Internet Crime Complaint Center (IC3.gov)
-- Interpol: Intellectual Property Crime Unit
-
-**I actively monitor and enforce my rights. Violators will be prosecuted.**
-
-### ✍️ WRITTEN CONSENT REQUIRED
-
-**Any use beyond viewing requires written permission:**
-
-To request permission, email asadkhanruby@gmail.com with:
-1. Your full legal name and contact information
-2. Detailed description of intended use
-3. Commercial or non-commercial purpose
-4. Duration and scope of use
-5. Compensation offered (if applicable)
-
-**All permissions must be granted in writing with a signed agreement.**
-
----
-
-<div align="center">
-
-## 🔐 COPYRIGHT & OWNERSHIP NOTICE 🔐
-
-**This entire document and all referenced software are the exclusive intellectual property of Asad Khan.**
-
-Every line of code, every algorithm, every design element, every feature described below  
-was created **solely by Asad Khan** and is protected by **international copyright law**.
-
-**Date of Creation**: October 2024  
-**Sole Author**: Asad Khan  
-**Email**: asadkhanruby@gmail.com  
-**GitHub**: @AsadK47
-
-This is **NOT open source**. This is **NOT licensed for reuse**.  
-This is **proprietary commercial software** protected by law.
-
-Reading this documentation does NOT grant you any rights.
-
-</div>
-
----
-
 ## ✨ What Makes It Special
 
 RecipeFinder brings **premium design** and **powerful features** together in a cooking companion that respects your privacy. Think of it as your personal sous chef—elegant, efficient, and entirely offline.
@@ -1025,77 +833,81 @@ GitHub: [@AsadK47](https://github.com/AsadK47)
 
 <div align="center">
 
-## 🔴 FINAL WARNING & COPYRIGHT NOTICE 🔴
-
-**UNAUTHORIZED USE IS A CRIME**
-
-This software is protected by international copyright law, UK law, and US law.  
-Copying, modifying, or distributing without written permission is **ILLEGAL**.
-
-**RecipeFinder™** is a registered trademark of **Asad Khan**.
-
-**Copyright © 2024-2025 Asad Khan. ALL RIGHTS RESERVED.**
-
-🔒 **PROPRIETARY & CONFIDENTIAL** 🔒
-
-**Violators will be prosecuted to the fullest extent of the law.**
-
----
-
-**OWNERSHIP DECLARATION**
-
-This work is the **sole and exclusive property** of **Asad Khan**.  
-Created independently without any third-party contributions.  
-Protected under UK Copyright, Designs and Patents Act 1988  
-and US Copyright Act (17 U.S.C.).
-
-**Author**: Asad Khan (@AsadK47)  
-**Email**: asadkhanruby@gmail.com  
-**Repository**: https://github.com/AsadK47/RecipeFinder
-
-**Last Updated**: November 5, 2025  
-**Version**: 3.0 - Maximum Legal Protection Edition
-
----
-
-⚠️ **WARNING**: This README constitutes legal notice. Ignorance of these terms is NOT a defense. By accessing this repository, you accept all terms and acknowledge receipt of notice.
-
-**ALL RIGHTS RESERVED. NO PERMISSIONS GRANTED.**
-
----
-
-**CRIMINAL OFFENSES UNDER UK & US LAW**
-
-Unauthorized use may result in:
-- 🚨 Criminal prosecution
-- ⚖️ Civil lawsuits
-- 💰 Financial penalties up to £50,000 / $150,000+
-- 🔒 Imprisonment up to 10 years
-- 📋 Permanent criminal record
-
-**Don't risk it. Get written permission first.**
-
----
-
-**"This software is my intellectual property.  
-I created it. I own it. It's protected by law.  
-Unauthorized use will result in legal action.  
-No exceptions."**
-
-— **Asad Khan**, Author & Copyright Holder
-
----
+## ⚖️ LEGAL NOTICE & COPYRIGHT
 
 </div>
 
-**END OF DOCUMENT**
+### Copyright & Ownership
 
-═══════════════════════════════════════════════════════════════════════════════
+**Copyright © 2024-2025 Asad Khan & RECIPEFINDER LIMITED. All Rights Reserved.**
 
-Document Signature: README.md  
-Copyright Holder: Asad Khan  
-Date: November 5, 2025  
-Jurisdiction: United Kingdom (Primary), United States (Secondary)  
-Protection: Copyright, Trade Secrets, Trademark
+This software and all associated materials are the exclusive intellectual property of **Asad Khan** and **RECIPEFINDER LIMITED** (Company No. 16833243, registered in England and Wales).
 
-═══════════════════════════════════════════════════════════════════════════════
+**Author & Copyright Holder**: Asad Khan  
+**Contact**: recipefinderlimited@icloud.com  
+**Repository**: https://github.com/AsadK47/RecipeFinder  
+**Website**: https://recipefinder.uk
+
+### Legal Protection
+
+This work is protected under:
+- 🇬🇧 **UK Law**: Copyright, Designs and Patents Act 1988
+- 🇺🇸 **US Law**: Copyright Act (17 U.S.C.), DMCA
+- 🌍 **International**: Berne Convention, WIPO Copyright Treaty
+
+### Company Information (Companies Act 2006 Compliance)
+
+**RECIPEFINDER LIMITED**  
+Company Number: **16833243**  
+Incorporated: **5 November 2025**  
+Jurisdiction: **England and Wales**  
+Director: **Asad Khan**  
+Registered Office: [As registered with Companies House]
+
+View official records: [Companies House](https://find-and-update.company-information.service.gov.uk/company/16833243)
+
+### Usage Terms
+
+This is **proprietary software**. By accessing this repository, you acknowledge:
+
+✅ **Permitted**: Personal viewing and running for non-commercial evaluation  
+❌ **Prohibited**: Copying, modifying, distributing, or commercial use without written permission
+
+### Enforcement
+
+Unauthorized use constitutes copyright infringement and may result in:
+- Civil remedies: Statutory damages up to £50,000 (UK) / $150,000 (US) per work
+- Criminal penalties: Up to 10 years imprisonment under UK/US law
+- Full recovery of legal costs and fees
+
+### Request Permission
+
+For licensing inquiries or permission requests:  
+📧 **recipefinderlimited@icloud.com**
+
+Include: Name, intended use, commercial/non-commercial purpose, duration
+
+### Complete Legal Documentation
+
+- 📄 [Full License Agreement](./LICENSE)
+- 🔒 [Privacy Policy](https://recipefinder.uk/privacy.html)
+- 📋 [Terms of Service](https://recipefinder.uk/terms.html)
+
+---
+
+<div align="center">
+
+**RecipeFinder™** is a trademark of Asad Khan  
+
+**Made with ❤️ and ☕️ in London**
+
+*Where Design Meets Delicious*
+
+---
+
+**© 2024-2025 Asad Khan & RECIPEFINDER LIMITED**  
+**All Rights Reserved • Proprietary Software**
+
+Last Updated: 8 November 2025
+
+</div>

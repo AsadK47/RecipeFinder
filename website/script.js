@@ -19,16 +19,19 @@ function initThemeToggle() {
     const themeIcon = themeToggle.querySelector('.theme-icon');
     const root = document.documentElement;
     
-    // Check for saved theme preference or default to dark
+    // Check for saved theme preference, otherwise respect system preference
     const savedTheme = localStorage.getItem('theme');
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    let currentTheme;
     if (savedTheme) {
-        root.setAttribute('data-theme', savedTheme);
-        updateThemeIcon(savedTheme, themeIcon);
+        currentTheme = savedTheme;
     } else {
-        // Default to dark mode
-        root.setAttribute('data-theme', 'dark');
-        updateThemeIcon('dark', themeIcon);
+        currentTheme = systemPrefersDark ? 'dark' : 'light';
     }
+    
+    root.setAttribute('data-theme', currentTheme);
+    updateThemeIcon(currentTheme, themeIcon);
     
     themeToggle.addEventListener('click', () => {
         const currentTheme = root.getAttribute('data-theme');
@@ -37,11 +40,27 @@ function initThemeToggle() {
         root.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
         updateThemeIcon(newTheme, themeIcon);
+        
+        // Add a subtle animation
+        themeToggle.style.transform = 'translateY(-50%) rotate(360deg)';
+        setTimeout(() => {
+            themeToggle.style.transform = 'translateY(-50%)';
+        }, 300);
+    });
+    
+    // Listen for system theme changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        if (!localStorage.getItem('theme')) {
+            const newTheme = e.matches ? 'dark' : 'light';
+            root.setAttribute('data-theme', newTheme);
+            updateThemeIcon(newTheme, themeIcon);
+        }
     });
 }
 
 function updateThemeIcon(theme, iconElement) {
     iconElement.textContent = theme === 'dark' ? '☀️' : '🌙';
+    iconElement.setAttribute('aria-label', `Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`);
 }
 
 // ============================================
@@ -51,30 +70,63 @@ function updateThemeIcon(theme, iconElement) {
 function initNotifyForm() {
     const form = document.getElementById('notifyForm');
     const message = document.getElementById('formMessage');
+    const button = form.querySelector('button');
+    const input = form.querySelector('input[type="email"]');
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        const email = form.querySelector('input[type="email"]').value;
+        const email = input.value;
         
-        // Show loading state
-        message.textContent = 'Adding you to the list...';
-        message.style.color = 'var(--text-secondary)';
+        // Disable button and show loading state
+        button.disabled = true;
+        button.textContent = 'Adding...';
+        message.textContent = '';
         
         // Simulate API call (replace with actual endpoint when ready)
-        setTimeout(() => {
+        try {
+            await new Promise(resolve => setTimeout(resolve, 1200));
+            
             message.textContent = '✓ Success! We\'ll notify you when RecipeFinder launches.';
-            message.style.color = 'var(--teal-start)';
+            message.style.color = 'var(--accent)';
             form.reset();
             
-            // Clear message after 5 seconds
+            // Reset button
+            button.disabled = false;
+            button.textContent = 'Notify Me';
+            
+            // Clear message after 6 seconds
             setTimeout(() => {
                 message.textContent = '';
-            }, 5000);
-        }, 1000);
-        
-        // For now, just log it (replace with actual API call)
-        console.log('Email submitted:', email);
+            }, 6000);
+            
+            // Store email locally (for demo - replace with backend call)
+            console.log('Email submitted:', email);
+            
+            // Optional: Send to backend
+            // await fetch('/api/subscribe', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({ email })
+            // });
+            
+        } catch (error) {
+            message.textContent = '⚠ Oops! Something went wrong. Please try again.';
+            message.style.color = '#ef4444';
+            button.disabled = false;
+            button.textContent = 'Notify Me';
+            
+            console.error('Subscription error:', error);
+        }
+    });
+    
+    // Add input validation feedback
+    input.addEventListener('blur', () => {
+        if (input.value && !input.validity.valid) {
+            input.style.borderColor = '#ef4444';
+        } else {
+            input.style.borderColor = 'rgba(20, 184, 166, 0.2)';
+        }
     });
 }
 
@@ -205,12 +257,21 @@ function initCookieConsent() {
 function initSmoothScroll() {
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
+            const href = this.getAttribute('href');
+            
+            // Skip empty or just # links
+            if (!href || href === '#') return;
+            
             e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
+            const target = document.querySelector(href);
+            
             if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
+                const bannerHeight = document.querySelector('.coming-soon-banner').offsetHeight;
+                const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - bannerHeight - 20;
+                
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
                 });
             }
         });

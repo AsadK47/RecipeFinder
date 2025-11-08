@@ -35,9 +35,9 @@ struct ContentView: View {
                     }
                     .tag(2)
                 
-                CookTimerView()
+                MealPlanningView(recipes: $recipes)
                     .tabItem {
-                        Label("Timer", systemImage: "timer")
+                        Label("Planning", systemImage: "calendar")
                     }
                     .tag(3)
                 
@@ -140,10 +140,10 @@ struct ContentView: View {
         // Icon colors - optimized for readability over colored backgrounds
         _ = UIColor(AppTheme.accentColor(for: themeBinding))
         
-        // Selected icon: Use high contrast color instead of theme color for better visibility
+        // Selected icon: Use high contrast colours
         let selectedIconColor: UIColor = colorScheme == .dark 
-            ? .white  // Pure white in dark mode
-            : .black  // Pure black in light mode
+            ? .black  // Black text in dark mode on teal background
+            : .white  // White text in light mode on teal background
         
         appearance.stackedLayoutAppearance.selected.iconColor = selectedIconColor
         appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
@@ -153,8 +153,8 @@ struct ContentView: View {
         
         // Unselected icons - high contrast for readability
         let unselectedColor: UIColor = colorScheme == .dark 
-            ? UIColor.white.withAlphaComponent(0.7)  // Increased from 0.6
-            : UIColor.black.withAlphaComponent(0.6)  // Increased from 0.5
+            ? UIColor.black.withAlphaComponent(0.7)  // Black in dark mode on teal
+            : UIColor.white.withAlphaComponent(0.7)  // White in light mode on teal
         
         appearance.stackedLayoutAppearance.normal.iconColor = unselectedColor
         appearance.stackedLayoutAppearance.normal.titleTextAttributes = [

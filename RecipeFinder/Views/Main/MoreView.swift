@@ -67,12 +67,12 @@ struct MoreView: View {
                                 
                                 VStack(spacing: 12) {
                                     MoreCard {
-                                        NavigationLink(destination: MealPlanningView(recipes: $recipes)) {
+                                        NavigationLink(destination: CookTimerView()) {
                                             MoreRow(
                                                 icon: "calendar.circle.fill",
                                                 iconColor: .green,
-                                                title: "Meal Planner",
-                                                subtitle: "Plan your weekly meals"
+                                                title: "Cook Timer",
+                                                subtitle: "Ready, set, cook!"
                                             )
                                         }
                                         .buttonStyle(PlainButtonStyle())

@@ -236,16 +236,16 @@ struct MealPlanningView: View {
                         Text(mode == .calendar ? "Calendar" : "Weekly")
                             .font(.system(size: 14, weight: .semibold))
                     }
-                    .foregroundColor(viewMode == mode ? .white : .white.opacity(0.6))
+                    .foregroundColor(viewMode == mode ? (colorScheme == .dark ? .white : .black) : (colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6)))
                     .padding(.horizontal, 16)
                     .padding(.vertical, 10)
                     .background {
                         if viewMode == mode {
                             Capsule()
-                                .fill(Color.white.opacity(0.2))
+                                .fill(colorScheme == .dark ? Color.white.opacity(0.2) : Color.black.opacity(0.15))
                         } else {
                             Capsule()
-                                .stroke(Color.white.opacity(0.3), lineWidth: 1)
+                                .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.black.opacity(0.3), lineWidth: 1)
                         }
                     }
                 }
@@ -268,18 +268,18 @@ struct MealPlanningView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Healthy Eating Tips")
                         .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.white)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
                     
                     Text("Plan balanced meals for better health")
                         .font(.caption)
-                        .foregroundColor(.white.opacity(0.7))
+                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.7))
                 }
                 
                 Spacer()
                 
                 Image(systemName: "chevron.right")
                     .font(.caption)
-                    .foregroundColor(.white.opacity(0.5))
+                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.5) : .black.opacity(0.5))
             }
             .padding(16)
             .background {
@@ -367,25 +367,25 @@ struct MealPlanningView: View {
                 Button(action: previousMonth) {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.white)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
                         .frame(width: 40, height: 40)
-                        .background(Circle().fill(Color.white.opacity(0.1)))
+                        .background(Circle().fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1)))
                 }
                 
                 Spacer()
                 
                 Text(monthYearString)
                     .font(.system(size: 22, weight: .bold))
-                    .foregroundColor(.white)
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
                 
                 Spacer()
                 
                 Button(action: nextMonth) {
                     Image(systemName: "chevron.right")
                         .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.white)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
                         .frame(width: 40, height: 40)
-                        .background(Circle().fill(Color.white.opacity(0.1)))
+                        .background(Circle().fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1)))
                 }
             }
             .padding(.horizontal, 4)
@@ -396,7 +396,7 @@ struct MealPlanningView: View {
                 ForEach(["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], id: \.self) { day in
                     Text(day)
                         .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(.white.opacity(0.6))
+                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6))
                         .frame(maxWidth: .infinity)
                 }
                 
@@ -448,13 +448,13 @@ struct MealPlanningView: View {
             HStack {
                 Text("Planned Meals")
                     .font(.system(size: 20, weight: .bold))
-                    .foregroundColor(.white)
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
                 
                 Spacer()
                 
                 Text(selectedDateString)
                     .font(.subheadline)
-                    .foregroundColor(.white.opacity(0.7))
+                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.7))
             }
             .padding(.horizontal, 4)
             
@@ -525,28 +525,28 @@ struct MealPlanningView: View {
             HStack {
                 Text("Meals for")
                     .font(.system(size: 20, weight: .bold))
-                    .foregroundColor(.white)
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
                 
                 Spacer()
                 
                 Text(selectedDateString)
                     .font(.subheadline)
-                    .foregroundColor(.white.opacity(0.7))
+                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.7))
             }
             .padding(.horizontal, 4)
             
             VStack(spacing: 16) {
                 Image(systemName: "calendar.badge.plus")
                     .font(.system(size: 48))
-                    .foregroundColor(.white.opacity(0.3))
+                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.3) : .black.opacity(0.3))
                 
                 Text("No meals planned for this day")
                     .font(.headline)
-                    .foregroundColor(.white.opacity(0.8))
+                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.8))
                 
                 Text("Tap below to add meals for \(shortDateString)")
                     .font(.subheadline)
-                    .foregroundColor(.white.opacity(0.6))
+                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6))
                     .multilineTextAlignment(.center)
                 
                 Button(action: {
@@ -558,12 +558,12 @@ struct MealPlanningView: View {
                         Text("Add Meal")
                             .fontWeight(.semibold)
                     }
-                    .foregroundColor(.white)
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 14)
                     .background(
                         Capsule()
-                            .fill(Color.white.opacity(0.2))
+                            .fill(colorScheme == .dark ? Color.white.opacity(0.2) : Color.black.opacity(0.15))
                     )
                 }
             }
@@ -784,7 +784,7 @@ struct CalendarDayView: View {
                     .shadow(color: Color.white.opacity(0.3), radius: 8, x: 0, y: 4)
             } else if isToday {
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.white.opacity(0.5), lineWidth: 2)
+                    .stroke(colorScheme == .dark ? Color.white.opacity(0.5) : Color.black.opacity(0.5), lineWidth: 2)
             }
         }
         .scaleEffect(isSelected ? 1.05 : 1.0)
@@ -795,9 +795,9 @@ struct CalendarDayView: View {
         if isSelected {
             return Color.blue
         } else if isToday {
-            return .white
+            return colorScheme == .dark ? .white : .black
         } else {
-            return .white.opacity(0.8)
+            return colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.8)
         }
     }
 }
@@ -813,18 +813,18 @@ struct MealTimeCard: View {
             // Icon with background
             ZStack {
                 Circle()
-                    .fill(Color.white.opacity(0.15))
+                    .fill(colorScheme == .dark ? Color.white.opacity(0.15) : Color.black.opacity(0.15))
                     .frame(width: 52, height: 52)
                 
                 Image(systemName: mealTime.icon)
                     .font(.system(size: 22, weight: .semibold))
-                    .foregroundColor(.white.opacity(0.9))
+                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.9) : .black.opacity(0.9))
             }
             
             VStack(alignment: .leading, spacing: 6) {
                 Text(mealTime.rawValue)
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(.white)
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
                 
                 HStack(spacing: 4) {
                     Image(systemName: "clock")
@@ -832,7 +832,7 @@ struct MealTimeCard: View {
                     Text(mealTime.timeRange)
                         .font(.caption)
                 }
-                .foregroundColor(.white.opacity(0.6))
+                .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6))
                 
                 if let recipe = recipe {
                     HStack(spacing: 6) {
