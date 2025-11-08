@@ -3,7 +3,7 @@ import UIKit
 import Combine
 
 final class AccountManager: ObservableObject, @unchecked Sendable {
-    nonisolated(unsafe) static let shared = AccountManager()
+    static let shared = AccountManager()
     
     // Profile fields
     @Published private(set) var uuid: String = ""
