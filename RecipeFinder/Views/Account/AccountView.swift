@@ -1117,6 +1117,9 @@ struct DataImportView: View {
         isImporting = true
         importResult = nil
         
+        // Capture mergeMode value before entering background thread
+        let selectedMergeMode = mergeMode
+        
         DispatchQueue.global(qos: .userInitiated).async {
             do {
                 guard let url = try result.get().first else {
@@ -1148,7 +1151,7 @@ struct DataImportView: View {
                 }
                 
                 // Import favorites
-                if mergeMode == .replace {
+                if selectedMergeMode == .replace {
                     if let favorites = json["favoriteRecipes"] as? [String] {
                         UserDefaults.standard.set(favorites, forKey: "favoriteRecipeIDs")
                     }
@@ -1165,7 +1168,7 @@ struct DataImportView: View {
                 if let shoppingListArray = json["shoppingList"] as? [[String: Any]] {
                     let jsonData = try JSONSerialization.data(withJSONObject: shoppingListArray)
                     if let newItems = try? JSONDecoder().decode([ShoppingListModel].self, from: jsonData) {
-                        if mergeMode == .replace {
+                        if selectedMergeMode == .replace {
                             let encoded = try JSONEncoder().encode(newItems)
                             UserDefaults.standard.set(encoded, forKey: "shoppingListItems")
                         } else {
@@ -1183,7 +1186,7 @@ struct DataImportView: View {
                 if let inventoryArray = json["kitchenInventory"] as? [[String: Any]] {
                     let jsonData = try JSONSerialization.data(withJSONObject: inventoryArray)
                     if let newItems = try? JSONDecoder().decode([KitchenInventoryModel].self, from: jsonData) {
-                        if mergeMode == .replace {
+                        if selectedMergeMode == .replace {
                             let encoded = try JSONEncoder().encode(newItems)
                             UserDefaults.standard.set(encoded, forKey: "kitchenInventory")
                         } else {
@@ -1201,7 +1204,7 @@ struct DataImportView: View {
                 if let mealPlansArray = json["mealPlans"] as? [[String: Any]] {
                     let jsonData = try JSONSerialization.data(withJSONObject: mealPlansArray)
                     if let newPlans = try? JSONDecoder().decode([MealPlanModel].self, from: jsonData) {
-                        if mergeMode == .replace {
+                        if selectedMergeMode == .replace {
                             let encoded = try JSONEncoder().encode(newPlans)
                             UserDefaults.standard.set(encoded, forKey: "mealPlans")
                         } else {
@@ -1217,7 +1220,7 @@ struct DataImportView: View {
                 
                 // Import notes
                 if let notes = json["recipeNotes"] as? [String: String] {
-                    if mergeMode == .replace {
+                    if selectedMergeMode == .replace {
                         let encoded = try JSONEncoder().encode(notes)
                         UserDefaults.standard.set(encoded, forKey: "recipeNotes")
                     } else {
