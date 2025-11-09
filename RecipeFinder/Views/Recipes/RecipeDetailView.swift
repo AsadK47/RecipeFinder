@@ -582,16 +582,21 @@ struct RecipeDetailView: View {
         HapticManager.shared.light()
         isGeneratingPDF = true
         
+        // Capture MainActor-isolated properties before background thread
+        let recipeCapture = recipe
+        let measurementSystemCapture = measurementSystem
+        let themeCapture = appTheme
+        
         // Generate PDF on background thread
         DispatchQueue.global(qos: .userInitiated).async {
             if let pdfData = RecipeShareUtility.generatePDF(
-                recipe: recipe, 
-                measurementSystem: measurementSystem,
-                theme: appTheme
+                recipe: recipeCapture, 
+                measurementSystem: measurementSystemCapture,
+                theme: themeCapture
             ) {
                 // Create temporary file
                 let tempURL = FileManager.default.temporaryDirectory
-                    .appendingPathComponent("\(recipe.name.replacingOccurrences(of: "/", with: "-")).pdf")
+                    .appendingPathComponent("\(recipeCapture.name.replacingOccurrences(of: "/", with: "-")).pdf")
                 
                 do {
                     try pdfData.write(to: tempURL)
