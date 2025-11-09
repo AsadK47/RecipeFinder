@@ -30,7 +30,7 @@ struct LegalInformationView: View {
                             HStack {
                                 Image(systemName: "building.2.fill")
                                     .font(.title2)
-                                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                                    .foregroundColor(colorScheme == .dark ? .white : .black)
                                 
                                 Text("Company Information")
                                     .font(.title3)
@@ -46,7 +46,7 @@ struct LegalInformationView: View {
                             CompanyInfoRow(label: "Registered", value: "England and Wales")
                             CompanyInfoRow(label: "Incorporation Date", value: "5 November 2025")
                             CompanyInfoRow(label: "Company Type", value: "Private Limited Company")
-                            CompanyInfoRow(label: "Status", value: "Active", valueColor: .green)
+                            CompanyInfoRow(label: "Status", value: "Active", valueColor: colorScheme == .dark ? .green : Color(red: 0.0, green: 0.6, blue: 0.0))
                         }
                         .padding(20)
                     }
@@ -57,7 +57,7 @@ struct LegalInformationView: View {
                             HStack {
                                 Image(systemName: "envelope.fill")
                                     .font(.title2)
-                                    .foregroundColor(.blue)
+                                    .foregroundColor(colorScheme == .dark ? .white : .black)
                                 
                                 Text("Contact Information")
                                     .font(.title3)
@@ -75,7 +75,7 @@ struct LegalInformationView: View {
                             }) {
                                 HStack(spacing: 12) {
                                     Image(systemName: "envelope.circle.fill")
-                                        .foregroundColor(.blue)
+                                        .foregroundColor(colorScheme == .dark ? .white : .black)
                                         .font(.title3)
                                     
                                     VStack(alignment: .leading, spacing: 4) {
@@ -94,7 +94,7 @@ struct LegalInformationView: View {
                                         .font(.caption)
                                 }
                                 .padding(12)
-                                .background(Color.blue.opacity(0.1))
+                                .background(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.05))
                                 .cornerRadius(10)
                             }
                             .buttonStyle(PlainButtonStyle())
@@ -106,7 +106,7 @@ struct LegalInformationView: View {
                             }) {
                                 HStack(spacing: 12) {
                                     Image(systemName: "globe")
-                                        .foregroundColor(.purple)
+                                        .foregroundColor(colorScheme == .dark ? .white : .black)
                                         .font(.title3)
                                     
                                     VStack(alignment: .leading, spacing: 4) {
@@ -125,7 +125,7 @@ struct LegalInformationView: View {
                                         .font(.caption)
                                 }
                                 .padding(12)
-                                .background(Color.purple.opacity(0.1))
+                                .background(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.05))
                                 .cornerRadius(10)
                             }
                             .buttonStyle(PlainButtonStyle())
@@ -142,7 +142,7 @@ struct LegalInformationView: View {
                             }) {
                                 LegalDocRow(
                                     icon: "hand.raised.fill",
-                                    iconColor: .blue,
+                                    iconColor: colorScheme == .dark ? .white : .black,
                                     title: "Privacy Policy",
                                     subtitle: "How we handle your data"
                                 )
@@ -158,7 +158,7 @@ struct LegalInformationView: View {
                             }) {
                                 LegalDocRow(
                                     icon: "doc.text.fill",
-                                    iconColor: .green,
+                                    iconColor: colorScheme == .dark ? .white : .black,
                                     title: "Terms of Service",
                                     subtitle: "Terms and conditions of use"
                                 )
@@ -174,7 +174,7 @@ struct LegalInformationView: View {
                             }) {
                                 LegalDocRow(
                                     icon: "checkmark.shield.fill",
-                                    iconColor: .purple,
+                                    iconColor: colorScheme == .dark ? .white : .black,
                                     title: "UK Company Compliance",
                                     subtitle: "Companies Act 2006 compliance"
                                 )
@@ -190,7 +190,7 @@ struct LegalInformationView: View {
                             }) {
                                 LegalDocRow(
                                     icon: "rosette",
-                                    iconColor: .red,
+                                    iconColor: colorScheme == .dark ? .white : .black,
                                     title: "Certificate of Incorporation",
                                     subtitle: "View official certificate (PDF)"
                                 )
@@ -205,7 +205,7 @@ struct LegalInformationView: View {
                             HStack {
                                 Image(systemName: "shield.checkered")
                                     .font(.title2)
-                                    .foregroundColor(.green)
+                                    .foregroundColor(colorScheme == .dark ? .white : .black)
                                 
                                 Text("Regulatory Compliance")
                                     .font(.title3)
@@ -220,28 +220,28 @@ struct LegalInformationView: View {
                                 icon: "checkmark.seal.fill",
                                 title: "UK GDPR",
                                 description: "Compliant with UK General Data Protection Regulation",
-                                color: .blue
+                                color: colorScheme == .dark ? .white : .black
                             )
                             
                             ComplianceBadge(
                                 icon: "lock.shield.fill",
                                 title: "Data Protection Act 2018",
                                 description: "Adherence to UK data protection legislation",
-                                color: .indigo
+                                color: colorScheme == .dark ? .white : .black
                             )
                             
                             ComplianceBadge(
                                 icon: "building.columns.fill",
                                 title: "Companies Act 2006",
                                 description: "Registered and compliant with UK company law",
-                                color: .purple
+                                color: colorScheme == .dark ? .white : .black
                             )
                             
                             ComplianceBadge(
                                 icon: "doc.text.fill",
                                 title: "Companies House",
                                 description: "Active registration in England and Wales",
-                                color: .green
+                                color: colorScheme == .dark ? .white : .black
                             )
                         }
                         .padding(20)
@@ -253,7 +253,7 @@ struct LegalInformationView: View {
                             HStack {
                                 Image(systemName: "person.crop.circle.badge.checkmark")
                                     .font(.title2)
-                                    .foregroundColor(.orange)
+                                    .foregroundColor(colorScheme == .dark ? .white : .black)
                                 
                                 Text("Company Directors")
                                     .font(.title3)
@@ -279,7 +279,7 @@ struct LegalInformationView: View {
                             }
                             .padding(12)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(Color.orange.opacity(0.1))
+                            .background(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.05))
                             .cornerRadius(10)
                         }
                         .padding(20)

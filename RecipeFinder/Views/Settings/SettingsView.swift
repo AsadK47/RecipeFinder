@@ -1951,32 +1951,32 @@ struct HelpView: View {
                             HelpItem(
                                 icon: "paintpalette",
                                 title: "Customize Appearance",
-                                description: "Choose between System, Frost Light, or Ember Dark modes in Settings > Appearance."
-                            )
-                            
-                            HelpItem(
-                                icon: "arrow.counterclockwise",
-                                title: "Backup Your Data",
-                                description: "Export your data regularly from Account > Download Your Data for safekeeping."
+                                description: "Choose from 8 beautiful themes and frosted or solid card styles in Settings > Appearance."
                             )
                             
                             HelpItem(
                                 icon: "star",
-                                title: "Default Timer",
-                                description: "Set your preferred timer duration in Settings > Cook Timer for quick access."
+                                title: "Smart Filters",
+                                description: "Use the burger menu in Recipes to filter by difficulty, prep time, or category."
+                            )
+                            
+                            HelpItem(
+                                icon: "link",
+                                title: "Import Recipes",
+                                description: "Paste any recipe URL in the burger menu to automatically import it into your collection."
                             )
                         }
                         .padding(20)
                     }
                     
                     SettingsCard {
-                        VStack(alignment: .leading, spacing: 20) {
-                            Text("Support")
+                        VStack(alignment: .leading, spacing: 16) {
+                            Text("Contact Support")
                                 .font(.headline)
                                 .foregroundColor(colorScheme == .dark ? .white : .black)
                             
                             Button(action: {
-                                if let url = URL(string: "mailto:support@recipefinder.com") {
+                                if let url = URL(string: "mailto:recipefinderlimited@icloud.com?subject=RecipeFinder%20Support") {
                                     UIApplication.shared.open(url)
                                 }
                             }) {
@@ -1987,16 +1987,16 @@ struct HelpView: View {
                                         .frame(width: 30)
                                     
                                     VStack(alignment: .leading, spacing: 4) {
-                                        Text("Contact Support")
+                                        Text("Email Support")
                                             .foregroundColor(colorScheme == .dark ? .white : .black)
-                                        Text("support@recipefinder.com")
+                                        Text("recipefinderlimited@icloud.com")
                                             .font(.caption)
                                             .foregroundColor(.secondary)
                                     }
                                     
                                     Spacer()
                                     
-                                    Image(systemName: "chevron.right")
+                                    Image(systemName: "arrow.up.right.square")
                                         .foregroundColor(.secondary)
                                         .font(.caption)
                                 }
@@ -2005,33 +2005,82 @@ struct HelpView: View {
                             .buttonStyle(PlainButtonStyle())
                             
                             Button(action: {
-                                if let url = URL(string: "https://recipefinder.com/faq") {
+                                if let url = URL(string: "https://recipefinder.uk") {
                                     UIApplication.shared.open(url)
                                 }
                             }) {
                                 HStack(spacing: 16) {
-                                    Image(systemName: "questionmark.circle.fill")
+                                    Image(systemName: "globe")
                                         .font(.title3)
                                         .foregroundColor(AppTheme.accentColor)
                                         .frame(width: 30)
                                     
                                     VStack(alignment: .leading, spacing: 4) {
-                                        Text("FAQs")
+                                        Text("Visit Website")
                                             .foregroundColor(colorScheme == .dark ? .white : .black)
-                                        Text("Common questions and answers")
+                                        Text("recipefinder.uk")
                                             .font(.caption)
                                             .foregroundColor(.secondary)
                                     }
                                     
                                     Spacer()
                                     
-                                    Image(systemName: "chevron.right")
+                                    Image(systemName: "arrow.up.right.square")
                                         .foregroundColor(.secondary)
                                         .font(.caption)
                                 }
                                 .padding(16)
                             }
                             .buttonStyle(PlainButtonStyle())
+                        }
+                        .padding(20)
+                    }
+                    
+                    SettingsCard {
+                        VStack(alignment: .leading, spacing: 20) {
+                            Text("Frequently Asked Questions")
+                                .font(.headline)
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                            
+                            FAQItem(
+                                question: "Is RecipeFinder free to use?",
+                                answer: "Yes! RecipeFinder is free with optional premium features coming soon."
+                            )
+                            
+                            FAQItem(
+                                question: "Does the app work offline?",
+                                answer: "Yes. All your saved recipes, favorites, and data are stored locally and work without internet."
+                            )
+                            
+                            FAQItem(
+                                question: "Can I import my own recipes?",
+                                answer: "Absolutely! Use the recipe import feature in the burger menu to paste any recipe URL, or create recipes manually."
+                            )
+                            
+                            FAQItem(
+                                question: "How do I backup my data?",
+                                answer: "Your data is automatically saved to your device. For cloud backup, enable iCloud sync in your device settings."
+                            )
+                            
+                            FAQItem(
+                                question: "Can I share recipes with friends?",
+                                answer: "Yes! Use the share button on any recipe to export as text or PDF that you can send via any app."
+                            )
+                            
+                            FAQItem(
+                                question: "How do I change the app theme?",
+                                answer: "Go to Settings > Appearance & Theme to choose from 8 beautiful color themes and card styles."
+                            )
+                            
+                            FAQItem(
+                                question: "Is my data private and secure?",
+                                answer: "Yes. All data is stored locally on your device. We don't collect or transmit any personal information. See our Privacy Policy for details."
+                            )
+                            
+                            FAQItem(
+                                question: "How do I delete my account?",
+                                answer: "Go to Settings > Account > Delete Account. Note that this will remove all your data permanently."
+                            )
                         }
                         .padding(20)
                     }
@@ -2072,6 +2121,49 @@ struct HelpItem: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+    }
+}
+
+struct FAQItem: View {
+    let question: String
+    let answer: String
+    
+    @Environment(\.colorScheme) var colorScheme
+    @State private var isExpanded = false
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Button(action: {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    isExpanded.toggle()
+                }
+                HapticManager.shared.light()
+            }) {
+                HStack(alignment: .top, spacing: 12) {
+                    Image(systemName: isExpanded ? "chevron.down.circle.fill" : "chevron.right.circle.fill")
+                        .font(.title3)
+                        .foregroundColor(AppTheme.accentColor)
+                        .frame(width: 30)
+                    
+                    Text(question)
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .multilineTextAlignment(.leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+            }
+            .buttonStyle(PlainButtonStyle())
+            
+            if isExpanded {
+                Text(answer)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.leading, 42)
+                    .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
     }

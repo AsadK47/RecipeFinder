@@ -138,7 +138,7 @@ struct ContentView: View {
         }
         
         // Icon colors - Force white text in dark mode, black text in light mode
-        let isDarkMode = UITraitCollection.current.userInterfaceStyle == .dark
+        let isDarkMode = colorScheme == .dark
         
         // Selected icon: Use high contrast colours
         let selectedIconColor: UIColor = isDarkMode ? .white : .black
@@ -165,12 +165,14 @@ struct ContentView: View {
         UITabBar.appearance().scrollEdgeAppearance = appearance
         
         // Force immediate update of all existing tab bars in the app
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-            windowScene.windows.forEach { window in
-                window.subviews.forEach { view in
-                    if let tabBar = view as? UITabBar {
+        DispatchQueue.main.async {
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+                windowScene.windows.forEach { window in
+                    window.subviews.compactMap { $0 as? UITabBar }.forEach { tabBar in
                         tabBar.standardAppearance = appearance
                         tabBar.scrollEdgeAppearance = appearance
+                        tabBar.tintColor = isDarkMode ? .white : .black
+                        tabBar.unselectedItemTintColor = isDarkMode ? UIColor.white.withAlphaComponent(0.6) : UIColor.black.withAlphaComponent(0.6)
                         tabBar.setNeedsLayout()
                         tabBar.layoutIfNeeded()
                     }

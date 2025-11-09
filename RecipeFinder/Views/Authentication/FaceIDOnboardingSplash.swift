@@ -220,8 +220,8 @@ struct FaceIDOnboardingSplash: View {
                                 )
                                 BiometricBenefitRow(
                                     icon: "lock.shield.fill",
-                                    title: "Military Grade",
-                                    description: "Enhanced security",
+                                    title: "Secure & Private",
+                                    description: "Built with security in mind",
                                     spacing: spacing
                                 )
                                 BiometricBenefitRow(

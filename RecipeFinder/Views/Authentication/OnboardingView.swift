@@ -18,36 +18,39 @@ struct OnboardingView: View {
     
     private let slides = [
         OnboardingSlide(
-            icon: "book.pages.fill",
-            title: "Discover Delicious\nRecipes",
-            description: "Browse hundreds of curated recipes from around the world. Search by name, ingredient, or cuisine type. Save your favorites and build your personal cookbook.",
-            accentColor: .blue,
+            icon: "book.fill",
+            title: "Discover & Save\nRecipes",
+            description: "Search thousands of recipes by ingredients you have. Save favorites, add personal notes, and build your digital cookbook. Import recipes from any website instantly.",
+            accentColor: .cyan,
             features: [
-                ("magnifyingglass.circle.fill", "Smart Search", "Find recipes instantly"),
+                ("magnifyingglass.circle.fill", "Smart Search", "Find by ingredients"),
                 ("heart.circle.fill", "Save Favorites", "Build your collection"),
-                ("tag.circle.fill", "Smart Filters", "Sort by any criteria")
+                ("note.text", "Personal Notes", "Add cooking tips"),
+                ("arrow.down.doc.fill", "Recipe Import", "From any website")
             ]
         ),
         OnboardingSlide(
-            icon: "calendar.badge.clock",
-            title: "Plan Your Meals\nEffortlessly",
-            description: "Organize your week with the intuitive meal planner. Drag recipes to any day and meal slot. Get timely reminders so you never miss a meal prep.",
+            icon: "cart.fill",
+            title: "Shop & Track\nIngredients",
+            description: "Smart shopping lists that auto-categorize items. Track kitchen inventory to reduce waste. Add ingredients from recipes with one tap.",
             accentColor: .green,
             features: [
-                ("calendar.circle.fill", "Weekly Calendar", "Visual meal planning"),
-                ("fork.knife.circle.fill", "Meal Slots", "Breakfast, lunch, dinner"),
-                ("bell.badge.fill", "Smart Reminders", "Never forget to prep")
+                ("list.bullet.circle.fill", "Smart Lists", "Auto-categorized"),
+                ("refrigerator.fill", "Kitchen Tracker", "Know what you have"),
+                ("basket.fill", "Quick Add", "From any recipe"),
+                ("checkmark.circle.fill", "Easy Check-off", "Tap to mark done")
             ]
         ),
         OnboardingSlide(
-            icon: "timer",
-            title: "Cook Like a\nPro Chef",
-            description: "Master your timing with multiple concurrent timers. Name each one for different dishes. Get notifications with haptic feedback when time's up.",
-            accentColor: .orange,
+            icon: "calendar.badge.plus",
+            title: "Plan Meals &\nImport Recipes",
+            description: "Visual weekly meal planner for all meals. Import recipes from websites instantly with our recipe parser. Plan balanced meals and never wonder what's for dinner.",
+            accentColor: .purple,
             features: [
-                ("timer.circle.fill", "Multi-Timers", "Track all your dishes"),
-                ("speaker.wave.2.circle.fill", "Audio Alerts", "Never miss a ding"),
-                ("chart.bar.circle.fill", "Progress Tracking", "Visual countdown")
+                ("calendar.circle.fill", "Weekly Planner", "See your week"),
+                ("fork.knife.circle.fill", "All Meal Times", "Breakfast to dinner"),
+                ("link.circle.fill", "Recipe Import", "Paste any URL"),
+                ("sparkles", "Smart Parser", "Extracts ingredients")
             ]
         )
     ]
