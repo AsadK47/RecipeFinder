@@ -48,7 +48,7 @@ struct ContentView: View {
                     .tag(4)
             }
             .environment(\.appTheme, themeBinding)
-            .tint(AppTheme.accentColor(for: themeBinding))
+            .tint(colorScheme == .dark ? .white : .black)
             .onAppear {
                 configureTabBarAppearance()
             }
@@ -137,13 +137,11 @@ struct ContentView: View {
             appearance.backgroundEffect = UIBlurEffect(style: blurStyle)
         }
         
-        // Icon colors - optimized for readability over colored backgrounds
-        _ = UIColor(AppTheme.accentColor(for: themeBinding))
+        // Icon colors - Force white text in dark mode, black text in light mode
+        let isDarkMode = UITraitCollection.current.userInterfaceStyle == .dark
         
         // Selected icon: Use high contrast colours
-        let selectedIconColor: UIColor = colorScheme == .dark 
-            ? .white  // White text in dark mode
-            : .black  // Black text in light mode
+        let selectedIconColor: UIColor = isDarkMode ? .white : .black
         
         appearance.stackedLayoutAppearance.selected.iconColor = selectedIconColor
         appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
@@ -152,14 +150,14 @@ struct ContentView: View {
         ]
         
         // Unselected icons - high contrast for readability
-        let unselectedColor: UIColor = colorScheme == .dark 
-            ? UIColor.white.withAlphaComponent(0.6)  // White with transparency in dark mode
-            : UIColor.black.withAlphaComponent(0.6)  // Black with transparency in light mode
+        let unselectedColor: UIColor = isDarkMode 
+            ? UIColor.white.withAlphaComponent(0.6)
+            : UIColor.black.withAlphaComponent(0.6)
         
         appearance.stackedLayoutAppearance.normal.iconColor = unselectedColor
         appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
             .foregroundColor: unselectedColor,
-            .font: UIFont.systemFont(ofSize: 11, weight: .medium)  // Medium instead of regular
+            .font: UIFont.systemFont(ofSize: 11, weight: .medium)
         ]
         
         // Apply to all tab bar states

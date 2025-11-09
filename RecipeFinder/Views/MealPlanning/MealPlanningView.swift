@@ -149,32 +149,21 @@ struct MealPlanningView: View {
     }
     
     private var header: some View {
-        VStack(spacing: 12) {
-            GeometryReader { geometry in
-                HStack(spacing: 0) {
-                    // Back button
-                    Button(action: {
-                        HapticManager.shared.light()
-                        dismiss()
-                    }) {
-                        Image(systemName: "chevron.left")
-                            .font(.title3)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.white)
-                            .frame(width: 44, height: 44)
-                    }
+        GeometryReader { geometry in
+            let spacing = AdaptiveSpacing(geometry: geometry)
+            
+            ZStack {
+                // Centered title
+                Text("Meal Planner")
+                    .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+                
+                // Menu button aligned to trailing edge
+                HStack {
+                    Spacer()
                     
-                    Spacer(minLength: 8)
-                    
-                    Text("Meal Planner")
-                        .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.7)
-                    
-                    Spacer(minLength: 8)
-                    
-                    // Burger menu
                     Menu {
                         Button(action: {
                             HapticManager.shared.light()
@@ -203,24 +192,15 @@ struct MealPlanningView: View {
                         ModernCircleButton(icon: "line.3.horizontal") {}
                             .allowsHitTesting(false)
                     }
-                    .frame(width: max(44, geometry.size.width * 0.15))
+                    .frame(width: spacing.touchTarget)
                 }
             }
-            .frame(height: 44)
-            .padding(.horizontal, 20)
-            .padding(.top, 16)
+            .frame(height: spacing.touchTarget)
+            .padding(.horizontal, spacing.screenEdge)
+            .padding(.top, spacing.lg)
+            .padding(.bottom, spacing.xl)
         }
-        .padding(.bottom, 8)
-        .background(
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color.black.opacity(0.2),
-                    Color.clear
-                ]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-        )
+        .frame(height: 80)
     }
     
     private var viewModePicker: some View {
@@ -308,25 +288,25 @@ struct MealPlanningView: View {
                 Button(action: previousWeek) {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.white)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
                         .frame(width: 40, height: 40)
-                        .background(Circle().fill(Color.white.opacity(0.1)))
+                        .background(Circle().fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1)))
                 }
                 
                 Spacer()
                 
                 Text(weekRangeString)
                     .font(.system(size: 18, weight: .bold))
-                    .foregroundColor(.white)
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
                 
                 Spacer()
                 
                 Button(action: nextWeek) {
                     Image(systemName: "chevron.right")
                         .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.white)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
                         .frame(width: 40, height: 40)
-                        .background(Circle().fill(Color.white.opacity(0.1)))
+                        .background(Circle().fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1)))
                 }
             }
             .padding(.horizontal, 4)
@@ -901,7 +881,7 @@ struct MealTimeSelectorSheet: View {
                     VStack(spacing: 12) {
                         Text("Plan a Meal")
                             .font(.system(size: 28, weight: .bold))
-                            .foregroundColor(.white)
+                            .foregroundColor(colorScheme == .dark ? .white : .black)
                         
                         HStack(spacing: 8) {
                             Image(systemName: "calendar")
@@ -909,7 +889,7 @@ struct MealTimeSelectorSheet: View {
                             Text(dateString)
                                 .font(.system(size: 16, weight: .medium))
                         }
-                        .foregroundColor(.white.opacity(0.7))
+                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.7))
                     }
                     .padding(.top, 24)
                     .padding(.bottom, 20)
@@ -929,18 +909,18 @@ struct MealTimeSelectorSheet: View {
                                             Circle()
                                                 .fill(selectedMealTimes.contains(mealTime) 
                                                       ? Color.green.opacity(0.2) 
-                                                      : Color.white.opacity(0.1))
+                                                      : (colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1)))
                                                 .frame(width: 50, height: 50)
                                             
                                             Image(systemName: mealTime.icon)
                                                 .font(.system(size: 22, weight: .semibold))
-                                                .foregroundColor(selectedMealTimes.contains(mealTime) ? .green : .white.opacity(0.9))
+                                                .foregroundColor(selectedMealTimes.contains(mealTime) ? .green : (colorScheme == .dark ? .white.opacity(0.9) : .black.opacity(0.9)))
                                         }
                                         
                                         VStack(alignment: .leading, spacing: 6) {
                                             Text(mealTime.rawValue)
                                                 .font(.system(size: 18, weight: .semibold))
-                                                .foregroundColor(.white)
+                                                .foregroundColor(colorScheme == .dark ? .white : .black)
                                             
                                             HStack(spacing: 4) {
                                                 Image(systemName: "clock")
@@ -948,7 +928,7 @@ struct MealTimeSelectorSheet: View {
                                                 Text(mealTime.timeRange)
                                                     .font(.caption)
                                             }
-                                            .foregroundColor(.white.opacity(0.6))
+                                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6))
                                         }
                                         
                                         Spacer()
@@ -960,7 +940,7 @@ struct MealTimeSelectorSheet: View {
                                         } else {
                                             Image(systemName: "plus.circle")
                                                 .font(.title3)
-                                                .foregroundColor(.white.opacity(0.4))
+                                                .foregroundColor(colorScheme == .dark ? .white.opacity(0.4) : .black.opacity(0.4))
                                         }
                                     }
                                     .padding(16)
@@ -977,7 +957,7 @@ struct MealTimeSelectorSheet: View {
                                         RoundedRectangle(cornerRadius: 16)
                                             .stroke(selectedMealTimes.contains(mealTime) 
                                                     ? Color.green.opacity(0.5) 
-                                                    : Color.white.opacity(0.1), 
+                                                    : (colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1)), 
                                                     lineWidth: selectedMealTimes.contains(mealTime) ? 2 : 1)
                                     )
                                 }
@@ -996,7 +976,7 @@ struct MealTimeSelectorSheet: View {
                             Image(systemName: "xmark.circle.fill")
                             Text("Cancel")
                         }
-                        .foregroundColor(.white)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
                     }
                 }
             }
@@ -1182,7 +1162,7 @@ struct WeekDayRow: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(dayString)
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.white)
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
                 
                 if isToday {
                     Text("Today")
@@ -1197,7 +1177,7 @@ struct WeekDayRow: View {
             HStack(spacing: 8) {
                 ForEach(["☀️", "🍽️", "🌙"], id: \.self) { icon in
                     Circle()
-                        .fill(Color.white.opacity(0.1))
+                        .fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1))
                         .frame(width: 32, height: 32)
                         .overlay {
                             Text(icon)
@@ -1211,22 +1191,22 @@ struct WeekDayRow: View {
             Button(action: onAddMeal) {
                 Image(systemName: "plus.circle")
                     .font(.title3)
-                    .foregroundColor(.white.opacity(0.6))
+                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6))
             }
         }
         .padding(12)
         .background {
             if cardStyle == .solid {
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(isToday ? Color.white.opacity(0.1) : Color.white.opacity(0.05))
+                    .fill(isToday ? (colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1)) : (colorScheme == .dark ? Color.white.opacity(0.05) : Color.black.opacity(0.05)))
             } else {
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(isToday ? Color.white.opacity(0.1) : Color.clear)
+                    .fill(isToday ? (colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1)) : Color.clear)
             }
         }
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(isToday ? Color.green.opacity(0.5) : Color.white.opacity(0.1), lineWidth: isToday ? 2 : 1)
+                .stroke(isToday ? Color.green.opacity(0.5) : (colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1)), lineWidth: isToday ? 2 : 1)
         )
     }
 }
