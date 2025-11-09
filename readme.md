@@ -341,7 +341,7 @@ RecipeFinder/
 ### Get Help
 - 🐛 **Found a bug?** [Open an issue](https://github.com/AsadK47/RecipeFinder/issues)
 - 💡 **Have an idea?** [Start a discussion](https://github.com/AsadK47/RecipeFinder/discussions)
-- 📧 **Need help?** Email: asadkhanruby@gmail.com
+- 📧 **Need help?** Email: recipefinderlimited@icloud.com
 
 ### Contributing
 
@@ -365,8 +365,8 @@ Inspired by the design excellence of modern fintech apps and the warmth of tradi
 
 ## 📮 Contact
 
-**Asad Khan**  
-Email: asadkhanruby@gmail.com  
+**Developer**  
+Email: recipefinderlimited@icloud.com  
 GitHub: [@AsadK47](https://github.com/AsadK47)
 
 ---
@@ -383,7 +383,7 @@ GitHub: [@AsadK47](https://github.com/AsadK47)
 
 ## ⚖️ License & Legal
 
-**Copyright © 2024-2025 Asad Khan & RECIPEFINDER LIMITED. All Rights Reserved.**
+**Copyright © 2024-2025 RECIPEFINDER LIMITED. All Rights Reserved.**
 
 This software is proprietary. Company No. 16833243 (England and Wales).
 
@@ -398,7 +398,7 @@ For licensing inquiries: recipefinderlimited@icloud.com
 
 <div align="center">
 
-**© 2024-2025 Asad Khan & RECIPEFINDER LIMITED • All Rights Reserved**
+**© 2024-2025 RECIPEFINDER LIMITED • All Rights Reserved**
 
 Last Updated: 8 November 2025
 

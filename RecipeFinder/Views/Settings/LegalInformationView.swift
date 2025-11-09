@@ -660,7 +660,7 @@ struct TermsOfServiceView: View {
                         
                         Group {
                             SectionTitle("7. Limitation of Liability")
-                            BodyText("To the maximum extent permitted by law, we (RECIPEFINDER LIMITED and Asad Khan) are not liable for any damages arising from your use of the app, including loss of data, food-related issues, or device problems.")
+                            BodyText("To the maximum extent permitted by law, RECIPEFINDER LIMITED is not liable for any damages arising from your use of the app, including loss of data, food-related issues, or device problems.")
                             BodyText("Maximum Liability: If we are found liable for anything, our total liability is limited to £50 or the amount you paid for the app (whichever is greater).")
                             
                             SectionTitle("8. Changes to These Terms")

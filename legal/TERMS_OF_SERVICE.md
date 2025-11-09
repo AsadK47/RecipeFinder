@@ -230,7 +230,7 @@ These Terms are governed by the laws of England and Wales.The Company actively m
 
 ### Disputes- Actual damages and/or statutory damages up to the maximum allowed by law
 
-If we have a dispute, let's try to resolve it friendly first by contacting asadkhanruby@gmail.com. - Disgorgement of all profits derived from infringement
+If we have a dispute, let's try to resolve it friendly first by contacting recipefinderlimited@icloud.com. - Disgorgement of all profits derived from infringement
 
 - Recovery of all attorney's fees and costs
 
@@ -308,7 +308,7 @@ Questions about these Terms?- You are solely responsible for verifying food safe
 
 - Consult healthcare professionals for dietary restrictions and allergies
 
-**Email:** asadkhanruby@gmail.com  - Follow proper food handling and safety practices
+**Email:** recipefinderlimited@icloud.com  - Follow proper food handling and safety practices
 
 **GitHub Issues:** https://github.com/AsadK47/RecipeFinder/issues  - The Company assumes no liability for adverse reactions, illness, or injury
 
@@ -567,7 +567,7 @@ Company Number: 16833243
 Registered in England and Wales  
 
 **Legal Department Contact:**  
-Email: asadkhanruby@gmail.com  
+Email: recipefinderlimited@icloud.com  
 GitHub: https://github.com/AsadK47/RecipeFinder  
 
 ### 13.2 Formal Legal Notices
