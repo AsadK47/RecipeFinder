@@ -27,16 +27,31 @@ struct IngredientRowView: View {
                 .buttonStyle(PlainButtonStyle())
             }
             
-            VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 12) {
+                // Ingredient name
                 Text(ingredient.name)
                     .font(.body)
                     .fontWeight(.medium)
                     .strikethrough(isChecked)
                     .foregroundColor(isChecked ? .secondary : .primary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 
+                // Visual separator
+                Rectangle()
+                    .fill(Color.secondary.opacity(0.3))
+                    .frame(width: 1, height: 20)
+                
+                // Quantity with unit
                 Text(ingredient.formattedWithUnit(for: scaleFactor, system: measurementSystem))
                     .font(.subheadline)
+                    .fontWeight(.medium)
                     .foregroundColor(.secondary)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(Color.secondary.opacity(0.1))
+                    )
             }
             
             Spacer()

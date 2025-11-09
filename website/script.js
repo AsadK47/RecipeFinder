@@ -93,7 +93,7 @@ function initNotifyForm() {
             const data = await response.json();
             
             if (data.success) {
-                message.textContent = '✓ Success! We\'ll notify you when RecipeFinder launches.';
+                message.textContent = '✓ Welcome to the community! We\'ll see you on launch day.';
                 message.style.color = 'var(--text-primary)';
                 form.reset();
                 
