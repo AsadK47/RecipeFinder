@@ -18,7 +18,7 @@ RecipeFinder is a recipe management app developed and operated by RECIPEFINDER L
 
 - Acknowledge that you have read, understood, and agree to be bound by these Terms of Service
 
-**Developer:** Asad Khan  - Consent to the formation of a legally binding contract with RECIPEFINDER LIMITED (Company Number 16833243) and its director Asad Khan ("we," "us," "our," or "the Company")
+**Developer:** Asad Khan  - Consent to the formation of a legally binding contract with RECIPEFINDER LIMITED (Company Number 16833243) ("we," "us," "our," or "the Company")
 
 **Contact:** recipefinderlimited@icloud.com  - Waive any right to claim you did not have adequate notice of these terms
 
@@ -52,11 +52,9 @@ RecipeFinder is a recipe management app developed and operated by RECIPEFINDER L
 
 - Don't distribute malware or harmful content**Company Type:** Private Limited Company by Shares  
 
-- Don't violate others' intellectual property rights**Director:** Asad Khan  
+- Don't violate others' intellectual property rights
 
-- Don't abuse or spam the recipe import feature**Sole Shareholder:** Asad Khan (100% beneficial ownership)  
-
-**Person with Significant Control (PSC):** Asad Khan  
+- Don't abuse or spam the recipe import feature
 
 ## 3. Your Content
 
@@ -152,7 +150,7 @@ RecipeFinder is provided "as is" without warranties of any kind. This means:- In
 
 ## 4. Intellectual Property Rights - Absolute and Exclusive Ownership
 
-We (RECIPEFINDER LIMITED and Asad Khan) are not liable for:
+We (RECIPEFINDER LIMITED) are not liable for:
 
 - Any damages arising from your use of the app### 4.1 Complete Ownership by RECIPEFINDER LIMITED
 
@@ -178,7 +176,9 @@ We (RECIPEFINDER LIMITED and Asad Khan) are not liable for:
 
 - Following proper food handling practices
 
-- Backing up your dataAre the EXCLUSIVE and ABSOLUTE property of RECIPEFINDER LIMITED and Asad Khan, protected by:
+- Backing up your data
+
+Are the EXCLUSIVE and ABSOLUTE property of RECIPEFINDER LIMITED, protected by:
 
 - UK Copyright, Designs and Patents Act 1988
 
@@ -338,7 +338,7 @@ Questions about these Terms?- You are solely responsible for verifying food safe
 
 
 
----**TO THE MAXIMUM EXTENT PERMITTED BY LAW, IN NO EVENT SHALL RECIPEFINDER LIMITED, ASAD KHAN, OR ANY ASSOCIATED PARTIES BE LIABLE FOR:**
+---**TO THE MAXIMUM EXTENT PERMITTED BY LAW, IN NO EVENT SHALL RECIPEFINDER LIMITED OR ANY ASSOCIATED PARTIES BE LIABLE FOR:**
 
 
 
@@ -371,7 +371,7 @@ IF, NOTWITHSTANDING THE ABOVE, THE COMPANY IS FOUND LIABLE FOR ANY REASON, THE T
 
 ### 7.3 Your Indemnification Obligations
 
-You agree to INDEMNIFY, DEFEND, and HOLD HARMLESS RECIPEFINDER LIMITED, Asad Khan, and all associated parties (including officers, directors, employees, agents, affiliates, successors, and assigns) from and against ANY AND ALL:
+You agree to INDEMNIFY, DEFEND, and HOLD HARMLESS RECIPEFINDER LIMITED and all associated parties (including officers, directors, employees, agents, affiliates, successors, and assigns) from and against ANY AND ALL:
 
 - Claims, demands, and causes of action
 - Losses, liabilities, and damages (actual and consequential)
@@ -630,7 +630,7 @@ The following provisions survive termination of these Terms:
 ## 16. COMPANY'S ENFORCEMENT RIGHTS AND REMEDIES
 
 ### 16.1 Comprehensive Enforcement Powers
-RECIPEFINDER LIMITED and Asad Khan reserve and retain ALL RIGHTS to enforce these Terms and protect Company interests through any and all legal means, including but not limited to:
+RECIPEFINDER LIMITED reserves and retains ALL RIGHTS to enforce these Terms and protect Company interests through any and all legal means, including but not limited to:
 
 **Civil Remedies:**
 - Breach of contract claims
@@ -829,6 +829,6 @@ The Company employs sophisticated monitoring, detection, and forensic tools to i
 Company Number: 16833243 | Registered in England and Wales  
 Last Updated: 5 November 2025
 
-**RecipeFinder™ is a registered trademark of RECIPEFINDER LIMITED and Asad Khan.**
+**RecipeFinder™ is a registered trademark of RECIPEFINDER LIMITED.**
 
 **These Terms of Service are governed by the laws of England and Wales. All disputes must be resolved in the courts of England and Wales.**

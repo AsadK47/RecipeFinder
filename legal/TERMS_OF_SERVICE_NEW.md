@@ -74,7 +74,7 @@ RecipeFinder is provided "as is" without warranties of any kind. This means:
 
 **To the maximum extent permitted by law:**
 
-We (RECIPEFINDER LIMITED and Asad Khan) are not liable for:
+We (RECIPEFINDER LIMITED) are not liable for:
 - Any damages arising from your use of the app
 - Loss of data or content
 - Food-related issues (allergies, illness, etc.)
