@@ -130,21 +130,10 @@ struct RecipeFinderApp: App {
     }
     
     private func configureTabBar() {
+        // Simple initial configuration - will adapt to color scheme
         let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        
-        // Use a frosted/blurred material background for better readability
+        appearance.configureWithDefaultBackground()
         appearance.backgroundEffect = UIBlurEffect(style: .systemMaterial)
-        appearance.backgroundColor = .clear
-        
-        let accentColor = UIColor(red: 0.8, green: 0.2, blue: 0.6, alpha: 1.0)
-        
-        // Use label color (adapts to light/dark mode automatically)
-        appearance.stackedLayoutAppearance.normal.iconColor = .label
-        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.label]
-        
-        appearance.stackedLayoutAppearance.selected.iconColor = accentColor
-        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: accentColor]
         
         UITabBar.appearance().standardAppearance = appearance
         if #available(iOS 15.0, *) {

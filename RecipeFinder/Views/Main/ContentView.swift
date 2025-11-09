@@ -86,93 +86,67 @@ struct ContentView: View {
     private func configureTabBarAppearance() {
         let appearance = UITabBarAppearance()
         
-        // Get the theme's accent color
-        let themeColor = UIColor(AppTheme.accentColor(for: themeBinding))
+        // Simple rule: Dark mode = white text, Light mode = black text
+        let isDarkMode = colorScheme == .dark
+        let textColor: UIColor = isDarkMode ? .white : .black
+        let dimmedTextColor: UIColor = isDarkMode 
+            ? UIColor.white.withAlphaComponent(0.6) 
+            : UIColor.black.withAlphaComponent(0.6)
         
+        // Background styling based on card style preference
         if cardStyle == .solid {
-            // Solid mode: Use opaque backgrounds
             appearance.configureWithOpaqueBackground()
-            let tabBarBgColor: UIColor = {
-                if colorScheme == .dark {
-                    // Dark mode: Rich dark background
-                    return UIColor(white: 0.12, alpha: 0.98)
-                } else {
-                    // Light mode: Clean light background
-                    return UIColor(white: 0.98, alpha: 0.98)
-                }
-            }()
-            appearance.backgroundColor = tabBarBgColor
+            appearance.backgroundColor = isDarkMode 
+                ? UIColor(white: 0.12, alpha: 0.98)
+                : UIColor(white: 0.98, alpha: 0.98)
         } else {
-            // Frosted Glass mode: Enhanced blur with theme-tinted background
             appearance.configureWithDefaultBackground()
-            
-            // Create a rich, readable background with theme color
-            let tintedBackground: UIColor = {
-                if colorScheme == .dark {
-                    // Dark mode: Deep tinted background for better readability
-                    // Mix theme color with dark base for subtle branded effect
-                    return themeColor
-                        .withAlphaComponent(0.25)
-                        .blended(with: UIColor(white: 0.1, alpha: 0.85))
-                } else {
-                    // Light mode: Light tinted background
-                    // Stronger tint in light mode for contrast with colorful content
-                    return themeColor
-                        .withAlphaComponent(0.20)
-                        .blended(with: UIColor(white: 0.95, alpha: 0.90))
-                }
-            }()
-            appearance.backgroundColor = tintedBackground
-            
-            // Enhanced blur effect for premium frosted glass look
-            let blurStyle: UIBlurEffect.Style = colorScheme == .dark 
-                ? .systemUltraThinMaterialDark 
-                : .systemUltraThinMaterialLight
-            
-            appearance.backgroundEffect = UIBlurEffect(style: blurStyle)
+            appearance.backgroundEffect = UIBlurEffect(style: isDarkMode ? .systemMaterialDark : .systemMaterialLight)
+            appearance.backgroundColor = isDarkMode
+                ? UIColor(white: 0.1, alpha: 0.85)
+                : UIColor(white: 0.95, alpha: 0.90)
         }
         
-        // Icon colors - Force white text in dark mode, black text in light mode
-        let isDarkMode = colorScheme == .dark
-        
-        // Selected icon: Use high contrast colours
-        let selectedIconColor: UIColor = isDarkMode ? .white : .black
-        
-        appearance.stackedLayoutAppearance.selected.iconColor = selectedIconColor
+        // Selected tab: Full brightness text color
+        appearance.stackedLayoutAppearance.selected.iconColor = textColor
         appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
-            .foregroundColor: selectedIconColor,
+            .foregroundColor: textColor,
             .font: UIFont.systemFont(ofSize: 11, weight: .semibold)
         ]
         
-        // Unselected icons - high contrast for readability
-        let unselectedColor: UIColor = isDarkMode 
-            ? UIColor.white.withAlphaComponent(0.6)
-            : UIColor.black.withAlphaComponent(0.6)
-        
-        appearance.stackedLayoutAppearance.normal.iconColor = unselectedColor
+        // Unselected tab: Dimmed text color
+        appearance.stackedLayoutAppearance.normal.iconColor = dimmedTextColor
         appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
-            .foregroundColor: unselectedColor,
+            .foregroundColor: dimmedTextColor,
             .font: UIFont.systemFont(ofSize: 11, weight: .medium)
         ]
         
-        // Apply to all tab bar states
+        // Apply the appearance
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
         
-        // Force immediate update of all existing tab bars in the app
+        // Force update all existing tab bars immediately
         DispatchQueue.main.async {
-            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-                windowScene.windows.forEach { window in
-                    window.subviews.compactMap { $0 as? UITabBar }.forEach { tabBar in
-                        tabBar.standardAppearance = appearance
-                        tabBar.scrollEdgeAppearance = appearance
-                        tabBar.tintColor = isDarkMode ? .white : .black
-                        tabBar.unselectedItemTintColor = isDarkMode ? UIColor.white.withAlphaComponent(0.6) : UIColor.black.withAlphaComponent(0.6)
-                        tabBar.setNeedsLayout()
-                        tabBar.layoutIfNeeded()
-                    }
-                }
-            }
+            UIApplication.shared.connectedScenes
+                .compactMap { $0 as? UIWindowScene }
+                .flatMap { $0.windows }
+                .compactMap { $0.rootViewController }
+                .forEach { updateTabBars(in: $0, with: appearance, textColor: textColor, dimmedColor: dimmedTextColor) }
+        }
+    }
+    
+    private func updateTabBars(in viewController: UIViewController, with appearance: UITabBarAppearance, textColor: UIColor, dimmedColor: UIColor) {
+        if let tabBarController = viewController as? UITabBarController {
+            tabBarController.tabBar.standardAppearance = appearance
+            tabBarController.tabBar.scrollEdgeAppearance = appearance
+            tabBarController.tabBar.tintColor = textColor
+            tabBarController.tabBar.unselectedItemTintColor = dimmedColor
+        }
+        
+        viewController.children.forEach { updateTabBars(in: $0, with: appearance, textColor: textColor, dimmedColor: dimmedColor) }
+        
+        if let presented = viewController.presentedViewController {
+            updateTabBars(in: presented, with: appearance, textColor: textColor, dimmedColor: dimmedColor)
         }
     }
 

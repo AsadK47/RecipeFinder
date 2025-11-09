@@ -1772,7 +1772,7 @@ struct DataManagementSettingsView: View {
         let context = PersistenceController.shared.container.viewContext
         
         // 1. Clear Core Data (all recipes)
-        let recipeFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "RecipeData")
+        let recipeFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "Recipe")
         let recipeBatchDelete = NSBatchDeleteRequest(fetchRequest: recipeFetch)
         _ = try? context.execute(recipeBatchDelete)
         _ = try? context.save()
