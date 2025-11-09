@@ -66,14 +66,9 @@ struct ContentView: View {
             }
             .onChange(of: colorScheme) { _, newScheme in
                 // Force immediate refresh when color scheme changes
-                DispatchQueue.main.async {
+                configureTabBarAppearance()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                     configureTabBarAppearance()
-                    // Force all windows to refresh their appearance
-                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-                        windowScene.windows.forEach { window in
-                            window.overrideUserInterfaceStyle = .unspecified
-                        }
-                    }
                 }
             }
             .onChange(of: selectedTab) { _, _ in

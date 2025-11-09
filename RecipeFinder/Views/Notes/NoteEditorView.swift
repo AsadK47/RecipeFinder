@@ -238,7 +238,7 @@ struct NoteEditorView: View {
                     if !currentTag.isEmpty {
                         Button(action: addTag) {
                             Image(systemName: "plus.circle.fill")
-                                .foregroundColor(AppTheme.accentColor(for: appTheme))
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
                         }
                     }
                 }

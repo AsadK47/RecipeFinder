@@ -10,7 +10,7 @@ struct ShoppingListInputBar: View {
         HStack(spacing: 12) {
             HStack {
                 Image(systemName: "plus.circle.fill")
-                    .foregroundColor(AppTheme.accentColor)
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
                 
                 ZStack(alignment: .leading) {
                     if text.isEmpty {

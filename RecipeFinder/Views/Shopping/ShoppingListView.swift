@@ -738,7 +738,7 @@ struct ShoppingFeatureRow: View {
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: icon)
-                .foregroundColor(AppTheme.accentColor(for: appTheme))
+                .foregroundColor(colorScheme == .dark ? .white : .black)
                 .font(.body)
                 .frame(width: 24)
             VStack(alignment: .leading, spacing: 2) {

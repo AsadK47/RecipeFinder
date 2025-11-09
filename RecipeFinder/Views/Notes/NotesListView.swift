@@ -340,7 +340,7 @@ struct FilterMenuView: View {
                             Toggle(isOn: $showPinnedOnly) {
                                 HStack {
                                     Image(systemName: "pin.fill")
-                                        .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                                        .foregroundColor(colorScheme == .dark ? .white : .black)
                                     Text("Show Pinned Only")
                                 }
                             }
@@ -464,7 +464,7 @@ struct FilterMenuView: View {
                 
                 if selectedCategory == category {
                     Image(systemName: "checkmark")
-                        .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
                         .fontWeight(.semibold)
                 }
                 

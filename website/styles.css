@@ -560,21 +560,22 @@ body {
 
 .notify-section {
     text-align: center;
-    padding: 100px 20px 80px;
-    max-width: 600px;
+    padding: 60px 20px 60px;
+    max-width: 700px;
     margin: 0 auto;
 }
 
 .notify-section h2 {
     font-size: 2.5rem;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
     color: var(--text-primary);  /* Black in light mode, white in dark mode */
     font-weight: 700;
+    line-height: 1.2;
 }
 
 .notify-section p {
     color: var(--text-secondary);
-    margin-bottom: 32px;
+    margin-bottom: 28px;
     font-size: 1.1rem;
 }
 
@@ -906,7 +907,7 @@ body {
     }
     
     .notify-section {
-        padding: 80px 20px 60px;
+        padding: 50px 20px 50px;
     }
 }
 
@@ -935,7 +936,8 @@ body {
     }
     
     .notify-section h2 {
-        font-size: 2rem;
+        font-size: 1.85rem;
+        line-height: 1.2;
     }
     
     .notify-form {
@@ -1028,15 +1030,16 @@ body {
     }
     
     .notify-section {
-        padding: 60px 15px 50px;
+        padding: 40px 15px 40px;
     }
     
     .notify-section h2 {
-        font-size: 1.75rem;
+        font-size: 1.6rem;
+        line-height: 1.3;
     }
     
     .notify-section p {
-        font-size: 1rem;
+        font-size: 0.95rem;
     }
     
     .footer-content {

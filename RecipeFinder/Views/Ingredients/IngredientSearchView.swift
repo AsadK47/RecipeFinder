@@ -482,7 +482,7 @@ struct IngredientSearchView: View {
             if let ingredient = selectedIngredient {
                 HStack(spacing: 12) {
                     Image(systemName: "leaf.fill")
-                        .foregroundColor(AppTheme.accentColor)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
                         .font(.title3)
                     
                     Text(ingredient)

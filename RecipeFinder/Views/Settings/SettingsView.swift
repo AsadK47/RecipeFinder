@@ -771,7 +771,7 @@ struct NotificationSettingsView: View {
                             Toggle(isOn: $timerNotifications) {
                                 HStack(spacing: 12) {
                                     Image(systemName: "timer")
-                                        .foregroundColor(AppTheme.accentColor)
+                                        .foregroundColor(colorScheme == .dark ? .white : .black)
                                         .frame(width: 30)
                                     
                                     VStack(alignment: .leading, spacing: 2) {
@@ -791,7 +791,7 @@ struct NotificationSettingsView: View {
                             Toggle(isOn: $mealPlanReminders) {
                                 HStack(spacing: 12) {
                                     Image(systemName: "calendar")
-                                        .foregroundColor(AppTheme.accentColor)
+                                        .foregroundColor(colorScheme == .dark ? .white : .black)
                                         .frame(width: 30)
                                     
                                     VStack(alignment: .leading, spacing: 2) {
@@ -811,7 +811,7 @@ struct NotificationSettingsView: View {
                             Toggle(isOn: $shoppingListReminders) {
                                 HStack(spacing: 12) {
                                     Image(systemName: "cart")
-                                        .foregroundColor(AppTheme.accentColor)
+                                        .foregroundColor(colorScheme == .dark ? .white : .black)
                                         .frame(width: 30)
                                     
                                     VStack(alignment: .leading, spacing: 2) {
@@ -840,7 +840,7 @@ struct NotificationSettingsView: View {
                                 }) {
                                     HStack {
                                         Image(systemName: "clock")
-                                            .foregroundColor(AppTheme.accentColor)
+                                            .foregroundColor(colorScheme == .dark ? .white : .black)
                                             .frame(width: 30)
                                         
                                         Text("Daily reminder at")
@@ -965,7 +965,7 @@ struct TimerSettingsView: View {
                                     }) {
                                         HStack {
                                             Image(systemName: "timer")
-                                                .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                                                .foregroundColor(colorScheme == .dark ? .white : .black)
                                                 .frame(width: 30)
                                             
                                             Text(label)
@@ -975,7 +975,7 @@ struct TimerSettingsView: View {
                                             
                                             if defaultTimerDuration == seconds {
                                                 Image(systemName: "checkmark.circle.fill")
-                                                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                                                    .foregroundColor(colorScheme == .dark ? .white : .black)
                                             }
                                         }
                                         .padding(12)
@@ -1011,7 +1011,7 @@ struct TimerSettingsView: View {
                                     }) {
                                         HStack {
                                             Image(systemName: sound == .silent ? "speaker.slash" : "speaker.wave.2")
-                                                .foregroundColor(AppTheme.accentColor)
+                                                .foregroundColor(colorScheme == .dark ? .white : .black)
                                                 .frame(width: 30)
                                             
                                             Text(sound.rawValue)
@@ -1021,7 +1021,7 @@ struct TimerSettingsView: View {
                                             
                                             if timerSound == sound {
                                                 Image(systemName: "checkmark.circle.fill")
-                                                    .foregroundColor(AppTheme.accentColor)
+                                                    .foregroundColor(colorScheme == .dark ? .white : .black)
                                             }
                                         }
                                         .padding(12)
@@ -1041,7 +1041,7 @@ struct TimerSettingsView: View {
                             Toggle(isOn: $timerVibration) {
                                 HStack(spacing: 12) {
                                     Image(systemName: "iphone.radiowaves.left.and.right")
-                                        .foregroundColor(AppTheme.accentColor)
+                                        .foregroundColor(colorScheme == .dark ? .white : .black)
                                         .frame(width: 30)
                                     
                                     VStack(alignment: .leading, spacing: 2) {
@@ -1068,7 +1068,7 @@ struct TimerSettingsView: View {
                             Toggle(isOn: $showTimerInNotifications) {
                                 HStack(spacing: 12) {
                                     Image(systemName: "app.badge")
-                                        .foregroundColor(AppTheme.accentColor)
+                                        .foregroundColor(colorScheme == .dark ? .white : .black)
                                         .frame(width: 30)
                                     
                                     VStack(alignment: .leading, spacing: 2) {
@@ -1135,7 +1135,7 @@ struct UnitsSettingsView: View {
                                     HStack(spacing: 16) {
                                         Image(systemName: system == .metric ? "ruler" : "ruler.fill")
                                             .font(.title3)
-                                            .foregroundColor(AppTheme.accentColor)
+                                            .foregroundColor(colorScheme == .dark ? .white : .black)
                                             .frame(width: 30)
                                         
                                         VStack(alignment: .leading, spacing: 4) {
@@ -1150,7 +1150,7 @@ struct UnitsSettingsView: View {
                                         
                                         if measurementSystem == system {
                                             Image(systemName: "checkmark.circle.fill")
-                                                .foregroundColor(AppTheme.accentColor)
+                                                .foregroundColor(colorScheme == .dark ? .white : .black)
                                         }
                                     }
                                     .padding(16)
@@ -1177,7 +1177,7 @@ struct UnitsSettingsView: View {
                                     HStack(spacing: 16) {
                                         Image(systemName: "thermometer")
                                             .font(.title3)
-                                            .foregroundColor(AppTheme.accentColor)
+                                            .foregroundColor(colorScheme == .dark ? .white : .black)
                                             .frame(width: 30)
                                         
                                         VStack(alignment: .leading, spacing: 4) {
@@ -1192,7 +1192,7 @@ struct UnitsSettingsView: View {
                                         
                                         if temperatureUnit == unit {
                                             Image(systemName: "checkmark.circle.fill")
-                                                .foregroundColor(AppTheme.accentColor)
+                                                .foregroundColor(colorScheme == .dark ? .white : .black)
                                         }
                                     }
                                     .padding(16)
@@ -1239,7 +1239,7 @@ struct DisplaySettingsView: View {
                             Toggle(isOn: $keepScreenAwake) {
                                 HStack(spacing: 12) {
                                     Image(systemName: "light.max")
-                                        .foregroundColor(AppTheme.accentColor)
+                                        .foregroundColor(colorScheme == .dark ? .white : .black)
                                         .frame(width: 30)
                                     
                                     VStack(alignment: .leading, spacing: 2) {
@@ -1348,7 +1348,7 @@ struct PrivacySettingsView: View {
                                 )) {
                                     HStack(spacing: 12) {
                                         Image(systemName: authManager.biometricType == "Face ID" ? "faceid" : "touchid")
-                                            .foregroundColor(AppTheme.accentColor)
+                                            .foregroundColor(colorScheme == .dark ? .white : .black)
                                             .frame(width: 30)
                                         
                                         VStack(alignment: .leading, spacing: 2) {
@@ -1563,7 +1563,7 @@ struct PrivacySettingsView: View {
                                 
                                 HStack(alignment: .top, spacing: 12) {
                                     Image(systemName: "info.circle.fill")
-                                        .foregroundColor(AppTheme.accentColor)
+                                        .foregroundColor(colorScheme == .dark ? .white : .black)
                                         .font(.system(size: 16))
                                     
                                     VStack(alignment: .leading, spacing: 4) {
@@ -1983,7 +1983,7 @@ struct HelpView: View {
                                 HStack(spacing: 16) {
                                     Image(systemName: "envelope.fill")
                                         .font(.title3)
-                                        .foregroundColor(AppTheme.accentColor)
+                                        .foregroundColor(colorScheme == .dark ? .white : .black)
                                         .frame(width: 30)
                                     
                                     VStack(alignment: .leading, spacing: 4) {
@@ -2012,7 +2012,7 @@ struct HelpView: View {
                                 HStack(spacing: 16) {
                                     Image(systemName: "globe")
                                         .font(.title3)
-                                        .foregroundColor(AppTheme.accentColor)
+                                        .foregroundColor(colorScheme == .dark ? .white : .black)
                                         .frame(width: 30)
                                     
                                     VStack(alignment: .leading, spacing: 4) {
@@ -2108,7 +2108,7 @@ struct HelpItem: View {
         HStack(alignment: .top, spacing: 16) {
             Image(systemName: icon)
                 .font(.title3)
-                .foregroundColor(AppTheme.accentColor)
+                .foregroundColor(colorScheme == .dark ? .white : .black)
                 .frame(width: 30)
             
             VStack(alignment: .leading, spacing: 4) {

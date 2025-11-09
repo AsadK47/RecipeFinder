@@ -251,7 +251,7 @@ struct AccountView: View {
             // Section Header
             HStack {
                 Image(systemName: "person.fill")
-                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
                 Text("Personal Information")
                     .font(.headline)
                     .foregroundColor(colorScheme == .dark ? .white : .black)
@@ -339,7 +339,7 @@ struct AccountView: View {
         VStack(spacing: 0) {
             HStack {
                 Image(systemName: "mappin.and.ellipse")
-                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
                 Text("Address")
                     .font(.headline)
                     .foregroundColor(colorScheme == .dark ? .white : .black)
@@ -427,7 +427,7 @@ struct AccountView: View {
         VStack(spacing: 12) {
             HStack {
                 Image(systemName: "fork.knife.circle.fill")
-                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
                 Text("Chef Type")
                     .font(.headline)
                     .foregroundColor(colorScheme == .dark ? .white : .black)
