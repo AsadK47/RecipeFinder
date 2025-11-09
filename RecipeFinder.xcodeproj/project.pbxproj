@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		9E0C88662EBAEB1E00D707E3 /* FaceIDOnboardingSplash.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E0C88652EBAEB1E00D707E3 /* FaceIDOnboardingSplash.swift */; };
+		9E12E8932EC156330077B1DA /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 9E12E8922EC156330077B1DA /* ConfettiSwiftUI */; };
 		9E212D722EB12375005743F7 /* RecipeShareUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E212D712EB12375005743F7 /* RecipeShareUtility.swift */; };
 		9E2E34212E9D9F8500E2E49F /* KitchenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E2E34202E9D9F8500E2E49F /* KitchenView.swift */; };
 		9E2E34242E9DA10000E2E49F /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E2E34232E9DA10000E2E49F /* FlowLayout.swift */; };
@@ -216,6 +217,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9E12E8932EC156330077B1DA /* ConfettiSwiftUI in Frameworks */,
 				9EC0DFA12EBEE6E8001A1D7F /* ConfettiSwiftUI in Frameworks */,
 				9EB629042EBB9FEE005FD6FC /* ConfettiSwiftUI in Frameworks */,
 			);
@@ -1106,6 +1108,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		9E12E8922EC156330077B1DA /* ConfettiSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9E6CF3A72D83087300D79DD6 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
+			productName = ConfettiSwiftUI;
+		};
 		9EB629032EBB9FEE005FD6FC /* ConfettiSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 9E6CF3A72D83087300D79DD6 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
