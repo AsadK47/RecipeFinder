@@ -83,9 +83,7 @@
     <!-- Coming Soon Banner -->
     <div class="coming-soon-banner">
         <div class="banner-content">
-            <span class="pulse-dot"></span>
             <span class="banner-text">Your Kitchen, Elevated 🌟</span>
-            <span class="pulse-dot"></span>
         </div>
         <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
             <span class="theme-icon">🌙</span>
@@ -109,7 +107,7 @@
                 <p class="tagline">Your personal culinary companion</p>
                 
                 <div id="features" class="features-grid">
-                    <!-- Core Recipe Features -->
+                    <!-- Core Recipe Features (Always visible - 1-6) -->
                     <div class="feature">
                         <div class="feature-icon">🔍</div>
                         <h3>Smart Recipe Discovery</h3>
@@ -144,41 +142,51 @@
                         <h3>Meal Planning</h3>
                         <p>Plan your meals effortlessly</p>
                     </div>
-                    <div class="feature">
+                    
+                    <!-- Hidden features (7-12) -->
+                    <div class="feature feature-hidden">
                         <div class="feature-icon">❤️</div>
                         <h3>Favorites & Collections</h3>
                         <p>Favorites at your fingertips</p>
                     </div>
                     
                     <!-- Cooking Tools -->
-                    <div class="feature">
+                    <div class="feature feature-hidden">
                         <div class="feature-icon">⏱️</div>
                         <h3>Cook Timer</h3>
                         <p>Timely meals</p>
                     </div>
-                    <div class="feature">
+                    <div class="feature feature-hidden">
                         <div class="feature-icon">📝</div>
                         <h3>Recipe Notes</h3>
                         <p>Capture your culinary insights</p>
                     </div>
                     
                     <!-- App Features -->
-                    <div class="feature">
+                    <div class="feature feature-hidden">
                         <div class="feature-icon">🎨</div>
                         <h3>Personalise appearance</h3>
                         <p>Customise your cooking experience</p>
                     </div>
-                    <div class="feature">
+                    <div class="feature feature-hidden">
                         <div class="feature-icon">🔐</div>
                         <h3>FaceID Sign In (Optional)</h3>
                         <p>Safe and secure</p>
                     </div>
-                    <div class="feature">
+                    <div class="feature feature-hidden">
                         <div class="feature-icon">📡</div>
                         <h3>Offline Ready</h3>
                         <p>Cook anywhere, anytime</p>
                     </div>
                     </div>
+                    
+                    <!-- Show More Button -->
+                    <button id="showMoreBtn" class="show-more-btn">
+                        <span class="show-more-text">Show More Features</span>
+                        <svg class="show-more-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </section>

@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initScrollAnimations();
     initCookieConsent();
     initSmoothScroll();
+    initShowMoreFeatures();
 });
 
 // ============================================
@@ -72,9 +73,100 @@ function initNotifyForm() {
     const message = document.getElementById('formMessage');
     const button = form.querySelector('button');
     const input = form.querySelector('input[type="email"]');
+    
+    // Comprehensive email validation regex
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    // Validate email format
+    function validateEmail(email) {
+        // Remove whitespace
+        email = email.trim();
+        
+        // Check regex pattern
+        if (!emailRegex.test(email)) {
+            return false;
+        }
+        
+        // Additional checks
+        const [localPart, domain] = email.split('@');
+        
+        // Check local part (before @)
+        if (localPart.length === 0 || localPart.length > 64) {
+            return false;
+        }
+        
+        // Check domain part (after @)
+        if (domain.length === 0 || domain.length > 255) {
+            return false;
+        }
+        
+        // Check for consecutive dots
+        if (email.includes('..')) {
+            return false;
+        }
+        
+        // Check domain has at least one dot
+        if (!domain.includes('.')) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    // Real-time validation on input
+    input.addEventListener('input', () => {
+        const email = input.value.trim();
+        
+        if (email.length === 0) {
+            // Empty input - reset to neutral state
+            input.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+            message.textContent = '';
+            return;
+        }
+        
+        if (validateEmail(email)) {
+            // Valid email - green border
+            input.style.borderColor = '#10b981';
+            message.textContent = '';
+        } else {
+            // Invalid email - red border
+            input.style.borderColor = '#ef4444';
+            if (email.includes('@')) {
+                message.textContent = '⚠ Please enter a valid email address';
+            } else {
+                message.textContent = '';
+            }
+            message.style.color = '#ef4444';
+        }
+    });
+    
+    // Validation on blur (when user clicks away)
+    input.addEventListener('blur', () => {
+        const email = input.value.trim();
+        
+        if (email.length > 0 && !validateEmail(email)) {
+            input.style.borderColor = '#ef4444';
+            message.textContent = '⚠ Please enter a valid email address';
+            message.style.color = '#ef4444';
+        } else if (email.length === 0) {
+            input.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+            message.textContent = '';
+        }
+    });
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
+        
+        const email = input.value.trim();
+        
+        // Validate email before submission
+        if (!validateEmail(email)) {
+            message.textContent = '⚠ Please enter a valid email address';
+            message.style.color = '#ef4444';
+            input.style.borderColor = '#ef4444';
+            input.focus();
+            return;
+        }
         
         const formData = new FormData(form);
         
@@ -95,6 +187,7 @@ function initNotifyForm() {
             if (data.success) {
                 message.textContent = '✓ Welcome to the community! We\'ll see you on launch day.';
                 message.style.color = 'var(--text-primary)';
+                input.style.borderColor = 'rgba(255, 255, 255, 0.3)';
                 form.reset();
                 
                 // Clear message after 6 seconds
@@ -116,15 +209,6 @@ function initNotifyForm() {
             button.textContent = 'Notify Me';
             
             console.error('Subscription error:', error);
-        }
-    });
-    
-    // Add input validation feedback
-    input.addEventListener('blur', () => {
-        if (input.value && !input.validity.valid) {
-            input.style.borderColor = '#ef4444';
-        } else {
-            input.style.borderColor = 'rgba(20, 184, 166, 0.2)';
         }
     });
 }
@@ -274,5 +358,53 @@ function initSmoothScroll() {
                 });
             }
         });
+    });
+}
+
+// ============================================
+// Show More Features
+// ============================================
+
+function initShowMoreFeatures() {
+    const showMoreBtn = document.getElementById('showMoreBtn');
+    const hiddenFeatures = document.querySelectorAll('.feature-hidden');
+    const showMoreText = showMoreBtn.querySelector('.show-more-text');
+    let isExpanded = false;
+    
+    showMoreBtn.addEventListener('click', () => {
+        isExpanded = !isExpanded;
+        
+        if (isExpanded) {
+            // Show features with staggered animation
+            hiddenFeatures.forEach((feature, index) => {
+                setTimeout(() => {
+                    feature.classList.add('feature-visible');
+                }, index * 100); // 100ms delay between each feature
+            });
+            
+            // Update button
+            showMoreBtn.classList.add('expanded');
+            showMoreText.textContent = 'Show Less';
+            
+        } else {
+            // Hide features
+            hiddenFeatures.forEach(feature => {
+                feature.classList.remove('feature-visible');
+            });
+            
+            // Update button
+            showMoreBtn.classList.remove('expanded');
+            showMoreText.textContent = 'Show More Features';
+            
+            // Smooth scroll to features section
+            const featuresSection = document.getElementById('features');
+            const bannerHeight = document.querySelector('.coming-soon-banner').offsetHeight;
+            const targetPosition = featuresSection.getBoundingClientRect().top + window.pageYOffset - bannerHeight - 100;
+            
+            window.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
+            });
+        }
     });
 }
