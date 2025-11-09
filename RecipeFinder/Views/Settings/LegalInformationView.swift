@@ -207,7 +207,7 @@ struct LegalInformationView: View {
                                     .font(.title2)
                                     .foregroundColor(.green)
                                 
-                                Text("Compliance & Standards")
+                                Text("Regulatory Compliance")
                                     .font(.title3)
                                     .fontWeight(.semibold)
                                     .foregroundColor(colorScheme == .dark ? .white : .black)
@@ -218,15 +218,15 @@ struct LegalInformationView: View {
                             
                             ComplianceBadge(
                                 icon: "checkmark.seal.fill",
-                                title: "UK GDPR Compliant",
-                                description: "Full compliance with UK General Data Protection Regulation",
+                                title: "UK GDPR",
+                                description: "Compliant with UK General Data Protection Regulation",
                                 color: .blue
                             )
                             
                             ComplianceBadge(
                                 icon: "lock.shield.fill",
-                                title: "DPA 2018 Compliant",
-                                description: "Adherence to Data Protection Act 2018",
+                                title: "Data Protection Act 2018",
+                                description: "Adherence to UK data protection legislation",
                                 color: .indigo
                             )
                             
@@ -238,9 +238,9 @@ struct LegalInformationView: View {
                             )
                             
                             ComplianceBadge(
-                                icon: "globe.europe.africa.fill",
+                                icon: "doc.text.fill",
                                 title: "Companies House",
-                                description: "Active company registration in England and Wales",
+                                description: "Active registration in England and Wales",
                                 color: .green
                             )
                         }
@@ -541,56 +541,88 @@ struct PrivacyPolicyView: View {
                                 .font(.system(size: 32, weight: .bold))
                                 .foregroundColor(colorScheme == .dark ? .white : .black)
                             
-                            Text("Last Updated: 7 November 2025")
+                            Text("Last Updated: 9 November 2025")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                             
                             Divider()
                             
-                            SectionTitle("Overview")
-                            BodyText("RecipeFinder is committed to protecting your privacy. This Privacy Policy explains how we handle information in our iOS application.")
+                            SectionTitle("1. Interpretation and Definitions")
                             
-                            SectionTitle("Information Collection and Use")
-                            BodyText("We do NOT collect, store, or transmit any personal information.")
+                            BodyText("1.1 In this Privacy Policy:")
+                            BulletPoint("\"Company\", \"we\", \"us\" or \"our\" means RECIPEFINDER LIMITED (company number 16833243), a private limited company registered in England and Wales.")
+                            BulletPoint("\"Application\" means the RecipeFinder mobile application software.")
+                            BulletPoint("\"User\", \"you\" or \"your\" means the individual accessing or using the Application.")
+                            BulletPoint("\"Personal Information\" means any information relating to an identified or identifiable natural person.")
+                            BulletPoint("\"Device\" means any device that can access the Application, such as an iPhone or iPad.")
                             
-                            BodyText("RecipeFinder is designed with privacy as a core principle:")
+                            SectionTitle("2. Information Collection and Processing")
                             
-                            BulletPoint("100% Offline Functionality - All features work without internet connection")
-                            BulletPoint("No Account Required - No registration, login, or user accounts")
-                            BulletPoint("No Analytics - We don't track your usage or behavior")
-                            BulletPoint("No Advertising - No third-party ad networks or tracking")
-                            BulletPoint("No Cloud Storage - All data stored locally on your device")
+                            BodyText("2.1 The Company does not collect, process, store or transmit any Personal Information through the Application.")
+                            
+                            BodyText("2.2 The Application operates on a local-only basis. All data generated through your use of the Application is stored exclusively on your Device using Core Data and UserDefaults frameworks.")
+                            
+                            BodyText("2.3 Data stored locally on your Device includes, without limitation:")
+                            BulletPoint("Recipe data (including imported recipes)")
+                            BulletPoint("Shopping list items")
+                            BulletPoint("Kitchen inventory records")
+                            BulletPoint("Meal planning information")
+                            BulletPoint("User preferences and settings")
+                            BulletPoint("Favorited items")
+                            
+                            BodyText("2.4 No user accounts, registrations or authentication mechanisms are required to use the Application.")
                         }
                         
                         Group {
-                            SectionTitle("Data Storage")
-                            BodyText("All data is stored exclusively on your device using Core Data and UserDefaults. This includes:")
+                            SectionTitle("3. Third-Party Services and Analytics")
                             
-                            BulletPoint("Recipes")
-                            BulletPoint("Shopping Lists")
-                            BulletPoint("Kitchen Inventory")
-                            BulletPoint("Meal Plans")
-                            BulletPoint("User Preferences")
-                            BulletPoint("Favorites")
+                            BodyText("3.1 The Application does not integrate with any third-party analytics services, advertising networks or tracking systems.")
                             
-                            SectionTitle("Your Rights")
-                            BodyText("Since we don't collect any data, you have complete control:")
+                            BodyText("3.2 When you elect to import a recipe by providing a URL, the Application retrieves content directly from the URL you supply. The Company does not intermediate, store copies of or monitor such requests.")
                             
-                            BulletPoint("Export your data anytime from the Account tab")
-                            BulletPoint("Delete all data from Settings > Data Management")
-                            BulletPoint("Uninstall the app to remove all data from your device")
+                            SectionTitle("4. Data Security")
+                            
+                            BodyText("4.1 As all data remains on your Device and is not transmitted to the Company's servers or any third party, data security is primarily dependent on your Device's security measures.")
+                            
+                            BodyText("4.2 The Company recommends that you maintain appropriate security measures on your Device, including but not limited to password protection and device encryption.")
+                            
+                            SectionTitle("5. Your Rights and Control")
+                            
+                            BodyText("5.1 You retain complete control over all data stored by the Application on your Device.")
+                            
+                            BodyText("5.2 You may at any time:")
+                            BulletPoint("Export all data via the Account section of the Application")
+                            BulletPoint("Delete all data via Settings > Data Management")
+                            BulletPoint("Remove all data by uninstalling the Application from your Device")
                         }
                         
                         Group {
-                            SectionTitle("UK GDPR Compliance")
-                            BodyText("RecipeFinder is fully compliant with UK GDPR and the Data Protection Act 2018. Since we don't collect any personal data, GDPR requirements don't apply.")
+                            SectionTitle("6. Compliance with Data Protection Laws")
                             
-                            SectionTitle("Changes to This Policy")
-                            BodyText("We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy in the app.")
+                            BodyText("6.1 The Application is designed to comply with:")
+                            BulletPoint("UK General Data Protection Regulation (UK GDPR)")
+                            BulletPoint("Data Protection Act 2018")
+                            BulletPoint("Children's Online Privacy Protection Act (COPPA)")
                             
-                            SectionTitle("Contact Us")
-                            BodyText("If you have questions about this Privacy Policy, contact us at:")
-                            BodyText("recipefinderlimited@icloud.com")
+                            BodyText("6.2 Given that the Company does not collect or process any Personal Information, the majority of data protection obligations under these laws do not apply.")
+                            
+                            SectionTitle("7. Children's Privacy")
+                            
+                            BodyText("7.1 The Application may be used by individuals under the age of 13. As no Personal Information is collected, parental consent is not required.")
+                            
+                            SectionTitle("8. Changes to This Privacy Policy")
+                            
+                            BodyText("8.1 The Company reserves the right to amend this Privacy Policy at any time. The date of the most recent revision shall be indicated at the top of this Privacy Policy.")
+                            
+                            BodyText("8.2 Material changes shall be notified through the Application. Continued use of the Application following notification constitutes acceptance of the amended Privacy Policy.")
+                            
+                            SectionTitle("9. Contact Information")
+                            
+                            BodyText("9.1 For enquiries regarding this Privacy Policy, you may contact:")
+                            BodyText("RECIPEFINDER LIMITED")
+                            BodyText("Company Number: 16833243")
+                            BodyText("Email: recipefinderlimited@icloud.com")
+                            BodyText("Website: recipefinder.uk")
                         }
                     }
                     .padding(24)
@@ -626,63 +658,100 @@ struct TermsOfServiceView: View {
                                 .font(.system(size: 32, weight: .bold))
                                 .foregroundColor(colorScheme == .dark ? .white : .black)
                             
-                            Text("Last Updated: 7 November 2025")
+                            Text("Last Updated: 9 November 2025")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                             
                             Divider()
                             
-                            BodyText("Welcome to RecipeFinder! These Terms explain your rights and responsibilities when using our app.")
+                            SectionTitle("1. Interpretation and General")
                             
-                            SectionTitle("1. About RecipeFinder")
-                            BodyText("RecipeFinder is developed and operated by RECIPEFINDER LIMITED (Company Number: 16833243), registered in England and Wales.")
+                            BodyText("1.1 Definitions. In these Terms:")
+                            BulletPoint("\"Company\" means RECIPEFINDER LIMITED (company number 16833243).")
+                            BulletPoint("\"Application\" means the RecipeFinder mobile application and associated website located at recipefinder.uk.")
+                            BulletPoint("\"User\" or \"you\" means any person who accesses, downloads, installs or uses the Application.")
+                            BulletPoint("\"Terms\" means these Terms of Service, as amended from time to time.")
                             
-                            SectionTitle("2. Using the App")
-                            BodyText("You can browse recipes, manage shopping lists, track inventory, import recipes from websites, and export/share recipes.")
-                            BodyText("Please don't use the app for illegal purposes, attempt to hack it, distribute malware, or violate others' intellectual property rights.")
+                            BodyText("1.2 Acceptance. By accessing or using the Application, you agree to be bound by these Terms. If you do not agree to these Terms, you must not use the Application.")
                             
-                            SectionTitle("3. Your Content")
-                            BodyText("You own the recipes you create. Your recipes are stored locally on your device. We don't claim ownership of your personal recipes.")
-                            BodyText("Recipes imported from websites belong to their original creators. You're responsible for respecting copyright when importing recipes.")
+                            SectionTitle("2. Scope of Service")
+                            
+                            BodyText("2.1 The Application provides recipe discovery, import, organization and related recipe management features. The Company may modify, suspend or discontinue the Application (or any part thereof) at any time.")
+                            
+                            SectionTitle("3. User Accounts and Access")
+                            
+                            BodyText("3.1 Account creation is not required to use the Application. All data is stored locally on your device.")
+                            
+                            SectionTitle("4. Acceptable Use")
+                            
+                            BodyText("4.1 You shall not:")
+                            BulletPoint("use the Application in violation of applicable law;")
+                            BulletPoint("infringe the intellectual property or other rights of third parties;")
+                            BulletPoint("attempt to gain unauthorised access to any systems or data;")
+                            BulletPoint("introduce viruses, malware, or other harmful code; or")
+                            BulletPoint("use the Application for any unlawful or abusive purpose.")
                         }
                         
                         Group {
-                            SectionTitle("4. Our Intellectual Property")
-                            BodyText("RecipeFinder's source code, design, and branding are owned by RECIPEFINDER LIMITED and protected by UK Copyright, Designs and Patents Act 1988.")
+                            SectionTitle("5. Intellectual Property")
                             
-                            SectionTitle("5. Privacy & Data")
-                            BodyText("All your data is stored locally on your device. We don't collect or transmit your personal information. See our Privacy Policy for full details.")
+                            BodyText("5.1 All intellectual property rights in and to the Application and its content (including software, logos and trademarks) are owned by the Company or its licensors. Nothing in these Terms grants you any rights to the Company's intellectual property except as expressly set out in these Terms.")
                             
-                            SectionTitle("6. No Warranties (Important!)")
-                            BodyText("RecipeFinder is provided \"as is\" without warranties. We don't guarantee recipe accuracy or safety. You're responsible for food safety and checking ingredients, especially for allergies.")
-                            BodyText("Always use your own judgment with recipes. Verify cooking instructions and follow food safety practices.")
+                            SectionTitle("6. User Content")
+                            
+                            BodyText("6.1 You retain ownership of content you submit to the Application. By submitting content you grant the Company a non-exclusive, worldwide, royalty-free licence to use, reproduce and display such content for the purposes of operating and providing the Application.")
+                            
+                            BodyText("6.2 When importing recipes from third-party websites, you are responsible for ensuring compliance with applicable copyright laws and terms of use of such websites.")
+                            
+                            SectionTitle("7. Warranty Disclaimer")
+                            
+                            BodyText("7.1 The Application is provided \"as is\" and the Company expressly disclaims all warranties, whether express or implied, including warranties of merchantability, fitness for a particular purpose and non-infringement.")
+                            
+                            BodyText("7.2 The Company does not warrant the accuracy, completeness or safety of any recipes or cooking instructions displayed in the Application. You are solely responsible for verifying recipe information and food safety.")
                         }
                         
                         Group {
-                            SectionTitle("7. Limitation of Liability")
-                            BodyText("To the maximum extent permitted by law, RECIPEFINDER LIMITED is not liable for any damages arising from your use of the app, including loss of data, food-related issues, or device problems.")
-                            BodyText("Maximum Liability: If we are found liable for anything, our total liability is limited to £50 or the amount you paid for the app (whichever is greater).")
+                            SectionTitle("8. Limitation of Liability")
                             
-                            SectionTitle("8. Changes to These Terms")
-                            BodyText("We may update these Terms from time to time. Check the \"Last Updated\" date above. Continued use means you accept the new terms.")
+                            BodyText("8.1 To the maximum extent permitted by applicable law, the Company's total liability arising out of or in connection with these Terms shall be limited to the greater of £50 or the amount you have paid to the Company in the 12 months preceding the claim.")
                             
-                            SectionTitle("9. Legal Stuff")
-                            BodyText("These Terms are governed by the laws of England and Wales. If we have a dispute, let's try to resolve it friendly first. If needed, legal proceedings must be brought in the courts of England and Wales.")
+                            BodyText("8.2 The Company shall not be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation loss of data, loss of profits or damage arising from food preparation.")
+                            
+                            SectionTitle("9. Third-Party Content and Links")
+                            
+                            BodyText("9.1 The Application may contain links to third-party websites or services. The Company is not responsible for the content or policies of such third parties, and your use of third-party services is at your own risk.")
+                            
+                            SectionTitle("10. Recipe Import and Data Handling")
+                            
+                            BodyText("10.1 When you elect to import a recipe by providing a URL, the Application will retrieve the content directly from the URL you supply. The Company does not intermediate or store copies of the source webpages on its servers. Parsed recipe data is stored locally on your device.")
+                            
+                            SectionTitle("11. Termination")
+                            
+                            BodyText("11.1 The Company may suspend or terminate your access to the Application immediately if you breach these Terms or where required by law.")
                         }
                         
                         Group {
-                            SectionTitle("10. Contact Us")
-                            BodyText("Questions about these Terms?")
+                            SectionTitle("12. Governing Law and Jurisdiction")
+                            
+                            BodyText("12.1 These Terms shall be governed by and construed in accordance with the laws of England and Wales. The courts of England and Wales shall have exclusive jurisdiction to settle any dispute arising out of or in connection with these Terms.")
+                            
+                            SectionTitle("13. Amendments")
+                            
+                            BodyText("13.1 The Company may amend these Terms from time to time. Material changes will be notified through the Application or on the Company's website. Continued use of the Application following notice of changes constitutes acceptance of the updated Terms.")
+                            
+                            SectionTitle("14. Severability")
+                            
+                            BodyText("14.1 If any provision of these Terms is held to be invalid or unenforceable, the remaining provisions shall continue in full force and effect.")
+                            
+                            SectionTitle("15. Contact")
+                            
+                            BodyText("For enquiries regarding these Terms, you may contact:")
+                            BodyText("RECIPEFINDER LIMITED")
+                            BodyText("Company Number: 16833243")
+                            BodyText("Registered in England and Wales")
+                            BodyText("Director: Asad Khan")
                             BodyText("Email: recipefinderlimited@icloud.com")
-                            BodyText("Company: RECIPEFINDER LIMITED (16833243)")
-                            
-                            Divider()
-                                .padding(.vertical, 8)
-                            
-                            Text("Thank you for using RecipeFinder!")
-                                .font(.headline)
-                                .foregroundColor(AppTheme.accentColor(for: selectedTheme))
-                                .padding(.top, 8)
+                            BodyText("Website: recipefinder.uk")
                         }
                     }
                     .padding(24)
@@ -724,45 +793,62 @@ struct CompanyComplianceView: View {
                             
                             Divider()
                             
-                            SectionTitle("Company Registration Details")
+                            SectionTitle("1. Company Registration Details")
                             CompanyDetailRow(label: "Legal Name", value: "RECIPEFINDER LIMITED")
                             CompanyDetailRow(label: "Company Number", value: "16833243")
                             CompanyDetailRow(label: "Jurisdiction", value: "England and Wales")
                             CompanyDetailRow(label: "Incorporation Date", value: "5 November 2025")
-                            CompanyDetailRow(label: "Company Type", value: "Private Limited Company by Shares")
+                            CompanyDetailRow(label: "Company Type", value: "Private Limited Company")
                             CompanyDetailRow(label: "Status", value: "Active")
                         }
                         
                         Group {
-                            SectionTitle("Directors")
-                            BodyText("Director: Asad Khan")
+                            SectionTitle("2. Directors")
+                            BodyText("The Company's current director is:")
+                            BodyText("Name: Asad Khan")
                             BodyText("Appointed: 5 November 2025")
                             
-                            SectionTitle("Director Responsibilities")
-                            BodyText("Under the Companies Act 2006, directors must:")
-                            BulletPoint("Act within powers (s.171)")
-                            BulletPoint("Promote the success of the company (s.172)")
-                            BulletPoint("Exercise independent judgment (s.173)")
-                            BulletPoint("Exercise reasonable care, skill and diligence (s.174)")
-                            BulletPoint("Avoid conflicts of interest (s.175)")
-                            BulletPoint("Not accept benefits from third parties (s.176)")
-                            BulletPoint("Declare interest in proposed transactions (s.177)")
+                            SectionTitle("3. Director Responsibilities")
+                            BodyText("3.1 Under Sections 171-177 of the Companies Act 2006, directors have the following statutory duties:")
+                            BulletPoint("Section 171: Duty to act within powers")
+                            BulletPoint("Section 172: Duty to promote the success of the company")
+                            BulletPoint("Section 173: Duty to exercise independent judgment")
+                            BulletPoint("Section 174: Duty to exercise reasonable care, skill and diligence")
+                            BulletPoint("Section 175: Duty to avoid conflicts of interest")
+                            BulletPoint("Section 176: Duty not to accept benefits from third parties")
+                            BulletPoint("Section 177: Duty to declare interest in proposed transaction or arrangement")
                         }
                         
                         Group {
-                            SectionTitle("Compliance Status")
-                            BulletPoint("✅ Companies House Registration: Complete")
-                            BulletPoint("✅ Certificate of Incorporation: Issued")
-                            BulletPoint("✅ UK GDPR Compliance: Achieved")
-                            BulletPoint("✅ DPA 2018 Compliance: Achieved")
-                            BulletPoint("✅ Privacy Policy: Published")
-                            BulletPoint("✅ Terms of Service: Published")
+                            SectionTitle("4. Regulatory Compliance")
+                            BodyText("4.1 The Company maintains compliance with:")
+                            BulletPoint("Companies Act 2006 (United Kingdom)")
+                            BulletPoint("UK General Data Protection Regulation (UK GDPR)")
+                            BulletPoint("Data Protection Act 2018")
+                            BulletPoint("Copyright, Designs and Patents Act 1988")
+                            BulletPoint("Consumer Rights Act 2015")
                             
-                            SectionTitle("Registered Office")
-                            BodyText("The company's registered office is located in England and Wales as filed with Companies House.")
+                            SectionTitle("5. Registered Office")
+                            BodyText("5.1 The Company's registered office address is maintained on file with Companies House in accordance with Section 86 of the Companies Act 2006.")
                             
-                            SectionTitle("More Information")
-                            BodyText("For complete compliance documentation and company records, visit the Companies House website with our company number: 16833243")
+                            SectionTitle("6. Annual Requirements")
+                            BodyText("6.1 The Company shall comply with all annual filing requirements, including:")
+                            BulletPoint("Confirmation Statement (Section 853A)")
+                            BulletPoint("Annual Accounts (Sections 441-442)")
+                            BulletPoint("Corporation Tax Return (as required by HMRC)")
+                        }
+                        
+                        Group {
+                            SectionTitle("7. Public Records")
+                            BodyText("7.1 Full company records, including current and historical filings, may be accessed through Companies House using company number 16833243.")
+                            
+                            BodyText("7.2 Companies House website: www.gov.uk/companieshouse")
+                            
+                            SectionTitle("8. Contact for Company Matters")
+                            BodyText("For official company correspondence:")
+                            BodyText("RECIPEFINDER LIMITED")
+                            BodyText("Company Number: 16833243")
+                            BodyText("Email: recipefinderlimited@icloud.com")
                         }
                     }
                     .padding(24)
