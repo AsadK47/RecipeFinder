@@ -286,46 +286,7 @@ RecipeFinder/
 
 ---
 
-## 🗺 Roadmap
-
-### v0.1 (Current) 🚧
-- ✅ Recipe management with import/export
-- ✅ Shopping lists with categories
-- ✅ Kitchen inventory tracking
-- ✅ Six beautiful themes
-- ✅ Cook timers with notifications
-- ✅ Face ID / Touch ID authentication
-- ✅ Beautiful onboarding experience
-- 🚧 Bug fixes and polish
-
-### v0.2 (Next) �
-- � Enhanced meal planning calendar
-- � Recipe Wizard with AI
-- � Persistent meal schedules
-- � Advanced search & filters
-- � Recipe collections
-- 🔜 Export recipes to PDF
-
-### v0.3 (Planned) 🎯
-- 📱 Widget support
-- 🔔 Smart notification improvements
-- 🎨 More theme options
-- 📤 Enhanced sharing capabilities
-- 🏷️ Recipe tags and categories
-
-### v1.0 (Future) �
-*When ready for public release*
-- 📱 iCloud sync across devices
-- 🤖 Smart recipe suggestions
-- 📷 Camera ingredient scanning
-- 🗣️ Siri Shortcuts integration
-- 🌐 Recipe social sharing
-- 📊 Cooking analytics
-- 🍎 App Store release
-
----
-
-## 📚 Documentation
+##  Documentation
 
 - **[Design Language](docs/DESIGN_AESTHETIC.md)** - Visual design principles
 - **[Theme Colors](docs/THEME_COLORS.md)** - Complete color palette
