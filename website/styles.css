@@ -296,9 +296,76 @@ body {
 .tagline {
     font-size: 1.5rem;
     color: var(--text-secondary);
-    margin-bottom: 50px;
+    margin-bottom: 40px;
     text-align: center;
     font-weight: 400;
+}
+
+/* ============================================
+   Platforms Section
+   ============================================ */
+
+.platforms {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 60px;
+    flex-wrap: wrap;
+}
+
+.platform-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: var(--bg-card);
+    border-radius: 20px;
+    border: 1px solid rgba(20, 184, 166, 0.15);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.platform-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow);
+    border-color: rgba(20, 184, 166, 0.3);
+}
+
+.platform-item.coming-soon {
+    border-color: rgba(20, 184, 166, 0.25);
+}
+
+.platform-item.future {
+    opacity: 0.5;
+}
+
+.platform-logo {
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+.platform-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1;
+}
+
+.platform-status {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 10px;
+    background: rgba(20, 184, 166, 0.1);
+    color: var(--text-secondary);
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.platform-item.coming-soon .platform-status {
+    background: var(--gradient-main);
+    color: #ffffff;
 }
 
 /* ============================================
