@@ -9,6 +9,7 @@ struct RecipeWizardView: View {
     let onComplete: (RecipeModel) -> Void
     let prefilledData: PrefilledRecipeData?
     let autoFillMode: Bool
+    let editingRecipeId: UUID?  // For preserving recipe ID when editing
     
     // Struct for pre-filling wizard with imported data
     struct PrefilledRecipeData {
@@ -21,6 +22,8 @@ struct RecipeWizardView: View {
         let servings: Int?
         let difficulty: String?
         let notes: String?
+        let category: String?  // Add category support
+        let isFavorite: Bool?  // Preserve favorite status
     }
     
     // Step tracking
@@ -56,9 +59,10 @@ struct RecipeWizardView: View {
     @State private var errorMessage = ""
     
     // Initializer with optional prefilled data
-    init(prefilledData: PrefilledRecipeData? = nil, autoFillMode: Bool = false, onComplete: @escaping (RecipeModel) -> Void) {
+    init(prefilledData: PrefilledRecipeData? = nil, autoFillMode: Bool = false, editingRecipeId: UUID? = nil, onComplete: @escaping (RecipeModel) -> Void) {
         self.prefilledData = prefilledData
         self.autoFillMode = autoFillMode
+        self.editingRecipeId = editingRecipeId
         self.onComplete = onComplete
         
         // If auto-fill mode, start at review step (last step)
@@ -161,6 +165,11 @@ struct RecipeWizardView: View {
         // Pre-fill recipe name
         if let name = data.name, !name.isEmpty {
             recipeName = name
+        }
+        
+        // Pre-fill category
+        if let category = data.category, !category.isEmpty {
+            self.category = category
         }
         
         // Pre-fill times
@@ -897,7 +906,12 @@ struct RecipeWizardView: View {
             return
         }
         
+        // Determine if we're creating a new recipe or updating an existing one
+        let recipeId = editingRecipeId ?? UUID()
+        let isFavorite = prefilledData?.isFavorite ?? false
+        
         let recipe = RecipeModel(
+            id: recipeId,
             name: recipeName,
             category: category,
             difficulty: difficulty,
@@ -910,7 +924,7 @@ struct RecipeWizardView: View {
             instructions: filteredInstructions,
             notes: notes,
             imageName: nil,
-            isFavorite: false
+            isFavorite: isFavorite
         )
         
         HapticManager.shared.success()

@@ -75,6 +75,103 @@ struct Ingredient: Identifiable, Codable, Hashable {
         
         return converted.unit.isEmpty ? formattedValue : "\(formattedValue) \(converted.unit)"
     }
+    
+    // MARK: - Smart Name Parsing
+    
+    /// Returns the display name with proper title case formatting
+    var displayName: String {
+        return IngredientNameFormatter.formatForDisplay(name)
+    }
+    
+    /// Returns the main ingredient name (without prep notes)
+    var mainIngredientName: String {
+        return IngredientNameFormatter.extractMainName(name)
+    }
+    
+    /// Returns preparation notes if any (e.g., "diced", "chopped", "boneless")
+    var preparationNotes: String? {
+        return IngredientNameFormatter.extractPreparationNotes(name)
+    }
+}
+
+// MARK: - Ingredient Name Formatter
+
+struct IngredientNameFormatter {
+    
+    // Common preparation keywords that indicate secondary information
+    private static let preparationKeywords = [
+        "diced", "chopped", "sliced", "minced", "grated", "shredded",
+        "cut", "bite-sized", "pieces", "cubed", "julienned",
+        "boneless", "skinless", "trimmed", "peeled", "seeded",
+        "fresh", "dried", "frozen", "canned", "cooked",
+        "room temperature", "softened", "melted", "beaten"
+    ]
+    
+    /// Format ingredient name with proper title case
+    static func formatForDisplay(_ name: String) -> String {
+        // Keep parenthetical names intact: "Fenugreek (Methi) Seeds"
+        return name.capitalized
+    }
+    
+    /// Extract the main ingredient name from a complex string
+    /// "Skinless And Boneless Chicken Thighs, Cut Into Bite-Sized Pieces" → "Chicken Thighs"
+    static func extractMainName(_ name: String) -> String {
+        let lowercased = name.lowercased()
+        
+        // Check if contains comma - often separates main ingredient from prep
+        if let commaIndex = lowercased.firstIndex(of: ",") {
+            let mainPart = String(name[..<commaIndex]).trimmingCharacters(in: .whitespaces)
+            // Remove leading prep words from main part
+            return removeLeadingPrepWords(mainPart)
+        }
+        
+        // No comma, but might have prep words at the start
+        return removeLeadingPrepWords(name)
+    }
+    
+    /// Extract preparation notes from the ingredient name
+    /// "Skinless And Boneless Chicken Thighs, Cut Into Bite-Sized Pieces" → "skinless, boneless, bite-sized"
+    static func extractPreparationNotes(_ name: String) -> String? {
+        var notes: [String] = []
+        let lowercased = name.lowercased()
+        
+        // Check for comma-separated prep instructions
+        if let commaIndex = lowercased.firstIndex(of: ",") {
+            let prepPart = String(name[name.index(after: commaIndex)...])
+                .trimmingCharacters(in: .whitespaces)
+            notes.append(prepPart.lowercased())
+        }
+        
+        // Extract prep words from the beginning
+        let words = name.components(separatedBy: .whitespaces)
+        for word in words {
+            let cleanWord = word.trimmingCharacters(in: CharacterSet.punctuationCharacters)
+            if preparationKeywords.contains(cleanWord.lowercased()) {
+                notes.append(cleanWord.lowercased())
+            }
+        }
+        
+        // Remove duplicates and format
+        let uniqueNotes = Array(Set(notes)).sorted()
+        return uniqueNotes.isEmpty ? nil : uniqueNotes.joined(separator: ", ")
+    }
+    
+    /// Remove leading preparation words
+    private static func removeLeadingPrepWords(_ text: String) -> String {
+        var words = text.components(separatedBy: .whitespaces)
+        
+        // Remove prep words from the beginning
+        while !words.isEmpty {
+            let firstWord = words[0].trimmingCharacters(in: CharacterSet.punctuationCharacters)
+            if preparationKeywords.contains(firstWord.lowercased()) {
+                words.removeFirst()
+            } else {
+                break
+            }
+        }
+        
+        return words.joined(separator: " ")
+    }
 }
 
 struct RecipeModel: Identifiable, Codable, Hashable {

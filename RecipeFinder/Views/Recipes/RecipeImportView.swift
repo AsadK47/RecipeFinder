@@ -219,7 +219,9 @@ struct RecipeImportView: View {
                         cookTime: data.cookTimeMinutes,
                         servings: data.servings,
                         difficulty: data.difficulty,
-                        notes: generateImportNotes(from: data)
+                        notes: generateImportNotes(from: data),
+                        category: data.category,
+                        isFavorite: false
                     ),
                     autoFillMode: importMode == .autoFill
                 ) { newRecipe in

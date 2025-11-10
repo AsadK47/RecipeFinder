@@ -706,7 +706,7 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
         text = text.replacingOccurrences(of: "</li>", with: "\n", options: .regularExpression)
         text = text.replacingOccurrences(of: "</div>", with: "\n", options: .regularExpression)
         text = text.replacingOccurrences(of: "<[^>]+>", with: " ", options: .regularExpression)
-        text = text.replacingOccurrences(of: "&nbsp;", with: " ", options: .regularExpression)
+        text = text.decodeHTMLEntities()
         text = text.replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
         
         let lines = text.components(separatedBy: .newlines)
@@ -724,6 +724,7 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
                     .replacingOccurrences(of: ">", with: "")
                     .replacingOccurrences(of: "<", with: "")
                     .trimmingCharacters(in: .whitespaces)
+                    .decodeHTMLEntities()
                 
                 // Clean up title (remove site names, separators)
                 let cleaned = rawTitle
@@ -746,6 +747,7 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
                         .replacingOccurrences(of: ">", with: "")
                         .replacingOccurrences(of: "<", with: "")
                         .trimmingCharacters(in: .whitespaces)
+                        .decodeHTMLEntities()
                     if rawH1.count > 3 && rawH1.count < 100 {
                         name = rawH1
                     }
@@ -1020,5 +1022,85 @@ struct SchemaRecipe: Codable {
     
     struct InstructionStep: Codable {
         let text: String?
+    }
+}
+
+// MARK: - HTML Entity Decoding Extension
+
+extension String {
+    /// Decode HTML entities like &amp;, &quot;, &nbsp;, {one pot}, etc.
+    func decodeHTMLEntities() -> String {
+        var result = self
+        
+        // Common HTML entities
+        let entities: [String: String] = [
+            "&amp;": "&",
+            "&lt;": "<",
+            "&gt;": ">",
+            "&quot;": "\"",
+            "&apos;": "'",
+            "&nbsp;": " ",
+            "&#39;": "'",
+            "&#34;": "\"",
+            "&mdash;": "—",
+            "&ndash;": "–",
+            "&hellip;": "...",
+            "&ldquo;": "\u{201C}",  // Left double quotation mark
+            "&rdquo;": "\u{201D}",  // Right double quotation mark
+            "&lsquo;": "\u{2018}",  // Left single quotation mark
+            "&rsquo;": "\u{2019}",  // Right single quotation mark
+            "&deg;": "°",
+            "&frac12;": "½",
+            "&frac14;": "¼",
+            "&frac34;": "¾"
+        ]
+        
+        // Replace known entities
+        for (entity, replacement) in entities {
+            result = result.replacingOccurrences(of: entity, with: replacement)
+        }
+        
+        // Handle numeric entities (&#123;)
+        let decimalPattern = "&#(\\d+);"
+        if let regex = try? NSRegularExpression(pattern: decimalPattern, options: []) {
+            let nsString = result as NSString
+            let matches = regex.matches(in: result, options: [], range: NSRange(location: 0, length: nsString.length))
+            
+            for match in matches.reversed() {
+                if match.numberOfRanges >= 2 {
+                    let numberRange = match.range(at: 1)
+                    let numberString = nsString.substring(with: numberRange)
+                    if let number = Int(numberString),
+                       let scalar = UnicodeScalar(number) {
+                        let replacement = String(Character(scalar))
+                        result = (result as NSString).replacingCharacters(in: match.range, with: replacement)
+                    }
+                }
+            }
+        }
+        
+        // Handle hex numeric entities (&#xAB;)
+        let hexPattern = "&#x([0-9A-Fa-f]+);"
+        if let regex = try? NSRegularExpression(pattern: hexPattern, options: []) {
+            let nsString = result as NSString
+            let matches = regex.matches(in: result, options: [], range: NSRange(location: 0, length: nsString.length))
+            
+            for match in matches.reversed() {
+                if match.numberOfRanges >= 2 {
+                    let hexRange = match.range(at: 1)
+                    let hexString = nsString.substring(with: hexRange)
+                    if let number = Int(hexString, radix: 16),
+                       let scalar = UnicodeScalar(number) {
+                        let replacement = String(Character(scalar))
+                        result = (result as NSString).replacingCharacters(in: match.range, with: replacement)
+                    }
+                }
+            }
+        }
+        
+        // Handle curly brace patterns like {one pot} -> remove braces
+        result = result.replacingOccurrences(of: #"\{([^}]+)\}"#, with: "$1", options: .regularExpression)
+        
+        return result
     }
 }

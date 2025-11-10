@@ -387,9 +387,12 @@ struct RecipeDetailView: View {
                 cookTime: TimeExtractor.extractMinutes(from: recipe.cookingTime),
                 servings: recipe.baseServings,
                 difficulty: recipe.difficulty,
-                notes: recipe.notes.isEmpty ? nil : recipe.notes
+                notes: recipe.notes.isEmpty ? nil : recipe.notes,
+                category: recipe.category,
+                isFavorite: recipe.isFavorite
             ),
             autoFillMode: true,
+            editingRecipeId: recipe.id,
             onComplete: { updatedRecipe in
                 recipe = updatedRecipe
                 // Update in Core Data

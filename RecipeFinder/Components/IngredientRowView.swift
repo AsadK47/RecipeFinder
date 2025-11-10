@@ -29,33 +29,54 @@ struct IngredientRowView: View {
             }
             
             HStack(spacing: 16) {
-                // Ingredient name
-                Text(ingredient.name)
-                    .font(.body)
-                    .fontWeight(.medium)
-                    .strikethrough(isChecked)
-                    .foregroundColor(isChecked ? .secondary : .primary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                // Ingredient name with optional prep notes
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(ingredient.mainIngredientName)
+                        .font(.body)
+                        .fontWeight(.medium)
+                        .strikethrough(isChecked)
+                        .foregroundColor(isChecked ? .secondary : .primary)
+                    
+                    // Show preparation notes if any
+                    if let prepNotes = ingredient.preparationNotes {
+                        Text(prepNotes)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .lineLimit(1)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
                 
                 // Visual separator
                 Rectangle()
                     .fill(Color.secondary.opacity(0.3))
                     .frame(width: 1, height: 20)
                 
-                // Quantity with unit - tappable if onTapQuantity is provided
+                // Quantity with unit - improved visual separation
                 Button(action: {
                     onTapQuantity?()
                 }) {
-                    Text(ingredient.formattedWithUnit(for: scaleFactor, system: measurementSystem))
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                        .foregroundColor(.secondary)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 5)
-                        .background(
-                            RoundedRectangle(cornerRadius: 6)
-                                .fill(Color.secondary.opacity(onTapQuantity != nil ? 0.15 : 0.1))
-                        )
+                    HStack(spacing: 4) {
+                        // Quantity - bold and prominent
+                        Text(formatQuantity(ingredient.scaledQuantity(for: scaleFactor)))
+                            .font(.subheadline)
+                            .fontWeight(.bold)
+                            .foregroundColor(.primary)
+                        
+                        // Unit - lighter weight
+                        if !ingredient.unit.isEmpty {
+                            Text(formatUnit(ingredient.unit, system: measurementSystem))
+                                .font(.caption)
+                                .fontWeight(.regular)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(Color.secondary.opacity(onTapQuantity != nil ? 0.15 : 0.1))
+                    )
                 }
                 .buttonStyle(PlainButtonStyle())
                 .disabled(onTapQuantity == nil)
@@ -71,5 +92,47 @@ struct IngredientRowView: View {
             })
         }
         .padding(.vertical, 10)
+    }
+    
+    // MARK: - Helper Functions
+    
+    /// Format quantity with smart rounding
+    /// - Small values (< 5): show 1 decimal place (2.1, 3.5)
+    /// - Medium values (5-100): show whole numbers (44, 75)
+    /// - Large values (> 100): show whole numbers (250, 1000)
+    private func formatQuantity(_ quantity: Double) -> String {
+        // Handle fractions nicely
+        if quantity < 1 {
+            // Check common fractions
+            if abs(quantity - 0.25) < 0.01 { return "¼" }
+            if abs(quantity - 0.33) < 0.02 { return "⅓" }
+            if abs(quantity - 0.5) < 0.01 { return "½" }
+            if abs(quantity - 0.66) < 0.02 { return "⅔" }
+            if abs(quantity - 0.75) < 0.01 { return "¾" }
+        }
+        
+        // For small quantities, show 1 decimal if meaningful
+        if quantity < 5 {
+            if quantity.truncatingRemainder(dividingBy: 1) < 0.1 {
+                return String(format: "%.0f", quantity)
+            }
+            return String(format: "%.1f", quantity)
+        }
+        
+        // For larger quantities, round to whole numbers
+        return String(format: "%.0f", quantity)
+    }
+    
+    /// Format unit with proper conversion and abbreviation
+    private func formatUnit(_ unit: String, system: MeasurementSystem) -> String {
+        // Convert if needed
+        let converted = UnitConversion.convert(
+            value: ingredient.scaledQuantity(for: scaleFactor),
+            unit: unit,
+            to: system,
+            ingredientName: ingredient.name
+        )
+        
+        return converted.unit
     }
 }
