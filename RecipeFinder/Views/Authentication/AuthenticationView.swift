@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import AuthenticationServices
 
 struct AuthenticationView: View {
     @StateObject private var authManager = AuthenticationManager.shared
+    @StateObject private var appleSignInManager = AppleSignInManager.shared
     @State private var showSignUp = false
     @State private var showSignIn = false
     @State private var showOnboarding = false
@@ -56,41 +58,6 @@ struct AuthenticationView: View {
                 
                 // Authentication Options
                 VStack(spacing: 16) {
-                    // Apple Sign In Button - Under Construction
-                    VStack(spacing: 8) {
-                        Button(action: {
-                            // Disabled during testing
-                            HapticManager.shared.light()
-                        }) {
-                            HStack(spacing: 8) {
-                                Image(systemName: "applelogo")
-                                    .font(.system(size: 20))
-                                Text("Sign In with Apple")
-                                    .fontWeight(.semibold)
-                            }
-                            .foregroundColor(.white.opacity(0.6))
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 50)
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color.black.opacity(colorScheme == .dark ? 0.2 : 0.5))
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.orange.opacity(0.5), lineWidth: 1)
-                            )
-                        }
-                        .disabled(true)
-                        
-                        HStack(spacing: 4) {
-                            Image(systemName: "wrench.and.screwdriver.fill")
-                                .font(.system(size: 12))
-                            Text("Under Construction • Coming Soon")
-                                .font(.system(size: 12, weight: .medium))
-                        }
-                        .foregroundColor(.orange.opacity(0.9))
-                    }
-                    
                     // Biometric Sign In (preferred if available and enabled)
                     if authManager.biometricsAvailable && biometricsEnabled {
                         Button(action: {
