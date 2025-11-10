@@ -8,9 +8,10 @@ struct IngredientRowView: View {
     var measurementSystem: MeasurementSystem = .metric
     var onAddToShopping: (() -> Void)?
     var isInShoppingList: Bool = false
+    var onTapQuantity: (() -> Void)?
     
     var body: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: 12) {
             // Optional basket button for adding to shopping list
             if let addToShopping = onAddToShopping {
                 Button(action: {
@@ -27,7 +28,7 @@ struct IngredientRowView: View {
                 .buttonStyle(PlainButtonStyle())
             }
             
-            HStack(spacing: 12) {
+            HStack(spacing: 16) {
                 // Ingredient name
                 Text(ingredient.name)
                     .font(.body)
@@ -41,17 +42,23 @@ struct IngredientRowView: View {
                     .fill(Color.secondary.opacity(0.3))
                     .frame(width: 1, height: 20)
                 
-                // Quantity with unit
-                Text(ingredient.formattedWithUnit(for: scaleFactor, system: measurementSystem))
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .foregroundColor(.secondary)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(
-                        RoundedRectangle(cornerRadius: 6)
-                            .fill(Color.secondary.opacity(0.1))
-                    )
+                // Quantity with unit - tappable if onTapQuantity is provided
+                Button(action: {
+                    onTapQuantity?()
+                }) {
+                    Text(ingredient.formattedWithUnit(for: scaleFactor, system: measurementSystem))
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .foregroundColor(.secondary)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(Color.secondary.opacity(onTapQuantity != nil ? 0.15 : 0.1))
+                        )
+                }
+                .buttonStyle(PlainButtonStyle())
+                .disabled(onTapQuantity == nil)
             }
             
             Spacer()
@@ -63,6 +70,6 @@ struct IngredientRowView: View {
                     .frame(width: 32, height: 32)
             })
         }
-        .padding(.vertical, 8)
+        .padding(.vertical, 10)
     }
 }

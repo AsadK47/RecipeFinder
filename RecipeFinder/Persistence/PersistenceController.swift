@@ -369,6 +369,48 @@ final class PersistenceController {
     
     // MARK: - Update Operations
     
+    func updateRecipe(_ recipe: RecipeModel) {
+        guard ensureStoreIsReady() else { return }
+        
+        let context = container.viewContext
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
+        fetchRequest.predicate = NSPredicate(format: "\(RecipeKey.id) == %@", recipe.id as CVarArg)
+        fetchRequest.fetchLimit = 1
+        
+        do {
+            guard let managedRecipe = try context.fetch(fetchRequest).first else {
+                debugLog("⚠️ Recipe with id \(recipe.id) not found")
+                return
+            }
+            
+            // Encode ingredients
+            guard let ingredientData = try? JSONEncoder().encode(recipe.ingredients) else {
+                debugLog("❌ Failed to encode ingredients for recipe: \(recipe.name)")
+                return
+            }
+            
+            // Update values
+            managedRecipe.setValue(recipe.name, forKey: RecipeKey.name)
+            managedRecipe.setValue(recipe.category, forKey: RecipeKey.category)
+            managedRecipe.setValue(recipe.difficulty, forKey: RecipeKey.difficulty)
+            managedRecipe.setValue(recipe.prepTime, forKey: RecipeKey.prepTime)
+            managedRecipe.setValue(recipe.cookingTime, forKey: RecipeKey.cookingTime)
+            managedRecipe.setValue(recipe.baseServings, forKey: RecipeKey.baseServings)
+            managedRecipe.setValue(recipe.currentServings, forKey: RecipeKey.currentServings)
+            managedRecipe.setValue(ingredientData, forKey: RecipeKey.ingredients)
+            managedRecipe.setValue(recipe.prePrepInstructions, forKey: RecipeKey.prePrepInstructions)
+            managedRecipe.setValue(recipe.instructions, forKey: RecipeKey.instructions)
+            managedRecipe.setValue(recipe.notes, forKey: RecipeKey.notes)
+            managedRecipe.setValue(recipe.imageName, forKey: RecipeKey.imageName)
+            managedRecipe.setValue(recipe.isFavorite, forKey: RecipeKey.isFavorite)
+            
+            try context.save()
+            debugLog("✅ Recipe '\(recipe.name)' updated successfully")
+        } catch {
+            debugLog("❌ Failed to update recipe: \(error.localizedDescription)")
+        }
+    }
+    
     func toggleFavorite(withId id: UUID) {
         guard ensureStoreIsReady() else { return }
         

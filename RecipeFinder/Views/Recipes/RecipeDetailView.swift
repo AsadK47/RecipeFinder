@@ -11,6 +11,9 @@ struct RecipeDetailView: View {
     @State private var showAddedFeedback: String?
     @State private var confettiCounter = 0
     @State private var showEditSheet = false
+    @State private var editingIngredientIndex: Int?
+    @State private var editingQuantity: String = ""
+    @State private var editingUnit: String = ""
     @AppStorage("measurementSystem") private var measurementSystem: MeasurementSystem = .metric
     @AppStorage("hasSeenServingEditWarning") private var hasSeenServingEditWarning: Bool = false
     @State private var showServingEditWarning = false
@@ -263,7 +266,7 @@ struct RecipeDetailView: View {
     
     private var ingredientsList: some View {
         GlassCard {
-            VStack(spacing: 12) {
+            VStack(spacing: 16) {
                 ForEach(recipe.ingredients.indices, id: \.self) { index in
                     IngredientRowView(
                         ingredient: recipe.ingredients[index],
@@ -277,13 +280,27 @@ struct RecipeDetailView: View {
                         onAddToShopping: {
                             addIngredientToShoppingList(recipe.ingredients[index])
                         },
-                        isInShoppingList: isIngredientInShoppingList(recipe.ingredients[index])
+                        isInShoppingList: isIngredientInShoppingList(recipe.ingredients[index]),
+                        onTapQuantity: {
+                            startEditingIngredient(at: index)
+                        }
                     )
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(20)
         }
+        .sheet(item: Binding(
+            get: { editingIngredientIndex.map { EditingIngredient(index: $0) } },
+            set: { editingIngredientIndex = $0?.index }
+        )) { editingItem in
+            ingredientEditSheet(for: editingItem.index)
+        }
+    }
+    
+    private struct EditingIngredient: Identifiable {
+        let id = UUID()
+        let index: Int
     }
     
     private var prePrepSection: some View {
@@ -548,10 +565,8 @@ struct RecipeDetailView: View {
         // Normalize ingredient name to USDA standard (e.g., "beef slices" -> "Beef Steak")
         let normalizedName = IngredientNormalizer.normalize(ingredient.name)
         
-        // Create item with normalized name and measurements
-        let formattedWithUnit = ingredient.formattedWithUnit(for: recipe.scaleFactor, system: measurementSystem)
-        let fullName = "\(normalizedName) (\(formattedWithUnit))"
-        ShoppingListManager.shared.addItem(name: fullName, quantity: 1, category: nil)
+        // Add only the ingredient name (no measurements)
+        ShoppingListManager.shared.addItem(name: normalizedName, quantity: 1, category: nil)
         
         // Mark as added immediately for UI update
         addedIngredients.insert(ingredient.name)
@@ -581,6 +596,88 @@ struct RecipeDetailView: View {
         }
         // Don't check actual shopping list - let user add multiple times if needed
         return false
+    }
+    
+    // MARK: - Ingredient Editing
+    
+    private func startEditingIngredient(at index: Int) {
+        HapticManager.shared.light()
+        let ingredient = recipe.ingredients[index]
+        editingQuantity = String(format: "%.2f", ingredient.baseQuantity)
+        editingUnit = ingredient.unit
+        editingIngredientIndex = index
+    }
+    
+    private func saveIngredientEdit(at index: Int) {
+        guard let quantity = Double(editingQuantity), quantity > 0 else {
+            // Invalid input - just close
+            editingIngredientIndex = nil
+            return
+        }
+        
+        // Create updated ingredient
+        var updatedIngredient = recipe.ingredients[index]
+        // Since baseQuantity is let, we need to create a new Ingredient
+        let newIngredient = Ingredient(
+            id: updatedIngredient.id,
+            baseQuantity: quantity,
+            unit: editingUnit,
+            name: updatedIngredient.name
+        )
+        
+        // Update recipe
+        recipe.ingredients[index] = newIngredient
+        
+        // Update in Core Data
+        PersistenceController.shared.updateRecipe(recipe)
+        
+        // Close sheet
+        editingIngredientIndex = nil
+        HapticManager.shared.success()
+    }
+    
+    private func ingredientEditSheet(for index: Int) -> some View {
+        NavigationStack {
+            Form {
+                Section("Edit Quantity") {
+                    HStack {
+                        Text("Amount")
+                        Spacer()
+                        TextField("Quantity", text: $editingQuantity)
+                            .keyboardType(.decimalPad)
+                            .multilineTextAlignment(.trailing)
+                            .frame(width: 100)
+                    }
+                    
+                    HStack {
+                        Text("Unit")
+                        Spacer()
+                        TextField("ml, g, cups, etc.", text: $editingUnit)
+                            .multilineTextAlignment(.trailing)
+                            .frame(maxWidth: 150)
+                    }
+                }
+                
+                Section {
+                    Text("Ingredient: \(recipe.ingredients[index].name)")
+                        .foregroundColor(.secondary)
+                }
+            }
+            .navigationTitle("Edit Ingredient")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        editingIngredientIndex = nil
+                    }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") {
+                        saveIngredientEdit(at: index)
+                    }
+                }
+            }
+        }
     }
     
     // MARK: - Favorites
