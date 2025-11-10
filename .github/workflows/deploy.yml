@@ -46,14 +46,6 @@ jobs:
         fi
         echo "✓ CNAME domain correct: $DOMAIN"
     
-    - name: Check for placeholder Google Analytics ID
-      run: |
-        if grep -q "G-XXXXXXXXXX" website/index.html; then
-          echo "⚠️  Warning: Replace Google Analytics placeholder ID"
-        else
-          echo "✓ Google Analytics ID updated"
-        fi
-    
     - name: Lint HTML (optional)
       continue-on-error: true
       run: |
@@ -80,7 +72,6 @@ jobs:
         echo "   1. GitHub Pages is enabled in repo settings"
         echo "   2. DNS is configured correctly"
         echo "   3. Assets are generated and uploaded"
-        echo "   4. Google Analytics ID is updated"
 
   # Optional: Deploy to GitHub Pages
   # Uncomment if you want GitHub Actions to handle deployment

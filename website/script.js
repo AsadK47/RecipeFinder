@@ -39,7 +39,13 @@ function initThemeToggle() {
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
         
         root.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
+        
+        // Only save to localStorage if cookies accepted
+        const cookieConsent = localStorage.getItem('cookieConsent');
+        if (cookieConsent === 'accepted') {
+            localStorage.setItem('theme', newTheme);
+        }
+        
         updateThemeIcon(newTheme, themeIcon);
         
         // Add a subtle animation
@@ -309,11 +315,12 @@ function switchTheme(themeName) {
 function initCookieConsent() {
     const cookieBanner = document.getElementById('cookieConsent');
     const acceptButton = document.getElementById('acceptCookies');
+    const rejectButton = document.getElementById('rejectCookies');
     
-    // Check if user has already accepted cookies
-    const cookiesAccepted = localStorage.getItem('cookiesAccepted');
+    // Check if user has made a choice
+    const cookieChoice = localStorage.getItem('cookieConsent');
     
-    if (!cookiesAccepted) {
+    if (!cookieChoice) {
         // Show banner after 2 seconds
         setTimeout(() => {
             cookieBanner.classList.remove('hidden');
@@ -321,13 +328,28 @@ function initCookieConsent() {
     }
     
     acceptButton.addEventListener('click', () => {
-        localStorage.setItem('cookiesAccepted', 'true');
+        localStorage.setItem('cookieConsent', 'accepted');
         cookieBanner.classList.add('hidden');
         
         // Initialize analytics after consent
         if (typeof gtag !== 'undefined') {
             gtag('consent', 'update', {
                 'analytics_storage': 'granted'
+            });
+        }
+    });
+    
+    rejectButton.addEventListener('click', () => {
+        localStorage.setItem('cookieConsent', 'rejected');
+        cookieBanner.classList.add('hidden');
+        
+        // Clear any existing theme preference
+        localStorage.removeItem('theme');
+        
+        // Deny analytics
+        if (typeof gtag !== 'undefined') {
+            gtag('consent', 'update', {
+                'analytics_storage': 'denied'
             });
         }
     });
