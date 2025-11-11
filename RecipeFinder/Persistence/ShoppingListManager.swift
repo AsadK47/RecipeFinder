@@ -1,22 +1,34 @@
 import Foundation
+import Combine
 
 final class ShoppingListManager: ObservableObject {
     nonisolated(unsafe) static let shared = ShoppingListManager()
     
     private let saveKey = Constants.UserDefaultsKeys.shoppingListItems
     
-    private init() {}
+    // PERFORMANCE: Cache items in memory and only read from UserDefaults once
+    @Published private(set) var items: [ShoppingListModel] = []
     
-    func getItems() -> [ShoppingListModel] {
-        if let data = UserDefaults.standard.data(forKey: saveKey),
-           let decoded = try? JSONDecoder().decode([ShoppingListModel].self, from: data) {
-            return decoded
-        }
-        return []
+    private init() {
+        loadItems()
     }
     
-    private func saveItems(_ items: [ShoppingListModel]) {
-        if let encoded = try? JSONEncoder().encode(items) {
+    private func loadItems() {
+        if let data = UserDefaults.standard.data(forKey: saveKey),
+           let decoded = try? JSONDecoder().decode([ShoppingListModel].self, from: data) {
+            items = decoded
+        } else {
+            items = []
+        }
+    }
+    
+    func getItems() -> [ShoppingListModel] {
+        return items
+    }
+    
+    private func saveItems(_ newItems: [ShoppingListModel]) {
+        items = newItems
+        if let encoded = try? JSONEncoder().encode(newItems) {
             UserDefaults.standard.set(encoded, forKey: saveKey)
         }
     }

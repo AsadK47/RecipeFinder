@@ -2,6 +2,7 @@ import SwiftUI
 
 struct KitchenView: View {
     @Binding var recipes: [RecipeModel]
+    @StateObject private var manager = KitchenInventoryManager.shared
     @State private var searchText = ""
     @State private var showAddIngredientSheet = false
     @State private var showQuickAdd = false
@@ -45,10 +46,9 @@ struct KitchenView: View {
     }
     
     var quickMatchRecipes: [RecipeModel] {
-        let items = KitchenInventoryManager.shared.getItems()
-        guard !items.isEmpty else { return [] }
+        guard !manager.items.isEmpty else { return [] }
         
-        let kitchenIngredients = Set(items.map { $0.name.lowercased() })
+        let kitchenIngredients = Set(manager.items.map { $0.name.lowercased() })
         
         return recipes.filter { recipe in
             let recipeIngredients = recipe.ingredients.map { $0.name.lowercased() }
@@ -87,7 +87,7 @@ struct KitchenView: View {
                             if let category = selectedCategory {
                                 // Show ingredients from selected category
                                 categoryIngredientsView(for: category)
-                            } else if KitchenInventoryManager.shared.getItems().isEmpty && searchText.isEmpty {
+                            } else if manager.items.isEmpty && searchText.isEmpty {
                                 emptyPromptView
                             } else if !searchText.isEmpty {
                                 searchResultsView
@@ -158,7 +158,7 @@ struct KitchenView: View {
                             Label("Search Ingredients", systemImage: "magnifyingglass")
                         }
                         
-                        if !KitchenInventoryManager.shared.getItems().isEmpty {
+                        if !manager.items.isEmpty {
                             Divider()
                             
                             Button(role: .destructive, action: {
@@ -491,7 +491,7 @@ struct KitchenView: View {
                         .fontWeight(.bold)
                         .foregroundColor(colorScheme == .dark ? .white : .black)
                     
-                    Text("\(KitchenInventoryManager.shared.getItems().count) ingredients")
+                    Text("\(manager.items.count) ingredients")
                         .font(.caption)
                         .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
                 }
@@ -662,7 +662,7 @@ struct KitchenView: View {
                                 recipe: recipe,
                                 matchCount: matchCount(
                                     recipe: recipe,
-                                    kitchenIngredients: Set(KitchenInventoryManager.shared.getItems().map { $0.name.lowercased() })
+                                    kitchenIngredients: Set(manager.items.map { $0.name.lowercased() })
                                 ),
                                 totalIngredients: recipe.ingredients.count
                             )

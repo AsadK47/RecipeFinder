@@ -58,6 +58,8 @@ struct ShoppingQuickAddSheet: View {
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
+    @StateObject private var shoppingManager = ShoppingListManager.shared
+    @StateObject private var kitchenManager = KitchenInventoryManager.shared
     
     var body: some View {
         ZStack {
@@ -107,10 +109,10 @@ struct ShoppingQuickAddSheet: View {
     
     private func quickAddButton(_ item: String) -> some View {
         let ingredient = item.split(separator: " ").dropFirst().joined(separator: " ")
-        let isInList = ShoppingListManager.shared.getItems().contains { $0.name.lowercased() == ingredient.lowercased() }
+        let isInList = shoppingManager.items.contains { $0.name.lowercased() == ingredient.lowercased() }
         
         return Button(action: {
-            ShoppingListManager.shared.addItem(name: String(ingredient))
+            shoppingManager.addItem(name: String(ingredient))
             HapticManager.shared.success()
         }) {
             HStack(spacing: 8) {
@@ -147,6 +149,7 @@ struct KitchenQuickAddSheet: View {
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
+    @StateObject private var kitchenManager = KitchenInventoryManager.shared
     
     var body: some View {
         ZStack {
@@ -196,10 +199,10 @@ struct KitchenQuickAddSheet: View {
     
     private func quickAddButton(_ item: String) -> some View {
         let ingredient = item.split(separator: " ").dropFirst().joined(separator: " ")
-        let isInKitchen = KitchenInventoryManager.shared.getItems().contains { $0.name.lowercased() == ingredient.lowercased() }
+        let isInKitchen = kitchenManager.items.contains { $0.name.lowercased() == ingredient.lowercased() }
         
         return Button(action: {
-            KitchenInventoryManager.shared.toggleItem(String(ingredient))
+            kitchenManager.toggleItem(String(ingredient))
             HapticManager.shared.success()
         }) {
             HStack(spacing: 8) {

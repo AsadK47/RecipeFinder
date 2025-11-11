@@ -2,6 +2,7 @@ import ConfettiSwiftUI
 import SwiftUI
 
 struct ShoppingListView: View {
+    @StateObject private var manager = ShoppingListManager.shared
     @State private var searchText: String = ""
     @State private var showClearConfirmation = false
     @State private var showQuickAdd = false
@@ -12,8 +13,17 @@ struct ShoppingListView: View {
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
+    // PERFORMANCE: Cache computed values
     private var sortedGroupedItems: [(key: String, value: [ShoppingListModel])] {
-        ShoppingListManager.shared.groupedItems().map { (key: $0.category, value: $0.items) }
+        Dictionary(grouping: manager.items, by: { $0.category })
+            .map { (key: $0.key, value: $0.value.sorted { !$0.isChecked && $1.isChecked }) }
+            .sorted { first, second in
+                guard let firstIndex = CategoryClassifier.categoryOrder.firstIndex(of: first.key),
+                      let secondIndex = CategoryClassifier.categoryOrder.firstIndex(of: second.key) else {
+                    return first.key < second.key
+                }
+                return firstIndex < secondIndex
+            }
     }
     
     private var searchResults: [String] {
@@ -25,6 +35,14 @@ struct ShoppingListView: View {
         !searchText.isEmpty && isSearchFocused && !searchResults.isEmpty
     }
     
+    private var checkedCount: Int {
+        manager.items.filter { $0.isChecked }.count
+    }
+    
+    private var totalCount: Int {
+        manager.items.count
+    }
+    
     private func shareShoppingList() {
         var text = "🛒 Shopping List\n\n"
         
@@ -32,7 +50,8 @@ struct ShoppingListView: View {
             text += "\(group.key)\n"
             for item in group.value {
                 let checkbox = item.isChecked ? "✓" : "○"
-                text += "\(checkbox) \(item.name)\n"
+                let qty = item.quantity > 1 ? "(\(item.quantity)) " : ""
+                text += "\(checkbox) \(qty)\(item.name)\n"
             }
             text += "\n"
         }
@@ -100,7 +119,7 @@ struct ShoppingListView: View {
                                         Label("Share List", systemImage: "square.and.arrow.up")
                                     }
                                     
-                                    if !ShoppingListManager.shared.getItems().isEmpty {
+                                    if !manager.items.isEmpty {
                                         Divider()
                                         
                                 Button(
@@ -204,14 +223,14 @@ struct ShoppingListView: View {
                         .animation(.spring(response: 0.3), value: isSearchFocused)
                         
                         // Progress bar below search
-                        if !ShoppingListManager.shared.getItems().isEmpty {
+                        if !manager.items.isEmpty {
                             VStack(spacing: 6) {
-                                ProgressView(value: Double(ShoppingListManager.shared.checkedCount()), total: Double(ShoppingListManager.shared.getItems().count))
+                                ProgressView(value: Double(checkedCount), total: Double(totalCount))
                                     .progressViewStyle(LinearProgressViewStyle(tint: AppTheme.accentColor))
                                     .frame(height: 8)
                                 
                                 HStack {
-                                    Text("\(ShoppingListManager.shared.checkedCount())/\(ShoppingListManager.shared.getItems().count) completed")
+                                    Text("\(checkedCount)/\(totalCount) completed")
                                         .font(.caption)
                                         .foregroundColor(.white.opacity(0.8))
                                     Spacer()
@@ -225,8 +244,8 @@ struct ShoppingListView: View {
                     if showingSearchResults {
                         searchResultsView
                     } else {
-                        if ShoppingListManager.shared.getItems().isEmpty {
-                            emptyPromptView
+                        if manager.items.isEmpty {
+                            emptyStateView
                         } else {
                             shoppingListContent
                         }
@@ -251,21 +270,21 @@ struct ShoppingListView: View {
                 num: 50,
                 radius: 500.0
             )
-            .onChange(of: ShoppingListManager.shared.checkedCount()) { _, newValue in
-                // Trigger confetti when all items are checked (but only if there are items)
-                if !ShoppingListManager.shared.getItems().isEmpty && newValue == ShoppingListManager.shared.getItems().count {
+            .onChange(of: checkedCount) { _, newValue in
+                // Trigger confetti when all items are checked
+                if !manager.items.isEmpty && newValue == totalCount {
                     HapticManager.shared.success()
                     confettiTrigger += 1
                 }
             }
             .confirmationDialog("Clear Items", isPresented: $showClearConfirmation) {
-                if ShoppingListManager.shared.checkedCount() > 0 {
-                    Button("Clear Checked Items (\(ShoppingListManager.shared.checkedCount()))", role: .destructive) {
-                        ShoppingListManager.shared.clearCheckedItems()
+                if checkedCount > 0 {
+                    Button("Clear Checked Items (\(checkedCount))", role: .destructive) {
+                        manager.clearCheckedItems()
                     }
                 }
-                Button("Clear All Items (\(ShoppingListManager.shared.getItems().count))", role: .destructive) {
-                    ShoppingListManager.shared.clearAllItems()
+                Button("Clear All Items (\(totalCount))", role: .destructive) {
+                    manager.clearAllItems()
                 }
                 Button("Cancel", role: .cancel) {}
             } message: {
@@ -308,8 +327,8 @@ struct ShoppingListView: View {
     
 
     
-    // MARK: - Empty Prompt (without Quick Add)
-    private var emptyPromptView: some View {
+    // MARK: - Empty State
+    private var emptyStateView: some View {
         ScrollView {
             VStack(spacing: 16) {
                 VStack(spacing: 12) {
@@ -334,35 +353,6 @@ struct ShoppingListView: View {
                 // Reusable features card
                 shoppingFeaturesCard
                     .padding(.horizontal, 16)
-            }
-            .padding(.bottom, 40)
-        }
-    }
-    
-    private var emptyStateView: some View {
-        ScrollView {
-            VStack(spacing: 16) {
-                VStack(spacing: 12) {
-                    Image(systemName: "cart.circle.fill")
-                        .font(.system(size: 80))
-                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.4))
-                        .padding(.top, 12)
-                    
-                    Text("Start Your Shopping List")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
-                    
-                    Text("Add items using the search bar above or tap the + button on any recipe")
-                        .font(.subheadline)
-                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 32)
-                }
-                .padding(.bottom, 6)
-                
-                // Reusable features card
-                shoppingFeaturesCard
             }
             .padding(.bottom, 40)
         }
@@ -400,7 +390,6 @@ struct ShoppingListView: View {
                 categorySection(for: group.key, items: group.value)
             }
             
-            // Reuse the same features card component
             // Features card at bottom
             Section {
                 shoppingFeaturesCard
@@ -413,50 +402,38 @@ struct ShoppingListView: View {
         .scrollContentBackground(.hidden)
         .background(Color.clear)
         .environment(\.defaultMinListHeaderHeight, 0)
-        .animation(nil, value: ShoppingListManager.shared.getItems().count) // Disable automatic list animations
     }
     
     @ViewBuilder
     private func categorySection(for category: String, items: [ShoppingListModel]) -> some View {
         Section {
             if !collapsedCategories.contains(category) {
-                categoryItems(for: items)
+                // PERFORMANCE: Use items directly instead of searching
+                ForEach(items) { item in
+                    ShoppingListItemRow(
+                        item: item,
+                        onToggle: { 
+                            manager.toggleItem(at: manager.items.firstIndex(where: { $0.id == item.id })!)
+                        },
+                        onQuantityChange: { newQuantity in
+                            manager.updateQuantity(at: manager.items.firstIndex(where: { $0.id == item.id })!, quantity: newQuantity)
+                        },
+                        onDelete: { 
+                            manager.deleteItem(at: manager.items.firstIndex(where: { $0.id == item.id })!)
+                        },
+                        onCategoryChange: { newCategory in
+                            manager.updateCategory(at: manager.items.firstIndex(where: { $0.id == item.id })!, category: newCategory)
+                        },
+                        allCategories: CategoryClassifier.categoryOrder
+                    )
+                    .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
+                }
             }
         } header: {
             categorySectionHeader(category: category, items: items)
         }
-    }
-    
-    @ViewBuilder
-    private func categoryItems(for items: [ShoppingListModel]) -> some View {
-        ForEach(items) { item in
-            if let index = ShoppingListManager.shared.getItems().firstIndex(where: { $0.id == item.id }) {
-                itemRow(for: item, at: index)
-            }
-        }
-    }
-    
-    @ViewBuilder
-    private func itemRow(for item: ShoppingListModel, at index: Int) -> some View {
-        ShoppingListItemRow(
-            item: item,
-            onToggle: { 
-                ShoppingListManager.shared.toggleItem(at: index)
-            },
-            onQuantityChange: { newQuantity in
-                ShoppingListManager.shared.updateQuantity(at: index, quantity: newQuantity)
-            },
-            onDelete: { 
-                ShoppingListManager.shared.deleteItem(at: index)
-            },
-            onCategoryChange: { newCategory in
-                ShoppingListManager.shared.updateCategory(at: index, category: newCategory)
-            },
-            allCategories: CategoryClassifier.categoryOrder
-        )
-        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
-        .listRowSeparator(.hidden)
-        .listRowBackground(Color.clear)
     }
     
     @ViewBuilder
@@ -520,27 +497,27 @@ struct ShoppingListView: View {
             return
         }
         print("🔍 ShoppingListView: Adding item '\(searchText)'")
-        ShoppingListManager.shared.addItem(name: searchText)
+        manager.addItem(name: searchText)
         searchText = ""
         isSearchFocused = false
         HapticManager.shared.success()
-        print("📊 ShoppingListView: Manager now has \(ShoppingListManager.shared.getItems().count) items")
+        print("📊 ShoppingListView: Manager now has \(manager.items.count) items")
     }
     
     private func addItemFromSearch(_ ingredient: String) {
         print("🔍 ShoppingListView: Adding item from search '\(ingredient)'")
-        ShoppingListManager.shared.addItem(name: ingredient)
+        manager.addItem(name: ingredient)
         // Reset state to allow continuous adding
         searchText = ""
         // Keep focus so user can continue typing
         isSearchFocused = true
         HapticManager.shared.success()
-        print("📊 ShoppingListView: Manager now has \(ShoppingListManager.shared.getItems().count) items")
+        print("📊 ShoppingListView: Manager now has \(manager.items.count) items")
     }
     
     private func ingredientButton(_ ingredient: String) -> some View {
         let category = CategoryClassifier.suggestCategory(for: ingredient)
-        let isInList = ShoppingListManager.shared.getItems().contains { $0.name.lowercased() == ingredient.lowercased() }
+        let isInList = manager.items.contains { $0.name.lowercased() == ingredient.lowercased() }
         
         return Button(
             action: {

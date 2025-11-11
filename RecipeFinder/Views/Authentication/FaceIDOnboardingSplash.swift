@@ -23,9 +23,10 @@ struct FaceIDOnboardingSplash: View {
     
     // Pre-computed particle data for performance
     private let particleData: [(icon: String, size: CGFloat, x: CGFloat, y: CGFloat)] = {
-        (0..<20).map { _ in
+        let icons = ["lock.fill", "key.fill", "shield.fill", "faceid", "touchid"]
+        return (0..<20).map { _ in
             (
-                icon: ["lock.fill", "key.fill", "shield.fill", "faceid", "touchid"].randomElement()!,
+                icon: icons.randomElement() ?? "lock.fill",
                 size: CGFloat.random(in: 8...20),
                 x: CGFloat.random(in: 50...350),
                 y: CGFloat.random(in: 100...700)
