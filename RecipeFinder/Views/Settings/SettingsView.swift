@@ -1109,7 +1109,6 @@ struct TimerSettingsView: View {
 
 struct UnitsSettingsView: View {
     @AppStorage("measurementSystem") private var measurementSystem: MeasurementSystem = .metric
-    @AppStorage("temperatureUnit") private var temperatureUnit: TemperatureUnit = .celsius
     
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
@@ -1156,48 +1155,6 @@ struct UnitsSettingsView: View {
                                     }
                                     .padding(16)
                                     .background(measurementSystem == system ? Color.gray.opacity(0.2) : Color.clear)
-                                    .cornerRadius(12)
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                            }
-                        }
-                        .padding(20)
-                    }
-                    
-                    SettingsCard {
-                        VStack(alignment: .leading, spacing: 20) {
-                            Text("Temperature Unit")
-                                .font(.headline)
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
-                            
-                            ForEach(TemperatureUnit.allCases, id: \.self) { unit in
-                                Button(action: {
-                                    temperatureUnit = unit
-                                    HapticManager.shared.selection()
-                                }) {
-                                    HStack(spacing: 16) {
-                                        Image(systemName: "thermometer")
-                                            .font(.title3)
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
-                                            .frame(width: 30)
-                                        
-                                        VStack(alignment: .leading, spacing: 4) {
-                                            Text(unit.rawValue)
-                                                .foregroundColor(colorScheme == .dark ? .white : .black)
-                                            Text(unit == .celsius ? "°C" : "°F")
-                                                .font(.caption)
-                                                .foregroundColor(.secondary)
-                                        }
-                                        
-                                        Spacer()
-                                        
-                                        if temperatureUnit == unit {
-                                            Image(systemName: "checkmark.circle.fill")
-                                                .foregroundColor(colorScheme == .dark ? .white : .black)
-                                        }
-                                    }
-                                    .padding(16)
-                                    .background(temperatureUnit == unit ? Color.gray.opacity(0.2) : Color.clear)
                                     .cornerRadius(12)
                                 }
                                 .buttonStyle(PlainButtonStyle())
@@ -1301,11 +1258,6 @@ struct DisplaySettingsView: View {
 }
 
 // MeasurementSystem enum is defined in UnitConversion.swift
-
-enum TemperatureUnit: String, CaseIterable {
-    case celsius = "Celsius"
-    case fahrenheit = "Fahrenheit"
-}
 
 struct PrivacySettingsView: View {
     @Environment(\.colorScheme) var colorScheme
