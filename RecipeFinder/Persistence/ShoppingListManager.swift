@@ -49,10 +49,20 @@ final class ShoppingListManager: ObservableObject {
             return
         }
         
+        // Prevent unreasonably large quantities
+        guard quantity <= 999 else {
+            print("❌ ShoppingListManager: Quantity too large for '\(trimmedName)'")
+            debugLog("⚠️ Quantity for item '\(trimmedName)' exceeds maximum (999).")
+            HapticManager.shared.error()
+            return
+        }
+        
         // Check for duplicates - if exists, just increase quantity
         if let existingIndex = items.firstIndex(where: { $0.name.lowercased() == trimmedName.lowercased() }) {
             print("✅ ShoppingListManager: Updating existing item '\(trimmedName)'")
-            items[existingIndex].quantity += quantity
+            // Ensure combined quantity doesn't exceed limit
+            let newQuantity = items[existingIndex].quantity + quantity
+            items[existingIndex].quantity = min(newQuantity, 999)
             saveItems(items)
             HapticManager.shared.light()
             return
@@ -101,7 +111,10 @@ final class ShoppingListManager: ObservableObject {
     func updateQuantity(at index: Int, quantity: Int) {
         var items = getItems()
         guard index < items.count else { return }
-        guard quantity > 0 else { return }
+        guard quantity > 0, quantity <= 999 else { 
+            HapticManager.shared.error()
+            return 
+        }
         items[index].quantity = quantity
         HapticManager.shared.light()
         saveItems(items)

@@ -36,7 +36,14 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
     // MARK: - Main Import Function with RecipeParser
     
     /// Import recipe from URL using intelligent RecipeParser
-    func importRecipe(from url: URL) async {
+    func importRecipe(from url: URL, redirectCount: Int = 0) async {
+        // Prevent infinite redirect loops
+        guard redirectCount < 5 else {
+            isLoading = false
+            errorMessage = "Too many redirects. Please try a different URL."
+            return
+        }
+        
         isLoading = true
         errorMessage = nil
         extractedData = nil
@@ -71,8 +78,8 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             if httpResponse.statusCode == 301 || httpResponse.statusCode == 302 {
                 if let location = httpResponse.value(forHTTPHeaderField: "Location"),
                    let redirectURL = URL(string: location, relativeTo: url) {
-                    debugLog("↪️ Following redirect to: \(redirectURL.absoluteString)")
-                    await importRecipe(from: redirectURL)
+                    debugLog("↪️ Following redirect \(redirectCount + 1)/5 to: \(redirectURL.absoluteString)")
+                    await importRecipe(from: redirectURL, redirectCount: redirectCount + 1)
                     return
                 }
             }

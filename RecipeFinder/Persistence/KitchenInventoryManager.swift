@@ -51,6 +51,24 @@ final class KitchenInventoryManager: ObservableObject {
 		// Don't add duplicates by name
 		guard !inventoryItems.contains(where: { $0.name.lowercased() == item.name.lowercased() }) else {
 			HapticManager.shared.warning()
+			debugLog("⚠️ Duplicate item '\(item.name)' not added")
+			return
+		}
+		
+		// Validate expiry date is not in the past (allow same-day)
+		if let expiryDate = item.expiryDate {
+			let calendar = Calendar.current
+			if calendar.startOfDay(for: expiryDate) < calendar.startOfDay(for: Date()) {
+				debugLog("⚠️ Cannot add item '\(item.name)' with past expiry date")
+				HapticManager.shared.error()
+				return
+			}
+		}
+		
+		// Validate quantity is positive
+		guard item.quantity > 0 else {
+			debugLog("⚠️ Cannot add item '\(item.name)' with zero or negative quantity")
+			HapticManager.shared.error()
 			return
 		}
 		
@@ -58,14 +76,33 @@ final class KitchenInventoryManager: ObservableObject {
 		updatedItems.append(item)
 		HapticManager.shared.medium()
 		saveInventoryItems(updatedItems)
+		debugLog("✅ Added inventory item: '\(item.name)'")
 	}
 	
 	func updateInventoryItem(_ item: KitchenInventoryModel) {
+		// Validate expiry date is not in the past
+		if let expiryDate = item.expiryDate {
+			let calendar = Calendar.current
+			if calendar.startOfDay(for: expiryDate) < calendar.startOfDay(for: Date()) {
+				debugLog("⚠️ Cannot update item '\(item.name)' with past expiry date")
+				HapticManager.shared.error()
+				return
+			}
+		}
+		
+		// Validate quantity is positive
+		guard item.quantity > 0 else {
+			debugLog("⚠️ Cannot update item '\(item.name)' with zero or negative quantity")
+			HapticManager.shared.error()
+			return
+		}
+		
 		var updatedItems = inventoryItems
 		if let index = updatedItems.firstIndex(where: { $0.id == item.id }) {
 			updatedItems[index] = item
 			HapticManager.shared.light()
 			saveInventoryItems(updatedItems)
+			debugLog("✅ Updated inventory item: '\(item.name)'")
 		}
 	}
 	
