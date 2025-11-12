@@ -619,7 +619,7 @@ struct RecipeDetailView: View {
         }
         
         // Create updated ingredient
-        var updatedIngredient = recipe.ingredients[index]
+        let updatedIngredient = recipe.ingredients[index]
         // Since baseQuantity is let, we need to create a new Ingredient
         let newIngredient = Ingredient(
             id: updatedIngredient.id,

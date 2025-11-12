@@ -168,12 +168,23 @@ struct OnboardingSlideView: View {
     @State private var isAnimating = false
     @State private var contentScale: CGFloat = 0.8
     @State private var contentOpacity: Double = 0
+    @State private var scrollOffset: CGFloat = 0
+    @State private var showScrollIndicator = true
     
     var body: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(spacing: 0) {
-                // Main Icon with Enhanced Animation
-                ZStack {
+        ZStack(alignment: .bottom) {
+            ScrollView(showsIndicators: false) {
+                GeometryReader { scrollGeometry in
+                    Color.clear.preference(
+                        key: ScrollOffsetPreferenceKey.self,
+                        value: scrollGeometry.frame(in: .named("scroll")).minY
+                    )
+                }
+                .frame(height: 0)
+                
+                VStack(spacing: 0) {
+                    // Main Icon with Enhanced Animation
+                    ZStack {
                     // Animated glow rings
                     ForEach(0..<3) { index in
                         Circle()
@@ -419,6 +430,38 @@ struct OnboardingSlideView: View {
             }
             .padding(.vertical, spacing.xl)
         }
+        .coordinateSpace(name: "scroll")
+        .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in
+            scrollOffset = value
+            // Hide scroll indicator when user starts scrolling
+            if scrollOffset < -10 && showScrollIndicator {
+                withAnimation(.easeOut(duration: 0.3)) {
+                    showScrollIndicator = false
+                }
+            }
+        }
+        
+        // Animated scroll indicator
+        if showScrollIndicator && !isLastSlide {
+            VStack(spacing: spacing.sm) {
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundColor(.white.opacity(0.8))
+                    .offset(y: isAnimating ? 8 : 0)
+                    .animation(
+                        .easeInOut(duration: 1.0)
+                        .repeatForever(autoreverses: true),
+                        value: isAnimating
+                    )
+                
+                Text("Scroll to see more")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundColor(.white.opacity(0.7))
+            }
+            .padding(.bottom, spacing.xl + spacing.lg)
+            .transition(.opacity)
+        }
+    }
         .onAppear {
             withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
                 contentScale = 1.0
@@ -430,6 +473,16 @@ struct OnboardingSlideView: View {
                 isAnimating = true
             }
         }
+    }
+}
+
+// MARK: - Scroll Offset Preference Key
+
+struct ScrollOffsetPreferenceKey: PreferenceKey {
+    static let defaultValue: CGFloat = 0
+    
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
     }
 }
 

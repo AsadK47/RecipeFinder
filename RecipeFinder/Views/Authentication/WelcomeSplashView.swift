@@ -177,6 +177,7 @@ struct WelcomeSplashView: View {
             .font(.system(size: 40, weight: .bold, design: .rounded))
             .foregroundStyle(titleGradient)
             .multilineTextAlignment(.center)
+            .frame(maxWidth: .infinity)
             .opacity(contentOpacity)
             .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 5)
     }
@@ -194,6 +195,7 @@ struct WelcomeSplashView: View {
             .font(.system(size: 20, weight: .medium, design: .rounded))
             .foregroundColor(.white.opacity(0.9))
             .multilineTextAlignment(.center)
+            .frame(maxWidth: .infinity)
             .opacity(contentOpacity)
     }
     
