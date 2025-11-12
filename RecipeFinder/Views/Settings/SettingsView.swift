@@ -10,6 +10,7 @@ struct SettingsTabView: View {
     @State private var notificationsEnabled: Bool = false
     @State private var cookModeEnabled: Bool = true
     @StateObject private var accountManager = AccountManager.shared
+    @StateObject private var authManager = AuthenticationManager.shared
     @State private var profileImage: UIImage?
     @State private var refreshID = UUID()
     
@@ -70,8 +71,8 @@ struct SettingsTabView: View {
                                                 .font(.headline)
                                                 .foregroundColor(colorScheme == .dark ? .white : .black)
                                             
-                                            if !accountManager.email.isEmpty {
-                                                Text(accountManager.email)
+                                            if let email = authManager.currentUser?.email, !email.isEmpty {
+                                                Text(email)
                                                     .font(.subheadline)
                                                     .foregroundColor(.secondary)
                                             }

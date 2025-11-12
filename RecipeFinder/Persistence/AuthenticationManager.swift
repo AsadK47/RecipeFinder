@@ -274,21 +274,16 @@ final class AuthenticationManager: NSObject, ObservableObject, @unchecked Sendab
         
         // Sync user data to AccountManager if not already set
         let accountManager = AccountManager.shared
-        if accountManager.email.isEmpty || accountManager.email != email {
+        if accountManager.firstName.isEmpty {
             // Parse full name into components
             let fullName = user.fullName ?? ""
             let nameComponents = fullName.components(separatedBy: " ").filter { !$0.isEmpty }
             let firstName = nameComponents.first ?? ""
             let lastName = nameComponents.count > 1 ? nameComponents.last ?? "" : ""
-            let middleName = nameComponents.count > 2 ? nameComponents[1..<nameComponents.count-1].joined(separator: " ") : ""
             
             accountManager.updateProfile(
                 firstName: firstName,
-                middleName: middleName,
                 lastName: lastName,
-                email: email,
-                address: accountManager.address, // Keep existing address
-                dateOfBirth: accountManager.dateOfBirth, // Keep existing DOB
                 chefType: accountManager.chefType // Keep existing chef type
             )
         }
@@ -356,11 +351,7 @@ final class AuthenticationManager: NSObject, ObservableObject, @unchecked Sendab
         if let givenName = givenName {
             AccountManager.shared.updateProfile(
                 firstName: givenName,
-                middleName: "",
                 lastName: familyName ?? "",
-                email: email,
-                address: "",
-                dateOfBirth: nil,
                 chefType: .homeCook
             )
         }
@@ -394,16 +385,11 @@ final class AuthenticationManager: NSObject, ObservableObject, @unchecked Sendab
         let nameComponents = fullName.components(separatedBy: " ").filter { !$0.isEmpty }
         let firstName = nameComponents.first ?? ""
         let lastName = nameComponents.count > 1 ? nameComponents.last ?? "" : ""
-        let middleName = nameComponents.count > 2 ? nameComponents[1..<nameComponents.count-1].joined(separator: " ") : ""
         
-        // Update AccountManager with parsed name and email
+        // Update AccountManager with parsed name
         AccountManager.shared.updateProfile(
             firstName: firstName,
-            middleName: middleName,
             lastName: lastName,
-            email: email,
-            address: "",
-            dateOfBirth: nil,
             chefType: .homeCook
         )
         
@@ -514,11 +500,7 @@ final class AuthenticationManager: NSObject, ObservableObject, @unchecked Sendab
         // Sync with AccountManager
         AccountManager.shared.updateProfile(
             firstName: user.givenName ?? "",
-            middleName: "",
             lastName: user.familyName ?? "",
-            email: user.email ?? "",
-            address: "",
-            dateOfBirth: nil,
             chefType: .homeCook
         )
     }
@@ -626,11 +608,7 @@ extension AuthenticationManager: ASAuthorizationControllerDelegate {
                 // Update AccountManager
                 AccountManager.shared.updateProfile(
                     firstName: user.givenName ?? "",
-                    middleName: "",
                     lastName: user.familyName ?? "",
-                    email: user.email ?? "",
-                    address: "",
-                    dateOfBirth: nil,
                     chefType: .homeCook
                 )
                 

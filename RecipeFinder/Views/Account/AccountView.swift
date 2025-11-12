@@ -22,16 +22,9 @@ struct AccountView: View {
     @State private var profileImage: UIImage?
     @State private var showPasswordVerification = false
     
-    // Profile fields from EditProfileView
+    // Profile fields
     @State private var firstName: String = ""
-    @State private var middleName: String = ""
     @State private var lastName: String = ""
-    @State private var addressLine1: String = ""
-    @State private var addressLine2: String = ""
-    @State private var city: String = ""
-    @State private var county: String = ""
-    @State private var postcode: String = ""
-    @State private var dateOfBirth: Date?
     @State private var selectedChefType: ChefType = .homeCook
     
     private var isGuestMode: Bool {
@@ -46,10 +39,7 @@ struct AccountView: View {
     }
     
     private var displayEmail: String {
-        if let user = authManager.currentUser {
-            return user.email ?? ""
-        }
-        return accountManager.email
+        authManager.currentUser?.email ?? ""
     }
     
     private var displayInitials: String {
@@ -89,9 +79,6 @@ struct AccountView: View {
                         
                         // Personal Information Section
                         personalInfoSection
-                        
-                        // Address Section
-                        addressSection
                         
                         // Chef Type Section
                         chefTypeSection
@@ -275,18 +262,6 @@ struct AccountView: View {
                     .padding(.leading, 60)
                 
                 ProfileTextField(
-                    icon: "person.circle.fill",
-                    label: "Middle Name",
-                    text: $middleName,
-                    placeholder: "Optional",
-                    colorScheme: colorScheme
-                )
-                
-                Divider()
-                    .background(Color.secondary.opacity(0.1))
-                    .padding(.leading, 60)
-                
-                ProfileTextField(
                     icon: "person.crop.circle",
                     label: "Last Name",
                     text: $lastName,
@@ -320,94 +295,6 @@ struct AccountView: View {
                     .padding(.horizontal, 20)
                     .padding(.vertical, 16)
                 }
-            }
-        }
-        .background {
-            if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
-            } else {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(.ultraThinMaterial)
-            }
-        }
-    }
-    
-    // MARK: - Address Section
-    
-    private var addressSection: some View {
-        VStack(spacing: 0) {
-            HStack {
-                Image(systemName: "mappin.and.ellipse")
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
-                Text("Address")
-                    .font(.headline)
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
-                Spacer()
-                Text("Optional")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
-            .background(Color.secondary.opacity(0.1))
-            
-            VStack(spacing: 0) {
-                ProfileTextField(
-                    icon: "house.fill",
-                    label: "Address Line 1",
-                    text: $addressLine1,
-                    placeholder: "House number and street name",
-                    colorScheme: colorScheme
-                )
-                
-                Divider()
-                    .background(Color.secondary.opacity(0.1))
-                    .padding(.leading, 60)
-                
-                ProfileTextField(
-                    icon: "building.2.fill",
-                    label: "Address Line 2",
-                    text: $addressLine2,
-                    placeholder: "Apartment, suite, etc.",
-                    colorScheme: colorScheme
-                )
-                
-                Divider()
-                    .background(Color.secondary.opacity(0.1))
-                    .padding(.leading, 60)
-                
-                ProfileTextField(
-                    icon: "building.columns.fill",
-                    label: "Town/City",
-                    text: $city,
-                    placeholder: "e.g. London",
-                    colorScheme: colorScheme
-                )
-                
-                Divider()
-                    .background(Color.secondary.opacity(0.1))
-                    .padding(.leading, 60)
-                
-                ProfileTextField(
-                    icon: "map.fill",
-                    label: "County",
-                    text: $county,
-                    placeholder: "e.g. Greater London",
-                    colorScheme: colorScheme
-                )
-                
-                Divider()
-                    .background(Color.secondary.opacity(0.1))
-                    .padding(.leading, 60)
-                
-                ProfileTextField(
-                    icon: "envelope.fill",
-                    label: "Postcode",
-                    text: $postcode,
-                    placeholder: "e.g. SW1A 1AA",
-                    colorScheme: colorScheme
-                )
             }
         }
         .background {
@@ -693,48 +580,25 @@ struct AccountView: View {
     private func loadCurrentProfile() {
         // Load current values from AccountManager
         firstName = accountManager.firstName
-        middleName = accountManager.middleName
         lastName = accountManager.lastName
-        dateOfBirth = accountManager.dateOfBirth
         selectedChefType = accountManager.chefType
         
         // Load profile image
         profileImage = accountManager.loadProfileImage()
         
-        // Parse stored address (stored as comma-separated string)
-        let addressComponents = accountManager.address.components(separatedBy: ", ")
-        if addressComponents.count >= 5 {
-            addressLine1 = addressComponents[0]
-            addressLine2 = addressComponents[1]
-            city = addressComponents[2]
-            county = addressComponents[3]
-            postcode = addressComponents[4]
-        } else if !accountManager.address.isEmpty {
-            // If address doesn't match expected format, put it in line 1
-            addressLine1 = accountManager.address
-        }
     }
     
     private func saveProfile() {
-        // Combine address fields into a single formatted string
-        let fullAddress = [addressLine1, addressLine2, city, county, postcode]
-            .filter { !$0.isEmpty }
-            .joined(separator: ", ")
-        
         // Save to AccountManager using the updateProfile method
         accountManager.updateProfile(
             firstName: firstName,
-            middleName: middleName,
             lastName: lastName,
-            email: accountManager.email,
-            address: fullAddress,
-            dateOfBirth: dateOfBirth,
             chefType: selectedChefType
         )
         
         // Update AuthManager if signed in
         if let currentUser = authManager.currentUser {
-            let fullName = [firstName, middleName, lastName]
+            let fullName = [firstName, lastName]
                 .filter { !$0.isEmpty }
                 .joined(separator: " ")
             

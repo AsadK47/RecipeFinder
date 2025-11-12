@@ -5,37 +5,31 @@ import Combine
 final class AccountManager: ObservableObject, @unchecked Sendable {
     static let shared = AccountManager()
     
-    // Profile fields
+    // Profile fields - MINIMAL DATA COLLECTION
     @Published private(set) var uuid: String = ""
     @Published private(set) var firstName: String = ""
-    @Published private(set) var middleName: String = ""
     @Published private(set) var lastName: String = ""
-    @Published private(set) var email: String = ""
-    @Published private(set) var address: String = ""
-    @Published private(set) var dateOfBirth: Date?
     @Published private(set) var chefType: ChefType = .homeCook
     
-    // Stats
+    // Stats (non-PII)
     @Published private(set) var recipeCount: Int = 0
     @Published private(set) var kitchenItemCount: Int = 0
     @Published private(set) var shoppingListCount: Int = 0
     
-    // UserDefaults keys
+    // UserDefaults keys (non-sensitive only!)
     private let uuidKey = "accountUUID"
     private let firstNameKey = "accountFirstName"
-    private let middleNameKey = "accountMiddleName"
     private let lastNameKey = "accountLastName"
-    private let emailKey = "accountEmail"
-    private let addressKey = "accountAddress"
-    private let dateOfBirthKey = "accountDateOfBirth"
     private let chefTypeKey = "accountChefType"
     private let profileImageKey = "accountProfileImage"
     
+    // Note: Email and password are handled by AuthenticationManager/Keychain ONLY
+    
     var fullName: String {
-        var name = firstName
-        if !middleName.isEmpty {
-            name += " \(middleName)"
+        if firstName.isEmpty && lastName.isEmpty {
+            return "Recipe Chef"
         }
+        var name = firstName
         if !lastName.isEmpty {
             name += " \(lastName)"
         }
@@ -78,15 +72,7 @@ final class AccountManager: ObservableObject, @unchecked Sendable {
         }
         
         firstName = UserDefaults.standard.string(forKey: firstNameKey) ?? ""
-        middleName = UserDefaults.standard.string(forKey: middleNameKey) ?? ""
         lastName = UserDefaults.standard.string(forKey: lastNameKey) ?? ""
-        email = UserDefaults.standard.string(forKey: emailKey) ?? ""
-        address = UserDefaults.standard.string(forKey: addressKey) ?? ""
-        
-        // Load date of birth if exists
-        if let dobTimestamp = UserDefaults.standard.object(forKey: dateOfBirthKey) as? Double {
-            dateOfBirth = Date(timeIntervalSince1970: dobTimestamp)
-        }
         
         if let chefTypeRaw = UserDefaults.standard.string(forKey: chefTypeKey),
            let savedChefType = ChefType(rawValue: chefTypeRaw) {
@@ -96,40 +82,18 @@ final class AccountManager: ObservableObject, @unchecked Sendable {
     
     func updateProfile(
         firstName: String,
-        middleName: String,
         lastName: String,
-        email: String,
-        address: String,
-        dateOfBirth: Date?,
         chefType: ChefType
     ) {
         let trimmedFirstName = firstName.trimmingCharacters(in: .whitespacesAndNewlines)
-        let trimmedMiddleName = middleName.trimmingCharacters(in: .whitespacesAndNewlines)
         let trimmedLastName = lastName.trimmingCharacters(in: .whitespacesAndNewlines)
-        let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
-        let trimmedAddress = address.trimmingCharacters(in: .whitespacesAndNewlines)
         
         self.firstName = trimmedFirstName
-        self.middleName = trimmedMiddleName
         self.lastName = trimmedLastName
-        self.email = trimmedEmail
-        self.address = trimmedAddress
-        self.dateOfBirth = dateOfBirth
         self.chefType = chefType
         
         UserDefaults.standard.set(trimmedFirstName, forKey: firstNameKey)
-        UserDefaults.standard.set(trimmedMiddleName, forKey: middleNameKey)
         UserDefaults.standard.set(trimmedLastName, forKey: lastNameKey)
-        UserDefaults.standard.set(trimmedEmail, forKey: emailKey)
-        UserDefaults.standard.set(trimmedAddress, forKey: addressKey)
-        
-        // Save date of birth as timestamp
-        if let dob = dateOfBirth {
-            UserDefaults.standard.set(dob.timeIntervalSince1970, forKey: dateOfBirthKey)
-        } else {
-            UserDefaults.standard.removeObject(forKey: dateOfBirthKey)
-        }
-        
         UserDefaults.standard.set(chefType.rawValue, forKey: chefTypeKey)
         
         HapticManager.shared.success()
