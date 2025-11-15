@@ -495,7 +495,7 @@ class RecipeShareUtility {
         config.context.saveGState()
         config.context.translateBy(x: config.margin, y: cardY)
         
-        // TEMP: Enable transparency to "hide" the measurement draw
+        // Render transparently to measure content height before drawing background
         config.context.setAlpha(0)
         let contentHeight = contentBlock()
         config.context.setAlpha(1)

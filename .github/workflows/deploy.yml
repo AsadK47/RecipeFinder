@@ -32,7 +32,7 @@ jobs:
         test -f website/terms.html && echo "✓ terms.html found"
         test -f website/cookies.html && echo "✓ cookies.html found"
         test -f website/styles.css && echo "✓ styles.css found"
-        test -f website/script.js && echo "✓ script.js found"
+        test -f website/recipefinder-site.js && echo "✓ recipefinder-site.js found"
         test -f website/CNAME && echo "✓ CNAME found"
         test -f website/robots.txt && echo "✓ robots.txt found"
         test -f website/sitemap.xml && echo "✓ sitemap.xml found"

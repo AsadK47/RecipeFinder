@@ -80,39 +80,21 @@ function initNotifyForm() {
     const button = form.querySelector('button');
     const input = form.querySelector('input[type="email"]');
     
-    // Comprehensive email validation regex
-    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    // Simple email validation - just check basic format
+    // Server-side (Web3Forms) handles spam protection
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     // Validate email format
     function validateEmail(email) {
-        // Remove whitespace
         email = email.trim();
         
-        // Check regex pattern
+        // Basic format check
         if (!emailRegex.test(email)) {
             return false;
         }
         
-        // Additional checks
-        const [localPart, domain] = email.split('@');
-        
-        // Check local part (before @)
-        if (localPart.length === 0 || localPart.length > 64) {
-            return false;
-        }
-        
-        // Check domain part (after @)
-        if (domain.length === 0 || domain.length > 255) {
-            return false;
-        }
-        
-        // Check for consecutive dots
-        if (email.includes('..')) {
-            return false;
-        }
-        
-        // Check domain has at least one dot
-        if (!domain.includes('.')) {
+        // Prevent obviously malformed emails
+        if (email.includes('..') || email.length > 254) {
             return false;
         }
         
@@ -351,13 +333,6 @@ function initCookieConsent() {
     acceptButton.addEventListener('click', () => {
         localStorage.setItem('cookieConsent', 'accepted');
         cookieBanner.classList.add('hidden');
-        
-        // Initialize analytics after consent
-        if (typeof gtag !== 'undefined') {
-            gtag('consent', 'update', {
-                'analytics_storage': 'granted'
-            });
-        }
     });
     
     rejectButton.addEventListener('click', () => {
@@ -366,13 +341,6 @@ function initCookieConsent() {
         
         // Clear any existing theme preference
         localStorage.removeItem('theme');
-        
-        // Deny analytics
-        if (typeof gtag !== 'undefined') {
-            gtag('consent', 'update', {
-                'analytics_storage': 'denied'
-            });
-        }
     });
 }
 

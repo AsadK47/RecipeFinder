@@ -29,7 +29,7 @@ Website/
 ├── terms.html           # Terms of service
 ├── legal-notice.html    # Legal notice & IP rights
 ├── styles.css           # All styling
-├── script.js            # Interactivity
+├── recipefinder-site.js # Interactivity
 └── assets/              # Images & icons
 ```
 
