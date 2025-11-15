@@ -174,7 +174,15 @@ function initNotifyForm() {
             return;
         }
         
-        const formData = new FormData(form);
+        // Check honeypot (if filled, it's a bot)
+        const botcheck = form.querySelector('[name="botcheck"]');
+        if (botcheck && botcheck.value !== '') {
+            // Silently fail for bots
+            message.textContent = '✓ Welcome to the community! We\'ll see you on launch day.';
+            message.style.color = 'var(--text-primary)';
+            form.reset();
+            return;
+        }
         
         // Disable button and show loading state
         button.disabled = true;
@@ -182,15 +190,21 @@ function initNotifyForm() {
         message.textContent = '';
         
         try {
-            // Submit to Web3Forms
+            // Create FormData and ensure proper formatting
+            const formData = new FormData(form);
+            
+            // Submit to Web3Forms with proper headers
             const response = await fetch('https://api.web3forms.com/submit', {
                 method: 'POST',
+                headers: {
+                    'Accept': 'application/json'
+                },
                 body: formData
             });
             
             const data = await response.json();
             
-            if (data.success) {
+            if (response.ok && data.success) {
                 message.textContent = '✓ Welcome to the community! We\'ll see you on launch day.';
                 message.style.color = 'var(--text-primary)';
                 input.style.borderColor = 'rgba(255, 255, 255, 0.3)';
@@ -201,6 +215,13 @@ function initNotifyForm() {
                     message.textContent = '';
                 }, 6000);
             } else {
+                // Handle specific error messages
+                let errorMessage = '⚠ Oops! Something went wrong. Please try again.';
+                
+                if (data.message && data.message.includes('spam')) {
+                    errorMessage = '⚠ Please wait a moment and try again.';
+                }
+                
                 throw new Error(data.message || 'Form submission failed');
             }
             

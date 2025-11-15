@@ -45,11 +45,11 @@ struct AuthTestHelper {
         )
         
         if testSaved && adminSaved {
-            print("✅ Test accounts seeded successfully!")
-            print("📧 Test User: \(testEmail) / \(testPassword)")
-            print("👨‍💼 Admin User: \(adminEmail) / \(adminPassword)")
+            debugLog("✅ Test accounts seeded successfully!")
+            debugLog("📧 Test User: \(testEmail) / \(testPassword)")
+            debugLog("👨‍💼 Admin User: \(adminEmail) / \(adminPassword)")
         } else {
-            print("❌ Failed to seed test accounts")
+            debugLog("❌ Failed to seed test accounts")
         }
     }
     
@@ -71,7 +71,7 @@ struct AuthTestHelper {
         // Sign out
         AuthenticationManager.shared.signOut()
         
-        print("🧹 All authentication data cleared")
+        debugLog("🧹 All authentication data cleared")
     }
     
     // MARK: - Quick Sign In
@@ -82,7 +82,7 @@ struct AuthTestHelper {
             email: testEmail,
             password: testPassword
         )
-        print("✅ Signed in as Test User")
+        debugLog("✅ Signed in as Test User")
     }
     
     /// Quick sign in with admin account
@@ -91,7 +91,7 @@ struct AuthTestHelper {
             email: adminEmail,
             password: adminPassword
         )
-        print("✅ Signed in as Admin User")
+        debugLog("✅ Signed in as Admin User")
     }
 }
 
@@ -103,14 +103,14 @@ extension AuthTestHelper {
      
     static func printAuthState() {
         let authManager = AuthenticationManager.shared
-        print("📊 === Authentication State ===")
-        print("   Authenticated: \(authManager.isAuthenticated)")
-        print("   Guest Mode: \(authManager.isGuestMode)")
-        print("   Current User: \(authManager.currentUser?.displayName ?? "None")")
-        print("   Email: \(authManager.currentUser?.email ?? "None")")
-        print("   Biometrics Available: \(authManager.biometricsAvailable)")
-        print("   Biometric Type: \(authManager.biometricType)")
-        print("================================")
+        debugLog("📊 === Authentication State ===")
+        debugLog("   Authenticated: \(authManager.isAuthenticated)")
+        debugLog("   Guest Mode: \(authManager.isGuestMode)")
+        debugLog("   Current User: \(authManager.currentUser?.displayName ?? "None")")
+        debugLog("   Email: \(authManager.currentUser?.email ?? "None")")
+        debugLog("   Biometrics Available: \(authManager.biometricsAvailable)")
+        debugLog("   Biometric Type: \(authManager.biometricType)")
+        debugLog("================================")
     }
 }
 

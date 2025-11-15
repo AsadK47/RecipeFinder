@@ -163,7 +163,7 @@ final class KitchenInventoryManager: ObservableObject {
 		
 		let removedCount = oldCount - filteredItems.count
 		if removedCount > 0 {
-			print("🔄 Kitchen Migration: Removed \(removedCount) non-food items")
+			debugLog("🔄 Kitchen Migration: Removed \(removedCount) non-food items")
 			saveItems(filteredItems)
 		}
 		

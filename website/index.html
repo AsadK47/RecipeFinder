@@ -210,11 +210,12 @@
                 <input type="hidden" name="access_key" value="08b5b319-3abd-4c3b-9e2c-cdcdd3c33b13">
                 <input type="hidden" name="subject" value="RecipeFinder - Launch Day Waitlist New Signup">
                 <input type="hidden" name="from_name" value="RecipeFinder Website">
+                <input type="hidden" name="redirect" value="https://recipefinder.uk/#notify">
                 
                 <!-- Honeypot for spam protection (bots will fill this, humans won't see it) -->
-                <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+                <input type="text" name="botcheck" id="botcheck" style="display: none;" tabindex="-1" autocomplete="off">
                 
-                <input type="email" name="email" placeholder="Enter your email" required>
+                <input type="email" name="email" id="emailInput" placeholder="Enter your email" required>
                 <button type="submit">Notify Me</button>
             </form>
             <p class="form-message" id="formMessage"></p>

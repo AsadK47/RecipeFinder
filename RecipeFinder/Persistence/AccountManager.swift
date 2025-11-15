@@ -164,7 +164,7 @@ final class AccountManager: ObservableObject, @unchecked Sendable {
         updateStats()
         
         HapticManager.shared.success()
-        print("🗑️ All data cleared and reset to defaults")
+        debugLog("🗑️ All data cleared and reset to defaults")
         
         // Notify other views to refresh
         NotificationCenter.default.post(name: NSNotification.Name("DataDidChange"), object: nil)

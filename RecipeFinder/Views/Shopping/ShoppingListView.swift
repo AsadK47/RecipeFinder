@@ -412,17 +412,25 @@ struct ShoppingListView: View {
                 ForEach(items) { item in
                     ShoppingListItemRow(
                         item: item,
-                        onToggle: { 
-                            manager.toggleItem(at: manager.items.firstIndex(where: { $0.id == item.id })!)
+                        onToggle: {
+                            if let index = manager.items.firstIndex(where: { $0.id == item.id }) {
+                                manager.toggleItem(at: index)
+                            }
                         },
                         onQuantityChange: { newQuantity in
-                            manager.updateQuantity(at: manager.items.firstIndex(where: { $0.id == item.id })!, quantity: newQuantity)
+                            if let index = manager.items.firstIndex(where: { $0.id == item.id }) {
+                                manager.updateQuantity(at: index, quantity: newQuantity)
+                            }
                         },
-                        onDelete: { 
-                            manager.deleteItem(at: manager.items.firstIndex(where: { $0.id == item.id })!)
+                        onDelete: {
+                            if let index = manager.items.firstIndex(where: { $0.id == item.id }) {
+                                manager.deleteItem(at: index)
+                            }
                         },
                         onCategoryChange: { newCategory in
-                            manager.updateCategory(at: manager.items.firstIndex(where: { $0.id == item.id })!, category: newCategory)
+                            if let index = manager.items.firstIndex(where: { $0.id == item.id }) {
+                                manager.updateCategory(at: index, category: newCategory)
+                            }
                         },
                         allCategories: CategoryClassifier.categoryOrder
                     )
@@ -493,26 +501,26 @@ struct ShoppingListView: View {
     
     private func addItem() {
         guard !searchText.trimmingCharacters(in: .whitespaces).isEmpty else {
-            print("❌ ShoppingListView: Empty search text")
+            debugLog("❌ ShoppingListView: Empty search text")
             return
         }
-        print("🔍 ShoppingListView: Adding item '\(searchText)'")
+        debugLog("🔍 ShoppingListView: Adding item '\(searchText)'")
         manager.addItem(name: searchText)
         searchText = ""
         isSearchFocused = false
         HapticManager.shared.success()
-        print("📊 ShoppingListView: Manager now has \(manager.items.count) items")
+        debugLog("📊 ShoppingListView: Manager now has \(manager.items.count) items")
     }
     
     private func addItemFromSearch(_ ingredient: String) {
-        print("🔍 ShoppingListView: Adding item from search '\(ingredient)'")
+        debugLog("🔍 ShoppingListView: Adding item from search '\(ingredient)'")
         manager.addItem(name: ingredient)
         // Reset state to allow continuous adding
         searchText = ""
         // Keep focus so user can continue typing
         isSearchFocused = true
         HapticManager.shared.success()
-        print("📊 ShoppingListView: Manager now has \(manager.items.count) items")
+        debugLog("📊 ShoppingListView: Manager now has \(manager.items.count) items")
     }
     
     private func ingredientButton(_ ingredient: String) -> some View {

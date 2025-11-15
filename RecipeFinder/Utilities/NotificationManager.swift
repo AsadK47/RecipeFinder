@@ -130,9 +130,9 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         // 4. Schedule it!
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
-                print("❌ Failed to schedule notification: \(error.localizedDescription)")
+                debugLog("❌ Failed to schedule notification: \(error.localizedDescription)")
             } else {
-                print("✅ Notification scheduled: \(title) in \(timeInterval)s")
+                debugLog("✅ Notification scheduled: \(title) in \(timeInterval)s")
             }
         }
         
@@ -158,7 +158,7 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
-                print("❌ Failed to send immediate notification: \(error)")
+                debugLog("❌ Failed to send immediate notification: \(error)")
             }
         }
     }
@@ -205,9 +205,9 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
-                print("❌ Failed to schedule meal reminder: \(error)")
+                debugLog("❌ Failed to schedule meal reminder: \(error)")
             } else {
-                print("✅ Meal reminder scheduled for \(date)")
+                debugLog("✅ Meal reminder scheduled for \(date)")
             }
         }
         
@@ -249,9 +249,9 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
-                print("❌ Failed to schedule daily reminder: \(error)")
+                debugLog("❌ Failed to schedule daily reminder: \(error)")
             } else {
-                print("✅ Daily reminder scheduled for \(hour):\(minute)")
+                debugLog("✅ Daily reminder scheduled for \(hour):\(minute)")
             }
         }
         
@@ -281,7 +281,7 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
     /// Cancel a specific notification by ID
     func cancelNotification(identifier: String) {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [identifier])
-        print("🗑️ Canceled notification: \(identifier)")
+        debugLog("🗑️ Canceled notification: \(identifier)")
     }
     
     /// Cancel all timer notifications
@@ -293,7 +293,7 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
             
             Task {
                 UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: timerIds)
-                print("🗑️ Canceled \(timerIds.count) timer notifications")
+                debugLog("🗑️ Canceled \(timerIds.count) timer notifications")
             }
         }
     }
@@ -301,7 +301,7 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
     /// Cancel ALL pending notifications
     func cancelAllNotifications() {
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-        print("🗑️ Canceled all notifications")
+        debugLog("🗑️ Canceled all notifications")
     }
     
     /// Get list of all pending notifications
@@ -330,7 +330,7 @@ extension NotificationManager {
         // Show banner and play sound even when app is open
         completionHandler([.banner, .sound, .badge])
         
-        print("📬 Received notification while app is foreground: \(notification.request.content.title)")
+        debugLog("📬 Received notification while app is foreground: \(notification.request.content.title)")
     }
     
     /// Called when user TAPS on a notification
@@ -342,7 +342,7 @@ extension NotificationManager {
         let userInfo = response.notification.request.content.userInfo
         let notificationType = userInfo["type"] as? String ?? "unknown"
         
-        print("👆 User tapped notification of type: \(notificationType)")
+        debugLog("👆 User tapped notification of type: \(notificationType)")
         
         // Handle different notification types
         switch notificationType {

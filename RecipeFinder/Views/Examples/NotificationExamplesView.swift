@@ -188,13 +188,14 @@ struct NotificationExamplesView: View {
                     icon: "🍝",
                     color: .orange
                 ) {
-                    let timerId = notificationManager.scheduleTimerNotification(
-                        title: "🍝 Pasta Ready!",
-                        body: "Your pasta timer (10 minutes) is complete",
-                        timeInterval: 600,  // 10 minutes
-                        identifier: "pasta-timer"
+                    Button("Schedule Pasta Timer") {
+                    let timerId = NotificationManager.shared.scheduleCookingTimer(
+                        recipeName: "Spaghetti Carbonara",
+                        duration: 11 * 60
                     )
-                    print("Scheduled pasta timer: \(timerId)")
+                    debugLog("Scheduled pasta timer: \(timerId)")
+                    HapticManager.shared.success()
+                }
                 }
                 
                 notificationButton(
@@ -260,7 +261,9 @@ struct NotificationExamplesView: View {
                     color: .yellow
                 ) {
                     var components = Calendar.current.dateComponents([.year, .month, .day], from: Date())
-                    components.day! += 1  // Tomorrow
+                    if let currentDay = components.day {
+                        components.day = currentDay + 1  // Tomorrow
+                    }
                     components.hour = 12
                     components.minute = 30
                     

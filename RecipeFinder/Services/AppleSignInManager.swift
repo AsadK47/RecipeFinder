@@ -152,10 +152,25 @@ extension AppleSignInManager: ASAuthorizationControllerDelegate {
 // MARK: - ASAuthorizationControllerPresentationContextProviding
 extension AppleSignInManager: ASAuthorizationControllerPresentationContextProviding {
     func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
-        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let window = scene.windows.first else {
-            fatalError("No window found")
+        // Safely find the window scene and window
+        if let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
+           let window = scene.windows.first(where: { $0.isKeyWindow }) ?? scene.windows.first {
+            return window
         }
+        
+        // Fallback: try any connected scene
+        if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = scene.windows.first {
+            debugLog("Warning: Using fallback window for Apple Sign In presentation")
+            return window
+        }
+        
+        // Last resort: create a new window (should never happen in normal circumstances)
+        debugLog("Critical: No existing window found for Apple Sign In, creating fallback")
+        let window = UIWindow(frame: UIScreen.main.bounds)
+        window.rootViewController = UIViewController()
+        window.windowLevel = .alert
+        window.makeKeyAndVisible()
         return window
     }
 }
