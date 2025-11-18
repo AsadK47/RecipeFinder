@@ -8,8 +8,6 @@
 [![Xcode](https://img.shields.io/badge/Xcode-16.0%2B-blue.svg)](https://developer.apple.com/xcode/)
 [![License](https://img.shields.io/badge/license-Proprietary-red.svg)](LICENSE)
 
----
-
 ## ✨ Overview
 
 A privacy-first recipe management app with elegant design. Start with carefully curated recipes, import from the web, or create your own. Built with SwiftUI and Core Data for iOS 15.0+.
@@ -19,8 +17,6 @@ A privacy-first recipe management app with elegant design. Start with carefully 
 **[recipefinder.uk](https://recipefinder.uk)** - Marketing site with legal pages, hosted via Cloudflare Pages.
 
 The `Website/` folder contains the static site source. Consider moving to a separate repository for independent deployment and versioning.
-
----
 
 ## 📸 Screenshots
 
@@ -34,8 +30,6 @@ The `Website/` folder contains the static site source. Consider moving to a sepa
 
 </div>
 
----
-
 ## 🚀 Quick Start
 
 ```bash
@@ -48,8 +42,6 @@ open RecipeFinder.xcodeproj  # Press ⌘+R to run
 
 **Design**: Six color themes • Light & dark modes • Adaptive layouts • SwiftUI animations
 
----
-
 ## ✨ Features
 
 **🔐 Account & Security**: Email/password authentication • Face ID/Touch ID • SHA-256 password hashing  
@@ -59,8 +51,6 @@ open RecipeFinder.xcodeproj  # Press ⌘+R to run
 **🏠 Kitchen**: Ingredient tracking • Expiry dates • Recipe matching  
 **⏲ Timers**: Multiple timers • Named labels • Background alerts • Haptic feedback
 
----
-
 ## 🏗 Technical Stack
 
 **Architecture**: SwiftUI with MVVM pattern • Core Data persistence • Combine for reactive programming  
@@ -69,8 +59,6 @@ open RecipeFinder.xcodeproj  # Press ⌘+R to run
 **Security**: Local-first storage • SHA-256 password hashing • iOS Keychain • Secure Enclave biometrics  
 **Privacy**: No analytics • No tracking • GDPR/CCPA compliant • All data stays on device  
 **Accessibility**: VoiceOver support • Dynamic Type • WCAG 2.1 AA contrast • 44pt tap targets
-
----
 
 ## 🛠 For Developers
 
@@ -114,8 +102,6 @@ RecipeFinder/
 - `PersistenceController.swift` - Core Data stack
 - `RecipeImporter.swift` - Web recipe parsing
 
----
-
 ##  Documentation
 
 - **[Design Language](docs/DESIGN_AESTHETIC.md)** - Visual design principles
@@ -125,15 +111,11 @@ RecipeFinder/
 - **[SF Symbols Guide](docs/SF_SYMBOLS_GUIDE.md)** - Icon usage
 - **[Commands](docs/COMMANDS.md)** - Development commands
 
----
-
 ## 💬 Support
 
 🐛 [Report bugs](https://github.com/AsadK47/RecipeFinder/issues) • 💡 [Share ideas](https://github.com/AsadK47/RecipeFinder/discussions) • 📧 recipefinderlimited@icloud.com
 
 **Note**: This is proprietary software. Pull requests are not accepted.
-
----
 
 ## ⚖️ License & Legal
 
@@ -147,8 +129,6 @@ For complete terms, see:
 - 📋 [Terms of Service](https://recipefinder.uk/terms.html)
 
 For licensing inquiries: recipefinderlimited@icloud.com
-
----
 
 <div align="center">
 
