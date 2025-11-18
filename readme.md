@@ -1,24 +1,20 @@
+<div align="center">
+
 # RecipeFinder™ 🍳
 
-> **Sophisticated recipe management with stunning design**  
-> All your culinary treasures, beautifully organized. Completely private.
+**Sophisticated recipe management with stunning design**  
+*All your culinary treasures, beautifully organized. Completely private.*
 
 [![Platform](https://img.shields.io/badge/platform-iOS%2015.0%2B-blue.svg)](https://www.apple.com/ios/)
 [![Swift](https://img.shields.io/badge/Swift-6.0-orange.svg)](https://swift.org/)
 [![Xcode](https://img.shields.io/badge/Xcode-16.0%2B-blue.svg)](https://developer.apple.com/xcode/)
 [![License](https://img.shields.io/badge/license-Proprietary-red.svg)](LICENSE)
 
-## ✨ Overview
+**[Visit recipefinder.uk →](https://recipefinder.uk)**
 
-A privacy-first recipe management app with elegant design. Start with carefully curated recipes, import from the web, or create your own. Built with SwiftUI and Core Data for iOS 15.0+.
+</div>
 
-## 🌐 Website
-
-**[recipefinder.uk](https://recipefinder.uk)** - Marketing site with legal pages, hosted via Cloudflare Pages.
-
-The `Website/` folder contains the static site source. Consider moving to a separate repository for independent deployment and versioning.
-
-## 📸 Screenshots
+## 📸 Demo
 
 <div align="center">
 
@@ -26,11 +22,24 @@ The `Website/` folder contains the static site source. Consider moving to a sepa
 <img src="screenshots/home_page.png" alt="Home Page" width="250"/>
 <img src="screenshots/splash_1.png" alt="Welcome Splash" width="250"/>
 
-*Elegant sign-up • Beautiful recipe browsing • Delightful onboarding*
+*Beautiful recipe management from sign-up to cooking*
 
 </div>
 
-## 🚀 Quick Start
+## ✨ Why RecipeFinder?
+
+- **Privacy First** - All data stays on your device. No accounts required, no tracking, no analytics
+- **Beautiful Design** - Six elegant color themes with seamless light/dark mode
+- **Complete Toolkit** - Recipes, shopping lists, meal planning, kitchen inventory, and timers in one app
+- **Smart Import** - Grab recipes from any website with automatic ingredient parsing
+- **Offline Ready** - Full functionality without internet connection
+
+## 🚀 Installation
+
+### For Users
+*Coming soon to the App Store*
+
+### For Developers
 
 ```bash
 git clone https://github.com/AsadK47/RecipeFinder.git
@@ -40,16 +49,24 @@ open RecipeFinder.xcodeproj  # Press ⌘+R to run
 
 **Requirements**: iOS 15.0+ • Xcode 16.0+ • Swift 6.0 • macOS 15.0+
 
-**Design**: Six color themes • Light & dark modes • Adaptive layouts • SwiftUI animations
+## 📱 Features
 
-## ✨ Features
+### Core Features
+- **� Recipe Management** - Curated collection, URL import, custom creation, favorites, and sharing
+- **🛒 Smart Shopping Lists** - Auto-categorized ingredients, add from recipes, track inventory
+- **🍽 Meal Planning** - Weekly calendar, schedule meals, get automatic notifications
+- **🏠 Kitchen Inventory** - Track ingredients, expiry dates, find recipes you can make now
+- **⏲ Multi-Timers** - Run multiple named timers with background alerts and haptic feedback
 
-**🔐 Account & Security**: Email/password authentication • Face ID/Touch ID • SHA-256 password hashing  
-**📖 Recipes**: Curated collection • URL import • Custom creation • Favorite & share • Scale servings  
-**🛒 Shopping**: Auto-categorized lists • Add from recipes • Track inventory • Easy sharing  
-**🍽 Planning**: Weekly calendar • Meal scheduling • Recipe assignment • Notifications  
-**🏠 Kitchen**: Ingredient tracking • Expiry dates • Recipe matching  
-**⏲ Timers**: Multiple timers • Named labels • Background alerts • Haptic feedback
+### Security & Privacy
+- **🔐 Local Authentication** - Face ID/Touch ID support with SHA-256 password hashing
+- **🔒 Secure Storage** - iOS Keychain integration with Secure Enclave
+- **🚫 Zero Tracking** - No analytics, no data collection, GDPR/CCPA compliant
+
+### Design & Accessibility
+- **🎨 Six Color Themes** - Beautiful palettes that work in light and dark modes
+- **♿️ Accessible** - VoiceOver support, Dynamic Type, WCAG 2.1 AA contrast, 44pt tap targets
+- **⚡️ Smooth Performance** - Hardware-accelerated rendering, optimized Core Data
 
 ## 🏗 Technical Stack
 
@@ -111,11 +128,14 @@ RecipeFinder/
 - **[SF Symbols Guide](docs/SF_SYMBOLS_GUIDE.md)** - Icon usage
 - **[Commands](docs/COMMANDS.md)** - Development commands
 
-## 💬 Support
+## 💬 Support & Contact
 
-🐛 [Report bugs](https://github.com/AsadK47/RecipeFinder/issues) • 💡 [Share ideas](https://github.com/AsadK47/RecipeFinder/discussions) • 📧 recipefinderlimited@icloud.com
+- 🐛 **Report Bugs**: [GitHub Issues](https://github.com/AsadK47/RecipeFinder/issues)
+- 💡 **Feature Requests**: [GitHub Discussions](https://github.com/AsadK47/RecipeFinder/discussions)
+- 📧 **Email**: recipefinderlimited@icloud.com
+- 🌐 **Website**: [recipefinder.uk](https://recipefinder.uk)
 
-**Note**: This is proprietary software. Pull requests are not accepted.
+> **Note**: This is proprietary software. Pull requests are not accepted.
 
 ## ⚖️ License & Legal
 
@@ -132,8 +152,10 @@ For licensing inquiries: recipefinderlimited@icloud.com
 
 <div align="center">
 
+---
+
 **© 2024-2025 RECIPEFINDER LIMITED • All Rights Reserved**
 
-Last Updated: 8 November 2025
+Made with ❤️ in the UK • [recipefinder.uk](https://recipefinder.uk)
 
 </div>
