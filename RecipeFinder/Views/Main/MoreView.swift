@@ -67,6 +67,18 @@ struct MoreView: View {
                                 
                                 VStack(spacing: 12) {
                                     MoreCard {
+                                        NavigationLink(destination: CookingTipsView()) {
+                                            MoreRow(
+                                                icon: "lightbulb.fill",
+                                                iconColor: .yellow,
+                                                title: "Cooking Tips",
+                                                subtitle: "Expert advice & kitchen hacks"
+                                            )
+                                        }
+                                        .buttonStyle(PlainButtonStyle())
+                                    }
+                                    
+                                    MoreCard {
                                         NavigationLink(destination: CookTimerView()) {
                                             MoreRow(
                                                 icon: "calendar.circle.fill",

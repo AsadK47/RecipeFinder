@@ -70,7 +70,7 @@ struct DeveloperDocumentationView: View {
                             DocPoint(title: "Swift 6.0", description: "Modern Swift with complete concurrency support"),
                             DocPoint(title: "iOS 15.0+", description: "Target deployment for modern iOS features"),
                             DocPoint(title: "Xcode 16.0+", description: "Latest development environment"),
-                            DocPoint(title: "XCTest", description: "Unit testing framework with 85% coverage")
+                            DocPoint(title: "XCTest", description: "Unit testing framework ready for implementation")
                         ],
                         appTheme: appTheme,
                         colorScheme: colorScheme,

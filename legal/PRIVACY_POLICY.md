@@ -1,7 +1,7 @@
 # PRIVACY POLICY
 
 **Effective Date:** 28 October 2025  
-**Last Revised:** 9 November 2025
+**Last Revised:** 18 November 2025
 
 ---
 
@@ -25,32 +25,50 @@
 
 ## 3. INFORMATION COLLECTION PRACTICES
 
-3.1 **No Personal Information Collection**  
-The Company does not collect, process, transmit, store, or otherwise handle any Personal Information of Users. For purposes of this Policy, "Personal Information" means any information relating to an identified or identifiable natural person.
+3.1 **Account Information**  
+The Application requires account creation to enable personalization and data security features. Users create an account using:
 
-3.2 **No Account Registration**  
-The Application does not require or support User account creation, authentication, or login credentials of any kind.
+**Email and Password:** Users create an account using an email address and password. Passwords are securely hashed using SHA-256 cryptographic algorithms before storage and are never stored in plain text.
 
-3.3 **No Usage Analytics**  
+3.2 **Biometric Authentication (Optional)**  
+Users may optionally enable Face ID or Touch ID for convenient app access. Biometric data is processed exclusively by Apple's Secure Enclave and is never accessed, stored, or transmitted by the Application.
+
+3.3 **User-Generated Content**  
+The Application stores content created by users, including:
+- Recipes (imported or manually created)
+- Shopping lists
+- Kitchen inventory items
+- Meal plans
+- Notes and cooking tips
+- Application preferences and settings
+
+3.4 **No Usage Analytics**  
 The Company does not implement, utilize, or maintain any analytics, telemetry, usage tracking, or behavioral monitoring systems within the Application.
 
-3.4 **No Advertising Networks**  
+3.5 **No Advertising Networks**  
 The Application does not integrate with, connect to, or utilize any third-party advertising networks, ad-serving technologies, or marketing platforms.
 
 ---
 
 ## 4. DATA STORAGE AND PROCESSING
 
-4.1 **Local Device Storage Only**  
-All User-generated data, including but not limited to recipes, shopping lists, kitchen inventory, meal plans, and application preferences, is stored exclusively on the User's local device using Apple's Core Data framework and iOS system storage mechanisms.
+4.1 **Local Device Storage**  
+All User-generated data, including recipes, shopping lists, kitchen inventory, meal plans, and application preferences, is stored primarily on the User's local device using Apple's Core Data framework and iOS system storage mechanisms.
 
-4.2 **No Server-Side Processing**  
-The Company does not operate, maintain, or utilize any servers, databases, or cloud infrastructure for the storage or processing of User data.
+4.2 **Account Credentials Storage**  
+When users create an account:
 
-4.3 **Device-Level Encryption**  
-User data stored on the device benefits from iOS system-level encryption at rest, as provided by Apple Inc. The Company does not implement additional encryption layers.
+(a) Email addresses are stored locally in encrypted format  
+(b) Passwords are cryptographically hashed using SHA-256 algorithms (never stored in plain text)  
+(c) Authentication tokens are stored securely in the iOS Keychain with hardware-backed encryption
 
-4.4 **Data Isolation**  
+4.3 **No Cloud Storage or Servers**  
+The Company does not currently operate, maintain, or utilize any servers, databases, or cloud infrastructure for the storage or processing of User data. All data remains on the user's device.
+
+4.4 **Device-Level Encryption**  
+User data stored on the device benefits from iOS system-level encryption at rest, as provided by Apple Inc. Authentication credentials stored in the iOS Keychain receive additional hardware-backed encryption protection.
+
+4.5 **Data Isolation**  
 All Application data is stored within the Application's sandboxed environment as mandated by iOS operating system security architecture, preventing unauthorized access by other applications or system processes.
 
 ---
@@ -105,16 +123,24 @@ The Application does not display advertisements, and no behavioural advertising 
 
 ## 8. USER RIGHTS AND DATA CONTROL
 
-8.1 **Data Portability**  
+8.1 **Account Management**  
+Users with accounts may:
+- Update their email address and password at any time
+- Enable or disable biometric authentication
+- View their account information
+- Delete their account and associated data
+
+8.2 **Data Portability**  
 Users may export their recipe data in Portable Document Format (PDF) or plain text format at any time using the Application's built-in export functionality.
 
-8.2 **Data Deletion**  
-Users may delete their data through either:  
-(a) Utilizing in-application deletion functions; or  
-(b) Uninstalling the Application from their device, which removes all associated data.
+8.3 **Data Deletion**  
+Users may delete their data through:  
+(a) Utilizing in-application deletion functions for individual items or entire categories  
+(b) Deleting their account through the account settings (for registered users)  
+(c) Uninstalling the Application from their device, which removes all associated data
 
-8.3 **No Data Retention by Company**  
-As the Company does not collect or store User data, no data retention policies are applicable, and no data resides with the Company following data deletion by the User.
+8.4 **No Data Retention by Company**  
+As the Company does not collect or store User data on external servers, no data retention policies are applicable, and no data resides with the Company following data deletion by the User.
 
 ---
 
@@ -122,10 +148,13 @@ As the Company does not collect or store User data, no data retention policies a
 
 9.1 The security of User data is maintained through the following mechanisms:
 
-(a) **iOS Sandboxing:** Application data is isolated within the iOS security model;  
-(b) **System-Level Encryption:** iOS provides encryption of data at rest on User devices;  
-(c) **No Network Transmission:** User data is not transmitted over networks (except as specified in Section 5.2);  
-(d) **No Authentication System:** The absence of login credentials eliminates credential-based security risks.
+(a) **iOS Sandboxing:** Application data is isolated within the iOS security model  
+(b) **System-Level Encryption:** iOS provides encryption of data at rest on User devices  
+(c) **Keychain Protection:** Authentication credentials are stored in the iOS Keychain with hardware-backed encryption  
+(d) **SHA-256 Password Hashing:** User passwords are cryptographically hashed using SHA-256 algorithms and never stored in plain text  
+(e) **Biometric Security:** Face ID and Touch ID leverage Apple's Secure Enclave for biometric authentication  
+(f) **No Network Transmission:** User data and credentials are not transmitted over networks to external servers  
+(g) **Session Management:** App locks after inactivity if biometric authentication is enabled
 
 ---
 

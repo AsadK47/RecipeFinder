@@ -13,6 +13,8 @@ struct SettingsTabView: View {
     @StateObject private var authManager = AuthenticationManager.shared
     @State private var profileImage: UIImage?
     @State private var refreshID = UUID()
+    @State private var showMenu = false
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         ZStack {
@@ -20,21 +22,8 @@ struct SettingsTabView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header Section
-                VStack(spacing: 8) {
-                    GeometryReader { geometry in
-                        HStack {
-                            Spacer()
-                            Text("Settings")
-                                .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
-                            Spacer()
-                        }
-                    }
-                    .frame(height: 44)
-                }
-                .padding(.horizontal, 20)
-                .padding(.top, 12)
+                // Compact Header
+                header
                     
                 ScrollView {
                     VStack(spacing: 24) {
@@ -227,6 +216,7 @@ struct SettingsTabView: View {
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(true)
             .toolbarBackground(.hidden, for: .navigationBar)
             .onAppear {
                 // Load profile image
@@ -234,7 +224,61 @@ struct SettingsTabView: View {
                 refreshID = UUID()
             }
         }
+    
+    // MARK: - Header
+    
+    private var header: some View {
+        VStack(spacing: 12) {
+            GeometryReader { geometry in
+                HStack(spacing: 0) {
+                    // Back button
+                    Button(action: {
+                        dismiss()
+                        HapticManager.shared.light()
+                    }) {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 20, weight: .semibold))
+                            .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                            .frame(width: 44, height: 44)
+                    }
+                    
+                    Spacer()
+                    
+                    Text("Settings")
+                        .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                    
+                    Spacer()
+                    
+                    // Menu button
+                    Menu {
+                        Button(action: {
+                            // Quick actions could go here
+                        }) {
+                            Label("Refresh", systemImage: "arrow.clockwise")
+                        }
+                        
+                        Button(action: {
+                            // Additional menu items
+                        }) {
+                            Label("Help", systemImage: "questionmark.circle")
+                        }
+                    } label: {
+                        Image(systemName: "line.3.horizontal")
+                            .font(.system(size: 20))
+                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                            .frame(width: 44, height: 44)
+                    }
+                }
+            }
+            .frame(height: 44)
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 16)
     }
+}
 
 // Settings Components
 

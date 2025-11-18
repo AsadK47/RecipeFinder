@@ -128,11 +128,11 @@ struct KitchenView: View {
         VStack(spacing: 12) {
             GeometryReader { geometry in
                 HStack(spacing: 0) {
-                    // Left spacer for balance - 15% of width or fixed size
+                    // Empty space to balance menu button
                     Color.clear
-                        .frame(width: max(44, geometry.size.width * 0.15))
+                        .frame(width: 44, height: 44)
                     
-                    Spacer(minLength: 8)
+                    Spacer()
                     
                     Text("Kitchen")
                         .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
@@ -140,9 +140,9 @@ struct KitchenView: View {
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
                     
-                    Spacer(minLength: 8)
+                    Spacer()
                     
-                    // Right menu - 15% of width or fixed size
+                    // Menu button
                     Menu {
                         Button(action: {
                             showQuickAdd = true
@@ -169,10 +169,11 @@ struct KitchenView: View {
                             }
                         }
                     } label: {
-                        ModernCircleButton(icon: "line.3.horizontal") {}
-                            .allowsHitTesting(false)
+                        Image(systemName: "line.3.horizontal")
+                            .font(.system(size: 20))
+                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                            .frame(width: 44, height: 44)
                     }
-                    .frame(width: max(44, geometry.size.width * 0.15))
                 }
             }
             .frame(height: 44)

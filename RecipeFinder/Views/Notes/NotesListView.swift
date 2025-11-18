@@ -74,19 +74,18 @@ struct NotesListView: View {
                 VStack(spacing: 12) {
                     GeometryReader { geometry in
                         HStack(spacing: 0) {
-                            // Back button (left side)
+                            // Back button
                             Button(action: {
-                                HapticManager.shared.light()
                                 dismiss()
+                                HapticManager.shared.light()
                             }) {
                                 Image(systemName: "chevron.left")
-                                    .font(.title3)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.white)
+                                    .font(.system(size: 20, weight: .semibold))
+                                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                                     .frame(width: 44, height: 44)
                             }
                             
-                            Spacer(minLength: 8)
+                            Spacer()
                             
                             Text("Notes")
                                 .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
@@ -94,7 +93,7 @@ struct NotesListView: View {
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.7)
                             
-                            Spacer(minLength: 8)
+                            Spacer()
                             
                             // Add Note Button - Prominent and clickable
                             Button(action: {

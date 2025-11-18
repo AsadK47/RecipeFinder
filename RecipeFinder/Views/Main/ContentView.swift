@@ -8,7 +8,6 @@ struct ContentView: View {
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @Environment(\.colorScheme) var colorScheme
     
-    // Performance: Cache the theme for the session
     private var themeBinding: AppTheme.ThemeType { selectedTheme }
     
     var body: some View {

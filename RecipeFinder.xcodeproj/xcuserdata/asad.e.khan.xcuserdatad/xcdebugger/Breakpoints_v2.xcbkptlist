@@ -14,8 +14,8 @@
             filePath = "RecipeFinder/Views/Settings/SettingsView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1408"
-            endingLineNumber = "1408"
+            startingLineNumber = "1407"
+            endingLineNumber = "1407"
             landmarkName = "body"
             landmarkType = "24">
             <Locations>
@@ -89,8 +89,8 @@
             filePath = "RecipeFinder/Views/Main/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "51"
-            endingLineNumber = "51"
+            startingLineNumber = "50"
+            endingLineNumber = "50"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -105,8 +105,8 @@
             filePath = "RecipeFinder/Views/Main/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "105"
-            endingLineNumber = "105"
+            startingLineNumber = "104"
+            endingLineNumber = "104"
             landmarkName = "configureTabBarAppearance()"
             landmarkType = "7">
          </BreakpointContent>

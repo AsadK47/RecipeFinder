@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct MealPlanningView: View {
-    @Environment(\.dismiss) private var dismiss
     @Binding var recipes: [RecipeModel]
     @StateObject private var mealPlanningManager = MealPlanningManager()
     @State private var selectedDate: Date = Date()
@@ -152,47 +151,52 @@ struct MealPlanningView: View {
         GeometryReader { geometry in
             let spacing = AdaptiveSpacing(geometry: geometry)
             
-            ZStack {
-                // Centered title
+            HStack(spacing: 0) {
+                // Empty space to balance menu button
+                Color.clear
+                    .frame(width: 44, height: 44)
+                
+                Spacer()
+                
+                // Title
                 Text("Meal Planner")
                     .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
                     .foregroundColor(colorScheme == .dark ? .white : .black)
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
                 
-                // Menu button aligned to trailing edge
-                HStack {
-                    Spacer()
-                    
-                    Menu {
-                        Button(action: {
-                            HapticManager.shared.light()
-                            showMealTimeSelector = true
-                        }) {
-                            Label("Add Meal", systemImage: "plus.circle")
-                        }
-                        
-                        Button(action: {
-                            HapticManager.shared.light()
-                            showNutritionTips = true
-                        }) {
-                            Label("Nutrition Tips", systemImage: "heart.text.square")
-                        }
-                        
-                        Divider()
-                        
-                        Button(role: .destructive, action: {
-                            selectedMealTimes.removeAll()
-                            mealPlanningManager.clearOldMealPlans()
-                            HapticManager.shared.light()
-                        }) {
-                            Label("Clear Old Plans", systemImage: "trash")
-                        }
-                    } label: {
-                        ModernCircleButton(icon: "line.3.horizontal") {}
-                            .allowsHitTesting(false)
+                Spacer()
+                
+                // Menu button
+                Menu {
+                    Button(action: {
+                        HapticManager.shared.light()
+                        showMealTimeSelector = true
+                    }) {
+                        Label("Add Meal", systemImage: "plus.circle")
                     }
-                    .frame(width: spacing.touchTarget)
+                    
+                    Button(action: {
+                        HapticManager.shared.light()
+                        showNutritionTips = true
+                    }) {
+                        Label("Nutrition Tips", systemImage: "heart.text.square")
+                    }
+                    
+                    Divider()
+                    
+                    Button(role: .destructive, action: {
+                        selectedMealTimes.removeAll()
+                        mealPlanningManager.clearOldMealPlans()
+                        HapticManager.shared.light()
+                    }) {
+                        Label("Clear Old Plans", systemImage: "trash")
+                    }
+                } label: {
+                    Image(systemName: "line.3.horizontal")
+                        .font(.system(size: 20))
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .frame(width: 44, height: 44)
                 }
             }
             .frame(height: spacing.touchTarget)
