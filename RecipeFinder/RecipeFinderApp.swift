@@ -20,14 +20,10 @@ struct RecipeFinderApp: App {
     
     /// Request notification permissions on app launch
     private func requestNotificationPermissions() {
-        // Request after a short delay to let the app fully load
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+        // Request asynchronously without blocking main thread
+        Task {
             NotificationManager.shared.requestPermission { granted in
-                if granted {
-                    debugLog("✅ User granted notification permissions")
-                } else {
-                    debugLog("⚠️ User denied notification permissions")
-                }
+                debugLog(granted ? "✅ User granted notification permissions" : "⚠️ User denied notification permissions")
             }
         }
     }
@@ -76,15 +72,11 @@ struct RecipeFinderApp: App {
     private func handleOnboardingFlow() {
         // Priority 1: Face ID onboarding (if biometrics available and not seen)
         if authManager.biometricsAvailable && !hasSeenBiometricOnboarding {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                showFaceIDOnboarding = true
-            }
+            showFaceIDOnboarding = true
         }
         // Priority 2: Main app onboarding
         else if !hasCompletedOnboarding {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                showOnboarding = true
-            }
+            showOnboarding = true
         }
     }
     
@@ -130,15 +122,13 @@ struct RecipeFinderApp: App {
     }
     
     private func configureTabBar() {
-        // Simple initial configuration - will adapt to color scheme
         let appearance = UITabBarAppearance()
         appearance.configureWithDefaultBackground()
         appearance.backgroundEffect = UIBlurEffect(style: .systemMaterial)
         
-        UITabBar.appearance().standardAppearance = appearance
-        if #available(iOS 15.0, *) {
-            UITabBar.appearance().scrollEdgeAppearance = appearance
-        }
+        let tabBarAppearance = UITabBar.appearance()
+        tabBarAppearance.standardAppearance = appearance
+        tabBarAppearance.scrollEdgeAppearance = appearance
     }
     
     private func configureNavigationBar() {
@@ -158,10 +148,11 @@ struct RecipeFinderApp: App {
         
         appearance.backButtonAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.white]
         
-        UINavigationBar.appearance().tintColor = .white
-        UINavigationBar.appearance().standardAppearance = appearance
-        UINavigationBar.appearance().compactAppearance = appearance
-        UINavigationBar.appearance().scrollEdgeAppearance = appearance
+        let navBarAppearance = UINavigationBar.appearance()
+        navBarAppearance.tintColor = .white
+        navBarAppearance.standardAppearance = appearance
+        navBarAppearance.compactAppearance = appearance
+        navBarAppearance.scrollEdgeAppearance = appearance
     }
     
     private func configureSearchBar() {
