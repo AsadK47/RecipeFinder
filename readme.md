@@ -52,7 +52,7 @@ open RecipeFinder.xcodeproj  # Press ⌘+R to run
 ## 📱 Features
 
 ### Core Features
-- **� Recipe Management** - Curated collection, URL import, custom creation, favorites, and sharing
+- **📖 Recipe Management** - Curated collection, URL import, custom creation, favorites, and sharing
 - **🛒 Smart Shopping Lists** - Auto-categorized ingredients, add from recipes, track inventory
 - **🍽 Meal Planning** - Weekly calendar, schedule meals, get automatic notifications
 - **🏠 Kitchen Inventory** - Track ingredients, expiry dates, find recipes you can make now
