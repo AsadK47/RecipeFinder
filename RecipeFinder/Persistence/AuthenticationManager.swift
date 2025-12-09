@@ -262,7 +262,7 @@ final class AuthenticationManager: NSObject, ObservableObject, @unchecked Sendab
     }
     
     private func completeSignIn(user: User, email: String) async throws {
-        try await saveUser(user)
+        try saveUser(user)
         
         self.currentUser = user
         self.isAuthenticated = true
@@ -337,7 +337,7 @@ final class AuthenticationManager: NSObject, ObservableObject, @unchecked Sendab
             lastLoginAt: Date()
         )
         
-        try await saveUser(user)
+        try saveUser(user)
         
         self.currentUser = user
         self.isAuthenticated = true
@@ -477,7 +477,7 @@ final class AuthenticationManager: NSObject, ObservableObject, @unchecked Sendab
     
     // MARK: - User Persistence
     
-    private func saveUser(_ user: User) async throws {
+    private func saveUser(_ user: User) throws {
         do {
             let encoder = JSONEncoder()
             let data = try encoder.encode(user)
@@ -495,14 +495,17 @@ final class AuthenticationManager: NSObject, ObservableObject, @unchecked Sendab
             return
         }
         
-        currentUser = user
-        
-        // Sync with AccountManager
-        AccountManager.shared.updateProfile(
-            firstName: user.givenName ?? "",
-            lastName: user.familyName ?? "",
-            chefType: .homeCook
-        )
+        // Ensure published property updates happen on the main thread
+        DispatchQueue.main.async {
+            self.currentUser = user
+            
+            // Sync with AccountManager
+            AccountManager.shared.updateProfile(
+                firstName: user.givenName ?? "",
+                lastName: user.familyName ?? "",
+                chefType: .homeCook
+            )
+        }
     }
     
     // Update Current User
@@ -594,9 +597,9 @@ extension AuthenticationManager: ASAuthorizationControllerDelegate {
             lastLoginAt: Date()
         )
         
-        Task {
+        Task { @MainActor in
             do {
-                try await saveUser(user)
+                try saveUser(user)
                 
                 self.currentUser = user
                 self.isAuthenticated = true

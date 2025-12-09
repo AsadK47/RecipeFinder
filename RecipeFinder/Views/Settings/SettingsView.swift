@@ -216,7 +216,6 @@ struct SettingsTabView: View {
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
-            .navigationBarBackButtonHidden(true)
             .toolbarBackground(.hidden, for: .navigationBar)
             .onAppear {
                 // Load profile image
@@ -231,17 +230,6 @@ struct SettingsTabView: View {
         VStack(spacing: 12) {
             GeometryReader { geometry in
                 HStack(spacing: 0) {
-                    // Back button
-                    Button(action: {
-                        dismiss()
-                        HapticManager.shared.light()
-                    }) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 20, weight: .semibold))
-                            .foregroundColor(AppTheme.accentColor(for: selectedTheme))
-                            .frame(width: 44, height: 44)
-                    }
-                    
                     Spacer()
                     
                     Text("Settings")
@@ -1653,7 +1641,6 @@ struct PrivacyInfoRow: View {
 }
 
 struct DataManagementSettingsView: View {
-    @State private var showingClearAlert = false
     @State private var showingResetAlert = false
     @State private var dataCleared = false
     
@@ -1668,67 +1655,48 @@ struct DataManagementSettingsView: View {
             
             ScrollView {
                 VStack(spacing: 24) {
+                    // Warning Card
                     SettingsCard {
-                        VStack(alignment: .leading, spacing: 20) {
-                            Text("Reset Options")
-                                .font(.headline)
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                        VStack(alignment: .leading, spacing: 16) {
+                            HStack(spacing: 12) {
+                                Image(systemName: "exclamationmark.triangle.fill")
+                                    .font(.title2)
+                                    .foregroundColor(.orange)
+                                
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Reset App to Default")
+                                        .font(.headline)
+                                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    
+                                    Text("Use this option if something goes wrong")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                            
+                            Text("This will reset the app to its initial state, clearing all your data and restoring default settings with sample recipes. Use this if you encounter issues or want a fresh start.")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                            
+                            Divider()
+                                .padding(.vertical, 4)
                             
                             Button(action: {
                                 showingResetAlert = true
                             }) {
-                                HStack(spacing: 16) {
+                                HStack {
                                     Image(systemName: "arrow.counterclockwise")
-                                        .font(.title3)
-                                        .foregroundColor(.orange)
-                                        .frame(width: 30)
-                                    
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text("Reset to Default")
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
-                                        Text("Clear everything and restore sample recipes + default settings")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                    }
-                                    
-                                    Spacer()
-                                    
-                                    Image(systemName: "chevron.right")
-                                        .foregroundColor(.secondary)
-                                        .font(.caption)
+                                        .font(.body)
+                                    Text("Reset to Default")
+                                        .font(.body)
+                                        .fontWeight(.semibold)
                                 }
-                                .padding(16)
-                                .background(Color.orange.opacity(0.1))
-                                .cornerRadius(12)
-                            }
-                            .buttonStyle(PlainButtonStyle())
-                            
-                            Button(action: {
-                                showingClearAlert = true
-                            }) {
-                                HStack(spacing: 16) {
-                                    Image(systemName: "trash")
-                                        .font(.title3)
-                                        .foregroundColor(.red)
-                                        .frame(width: 30)
-                                    
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text("Clear User Content")
-                                            .foregroundColor(.red)
-                                        Text("Delete recipes, lists, and notes (keeps your settings)")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                    }
-                                    
-                                    Spacer()
-                                    
-                                    Image(systemName: "chevron.right")
-                                        .foregroundColor(.secondary)
-                                        .font(.caption)
-                                }
-                                .padding(16)
-                                .background(Color.red.opacity(0.1))
-                                .cornerRadius(12)
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .background(Color.orange)
+                                .cornerRadius(10)
                             }
                             .buttonStyle(PlainButtonStyle())
                         }
@@ -1747,21 +1715,13 @@ struct DataManagementSettingsView: View {
         .navigationTitle("Data Management")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
-        .alert("Clear User Content", isPresented: $showingClearAlert) {
-            Button("Cancel", role: .cancel) { }
-            Button("Clear", role: .destructive) {
-                clearAllData()
-            }
-        } message: {
-            Text("This will delete all your recipes, kitchen inventory, shopping lists, meal plans, and notes. Your app settings and preferences will be preserved. This action cannot be undone.")
-        }
         .alert("Reset to Default", isPresented: $showingResetAlert) {
             Button("Cancel", role: .cancel) { }
             Button("Reset", role: .destructive) {
                 resetToDefault()
             }
         } message: {
-            Text("This will delete ALL your data including recipes, settings, preferences, and restore the app to a fresh install state. Sample recipes will be restored. This action cannot be undone!")
+            Text("This will reset the app to factory defaults, clearing all your data and restoring sample recipes. Use this if you encounter any issues. This action cannot be undone!")
         }
     }
     
@@ -1792,34 +1752,6 @@ struct DataManagementSettingsView: View {
         
         // 5. Restore sample recipes
         PersistenceController.shared.populateDatabase()
-        
-        dataCleared = true
-        HapticManager.shared.success()
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-            dataCleared = false
-        }
-    }
-    
-    private func clearAllData() {
-        let context = PersistenceController.shared.container.viewContext
-        
-        // 1. Clear Core Data (all recipes)
-        let recipeFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "Recipe")
-        let recipeBatchDelete = NSBatchDeleteRequest(fetchRequest: recipeFetch)
-        _ = try? context.execute(recipeBatchDelete)
-        _ = try? context.save()
-        
-        // 2. Clear all managers
-        KitchenInventoryManager.shared.clearAll()
-        ShoppingListManager.shared.clearAllItems()
-        
-        // 3. Clear specific UserDefaults data (keep settings)
-        UserDefaults.standard.removeObject(forKey: "favoriteRecipeIDs")
-        UserDefaults.standard.removeObject(forKey: "shoppingListItems")
-        UserDefaults.standard.removeObject(forKey: "kitchenInventory")
-        UserDefaults.standard.removeObject(forKey: "mealPlans")
-        UserDefaults.standard.removeObject(forKey: "recipeNotes")
         
         dataCleared = true
         HapticManager.shared.success()

@@ -1,5 +1,11 @@
 import SwiftUI
 
+// TODO: Future Enhancement - Add support for helpful pictures and videos to cooking tips
+// - Add media attachments to CookingTipModel (images, video URLs)
+// - Display images in tip cards
+// - Support embedded video playback in detail view
+// - Allow users to add their own media to tips
+
 struct CookingTipsView: View {
     @StateObject private var tipsManager = CookingTipsManager.shared
     @Environment(\.colorScheme) var colorScheme
@@ -55,6 +61,7 @@ struct CookingTipsView: View {
                     .padding(.bottom, 100)
                 }
                 .scrollBounceBehavior(.basedOnSize, axes: .vertical)
+                .scrollDisabled(false)
             }
         }
         .navigationBarHidden(true)
@@ -196,46 +203,43 @@ struct CookingTipsView: View {
     // MARK: - Active Filters Pills
     
     private var activeFiltersPills: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
-                if let category = tipsManager.selectedCategory {
-                    FilterPill(
-                        text: category.rawValue,
-                        color: AppTheme.accentColor(for: selectedTheme),
-                        onRemove: { tipsManager.selectedCategory = nil }
-                    )
-                }
-                
-                if let difficulty = tipsManager.selectedDifficulty {
-                    FilterPill(
-                        text: difficulty.rawValue,
-                        color: .orange,
-                        onRemove: { tipsManager.selectedDifficulty = nil }
-                    )
-                }
-                
-                if tipsManager.showFavoritesOnly {
-                    FilterPill(
-                        text: "Favorites",
-                        color: .pink,
-                        onRemove: { tipsManager.showFavoritesOnly = false }
-                    )
-                }
-                
-                Button(action: {
-                    tipsManager.clearFilters()
-                    HapticManager.shared.light()
-                }) {
-                    Text("Clear All")
-                        .font(.caption)
-                        .fontWeight(.medium)
-                        .foregroundColor(.red)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                }
+        FlowLayout(spacing: 8) {
+            if let category = tipsManager.selectedCategory {
+                FilterPill(
+                    text: category.rawValue,
+                    color: AppTheme.accentColor(for: selectedTheme),
+                    onRemove: { tipsManager.selectedCategory = nil }
+                )
+            }
+            
+            if let difficulty = tipsManager.selectedDifficulty {
+                FilterPill(
+                    text: difficulty.rawValue,
+                    color: .orange,
+                    onRemove: { tipsManager.selectedDifficulty = nil }
+                )
+            }
+            
+            if tipsManager.showFavoritesOnly {
+                FilterPill(
+                    text: "Favorites",
+                    color: .pink,
+                    onRemove: { tipsManager.showFavoritesOnly = false }
+                )
+            }
+            
+            Button(action: {
+                tipsManager.clearFilters()
+                HapticManager.shared.light()
+            }) {
+                Text("Clear All")
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .foregroundColor(.red)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
             }
         }
-        .scrollBounceBehavior(.basedOnSize, axes: .horizontal)
     }
     
     // MARK: - Compact List View

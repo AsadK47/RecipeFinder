@@ -1,10 +1,3 @@
-//
-//  NetworkMonitor.swift
-//  RecipeFinder
-//
-//  Network connectivity monitoring for offline detection
-//
-
 import Foundation
 import Network
 

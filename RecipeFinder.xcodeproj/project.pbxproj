@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		9E0C88662EBAEB1E00D707E3 /* FaceIDOnboardingSplash.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E0C88652EBAEB1E00D707E3 /* FaceIDOnboardingSplash.swift */; };
-		9E12E8932EC156330077B1DA /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 9E12E8922EC156330077B1DA /* ConfettiSwiftUI */; };
 		9E12E8952EC15AFA0077B1DA /* AppleSignInManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E12E8942EC15AFA0077B1DA /* AppleSignInManager.swift */; };
 		9E212D722EB12375005743F7 /* RecipeShareUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E212D712EB12375005743F7 /* RecipeShareUtility.swift */; };
 		9E2E34212E9D9F8500E2E49F /* KitchenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E2E34202E9D9F8500E2E49F /* KitchenView.swift */; };
@@ -96,9 +95,9 @@
 		9EA779292EB57D900028F064 /* StandardAppHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA779282EB57D900028F064 /* StandardAppHeader.swift */; };
 		9EB04E5B2EB4704F0033C093 /* MoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EB04E5A2EB4704F0033C093 /* MoreView.swift */; };
 		9EB629042EBB9FEE005FD6FC /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 9EB629032EBB9FEE005FD6FC /* ConfettiSwiftUI */; };
-		9EC0DFA12EBEE6E8001A1D7F /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 9EC0DFA02EBEE6E8001A1D7F /* ConfettiSwiftUI */; };
 		9EC0DFA32EBF8525001A1D7F /* AdaptiveSpacing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EC0DFA22EBF8525001A1D7F /* AdaptiveSpacing.swift */; };
 		9EC7284C2EBC247B00299DAD /* AppErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EC7284A2EBC247B00299DAD /* AppErrorHandler.swift */; };
+		9EDBD52E2EE8593F00DC2503 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9EDBD52D2EE8593F00DC2503 /* Assets.xcassets */; };
 		9EE5AAD92D08FCBE00C1B736 /* RecipeFinderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EE5AAD82D08FCBE00C1B736 /* RecipeFinderApp.swift */; };
 		9EE5AADB2D08FCBE00C1B736 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EE5AADA2D08FCBE00C1B736 /* ContentView.swift */; };
 		9EFB6CC02EBAD4EA00686A61 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EFB6CBF2EBAD4EA00686A61 /* NotificationManager.swift */; };
@@ -223,10 +222,10 @@
 		9EC7284A2EBC247B00299DAD /* AppErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppErrorHandler.swift; sourceTree = "<group>"; };
 		9EC7284E2EBC263000299DAD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		9ED480102EBB5F9800F0C7A9 /* RecipeFinder.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RecipeFinder.entitlements; sourceTree = "<group>"; };
+		9EDBD52D2EE8593F00DC2503 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9EE5AAD52D08FCBE00C1B736 /* RecipeFinder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RecipeFinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9EE5AAD82D08FCBE00C1B736 /* RecipeFinderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeFinderApp.swift; sourceTree = "<group>"; };
 		9EE5AADA2D08FCBE00C1B736 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		9EE5AADE2D08FCBF00C1B736 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9EE5AAE12D08FCBF00C1B736 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		9EE5AAE72D08FCBF00C1B736 /* RecipeFinderTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RecipeFinderTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9EE5AAF12D08FCBF00C1B736 /* RecipeFinderUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RecipeFinderUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -239,8 +238,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9E12E8932EC156330077B1DA /* ConfettiSwiftUI in Frameworks */,
-				9EC0DFA12EBEE6E8001A1D7F /* ConfettiSwiftUI in Frameworks */,
 				9EB629042EBB9FEE005FD6FC /* ConfettiSwiftUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -592,6 +589,7 @@
 		9EE5AAD72D08FCBE00C1B736 /* RecipeFinder */ = {
 			isa = PBXGroup;
 			children = (
+				9EDBD52D2EE8593F00DC2503 /* Assets.xcassets */,
 				9EC7284E2EBC263000299DAD /* Info.plist */,
 				9ED480102EBB5F9800F0C7A9 /* RecipeFinder.entitlements */,
 				9E77ABED2EB412C600666BB0 /* Services */,
@@ -602,7 +600,6 @@
 				9E7B9A7F2E9BEC3D007E1786 /* Views */,
 				9E7B9A7C2E9BC2CB007E1786 /* Models */,
 				9EE5AAD82D08FCBE00C1B736 /* RecipeFinderApp.swift */,
-				9EE5AADE2D08FCBF00C1B736 /* Assets.xcassets */,
 				9EE5AAE02D08FCBF00C1B736 /* Preview Content */,
 			);
 			path = RecipeFinder;
@@ -727,6 +724,7 @@
 				9E9DE5FE2ECCA111005CD593 /* PRIVACY_POLICY.md in Resources */,
 				9E9DE5FF2ECCA111005CD593 /* LICENSE in Resources */,
 				9E9DE6002ECCA111005CD593 /* TERMS_OF_SERVICE.md in Resources */,
+				9EDBD52E2EE8593F00DC2503 /* Assets.xcassets in Resources */,
 				9E9DE6012ECCA111005CD593 /* home_page.png in Resources */,
 				9E9DE6022ECCA111005CD593 /* splash_1.png in Resources */,
 			);
@@ -1004,6 +1002,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = RecipeFinder/RecipeFinder.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1037,6 +1036,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = RecipeFinder/RecipeFinder.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1186,17 +1186,7 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		9E12E8922EC156330077B1DA /* ConfettiSwiftUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9E6CF3A72D83087300D79DD6 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
-			productName = ConfettiSwiftUI;
-		};
 		9EB629032EBB9FEE005FD6FC /* ConfettiSwiftUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9E6CF3A72D83087300D79DD6 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
-			productName = ConfettiSwiftUI;
-		};
-		9EC0DFA02EBEE6E8001A1D7F /* ConfettiSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 9E6CF3A72D83087300D79DD6 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
 			productName = ConfettiSwiftUI;
