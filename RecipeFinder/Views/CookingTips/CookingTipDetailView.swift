@@ -109,20 +109,6 @@ struct CookingTipDetailView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: {
-                        dismiss()
-                    }) {
-                        HStack(spacing: 4) {
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 16, weight: .semibold))
-                            Text("Tips")
-                                .fontWeight(.medium)
-                        }
-                        .foregroundColor(AppTheme.accentColor(for: selectedTheme))
-                    }
-                }
-                
                 ToolbarItem(placement: .navigationBarTrailing) {
                     AnimatedHeartButton(isFavorite: $isFavorite) {
                         onToggleFavorite()

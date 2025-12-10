@@ -64,51 +64,11 @@ struct CookingTipsView: View {
                 .scrollDisabled(false)
             }
         }
-        .navigationBarHidden(true)
-        .sheet(item: $selectedTip) { tip in
-            CookingTipDetailView(tip: tip, onToggleFavorite: {
-                tipsManager.toggleFavorite(tip)
-            })
-        }
-        .sheet(isPresented: $showFilters) {
-            FiltersSheet(
-                selectedCategory: $tipsManager.selectedCategory,
-                selectedDifficulty: $tipsManager.selectedDifficulty,
-                showFavoritesOnly: $tipsManager.showFavoritesOnly
-            )
-        }
-    }
-    
-    // MARK: - Header
-    
-    private var header: some View {
-        GeometryReader { geometry in
-            let spacing = AdaptiveSpacing(geometry: geometry)
-            
-            HStack(spacing: 0) {
-                // Back button
-                Button(action: {
-                    dismiss()
-                    HapticManager.shared.light()
-                }) {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 20, weight: .semibold))
-                        .foregroundColor(AppTheme.accentColor(for: selectedTheme))
-                        .frame(width: 44, height: 44)
-                }
-                
-                Spacer()
-                
-                // Title
-                Text("Cooking Tips")
-                    .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.7)
-                
-                Spacer()
-                
-                // Menu button with all actions
+        .navigationTitle("Cooking Tips")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
                 Menu {
                     // View mode toggle
                     Button(action: {
@@ -130,7 +90,10 @@ struct CookingTipsView: View {
                         showFilters = true
                         HapticManager.shared.light()
                     }) {
-                        Label("Filters", systemImage: "line.3.horizontal.decrease.circle")
+                        Label(
+                            tipsManager.hasActiveFilters ? "Filters (\(tipsManager.activeFilterCount))" : "Filters",
+                            systemImage: "line.3.horizontal.decrease.circle"
+                        )
                     }
                     
                     // Clear filters option if active
@@ -153,12 +116,43 @@ struct CookingTipsView: View {
                         }
                         
                         Image(systemName: "line.3.horizontal")
-                            .font(.system(size: 20))
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
                     }
                 }
-                .frame(width: 44, height: 44)
             }
+        }
+        .sheet(item: $selectedTip) { tip in
+            CookingTipDetailView(tip: tip, onToggleFavorite: {
+                tipsManager.toggleFavorite(tip)
+            })
+        }
+        .sheet(isPresented: $showFilters) {
+            FiltersSheet(
+                selectedCategory: $tipsManager.selectedCategory,
+                selectedDifficulty: $tipsManager.selectedDifficulty,
+                showFavoritesOnly: $tipsManager.showFavoritesOnly
+            )
+        }
+    }
+    
+    // MARK: - Header
+    
+    private var header: some View {
+        GeometryReader { geometry in
+            let spacing = AdaptiveSpacing(geometry: geometry)
+            
+            HStack(spacing: 0) {
+                Spacer()
+                
+                // Title
+                Text("Cooking Tips")
+                    .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+                
+                Spacer()
+            }
+            .padding(.horizontal, spacing.horizontal)
         }
         .frame(height: 44)
         .padding(.horizontal, 20)

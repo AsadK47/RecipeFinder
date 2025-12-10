@@ -110,7 +110,6 @@ struct MoreView: View {
                     }
                 }
             }
-            .navigationBarHidden(true)
         }
     }
 }

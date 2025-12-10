@@ -1,6 +1,6 @@
 # Terms of Service
 
-**Last Updated: 7 November 2025**
+**Last Updated: 18 November 2025**
 
 Welcome to RecipeFinder! These Terms of Service explain your rights and responsibilities when using our app. By using RecipeFinder, you agree to these terms.
 

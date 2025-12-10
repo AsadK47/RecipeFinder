@@ -17,6 +17,12 @@ struct LegalInformationView: View {
     @State private var showCompanyCompliance = false
     @State private var showCertificate = false
     
+    private var currentDateFormatted: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "d MMMM yyyy"
+        return formatter.string(from: Date())
+    }
+    
     var body: some View {
         ZStack {
             AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
@@ -541,7 +547,7 @@ struct PrivacyPolicyView: View {
                                 .font(.system(size: 32, weight: .bold))
                                 .foregroundColor(colorScheme == .dark ? .white : .black)
                             
-                            Text("Last Updated: 9 November 2025")
+                            Text("Last Updated: \(currentDateFormatted)")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                             
@@ -658,7 +664,7 @@ struct TermsOfServiceView: View {
                                 .font(.system(size: 32, weight: .bold))
                                 .foregroundColor(colorScheme == .dark ? .white : .black)
                             
-                            Text("Last Updated: 9 November 2025")
+                            Text("Last Updated: \(currentDateFormatted)")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                             

@@ -64,7 +64,6 @@ struct MealPlanningView: View {
                 }
             }
         }
-        .navigationBarHidden(true)
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbarColorScheme(.dark, for: .navigationBar)
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: selectedMealTimes)

@@ -64,7 +64,8 @@ struct NotesListView: View {
     }
     
     var body: some View {
-        ZStack {
+        NavigationStack {
+            ZStack {
             // Background
             AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
@@ -74,17 +75,6 @@ struct NotesListView: View {
                 VStack(spacing: 12) {
                     GeometryReader { geometry in
                         HStack(spacing: 0) {
-                            // Back button
-                            Button(action: {
-                                dismiss()
-                                HapticManager.shared.light()
-                            }) {
-                                Image(systemName: "chevron.left")
-                                    .font(.system(size: 20, weight: .semibold))
-                                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
-                                    .frame(width: 44, height: 44)
-                            }
-                            
                             Spacer()
                             
                             Text("Notes")
@@ -94,33 +84,6 @@ struct NotesListView: View {
                                 .minimumScaleFactor(0.7)
                             
                             Spacer()
-                            
-                            // Add Note Button - Prominent and clickable
-                            Button(action: {
-                                HapticManager.shared.medium()
-                                showNewNoteSheet = true
-                            }) {
-                                ModernCircleButton(icon: "plus") {}
-                                    .allowsHitTesting(false)
-                            }
-                                
-                            // Right menu - burger menu for filters
-                            Menu {
-                                // Filter option
-                                Button(
-                                    action: {
-                                        HapticManager.shared.light()
-                                        showFilterMenu.toggle()
-                                    },
-                                    label: {
-                                        Label(activeFilterCount > 0 ? "Filters (\(activeFilterCount))" : "Filters", systemImage: "line.3.horizontal.decrease.circle")
-                                    }
-                                )
-                            } label: {
-                                ModernCircleButton(icon: "line.3.horizontal") {}
-                                    .allowsHitTesting(false)
-                            }
-                            .frame(width: max(44, geometry.size.width * 0.15))
                         }
                     }
                     .frame(height: 44)
@@ -189,7 +152,36 @@ struct NotesListView: View {
                 }
             }
         }
-        .navigationBarHidden(true)
+        .navigationTitle("Notes")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Menu {
+                    // Filter option
+                    Button(
+                        action: {
+                            HapticManager.shared.light()
+                            showFilterMenu.toggle()
+                        },
+                        label: {
+                            Label(activeFilterCount > 0 ? "Filters (\(activeFilterCount))" : "Filters", systemImage: "line.3.horizontal.decrease.circle")
+                        }
+                    )
+                } label: {
+                    Image(systemName: "line.3.horizontal")
+                }
+            }
+            
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+                    HapticManager.shared.medium()
+                    showNewNoteSheet = true
+                }) {
+                    Image(systemName: "plus")
+                }
+            }
+        }
         .sheet(isPresented: $showNewNoteSheet) {
             NoteEditorView(note: nil) { note in
                 notesManager.addNote(note)
