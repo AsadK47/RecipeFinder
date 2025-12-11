@@ -208,6 +208,7 @@ struct NotesListView: View {
         .onChange(of: notesManager.notes.count) { _, _ in
             updateTagCache()
         }
+        }
     }
     
     // Update tag cache (performance optimization)
