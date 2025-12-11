@@ -17,11 +17,11 @@ struct LegalInformationView: View {
     @State private var showCompanyCompliance = false
     @State private var showCertificate = false
     
-    private var currentDateFormatted: String {
+    private let currentDateFormatted: String = {
         let formatter = DateFormatter()
         formatter.dateFormat = "d MMMM yyyy"
         return formatter.string(from: Date())
-    }
+    }()
     
     var body: some View {
         ZStack {
@@ -534,6 +534,12 @@ struct PrivacyPolicyView: View {
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     
+    private let currentDateFormatted: String = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "d MMMM yyyy"
+        return formatter.string(from: Date())
+    }()
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -650,6 +656,12 @@ struct TermsOfServiceView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
+    
+    private let currentDateFormatted: String = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "d MMMM yyyy"
+        return formatter.string(from: Date())
+    }()
     
     var body: some View {
         NavigationStack {

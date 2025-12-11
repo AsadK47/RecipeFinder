@@ -67,8 +67,8 @@ struct CookingTipsView: View {
         .navigationTitle("Cooking Tips")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+        .toolbar(content: {
+            ToolbarItem(placement: .topBarTrailing) {
                 Menu {
                     // View mode toggle
                     Button(action: {
@@ -91,7 +91,7 @@ struct CookingTipsView: View {
                         HapticManager.shared.light()
                     }) {
                         Label(
-                            tipsManager.hasActiveFilters ? "Filters (\(tipsManager.activeFilterCount))" : "Filters",
+                            hasActiveFilters ? "Filters (Active)" : "Filters",
                             systemImage: "line.3.horizontal.decrease.circle"
                         )
                     }
@@ -119,7 +119,7 @@ struct CookingTipsView: View {
                     }
                 }
             }
-        }
+        })
         .sheet(item: $selectedTip) { tip in
             CookingTipDetailView(tip: tip, onToggleFavorite: {
                 tipsManager.toggleFavorite(tip)
@@ -152,7 +152,7 @@ struct CookingTipsView: View {
                 
                 Spacer()
             }
-            .padding(.horizontal, spacing.horizontal)
+            .padding(.horizontal, spacing.md)
         }
         .frame(height: 44)
         .padding(.horizontal, 20)
