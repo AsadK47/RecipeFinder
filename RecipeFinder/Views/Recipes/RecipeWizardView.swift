@@ -8,7 +8,6 @@ struct RecipeWizardView: View {
     
     let onComplete: (RecipeModel) -> Void
     let prefilledData: PrefilledRecipeData?
-    let autoFillMode: Bool
     let editingRecipeId: UUID?  // For preserving recipe ID when editing
     
     // Struct for pre-filling wizard with imported data
@@ -59,16 +58,12 @@ struct RecipeWizardView: View {
     @State private var errorMessage = ""
     
     // Initializer with optional prefilled data
-    init(prefilledData: PrefilledRecipeData? = nil, autoFillMode: Bool = false, editingRecipeId: UUID? = nil, onComplete: @escaping (RecipeModel) -> Void) {
+    // SIMPLE LOGIC: Always start from step 0, whether creating or editing
+    // Pre-filled data just populates the fields, that's it!
+    init(prefilledData: PrefilledRecipeData? = nil, editingRecipeId: UUID? = nil, onComplete: @escaping (RecipeModel) -> Void) {
         self.prefilledData = prefilledData
-        self.autoFillMode = autoFillMode
         self.editingRecipeId = editingRecipeId
         self.onComplete = onComplete
-        
-        // If auto-fill mode, start at review step (last step)
-        if autoFillMode && prefilledData != nil {
-            _currentStep = State(initialValue: totalSteps - 1)
-        }
     }
     
     let difficulties = ["Basic", "Intermediate", "Expert"]
@@ -584,19 +579,19 @@ struct RecipeWizardView: View {
         VStack(alignment: .leading, spacing: 20) {
             stepHeader(
                 title: "Final Notes",
-                subtitle: autoFillMode && !notes.isEmpty ? "Review imported notes or add your own" : "Any tips, variations, or additional notes? (Optional)",
+                subtitle: prefilledData?.notes != nil && !notes.isEmpty ? "Review notes or add your own" : "Any tips, variations, or additional notes? (Optional)",
                 stepNumber: 7,
                 illustration: "note.text"
             )
             
             cardContainer {
                 VStack(spacing: 20) {
-                    // Show a preview label if there are existing notes from import
-                    if autoFillMode && !notes.isEmpty {
+                    // Show a preview label if there are existing notes from import/edit
+                    if prefilledData?.notes != nil && !notes.isEmpty {
                         HStack {
                             Image(systemName: "info.circle.fill")
                                 .foregroundColor(.blue)
-                            Text("Auto-imported notes from source recipe")
+                            Text("Pre-filled notes from recipe")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                             Spacer()
@@ -644,27 +639,26 @@ struct RecipeWizardView: View {
                     .background(Color(.systemGray6))
                     .cornerRadius(8)
                     
-                    // Quick add buttons for common note types
-                    if notes.isEmpty || !autoFillMode {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Quick Add:")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                            
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 8) {
-                                    quickNoteButton(icon: "leaf.fill", text: "Make it healthier", template: "💚 Healthier Option:\n• ")
-                                    quickNoteButton(icon: "carrot.fill", text: "Make it vegan", template: "🌱 Vegan Version:\n• ")
-                                    quickNoteButton(icon: "clock.fill", text: "Save time", template: "⏰ Time-Saving Tip:\n• ")
-                                    quickNoteButton(icon: "arrow.triangle.swap", text: "Substitutions", template: "🔄 Substitutions:\n• ")
-                                    quickNoteButton(icon: "snowflake", text: "Storage", template: "❄️ Storage:\n• ")
-                                    quickNoteButton(icon: "star.fill", text: "Pro tip", template: "✨ Pro Tip:\n• ")
-                                }
+                    // Quick add buttons for common note types (always show)
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Quick Add:")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 8) {
+                                quickNoteButton(icon: "leaf.fill", text: "Make it healthier", template: "💚 Healthier Option:\n• ")
+                                quickNoteButton(icon: "carrot.fill", text: "Make it vegan", template: "🌱 Vegan Version:\n• ")
+                                quickNoteButton(icon: "clock.fill", text: "Save time", template: "⏰ Time-Saving Tip:\n• ")
+                                quickNoteButton(icon: "arrow.triangle.swap", text: "Substitutions", template: "🔄 Substitutions:\n• ")
+                                quickNoteButton(icon: "snowflake", text: "Storage", template: "❄️ Storage:\n• ")
+                                quickNoteButton(icon: "star.fill", text: "Pro tip", template: "✨ Pro Tip:\n• ")
                             }
                         }
                     }
-                    
-                    Divider()
+                }
+                
+                Divider()
                     
                     // Summary
                     VStack(alignment: .leading, spacing: 12) {
@@ -681,7 +675,6 @@ struct RecipeWizardView: View {
                         summaryRow(icon: "list.number", label: "Pre-prep Steps", value: "\(prePrepSteps.filter { !$0.isEmpty }.count)")
                         summaryRow(icon: "list.number", label: "Cooking Steps", value: "\(mainInstructions.filter { !$0.isEmpty }.count)")
                     }
-                }
                 .padding()
             }
         }

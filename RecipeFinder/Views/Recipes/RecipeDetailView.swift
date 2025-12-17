@@ -391,7 +391,6 @@ struct RecipeDetailView: View {
                 category: recipe.category,
                 isFavorite: recipe.isFavorite
             ),
-            autoFillMode: true,
             editingRecipeId: recipe.id,
             onComplete: { updatedRecipe in
                 recipe = updatedRecipe

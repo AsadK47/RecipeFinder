@@ -6,14 +6,7 @@ struct RecipeImportView: View {
     @StateObject private var importer = RecipeImporter()
     @State private var urlText = ""
     @FocusState private var isTextFieldFocused: Bool
-    @State private var showImportChoice = false
     @State private var showRecipeWizard = false
-    @State private var importMode: ImportMode = .autoFill
-    
-    enum ImportMode {
-        case autoFill
-        case manual
-    }
     
     var onImport: (RecipeModel) -> Void
     
@@ -186,25 +179,8 @@ struct RecipeImportView: View {
         }
         .onChange(of: importer.extractedData) { _, newValue in
             if newValue != nil {
-                // Data extracted successfully - show import choice dialog
-                showImportChoice = true
-            }
-        }
-        .confirmationDialog("Import Recipe", isPresented: $showImportChoice) {
-            Button("Auto-Fill Recipe (\(Int(importer.parseConfidence * 100))% confident)") {
-                importMode = .autoFill
+                // Data extracted successfully - open wizard directly with pre-filled data
                 showRecipeWizard = true
-            }
-            Button("Review & Edit Manually") {
-                importMode = .manual
-                showRecipeWizard = true
-            }
-            Button("Cancel", role: .cancel) {
-                // Keep the data, user can try again
-            }
-        } message: {
-            if let data = importer.extractedData {
-                Text("Recipe '\(data.name)' parsed successfully!\n\nChoose how to proceed:")
             }
         }
         .sheet(isPresented: $showRecipeWizard) {
@@ -222,8 +198,7 @@ struct RecipeImportView: View {
                         notes: generateImportNotes(from: data),
                         category: data.category,
                         isFavorite: false
-                    ),
-                    autoFillMode: importMode == .autoFill
+                    )
                 ) { newRecipe in
                     onImport(newRecipe)
                     showRecipeWizard = false
