@@ -5,6 +5,7 @@ import UniformTypeIdentifiers
 struct AccountView: View {
     @StateObject private var accountManager = AccountManager.shared
     @StateObject private var authManager = AuthenticationManager.shared
+    @StateObject private var badgeManager = BadgeManager.shared
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
@@ -76,6 +77,9 @@ struct AccountView: View {
                     VStack(spacing: 20) {
                         // Profile Avatar
                         profileAvatar
+                        
+                        // Achievements/Badges Section
+                        badgesSection
                         
                         // Personal Information Section
                         personalInfoSection
@@ -1184,5 +1188,105 @@ struct ChefTypeCard: View {
             }
         }
         .buttonStyle(PlainButtonStyle())
+    }
+}
+
+// MARK: - Badges Section Extension
+
+extension AccountView {
+    var badgesSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Achievements")
+                .font(.title3)
+                .fontWeight(.bold)
+                .foregroundColor(colorScheme == .dark ? .white : .black)
+            
+            let recipeCount = PersistenceController.shared.getRecipeCount()
+            let allBadges = badgeManager.getAllBadges(recipeCount: recipeCount)
+            
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                ForEach(allBadges) { badge in
+                    BadgeCard(badge: badge, colorScheme: colorScheme, cardStyle: cardStyle)
+                }
+            }
+        }
+        .padding(20)
+        .background {
+            if cardStyle == .solid {
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+            } else {
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(.ultraThinMaterial)
+            }
+        }
+    }
+}
+
+struct BadgeCard: View {
+    let badge: Badge
+    let colorScheme: ColorScheme
+    let cardStyle: CardStyle
+    
+    var badgeColor: Color {
+        switch badge.color {
+        case "purple": return .purple
+        case "green": return .green
+        case "mint": return .mint
+        case "blue": return .blue
+        case "orange": return .orange
+        case "yellow": return .yellow
+        case "gold": return .yellow
+        default: return .gray
+        }
+    }
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            ZStack {
+                Circle()
+                    .fill(badge.isUnlocked ? badgeColor.opacity(0.2) : Color.gray.opacity(0.1))
+                    .frame(width: 60, height: 60)
+                
+                Image(systemName: badge.icon)
+                    .font(.system(size: 28))
+                    .foregroundColor(badge.isUnlocked ? badgeColor : .gray.opacity(0.5))
+            }
+            
+            Text(badge.title.components(separatedBy: " ")[0]) // First word only
+                .font(.caption2)
+                .fontWeight(.semibold)
+                .foregroundColor(badge.isUnlocked ? (colorScheme == .dark ? .white : .black) : .gray)
+                .lineLimit(1)
+            
+            if badge.isUnlocked, let date = badge.dateEarned {
+                Text(date.formatted(date: .abbreviated, time: .omitted))
+                    .font(.system(size: 9))
+                    .foregroundColor(.secondary)
+            } else {
+                Text("Locked")
+                    .font(.system(size: 9))
+                    .foregroundColor(.gray)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 12)
+        .background {
+            if cardStyle == .solid {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(colorScheme == .dark ? Color(white: 0.1) : Color.white.opacity(0.5))
+            } else {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(.ultraThinMaterial.opacity(0.5))
+            }
+        }
+        .overlay {
+            if !badge.isUnlocked {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.black.opacity(0.3))
+            }
+        }
+        .saturation(badge.isUnlocked ? 1.0 : 0.3)
+        .opacity(badge.isUnlocked ? 1.0 : 0.6)
     }
 }

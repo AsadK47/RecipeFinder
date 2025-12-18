@@ -14,7 +14,7 @@ enum MeasurementSystem: String, CaseIterable, Codable {
 
 struct UnitConversion {
     
-    // Weight Conversions
+    // Weight Conversions - VERIFIED ACCURATE (USDA/NIST Standards)
     static func convertWeight(value: Double, from fromUnit: String, to toUnit: String) -> Double {
         let normalizedFrom = fromUnit.lowercased().trimmingCharacters(in: .whitespaces)
         let normalizedTo = toUnit.lowercased().trimmingCharacters(in: .whitespaces)
@@ -22,36 +22,36 @@ struct UnitConversion {
         // Convert to grams first (base unit)
         var grams: Double = 0
         
-        // From conversions
+        // From conversions (EXACT values from NIST)
         switch normalizedFrom {
         case "g", "grams", "gram":
             grams = value
         case "kg", "kilograms", "kilogram":
-            grams = value * 1000
+            grams = value * 1000.0  // Exact
         case "lbs", "lb", "pounds", "pound":
-            grams = value * 453.592
+            grams = value * 453.59237  // NIST exact: 1 lb = 453.59237 g
         case "oz", "ounces", "ounce":
-            grams = value * 28.3495
+            grams = value * 28.349523125  // NIST exact: 1 oz = 28.349523125 g
         default:
             return value // No conversion needed
         }
         
-        // To conversions
+        // To conversions (EXACT values from NIST)
         switch normalizedTo {
         case "g", "grams", "gram":
             return grams
         case "kg", "kilograms", "kilogram":
-            return grams / 1000
+            return grams / 1000.0  // Exact
         case "lbs", "lb", "pounds", "pound":
-            return grams / 453.592
+            return grams / 453.59237  // NIST exact
         case "oz", "ounces", "ounce":
-            return grams / 28.3495
+            return grams / 28.349523125  // NIST exact
         default:
             return value
         }
     }
     
-    // Volume Conversions
+    // Volume Conversions - VERIFIED ACCURATE (USDA/NIST Standards)
     static func convertVolume(value: Double, from fromUnit: String, to toUnit: String) -> Double {
         let normalizedFrom = fromUnit.lowercased().trimmingCharacters(in: .whitespaces)
         let normalizedTo = toUnit.lowercased().trimmingCharacters(in: .whitespaces)
@@ -59,38 +59,38 @@ struct UnitConversion {
         // Convert to ml first (base unit)
         var ml: Double = 0
         
-        // From conversions
+        // From conversions (EXACT values from NIST/USDA)
         switch normalizedFrom {
         case "ml", "milliliters", "milliliter":
             ml = value
         case "l", "liters", "liter":
-            ml = value * 1000
+            ml = value * 1000.0  // Exact
         case "cup", "cups":
-            ml = value * 236.588
+            ml = value * 236.5882365  // USDA exact: 1 US cup = 236.5882365 ml
         case "tbsp", "tablespoon", "tablespoons":
-            ml = value * 14.7868
+            ml = value * 14.78676478125  // USDA exact: 1 US tbsp = 14.78676478125 ml (1/16 cup)
         case "tsp", "teaspoon", "teaspoons":
-            ml = value * 4.92892
+            ml = value * 4.92892159375  // USDA exact: 1 US tsp = 4.92892159375 ml (1/3 tbsp)
         case "fl oz", "fluid ounce", "fluid ounces":
-            ml = value * 29.5735
+            ml = value * 29.5735295625  // NIST exact: 1 US fl oz = 29.5735295625 ml
         default:
             return value
         }
         
-        // To conversions
+        // To conversions (EXACT values from NIST/USDA)
         switch normalizedTo {
         case "ml", "milliliters", "milliliter":
             return ml
         case "l", "liters", "liter":
-            return ml / 1000
+            return ml / 1000.0  // Exact
         case "cup", "cups":
-            return ml / 236.588
+            return ml / 236.5882365  // USDA exact
         case "tbsp", "tablespoon", "tablespoons":
-            return ml / 14.7868
+            return ml / 14.78676478125  // USDA exact
         case "tsp", "teaspoon", "teaspoons":
-            return ml / 4.92892
+            return ml / 4.92892159375  // USDA exact
         case "fl oz", "fluid ounce", "fluid ounces":
-            return ml / 29.5735
+            return ml / 29.5735295625  // NIST exact
         default:
             return value
         }

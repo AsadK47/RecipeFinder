@@ -241,6 +241,10 @@ final class PersistenceController {
         do {
             try context.save()
             debugLog("✅ Recipe '\(parameters.name)' saved successfully")
+            
+            // Check and unlock badges after saving
+            let recipeCount = getRecipeCount()
+            BadgeManager.shared.checkAndUnlockBadges(recipeCount: recipeCount)
         } catch {
             debugLog("❌ Failed to save recipe '\(parameters.name)': \(error.localizedDescription)")
         }
@@ -289,6 +293,11 @@ final class PersistenceController {
             debugLog("❌ Failed to fetch recipe count: \(error.localizedDescription)")
             return 0
         }
+    }
+    
+    /// Convenience method for badge system
+    func getRecipeCount() -> Int {
+        return fetchRecipeCount()
     }
     
     // MARK: - Mapping

@@ -51,6 +51,9 @@ final class AccountManager: ObservableObject, @unchecked Sendable {
         loadProfile()
         updateStats()
         
+        // Unlock welcome badge on first launch
+        unlockWelcomeBadge()
+        
         // Observe data changes to update stats
         NotificationCenter.default.addObserver(
             self,
@@ -58,6 +61,20 @@ final class AccountManager: ObservableObject, @unchecked Sendable {
             name: NSNotification.Name("DataDidChange"),
             object: nil
         )
+    }
+    
+    private func unlockWelcomeBadge() {
+        // Only unlock once
+        if !BadgeManager.shared.isBadgeUnlocked(BadgeType.welcomeAboard.rawValue) {
+            // Use the account creation date if available, otherwise use current date
+            let signupDate = UserDefaults.standard.object(forKey: "accountCreationDate") as? Date ?? Date()
+            BadgeManager.shared.unlockBadge(.welcomeAboard, customDate: signupDate)
+            
+            // Save account creation date for future reference
+            if UserDefaults.standard.object(forKey: "accountCreationDate") == nil {
+                UserDefaults.standard.set(Date(), forKey: "accountCreationDate")
+            }
+        }
     }
     
     // Profile Management

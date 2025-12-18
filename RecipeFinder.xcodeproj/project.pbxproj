@@ -55,6 +55,7 @@
 		9E5447BA2EB0409700AD6D0A /* RecipeImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5447B92EB0409700AD6D0A /* RecipeImportView.swift */; };
 		9E605FFE2D0985BD00236896 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E605FFD2D0985BD00236896 /* PersistenceController.swift */; };
 		9E6060032D09CB6400236896 /* RecipeModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9E6060002D09CB6400236896 /* RecipeModel.xcdatamodeld */; };
+		9E7691702EF46CD400277ADF /* BadgeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E76916E2EF46CD400277ADF /* BadgeModel.swift */; };
 		9E77ABEE2EB412C600666BB0 /* SecureCredentialManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E77ABEC2EB412C600666BB0 /* SecureCredentialManager.swift */; };
 		9E77ABF02EB4309A00666BB0 /* IngredientNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E77ABEF2EB4309A00666BB0 /* IngredientNormalizer.swift */; };
 		9E77ABF22EB430BC00666BB0 /* DeveloperDocumentationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E77ABF12EB430BC00666BB0 /* DeveloperDocumentationView.swift */; };
@@ -174,6 +175,7 @@
 		9E605FFD2D0985BD00236896 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		9E6060012D09CB6400236896 /* RecipeModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = RecipeModel.xcdatamodel; sourceTree = "<group>"; };
 		9E6060022D09CB6400236896 /* RecipeModel 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 2.xcdatamodel"; sourceTree = "<group>"; };
+		9E76916E2EF46CD400277ADF /* BadgeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeModel.swift; sourceTree = "<group>"; };
 		9E77ABEC2EB412C600666BB0 /* SecureCredentialManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureCredentialManager.swift; sourceTree = "<group>"; };
 		9E77ABEF2EB4309A00666BB0 /* IngredientNormalizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientNormalizer.swift; sourceTree = "<group>"; };
 		9E77ABF12EB430BC00666BB0 /* DeveloperDocumentationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperDocumentationView.swift; sourceTree = "<group>"; };
@@ -380,6 +382,14 @@
 			path = Authentication;
 			sourceTree = "<group>";
 		};
+		9E76916F2EF46CD400277ADF /* Account */ = {
+			isa = PBXGroup;
+			children = (
+				9E76916E2EF46CD400277ADF /* BadgeModel.swift */,
+			);
+			path = Account;
+			sourceTree = "<group>";
+		};
 		9E77ABED2EB412C600666BB0 /* Services */ = {
 			isa = PBXGroup;
 			children = (
@@ -392,6 +402,7 @@
 		9E7B9A7C2E9BC2CB007E1786 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				9E76916F2EF46CD400277ADF /* Account */,
 				9E834DF02ECA6508008F8A11 /* CookingTips */,
 				9EA779262EB5725D0028F064 /* MealPlanning */,
 				9EA779242EB5711E0028F064 /* ShoppingList */,
@@ -802,6 +813,7 @@
 				9E834DF12ECA6508008F8A11 /* CookingTipModel.swift in Sources */,
 				9EA779072EB5332B0028F064 /* TestHelpers.swift in Sources */,
 				9E212D722EB12375005743F7 /* RecipeShareUtility.swift in Sources */,
+				9E7691702EF46CD400277ADF /* BadgeModel.swift in Sources */,
 				9E51C3A12EB406AD0064B917 /* CookTimerView.swift in Sources */,
 				9E5447B22EAA92B900AD6D0A /* HapticManager.swift in Sources */,
 				9E77ABF02EB4309A00666BB0 /* IngredientNormalizer.swift in Sources */,

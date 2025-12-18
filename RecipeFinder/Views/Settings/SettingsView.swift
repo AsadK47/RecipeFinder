@@ -227,44 +227,39 @@ struct SettingsTabView: View {
     // MARK: - Header
     
     private var header: some View {
-        VStack(spacing: 12) {
-            GeometryReader { geometry in
-                HStack(spacing: 0) {
-                    Spacer()
-                    
-                    Text("Settings")
-                        .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.7)
-                    
-                    Spacer()
-                    
-                    // Menu button
-                    Menu {
-                        Button(action: {
-                            // Quick actions could go here
-                        }) {
-                            Label("Refresh", systemImage: "arrow.clockwise")
-                        }
-                        
-                        Button(action: {
-                            // Additional menu items
-                        }) {
-                            Label("Help", systemImage: "questionmark.circle")
-                        }
-                    } label: {
-                        Image(systemName: "line.3.horizontal")
-                            .font(.system(size: 20))
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
-                            .frame(width: 44, height: 44)
-                    }
+        HStack(spacing: 0) {
+            Spacer()
+            
+            Text("Settings")
+                .font(.system(size: 34, weight: .bold))
+                .foregroundColor(colorScheme == .dark ? .white : .black)
+            
+            Spacer()
+            
+            // Menu button
+            Menu {
+                Button(action: {
+                    // Quick actions could go here
+                }) {
+                    Label("Refresh", systemImage: "arrow.clockwise")
                 }
+                
+                Button(action: {
+                    // Additional menu items
+                }) {
+                    Label("Help", systemImage: "questionmark.circle")
+                }
+            } label: {
+                Image(systemName: "line.3.horizontal")
+                    .font(.system(size: 20))
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .frame(width: 44, height: 44)
             }
-            .frame(height: 44)
         }
+        .frame(height: 44)
         .padding(.horizontal, 20)
-        .padding(.top, 16)
+        .padding(.top, 8)
+        .padding(.bottom, 4)
     }
 }
 

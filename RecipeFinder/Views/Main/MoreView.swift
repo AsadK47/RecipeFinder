@@ -14,23 +14,14 @@ struct MoreView: View {
                 
                 VStack(spacing: 0) {
                     VStack(spacing: 12) {
-                        GeometryReader { geometry in
-                            HStack(spacing: 0) {
-                                Spacer()
-                                
-                                Text("More")
-                                    .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
-                                    .lineLimit(1)
-                                    .minimumScaleFactor(0.7)
-                                
-                                Spacer()
-                            }
-                        }
-                        .frame(height: 44)
-                        .padding(.horizontal, 20)
-                        .padding(.top, 16)
+                        Text("More")
+                            .font(.system(size: 34, weight: .bold))
+                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 44)
                     }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 16)
                     
                     ScrollView {
                         VStack(spacing: 24) {

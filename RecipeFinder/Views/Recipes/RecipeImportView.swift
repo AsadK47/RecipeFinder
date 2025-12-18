@@ -211,60 +211,71 @@ struct RecipeImportView: View {
     // MARK: - Helper Functions
     
     /// Generate comprehensive notes from imported recipe data
+    /// Follows the format of the Achari Chicken Curry sample recipe
     private func generateImportNotes(from data: RecipeImporter.ExtractedRecipeData) -> String {
         var notes: [String] = []
         
-        // 1. Source information
+        // 1. Recipe description (if available) - PRIMARY CONTENT
+        if let description = data.description, !description.isEmpty {
+            // Clean up the description
+            let cleanDescription = description
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+                .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+            notes.append(cleanDescription)
+        }
+        
+        // 2. Add cuisine-specific tips (if available)
+        if let cuisine = data.cuisine, !cuisine.isEmpty {
+            notes.append("") // Blank line
+            notes.append("💡 Cuisine: \(cuisine)")
+        }
+        
+        // 3. Add pairing suggestions based on category
+        if let category = data.category {
+            let pairingSuggestion = getPairingSuggestion(for: category)
+            if !pairingSuggestion.isEmpty {
+                notes.append("") // Blank line
+                notes.append(pairingSuggestion)
+            }
+        }
+        
+        // 4. Source attribution (minimal, at the end)
+        notes.append("") // Blank line
         let domain = data.sourceURL.host ?? "Unknown"
         let cleanDomain = domain.replacingOccurrences(of: "www.", with: "")
-        notes.append("📍 Source: \(cleanDomain)")
-        notes.append("🔗 \(data.sourceURL.absoluteString)")
-        
-        // 2. Import metadata
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
-        dateFormatter.timeStyle = .short
-        notes.append("📅 Imported: \(dateFormatter.string(from: Date()))")
-        
-        // 3. Parse confidence
-        let confidence = Int(importer.parseConfidence * 100)
-        let confidenceEmoji: String
-        if confidence >= 90 {
-            confidenceEmoji = "✅"
-        } else if confidence >= 70 {
-            confidenceEmoji = "⚠️"
-        } else {
-            confidenceEmoji = "❓"
-        }
-        notes.append("\(confidenceEmoji) Parse Confidence: \(confidence)%")
+        notes.append("---")
+        notes.append("Imported from \(cleanDomain)")
         
         // 4. Description if available
-        if let description = data.description, !description.isEmpty {
-            notes.append("")  // Blank line for separation
-            notes.append("📝 About This Recipe:")
-            notes.append(description)
-        }
         
-        // 5. Tips based on cuisine
-        if let cuisine = data.cuisine, !cuisine.isEmpty {
-            notes.append("")
-            notes.append("🌍 Cuisine: \(cuisine)")
-        }
-        
-        // 6. Helpful reminders
-        notes.append("")
-        notes.append("💡 Tips:")
-        notes.append("• Review and adjust ingredient quantities if needed")
-        notes.append("• Verify cooking times for your equipment")
-        notes.append("• Check seasonings to taste")
-        
-        // 7. Original recipe note
-        if confidence < 90 {
-            notes.append("")
-            notes.append("⚠️ Note: Some details may need verification against the original recipe")
-        }
+        // Add date for record-keeping (subtle)
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .medium
+        notes.append("Imported \(dateFormatter.string(from: Date()))")
         
         return notes.joined(separator: "\n")
+    }
+    
+    /// Get pairing suggestions based on recipe category
+    private func getPairingSuggestion(for category: String) -> String {
+        switch category.lowercased() {
+        case "main", "dinner", "entree", "entrée":
+            return "🍽️ Perfect for pairing with rice, naan, or your favorite sides."
+        case "dessert", "sweet":
+            return "🍰 Great with coffee, tea, or as a sweet treat after dinner."
+        case "breakfast":
+            return "☕ Best enjoyed fresh in the morning with coffee or juice."
+        case "appetizer", "starter":
+            return "🥗 Ideal as a starter or party appetizer."
+        case "soup", "stew":
+            return "🍲 Serve hot with crusty bread or crackers."
+        case "salad":
+            return "🥗 Light and refreshing as a side or main course."
+        case "drink", "beverage":
+            return "🥤 Serve chilled or at the recommended temperature."
+        default:
+            return ""
+        }
     }
     
     private func exampleButton(url: String, title: String, subtitle: String) -> some View {

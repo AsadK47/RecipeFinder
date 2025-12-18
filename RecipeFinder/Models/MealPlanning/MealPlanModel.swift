@@ -59,32 +59,26 @@ struct MealPlanModel: Identifiable, Codable, Hashable {
 
 enum MealTime: String, Codable, CaseIterable {
     case breakfast = "Breakfast"
-    case brunch = "Brunch"
     case lunch = "Lunch"
-    case snack = "Snack"
     case dinner = "Dinner"
-    case lateNight = "Late Night"
+    case snack = "Snack"
     
     var icon: String {
         switch self {
         case .breakfast: return "sunrise.fill"
-        case .brunch: return "sun.max.fill"
-        case .lunch: return "sun.min.fill"
-        case .snack: return "star.fill"
+        case .lunch: return "sun.max.fill"
         case .dinner: return "moon.stars.fill"
-        case .lateNight: return "moon.fill"
+        case .snack: return "star.fill"
         }
     }
     
     /// Typical time range for this meal
     var timeRange: String {
         switch self {
-        case .breakfast: return "6:00 AM - 10:00 AM"
-        case .brunch: return "10:00 AM - 12:00 PM"
-        case .lunch: return "12:00 PM - 2:00 PM"
-        case .snack: return "2:00 PM - 5:00 PM"
-        case .dinner: return "5:00 PM - 9:00 PM"
-        case .lateNight: return "9:00 PM - 12:00 AM"
+        case .breakfast: return "Morning"
+        case .lunch: return "Afternoon"
+        case .dinner: return "Evening"
+        case .snack: return "Anytime"
         }
     }
     
@@ -92,11 +86,9 @@ enum MealTime: String, Codable, CaseIterable {
     var sortOrder: Int {
         switch self {
         case .breakfast: return 0
-        case .brunch: return 1
-        case .lunch: return 2
+        case .lunch: return 1
+        case .dinner: return 2
         case .snack: return 3
-        case .dinner: return 4
-        case .lateNight: return 5
         }
     }
 }

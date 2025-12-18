@@ -274,6 +274,7 @@ struct RecipeDetailView: View {
                         toggle: { 
                             HapticManager.shared.light()
                             ingredientsState[index].toggle()
+                            checkForCompletion()
                         },
                         scaleFactor: recipe.scaleFactor,
                         measurementSystem: measurementSystem,
@@ -314,6 +315,7 @@ struct RecipeDetailView: View {
                         toggle: { 
                             HapticManager.shared.light()
                             prePrepState[index].toggle()
+                            checkForCompletion()
                         }
                     )
                 }
@@ -332,6 +334,7 @@ struct RecipeDetailView: View {
                         toggle: { 
                             HapticManager.shared.light()
                             instructionsState[index].toggle()
+                            checkForCompletion()
                         }
                     )
                 }
@@ -458,10 +461,20 @@ struct RecipeDetailView: View {
     }
     
     private func checkForCompletion(_ newValue: [Bool]) {
-        if !recipe.instructions.isEmpty && newValue.allSatisfy({ $0 }) {
+        // Check if ALL steps are completed (ingredients, pre-prep if exists, and instructions)
+        let allIngredientsChecked = ingredientsState.allSatisfy({ $0 })
+        let allPrePrepChecked = hasPrePrep ? prePrepState.allSatisfy({ $0 }) : true
+        let allInstructionsChecked = instructionsState.allSatisfy({ $0 })
+        
+        if allIngredientsChecked && allPrePrepChecked && allInstructionsChecked {
             HapticManager.shared.success()
             confettiCounter += 1
         }
+    }
+    
+    // Overload for when we need to check without the onChange parameter
+    private func checkForCompletion() {
+        checkForCompletion(instructionsState)
     }
     
     // MARK: - Collapsible Section

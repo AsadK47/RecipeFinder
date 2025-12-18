@@ -177,21 +177,21 @@ struct RecipeParser {
         
         // Extract name
         if let name = data["name"] as? String {
-            result.name = name.trimmingCharacters(in: .whitespacesAndNewlines)
+            result.name = decodeHTMLEntities(name.trimmingCharacters(in: .whitespacesAndNewlines))
         }
         
         // Extract description
         if let description = data["description"] as? String {
-            result.description = description.trimmingCharacters(in: .whitespacesAndNewlines)
+            result.description = decodeHTMLEntities(description.trimmingCharacters(in: .whitespacesAndNewlines))
         }
         
         // Extract ingredients (can be array of strings or array of objects)
         if let ingredientsArray = data["recipeIngredient"] as? [Any] {
             result.ingredients = ingredientsArray.compactMap { ingredient in
                 if let str = ingredient as? String {
-                    return str.trimmingCharacters(in: .whitespacesAndNewlines)
+                    return decodeHTMLEntities(str.trimmingCharacters(in: .whitespacesAndNewlines))
                 } else if let dict = ingredient as? [String: Any], let text = dict["text"] as? String {
-                    return text.trimmingCharacters(in: .whitespacesAndNewlines)
+                    return decodeHTMLEntities(text.trimmingCharacters(in: .whitespacesAndNewlines))
                 }
                 return nil
             }.filter { !$0.isEmpty }
@@ -201,19 +201,19 @@ struct RecipeParser {
         if let instructionsData = data["recipeInstructions"] as? [Any] {
             result.instructions = instructionsData.compactMap { instruction in
                 if let str = instruction as? String {
-                    return str.trimmingCharacters(in: .whitespacesAndNewlines)
+                    return decodeHTMLEntities(str.trimmingCharacters(in: .whitespacesAndNewlines))
                 } else if let dict = instruction as? [String: Any] {
                     // Handle HowToStep or HowToSection objects
                     if let text = dict["text"] as? String {
-                        return text.trimmingCharacters(in: .whitespacesAndNewlines)
+                        return decodeHTMLEntities(text.trimmingCharacters(in: .whitespacesAndNewlines))
                     } else if let itemList = dict["itemListElement"] as? [[String: Any]] {
                         // Handle nested HowToSection with steps inside
-                        return itemList.compactMap { step in
+                        return decodeHTMLEntities(itemList.compactMap { step in
                             if let stepText = step["text"] as? String {
                                 return stepText.trimmingCharacters(in: .whitespacesAndNewlines)
                             }
                             return nil
-                        }.joined(separator: " ")
+                        }.joined(separator: " "))
                     }
                 }
                 return nil
@@ -221,7 +221,7 @@ struct RecipeParser {
         } else if let instructionsString = data["recipeInstructions"] as? String {
             // Sometimes instructions is a single string - split by newlines or periods
             let steps = instructionsString.components(separatedBy: .newlines)
-                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                .map { decodeHTMLEntities($0.trimmingCharacters(in: .whitespacesAndNewlines)) }
                 .filter { !$0.isEmpty && $0.count >= 10 }
             result.instructions = steps
         }
@@ -658,9 +658,19 @@ struct RecipeParser {
             ("&frac12;", "½"),
             ("&frac14;", "¼"),
             ("&frac34;", "¾"),
+            ("&frac13;", "⅓"),
+            ("&frac23;", "⅔"),
             ("&ndash;", "–"),
             ("&mdash;", "—"),
-            ("&hellip;", "…")
+            ("&hellip;", "…"),
+            ("&deg;", "°"),
+            ("&trade;", "™"),
+            ("&reg;", "®"),
+            ("&copy;", "©"),
+            ("&rsquo;", "\u{2019}"),  // Right single quotation mark
+            ("&lsquo;", "\u{2018}"),  // Left single quotation mark
+            ("&rdquo;", "\u{201D}"),  // Right double quotation mark
+            ("&ldquo;", "\u{201C}")   // Left double quotation mark
         ]
         
         // Use array instead of dictionary for faster iteration
@@ -926,6 +936,69 @@ struct RecipeParser {
         // Must have reasonable length
         guard trimmed.count >= 3 && trimmed.count < 200 else { return false }
         
+        // Common ingredient indicators - expanded for ANY website
+        let indicators = [
+            "cup", "cups", "tbsp", "tsp", "teaspoon", "tablespoon", "oz", "ounce", "lb", "pound",
+            "gram", "grams", "kg", "kilogram", "ml", "milliliter", "liter", "l",
+            "clove", "cloves", "pinch", "dash", "sprig", "bunch", "piece", "pieces", "slice", "slices",
+            "diced", "chopped", "sliced", "minced", "crushed", "grated", "shredded",
+            "fresh", "dried", "frozen", "canned", "whole", "ground",
+            "optional", "to taste", "as needed", "for serving",
+            // Fractions and numbers
+            "½", "¼", "¾", "⅓", "⅔", "⅛", "⅜", "⅝", "⅞"
+        ]
+        
+        let lowercased = trimmed.lowercased()
+        
+        // Check for indicators
+        for indicator in indicators {
+            if lowercased.contains(indicator) {
+                return true
+            }
+        }
+        
+        // Check for number patterns (e.g., "2 eggs", "1/2 onion")
+        let numberPattern = "^[0-9]|\\s[0-9]|^[½¼¾⅓⅔⅛⅜⅝⅞]|\\s[½¼¾⅓⅔⅛⅜⅝⅞]"
+        if lowercased.range(of: numberPattern, options: .regularExpression) != nil {
+            return true
+        }
+        
+        // If line is short and contains common food words, it's likely an ingredient
+        if trimmed.count < 80 {
+            let foodWords = ["oil", "salt", "pepper", "sugar", "butter", "egg", "flour", "water", "milk", "cheese", "onion", "garlic", "tomato", "chicken", "beef", "pork", "rice", "pasta"]
+            for food in foodWords {
+                if lowercased.contains(food) {
+                    return true
+                }
+            }
+        }
+        
+        return false
+    }
+    
+    // Additional check - is this line too generic or a header?
+    private static func isLikelyIngredient(_ line: String) -> Bool {
+        let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
+        let lowercased = trimmed.lowercased()
+        
+        // Exclude headers and navigation
+        let excludePatterns = ["ingredient", "instruction", "method", "step", "nutrition", "calories", "print", "save", "share", "comment", "recipe by", "posted", "updated"]
+        for pattern in excludePatterns {
+            if lowercased == pattern || lowercased.starts(with: pattern + ":") {
+                return false
+            }
+        }
+        
+        return isIngredientLine(line)
+    }
+    
+    // Original isIngredientLine that was here before
+    private static func isIngredientLineOld(_ line: String) -> Bool {
+        let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        // Must have reasonable length
+        guard trimmed.count >= 3 && trimmed.count < 200 else { return false }
+        
         // Common ingredient indicators
         let indicators = [
             "cup", "tbsp", "tsp", "oz", "lb", "gram", "kg", "ml", "liter",
@@ -1039,17 +1112,53 @@ struct RecipeParser {
         // Must have reasonable length
         guard trimmed.count >= 10 && trimmed.count < 500 else { return false }
         
-        // Action verbs common in cooking
+        // Exclude if it's likely a header
+        let lowercased = trimmed.lowercased()
+        let excludeHeaders = ["instructions:", "method:", "directions:", "steps:", "preparation:"]
+        for header in excludeHeaders {
+            if lowercased == header.replacingOccurrences(of: ":", with: "") {
+                return false
+            }
+        }
+        
+        // Action verbs common in cooking - EXPANDED for ANY website
         let actionVerbs = [
             "add", "mix", "stir", "cook", "bake", "heat", "boil", "simmer",
             "chop", "dice", "slice", "pour", "place", "remove", "combine",
-            "preheat", "transfer", "serve", "garnish", "season", "prepare"
+            "preheat", "transfer", "serve", "garnish", "season", "prepare",
+            "whisk", "blend", "fold", "sauté", "fry", "roast", "grill",
+            "melt", "cut", "drain", "rinse", "arrange", "sprinkle", "drizzle",
+            "bring", "reduce", "increase", "lower", "raise", "flip", "turn",
+            "cover", "uncover", "let", "allow", "wait", "set aside",
+            "brush", "coat", "dip", "toss", "roll", "spread", "layer"
         ]
         
-        let lowercased = trimmed.lowercased()
+        // Check if starts with action verb
         for verb in actionVerbs {
-            if lowercased.starts(with: verb) || lowercased.contains(" \(verb) ") {
+            if lowercased.starts(with: verb + " ") || lowercased.starts(with: verb + "s ") {
                 return true
+            }
+        }
+        
+        // Check if contains common cooking phrases
+        let cookingPhrases = [
+            "until", "for about", "minutes", "hours", "degrees", "°f", "°c",
+            "in a", "on a", "into the", "to the", "with the",
+            "and cook", "and bake", "and stir", "then add", "then place"
+        ]
+        
+        for phrase in cookingPhrases {
+            if lowercased.contains(phrase) && trimmed.count > 20 {
+                return true
+            }
+        }
+        
+        // If line is a complete sentence with cooking action, likely an instruction
+        if trimmed.contains(".") || trimmed.contains(",") {
+            for verb in actionVerbs {
+                if lowercased.contains(" \(verb) ") || lowercased.contains(" \(verb)s ") {
+                    return true
+                }
             }
         }
         

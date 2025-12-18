@@ -16,6 +16,7 @@ struct CookingTipsView: View {
     @State private var selectedTip: CookingTipModel?
     @State private var showFilters = false
     @State private var viewMode: ViewMode = .card
+    @State private var expandedCategories: Set<String> = []
     
     enum ViewMode {
         case list
@@ -27,41 +28,41 @@ struct CookingTipsView: View {
             AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
-            VStack(spacing: 0) {
-                // Header
-                header
-                
-                // Search Bar
-                searchBar
-                    .padding(.horizontal, 20)
-                    .padding(.top, 12)
-                
-                // Filter Pills
-                if hasActiveFilters {
-                    activeFiltersPills
+            GeometryReader { geometry in
+                VStack(spacing: 0) {
+                    // Search Bar
+                    searchBar
                         .padding(.horizontal, 20)
                         .padding(.top, 12)
-                }
-                
-                // Content
-                ScrollView(.vertical, showsIndicators: true) {
-                    VStack(spacing: 24) {
-                        if tipsManager.filteredTips.isEmpty {
-                            emptyStateView
-                        } else {
-                            if viewMode == .card {
-                                categoryGridView
+                    
+                    // Filter Pills
+                    if hasActiveFilters {
+                        activeFiltersPills
+                            .padding(.horizontal, 20)
+                            .padding(.top, 12)
+                    }
+                    
+                    // Content
+                    ScrollView(.vertical, showsIndicators: true) {
+                        VStack(spacing: 24) {
+                            if tipsManager.filteredTips.isEmpty {
+                                emptyStateView
                             } else {
-                                compactListView
+                                if viewMode == .card {
+                                    categoryGridView
+                                } else {
+                                    compactListView
+                                }
                             }
                         }
+                        .padding(.top, 16)
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 100)
+                        .frame(width: geometry.size.width - 40)
                     }
-                    .padding(.top, 16)
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 100)
+                    .scrollDisabled(false)
+                    .scrollBounceBehavior(.basedOnSize, axes: .vertical)
                 }
-                .scrollBounceBehavior(.basedOnSize, axes: .vertical)
-                .scrollDisabled(false)
             }
         }
         .navigationTitle("Cooking Tips")
@@ -265,41 +266,60 @@ struct CookingTipsView: View {
                 
                 if !categoryTips.isEmpty {
                     VStack(alignment: .leading, spacing: 12) {
-                        // Category Header
-                        HStack(spacing: 8) {
-                            Image(systemName: category.icon)
-                                .font(.title3)
-                                .foregroundColor(colorForCategory(category))
-                            
-                            Text(category.rawValue)
-                                .font(.title3)
-                                .fontWeight(.bold)
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
-                            
-                            Spacer()
-                            
-                            Text("\(categoryTips.count)")
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.secondary)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
-                                .background(
-                                    Capsule()
-                                        .fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1))
-                                )
-                        }
-                        
-                        // Tips in Category
-                        VStack(spacing: 12) {
-                            ForEach(categoryTips) { tip in
-                                TipCard(tip: tip, onTap: {
-                                    selectedTip = tip
-                                    HapticManager.shared.light()
-                                }, onToggleFavorite: {
-                                    tipsManager.toggleFavorite(tip)
-                                })
+                        // Category Header - Tappable to expand/collapse
+                        Button(action: {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                if expandedCategories.contains(category.rawValue) {
+                                    expandedCategories.remove(category.rawValue)
+                                } else {
+                                    expandedCategories.insert(category.rawValue)
+                                }
                             }
+                            HapticManager.shared.light()
+                        }) {
+                            HStack(spacing: 8) {
+                                Image(systemName: category.icon)
+                                    .font(.title3)
+                                    .foregroundColor(colorForCategory(category))
+                                
+                                Text(category.rawValue)
+                                    .font(.title3)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                
+                                Spacer()
+                                
+                                Text("\(categoryTips.count)")
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.secondary)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(
+                                        Capsule()
+                                            .fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1))
+                                    )
+                                
+                                Image(systemName: expandedCategories.contains(category.rawValue) ? "chevron.up" : "chevron.down")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        .buttonStyle(.plain)
+                        
+                        // Tips in Category - Only show if expanded
+                        if expandedCategories.contains(category.rawValue) {
+                            VStack(spacing: 12) {
+                                ForEach(categoryTips) { tip in
+                                    TipCard(tip: tip, onTap: {
+                                        selectedTip = tip
+                                        HapticManager.shared.light()
+                                    }, onToggleFavorite: {
+                                        tipsManager.toggleFavorite(tip)
+                                    })
+                                }
+                            }
+                            .transition(.opacity.combined(with: .move(edge: .top)))
                         }
                     }
                 }
@@ -438,7 +458,7 @@ struct CompactTipRow: View {
                     .foregroundColor(.secondary)
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 12)
+            .padding(.vertical, 8)
             .background(
                 RoundedRectangle(cornerRadius: 12)
                     .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.5))
@@ -505,6 +525,7 @@ struct TipCard: View {
                             .foregroundColor(colorScheme == .dark ? .white : .black)
                             .multilineTextAlignment(.leading)
                             .lineLimit(2)
+                            .fixedSize(horizontal: false, vertical: true)
                         
                         // Category and Difficulty badges
                         HStack(spacing: 8) {
@@ -539,6 +560,7 @@ struct TipCard: View {
                             )
                         }
                     }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     
                     Spacer(minLength: 4)
                     
@@ -552,6 +574,7 @@ struct TipCard: View {
                     }
                     .buttonStyle(PlainButtonStyle())
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
                 
                 // Divider
                 Rectangle()

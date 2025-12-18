@@ -399,6 +399,8 @@ struct MealPlanningView: View {
                                 selectedDate = date
                                 // Load meal times for selected date
                                 updateSelectedMealTimes(for: date)
+                                // Immediately show meal selector
+                                showMealTimeSelector = true
                             }
                             HapticManager.shared.light()
                         }

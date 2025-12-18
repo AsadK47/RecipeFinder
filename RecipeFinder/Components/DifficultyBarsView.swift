@@ -11,10 +11,10 @@ struct DifficultyBarsView: View {
     
     private var filledBars: Int {
         switch difficulty.lowercased() {
-        case "basic": return 1
-        case "intermediate": return 2
-        case "expert": return 3
-        default: return 1
+        case "easy": return 1
+        case "medium": return 2
+        case "hard": return 3
+        default: return 2 // Default to medium if unspecified
         }
     }
     

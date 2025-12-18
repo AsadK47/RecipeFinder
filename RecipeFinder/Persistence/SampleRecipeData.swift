@@ -10,7 +10,7 @@ extension PersistenceController {
         saveRecipe(parameters: RecipeSaveParameters(
             name: "Achari Chicken Curry (Instant Pot Version)",
             category: "Main",
-            difficulty: "Intermediate",
+            difficulty: "Medium",
             prepTime: "20 minutes",
             cookingTime: "20 minutes",
             baseServings: 4,
@@ -58,7 +58,7 @@ extension PersistenceController {
         saveRecipe(parameters: RecipeSaveParameters(
             name: "Chicken Pot Pie",
             category: "Main",
-            difficulty: "Advanced",
+            difficulty: "Hard",
             prepTime: "30 minutes",
             cookingTime: "45 minutes",
             baseServings: 6,
@@ -122,7 +122,7 @@ extension PersistenceController {
         saveRecipe(parameters: RecipeSaveParameters(
             name: "Aloo Gosht - Stovetop (Mutton/Lamb and Potato Curry)",
             category: "Main",
-            difficulty: "Intermediate",
+            difficulty: "Medium",
             prepTime: "20 minutes",
             cookingTime: "2 hours 15 minutes",
             baseServings: 4,
@@ -179,7 +179,7 @@ extension PersistenceController {
         saveRecipe(parameters: RecipeSaveParameters(
             name: "Aloo Gosht - Instant Pot (Mutton/Lamb and Potato Curry)",
             category: "Main",
-            difficulty: "Intermediate",
+            difficulty: "Medium",
             prepTime: "20 minutes",
             cookingTime: "45 minutes",
             baseServings: 4,
