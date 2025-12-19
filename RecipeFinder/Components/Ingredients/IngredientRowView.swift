@@ -11,31 +11,34 @@ struct IngredientRowView: View {
     var onTapQuantity: (() -> Void)?
     
     var body: some View {
-        HStack(spacing: 16) {
-            // Ingredient name with optional prep notes
+        HStack(spacing: 0) {
+            // Left column: Ingredient name with optional prep notes
             VStack(alignment: .leading, spacing: 4) {
                 Text(ingredient.mainIngredientName)
                     .font(.body)
                     .fontWeight(.semibold)
                     .strikethrough(isChecked)
-                    .foregroundColor(isChecked ? .secondary : .primary)
+                    .foregroundStyle(isChecked ? .secondary : .primary)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.9)
                     
-                    // Show preparation notes if any
-                    if let prepNotes = ingredient.preparationNotes {
-                        Text(prepNotes)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .lineLimit(1)
-                    }
+                // Show preparation notes if any
+                if let prepNotes = ingredient.preparationNotes {
+                    Text(prepNotes)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                
-            // Visual separator
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.trailing, 12)
+            
+            // First separator
             Rectangle()
                 .fill(Color.secondary.opacity(0.3))
-                .frame(width: 1, height: 24)
+                .frame(width: 1, height: 40)
             
-            // Quantity with unit - improved visual separation
+            // Middle column: Quantity with unit
             Button(action: {
                 onTapQuantity?()
             }) {
@@ -44,14 +47,14 @@ struct IngredientRowView: View {
                     Text(formatQuantity(ingredient.scaledQuantity(for: scaleFactor)))
                         .font(.subheadline)
                         .fontWeight(.bold)
-                        .foregroundColor(.primary)
+                        .foregroundStyle(.primary)
                     
                     // Unit - lighter weight
                     if !ingredient.unit.isEmpty {
                         Text(formatUnit(ingredient.unit, system: measurementSystem))
                             .font(.caption)
                             .fontWeight(.regular)
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                     }
                 }
                 .padding(.horizontal, 12)
@@ -63,9 +66,15 @@ struct IngredientRowView: View {
             }
             .buttonStyle(PlainButtonStyle())
             .disabled(onTapQuantity == nil)
+            .frame(width: 80)
+            .padding(.horizontal, 12)
             
-            Spacer()
+            // Second separator
+            Rectangle()
+                .fill(Color.secondary.opacity(0.3))
+                .frame(width: 1, height: 40)
             
+            // Right column: Checkbox
             Button(action: { 
                 HapticManager.shared.light()
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) { 
@@ -76,14 +85,15 @@ struct IngredientRowView: View {
                     .font(.system(size: 24))
                     .foregroundColor(isChecked ? .green : .gray.opacity(0.4))
                     .frame(width: 28, height: 28)
-                    .scaleEffect(isChecked ? 1.0 : 1.0)
             })
+            .frame(width: 50)
+            .padding(.leading, 12)
         }
-        .padding(.vertical, 12)
+        .padding(.vertical, 8)
         .swipe(onAddToShopping != nil,
-               leading: onAddToShopping.map { addAction in
+               trailing: onAddToShopping.map { addAction in
                    SwipeAction(
-                       icon: "basket",
+                       icon: "cart.badge.plus",
                        backgroundColor: AppTheme.accentColor,
                        action: addAction
                    )

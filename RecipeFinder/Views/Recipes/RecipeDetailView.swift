@@ -315,7 +315,7 @@ struct RecipeDetailView: View {
                             .font(.system(size: 16))
                             .foregroundColor(AppTheme.accentColor)
                         
-                        Text("Swipe right to add to shopping list")
+                        Text("Swipe left to add to shopping list")
                             .font(.caption)
                             .foregroundColor(.secondary)
                         
