@@ -250,6 +250,39 @@ struct RecipeModel: Identifiable, Codable, Hashable {
     mutating func updateServings(to servings: Int) {
         currentServings = servings
     }
+    
+    // MARK: - Convenience Initializers
+    
+    /// Simplified initializer for quick snacks with minimal data
+    init(
+        name: String,
+        ingredients: [Ingredient],
+        instructions: String,
+        prepTime: String,
+        category: String,
+        difficulty: Int,
+        currentServings: Int,
+        baseServings: Int,
+        defaultServings: Int,
+        isFavorite: Bool,
+        imageName: String?,
+        notes: String
+    ) {
+        self.id = UUID()
+        self.name = name
+        self.category = category
+        self.difficulty = "\(difficulty)"
+        self.prepTime = prepTime
+        self.cookingTime = "0 min"
+        self.baseServings = baseServings
+        self.currentServings = currentServings
+        self.ingredients = ingredients
+        self.prePrepInstructions = []
+        self.instructions = [instructions]
+        self.notes = notes
+        self.imageName = imageName
+        self.isFavorite = isFavorite
+    }
 }
 
 // Time Extraction Helper

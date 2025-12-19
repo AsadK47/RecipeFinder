@@ -256,7 +256,7 @@ struct CookingTipsView: View {
     
     private var categoryGridView: some View {
         VStack(spacing: 20) {
-            ForEach(TipCategory.allCases) { category in
+            ForEach(CookingTipCategory.allCases) { category in
                 let categoryTips = tipsManager.tipsForCategory(category)
                     .filter { tip in
                         tipsManager.searchText.isEmpty ||
@@ -311,7 +311,7 @@ struct CookingTipsView: View {
                         if expandedCategories.contains(category.rawValue) {
                             VStack(spacing: 12) {
                                 ForEach(categoryTips) { tip in
-                                    TipCard(tip: tip, onTap: {
+                                    CookingTipCard(tip: tip, onTap: {
                                         selectedTip = tip
                                         HapticManager.shared.light()
                                     }, onToggleFavorite: {
@@ -375,7 +375,7 @@ struct CookingTipsView: View {
         tipsManager.showFavoritesOnly
     }
     
-    private func colorForCategory(_ category: TipCategory) -> Color {
+    private func colorForCategory(_ category: CookingTipCategory) -> Color {
         switch category.color {
         case "blue": return .blue
         case "purple": return .purple
@@ -467,7 +467,7 @@ struct CompactTipRow: View {
         .buttonStyle(PlainButtonStyle())
     }
     
-    private func colorForCategory(_ category: TipCategory) -> Color {
+    private func colorForCategory(_ category: CookingTipCategory) -> Color {
         switch category.color {
         case "blue": return .blue
         case "purple": return .purple
@@ -486,7 +486,7 @@ struct CompactTipRow: View {
 
 // MARK: - Tip Card
 
-struct TipCard: View {
+struct CookingTipCard: View {
     let tip: CookingTipModel
     let onTap: () -> Void
     let onToggleFavorite: () -> Void
@@ -653,7 +653,7 @@ struct TipCard: View {
         .buttonStyle(PlainButtonStyle())
     }
     
-    private func colorForCategory(_ category: TipCategory) -> Color {
+    private func colorForCategory(_ category: CookingTipCategory) -> Color {
         switch category.color {
         case "blue": return .blue
         case "purple": return .purple
@@ -709,7 +709,7 @@ struct FiltersSheet: View {
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
-    @Binding var selectedCategory: TipCategory?
+    @Binding var selectedCategory: CookingTipCategory?
     @Binding var selectedDifficulty: TipDifficulty?
     @Binding var showFavoritesOnly: Bool
     
@@ -749,7 +749,7 @@ struct FiltersSheet: View {
                             
                             filterCard {
                                 VStack(spacing: 8) {
-                                    ForEach(TipCategory.allCases) { category in
+                                    ForEach(CookingTipCategory.allCases) { category in
                                         Button(action: {
                                             selectedCategory = selectedCategory == category ? nil : category
                                             HapticManager.shared.light()
@@ -774,7 +774,7 @@ struct FiltersSheet: View {
                                             .padding(.vertical, 8)
                                         }
                                         
-                                        if category != TipCategory.allCases.last {
+                                        if category != CookingTipCategory.allCases.last {
                                             Divider()
                                         }
                                     }

@@ -8,6 +8,7 @@ struct ShoppingListView: View {
     @State private var showQuickAdd = false
     @State private var collapsedCategories: Set<String> = []
     @State private var confettiTrigger = 0
+    @State private var isInputBarCollapsed = false
     @FocusState private var isSearchFocused: Bool
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
@@ -162,65 +163,103 @@ struct ShoppingListView: View {
                         .padding(.horizontal, 20)
                         .padding(.top, 16)
                         
-                        // Search bar with cancel option
-                        HStack(spacing: 12) {
-                            HStack(spacing: 12) {
-                                Image(systemName: "magnifyingglass")
-                                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.6))
-                                    .font(.body)
-                                
-                                ZStack(alignment: .leading) {
-                                    if searchText.isEmpty {
-                                        Text("Add item (e.g., milk, chicken, apples)...")
-                                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6))
-                                    }
-                                    TextField("", text: $searchText)
-                                        .focused($isSearchFocused)
-                                        .autocorrectionDisabled()
-                                        .foregroundColor(colorScheme == .dark ? .white : .black)
-                                        .onSubmit(addItem)
-                                }
-                                
-                                if !searchText.isEmpty {
-                                    Button(
-                                        action: { 
-                                            searchText = ""
-                                        },
-                                        label: {
-                                            Image(systemName: "xmark.circle.fill")
-                                                .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
-                                        }
-                                    )
-                                }
-                            }
-                            .padding(14)
-                            .background {
-                                if cardStyle == .solid {
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
-                                } else {
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .fill(.ultraThinMaterial)
-                                }
-                            }
-                            
-                            if isSearchFocused {
-                                Button(
-                                    action: {
+                        // Collapsible Search bar
+                        VStack(spacing: 0) {
+                            // Collapse/Expand button
+                            Button(action: {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                    isInputBarCollapsed.toggle()
+                                    if isInputBarCollapsed {
                                         searchText = ""
                                         isSearchFocused = false
-                                    },
-                                    label: {
-                                        Text("Cancel")
-                                            .foregroundColor(.white)
-                                            .fontWeight(.semibold)
                                     }
-                                )
-                                .transition(.move(edge: .trailing).combined(with: .opacity))
+                                }
+                                HapticManager.shared.light()
+                            }) {
+                                HStack {
+                                    Image(systemName: "plus.circle.fill")
+                                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.6))
+                                        .font(.body)
+                                    
+                                    Text(isInputBarCollapsed ? "Add items..." : "Hide input bar")
+                                        .font(.subheadline)
+                                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.6))
+                                    
+                                    Spacer()
+                                    
+                                    Image(systemName: isInputBarCollapsed ? "chevron.down" : "chevron.up")
+                                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.5))
+                                        .font(.caption)
+                                }
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 8)
+                            }
+                            
+                            if !isInputBarCollapsed {
+                                // Search bar with cancel option
+                                HStack(spacing: 12) {
+                                    HStack(spacing: 12) {
+                                        Image(systemName: "magnifyingglass")
+                                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.6))
+                                            .font(.body)
+                                        
+                                        ZStack(alignment: .leading) {
+                                            if searchText.isEmpty {
+                                                Text("Add item (e.g., milk, chicken, apples)...")
+                                                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6))
+                                            }
+                                            TextField("", text: $searchText)
+                                                .focused($isSearchFocused)
+                                                .autocorrectionDisabled()
+                                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                                .onSubmit(addItem)
+                                        }
+                                        
+                                        if !searchText.isEmpty {
+                                            Button(
+                                                action: { 
+                                                    searchText = ""
+                                                },
+                                                label: {
+                                                    Image(systemName: "xmark.circle.fill")
+                                                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
+                                                }
+                                            )
+                                        }
+                                    }
+                                    .padding(14)
+                                    .background {
+                                        if cardStyle == .solid {
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+                                        } else {
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .fill(.ultraThinMaterial)
+                                        }
+                                    }
+                                    
+                                    if isSearchFocused {
+                                        Button(
+                                            action: {
+                                                searchText = ""
+                                                isSearchFocused = false
+                                            },
+                                            label: {
+                                                Text("Cancel")
+                                                    .foregroundColor(.white)
+                                                    .fontWeight(.semibold)
+                                            }
+                                        )
+                                        .transition(.move(edge: .trailing).combined(with: .opacity))
+                                    }
+                                }
+                                .padding(.horizontal, 20)
+                                .padding(.top, 4)
+                                .transition(.move(edge: .top).combined(with: .opacity))
                             }
                         }
-                        .padding(.horizontal, 20)
                         .padding(.bottom, 12)
+                        .animation(.spring(response: 0.3), value: isInputBarCollapsed)
                         .animation(.spring(response: 0.3), value: isSearchFocused)
                         
                         // Progress bar below search

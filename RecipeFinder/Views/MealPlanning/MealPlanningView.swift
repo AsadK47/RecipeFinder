@@ -8,6 +8,7 @@ struct MealPlanningView: View {
     @State private var selectedMealTimes: Set<MealTime> = []
     @State private var showRecipeWizard = false
     @State private var showRecipeSelector = false
+    @State private var showQuickSnackSheet = false
     @State private var currentMealTime: MealTime?
     @State private var viewMode: ViewMode = .calendar
     @State private var showNutritionTips = false
@@ -89,7 +90,7 @@ struct MealPlanningView: View {
         }
         .sheet(isPresented: $showRecipeSelector) {
             RecipeSelectionSheet(
-                recipes: recipes,
+                recipes: $recipes,
                 mealTime: currentMealTime,
                 onCreateNew: {
                     showRecipeSelector = false
@@ -102,8 +103,22 @@ struct MealPlanningView: View {
                     }
                     showRecipeSelector = false
                     currentMealTime = nil
+                },
+                onQuickSnack: {
+                    showRecipeSelector = false
+                    showQuickSnackSheet = true
                 }
             )
+        }
+        .sheet(isPresented: $showQuickSnackSheet) {
+            QuickSnackSheet(recipes: $recipes) { snackRecipe in
+                // Save the quick snack to meal plan
+                if let mealTime = currentMealTime {
+                    saveMealPlan(recipe: snackRecipe, for: selectedDate, mealTime: mealTime)
+                }
+                showQuickSnackSheet = false
+                currentMealTime = nil
+            }
         }
     }
     
@@ -239,23 +254,34 @@ struct MealPlanningView: View {
     }
     
     private var nutritionTipsBanner: some View {
-        Button(action: {
-            showNutritionTips = true
-            HapticManager.shared.light()
-        }) {
+        let tipOfDay = NutritionalTipsDatabase.tipOfTheDay()
+        
+        return NavigationLink(destination: NutritionalTipsView()) {
             HStack(spacing: 12) {
-                Image(systemName: "heart.circle.fill")
+                Text(tipOfDay.icon)
                     .font(.title2)
-                    .foregroundColor(.green)
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Healthy Eating Tips")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                    HStack(spacing: 4) {
+                        Text("💡 Tip of the Day")
+                            .font(.caption2)
+                            .fontWeight(.semibold)
+                            .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                        
+                        Image(systemName: "graduationcap.fill")
+                            .font(.caption2)
+                            .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                    }
                     
-                    Text("Plan balanced meals for better health")
+                    Text(tipOfDay.title)
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .lineLimit(1)
+                    
+                    Text(tipOfDay.summary)
                         .font(.caption)
                         .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.7))
+                        .lineLimit(1)
                 }
                 
                 Spacer()
@@ -268,7 +294,7 @@ struct MealPlanningView: View {
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(Color.green.opacity(0.15))
+                        .fill(AppTheme.accentColor(for: selectedTheme).opacity(0.15))
                 } else {
                     RoundedRectangle(cornerRadius: 16)
                         .fill(.ultraThinMaterial)
@@ -276,12 +302,10 @@ struct MealPlanningView: View {
             }
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color.green.opacity(0.3), lineWidth: 1)
+                    .stroke(AppTheme.accentColor(for: selectedTheme).opacity(0.3), lineWidth: 1)
             )
         }
-        .sheet(isPresented: $showNutritionTips) {
-            NutritionTipsSheet(cardStyle: cardStyle, selectedTheme: selectedTheme, colorScheme: colorScheme)
-        }
+        .buttonStyle(PlainButtonStyle())
     }
     
     private var weeklyPlanView: some View {
@@ -996,10 +1020,11 @@ struct MealTimeSelectorSheet: View {
 }
 
 struct RecipeSelectionSheet: View {
-    let recipes: [RecipeModel]
+    @Binding var recipes: [RecipeModel]
     let mealTime: MealTime?
     let onCreateNew: () -> Void
     let onSelectExisting: (RecipeModel) -> Void
+    let onQuickSnack: () -> Void
     
     @Environment(\.dismiss) var dismiss
     @State private var searchText = ""
@@ -1034,6 +1059,43 @@ struct RecipeSelectionSheet: View {
                                 .font(.headline)
                                 .foregroundColor(.white.opacity(0.7))
                         }
+                    }
+                    
+                    // Quick Add Snack button (highlighted for snacks)
+                    if mealTime == .snack {
+                        Button(action: {
+                            onQuickSnack()
+                            HapticManager.shared.light()
+                        }) {
+                            HStack(spacing: 12) {
+                                Image(systemName: "star.circle.fill")
+                                    .font(.title2)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Quick Add Snack")
+                                        .font(.headline)
+                                    Text("Simple & Fast")
+                                        .font(.caption)
+                                        .opacity(0.7)
+                                }
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.caption)
+                            }
+                            .foregroundColor(.white)
+                            .padding(20)
+                            .background(
+                                LinearGradient(
+                                    colors: [
+                                        AppTheme.accentColor(for: selectedTheme),
+                                        AppTheme.accentColor(for: selectedTheme).opacity(0.8)
+                                    ],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                            .cornerRadius(16)
+                        }
+                        .padding(.horizontal)
                     }
                     
                     // Create New Recipe button

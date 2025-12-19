@@ -93,6 +93,17 @@ struct SettingsTabView: View {
                                 .buttonStyle(PlainButtonStyle())
                             }
                             
+                            // Health & Nutrition
+                            SettingsSectionHeader(title: "Health & Nutrition")
+                            
+                            SettingsCard {
+                                NavigationLink(destination: NutritionalTipsView()) {
+                                    SettingsRow(icon: "heart.text.square.fill", iconColor: .red, title: "Nutrition Science")
+                                        .padding(20)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                            }
+                            
                             // Cooking
                             SettingsSectionHeader(title: "Cooking")
                             
@@ -2175,9 +2186,26 @@ struct AboutView: View {
                             Divider()
                                 .padding(.vertical, 4)
                             
+                            Text("Science-Backed Approach")
+                                .font(.headline)
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                            
+                            Text("""
+                                Our nutritional guidance is based on peer-reviewed research from leading institutions \
+                                including Harvard T.H. Chan School of Public Health, Cambridge University, and Oxford \
+                                University. We believe in evidence-based nutrition, not fads.
+                                """)
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                            
+                            Divider()
+                                .padding(.vertical, 4)
+                            
                             VStack(alignment: .leading, spacing: 8) {
                                 AboutFeatureRow(icon: "shield.fill", text: "Privacy-first: All data stored locally", color: .blue)
-                                AboutFeatureRow(icon: "doc.text.fill", text: "Ingredient database", color: .green)
+                                AboutFeatureRow(icon: "graduationcap.fill", text: "Science-backed nutrition guidance", color: .purple)
+                                AboutFeatureRow(icon: "leaf.fill", text: "Dietary preferences & allergen tracking", color: .green)
                                 AboutFeatureRow(icon: "heart.fill", text: "Made with love for home cooks", color: .red)
                             }
                         }

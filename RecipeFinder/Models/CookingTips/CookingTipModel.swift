@@ -5,7 +5,7 @@ struct CookingTipModel: Identifiable, Codable, Hashable {
     var id: UUID
     var title: String
     var content: String
-    var category: TipCategory
+    var category: CookingTipCategory
     var difficulty: TipDifficulty
     var isFavorite: Bool
     var tags: [String]
@@ -15,7 +15,7 @@ struct CookingTipModel: Identifiable, Codable, Hashable {
         id: UUID = UUID(),
         title: String,
         content: String,
-        category: TipCategory,
+        category: CookingTipCategory,
         difficulty: TipDifficulty = .beginner,
         isFavorite: Bool = false,
         tags: [String] = [],
@@ -34,7 +34,7 @@ struct CookingTipModel: Identifiable, Codable, Hashable {
 
 // MARK: - Tip Category
 
-enum TipCategory: String, Codable, CaseIterable, Identifiable {
+enum CookingTipCategory: String, Codable, CaseIterable, Identifiable {
     case basics = "Cooking Basics"
     case techniques = "Techniques"
     case ingredients = "Ingredients"

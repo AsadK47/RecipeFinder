@@ -7,7 +7,7 @@ final class CookingTipsManager: ObservableObject {
     
     @Published private(set) var tips: [CookingTipModel] = []
     @Published var searchText: String = ""
-    @Published var selectedCategory: TipCategory?
+    @Published var selectedCategory: CookingTipCategory?
     @Published var selectedDifficulty: TipDifficulty?
     @Published var showFavoritesOnly: Bool = false
     
@@ -64,7 +64,7 @@ final class CookingTipsManager: ObservableObject {
         return filtered.sorted { $0.createdDate > $1.createdDate }
     }
     
-    var tipsByCategory: [TipCategory: [CookingTipModel]] {
+    var tipsByCategory: [CookingTipCategory: [CookingTipModel]] {
         Dictionary(grouping: tips) { $0.category }
     }
     
@@ -105,7 +105,7 @@ final class CookingTipsManager: ObservableObject {
         searchText = ""
     }
     
-    func tipsForCategory(_ category: TipCategory) -> [CookingTipModel] {
+    func tipsForCategory(_ category: CookingTipCategory) -> [CookingTipModel] {
         tips.filter { $0.category == category }
     }
     
@@ -143,7 +143,7 @@ final class CookingTipsManager: ObservableObject {
         debugLog("🔄 Reset to sample cooking tips")
     }
     
-    func tipCount(for category: TipCategory) -> Int {
+    func tipCount(for category: CookingTipCategory) -> Int {
         tips.filter { $0.category == category }.count
     }
 }

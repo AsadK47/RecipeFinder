@@ -153,7 +153,7 @@ class BadgeManager: ObservableObject {
             if let unlocked = unlockedBadges[badgeType.rawValue] {
                 return unlocked
             } else {
-                var badge = badgeType.badge
+                let badge = badgeType.badge
                 return Badge(
                     id: badge.id,
                     title: badge.title,

@@ -202,7 +202,7 @@ struct CookingTipDetailView: View {
     
     // MARK: - Helpers
     
-    private func colorForCategory(_ category: TipCategory) -> Color {
+    private func colorForCategory(_ category: CookingTipCategory) -> Color {
         switch category.color {
         case "blue": return .blue
         case "purple": return .purple

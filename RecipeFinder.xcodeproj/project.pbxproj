@@ -56,6 +56,7 @@
 		9E605FFE2D0985BD00236896 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E605FFD2D0985BD00236896 /* PersistenceController.swift */; };
 		9E6060032D09CB6400236896 /* RecipeModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9E6060002D09CB6400236896 /* RecipeModel.xcdatamodeld */; };
 		9E7691702EF46CD400277ADF /* BadgeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E76916E2EF46CD400277ADF /* BadgeModel.swift */; };
+		9E7691722EF5421600277ADF /* QuickSnackSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E7691712EF5421500277ADF /* QuickSnackSheet.swift */; };
 		9E77ABEE2EB412C600666BB0 /* SecureCredentialManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E77ABEC2EB412C600666BB0 /* SecureCredentialManager.swift */; };
 		9E77ABF02EB4309A00666BB0 /* IngredientNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E77ABEF2EB4309A00666BB0 /* IngredientNormalizer.swift */; };
 		9E77ABF22EB430BC00666BB0 /* DeveloperDocumentationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E77ABF12EB430BC00666BB0 /* DeveloperDocumentationView.swift */; };
@@ -68,6 +69,9 @@
 		9E834DF52ECA651C008F8A11 /* CookingTipsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E834DF32ECA651C008F8A11 /* CookingTipsView.swift */; };
 		9E834DF62ECA651C008F8A11 /* CookingTipDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E834DF22ECA651C008F8A11 /* CookingTipDetailView.swift */; };
 		9E83ED8F2EA78A3900425CC0 /* KitchenInventoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E83ED8E2EA78A3900425CC0 /* KitchenInventoryManager.swift */; };
+		9E87BC922EF54E17003F9157 /* DietaryInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E87BC8E2EF54E17003F9157 /* DietaryInfo.swift */; };
+		9E87BC932EF54E17003F9157 /* NutritionalTips.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E87BC902EF54E17003F9157 /* NutritionalTips.swift */; };
+		9E87BC952EF54F26003F9157 /* NutritionalTipsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E87BC942EF54F26003F9157 /* NutritionalTipsView.swift */; };
 		9E87D3292EB6722300FFA1D1 /* BiometricSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E87D3282EB6722300FFA1D1 /* BiometricSetupView.swift */; };
 		9E87D32B2EB67CEA00FFA1D1 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E87D32A2EB67CEA00FFA1D1 /* ImagePicker.swift */; };
 		9E87D32D2EB6909700FFA1D1 /* QuickAddSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E87D32C2EB6909700FFA1D1 /* QuickAddSheet.swift */; };
@@ -176,6 +180,7 @@
 		9E6060012D09CB6400236896 /* RecipeModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = RecipeModel.xcdatamodel; sourceTree = "<group>"; };
 		9E6060022D09CB6400236896 /* RecipeModel 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 2.xcdatamodel"; sourceTree = "<group>"; };
 		9E76916E2EF46CD400277ADF /* BadgeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeModel.swift; sourceTree = "<group>"; };
+		9E7691712EF5421500277ADF /* QuickSnackSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickSnackSheet.swift; sourceTree = "<group>"; };
 		9E77ABEC2EB412C600666BB0 /* SecureCredentialManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureCredentialManager.swift; sourceTree = "<group>"; };
 		9E77ABEF2EB4309A00666BB0 /* IngredientNormalizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientNormalizer.swift; sourceTree = "<group>"; };
 		9E77ABF12EB430BC00666BB0 /* DeveloperDocumentationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperDocumentationView.swift; sourceTree = "<group>"; };
@@ -188,6 +193,9 @@
 		9E834DF22ECA651C008F8A11 /* CookingTipDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookingTipDetailView.swift; sourceTree = "<group>"; };
 		9E834DF32ECA651C008F8A11 /* CookingTipsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookingTipsView.swift; sourceTree = "<group>"; };
 		9E83ED8E2EA78A3900425CC0 /* KitchenInventoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KitchenInventoryManager.swift; sourceTree = "<group>"; };
+		9E87BC8E2EF54E17003F9157 /* DietaryInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DietaryInfo.swift; sourceTree = "<group>"; };
+		9E87BC902EF54E17003F9157 /* NutritionalTips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionalTips.swift; sourceTree = "<group>"; };
+		9E87BC942EF54F26003F9157 /* NutritionalTipsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionalTipsView.swift; sourceTree = "<group>"; };
 		9E87D3282EB6722300FFA1D1 /* BiometricSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricSetupView.swift; sourceTree = "<group>"; };
 		9E87D32A2EB67CEA00FFA1D1 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		9E87D32C2EB6909700FFA1D1 /* QuickAddSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddSheet.swift; sourceTree = "<group>"; };
@@ -272,6 +280,7 @@
 		9E4DC7322E9BF10900E17DDF /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				9E7691712EF5421500277ADF /* QuickSnackSheet.swift */,
 				9E40CAF22EB9A1D500ED9594 /* OfflineBanner.swift */,
 				9E87D32C2EB6909700FFA1D1 /* QuickAddSheet.swift */,
 				9EA779282EB57D900028F064 /* StandardAppHeader.swift */,
@@ -402,6 +411,8 @@
 		9E7B9A7C2E9BC2CB007E1786 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				9E87BC8F2EF54E17003F9157 /* DietaryInfo */,
+				9E87BC912EF54E17003F9157 /* NutritionalTips */,
 				9E76916F2EF46CD400277ADF /* Account */,
 				9E834DF02ECA6508008F8A11 /* CookingTips */,
 				9EA779262EB5725D0028F064 /* MealPlanning */,
@@ -472,6 +483,7 @@
 		9E7B9A842E9BECFE007E1786 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				9E87BC942EF54F26003F9157 /* NutritionalTipsView.swift */,
 				9E4EF5D02EBB6A0600C3C0E7 /* LegalInformationView.swift */,
 				9E4EF5D12EBB6A0600C3C0E7 /* QueenEasterEggView.swift */,
 				9E77ABF32EB4483100666BB0 /* SettingsView.swift */,
@@ -495,6 +507,22 @@
 				9E834DF32ECA651C008F8A11 /* CookingTipsView.swift */,
 			);
 			path = CookingTips;
+			sourceTree = "<group>";
+		};
+		9E87BC8F2EF54E17003F9157 /* DietaryInfo */ = {
+			isa = PBXGroup;
+			children = (
+				9E87BC8E2EF54E17003F9157 /* DietaryInfo.swift */,
+			);
+			path = DietaryInfo;
+			sourceTree = "<group>";
+		};
+		9E87BC912EF54E17003F9157 /* NutritionalTips */ = {
+			isa = PBXGroup;
+			children = (
+				9E87BC902EF54E17003F9157 /* NutritionalTips.swift */,
+			);
+			path = NutritionalTips;
 			sourceTree = "<group>";
 		};
 		9E9DE5F72ECCA111005CD593 /* legal */ = {
@@ -840,14 +868,18 @@
 				9E5447B02EAA867600AD6D0A /* Extensions.swift in Sources */,
 				9E5447B42EABEDB200AD6D0A /* DifficultyBarsView.swift in Sources */,
 				9E4DC74D2E9C119000E17DDF /* ShoppingListInputBar.swift in Sources */,
+				9E87BC952EF54F26003F9157 /* NutritionalTipsView.swift in Sources */,
 				9E4DC7482E9C114300E17DDF /* IngredientRowView.swift in Sources */,
 				9E5447BA2EB0409700AD6D0A /* RecipeImportView.swift in Sources */,
 				9E4DC7692E9D738500E17DDF /* FilterComponents.swift in Sources */,
+				9E87BC922EF54E17003F9157 /* DietaryInfo.swift in Sources */,
+				9E87BC932EF54E17003F9157 /* NutritionalTips.swift in Sources */,
 				9E87D3292EB6722300FFA1D1 /* BiometricSetupView.swift in Sources */,
 				9EA779272EB5725D0028F064 /* MealPlanModel.swift in Sources */,
 				9E77ABF22EB430BC00666BB0 /* DeveloperDocumentationView.swift in Sources */,
 				9EA7790E2EB56B720028F064 /* NotesManager.swift in Sources */,
 				9EA7791B2EB570BC0028F064 /* MealPlanningManager.swift in Sources */,
+				9E7691722EF5421600277ADF /* QuickSnackSheet.swift in Sources */,
 				9E6060032D09CB6400236896 /* RecipeModel.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
