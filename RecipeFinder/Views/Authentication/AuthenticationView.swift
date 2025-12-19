@@ -13,12 +13,10 @@ struct AuthenticationView: View {
     @StateObject private var appleSignInManager = AppleSignInManager.shared
     @State private var showSignUp = false
     @State private var showSignIn = false
-    @State private var showOnboarding = false
     @State private var showBiometricSetup = false
     @State private var newUserEmail = ""
     @State private var showWelcomeSplash = false
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
-    @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     @AppStorage("hasBeenPromptedForBiometrics") private var hasBeenPromptedForBiometrics = false
     @AppStorage("biometricsEnabled") private var biometricsEnabled: Bool = false
     @Environment(\.colorScheme) var colorScheme
@@ -148,9 +146,6 @@ struct AuthenticationView: View {
                 }
             }
         }
-        .fullScreenCover(isPresented: $showOnboarding) {
-            OnboardingView()
-        }
         .sheet(isPresented: $showBiometricSetup) {
             BiometricSetupView()
         }
@@ -164,13 +159,9 @@ struct AuthenticationView: View {
             }
         }
         .onChange(of: authManager.isAuthenticated) { oldValue, newValue in
-            if newValue && !hasSeenOnboarding && !authManager.isGuestMode {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    showOnboarding = true
-                    hasSeenOnboarding = true
-                }
-            } else if newValue && !authManager.isGuestMode && !hasBeenPromptedForBiometrics && !biometricsEnabled {
-                // After successful sign in, prompt for biometrics if available and not yet enabled
+            // Onboarding is now handled by RecipeFinderApp
+            // Only handle biometric setup prompt here
+            if newValue && !authManager.isGuestMode && !hasBeenPromptedForBiometrics && !biometricsEnabled {
                 if authManager.biometricsAvailable {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                         showBiometricSetup = true
@@ -383,7 +374,18 @@ struct SignUpView: View {
         isValidEmail &&
         !password.isEmpty &&
         password == confirmPassword &&
-        password.count >= 6
+        isPasswordStrong
+    }
+    
+    // Industry-standard password strength check
+    private var isPasswordStrong: Bool {
+        let hasUppercase = password.rangeOfCharacter(from: .uppercaseLetters) != nil
+        let hasLowercase = password.rangeOfCharacter(from: .lowercaseLetters) != nil
+        let hasNumber = password.rangeOfCharacter(from: .decimalDigits) != nil
+        let specialCharacters = CharacterSet(charactersIn: "!@#$%^&*()_+-=[]{}|;:',.<>?/~`")
+        let hasSpecialChar = password.rangeOfCharacter(from: specialCharacters) != nil
+        
+        return password.count >= 8 && hasUppercase && hasLowercase && hasNumber && hasSpecialChar
     }
     
     var body: some View {
@@ -458,10 +460,25 @@ struct SignUpView: View {
                                     .textFieldStyle(AuthTextFieldStyle())
                                     .textContentType(.newPassword)
                                 
-                                if !password.isEmpty && password.count < 6 {
-                                    Text("Password must be at least 6 characters")
-                                        .font(.caption)
-                                        .foregroundColor(.red.opacity(0.8))
+                                if !password.isEmpty && !isPasswordStrong {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("Password must contain:")
+                                            .font(.caption2)
+                                            .foregroundColor(.white.opacity(0.8))
+                                        Text("• 8+ characters")
+                                            .font(.caption2)
+                                            .foregroundColor(password.count >= 8 ? .green : .red.opacity(0.8))
+                                        Text("• Uppercase & lowercase letters")
+                                            .font(.caption2)
+                                            .foregroundColor((password.rangeOfCharacter(from: .uppercaseLetters) != nil && password.rangeOfCharacter(from: .lowercaseLetters) != nil) ? .green : .red.opacity(0.8))
+                                        Text("• At least one number")
+                                            .font(.caption2)
+                                            .foregroundColor(password.rangeOfCharacter(from: .decimalDigits) != nil ? .green : .red.opacity(0.8))
+                                        Text("• Special character (!@#$%^&* etc.)")
+                                            .font(.caption2)
+                                            .foregroundColor(password.rangeOfCharacter(from: CharacterSet(charactersIn: "!@#$%^&*()_+-=[]{}|;:',.<>?/~`")) != nil ? .green : .red.opacity(0.8))
+                                    }
+                                    .padding(.top, 4)
                                 }
                             }
                             

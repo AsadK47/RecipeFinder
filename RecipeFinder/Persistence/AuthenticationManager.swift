@@ -90,33 +90,7 @@ final class AuthenticationManager: NSObject, ObservableObject, @unchecked Sendab
     
     override init() {
         super.init()
-        clearAllUsersExceptTest() // Clear DB except test user on init
-        setupTestUser()
         checkAuthenticationStatus()
-    }
-    
-    // MARK: - Test User Setup
-    
-    private func clearAllUsersExceptTest() {
-        let success = credentialManager.clearAllUsersExceptTest()
-        if success {
-            debugLog("✅ Cleared all users except test user")
-        }
-    }
-    
-    private func setupTestUser() {
-        let testEmail = "e@mail.com"
-        let testPassword = "password"
-        let testFullName = "Test User"
-        
-        if credentialManager.getUserInfo(email: testEmail) == nil {
-            _ = credentialManager.saveCredentials(
-                email: testEmail,
-                password: testPassword,
-                fullName: testFullName
-            )
-            debugLog("✅ Test user: \(testEmail) / \(testPassword)")
-        }
     }
     
     // MARK: - Authentication Status
@@ -287,7 +261,6 @@ final class AuthenticationManager: NSObject, ObservableObject, @unchecked Sendab
                 chefType: accountManager.chefType // Keep existing chef type
             )
         }
-        
         HapticManager.shared.success()
     }
     

@@ -22,6 +22,7 @@ struct AccountView: View {
     @State private var showImagePicker = false
     @State private var profileImage: UIImage?
     @State private var showPasswordVerification = false
+    @State private var badgesSectionExpanded = false // Collapsible badges
     
     // Profile fields
     @State private var firstName: String = ""
@@ -78,11 +79,11 @@ struct AccountView: View {
                         // Profile Avatar
                         profileAvatar
                         
-                        // Achievements/Badges Section
-                        badgesSection
-                        
                         // Personal Information Section
                         personalInfoSection
+                        
+                        // Achievements/Badges Section (collapsible)
+                        badgesSection
                         
                         // Chef Type Section
                         chefTypeSection
@@ -1195,22 +1196,47 @@ struct ChefTypeCard: View {
 
 extension AccountView {
     var badgesSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Achievements")
-                .font(.title3)
-                .fontWeight(.bold)
-                .foregroundColor(colorScheme == .dark ? .white : .black)
-            
-            let recipeCount = PersistenceController.shared.getRecipeCount()
-            let allBadges = badgeManager.getAllBadges(recipeCount: recipeCount)
-            
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                ForEach(allBadges) { badge in
-                    BadgeCard(badge: badge, colorScheme: colorScheme, cardStyle: cardStyle)
+        VStack(spacing: 0) {
+            // Collapsible Header
+            Button(action: {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    badgesSectionExpanded.toggle()
                 }
+                HapticManager.shared.light()
+            }) {
+                HStack {
+                    Image(systemName: "trophy.fill")
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                    Text("Achievements")
+                        .font(.headline)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                    Spacer()
+                    Image(systemName: badgesSectionExpanded ? "chevron.up" : "chevron.down")
+                        .foregroundColor(.secondary)
+                        .font(.caption)
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 12)
+                .background(Color.secondary.opacity(0.1))
+            }
+            .buttonStyle(PlainButtonStyle())
+            
+            // Collapsible Content
+            if badgesSectionExpanded {
+                VStack(alignment: .leading, spacing: 12) {
+                    let recipeCount = PersistenceController.shared.getRecipeCount()
+                    let allBadges = badgeManager.getAllBadges(recipeCount: recipeCount)
+                    
+                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                        ForEach(allBadges) { badge in
+                            BadgeCard(badge: badge, colorScheme: colorScheme, cardStyle: cardStyle)
+                        }
+                    }
+                }
+                .padding(20)
+                .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
-        .padding(20)
         .background {
             if cardStyle == .solid {
                 RoundedRectangle(cornerRadius: 16)

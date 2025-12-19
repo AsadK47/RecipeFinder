@@ -159,17 +159,6 @@ final class SecureCredentialManager: @unchecked Sendable {
         return status == errSecSuccess || status == errSecItemNotFound
     }
     
-    /// Clear all users except the test master user
-    @discardableResult
-    func clearAllUsersExceptTest() -> Bool {
-        let testEmail = "e@mail.com"
-        let testPassword = "password"
-        let testFullName = "Test User"
-        
-        _ = deleteAllCredentials()
-        return saveCredentials(email: testEmail, password: testPassword, fullName: testFullName)
-    }
-    
     // MARK: - Token Management (for session management)
     
     /// Generate a secure session token

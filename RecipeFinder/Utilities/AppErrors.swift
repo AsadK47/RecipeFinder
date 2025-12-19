@@ -141,17 +141,28 @@ struct Validator {
         return emailPredicate.evaluate(with: email)
     }
     
-    // Password strength validation
+    // Password strength validation - Industry Standard
     static func validatePassword(_ password: String) throws {
         guard password.count >= 8 else {
             throw AppError.weakPassword(reason: "Must be at least 8 characters")
         }
         
-        let hasLetter = password.rangeOfCharacter(from: .letters) != nil
+        let hasUppercase = password.rangeOfCharacter(from: .uppercaseLetters) != nil
+        let hasLowercase = password.rangeOfCharacter(from: .lowercaseLetters) != nil
         let hasNumber = password.rangeOfCharacter(from: .decimalDigits) != nil
+        let specialCharacters = CharacterSet(charactersIn: "!@#$%^&*()_+-=[]{}|;:',.<>?/~`")
+        let hasSpecialChar = password.rangeOfCharacter(from: specialCharacters) != nil
         
-        guard hasLetter && hasNumber else {
-            throw AppError.weakPassword(reason: "Must contain letters and numbers")
+        guard hasUppercase && hasLowercase else {
+            throw AppError.weakPassword(reason: "Must contain uppercase and lowercase letters")
+        }
+        
+        guard hasNumber else {
+            throw AppError.weakPassword(reason: "Must contain at least one number")
+        }
+        
+        guard hasSpecialChar else {
+            throw AppError.weakPassword(reason: "Must contain at least one special character (!@#$%^&* etc.)")
         }
     }
     

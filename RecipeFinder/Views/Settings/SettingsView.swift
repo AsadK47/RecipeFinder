@@ -17,14 +17,11 @@ struct SettingsTabView: View {
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
-        ZStack {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                .ignoresSafeArea()
-            
-            VStack(spacing: 0) {
-                // Compact Header
-                header
-                    
+        NavigationStack {
+            ZStack {
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
+                    .ignoresSafeArea()
+                
                 ScrollView {
                     VStack(spacing: 24) {
                         // Account Section Header
@@ -32,245 +29,232 @@ struct SettingsTabView: View {
                         
                         // Account Card
                         SettingsCard {
-                                NavigationLink(destination: AccountView()) {
-                                    HStack(spacing: 16) {
-                                        // Profile picture or initials
-                                        ZStack {
-                                            if let profileImage = profileImage {
-                                                Image(uiImage: profileImage)
-                                                    .resizable()
-                                                    .scaledToFill()
-                                                    .frame(width: 56, height: 56)
-                                                    .clipShape(Circle())
-                                            } else {
-                                                Circle()
-                                                    .fill(AppTheme.accentColor(for: selectedTheme))
-                                                    .frame(width: 56, height: 56)
-                                                    .overlay {
-                                                        Text(accountManager.initials)
-                                                            .font(.system(size: 22, weight: .semibold))
-                                                            .foregroundStyle(.white)
-                                                    }
-                                            }
+                            NavigationLink(destination: AccountView()) {
+                                HStack(spacing: 16) {
+                                    // Profile picture or initials
+                                    ZStack {
+                                        if let profileImage = profileImage {
+                                            Image(uiImage: profileImage)
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(width: 56, height: 56)
+                                                .clipShape(Circle())
+                                        } else {
+                                            Circle()
+                                                .fill(AppTheme.accentColor(for: selectedTheme))
+                                                .frame(width: 56, height: 56)
+                                                .overlay {
+                                                    Text(accountManager.initials)
+                                                        .font(.system(size: 22, weight: .semibold))
+                                                        .foregroundStyle(.white)
+                                                }
                                         }
-                                        .id(refreshID)
+                                    }
+                                    .id(refreshID)
+                                    
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(accountManager.fullName.isEmpty ? "Account" : accountManager.fullName)
+                                            .font(.headline)
+                                            .foregroundColor(colorScheme == .dark ? .white : .black)
                                         
-                                        VStack(alignment: .leading, spacing: 4) {
-                                            Text(accountManager.fullName.isEmpty ? "Account" : accountManager.fullName)
-                                                .font(.headline)
-                                                .foregroundColor(colorScheme == .dark ? .white : .black)
-                                            
-                                            if let email = authManager.currentUser?.email, !email.isEmpty {
-                                                Text(email)
-                                                    .font(.subheadline)
-                                                    .foregroundColor(.secondary)
-                                            }
-                                            
-                                            Text("Apple ID, iCloud & More")
-                                                .font(.caption)
+                                        if let email = authManager.currentUser?.email, !email.isEmpty {
+                                            Text(email)
+                                                .font(.subheadline)
                                                 .foregroundColor(.secondary)
                                         }
                                         
-                                        Spacer()
-                                        
-                                        Image(systemName: "chevron.right")
-                                            .foregroundColor(.gray)
+                                        Text("Apple ID, iCloud & More")
                                             .font(.caption)
+                                            .foregroundColor(.secondary)
                                     }
-                                    .padding(20)
+                                    
+                                    Spacer()
+                                    
+                                    Image(systemName: "chevron.right")
+                                        .foregroundColor(.gray)
+                                        .font(.caption)
                                 }
-                                .buttonStyle(PlainButtonStyle())
+                                .padding(20)
                             }
-                            
-                            // Personalization
-                            SettingsSectionHeader(title: "Personalization")
-                            
-                            SettingsCard {
-                                NavigationLink(destination: AppearanceAndThemeSettingsView()) {
-                                    SettingsRow(icon: "paintpalette.fill", iconColor: .pink, title: "Appearance & Theme")
-                                        .padding(20)
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                            }
-                            
-                            // Health & Nutrition
-                            SettingsSectionHeader(title: "Health & Nutrition")
-                            
-                            SettingsCard {
-                                NavigationLink(destination: NutritionalTipsView()) {
-                                    SettingsRow(icon: "heart.text.square.fill", iconColor: .red, title: "Nutrition Science")
-                                        .padding(20)
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                            }
-                            
-                            // Cooking
-                            SettingsSectionHeader(title: "Cooking")
-                            
-                            SettingsCard {
-                                VStack(spacing: 0) {
-                                    NavigationLink(destination: NotificationSettingsView()) {
-                                        SettingsRow(icon: "bell.fill", iconColor: .red, title: "Notifications")
-                                            .padding(20)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                    
-                                    Divider()
-                                        .padding(.leading, 60)
-                                    
-                                    NavigationLink(destination: TimerSettingsView()) {
-                                        SettingsRow(icon: "timer", iconColor: .orange, title: "Timers")
-                                            .padding(20)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                    
-                                    Divider()
-                                        .padding(.leading, 60)
-                                    
-                                    NavigationLink(destination: UnitsSettingsView()) {
-                                        SettingsRow(icon: "ruler.fill", iconColor: .blue, title: "Units & Measurements")
-                                            .padding(20)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                    
-                                    Divider()
-                                        .padding(.leading, 60)
-                                    
-                                    NavigationLink(destination: DisplaySettingsView()) {
-                                        SettingsRow(icon: "display", iconColor: .cyan, title: "Display")
-                                            .padding(20)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                    
-                                    Divider()
-                                        .padding(.leading, 60)
-                                    
-                                    NavigationLink(destination: PartyTimeView()) {
-                                        SettingsRow(icon: "party.popper.fill", iconColor: .purple, title: "Party Time")
-                                            .padding(20)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                }
-                            }
-                            
-                            // Privacy & Data
-                            SettingsSectionHeader(title: "Privacy & Data")
-                            
-                            SettingsCard {
-                                VStack(spacing: 0) {
-                                    NavigationLink(destination: PrivacySettingsView()) {
-                                        SettingsRow(icon: "hand.raised.fill", iconColor: .blue, title: "Privacy")
-                                            .padding(20)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                    
-                                    Divider()
-                                        .padding(.leading, 60)
-                                    
-                                    NavigationLink(destination: DataManagementSettingsView()
-                                    ) {
-                                        SettingsRow(icon: "externaldrive.fill", iconColor: .gray, title: "Data Management")
-                                            .padding(20)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                }
-                            }
-                            
-                            // Support
-                            SettingsSectionHeader(title: "Support")
-                            
-                            SettingsCard {
-                                VStack(spacing: 0) {
-                                    NavigationLink(destination: HelpView()) {
-                                        SettingsRow(icon: "questionmark.circle.fill", iconColor: .teal, title: "Help & Support")
-                                            .padding(20)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                    
-                                    Divider()
-                                        .padding(.leading, 60)
-                                    
-                                    NavigationLink(destination: AboutView()) {
-                                        SettingsRow(icon: "info.circle.fill", iconColor: .gray, title: "About RecipeFinder")
-                                            .padding(20)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                }
-                            }
-                            
-                            // Legal & Company
-                            SettingsSectionHeader(title: "Legal & Company")
-                            
-                            SettingsCard {
-                                NavigationLink(destination: LegalInformationView()) {
-                                    SettingsRow(icon: "building.2.fill", iconColor: .indigo, title: "Legal Information")
-                                        .padding(20)
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                            }
-                            
-                            // App Info
-                            VStack(spacing: 4) {
-                                Text("RecipeFinder")
-                                    .font(.caption)
-                                    .foregroundColor(.white.opacity(0.6))
-                                Text("Version 1.0.0 (Build 1)")
-                                    .font(.caption2)
-                                    .foregroundColor(.white.opacity(0.5))
-                            }
-                            .padding(.top, 24)
-                            .padding(.bottom, 40)
+                            .buttonStyle(PlainButtonStyle())
                         }
-                        .padding(.top, 16)
-                        .padding(.horizontal, 20)
+                        
+                        // Personalization
+                        SettingsSectionHeader(title: "Personalization")
+                        
+                        SettingsCard {
+                            NavigationLink(destination: AppearanceAndThemeSettingsView()) {
+                                SettingsRow(icon: "paintpalette.fill", iconColor: .pink, title: "Appearance & Theme")
+                                    .padding(20)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
+                        
+                        // Health & Nutrition section removed - now a main feature in More tab
+                        
+                        // Cooking
+                        SettingsSectionHeader(title: "Cooking")
+                        
+                        SettingsCard {
+                            VStack(spacing: 0) {
+                                NavigationLink(destination: NotificationSettingsView()) {
+                                    SettingsRow(icon: "bell.fill", iconColor: .red, title: "Notifications")
+                                        .padding(20)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                
+                                Divider()
+                                    .padding(.leading, 60)
+                                
+                                NavigationLink(destination: TimerSettingsView()) {
+                                    SettingsRow(icon: "timer", iconColor: .orange, title: "Timers")
+                                        .padding(20)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                
+                                Divider()
+                                    .padding(.leading, 60)
+                                
+                                NavigationLink(destination: UnitsSettingsView()) {
+                                    SettingsRow(icon: "ruler.fill", iconColor: .blue, title: "Units & Measurements")
+                                        .padding(20)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                
+                                Divider()
+                                    .padding(.leading, 60)
+                                
+                                NavigationLink(destination: DisplaySettingsView()) {
+                                    SettingsRow(icon: "display", iconColor: .cyan, title: "Display")
+                                        .padding(20)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                
+                                Divider()
+                                    .padding(.leading, 60)
+                                
+                                NavigationLink(destination: PartyTimeView()) {
+                                    SettingsRow(icon: "party.popper.fill", iconColor: .purple, title: "Party Time")
+                                        .padding(20)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                            }
+                        }
+                        
+                        // Privacy & Data
+                        SettingsSectionHeader(title: "Privacy & Data")
+                        
+                        SettingsCard {
+                            VStack(spacing: 0) {
+                                NavigationLink(destination: PrivacySettingsView()) {
+                                    SettingsRow(icon: "hand.raised.fill", iconColor: .blue, title: "Privacy")
+                                        .padding(20)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                
+                                Divider()
+                                    .padding(.leading, 60)
+                                
+                                NavigationLink(destination: DataManagementSettingsView()) {
+                                    SettingsRow(icon: "externaldrive.fill", iconColor: .gray, title: "Data Management")
+                                        .padding(20)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                            }
+                        }
+                            
+                        // Support
+                        SettingsSectionHeader(title: "Support")
+                        
+                        SettingsCard {
+                            VStack(spacing: 0) {
+                                NavigationLink(destination: HelpView()) {
+                                    SettingsRow(icon: "questionmark.circle.fill", iconColor: .teal, title: "Help & Support")
+                                        .padding(20)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                
+                                Divider()
+                                    .padding(.leading, 60)
+                                
+                                NavigationLink(destination: AboutView()) {
+                                    SettingsRow(icon: "info.circle.fill", iconColor: .gray, title: "About RecipeFinder")
+                                        .padding(20)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                            }
+                        }
+                            
+                        // Legal & Company
+                        SettingsSectionHeader(title: "Legal & Company")
+                        
+                        SettingsCard {
+                            NavigationLink(destination: LegalInformationView()) {
+                                SettingsRow(icon: "building.2.fill", iconColor: .indigo, title: "Legal Information")
+                                    .padding(20)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
+                        
+                        // App Info
+                        VStack(spacing: 4) {
+                            Text("RecipeFinder")
+                                .font(.caption)
+                                .foregroundColor(.white.opacity(0.6))
+                            Text("Version 1.0.0 (Build 1)")
+                                .font(.caption2)
+                                .foregroundColor(.white.opacity(0.5))
+                        }
+                        .padding(.top, 24)
+                        .padding(.bottom, 40)
+                    }
+                    .padding(.top, 16)
+                    .padding(.horizontal, 20)
+                }
+            }
+            .navigationTitle("Settings")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbarBackground(.hidden, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Menu {
+                        Button(action: {
+                            refreshID = UUID()
+                            HapticManager.shared.light()
+                        }) {
+                            Label("Refresh", systemImage: "arrow.clockwise")
+                        }
+                        
+                        Button(action: {
+                            if let url = URL(string: "https://github.com/yourusername/recipefinder/wiki") {
+                                let activityVC = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+                                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                                   let topController = windowScene.windows.first?.rootViewController {
+                                    if let presentedVC = topController.presentedViewController {
+                                        presentedVC.present(activityVC, animated: true)
+                                    } else {
+                                        topController.present(activityVC, animated: true)
+                                    }
+                                }
+                            }
+                            HapticManager.shared.light()
+                        }) {
+                            Label("Help", systemImage: "questionmark.circle")
+                        }
+                    } label: {
+                        Image(systemName: "line.3.horizontal")
+                            .font(.system(size: 20))
+                            .foregroundColor(.white)
                     }
                 }
             }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
             .onAppear {
                 // Load profile image
                 profileImage = accountManager.loadProfileImage()
                 refreshID = UUID()
             }
         }
-    
-    // MARK: - Header
-    
-    private var header: some View {
-        HStack(spacing: 0) {
-            Spacer()
-            
-            Text("Settings")
-                .font(.system(size: 34, weight: .bold))
-                .foregroundColor(colorScheme == .dark ? .white : .black)
-            
-            Spacer()
-            
-            // Menu button
-            Menu {
-                Button(action: {
-                    // Quick actions could go here
-                }) {
-                    Label("Refresh", systemImage: "arrow.clockwise")
-                }
-                
-                Button(action: {
-                    // Additional menu items
-                }) {
-                    Label("Help", systemImage: "questionmark.circle")
-                }
-            } label: {
-                Image(systemName: "line.3.horizontal")
-                    .font(.system(size: 20))
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
-                    .frame(width: 44, height: 44)
-            }
-        }
-        .frame(height: 44)
-        .padding(.horizontal, 20)
-        .padding(.top, 8)
-        .padding(.bottom, 4)
     }
 }
 

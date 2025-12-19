@@ -67,6 +67,11 @@ struct NutritionalTipsView: View {
                     Text("Evidence from Harvard, Cambridge & Oxford")
                         .font(.caption)
                         .foregroundColor(.white.opacity(0.7))
+                    
+                    Text("All tips cite peer-reviewed sources • Click to verify")
+                        .font(.caption2)
+                        .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                        .fontWeight(.semibold)
                 }
                 
                 Spacer()
@@ -129,9 +134,13 @@ struct NutritionalTipsView: View {
                     
                     Spacer()
                     
-                    Text(tip.category.rawValue)
-                        .font(.caption2)
-                        .foregroundColor(.white.opacity(0.6))
+                    HStack(spacing: 4) {
+                        Image(systemName: "link.circle.fill")
+                            .font(.caption2)
+                        Text("\(tip.sources.count) sources")
+                            .font(.caption2)
+                    }
+                    .foregroundColor(.white.opacity(0.6))
                 }
             }
             .padding()
@@ -416,7 +425,7 @@ struct TipDetailView: View {
                             .foregroundColor(.white)
                             
                             ForEach(tip.sources) { source in
-                                VStack(alignment: .leading, spacing: 4) {
+                                VStack(alignment: .leading, spacing: 8) {
                                     Text(source.institution)
                                         .font(.subheadline)
                                         .fontWeight(.semibold)
@@ -433,6 +442,34 @@ struct TipDetailView: View {
                                             .font(.caption2)
                                             .foregroundColor(.white.opacity(0.5))
                                     }
+                                    
+                                    if let urlString = source.url, let url = URL(string: urlString) {
+                                        Button(action: {
+                                            // Present share sheet so user can choose which app to open URL with
+                                            let activityVC = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+                                            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                                               let topController = windowScene.windows.first?.rootViewController {
+                                                if let presentedVC = topController.presentedViewController {
+                                                    presentedVC.present(activityVC, animated: true)
+                                                } else {
+                                                    topController.present(activityVC, animated: true)
+                                                }
+                                            }
+                                        }) {
+                                            HStack(spacing: 4) {
+                                                Image(systemName: "link.circle.fill")
+                                                    .font(.caption)
+                                                Text("View Source")
+                                                    .font(.caption)
+                                                    .fontWeight(.medium)
+                                            }
+                                            .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                                            .padding(.horizontal, 10)
+                                            .padding(.vertical, 6)
+                                            .background(AppTheme.accentColor(for: selectedTheme).opacity(0.2))
+                                            .cornerRadius(8)
+                                        }
+                                    }
                                 }
                                 .padding()
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -443,6 +480,15 @@ struct TipDetailView: View {
                             Text("Evidence Level: \(tip.evidenceLevel.description)")
                                 .font(.caption)
                                 .foregroundColor(.white.opacity(0.6))
+                                .italic()
+                            
+                            Divider()
+                                .background(Color.white.opacity(0.3))
+                                .padding(.vertical, 8)
+                            
+                            Text("💡 Tip: Click 'View Source' to read the full peer-reviewed research and verify the information yourself.")
+                                .font(.caption2)
+                                .foregroundColor(.white.opacity(0.5))
                                 .italic()
                         }
                         .padding()
