@@ -7,6 +7,10 @@ struct RecipeSearchView: View {
     @State private var selectedCategories: Set<String> = []
     @State private var selectedDifficulties: Set<String> = []
     @State private var selectedCookTimes: Set<Int> = []
+    @State private var selectedDietaryFilters: Set<String> = []
+    @State private var selectedTags: Set<String> = []
+    @State private var ingredientSearchText = ""
+    @State private var availableIngredientsOnly = false
     @State private var showFavoritesOnly = false
     @State private var showImportSheet = false
     @State private var showRecipeWizard: Bool = false
@@ -20,6 +24,15 @@ struct RecipeSearchView: View {
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @AppStorage("skipRecipeDeleteConfirmation") private var skipDeleteConfirmation: Bool = false
+    @AppStorage("kitchenInventory") private var kitchenInventoryJSON: String = "[]"
+    
+    private var availableIngredients: Set<String> {
+        guard let data = kitchenInventoryJSON.data(using: .utf8),
+              let items = try? JSONDecoder().decode([String].self, from: data) else {
+            return []
+        }
+        return Set(items.map { $0.lowercased() })
+    }
 
     // Optimized filtered recipes with caching
     private var filteredRecipes: [RecipeModel] {
@@ -37,26 +50,72 @@ struct RecipeSearchView: View {
             results = results.filter { $0.isFavorite }
         }
         
-        // Search filter
+        // Search filter (recipe name)
         if !searchText.isEmpty {
             results = results.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
         }
         
-        // Category filter (OR logic - show if matches any selected category)
+        // Ingredient search filter
+        if !ingredientSearchText.isEmpty {
+            results = results.filter { $0.containsIngredient(ingredientSearchText) }
+        }
+        
+        // Available ingredients only
+        if availableIngredientsOnly && !availableIngredients.isEmpty {
+            results = results.filter { recipe in
+                recipe.ingredientMatchPercentage(availableIngredients: availableIngredients) >= 0.8
+            }
+        }
+        
+        // Category filter
         if !selectedCategories.isEmpty {
             results = results.filter { selectedCategories.contains($0.category) }
         }
         
-        // Difficulty filter (OR logic - show if matches any selected difficulty)
+        // Difficulty filter
         if !selectedDifficulties.isEmpty {
             results = results.filter { selectedDifficulties.contains($0.difficulty) }
         }
         
-        // Cook time filter (OR logic - show if <= any selected time limit)
+        // Cook time filter
         if !selectedCookTimes.isEmpty {
             results = results.filter { recipe in
                 let time = TimeExtractor.extractMinutes(from: recipe.cookingTime)
                 return selectedCookTimes.contains { time <= $0 }
+            }
+        }
+        
+        // Dietary filters
+        if !selectedDietaryFilters.isEmpty {
+            results = results.filter { recipe in
+                selectedDietaryFilters.allSatisfy { dietaryTag in
+                    switch dietaryTag {
+                    case "Vegetarian": return recipe.dietaryInfo.isVegetarian
+                    case "Vegan": return recipe.dietaryInfo.isVegan
+                    case "Gluten-Free": return recipe.dietaryInfo.isGlutenFree
+                    case "Dairy-Free": return recipe.dietaryInfo.isDairyFree
+                    case "Nut-Free": return recipe.dietaryInfo.isNutFree
+                    case "Low-Carb": return recipe.dietaryInfo.isLowCarb
+                    case "Keto": return recipe.dietaryInfo.isKeto
+                    default: return true
+                    }
+                }
+            }
+        }
+        
+        // Tags filter
+        if !selectedTags.isEmpty {
+            results = results.filter { recipe in
+                !Set(recipe.tags).isDisjoint(with: selectedTags)
+            }
+        }
+        
+        // Sort by ingredient match if using "what can I make" mode
+        if availableIngredientsOnly && !availableIngredients.isEmpty {
+            results.sort { recipe1, recipe2 in
+                let match1 = recipe1.ingredientMatchPercentage(availableIngredients: availableIngredients)
+                let match2 = recipe2.ingredientMatchPercentage(availableIngredients: availableIngredients)
+                return match1 > match2
             }
         }
         
@@ -67,16 +126,31 @@ struct RecipeSearchView: View {
     private func computeFilterHash() -> Int {
         var hasher = Hasher()
         hasher.combine(searchText)
+        hasher.combine(ingredientSearchText)
+        hasher.combine(availableIngredientsOnly)
         hasher.combine(showFavoritesOnly)
         hasher.combine(selectedCategories)
         hasher.combine(selectedDifficulties)
         hasher.combine(selectedCookTimes)
-        hasher.combine(recipes.count) // Include recipe count to detect changes
+        hasher.combine(selectedDietaryFilters)
+        hasher.combine(selectedTags)
+        hasher.combine(recipes.count)
         return hasher.finalize()
     }
     
     var activeFilterCount: Int {
-        return selectedCategories.count + selectedDifficulties.count + selectedCookTimes.count + (showFavoritesOnly ? 1 : 0)
+        return selectedCategories.count + 
+               selectedDifficulties.count + 
+               selectedCookTimes.count + 
+               selectedDietaryFilters.count +
+               selectedTags.count +
+               (showFavoritesOnly ? 1 : 0) +
+               (availableIngredientsOnly ? 1 : 0) +
+               (!ingredientSearchText.isEmpty ? 1 : 0)
+    }
+    
+    var availableTags: [String] {
+        Array(Set(recipes.flatMap { $0.tags })).sorted()
     }
     
     var categories: [String] {
@@ -92,59 +166,89 @@ struct RecipeSearchView: View {
 
     var body: some View {
         NavigationStack {
-            ZStack {
-                backgroundView
-                
-                VStack(spacing: 0) {
-                    VStack(spacing: 12) {
-                        headerSection
-                        
-                        // Search bar with cancel option
-                        searchBarSection
-                    }
-                    
-                    // Active filters chips
-                    if activeFilterCount > 0 {
-                        activeFiltersView
-                    }
-                    
-                    if filteredRecipes.isEmpty {
-                        emptyStateView
-                    } else {
-                        recipeListView
-                    }
-                }
+            mainContentView
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbarBackground(.hidden, for: .navigationBar)
+                .toolbar { keyboardToolbar }
+                .modifier(SheetPresentationModifier(
+                    showFilters: $showFilters,
+                    showImportSheet: $showImportSheet,
+                    showRecipeWizard: $showRecipeWizard,
+                    showDeleteAlert: $showDeleteAlert,
+                    filterSheet: filterSheet,
+                    importSheet: recipeImportSheet,
+                    wizardSheet: recipeWizardSheet,
+                    deleteSheet: deleteConfirmationSheet
+                ))
+                .modifier(FilterCacheUpdateModifier(
+                    searchText: searchText,
+                    ingredientSearchText: ingredientSearchText,
+                    availableIngredientsOnly: availableIngredientsOnly,
+                    selectedCategories: selectedCategories,
+                    selectedDifficulties: selectedDifficulties,
+                    selectedCookTimes: selectedCookTimes,
+                    selectedDietaryFilters: selectedDietaryFilters,
+                    selectedTags: selectedTags,
+                    showFavoritesOnly: showFavoritesOnly,
+                    recipes: recipes,
+                    updateAction: updateFilterCache
+                ))
+        }
+    }
+    
+    // MARK: - Main Content Orchestration
+    
+    private var mainContentView: some View {
+        ZStack {
+            backgroundView
+            contentStack
+        }
+    }
+    
+    private var contentStack: some View {
+        VStack(spacing: 0) {
+            searchHeaderGroup
+            activeFiltersSection
+            recipeContentArea
+        }
+    }
+    
+    private var searchHeaderGroup: some View {
+        VStack(spacing: 12) {
+            headerSection
+            searchBarSection
+        }
+    }
+    
+    private var activeFiltersSection: some View {
+        Group {
+            if activeFilterCount > 0 {
+                activeFiltersView
             }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
-            .toolbar {
-                ToolbarItemGroup(placement: .keyboard) {
-                    Spacer()
-                    Button {
-                        isSearchFocused = false
-                    } label: {
-                        Image(systemName: "keyboard.chevron.compact.down")
-                            .foregroundColor(.gray)
-                    }
-                }
+        }
+    }
+    
+    private var recipeContentArea: some View {
+        Group {
+            if filteredRecipes.isEmpty {
+                emptyStateView
+            } else {
+                recipeListView
             }
-            .sheet(isPresented: $showFilters) {
-                filterSheet
-            }
-            .sheet(isPresented: $showImportSheet) {
-                recipeImportSheet
-            }
-            .sheet(isPresented: $showRecipeWizard) {
-                recipeWizardSheet
-            }
-            .onChange(of: searchText) { _, _ in updateFilterCache() }
-            .onChange(of: selectedCategories) { _, _ in updateFilterCache() }
-            .onChange(of: selectedDifficulties) { _, _ in updateFilterCache() }
-            .onChange(of: selectedCookTimes) { _, _ in updateFilterCache() }
-            .onChange(of: showFavoritesOnly) { _, _ in updateFilterCache() }
-            .onChange(of: recipes) { _, _ in updateFilterCache() }
-            .sheet(isPresented: $showDeleteAlert) {
-                deleteConfirmationSheet
+        }
+    }
+    
+    // MARK: - Toolbar Components
+    
+    @ToolbarContentBuilder
+    private var keyboardToolbar: some ToolbarContent {
+        ToolbarItemGroup(placement: .keyboard) {
+            Spacer()
+            Button {
+                isSearchFocused = false
+            } label: {
+                Image(systemName: "keyboard.chevron.compact.down")
+                    .foregroundColor(.gray)
             }
         }
     }
@@ -303,6 +407,20 @@ struct RecipeSearchView: View {
                     }
                 }
                 
+                if availableIngredientsOnly {
+                    FilterChip(label: "Can Make Now", icon: "checkmark.circle.fill") {
+                        HapticManager.shared.light()
+                        availableIngredientsOnly = false
+                    }
+                }
+                
+                if !ingredientSearchText.isEmpty {
+                    FilterChip(label: "Has: \(ingredientSearchText)", icon: "leaf.fill") {
+                        HapticManager.shared.light()
+                        ingredientSearchText = ""
+                    }
+                }
+                
                 ForEach(Array(selectedCategories), id: \.self) { category in
                     FilterChip(label: category, icon: "fork.knife") {
                         HapticManager.shared.light()
@@ -321,6 +439,20 @@ struct RecipeSearchView: View {
                     FilterChip(label: time > 120 ? "> 120 min" : "≤ \(time) min", icon: "clock.fill") {
                         HapticManager.shared.light()
                         selectedCookTimes.remove(time)
+                    }
+                }
+                
+                ForEach(Array(selectedDietaryFilters), id: \.self) { diet in
+                    FilterChip(label: diet, icon: "leaf.circle.fill") {
+                        HapticManager.shared.light()
+                        selectedDietaryFilters.remove(diet)
+                    }
+                }
+                
+                ForEach(Array(selectedTags), id: \.self) { tag in
+                    FilterChip(label: tag, icon: "tag.fill") {
+                        HapticManager.shared.light()
+                        selectedTags.remove(tag)
                     }
                 }
                 
@@ -386,9 +518,15 @@ struct RecipeSearchView: View {
         FilterSheet(
             categories: categories,
             difficulties: difficulties,
+            availableTags: availableTags,
+            availableIngredients: availableIngredients,
             selectedCategories: $selectedCategories,
             selectedDifficulties: $selectedDifficulties,
             selectedCookTimes: $selectedCookTimes,
+            selectedDietaryFilters: $selectedDietaryFilters,
+            selectedTags: $selectedTags,
+            ingredientSearchText: $ingredientSearchText,
+            availableIngredientsOnly: $availableIngredientsOnly,
             showFavoritesOnly: $showFavoritesOnly
         )
     }
@@ -508,6 +646,10 @@ struct RecipeSearchView: View {
             selectedCategories.removeAll()
             selectedDifficulties.removeAll()
             selectedCookTimes.removeAll()
+            selectedDietaryFilters.removeAll()
+            selectedTags.removeAll()
+            ingredientSearchText = ""
+            availableIngredientsOnly = false
             showFavoritesOnly = false
         }
     }
@@ -527,12 +669,19 @@ struct FilterSheet: View {
     
     let categories: [String]
     let difficulties: [String]
+    let availableTags: [String]
+    let availableIngredients: Set<String>
     @Binding var selectedCategories: Set<String>
     @Binding var selectedDifficulties: Set<String>
     @Binding var selectedCookTimes: Set<Int>
+    @Binding var selectedDietaryFilters: Set<String>
+    @Binding var selectedTags: Set<String>
+    @Binding var ingredientSearchText: String
+    @Binding var availableIngredientsOnly: Bool
     @Binding var showFavoritesOnly: Bool
     
-    let cookTimeOptions = [15, 30, 45, 60, 90, 121] // 121 represents "> 120"
+    let cookTimeOptions = [15, 30, 45, 60, 90, 121]
+    let dietaryOptions = ["Vegetarian", "Vegan", "Gluten-Free", "Dairy-Free", "Nut-Free", "Low-Carb", "Keto"]
     
     private let columns = [
         GridItem(.adaptive(minimum: 100, maximum: 120), spacing: 8, alignment: .center)
@@ -562,6 +711,98 @@ struct FilterSheet: View {
                         
                         Divider()
                             .background(Color.white.opacity(0.3))
+                        
+                        // What Can I Make Filter
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("What Can I Make?")
+                                        .font(.headline)
+                                        .foregroundColor(.white)
+                                    Text("Recipes using ingredients you have")
+                                        .font(.caption)
+                                        .foregroundColor(.white.opacity(0.7))
+                                }
+                                
+                                Spacer()
+                                
+                                Toggle("", isOn: $availableIngredientsOnly)
+                                    .tint(AppTheme.accentColor)
+                                    .disabled(availableIngredients.isEmpty)
+                            }
+                            
+                            if availableIngredients.isEmpty {
+                                Text("Add ingredients in Kitchen Inventory first")
+                                    .font(.caption)
+                                    .foregroundColor(.orange)
+                            }
+                        }
+                        
+                        Divider()
+                            .background(Color.white.opacity(0.3))
+                        
+                        // Search by Ingredient
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Search by Ingredient")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                            
+                            TextField("e.g., chicken, tomato...", text: $ingredientSearchText)
+                                .textFieldStyle(.plain)
+                                .padding(12)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(Color.white.opacity(0.15))
+                                )
+                                .foregroundColor(.white)
+                        }
+                        
+                        Divider()
+                            .background(Color.white.opacity(0.3))
+                        
+                        // Dietary Filters
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Dietary Preferences")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                            
+                            LazyVGrid(columns: columns, spacing: 8) {
+                                ForEach(dietaryOptions, id: \.self) { diet in
+                                    RecipeFilterButton(
+                                        label: diet,
+                                        isSelected: selectedDietaryFilters.contains(diet)
+                                    ) {
+                                        toggleSelection(diet, in: $selectedDietaryFilters)
+                                    }
+                                }
+                            }
+                        }
+                        
+                        Divider()
+                            .background(Color.white.opacity(0.3))
+                        
+                        // Tags
+                        if !availableTags.isEmpty {
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("Tags")
+                                    .font(.headline)
+                                    .foregroundColor(.white)
+                                
+                                LazyVGrid(columns: columns, spacing: 8) {
+                                    ForEach(availableTags, id: \.self) { tag in
+                                        RecipeFilterButton(
+                                            label: tag,
+                                            isSelected: selectedTags.contains(tag)
+                                        ) {
+                                            toggleSelection(tag, in: $selectedTags)
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            Divider()
+                                .background(Color.white.opacity(0.3))
+                        }
                         
                         // Category Filter
                         VStack(alignment: .leading, spacing: 12) {
@@ -635,6 +876,10 @@ struct FilterSheet: View {
                         selectedCategories.removeAll()
                         selectedDifficulties.removeAll()
                         selectedCookTimes.removeAll()
+                        selectedDietaryFilters.removeAll()
+                        selectedTags.removeAll()
+                        ingredientSearchText = ""
+                        availableIngredientsOnly = false
                         showFavoritesOnly = false
                     }
                     .foregroundColor(.white)
@@ -811,5 +1056,83 @@ struct RecipeDeleteConfirmationSheet: View {
         }
         .presentationDetents([.height(480)])
         .presentationDragIndicator(.hidden)
+    }
+}
+
+// MARK: - View Modifiers
+
+/// Encapsulates all sheet presentation logic following Single Responsibility Principle
+struct SheetPresentationModifier: ViewModifier {
+    @Binding var showFilters: Bool
+    @Binding var showImportSheet: Bool
+    @Binding var showRecipeWizard: Bool
+    @Binding var showDeleteAlert: Bool
+    
+    let filterSheet: AnyView
+    let importSheet: AnyView
+    let wizardSheet: AnyView
+    let deleteSheet: AnyView
+    
+    init(showFilters: Binding<Bool>,
+         showImportSheet: Binding<Bool>,
+         showRecipeWizard: Binding<Bool>,
+         showDeleteAlert: Binding<Bool>,
+         filterSheet: some View,
+         importSheet: some View,
+         wizardSheet: some View,
+         deleteSheet: some View) {
+        self._showFilters = showFilters
+        self._showImportSheet = showImportSheet
+        self._showRecipeWizard = showRecipeWizard
+        self._showDeleteAlert = showDeleteAlert
+        self.filterSheet = AnyView(filterSheet)
+        self.importSheet = AnyView(importSheet)
+        self.wizardSheet = AnyView(wizardSheet)
+        self.deleteSheet = AnyView(deleteSheet)
+    }
+    
+    func body(content: Content) -> some View {
+        content
+            .sheet(isPresented: $showFilters) {
+                filterSheet
+            }
+            .sheet(isPresented: $showImportSheet) {
+                importSheet
+            }
+            .sheet(isPresented: $showRecipeWizard) {
+                wizardSheet
+            }
+            .sheet(isPresented: $showDeleteAlert) {
+                deleteSheet
+            }
+    }
+}
+
+/// Manages filter state change observation and cache updates
+struct FilterCacheUpdateModifier: ViewModifier {
+    let searchText: String
+    let ingredientSearchText: String
+    let availableIngredientsOnly: Bool
+    let selectedCategories: Set<String>
+    let selectedDifficulties: Set<String>
+    let selectedCookTimes: Set<Int>
+    let selectedDietaryFilters: Set<String>
+    let selectedTags: Set<String>
+    let showFavoritesOnly: Bool
+    let recipes: [RecipeModel]
+    let updateAction: () -> Void
+    
+    func body(content: Content) -> some View {
+        content
+            .onChange(of: searchText) { _, _ in updateAction() }
+            .onChange(of: ingredientSearchText) { _, _ in updateAction() }
+            .onChange(of: availableIngredientsOnly) { _, _ in updateAction() }
+            .onChange(of: selectedCategories) { _, _ in updateAction() }
+            .onChange(of: selectedDifficulties) { _, _ in updateAction() }
+            .onChange(of: selectedCookTimes) { _, _ in updateAction() }
+            .onChange(of: selectedDietaryFilters) { _, _ in updateAction() }
+            .onChange(of: selectedTags) { _, _ in updateAction() }
+            .onChange(of: showFavoritesOnly) { _, _ in updateAction() }
+            .onChange(of: recipes) { _, _ in updateAction() }
     }
 }

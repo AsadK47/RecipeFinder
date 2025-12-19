@@ -174,6 +174,48 @@ struct IngredientNameFormatter {
     }
 }
 
+// MARK: - Dietary Info
+
+struct DietaryInfo: Codable, Hashable {
+    var isVegetarian: Bool
+    var isVegan: Bool
+    var isGlutenFree: Bool
+    var isDairyFree: Bool
+    var isNutFree: Bool
+    var isLowCarb: Bool
+    var isKeto: Bool
+    
+    init(
+        isVegetarian: Bool = false,
+        isVegan: Bool = false,
+        isGlutenFree: Bool = false,
+        isDairyFree: Bool = false,
+        isNutFree: Bool = false,
+        isLowCarb: Bool = false,
+        isKeto: Bool = false
+    ) {
+        self.isVegetarian = isVegetarian
+        self.isVegan = isVegan
+        self.isGlutenFree = isGlutenFree
+        self.isDairyFree = isDairyFree
+        self.isNutFree = isNutFree
+        self.isLowCarb = isLowCarb
+        self.isKeto = isKeto
+    }
+    
+    var activeTags: [String] {
+        var tags: [String] = []
+        if isVegetarian { tags.append("Vegetarian") }
+        if isVegan { tags.append("Vegan") }
+        if isGlutenFree { tags.append("Gluten-Free") }
+        if isDairyFree { tags.append("Dairy-Free") }
+        if isNutFree { tags.append("Nut-Free") }
+        if isLowCarb { tags.append("Low-Carb") }
+        if isKeto { tags.append("Keto") }
+        return tags
+    }
+}
+
 struct RecipeModel: Identifiable, Codable, Hashable {
     var id: UUID = UUID()
     let name: String
@@ -189,6 +231,8 @@ struct RecipeModel: Identifiable, Codable, Hashable {
     let notes: String
     let imageName: String?
     var isFavorite: Bool
+    var tags: [String]
+    var dietaryInfo: DietaryInfo
 
     init(
         id: UUID = UUID(),
@@ -204,7 +248,9 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         instructions: [String],
         notes: String,
         imageName: String? = nil,
-        isFavorite: Bool = false
+        isFavorite: Bool = false,
+        tags: [String] = [],
+        dietaryInfo: DietaryInfo = DietaryInfo()
     ) {
         self.id = id
         self.name = name
@@ -220,6 +266,8 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         self.notes = notes
         self.imageName = imageName
         self.isFavorite = isFavorite
+        self.tags = tags
+        self.dietaryInfo = dietaryInfo
     }
     
     //  Hashable Conformance
@@ -249,6 +297,43 @@ struct RecipeModel: Identifiable, Codable, Hashable {
     
     mutating func updateServings(to servings: Int) {
         currentServings = servings
+    }
+    
+    // MARK: - Ingredient Matching
+    
+    /// Check if recipe contains a specific ingredient (fuzzy matching)
+    func containsIngredient(_ searchTerm: String) -> Bool {
+        let normalized = searchTerm.lowercased().trimmingCharacters(in: .whitespaces)
+        return ingredients.contains { ingredient in
+            ingredient.name.lowercased().contains(normalized) ||
+            ingredient.mainIngredientName.lowercased().contains(normalized)
+        }
+    }
+    
+    /// Get percentage of ingredients you have
+    func ingredientMatchPercentage(availableIngredients: Set<String>) -> Double {
+        guard !ingredients.isEmpty else { return 0 }
+        
+        let matchCount = ingredients.filter { ingredient in
+            let mainName = ingredient.mainIngredientName.lowercased()
+            return availableIngredients.contains { available in
+                mainName.contains(available.lowercased()) ||
+                available.lowercased().contains(mainName)
+            }
+        }.count
+        
+        return Double(matchCount) / Double(ingredients.count)
+    }
+    
+    /// Get list of missing ingredients
+    func missingIngredients(from availableIngredients: Set<String>) -> [Ingredient] {
+        ingredients.filter { ingredient in
+            let mainName = ingredient.mainIngredientName.lowercased()
+            return !availableIngredients.contains { available in
+                mainName.contains(available.lowercased()) ||
+                available.lowercased().contains(mainName)
+            }
+        }
     }
     
     // MARK: - Convenience Initializers
@@ -282,6 +367,8 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         self.notes = notes
         self.imageName = imageName
         self.isFavorite = isFavorite
+        self.tags = []
+        self.dietaryInfo = DietaryInfo()
     }
 }
 
