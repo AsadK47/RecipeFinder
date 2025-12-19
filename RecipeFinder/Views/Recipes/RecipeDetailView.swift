@@ -14,6 +14,7 @@ struct RecipeDetailView: View {
     @State private var editingIngredientIndex: Int?
     @State private var editingQuantity: String = ""
     @State private var editingUnit: String = ""
+    @AppStorage("hasSeenSwipeHint") private var hasSeenSwipeHint = false
     @AppStorage("measurementSystem") private var measurementSystem: MeasurementSystem = .metric
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
@@ -307,6 +308,38 @@ struct RecipeDetailView: View {
     private var ingredientsList: some View {
         GlassCard {
             VStack(spacing: 16) {
+                // Swipe hint banner (shows once)
+                if !hasSeenSwipeHint {
+                    HStack(spacing: 8) {
+                        Image(systemName: "hand.draw")
+                            .font(.system(size: 16))
+                            .foregroundColor(AppTheme.accentColor)
+                        
+                        Text("Swipe right to add to shopping list")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            withAnimation {
+                                hasSeenSwipeHint = true
+                            }
+                        }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.system(size: 16))
+                                .foregroundColor(.secondary.opacity(0.5))
+                        }
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(AppTheme.accentColor.opacity(0.1))
+                    )
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                }
+                
                 ForEach(recipe.ingredients.indices, id: \.self) { index in
                     IngredientRowView(
                         ingredient: recipe.ingredients[index],
