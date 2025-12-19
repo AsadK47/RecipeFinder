@@ -387,13 +387,13 @@ struct ShoppingListView: View {
             
             if isTipsExpanded {
                 VStack(alignment: .leading, spacing: 16) {
-                    ShoppingFeatureRow(icon: "sparkles", title: "Smart Categories", description: "Type 'milk' → Dairy, 'chicken' → Meat", appTheme: selectedTheme)
-                    ShoppingFeatureRow(icon: "list.bullet.indent", title: "Auto Grouping", description: "Items group by category automatically", appTheme: selectedTheme)
-                    ShoppingFeatureRow(icon: "hand.tap", title: "Tap to Collapse", description: "Hide completed categories while shopping", appTheme: selectedTheme)
-                    ShoppingFeatureRow(icon: "checkmark.circle", title: "Check Off Items", description: "Tap checkbox or swipe to mark as purchased", appTheme: selectedTheme)
+                    ShoppingFeatureRow(icon: "sparkles", title: "Smart Categories", description: "Items are automatically sorted into categories", appTheme: selectedTheme)
+                    ShoppingFeatureRow(icon: "chevron.up.chevron.down", title: "Collapse Categories", description: "Tap category headers to show or hide items", appTheme: selectedTheme)
+                    ShoppingFeatureRow(icon: "checkmark.circle", title: "Check Off Items", description: "Tap checkbox to mark items as purchased", appTheme: selectedTheme)
+                    ShoppingFeatureRow(icon: "plus.circle", title: "Quick Add", description: "Use menu (≡) to quickly add items", appTheme: selectedTheme)
+                    ShoppingFeatureRow(icon: "square.and.pencil", title: "Adjust Quantity", description: "Use +/- buttons to change item amounts", appTheme: selectedTheme)
                     ShoppingFeatureRow(icon: "trash", title: "Delete Items", description: "Swipe left on any item to remove it", appTheme: selectedTheme)
-                    ShoppingFeatureRow(icon: "ellipsis.circle", title: "Bulk Actions", description: "Use menu (⋯) to clear checked or all items", appTheme: selectedTheme)
-                    ShoppingFeatureRow(icon: "square.and.pencil", title: "Edit Quantity", description: "Tap item to change amount or category", appTheme: selectedTheme)
+                    ShoppingFeatureRow(icon: "square.and.arrow.up", title: "Share List", description: "Export your list via menu (≡)", appTheme: selectedTheme)
                 }
                 .padding(.top, 8)
                 .padding(.horizontal, 20)
@@ -712,11 +712,11 @@ struct ShoppingListItemRow: View {
         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
             Button(
                 role: .destructive,
-                action: onDelete,
-                label: {
-                    Image(systemName: "trash")
-                }
-            )
+                action: onDelete
+            ) {
+                Label("Delete", systemImage: "trash")
+            }
+            .tint(.red)
         }
         .contextMenu {
             Menu("Change Category") {
@@ -805,13 +805,13 @@ struct HelpSheetView: View {
                         
                         // Feature cards with beautiful styling
                         VStack(alignment: .leading, spacing: 16) {
-                            ShoppingFeatureRow(icon: "sparkles", title: "Smart Categories", description: "Type 'milk' → Dairy, 'chicken' → Meat", appTheme: appTheme)
-                            ShoppingFeatureRow(icon: "list.bullet.indent", title: "Auto Grouping", description: "Items group by category automatically", appTheme: appTheme)
-                            ShoppingFeatureRow(icon: "hand.tap", title: "Tap to Collapse", description: "Hide completed categories while shopping", appTheme: appTheme)
-                            ShoppingFeatureRow(icon: "checkmark.circle", title: "Check Off Items", description: "Tap checkbox or swipe to mark as purchased", appTheme: appTheme)
+                            ShoppingFeatureRow(icon: "sparkles", title: "Smart Categories", description: "Items are automatically sorted into categories", appTheme: appTheme)
+                            ShoppingFeatureRow(icon: "chevron.up.chevron.down", title: "Collapse Categories", description: "Tap category headers to show or hide items", appTheme: appTheme)
+                            ShoppingFeatureRow(icon: "checkmark.circle", title: "Check Off Items", description: "Tap checkbox to mark items as purchased", appTheme: appTheme)
+                            ShoppingFeatureRow(icon: "plus.circle", title: "Quick Add", description: "Use menu (≡) to quickly add items", appTheme: appTheme)
+                            ShoppingFeatureRow(icon: "square.and.pencil", title: "Adjust Quantity", description: "Use +/- buttons to change item amounts", appTheme: appTheme)
                             ShoppingFeatureRow(icon: "trash", title: "Delete Items", description: "Swipe left on any item to remove it", appTheme: appTheme)
-                            ShoppingFeatureRow(icon: "ellipsis.circle", title: "Bulk Actions", description: "Use menu (⋯) to clear checked or all items", appTheme: appTheme)
-                            ShoppingFeatureRow(icon: "square.and.pencil", title: "Edit Quantity", description: "Tap item to change amount or category", appTheme: appTheme)
+                            ShoppingFeatureRow(icon: "square.and.arrow.up", title: "Share List", description: "Export your list via menu (≡)", appTheme: appTheme)
                         }
                         .padding(24)
                         .background {

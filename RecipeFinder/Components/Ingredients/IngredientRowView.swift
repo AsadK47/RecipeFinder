@@ -63,11 +63,13 @@ struct IngredientRowView: View {
                     RoundedRectangle(cornerRadius: 8)
                         .fill(AppTheme.accentColor.opacity(0.12))
                 )
+                .contentShape(Rectangle())
             }
-            .buttonStyle(PlainButtonStyle())
+            .buttonStyle(.plain)
             .disabled(onTapQuantity == nil)
             .frame(width: 80)
             .padding(.horizontal, 12)
+            .allowsHitTesting(true)
             
             // Second separator
             Rectangle()
@@ -85,11 +87,15 @@ struct IngredientRowView: View {
                     .font(.system(size: 24))
                     .foregroundColor(isChecked ? .green : .gray.opacity(0.4))
                     .frame(width: 28, height: 28)
+                    .contentShape(Rectangle())
             })
+            .buttonStyle(.plain)
             .frame(width: 50)
             .padding(.leading, 12)
+            .allowsHitTesting(true)
         }
         .padding(.vertical, 8)
+        .contentShape(Rectangle())
         .swipe(onAddToShopping != nil,
                trailing: onAddToShopping.map { addAction in
                    SwipeAction(

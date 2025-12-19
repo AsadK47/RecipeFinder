@@ -15,7 +15,7 @@ struct SwipeActionModifier: ViewModifier {
     
     private let actionThreshold: CGFloat = 80
     private let maxSwipe: CGFloat = 100
-    private let minimumDragDistance: CGFloat = 10
+    private let minimumDragDistance: CGFloat = 15
     
     func body(content: Content) -> some View {
         ZStack(alignment: .trailing) {
@@ -47,11 +47,11 @@ struct SwipeActionModifier: ViewModifier {
                     enabled ? DragGesture(minimumDistance: minimumDragDistance)
                         .onChanged { value in
                             // Only allow swipe from right to left (negative offset)
-                            // And only if horizontal movement is greater than vertical
+                            // Require horizontal movement to be 2x greater than vertical for swipe
                             let horizontalMovement = abs(value.translation.width)
                             let verticalMovement = abs(value.translation.height)
                             
-                            if horizontalMovement > verticalMovement && value.translation.width < 0 {
+                            if horizontalMovement > verticalMovement * 2 && value.translation.width < 0 {
                                 offset = max(value.translation.width, -maxSwipe)
                             }
                         }
