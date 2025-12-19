@@ -81,6 +81,13 @@ final class ShoppingListManager: ObservableObject {
         saveItems(items)
     }
     
+    func updateStore(at index: Int, store: String?) {
+        var items = getItems()
+        guard index < items.count else { return }
+        items[index].preferredStore = store
+        saveItems(items)
+    }
+    
     func updateName(at index: Int, name: String) {
         var items = getItems()
         guard index < items.count else { return }

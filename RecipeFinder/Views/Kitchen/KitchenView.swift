@@ -7,7 +7,6 @@ struct KitchenView: View {
     @State private var showAddIngredientSheet = false
     @State private var showQuickAdd = false
     @State private var cachedCategorizedIngredients: [(category: String, ingredients: [String])] = []
-    @State private var selectedCategory: String? = nil
     @State private var collapsedCategories: Set<String> = []
     @FocusState private var isSearchFocused: Bool
     @Environment(\.colorScheme) var colorScheme
@@ -84,10 +83,7 @@ struct KitchenView: View {
                     
                     ScrollView {
                         VStack(alignment: .leading, spacing: 24) {
-                            if let category = selectedCategory {
-                                // Show ingredients from selected category
-                                categoryIngredientsView(for: category)
-                            } else if manager.items.isEmpty && searchText.isEmpty {
+                            if manager.items.isEmpty && searchText.isEmpty {
                                 emptyPromptView
                             } else if !searchText.isEmpty {
                                 searchResultsView
@@ -256,230 +252,15 @@ struct KitchenView: View {
                     .fontWeight(.bold)
                     .foregroundColor(colorScheme == .dark ? .white : .black)
                 
-                Text("Add ingredients using Quick Add from the menu or browse categories below")
+                Text("Tap the menu button to Quick Add ingredients, or use the search bar to find and add items")
                     .font(.subheadline)
                     .foregroundColor(colorScheme == .dark ? .white.opacity(0.9) : .black.opacity(0.8))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 40)
             }
-            .padding(.top, 20)
-            
-            // Browse Categories Grid
-            browseCategoriesSection
-        }
-        .frame(maxWidth: .infinity)
-    }
-    
-    // MARK: - Browse Categories Section
-    private var browseCategoriesSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            HStack(spacing: 8) {
-                Image(systemName: "square.grid.2x2")
-                    .font(.caption)
-                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
-                    .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
-                Text("Browse by Category")
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
-            }
-            .padding(.horizontal, 20)
-            
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                ForEach(FoodsList.categories.prefix(6), id: \.self) { category in
-                    categoryCard(category)
-                }
-            }
-            .padding(.horizontal, 20)
-        }
-    }
-    
-    private var emptyStateView: some View {
-        VStack(spacing: 24) {
-            VStack(spacing: 16) {
-                Image(systemName: "refrigerator")
-                    .font(.system(size: 80))
-                    .foregroundColor(.white.opacity(0.3))
-                
-                Text("Your Kitchen is Empty")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
-                
-                Text("Add ingredients to see recipe matches")
-                    .font(.subheadline)
-                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
-                    .multilineTextAlignment(.center)
-            }
             .padding(.top, 40)
-            
-            // Browse Categories Grid
-            VStack(alignment: .leading, spacing: 16) {
-                HStack(spacing: 8) {
-                    Image(systemName: "square.grid.2x2")
-                        .font(.caption)
-                        .foregroundColor(AppTheme.accentColor(for: selectedTheme))
-                        .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
-                    Text("Browse by Category")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
-                        .shadow(color: .black.opacity(0.5), radius: 3, x: 0, y: 2)
-                }
-                .padding(.horizontal, 20)
-                
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                    ForEach(FoodsList.categories.prefix(6), id: \.self) { category in
-                        categoryCard(category)
-                    }
-                }
-                .padding(.horizontal, 20)
-            }
         }
         .frame(maxWidth: .infinity)
-    }
-    
-    private func categoryCard(_ category: String) -> some View {
-        Button(action: {
-            withAnimation {
-                selectedCategory = category
-                HapticManager.shared.light()
-            }
-        }) {
-            VStack(spacing: 12) {
-                ZStack {
-                    Circle()
-                        .fill(CategoryClassifier.categoryColor(for: category).opacity(0.2))
-                        .frame(width: 60, height: 60)
-                    
-                    Image(systemName: CategoryClassifier.categoryIcon(for: category))
-                        .font(.system(size: 28))
-                        .foregroundColor(CategoryClassifier.categoryColor(for: category))
-                }
-                
-                Text(category)
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
-                    .lineLimit(1)
-                
-                Text("\(FoodsList.getFoods(forCategory: category).count) items")
-                    .font(.caption2)
-                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.5))
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
-            .background {
-                if cardStyle == .solid {
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
-                        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
-                } else {
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(.ultraThinMaterial)
-                        .shadow(color: Color.black.opacity(colorScheme == .dark ? 0.2 : 0.08), radius: 6, x: 0, y: 2)
-                }
-            }
-        }
-        .buttonStyle(PlainButtonStyle())
-    }
-    
-    // Category Ingredients View
-    private func categoryIngredientsView(for category: String) -> some View {
-        VStack(alignment: .leading, spacing: 16) {
-            // Header with back button and category info
-            HStack(spacing: 12) {
-                Button(action: {
-                    withAnimation {
-                        selectedCategory = nil
-                        HapticManager.shared.light()
-                    }
-                }) {
-                    Image(systemName: "chevron.left.circle.fill")
-                        .font(.title2)
-                        .foregroundColor(.white)
-                }
-                
-                Circle()
-                    .fill(CategoryClassifier.categoryColor(for: category).opacity(0.2))
-                    .frame(width: 50, height: 50)
-                    .overlay(
-                        Image(systemName: CategoryClassifier.categoryIcon(for: category))
-                            .font(.title3)
-                            .foregroundColor(CategoryClassifier.categoryColor(for: category))
-                    )
-                
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(category)
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
-                    
-                    Text("\(FoodsList.getFoods(forCategory: category).count) items")
-                        .font(.caption)
-                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
-                }
-                
-                Spacer()
-            }
-            .padding(.horizontal, 20)
-            .padding(.top, 8)
-            
-            // List of ingredients
-            LazyVStack(spacing: 8) {
-                ForEach(FoodsList.getFoods(forCategory: category), id: \.self) { ingredient in
-                    categoryIngredientButton(ingredient)
-                }
-            }
-            .padding(.horizontal, 20)
-        }
-    }
-    
-    private func categoryIngredientButton(_ ingredient: String) -> some View {
-        let isInKitchen = KitchenInventoryManager.shared.hasItem(ingredient)
-        let category = CategoryClassifier.suggestCategory(for: ingredient)
-        
-        return Button {
-            withAnimation(.spring(response: 0.3)) {
-                KitchenInventoryManager.shared.toggleItem(ingredient)
-                HapticManager.shared.light()
-                
-                // Go back to main view after adding
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    withAnimation {
-                        selectedCategory = nil
-                    }
-                }
-            }
-        } label: {
-            HStack(spacing: 12) {
-                    Image(systemName: CategoryClassifier.categoryIcon(for: category))
-                        .foregroundStyle(CategoryClassifier.categoryColor(for: category))
-                        .font(.body)
-                    
-                    Text(ingredient)
-                        .font(.body)
-                        .foregroundStyle(colorScheme == .dark ? .white : .black)
-                    
-                    Spacer()
-                    
-                    Image(systemName: isInKitchen ? "checkmark.circle.fill" : "plus.circle")
-                        .foregroundStyle(isInKitchen ? .green : AppTheme.accentColor(for: selectedTheme))
-                        .font(.title3)
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 14)
-                .background {
-                    if cardStyle == .solid {
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
-                    } else {
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(.ultraThinMaterial)
-                    }
-                }
-            }
-        .buttonStyle(PlainButtonStyle())
     }
     
     private var kitchenItemsView: some View {
@@ -539,10 +320,6 @@ struct KitchenView: View {
                 )
             }
             .padding(.horizontal, 20)
-            
-            // Browse more categories
-            browseCategoriesSection
-                .padding(.top, 8)
         }
     }
     

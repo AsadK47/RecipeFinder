@@ -49,14 +49,15 @@ enum CategoryClassifier {
             // Beef
             "beef", "steak", "sirloin", "ribeye", "t-bone", "filet mignon",
             "tenderloin", "ground beef", "chuck", "brisket", "short rib", "oxtail",
-            "flank", "skirt steak",
+            "flank", "skirt steak", "rump", "topside", "mince", "minced beef",
             // Pork
             "pork", "bacon", "ham", "pork chop", "pork belly", "pancetta", "prosciutto",
             "sausage", "chorizo", "salami", "pepperoni", "guanciale",
             "pork loin", "pork shoulder", "ground pork", "italian sausage",
-            // Lamb & Goat
+            "gammon", "pork mince",
+            // Lamb & Goat  
             "lamb", "mutton", "lamb chop", "lamb shank", "rack of lamb",
-            "goat", "lamb leg", "ground lamb",
+            "goat", "lamb leg", "ground lamb", "lamb mince",
             // Game & Specialty
             "veal", "venison", "bison", "rabbit", "wild boar"
         ],
@@ -83,9 +84,9 @@ enum CategoryClassifier {
         // MARK: Vegetables
         "Vegetables": [
             // Alliums
-            "onion", "red onion", "white onion", "yellow onion", "sweet onion",
-            "shallot", "scallion", "green onion", "spring onion", "leek", "ramp",
-            "garlic", "chive",
+            "onion", "onions", "red onion", "white onion", "yellow onion", "sweet onion",
+            "shallot", "shallots", "scallion", "scallions", "green onion", "spring onion", "leek", "leeks", "ramp",
+            "garlic", "garlic clove", "clove of garlic", "chive", "chives",
             // Nightshades
             "tomato", "cherry tomato", "grape tomato", "roma tomato",
             "bell pepper", "red pepper", "green pepper", "yellow pepper",
@@ -142,8 +143,8 @@ enum CategoryClassifier {
         "Grains & Pasta": [
             // Rice
             "rice", "white rice", "brown rice", "basmati", "jasmine", "arborio",
-            "sushi rice", "sticky rice", "wild rice", "black rice",
-            "rice noodle", "rice paper", "rice flour",
+            "sushi rice", "sticky rice", "wild rice", "black rice", "long grain", "short grain",
+            "rice noodle", "rice noodles", "rice paper", "rice flour",
             // Bread
             "bread", "white bread", "whole wheat bread", "sourdough", "baguette",
             "ciabatta", "focaccia", "pita", "naan", "roti", "chapati", "paratha",
@@ -367,7 +368,7 @@ enum CategoryClassifier {
     // swiftlint:disable cyclomatic_complexity function_body_length
     static func categorize(_ itemName: String) -> String {
         // Check cache first
-        let cacheKey = itemName.lowercased()
+        let cacheKey = itemName.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
         if let cached = categoryCache[cacheKey] {
             return cached
         }
@@ -375,8 +376,31 @@ enum CategoryClassifier {
         let lowercased = cacheKey
         
         // Helper function to check if lowercased contains any keyword
+        // Now supports fuzzy matching for plurals and common variations
         func matchesCategory(_ keywords: [String]) -> Bool {
-            keywords.contains { lowercased.contains($0.lowercased()) }
+            keywords.contains { keyword in
+                let keywordLower = keyword.lowercased()
+                // Exact match
+                if lowercased.contains(keywordLower) {
+                    return true
+                }
+                // Plural variations (e.g., "tomato" matches "tomatoes")
+                if keywordLower.hasSuffix("s") {
+                    let singular = String(keywordLower.dropLast())
+                    if lowercased.contains(singular) {
+                        return true
+                    }
+                } else {
+                    if lowercased.contains(keywordLower + "s") || lowercased.contains(keywordLower + "es") {
+                        return true
+                    }
+                }
+                // Word boundary matching ("egg" shouldn't match "eggplant")
+                let words = lowercased.components(separatedBy: .whitespacesAndNewlines)
+                return words.contains { word in
+                    word == keywordLower || word == keywordLower + "s" || word == keywordLower + "es"
+                }
+            }
         }
         
         // Priority order matters! Check most specific categories first

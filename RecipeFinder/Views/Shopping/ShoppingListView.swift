@@ -390,6 +390,7 @@ struct ShoppingListView: View {
                     ShoppingFeatureRow(icon: "sparkles", title: "Smart Categories", description: "Items are automatically sorted into categories", appTheme: selectedTheme)
                     ShoppingFeatureRow(icon: "chevron.up.chevron.down", title: "Collapse Categories", description: "Tap category headers to show or hide items", appTheme: selectedTheme)
                     ShoppingFeatureRow(icon: "checkmark.circle", title: "Check Off Items", description: "Tap checkbox to mark items as purchased", appTheme: selectedTheme)
+                    ShoppingFeatureRow(icon: "storefront", title: "Tag by Store", description: "Long-press items to set preferred supermarket", appTheme: selectedTheme)
                     ShoppingFeatureRow(icon: "plus.circle", title: "Quick Add", description: "Use menu (≡) to quickly add items", appTheme: selectedTheme)
                     ShoppingFeatureRow(icon: "square.and.pencil", title: "Adjust Quantity", description: "Use +/- buttons to change item amounts", appTheme: selectedTheme)
                     ShoppingFeatureRow(icon: "trash", title: "Delete Items", description: "Swipe left on any item to remove it", appTheme: selectedTheme)
@@ -462,6 +463,11 @@ struct ShoppingListView: View {
                         onCategoryChange: { newCategory in
                             if let index = manager.items.firstIndex(where: { $0.id == item.id }) {
                                 manager.updateCategory(at: index, category: newCategory)
+                            }
+                        },
+                        onStoreChange: { newStore in
+                            if let index = manager.items.firstIndex(where: { $0.id == item.id }) {
+                                manager.updateStore(at: index, store: newStore)
                             }
                         },
                         allCategories: CategoryClassifier.categoryOrder
@@ -612,7 +618,9 @@ struct ShoppingListItemRow: View {
     let onQuantityChange: (Int) -> Void
     let onDelete: () -> Void
     let onCategoryChange: (String) -> Void
+    let onStoreChange: (String?) -> Void
     let allCategories: [String]
+    let availableStores: [String] = ["ASDA", "Tesco", "Sainsbury's", "Lidl", "Aldi", "Morrisons", "Waitrose"]
     
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
@@ -646,6 +654,20 @@ struct ShoppingListItemRow: View {
                         .fontWeight(.medium)
                         .strikethrough(item.isChecked)
                         .foregroundColor(item.isChecked ? .gray: (colorScheme == .dark ? .white: .black))
+                    
+                    // Store badge
+                    if let store = item.preferredStore {
+                        Text(store)
+                            .font(.caption2)
+                            .fontWeight(.semibold)
+                            .foregroundColor(colorScheme == .dark ? .black : .white)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(
+                                Capsule()
+                                    .fill(AppTheme.accentColor.opacity(0.8))
+                            )
+                    }
                     
                     Spacer()
                     
@@ -719,6 +741,22 @@ struct ShoppingListItemRow: View {
             .tint(.red)
         }
         .contextMenu {
+            Menu("Change Store") {
+                Button(action: {
+                    onStoreChange(nil)
+                }) {
+                    Label("None", systemImage: item.preferredStore == nil ? "checkmark" : "")
+                }
+                
+                ForEach(availableStores, id: \.self) { store in
+                    Button(action: {
+                        onStoreChange(store)
+                    }) {
+                        Label(store, systemImage: item.preferredStore == store ? "checkmark" : "")
+                    }
+                }
+            }
+            
             Menu("Change Category") {
                 ForEach(allCategories, id: \.self) { category in
                     Button(action: {
@@ -808,6 +846,7 @@ struct HelpSheetView: View {
                             ShoppingFeatureRow(icon: "sparkles", title: "Smart Categories", description: "Items are automatically sorted into categories", appTheme: appTheme)
                             ShoppingFeatureRow(icon: "chevron.up.chevron.down", title: "Collapse Categories", description: "Tap category headers to show or hide items", appTheme: appTheme)
                             ShoppingFeatureRow(icon: "checkmark.circle", title: "Check Off Items", description: "Tap checkbox to mark items as purchased", appTheme: appTheme)
+                            ShoppingFeatureRow(icon: "storefront", title: "Tag by Store", description: "Long-press items to set preferred supermarket", appTheme: appTheme)
                             ShoppingFeatureRow(icon: "plus.circle", title: "Quick Add", description: "Use menu (≡) to quickly add items", appTheme: appTheme)
                             ShoppingFeatureRow(icon: "square.and.pencil", title: "Adjust Quantity", description: "Use +/- buttons to change item amounts", appTheme: appTheme)
                             ShoppingFeatureRow(icon: "trash", title: "Delete Items", description: "Swipe left on any item to remove it", appTheme: appTheme)
