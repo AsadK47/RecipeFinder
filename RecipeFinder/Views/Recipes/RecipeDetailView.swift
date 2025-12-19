@@ -15,8 +15,6 @@ struct RecipeDetailView: View {
     @State private var editingQuantity: String = ""
     @State private var editingUnit: String = ""
     @AppStorage("measurementSystem") private var measurementSystem: MeasurementSystem = .metric
-    @AppStorage("hasSeenServingEditWarning") private var hasSeenServingEditWarning: Bool = false
-    @State private var showServingEditWarning = false
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
     
@@ -80,13 +78,6 @@ struct RecipeDetailView: View {
         .sheet(isPresented: $showEditSheet) {
             editRecipeSheet
         }
-        .alert("💡 Tip: Edit Recipe Instead", isPresented: $showServingEditWarning) {
-            Button("Got It!", role: .cancel) {
-                HapticManager.shared.light()
-            }
-        } message: {
-            Text("You're adjusting servings on-the-fly! This is fine for quick changes, but for permanent adjustments, consider editing the recipe itself. This way your changes are saved for next time. 👨‍🍳")
-        }
         .overlay(alignment: .bottom) {
             feedbackOverlay
         }
@@ -146,14 +137,21 @@ struct RecipeDetailView: View {
     
     private var servingsCard: some View {
         GlassCard {
-            HStack {
-                servingsDisplay
+            VStack(spacing: 16) {
+                HStack {
+                    servingsDisplay
+                    
+                    Divider()
+                        .frame(height: 60)
+                        .padding(.horizontal)
+                    
+                    servingsControls
+                }
                 
                 Divider()
-                    .frame(height: 60)
-                    .padding(.horizontal)
+                    .background(Color.white.opacity(0.3))
                 
-                servingsControls
+                quickScaleButtons
             }
             .padding()
         }
@@ -167,30 +165,72 @@ struct RecipeDetailView: View {
             Text("Servings")
                 .font(.caption)
                 .foregroundColor(.secondary)
-            Text("\(recipe.currentServings)")
-                .font(.title2)
-                .fontWeight(.bold)
-                .foregroundColor(.primary)
+            
+            HStack(spacing: 4) {
+                Text("\(recipe.currentServings)")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(.primary)
+                
+                if recipe.currentServings != recipe.baseServings {
+                    Text("(\(String(format: "%.1fx", recipe.scaleFactor)))")
+                        .font(.caption)
+                        .foregroundColor(AppTheme.accentColor)
+                }
+            }
         }
         .frame(maxWidth: .infinity)
     }
     
     private var servingsControls: some View {
         HStack(spacing: 12) {
-            servingsButton(icon: "minus", action: decreaseServings)
-            servingsButton(icon: "plus", action: increaseServings)
+            servingsButton(icon: "minus", action: decreaseServings, isEnabled: recipe.currentServings > 1)
+            servingsButton(icon: "plus", action: increaseServings, isEnabled: true)
         }
         .frame(maxWidth: .infinity)
     }
     
-    private func servingsButton(icon: String, action: @escaping () -> Void) -> some View {
+    private var quickScaleButtons: some View {
+        HStack(spacing: 8) {
+            quickScaleButton(label: "½x", multiplier: 0.5)
+            quickScaleButton(label: "1x", multiplier: 1.0)
+            quickScaleButton(label: "2x", multiplier: 2.0)
+            quickScaleButton(label: "3x", multiplier: 3.0)
+        }
+    }
+    
+    private func quickScaleButton(label: String, multiplier: Double) -> some View {
+        let targetServings = Int(Double(recipe.baseServings) * multiplier)
+        let isActive = recipe.currentServings == targetServings
+        
+        return Button(action: {
+            HapticManager.shared.light()
+            withAnimation(.spring(response: 0.3)) {
+                recipe.updateServings(to: targetServings)
+            }
+        }) {
+            Text(label)
+                .font(.subheadline)
+                .fontWeight(isActive ? .bold : .medium)
+                .foregroundColor(isActive ? .white : .primary)
+                .frame(maxWidth: .infinity)
+                .frame(height: 36)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(isActive ? AppTheme.accentColor : Color.white.opacity(0.15))
+                )
+        }
+    }
+    
+    private func servingsButton(icon: String, action: @escaping () -> Void, isEnabled: Bool) -> some View {
         Button(action: action) {
             Image(systemName: icon)
                 .font(.system(size: 18, weight: .semibold))
                 .foregroundColor(.white)
                 .frame(width: 44, height: 44)
-                .background(Circle().fill(AppTheme.accentColor))
+                .background(Circle().fill(isEnabled ? AppTheme.accentColor : Color.gray))
         }
+        .disabled(!isEnabled)
     }
     
     private var ingredientsSection: some View {
@@ -448,20 +488,21 @@ struct RecipeDetailView: View {
     
     private func decreaseServings() {
         if recipe.currentServings > 1 {
-            showWarningIfNeeded()
             HapticManager.shared.light()
-            recipe.currentServings -= 1
+            withAnimation(.spring(response: 0.3)) {
+                recipe.currentServings -= 1
+            }
         }
     }
     
     private func increaseServings() {
-        showWarningIfNeeded()
         HapticManager.shared.light()
-        recipe.currentServings += 1
+        withAnimation(.spring(response: 0.3)) {
+            recipe.currentServings += 1
+        }
     }
     
-    private func checkForCompletion(_ newValue: [Bool]) {
-        // Check if ALL steps are completed (ingredients, pre-prep if exists, and instructions)
+    private func checkForCompletion(_ instructionsState: [Bool]) {
         let allIngredientsChecked = ingredientsState.allSatisfy({ $0 })
         let allPrePrepChecked = hasPrePrep ? prePrepState.allSatisfy({ $0 }) : true
         let allInstructionsChecked = instructionsState.allSatisfy({ $0 })
@@ -709,13 +750,5 @@ struct RecipeDetailView: View {
         
         // Trigger callback if provided
         onFavoriteToggle?()
-    }
-    
-    // Show one-time warning about editing servings
-    private func showWarningIfNeeded() {
-        if !hasSeenServingEditWarning {
-            showServingEditWarning = true
-            hasSeenServingEditWarning = true
-        }
     }
 }
