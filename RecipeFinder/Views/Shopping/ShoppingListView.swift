@@ -8,7 +8,7 @@ struct ShoppingListView: View {
     @State private var showQuickAdd = false
     @State private var collapsedCategories: Set<String> = []
     @State private var confettiTrigger = 0
-    @State private var isInputBarCollapsed = false
+    @State private var isTipsExpanded = false
     @FocusState private var isSearchFocused: Bool
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
@@ -163,103 +163,66 @@ struct ShoppingListView: View {
                         .padding(.horizontal, 20)
                         .padding(.top, 16)
                         
-                        // Collapsible Search bar
-                        VStack(spacing: 0) {
-                            // Collapse/Expand button
-                            Button(action: {
-                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                    isInputBarCollapsed.toggle()
-                                    if isInputBarCollapsed {
-                                        searchText = ""
-                                        isSearchFocused = false
+                        // Search bar
+                        HStack(spacing: 12) {
+                            HStack(spacing: 12) {
+                                Image(systemName: "magnifyingglass")
+                                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.6))
+                                    .font(.body)
+                                
+                                ZStack(alignment: .leading) {
+                                    if searchText.isEmpty {
+                                        Text("Add item (e.g., milk, chicken, apples)...")
+                                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6))
                                     }
+                                    TextField("", text: $searchText)
+                                        .focused($isSearchFocused)
+                                        .autocorrectionDisabled()
+                                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        .onSubmit(addItem)
                                 }
-                                HapticManager.shared.light()
-                            }) {
-                                HStack {
-                                    Image(systemName: "plus.circle.fill")
-                                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.6))
-                                        .font(.body)
-                                    
-                                    Text(isInputBarCollapsed ? "Add items..." : "Hide input bar")
-                                        .font(.subheadline)
-                                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.6))
-                                    
-                                    Spacer()
-                                    
-                                    Image(systemName: isInputBarCollapsed ? "chevron.down" : "chevron.up")
-                                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.5))
-                                        .font(.caption)
+                                
+                                if !searchText.isEmpty {
+                                    Button(
+                                        action: { 
+                                            searchText = ""
+                                        },
+                                        label: {
+                                            Image(systemName: "xmark.circle.fill")
+                                                .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
+                                        }
+                                    )
                                 }
-                                .padding(.horizontal, 20)
-                                .padding(.vertical, 8)
+                            }
+                            .padding(14)
+                            .background {
+                                if cardStyle == .solid {
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+                                } else {
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(.ultraThinMaterial)
+                                }
                             }
                             
-                            if !isInputBarCollapsed {
-                                // Search bar with cancel option
-                                HStack(spacing: 12) {
-                                    HStack(spacing: 12) {
-                                        Image(systemName: "magnifyingglass")
-                                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.6))
-                                            .font(.body)
-                                        
-                                        ZStack(alignment: .leading) {
-                                            if searchText.isEmpty {
-                                                Text("Add item (e.g., milk, chicken, apples)...")
-                                                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6))
-                                            }
-                                            TextField("", text: $searchText)
-                                                .focused($isSearchFocused)
-                                                .autocorrectionDisabled()
-                                                .foregroundColor(colorScheme == .dark ? .white : .black)
-                                                .onSubmit(addItem)
-                                        }
-                                        
-                                        if !searchText.isEmpty {
-                                            Button(
-                                                action: { 
-                                                    searchText = ""
-                                                },
-                                                label: {
-                                                    Image(systemName: "xmark.circle.fill")
-                                                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
-                                                }
-                                            )
-                                        }
+                            if isSearchFocused {
+                                Button(
+                                    action: {
+                                        searchText = ""
+                                        isSearchFocused = false
+                                    },
+                                    label: {
+                                        Text("Cancel")
+                                            .foregroundColor(.white)
+                                            .fontWeight(.semibold)
                                     }
-                                    .padding(14)
-                                    .background {
-                                        if cardStyle == .solid {
-                                            RoundedRectangle(cornerRadius: 12)
-                                                .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
-                                        } else {
-                                            RoundedRectangle(cornerRadius: 12)
-                                                .fill(.ultraThinMaterial)
-                                        }
-                                    }
-                                    
-                                    if isSearchFocused {
-                                        Button(
-                                            action: {
-                                                searchText = ""
-                                                isSearchFocused = false
-                                            },
-                                            label: {
-                                                Text("Cancel")
-                                                    .foregroundColor(.white)
-                                                    .fontWeight(.semibold)
-                                            }
-                                        )
-                                        .transition(.move(edge: .trailing).combined(with: .opacity))
-                                    }
-                                }
-                                .padding(.horizontal, 20)
-                                .padding(.top, 4)
-                                .transition(.move(edge: .top).combined(with: .opacity))
+                                )
+                                .transition(.move(edge: .trailing).combined(with: .opacity))
                             }
                         }
+                        .padding(.horizontal, 20)
+                        .padding(.top, 12)
                         .padding(.bottom, 12)
-                        .animation(.spring(response: 0.3), value: isInputBarCollapsed)
                         .animation(.spring(response: 0.3), value: isSearchFocused)
                         
                         // Progress bar below search
@@ -400,14 +363,43 @@ struct ShoppingListView: View {
     
     // Shared Features Card Component
     private var shoppingFeaturesCard: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            ShoppingFeatureRow(icon: "sparkles", title: "Smart Categories", description: "Type 'milk' → Dairy, 'chicken' → Meat", appTheme: selectedTheme)
-            ShoppingFeatureRow(icon: "list.bullet.indent", title: "Auto Grouping", description: "Items group by category automatically", appTheme: selectedTheme)
-            ShoppingFeatureRow(icon: "hand.tap", title: "Tap to Collapse", description: "Hide completed categories while shopping", appTheme: selectedTheme)
-            ShoppingFeatureRow(icon: "checkmark.circle", title: "Check Off Items", description: "Tap checkbox or swipe to mark as purchased", appTheme: selectedTheme)
-            ShoppingFeatureRow(icon: "trash", title: "Delete Items", description: "Swipe left on any item to remove it", appTheme: selectedTheme)
-            ShoppingFeatureRow(icon: "ellipsis.circle", title: "Bulk Actions", description: "Use menu (⋯) to clear checked or all items", appTheme: selectedTheme)
-            ShoppingFeatureRow(icon: "square.and.pencil", title: "Edit Quantity", description: "Tap item to change amount or category", appTheme: selectedTheme)
+        VStack(alignment: .leading, spacing: 0) {
+            // Header
+            Button(action: {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                    isTipsExpanded.toggle()
+                }
+            }) {
+                HStack {
+                    Image(systemName: "lightbulb.fill")
+                        .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                    Text("Shopping Tips")
+                        .font(.headline)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                    Spacer()
+                    Image(systemName: isTipsExpanded ? "chevron.up" : "chevron.down")
+                        .foregroundColor(.gray)
+                        .font(.caption.weight(.semibold))
+                }
+                .padding(20)
+            }
+            .buttonStyle(PlainButtonStyle())
+            
+            if isTipsExpanded {
+                VStack(alignment: .leading, spacing: 16) {
+                    ShoppingFeatureRow(icon: "sparkles", title: "Smart Categories", description: "Type 'milk' → Dairy, 'chicken' → Meat", appTheme: selectedTheme)
+                    ShoppingFeatureRow(icon: "list.bullet.indent", title: "Auto Grouping", description: "Items group by category automatically", appTheme: selectedTheme)
+                    ShoppingFeatureRow(icon: "hand.tap", title: "Tap to Collapse", description: "Hide completed categories while shopping", appTheme: selectedTheme)
+                    ShoppingFeatureRow(icon: "checkmark.circle", title: "Check Off Items", description: "Tap checkbox or swipe to mark as purchased", appTheme: selectedTheme)
+                    ShoppingFeatureRow(icon: "trash", title: "Delete Items", description: "Swipe left on any item to remove it", appTheme: selectedTheme)
+                    ShoppingFeatureRow(icon: "ellipsis.circle", title: "Bulk Actions", description: "Use menu (⋯) to clear checked or all items", appTheme: selectedTheme)
+                    ShoppingFeatureRow(icon: "square.and.pencil", title: "Edit Quantity", description: "Tap item to change amount or category", appTheme: selectedTheme)
+                }
+                .padding(.top, 8)
+                .padding(.horizontal, 20)
+                .padding(.bottom, 20)
+                .transition(.opacity.combined(with: .move(edge: .top)))
+            }
         }
         .padding(20)
         .background {

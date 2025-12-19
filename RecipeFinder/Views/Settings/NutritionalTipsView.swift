@@ -40,7 +40,7 @@ struct NutritionalTipsView: View {
                 .padding(.bottom, 100)
             }
         }
-        .navigationTitle("Nutrition Science")
+        .navigationTitle("Nutritional Science")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbarColorScheme(.dark, for: .navigationBar)

@@ -15,7 +15,6 @@ struct LegalInformationView: View {
     @State private var showPrivacyPolicy = false
     @State private var showTermsOfService = false
     @State private var showCompanyCompliance = false
-    @State private var showCertificate = false
     
     private let currentDateFormatted: String = {
         let formatter = DateFormatter()
@@ -186,22 +185,6 @@ struct LegalInformationView: View {
                                 )
                             }
                             .buttonStyle(PlainButtonStyle())
-                            
-                            Divider()
-                                .padding(.leading, 62)
-                            
-                            Button(action: {
-                                showCertificate = true
-                                HapticManager.shared.light()
-                            }) {
-                                LegalDocRow(
-                                    icon: "rosette",
-                                    iconColor: colorScheme == .dark ? .white : .black,
-                                    title: "Certificate of Incorporation",
-                                    subtitle: "View official certificate (PDF)"
-                                )
-                            }
-                            .buttonStyle(PlainButtonStyle())
                         }
                     }
                     
@@ -320,12 +303,6 @@ struct LegalInformationView: View {
         }
         .sheet(isPresented: $showCompanyCompliance) {
             CompanyComplianceView()
-        }
-        .sheet(isPresented: $showCertificate) {
-            PDFViewerSheet(
-                title: "Certificate of Incorporation",
-                pdfName: "certicate_of_incorporation"
-            )
         }
     }
 }

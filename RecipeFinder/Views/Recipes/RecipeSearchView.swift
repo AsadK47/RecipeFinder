@@ -165,7 +165,7 @@ struct RecipeSearchView: View {
                 
                 Spacer(minLength: 8)
                 
-                Text("Recipe Finder")
+                Text("RecipeFinder")
                     .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
                     .foregroundColor(colorScheme == .dark ? .white : .black)
                     .lineLimit(1)

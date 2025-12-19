@@ -62,7 +62,7 @@ struct MoreView: View {
                                             MoreRow(
                                                 icon: "heart.text.square.fill",
                                                 iconColor: .pink,
-                                                title: "Nutrition Science",
+                                                title: "Nutritional Science",
                                                 subtitle: "Evidence-based health guidance"
                                             )
                                         }

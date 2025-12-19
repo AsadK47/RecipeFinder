@@ -18,29 +18,17 @@ struct SettingsTabView: View {
     
     var body: some View {
         NavigationStack {
-            GeometryReader { geometry in
-                ZStack {
-                    AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                        .ignoresSafeArea()
-                    
-                    VStack(spacing: 0) {
-                        VStack(spacing: 12) {
-                            Text("Settings")
-                                .font(.system(size: 34, weight: .bold))
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 44)
-                        }
-                        .padding(.horizontal, 20)
-                        .padding(.top, 16)
+            ZStack {
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
+                    .ignoresSafeArea()
+                
+                ScrollView {
+                    VStack(spacing: 20) {
+                        // Account Section Header
+                        SettingsSectionHeader(title: "Account")
                         
-                        ScrollView {
-                            VStack(spacing: 20) {
-                                // Account Section Header
-                                SettingsSectionHeader(title: "Account")
-                                
-                                // Account Card
-                                SettingsCard {
+                        // Account Card
+                        SettingsCard {
                             NavigationLink(destination: AccountView()) {
                                 HStack(spacing: 16) {
                                     // Profile picture or initials
@@ -224,15 +212,17 @@ struct SettingsTabView: View {
                         }
                     }
                 }
-            }
-            .onAppear {
-                // Load profile image
-                profileImage = accountManager.loadProfileImage()
-                refreshID = UUID()
-            }
+                .navigationTitle("Settings")
+                .navigationBarTitleDisplayMode(.large)
+                .toolbarBackground(.hidden, for: .navigationBar)
+                .onAppear {
+                    // Load profile image
+                    profileImage = accountManager.loadProfileImage()
+                    refreshID = UUID()
+                }
         }
     }
-}
+
 
 // Settings Components
 
@@ -265,7 +255,7 @@ struct SettingsSectionHeader: View {
     
     var body: some View {
         Text(title)
-            .font(.subheadline)
+            .font(.headline)
             .fontWeight(.semibold)
             .foregroundColor(.white.opacity(0.8))
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -293,7 +283,7 @@ struct SettingsRow: View {
             }
             
             Text(title)
-                .font(.subheadline)
+                .font(.body)
                 .foregroundColor(colorScheme == .dark ? .white : .black)
             
             Spacer()
@@ -2127,61 +2117,60 @@ struct AboutView: View {
                         .padding(20)
                     }
                     
-                    // Description
+                    // Legal Information
                     SettingsCard {
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text("About RecipeFinder")
+                        VStack(alignment: .leading, spacing: 16) {
+                            Text("Legal Information")
                                 .font(.headline)
                                 .foregroundColor(colorScheme == .dark ? .white : .black)
-                            
-                            Text("""
-                                RecipeFinder is your ultimate kitchen companion, designed to make cooking easier, \
-                                more organized, and enjoyable. Discover new recipes, manage your kitchen inventory, \
-                                plan meals, and never forget an ingredient with our smart shopping lists.
-                                """)
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                                .fixedSize(horizontal: false, vertical: true)
-                            
-                            Divider()
-                                .padding(.vertical, 4)
-                            
-                            Text("Science-Backed Approach")
-                                .font(.headline)
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
-                            
-                            Text("""
-                                Our nutritional guidance is based on peer-reviewed research from leading institutions \
-                                including Harvard T.H. Chan School of Public Health, Cambridge University, and Oxford \
-                                University. We believe in evidence-based nutrition, not fads.
-                                """)
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                                .fixedSize(horizontal: false, vertical: true)
-                            
-                            Divider()
-                                .padding(.vertical, 4)
                             
                             VStack(alignment: .leading, spacing: 8) {
-                                AboutFeatureRow(icon: "shield.fill", text: "Privacy-first: All data stored locally", color: .blue)
-                                AboutFeatureRow(icon: "graduationcap.fill", text: "Science-backed nutrition guidance", color: .purple)
-                                AboutFeatureRow(icon: "leaf.fill", text: "Dietary preferences & allergen tracking", color: .green)
-                                AboutFeatureRow(icon: "heart.fill", text: "Made with love for home cooks", color: .red)
+                                Text("© 2025 RecipeFinder")
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                                
+                                Text("All rights reserved")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            
+                            Divider()
+                            
+                            Text("For Terms of Service and Privacy Policy, please visit the Legal Information section in Settings.")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        .padding(20)
+                    }
+                    
+                    // Contact
+                    SettingsCard {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Support")
+                                .font(.headline)
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                            
+                            Button(action: {
+                                if let url = URL(string: "mailto:support@recipefinder.com") {
+                                    UIApplication.shared.open(url)
+                                }
+                            }) {
+                                HStack {
+                                    Image(systemName: "envelope.fill")
+                                        .foregroundColor(AppTheme.accentColor(for: appTheme))
+                                    Text("support@recipefinder.com")
+                                        .font(.subheadline)
+                                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                                }
                             }
                         }
                         .padding(20)
                     }
                     
-                    // Legal
-                    VStack(spacing: 8) {
-                        Text("© 2025 RecipeFinder")
-                            .font(.caption)
-                            .foregroundColor(.white.opacity(0.6))
-                        
-                        Text("All rights reserved")
-                            .font(.caption2)
-                            .foregroundColor(.white.opacity(0.5))
-                    }
+                    Text("Made with ❤️ for home cooks")
+                        .font(.caption)
+                        .foregroundColor(.white.opacity(0.6))
                     .padding(.bottom, 40)
                 }
                 .padding(.horizontal, 20)

@@ -23,6 +23,8 @@ struct AccountView: View {
     @State private var profileImage: UIImage?
     @State private var showPasswordVerification = false
     @State private var badgesSectionExpanded = false // Collapsible badges
+    @State private var selectedBadge: Badge? = nil
+    @State private var showBadgeDetail = false
     
     // Profile fields
     @State private var firstName: String = ""
@@ -144,6 +146,11 @@ struct AccountView: View {
         .sheet(isPresented: $showPasswordVerification) {
             PasswordVerificationSheet(email: displayEmail) {
                 saveProfile()
+            }
+        }
+        .sheet(isPresented: $showBadgeDetail) {
+            if let badge = selectedBadge {
+                BadgeDetailView(badge: badge)
             }
         }
         .fullScreenCover(isPresented: $showingGuestSplash) {
@@ -1229,7 +1236,14 @@ extension AccountView {
                     
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                         ForEach(allBadges) { badge in
-                            BadgeCard(badge: badge, colorScheme: colorScheme, cardStyle: cardStyle)
+                            Button(action: {
+                                selectedBadge = badge
+                                showBadgeDetail = true
+                                HapticManager.shared.light()
+                            }) {
+                                BadgeCard(badge: badge, colorScheme: colorScheme, cardStyle: cardStyle)
+                            }
+                            .buttonStyle(PlainButtonStyle())
                         }
                     }
                 }
@@ -1316,3 +1330,148 @@ struct BadgeCard: View {
         .opacity(badge.isUnlocked ? 1.0 : 0.6)
     }
 }
+
+// MARK: - Badge Detail View
+
+struct BadgeDetailView: View {
+    let badge: Badge
+    @Environment(\.dismiss) var dismiss
+    @Environment(\.colorScheme) var colorScheme
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
+    
+    var badgeColor: Color {
+        switch badge.color {
+        case "purple": return .purple
+        case "green": return .green
+        case "mint": return .mint
+        case "blue": return .blue
+        case "orange": return .orange
+        case "yellow": return .yellow
+        case "gold": return .yellow
+        case "teal": return .teal
+        case "indigo": return .indigo
+        default: return .gray
+        }
+    }
+    
+    var body: some View {
+        ZStack {
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
+                .ignoresSafeArea()
+            
+            VStack(spacing: 24) {
+                // Close button
+                HStack {
+                    Spacer()
+                    Button(action: { dismiss() }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.title2)
+                            .foregroundColor(.white.opacity(0.7))
+                    }
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 20)
+                
+                Spacer()
+                
+                // Badge Icon
+                ZStack {
+                    Circle()
+                        .fill(badge.isUnlocked ? badgeColor.opacity(0.2) : Color.gray.opacity(0.1))
+                        .frame(width: 120, height: 120)
+                    
+                    Image(systemName: badge.icon)
+                        .font(.system(size: 60))
+                        .foregroundColor(badge.isUnlocked ? badgeColor : .gray.opacity(0.5))
+                }
+                .shadow(color: badge.isUnlocked ? badgeColor.opacity(0.3) : .clear, radius: 20)
+                
+                // Title
+                Text(badge.title)
+                    .font(.system(size: 28, weight: .bold))
+                    .foregroundColor(.white)
+                    .multilineTextAlignment(.center)
+                
+                // Description
+                Text(badge.description)
+                    .font(.title3)
+                    .foregroundColor(.white.opacity(0.8))
+                    .multilineTextAlignment(.center)
+                
+                // Status/Date
+                if badge.isUnlocked, let date = badge.dateEarned {
+                    VStack(spacing: 8) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.green)
+                            Text("Unlocked!")
+                                .fontWeight(.semibold)
+                                .foregroundColor(.green)
+                        }
+                        .font(.headline)
+                        
+                        Text("Earned on \\(date.formatted(date: .long, time: .omitted))")
+                            .font(.subheadline)
+                            .foregroundColor(.white.opacity(0.6))
+                    }
+                    .padding()
+                    .background {
+                        if cardStyle == .solid {
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+                        } else {
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(.ultraThinMaterial)
+                        }
+                    }
+                } else {
+                    VStack(spacing: 8) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "lock.fill")
+                                .foregroundColor(.gray)
+                            Text("Locked")
+                                .fontWeight(.semibold)
+                                .foregroundColor(.gray)
+                        }
+                        .font(.headline)
+                        
+                        if !badge.howToEarn.isEmpty {
+                            Divider()
+                                .padding(.vertical, 4)
+                            
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("How to Earn:")
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.white.opacity(0.6))
+                                    .textCase(.uppercase)
+                                
+                                Text(badge.howToEarn)
+                                    .font(.subheadline)
+                                    .foregroundColor(.white.opacity(0.8))
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding()
+                    .background {
+                        if cardStyle == .solid {
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+                        } else {
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(.ultraThinMaterial)
+                        }
+                    }
+                }
+                
+                Spacer()
+                Spacer()
+            }
+            .padding(.horizontal, 20)
+        }
+    }
+}
+
