@@ -177,12 +177,14 @@ struct NutritionalTipsDatabase {
                 ScientificSource(
                     institution: "Harvard T.H. Chan School of Public Health",
                     publication: "Whole Grains",
-                    year: 2023
+                    year: 2023,
+                    url: "https://nutritionsource.hsph.harvard.edu/what-should-you-eat/whole-grains/"
                 ),
                 ScientificSource(
                     institution: "Cambridge University Press",
                     publication: "Public Health Nutrition Journal",
-                    year: 2024
+                    year: 2024,
+                    url: "https://www.cambridge.org/core/journals/public-health-nutrition"
                 )
             ],
             actionableSteps: [
@@ -206,12 +208,14 @@ struct NutritionalTipsDatabase {
                 ScientificSource(
                     institution: "Harvard Medical School",
                     publication: "Protein Power - Healthy Eating Plate",
-                    year: 2023
+                    year: 2023,
+                    url: "https://www.health.harvard.edu/staying-healthy/the-right-plant-based-diet-for-you"
                 ),
                 ScientificSource(
                     institution: "Oxford University",
                     publication: "European Heart Journal",
-                    year: 2022
+                    year: 2022,
+                    url: "https://academic.oup.com/eurheartj"
                 )
             ],
             actionableSteps: [
@@ -235,12 +239,14 @@ struct NutritionalTipsDatabase {
                 ScientificSource(
                     institution: "Harvard T.H. Chan School of Public Health",
                     publication: "Vegetables and Fruits",
-                    year: 2023
+                    year: 2023,
+                    url: "https://nutritionsource.hsph.harvard.edu/what-should-you-eat/vegetables-and-fruits/"
                 ),
                 ScientificSource(
                     institution: "Cambridge University",
                     publication: "Public Health Nutrition - Diet Quality Studies",
-                    year: 2024
+                    year: 2024,
+                    url: "https://www.cambridge.org/core/journals/public-health-nutrition"
                 )
             ],
             actionableSteps: [
@@ -264,12 +270,14 @@ struct NutritionalTipsDatabase {
                 ScientificSource(
                     institution: "Harvard T.H. Chan School of Public Health",
                     publication: "Fats and Cholesterol",
-                    year: 2023
+                    year: 2023,
+                    url: "https://nutritionsource.hsph.harvard.edu/what-should-you-eat/fats-and-cholesterol/"
                 ),
                 ScientificSource(
                     institution: "Harvard Medical School",
                     publication: "Ask the Expert: Healthy Fats",
-                    year: 2012
+                    year: 2012,
+                    url: "https://www.health.harvard.edu/staying-healthy/the-truth-about-fats-bad-and-good"
                 )
             ],
             actionableSteps: [
@@ -293,12 +301,14 @@ struct NutritionalTipsDatabase {
                 ScientificSource(
                     institution: "Harvard T.H. Chan School of Public Health",
                     publication: "Sugary Drinks",
-                    year: 2023
+                    year: 2023,
+                    url: "https://nutritionsource.hsph.harvard.edu/healthy-drinks/sugary-drinks/"
                 ),
                 ScientificSource(
                     institution: "Cambridge University Press",
                     publication: "Public Health Nutrition - Fast Food Studies",
-                    year: 2024
+                    year: 2024,
+                    url: "https://www.cambridge.org/core/journals/public-health-nutrition"
                 )
             ],
             actionableSteps: [
@@ -322,12 +332,14 @@ struct NutritionalTipsDatabase {
                 ScientificSource(
                     institution: "Cambridge University Press",
                     publication: "Public Health Nutrition - Ultra-processed Foods",
-                    year: 2019
+                    year: 2019,
+                    url: "https://www.cambridge.org/core/journals/public-health-nutrition"
                 ),
                 ScientificSource(
                     institution: "Harvard School of Public Health",
                     publication: "Food Processing and Health",
-                    year: 2023
+                    year: 2023,
+                    url: "https://nutritionsource.hsph.harvard.edu/processed-foods/"
                 )
             ],
             actionableSteps: [
@@ -351,12 +363,14 @@ struct NutritionalTipsDatabase {
                 ScientificSource(
                     institution: "Harvard Medical School",
                     publication: "Healthy Weight and Portion Control",
-                    year: 2023
+                    year: 2023,
+                    url: "https://www.health.harvard.edu/staying-healthy/managing-your-weight-with-healthy-eating"
                 ),
                 ScientificSource(
                     institution: "Cambridge University",
                     publication: "Public Health Nutrition - Diet Quality",
-                    year: 2024
+                    year: 2024,
+                    url: "https://www.cambridge.org/core/journals/public-health-nutrition"
                 )
             ],
             actionableSteps: [
@@ -380,12 +394,14 @@ struct NutritionalTipsDatabase {
                 ScientificSource(
                     institution: "Harvard Medical School",
                     publication: "Meal Timing and Metabolic Health",
-                    year: 2022
+                    year: 2022,
+                    url: "https://www.health.harvard.edu/staying-healthy/meal-timing-and-frequency-implications-for-health"
                 ),
                 ScientificSource(
                     institution: "Cambridge University",
                     publication: "Nutrition and Metabolism Research",
-                    year: 2023
+                    year: 2023,
+                    url: "https://www.cambridge.org/core/journals/public-health-nutrition"
                 )
             ],
             actionableSteps: [
@@ -415,7 +431,8 @@ struct NutritionalTipsDatabase {
                 ScientificSource(
                     institution: "Cambridge University Press",
                     publication: "Public Health Nutrition - Food Environments",
-                    year: 2024
+                    year: 2024,
+                    url: "https://www.cambridge.org/core/journals/public-health-nutrition"
                 )
             ],
             actionableSteps: [

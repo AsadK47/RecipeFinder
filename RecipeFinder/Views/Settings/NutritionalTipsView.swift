@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SafariServices
 
 struct NutritionalTipsView: View {
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
@@ -16,6 +17,7 @@ struct NutritionalTipsView: View {
     @State private var selectedCategory: NutritionalTipCategory? = nil
     @State private var selectedTip: NutritionalTip? = nil
     @State private var showTipDetail = false
+    @State private var showFilterMenu = false
     
     var body: some View {
         ZStack {
@@ -23,27 +25,59 @@ struct NutritionalTipsView: View {
                 .ignoresSafeArea()
             
             ScrollView {
-                VStack(spacing: 24) {
-                    // Header
-                    headerSection
-                    
+                VStack(spacing: 20) {
                     // Tip of the Day
                     tipOfTheDayCard
-                    
-                    // Category Filters
-                    categoryFilters
                     
                     // Tips List
                     tipsGrid
                 }
                 .padding(.horizontal, 20)
+                .padding(.top, 16)
                 .padding(.bottom, 100)
             }
         }
-        .navigationTitle("Nutritional Science")
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle("Nutrition Tips")
+        .navigationBarTitleDisplayMode(.large)
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbarColorScheme(.dark, for: .navigationBar)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Menu {
+                    Button(action: {
+                        selectedCategory = nil
+                        HapticManager.shared.light()
+                    }) {
+                        HStack {
+                            Text("All Tips")
+                            if selectedCategory == nil {
+                                Image(systemName: "checkmark")
+                            }
+                        }
+                    }
+                    
+                    Divider()
+                    
+                    ForEach(NutritionalTipCategory.allCases, id: \.self) { category in
+                        Button(action: {
+                            selectedCategory = category
+                            HapticManager.shared.light()
+                        }) {
+                            HStack {
+                                Text("\(category.icon) \(category.rawValue)")
+                                if selectedCategory == category {
+                                    Image(systemName: "checkmark")
+                                }
+                            }
+                        }
+                    }
+                } label: {
+                    Image(systemName: selectedCategory == nil ? "line.3.horizontal.decrease.circle" : "line.3.horizontal.decrease.circle.fill")
+                        .foregroundColor(.white)
+                        .font(.title3)
+                }
+            }
+        }
         .sheet(isPresented: $showTipDetail) {
             if let tip = selectedTip {
                 TipDetailView(tip: tip)
@@ -51,42 +85,6 @@ struct NutritionalTipsView: View {
         }
     }
     
-    private var headerSection: some View {
-        VStack(spacing: 12) {
-            HStack {
-                Image(systemName: "heart.text.square.fill")
-                    .font(.system(size: 40))
-                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
-                
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Science-Backed Nutrition")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                    
-                    Text("Evidence from Harvard, Cambridge & Oxford")
-                        .font(.caption)
-                        .foregroundColor(.white.opacity(0.7))
-                    
-                    Text("All tips cite peer-reviewed sources • Click to verify")
-                        .font(.caption2)
-                        .foregroundColor(AppTheme.accentColor(for: selectedTheme))
-                        .fontWeight(.semibold)
-                }
-                
-                Spacer()
-            }
-            
-            Text("Nutritional guidance based on peer-reviewed research and white papers from leading institutions.")
-                .font(.subheadline)
-                .foregroundColor(.white.opacity(0.8))
-                .fixedSize(horizontal: false, vertical: true)
-        }
-        .padding()
-        .background {
-            cardBackground()
-        }
-    }
     
     private var tipOfTheDayCard: some View {
         let tip = NutritionalTipsDatabase.tipOfTheDay()
@@ -96,118 +94,48 @@ struct NutritionalTipsView: View {
             showTipDetail = true
             HapticManager.shared.light()
         }) {
-            VStack(alignment: .leading, spacing: 12) {
-                HStack {
-                    Text("💡 Tip of the Day")
+            HStack(spacing: 16) {
+                Text(tip.icon)
+                    .font(.system(size: 50))
+                
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Text("💡")
+                            .font(.caption2)
+                        Text("TIP OF THE DAY")
+                            .font(.caption2)
+                            .fontWeight(.bold)
+                            .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                    }
+                    
+                    Text(tip.title)
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .multilineTextAlignment(.leading)
+                    
+                    Text(tip.summary)
                         .font(.caption)
-                        .fontWeight(.semibold)
-                        .foregroundColor(AppTheme.accentColor(for: selectedTheme))
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .background(AppTheme.accentColor(for: selectedTheme).opacity(0.2))
-                        .cornerRadius(12)
-                    
-                    Spacer()
-                    
-                    Image(systemName: "chevron.right")
-                        .foregroundColor(.white.opacity(0.5))
+                        .foregroundColor(.white.opacity(0.7))
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
                 }
                 
-                HStack {
-                    Text(tip.icon)
-                        .font(.system(size: 40))
-                    
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(tip.title)
-                            .font(.headline)
-                            .foregroundColor(.white)
-                        
-                        Text(tip.summary)
-                            .font(.subheadline)
-                            .foregroundColor(.white.opacity(0.7))
-                            .lineLimit(2)
-                    }
-                }
+                Spacer()
                 
-                HStack {
-                    EvidenceBadge(level: tip.evidenceLevel)
-                    
-                    Spacer()
-                    
-                    HStack(spacing: 4) {
-                        Image(systemName: "link.circle.fill")
-                            .font(.caption2)
-                        Text("\(tip.sources.count) sources")
-                            .font(.caption2)
-                    }
-                    .foregroundColor(.white.opacity(0.6))
-                }
+                Image(systemName: "chevron.right.circle.fill")
+                    .font(.title2)
+                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
             }
             .padding()
             .background {
                 cardBackground()
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
-                            .stroke(AppTheme.accentColor(for: selectedTheme).opacity(0.3), lineWidth: 2)
+                            .stroke(AppTheme.accentColor(for: selectedTheme).opacity(0.5), lineWidth: 2)
                     )
             }
         }
         .buttonStyle(PlainButtonStyle())
-    }
-    
-    private var categoryFilters: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Browse by Category")
-                .font(.headline)
-                .foregroundColor(.white)
-            
-            FlowLayout(spacing: 8) {
-                // All button
-                Button(action: {
-                    selectedCategory = nil
-                    HapticManager.shared.light()
-                }) {
-                    HStack(spacing: 4) {
-                        Text("All")
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(
-                        selectedCategory == nil ?
-                        AppTheme.accentColor(for: selectedTheme) :
-                        Color.white.opacity(0.2)
-                    )
-                    .foregroundColor(.white)
-                    .cornerRadius(20)
-                }
-                
-                ForEach(NutritionalTipCategory.allCases, id: \.self) { category in
-                    Button(action: {
-                        selectedCategory = category
-                        HapticManager.shared.light()
-                    }) {
-                        HStack(spacing: 4) {
-                            Text(category.icon)
-                                .font(.caption)
-                            Text(category.rawValue)
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .background(
-                            selectedCategory == category ?
-                            AppTheme.accentColor(for: selectedTheme) :
-                            Color.white.opacity(0.2)
-                        )
-                        .foregroundColor(.white)
-                        .cornerRadius(20)
-                    }
-                }
-            }
-        }
     }
     
     private var tipsGrid: some View {
@@ -251,49 +179,52 @@ struct NutritionalTipCard: View {
     
     var body: some View {
         Button(action: action) {
-            VStack(alignment: .leading, spacing: 12) {
-                HStack {
-                    Text(tip.icon)
-                        .font(.system(size: 32))
+            HStack(spacing: 16) {
+                Text(tip.icon)
+                    .font(.system(size: 40))
+                
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(tip.title)
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                        .multilineTextAlignment(.leading)
                     
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(tip.title)
-                            .font(.headline)
-                            .foregroundColor(.white)
-                        
+                    Text(tip.summary)
+                        .font(.caption)
+                        .foregroundColor(.white.opacity(0.65))
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
+                    
+                    HStack(spacing: 8) {
+                        Text(tip.category.icon)
+                            .font(.caption2)
                         Text(tip.category.rawValue)
-                            .font(.caption)
-                            .foregroundColor(.white.opacity(0.6))
+                            .font(.caption2)
+                            .foregroundColor(.white.opacity(0.5))
+                        
+                        Text("•")
+                            .foregroundColor(.white.opacity(0.3))
+                        
+                        Text("\(tip.sources.count) sources")
+                            .font(.caption2)
+                            .foregroundColor(.white.opacity(0.5))
                     }
-                    
-                    Spacer()
-                    
-                    Image(systemName: "chevron.right")
-                        .foregroundColor(.white.opacity(0.5))
                 }
                 
-                Text(tip.summary)
+                Spacer()
+                
+                Image(systemName: "chevron.right")
                     .font(.subheadline)
-                    .foregroundColor(.white.opacity(0.8))
-                    .lineLimit(2)
-                
-                HStack {
-                    EvidenceBadge(level: tip.evidenceLevel)
-                    
-                    Spacer()
-                    
-                    Text("\(tip.sources.count) sources")
-                        .font(.caption2)
-                        .foregroundColor(.white.opacity(0.6))
-                }
+                    .foregroundColor(.white.opacity(0.4))
             }
             .padding()
             .background {
                 if cardStyle == .solid {
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
                 } else {
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: 12)
                         .fill(.ultraThinMaterial)
                 }
             }
@@ -340,6 +271,8 @@ struct TipDetailView: View {
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismiss
+    @State private var safariURL: URL?
+    @State private var showSafari = false
     
     var body: some View {
         NavigationView {
@@ -425,56 +358,60 @@ struct TipDetailView: View {
                             .foregroundColor(.white)
                             
                             ForEach(tip.sources) { source in
-                                VStack(alignment: .leading, spacing: 8) {
-                                    Text(source.institution)
-                                        .font(.subheadline)
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(.white)
-                                    
-                                    if let pub = source.publication {
-                                        Text(pub)
-                                            .font(.caption)
-                                            .foregroundColor(.white.opacity(0.7))
-                                    }
-                                    
-                                    if let year = source.year {
-                                        Text("Published: \(year)")
-                                            .font(.caption2)
-                                            .foregroundColor(.white.opacity(0.5))
-                                    }
-                                    
+                                Button(action: {
                                     if let urlString = source.url, let url = URL(string: urlString) {
-                                        Button(action: {
-                                            // Present share sheet so user can choose which app to open URL with
-                                            let activityVC = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-                                            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                                               let topController = windowScene.windows.first?.rootViewController {
-                                                if let presentedVC = topController.presentedViewController {
-                                                    presentedVC.present(activityVC, animated: true)
-                                                } else {
-                                                    topController.present(activityVC, animated: true)
+                                        safariURL = url
+                                        showSafari = true
+                                        HapticManager.shared.light()
+                                    }
+                                }) {
+                                    VStack(alignment: .leading, spacing: 8) {
+                                        HStack {
+                                            VStack(alignment: .leading, spacing: 4) {
+                                                Text(source.institution)
+                                                    .font(.subheadline)
+                                                    .fontWeight(.semibold)
+                                                    .foregroundColor(.white)
+                                                
+                                                if let pub = source.publication {
+                                                    Text(pub)
+                                                        .font(.caption)
+                                                        .foregroundColor(.white.opacity(0.7))
+                                                }
+                                                
+                                                if let year = source.year {
+                                                    Text("Published: \(year)")
+                                                        .font(.caption2)
+                                                        .foregroundColor(.white.opacity(0.5))
                                                 }
                                             }
-                                        }) {
-                                            HStack(spacing: 4) {
-                                                Image(systemName: "link.circle.fill")
-                                                    .font(.caption)
-                                                Text("View Source")
-                                                    .font(.caption)
-                                                    .fontWeight(.medium)
+                                            
+                                            Spacer()
+                                            
+                                            if source.url != nil {
+                                                Image(systemName: "arrow.up.right.circle.fill")
+                                                    .font(.title3)
+                                                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                                            } else {
+                                                Image(systemName: "info.circle.fill")
+                                                    .font(.title3)
+                                                    .foregroundColor(.gray)
                                             }
-                                            .foregroundColor(AppTheme.accentColor(for: selectedTheme))
-                                            .padding(.horizontal, 10)
-                                            .padding(.vertical, 6)
-                                            .background(AppTheme.accentColor(for: selectedTheme).opacity(0.2))
-                                            .cornerRadius(8)
                                         }
                                     }
+                                    .padding()
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .fill(source.url != nil ? Color.white.opacity(0.15) : Color.white.opacity(0.05))
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 12)
+                                                    .stroke(source.url != nil ? AppTheme.accentColor(for: selectedTheme).opacity(0.3) : Color.clear, lineWidth: 1)
+                                            )
+                                    )
                                 }
-                                .padding()
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(Color.white.opacity(0.1))
-                                .cornerRadius(12)
+                                .disabled(source.url == nil)
+                                .buttonStyle(PlainButtonStyle())
                             }
                             
                             Text("Evidence Level: \(tip.evidenceLevel.description)")
@@ -486,10 +423,13 @@ struct TipDetailView: View {
                                 .background(Color.white.opacity(0.3))
                                 .padding(.vertical, 8)
                             
-                            Text("💡 Tip: Click 'View Source' to read the full peer-reviewed research and verify the information yourself.")
-                                .font(.caption2)
-                                .foregroundColor(.white.opacity(0.5))
-                                .italic()
+                            HStack(spacing: 6) {
+                                Image(systemName: "checkmark.shield.fill")
+                                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                                Text("Tap any source with a link icon to read the full peer-reviewed research.")
+                            }
+                            .font(.caption2)
+                            .foregroundColor(.white.opacity(0.7))
                         }
                         .padding()
                         .background {
@@ -509,6 +449,12 @@ struct TipDetailView: View {
                     .foregroundColor(.white)
                 }
             }
+            .fullScreenCover(isPresented: $showSafari) {
+                if let url = safariURL {
+                    SafariView(url: url)
+                        .ignoresSafeArea()
+                }
+            }
         }
     }
     
@@ -523,6 +469,20 @@ struct TipDetailView: View {
             }
         }
     }
+}
+
+// MARK: - Safari View Wrapper
+
+struct SafariView: UIViewControllerRepresentable {
+    let url: URL
+    
+    func makeUIViewController(context: Context) -> SFSafariViewController {
+        let config = SFSafariViewController.Configuration()
+        config.entersReaderIfAvailable = true
+        return SFSafariViewController(url: url, configuration: config)
+    }
+    
+    func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {}
 }
 
 // MARK: - Preview

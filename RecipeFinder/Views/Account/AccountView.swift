@@ -561,6 +561,7 @@ struct AccountView: View {
                             }
                         }
                 }
+                .buttonStyle(PlainButtonStyle())
             }
         }
     }
