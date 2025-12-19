@@ -18,17 +18,29 @@ struct SettingsTabView: View {
     
     var body: some View {
         NavigationStack {
-            ZStack {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                    .ignoresSafeArea()
-                
-                ScrollView {
-                    VStack(spacing: 24) {
-                        // Account Section Header
-                        SettingsSectionHeader(title: "Account")
+            GeometryReader { geometry in
+                ZStack {
+                    AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
+                        .ignoresSafeArea()
+                    
+                    VStack(spacing: 0) {
+                        VStack(spacing: 12) {
+                            Text("Settings")
+                                .font(.system(size: 34, weight: .bold))
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 44)
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.top, 16)
                         
-                        // Account Card
-                        SettingsCard {
+                        ScrollView {
+                            VStack(spacing: 20) {
+                                // Account Section Header
+                                SettingsSectionHeader(title: "Account")
+                                
+                                // Account Card
+                                SettingsCard {
                             NavigationLink(destination: AccountView()) {
                                 HStack(spacing: 16) {
                                     // Profile picture or initials
@@ -78,24 +90,24 @@ struct SettingsTabView: View {
                             }
                             .buttonStyle(PlainButtonStyle())
                         }
-                        
-                        // Personalization
-                        SettingsSectionHeader(title: "Personalization")
-                        
-                        SettingsCard {
+                                
+                                // Personalization
+                                SettingsSectionHeader(title: "Personalization")
+                                
+                                SettingsCard {
                             NavigationLink(destination: AppearanceAndThemeSettingsView()) {
                                 SettingsRow(icon: "paintpalette.fill", iconColor: .pink, title: "Appearance & Theme")
                                     .padding(20)
                             }
                             .buttonStyle(PlainButtonStyle())
                         }
-                        
-                        // Health & Nutrition section removed - now a main feature in More tab
-                        
-                        // Cooking
-                        SettingsSectionHeader(title: "Cooking")
-                        
-                        SettingsCard {
+                                
+                                // Health & Nutrition section removed - now a main feature in More tab
+                                
+                                // Cooking
+                                SettingsSectionHeader(title: "Cooking")
+                                
+                                SettingsCard {
                             VStack(spacing: 0) {
                                 NavigationLink(destination: NotificationSettingsView()) {
                                     SettingsRow(icon: "bell.fill", iconColor: .red, title: "Notifications")
@@ -140,11 +152,11 @@ struct SettingsTabView: View {
                                 .buttonStyle(PlainButtonStyle())
                             }
                         }
-                        
-                        // Privacy & Data
-                        SettingsSectionHeader(title: "Privacy & Data")
-                        
-                        SettingsCard {
+                                
+                                // Privacy & Data
+                                SettingsSectionHeader(title: "Privacy & Data")
+                                
+                                SettingsCard {
                             VStack(spacing: 0) {
                                 NavigationLink(destination: PrivacySettingsView()) {
                                     SettingsRow(icon: "hand.raised.fill", iconColor: .blue, title: "Privacy")
@@ -162,11 +174,11 @@ struct SettingsTabView: View {
                                 .buttonStyle(PlainButtonStyle())
                             }
                         }
-                            
-                        // Support
-                        SettingsSectionHeader(title: "Support")
-                        
-                        SettingsCard {
+                                
+                                // Support
+                                SettingsSectionHeader(title: "Support")
+                                
+                                SettingsCard {
                             VStack(spacing: 0) {
                                 NavigationLink(destination: HelpView()) {
                                     SettingsRow(icon: "questionmark.circle.fill", iconColor: .teal, title: "Help & Support")
@@ -184,68 +196,32 @@ struct SettingsTabView: View {
                                 .buttonStyle(PlainButtonStyle())
                             }
                         }
-                            
-                        // Legal & Company
-                        SettingsSectionHeader(title: "Legal & Company")
-                        
-                        SettingsCard {
+                                
+                                // Legal & Company
+                                SettingsSectionHeader(title: "Legal & Company")
+                                
+                                SettingsCard {
                             NavigationLink(destination: LegalInformationView()) {
                                 SettingsRow(icon: "building.2.fill", iconColor: .indigo, title: "Legal Information")
                                     .padding(20)
                             }
                             .buttonStyle(PlainButtonStyle())
                         }
-                        
-                        // App Info
-                        VStack(spacing: 4) {
-                            Text("RecipeFinder")
-                                .font(.caption)
-                                .foregroundColor(.white.opacity(0.6))
-                            Text("Version 1.0.0 (Build 1)")
-                                .font(.caption2)
-                                .foregroundColor(.white.opacity(0.5))
-                        }
-                        .padding(.top, 24)
-                        .padding(.bottom, 40)
-                    }
-                    .padding(.top, 16)
-                    .padding(.horizontal, 20)
-                }
-            }
-            .navigationTitle("Settings")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbarBackground(.hidden, for: .navigationBar)
-            .toolbarColorScheme(.dark, for: .navigationBar)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Menu {
-                        Button(action: {
-                            refreshID = UUID()
-                            HapticManager.shared.light()
-                        }) {
-                            Label("Refresh", systemImage: "arrow.clockwise")
-                        }
-                        
-                        Button(action: {
-                            if let url = URL(string: "https://github.com/yourusername/recipefinder/wiki") {
-                                let activityVC = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-                                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                                   let topController = windowScene.windows.first?.rootViewController {
-                                    if let presentedVC = topController.presentedViewController {
-                                        presentedVC.present(activityVC, animated: true)
-                                    } else {
-                                        topController.present(activityVC, animated: true)
-                                    }
+                                
+                                // App Info
+                                VStack(spacing: 4) {
+                                    Text("RecipeFinder")
+                                        .font(.caption)
+                                        .foregroundColor(.white.opacity(0.6))
+                                    Text("Version 1.0.0 (Build 1)")
+                                        .font(.caption2)
+                                        .foregroundColor(.white.opacity(0.5))
                                 }
+                                .padding(.top, 16)
+                                .padding(.bottom, 40)
                             }
-                            HapticManager.shared.light()
-                        }) {
-                            Label("Help", systemImage: "questionmark.circle")
+                            .padding(.horizontal, 20)
                         }
-                    } label: {
-                        Image(systemName: "line.3.horizontal")
-                            .font(.system(size: 20))
-                            .foregroundColor(.white)
                     }
                 }
             }
