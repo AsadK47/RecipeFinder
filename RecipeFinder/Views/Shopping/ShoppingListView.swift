@@ -8,7 +8,6 @@ struct ShoppingListView: View {
     @State private var showQuickAdd = false
     @State private var collapsedCategories: Set<String> = []
     @State private var confettiTrigger = 0
-    @State private var isTipsExpanded = false
     @FocusState private var isSearchFocused: Bool
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
@@ -91,156 +90,24 @@ struct ShoppingListView: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                    VStack(spacing: 12) {
-                        GeometryReader { geometry in
-                            HStack(spacing: 0) {
-                                // Empty space to balance menu button
-                                Color.clear
-                                    .frame(width: 44, height: 44)
-                                
-                                Spacer()
-                                
-                                Text("Shopping List")
-                                    .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
-                                    .lineLimit(1)
-                                    .minimumScaleFactor(0.7)
-                                
-                                Spacer()
-                                
-                                // Menu button
-                                Menu {
-                                    Button(action: {
-                                        showQuickAdd = true
-                                    }) {
-                                        Label("Quick Add", systemImage: "plus.circle")
-                                    }
-                                    
-                                    Button(action: shareShoppingList) {
-                                        Label("Share List", systemImage: "square.and.arrow.up")
-                                    }
-                                    
-                                    if !manager.items.isEmpty {
-                                        Divider()
-                                        
-                                Button(
-                                    action: {
-                                        if collapsedCategories.count == CategoryClassifier.categoryOrder.count {
-                                            collapsedCategories.removeAll()
-                                        } else {
-                                            collapsedCategories = Set(CategoryClassifier.categoryOrder)
-                                        }
-                                    },
-                                    label: {
-                                        Label(
-                                            collapsedCategories.count == CategoryClassifier.categoryOrder.count ? "Expand All" : "Collapse All",
-                                            systemImage: collapsedCategories.count == CategoryClassifier.categoryOrder.count ? "chevron.down.circle" : "chevron.up.circle"
-                                        )
-                                    }
-                                )
-                                
-                                Divider()
-                                        
-                                        Button(
-                                            role: .destructive,
-                                            action: { 
-                                                showClearConfirmation = true 
-                                            },
-                                            label: {
-                                                Label("Clear Items", systemImage: "trash")
-                                            }
-                                        )
-                                    }
-                                } label: {
-                                    Image(systemName: "line.3.horizontal")
-                                        .font(.system(size: 20))
-                                        .foregroundColor(colorScheme == .dark ? .white : .black)
-                                        .frame(width: 44, height: 44)
-                                }
-                            }
-                        }
-                        .frame(height: 44)
-                        .padding(.horizontal, 20)
-                        .padding(.top, 16)
-                        
-                        // Search bar
-                        HStack(spacing: 12) {
-                            HStack(spacing: 12) {
-                                Image(systemName: "magnifyingglass")
-                                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.6))
-                                    .font(.body)
-                                
-                                ZStack(alignment: .leading) {
-                                    if searchText.isEmpty {
-                                        Text("Add item (e.g., milk, chicken, apples)...")
-                                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6))
-                                    }
-                                    TextField("", text: $searchText)
-                                        .focused($isSearchFocused)
-                                        .autocorrectionDisabled()
-                                        .foregroundColor(colorScheme == .dark ? .white : .black)
-                                        .onSubmit(addItem)
-                                }
-                                
-                                if !searchText.isEmpty {
-                                    Button(
-                                        action: { 
-                                            searchText = ""
-                                        },
-                                        label: {
-                                            Image(systemName: "xmark.circle.fill")
-                                                .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
-                                        }
-                                    )
-                                }
-                            }
-                            .padding(14)
-                            .background {
-                                if cardStyle == .solid {
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
-                                } else {
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .fill(.ultraThinMaterial)
-                                }
-                            }
+                    header
+                    
+                    // Progress bar
+                    if !manager.items.isEmpty && !showingSearchResults {
+                        VStack(spacing: 6) {
+                            ProgressView(value: Double(checkedCount), total: Double(totalCount))
+                                .progressViewStyle(LinearProgressViewStyle(tint: AppTheme.accentColor(for: selectedTheme)))
+                                .frame(height: 8)
                             
-                            if isSearchFocused {
-                                Button(
-                                    action: {
-                                        searchText = ""
-                                        isSearchFocused = false
-                                    },
-                                    label: {
-                                        Text("Cancel")
-                                            .foregroundColor(.white)
-                                            .fontWeight(.semibold)
-                                    }
-                                )
-                                .transition(.move(edge: .trailing).combined(with: .opacity))
+                            HStack {
+                                Text("\(checkedCount)/\(totalCount) completed")
+                                    .font(.caption)
+                                    .foregroundColor(.white.opacity(0.8))
+                                Spacer()
                             }
                         }
                         .padding(.horizontal, 20)
-                        .padding(.top, 12)
-                        .padding(.bottom, 12)
-                        .animation(.spring(response: 0.3), value: isSearchFocused)
-                        
-                        // Progress bar below search
-                        if !manager.items.isEmpty {
-                            VStack(spacing: 6) {
-                                ProgressView(value: Double(checkedCount), total: Double(totalCount))
-                                    .progressViewStyle(LinearProgressViewStyle(tint: AppTheme.accentColor))
-                                    .frame(height: 8)
-                                
-                                HStack {
-                                    Text("\(checkedCount)/\(totalCount) completed")
-                                        .font(.caption)
-                                        .foregroundColor(.white.opacity(0.8))
-                                    Spacer()
-                                }
-                            }
-                            .padding(.horizontal, 20)
-                        }
+                        .padding(.bottom, 8)
                     }
                     
                     // Content
@@ -328,17 +195,152 @@ struct ShoppingListView: View {
         }
     }
     
-
+    // MARK: - Header
+    private var header: some View {
+        VStack(spacing: 12) {
+            GeometryReader { geometry in
+                HStack(spacing: 0) {
+                    // Empty space to balance menu button
+                    Color.clear
+                        .frame(width: 44, height: 44)
+                    
+                    Spacer()
+                    
+                    Text("Shopping List")
+                        .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                    
+                    Spacer()
+                    
+                    // Menu button
+                    Menu {
+                        Button(action: {
+                            showQuickAdd = true
+                        }) {
+                            Label("Quick Add", systemImage: "plus.circle")
+                        }
+                        
+                        Button(action: shareShoppingList) {
+                            Label("Share List", systemImage: "square.and.arrow.up")
+                        }
+                        
+                        if !manager.items.isEmpty {
+                            Divider()
+                            
+                            Button(
+                                action: {
+                                    if collapsedCategories.count == CategoryClassifier.categoryOrder.count {
+                                        collapsedCategories.removeAll()
+                                    } else {
+                                        collapsedCategories = Set(CategoryClassifier.categoryOrder)
+                                    }
+                                },
+                                label: {
+                                    Label(
+                                        collapsedCategories.count == CategoryClassifier.categoryOrder.count ? "Expand All" : "Collapse All",
+                                        systemImage: collapsedCategories.count == CategoryClassifier.categoryOrder.count ? "chevron.down.circle" : "chevron.up.circle"
+                                    )
+                                }
+                            )
+                            
+                            Divider()
+                            
+                            Button(
+                                role: .destructive,
+                                action: { 
+                                    showClearConfirmation = true 
+                                },
+                                label: {
+                                    Label("Clear Items", systemImage: "trash")
+                                }
+                            )
+                        }
+                    } label: {
+                        Image(systemName: "line.3.horizontal")
+                            .font(.system(size: 20))
+                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                            .frame(width: 44, height: 44)
+                    }
+                }
+            }
+            .frame(height: 44)
+            .padding(.horizontal, 20)
+            .padding(.top, 16)
+            
+            // Search bar with cancel option
+            HStack(spacing: 12) {
+                HStack(spacing: 12) {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.6))
+                        .font(.body)
+                    
+                    ZStack(alignment: .leading) {
+                        if searchText.isEmpty {
+                            Text("Add item (e.g., milk, chicken, apples)...")
+                                .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6))
+                        }
+                        TextField("", text: $searchText)
+                            .focused($isSearchFocused)
+                            .autocorrectionDisabled()
+                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                            .onSubmit(addItem)
+                    }
+                    
+                    if !searchText.isEmpty {
+                        Button(
+                            action: { 
+                                searchText = ""
+                            },
+                            label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
+                            }
+                        )
+                    }
+                }
+                .padding(14)
+                .background {
+                    if cardStyle == .solid {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+                    } else {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(.ultraThinMaterial)
+                    }
+                }
+                
+                if isSearchFocused {
+                    Button(
+                        action: {
+                            searchText = ""
+                            isSearchFocused = false
+                        },
+                        label: {
+                            Text("Cancel")
+                                .foregroundColor(.white)
+                                .fontWeight(.semibold)
+                        }
+                    )
+                    .transition(.move(edge: .trailing).combined(with: .opacity))
+                }
+            }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 12)
+            .animation(.spring(response: 0.3), value: isSearchFocused)
+        }
+    }
     
     // MARK: - Empty State
     private var emptyStateView: some View {
         ScrollView {
-            VStack(spacing: 16) {
+            VStack(spacing: 24) {
                 VStack(spacing: 12) {
                     Image(systemName: "cart.circle.fill")
                         .font(.system(size: 80))
                         .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.4))
-                        .padding(.top, 12)
+                        .padding(.top, 40)
                     
                     Text("Start Your Shopping List")
                         .font(.title2)
@@ -351,84 +353,15 @@ struct ShoppingListView: View {
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 32)
                 }
-                .padding(.bottom, 6)
-                
-                // Reusable features card
-                shoppingFeaturesCard
-                    .padding(.horizontal, 16)
             }
             .padding(.bottom, 40)
         }
-    }
-    
-    // Shared Features Card Component
-    private var shoppingFeaturesCard: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            // Header
-            Button(action: {
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                    isTipsExpanded.toggle()
-                }
-            }) {
-                HStack {
-                    Image(systemName: "lightbulb.fill")
-                        .foregroundColor(AppTheme.accentColor(for: selectedTheme))
-                    Text("Shopping Tips")
-                        .font(.headline)
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
-                    Spacer()
-                    Image(systemName: isTipsExpanded ? "chevron.up" : "chevron.down")
-                        .foregroundColor(.gray)
-                        .font(.caption.weight(.semibold))
-                }
-                .padding(20)
-            }
-            .buttonStyle(PlainButtonStyle())
-            
-            if isTipsExpanded {
-                VStack(alignment: .leading, spacing: 16) {
-                    ShoppingFeatureRow(icon: "sparkles", title: "Smart Categories", description: "Items are automatically sorted into categories", appTheme: selectedTheme)
-                    ShoppingFeatureRow(icon: "chevron.up.chevron.down", title: "Collapse Categories", description: "Tap category headers to show or hide items", appTheme: selectedTheme)
-                    ShoppingFeatureRow(icon: "checkmark.circle", title: "Check Off Items", description: "Tap checkbox to mark items as purchased", appTheme: selectedTheme)
-                    ShoppingFeatureRow(icon: "storefront", title: "Tag by Store", description: "Long-press items to set preferred supermarket", appTheme: selectedTheme)
-                    ShoppingFeatureRow(icon: "plus.circle", title: "Quick Add", description: "Use menu (≡) to quickly add items", appTheme: selectedTheme)
-                    ShoppingFeatureRow(icon: "square.and.pencil", title: "Adjust Quantity", description: "Use +/- buttons to change item amounts", appTheme: selectedTheme)
-                    ShoppingFeatureRow(icon: "trash", title: "Delete Items", description: "Swipe left on any item to remove it", appTheme: selectedTheme)
-                    ShoppingFeatureRow(icon: "square.and.arrow.up", title: "Share List", description: "Export your list via menu (≡)", appTheme: selectedTheme)
-                }
-                .padding(.top, 8)
-                .padding(.horizontal, 20)
-                .padding(.bottom, 20)
-                .transition(.opacity.combined(with: .move(edge: .top)))
-            }
-        }
-        .padding(20)
-        .background {
-            if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
-                    .shadow(color: Color.black.opacity(0.25), radius: 8, x: 0, y: 4)
-            } else {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(.ultraThinMaterial)
-                    .shadow(color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.15), radius: 10, x: 0, y: 4)
-            }
-        }
-        .clipShape(RoundedRectangle(cornerRadius: 16))
     }
     
     private var shoppingListContent: some View {
         List {
             ForEach(sortedGroupedItems, id: \.key) { group in
                 categorySection(for: group.key, items: group.value)
-            }
-            
-            // Features card at bottom
-            Section {
-                shoppingFeaturesCard
-                    .listRowInsets(EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))
-                    .listRowBackground(Color.clear)
-                    .listRowSeparator(.hidden)
             }
         }
         .listStyle(.plain)

@@ -31,22 +31,17 @@ struct RecipeImageView: View {
                         cachedImage = uiImage
                     }
             } else {
-                // Default placeholder image
-                Image("default_recipe_image")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(height: height)
-                    .clipped()
-                    .overlay(
-                        Circle()
-                            .fill(Color.black.opacity(0.6))
-                            .frame(width: 50, height: 50)
-                            .overlay(
-                                Image(systemName: "camera.fill")
-                                    .font(.title3)
-                                    .foregroundColor(.white)
-                            )
-                    )
+                // Default placeholder with SF Symbol
+                ZStack {
+                    Color.gray.opacity(0.2)
+                    
+                    VStack(spacing: 8) {
+                        Image(systemName: "photo")
+                            .font(.system(size: 40))
+                            .foregroundColor(.gray.opacity(0.5))
+                    }
+                }
+                .frame(height: height)
             }
         }
         .frame(height: height)

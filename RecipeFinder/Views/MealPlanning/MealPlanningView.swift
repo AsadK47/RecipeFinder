@@ -275,12 +275,12 @@ struct MealPlanningView: View {
                     
                     Text(tipOfDay.title)
                         .font(.system(size: 15, weight: .semibold))
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .foregroundColor(.white)
                         .lineLimit(1)
                     
                     Text(tipOfDay.summary)
                         .font(.caption)
-                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.7))
+                        .foregroundColor(.white.opacity(0.85))
                         .lineLimit(1)
                 }
                 
@@ -288,22 +288,13 @@ struct MealPlanningView: View {
                 
                 Image(systemName: "chevron.right")
                     .font(.caption)
-                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.5) : .black.opacity(0.5))
+                    .foregroundColor(.white.opacity(0.8))
             }
             .padding(16)
             .background {
-                if cardStyle == .solid {
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(AppTheme.accentColor(for: selectedTheme).opacity(0.15))
-                } else {
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(.ultraThinMaterial)
-                }
-            }
-            .overlay(
                 RoundedRectangle(cornerRadius: 16)
-                    .stroke(AppTheme.accentColor(for: selectedTheme).opacity(0.3), lineWidth: 1)
-            )
+                    .fill(AppTheme.accentColor(for: selectedTheme).opacity(0.8))
+            }
         }
         .buttonStyle(PlainButtonStyle())
     }
@@ -408,7 +399,7 @@ struct MealPlanningView: View {
                 }
                 
                 // Calendar days - only show needed rows
-                ForEach(compactDaysInMonth, id: \.self) { date in
+                ForEach(Array(compactDaysInMonth.enumerated()), id: \.offset) { index, date in
                     if let date = date {
                         CalendarDayView(
                             date: date,

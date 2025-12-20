@@ -147,13 +147,6 @@ struct KitchenView: View {
                             Label("Quick Add", systemImage: "plus.circle")
                         }
                         
-                        Button(action: {
-                            isSearchFocused = true
-                            HapticManager.shared.light()
-                        }) {
-                            Label("Search Ingredients", systemImage: "magnifyingglass")
-                        }
-                        
                         if !manager.items.isEmpty {
                             Divider()
                             
