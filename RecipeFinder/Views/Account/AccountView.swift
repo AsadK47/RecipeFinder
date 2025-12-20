@@ -60,7 +60,7 @@ struct AccountView: View {
             
             VStack(spacing: 0) {
                 // Header Section
-                VStack(spacing: 12) {
+                VStack(spacing: 0) {
                     GeometryReader { geometry in
                         HStack {
                             Spacer()
@@ -73,8 +73,8 @@ struct AccountView: View {
                     .frame(height: 44)
                 }
                 .padding(.horizontal, 20)
-                .padding(.top, 16)
-                .padding(.bottom, 8)
+                .padding(.top, 8)
+                .padding(.bottom, 4)
                 
                 ScrollView {
                     VStack(spacing: 20) {
@@ -696,107 +696,6 @@ struct AccountRowButton: View {
 
 // MARK: - Data Privacy View
 
-struct DataPrivacyView: View {
-    @AppStorage("shareUsageData") private var shareUsageData = false
-    @AppStorage("personalizedRecommendations") private var personalizedRecommendations = true
-    @AppStorage("analyticsEnabled") private var analyticsEnabled = false
-    
-    var body: some View {
-        List {
-            Section {
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack {
-                        Image(systemName: "shield.fill")
-                            .foregroundColor(.blue)
-                        Text("Your Privacy Matters")
-                            .font(.headline)
-                    }
-                    
-                    Text("RecipeFinder is designed to protect your privacy. All data is stored locally on your device and never shared without your explicit permission.")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-                .padding(.vertical, 8)
-            }
-            
-            Section("Data Collection") {
-                Toggle(isOn: $shareUsageData) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Share Usage Data")
-                        Text("Help improve RecipeFinder by sharing anonymous usage statistics")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                }
-                
-                Toggle(isOn: $personalizedRecommendations) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Personalized Recommendations")
-                        Text("Use your recipe history to suggest relevant content")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                }
-                
-                Toggle(isOn: $analyticsEnabled) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Analytics")
-                        Text("Allow collection of app performance data")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                }
-            }
-            
-            Section("Data Storage") {
-                HStack {
-                    Image(systemName: "lock.shield.fill")
-                        .foregroundColor(.green)
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Local Storage")
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-                        Text("All your recipes and preferences are stored securely on your device")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                }
-                .padding(.vertical, 4)
-                
-                HStack {
-                    Image(systemName: "key.fill")
-                        .foregroundColor(.orange)
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("End-to-End Encryption")
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-                        Text("Your account credentials are encrypted and stored in the iOS Keychain")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                }
-                .padding(.vertical, 4)
-            }
-            
-            Section("Your Rights") {
-                Label("Access your data anytime", systemImage: "eye.fill")
-                Label("Request data deletion", systemImage: "trash.fill")
-                Label("Export your data", systemImage: "square.and.arrow.up.fill")
-                Label("Withdraw consent", systemImage: "hand.raised.fill")
-            }
-            .font(.subheadline)
-            
-            Section {
-                Text("Changes to these settings will take effect immediately. RecipeFinder complies with UK GDPR and Data Protection Act 2018.")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-        }
-        .navigationTitle("Data & Privacy")
-        .navigationBarTitleDisplayMode(.inline)
-    }
-}
-
 // MARK: - Data Download View
 
 struct StatBadge: View {
@@ -1412,7 +1311,7 @@ struct BadgeDetailView: View {
                         }
                         .font(.headline)
                         
-                        Text("Earned on \\(date.formatted(date: .long, time: .omitted))")
+                        Text("Earned on \(date.formatted(date: .long, time: .omitted))")
                             .font(.subheadline)
                             .foregroundColor(.white.opacity(0.6))
                     }

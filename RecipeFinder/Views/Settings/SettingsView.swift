@@ -22,11 +22,8 @@ struct SettingsTabView: View {
                 AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
                 
-                VStack(spacing: 0) {
-                    header
-                    
-                    ScrollView {
-                        VStack(spacing: 20) {
+                ScrollView {
+                    VStack(spacing: 20) {
                             // Account Section Header
                             SettingsSectionHeader(title: "Account")
                         
@@ -66,7 +63,7 @@ struct SettingsTabView: View {
                                                 .foregroundColor(.secondary)
                                         }
                                         
-                                        Text("Apple ID, iCloud & More")
+                                        Text("Profile & Settings")
                                             .font(.caption)
                                             .foregroundColor(.secondary)
                                     }
@@ -214,14 +211,15 @@ struct SettingsTabView: View {
                             .padding(.horizontal, 20)
                         }
                     }
+                .navigationTitle("Settings")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbarBackground(.hidden, for: .navigationBar)
+                .toolbarColorScheme(.dark, for: .navigationBar)
+                .onAppear {
+                    // Load profile image
+                    profileImage = accountManager.loadProfileImage()
+                    refreshID = UUID()
                 }
-            }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
-            .onAppear {
-                // Load profile image
-                profileImage = accountManager.loadProfileImage()
-                refreshID = UUID()
             }
         }
     
@@ -251,8 +249,7 @@ struct SettingsTabView: View {
         }
         .frame(height: 44)
         .padding(.horizontal, 20)
-        .padding(.top, 16)
-        .padding(.bottom, 12)
+        .padding(.top, 8)
     }
 }
 
@@ -292,7 +289,7 @@ struct SettingsSectionHeader: View {
             .foregroundColor(.white.opacity(0.8))
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 4)
-            .padding(.top, 8)
+            .padding(.top, 0)
     }
 }
 
@@ -408,8 +405,9 @@ struct AppearanceAndThemeSettingsView: View {
             }
         }
         .navigationTitle("Appearance & Theme")
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarTitleDisplayMode(.large)
         .toolbarBackground(.hidden, for: .navigationBar)
+        .toolbarColorScheme(.dark, for: .navigationBar)
     }
 }
 
@@ -1355,33 +1353,6 @@ struct PrivacySettingsView: View {
                                         Text("Privacy Policy")
                                             .foregroundColor(colorScheme == .dark ? .white : .black)
                                         Text("View our privacy and data practices")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                    }
-                                    
-                                    Spacer()
-                                    
-                                    Image(systemName: "chevron.right")
-                                        .foregroundColor(.gray)
-                                        .font(.caption)
-                                }
-                                .padding(20)
-                            }
-                            .buttonStyle(PlainButtonStyle())
-                            
-                            Divider()
-                                .padding(.leading, 62)
-                            
-                            NavigationLink(destination: DataPrivacyView()) {
-                                HStack(spacing: 12) {
-                                    Image(systemName: "lock.doc.fill")
-                                        .foregroundColor(.purple)
-                                        .frame(width: 30)
-                                    
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text("Data & Privacy")
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
-                                        Text("Control your data and privacy settings")
                                             .font(.caption)
                                             .foregroundColor(.secondary)
                                     }

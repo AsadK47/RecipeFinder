@@ -293,8 +293,9 @@ struct LegalInformationView: View {
             }
         }
         .navigationTitle("Legal Information")
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarTitleDisplayMode(.large)
         .toolbarBackground(.hidden, for: .navigationBar)
+        .toolbarColorScheme(.dark, for: .navigationBar)
         .sheet(isPresented: $showPrivacyPolicy) {
             PrivacyPolicyView()
         }
