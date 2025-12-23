@@ -71,10 +71,20 @@ struct NotesListView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header - Blended design like RecipeSearchView
+                // Header
                 VStack(spacing: 12) {
                     GeometryReader { geometry in
                         HStack(spacing: 0) {
+                            // Back button
+                            Button(action: {
+                                dismiss()
+                            }) {
+                                Image(systemName: "chevron.left")
+                                    .font(.title3)
+                                    .foregroundColor(.white)
+                                    .frame(width: 44, height: 44)
+                            }
+                            
                             Spacer()
                             
                             Text("Notes")
@@ -84,17 +94,47 @@ struct NotesListView: View {
                                 .minimumScaleFactor(0.7)
                             
                             Spacer()
+                            
+                            // Menu and Add buttons
+                            HStack(spacing: 12) {
+                                Menu {
+                                    // Filter option
+                                    Button(
+                                        action: {
+                                            HapticManager.shared.light()
+                                            showFilterMenu.toggle()
+                                        },
+                                        label: {
+                                            Label(activeFilterCount > 0 ? "Filters (\(activeFilterCount))" : "Filters", systemImage: "line.3.horizontal.decrease.circle")
+                                        }
+                                    )
+                                } label: {
+                                    Image(systemName: "line.3.horizontal")
+                                        .foregroundColor(.white)
+                                        .font(.title3)
+                                        .frame(width: 44, height: 44)
+                                }
+                                
+                                Button(action: {
+                                    HapticManager.shared.medium()
+                                    showNewNoteSheet = true
+                                }) {
+                                    Image(systemName: "plus")
+                                        .foregroundColor(.white)
+                                        .font(.title3)
+                                        .frame(width: 44, height: 44)
+                                }
+                            }
                         }
                     }
                     .frame(height: 44)
-                    .padding(.horizontal, 20)
-                    .padding(.top, 16)
                     
                     // Search Bar
                     ModernSearchBar(text: $searchText, placeholder: "Search notes...")
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 12)
                 }
+                .padding(.horizontal, 20)
+                .padding(.top, 16)
+                .padding(.bottom, 12)
                 
                 // Active filters chips
                 if activeFilterCount > 0 {
@@ -152,36 +192,7 @@ struct NotesListView: View {
                 }
             }
         }
-        .navigationTitle("Notes")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.hidden, for: .navigationBar)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Menu {
-                    // Filter option
-                    Button(
-                        action: {
-                            HapticManager.shared.light()
-                            showFilterMenu.toggle()
-                        },
-                        label: {
-                            Label(activeFilterCount > 0 ? "Filters (\(activeFilterCount))" : "Filters", systemImage: "line.3.horizontal.decrease.circle")
-                        }
-                    )
-                } label: {
-                    Image(systemName: "line.3.horizontal")
-                }
-            }
-            
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: {
-                    HapticManager.shared.medium()
-                    showNewNoteSheet = true
-                }) {
-                    Image(systemName: "plus")
-                }
-            }
-        }
+        .navigationBarHidden(true)
         .sheet(isPresented: $showNewNoteSheet) {
             NoteEditorView(note: nil) { note in
                 notesManager.addNote(note)
