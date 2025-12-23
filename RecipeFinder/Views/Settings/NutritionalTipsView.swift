@@ -380,7 +380,7 @@ struct TipDetailView: View {
                                                 }
                                                 
                                                 if let year = source.year {
-                                                    Text("Published: \(year)")
+                                                    Text("Published: \(year, format: .number.grouping(.never))")
                                                         .font(.caption2)
                                                         .foregroundColor(.white.opacity(0.5))
                                                 }
