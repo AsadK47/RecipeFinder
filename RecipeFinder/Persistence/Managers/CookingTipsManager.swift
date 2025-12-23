@@ -2,8 +2,9 @@ import Combine
 import Foundation
 
 /// Manages cooking tips with filtering, searching, and favorites
+@MainActor
 final class CookingTipsManager: ObservableObject {
-    nonisolated(unsafe) static let shared = CookingTipsManager()
+    static let shared = CookingTipsManager()
     
     @Published private(set) var tips: [CookingTipModel] = []
     @Published var searchText: String = ""

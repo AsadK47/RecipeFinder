@@ -9,7 +9,8 @@ import Foundation
 import AuthenticationServices
 import SwiftUI
 
-final class AppleSignInManager: NSObject, ObservableObject, @unchecked Sendable {
+@MainActor
+final class AppleSignInManager: NSObject, ObservableObject {
     static let shared = AppleSignInManager()
     
     @Published var isAuthenticated = false
@@ -32,7 +33,7 @@ final class AppleSignInManager: NSObject, ObservableObject, @unchecked Sendable 
         
         let provider = ASAuthorizationAppleIDProvider()
         provider.getCredentialState(forUserID: userID) { credentialState, error in
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 switch credentialState {
                 case .authorized:
                     self.isAuthenticated = true

@@ -1,8 +1,9 @@
 import Foundation
 import Combine
 
+@MainActor
 final class ShoppingListManager: ObservableObject {
-    nonisolated(unsafe) static let shared = ShoppingListManager()
+    static let shared = ShoppingListManager()
     
     private let saveKey = Constants.UserDefaultsKeys.shoppingListItems
     

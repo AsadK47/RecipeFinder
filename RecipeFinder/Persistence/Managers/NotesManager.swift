@@ -1,6 +1,7 @@
 import Foundation
 import Combine
 
+@MainActor
 class NotesManager: ObservableObject {
     @Published var notes: [NoteModel] = []
     

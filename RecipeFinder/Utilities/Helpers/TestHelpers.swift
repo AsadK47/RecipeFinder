@@ -44,6 +44,7 @@ struct AuthTestHelper {
     // MARK: - Clear All Auth Data
     
     /// Clear all authentication data for clean testing
+    @MainActor
     static func clearAllAuthData() {
         // Clear UserDefaults
         UserDefaults.standard.removeObject(forKey: "isAuthenticated")

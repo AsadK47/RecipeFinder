@@ -2,8 +2,9 @@ import Foundation
 
 // MARK: - Kitchen Inventory Manager
 
+@MainActor
 final class KitchenInventoryManager: ObservableObject {
-	nonisolated(unsafe) static let shared = KitchenInventoryManager()
+	static let shared = KitchenInventoryManager()
     
 	private let saveKey = Constants.UserDefaultsKeys.kitchenItems
 	private let inventorySaveKey = "kitchenInventoryItems"

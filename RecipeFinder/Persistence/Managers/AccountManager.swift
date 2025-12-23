@@ -2,7 +2,8 @@ import Foundation
 import UIKit
 import Combine
 
-final class AccountManager: ObservableObject, @unchecked Sendable {
+@MainActor
+final class AccountManager: ObservableObject {
     static let shared = AccountManager()
     
     // Profile fields - MINIMAL DATA COLLECTION

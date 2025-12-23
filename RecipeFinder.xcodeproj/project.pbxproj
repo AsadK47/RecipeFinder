@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9E09460D2EFB41600072BDFE /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 9E09460C2EFB41600072BDFE /* ConfettiSwiftUI */; };
 		9E0C88662EBAEB1E00D707E3 /* FaceIDOnboardingSplash.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E0C88652EBAEB1E00D707E3 /* FaceIDOnboardingSplash.swift */; };
 		9E12E8952EC15AFA0077B1DA /* AppleSignInManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E12E8942EC15AFA0077B1DA /* AppleSignInManager.swift */; };
 		9E2E34212E9D9F8500E2E49F /* KitchenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E2E34202E9D9F8500E2E49F /* KitchenView.swift */; };
@@ -71,7 +72,6 @@
 		9E6DEAA82EF5F053001E7B24 /* AuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA9B2EF5F053001E7B24 /* AuthenticationManager.swift */; };
 		9E6DEAA92EF5F053001E7B24 /* SampleRecipeData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA982EF5F053001E7B24 /* SampleRecipeData.swift */; };
 		9E6DEAAA2EF5F053001E7B24 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA972EF5F053001E7B24 /* PersistenceController.swift */; };
-		9E6DEAB02EFB067C001E7B24 /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 9E6DEAAF2EFB067C001E7B24 /* ConfettiSwiftUI */; };
 		9E7691702EF46CD400277ADF /* BadgeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E76916E2EF46CD400277ADF /* BadgeModel.swift */; };
 		9E77ABEE2EB412C600666BB0 /* SecureCredentialManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E77ABEC2EB412C600666BB0 /* SecureCredentialManager.swift */; };
 		9E77ABF22EB430BC00666BB0 /* DeveloperDocumentationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E77ABF12EB430BC00666BB0 /* DeveloperDocumentationView.swift */; };
@@ -248,7 +248,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9E6DEAB02EFB067C001E7B24 /* ConfettiSwiftUI in Frameworks */,
+				9E09460D2EFB41600072BDFE /* ConfettiSwiftUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -869,7 +869,7 @@
 			);
 			mainGroup = 9EE5AACC2D08FCBE00C1B736;
 			packageReferences = (
-				9E6DEAAE2EFB067C001E7B24 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
+				9E09460B2EFB41600072BDFE /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
 			);
 			productRefGroup = 9EE5AAD62D08FCBE00C1B736 /* Products */;
 			projectDirPath = "";
@@ -1347,7 +1347,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		9E6DEAAE2EFB067C001E7B24 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */ = {
+		9E09460B2EFB41600072BDFE /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/simibac/ConfettiSwiftUI";
 			requirement = {
@@ -1358,9 +1358,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		9E6DEAAF2EFB067C001E7B24 /* ConfettiSwiftUI */ = {
+		9E09460C2EFB41600072BDFE /* ConfettiSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 9E6DEAAE2EFB067C001E7B24 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
+			package = 9E09460B2EFB41600072BDFE /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
 			productName = ConfettiSwiftUI;
 		};
 /* End XCSwiftPackageProductDependency section */

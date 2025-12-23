@@ -52,16 +52,12 @@ struct ContentView: View {
                 configureTabBarAppearance()
             }
             .onChange(of: selectedTheme) { _, _ in
-                // Force immediate refresh
-                DispatchQueue.main.async {
-                    configureTabBarAppearance()
-                }
+                // Already on main thread - no need for DispatchQueue
+                configureTabBarAppearance()
             }
             .onChange(of: cardStyle) { _, _ in
-                // Force immediate refresh
-                DispatchQueue.main.async {
-                    configureTabBarAppearance()
-                }
+                // Already on main thread - no need for DispatchQueue
+                configureTabBarAppearance()
             }
             .onChange(of: colorScheme) { _, newScheme in
                 // Force immediate refresh when color scheme changes
@@ -124,14 +120,12 @@ struct ContentView: View {
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
         
-        // Force update all existing tab bars immediately
-        DispatchQueue.main.async {
-            UIApplication.shared.connectedScenes
-                .compactMap { $0 as? UIWindowScene }
-                .flatMap { $0.windows }
-                .compactMap { $0.rootViewController }
-                .forEach { updateTabBars(in: $0, with: appearance, textColor: textColor, dimmedColor: dimmedTextColor) }
-        }
+        // Update existing tab bars (already on main thread in SwiftUI)
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap { $0.windows }
+            .compactMap { $0.rootViewController }
+            .forEach { updateTabBars(in: $0, with: appearance, textColor: textColor, dimmedColor: dimmedTextColor) }
     }
     
     private func updateTabBars(in viewController: UIViewController, with appearance: UITabBarAppearance, textColor: UIColor, dimmedColor: UIColor) {

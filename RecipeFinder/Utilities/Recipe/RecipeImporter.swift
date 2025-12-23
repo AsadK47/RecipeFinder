@@ -49,7 +49,8 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
         extractedData = nil
         
         // Check network connectivity first
-        guard NetworkMonitor.shared.isConnected else {
+        let isConnected = await NetworkMonitor.shared.isConnected
+        guard isConnected else {
             self.isLoading = false
             self.errorMessage = AppError.networkUnavailable.localizedDescription
             return

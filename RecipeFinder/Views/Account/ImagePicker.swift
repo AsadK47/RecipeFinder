@@ -33,7 +33,7 @@ struct ImagePicker: UIViewControllerRepresentable {
             
             results.first?.itemProvider.loadObject(ofClass: UIImage.self) { object, _ in
                 if let image = object as? UIImage {
-                    DispatchQueue.main.async {
+                    Task { @MainActor in
                         self.parent.image = image
                     }
                 }

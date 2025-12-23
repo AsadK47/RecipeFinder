@@ -9,42 +9,32 @@ final class HapticManager: Sendable {
     
     // Light tap - for subtle interactions
     func light() {
-        DispatchQueue.main.async {
-            let generator = UIImpactFeedbackGenerator(style: .light)
-            generator.impactOccurred()
-        }
+        let generator = UIImpactFeedbackGenerator(style: .light)
+        generator.impactOccurred()
     }
     
     // Medium impact - for standard interactions
     func medium() {
-        DispatchQueue.main.async {
-            let generator = UIImpactFeedbackGenerator(style: .medium)
-            generator.impactOccurred()
-        }
+        let generator = UIImpactFeedbackGenerator(style: .medium)
+        generator.impactOccurred()
     }
     
     // Heavy impact - for important actions
     func heavy() {
-        DispatchQueue.main.async {
-            let generator = UIImpactFeedbackGenerator(style: .heavy)
-            generator.impactOccurred()
-        }
+        let generator = UIImpactFeedbackGenerator(style: .heavy)
+        generator.impactOccurred()
     }
     
     // Soft impact - for very gentle feedback
     func soft() {
-        DispatchQueue.main.async {
-            let generator = UIImpactFeedbackGenerator(style: .soft)
-            generator.impactOccurred()
-        }
+        let generator = UIImpactFeedbackGenerator(style: .soft)
+        generator.impactOccurred()
     }
     
     // Rigid impact - for firm, definitive actions
     func rigid() {
-        DispatchQueue.main.async {
-            let generator = UIImpactFeedbackGenerator(style: .rigid)
-            generator.impactOccurred()
-        }
+        let generator = UIImpactFeedbackGenerator(style: .rigid)
+        generator.impactOccurred()
     }
     
     // Success notification - for successful operations
@@ -84,20 +74,20 @@ final class HapticManager: Sendable {
     // Double tap pattern - light-light quickly
     func doubleTap() {
         light()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
             self.light()
         }
     }
     
     // Success celebration - uses native vibration pattern
     func celebrate() {
-        DispatchQueue.main.async {
-            let generator = UINotificationFeedbackGenerator()
-            generator.notificationOccurred(.success)
-            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
-        }
+        let generator = UINotificationFeedbackGenerator()
+        generator.notificationOccurred(.success)
+        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 150_000_000) // 0.15 seconds
             self.light()
         }
     }
@@ -105,7 +95,8 @@ final class HapticManager: Sendable {
     // Delete pattern - warning + rigid
     func delete() {
         warning()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
             self.rigid()
         }
     }

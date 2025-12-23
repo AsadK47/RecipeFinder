@@ -55,7 +55,7 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
     /// Call this when the app launches or when user enables notifications in settings
     func requestPermission(completion: @escaping @Sendable (Bool) -> Void) {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 if let error = error {
                     debugLog("❌ Notification permission error: \(error.localizedDescription)")
                 } else if granted {
@@ -77,7 +77,7 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
             let soundSetting = settings.soundSetting
             let badgeSetting = settings.badgeSetting
             
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 debugLog("📱 Notification Status: \(authStatus.rawValue)")
                 debugLog("   - Alert: \(alertSetting.rawValue)")
                 debugLog("   - Sound: \(soundSetting.rawValue)")
