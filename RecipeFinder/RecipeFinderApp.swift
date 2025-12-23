@@ -16,6 +16,11 @@ struct RecipeFinderApp: App {
         configureAppearance()
         initializeDatabase()
         requestNotificationPermissions()
+        
+        #if DEBUG
+        // Auto-create test account for easy sign-in during development
+        AuthTestHelper.ensureTestAccountExists()
+        #endif
     }
     
     /// Request notification permissions on app launch

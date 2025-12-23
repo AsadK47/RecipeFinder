@@ -71,6 +71,7 @@
 		9E6DEAA82EF5F053001E7B24 /* AuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA9B2EF5F053001E7B24 /* AuthenticationManager.swift */; };
 		9E6DEAA92EF5F053001E7B24 /* SampleRecipeData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA982EF5F053001E7B24 /* SampleRecipeData.swift */; };
 		9E6DEAAA2EF5F053001E7B24 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA972EF5F053001E7B24 /* PersistenceController.swift */; };
+		9E6DEAB02EFB067C001E7B24 /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 9E6DEAAF2EFB067C001E7B24 /* ConfettiSwiftUI */; };
 		9E7691702EF46CD400277ADF /* BadgeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E76916E2EF46CD400277ADF /* BadgeModel.swift */; };
 		9E77ABEE2EB412C600666BB0 /* SecureCredentialManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E77ABEC2EB412C600666BB0 /* SecureCredentialManager.swift */; };
 		9E77ABF22EB430BC00666BB0 /* DeveloperDocumentationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E77ABF12EB430BC00666BB0 /* DeveloperDocumentationView.swift */; };
@@ -94,7 +95,6 @@
 		9E9DE6012ECCA111005CD593 /* home_page.png in Resources */ = {isa = PBXBuildFile; fileRef = 9E9DE5FA2ECCA111005CD593 /* home_page.png */; };
 		9E9DE6022ECCA111005CD593 /* splash_1.png in Resources */ = {isa = PBXBuildFile; fileRef = 9E9DE5FB2ECCA111005CD593 /* splash_1.png */; };
 		9EA778FD2EB4A4B00028F064 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA778FC2EB4A4B00028F064 /* OnboardingView.swift */; };
-		9EA779002EB4C36A0028F064 /* GuestModeSplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA778FF2EB4C36A0028F064 /* GuestModeSplashView.swift */; };
 		9EA779012EB4C36A0028F064 /* EmailConfirmationSplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA778FE2EB4C36A0028F064 /* EmailConfirmationSplashView.swift */; };
 		9EA779032EB4C6C90028F064 /* PasswordReminderSplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA779022EB4C6C90028F064 /* PasswordReminderSplashView.swift */; };
 		9EA7790C2EB56B630028F064 /* NoteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA7790A2EB56B630028F064 /* NoteModel.swift */; };
@@ -103,7 +103,6 @@
 		9EA779152EB56BA00028F064 /* NoteCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA7790F2EB56BA00028F064 /* NoteCardView.swift */; };
 		9EA779272EB5725D0028F064 /* MealPlanModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA779252EB5725D0028F064 /* MealPlanModel.swift */; };
 		9EB04E5B2EB4704F0033C093 /* MoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EB04E5A2EB4704F0033C093 /* MoreView.swift */; };
-		9EB629042EBB9FEE005FD6FC /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 9EB629032EBB9FEE005FD6FC /* ConfettiSwiftUI */; };
 		9EDBD52E2EE8593F00DC2503 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9EDBD52D2EE8593F00DC2503 /* Assets.xcassets */; };
 		9EE5AAD92D08FCBE00C1B736 /* RecipeFinderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EE5AAD82D08FCBE00C1B736 /* RecipeFinderApp.swift */; };
 		9EE5AADB2D08FCBE00C1B736 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EE5AADA2D08FCBE00C1B736 /* ContentView.swift */; };
@@ -221,7 +220,6 @@
 		9EA777B82D09F1E000C3422A /* RecipeModel 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 3.xcdatamodel"; sourceTree = "<group>"; };
 		9EA778FC2EB4A4B00028F064 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		9EA778FE2EB4C36A0028F064 /* EmailConfirmationSplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailConfirmationSplashView.swift; sourceTree = "<group>"; };
-		9EA778FF2EB4C36A0028F064 /* GuestModeSplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuestModeSplashView.swift; sourceTree = "<group>"; };
 		9EA779022EB4C6C90028F064 /* PasswordReminderSplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordReminderSplashView.swift; sourceTree = "<group>"; };
 		9EA7790A2EB56B630028F064 /* NoteModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteModel.swift; sourceTree = "<group>"; };
 		9EA7790F2EB56BA00028F064 /* NoteCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteCardView.swift; sourceTree = "<group>"; };
@@ -250,7 +248,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9EB629042EBB9FEE005FD6FC /* ConfettiSwiftUI in Frameworks */,
+				9E6DEAB02EFB067C001E7B24 /* ConfettiSwiftUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -359,7 +357,6 @@
 				9E87D3282EB6722300FFA1D1 /* BiometricSetupView.swift */,
 				9EA779022EB4C6C90028F064 /* PasswordReminderSplashView.swift */,
 				9EA778FE2EB4C36A0028F064 /* EmailConfirmationSplashView.swift */,
-				9EA778FF2EB4C36A0028F064 /* GuestModeSplashView.swift */,
 				9EA778FC2EB4A4B00028F064 /* OnboardingView.swift */,
 				9E51C3A62EB40DC90064B917 /* AuthenticationView.swift */,
 			);
@@ -872,7 +869,7 @@
 			);
 			mainGroup = 9EE5AACC2D08FCBE00C1B736;
 			packageReferences = (
-				9E6CF3A72D83087300D79DD6 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
+				9E6DEAAE2EFB067C001E7B24 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
 			);
 			productRefGroup = 9EE5AAD62D08FCBE00C1B736 /* Products */;
 			projectDirPath = "";
@@ -951,7 +948,6 @@
 				9E51C39A2EB3E9C20064B917 /* AccountView.swift in Sources */,
 				9E87D3362EB6C0E900FFA1D1 /* PasswordVerificationSheet.swift in Sources */,
 				9E7B9A862E9BED16007E1786 /* RecipeSearchView.swift in Sources */,
-				9EA779002EB4C36A0028F064 /* GuestModeSplashView.swift in Sources */,
 				9E87D3302EB696A400FFA1D1 /* ThemeManager.swift in Sources */,
 				9EA779012EB4C36A0028F064 /* EmailConfirmationSplashView.swift in Sources */,
 				9E4DC7522E9C12A900E17DDF /* IngredientSearchView.swift in Sources */,
@@ -1351,20 +1347,20 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		9E6CF3A72D83087300D79DD6 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */ = {
+		9E6DEAAE2EFB067C001E7B24 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/simibac/ConfettiSwiftUI.git";
+			repositoryURL = "https://github.com/simibac/ConfettiSwiftUI";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.2;
+				minimumVersion = 2.0.3;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		9EB629032EBB9FEE005FD6FC /* ConfettiSwiftUI */ = {
+		9E6DEAAF2EFB067C001E7B24 /* ConfettiSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 9E6CF3A72D83087300D79DD6 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
+			package = 9E6DEAAE2EFB067C001E7B24 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
 			productName = ConfettiSwiftUI;
 		};
 /* End XCSwiftPackageProductDependency section */

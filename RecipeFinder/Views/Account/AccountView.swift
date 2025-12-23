@@ -17,7 +17,6 @@ struct AccountView: View {
     @State private var showingPrivacyPolicy = false
     @State private var showingAuthError = false
     @State private var authErrorMessage = ""
-    @State private var showingGuestSplash = false
     @State private var showSuccessFeedback = false
     @State private var showImagePicker = false
     @State private var profileImage: UIImage?
@@ -30,10 +29,6 @@ struct AccountView: View {
     @State private var firstName: String = ""
     @State private var lastName: String = ""
     @State private var selectedChefType: ChefType = .homeCook
-    
-    private var isGuestMode: Bool {
-        authManager.isGuestMode
-    }
     
     private var displayName: String {
         if let user = authManager.currentUser {
@@ -151,11 +146,6 @@ struct AccountView: View {
         .sheet(isPresented: $showBadgeDetail) {
             if let badge = selectedBadge {
                 BadgeDetailView(badge: badge)
-            }
-        }
-        .fullScreenCover(isPresented: $showingGuestSplash) {
-            GuestModeSplashView {
-                showingGuestSplash = false
             }
         }
         .alert("Sign Out", isPresented: $showingSignOutAlert) {
@@ -447,7 +437,7 @@ struct AccountView: View {
     private var accountActionsSection: some View {
         VStack(spacing: 12) {
             // Sign in with Apple (if not already using it) - Under Construction
-            if authManager.currentUser?.appleUserID == nil && !isGuestMode {
+            if authManager.currentUser?.appleUserID == nil {
                 VStack(spacing: 8) {
                     Button {
                         // Disabled during testing
@@ -490,7 +480,7 @@ struct AccountView: View {
             }
             
             // Face ID / Touch ID Settings
-            if authManager.biometricsAvailable && !authManager.isGuestMode {
+            if authManager.biometricsAvailable {
                 NavigationLink(destination: PrivacySettingsView()) {
                     HStack(spacing: 12) {
                         Image(systemName: authManager.biometricType == "Face ID" ? "faceid" : "touchid")
@@ -523,7 +513,7 @@ struct AccountView: View {
                 showingSignOutAlert = true
                 HapticManager.shared.light()
             } label: {
-                Text(isGuestMode ? "Exit Guest Mode" : "Sign Out")
+                Text("Sign Out")
                     .font(.body)
                     .fontWeight(.semibold)
                     .foregroundColor(.red)
@@ -540,9 +530,8 @@ struct AccountView: View {
                     }
             }
             
-            if !isGuestMode {
-                Button {
-                    showingDeleteAccountAlert = true
+            Button {
+                showingDeleteAccountAlert = true
                     HapticManager.shared.light()
                 } label: {
                     Text("Delete Account")
@@ -562,7 +551,6 @@ struct AccountView: View {
                         }
                 }
                 .buttonStyle(PlainButtonStyle())
-            }
         }
     }
     
@@ -636,6 +624,68 @@ struct AccountView: View {
         // Hide after 2 seconds
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             showSuccessFeedback = false
+        }
+    }
+    
+    // MARK: - Badges Section
+    
+    var badgesSection: some View {
+        VStack(spacing: 0) {
+            // Collapsible Header
+            Button(action: {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    badgesSectionExpanded.toggle()
+                }
+                HapticManager.shared.light()
+            }) {
+                HStack {
+                    Image(systemName: "trophy.fill")
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                    Text("Achievements")
+                        .font(.headline)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                    Spacer()
+                    Image(systemName: badgesSectionExpanded ? "chevron.up" : "chevron.down")
+                        .foregroundColor(.secondary)
+                        .font(.caption)
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 12)
+                .background(Color.secondary.opacity(0.1))
+            }
+            .buttonStyle(PlainButtonStyle())
+            
+            // Collapsible Content
+            if badgesSectionExpanded {
+                VStack(alignment: .leading, spacing: 12) {
+                    let recipeCount = PersistenceController.shared.getRecipeCount()
+                    let allBadges = badgeManager.getAllBadges(recipeCount: recipeCount)
+                    
+                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                        ForEach(allBadges) { badge in
+                            Button(action: {
+                                selectedBadge = badge
+                                showBadgeDetail = true
+                                HapticManager.shared.light()
+                            }) {
+                                BadgeCard(badge: badge, colorScheme: colorScheme, cardStyle: cardStyle)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
+                    }
+                }
+                .padding(20)
+                .transition(.opacity.combined(with: .move(edge: .top)))
+            }
+        }
+        .background {
+            if cardStyle == .solid {
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+            } else {
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(.ultraThinMaterial)
+            }
         }
     }
 }
@@ -1099,70 +1149,6 @@ struct ChefTypeCard: View {
     }
 }
 
-// MARK: - Badges Section Extension
-
-extension AccountView {
-    var badgesSection: some View {
-        VStack(spacing: 0) {
-            // Collapsible Header
-            Button(action: {
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                    badgesSectionExpanded.toggle()
-                }
-                HapticManager.shared.light()
-            }) {
-                HStack {
-                    Image(systemName: "trophy.fill")
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
-                    Text("Achievements")
-                        .font(.headline)
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
-                    Spacer()
-                    Image(systemName: badgesSectionExpanded ? "chevron.up" : "chevron.down")
-                        .foregroundColor(.secondary)
-                        .font(.caption)
-                }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 12)
-                .background(Color.secondary.opacity(0.1))
-            }
-            .buttonStyle(PlainButtonStyle())
-            
-            // Collapsible Content
-            if badgesSectionExpanded {
-                VStack(alignment: .leading, spacing: 12) {
-                    let recipeCount = PersistenceController.shared.getRecipeCount()
-                    let allBadges = badgeManager.getAllBadges(recipeCount: recipeCount)
-                    
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                        ForEach(allBadges) { badge in
-                            Button(action: {
-                                selectedBadge = badge
-                                showBadgeDetail = true
-                                HapticManager.shared.light()
-                            }) {
-                                BadgeCard(badge: badge, colorScheme: colorScheme, cardStyle: cardStyle)
-                            }
-                            .buttonStyle(PlainButtonStyle())
-                        }
-                    }
-                }
-                .padding(20)
-                .transition(.opacity.combined(with: .move(edge: .top)))
-            }
-        }
-        .background {
-            if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
-            } else {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(.ultraThinMaterial)
-            }
-        }
-    }
-}
-
 struct BadgeCard: View {
     let badge: Badge
     let colorScheme: ColorScheme
@@ -1374,4 +1360,3 @@ struct BadgeDetailView: View {
         }
     }
 }
-

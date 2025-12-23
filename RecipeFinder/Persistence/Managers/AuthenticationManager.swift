@@ -12,13 +12,11 @@ final class AuthenticationManager: NSObject, ObservableObject, @unchecked Sendab
     @Published private(set) var isAuthenticated: Bool = false
     @Published private(set) var currentUser: User?
     @Published var authError: AuthError?
-    @Published private(set) var isGuestMode: Bool = false
     
     // UserDefaults Keys
     private let isAuthenticatedKey = "isAuthenticated"
     private let userDataKey = "userData"
     private let biometricsEnabledKey = "biometricsEnabled"
-    private let guestModeKey = "guestMode"
     private let currentEmailKey = "currentUserEmail"
     private let lastActiveTimestampKey = "lastActiveTimestamp"
     private let appleUserCacheKey = "appleUserCache" // Cache Apple ID user data
@@ -97,10 +95,9 @@ final class AuthenticationManager: NSObject, ObservableObject, @unchecked Sendab
     
     func checkAuthenticationStatus() {
         isAuthenticated = UserDefaults.standard.bool(forKey: isAuthenticatedKey)
-        isGuestMode = UserDefaults.standard.bool(forKey: guestModeKey)
         
         // Check if session has expired (user was away too long)
-        if isAuthenticated && !isGuestMode {
+        if isAuthenticated {
             if let lastActive = UserDefaults.standard.object(forKey: lastActiveTimestampKey) as? Date {
                 let timeAway = Date().timeIntervalSince(lastActive)
                 if timeAway > sessionTimeoutSeconds {
@@ -125,7 +122,7 @@ final class AuthenticationManager: NSObject, ObservableObject, @unchecked Sendab
     
     /// Check if session is expired and sign out if needed
     func checkSessionExpiration() {
-        guard isAuthenticated && !isGuestMode else { return }
+        guard isAuthenticated else { return }
         
         if let lastActive = UserDefaults.standard.object(forKey: lastActiveTimestampKey) as? Date {
             let timeAway = Date().timeIntervalSince(lastActive)
@@ -133,36 +130,6 @@ final class AuthenticationManager: NSObject, ObservableObject, @unchecked Sendab
                 debugLog("⏱️ Session expired - signing out")
                 signOut()
             }
-        }
-    }
-    
-    // Guest Mode
-    
-    func skipLoginAsGuest() {
-        // Post notification to show splash screen
-        NotificationCenter.default.post(name: NSNotification.Name("ShowGuestSplash"), object: nil)
-        
-        // Delay authentication to allow splash screen to show
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            let guestUser = User(
-                id: UUID().uuidString,
-                email: nil,
-                fullName: "Guest User",
-                givenName: "Guest",
-                familyName: nil,
-                appleUserID: nil,
-                createdAt: Date(),
-                lastLoginAt: Date()
-            )
-            
-            self.currentUser = guestUser
-            self.isAuthenticated = true
-            self.isGuestMode = true
-            
-            UserDefaults.standard.set(true, forKey: self.isAuthenticatedKey)
-            UserDefaults.standard.set(true, forKey: self.guestModeKey)
-            
-            HapticManager.shared.light()
         }
     }
     
@@ -240,9 +207,7 @@ final class AuthenticationManager: NSObject, ObservableObject, @unchecked Sendab
         
         self.currentUser = user
         self.isAuthenticated = true
-        self.isGuestMode = false
         UserDefaults.standard.set(true, forKey: isAuthenticatedKey)
-        UserDefaults.standard.set(false, forKey: guestModeKey)
         UserDefaults.standard.set(email, forKey: currentEmailKey)
         updateLastActiveTimestamp()
         
@@ -314,9 +279,7 @@ final class AuthenticationManager: NSObject, ObservableObject, @unchecked Sendab
         
         self.currentUser = user
         self.isAuthenticated = true
-        self.isGuestMode = false
         UserDefaults.standard.set(true, forKey: isAuthenticatedKey)
-        UserDefaults.standard.set(false, forKey: guestModeKey)
         UserDefaults.standard.set(email, forKey: currentEmailKey)
         updateLastActiveTimestamp()
         
@@ -437,10 +400,8 @@ final class AuthenticationManager: NSObject, ObservableObject, @unchecked Sendab
         // Ensure UI updates happen immediately on main thread
         self.isAuthenticated = false
         self.currentUser = nil
-        self.isGuestMode = false
         
         UserDefaults.standard.set(false, forKey: self.isAuthenticatedKey)
-        UserDefaults.standard.set(false, forKey: self.guestModeKey)
         UserDefaults.standard.removeObject(forKey: self.currentEmailKey)
         UserDefaults.standard.removeObject(forKey: self.lastActiveTimestampKey)
         
@@ -506,7 +467,6 @@ final class AuthenticationManager: NSObject, ObservableObject, @unchecked Sendab
         UserDefaults.standard.removeObject(forKey: userDataKey)
         UserDefaults.standard.removeObject(forKey: isAuthenticatedKey)
         UserDefaults.standard.removeObject(forKey: biometricsEnabledKey)
-        UserDefaults.standard.removeObject(forKey: guestModeKey)
         UserDefaults.standard.removeObject(forKey: currentEmailKey)
         
         // Clear all app data
@@ -514,7 +474,6 @@ final class AuthenticationManager: NSObject, ObservableObject, @unchecked Sendab
         
         isAuthenticated = false
         currentUser = nil
-        isGuestMode = false
         HapticManager.shared.success()
     }
 }
@@ -576,9 +535,7 @@ extension AuthenticationManager: ASAuthorizationControllerDelegate {
                 
                 self.currentUser = user
                 self.isAuthenticated = true
-                self.isGuestMode = false
                 UserDefaults.standard.set(true, forKey: isAuthenticatedKey)
-                UserDefaults.standard.set(false, forKey: guestModeKey)
                 updateLastActiveTimestamp()
                 
                 // Update AccountManager

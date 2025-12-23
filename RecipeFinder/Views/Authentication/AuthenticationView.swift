@@ -161,7 +161,7 @@ struct AuthenticationView: View {
         .onChange(of: authManager.isAuthenticated) { oldValue, newValue in
             // Onboarding is now handled by RecipeFinderApp
             // Only handle biometric setup prompt here
-            if newValue && !authManager.isGuestMode && !hasBeenPromptedForBiometrics && !biometricsEnabled {
+            if newValue && !hasBeenPromptedForBiometrics && !biometricsEnabled {
                 if authManager.biometricsAvailable {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                         showBiometricSetup = true

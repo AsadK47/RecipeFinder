@@ -1296,8 +1296,8 @@ struct PrivacySettingsView: View {
             
             ScrollView {
                 VStack(spacing: 24) {
-                    // Biometric Authentication (if available and not in guest mode)
-                    if authManager.biometricsAvailable && !authManager.isGuestMode {
+                    // Biometric Authentication (if available)
+                    if authManager.biometricsAvailable {
                         SettingsCard {
                             VStack(alignment: .leading, spacing: 20) {
                                 Text("Security")

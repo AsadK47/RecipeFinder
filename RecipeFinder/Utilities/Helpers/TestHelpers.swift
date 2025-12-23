@@ -14,8 +14,32 @@ struct AuthTestHelper {
     
     // MARK: - Test Credentials
     
-    static let testEmail = "test@recipe.app"
-    static let testPassword = "Test123!"
+    static let testEmail = "test@email.com"
+    static let testPassword = "Password123!"
+    
+    // MARK: - Auto-Create Test Account
+    
+    /// Ensures the test account exists in Keychain (call on app launch in DEBUG)
+    static func ensureTestAccountExists() {
+        let credentialManager = SecureCredentialManager.shared
+        
+        // Only create if it doesn't already exist
+        if credentialManager.getUserInfo(email: testEmail) == nil {
+            let success = credentialManager.saveCredentials(
+                email: testEmail,
+                password: testPassword,
+                fullName: "Test User"
+            )
+            
+            if success {
+                debugLog("✅ Test account created: \(testEmail) / \(testPassword)")
+            } else {
+                debugLog("❌ Failed to create test account")
+            }
+        } else {
+            debugLog("ℹ️ Test account already exists: \(testEmail)")
+        }
+    }
     
     // MARK: - Clear All Auth Data
     
@@ -24,7 +48,6 @@ struct AuthTestHelper {
         // Clear UserDefaults
         UserDefaults.standard.removeObject(forKey: "isAuthenticated")
         UserDefaults.standard.removeObject(forKey: "userData")
-        UserDefaults.standard.removeObject(forKey: "guestMode")
         UserDefaults.standard.removeObject(forKey: "currentUserEmail")
         UserDefaults.standard.removeObject(forKey: "lastActiveTimestamp")
         UserDefaults.standard.removeObject(forKey: "biometricsEnabled")
