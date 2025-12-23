@@ -28,12 +28,97 @@ struct CookingTipsView: View {
             AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
-            GeometryReader { geometry in
-                VStack(spacing: 0) {
-                    // Search Bar
-                    searchBar
-                        .padding(.horizontal, 20)
-                        .padding(.top, 12)
+            VStack(spacing: 0) {
+                // Header
+                VStack(spacing: 12) {
+                    GeometryReader { geometry in
+                        HStack(spacing: 0) {
+                            // Back button
+                            Button(action: {
+                                dismiss()
+                            }) {
+                                Image(systemName: "chevron.left")
+                                    .font(.title3)
+                                    .foregroundColor(.white)
+                                    .frame(width: 44, height: 44)
+                            }
+                            
+                            Spacer()
+                            
+                            Text("Cooking Tips")
+                                .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.7)
+                            
+                            Spacer()
+                            
+                            // Menu button
+                            Menu {
+                                // View mode toggle
+                                Button(action: {
+                                    withAnimation(.spring(response: 0.3)) {
+                                        viewMode = viewMode == .card ? .list : .card
+                                    }
+                                    HapticManager.shared.light()
+                                }) {
+                                    Label(
+                                        viewMode == .card ? "List View" : "Card View",
+                                        systemImage: viewMode == .card ? "list.bullet" : "square.grid.2x2"
+                                    )
+                                }
+                                
+                                Divider()
+                                
+                                // Filters
+                                Button(action: {
+                                    showFilters = true
+                                    HapticManager.shared.light()
+                                }) {
+                                    Label(
+                                        hasActiveFilters ? "Filters (Active)" : "Filters",
+                                        systemImage: "line.3.horizontal.decrease.circle"
+                                    )
+                                }
+                                
+                                // Clear filters option if active
+                                if hasActiveFilters {
+                                    Button(action: {
+                                        tipsManager.clearFilters()
+                                        HapticManager.shared.light()
+                                    }) {
+                                        Label("Clear Filters", systemImage: "xmark.circle")
+                                    }
+                                }
+                            } label: {
+                                ZStack {
+                                    // Badge indicator if filters are active
+                                    if hasActiveFilters {
+                                        Circle()
+                                            .fill(AppTheme.accentColor(for: selectedTheme))
+                                            .frame(width: 8, height: 8)
+                                            .offset(x: 10, y: -10)
+                                    }
+                                    
+                                    Image(systemName: "line.3.horizontal")
+                                        .foregroundColor(.white)
+                                        .font(.title3)
+                                        .frame(width: 44, height: 44)
+                                }
+                            }
+                        }
+                    }
+                    .frame(height: 44)
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 16)
+                
+                GeometryReader { geometry in
+                    VStack(spacing: 0) {
+                        // Search Bar
+                        searchBar
+                            .padding(.horizontal, 20)
+                            .padding(.top, 12)
                     
                     // Filter Pills
                     if hasActiveFilters {
@@ -65,62 +150,8 @@ struct CookingTipsView: View {
                 }
             }
         }
-        .navigationTitle("Cooking Tips")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.hidden, for: .navigationBar)
-        .toolbar(content: {
-            ToolbarItem(placement: .topBarTrailing) {
-                Menu {
-                    // View mode toggle
-                    Button(action: {
-                        withAnimation(.spring(response: 0.3)) {
-                            viewMode = viewMode == .card ? .list : .card
-                        }
-                        HapticManager.shared.light()
-                    }) {
-                        Label(
-                            viewMode == .card ? "List View" : "Card View",
-                            systemImage: viewMode == .card ? "list.bullet" : "square.grid.2x2"
-                        )
-                    }
-                    
-                    Divider()
-                    
-                    // Filters
-                    Button(action: {
-                        showFilters = true
-                        HapticManager.shared.light()
-                    }) {
-                        Label(
-                            hasActiveFilters ? "Filters (Active)" : "Filters",
-                            systemImage: "line.3.horizontal.decrease.circle"
-                        )
-                    }
-                    
-                    // Clear filters option if active
-                    if hasActiveFilters {
-                        Button(action: {
-                            tipsManager.clearFilters()
-                            HapticManager.shared.light()
-                        }) {
-                            Label("Clear Filters", systemImage: "xmark.circle")
-                        }
-                    }
-                } label: {
-                    ZStack {
-                        // Badge indicator if filters are active
-                        if hasActiveFilters {
-                            Circle()
-                                .fill(AppTheme.accentColor(for: selectedTheme))
-                                .frame(width: 8, height: 8)
-                                .offset(x: 10, y: -10)
-                        }
-                        
-                        Image(systemName: "line.3.horizontal")
-                    }
-                }
-            }
-        })
+        }
+        .navigationBarHidden(true)
         .sheet(item: $selectedTip) { tip in
             CookingTipDetailView(tip: tip, onToggleFavorite: {
                 tipsManager.toggleFavorite(tip)
