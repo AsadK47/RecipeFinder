@@ -51,9 +51,20 @@ struct CookTimerView: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
+                    // Header
                     VStack(spacing: 12) {
                         GeometryReader { geometry in
                             HStack(spacing: 0) {
+                                // Back button
+                                Button(action: {
+                                    dismiss()
+                                }) {
+                                    Image(systemName: "chevron.left")
+                                        .font(.title3)
+                                        .foregroundColor(.white)
+                                        .frame(width: 44, height: 44)
+                                }
+                                
                                 Spacer()
                                 
                                 Text("Cook Timers")
@@ -63,12 +74,54 @@ struct CookTimerView: View {
                                     .minimumScaleFactor(0.7)
                                 
                                 Spacer()
+                                
+                                // Menu button
+                                Menu {
+                                    Button(action: {
+                                        HapticManager.shared.light()
+                                        showCustomInput = true
+                                    }) {
+                                        Label("Custom Timer", systemImage: "timer")
+                                    }
+                                    
+                                    if !timers.isEmpty {
+                                        Divider()
+                                        
+                                        Button(action: {
+                                            pauseAllTimers()
+                                            HapticManager.shared.light()
+                                        }) {
+                                            Label("Pause All", systemImage: "pause.circle")
+                                        }
+                                        
+                                        Button(action: {
+                                            resumeAllTimers()
+                                            HapticManager.shared.light()
+                                        }) {
+                                            Label("Resume All", systemImage: "play.circle")
+                                        }
+                                        
+                                        Divider()
+                                        
+                                        Button(role: .destructive, action: {
+                                            timers.removeAll()
+                                            HapticManager.shared.light()
+                                        }) {
+                                            Label("Clear All Timers", systemImage: "trash")
+                                        }
+                                    }
+                                } label: {
+                                    Image(systemName: "line.3.horizontal")
+                                        .foregroundColor(.white)
+                                        .font(.title3)
+                                        .frame(width: 44, height: 44)
+                                }
                             }
                         }
                         .frame(height: 44)
-                        .padding(.horizontal, 20)
-                        .padding(.top, 16)
                     }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 16)
                     
                     ScrollView {
                         VStack(spacing: 24) {
@@ -94,49 +147,7 @@ struct CookTimerView: View {
                     }
                 }
             }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Menu {
-                        Button(action: {
-                            HapticManager.shared.light()
-                            showCustomInput = true
-                        }) {
-                            Label("Custom Timer", systemImage: "timer")
-                        }
-                        
-                        if !timers.isEmpty {
-                            Divider()
-                            
-                            Button(action: {
-                                pauseAllTimers()
-                                HapticManager.shared.light()
-                            }) {
-                                Label("Pause All", systemImage: "pause.circle")
-                            }
-                            
-                            Button(action: {
-                                resumeAllTimers()
-                                HapticManager.shared.light()
-                            }) {
-                                Label("Resume All", systemImage: "play.circle")
-                            }
-                            
-                            Divider()
-                            
-                            Button(role: .destructive, action: {
-                                timers.removeAll()
-                                HapticManager.shared.light()
-                            }) {
-                                Label("Clear All Timers", systemImage: "trash")
-                            }
-                        }
-                    } label: {
-                        Image(systemName: "line.3.horizontal")
-                    }
-                }
-            }
+            .navigationBarHidden(true)
             .sheet(isPresented: $showCustomInput) {
                 customTimeInputSheet
             }
