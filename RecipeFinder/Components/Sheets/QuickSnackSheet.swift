@@ -231,6 +231,9 @@ struct EmojiSelectorView: View {
                     cardBackground(cardStyle: cardStyle, colorScheme: colorScheme)
                 }
             }
+            .accessibilityLabel("Selected emoji: \(selectedEmoji)")
+            .accessibilityHint("Double tap to choose a different emoji icon")
+            .accessibilityAddTraits(.isButton)
             
             if showEmojiPicker {
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 8), spacing: 8) {

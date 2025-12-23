@@ -163,9 +163,11 @@ struct RecipeDetailView: View {
             Image(systemName: "person.2.fill")
                 .font(.title2)
                 .foregroundColor(.cyan)
+                .accessibilityHidden(true)
             Text("Servings")
                 .font(.caption)
                 .foregroundColor(.secondary)
+                .accessibilityHidden(true)
             
             HStack(spacing: 4) {
                 Text("\(recipe.currentServings)")
@@ -179,6 +181,9 @@ struct RecipeDetailView: View {
                         .foregroundColor(AppTheme.accentColor)
                 }
             }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Current servings: \(recipe.currentServings)")
+            .accessibilityValue(recipe.currentServings != recipe.baseServings ? "Scaled \(String(format: "%.1f", recipe.scaleFactor)) times from base" : "Base servings")
         }
         .frame(maxWidth: .infinity)
     }
@@ -221,6 +226,10 @@ struct RecipeDetailView: View {
                         .fill(isActive ? AppTheme.accentColor : Color.white.opacity(0.15))
                 )
         }
+        .accessibilityLabel("Scale to \(label)")
+        .accessibilityValue(isActive ? "Active" : "Inactive")
+        .accessibilityHint("Sets servings to \(targetServings)")
+        .accessibilityAddTraits(.isButton)
     }
     
     private func servingsButton(icon: String, action: @escaping () -> Void, isEnabled: Bool) -> some View {
@@ -232,6 +241,9 @@ struct RecipeDetailView: View {
                 .background(Circle().fill(isEnabled ? AppTheme.accentColor : Color.gray))
         }
         .disabled(!isEnabled)
+        .accessibilityLabel(icon == "minus" ? "Decrease servings" : "Increase servings")
+        .accessibilityHint(icon == "minus" ? "Reduces serving size by one" : "Increases serving size by one")
+        .accessibilityAddTraits(.isButton)
     }
     
     private var ingredientsSection: some View {
@@ -291,6 +303,9 @@ struct RecipeDetailView: View {
             )
         }
         .buttonStyle(PlainButtonStyle())
+        .accessibilityLabel("Measurement system")
+        .accessibilityValue(measurementSystem.rawValue)
+        .accessibilityHint("Double tap to switch between metric and imperial units")
     }
     
     private func chevronButton(for section: String) -> some View {
@@ -303,6 +318,9 @@ struct RecipeDetailView: View {
                 .animation(.spring(response: 0.3), value: expandedSections.contains(section))
         }
         .buttonStyle(PlainButtonStyle())
+        .accessibilityLabel(expandedSections.contains(section) ? "Collapse \(section)" : "Expand \(section)")
+        .accessibilityHint("Double tap to \(expandedSections.contains(section) ? "collapse" : "expand") \(section) section")
+        .accessibilityAddTraits(.isButton)
     }
     
     private var ingredientsList: some View {
@@ -329,8 +347,8 @@ struct RecipeDetailView: View {
                             Image(systemName: "xmark.circle.fill")
                                 .font(.system(size: 16))
                                 .foregroundColor(.secondary.opacity(0.5))
-                        }
-                    }
+                        }                        .accessibilityLabel("Dismiss hint")
+                        .accessibilityHint("Closes swipe instruction banner")                    }
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
                     .background(

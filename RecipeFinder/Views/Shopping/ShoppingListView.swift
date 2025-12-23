@@ -98,11 +98,14 @@ struct ShoppingListView: View {
                             ProgressView(value: Double(checkedCount), total: Double(totalCount))
                                 .progressViewStyle(LinearProgressViewStyle(tint: AppTheme.accentColor(for: selectedTheme)))
                                 .frame(height: 8)
+                                .accessibilityLabel("Shopping progress")
+                                .accessibilityValue("\(checkedCount) of \(totalCount) items checked")
                             
                             HStack {
                                 Text("\(checkedCount)/\(totalCount) completed")
                                     .font(.caption)
                                     .foregroundColor(.white.opacity(0.8))
+                                    .accessibilityHidden(true)
                                 Spacer()
                             }
                         }
@@ -267,6 +270,8 @@ struct ShoppingListView: View {
                             .foregroundColor(colorScheme == .dark ? .white : .black)
                             .frame(width: 44, height: 44)
                     }
+                    .accessibilityLabel("Shopping list menu")
+                    .accessibilityHint("Opens menu with options to add items, share list, or manage categories")
                 }
             }
             .frame(height: 44)

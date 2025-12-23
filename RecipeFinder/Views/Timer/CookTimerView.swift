@@ -65,6 +65,8 @@ struct CookTimerView: View {
                                         .foregroundColor(.white)
                                         .frame(width: 44, height: 44)
                                 }
+                                .accessibilityLabel("Back")
+                                .accessibilityHint("Returns to previous screen")
                                 
                                 Spacer()
                                 
@@ -828,6 +830,8 @@ struct CompletedTimerBannerView: View {
                     .font(.title3)
                     .foregroundColor(.secondary)
             }
+            .accessibilityLabel("Dismiss notification")
+            .accessibilityHint("Closes timer completion notification")
         }
         .padding(16)
         .background {

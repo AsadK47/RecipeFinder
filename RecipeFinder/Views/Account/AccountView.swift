@@ -671,6 +671,9 @@ struct AccountView: View {
                                 BadgeCard(badge: badge, colorScheme: colorScheme, cardStyle: cardStyle)
                             }
                             .buttonStyle(PlainButtonStyle())
+                            .accessibilityLabel(badge.title)
+                            .accessibilityHint(badge.isUnlocked ? "Unlocked badge. Double tap for details" : "Locked badge. \(badge.description)")
+                            .accessibilityAddTraits(.isButton)
                         }
                     }
                 }

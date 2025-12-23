@@ -26,6 +26,7 @@ struct ModernCircleButton: View {
                 }
         }
         .buttonStyle(PlainButtonStyle())
+        .accessibilityAddTraits(.isButton)
     }
 }
 

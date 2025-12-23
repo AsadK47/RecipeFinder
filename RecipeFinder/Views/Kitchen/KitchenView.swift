@@ -163,6 +163,8 @@ struct KitchenView: View {
                             .foregroundColor(colorScheme == .dark ? .white : .black)
                             .frame(width: 44, height: 44)
                     }
+                    .accessibilityLabel("Kitchen menu")
+                    .accessibilityHint("Opens menu to add ingredients or clear kitchen inventory")
                 }
             }
             .frame(height: 44)
@@ -697,6 +699,7 @@ struct AddIngredientSheet: View {
                         dismiss()
                     }
                     .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                    .accessibilityHint("Closes add ingredients screen")
                 }
             }
         }
