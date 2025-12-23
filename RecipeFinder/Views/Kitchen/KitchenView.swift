@@ -237,8 +237,8 @@ struct KitchenView: View {
         VStack(spacing: 24) {
             VStack(spacing: 16) {
                 Image(systemName: "refrigerator")
-                    .font(.system(size: 80))
-                    .foregroundColor(.white.opacity(0.3))
+                    .font(.system(size: 70))
+                    .foregroundColor(Color(colorScheme == .dark ? .white : .black).opacity(0.4))
                 
                 Text("Your Kitchen is Empty")
                     .font(.title2)
@@ -247,7 +247,7 @@ struct KitchenView: View {
                 
                 Text("Tap the menu button to Quick Add ingredients, or use the search bar to find and add items")
                     .font(.subheadline)
-                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.9) : .black.opacity(0.8))
+                    .foregroundColor(Color(colorScheme == .dark ? .white : .black).opacity(0.7))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 40)
             }
@@ -625,7 +625,7 @@ struct AddIngredientSheet: View {
                 
                 VStack(spacing: 0) {
                     // Search Bar
-                    ModernSearchBar(text: $searchText, placeholder: "Search foods...")
+                    ModernSearchBar(text: $searchText, placeholder: "Search Foods...")
                         .padding(.horizontal, 20)
                         .padding(.top, 16)
                         .padding(.bottom, 12)

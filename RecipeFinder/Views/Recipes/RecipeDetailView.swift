@@ -744,7 +744,7 @@ struct RecipeDetailView: View {
                     HStack {
                         Text("Unit")
                         Spacer()
-                        TextField("ml, g, cups, etc.", text: $editingUnit)
+                        TextField("Unit (ml, g, cups, etc.)", text: $editingUnit)
                             .multilineTextAlignment(.trailing)
                             .frame(maxWidth: 150)
                     }

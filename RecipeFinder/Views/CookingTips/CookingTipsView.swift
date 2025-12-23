@@ -35,6 +35,7 @@ struct CookingTipsView: View {
                         HStack(spacing: 0) {
                             // Back button
                             Button(action: {
+                                HapticManager.shared.light()
                                 dismiss()
                             }) {
                                 Image(systemName: "chevron.left")
@@ -199,7 +200,7 @@ struct CookingTipsView: View {
                 .foregroundColor(.secondary)
                 .font(.body)
             
-            TextField("Search tips...", text: $tipsManager.searchText)
+            TextField("Search Tips...", text: $tipsManager.searchText)
                 .autocapitalization(.none)
                 .disableAutocorrection(true)
             
@@ -363,8 +364,8 @@ struct CookingTipsView: View {
     private var emptyStateView: some View {
         VStack(spacing: 20) {
             Image(systemName: "magnifyingglass.circle")
-                .font(.system(size: 64))
-                .foregroundColor(.secondary.opacity(0.5))
+                .font(.system(size: 70))
+                .foregroundColor(Color(colorScheme == .dark ? .white : .black).opacity(0.4))
             
             Text("No Tips Found")
                 .font(.title2)
@@ -373,7 +374,7 @@ struct CookingTipsView: View {
             
             Text("Try adjusting your filters or search terms")
                 .font(.subheadline)
-                .foregroundColor(.secondary)
+                .foregroundColor(Color(colorScheme == .dark ? .white : .black).opacity(0.7))
                 .multilineTextAlignment(.center)
             
             Button(action: {

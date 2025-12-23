@@ -42,7 +42,7 @@ struct RecipeImportView: View {
                         Image(systemName: "link")
                             .foregroundColor(.secondary)
                         
-                        TextField("https://example.com/recipe", text: $urlText)
+                        TextField("https://example.com/recipe...", text: $urlText)
                             .textFieldStyle(.plain)
                             .keyboardType(.URL)
                             .autocapitalization(.none)

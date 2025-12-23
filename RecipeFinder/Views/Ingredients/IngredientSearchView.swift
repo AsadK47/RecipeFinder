@@ -169,7 +169,7 @@ struct IngredientSearchView: View {
                         }
                         .padding(.horizontal, 20)
                         
-                        ModernSearchBar(text: $searchText, placeholder: "Search for ingredients...")
+                        ModernSearchBar(text: $searchText, placeholder: "Search for Ingredients...")
                             .padding(.horizontal, 20)
                         
                         // Active filters chips

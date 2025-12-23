@@ -57,6 +57,7 @@ struct CookTimerView: View {
                             HStack(spacing: 0) {
                                 // Back button
                                 Button(action: {
+                                    HapticManager.shared.light()
                                     dismiss()
                                 }) {
                                     Image(systemName: "chevron.left")
@@ -374,7 +375,7 @@ struct CookTimerView: View {
                             .font(.caption)
                             .foregroundColor(.white.opacity(0.7))
                         
-                        TextField("e.g., Pasta, Cookies", text: $customName)
+                        TextField("E.g., Pasta, Cookies", text: $customName)
                             .textFieldStyle(.roundedBorder)
                             .autocorrectionDisabled()
                     }

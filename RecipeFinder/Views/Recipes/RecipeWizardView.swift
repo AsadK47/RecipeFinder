@@ -407,11 +407,11 @@ struct RecipeWizardView: View {
                                     .font(.caption2)
                                     .foregroundColor(.secondary)
                                 HStack(spacing: 4) {
-                                    TextField("1", text: $ingredientItems[index].quantity)
+                                    TextField("Qty", text: $ingredientItems[index].quantity)
                                         .keyboardType(.decimalPad)
                                         .textFieldStyle(.roundedBorder)
                                         .frame(width: 50)
-                                    TextField("tbsp", text: $ingredientItems[index].unit)
+                                    TextField("Unit", text: $ingredientItems[index].unit)
                                         .textFieldStyle(.roundedBorder)
                                         .frame(width: 60)
                                 }
@@ -422,7 +422,7 @@ struct RecipeWizardView: View {
                                 Text("Ingredient")
                                     .font(.caption2)
                                     .foregroundColor(.secondary)
-                                TextField("Name", text: $ingredientItems[index].name)
+                                TextField("Ingredient Name", text: $ingredientItems[index].name)
                                     .textFieldStyle(.roundedBorder)
                             }
                             

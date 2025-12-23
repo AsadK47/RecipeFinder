@@ -398,7 +398,7 @@ struct SnackNameInputView: View {
                 .font(.headline)
                 .foregroundColor(.white)
             
-            TextField("e.g., Apple Slices", text: $snackName)
+            TextField("E.g., Apple Slices", text: $snackName)
                 .textFieldStyle(.plain)
                 .padding()
                 .background {

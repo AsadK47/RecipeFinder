@@ -78,6 +78,7 @@ struct NotesListView: View {
                             // Left side - back button with spacer to match right side width
                             HStack(spacing: 0) {
                                 Button(action: {
+                                    HapticManager.shared.light()
                                     dismiss()
                                 }) {
                                     Image(systemName: "chevron.left")
@@ -135,7 +136,7 @@ struct NotesListView: View {
                     .frame(height: 44)
                     
                     // Search Bar
-                    ModernSearchBar(text: $searchText, placeholder: "Search notes...")
+                    ModernSearchBar(text: $searchText, placeholder: "Search Notes...")
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 16)
@@ -287,12 +288,12 @@ struct NotesListView: View {
     private var emptyStateView: some View {
         VStack(spacing: 20) {
             Image(systemName: searchText.isEmpty ? "note.text" : "magnifyingglass")
-                .font(.system(size: 64))
-                .foregroundColor(.white.opacity(0.3))
+                .font(.system(size: 70))
+                .foregroundColor(.white.opacity(0.4))
             
             Text(searchText.isEmpty ? "No Notes Yet" : "No Matching Notes")
                 .font(.title2)
-                .fontWeight(.semibold)
+                .fontWeight(.bold)
                 .foregroundColor(.white)
             
             Text(searchText.isEmpty ? "Tap the + button at the top to create your first note" : "Try a different search")

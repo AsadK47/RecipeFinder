@@ -255,35 +255,6 @@ struct SettingsTabView: View {
                 }
             }
         }
-    
-    // MARK: - Header
-    @ViewBuilder
-    private var header: some View {
-        GeometryReader { geometry in
-            HStack(spacing: 0) {
-                // Empty space to balance back button
-                Color.clear
-                    .frame(width: 44, height: 44)
-                
-                Spacer()
-                
-                Text("Settings")
-                    .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.7)
-                
-                Spacer()
-                
-                // Empty space for symmetry
-                Color.clear
-                    .frame(width: 44, height: 44)
-            }
-        }
-        .frame(height: 44)
-        .padding(.horizontal, 20)
-        .padding(.top, 8)
-    }
 }
 
 // Settings Components

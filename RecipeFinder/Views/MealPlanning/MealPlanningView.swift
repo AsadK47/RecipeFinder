@@ -537,16 +537,17 @@ struct MealPlanningView: View {
             
             VStack(spacing: 16) {
                 Image(systemName: "calendar.badge.plus")
-                    .font(.system(size: 48))
-                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.3) : .black.opacity(0.3))
+                    .font(.system(size: 70))
+                    .foregroundColor(Color(colorScheme == .dark ? .white : .black).opacity(0.4))
                 
-                Text("No meals planned for this day")
-                    .font(.headline)
-                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.8))
+                Text("No Meals Planned for This Day")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
                 
                 Text("Tap below to add meals for \(shortDateString)")
                     .font(.subheadline)
-                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6))
+                    .foregroundColor(Color(colorScheme == .dark ? .white : .black).opacity(0.7))
                     .multilineTextAlignment(.center)
                 
                 Button(action: {
@@ -584,17 +585,17 @@ struct MealPlanningView: View {
     private var emptyStateView: some View {
         VStack(spacing: 16) {
             Image(systemName: "calendar.badge.plus")
-                .font(.system(size: 60))
-                .foregroundColor(.white.opacity(0.3))
+                .font(.system(size: 70))
+                .foregroundColor(.white.opacity(0.4))
             
-            Text("No meals planned yet")
-                .font(.title3)
-                .fontWeight(.semibold)
-                .foregroundColor(.white.opacity(0.8))
+            Text("No Meals Planned Yet")
+                .font(.title2)
+                .fontWeight(.bold)
+                .foregroundColor(.white)
             
             Text("Tap on a date to start planning your meals")
                 .font(.subheadline)
-                .foregroundColor(.white.opacity(0.6))
+                .foregroundColor(.white.opacity(0.7))
                 .multilineTextAlignment(.center)
             
             Button(action: {
@@ -1126,7 +1127,7 @@ struct RecipeSelectionSheet: View {
                         .font(.subheadline)
                         .foregroundColor(.white.opacity(0.7))
                     
-                    ModernSearchBar(text: $searchText, placeholder: "Search recipes...")
+                    ModernSearchBar(text: $searchText, placeholder: "Search Recipes...")
                         .padding(.horizontal)
                     
                     ScrollView {

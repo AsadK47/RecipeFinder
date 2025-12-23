@@ -31,6 +31,7 @@ struct NutritionalTipsView: View {
                         HStack(spacing: 0) {
                             // Back button
                             Button(action: {
+                                HapticManager.shared.light()
                                 dismiss()
                             }) {
                                 Image(systemName: "chevron.left")

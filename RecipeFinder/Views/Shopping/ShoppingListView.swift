@@ -217,12 +217,16 @@ struct ShoppingListView: View {
                     // Menu button
                     Menu {
                         Button(action: {
+                            HapticManager.shared.light()
                             showQuickAdd = true
                         }) {
                             Label("Quick Add", systemImage: "plus.circle")
                         }
                         
-                        Button(action: shareShoppingList) {
+                        Button(action: {
+                            HapticManager.shared.light()
+                            shareShoppingList()
+                        }) {
                             Label("Share List", systemImage: "square.and.arrow.up")
                         }
                         
@@ -338,8 +342,8 @@ struct ShoppingListView: View {
             VStack(spacing: 24) {
                 VStack(spacing: 12) {
                     Image(systemName: "cart.circle.fill")
-                        .font(.system(size: 80))
-                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.4))
+                        .font(.system(size: 70))
+                        .foregroundColor(Color(colorScheme == .dark ? .white : .black).opacity(0.4))
                         .padding(.top, 40)
                     
                     Text("Start Your Shopping List")
@@ -349,7 +353,7 @@ struct ShoppingListView: View {
                     
                     Text("Use the menu button or search bar, or tap + on any recipe")
                         .font(.subheadline)
-                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
+                        .foregroundColor(Color(colorScheme == .dark ? .white : .black).opacity(0.7))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 32)
                 }

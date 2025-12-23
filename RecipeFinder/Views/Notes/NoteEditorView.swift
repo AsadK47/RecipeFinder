@@ -229,7 +229,7 @@ struct NoteEditorView: View {
                 
                 // Tag input
                 HStack {
-                    TextField("Add tag...", text: $currentTag)
+                    TextField("Add Tag...", text: $currentTag)
                         .foregroundColor(colorScheme == .dark ? .white : .black)
                         .onSubmit {
                             addTag()

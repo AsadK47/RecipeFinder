@@ -599,12 +599,12 @@ struct RecipeSearchView: View {
     private var emptyStateView: some View {
         VStack(spacing: 20) {
             Image(systemName: "magnifyingglass")
-                .font(.system(size: 80))
-                .foregroundColor(.white.opacity(0.5))
+                .font(.system(size: 70))
+                .foregroundColor(.white.opacity(0.4))
             
-            Text("No recipes found")
-                .font(.title3)
-                .fontWeight(.semibold)
+            Text("No Recipes Found")
+                .font(.title2)
+                .fontWeight(.bold)
                 .foregroundColor(.white)
             
             Text("Try adjusting your filters or search")
@@ -747,7 +747,7 @@ struct FilterSheet: View {
                                 .font(.headline)
                                 .foregroundColor(.white)
                             
-                            TextField("e.g., chicken, tomato...", text: $ingredientSearchText)
+                            TextField("E.g., Chicken, Tomato...", text: $ingredientSearchText)
                                 .textFieldStyle(.plain)
                                 .padding(12)
                                 .background(
