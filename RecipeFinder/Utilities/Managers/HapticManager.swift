@@ -9,32 +9,42 @@ final class HapticManager: Sendable {
     
     // Light tap - for subtle interactions
     func light() {
-        let generator = UIImpactFeedbackGenerator(style: .light)
-        generator.impactOccurred()
+        Task { @MainActor in
+            let generator = UIImpactFeedbackGenerator(style: .light)
+            generator.impactOccurred()
+        }
     }
     
     // Medium impact - for standard interactions
     func medium() {
-        let generator = UIImpactFeedbackGenerator(style: .medium)
-        generator.impactOccurred()
+        Task { @MainActor in
+            let generator = UIImpactFeedbackGenerator(style: .medium)
+            generator.impactOccurred()
+        }
     }
     
     // Heavy impact - for important actions
     func heavy() {
-        let generator = UIImpactFeedbackGenerator(style: .heavy)
-        generator.impactOccurred()
+        Task { @MainActor in
+            let generator = UIImpactFeedbackGenerator(style: .heavy)
+            generator.impactOccurred()
+        }
     }
     
     // Soft impact - for very gentle feedback
     func soft() {
-        let generator = UIImpactFeedbackGenerator(style: .soft)
-        generator.impactOccurred()
+        Task { @MainActor in
+            let generator = UIImpactFeedbackGenerator(style: .soft)
+            generator.impactOccurred()
+        }
     }
     
     // Rigid impact - for firm, definitive actions
     func rigid() {
-        let generator = UIImpactFeedbackGenerator(style: .rigid)
-        generator.impactOccurred()
+        Task { @MainActor in
+            let generator = UIImpactFeedbackGenerator(style: .rigid)
+            generator.impactOccurred()
+        }
     }
     
     // Success notification - for successful operations
@@ -63,7 +73,7 @@ final class HapticManager: Sendable {
     
     // Selection changed - for picker/selection changes
     func selection() {
-        DispatchQueue.main.async {
+        Task { @MainActor in
             let generator = UISelectionFeedbackGenerator()
             generator.selectionChanged()
         }
@@ -82,11 +92,11 @@ final class HapticManager: Sendable {
     
     // Success celebration - uses native vibration pattern
     func celebrate() {
-        let generator = UINotificationFeedbackGenerator()
-        generator.notificationOccurred(.success)
-        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
-        
         Task { @MainActor in
+            let generator = UINotificationFeedbackGenerator()
+            generator.notificationOccurred(.success)
+            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+            
             try? await Task.sleep(nanoseconds: 150_000_000) // 0.15 seconds
             self.light()
         }

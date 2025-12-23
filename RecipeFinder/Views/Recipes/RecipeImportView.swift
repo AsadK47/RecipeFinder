@@ -3,10 +3,40 @@ import SwiftUI
 struct RecipeImportView: View {
     @Environment(\.dismiss) var dismiss
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
+    @Environment(\.colorScheme) var colorScheme
     @StateObject private var importer = RecipeImporter()
     @State private var urlText = ""
     @FocusState private var isTextFieldFocused: Bool
     @State private var showRecipeWizard = false
+    @State private var loadingStage: LoadingStage = .idle
+    
+    enum LoadingStage {
+        case idle
+        case fetching
+        case parsing
+        case extracting
+        case complete
+        
+        var message: String {
+            switch self {
+            case .idle: return ""
+            case .fetching: return "Fetching recipe from website..."
+            case .parsing: return "Parsing recipe data..."
+            case .extracting: return "Extracting ingredients..."
+            case .complete: return "Ready!"
+            }
+        }
+        
+        var progress: Double {
+            switch self {
+            case .idle: return 0.0
+            case .fetching: return 0.33
+            case .parsing: return 0.66
+            case .extracting: return 0.90
+            case .complete: return 1.0
+            }
+        }
+    }
     
     var onImport: (RecipeModel) -> Void
     
@@ -31,6 +61,7 @@ struct RecipeImportView: View {
                         .padding(.horizontal)
                 }
                 .padding(.top, 40)
+                .opacity(importer.isLoading ? 0.5 : 1.0)
                 
                 // URL Input
                 VStack(alignment: .leading, spacing: 8) {
@@ -62,26 +93,61 @@ struct RecipeImportView: View {
                 }
                 .padding(.horizontal)
                 
-                // Import Button
-                Button(action: importRecipe, label: {
-                    HStack {
-                        if importer.isLoading {
-                            ProgressView()
-                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                        } else {
+                // Import Button or Loading State
+                if importer.isLoading {
+                    // Enhanced loading view with stages
+                    VStack(spacing: 20) {
+                        ZStack {
+                            // Animated circle background
+                            Circle()
+                                .stroke(AppTheme.accentColor(for: selectedTheme).opacity(0.3), lineWidth: 4)
+                                .frame(width: 80, height: 80)
+                            
+                            Circle()
+                                .trim(from: 0, to: loadingStage.progress)
+                                .stroke(
+                                    AppTheme.accentColor(for: selectedTheme),
+                                    style: StrokeStyle(lineWidth: 4, lineCap: .round)
+                                )
+                                .frame(width: 80, height: 80)
+                                .rotationEffect(.degrees(-90))
+                                .animation(.easeInOut(duration: 0.5), value: loadingStage)
+                            
+                            Image(systemName: "sparkles")
+                                .font(.title)
+                                .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                        }
+                        
+                        VStack(spacing: 8) {
+                            Text(loadingStage.message)
+                                .font(.headline)
+                                .foregroundColor(.primary)
+                            
+                            Text("\(Int(loadingStage.progress * 100))% complete")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        .animation(.easeInOut, value: loadingStage)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 40)
+                    .padding(.horizontal)
+                } else {
+                    Button(action: importRecipe, label: {
+                        HStack {
                             Image(systemName: "arrow.down.circle.fill")
                             Text("Import Recipe")
                         }
-                    }
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 56)
-                    .background(urlText.isEmpty || importer.isLoading ? Color.gray : AppTheme.accentColor(for: selectedTheme))
-                    .cornerRadius(16)
-                })
-                .disabled(urlText.isEmpty || importer.isLoading)
-                .padding(.horizontal)
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 56)
+                        .background(urlText.isEmpty ? Color.gray : AppTheme.accentColor(for: selectedTheme))
+                        .cornerRadius(16)
+                    })
+                    .disabled(urlText.isEmpty)
+                    .padding(.horizontal)
+                }
                 
                 // Error Message
                 if let error = importer.errorMessage {
@@ -322,8 +388,26 @@ struct RecipeImportView: View {
         
         let importerRef = importer
         
+        // Simulate loading stages for better UX
         Task {
+            loadingStage = .fetching
+            try? await Task.sleep(nanoseconds: 500_000_000) // 0.5s
+            
+            loadingStage = .parsing
+            
             await importerRef.importRecipe(from: url)
+            
+            if importerRef.extractedData != nil {
+                loadingStage = .extracting
+                try? await Task.sleep(nanoseconds: 300_000_000) // 0.3s
+                
+                loadingStage = .complete
+                HapticManager.shared.success()
+                try? await Task.sleep(nanoseconds: 200_000_000) // 0.2s
+            } else {
+                loadingStage = .idle
+                HapticManager.shared.error()
+            }
         }
     }
 }
