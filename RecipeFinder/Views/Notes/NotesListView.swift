@@ -75,15 +75,19 @@ struct NotesListView: View {
                 VStack(spacing: 12) {
                     GeometryReader { geometry in
                         HStack(spacing: 0) {
-                            // Back button
-                            Button(action: {
-                                dismiss()
-                            }) {
-                                Image(systemName: "chevron.left")
-                                    .font(.title3)
-                                    .foregroundColor(.white)
-                                    .frame(width: 44, height: 44)
+                            // Left side - back button with spacer to match right side width
+                            HStack(spacing: 0) {
+                                Button(action: {
+                                    dismiss()
+                                }) {
+                                    Image(systemName: "chevron.left")
+                                        .font(.title3)
+                                        .foregroundColor(.white)
+                                        .frame(width: 44, height: 44)
+                                }
+                                Spacer()
                             }
+                            .frame(width: 88) // Match right side width
                             
                             Spacer()
                             
@@ -95,8 +99,8 @@ struct NotesListView: View {
                             
                             Spacer()
                             
-                            // Menu and Add buttons
-                            HStack(spacing: 12) {
+                            // Right side - menu and add buttons
+                            HStack(spacing: 0) {
                                 Menu {
                                     // Filter option
                                     Button(
@@ -112,8 +116,8 @@ struct NotesListView: View {
                                     Image(systemName: "line.3.horizontal")
                                         .foregroundColor(.white)
                                         .font(.title3)
-                                        .frame(width: 44, height: 44)
                                 }
+                                .frame(width: 44, height: 44)
                                 
                                 Button(action: {
                                     HapticManager.shared.medium()
@@ -122,9 +126,10 @@ struct NotesListView: View {
                                     Image(systemName: "plus")
                                         .foregroundColor(.white)
                                         .font(.title3)
-                                        .frame(width: 44, height: 44)
                                 }
+                                .frame(width: 44, height: 44)
                             }
+                            .frame(width: 88) // 44 + 44
                         }
                     }
                     .frame(height: 44)
