@@ -54,22 +54,25 @@ struct AccountView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header Section
-                VStack(spacing: 0) {
+                // Header
+                VStack(spacing: 12) {
                     GeometryReader { geometry in
-                        HStack {
+                        HStack(spacing: 0) {
                             Spacer()
+                            
                             Text("Account")
                                 .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
                                 .foregroundColor(.white)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.7)
+                            
                             Spacer()
                         }
                     }
                     .frame(height: 44)
                 }
                 .padding(.horizontal, 20)
-                .padding(.top, 8)
-                .padding(.bottom, 4)
+                .padding(.top, 16)
                 
                 ScrollView {
                     VStack(spacing: 20) {
@@ -660,6 +663,7 @@ struct AccountView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     let recipeCount = PersistenceController.shared.getRecipeCount()
                     let allBadges = badgeManager.getAllBadges(recipeCount: recipeCount)
+                        .sorted { $0.isUnlocked && !$1.isUnlocked } // Unlocked first
                     
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                         ForEach(allBadges) { badge in
@@ -1166,6 +1170,8 @@ struct BadgeCard: View {
         case "orange": return .orange
         case "yellow": return .yellow
         case "gold": return .yellow
+        case "teal": return .teal
+        case "indigo": return .indigo
         default: return .gray
         }
     }
@@ -1215,8 +1221,6 @@ struct BadgeCard: View {
                     .fill(Color.black.opacity(0.3))
             }
         }
-        .saturation(badge.isUnlocked ? 1.0 : 0.3)
-        .opacity(badge.isUnlocked ? 1.0 : 0.6)
     }
 }
 

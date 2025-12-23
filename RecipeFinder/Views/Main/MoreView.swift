@@ -25,87 +25,71 @@ struct MoreView: View {
                     
                     ScrollView {
                         VStack(spacing: 24) {
-                            // Settings Section
-                            VStack(alignment: .leading, spacing: 12) {
-                                Text("Settings")
-                                    .font(.title3)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.white.opacity(0.9))
-                                    .padding(.horizontal, 20)
-                                
-                                MoreCard {
-                                    NavigationLink(destination: SettingsTabView()
-                                    ) {
-                                        MoreRow(
-                                            icon: "gearshape.circle.fill",
-                                            iconColor: AppTheme.accentColor(for: selectedTheme),
-                                            title: "Settings",
-                                            subtitle: "Customize your experience"
-                                        )
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
+                            MoreCard {
+                                NavigationLink(destination: SettingsTabView()
+                                ) {
+                                    MoreRow(
+                                        icon: "gearshape.circle.fill",
+                                        iconColor: AppTheme.accentColor(for: selectedTheme),
+                                        title: "Settings",
+                                        subtitle: "Customize your experience"
+                                    )
                                 }
-                                .padding(.horizontal, 20)
+                                .buttonStyle(PlainButtonStyle())
                             }
+                            .padding(.horizontal, 20)
                             
-                            // Features Section
-                            VStack(alignment: .leading, spacing: 12) {
-                                Text("Features")
-                                    .font(.title3)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.white.opacity(0.9))
-                                    .padding(.horizontal, 20)
-                                
-                                VStack(spacing: 12) {
-                                    MoreCard {
-                                        NavigationLink(destination: NutritionalTipsView()) {
-                                            MoreRow(
-                                                icon: "heart.text.square.fill",
-                                                iconColor: .pink,
-                                                title: "Nutritional Science",
-                                                subtitle: "Evidence-based health guidance"
-                                            )
-                                        }
-                                        .buttonStyle(PlainButtonStyle())
-                                    }
-                                    
-                                    MoreCard {
-                                        NavigationLink(destination: CookingTipsView()) {
-                                            MoreRow(
-                                                icon: "lightbulb.fill",
-                                                iconColor: .yellow,
-                                                title: "Cooking Tips",
-                                                subtitle: "Expert advice & kitchen hacks"
-                                            )
-                                        }
-                                        .buttonStyle(PlainButtonStyle())
-                                    }
-                                    
-                                    MoreCard {
-                                        NavigationLink(destination: CookTimerView()) {
-                                            MoreRow(
-                                                icon: "calendar.circle.fill",
-                                                iconColor: .green,
-                                                title: "Cook Timer",
-                                                subtitle: "Ready, set, cook!"
-                                            )
-                                        }
-                                        .buttonStyle(PlainButtonStyle())
-                                    }
-                                    
-                                    MoreCard {
-                                        NavigationLink(destination: NotesListView()) {
-                                            MoreRow(
-                                                icon: "note.text.badge.plus",
-                                                iconColor: .orange,
-                                                title: "Notes",
-                                                subtitle: "Capture your cooking ideas"
-                                            )
-                                        }
-                                        .buttonStyle(PlainButtonStyle())
-                                    }
+                            MoreCard {
+                                NavigationLink(destination: NutritionalTipsView()) {
+                                    MoreRow(
+                                        icon: "heart.text.square.fill",
+                                        iconColor: .pink,
+                                        title: "Nutritional Science",
+                                        subtitle: "Evidence-based health guidance"
+                                    )
                                 }
-                                .padding(.horizontal, 20)
+                                .buttonStyle(PlainButtonStyle())
+                            }
+                            .padding(.horizontal, 20)
+                            
+                            MoreCard {
+                                NavigationLink(destination: CookingTipsView()) {
+                                    MoreRow(
+                                        icon: "lightbulb.fill",
+                                        iconColor: .yellow,
+                                        title: "Cooking Tips",
+                                        subtitle: "Expert advice & kitchen hacks"
+                                    )
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                            }
+                            .padding(.horizontal, 20)
+                            
+                            MoreCard {
+                                NavigationLink(destination: CookTimerView()) {
+                                    MoreRow(
+                                        icon: "calendar.circle.fill",
+                                        iconColor: .green,
+                                        title: "Cook Timer",
+                                        subtitle: "Ready, set, cook!"
+                                    )
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                            }
+                            .padding(.horizontal, 20)
+                            
+                            MoreCard {
+                                NavigationLink(destination: NotesListView()) {
+                                    MoreRow(
+                                        icon: "note.text.badge.plus",
+                                        iconColor: .orange,
+                                        title: "Notes",
+                                        subtitle: "Capture your cooking ideas"
+                                    )
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                            }
+                            .padding(.horizontal, 20)
                             }
                         }
                         .padding(.top, 16)
@@ -115,7 +99,6 @@ struct MoreView: View {
             }
         }
     }
-}
 
 // MARK: - More View Components
 
