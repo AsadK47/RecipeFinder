@@ -15,7 +15,6 @@ struct NoteEditorView: View {
     @State private var tags: [String]
     @State private var currentTag: String = ""
     @State private var isPinned: Bool
-    @State private var showMoreCategories: Bool = false
     @State private var showValidationError: Bool = false
     
     @FocusState private var isTitleFocused: Bool
@@ -140,44 +139,9 @@ struct NoteEditorView: View {
                     .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.5))
                     .textCase(.uppercase)
                 
-                // Top 3 Categories (prominent)
                 VStack(spacing: 12) {
-                    ForEach(NoteCategory.topCategories, id: \.self) { category in
+                    ForEach(NoteCategory.allCases, id: \.self) { category in
                         categoryRow(category)
-                    }
-                }
-                
-                Divider()
-                
-                // More Categories (collapsible)
-                VStack(alignment: .leading, spacing: 12) {
-                    Button(action: {
-                        HapticManager.shared.light()
-                        withAnimation {
-                            showMoreCategories.toggle()
-                        }
-                    }) {
-                        HStack {
-                            Text("More Categories")
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
-                            
-                            Spacer()
-                            
-                            Image(systemName: showMoreCategories ? "chevron.up" : "chevron.down")
-                                .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.5))
-                                .font(.caption)
-                        }
-                    }
-                    
-                    if showMoreCategories {
-                        VStack(spacing: 12) {
-                            ForEach(NoteCategory.moreCategories, id: \.self) { category in
-                                categoryRow(category)
-                            }
-                        }
-                        .transition(.opacity.combined(with: .move(edge: .top)))
                     }
                 }
             }

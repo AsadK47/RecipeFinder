@@ -20,7 +20,7 @@ struct IngredientRowView: View {
                     .strikethrough(isChecked)
                     .foregroundStyle(isChecked ? .secondary : .primary)
                     .lineLimit(2)
-                    .minimumScaleFactor(0.9)
+                    .minimumScaleFactor(0.8)
                     
                 // Show preparation notes if any
                 if let prepNotes = ingredient.preparationNotes {
@@ -31,7 +31,8 @@ struct IngredientRowView: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.trailing, 12)
+            .padding(.trailing, 8)
+            .layoutPriority(1)
             
             // First separator
             Rectangle()
@@ -57,7 +58,7 @@ struct IngredientRowView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
-                .padding(.horizontal, 12)
+                .padding(.horizontal, 8)
                 .padding(.vertical, 8)
                 .background(
                     RoundedRectangle(cornerRadius: 8)
@@ -67,8 +68,8 @@ struct IngredientRowView: View {
             }
             .buttonStyle(.plain)
             .disabled(onTapQuantity == nil)
-            .frame(width: 80)
-            .padding(.horizontal, 12)
+            .frame(minWidth: 60, maxWidth: 75)
+            .padding(.horizontal, 8)
             .allowsHitTesting(true)
             
             // Second separator
@@ -90,10 +91,11 @@ struct IngredientRowView: View {
                     .contentShape(Rectangle())
             })
             .buttonStyle(.plain)
-            .frame(width: 50)
-            .padding(.leading, 12)
+            .frame(width: 44)
+            .padding(.leading, 8)
             .allowsHitTesting(true)
         }
+        .frame(maxWidth: .infinity)
         .padding(.vertical, 8)
         .contentShape(Rectangle())
         .contextMenu {

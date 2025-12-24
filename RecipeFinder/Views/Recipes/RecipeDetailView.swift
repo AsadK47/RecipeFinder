@@ -635,10 +635,10 @@ struct RecipeDetailView: View {
                 ZStack {
                     Circle()
                         .fill(AppTheme.accentColor)
-                        .frame(width: 20, height: 20)
+                        .frame(width: 10, height: 10)
                     
                     Text("\(number)")
-                        .font(.caption)
+                        .font(.system(size: 7))
                         .fontWeight(.bold)
                         .foregroundColor(.white)
                 }
