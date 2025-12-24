@@ -328,17 +328,56 @@ struct AppearanceAndThemeSettingsView: View {
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         ZStack {
             AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
-            ScrollView {
-                VStack(spacing: 24) {
-                    // Color Theme Section
-                    SettingsCard {
-                        VStack(alignment: .leading, spacing: 20) {
+            VStack(spacing: 0) {
+                // Header
+                GeometryReader { geometry in
+                    let buttonSize = max(44, geometry.size.width * 0.11)
+                    let horizontalPadding = geometry.size.width * 0.05
+                    let headerSpacing = geometry.size.width * 0.03
+                    
+                    VStack(spacing: headerSpacing) {
+                        HStack(spacing: 0) {
+                            Button(action: {
+                                dismiss()
+                            }) {
+                                Image(systemName: "chevron.left")
+                                    .font(.title3)
+                                    .foregroundColor(.white)
+                                    .frame(width: buttonSize, height: buttonSize)
+                            }
+                            
+                            Spacer()
+                            
+                            Text("Appearance & Theme")
+                                .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.7)
+                            
+                            Spacer()
+                            
+                            Color.clear
+                                .frame(width: buttonSize, height: buttonSize)
+                        }
+                        .frame(height: buttonSize)
+                        .padding(.horizontal, horizontalPadding)
+                        .padding(.top, horizontalPadding * 0.8)
+                    }
+                }
+                .frame(height: max(72, UIScreen.main.bounds.width * 0.18))
+                
+                ScrollView {
+                    VStack(spacing: 24) {
+                        // Color Theme Section
+                        SettingsCard {
+                            VStack(alignment: .leading, spacing: 20) {
                             HStack {
                                 Image(systemName: "sparkles")
                                     .font(.title2)
@@ -401,10 +440,8 @@ struct AppearanceAndThemeSettingsView: View {
                 .padding(20)
             }
         }
-        .navigationTitle("Appearance & Theme")
-        .navigationBarTitleDisplayMode(.large)
-        .toolbarBackground(.hidden, for: .navigationBar)
-        .toolbarColorScheme(.dark, for: .navigationBar)
+        }
+        .navigationBarHidden(true)
     }
 }
 
