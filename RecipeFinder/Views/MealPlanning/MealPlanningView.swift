@@ -1201,14 +1201,16 @@ struct WeekDayRow: View {
             // Meal indicators (placeholder - would show actual planned meals)
             HStack(spacing: 8) {
                 ForEach(["☀️", "🍽️", "🌙"], id: \.self) { icon in
-                    Circle()
-                        .fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1))
-                        .frame(width: 32, height: 32)
-                        .overlay {
-                            Text(icon)
-                                .font(.caption)
-                                .opacity(0.5)
-                        }
+                    Button(action: onAddMeal) {
+                        Circle()
+                            .fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1))
+                            .frame(width: 32, height: 32)
+                            .overlay {
+                                Text(icon)
+                                    .font(.caption)
+                                    .opacity(0.5)
+                            }
+                    }
                 }
             }
             
