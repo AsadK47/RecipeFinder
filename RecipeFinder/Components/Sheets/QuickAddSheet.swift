@@ -83,7 +83,8 @@ struct ShoppingQuickAddSheet: View {
                     } label: {
                         Image(systemName: "xmark.circle.fill")
                             .font(.title2)
-                            .foregroundColor(.white.opacity(0.7))
+                            .foregroundColor(.white.opacity(0.9))
+                            .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
                     }
                 }
                 .padding(.horizontal, 20)
@@ -173,7 +174,8 @@ struct KitchenQuickAddSheet: View {
                     } label: {
                         Image(systemName: "xmark.circle.fill")
                             .font(.title2)
-                            .foregroundColor(.white.opacity(0.7))
+                            .foregroundColor(.white.opacity(0.9))
+                            .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
                     }
                 }
                 .padding(.horizontal, 20)

@@ -12,6 +12,7 @@ struct MealPlanningView: View {
     @State private var currentMealTime: MealTime?
     @State private var viewMode: ViewMode = .calendar
     @State private var showNutritionTips = false
+    @State private var showMonthYearPicker = false
     
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
@@ -119,6 +120,9 @@ struct MealPlanningView: View {
                 showQuickSnackSheet = false
                 currentMealTime = nil
             }
+        }
+        .sheet(isPresented: $showMonthYearPicker) {
+            MonthYearPickerSheet(selectedDate: $selectedDate)
         }
     }
     
@@ -260,40 +264,47 @@ struct MealPlanningView: View {
             HStack(spacing: 12) {
                 Text(tipOfDay.icon)
                     .font(.title2)
+                    .shadow(color: .black.opacity(0.2), radius: 1, x: 0, y: 1)
                 
                 VStack(alignment: .leading, spacing: 4) {
                     HStack(spacing: 4) {
                         Text("💡 Tip of the Day")
                             .font(.caption2)
                             .fontWeight(.semibold)
-                            .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                            .foregroundColor(.white)
+                            .shadow(color: .black.opacity(0.3), radius: 1, x: 0, y: 1)
                         
                         Image(systemName: "graduationcap.fill")
                             .font(.caption2)
-                            .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                            .foregroundColor(.white)
+                            .shadow(color: .black.opacity(0.3), radius: 1, x: 0, y: 1)
                     }
                     
                     Text(tipOfDay.title)
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundColor(.white)
-                        .lineLimit(1)
+                        .shadow(color: .black.opacity(0.3), radius: 1, x: 0, y: 1)
+                        .lineLimit(2)
                     
                     Text(tipOfDay.summary)
                         .font(.caption)
-                        .foregroundColor(.white.opacity(0.85))
-                        .lineLimit(1)
+                        .foregroundColor(.white)
+                        .shadow(color: .black.opacity(0.3), radius: 1, x: 0, y: 1)
+                        .lineLimit(2)
                 }
                 
                 Spacer()
                 
                 Image(systemName: "chevron.right")
                     .font(.caption)
-                    .foregroundColor(.white.opacity(0.8))
+                    .foregroundColor(.white)
+                    .shadow(color: .black.opacity(0.3), radius: 1, x: 0, y: 1)
             }
             .padding(16)
             .background {
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(AppTheme.accentColor(for: selectedTheme).opacity(0.8))
+                    .fill(AppTheme.accentColor(for: selectedTheme))
+                    .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2)
             }
         }
         .buttonStyle(PlainButtonStyle())
@@ -372,9 +383,21 @@ struct MealPlanningView: View {
                 
                 Spacer()
                 
-                Text(monthYearString)
-                    .font(.system(size: 22, weight: .bold))
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                Button(action: {
+                    showMonthYearPicker = true
+                    HapticManager.shared.light()
+                }) {
+                    HStack(spacing: 6) {
+                        Text(monthYearString)
+                            .font(.system(size: 22, weight: .bold))
+                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                        
+                        Image(systemName: "calendar.circle")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                    }
+                }
+                .buttonStyle(PlainButtonStyle())
                 
                 Spacer()
                 
@@ -892,32 +915,47 @@ struct MealTimeSelectorSheet: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        NavigationView {
-            ZStack {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                    .ignoresSafeArea()
-                
-                VStack(spacing: 0) {
-                    // Header section
-                    VStack(spacing: 12) {
-                        Text("Plan a Meal")
-                            .font(.system(size: 28, weight: .bold))
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
+        ZStack {
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
+                .ignoresSafeArea()
+            
+            VStack(spacing: 0) {
+                // Header section with better blending
+                VStack(spacing: 12) {
+                    HStack {
+                        Spacer()
                         
-                        HStack(spacing: 8) {
-                            Image(systemName: "calendar")
-                                .font(.subheadline)
-                            Text(dateString)
-                                .font(.system(size: 16, weight: .medium))
+                        Button(action: { dismiss() }) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "xmark.circle.fill")
+                                    .font(.title2)
+                                Text("Cancel")
+                                    .font(.system(size: 16, weight: .semibold))
+                            }
+                            .foregroundColor(.white.opacity(0.9))
                         }
-                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.7))
                     }
-                    .padding(.top, 24)
-                    .padding(.bottom, 20)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 20)
                     
-                    // Meal times list
-                    ScrollView {
-                        VStack(spacing: 12) {
+                    Text("Plan a Meal")
+                        .font(.system(size: 28, weight: .bold))
+                        .foregroundColor(.white)
+                        .shadow(color: .black.opacity(0.2), radius: 2, x: 0, y: 1)
+                    
+                    HStack(spacing: 8) {
+                        Image(systemName: "calendar")
+                            .font(.subheadline)
+                        Text(dateString)
+                            .font(.system(size: 16, weight: .medium))
+                    }
+                    .foregroundColor(.white.opacity(0.85))
+                }
+                .padding(.bottom, 20)
+                
+                // Meal times list
+                ScrollView {
+                    VStack(spacing: 12) {
                             ForEach(MealTime.allCases, id: \.self) { mealTime in
                                 Button(action: {
                                     selectedMealTimes.insert(mealTime)
@@ -990,26 +1028,14 @@ struct MealTimeSelectorSheet: View {
                     }
                 }
             }
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(action: { dismiss() }) {
-                        HStack(spacing: 6) {
-                            Image(systemName: "xmark.circle.fill")
-                            Text("Cancel")
-                        }
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
-                    }
-                }
-            }
+        }
+        
+        private var dateString: String {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "EEEE, MMM d, yyyy"
+            return formatter.string(from: selectedDate)
         }
     }
-    
-    private var dateString: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "EEEE, MMM d, yyyy"
-        return formatter.string(from: selectedDate)
-    }
-}
 
 struct RecipeSelectionSheet: View {
     @Binding var recipes: [RecipeModel]
@@ -1372,6 +1398,57 @@ struct NutritionTipsSheet: View {
                         }
                         .foregroundColor(.white)
                     }
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Month/Year Picker Sheet
+struct MonthYearPickerSheet: View {
+    @Binding var selectedDate: Date
+    @Environment(\.dismiss) var dismiss
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
+    @Environment(\.colorScheme) var colorScheme
+    
+    var body: some View {
+        NavigationView {
+            ZStack {
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
+                    .ignoresSafeArea()
+                
+                VStack(spacing: 0) {
+                    DatePicker(
+                        "Select Month and Year",
+                        selection: $selectedDate,
+                        displayedComponents: [.date]
+                    )
+                    .datePickerStyle(.graphical)
+                    .padding()
+                    .background {
+                        if cardStyle == .solid {
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(colorScheme == .dark ? Color.white.opacity(0.05) : Color.white.opacity(0.15))
+                        } else {
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(.ultraThinMaterial)
+                        }
+                    }
+                    .padding()
+                    
+                    Spacer()
+                }
+                .padding(.top, 20)
+            }
+            .navigationTitle("Select Date")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                 }
             }
         }

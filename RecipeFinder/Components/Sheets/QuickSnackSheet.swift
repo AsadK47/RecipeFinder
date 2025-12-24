@@ -21,10 +21,29 @@ struct QuickSnackSheet: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        NavigationView {
-            ZStack {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                    .ignoresSafeArea()
+        ZStack {
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
+                .ignoresSafeArea()
+            
+            VStack(spacing: 0) {
+                // Custom Header
+                HStack {
+                    Spacer()
+                    
+                    Button(action: { dismiss() }) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.title2)
+                            Text("Cancel")
+                                .font(.system(size: 16, weight: .semibold))
+                        }
+                        .foregroundColor(.white.opacity(0.9))
+                        .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
+                    }
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 20)
+                .padding(.bottom, 8)
                 
                 ScrollView {
                     VStack(spacing: 24) {
@@ -91,15 +110,6 @@ struct QuickSnackSheet: View {
                         .padding(.top, 8)
                     }
                     .padding(.bottom, 100)
-                }
-            }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
-                    .foregroundColor(.white)
                 }
             }
         }
