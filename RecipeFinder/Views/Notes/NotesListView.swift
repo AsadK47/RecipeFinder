@@ -356,50 +356,12 @@ struct FilterMenuView: View {
                             .tint(AppTheme.accentColor(for: selectedTheme))
                         }
                         
-                        // Top 3 Categories
+                        // All Categories in one list
                         filterSection(title: "Categories") {
-                            ForEach(NoteCategory.topCategories, id: \.self) { category in
+                            ForEach(NoteCategory.allCases, id: \.self) { category in
                                 categoryButton(category)
                             }
                         }
-                        
-                        // More Categories (Collapsible)
-                        VStack(alignment: .leading, spacing: 12) {
-                            Button(action: {
-                                HapticManager.shared.light()
-                                withAnimation {
-                                    showCategoryExpanded.toggle()
-                                }
-                            }) {
-                                HStack {
-                                    Text("More Categories")
-                                        .font(.headline)
-                                        .foregroundColor(.white)
-                                    
-                                    Spacer()
-                                    
-                                    Image(systemName: showCategoryExpanded ? "chevron.up" : "chevron.down")
-                                        .foregroundColor(.white.opacity(0.7))
-                                }
-                            }
-                            
-                            if showCategoryExpanded {
-                                cardContainer {
-                                    VStack(spacing: 0) {
-                                        ForEach(NoteCategory.moreCategories, id: \.self) { category in
-                                            categoryButton(category)
-                                            
-                                            if category != NoteCategory.moreCategories.last {
-                                                Divider()
-                                                    .padding(.leading, 44)
-                                            }
-                                        }
-                                    }
-                                    .padding(.vertical, 8)
-                                }
-                            }
-                        }
-                        .padding(.horizontal, 20)
                         
                         // Tags Filter
                         if !allTags.isEmpty {

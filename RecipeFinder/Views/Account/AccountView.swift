@@ -21,7 +21,7 @@ struct AccountView: View {
     @State private var showImagePicker = false
     @State private var profileImage: UIImage?
     @State private var showPasswordVerification = false
-    @State private var badgesSectionExpanded = false // Collapsible badges
+    @State private var badgesSectionExpanded = true // Collapsible badges
     @State private var selectedBadge: Badge? = nil
     @State private var showBadgeDetail = false
     
@@ -665,7 +665,7 @@ struct AccountView: View {
                     let allBadges = badgeManager.getAllBadges(recipeCount: recipeCount)
                         .sorted { $0.isUnlocked && !$1.isUnlocked } // Unlocked first
                     
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                         ForEach(allBadges) { badge in
                             Button(action: {
                                 selectedBadge = badge
@@ -682,7 +682,6 @@ struct AccountView: View {
                     }
                 }
                 .padding(20)
-                .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
         .background {

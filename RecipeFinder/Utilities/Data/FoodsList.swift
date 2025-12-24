@@ -84,6 +84,7 @@ struct FoodsList {
             "Beef Shank", "Oxtail", "Beef Ribs", "Back Ribs",
             // Beef - Ground & Processed
             "Ground Beef", "Lean Ground Beef", "Ground Chuck", "Ground Sirloin",
+            "Minced Beef", "Beef Mince",
             "Beef Patties", "Beef Meatballs",
             // Pork
             "Pork Chop", "Bone-In Pork Chop", "Boneless Pork Chop",

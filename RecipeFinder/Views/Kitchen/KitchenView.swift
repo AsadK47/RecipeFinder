@@ -247,7 +247,7 @@ struct KitchenView: View {
                     .fontWeight(.bold)
                     .foregroundColor(colorScheme == .dark ? .white : .black)
                 
-                Text("Tap the menu button to Quick Add ingredients, or use the search bar to find and add items")
+                Text("Add ingredients to see matching recipes")
                     .font(.subheadline)
                     .foregroundColor(Color(colorScheme == .dark ? .white : .black).opacity(0.7))
                     .multilineTextAlignment(.center)
@@ -567,32 +567,68 @@ struct KitchenCategoryCard: View {
 struct KitchenItemChip: View {
     let item: KitchenItem
     @Environment(\.colorScheme) var colorScheme
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
+    
+    private var categoryInfo: (icon: String, color: Color) {
+        let category = CategoryClassifier.suggestCategory(for: item.name)
+        return (
+            CategoryClassifier.categoryIcon(for: category),
+            CategoryClassifier.categoryColor(for: category)
+        )
+    }
     
     var body: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: 8) {
+            // Category icon
+            Image(systemName: categoryInfo.icon)
+                .font(.caption)
+                .foregroundColor(categoryInfo.color)
+                .frame(width: 20, height: 20)
+                .background(
+                    Circle()
+                        .fill(categoryInfo.color.opacity(0.15))
+                )
+            
             Text(item.name)
                 .font(.subheadline)
+                .fontWeight(.medium)
                 .foregroundColor(colorScheme == .dark ? .white : .black)
             
             Button(
                 action: {
                     withAnimation(.spring(response: 0.3)) {
                         KitchenInventoryManager.shared.removeItem(item)
+                        HapticManager.shared.light()
                     }
                 },
                 label: {
                     Image(systemName: "xmark.circle.fill")
-                        .font(.caption)
-                        .foregroundColor(.gray)
+                        .font(.system(size: 16))
+                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.4) : .black.opacity(0.3))
                 }
             )
+            .buttonStyle(.plain)
         }
         .padding(.horizontal, 12)
-        .padding(.vertical, 8)
+        .padding(.vertical, 10)
         .background(
             Capsule()
-                .fill(AppTheme.accentColor.opacity(0.2))
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            categoryInfo.color.opacity(0.25),
+                            categoryInfo.color.opacity(0.15)
+                        ],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .overlay(
+                    Capsule()
+                        .stroke(categoryInfo.color.opacity(0.3), lineWidth: 1)
+                )
         )
+        .shadow(color: categoryInfo.color.opacity(0.2), radius: 4, x: 0, y: 2)
     }
 }
 

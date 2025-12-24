@@ -287,7 +287,7 @@ struct ShoppingListView: View {
                     
                     ZStack(alignment: .leading) {
                         if searchText.isEmpty {
-                            Text("Add item (e.g., milk, chicken, apples)...")
+                            Text("Add item...")
                                 .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6))
                         }
                         TextField("", text: $searchText)
@@ -356,7 +356,7 @@ struct ShoppingListView: View {
                         .fontWeight(.bold)
                         .foregroundColor(colorScheme == .dark ? .white : .black)
                     
-                    Text("Use the menu button or search bar, or tap + on any recipe")
+                    Text("Add items to begin shopping")
                         .font(.subheadline)
                         .foregroundColor(Color(colorScheme == .dark ? .white : .black).opacity(0.7))
                         .multilineTextAlignment(.center)

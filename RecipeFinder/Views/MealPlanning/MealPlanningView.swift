@@ -223,35 +223,39 @@ struct MealPlanningView: View {
     }
     
     private var viewModePicker: some View {
-        HStack(spacing: 12) {
-            ForEach([ViewMode.calendar, ViewMode.weeklyView], id: \.self) { mode in
-                Button(action: {
-                    viewMode = mode
-                    HapticManager.shared.light()
-                }) {
-                    HStack(spacing: 6) {
-                        Image(systemName: mode == .calendar ? "calendar" : "list.bullet")
-                            .font(.system(size: 14, weight: .semibold))
-                        Text(mode == .calendar ? "Calendar" : "Weekly")
-                            .font(.system(size: 14, weight: .semibold))
-                    }
-                    .foregroundColor(viewMode == mode ? (colorScheme == .dark ? .white : .black) : (colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6)))
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 10)
-                    .background {
-                        if viewMode == mode {
-                            Capsule()
-                                .fill(colorScheme == .dark ? Color.white.opacity(0.2) : Color.black.opacity(0.15))
-                        } else {
-                            Capsule()
-                                .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.black.opacity(0.3), lineWidth: 1)
+        GeometryReader { geometry in
+            HStack(spacing: 12) {
+                ForEach([ViewMode.calendar, ViewMode.weeklyView], id: \.self) { mode in
+                    Button(action: {
+                        viewMode = mode
+                        HapticManager.shared.light()
+                    }) {
+                        HStack(spacing: 6) {
+                            Image(systemName: mode == .calendar ? "calendar" : "list.bullet")
+                                .font(.system(size: 14, weight: .semibold))
+                            Text(mode == .calendar ? "Calendar" : "Weekly")
+                                .font(.system(size: 14, weight: .semibold))
+                        }
+                        .foregroundColor(viewMode == mode ? (colorScheme == .dark ? .white : .black) : (colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6)))
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                        .background {
+                            if viewMode == mode {
+                                Capsule()
+                                    .fill(colorScheme == .dark ? Color.white.opacity(0.2) : Color.black.opacity(0.15))
+                            } else {
+                                Capsule()
+                                    .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.black.opacity(0.3), lineWidth: 1)
+                            }
                         }
                     }
                 }
             }
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 20)
+            .padding(.bottom, max(20, geometry.size.height * 0.025))
         }
-        .padding(.horizontal, 20)
-        .padding(.bottom, 8)
+        .frame(height: 50)
     }
     
     private var weeklyPlanView: some View {
@@ -990,6 +994,7 @@ struct RecipeSelectionSheet: View {
     
     @Environment(\.dismiss) var dismiss
     @State private var searchText = ""
+    @State private var showRecipeList = false
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @Environment(\.colorScheme) var colorScheme
@@ -1007,154 +1012,144 @@ struct RecipeSelectionSheet: View {
                 AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
                 
-                VStack(spacing: 16) {
-                    Text("Choose an option")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                        .padding(.top)
-                    
-                    if let mealTime = mealTime {
-                        HStack {
-                            Text(mealTime.icon)
-                            Text(mealTime.rawValue)
-                                .font(.headline)
-                                .foregroundColor(.white.opacity(0.7))
-                        }
-                    }
-                    
-                    // Quick Add Snack button (highlighted for snacks)
-                    if mealTime == .snack {
-                        Button(action: {
-                            onQuickSnack()
-                            HapticManager.shared.light()
-                        }) {
-                            HStack(spacing: 12) {
-                                Image(systemName: "star.circle.fill")
-                                    .font(.title2)
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text("Quick Add Snack")
-                                        .font(.headline)
-                                    Text("Simple & Fast")
-                                        .font(.caption)
-                                        .opacity(0.7)
+                VStack(spacing: 0) {
+                    if showRecipeList {
+                        // Recipe List View
+                        VStack(spacing: 12) {
+                            // Back button
+                            HStack {
+                                Button(action: {
+                                    withAnimation {
+                                        showRecipeList = false
+                                        searchText = ""
+                                    }
+                                    HapticManager.shared.light()
+                                }) {
+                                    HStack(spacing: 8) {
+                                        Image(systemName: "chevron.left")
+                                        Text("Back")
+                                    }
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 20)
+                                    .padding(.vertical, 12)
                                 }
                                 Spacer()
-                                Image(systemName: "chevron.right")
-                                    .font(.caption)
                             }
-                            .foregroundColor(.white)
-                            .padding(20)
-                            .background(
-                                LinearGradient(
-                                    colors: [
-                                        AppTheme.accentColor(for: selectedTheme),
-                                        AppTheme.accentColor(for: selectedTheme).opacity(0.8)
-                                    ],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
-                            .cornerRadius(16)
-                        }
-                        .padding(.horizontal)
-                    }
-                    
-                    // Create New Recipe button
-                    Button(action: {
-                        onCreateNew()
-                        HapticManager.shared.light()
-                    }) {
-                        HStack(spacing: 12) {
-                            Image(systemName: "plus.circle.fill")
-                                .font(.title2)
-                            Text("Create New Recipe")
-                                .font(.headline)
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                                .font(.caption)
-                        }
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
-                        .padding(20)
-                        .background {
-                            if cardStyle == .solid {
-                                RoundedRectangle(cornerRadius: 16)
-                                    .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
-                            } else {
-                                RoundedRectangle(cornerRadius: 16)
-                                    .fill(.ultraThinMaterial)
+                            
+                            ModernSearchBar(text: $searchText, placeholder: "Search Recipes...")
+                                .padding(.horizontal)
+                            
+                            ScrollView {
+                                LazyVGrid(columns: [
+                                    GridItem(.flexible()),
+                                    GridItem(.flexible())
+                                ], spacing: 16) {
+                                    ForEach(filteredRecipes) { recipe in
+                                        Button(action: {
+                                            onSelectExisting(recipe)
+                                            HapticManager.shared.light()
+                                        }) {
+                                            CompactRecipeCard(recipe: recipe)
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
+                                }
+                                .padding(.horizontal)
+                                .padding(.bottom, 100)
                             }
                         }
-                    }
-                    .padding(.horizontal)
-                    
-                    Divider()
-                        .background(Color.white.opacity(0.3))
-                        .padding(.horizontal)
-                    
-                    // Existing recipes
-                    Text("Or choose existing recipe")
-                        .font(.subheadline)
-                        .foregroundColor(.white.opacity(0.7))
-                    
-                    ModernSearchBar(text: $searchText, placeholder: "Search Recipes...")
-                        .padding(.horizontal)
-                    
-                    ScrollView {
-                        LazyVStack(spacing: 12) {
-                            ForEach(filteredRecipes) { recipe in
+                    } else {
+                        // Button View
+                        VStack(spacing: 16) {
+                            // Add a Snack button (for snacks only)
+                            if mealTime == .snack {
                                 Button(action: {
-                                    onSelectExisting(recipe)
+                                    onQuickSnack()
                                     HapticManager.shared.light()
                                 }) {
                                     HStack(spacing: 12) {
-                                        if let imageName = recipe.imageName,
-                                           let uiImage = UIImage(named: imageName) {
-                                            Image(uiImage: uiImage)
-                                                .resizable()
-                                                .scaledToFill()
-                                                .frame(width: 50, height: 50)
-                                                .clipShape(RoundedRectangle(cornerRadius: 8))
-                                        } else {
-                                            RoundedRectangle(cornerRadius: 8)
-                                                .fill(Color.gray.opacity(0.3))
-                                                .frame(width: 50, height: 50)
-                                                .overlay {
-                                                    Image(systemName: "photo")
-                                                        .foregroundColor(.white.opacity(0.5))
-                                                }
-                                        }
-                                        
-                                        VStack(alignment: .leading, spacing: 4) {
-                                            Text(recipe.name)
-                                                .font(.headline)
-                                                .foregroundColor(.white)
-                                            
-                                            Text(recipe.prepTime)
-                                                .font(.caption)
-                                                .foregroundColor(.white.opacity(0.6))
-                                        }
-                                        
+                                        Image(systemName: "star.circle.fill")
+                                            .font(.title2)
+                                        Text("Add a Snack")
+                                            .font(.headline)
                                         Spacer()
-                                        
-                                        Image(systemName: "chevron.right")
-                                            .foregroundColor(.white.opacity(0.4))
                                     }
-                                    .padding(12)
-                                    .background {
-                                        if cardStyle == .solid {
-                                            RoundedRectangle(cornerRadius: 12)
-                                                .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
-                                        } else {
-                                            RoundedRectangle(cornerRadius: 12)
-                                                .fill(.ultraThinMaterial)
-                                        }
-                                    }
+                                    .foregroundColor(.white)
+                                    .padding(20)
+                                    .background(
+                                        LinearGradient(
+                                            colors: [
+                                                AppTheme.accentColor(for: selectedTheme),
+                                                AppTheme.accentColor(for: selectedTheme).opacity(0.8)
+                                            ],
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        )
+                                    )
+                                    .cornerRadius(16)
                                 }
+                            }
+                            
+                            // Create Recipe button
+                            Button(action: {
+                                onCreateNew()
+                                HapticManager.shared.light()
+                            }) {
+                                HStack(spacing: 12) {
+                                    Image(systemName: "plus.circle.fill")
+                                        .font(.title2)
+                                    Text("Create Recipe")
+                                        .font(.headline)
+                                    Spacer()
+                                }
+                                .foregroundColor(.white)
+                                .padding(20)
+                                .background(
+                                    LinearGradient(
+                                        colors: [
+                                            Color.purple,
+                                            Color.purple.opacity(0.8)
+                                        ],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                                .cornerRadius(16)
+                            }
+                            
+                            // Add from Existing button
+                            Button(action: {
+                                withAnimation {
+                                    showRecipeList = true
+                                }
+                                HapticManager.shared.light()
+                            }) {
+                                HStack(spacing: 12) {
+                                    Image(systemName: "list.bullet")
+                                        .font(.title2)
+                                    Text("Add from Existing")
+                                        .font(.headline)
+                                    Spacer()
+                                }
+                                .foregroundColor(.white)
+                                .padding(20)
+                                .background(
+                                    LinearGradient(
+                                        colors: [
+                                            Color.blue,
+                                            Color.blue.opacity(0.8)
+                                        ],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                                .cornerRadius(16)
                             }
                         }
                         .padding(.horizontal)
-                        .padding(.bottom, 100)
+                        .padding(.top, 24)
+                        
+                        Spacer()
                     }
                 }
             }
@@ -1166,6 +1161,7 @@ struct RecipeSelectionSheet: View {
                     .foregroundColor(.white)
                 }
             }
+            .toolbarBackground(.hidden, for: .navigationBar)
         }
     }
 }

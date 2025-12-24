@@ -84,9 +84,9 @@ struct IngredientRowView: View {
                 } 
             }, label: {
                 Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: 24))
+                    .font(.system(size: 28))
                     .foregroundColor(isChecked ? .green : .gray.opacity(0.4))
-                    .frame(width: 28, height: 28)
+                    .frame(width: 32, height: 32)
                     .contentShape(Rectangle())
             })
             .buttonStyle(.plain)
@@ -96,14 +96,18 @@ struct IngredientRowView: View {
         }
         .padding(.vertical, 8)
         .contentShape(Rectangle())
-        .swipe(onAddToShopping != nil,
-               trailing: onAddToShopping.map { addAction in
-                   SwipeAction(
-                       icon: "cart.badge.plus",
-                       backgroundColor: AppTheme.accentColor,
-                       action: addAction
-                   )
-               })
+        .contextMenu {
+            if let onAddToShopping = onAddToShopping {
+                Button(action: {
+                    onAddToShopping()
+                    HapticManager.shared.light()
+                }) {
+                    Label(isInShoppingList ? "Already in Shopping List" : "Add to Shopping List", 
+                          systemImage: isInShoppingList ? "checkmark.circle.fill" : "cart.badge.plus")
+                }
+                .disabled(isInShoppingList)
+            }
+        }
     }
     
     // MARK: - Helper Functions

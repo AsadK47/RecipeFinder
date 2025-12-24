@@ -43,30 +43,26 @@ struct RecipeDetailView: View {
     }
     
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                backgroundView
-                
-                ScrollView(.vertical, showsIndicators: true) {
-                    VStack(spacing: 0) {
-                        recipeTitleView
-                        recipeInfoCardsView
-                        ingredientsSection
-                        
-                        if hasPrePrep {
-                            prePrepSection
-                        }
-                        
-                        instructionsSection
-                        
-                        if hasNotes {
-                            notesSection
-                        }
+        ZStack {
+            backgroundView
+            
+            ScrollView(.vertical, showsIndicators: true) {
+                VStack(spacing: 0) {
+                    recipeTitleView
+                    recipeInfoCardsView
+                    ingredientsSection
+                    
+                    if hasPrePrep {
+                        prePrepSection
                     }
-                    .padding(.bottom, 100)
-                    .frame(width: geometry.size.width)
+                    
+                    instructionsSection
+                    
+                    if hasNotes {
+                        notesSection
+                    }
                 }
-                .scrollBounceBehavior(.basedOnSize, axes: .vertical)
+                .padding(.bottom, 100)
             }
         }
         .navigationBarTitleDisplayMode(.inline)
@@ -98,7 +94,7 @@ struct RecipeDetailView: View {
     
     private var recipeTitleView: some View {
         Text(recipe.name)
-            .font(.system(size: 28, weight: .bold))
+            .font(.system(size: 34, weight: .bold))
             .foregroundColor(colorScheme == .dark ? .white : .black)
             .multilineTextAlignment(.center)
             .frame(maxWidth: .infinity, alignment: .center)
@@ -639,15 +635,16 @@ struct RecipeDetailView: View {
                 ZStack {
                     Circle()
                         .fill(AppTheme.accentColor)
-                        .frame(width: 32, height: 32)
+                        .frame(width: 20, height: 20)
                     
                     Text("\(number)")
-                        .font(.headline)
+                        .font(.caption)
+                        .fontWeight(.bold)
                         .foregroundColor(.white)
                 }
                 
                 Text(text)
-                    .font(.subheadline)
+                    .font(.body)
                     .foregroundColor(.primary)
                     .strikethrough(isChecked, color: .primary)
                     .opacity(isChecked ? 0.5 : 1.0)
@@ -657,8 +654,8 @@ struct RecipeDetailView: View {
                 Spacer()
                 
                 Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
-                    .font(.title3)
-                    .foregroundColor(isChecked ? .green : .gray.opacity(0.3))
+                    .font(.system(size: 28))
+                    .foregroundColor(isChecked ? .green : .gray.opacity(0.4))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .contentShape(Rectangle())
