@@ -755,6 +755,7 @@ struct NotificationSettingsView: View {
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
+    @Environment(\.dismiss) private var dismiss
     
     var reminderTime: Date {
         let formatter = DateFormatter()
@@ -767,7 +768,45 @@ struct NotificationSettingsView: View {
             AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
-            ScrollView {
+            VStack(spacing: 0) {
+                // Header
+                GeometryReader { geometry in
+                    let buttonSize = max(44, geometry.size.width * 0.11)
+                    let horizontalPadding = geometry.size.width * 0.05
+                    let headerSpacing = geometry.size.width * 0.03
+                    
+                    VStack(spacing: headerSpacing) {
+                        HStack(spacing: 0) {
+                            Button(action: {
+                                dismiss()
+                            }) {
+                                Image(systemName: "chevron.left")
+                                    .font(.title3)
+                                    .foregroundColor(.white)
+                                    .frame(width: buttonSize, height: buttonSize)
+                            }
+                            
+                            Spacer()
+                            
+                            Text("Notifications")
+                                .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.7)
+                            
+                            Spacer()
+                            
+                            Color.clear
+                                .frame(width: buttonSize, height: buttonSize)
+                        }
+                        .frame(height: buttonSize)
+                        .padding(.horizontal, horizontalPadding)
+                        .padding(.top, horizontalPadding * 0.8)
+                    }
+                }
+                .frame(height: max(72, UIScreen.main.bounds.width * 0.18))
+                
+                ScrollView {
                 VStack(spacing: 24) {
                     if notificationPermission != .authorized {
                         SettingsCard {
@@ -920,9 +959,8 @@ struct NotificationSettingsView: View {
                 .padding(20)
             }
         }
-        .navigationTitle("Notifications")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.hidden, for: .navigationBar)
+        }
+        .navigationBarHidden(true)
         .sheet(isPresented: $showingTimePicker) {
             TimePickerSheet(selectedTime: reminderTime) { newTime in
                 let formatter = DateFormatter()
@@ -986,6 +1024,7 @@ struct TimerSettingsView: View {
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
+    @Environment(\.dismiss) private var dismiss
     
     enum TimerSound: String, CaseIterable {
         case `default` = "Default"
@@ -1000,7 +1039,45 @@ struct TimerSettingsView: View {
             AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
-            ScrollView {
+            VStack(spacing: 0) {
+                // Header
+                GeometryReader { geometry in
+                    let buttonSize = max(44, geometry.size.width * 0.11)
+                    let horizontalPadding = geometry.size.width * 0.05
+                    let headerSpacing = geometry.size.width * 0.03
+                    
+                    VStack(spacing: headerSpacing) {
+                        HStack(spacing: 0) {
+                            Button(action: {
+                                dismiss()
+                            }) {
+                                Image(systemName: "chevron.left")
+                                    .font(.title3)
+                                    .foregroundColor(.white)
+                                    .frame(width: buttonSize, height: buttonSize)
+                            }
+                            
+                            Spacer()
+                            
+                            Text("Timers")
+                                .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.7)
+                            
+                            Spacer()
+                            
+                            Color.clear
+                                .frame(width: buttonSize, height: buttonSize)
+                        }
+                        .frame(height: buttonSize)
+                        .padding(.horizontal, horizontalPadding)
+                        .padding(.top, horizontalPadding * 0.8)
+                    }
+                }
+                .frame(height: max(72, UIScreen.main.bounds.width * 0.18))
+                
+                ScrollView {
                 VStack(spacing: 24) {
                     // Default Duration
                     SettingsCard {
@@ -1141,9 +1218,8 @@ struct TimerSettingsView: View {
                 .padding(20)
             }
         }
-        .navigationTitle("Timers")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.hidden, for: .navigationBar)
+        }
+        .navigationBarHidden(true)
     }
     
     private func formatDuration(_ seconds: Int) -> String {
@@ -1165,13 +1241,52 @@ struct UnitsSettingsView: View {
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         ZStack {
             AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
-            ScrollView {
+            VStack(spacing: 0) {
+                // Header
+                GeometryReader { geometry in
+                    let buttonSize = max(44, geometry.size.width * 0.11)
+                    let horizontalPadding = geometry.size.width * 0.05
+                    let headerSpacing = geometry.size.width * 0.03
+                    
+                    VStack(spacing: headerSpacing) {
+                        HStack(spacing: 0) {
+                            Button(action: {
+                                dismiss()
+                            }) {
+                                Image(systemName: "chevron.left")
+                                    .font(.title3)
+                                    .foregroundColor(.white)
+                                    .frame(width: buttonSize, height: buttonSize)
+                            }
+                            
+                            Spacer()
+                            
+                            Text("Units & Measurements")
+                                .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.7)
+                            
+                            Spacer()
+                            
+                            Color.clear
+                                .frame(width: buttonSize, height: buttonSize)
+                        }
+                        .frame(height: buttonSize)
+                        .padding(.horizontal, horizontalPadding)
+                        .padding(.top, horizontalPadding * 0.8)
+                    }
+                }
+                .frame(height: max(72, UIScreen.main.bounds.width * 0.18))
+                
+                ScrollView {
                 VStack(spacing: 24) {
                     SettingsCard {
                         VStack(alignment: .leading, spacing: 20) {
@@ -1218,9 +1333,8 @@ struct UnitsSettingsView: View {
                 .padding(20)
             }
         }
-        .navigationTitle("Units & Measurements")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.hidden, for: .navigationBar)
+        }
+        .navigationBarHidden(true)
     }
 }
 
@@ -1231,13 +1345,52 @@ struct DisplaySettingsView: View {
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         ZStack {
             AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
-            ScrollView {
+            VStack(spacing: 0) {
+                // Header
+                GeometryReader { geometry in
+                    let buttonSize = max(44, geometry.size.width * 0.11)
+                    let horizontalPadding = geometry.size.width * 0.05
+                    let headerSpacing = geometry.size.width * 0.03
+                    
+                    VStack(spacing: headerSpacing) {
+                        HStack(spacing: 0) {
+                            Button(action: {
+                                dismiss()
+                            }) {
+                                Image(systemName: "chevron.left")
+                                    .font(.title3)
+                                    .foregroundColor(.white)
+                                    .frame(width: buttonSize, height: buttonSize)
+                            }
+                            
+                            Spacer()
+                            
+                            Text("Display")
+                                .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.7)
+                            
+                            Spacer()
+                            
+                            Color.clear
+                                .frame(width: buttonSize, height: buttonSize)
+                        }
+                        .frame(height: buttonSize)
+                        .padding(.horizontal, horizontalPadding)
+                        .padding(.top, horizontalPadding * 0.8)
+                    }
+                }
+                .frame(height: max(72, UIScreen.main.bounds.width * 0.18))
+                
+                ScrollView {
                 VStack(spacing: 24) {
                     // Screen Settings
                     SettingsCard {
@@ -1303,9 +1456,8 @@ struct DisplaySettingsView: View {
                 .padding(20)
             }
         }
-        .navigationTitle("Display")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.hidden, for: .navigationBar)
+        }
+        .navigationBarHidden(true)
     }
 }
 
@@ -2243,6 +2395,7 @@ struct PartyTimeView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
+    @Environment(\.dismiss) private var dismiss
     @State private var isVibrating = false
     @State private var vibrationTimer: Timer?
     
@@ -2252,6 +2405,43 @@ struct PartyTimeView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
+                // Header
+                GeometryReader { geometry in
+                    let buttonSize = max(44, geometry.size.width * 0.11)
+                    let horizontalPadding = geometry.size.width * 0.05
+                    let headerSpacing = geometry.size.width * 0.03
+                    
+                    VStack(spacing: headerSpacing) {
+                        HStack(spacing: 0) {
+                            Button(action: {
+                                dismiss()
+                            }) {
+                                Image(systemName: "chevron.left")
+                                    .font(.title3)
+                                    .foregroundColor(.white)
+                                    .frame(width: buttonSize, height: buttonSize)
+                            }
+                            
+                            Spacer()
+                            
+                            Text("Party Time")
+                                .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.7)
+                            
+                            Spacer()
+                            
+                            Color.clear
+                                .frame(width: buttonSize, height: buttonSize)
+                        }
+                        .frame(height: buttonSize)
+                        .padding(.horizontal, horizontalPadding)
+                        .padding(.top, horizontalPadding * 0.8)
+                    }
+                }
+                .frame(height: max(72, UIScreen.main.bounds.width * 0.18))
+                
                 ScrollView {
                     VStack(spacing: 32) {
                         // Header Info
@@ -2356,9 +2546,7 @@ struct PartyTimeView: View {
                 }
             }
         }
-        .navigationTitle("Party Time")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.hidden, for: .navigationBar)
+        .navigationBarHidden(true)
         .onDisappear {
             stopVibration()
         }
