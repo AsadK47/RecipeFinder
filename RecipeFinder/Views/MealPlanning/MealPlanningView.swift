@@ -36,9 +36,6 @@ struct MealPlanningView: View {
                 
                 ScrollView {
                     VStack(spacing: 24) {
-                        // Nutrition Tips Banner
-                        nutritionTipsBanner
-                        
                         // Main Content
                         if viewMode == .calendar {
                             calendarView
@@ -255,59 +252,6 @@ struct MealPlanningView: View {
         }
         .padding(.horizontal, 20)
         .padding(.bottom, 8)
-    }
-    
-    private var nutritionTipsBanner: some View {
-        let tipOfDay = NutritionalTipsDatabase.tipOfTheDay()
-        
-        return NavigationLink(destination: NutritionalTipsView()) {
-            HStack(spacing: 12) {
-                Text(tipOfDay.icon)
-                    .font(.title2)
-                    .shadow(color: .black.opacity(0.2), radius: 1, x: 0, y: 1)
-                
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack(spacing: 4) {
-                        Text("💡 Tip of the Day")
-                            .font(.caption2)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.white)
-                            .shadow(color: .black.opacity(0.3), radius: 1, x: 0, y: 1)
-                        
-                        Image(systemName: "graduationcap.fill")
-                            .font(.caption2)
-                            .foregroundColor(.white)
-                            .shadow(color: .black.opacity(0.3), radius: 1, x: 0, y: 1)
-                    }
-                    
-                    Text(tipOfDay.title)
-                        .font(.system(size: 15, weight: .semibold))
-                        .foregroundColor(.white)
-                        .shadow(color: .black.opacity(0.3), radius: 1, x: 0, y: 1)
-                        .lineLimit(2)
-                    
-                    Text(tipOfDay.summary)
-                        .font(.caption)
-                        .foregroundColor(.white)
-                        .shadow(color: .black.opacity(0.3), radius: 1, x: 0, y: 1)
-                        .lineLimit(2)
-                }
-                
-                Spacer()
-                
-                Image(systemName: "chevron.right")
-                    .font(.caption)
-                    .foregroundColor(.white)
-                    .shadow(color: .black.opacity(0.3), radius: 1, x: 0, y: 1)
-            }
-            .padding(16)
-            .background {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(AppTheme.accentColor(for: selectedTheme))
-                    .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2)
-            }
-        }
-        .buttonStyle(PlainButtonStyle())
     }
     
     private var weeklyPlanView: some View {
