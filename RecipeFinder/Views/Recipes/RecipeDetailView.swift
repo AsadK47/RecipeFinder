@@ -11,6 +11,7 @@ struct RecipeDetailView: View {
     @State private var showAddedFeedback: String?
     @State private var confettiCounter = 0
     @State private var showEditSheet = false
+    @State private var showTimerSheet = false
     @State private var editingIngredientIndex: Int?
     @State private var editingQuantity: String = ""
     @State private var editingUnit: String = ""
@@ -43,26 +44,29 @@ struct RecipeDetailView: View {
     }
     
     var body: some View {
-        ZStack {
-            backgroundView
-            
-            ScrollView(.vertical, showsIndicators: true) {
-                VStack(spacing: 0) {
-                    recipeTitleView
-                    recipeInfoCardsView
-                    ingredientsSection
-                    
-                    if hasPrePrep {
-                        prePrepSection
+        GeometryReader { geometry in
+            ZStack {
+                backgroundView
+                
+                ScrollView([.vertical], showsIndicators: true) {
+                    VStack(spacing: 0) {
+                        recipeTitleView
+                        recipeInfoCardsView
+                        ingredientsSection
+                        
+                        if hasPrePrep {
+                            prePrepSection
+                        }
+                        
+                        instructionsSection
+                        
+                        if hasNotes {
+                            notesSection
+                        }
                     }
-                    
-                    instructionsSection
-                    
-                    if hasNotes {
-                        notesSection
-                    }
+                    .padding(.bottom, 100)
+                    .frame(width: geometry.size.width)
                 }
-                .padding(.bottom, 100)
             }
         }
         .navigationBarTitleDisplayMode(.inline)
@@ -74,6 +78,9 @@ struct RecipeDetailView: View {
         }
         .sheet(isPresented: $showEditSheet) {
             editRecipeSheet
+        }
+        .sheet(isPresented: $showTimerSheet) {
+            CookTimerView()
         }
         .overlay(alignment: .bottom) {
             feedbackOverlay
@@ -199,6 +206,7 @@ struct RecipeDetailView: View {
             quickScaleButton(label: "2x", multiplier: 2.0)
             quickScaleButton(label: "3x", multiplier: 3.0)
         }
+        .frame(maxWidth: .infinity)
     }
     
     private func quickScaleButton(label: String, multiplier: Double) -> some View {
@@ -452,6 +460,12 @@ struct RecipeDetailView: View {
     
     private var toolbarButtons: some View {
         HStack(spacing: 16) {
+            Button(action: { showTimerSheet = true }) {
+                Image(systemName: "timer")
+                    .font(.title3)
+                    .foregroundColor(.white)
+            }
+            
             Button(action: { showEditSheet = true }) {
                 Image(systemName: "pencil")
                     .font(.title3)

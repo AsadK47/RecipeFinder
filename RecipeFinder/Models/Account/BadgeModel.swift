@@ -51,7 +51,7 @@ enum BadgeType: String, CaseIterable {
         case .firstRecipe:
             return Badge(
                 id: rawValue,
-                title: "Baby Steps",
+                title: "First Bite",
                 description: "Added your first recipe",
                 icon: "fork.knife.circle.fill",
                 color: "green",
@@ -60,7 +60,7 @@ enum BadgeType: String, CaseIterable {
         case .fiveRecipes:
             return Badge(
                 id: rawValue,
-                title: "Taste Tester",
+                title: "Getting Hungry",
                 description: "Collected 5 recipes",
                 icon: "leaf.circle.fill",
                 color: "mint",
@@ -69,7 +69,7 @@ enum BadgeType: String, CaseIterable {
         case .tenRecipes:
             return Badge(
                 id: rawValue,
-                title: "Recipe Hoarder",
+                title: "Cookbook Rookie",
                 description: "Collected 10 recipes",
                 icon: "books.vertical.circle.fill",
                 color: "blue",
@@ -78,7 +78,7 @@ enum BadgeType: String, CaseIterable {
         case .twentyFiveRecipes:
             return Badge(
                 id: rawValue,
-                title: "Kitchen Veteran",
+                title: "Cooking With Fire",
                 description: "Collected 25 recipes",
                 icon: "flame.circle.fill",
                 color: "orange",
@@ -87,7 +87,7 @@ enum BadgeType: String, CaseIterable {
         case .fiftyRecipes:
             return Badge(
                 id: rawValue,
-                title: "Culinary Arsenal",
+                title: "Master Chef",
                 description: "Collected 50 recipes",
                 icon: "crown.fill",
                 color: "yellow",
@@ -96,7 +96,7 @@ enum BadgeType: String, CaseIterable {
         case .hundredRecipes:
             return Badge(
                 id: rawValue,
-                title: "Master Collector",
+                title: "Legendary Feast",
                 description: "Collected 100+ recipes",
                 icon: "trophy.fill",
                 color: "gold",
@@ -105,7 +105,7 @@ enum BadgeType: String, CaseIterable {
         case .mealPlanner:
             return Badge(
                 id: rawValue,
-                title: "Meal Prepper",
+                title: "Time Traveler",
                 description: "Created your first meal plan",
                 icon: "calendar.circle.fill",
                 color: "teal",
@@ -114,7 +114,7 @@ enum BadgeType: String, CaseIterable {
         case .shoppingExpert:
             return Badge(
                 id: rawValue,
-                title: "Cart Commander",
+                title: "Grocery Ninja",
                 description: "Used the shopping list feature",
                 icon: "cart.circle.fill",
                 color: "indigo",
