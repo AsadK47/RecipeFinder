@@ -3,7 +3,18 @@ import Foundation
 extension PersistenceController {
     // swiftlint:disable function_body_length
     func populateDatabase() {
-        clearDatabase()
+        let context = container.viewContext
+        let fetchRequest = Recipe.fetchRequest()
+        
+        do {
+            let existingRecipes = try context.fetch(fetchRequest)
+            if !existingRecipes.isEmpty {
+                debugLog("ℹ️ Database already contains \(existingRecipes.count) recipes, skipping population")
+                return
+            }
+        } catch {
+            debugLog("⚠️ Failed to check existing recipes: \(error.localizedDescription)")
+        }
         
         debugLog("🔄 Populating database with sample recipes...")
         

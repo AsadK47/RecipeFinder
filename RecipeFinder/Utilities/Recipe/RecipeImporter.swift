@@ -39,20 +39,26 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
     func importRecipe(from url: URL, redirectCount: Int = 0) async {
         // Prevent infinite redirect loops
         guard redirectCount < 5 else {
-            isLoading = false
-            errorMessage = "Too many redirects. Please try a different URL."
+            await MainActor.run {
+                isLoading = false
+                errorMessage = "Too many redirects. Please try a different URL."
+            }
             return
         }
         
-        isLoading = true
-        errorMessage = nil
-        extractedData = nil
+        await MainActor.run {
+            isLoading = true
+            errorMessage = nil
+            extractedData = nil
+        }
         
         // Check network connectivity first
         let isConnected = await NetworkMonitor.shared.isConnected
         guard isConnected else {
-            self.isLoading = false
-            self.errorMessage = AppError.networkUnavailable.localizedDescription
+            await MainActor.run {
+                self.isLoading = false
+                self.errorMessage = AppError.networkUnavailable.localizedDescription
+            }
             return
         }
         
@@ -98,7 +104,9 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             // Use RecipeParser to extract structured data
             let parsed = RecipeParser.parse(html: html)
             
-            self.parseConfidence = parsed.confidence
+            await MainActor.run {
+                self.parseConfidence = parsed.confidence
+            }
             debugLog("🎯 Parse confidence: \(Int(parsed.confidence * 100))%")
             
             // Validate minimum requirements
@@ -136,13 +144,17 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
                 cuisine: parsed.cuisine
             )
             
-            self.extractedData = extractedData
-            self.isLoading = false
+            await MainActor.run {
+                self.extractedData = extractedData
+                self.isLoading = false
+            }
             debugLog("🎉 Import complete!")
             
         } catch {
-            self.isLoading = false
-            self.errorMessage = error.localizedDescription
+            await MainActor.run {
+                self.isLoading = false
+                self.errorMessage = error.localizedDescription
+            }
             debugLog("❌ Import failed: \(error.localizedDescription)")
         }
     }
