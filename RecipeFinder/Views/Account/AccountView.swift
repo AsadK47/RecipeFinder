@@ -23,7 +23,6 @@ struct AccountView: View {
     @State private var showPasswordVerification = false
     @State private var badgesSectionExpanded = true // Collapsible badges
     @State private var selectedBadge: Badge? = nil
-    @State private var showBadgeDetail = false
     
     // Profile fields
     @State private var firstName: String = ""
@@ -146,10 +145,10 @@ struct AccountView: View {
                 saveProfile()
             }
         }
-        .sheet(isPresented: $showBadgeDetail) {
-            if let badge = selectedBadge {
-                BadgeDetailView(badge: badge)
-            }
+        .sheet(item: $selectedBadge) { badge in
+            BadgeDetailView(badge: badge)
+                .presentationDetents([.large])
+                .presentationDragIndicator(.hidden)
         }
         .alert("Sign Out", isPresented: $showingSignOutAlert) {
             Button("Cancel", role: .cancel) {}
@@ -669,7 +668,6 @@ struct AccountView: View {
                         ForEach(allBadges) { badge in
                             Button(action: {
                                 selectedBadge = badge
-                                showBadgeDetail = true
                                 HapticManager.shared.light()
                             }) {
                                 BadgeCard(badge: badge, colorScheme: colorScheme, cardStyle: cardStyle)
