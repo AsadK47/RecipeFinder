@@ -344,26 +344,23 @@ struct ShoppingListView: View {
     // MARK: - Empty State
     private var emptyStateView: some View {
         ScrollView {
-            VStack(spacing: 24) {
-                VStack(spacing: 12) {
-                    Image(systemName: "cart.circle.fill")
-                        .font(.system(size: 70))
-                        .foregroundColor(Color(colorScheme == .dark ? .white : .black).opacity(0.4))
-                        .padding(.top, 40)
-                    
-                    Text("Start Your Shopping List")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
-                    
-                    Text("Add items to begin shopping")
-                        .font(.subheadline)
-                        .foregroundColor(Color(colorScheme == .dark ? .white : .black).opacity(0.7))
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 32)
-                }
+            VStack(spacing: 16) {
+                Image(systemName: "cart.circle.fill")
+                    .font(.system(size: 70))
+                    .foregroundColor(Color(colorScheme == .dark ? .white : .black).opacity(0.4))
+                
+                Text("Start Your Shopping List")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                
+                Text("Add items to begin shopping")
+                    .font(.subheadline)
+                    .foregroundColor(Color(colorScheme == .dark ? .white : .black).opacity(0.7))
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 32)
             }
-            .padding(.bottom, 40)
+            .padding(.top, 40)
         }
     }
     

@@ -121,15 +121,9 @@ struct RecipeFinderApp: App {
     // Initialization
     
     private func initializeDatabase() {
-        guard !UserDefaults.standard.bool(forKey: Constants.UserDefaultsKeys.hasPopulatedDatabase) else {
-            debugLog("✅ Database already populated")
-            return
-        }
-        
-        debugLog("🔄 First launch - populating database...")
-        persistenceController.populateDatabase()
-        UserDefaults.standard.set(true, forKey: Constants.UserDefaultsKeys.hasPopulatedDatabase)
-        debugLog("✅ Database ready")
+        // Database population now happens per-user after authentication
+        // No global flag needed - see AuthenticationManager
+        debugLog("✅ Database initialized")
     }
     
     // Appearance Configuration

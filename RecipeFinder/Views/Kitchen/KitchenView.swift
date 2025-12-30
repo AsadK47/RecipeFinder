@@ -236,25 +236,23 @@ struct KitchenView: View {
     
     // MARK: - Empty Prompt
     private var emptyPromptView: some View {
-        VStack(spacing: 24) {
-            VStack(spacing: 16) {
-                Image(systemName: "refrigerator")
-                    .font(.system(size: 70))
-                    .foregroundColor(Color(colorScheme == .dark ? .white : .black).opacity(0.4))
-                
-                Text("Your Kitchen is Empty")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
-                
-                Text("Add ingredients to see matching recipes")
-                    .font(.subheadline)
-                    .foregroundColor(Color(colorScheme == .dark ? .white : .black).opacity(0.7))
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 40)
-            }
-            .padding(.top, 40)
+        VStack(spacing: 16) {
+            Image(systemName: "refrigerator")
+                .font(.system(size: 70))
+                .foregroundColor(Color(colorScheme == .dark ? .white : .black).opacity(0.4))
+            
+            Text("Your Kitchen is Empty")
+                .font(.title2)
+                .fontWeight(.bold)
+                .foregroundColor(colorScheme == .dark ? .white : .black)
+            
+            Text("Add ingredients to see matching recipes")
+                .font(.subheadline)
+                .foregroundColor(Color(colorScheme == .dark ? .white : .black).opacity(0.7))
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 40)
         }
+        .padding(.top, 40)
         .frame(maxWidth: .infinity)
     }
     

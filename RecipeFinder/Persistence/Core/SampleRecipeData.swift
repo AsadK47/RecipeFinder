@@ -6,17 +6,26 @@ extension PersistenceController {
         let context = container.viewContext
         let fetchRequest = Recipe.fetchRequest()
         
+        // Filter by current user if user is logged in
+        if let userId = UserScopedStorage.shared.currentUserId {
+            fetchRequest.predicate = NSPredicate(format: "userId == %@", userId)
+        } else {
+            // No user logged in - skip population
+            debugLog("⚠️ No user logged in, skipping database population")
+            return
+        }
+        
         do {
             let existingRecipes = try context.fetch(fetchRequest)
             if !existingRecipes.isEmpty {
-                debugLog("ℹ️ Database already contains \(existingRecipes.count) recipes, skipping population")
+                debugLog("ℹ️ Database already contains \(existingRecipes.count) recipes for current user, skipping population")
                 return
             }
         } catch {
             debugLog("⚠️ Failed to check existing recipes: \(error.localizedDescription)")
         }
         
-        debugLog("🔄 Populating database with sample recipes...")
+        debugLog("🔄 Populating database with sample recipes for current user...")
         
         saveRecipe(parameters: RecipeSaveParameters(
             name: "Achari Chicken Curry (Instant Pot Version)",

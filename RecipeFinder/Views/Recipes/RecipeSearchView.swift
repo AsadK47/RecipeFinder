@@ -597,47 +597,48 @@ struct RecipeSearchView: View {
     }
     
     private var emptyStateView: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "magnifyingglass")
-                .font(.system(size: 70))
-                .foregroundColor(.white.opacity(0.4))
-            
-            Text("No Recipes Found")
-                .font(.title2)
-                .fontWeight(.bold)
-                .foregroundColor(.white)
-            
-            Text("Try adjusting your filters or search")
-                .font(.subheadline)
-                .foregroundColor(.white.opacity(0.7))
-            
-            if activeFilterCount > 0 {
-                Button(action: clearAllFilters, label: {
-                    HStack(spacing: 8) {
-                        Image(systemName: "xmark.circle.fill")
-                        Text("Clear All Filters")
-                    }
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
+        ScrollView {
+            VStack(spacing: 20) {
+                Image(systemName: "magnifyingglass")
+                    .font(.system(size: 70))
+                    .foregroundColor(.white.opacity(0.4))
+                
+                Text("No Recipes Found")
+                    .font(.title2)
+                    .fontWeight(.bold)
                     .foregroundColor(.white)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 12)
-                    .background(
-                        Group {
-                            if cardStyle == .solid {
-                                Capsule()
-                                    .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
-                            } else {
-                                Capsule()
-                                    .fill(.ultraThinMaterial)
-                            }
+                
+                Text("Try adjusting your filters or search")
+                    .font(.subheadline)
+                    .foregroundColor(.white.opacity(0.7))
+                
+                if activeFilterCount > 0 {
+                    Button(action: clearAllFilters, label: {
+                        HStack(spacing: 8) {
+                            Image(systemName: "xmark.circle.fill")
+                            Text("Clear All Filters")
                         }
-                    )
-                })
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 12)
+                        .background(
+                            Group {
+                                if cardStyle == .solid {
+                                    Capsule()
+                                        .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+                                } else {
+                                    Capsule()
+                                        .fill(.ultraThinMaterial)
+                                }
+                            }
+                        )
+                    })
+                }
             }
+            .padding(.top, 40)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(.top, 60)
     }
     
     private func clearAllFilters() {
