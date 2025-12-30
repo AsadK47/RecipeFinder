@@ -145,10 +145,14 @@ class BadgeManager: ObservableObject {
     
     @Published var unlockedBadges: [String: Badge] = [:]
     
-    private let userDefaults = UserDefaults.standard
+    private let storage = UserScopedStorage.shared
     private let badgesKey = "unlockedBadges"
     
     private init() {
+        loadBadges()
+    }
+    
+    func reloadForCurrentUser() {
         loadBadges()
     }
     
@@ -201,14 +205,16 @@ class BadgeManager: ObservableObject {
     
     private func saveBadges() {
         if let encoded = try? JSONEncoder().encode(unlockedBadges) {
-            userDefaults.set(encoded, forKey: badgesKey)
+            storage.set(encoded, forKey: badgesKey)
         }
     }
     
     private func loadBadges() {
-        if let data = userDefaults.data(forKey: badgesKey),
+        if let data = storage.data(forKey: badgesKey),
            let decoded = try? JSONDecoder().decode([String: Badge].self, from: data) {
             unlockedBadges = decoded
+        } else {
+            unlockedBadges = [:]
         }
     }
 }

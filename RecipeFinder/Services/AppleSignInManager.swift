@@ -28,8 +28,12 @@ final class AppleSignInManager: NSObject, ObservableObject {
     func checkAuthenticationState() {
         guard let userID = UserDefaults.standard.string(forKey: "appleUserIdentifier") else {
             isAuthenticated = false
+            UserScopedStorage.shared.currentUserId = nil
             return
         }
+        
+        // Set the current user ID
+        UserScopedStorage.shared.currentUserId = userID
         
         let provider = ASAuthorizationAppleIDProvider()
         provider.getCredentialState(forUserID: userID) { credentialState, error in
@@ -39,10 +43,16 @@ final class AppleSignInManager: NSObject, ObservableObject {
                     self.isAuthenticated = true
                     self.userIdentifier = userID
                     self.loadUserData()
+                    
+                    // Reload all managers for the current user
+                    ShoppingListManager.shared.reloadForCurrentUser()
+                    NotesManager().reloadForCurrentUser()
+                    BadgeManager.shared.reloadForCurrentUser()
                 case .revoked, .notFound:
                     self.signOut()
                 default:
                     self.isAuthenticated = false
+                    UserScopedStorage.shared.currentUserId = nil
                 }
             }
         }
@@ -65,10 +75,20 @@ final class AppleSignInManager: NSObject, ObservableObject {
         UserDefaults.standard.removeObject(forKey: "appleUserEmail")
         UserDefaults.standard.removeObject(forKey: "appleUserName")
         
+        // Clear the current user ID
+        UserScopedStorage.shared.currentUserId = nil
+        
         isAuthenticated = false
         userIdentifier = nil
         userEmail = nil
         fullName = nil
+        
+        // Clear managers
+        Task { @MainActor in
+            ShoppingListManager.shared.reloadForCurrentUser()
+            NotesManager().reloadForCurrentUser()
+            BadgeManager.shared.reloadForCurrentUser()
+        }
         
         HapticManager.shared.success()
     }
@@ -83,6 +103,9 @@ final class AppleSignInManager: NSObject, ObservableObject {
     private func saveUserData(identifier: String, email: String?, name: PersonNameComponents?) {
         UserDefaults.standard.set(identifier, forKey: "appleUserIdentifier")
         
+        // Set the current user ID for scoped storage
+        UserScopedStorage.shared.currentUserId = identifier
+        
         if let email = email {
             UserDefaults.standard.set(email, forKey: "appleUserEmail")
         }
@@ -94,6 +117,13 @@ final class AppleSignInManager: NSObject, ObservableObject {
             if !fullName.isEmpty {
                 UserDefaults.standard.set(fullName, forKey: "appleUserName")
             }
+        }
+        
+        // Reload all managers for the new user
+        Task { @MainActor in
+            ShoppingListManager.shared.reloadForCurrentUser()
+            NotesManager().reloadForCurrentUser()
+            BadgeManager.shared.reloadForCurrentUser()
         }
     }
 }

@@ -28,6 +28,7 @@ final class PersistenceController {
         static let notes = "notes"
         static let imageName = "imageName"
         static let isFavorite = "isFavorite"
+        static let userId = "userId"
     }
     
     private init() {
@@ -238,6 +239,11 @@ final class PersistenceController {
         recipe.setValue(parameters.imageName, forKey: RecipeKey.imageName)
         recipe.setValue(parameters.isFavorite, forKey: RecipeKey.isFavorite)
         
+        // Set user ID for multi-user support
+        if let userId = UserScopedStorage.shared.currentUserId {
+            recipe.setValue(userId, forKey: "userId")
+        }
+        
         do {
             try context.save()
             debugLog("✅ Recipe '\(parameters.name)' saved successfully")
@@ -271,9 +277,17 @@ final class PersistenceController {
             )
         ]
         
+        // Filter by current user if user is logged in
+        if let userId = UserScopedStorage.shared.currentUserId {
+            fetchRequest.predicate = NSPredicate(format: "userId == %@", userId)
+        } else {
+            // If no user, return empty (require authentication)
+            return []
+        }
+        
         do {
             let results = try context.fetch(fetchRequest)
-            debugLog("✅ Fetched \(results.count) recipes from database")
+            debugLog("✅ Fetched \(results.count) recipes from database for current user")
             return results.compactMap(mapToRecipeModel)
         } catch {
             debugLog("❌ Failed to fetch recipes: \(error.localizedDescription)")
@@ -286,6 +300,13 @@ final class PersistenceController {
         
         let context = container.viewContext
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
+        
+        // Filter by current user if user is logged in
+        if let userId = UserScopedStorage.shared.currentUserId {
+            fetchRequest.predicate = NSPredicate(format: "userId == %@", userId)
+        } else {
+            return 0
+        }
         
         do {
             return try context.count(for: fetchRequest)

@@ -15,5 +15,6 @@
         <attribute name="notes" optional="YES" attributeType="String"/>
         <attribute name="prePrepInstructions" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformerName"/>
         <attribute name="prepTime" optional="YES" attributeType="String"/>
+        <attribute name="userId" optional="YES" attributeType="String"/>
     </entity>
 </model>

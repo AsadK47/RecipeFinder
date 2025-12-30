@@ -6,6 +6,7 @@ final class ShoppingListManager: ObservableObject {
     static let shared = ShoppingListManager()
     
     private let saveKey = Constants.UserDefaultsKeys.shoppingListItems
+    private let storage = UserScopedStorage.shared
     
     // PERFORMANCE: Cache items in memory and only read from UserDefaults once
     @Published private(set) var items: [ShoppingListModel] = []
@@ -14,8 +15,12 @@ final class ShoppingListManager: ObservableObject {
         loadItems()
     }
     
+    func reloadForCurrentUser() {
+        loadItems()
+    }
+    
     private func loadItems() {
-        if let data = UserDefaults.standard.data(forKey: saveKey),
+        if let data = storage.data(forKey: saveKey),
            let decoded = try? JSONDecoder().decode([ShoppingListModel].self, from: data) {
             items = decoded
         } else {
@@ -30,7 +35,7 @@ final class ShoppingListManager: ObservableObject {
     private func saveItems(_ newItems: [ShoppingListModel]) {
         items = newItems
         if let encoded = try? JSONEncoder().encode(newItems) {
-            UserDefaults.standard.set(encoded, forKey: saveKey)
+            storage.set(encoded, forKey: saveKey)
         }
     }
     

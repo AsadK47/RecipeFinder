@@ -10,6 +10,7 @@
 		9E0946102EFB428D0072BDFE /* ShimmerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E09460E2EFB428D0072BDFE /* ShimmerView.swift */; };
 		9E0946152EFB42AA0072BDFE /* LoadingExampleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E0946112EFB42AA0072BDFE /* LoadingExampleView.swift */; };
 		9E09461E2EFB8BA20072BDFE /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 9E09461D2EFB8BA20072BDFE /* ConfettiSwiftUI */; };
+		9E0946202F0415F40072BDFE /* UserScopedStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E09461F2F0415F40072BDFE /* UserScopedStorage.swift */; };
 		9E0C88662EBAEB1E00D707E3 /* FaceIDOnboardingSplash.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E0C88652EBAEB1E00D707E3 /* FaceIDOnboardingSplash.swift */; };
 		9E12E8952EC15AFA0077B1DA /* AppleSignInManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E12E8942EC15AFA0077B1DA /* AppleSignInManager.swift */; };
 		9E2E34212E9D9F8500E2E49F /* KitchenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E2E34202E9D9F8500E2E49F /* KitchenView.swift */; };
@@ -130,6 +131,7 @@
 /* Begin PBXFileReference section */
 		9E09460E2EFB428D0072BDFE /* ShimmerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShimmerView.swift; sourceTree = "<group>"; };
 		9E0946112EFB42AA0072BDFE /* LoadingExampleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingExampleView.swift; sourceTree = "<group>"; };
+		9E09461F2F0415F40072BDFE /* UserScopedStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserScopedStorage.swift; sourceTree = "<group>"; };
 		9E0C88652EBAEB1E00D707E3 /* FaceIDOnboardingSplash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceIDOnboardingSplash.swift; sourceTree = "<group>"; };
 		9E12E8942EC15AFA0077B1DA /* AppleSignInManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSignInManager.swift; sourceTree = "<group>"; };
 		9E212D6F2EB12315005743F7 /* RecipeModel 9.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 9.xcdatamodel"; sourceTree = "<group>"; };
@@ -497,6 +499,7 @@
 		9E6DEA7F2EF5EFE8001E7B24 /* Managers */ = {
 			isa = PBXGroup;
 			children = (
+				9E09461F2F0415F40072BDFE /* UserScopedStorage.swift */,
 				9E6DEA7C2EF5EFE8001E7B24 /* HapticManager.swift */,
 				9E6DEA7D2EF5EFE8001E7B24 /* NetworkMonitor.swift */,
 				9E6DEA7E2EF5EFE8001E7B24 /* NotificationManager.swift */,
@@ -1004,6 +1007,7 @@
 				9E6DEA632EF5EF47001E7B24 /* CardView.swift in Sources */,
 				9E6DEA642EF5EF47001E7B24 /* FlowLayout.swift in Sources */,
 				9E6DEA652EF5EF47001E7B24 /* ModernCircleButton.swift in Sources */,
+				9E0946202F0415F40072BDFE /* UserScopedStorage.swift in Sources */,
 				9E6DEA662EF5EF47001E7B24 /* OfflineBanner.swift in Sources */,
 				9E6DEA672EF5EF47001E7B24 /* IngredientRowView.swift in Sources */,
 				9E6DEA682EF5EF47001E7B24 /* InfoPairView.swift in Sources */,

@@ -6,8 +6,13 @@ class NotesManager: ObservableObject {
     @Published var notes: [NoteModel] = []
     
     private let notesKey = "saved_notes"
+    private let storage = UserScopedStorage.shared
     
     init() {
+        loadNotes()
+    }
+    
+    func reloadForCurrentUser() {
         loadNotes()
     }
     
@@ -94,15 +99,17 @@ class NotesManager: ObservableObject {
     
     private func saveNotes() {
         if let encoded = try? JSONEncoder().encode(notes) {
-            UserDefaults.standard.set(encoded, forKey: notesKey)
+            storage.set(encoded, forKey: notesKey)
         }
     }
     
     private func loadNotes() {
-        if let data = UserDefaults.standard.data(forKey: notesKey),
+        if let data = storage.data(forKey: notesKey),
            let decoded = try? JSONDecoder().decode([NoteModel].self, from: data) {
             notes = decoded
             sortNotes()
+        } else {
+            notes = []
         }
     }
     
