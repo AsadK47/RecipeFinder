@@ -106,6 +106,10 @@ final class AppleSignInManager: NSObject, ObservableObject {
         // Set the current user ID for scoped storage
         UserScopedStorage.shared.currentUserId = identifier
         
+        // Check if this is a new user (first time sign-in)
+        let userKey = "user_\(identifier)_initialized"
+        let isNewUser = !UserDefaults.standard.bool(forKey: userKey)
+        
         if let email = email {
             UserDefaults.standard.set(email, forKey: "appleUserEmail")
         }
@@ -124,6 +128,16 @@ final class AppleSignInManager: NSObject, ObservableObject {
             ShoppingListManager.shared.reloadForCurrentUser()
             NotesManager().reloadForCurrentUser()
             BadgeManager.shared.reloadForCurrentUser()
+            
+            // If new user, populate with sample recipes
+            if isNewUser {
+                debugLog("🆕 New user detected - populating sample recipes")
+                PersistenceController.shared.populateDatabase()
+                UserDefaults.standard.set(true, forKey: userKey)
+                
+                // Unlock welcome badge
+                BadgeManager.shared.unlockBadge(.welcomeAboard)
+            }
         }
     }
 }

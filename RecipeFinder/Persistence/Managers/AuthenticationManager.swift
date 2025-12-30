@@ -111,6 +111,17 @@ final class AuthenticationManager: NSObject, ObservableObject {
         
         if isAuthenticated {
             loadUser()
+            
+            // Restore user ID for scoped storage
+            if let user = currentUser {
+                UserScopedStorage.shared.currentUserId = user.id
+                
+                // Reload all managers
+                ShoppingListManager.shared.reloadForCurrentUser()
+                NotesManager().reloadForCurrentUser()
+                BadgeManager.shared.reloadForCurrentUser()
+            }
+            
             updateLastActiveTimestamp()
         }
     }
@@ -210,6 +221,27 @@ final class AuthenticationManager: NSObject, ObservableObject {
         UserDefaults.standard.set(true, forKey: isAuthenticatedKey)
         UserDefaults.standard.set(email, forKey: currentEmailKey)
         updateLastActiveTimestamp()
+        
+        // Set user ID for scoped storage
+        UserScopedStorage.shared.currentUserId = user.id
+        
+        // Reload all managers for the current user
+        ShoppingListManager.shared.reloadForCurrentUser()
+        NotesManager().reloadForCurrentUser()
+        BadgeManager.shared.reloadForCurrentUser()
+        
+        // Check if this is a new user (first time sign-in)
+        let userKey = "user_\(user.id)_initialized"
+        let isNewUser = !UserDefaults.standard.bool(forKey: userKey)
+        
+        if isNewUser {
+            debugLog("🆕 New user detected - populating sample recipes")
+            PersistenceController.shared.populateDatabase()
+            UserDefaults.standard.set(true, forKey: userKey)
+            
+            // Unlock welcome badge
+            BadgeManager.shared.unlockBadge(.welcomeAboard)
+        }
         
         // Sync user data to AccountManager if not already set
         let accountManager = AccountManager.shared
@@ -396,6 +428,14 @@ final class AuthenticationManager: NSObject, ObservableObject {
             credentialManager.deleteSessionToken(for: email)
             debugLog("🗑️ Deleted session token for: \(email)")
         }
+        
+        // Clear user ID for scoped storage
+        UserScopedStorage.shared.currentUserId = nil
+        
+        // Clear managers
+        ShoppingListManager.shared.reloadForCurrentUser()
+        NotesManager().reloadForCurrentUser()
+        BadgeManager.shared.reloadForCurrentUser()
         
         // Ensure UI updates happen immediately on main thread
         self.isAuthenticated = false

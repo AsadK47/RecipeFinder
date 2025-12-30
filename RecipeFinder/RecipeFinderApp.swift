@@ -7,8 +7,8 @@ struct RecipeFinderApp: App {
     let persistenceController = PersistenceController.shared
     @StateObject private var authManager = AuthenticationManager.shared
     @StateObject private var themeManager = ThemeManager.shared
-    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
-    @AppStorage("hasSeenBiometricOnboarding") private var hasSeenBiometricOnboarding = false
+    @State private var hasCompletedOnboarding = false
+    @State private var hasSeenBiometricOnboarding = false
     @State private var showOnboarding = false
     @State private var showFaceIDOnboarding = false
     
@@ -39,6 +39,9 @@ struct RecipeFinderApp: App {
                 .animation(.easeInOut(duration: 0.3), value: authManager.isAuthenticated)
                 .fullScreenCover(isPresented: $showFaceIDOnboarding) {
                     FaceIDOnboardingSplash {
+                        // Save user-scoped Face ID onboarding completion
+                        UserScopedStorage.shared.set(true, forKey: "hasSeenBiometricOnboarding")
+                        hasSeenBiometricOnboarding = true
                         showFaceIDOnboarding = false
                         // Show main onboarding after Face ID setup
                         if !hasCompletedOnboarding {
@@ -51,10 +54,15 @@ struct RecipeFinderApp: App {
                 .fullScreenCover(isPresented: $showOnboarding) {
                     OnboardingView()
                         .onDisappear {
+                            // Save user-scoped onboarding completion
+                            UserScopedStorage.shared.set(true, forKey: "hasCompletedOnboarding")
                             hasCompletedOnboarding = true
                         }
                 }
                 .onAppear {
+                    // Load user-scoped onboarding flags
+                    loadUserOnboardingFlags()
+                    
                     // Check what to show on first launch after authentication
                     if authManager.isAuthenticated {
                         handleOnboardingFlow()
@@ -63,6 +71,7 @@ struct RecipeFinderApp: App {
                 .onChange(of: authManager.isAuthenticated) { _, isAuthenticated in
                     // Handle onboarding flow when user first signs in
                     if isAuthenticated {
+                        loadUserOnboardingFlags()
                         handleOnboardingFlow()
                     }
                 }
@@ -73,6 +82,11 @@ struct RecipeFinderApp: App {
     }
     
     // MARK: - Onboarding Flow
+    
+    private func loadUserOnboardingFlags() {
+        hasCompletedOnboarding = UserScopedStorage.shared.bool(forKey: "hasCompletedOnboarding")
+        hasSeenBiometricOnboarding = UserScopedStorage.shared.bool(forKey: "hasSeenBiometricOnboarding")
+    }
     
     private func handleOnboardingFlow() {
         // Priority 1: Face ID onboarding (if biometrics available and not seen)
