@@ -168,9 +168,12 @@ struct NutritionalTipsView: View {
     }
     
     private var tipsGrid: some View {
-        let filteredTips = selectedCategory == nil ?
-            NutritionalTipsDatabase.allTips :
-            NutritionalTipsDatabase.tips(forCategory: selectedCategory!)
+        let filteredTips: [NutritionalTip]
+        if let category = selectedCategory {
+            filteredTips = NutritionalTipsDatabase.tips(forCategory: category)
+        } else {
+            filteredTips = NutritionalTipsDatabase.allTips
+        }
         
         return LazyVStack(spacing: 16) {
             ForEach(filteredTips) { tip in

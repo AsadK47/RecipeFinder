@@ -103,7 +103,7 @@ struct WeeklyMealPlan: Identifiable {
     
     init(startDate: Date, meals: [MealPlanModel]) {
         self.startDate = Calendar.current.startOfDay(for: startDate)
-        self.endDate = Calendar.current.date(byAdding: .day, value: 6, to: self.startDate)!
+        self.endDate = Calendar.current.date(byAdding: .day, value: 6, to: self.startDate) ?? self.startDate
         self.meals = meals
     }
     

@@ -620,7 +620,10 @@ struct MealPlanningView: View {
         formatter.dateFormat = "MMM d"
         
         let startString = formatter.string(from: weekInterval.start)
-        let endString = formatter.string(from: Calendar.current.date(byAdding: .day, value: -1, to: weekInterval.end)!)
+        guard let endDate = Calendar.current.date(byAdding: .day, value: -1, to: weekInterval.end) else {
+            return startString
+        }
+        let endString = formatter.string(from: endDate)
         
         return "\(startString) - \(endString)"
     }
@@ -635,7 +638,10 @@ struct MealPlanningView: View {
         
         for _ in 0..<7 {
             days.append(currentDate)
-            currentDate = Calendar.current.date(byAdding: .day, value: 1, to: currentDate)!
+            guard let nextDate = Calendar.current.date(byAdding: .day, value: 1, to: currentDate) else {
+                break
+            }
+            currentDate = nextDate
         }
         
         return days
@@ -664,7 +670,10 @@ struct MealPlanningView: View {
                 days.append(nil)
             }
             
-            currentDate = Calendar.current.date(byAdding: .day, value: 1, to: currentDate)!
+            guard let nextDate = Calendar.current.date(byAdding: .day, value: 1, to: currentDate) else {
+                break
+            }
+            currentDate = nextDate
             
             // Stop after we've passed the month and completed the week
             if currentDate > monthEnd && days.count % 7 == 0 {
@@ -695,7 +704,10 @@ struct MealPlanningView: View {
             } else {
                 days.append(nil)
             }
-            currentDate = Calendar.current.date(byAdding: .day, value: 1, to: currentDate)!
+            guard let nextDate = Calendar.current.date(byAdding: .day, value: 1, to: currentDate) else {
+                break
+            }
+            currentDate = nextDate
         }
         
         return days

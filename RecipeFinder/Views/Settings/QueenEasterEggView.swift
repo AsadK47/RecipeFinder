@@ -26,7 +26,7 @@ struct QueenEasterEggView: View {
     private let particleData: [(icon: String, size: CGFloat, x: CGFloat, y: CGFloat)] = {
         let icons = ["heart.fill", "sparkles", "star.fill", "crown.fill"]
         return (0..<15).map { _ in
-            let selectedIcon = icons.randomElement()!
+            let selectedIcon = icons.randomElement() ?? "heart.fill"
             let particleSize = CGFloat.random(in: 10...25)
             let xPosition = CGFloat.random(in: 50...350)
             let yPosition = CGFloat.random(in: 100...700)

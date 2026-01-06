@@ -176,9 +176,9 @@ struct IngredientNameFormatter {
         var words = text.components(separatedBy: .whitespaces)
         
         // Remove prep words from the beginning
-        while !words.isEmpty {
-            let firstWord = words[0].trimmingCharacters(in: CharacterSet.punctuationCharacters)
-            if preparationKeywords.contains(firstWord.lowercased()) {
+        while let firstWord = words.first {
+            let cleanedWord = firstWord.trimmingCharacters(in: CharacterSet.punctuationCharacters)
+            if preparationKeywords.contains(cleanedWord.lowercased()) {
                 words.removeFirst()
             } else {
                 break

@@ -1185,7 +1185,7 @@ struct BadgeCard: View {
                     .foregroundColor(badge.isUnlocked ? badgeColor : .gray.opacity(0.5))
             }
             
-            Text(badge.title.components(separatedBy: " ")[0]) // First word only
+            Text(badge.title.components(separatedBy: " ").first ?? badge.title)
                 .font(.caption2)
                 .fontWeight(.semibold)
                 .foregroundColor(badge.isUnlocked ? (colorScheme == .dark ? .white : .black) : .gray)

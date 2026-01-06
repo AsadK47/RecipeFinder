@@ -63,7 +63,9 @@ final class MealPlanningManager: ObservableObject {
     }
     
     func clearOldMealPlans() {
-        let oneWeekAgo = Calendar.current.date(byAdding: .day, value: -7, to: Date())!
+        guard let oneWeekAgo = Calendar.current.date(byAdding: .day, value: -7, to: Date()) else {
+            return
+        }
         mealPlans.removeAll { $0.date < oneWeekAgo }
         saveMealPlans()
     }
@@ -91,7 +93,9 @@ final class MealPlanningManager: ObservableObject {
     
     func mealPlansForWeek(starting startDate: Date) -> WeeklyMealPlan {
         let start = Calendar.current.startOfDay(for: startDate)
-        let end = Calendar.current.date(byAdding: .day, value: 7, to: start)!
+        guard let end = Calendar.current.date(byAdding: .day, value: 7, to: start) else {
+            return WeeklyMealPlan(startDate: start, meals: [])
+        }
         
         let weekMeals = mealPlans.filter { meal in
             meal.date >= start && meal.date < end

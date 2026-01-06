@@ -1885,9 +1885,10 @@ struct DataManagementSettingsView: View {
         
         // 3. Clear all UserDefaults except critical ones
         let defaults = UserDefaults.standard
-        let domain = Bundle.main.bundleIdentifier!
-        defaults.removePersistentDomain(forName: domain)
-        defaults.synchronize()
+        if let domain = Bundle.main.bundleIdentifier {
+            defaults.removePersistentDomain(forName: domain)
+            defaults.synchronize()
+        }
         
         // 4. Restore default settings
         defaults.set("teal", forKey: "appTheme")
