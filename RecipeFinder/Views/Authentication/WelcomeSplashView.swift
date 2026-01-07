@@ -193,7 +193,7 @@ struct WelcomeSplashView: View {
     private var subtitleText: some View {
         Text("Your culinary journey begins now")
             .font(.system(size: 20, weight: .medium, design: .rounded))
-            .foregroundColor(.white.opacity(0.9))
+            .foregroundColor(AppTheme.textColor(for: colorScheme, opacity: 0.9))
             .multilineTextAlignment(.center)
             .frame(maxWidth: .infinity)
             .opacity(contentOpacity)
@@ -218,7 +218,7 @@ struct WelcomeSplashView: View {
                 .foregroundStyle(AppTheme.accentColor(for: appTheme))
             Text("Account created successfully")
                 .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(.white)
+                .adaptiveForegroundColor()
         }
     }
     
@@ -226,10 +226,10 @@ struct WelcomeSplashView: View {
         HStack(spacing: 8) {
             Image(systemName: "envelope.fill")
                 .font(.system(size: 14))
-                .foregroundColor(.white.opacity(0.6))
+                .adaptiveForegroundColor(opacity: 0.6)
             Text(email)
                 .font(.system(size: 15, weight: .medium))
-                .foregroundColor(.white.opacity(0.8))
+                .adaptiveForegroundColor(opacity: 0.8)
         }
     }
     
@@ -273,7 +273,7 @@ struct WelcomeSplashView: View {
             Image(systemName: "arrow.right.circle.fill")
                 .font(.system(size: 20))
         }
-        .foregroundColor(.white)
+        .adaptiveForegroundColor()
         .frame(maxWidth: .infinity)
         .frame(height: spacing.buttonHeight + spacing.md)
         .background(buttonBackground(spacing: spacing))
@@ -353,17 +353,18 @@ struct FeatureRow: View {
     let icon: String
     let text: String
     let spacing: AdaptiveSpacing
+    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         HStack(spacing: spacing.md) {
             Image(systemName: icon)
                 .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(.white.opacity(0.9))
+                .adaptiveForegroundColor(opacity: 0.9)
                 .frame(width: spacing.iconMedium)
             
             Text(text)
                 .font(.system(size: 15, weight: .medium))
-                .foregroundColor(.white.opacity(0.85))
+                .adaptiveForegroundColor(opacity: 0.85)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
     }

@@ -338,11 +338,11 @@ struct OnboardingSlideView: View {
                             VStack(alignment: .leading, spacing: spacing.xxs) {
                                 Text(feature.title)
                                     .font(.system(size: 17, weight: .semibold))
-                                    .foregroundColor(.white)
+                                    .adaptiveForegroundColor()
                                 
                                 Text(feature.subtitle)
                                     .font(.system(size: 14, weight: .regular))
-                                    .foregroundColor(.white.opacity(0.7))
+                                    .adaptiveForegroundColor(opacity: 0.7)
                             }
                             
                             Spacer()
@@ -378,7 +378,7 @@ struct OnboardingSlideView: View {
                             Image(systemName: "arrow.right.circle.fill")
                                 .font(.system(size: 22))
                         }
-                        .foregroundColor(.white)
+                        .adaptiveForegroundColor()
                         .frame(maxWidth: .infinity)
                         .frame(height: spacing.buttonHeight + spacing.md)
                         .background(

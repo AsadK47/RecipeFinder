@@ -142,7 +142,7 @@ struct MoreRow: View {
                 
                 Image(systemName: icon)
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(.white)
+                    .adaptiveForegroundColor()
             }
             
             VStack(alignment: .leading, spacing: 4) {

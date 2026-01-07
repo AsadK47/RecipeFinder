@@ -217,16 +217,16 @@ struct EmailSignInView: View {
                     VStack(spacing: 8) {
                         Image(systemName: "person.crop.circle.fill")
                             .font(.system(size: 60))
-                            .foregroundColor(.white.opacity(0.9))
+                            .adaptiveForegroundColor(opacity: 0.9)
                             .padding(.top, 40)
                         
                         Text("Welcome Back")
                             .font(.system(size: 32, weight: .bold))
-                            .foregroundColor(.white)
+                            .adaptiveForegroundColor()
                         
                         Text("Sign in to continue")
                             .font(.subheadline)
-                            .foregroundColor(.white.opacity(0.8))
+                            .adaptiveForegroundColor(opacity: 0.8)
                     }
                     .padding(.bottom, 20)
                     
@@ -237,7 +237,7 @@ struct EmailSignInView: View {
                             Text("Email")
                                 .font(.subheadline)
                                 .fontWeight(.medium)
-                                .foregroundColor(.white.opacity(0.9))
+                                .adaptiveForegroundColor(opacity: 0.9)
                             
                             TextField("", text: $email)
                                 .textFieldStyle(AuthTextFieldStyle())
@@ -258,7 +258,7 @@ struct EmailSignInView: View {
                             Text("Password")
                                 .font(.subheadline)
                                 .fontWeight(.medium)
-                                .foregroundColor(.white.opacity(0.9))
+                                .adaptiveForegroundColor(opacity: 0.9)
                             
                             SecureField("", text: $password)
                                 .textFieldStyle(AuthTextFieldStyle())
@@ -282,7 +282,7 @@ struct EmailSignInView: View {
                                         .fontWeight(.semibold)
                                 }
                             }
-                            .foregroundColor(.white)
+                            .adaptiveForegroundColor()
                             .frame(maxWidth: .infinity)
                             .frame(height: 50)
                             .background(
@@ -400,16 +400,16 @@ struct SignUpView: View {
                         VStack(spacing: 8) {
                             Image(systemName: "person.crop.circle.badge.plus")
                                 .font(.system(size: 60))
-                                .foregroundColor(.white.opacity(0.9))
+                                .adaptiveForegroundColor(opacity: 0.9)
                                 .padding(.top, 40)
                             
                             Text("Create Account")
                                 .font(.system(size: 32, weight: .bold))
-                                .foregroundColor(.white)
+                                .adaptiveForegroundColor()
                             
                             Text("Join RecipeFinder today")
                                 .font(.subheadline)
-                                .foregroundColor(.white.opacity(0.8))
+                                .adaptiveForegroundColor(opacity: 0.8)
                         }
                         .padding(.bottom, 20)
                         
@@ -420,7 +420,7 @@ struct SignUpView: View {
                                 Text("Full Name")
                                     .font(.subheadline)
                                     .fontWeight(.medium)
-                                    .foregroundColor(.white.opacity(0.9))
+                                    .adaptiveForegroundColor(opacity: 0.9)
                                 
                                 TextField("", text: $fullName)
                                     .textFieldStyle(AuthTextFieldStyle())
@@ -433,7 +433,7 @@ struct SignUpView: View {
                                 Text("Email")
                                     .font(.subheadline)
                                     .fontWeight(.medium)
-                                    .foregroundColor(.white.opacity(0.9))
+                                    .adaptiveForegroundColor(opacity: 0.9)
                                 
                                 TextField("", text: $email)
                                     .textFieldStyle(AuthTextFieldStyle())
@@ -454,7 +454,7 @@ struct SignUpView: View {
                                 Text("Password")
                                     .font(.subheadline)
                                     .fontWeight(.medium)
-                                    .foregroundColor(.white.opacity(0.9))
+                                    .adaptiveForegroundColor(opacity: 0.9)
                                 
                                 SecureField("", text: $password)
                                     .textFieldStyle(AuthTextFieldStyle())
@@ -487,7 +487,7 @@ struct SignUpView: View {
                                 Text("Confirm Password")
                                     .font(.subheadline)
                                     .fontWeight(.medium)
-                                    .foregroundColor(.white.opacity(0.9))
+                                    .adaptiveForegroundColor(opacity: 0.9)
                                 
                                 SecureField("", text: $confirmPassword)
                                     .textFieldStyle(AuthTextFieldStyle())
@@ -517,7 +517,7 @@ struct SignUpView: View {
                                             .fontWeight(.semibold)
                                     }
                                 }
-                                .foregroundColor(.white)
+                                .adaptiveForegroundColor()
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 50)
                                 .background(
@@ -541,7 +541,7 @@ struct SignUpView: View {
                     Button("Cancel") {
                         dismiss()
                     }
-                    .foregroundColor(.white)
+                    .adaptiveForegroundColor()
                 }
             }
             .toolbarBackground(.hidden, for: .navigationBar)
@@ -583,23 +583,21 @@ struct SignUpView: View {
 // Custom Text Field Style
 
 struct AuthTextFieldStyle: TextFieldStyle {
-    typealias _Body = AnyView
+    @Environment(\.colorScheme) var colorScheme
     
-    func _body(configuration: TextField<Self._Label>) -> AnyView {
-        AnyView(
-            configuration
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.white.opacity(0.15))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color.white.opacity(0.3), lineWidth: 1)
-                        )
-                )
-                .foregroundColor(.white)
-                .accentColor(.white)
-        )
+    func _body(configuration: TextField<_Label>) -> some View {
+        configuration
+            .padding()
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(AppTheme.textColor(for: colorScheme, opacity: 0.15))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(AppTheme.textColor(for: colorScheme, opacity: 0.3), lineWidth: 1)
+                    )
+            )
+            .adaptiveForegroundColor()
+            .tint(AppTheme.textColor(for: colorScheme))
     }
 }
 

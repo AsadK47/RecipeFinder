@@ -47,11 +47,11 @@ struct PasswordVerificationSheet: View {
                     VStack(spacing: 12) {
                         Text("Verify Your Identity")
                             .font(.system(size: 28, weight: .bold))
-                            .foregroundColor(.white)
+                            .adaptiveForegroundColor()
                         
                         Text("Enter your password to update account details")
                             .font(.subheadline)
-                            .foregroundColor(.white.opacity(0.85))
+                            .adaptiveForegroundColor(opacity: 0.85)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 32)
                     }
@@ -60,10 +60,10 @@ struct PasswordVerificationSheet: View {
                     HStack(spacing: 8) {
                         Image(systemName: "envelope.fill")
                             .font(.caption)
-                            .foregroundColor(.white.opacity(0.7))
+                            .adaptiveForegroundColor(opacity: 0.7)
                         Text(email)
                             .font(.system(size: 15, weight: .medium))
-                            .foregroundColor(.white.opacity(0.9))
+                            .adaptiveForegroundColor(opacity: 0.9)
                     }
                     .padding(.horizontal, 20)
                     .padding(.vertical, 12)
@@ -81,7 +81,7 @@ struct PasswordVerificationSheet: View {
                         Text("Password")
                             .font(.subheadline)
                             .fontWeight(.medium)
-                            .foregroundColor(.white.opacity(0.9))
+                            .adaptiveForegroundColor(opacity: 0.9)
                         
                         SecureField("Enter your password", text: $password)
                             .padding()
@@ -93,8 +93,8 @@ struct PasswordVerificationSheet: View {
                                             .stroke(Color.white.opacity(0.3), lineWidth: 1)
                                     )
                             )
-                            .foregroundColor(.white)
-                            .accentColor(.white)
+                            .adaptiveForegroundColor()
+                            .tint(AppTheme.textColor(for: colorScheme))
                             .focused($isPasswordFocused)
                             .textContentType(.password)
                             .submitLabel(.done)
@@ -130,7 +130,7 @@ struct PasswordVerificationSheet: View {
                                 }
                             }
                         }
-                        .foregroundColor(.white)
+                        .adaptiveForegroundColor()
                         .frame(maxWidth: .infinity)
                         .frame(height: 54)
                         .background(
@@ -153,7 +153,7 @@ struct PasswordVerificationSheet: View {
                     Button("Cancel") {
                         dismiss()
                     }
-                    .foregroundColor(.white)
+                    .adaptiveForegroundColor()
                 }
             }
             .toolbarBackground(.hidden, for: .navigationBar)

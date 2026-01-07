@@ -43,7 +43,7 @@ struct PasswordReminderSplashView: View {
                     VStack(spacing: spacing.lg) {
                         Text("Remember Your Password!")
                             .font(.system(size: 28, weight: .bold))
-                            .foregroundColor(.white)
+                            .adaptiveForegroundColor()
                             .multilineTextAlignment(.center)
                             .opacity(opacity)
                         
@@ -56,11 +56,11 @@ struct PasswordReminderSplashView: View {
                                 VStack(alignment: .leading, spacing: spacing.xxs) {
                                 Text("Account Created!")
                                     .font(.system(size: 17, weight: .semibold))
-                                    .foregroundColor(.white)
+                                    .adaptiveForegroundColor()
                                 
                                 Text(email)
                                     .font(.system(size: 15))
-                                    .foregroundColor(.white.opacity(0.8))
+                                    .adaptiveForegroundColor(opacity: 0.8)
                             }
                                 
                                 Spacer()
@@ -79,12 +79,12 @@ struct PasswordReminderSplashView: View {
                                     
                                     Text("Use iOS Password Manager")
                                         .font(.system(size: 16, weight: .medium))
-                                        .foregroundColor(.white)
+                                        .adaptiveForegroundColor()
                                 }
                                 
                                 Text("Your password is saved in iCloud Keychain and will auto-fill when you sign in.")
                                     .font(.system(size: 14))
-                                    .foregroundColor(.white.opacity(0.8))
+                                    .adaptiveForegroundColor(opacity: 0.8)
                                     .lineSpacing(2)
                             }
                             .padding(spacing.lg)
@@ -103,7 +103,7 @@ struct PasswordReminderSplashView: View {
                                 
                                 Text("You'll need to sign in each time you log out")
                                     .font(.system(size: 14))
-                                    .foregroundColor(.white.opacity(0.9))
+                                    .adaptiveForegroundColor(opacity: 0.9)
                             }
                             .padding(spacing.md)
                             .background(
@@ -127,7 +127,7 @@ struct PasswordReminderSplashView: View {
                                 .fontWeight(.semibold)
                             Image(systemName: "arrow.right.circle.fill")
                         }
-                        .foregroundColor(.white)
+                        .adaptiveForegroundColor()
                         .frame(maxWidth: .infinity)
                         .frame(height: spacing.buttonHeight)
                         .background(

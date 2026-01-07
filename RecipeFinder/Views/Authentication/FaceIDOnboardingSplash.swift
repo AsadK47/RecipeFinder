@@ -199,14 +199,14 @@ struct FaceIDOnboardingSplash: View {
                             
                             Text("Quick, secure, and effortless")
                                 .font(.system(size: 20, weight: .medium, design: .rounded))
-                                .foregroundColor(.white.opacity(0.85))
+                                .adaptiveForegroundColor(opacity: 0.85)
                                 .multilineTextAlignment(.center)
                         }
                         
                         VStack(spacing: spacing.lg) {
                             Text("Sign in with just a glance or touch")
                                 .font(.system(size: 17, weight: .medium))
-                                .foregroundColor(.white.opacity(0.9))
+                                .adaptiveForegroundColor(opacity: 0.9)
                                 .multilineTextAlignment(.center)
                                 .lineSpacing(4)
                                 .padding(.horizontal, spacing.xl)
@@ -257,7 +257,7 @@ struct FaceIDOnboardingSplash: View {
                                         .font(.system(size: 19, weight: .bold))
                                 }
                             }
-                            .foregroundColor(.white)
+                            .adaptiveForegroundColor()
                             .frame(maxWidth: .infinity)
                             .frame(height: spacing.buttonHeightLarge)
                             .background(

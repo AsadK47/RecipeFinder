@@ -109,7 +109,7 @@ struct BiometricSetupView: View {
             VStack(spacing: spacing.lg) {
                 Text("Enable \(authManager.biometricType) for quick and secure access")
                     .font(.system(size: 18, weight: .medium))
-                    .foregroundColor(.white.opacity(0.9))
+                    .adaptiveForegroundColor(opacity: 0.9)
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
                 
@@ -140,7 +140,7 @@ struct BiometricSetupView: View {
             Button(action: skipSetup) {
                 Text("Maybe Later")
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.white.opacity(0.85))
+                    .adaptiveForegroundColor(opacity: 0.85)
                     .frame(maxWidth: .infinity)
                     .frame(height: spacing.buttonHeight)
                     .background(
@@ -409,6 +409,7 @@ private struct EnableButton: View {
     let isEnabling: Bool
     let shimmerOffset: CGFloat
     let action: () -> Void
+    @Environment(\.colorScheme) var colorScheme
     
     private var accentColor: Color {
         AppTheme.accentColor(for: selectedTheme)
@@ -419,7 +420,7 @@ private struct EnableButton: View {
             HStack(spacing: spacing.md) {
                 if isEnabling {
                     ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        .progressViewStyle(CircularProgressViewStyle(tint: AppTheme.textColor(for: colorScheme)))
                 } else {
                     Image(systemName: biometricIcon)
                         .font(.system(size: 20, weight: .semibold))
@@ -427,7 +428,7 @@ private struct EnableButton: View {
                         .font(.system(size: 18, weight: .bold))
                 }
             }
-            .foregroundColor(.white)
+            .adaptiveForegroundColor()
             .frame(maxWidth: .infinity)
             .frame(height: spacing.buttonHeightLarge)
             .background(
@@ -468,17 +469,18 @@ struct BenefitRow: View {
     let icon: String
     let text: String
     let spacing: AdaptiveSpacing
+    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         HStack(spacing: spacing.md) {
             Image(systemName: icon)
                 .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(.white.opacity(0.9))
+                .adaptiveForegroundColor(opacity: 0.9)
                 .frame(width: spacing.md + spacing.md)
             
             Text(text)
                 .font(.system(size: 15, weight: .medium))
-                .foregroundColor(.white.opacity(0.85))
+                .adaptiveForegroundColor(opacity: 0.85)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
     }

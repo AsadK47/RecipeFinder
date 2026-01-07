@@ -157,6 +157,12 @@ enum AppTheme {
         colorScheme == .dark ? secondaryBackgroundDark : secondaryBackgroundLight
     }
     
+    /// Returns adaptive text color based on color scheme
+    static func textColor(for colorScheme: ColorScheme, opacity: Double = 1.0) -> Color {
+        let baseColor = colorScheme == .dark ? Color.white : Color.black
+        return opacity == 1.0 ? baseColor : baseColor.opacity(opacity)
+    }
+    
     // Dynamic accent color based on theme
     static func accentColor(for theme: ThemeType) -> Color {
         switch theme {
@@ -317,5 +323,20 @@ enum AppTheme {
 extension View {
     var themeAccentColor: Color {
         AppTheme.accentColor
+    }
+    
+    /// Adaptive foreground color modifier - automatically adjusts for light/dark mode
+    nonisolated func adaptiveForegroundColor(opacity: Double = 1.0) -> some View {
+        modifier(AdaptiveForegroundColorModifier(opacity: opacity))
+    }
+}
+
+// ViewModifier for adaptive text color
+private struct AdaptiveForegroundColorModifier: ViewModifier {
+    @Environment(\.colorScheme) var colorScheme
+    let opacity: Double
+    
+    func body(content: Content) -> some View {
+        content.foregroundColor(AppTheme.textColor(for: colorScheme, opacity: opacity))
     }
 }
