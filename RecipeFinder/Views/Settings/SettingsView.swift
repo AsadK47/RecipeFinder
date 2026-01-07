@@ -37,7 +37,7 @@ struct SettingsTabView: View {
                                 }) {
                                     Image(systemName: "chevron.left")
                                         .font(.title3)
-                                        .foregroundColor(.white)
+                                        .adaptiveForegroundColor()
                                         .frame(width: buttonSize, height: buttonSize)
                                 }
                                 
@@ -226,10 +226,10 @@ struct SettingsTabView: View {
                         VStack(spacing: scrollGeometry.size.width * 0.01) {
                             Text("RecipeFinder")
                                 .font(.caption)
-                                .foregroundColor(.white.opacity(0.6))
+                                .adaptiveForegroundColor(opacity: 0.6)
                             Text("Version 1.0.0 (Build 1)")
                                 .font(.caption2)
-                                .foregroundColor(.white.opacity(0.5))
+                                .adaptiveForegroundColor(opacity: 0.5)
                         }
                         .padding(.top, contentPadding * 0.8)
                         .padding(.bottom, contentPadding * 2)
@@ -283,7 +283,7 @@ struct SettingsSectionHeader: View {
         Text(title)
             .font(.headline)
             .fontWeight(.semibold)
-            .foregroundColor(.white.opacity(0.8))
+            .adaptiveForegroundColor(opacity: 0.8)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 4)
             .padding(.top, 0)
@@ -305,7 +305,7 @@ struct SettingsRow: View {
                 
                 Image(systemName: icon)
                     .font(.system(size: 15, weight: .semibold))
-                    .foregroundColor(.white)
+                    .adaptiveForegroundColor()
             }
             
             Text(title)
@@ -349,7 +349,7 @@ struct AppearanceAndThemeSettingsView: View {
                             }) {
                                 Image(systemName: "chevron.left")
                                     .font(.title3)
-                                    .foregroundColor(.white)
+                                    .adaptiveForegroundColor()
                                     .frame(width: buttonSize, height: buttonSize)
                             }
                             
@@ -699,7 +699,7 @@ struct ThemeSettingsView: View {
                                         
                                         if selectedTheme == theme {
                                             Image(systemName: "checkmark.circle.fill")
-                                                .foregroundColor(.white)
+                                                .adaptiveForegroundColor()
                                                 .font(.title3)
                                         }
                                     }
@@ -782,7 +782,7 @@ struct NotificationSettingsView: View {
                             }) {
                                 Image(systemName: "chevron.left")
                                     .font(.title3)
-                                    .foregroundColor(.white)
+                                    .adaptiveForegroundColor()
                                     .frame(width: buttonSize, height: buttonSize)
                             }
                             
@@ -839,7 +839,7 @@ struct NotificationSettingsView: View {
                                         Text("Open Settings")
                                     }
                                     .font(.headline)
-                                    .foregroundColor(.white)
+                                    .adaptiveForegroundColor()
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 14)
                                     .background(AppTheme.accentColor)
@@ -1053,7 +1053,7 @@ struct TimerSettingsView: View {
                             }) {
                                 Image(systemName: "chevron.left")
                                     .font(.title3)
-                                    .foregroundColor(.white)
+                                    .adaptiveForegroundColor()
                                     .frame(width: buttonSize, height: buttonSize)
                             }
                             
@@ -1262,7 +1262,7 @@ struct UnitsSettingsView: View {
                             }) {
                                 Image(systemName: "chevron.left")
                                     .font(.title3)
-                                    .foregroundColor(.white)
+                                    .adaptiveForegroundColor()
                                     .frame(width: buttonSize, height: buttonSize)
                             }
                             
@@ -1366,7 +1366,7 @@ struct DisplaySettingsView: View {
                             }) {
                                 Image(systemName: "chevron.left")
                                     .font(.title3)
-                                    .foregroundColor(.white)
+                                    .adaptiveForegroundColor()
                                     .frame(width: buttonSize, height: buttonSize)
                             }
                             
@@ -1570,7 +1570,7 @@ struct PrivacySettingsView: View {
                                     
                                     Image(systemName: "exclamationmark.triangle.fill")
                                         .font(.system(size: 18, weight: .semibold))
-                                        .foregroundColor(.white)
+                                        .adaptiveForegroundColor()
                                 }
                                 
                                 VStack(alignment: .leading, spacing: 4) {
@@ -1612,7 +1612,7 @@ struct PrivacySettingsView: View {
                                         }
                                         .font(.subheadline)
                                         .fontWeight(.semibold)
-                                        .foregroundColor(.white)
+                                        .adaptiveForegroundColor()
                                         .frame(maxWidth: .infinity)
                                         .padding(.vertical, 12)
                                         .background(AppTheme.accentColor)
@@ -1837,7 +1837,7 @@ struct DataManagementSettingsView: View {
                                         .font(.body)
                                         .fontWeight(.semibold)
                                 }
-                                .foregroundColor(.white)
+                                .adaptiveForegroundColor()
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 12)
                                 .background(Color.orange)
@@ -2272,11 +2272,11 @@ struct AboutView: View {
                         
                         Text("RecipeFinder")
                             .font(.system(size: 32, weight: .bold))
-                            .foregroundColor(.white)
+                            .adaptiveForegroundColor()
                         
                         Text("Your Personal Cooking Companion")
                             .font(.subheadline)
-                            .foregroundColor(.white.opacity(0.8))
+                            .adaptiveForegroundColor(opacity: 0.8)
                             .multilineTextAlignment(.center)
                     }
                     .padding(.top, 40)
@@ -2360,7 +2360,7 @@ struct AboutView: View {
                     
                     Text("Made with ❤️ for home cooks")
                         .font(.caption)
-                        .foregroundColor(.white.opacity(0.6))
+                        .adaptiveForegroundColor(opacity: 0.6)
                     .padding(.bottom, 40)
                 }
                 .padding(.horizontal, 20)
@@ -2419,7 +2419,7 @@ struct PartyTimeView: View {
                             }) {
                                 Image(systemName: "chevron.left")
                                     .font(.title3)
-                                    .foregroundColor(.white)
+                                    .adaptiveForegroundColor()
                                     .frame(width: buttonSize, height: buttonSize)
                             }
                             
@@ -2455,11 +2455,11 @@ struct PartyTimeView: View {
                             Text("Party Time")
                                 .font(.title)
                                 .fontWeight(.bold)
-                                .foregroundColor(.white)
+                                .adaptiveForegroundColor()
                             
                             Text("Press and hold the button below for continuous vibration")
                                 .font(.subheadline)
-                                .foregroundColor(.white.opacity(0.7))
+                                .adaptiveForegroundColor(opacity: 0.7)
                                 .multilineTextAlignment(.center)
                                 .padding(.horizontal, 40)
                         }
@@ -2503,7 +2503,7 @@ struct PartyTimeView: View {
                                 
                                 Image(systemName: isVibrating ? "iphone.radiowaves.left.and.right" : "hand.tap.fill")
                                     .font(.system(size: 70))
-                                    .foregroundColor(.white)
+                                    .adaptiveForegroundColor()
                                     .symbolEffect(.bounce, options: .repeating, value: isVibrating)
                             }
                             .onLongPressGesture(minimumDuration: .infinity, pressing: { pressing in
@@ -2516,7 +2516,7 @@ struct PartyTimeView: View {
                             
                             Text(isVibrating ? "Release to stop" : "Press and hold to start")
                                 .font(.caption)
-                                .foregroundColor(.white.opacity(0.6))
+                                .adaptiveForegroundColor(opacity: 0.6)
                         }
                         .padding(.vertical, 40)
                         

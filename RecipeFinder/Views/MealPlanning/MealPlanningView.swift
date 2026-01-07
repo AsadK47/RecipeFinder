@@ -469,7 +469,7 @@ struct MealPlanningView: View {
                     
                     Text("Add Another Meal")
                         .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.white)
+                        .adaptiveForegroundColor()
                     
                     Spacer()
                 }
@@ -557,16 +557,16 @@ struct MealPlanningView: View {
         VStack(spacing: 16) {
             Image(systemName: "calendar.badge.plus")
                 .font(.system(size: 70))
-                .foregroundColor(.white.opacity(0.4))
+                .adaptiveForegroundColor(opacity: 0.4)
             
             Text("No Meals Planned Yet")
                 .font(.title2)
                 .fontWeight(.bold)
-                .foregroundColor(.white)
+                .adaptiveForegroundColor()
             
             Text("Tap on a date to start planning your meals")
                 .font(.subheadline)
-                .foregroundColor(.white.opacity(0.7))
+                .adaptiveForegroundColor(opacity: 0.7)
                 .multilineTextAlignment(.center)
             
             Button(action: {
@@ -578,7 +578,7 @@ struct MealPlanningView: View {
                     Text("Plan a Meal")
                         .fontWeight(.semibold)
                 }
-                .foregroundColor(.white)
+                .adaptiveForegroundColor()
                 .padding(.horizontal, 24)
                 .padding(.vertical, 14)
                 .background(
@@ -827,7 +827,7 @@ struct MealTimeCard: View {
                             .font(.caption)
                             .lineLimit(1)
                     }
-                    .foregroundColor(.white.opacity(0.9))
+                    .adaptiveForegroundColor(opacity: 0.9)
                 } else {
                     HStack(spacing: 6) {
                         Image(systemName: "fork.knife")
@@ -835,7 +835,7 @@ struct MealTimeCard: View {
                         Text("Tap to add recipe")
                             .font(.caption)
                     }
-                    .foregroundColor(.white.opacity(0.5))
+                    .adaptiveForegroundColor(opacity: 0.5)
                 }
             }
             
@@ -843,7 +843,7 @@ struct MealTimeCard: View {
             
             Image(systemName: recipe != nil ? "pencil.circle" : "chevron.right")
                 .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(.white.opacity(0.4))
+                .adaptiveForegroundColor(opacity: 0.4)
         }
         .padding(16)
         .background {
@@ -892,7 +892,7 @@ struct MealTimeSelectorSheet: View {
                                 Text("Cancel")
                                     .font(.system(size: 16, weight: .semibold))
                             }
-                            .foregroundColor(.white.opacity(0.9))
+                            .adaptiveForegroundColor(opacity: 0.9)
                         }
                     }
                     .padding(.horizontal, 20)
@@ -900,7 +900,7 @@ struct MealTimeSelectorSheet: View {
                     
                     Text("Plan a Meal")
                         .font(.system(size: 28, weight: .bold))
-                        .foregroundColor(.white)
+                        .adaptiveForegroundColor()
                         .shadow(color: .black.opacity(0.2), radius: 2, x: 0, y: 1)
                     
                     HStack(spacing: 8) {
@@ -909,7 +909,7 @@ struct MealTimeSelectorSheet: View {
                         Text(dateString)
                             .font(.system(size: 16, weight: .medium))
                     }
-                    .foregroundColor(.white.opacity(0.85))
+                    .adaptiveForegroundColor(opacity: 0.85)
                 }
                 .padding(.bottom, 20)
                 
@@ -1041,7 +1041,7 @@ struct RecipeSelectionSheet: View {
                                         Image(systemName: "chevron.left")
                                         Text("Back")
                                     }
-                                    .foregroundColor(.white)
+                                    .adaptiveForegroundColor()
                                     .padding(.horizontal, 20)
                                     .padding(.vertical, 12)
                                 }
@@ -1086,7 +1086,7 @@ struct RecipeSelectionSheet: View {
                                             .font(.headline)
                                         Spacer()
                                     }
-                                    .foregroundColor(.white)
+                                    .adaptiveForegroundColor()
                                     .padding(20)
                                     .background(
                                         LinearGradient(
@@ -1114,7 +1114,7 @@ struct RecipeSelectionSheet: View {
                                         .font(.headline)
                                     Spacer()
                                 }
-                                .foregroundColor(.white)
+                                .adaptiveForegroundColor()
                                 .padding(20)
                                 .background(
                                     LinearGradient(
@@ -1143,7 +1143,7 @@ struct RecipeSelectionSheet: View {
                                         .font(.headline)
                                     Spacer()
                                 }
-                                .foregroundColor(.white)
+                                .adaptiveForegroundColor()
                                 .padding(20)
                                 .background(
                                     LinearGradient(
@@ -1170,7 +1170,7 @@ struct RecipeSelectionSheet: View {
                     Button("Cancel") {
                         dismiss()
                     }
-                    .foregroundColor(.white)
+                    .adaptiveForegroundColor()
                 }
             }
             .toolbarBackground(.hidden, for: .navigationBar)
@@ -1325,11 +1325,11 @@ struct NutritionTipsSheet: View {
                             
                             Text("Healthy Eating Guide")
                                 .font(.system(size: 28, weight: .bold))
-                                .foregroundColor(.white)
+                                .adaptiveForegroundColor()
                             
                             Text("8 tips for planning nutritious meals")
                                 .font(.subheadline)
-                                .foregroundColor(.white.opacity(0.7))
+                                .adaptiveForegroundColor(opacity: 0.7)
                         }
                         .padding(.top, 20)
                         .padding(.bottom, 10)
@@ -1350,7 +1350,7 @@ struct NutritionTipsSheet: View {
                             Image(systemName: "xmark.circle.fill")
                             Text("Close")
                         }
-                        .foregroundColor(.white)
+                        .adaptiveForegroundColor()
                     }
                 }
             }
@@ -1437,7 +1437,7 @@ struct NutritionTipCard: View {
                     
                     Text(tip.title)
                         .font(.system(size: 18, weight: .bold))
-                        .foregroundColor(.white)
+                        .adaptiveForegroundColor()
                 }
                 
                 Spacer()
@@ -1445,7 +1445,7 @@ struct NutritionTipCard: View {
             
             Text(tip.description)
                 .font(.system(size: 15))
-                .foregroundColor(.white.opacity(0.8))
+                .adaptiveForegroundColor(opacity: 0.8)
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(20)

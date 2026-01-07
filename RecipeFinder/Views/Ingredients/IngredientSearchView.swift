@@ -113,7 +113,7 @@ struct IngredientSearchView: View {
                                             Text("\(activeFilterCount)")
                                                 .font(.caption2)
                                                 .fontWeight(.bold)
-                                                .foregroundColor(.white)
+                                                .adaptiveForegroundColor()
                                                 .frame(width: 18, height: 18)
                                                 .background(Circle().fill(Color.red))
                                                 .offset(x: 4, y: -4)
@@ -129,7 +129,7 @@ struct IngredientSearchView: View {
                             
                             Text("Ingredients")
                                 .font(.system(size: 34, weight: .bold))
-                                .foregroundColor(.white)
+                                .adaptiveForegroundColor()
                             
                             Spacer()
                             
@@ -189,7 +189,7 @@ struct IngredientSearchView: View {
                                         Text("Clear All")
                                             .font(.caption)
                                             .fontWeight(.semibold)
-                                            .foregroundColor(.white)
+                                            .adaptiveForegroundColor()
                                             .padding(.horizontal, 12)
                                             .padding(.vertical, 6)
                                             .background(
@@ -235,15 +235,15 @@ struct IngredientSearchView: View {
                     VStack(spacing: 16) {
                         Image(systemName: "magnifyingglass")
                             .font(.system(size: 60))
-                            .foregroundColor(.white.opacity(0.5))
+                            .adaptiveForegroundColor(opacity: 0.5)
                         
                         Text("No ingredients found")
                             .font(.headline)
-                            .foregroundColor(.white)
+                            .adaptiveForegroundColor()
                         
                         Text("Try a different search term")
                             .font(.subheadline)
-                            .foregroundColor(.white.opacity(0.7))
+                            .adaptiveForegroundColor(opacity: 0.7)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.top, 60)
@@ -267,7 +267,7 @@ struct IngredientSearchView: View {
                     Text("Browse by Category")
                         .font(.title3)
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .adaptiveForegroundColor()
                     
                     ForEach(filteredCategorizedIngredients, id: \.category) { category, ingredients in
                         CategoryCard(
@@ -317,7 +317,7 @@ struct IngredientSearchView: View {
                     Text("\(recipeCount(for: ingredient))")
                         .font(.caption)
                         .fontWeight(.semibold)
-                        .foregroundColor(.white)
+                        .adaptiveForegroundColor()
                         .padding(.horizontal, 10)
                         .padding(.vertical, 5)
                         .background(
@@ -437,7 +437,7 @@ struct IngredientSearchView: View {
                             Text("Back")
                                 .font(.body)
                         }
-                        .foregroundColor(.white)
+                        .adaptiveForegroundColor()
                     }
                 )
                 .padding(.horizontal, 20)
@@ -488,13 +488,13 @@ struct IngredientSearchView: View {
                     Text(ingredient)
                         .font(.title2)
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .adaptiveForegroundColor()
                     
                     Spacer()
                     
                     Text("\(filteredRecipes.count) recipe\(filteredRecipes.count == 1 ? "" : "s")")
                         .font(.subheadline)
-                        .foregroundColor(.white.opacity(0.8))
+                        .adaptiveForegroundColor(opacity: 0.8)
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 16)
@@ -594,12 +594,12 @@ struct QuickMatchRecipeCard: View {
         HStack(spacing: 4) {
             Image(systemName: "checkmark.circle.fill")
                 .font(.caption2)
-                .foregroundColor(.white)
+                .adaptiveForegroundColor()
             
             Text("\(matchCount)/\(totalIngredients)")
                 .font(.caption2)
                 .fontWeight(.bold)
-                .foregroundColor(.white)
+                .adaptiveForegroundColor()
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
@@ -942,7 +942,7 @@ struct IngredientFilterSheet: View {
                         VStack(alignment: .leading, spacing: 12) {
                             Text("Ingredient Categories")
                                 .font(.headline)
-                                .foregroundColor(.white)
+                                .adaptiveForegroundColor()
                                 .padding(.horizontal, 20)
                             
                             LazyVGrid(columns: [
@@ -978,7 +978,7 @@ struct IngredientFilterSheet: View {
                     Button("Done") {
                         dismiss()
                     }
-                    .foregroundColor(.white)
+                    .adaptiveForegroundColor()
                     .fontWeight(.semibold)
                 }
                 
@@ -987,7 +987,7 @@ struct IngredientFilterSheet: View {
                         Button("Clear All") {
                             selectedCategories.removeAll()
                         }
-                        .foregroundColor(.white)
+                        .adaptiveForegroundColor()
                     }
                 }
             }

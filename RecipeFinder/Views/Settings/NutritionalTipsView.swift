@@ -36,7 +36,7 @@ struct NutritionalTipsView: View {
                             }) {
                                 Image(systemName: "chevron.left")
                                     .font(.title3)
-                                    .foregroundColor(.white)
+                                    .adaptiveForegroundColor()
                                     .frame(width: 44, height: 44)
                             }
                             
@@ -81,7 +81,7 @@ struct NutritionalTipsView: View {
                                 }
                             } label: {
                                 Image(systemName: selectedCategory == nil ? "line.3.horizontal.decrease.circle" : "line.3.horizontal.decrease.circle.fill")
-                                    .foregroundColor(.white)
+                                    .adaptiveForegroundColor()
                                     .font(.title3)
                                     .frame(width: 44, height: 44)
                             }
@@ -139,12 +139,12 @@ struct NutritionalTipsView: View {
                     
                     Text(tip.title)
                         .font(.headline)
-                        .foregroundColor(.white)
+                        .adaptiveForegroundColor()
                         .multilineTextAlignment(.leading)
                     
                     Text(tip.summary)
                         .font(.caption)
-                        .foregroundColor(.white.opacity(0.7))
+                        .adaptiveForegroundColor(opacity: 0.7)
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
                 }
@@ -219,12 +219,12 @@ struct NutritionalTipCard: View {
                     Text(tip.title)
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                        .foregroundColor(.white)
+                        .adaptiveForegroundColor()
                         .multilineTextAlignment(.leading)
                     
                     Text(tip.summary)
                         .font(.caption)
-                        .foregroundColor(.white.opacity(0.65))
+                        .adaptiveForegroundColor(opacity: 0.65)
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
                     
@@ -233,14 +233,14 @@ struct NutritionalTipCard: View {
                             .font(.caption2)
                         Text(tip.category.rawValue)
                             .font(.caption2)
-                            .foregroundColor(.white.opacity(0.5))
+                            .adaptiveForegroundColor(opacity: 0.5)
                         
                         Text("•")
-                            .foregroundColor(.white.opacity(0.3))
+                            .adaptiveForegroundColor(opacity: 0.3)
                         
                         Text("\(tip.sources.count) sources")
                             .font(.caption2)
-                            .foregroundColor(.white.opacity(0.5))
+                            .adaptiveForegroundColor(opacity: 0.5)
                     }
                 }
                 
@@ -248,7 +248,7 @@ struct NutritionalTipCard: View {
                 
                 Image(systemName: "chevron.right")
                     .font(.subheadline)
-                    .foregroundColor(.white.opacity(0.4))
+                    .adaptiveForegroundColor(opacity: 0.4)
             }
             .padding()
             .background {
@@ -323,11 +323,11 @@ struct TipDetailView: View {
                                 Text(tip.title)
                                     .font(.title2)
                                     .fontWeight(.bold)
-                                    .foregroundColor(.white)
+                                    .adaptiveForegroundColor()
                                 
                                 Text(tip.category.rawValue)
                                     .font(.subheadline)
-                                    .foregroundColor(.white.opacity(0.7))
+                                    .adaptiveForegroundColor(opacity: 0.7)
                             }
                             
                             Spacer()
@@ -339,11 +339,11 @@ struct TipDetailView: View {
                         VStack(alignment: .leading, spacing: 12) {
                             Text("What the Science Says")
                                 .font(.headline)
-                                .foregroundColor(.white)
+                                .adaptiveForegroundColor()
                             
                             Text(tip.fullDescription)
                                 .font(.body)
-                                .foregroundColor(.white.opacity(0.9))
+                                .adaptiveForegroundColor(opacity: 0.9)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
                         .padding()
@@ -355,21 +355,21 @@ struct TipDetailView: View {
                         VStack(alignment: .leading, spacing: 12) {
                             Text("What You Can Do")
                                 .font(.headline)
-                                .foregroundColor(.white)
+                                .adaptiveForegroundColor()
                             
                             ForEach(Array(tip.actionableSteps.enumerated()), id: \.offset) { index, step in
                                 HStack(alignment: .top, spacing: 12) {
                                     Text("\(index + 1)")
                                         .font(.caption)
                                         .fontWeight(.bold)
-                                        .foregroundColor(.white)
+                                        .adaptiveForegroundColor()
                                         .frame(width: 24, height: 24)
                                         .background(AppTheme.accentColor(for: selectedTheme))
                                         .clipShape(Circle())
                                     
                                     Text(step)
                                         .font(.body)
-                                        .foregroundColor(.white.opacity(0.9))
+                                        .adaptiveForegroundColor(opacity: 0.9)
                                     
                                     Spacer()
                                 }
@@ -387,7 +387,7 @@ struct TipDetailView: View {
                                 Text("Scientific Sources")
                                     .font(.headline)
                             }
-                            .foregroundColor(.white)
+                            .adaptiveForegroundColor()
                             
                             ForEach(tip.sources) { source in
                                 Button(action: {
@@ -403,18 +403,18 @@ struct TipDetailView: View {
                                                 Text(source.institution)
                                                     .font(.subheadline)
                                                     .fontWeight(.semibold)
-                                                    .foregroundColor(.white)
+                                                    .adaptiveForegroundColor()
                                                 
                                                 if let pub = source.publication {
                                                     Text(pub)
                                                         .font(.caption)
-                                                        .foregroundColor(.white.opacity(0.7))
+                                                        .adaptiveForegroundColor(opacity: 0.7)
                                                 }
                                                 
                                                 if let year = source.year {
                                                     Text("Published: \(year, format: .number.grouping(.never))")
                                                         .font(.caption2)
-                                                        .foregroundColor(.white.opacity(0.5))
+                                                        .adaptiveForegroundColor(opacity: 0.5)
                                                 }
                                             }
                                             
@@ -448,7 +448,7 @@ struct TipDetailView: View {
                             
                             Text("Evidence Level: \(tip.evidenceLevel.description)")
                                 .font(.caption)
-                                .foregroundColor(.white.opacity(0.6))
+                                .adaptiveForegroundColor(opacity: 0.6)
                                 .italic()
                             
                             Divider()
@@ -461,7 +461,7 @@ struct TipDetailView: View {
                                 Text("Tap any source with a link icon to read the full peer-reviewed research.")
                             }
                             .font(.caption2)
-                            .foregroundColor(.white.opacity(0.7))
+                            .adaptiveForegroundColor(opacity: 0.7)
                         }
                         .padding()
                         .background {
@@ -478,7 +478,7 @@ struct TipDetailView: View {
                     Button("Done") {
                         dismiss()
                     }
-                    .foregroundColor(.white)
+                    .adaptiveForegroundColor()
                 }
             }
             .fullScreenCover(isPresented: $showSafari) {

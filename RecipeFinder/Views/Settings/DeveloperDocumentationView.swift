@@ -18,11 +18,11 @@ struct DeveloperDocumentationView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Developer Documentation")
                             .font(.system(size: 34, weight: .bold))
-                            .foregroundColor(.white)
+                            .adaptiveForegroundColor()
                         
                         Text("RecipeFinder is built with SwiftUI and Core Data, featuring modern iOS development patterns and best practices.")
                             .font(.system(size: 17))
-                            .foregroundColor(.white.opacity(0.85))
+                            .adaptiveForegroundColor(opacity: 0.85)
                             .lineSpacing(4)
                     }
                     .padding(.horizontal, 24)
@@ -115,11 +115,11 @@ struct DeveloperDocumentationView: View {
                     VStack(spacing: 12) {
                         Text("© 2024-2025 Asad Khan")
                             .font(.system(size: 13))
-                            .foregroundColor(.white.opacity(0.5))
+                            .adaptiveForegroundColor(opacity: 0.5)
                         
                         Text("Built with ❤️ using SwiftUI and Core Data")
                             .font(.system(size: 13))
-                            .foregroundColor(.white.opacity(0.5))
+                            .adaptiveForegroundColor(opacity: 0.5)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.top, 32)
@@ -137,7 +137,7 @@ struct DeveloperDocumentationView: View {
                     } label: {
                         Text("Done")
                             .font(.system(size: 17, weight: .semibold))
-                            .foregroundColor(.white)
+                            .adaptiveForegroundColor()
                             .padding(.horizontal, 20)
                             .padding(.vertical, 8)
                             .background(
@@ -178,7 +178,7 @@ struct DocSection: View {
                 
                 Text(title)
                     .font(.system(size: 24, weight: .bold))
-                    .foregroundColor(.white)
+                    .adaptiveForegroundColor()
             }
             .padding(.horizontal, 24)
             

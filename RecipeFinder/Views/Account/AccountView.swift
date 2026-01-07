@@ -61,7 +61,7 @@ struct AccountView: View {
                             
                             Text("Account")
                                 .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                                .foregroundColor(.white)
+                                .adaptiveForegroundColor()
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.7)
                             
@@ -100,7 +100,7 @@ struct AccountView: View {
                             .frame(maxWidth: .infinity)
                             .padding()
                             .background(AppTheme.accentColor(for: selectedTheme))
-                            .foregroundColor(.white)
+                            .adaptiveForegroundColor()
                             .cornerRadius(12)
                         }
                         .opacity(showSuccessFeedback ? 0.6 : 1)
@@ -207,7 +207,7 @@ struct AccountView: View {
                             
                             Text(getInitials())
                                 .font(.system(size: 40, weight: .bold))
-                                .foregroundColor(.white)
+                                .adaptiveForegroundColor()
                         }
                     }
                     
@@ -378,7 +378,7 @@ struct AccountView: View {
                             
                             Text(displayInitials)
                                 .font(.system(size: 40, weight: .semibold))
-                                .foregroundColor(.white)
+                                .adaptiveForegroundColor()
                         }
                     }
                     
@@ -452,7 +452,7 @@ struct AccountView: View {
                                 .font(.body)
                                 .fontWeight(.semibold)
                         }
-                        .foregroundColor(.white.opacity(0.5))
+                        .adaptiveForegroundColor(opacity: 0.5)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background {
@@ -717,7 +717,7 @@ struct AccountRowButton: View {
                     
                     Image(systemName: icon)
                         .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.white)
+                        .adaptiveForegroundColor()
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {
@@ -914,7 +914,7 @@ struct DataImportView: View {
                         }
                     }
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .adaptiveForegroundColor()
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color.orange)
@@ -1257,7 +1257,7 @@ struct BadgeDetailView: View {
                     Button(action: { dismiss() }) {
                         Image(systemName: "xmark.circle.fill")
                             .font(.title2)
-                            .foregroundColor(.white.opacity(0.7))
+                            .adaptiveForegroundColor(opacity: 0.7)
                     }
                 }
                 .padding(.horizontal, 20)
@@ -1280,13 +1280,13 @@ struct BadgeDetailView: View {
                 // Title
                 Text(badge.title)
                     .font(.system(size: 28, weight: .bold))
-                    .foregroundColor(.white)
+                    .adaptiveForegroundColor()
                     .multilineTextAlignment(.center)
                 
                 // Description
                 Text(badge.description)
                     .font(.title3)
-                    .foregroundColor(.white.opacity(0.8))
+                    .adaptiveForegroundColor(opacity: 0.8)
                     .multilineTextAlignment(.center)
                 
                 // Status/Date
@@ -1303,7 +1303,7 @@ struct BadgeDetailView: View {
                         
                         Text("Earned on \(date.formatted(date: .long, time: .omitted))")
                             .font(.subheadline)
-                            .foregroundColor(.white.opacity(0.6))
+                            .adaptiveForegroundColor(opacity: 0.6)
                     }
                     .padding()
                     .background {
@@ -1334,12 +1334,12 @@ struct BadgeDetailView: View {
                                 Text("How to Earn:")
                                     .font(.caption)
                                     .fontWeight(.semibold)
-                                    .foregroundColor(.white.opacity(0.6))
+                                    .adaptiveForegroundColor(opacity: 0.6)
                                     .textCase(.uppercase)
                                 
                                 Text(badge.howToEarn)
                                     .font(.subheadline)
-                                    .foregroundColor(.white.opacity(0.8))
+                                    .adaptiveForegroundColor(opacity: 0.8)
                                     .fixedSize(horizontal: false, vertical: true)
                             }
                         }

@@ -347,7 +347,7 @@ struct RecipeSearchView: View {
                     label: {
                         Text("Cancel")
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.white)
+                            .adaptiveForegroundColor()
                     }
                 )
                 .transition(.move(edge: .trailing).combined(with: .opacity))
@@ -460,7 +460,7 @@ struct RecipeSearchView: View {
                     Text("Clear All")
                         .font(.caption)
                         .fontWeight(.semibold)
-                        .foregroundColor(.white)
+                        .adaptiveForegroundColor()
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
                         .background(
@@ -601,16 +601,16 @@ struct RecipeSearchView: View {
             VStack(spacing: 20) {
                 Image(systemName: "magnifyingglass")
                     .font(.system(size: 70))
-                    .foregroundColor(.white.opacity(0.4))
+                    .adaptiveForegroundColor(opacity: 0.4)
                 
                 Text("No Recipes Found")
                     .font(.title2)
                     .fontWeight(.bold)
-                    .foregroundColor(.white)
+                    .adaptiveForegroundColor()
                 
                 Text("Try adjusting your filters or search")
                     .font(.subheadline)
-                    .foregroundColor(.white.opacity(0.7))
+                    .adaptiveForegroundColor(opacity: 0.7)
                 
                 if activeFilterCount > 0 {
                     Button(action: clearAllFilters, label: {
@@ -620,7 +620,7 @@ struct RecipeSearchView: View {
                         }
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                        .foregroundColor(.white)
+                        .adaptiveForegroundColor()
                         .padding(.horizontal, 20)
                         .padding(.vertical, 12)
                         .background(
@@ -701,7 +701,7 @@ struct FilterSheet: View {
                             HStack {
                                 Text("Show Favorites Only")
                                     .font(.headline)
-                                    .foregroundColor(.white)
+                                    .adaptiveForegroundColor()
                                 
                                 Spacer()
                                 
@@ -719,10 +719,10 @@ struct FilterSheet: View {
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text("What Can I Make?")
                                         .font(.headline)
-                                        .foregroundColor(.white)
+                                        .adaptiveForegroundColor()
                                     Text("Recipes using ingredients you have")
                                         .font(.caption)
-                                        .foregroundColor(.white.opacity(0.7))
+                                        .adaptiveForegroundColor(opacity: 0.7)
                                 }
                                 
                                 Spacer()
@@ -746,7 +746,7 @@ struct FilterSheet: View {
                         VStack(alignment: .leading, spacing: 12) {
                             Text("Search by Ingredient")
                                 .font(.headline)
-                                .foregroundColor(.white)
+                                .adaptiveForegroundColor()
                             
                             TextField("E.g., Chicken, Tomato...", text: $ingredientSearchText)
                                 .textFieldStyle(.plain)
@@ -755,7 +755,7 @@ struct FilterSheet: View {
                                     RoundedRectangle(cornerRadius: 10)
                                         .fill(Color.white.opacity(0.15))
                                 )
-                                .foregroundColor(.white)
+                                .adaptiveForegroundColor()
                         }
                         
                         Divider()
@@ -765,7 +765,7 @@ struct FilterSheet: View {
                         VStack(alignment: .leading, spacing: 12) {
                             Text("Dietary Preferences")
                                 .font(.headline)
-                                .foregroundColor(.white)
+                                .adaptiveForegroundColor()
                             
                             LazyVGrid(columns: columns, spacing: 8) {
                                 ForEach(dietaryOptions, id: \.self) { diet in
@@ -787,7 +787,7 @@ struct FilterSheet: View {
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("Tags")
                                     .font(.headline)
-                                    .foregroundColor(.white)
+                                    .adaptiveForegroundColor()
                                 
                                 LazyVGrid(columns: columns, spacing: 8) {
                                     ForEach(availableTags, id: \.self) { tag in
@@ -809,7 +809,7 @@ struct FilterSheet: View {
                         VStack(alignment: .leading, spacing: 12) {
                             Text("Course / Category")
                                 .font(.headline)
-                                .foregroundColor(.white)
+                                .adaptiveForegroundColor()
                             
                             LazyVGrid(columns: columns, spacing: 8) {
                                 ForEach(categories, id: \.self) { category in
@@ -830,7 +830,7 @@ struct FilterSheet: View {
                         VStack(alignment: .leading, spacing: 12) {
                             Text("Difficulty")
                                 .font(.headline)
-                                .foregroundColor(.white)
+                                .adaptiveForegroundColor()
                             
                             LazyVGrid(columns: columns, spacing: 8) {
                                 ForEach(difficulties, id: \.self) { difficulty in
@@ -851,7 +851,7 @@ struct FilterSheet: View {
                         VStack(alignment: .leading, spacing: 12) {
                             Text("Max Cooking Time")
                                 .font(.headline)
-                                .foregroundColor(.white)
+                                .adaptiveForegroundColor()
                             
                             LazyVGrid(columns: columns, spacing: 8) {
                                 ForEach(cookTimeOptions, id: \.self) { time in
@@ -883,14 +883,14 @@ struct FilterSheet: View {
                         availableIngredientsOnly = false
                         showFavoritesOnly = false
                     }
-                    .foregroundColor(.white)
+                    .adaptiveForegroundColor()
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") {
                         dismiss()
                     }
-                    .foregroundColor(.white)
+                    .adaptiveForegroundColor()
                     .fontWeight(.semibold)
                 }
             }
@@ -917,7 +917,7 @@ struct RecipeFilterButton: View {
             Text(label)
                 .font(.subheadline)
                 .fontWeight(isSelected ? .semibold : .regular)
-                .foregroundColor(.white)
+                .adaptiveForegroundColor()
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
                 .frame(maxWidth: .infinity)
@@ -977,19 +977,19 @@ struct RecipeDeleteConfirmationSheet: View {
                             Text("Remove this recipe?")
                                 .font(.title2)
                                 .fontWeight(.bold)
-                                .foregroundColor(.white)
+                                .adaptiveForegroundColor()
                                 .fixedSize(horizontal: false, vertical: true)
                             
                             Text(recipeName.isEmpty ? "This recipe will be removed from your collection." : "\(recipeName) will be removed from your collection.")
                                 .font(.body)
-                                .foregroundColor(.white.opacity(0.85))
+                                .adaptiveForegroundColor(opacity: 0.85)
                                 .multilineTextAlignment(.center)
                                 .fixedSize(horizontal: false, vertical: true)
                                 .frame(maxWidth: geometry.size.width - 48)
                             
                             Text("This can't be undone, but you can always import it again! 📖")
                                 .font(.subheadline)
-                                .foregroundColor(.white.opacity(0.7))
+                                .adaptiveForegroundColor(opacity: 0.7)
                                 .multilineTextAlignment(.center)
                                 .fixedSize(horizontal: false, vertical: true)
                                 .frame(maxWidth: geometry.size.width - 48)
@@ -1009,7 +1009,7 @@ struct RecipeDeleteConfirmationSheet: View {
                                 
                                 Text("Don't ask me again")
                                     .font(.subheadline)
-                                    .foregroundColor(.white)
+                                    .adaptiveForegroundColor()
                                 
                                 Spacer()
                             }
@@ -1026,7 +1026,7 @@ struct RecipeDeleteConfirmationSheet: View {
                             }) {
                                 Text("Remove Recipe")
                                     .font(.headline)
-                                    .foregroundColor(.white)
+                                    .adaptiveForegroundColor()
                                     .frame(maxWidth: geometry.size.width - 48)
                                     .padding(.vertical, 16)
                                     .background(Color.orange)
@@ -1040,7 +1040,7 @@ struct RecipeDeleteConfirmationSheet: View {
                             }) {
                                 Text("Keep It")
                                     .font(.headline)
-                                    .foregroundColor(.white)
+                                    .adaptiveForegroundColor()
                                     .frame(maxWidth: geometry.size.width - 48)
                                     .padding(.vertical, 16)
                                     .background(Color.white.opacity(0.15))

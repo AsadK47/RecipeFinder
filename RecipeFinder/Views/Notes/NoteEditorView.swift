@@ -62,7 +62,7 @@ struct NoteEditorView: View {
                     Button("Cancel") {
                         dismiss()
                     }
-                    .foregroundColor(.white)
+                    .adaptiveForegroundColor()
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -171,7 +171,7 @@ struct NoteEditorView: View {
                 
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(.white)
+                        .adaptiveForegroundColor()
                         .font(.title3)
                 }
             }
@@ -238,7 +238,7 @@ struct NoteEditorView: View {
                     .font(.caption)
             }
         }
-        .foregroundColor(.white)
+        .adaptiveForegroundColor()
         .padding(.horizontal, 12)
         .padding(.vertical, 6)
         .background(

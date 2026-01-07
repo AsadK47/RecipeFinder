@@ -83,7 +83,7 @@ struct NotesListView: View {
                                 }) {
                                     Image(systemName: "chevron.left")
                                         .font(.title3)
-                                        .foregroundColor(.white)
+                                        .adaptiveForegroundColor()
                                         .frame(width: 44, height: 44)
                                 }
                                 Spacer()
@@ -115,7 +115,7 @@ struct NotesListView: View {
                                     )
                                 } label: {
                                     Image(systemName: "line.3.horizontal")
-                                        .foregroundColor(.white)
+                                        .adaptiveForegroundColor()
                                         .font(.title3)
                                 }
                                 .frame(width: 44, height: 44)
@@ -125,7 +125,7 @@ struct NotesListView: View {
                                     showNewNoteSheet = true
                                 }) {
                                     Image(systemName: "plus")
-                                        .foregroundColor(.white)
+                                        .adaptiveForegroundColor()
                                         .font(.title3)
                                 }
                                 .frame(width: 44, height: 44)
@@ -176,7 +176,7 @@ struct NotesListView: View {
                                 Text("Clear All")
                                     .font(.caption)
                                     .fontWeight(.semibold)
-                                    .foregroundColor(.white)
+                                    .adaptiveForegroundColor()
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 6)
                                     .background(
@@ -289,16 +289,16 @@ struct NotesListView: View {
         VStack(spacing: 20) {
             Image(systemName: searchText.isEmpty ? "note.text" : "magnifyingglass")
                 .font(.system(size: 70))
-                .foregroundColor(.white.opacity(0.4))
+                .adaptiveForegroundColor(opacity: 0.4)
             
             Text(searchText.isEmpty ? "No Notes Yet" : "No Matching Notes")
                 .font(.title2)
                 .fontWeight(.bold)
-                .foregroundColor(.white)
+                .adaptiveForegroundColor()
             
             Text(searchText.isEmpty ? "Tap the + button at the top to create your first note" : "Try a different search")
                 .font(.subheadline)
-                .foregroundColor(.white.opacity(0.7))
+                .adaptiveForegroundColor(opacity: 0.7)
                 .multilineTextAlignment(.center)
             
             if searchText.isEmpty {
@@ -384,7 +384,7 @@ struct FilterMenuView: View {
                     Button("Done") {
                         dismiss()
                     }
-                    .foregroundColor(.white)
+                    .adaptiveForegroundColor()
                 }
             }
             .toolbarBackground(.visible, for: .navigationBar)
@@ -399,7 +399,7 @@ struct FilterMenuView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text(title)
                 .font(.headline)
-                .foregroundColor(.white)
+                .adaptiveForegroundColor()
                 .padding(.horizontal, 20)
             
             cardContainer {

@@ -40,7 +40,7 @@ struct CookingTipsView: View {
                             }) {
                                 Image(systemName: "chevron.left")
                                     .font(.title3)
-                                    .foregroundColor(.white)
+                                    .adaptiveForegroundColor()
                                     .frame(width: 44, height: 44)
                             }
                             
@@ -102,7 +102,7 @@ struct CookingTipsView: View {
                                     }
                                     
                                     Image(systemName: "line.3.horizontal")
-                                        .foregroundColor(.white)
+                                        .adaptiveForegroundColor()
                                         .font(.title3)
                                         .frame(width: 44, height: 44)
                                 }
@@ -387,7 +387,7 @@ struct CookingTipsView: View {
                     Text("Clear Filters")
                         .fontWeight(.semibold)
                 }
-                .foregroundColor(.white)
+                .adaptiveForegroundColor()
                 .padding(.horizontal, 24)
                 .padding(.vertical, 12)
                 .background(
@@ -723,7 +723,7 @@ struct FilterPill: View {
                     .font(.caption)
             }
         }
-        .foregroundColor(.white)
+        .adaptiveForegroundColor()
         .padding(.horizontal, 12)
         .padding(.vertical, 6)
         .background(

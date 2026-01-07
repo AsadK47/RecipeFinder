@@ -220,7 +220,7 @@ struct KitchenView: View {
                         },
                         label: {
                             Text("Cancel")
-                                .foregroundColor(.white)
+                                .adaptiveForegroundColor()
                                 .fontWeight(.semibold)
                         }
                     )
@@ -284,7 +284,7 @@ struct KitchenView: View {
                             .font(.caption)
                             .fontWeight(.semibold)
                     }
-                    .foregroundColor(.white)
+                    .adaptiveForegroundColor()
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
                     .background(

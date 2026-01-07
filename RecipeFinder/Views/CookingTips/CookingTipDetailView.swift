@@ -36,7 +36,7 @@ struct CookingTipDetailView: View {
                                         .font(.subheadline)
                                         .fontWeight(.semibold)
                                 }
-                                .foregroundColor(.white)
+                                .adaptiveForegroundColor()
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 6)
                                 .background(
@@ -53,7 +53,7 @@ struct CookingTipDetailView: View {
                                         .font(.caption)
                                         .fontWeight(.semibold)
                                 }
-                                .foregroundColor(.white)
+                                .adaptiveForegroundColor()
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 6)
                                 .background(

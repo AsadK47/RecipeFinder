@@ -95,7 +95,7 @@ struct RecipeWizardView: View {
                                 }) {
                                     Text("Cancel")
                                         .font(.body)
-                                        .foregroundColor(.white)
+                                        .adaptiveForegroundColor()
                                         .padding(.horizontal, 16)
                                         .padding(.vertical, 8)
                                         .background(.ultraThinMaterial)
@@ -106,7 +106,7 @@ struct RecipeWizardView: View {
                                 
                                 Text("Recipe Wizard")
                                     .font(.system(size: min(24, geometry.size.width * 0.06), weight: .bold))
-                                    .foregroundColor(.white)
+                                    .adaptiveForegroundColor()
                                 
                                 Spacer()
                                 
@@ -710,7 +710,7 @@ struct RecipeWizardView: View {
             Text("Step \(stepNumber) of \(totalSteps)")
                 .font(.caption)
                 .fontWeight(.medium)
-                .foregroundColor(.white.opacity(0.8))
+                .adaptiveForegroundColor(opacity: 0.8)
             
             // Title with icon overlay
             HStack(alignment: .firstTextBaseline, spacing: 0) {
@@ -718,11 +718,11 @@ struct RecipeWizardView: View {
                     Text(title)
                         .font(.title2)
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .adaptiveForegroundColor()
                     
                     Text(subtitle)
                         .font(.subheadline)
-                        .foregroundColor(.white.opacity(0.9))
+                        .adaptiveForegroundColor(opacity: 0.9)
                 }
                 
                 Spacer()
@@ -731,7 +731,7 @@ struct RecipeWizardView: View {
                 // Icon positioned absolutely, doesn't affect layout
                 Image(systemName: illustration)
                     .font(.system(size: 44, weight: .medium))
-                    .foregroundColor(.white.opacity(0.6))
+                    .adaptiveForegroundColor(opacity: 0.6)
             }
         }
     }
@@ -789,7 +789,7 @@ struct RecipeWizardView: View {
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color.white.opacity(0.3))
-                    .foregroundColor(.white)
+                    .adaptiveForegroundColor()
                     .cornerRadius(12)
                 }
             }

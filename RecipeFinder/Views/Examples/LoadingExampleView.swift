@@ -53,14 +53,14 @@ struct LoadingExampleView: View {
                             VStack(spacing: 20) {
                                 Text("Recipe Card Skeleton")
                                     .font(.headline)
-                                    .foregroundColor(.white)
+                                    .adaptiveForegroundColor()
                                 
                                 RecipeCardSkeleton()
                                     .padding(.horizontal)
                                 
                                 Text("List Item Skeleton")
                                     .font(.headline)
-                                    .foregroundColor(.white)
+                                    .adaptiveForegroundColor()
                                     .padding(.top)
                                 
                                 ForEach(0..<3) { _ in
@@ -76,7 +76,7 @@ struct LoadingExampleView: View {
                                 Text("✨ Content Loaded!")
                                     .font(.title2)
                                     .fontWeight(.bold)
-                                    .foregroundColor(.white)
+                                    .adaptiveForegroundColor()
                                 
                                 Text("This is where your actual content appears")
                                     .font(.subheadline)

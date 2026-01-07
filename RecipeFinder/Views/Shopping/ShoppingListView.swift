@@ -104,7 +104,7 @@ struct ShoppingListView: View {
                             HStack {
                                 Text("\(checkedCount)/\(totalCount) completed")
                                     .font(.caption)
-                                    .foregroundColor(.white.opacity(0.8))
+                                    .adaptiveForegroundColor(opacity: 0.8)
                                     .accessibilityHidden(true)
                                 Spacer()
                             }
@@ -175,14 +175,14 @@ struct ShoppingListView: View {
                 Text("Suggested Ingredients")
                     .font(.title3)
                     .fontWeight(.bold)
-                    .foregroundColor(.white)
+                    .adaptiveForegroundColor()
                     .padding(.horizontal, 20)
                     .padding(.top, 20)
                 
                 if searchResults.isEmpty {
                     Text("No ingredients found")
                         .font(.body)
-                        .foregroundColor(.white.opacity(0.7))
+                        .adaptiveForegroundColor(opacity: 0.7)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 20)
                 } else {
@@ -328,7 +328,7 @@ struct ShoppingListView: View {
                         },
                         label: {
                             Text("Cancel")
-                                .foregroundColor(.white)
+                                .adaptiveForegroundColor()
                                 .fontWeight(.semibold)
                         }
                     )
@@ -580,7 +580,7 @@ struct ShoppingListItemRow: View {
                             if item.isChecked {
                                 Image(systemName: "checkmark")
                                     .font(.system(size: 14, weight: .bold))
-                                    .foregroundColor(.white)
+                                    .adaptiveForegroundColor()
                                     .frame(width: 28, height: 28)
                                     .background(Circle().fill(AppTheme.accentColor))
                             }
@@ -732,7 +732,7 @@ struct ShoppingFeatureRow: View {
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: icon)
-                .foregroundColor(colorScheme == .dark ? .white : .black)
+                .adaptiveForegroundColor()
                 .font(.body)
                 .frame(width: 24)
             VStack(alignment: .leading, spacing: 2) {
@@ -769,11 +769,11 @@ struct HelpSheetView: View {
                         VStack(alignment: .leading, spacing: 12) {
                             Text("Shopping List Features")
                                 .font(.system(size: 34, weight: .bold))
-                                .foregroundColor(.white)
+                                .adaptiveForegroundColor()
                             
                             Text("Learn how to make the most of your shopping list with these powerful features.")
                                 .font(.system(size: 17))
-                                .foregroundColor(.white.opacity(0.85))
+                                .adaptiveForegroundColor(opacity: 0.85)
                                 .lineSpacing(4)
                         }
                         .padding(.horizontal, 24)
@@ -816,7 +816,7 @@ struct HelpSheetView: View {
                         } label: {
                             Text("Done")
                                 .font(.system(size: 17, weight: .semibold))
-                                .foregroundColor(.white)
+                                .adaptiveForegroundColor()
                                 .padding(.horizontal, 20)
                                 .padding(.vertical, 8)
                                 .background(

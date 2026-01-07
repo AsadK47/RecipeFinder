@@ -240,7 +240,7 @@ struct RecipeDetailView: View {
         Button(action: action) {
             Image(systemName: icon)
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundColor(.white)
+                .adaptiveForegroundColor()
                 .frame(width: 44, height: 44)
                 .background(Circle().fill(isEnabled ? AppTheme.accentColor : Color.gray))
         }
@@ -463,13 +463,13 @@ struct RecipeDetailView: View {
             Button(action: { showTimerSheet = true }) {
                 Image(systemName: "timer")
                     .font(.title3)
-                    .foregroundColor(.white)
+                    .adaptiveForegroundColor()
             }
             
             Button(action: { showEditSheet = true }) {
                 Image(systemName: "pencil")
                     .font(.title3)
-                    .foregroundColor(.white)
+                    .adaptiveForegroundColor()
             }
             
             Button(action: toggleFavorite) {
@@ -510,10 +510,10 @@ struct RecipeDetailView: View {
         if let feedback = showAddedFeedback {
             HStack(spacing: 12) {
                 Image(systemName: "basket.fill")
-                    .foregroundColor(.white)
+                    .adaptiveForegroundColor()
                 Text("\(feedback) added to shopping list")
                     .font(.subheadline)
-                    .foregroundColor(.white)
+                    .adaptiveForegroundColor()
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 12)
@@ -654,7 +654,7 @@ struct RecipeDetailView: View {
                     Text("\(number)")
                         .font(.system(size: 7))
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .adaptiveForegroundColor()
                 }
                 
                 Text(text)

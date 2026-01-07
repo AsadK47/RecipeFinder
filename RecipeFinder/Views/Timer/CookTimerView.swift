@@ -62,7 +62,7 @@ struct CookTimerView: View {
                                 }) {
                                     Image(systemName: "chevron.left")
                                         .font(.title3)
-                                        .foregroundColor(.white)
+                                        .adaptiveForegroundColor()
                                         .frame(width: 44, height: 44)
                                 }
                                 .accessibilityLabel("Back")
@@ -115,7 +115,7 @@ struct CookTimerView: View {
                                     }
                                 } label: {
                                     Image(systemName: "line.3.horizontal")
-                                        .foregroundColor(.white)
+                                        .adaptiveForegroundColor()
                                         .font(.title3)
                                         .frame(width: 44, height: 44)
                                 }
@@ -331,7 +331,7 @@ struct CookTimerView: View {
                                 }) {
                                     Text("Cancel")
                                         .font(.body)
-                                        .foregroundColor(.white)
+                                        .adaptiveForegroundColor()
                                         .padding(.horizontal, 16)
                                         .padding(.vertical, 8)
                                         .background {
@@ -349,7 +349,7 @@ struct CookTimerView: View {
                                 
                                 Text("Create Custom Timer")
                                     .font(.system(size: min(24, geometry.size.width * 0.06), weight: .bold))
-                                    .foregroundColor(.white)
+                                    .adaptiveForegroundColor()
                                 
                                 Spacer()
                                 
@@ -375,7 +375,7 @@ struct CookTimerView: View {
                             VStack(alignment: .leading, spacing: 8) {
                         Text("Timer Name (Optional)")
                             .font(.caption)
-                            .foregroundColor(.white.opacity(0.7))
+                            .adaptiveForegroundColor(opacity: 0.7)
                         
                         TextField("E.g., Pasta, Cookies", text: $customName)
                             .textFieldStyle(.roundedBorder)
@@ -388,7 +388,7 @@ struct CookTimerView: View {
                         VStack(spacing: 8) {
                             Text("Hours")
                                 .font(.caption)
-                                .foregroundColor(.white.opacity(0.7))
+                                .adaptiveForegroundColor(opacity: 0.7)
                             
                             Picker("Hours", selection: $customHours) {
                                 ForEach(0..<24) { hour in
@@ -403,13 +403,13 @@ struct CookTimerView: View {
                         Text(":")
                             .font(.largeTitle)
                             .fontWeight(.bold)
-                            .foregroundColor(.white)
+                            .adaptiveForegroundColor()
                             .padding(.top, 20)
                         
                         VStack(spacing: 8) {
                             Text("Minutes")
                                 .font(.caption)
-                                .foregroundColor(.white.opacity(0.7))
+                                .adaptiveForegroundColor(opacity: 0.7)
                             
                             Picker("Minutes", selection: $customMinutes) {
                                 ForEach(0..<60) { minute in
@@ -424,13 +424,13 @@ struct CookTimerView: View {
                         Text(":")
                             .font(.largeTitle)
                             .fontWeight(.bold)
-                            .foregroundColor(.white)
+                            .adaptiveForegroundColor()
                             .padding(.top, 20)
                         
                         VStack(spacing: 8) {
                             Text("Seconds")
                                 .font(.caption)
-                                .foregroundColor(.white.opacity(0.7))
+                                .adaptiveForegroundColor(opacity: 0.7)
                             
                             Picker("Seconds", selection: $customSeconds) {
                                 ForEach(0..<60) { second in
@@ -471,7 +471,7 @@ struct CookTimerView: View {
                             Text("Start Timer")
                                 .fontWeight(.semibold)
                         }
-                        .foregroundColor(.white)
+                        .adaptiveForegroundColor()
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 18)
                         .background(AppTheme.accentColor(for: selectedTheme))
@@ -499,13 +499,13 @@ struct CookTimerView: View {
                 Text("Active Timers")
                     .font(.title3)
                     .fontWeight(.semibold)
-                    .foregroundColor(.white)
+                    .adaptiveForegroundColor()
                 
                 Spacer()
                 
                 Text("\(timers.count)/\(maxTimers)")
                     .font(.subheadline)
-                    .foregroundColor(.white.opacity(0.7))
+                    .adaptiveForegroundColor(opacity: 0.7)
             }
             
             ForEach(timers.sorted(by: { $0.timeRemaining < $1.timeRemaining })) { timer in
@@ -530,7 +530,7 @@ struct CookTimerView: View {
             
             Text("Maximum timers reached (\(maxTimers)/\(maxTimers))")
                 .font(.subheadline)
-                .foregroundColor(.white.opacity(0.9))
+                .adaptiveForegroundColor(opacity: 0.9)
             
             Spacer()
         }
@@ -756,7 +756,7 @@ struct TimerCard: View {
                         Text(timer.isPaused ? "Resume" : "Pause")
                             .fontWeight(.semibold)
                     }
-                    .foregroundColor(.white)
+                    .adaptiveForegroundColor()
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
                     .background(Color.orange)
@@ -770,7 +770,7 @@ struct TimerCard: View {
                         Text("Stop")
                             .fontWeight(.semibold)
                     }
-                    .foregroundColor(.white)
+                    .adaptiveForegroundColor()
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
                     .background(Color.red)
@@ -809,7 +809,7 @@ struct CompletedTimerBannerView: View {
                 
                 Image(systemName: "checkmark")
                     .font(.system(size: 20, weight: .bold))
-                    .foregroundColor(.white)
+                    .adaptiveForegroundColor()
             }
             
             VStack(alignment: .leading, spacing: 2) {

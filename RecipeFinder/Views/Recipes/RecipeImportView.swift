@@ -139,7 +139,7 @@ struct RecipeImportView: View {
                             Text("Import Recipe")
                         }
                         .font(.headline)
-                        .foregroundColor(.white)
+                        .adaptiveForegroundColor()
                         .frame(maxWidth: .infinity)
                         .frame(height: 56)
                         .background(urlText.isEmpty ? Color.gray : AppTheme.accentColor(for: selectedTheme))

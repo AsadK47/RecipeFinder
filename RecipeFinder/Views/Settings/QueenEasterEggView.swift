@@ -39,7 +39,7 @@ struct QueenEasterEggView: View {
         ForEach(Array(particleData.enumerated()), id: \.offset) { index, particle in
             Image(systemName: particle.icon)
                 .font(.system(size: particle.size))
-                .foregroundColor(.white.opacity(0.15))
+                .adaptiveForegroundColor(opacity: 0.15)
                 .position(x: particle.x, y: particle.y)
                 .opacity(particlesOpacity)
                 .animation(
@@ -115,7 +115,7 @@ struct QueenEasterEggView: View {
                 
                 Text("Queen of My Heart")
                     .font(.system(size: 20, weight: .medium, design: .rounded))
-                    .foregroundColor(.white.opacity(0.9))
+                    .adaptiveForegroundColor(opacity: 0.9)
                 
                 Text("❤️")
                     .font(.system(size: 40))
@@ -132,7 +132,7 @@ struct QueenEasterEggView: View {
         Text("\"In every recipe of life,\nyou're the secret ingredient\nthat makes everything perfect\"")
             .font(.system(size: 16, weight: .medium, design: .serif))
             .italic()
-            .foregroundColor(.white.opacity(0.85))
+            .adaptiveForegroundColor(opacity: 0.85)
             .multilineTextAlignment(.center)
             .padding(.horizontal, 40)
             .padding(.top, 20)
@@ -254,7 +254,7 @@ struct QueenEasterEggView: View {
                 Text("Close")
                     .fontWeight(.semibold)
             }
-            .foregroundColor(.white)
+            .adaptiveForegroundColor()
             .frame(maxWidth: .infinity)
             .frame(height: 56)
             .background(closeButtonBackground)
