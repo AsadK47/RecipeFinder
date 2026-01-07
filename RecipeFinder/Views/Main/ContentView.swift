@@ -7,6 +7,7 @@ struct ContentView: View {
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @Environment(\.colorScheme) var colorScheme
+    @StateObject private var authManager = AuthenticationManager.shared
     
     private var themeBinding: AppTheme.ThemeType { selectedTheme }
     
@@ -74,6 +75,14 @@ struct ContentView: View {
             // Load recipes only once on appear
             if recipes.isEmpty {
                 loadRecipes()
+            }
+        }
+        .onChange(of: authManager.isAuthenticated) { _, isAuthenticated in
+            // Reload recipes when user signs in
+            if isAuthenticated {
+                loadRecipes()
+            } else {
+                recipes = []
             }
         }
     }

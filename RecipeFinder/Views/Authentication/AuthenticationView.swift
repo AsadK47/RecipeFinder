@@ -44,11 +44,11 @@ struct AuthenticationView: View {
                     
                     Text("RecipeFinder")
                         .font(.system(size: 42, weight: .bold, design: .rounded))
-                        .foregroundColor(.white)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
                     
                     Text("Discover, Create, Cook")
                         .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(.white.opacity(0.8))
+                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.7))
                 }
                 .padding(.bottom, 20)
                 
@@ -70,7 +70,7 @@ struct AuthenticationView: View {
                                     .fontWeight(.bold)
                                     .font(.system(size: 17))
                             }
-                            .foregroundColor(.white)
+                            .foregroundColor(colorScheme == .dark ? .white : .black)
                             .frame(maxWidth: .infinity)
                             .frame(height: 56)
                             .background(
@@ -103,7 +103,7 @@ struct AuthenticationView: View {
                             Text("Sign In with Email")
                                 .fontWeight(.semibold)
                         }
-                        .foregroundColor(.white)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
                         .frame(maxWidth: .infinity)
                         .frame(height: 50)
                         .background(
@@ -120,7 +120,7 @@ struct AuthenticationView: View {
                     Button(action: { showSignUp = true }) {
                         Text("Don't have an account? **Sign Up**")
                             .font(.subheadline)
-                            .foregroundColor(.white)
+                            .foregroundColor(colorScheme == .dark ? .white : .black)
                     }
                     .padding(.top, 8)
                 }
