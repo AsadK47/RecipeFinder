@@ -1,5 +1,8 @@
 import SwiftUI
 
+private let logger = AppLogger.logger(category: "RecipeImport")
+
+
 struct RecipeImportView: View {
     @Environment(\.dismiss) var dismiss
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
@@ -414,6 +417,6 @@ struct RecipeImportView: View {
 
 #Preview {
     RecipeImportView { recipe in
-        debugLog("Imported: \(recipe.name)")
+        logger.debug("Imported: \(recipe.name)")
     }
 }

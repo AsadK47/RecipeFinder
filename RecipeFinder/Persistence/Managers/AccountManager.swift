@@ -2,6 +2,9 @@ import Foundation
 import UIKit
 import Combine
 
+private let logger = AppLogger.logger(category: "Account")
+
+
 @MainActor
 final class AccountManager: ObservableObject {
     static let shared = AccountManager()
@@ -182,7 +185,7 @@ final class AccountManager: ObservableObject {
         updateStats()
         
         HapticManager.shared.success()
-        debugLog("🗑️ All data cleared and reset to defaults")
+        logger.debug("🗑️ All data cleared and reset to defaults")
         
         // Notify other views to refresh
         NotificationCenter.default.post(name: NSNotification.Name("DataDidChange"), object: nil)

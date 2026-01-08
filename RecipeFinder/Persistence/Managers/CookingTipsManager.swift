@@ -1,6 +1,9 @@
 import Combine
 import Foundation
 
+private let logger = AppLogger.logger(category: "CookingTips")
+
+
 /// Manages cooking tips with filtering, searching, and favorites
 @MainActor
 final class CookingTipsManager: ObservableObject {
@@ -121,12 +124,12 @@ final class CookingTipsManager: ObservableObject {
         if let data = UserDefaults.standard.data(forKey: saveKey),
            let decoded = try? JSONDecoder().decode([CookingTipModel].self, from: data) {
             tips = decoded
-            debugLog("✅ Loaded \(tips.count) cooking tips")
+            logger.debug("✅ Loaded \(tips.count) cooking tips")
         } else {
             // First time - populate with sample tips
             tips = CookingTipModel.samples
             saveTips()
-            debugLog("📚 Populated \(tips.count) sample cooking tips")
+            logger.debug("📚 Populated \(tips.count) sample cooking tips")
         }
     }
     
@@ -141,7 +144,7 @@ final class CookingTipsManager: ObservableObject {
     func resetToSamples() {
         tips = CookingTipModel.samples
         saveTips()
-        debugLog("🔄 Reset to sample cooking tips")
+        logger.debug("🔄 Reset to sample cooking tips")
     }
     
     func tipCount(for category: CookingTipCategory) -> Int {

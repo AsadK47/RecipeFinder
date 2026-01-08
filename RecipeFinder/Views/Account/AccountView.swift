@@ -2,6 +2,9 @@ import SwiftUI
 import AuthenticationServices
 import UniformTypeIdentifiers
 
+private let logger = AppLogger.logger(category: "Account")
+
+
 struct AccountView: View {
     @StateObject private var accountManager = AccountManager.shared
     @StateObject private var authManager = AuthenticationManager.shared
@@ -559,18 +562,18 @@ struct AccountView: View {
     // MARK: - Helper Functions
     
     private func signOut() {
-        debugLog("🔓 [AccountView] Sign out button tapped")
+        logger.debug("🔓 [AccountView] Sign out button tapped")
         authManager.signOut()
         // Navigation handled automatically by app root view
     }
     
     private func deleteAccount() async {
         do {
-            debugLog("🗑️ [AccountView] Delete account requested")
+            logger.debug("🗑️ [AccountView] Delete account requested")
             try await authManager.deleteAccount()
             // Navigation handled automatically by app root view
         } catch {
-            debugLog("Error deleting account: \(error)")
+            logger.debug("Error deleting account: \(error)")
         }
     }
     

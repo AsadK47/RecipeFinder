@@ -1,6 +1,9 @@
 import ConfettiSwiftUI
 import SwiftUI
 
+private let logger = AppLogger.logger(category: "ShoppingList")
+
+
 struct ShoppingListView: View {
     @StateObject private var manager = ShoppingListManager.shared
     @State private var searchText: String = ""
@@ -478,26 +481,26 @@ struct ShoppingListView: View {
     
     private func addItem() {
         guard !searchText.trimmingCharacters(in: .whitespaces).isEmpty else {
-            debugLog("❌ ShoppingListView: Empty search text")
+            logger.error("❌ ShoppingListView: Empty search text")
             return
         }
-        debugLog("🔍 ShoppingListView: Adding item '\(searchText)'")
+        logger.debug("🔍 ShoppingListView: Adding item '\(searchText)'")
         manager.addItem(name: searchText)
         searchText = ""
         isSearchFocused = false
         HapticManager.shared.success()
-        debugLog("📊 ShoppingListView: Manager now has \(manager.items.count) items")
+        logger.debug("📊 ShoppingListView: Manager now has \(manager.items.count) items")
     }
     
     private func addItemFromSearch(_ ingredient: String) {
-        debugLog("🔍 ShoppingListView: Adding item from search '\(ingredient)'")
+        logger.debug("🔍 ShoppingListView: Adding item from search '\(ingredient)'")
         manager.addItem(name: ingredient)
         // Reset state to allow continuous adding
         searchText = ""
         // Keep focus so user can continue typing
         isSearchFocused = true
         HapticManager.shared.success()
-        debugLog("📊 ShoppingListView: Manager now has \(manager.items.count) items")
+        logger.debug("📊 ShoppingListView: Manager now has \(manager.items.count) items")
     }
     
     private func ingredientButton(_ ingredient: String) -> some View {

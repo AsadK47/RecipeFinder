@@ -8,6 +8,9 @@
 import Foundation
 import SwiftUI
 
+private let logger = AppLogger.logger(category: "AppErrorHandler")
+
+
 /// Comprehensive error types for the app
 enum RecipeFinderError: LocalizedError, Identifiable {
     var id: String { errorDescription ?? "Unknown error" }
@@ -272,14 +275,14 @@ final class ErrorLogger: @unchecked Sendable {
     func log(_ error: RecipeFinderError, file: String = #file, function: String = #function, line: Int = #line) {
         #if DEBUG
         let filename = (file as NSString).lastPathComponent
-        print("❌ ERROR [\(filename):\(line)] \(function)")
-        print("   Type: \(error)")
-        print("   Description: \(error.errorDescription ?? "No description")")
-        print("   Severity: \(error.severity)")
+        logger.error("❌ ERROR [\(filename):\(line)] \(function)")
+        logger.info("   Type: \(error)")
+        logger.info("   Description: \(error.errorDescription ?? "No description")")
+        logger.info("   Severity: \(error.severity)")
         if let suggestion = error.recoverySuggestion {
-            print("   Suggestion: \(suggestion)")
+            logger.info("   Suggestion: \(suggestion)")
         }
-        print("─────────────────────────────────────────")
+        logger.info("─────────────────────────────────────────")
         #endif
         
         // In production, you might want to send to analytics service
@@ -288,7 +291,7 @@ final class ErrorLogger: @unchecked Sendable {
     
     func logSuccess(_ message: String) {
         #if DEBUG
-        print("✅ SUCCESS: \(message)")
+        logger.info("✅ SUCCESS: \(message)")
         #endif
     }
 }

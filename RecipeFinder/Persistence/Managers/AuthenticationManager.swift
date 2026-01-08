@@ -3,6 +3,9 @@ import AuthenticationServices
 import SwiftUI
 import LocalAuthentication
 
+private let logger = AppLogger.logger(category: "Authentication")
+
+
 @MainActor
 final class AuthenticationManager: NSObject, ObservableObject {
     static let shared = AuthenticationManager()
@@ -102,7 +105,7 @@ final class AuthenticationManager: NSObject, ObservableObject {
                 let timeAway = Date().timeIntervalSince(lastActive)
                 if timeAway > sessionTimeoutSeconds {
                     // Session expired - require re-authentication
-                    debugLog("⏱️ Session expired after \(Int(timeAway))s away")
+                    logger.debug("⏱️ Session expired after \(Int(timeAway))s away")
                     signOut()
                     return
                 }
@@ -138,7 +141,7 @@ final class AuthenticationManager: NSObject, ObservableObject {
         if let lastActive = UserDefaults.standard.object(forKey: lastActiveTimestampKey) as? Date {
             let timeAway = Date().timeIntervalSince(lastActive)
             if timeAway > sessionTimeoutSeconds {
-                debugLog("⏱️ Session expired - signing out")
+                logger.debug("⏱️ Session expired - signing out")
                 signOut()
             }
         }
@@ -235,7 +238,7 @@ final class AuthenticationManager: NSObject, ObservableObject {
         let isNewUser = !UserDefaults.standard.bool(forKey: userKey)
         
         if isNewUser {
-            debugLog("🆕 New user detected - populating sample recipes")
+            logger.debug("🆕 New user detected - populating sample recipes")
             PersistenceController.shared.populateDatabase()
             UserDefaults.standard.set(true, forKey: userKey)
             
@@ -362,7 +365,7 @@ final class AuthenticationManager: NSObject, ObservableObject {
         )
         
         // Don't authenticate - user must sign in manually (defensive)
-        debugLog("✅ Account created for \(email) - user must sign in manually")
+        logger.debug("✅ Account created for \(email) - user must sign in manually")
     }
     
     // Biometric Authentication
@@ -421,12 +424,12 @@ final class AuthenticationManager: NSObject, ObservableObject {
     // MARK: - Sign Out
     
     func signOut() {
-        debugLog("🚪 Sign out initiated")
+        logger.debug("🚪 Sign out initiated")
         
         // Delete session token
         if let email = UserDefaults.standard.string(forKey: currentEmailKey) {
             credentialManager.deleteSessionToken(for: email)
-            debugLog("🗑️ Deleted session token for: \(email)")
+            logger.debug("🗑️ Deleted session token for: \(email)")
         }
         
         // Clear user ID for scoped storage
@@ -445,7 +448,7 @@ final class AuthenticationManager: NSObject, ObservableObject {
         UserDefaults.standard.removeObject(forKey: self.currentEmailKey)
         UserDefaults.standard.removeObject(forKey: self.lastActiveTimestampKey)
         
-        self.debugLog("✅ Sign out complete - UI should now show login screen")
+        self.logger.debug("✅ Sign out complete - UI should now show login screen")
         HapticManager.shared.light()
     }
     
@@ -493,7 +496,7 @@ final class AuthenticationManager: NSObject, ObservableObject {
             UserDefaults.standard.set(encoded, forKey: userDataKey)
         }
         
-        debugLog("✅ Current user updated: \(user.displayName)")
+        logger.debug("✅ Current user updated: \(user.displayName)")
     }
     
     func deleteAccount() async throws {
@@ -641,7 +644,7 @@ extension PersonNameComponents {
 extension AuthenticationManager {
     private func debugLog(_ message: String) {
         #if DEBUG
-        print("[AuthenticationManager] \(message)")
+        logger.info("[AuthenticationManager] \(message)")
         #endif
     }
 }

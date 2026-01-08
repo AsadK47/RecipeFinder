@@ -7,6 +7,9 @@
 
 import Foundation
 
+private let logger = AppLogger.logger(category: "TestHelpers")
+
+
 #if DEBUG
 
 /// Test Helper for Authentication Testing
@@ -32,12 +35,12 @@ struct AuthTestHelper {
             )
             
             if success {
-                debugLog("✅ Test account created: \(testEmail) / \(testPassword)")
+                logger.debug("✅ Test account created: \(testEmail) / \(testPassword)")
             } else {
-                debugLog("❌ Failed to create test account")
+                logger.error("❌ Failed to create test account")
             }
         } else {
-            debugLog("ℹ️ Test account already exists: \(testEmail)")
+            logger.debug("ℹ️ Test account already exists: \(testEmail)")
         }
     }
     
@@ -62,13 +65,13 @@ struct AuthTestHelper {
         // Sign out
         AuthenticationManager.shared.signOut()
         
-        debugLog("🧹 All authentication data cleared (UserDefaults + Keychain)")
+        logger.debug("🧹 All authentication data cleared (UserDefaults + Keychain)")
     }
     
     /// Delete a specific user from Keychain
     static func deleteUser(email: String) {
         SecureCredentialManager.shared.deleteCredentials(email: email)
-        debugLog("🗑️ Deleted user: \(email)")
+        logger.debug("🗑️ Deleted user: \(email)")
     }
 }
 

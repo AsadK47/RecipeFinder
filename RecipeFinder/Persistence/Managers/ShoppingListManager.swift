@@ -1,6 +1,9 @@
 import Foundation
 import Combine
 
+private let logger = AppLogger.logger(category: "ShoppingList")
+
+
 @MainActor
 final class ShoppingListManager: ObservableObject {
     static let shared = ShoppingListManager()
@@ -43,27 +46,27 @@ final class ShoppingListManager: ObservableObject {
         var items = getItems()
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedName.isEmpty else {
-            debugLog("❌ ShoppingListManager: Empty item name")
+            logger.error("❌ ShoppingListManager: Empty item name")
             return
         }
         
         // Validate quantity
         guard quantity > 0 else {
-            debugLog("❌ ShoppingListManager: Invalid quantity for '\(trimmedName)'")
+            logger.error("❌ ShoppingListManager: Invalid quantity for '\(trimmedName)'")
             HapticManager.shared.error()
             return
         }
         
         // Prevent unreasonably large quantities
         guard quantity <= 999 else {
-            debugLog("❌ ShoppingListManager: Quantity too large for '\(trimmedName)'")
+            logger.error("❌ ShoppingListManager: Quantity too large for '\(trimmedName)'")
             HapticManager.shared.error()
             return
         }
         
         // Check for duplicates - if exists, just increase quantity
         if let existingIndex = items.firstIndex(where: { $0.name.lowercased() == trimmedName.lowercased() }) {
-            debugLog("✅ ShoppingListManager: Updating existing item '\(trimmedName)'")
+            logger.debug("✅ ShoppingListManager: Updating existing item '\(trimmedName)'")
             // Ensure combined quantity doesn't exceed limit
             let newQuantity = items[existingIndex].quantity + quantity
             items[existingIndex].quantity = min(newQuantity, 999)
@@ -75,7 +78,7 @@ final class ShoppingListManager: ObservableObject {
         let detectedCategory = category ?? CategoryClassifier.categorize(trimmedName)
         let newItem = ShoppingListModel(name: trimmedName, quantity: quantity, category: detectedCategory)
         items.append(newItem)
-        debugLog("✅ ShoppingListManager: Added '\(trimmedName)' in category '\(detectedCategory)'. Total items: \(items.count)")
+        logger.debug("✅ ShoppingListManager: Added '\(trimmedName)' in category '\(detectedCategory)'. Total items: \(items.count)")
         saveItems(items)
         HapticManager.shared.medium()
     }

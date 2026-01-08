@@ -1,6 +1,9 @@
 import CoreData
 import Foundation
 
+private let logger = AppLogger.logger(category: "PersistenceController")
+
+
 final class PersistenceController {
     nonisolated(unsafe) static let shared = PersistenceController()
     
@@ -54,14 +57,14 @@ final class PersistenceController {
             let storeURL = storeDescription.url?.absoluteString ?? "unknown location"
             
             if let error = error as NSError? {
-                debugLog("❌ Failed to load persistent store: \(error.localizedDescription)")
-                debugLog("❌ Error details: \(error.userInfo)")
+                logger.error("❌ Failed to load persistent store: \(error.localizedDescription)")
+                logger.error("❌ Error details: \(error.userInfo)")
                 
                 self.loadError = error
                 self.isStoreLoaded = false
                 self.attemptStoreRecovery()
             } else {
-                debugLog("✅ Core Data store loaded successfully at: \(storeURL)")
+                logger.debug("✅ Core Data store loaded successfully at: \(storeURL)")
                 self.isStoreLoaded = true
                 self.loadError = nil
             }
@@ -70,33 +73,33 @@ final class PersistenceController {
     
     /// Attempts to recover from a store loading failure by removing corrupted data
     private func attemptStoreRecovery() {
-        debugLog("🔄 Attempting to recover from Core Data store failure...")
+        logger.debug("🔄 Attempting to recover from Core Data store failure...")
         
         guard let storeURL = container.persistentStoreDescriptions.first?.url else {
-            debugLog("❌ Cannot recover: store URL not found")
+            logger.error("❌ Cannot recover: store URL not found")
             return
         }
         
         do {
             try FileManager.default.removeItem(at: storeURL)
-            debugLog("✅ Removed corrupted store file")
+            logger.debug("✅ Removed corrupted store file")
             
             container.loadPersistentStores { [weak self] _, error in
                 guard let self = self else { return }
                 
                 if let error {
-                    debugLog("❌ Recovery failed: \(error.localizedDescription)")
+                    logger.error("❌ Recovery failed: \(error.localizedDescription)")
                     self.loadError = error
                     self.isStoreLoaded = false
                 } else {
-                    debugLog("✅ Store recovered successfully")
+                    logger.debug("✅ Store recovered successfully")
                     self.isStoreLoaded = true
                     self.loadError = nil
                     self.populateDatabase()
                 }
             }
         } catch {
-            debugLog("❌ Failed to remove corrupted store: \(error.localizedDescription)")
+            logger.error("❌ Failed to remove corrupted store: \(error.localizedDescription)")
             self.loadError = error
         }
     }
@@ -105,7 +108,7 @@ final class PersistenceController {
     @discardableResult
     private func ensureStoreIsReady() -> Bool {
         guard isStoreLoaded else {
-            debugLog("⚠️ Store not loaded. Cannot perform operation.")
+            logger.debug("⚠️ Store not loaded. Cannot perform operation.")
             return false
         }
         return true
@@ -121,20 +124,20 @@ final class PersistenceController {
         do {
             try context.execute(deleteRequest)
             try context.save()
-            debugLog("✅ Database cleared successfully")
+            logger.debug("✅ Database cleared successfully")
         } catch {
-            debugLog("❌ Failed to clear database: \(error.localizedDescription)")
+            logger.error("❌ Failed to clear database: \(error.localizedDescription)")
         }
     }
     
     /// Resets the database by clearing all data and repopulating with sample recipes
     func resetDatabase() {
-        debugLog("🔄 Resetting database...")
+        logger.debug("🔄 Resetting database...")
         clearDatabase()
         UserDefaults.standard.set(false, forKey: Constants.UserDefaultsKeys.hasPopulatedDatabase)
         populateDatabase()
         UserDefaults.standard.set(true, forKey: Constants.UserDefaultsKeys.hasPopulatedDatabase)
-        debugLog("✅ Database reset complete")
+        logger.debug("✅ Database reset complete")
     }
     
     // MARK: - Recipe Save Parameters
@@ -211,7 +214,7 @@ final class PersistenceController {
         let context = container.viewContext
         
         guard let entity = NSEntityDescription.entity(forEntityName: Entity.recipe, in: context) else {
-            debugLog("❌ Failed to find Recipe entity")
+            logger.error("❌ Failed to find Recipe entity")
             return
         }
         
@@ -219,7 +222,7 @@ final class PersistenceController {
         
         // Encode ingredients
         guard let ingredientData = try? JSONEncoder().encode(parameters.ingredients) else {
-            debugLog("❌ Failed to encode ingredients for recipe: \(parameters.name)")
+            logger.error("❌ Failed to encode ingredients for recipe: \(parameters.name)")
             return
         }
         
@@ -246,13 +249,13 @@ final class PersistenceController {
         
         do {
             try context.save()
-            debugLog("✅ Recipe '\(parameters.name)' saved successfully")
+            logger.debug("✅ Recipe '\(parameters.name)' saved successfully")
             
             // Check and unlock badges after saving
             let recipeCount = getRecipeCount()
             BadgeManager.shared.checkAndUnlockBadges(recipeCount: recipeCount)
         } catch {
-            debugLog("❌ Failed to save recipe '\(parameters.name)': \(error.localizedDescription)")
+            logger.error("❌ Failed to save recipe '\(parameters.name)': \(error.localizedDescription)")
         }
     }
     
@@ -287,10 +290,10 @@ final class PersistenceController {
         
         do {
             let results = try context.fetch(fetchRequest)
-            debugLog("✅ Fetched \(results.count) recipes from database for current user")
+            logger.debug("✅ Fetched \(results.count) recipes from database for current user")
             return results.compactMap(mapToRecipeModel)
         } catch {
-            debugLog("❌ Failed to fetch recipes: \(error.localizedDescription)")
+            logger.error("❌ Failed to fetch recipes: \(error.localizedDescription)")
             return []
         }
     }
@@ -311,7 +314,7 @@ final class PersistenceController {
         do {
             return try context.count(for: fetchRequest)
         } catch {
-            debugLog("❌ Failed to fetch recipe count: \(error.localizedDescription)")
+            logger.error("❌ Failed to fetch recipe count: \(error.localizedDescription)")
             return 0
         }
     }
@@ -329,13 +332,13 @@ final class PersistenceController {
             let name = object.value(forKey: RecipeKey.name) as? String,
             let ingredientsData = object.value(forKey: RecipeKey.ingredients) as? Data
         else {
-            debugLog("⚠️ Skipping recipe with missing required fields")
+            logger.debug("⚠️ Skipping recipe with missing required fields")
             return nil
         }
         
         // Decode ingredients
         guard let ingredients = try? JSONDecoder().decode([Ingredient].self, from: ingredientsData) else {
-            debugLog("❌ Failed to decode ingredients for '\(name)'")
+            logger.error("❌ Failed to decode ingredients for '\(name)'")
             return nil
         }
         
@@ -381,15 +384,15 @@ final class PersistenceController {
         
         do {
             guard let recipe = try context.fetch(fetchRequest).first else {
-                debugLog("⚠️ Recipe with id \(id) not found")
+                logger.debug("⚠️ Recipe with id \(id) not found")
                 return
             }
             
             context.delete(recipe)
             try context.save()
-            debugLog("✅ Recipe deleted successfully")
+            logger.debug("✅ Recipe deleted successfully")
         } catch {
-            debugLog("❌ Failed to delete recipe: \(error.localizedDescription)")
+            logger.error("❌ Failed to delete recipe: \(error.localizedDescription)")
         }
     }
     
@@ -409,13 +412,13 @@ final class PersistenceController {
         
         do {
             guard let managedRecipe = try context.fetch(fetchRequest).first else {
-                debugLog("⚠️ Recipe with id \(recipe.id) not found")
+                logger.debug("⚠️ Recipe with id \(recipe.id) not found")
                 return
             }
             
             // Encode ingredients
             guard let ingredientData = try? JSONEncoder().encode(recipe.ingredients) else {
-                debugLog("❌ Failed to encode ingredients for recipe: \(recipe.name)")
+                logger.error("❌ Failed to encode ingredients for recipe: \(recipe.name)")
                 return
             }
             
@@ -435,9 +438,9 @@ final class PersistenceController {
             managedRecipe.setValue(recipe.isFavorite, forKey: RecipeKey.isFavorite)
             
             try context.save()
-            debugLog("✅ Recipe '\(recipe.name)' updated successfully")
+            logger.debug("✅ Recipe '\(recipe.name)' updated successfully")
         } catch {
-            debugLog("❌ Failed to update recipe: \(error.localizedDescription)")
+            logger.error("❌ Failed to update recipe: \(error.localizedDescription)")
         }
     }
     
@@ -451,7 +454,7 @@ final class PersistenceController {
         
         do {
             guard let recipe = try context.fetch(fetchRequest).first else {
-                debugLog("⚠️ Recipe with id \(id) not found")
+                logger.debug("⚠️ Recipe with id \(id) not found")
                 return
             }
             
@@ -460,9 +463,9 @@ final class PersistenceController {
             recipe.setValue(newFavorite, forKey: RecipeKey.isFavorite)
             
             try context.save()
-            debugLog("✅ Recipe favorite status toggled to \(newFavorite)")
+            logger.debug("✅ Recipe favorite status toggled to \(newFavorite)")
         } catch {
-            debugLog("❌ Failed to toggle favorite: \(error.localizedDescription)")
+            logger.error("❌ Failed to toggle favorite: \(error.localizedDescription)")
         }
     }
 }

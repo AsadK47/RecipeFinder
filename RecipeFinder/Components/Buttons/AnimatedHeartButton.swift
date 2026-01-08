@@ -1,5 +1,8 @@
 import SwiftUI
 
+private let logger = AppLogger.logger(category: "AnimatedHeartButton")
+
+
 struct AnimatedHeartButton: View {
     @Binding var isFavorite: Bool
     let action: () -> Void
@@ -120,11 +123,11 @@ struct AnimatedHeartButton: View {
                 .font(.title2)
             
             AnimatedHeartButton(isFavorite: .constant(false)) {
-                debugLog("Heart tapped!")
+                logger.debug("Heart tapped!")
             }
             
             AnimatedHeartButton(isFavorite: .constant(true)) {
-                debugLog("Already favorited!")
+                logger.debug("Already favorited!")
             }
         }
     }

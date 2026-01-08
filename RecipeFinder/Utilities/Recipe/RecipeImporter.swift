@@ -1,6 +1,9 @@
 import Foundation
 import SwiftUI
 
+private let logger = AppLogger.logger(category: "RecipeImporter")
+
+
 /// Smart Recipe Importer - Now powered by RecipeParser engine
  
 final class RecipeImporter: ObservableObject, @unchecked Sendable {
@@ -29,7 +32,7 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
     
     private func debugLog(_ message: String) {
         #if DEBUG
-        print("[RecipeImporter] \(message)")
+        logger.info("[RecipeImporter] \(message)")
         #endif
     }
     
@@ -63,7 +66,7 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
         }
         
         do {
-            debugLog("🌐 Fetching recipe from: \(url.absoluteString)")
+            logger.debug("🌐 Fetching recipe from: \(url.absoluteString)")
             
             // Create request with user agent to avoid blocking
             var request = URLRequest(url: url)
@@ -79,13 +82,13 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
                 throw ImportError.invalidResponse
             }
             
-            debugLog("📊 HTTP Status: \(httpResponse.statusCode)")
+            logger.debug("📊 HTTP Status: \(httpResponse.statusCode)")
             
             // Handle redirects and different status codes
             if httpResponse.statusCode == 301 || httpResponse.statusCode == 302 {
                 if let location = httpResponse.value(forHTTPHeaderField: "Location"),
                    let redirectURL = URL(string: location, relativeTo: url) {
-                    debugLog("↪️ Following redirect \(redirectCount + 1)/5 to: \(redirectURL.absoluteString)")
+                    logger.debug("↪️ Following redirect \(redirectCount + 1)/5 to: \(redirectURL.absoluteString)")
                     await importRecipe(from: redirectURL, redirectCount: redirectCount + 1)
                     return
                 }
@@ -99,7 +102,7 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
                 throw ImportError.invalidEncoding
             }
             
-            debugLog("✅ HTML fetched (\(html.count) chars)")
+            logger.debug("✅ HTML fetched (\(html.count) chars)")
             
             // Use RecipeParser to extract structured data
             let parsed = RecipeParser.parse(html: html)
@@ -107,7 +110,7 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             await MainActor.run {
                 self.parseConfidence = parsed.confidence
             }
-            debugLog("🎯 Parse confidence: \(Int(parsed.confidence * 100))%")
+            logger.debug("🎯 Parse confidence: \(Int(parsed.confidence * 100))%")
             
             // Validate minimum requirements
             guard let name = parsed.name, !name.isEmpty else {
@@ -125,7 +128,7 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             // Match ingredients against database
             let matchedIngredients = matchIngredientsWithUSDA(parsed.ingredients)
             
-            debugLog("✅ Matched \(matchedIngredients.count)/\(parsed.ingredients.count) ingredients")
+            logger.debug("✅ Matched \(matchedIngredients.count)/\(parsed.ingredients.count) ingredients")
             
             // Create extracted data
             let extractedData = ExtractedRecipeData(
@@ -148,14 +151,14 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
                 self.extractedData = extractedData
                 self.isLoading = false
             }
-            debugLog("🎉 Import complete!")
+            logger.debug("🎉 Import complete!")
             
         } catch {
             await MainActor.run {
                 self.isLoading = false
                 self.errorMessage = error.localizedDescription
             }
-            debugLog("❌ Import failed: \(error.localizedDescription)")
+            logger.error("❌ Import failed: \(error.localizedDescription)")
         }
     }
     
@@ -257,20 +260,20 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
         if let schema = schemaCategory {
             let normalized = normalizeCategory(schema)
             if isValidCategory(normalized) {
-                debugLog("📂 Category from Schema.org: \(normalized)")
+                logger.debug("📂 Category from Schema.org: \(normalized)")
                 return normalized
             }
         }
         
         // Strategy 2: Name-based classification (keyword matching)
         if let nameCategory = classifyCategoryFromName(recipeName) {
-            debugLog("📂 Category from name: \(nameCategory)")
+            logger.debug("📂 Category from name: \(nameCategory)")
             return nameCategory
         }
         
         // Strategy 3: Ingredient-based classification (machine learning approach)
         if let ingredientCategory = classifyCategoryFromIngredients(ingredients) {
-            debugLog("📂 Category from ingredients: \(ingredientCategory)")
+            logger.debug("📂 Category from ingredients: \(ingredientCategory)")
             return ingredientCategory
         }
         
@@ -284,7 +287,7 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
         }
         
         // Default fallback
-        debugLog("📂 Category: Using default (Main)")
+        logger.debug("📂 Category: Using default (Main)")
         return "Main"
     }
     
@@ -557,7 +560,7 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
         errorMessage = nil
         extractedData = nil
         
-        debugLog("🌐 Starting smart import from: \(urlString)")
+        logger.debug("🌐 Starting smart import from: \(urlString)")
         
         guard let url = URL(string: urlString) else {
             errorMessage = "Invalid URL"
@@ -567,15 +570,15 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
         
         do {
             // 1. Fetch HTML
-            debugLog("📥 Fetching HTML...")
+            logger.debug("📥 Fetching HTML...")
             let (data, _) = try await URLSession.shared.data(from: url)
             guard let html = String(data: data, encoding: .utf8) else {
                 throw ImportError.invalidHTML
             }
-            debugLog("✅ HTML fetched: \(html.count) chars")
+            logger.debug("✅ HTML fetched: \(html.count) chars")
             
             // 2. Extract recipe data (try Schema.org first, then fallback to text extraction)
-            debugLog("🔍 Extracting recipe data...")
+            logger.debug("🔍 Extracting recipe data...")
             let schemaRecipe = extractSchemaRecipe(from: html)
             
             let recipeName: String
@@ -586,21 +589,21 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
                 recipeName = schema.name ?? "Imported Recipe"
                 ingredientTexts = schema.recipeIngredient ?? []
                 instructions = schema.recipeInstructions?.steps ?? []
-                debugLog("✅ Extracted via Schema.org: \(ingredientTexts.count) ingredients")
+                logger.debug("✅ Extracted via Schema.org: \(ingredientTexts.count) ingredients")
             } else {
                 // Fallback: extract from HTML text
-                debugLog("⚠️ No Schema.org data, extracting from HTML text...")
+                logger.debug("⚠️ No Schema.org data, extracting from HTML text...")
                 let extracted = extractFromHTML(html)
                 recipeName = extracted.name
                 ingredientTexts = extracted.ingredients
                 instructions = extracted.instructions
-                debugLog("✅ Extracted from HTML: \(ingredientTexts.count) ingredient lines")
+                logger.debug("✅ Extracted from HTML: \(ingredientTexts.count) ingredient lines")
             }
             
             // 3. Match ingredients against food list
-            debugLog("🎯 Matching ingredients against foods...")
+            logger.debug("🎯 Matching ingredients against foods...")
             let matchedIngredients = matchUSDAIngredients(from: ingredientTexts)
-            debugLog("✅ Matched \(matchedIngredients.count) ingredients")
+            logger.debug("✅ Matched \(matchedIngredients.count) ingredients")
             
             // 4. Return extracted data for Recipe Wizard
             let extracted = ExtractedRecipeData(
@@ -623,7 +626,7 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             isLoading = false
             
         } catch {
-            debugLog("❌ Import failed: \(error)")
+            logger.error("❌ Import failed: \(error)")
             errorMessage = "Failed to import: \(error.localizedDescription)"
             isLoading = false
         }
@@ -658,7 +661,7 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
                         if !matchedLower.contains(match.lowercased()) {
                             matched.append(match)
                             matchedLower.insert(match.lowercased())
-                            debugLog("  ✓ Multi-word: \(match) from '\(twoWords)'")
+                            logger.debug("  ✓ Multi-word: \(match) from '\(twoWords)'")
                             break
                         }
                     }
@@ -672,7 +675,7 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
                     if !matchedLower.contains(foodLower) {
                         matched.append(food)
                         matchedLower.insert(foodLower)
-                        debugLog("  ✓ Exact: \(food)")
+                        logger.debug("  ✓ Exact: \(food)")
                         break
                     }
                 }
@@ -692,7 +695,7 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
                     if !matchedLower.contains(match.lowercased()) {
                         matched.append(match)
                         matchedLower.insert(match.lowercased())
-                        debugLog("  ≈ Fuzzy: \(match) from word '\(word)'")
+                        logger.debug("  ≈ Fuzzy: \(match) from word '\(word)'")
                         break
                     }
                 }
@@ -706,7 +709,7 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
                         if !matchedLower.contains(foodLower) {
                             matched.append(match)
                             matchedLower.insert(foodLower)
-                            debugLog("  ~ Partial: \(match)")
+                            logger.debug("  ~ Partial: \(match)")
                             break
                         }
                     }
@@ -714,7 +717,7 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             }
         }
         
-        debugLog("✅ Total matched: \(matched.count) unique ingredients")
+        logger.debug("✅ Total matched: \(matched.count) unique ingredients")
         return matched
     }
     
@@ -894,7 +897,7 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             }
         }
         
-        debugLog("📝 Extracted: name='\(name)', \(ingredientLines.count) ingredients, \(instructionLines.count) instructions")
+        logger.debug("📝 Extracted: name='\(name)', \(ingredientLines.count) ingredients, \(instructionLines.count) instructions")
         
         return (name, Array(ingredientLines.prefix(30)), Array(instructionLines.prefix(20)))
     }

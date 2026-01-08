@@ -1,5 +1,8 @@
 import Foundation
 
+private let logger = AppLogger.logger(category: "SampleRecipeData")
+
+
 extension PersistenceController {
     // swiftlint:disable function_body_length
     func populateDatabase() {
@@ -11,21 +14,21 @@ extension PersistenceController {
             fetchRequest.predicate = NSPredicate(format: "userId == %@", userId)
         } else {
             // No user logged in - skip population
-            debugLog("⚠️ No user logged in, skipping database population")
+            logger.debug("⚠️ No user logged in, skipping database population")
             return
         }
         
         do {
             let existingRecipes = try context.fetch(fetchRequest)
             if !existingRecipes.isEmpty {
-                debugLog("ℹ️ Database already contains \(existingRecipes.count) recipes for current user, skipping population")
+                logger.debug("ℹ️ Database already contains \(existingRecipes.count) recipes for current user, skipping population")
                 return
             }
         } catch {
-            debugLog("⚠️ Failed to check existing recipes: \(error.localizedDescription)")
+            logger.debug("⚠️ Failed to check existing recipes: \(error.localizedDescription)")
         }
         
-        debugLog("🔄 Populating database with sample recipes for current user...")
+        logger.debug("🔄 Populating database with sample recipes for current user...")
         
         saveRecipe(parameters: RecipeSaveParameters(
             name: "Achari Chicken Curry (Instant Pot Version)",
@@ -254,7 +257,7 @@ extension PersistenceController {
             isFavorite: false
         ))
         
-        debugLog("✅ Default recipes added!")
+        logger.debug("✅ Default recipes added!")
     }
     // swiftlint:enable function_body_length
 }

@@ -9,6 +9,9 @@ import Foundation
 import AuthenticationServices
 import SwiftUI
 
+private let logger = AppLogger.logger(category: "AppleSignIn")
+
+
 @MainActor
 final class AppleSignInManager: NSObject, ObservableObject {
     static let shared = AppleSignInManager()
@@ -131,7 +134,7 @@ final class AppleSignInManager: NSObject, ObservableObject {
             
             // If new user, populate with sample recipes
             if isNewUser {
-                debugLog("🆕 New user detected - populating sample recipes")
+                logger.debug("🆕 New user detected - populating sample recipes")
                 PersistenceController.shared.populateDatabase()
                 UserDefaults.standard.set(true, forKey: userKey)
                 
@@ -174,7 +177,7 @@ extension AppleSignInManager: ASAuthorizationControllerDelegate {
         
         HapticManager.shared.success()
         
-        debugLog("✅ [AppleSignIn] Successfully signed in: \(userID)")
+        logger.debug("✅ [AppleSignIn] Successfully signed in: \(userID)")
     }
     
     func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
@@ -183,14 +186,14 @@ extension AppleSignInManager: ASAuthorizationControllerDelegate {
         // User cancelled
         if authError.code == 1001 {
             errorMessage = nil
-            debugLog("ℹ️ [AppleSignIn] User cancelled sign in")
+            logger.debug("ℹ️ [AppleSignIn] User cancelled sign in")
             return
         }
         
         errorMessage = "Sign in failed: \(error.localizedDescription)"
         HapticManager.shared.error()
         
-        debugLog("❌ [AppleSignIn] Error: \(error.localizedDescription)")
+        logger.error("❌ [AppleSignIn] Error: \(error.localizedDescription)")
     }
 }
 
@@ -206,12 +209,12 @@ extension AppleSignInManager: ASAuthorizationControllerPresentationContextProvid
         // Fallback: try any connected scene
         if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
            let window = scene.windows.first {
-            debugLog("Warning: Using fallback window for Apple Sign In presentation")
+            logger.debug("Warning: Using fallback window for Apple Sign In presentation")
             return window
         }
         
         // Last resort: create a new window (should never happen in normal circumstances)
-        debugLog("Critical: No existing window found for Apple Sign In, creating fallback")
+        logger.debug("Critical: No existing window found for Apple Sign In, creating fallback")
         let window = UIWindow(frame: UIScreen.main.bounds)
         window.rootViewController = UIViewController()
         window.windowLevel = .alert

@@ -2,6 +2,9 @@ import SwiftData
 import SwiftUI
 import UIKit
 
+private let logger = AppLogger.logger(category: "RecipeFinderApp")
+
+
 @main
 struct RecipeFinderApp: App {
     let persistenceController = PersistenceController.shared
@@ -123,7 +126,7 @@ struct RecipeFinderApp: App {
     private func initializeDatabase() {
         // Database population now happens per-user after authentication
         // No global flag needed - see AuthenticationManager
-        debugLog("✅ Database initialized")
+        logger.debug("✅ Database initialized")
     }
     
     // Appearance Configuration

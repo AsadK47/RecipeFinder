@@ -21,7 +21,7 @@ import UserNotifications
 /// ```
 /// // Request permission first (usually on app launch)
 /// NotificationManager.shared.requestPermission { granted in
-///     print("Permission: \(granted)")
+///     logger.info("Permission: \(granted)")
 /// }
 ///
 /// // Schedule a notification
@@ -34,6 +34,9 @@ import UserNotifications
 
 import Foundation
 import UserNotifications
+
+private let logger = AppLogger.logger(category: "Notification")
+
 
  
 final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sendable {
@@ -57,11 +60,11 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             Task { @MainActor in
                 if let error = error {
-                    debugLog("❌ Notification permission error: \(error.localizedDescription)")
+                    logger.error("❌ Notification permission error: \(error.localizedDescription)")
                 } else if granted {
-                    debugLog("✅ Notification permission granted")
+                    logger.debug("✅ Notification permission granted")
                 } else {
-                    debugLog("⚠️ Notification permission denied")
+                    logger.debug("⚠️ Notification permission denied")
                 }
                 completion(granted)
             }
@@ -78,10 +81,10 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
             let badgeSetting = settings.badgeSetting
             
             Task { @MainActor in
-                debugLog("📱 Notification Status: \(authStatus.rawValue)")
-                debugLog("   - Alert: \(alertSetting.rawValue)")
-                debugLog("   - Sound: \(soundSetting.rawValue)")
-                debugLog("   - Badge: \(badgeSetting.rawValue)")
+                logger.debug("📱 Notification Status: \(authStatus.rawValue)")
+                logger.debug("   - Alert: \(alertSetting.rawValue)")
+                logger.debug("   - Sound: \(soundSetting.rawValue)")
+                logger.debug("   - Badge: \(badgeSetting.rawValue)")
             }
         }
     }
@@ -130,9 +133,9 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         // 4. Schedule it!
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
-                debugLog("❌ Failed to schedule notification: \(error.localizedDescription)")
+                logger.error("❌ Failed to schedule notification: \(error.localizedDescription)")
             } else {
-                debugLog("✅ Notification scheduled: \(title) in \(timeInterval)s")
+                logger.debug("✅ Notification scheduled: \(title) in \(timeInterval)s")
             }
         }
         
@@ -158,7 +161,7 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
-                debugLog("❌ Failed to send immediate notification: \(error)")
+                logger.error("❌ Failed to send immediate notification: \(error)")
             }
         }
     }
@@ -205,9 +208,9 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
-                debugLog("❌ Failed to schedule meal reminder: \(error)")
+                logger.error("❌ Failed to schedule meal reminder: \(error)")
             } else {
-                debugLog("✅ Meal reminder scheduled for \(date)")
+                logger.debug("✅ Meal reminder scheduled for \(date)")
             }
         }
         
@@ -249,9 +252,9 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
-                debugLog("❌ Failed to schedule daily reminder: \(error)")
+                logger.error("❌ Failed to schedule daily reminder: \(error)")
             } else {
-                debugLog("✅ Daily reminder scheduled for \(hour):\(minute)")
+                logger.debug("✅ Daily reminder scheduled for \(hour):\(minute)")
             }
         }
         
@@ -281,7 +284,7 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
     /// Cancel a specific notification by ID
     func cancelNotification(identifier: String) {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [identifier])
-        debugLog("🗑️ Canceled notification: \(identifier)")
+        logger.debug("🗑️ Canceled notification: \(identifier)")
     }
     
     /// Cancel all timer notifications
@@ -293,7 +296,7 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
             
             Task {
                 UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: timerIds)
-                debugLog("🗑️ Canceled \(timerIds.count) timer notifications")
+                logger.debug("🗑️ Canceled \(timerIds.count) timer notifications")
             }
         }
     }
@@ -301,7 +304,7 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
     /// Cancel ALL pending notifications
     func cancelAllNotifications() {
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-        debugLog("🗑️ Canceled all notifications")
+        logger.debug("🗑️ Canceled all notifications")
     }
     
     /// Get list of all pending notifications
@@ -330,7 +333,7 @@ extension NotificationManager {
         // Show banner and play sound even when app is open
         completionHandler([.banner, .sound, .badge])
         
-        debugLog("📬 Received notification while app is foreground: \(notification.request.content.title)")
+        logger.debug("📬 Received notification while app is foreground: \(notification.request.content.title)")
     }
     
     /// Called when user TAPS on a notification
@@ -342,7 +345,7 @@ extension NotificationManager {
         let userInfo = response.notification.request.content.userInfo
         let notificationType = userInfo["type"] as? String ?? "unknown"
         
-        debugLog("👆 User tapped notification of type: \(notificationType)")
+        logger.debug("👆 User tapped notification of type: \(notificationType)")
         
         // Handle different notification types
         switch notificationType {

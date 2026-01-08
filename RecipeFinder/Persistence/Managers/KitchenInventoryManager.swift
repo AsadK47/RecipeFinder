@@ -1,5 +1,8 @@
 import Foundation
 
+private let logger = AppLogger.logger(category: "KitchenInventory")
+
+
 // MARK: - Kitchen Inventory Manager
 
 @MainActor
@@ -52,7 +55,7 @@ final class KitchenInventoryManager: ObservableObject {
 		// Don't add duplicates by name
 		guard !inventoryItems.contains(where: { $0.name.lowercased() == item.name.lowercased() }) else {
 			HapticManager.shared.warning()
-			debugLog("⚠️ Duplicate item '\(item.name)' not added")
+			logger.debug("⚠️ Duplicate item '\(item.name)' not added")
 			return
 		}
 		
@@ -60,7 +63,7 @@ final class KitchenInventoryManager: ObservableObject {
 		if let expiryDate = item.expiryDate {
 			let calendar = Calendar.current
 			if calendar.startOfDay(for: expiryDate) < calendar.startOfDay(for: Date()) {
-				debugLog("⚠️ Cannot add item '\(item.name)' with past expiry date")
+				logger.debug("⚠️ Cannot add item '\(item.name)' with past expiry date")
 				HapticManager.shared.error()
 				return
 			}
@@ -68,7 +71,7 @@ final class KitchenInventoryManager: ObservableObject {
 		
 		// Validate quantity is positive
 		guard item.quantity > 0 else {
-			debugLog("⚠️ Cannot add item '\(item.name)' with zero or negative quantity")
+			logger.debug("⚠️ Cannot add item '\(item.name)' with zero or negative quantity")
 			HapticManager.shared.error()
 			return
 		}
@@ -77,7 +80,7 @@ final class KitchenInventoryManager: ObservableObject {
 		updatedItems.append(item)
 		HapticManager.shared.medium()
 		saveInventoryItems(updatedItems)
-		debugLog("✅ Added inventory item: '\(item.name)'")
+		logger.debug("✅ Added inventory item: '\(item.name)'")
 	}
 	
 	func updateInventoryItem(_ item: KitchenInventoryModel) {
@@ -85,7 +88,7 @@ final class KitchenInventoryManager: ObservableObject {
 		if let expiryDate = item.expiryDate {
 			let calendar = Calendar.current
 			if calendar.startOfDay(for: expiryDate) < calendar.startOfDay(for: Date()) {
-				debugLog("⚠️ Cannot update item '\(item.name)' with past expiry date")
+				logger.debug("⚠️ Cannot update item '\(item.name)' with past expiry date")
 				HapticManager.shared.error()
 				return
 			}
@@ -93,7 +96,7 @@ final class KitchenInventoryManager: ObservableObject {
 		
 		// Validate quantity is positive
 		guard item.quantity > 0 else {
-			debugLog("⚠️ Cannot update item '\(item.name)' with zero or negative quantity")
+			logger.debug("⚠️ Cannot update item '\(item.name)' with zero or negative quantity")
 			HapticManager.shared.error()
 			return
 		}
@@ -103,7 +106,7 @@ final class KitchenInventoryManager: ObservableObject {
 			updatedItems[index] = item
 			HapticManager.shared.light()
 			saveInventoryItems(updatedItems)
-			debugLog("✅ Updated inventory item: '\(item.name)'")
+			logger.debug("✅ Updated inventory item: '\(item.name)'")
 		}
 	}
 	
@@ -164,7 +167,7 @@ final class KitchenInventoryManager: ObservableObject {
 		
 		let removedCount = oldCount - filteredItems.count
 		if removedCount > 0 {
-			debugLog("🔄 Kitchen Migration: Removed \(removedCount) non-food items")
+			logger.debug("🔄 Kitchen Migration: Removed \(removedCount) non-food items")
 			saveItems(filteredItems)
 		}
 		

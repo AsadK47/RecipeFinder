@@ -5,6 +5,9 @@ import Security
 import CryptoKit
 import CommonCrypto
 
+private let logger = AppLogger.logger(category: "SecureCredential")
+
+
 /// Manages secure storage of user credentials using iOS Keychain
 /// Uses PBKDF2 with unique salts for production-grade password security
 final class SecureCredentialManager: @unchecked Sendable {
@@ -97,7 +100,7 @@ final class SecureCredentialManager: @unchecked Sendable {
         
         // Hash the password with salt
         guard let hashedPassword = hashPasswordWithSalt(password, salt: salt) else {
-            debugLog("❌ Failed to hash password")
+            logger.error("❌ Failed to hash password")
             return false
         }
         
