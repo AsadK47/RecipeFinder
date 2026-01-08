@@ -72,7 +72,7 @@ struct NotesListView: View {
             
             VStack(spacing: 0) {
                 // Header
-                VStack(spacing: AppTheme.spacingMD) {
+                VStack(spacing: AppTheme.spacing12) {
                     GeometryReader { geometry in
                         HStack(spacing: 0) {
                             // Left side - back button with spacer to match right side width
@@ -145,7 +145,7 @@ struct NotesListView: View {
                 // Active filters chips
                 if activeFilterCount > 0 {
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: AppTheme.spacingSM) {
+                        HStack(spacing: AppTheme.spacing8) {
                             if showPinnedOnly {
                                 FilterChip(label: "Pinned", icon: "pin.fill") {
                                     HapticManager.shared.light()
@@ -237,7 +237,7 @@ struct NotesListView: View {
     // MARK: - Notes List
     private var notesList: some View {
         ScrollView {
-            LazyVStack(spacing: AppTheme.spacingMD) {
+            LazyVStack(spacing: AppTheme.spacing12) {
                 ForEach(filteredNotes) { note in
                     NoteCardView(note: note)
                         .onTapGesture {
@@ -286,7 +286,7 @@ struct NotesListView: View {
     
     // MARK: - Empty State
     private var emptyStateView: some View {
-        VStack(spacing: AppTheme.spacingXL) {
+        VStack(spacing: AppTheme.spacing24) {
             Image(systemName: searchText.isEmpty ? "note.text" : "magnifyingglass")
                 .font(.system(size: 70))
                 .adaptiveForegroundColor(opacity: 0.4)
@@ -303,7 +303,7 @@ struct NotesListView: View {
             
             if searchText.isEmpty {
                 // Show animated arrow pointing upward to the + button
-                VStack(spacing: AppTheme.spacingMD) {
+                VStack(spacing: AppTheme.spacing12) {
                     Image(systemName: "arrow.up")
                         .font(.title)
                         .foregroundColor(AppTheme.accentColor(for: selectedTheme))
@@ -317,7 +317,7 @@ struct NotesListView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(AppTheme.spacing4XL)
+        .padding(AppTheme.spacing48)
     }
 }
 
@@ -343,7 +343,7 @@ struct FilterMenuView: View {
                     .ignoresSafeArea()
                 
                 ScrollView {
-                    VStack(alignment: .leading, spacing: AppTheme.spacingXXL) {
+                    VStack(alignment: .leading, spacing: AppTheme.spacing32) {
                         // Pinned Filter
                         filterSection(title: "Quick Filters") {
                             Toggle(isOn: $showPinnedOnly) {
@@ -366,7 +366,7 @@ struct FilterMenuView: View {
                         // Tags Filter
                         if !allTags.isEmpty {
                             filterSection(title: "Filter by Tag") {
-                                FlowLayout(spacing: AppTheme.spacingSM) {
+                                FlowLayout(spacing: AppTheme.spacing8) {
                                     ForEach(allTags, id: \.self) { tag in
                                         tagButton(tag)
                                     }
@@ -396,7 +396,7 @@ struct FilterMenuView: View {
     }
     
     private func filterSection<Content: View>(title: String, @ViewBuilder content: () -> Content) -> some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
+        VStack(alignment: .leading, spacing: AppTheme.spacing12) {
             Text(title)
                 .font(.headline)
                 .adaptiveForegroundColor()
@@ -421,7 +421,7 @@ struct FilterMenuView: View {
                 selectedCategory = category
             }
         }) {
-            HStack(spacing: AppTheme.spacingMD) {
+            HStack(spacing: AppTheme.spacing12) {
                 Image(systemName: category.icon)
                     .font(.title3)
                     .foregroundColor(AppTheme.accentColor(for: selectedTheme))

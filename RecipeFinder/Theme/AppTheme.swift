@@ -52,23 +52,21 @@ enum AppTheme {
     // Base spacing unit (8pt grid system)
     static let spacingBase: CGFloat = 8
     
-    // Spacing scale (multiples of base unit)
-    static let spacingXXS: CGFloat = 2               // 2pt
-    static let spacingXS: CGFloat = 4                // 4pt
-    static let spacingSM: CGFloat = 8                // 8pt (1x base)
-    static let spacingMD: CGFloat = 12               // 12pt (1.5x base)
-    static let spacingLG: CGFloat = 16               // 16pt (2x base)
-    static let spacingXL: CGFloat = 20               // 20pt (2.5x base)
-    static let spacingXXL: CGFloat = 24              // 24pt (3x base)
-    static let spacing3XL: CGFloat = 32              // 32pt (4x base)
-    static let spacing4XL: CGFloat = 40              // 40pt (5x base)
-    static let spacing5XL: CGFloat = 48              // 48pt (6x base)
-    
-    // Common spacing values that don't fit the grid perfectly
+    // Spacing scale - clear numeric names (no abbreviations!)
+    static let spacing2: CGFloat = 2                 // Tiny gaps
+    static let spacing4: CGFloat = 4                 // Extra small
     static let spacing5: CGFloat = 5                 // Small gap
     static let spacing6: CGFloat = 6                 // Small gap
-    static let spacing10: CGFloat = 10               // Medium gap
-    static let spacing18: CGFloat = 18               // Specific use cases
+    static let spacing8: CGFloat = 8                 // Small (1x base)
+    static let spacing10: CGFloat = 10               // Medium-small
+    static let spacing12: CGFloat = 12               // Medium (1.5x base)
+    static let spacing16: CGFloat = 16               // Large (2x base)
+    static let spacing18: CGFloat = 18               // Large-plus
+    static let spacing20: CGFloat = 20               // Extra large (2.5x base)
+    static let spacing24: CGFloat = 24               // 2X large (3x base)
+    static let spacing32: CGFloat = 32               // 3X large (4x base)
+    static let spacing40: CGFloat = 40               // 4X large (5x base)
+    static let spacing48: CGFloat = 48               // 5X large (6x base)
     
     // MARK: - Layout Constants
     
@@ -83,19 +81,47 @@ enum AppTheme {
     static let cardImageSize: CGFloat = 70
     
     // Corner radii for different UI elements
-    static let cornerRadiusXS: CGFloat = 4
-    static let cornerRadiusSM: CGFloat = 8
-    static let cornerRadiusMD: CGFloat = 12
-    static let cornerRadiusLG: CGFloat = 16
-    static let cornerRadiusXL: CGFloat = 20
-    static let cornerRadiusXXL: CGFloat = 24
+    static let cornerRadius4: CGFloat = 4
+    static let cornerRadius6: CGFloat = 6
+    static let cornerRadius8: CGFloat = 8
+    static let cornerRadius12: CGFloat = 12
+    static let cornerRadius16: CGFloat = 16
+    static let cornerRadius20: CGFloat = 20
+    static let cornerRadius24: CGFloat = 24
     static let cornerRadiusPill: CGFloat = 999      // Fully rounded pill shape
     
     // Common dimension values
-    static let iconSizeSmall: CGFloat = 20
-    static let iconSizeMedium: CGFloat = 24
-    static let iconSizeLarge: CGFloat = 28
-    static let iconSizeXLarge: CGFloat = 32
+    static let iconSize20: CGFloat = 20
+    static let iconSize24: CGFloat = 24
+    static let iconSize28: CGFloat = 28
+    static let iconSize32: CGFloat = 32
+    static let iconSize40: CGFloat = 40
+    
+    // Common height values
+    static let height12: CGFloat = 12
+    static let height14: CGFloat = 14
+    static let height16: CGFloat = 16
+    static let height20: CGFloat = 20
+    static let height24: CGFloat = 24
+    static let height28: CGFloat = 28
+    static let height40: CGFloat = 40
+    static let height50: CGFloat = 50
+    static let height180: CGFloat = 180             // Card image heights
+    
+    // Common width values
+    static let width60: CGFloat = 60
+    static let width80: CGFloat = 80
+    static let width100: CGFloat = 100
+    static let width120: CGFloat = 120
+    static let width150: CGFloat = 150
+    static let width200: CGFloat = 200
+    static let width250: CGFloat = 250
+    
+    // Animation values
+    static let shimmerPhaseDistance: CGFloat = 400   // Shimmer animation travel distance
+    static let shimmerRotation: Double = 30          // Shimmer gradient rotation angle
+    static let shimmerDuration: Double = 1.5         // Shimmer animation duration
+    static let shimmerOpacity: Double = 0.3          // Skeleton/shimmer base opacity
     
     static let buttonHeight: CGFloat = 44            // Minimum touch target
     static let buttonHeightCompact: CGFloat = 36

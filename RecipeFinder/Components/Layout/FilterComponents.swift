@@ -42,7 +42,7 @@ struct FilterButton: View {
         Button {
             action()
         } label: {
-            HStack(spacing: AppTheme.spacingSM) {
+            HStack(spacing: AppTheme.spacing8) {
                 Image(systemName: icon)
                     .font(.system(size: AppTheme.fontSizeBody))
                     .foregroundColor(isSelected ? .white : color)
@@ -61,7 +61,7 @@ struct FilterButton: View {
                         .foregroundColor(.white)
                 }
             }
-            .padding(AppTheme.spacingMD)
+            .padding(AppTheme.spacing12)
             .background(
                 RoundedRectangle(cornerRadius: 12)
                     .fill(isSelected ? color : AppTheme.adaptiveFilterChip(for: colorScheme))

@@ -12,7 +12,7 @@ import SwiftUI
 struct OfflineBanner: View {
     var body: some View {
         if !NetworkMonitor.shared.isConnected {
-            HStack(spacing: AppTheme.spacingSM) {
+            HStack(spacing: AppTheme.spacing8) {
                 Image(systemName: "wifi.slash")
                     .font(.subheadline)
                 

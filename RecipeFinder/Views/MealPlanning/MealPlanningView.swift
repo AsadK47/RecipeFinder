@@ -35,7 +35,7 @@ struct MealPlanningView: View {
                 viewModePicker
                 
                 ScrollView {
-                    VStack(spacing: AppTheme.spacingXXL) {
+                    VStack(spacing: AppTheme.spacing32) {
                         // Main Content
                         if viewMode == .calendar {
                             calendarView
@@ -224,7 +224,7 @@ struct MealPlanningView: View {
     
     private var viewModePicker: some View {
         GeometryReader { geometry in
-            HStack(spacing: AppTheme.spacingMD) {
+            HStack(spacing: AppTheme.spacing12) {
                 ForEach([ViewMode.calendar, ViewMode.weeklyView], id: \.self) { mode in
                     Button(action: {
                         viewMode = mode
@@ -259,7 +259,7 @@ struct MealPlanningView: View {
     }
     
     private var weeklyPlanView: some View {
-        VStack(spacing: AppTheme.spacingLG) {
+        VStack(spacing: AppTheme.spacing16) {
             // Week navigation
             HStack {
                 Button(action: previousWeek) {
@@ -289,7 +289,7 @@ struct MealPlanningView: View {
             .padding(.horizontal, 4)
             
             // Weekly meal grid
-            VStack(spacing: AppTheme.spacingMD) {
+            VStack(spacing: AppTheme.spacing12) {
                 ForEach(daysInCurrentWeek, id: \.self) { date in
                     WeekDayRow(
                         date: date,
@@ -305,7 +305,7 @@ struct MealPlanningView: View {
                 }
             }
         }
-        .padding(AppTheme.spacingXL)
+        .padding(AppTheme.spacing24)
         .background {
             if cardStyle == .solid {
                 RoundedRectangle(cornerRadius: 20)
@@ -318,7 +318,7 @@ struct MealPlanningView: View {
     }
     
     private var calendarView: some View {
-        VStack(spacing: AppTheme.spacingLG) {
+        VStack(spacing: AppTheme.spacing16) {
             // Month/Year header with better styling
             HStack {
                 Button(action: previousMonth) {
@@ -360,7 +360,7 @@ struct MealPlanningView: View {
             .padding(.horizontal, 4)
             
             // Calendar grid - only show actual weeks needed
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: AppTheme.spacingXS), count: 7), spacing: AppTheme.spacingSM) {
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: AppTheme.spacing4), count: 7), spacing: AppTheme.spacing8) {
                 // Weekday headers
                 ForEach(["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], id: \.self) { day in
                     Text(day)
@@ -397,7 +397,7 @@ struct MealPlanningView: View {
                 }
             }
         }
-        .padding(AppTheme.spacingXL)
+        .padding(AppTheme.spacing24)
         .background {
             if cardStyle == .solid {
                 RoundedRectangle(cornerRadius: 20)
@@ -415,7 +415,7 @@ struct MealPlanningView: View {
     }
     
     private var selectedMealsSection: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
+        VStack(alignment: .leading, spacing: AppTheme.spacing12) {
             HStack {
                 Text("Planned Meals")
                     .font(.system(size: AppTheme.fontSizeTitle3, weight: .bold))
@@ -462,7 +462,7 @@ struct MealPlanningView: View {
                 showMealTimeSelector = true
                 HapticManager.shared.light()
             }) {
-                HStack(spacing: AppTheme.spacingMD) {
+                HStack(spacing: AppTheme.spacing12) {
                     Image(systemName: "plus.circle.fill")
                         .font(.title3)
                         .foregroundColor(AppTheme.accentColor(for: selectedTheme))
@@ -473,7 +473,7 @@ struct MealPlanningView: View {
                     
                     Spacer()
                 }
-                .padding(AppTheme.spacingLG)
+                .padding(AppTheme.spacing16)
                 .background {
                     if cardStyle == .solid {
                         RoundedRectangle(cornerRadius: 16)
@@ -492,7 +492,7 @@ struct MealPlanningView: View {
     }
     
     private var selectedDayEmptyState: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacingLG) {
+        VStack(alignment: .leading, spacing: AppTheme.spacing16) {
             HStack {
                 Text("Meals for")
                     .font(.system(size: AppTheme.fontSizeTitle3, weight: .bold))
@@ -506,7 +506,7 @@ struct MealPlanningView: View {
             }
             .padding(.horizontal, 4)
             
-            VStack(spacing: AppTheme.spacingLG) {
+            VStack(spacing: AppTheme.spacing16) {
                 Image(systemName: "calendar.badge.plus")
                     .font(.system(size: 70))
                     .adaptiveForegroundColor(opacity: 0.4)
@@ -540,7 +540,7 @@ struct MealPlanningView: View {
                 }
             }
             .frame(maxWidth: .infinity)
-            .padding(AppTheme.spacing3XL)
+            .padding(AppTheme.spacing40)
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 16)
@@ -554,7 +554,7 @@ struct MealPlanningView: View {
     }
     
     private var emptyStateView: some View {
-        VStack(spacing: AppTheme.spacingLG) {
+        VStack(spacing: AppTheme.spacing16) {
             Image(systemName: "calendar.badge.plus")
                 .font(.system(size: 70))
                 .adaptiveForegroundColor(opacity: 0.4)
@@ -588,7 +588,7 @@ struct MealPlanningView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(AppTheme.spacing4XL)
+        .padding(AppTheme.spacing48)
     }
     
     // Helper Properties
@@ -747,7 +747,7 @@ struct CalendarDayView: View {
     let colorScheme: ColorScheme
     
     var body: some View {
-        VStack(spacing: AppTheme.spacingXS) {
+        VStack(spacing: AppTheme.spacing4) {
             Text("\(Calendar.current.component(.day, from: date))")
                 .font(.system(size: AppTheme.fontSizeBody, weight: isSelected ? .bold : (isToday ? .semibold : .regular)))
                 .foregroundColor(textColor)
@@ -793,7 +793,7 @@ struct MealTimeCard: View {
     let colorScheme: ColorScheme
     
     var body: some View {
-        HStack(spacing: AppTheme.spacingLG) {
+        HStack(spacing: AppTheme.spacing16) {
             // Icon with background
             ZStack {
                 Circle()
@@ -810,7 +810,7 @@ struct MealTimeCard: View {
                     .font(.system(size: AppTheme.fontSizeBody + 2, weight: .semibold))
                     .adaptiveForegroundColor()
                 
-                HStack(spacing: AppTheme.spacingXS) {
+                HStack(spacing: AppTheme.spacing4) {
                     Image(systemName: "clock")
                         .font(.caption2)
                     Text(mealTime.timeRange)
@@ -845,7 +845,7 @@ struct MealTimeCard: View {
                 .font(.system(size: AppTheme.fontSizeSubheadline, weight: .semibold))
                 .adaptiveForegroundColor(opacity: 0.4)
         }
-        .padding(AppTheme.spacingLG)
+        .padding(AppTheme.spacing16)
         .background {
             if cardStyle == .solid {
                 RoundedRectangle(cornerRadius: 16)
@@ -881,7 +881,7 @@ struct MealTimeSelectorSheet: View {
             
             VStack(spacing: 0) {
                 // Header section with better blending
-                VStack(spacing: AppTheme.spacingMD) {
+                VStack(spacing: AppTheme.spacing12) {
                     HStack {
                         Spacer()
                         
@@ -903,7 +903,7 @@ struct MealTimeSelectorSheet: View {
                         .adaptiveForegroundColor()
                         .shadow(color: .black.opacity(AppTheme.overlayLightOpacity), radius: 2, x: 0, y: 1)
                     
-                    HStack(spacing: AppTheme.spacingSM) {
+                    HStack(spacing: AppTheme.spacing8) {
                         Image(systemName: "calendar")
                             .font(.subheadline)
                         Text(dateString)
@@ -915,14 +915,14 @@ struct MealTimeSelectorSheet: View {
                 
                 // Meal times list
                 ScrollView {
-                    VStack(spacing: AppTheme.spacingMD) {
+                    VStack(spacing: AppTheme.spacing12) {
                             ForEach(MealTime.allCases, id: \.self) { mealTime in
                                 Button(action: {
                                     selectedMealTimes.insert(mealTime)
                                     onContinue(mealTime)
                                     HapticManager.shared.light()
                                 }) {
-                                    HStack(spacing: AppTheme.spacingLG) {
+                                    HStack(spacing: AppTheme.spacing16) {
                                         // Icon with styled background
                                         ZStack {
                                             Circle()
@@ -941,7 +941,7 @@ struct MealTimeSelectorSheet: View {
                                                 .font(.system(size: AppTheme.fontSizeBody + 2, weight: .semibold))
                                                 .adaptiveForegroundColor()
                                             
-                                            HStack(spacing: AppTheme.spacingXS) {
+                                            HStack(spacing: AppTheme.spacing4) {
                                                 Image(systemName: "clock")
                                                     .font(.caption2)
                                                 Text(mealTime.timeRange)
@@ -962,7 +962,7 @@ struct MealTimeSelectorSheet: View {
                                                 .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.lowEmphasisOpacity) : .black.opacity(AppTheme.lowEmphasisOpacity))
                                         }
                                     }
-                                    .padding(AppTheme.spacingLG)
+                                    .padding(AppTheme.spacing16)
                                     .background {
                                         if cardStyle == .solid {
                                             RoundedRectangle(cornerRadius: 16)
@@ -1027,7 +1027,7 @@ struct RecipeSelectionSheet: View {
                 VStack(spacing: 0) {
                     if showRecipeList {
                         // Recipe List View
-                        VStack(spacing: AppTheme.spacingMD) {
+                        VStack(spacing: AppTheme.spacing12) {
                             // Back button
                             HStack {
                                 Button(action: {
@@ -1037,7 +1037,7 @@ struct RecipeSelectionSheet: View {
                                     }
                                     HapticManager.shared.light()
                                 }) {
-                                    HStack(spacing: AppTheme.spacingSM) {
+                                    HStack(spacing: AppTheme.spacing8) {
                                         Image(systemName: "chevron.left")
                                         Text("Back")
                                     }
@@ -1055,7 +1055,7 @@ struct RecipeSelectionSheet: View {
                                 LazyVGrid(columns: [
                                     GridItem(.flexible()),
                                     GridItem(.flexible())
-                                ], spacing: AppTheme.spacingLG) {
+                                ], spacing: AppTheme.spacing16) {
                                     ForEach(filteredRecipes) { recipe in
                                         Button(action: {
                                             onSelectExisting(recipe)
@@ -1072,14 +1072,14 @@ struct RecipeSelectionSheet: View {
                         }
                     } else {
                         // Button View
-                        VStack(spacing: AppTheme.spacingLG) {
+                        VStack(spacing: AppTheme.spacing16) {
                             // Add a Snack button (for snacks only)
                             if mealTime == .snack {
                                 Button(action: {
                                     onQuickSnack()
                                     HapticManager.shared.light()
                                 }) {
-                                    HStack(spacing: AppTheme.spacingMD) {
+                                    HStack(spacing: AppTheme.spacing12) {
                                         Image(systemName: "star.circle.fill")
                                             .font(.title2)
                                         Text("Add a Snack")
@@ -1087,7 +1087,7 @@ struct RecipeSelectionSheet: View {
                                         Spacer()
                                     }
                                     .adaptiveForegroundColor()
-                                    .padding(AppTheme.spacingXL)
+                                    .padding(AppTheme.spacing24)
                                     .background(
                                         LinearGradient(
                                             colors: [
@@ -1107,7 +1107,7 @@ struct RecipeSelectionSheet: View {
                                 onCreateNew()
                                 HapticManager.shared.light()
                             }) {
-                                HStack(spacing: AppTheme.spacingMD) {
+                                HStack(spacing: AppTheme.spacing12) {
                                     Image(systemName: "plus.circle.fill")
                                         .font(.title2)
                                     Text("Create Recipe")
@@ -1115,7 +1115,7 @@ struct RecipeSelectionSheet: View {
                                     Spacer()
                                 }
                                 .adaptiveForegroundColor()
-                                .padding(AppTheme.spacingXL)
+                                .padding(AppTheme.spacing24)
                                 .background(
                                     LinearGradient(
                                         colors: [
@@ -1136,7 +1136,7 @@ struct RecipeSelectionSheet: View {
                                 }
                                 HapticManager.shared.light()
                             }) {
-                                HStack(spacing: AppTheme.spacingMD) {
+                                HStack(spacing: AppTheme.spacing12) {
                                     Image(systemName: "list.bullet")
                                         .font(.title2)
                                     Text("Add from Existing")
@@ -1144,7 +1144,7 @@ struct RecipeSelectionSheet: View {
                                     Spacer()
                                 }
                                 .adaptiveForegroundColor()
-                                .padding(AppTheme.spacingXL)
+                                .padding(AppTheme.spacing24)
                                 .background(
                                     LinearGradient(
                                         colors: [
@@ -1194,9 +1194,9 @@ struct WeekDayRow: View {
     }
     
     var body: some View {
-        HStack(spacing: AppTheme.spacingMD) {
+        HStack(spacing: AppTheme.spacing12) {
             // Date
-            VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
+            VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                 Text(dayString)
                     .font(.system(size: AppTheme.fontSizeBody, weight: .semibold))
                     .adaptiveForegroundColor()
@@ -1211,7 +1211,7 @@ struct WeekDayRow: View {
             Spacer()
             
             // Meal indicators (placeholder - would show actual planned meals)
-            HStack(spacing: AppTheme.spacingSM) {
+            HStack(spacing: AppTheme.spacing8) {
                 ForEach(["☀️", "🍽️", "🌙"], id: \.self) { icon in
                     Button(action: onAddMeal) {
                         Circle()
@@ -1233,7 +1233,7 @@ struct WeekDayRow: View {
                     .foregroundColor(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
             }
         }
-        .padding(AppTheme.spacingMD)
+        .padding(AppTheme.spacing12)
         .background {
             if cardStyle == .solid {
                 RoundedRectangle(cornerRadius: 12)
@@ -1316,9 +1316,9 @@ struct NutritionTipsSheet: View {
                     .ignoresSafeArea()
                 
                 ScrollView {
-                    VStack(spacing: AppTheme.spacingXL) {
+                    VStack(spacing: AppTheme.spacing24) {
                         // Header
-                        VStack(spacing: AppTheme.spacingMD) {
+                        VStack(spacing: AppTheme.spacing12) {
                             Image(systemName: "heart.circle.fill")
                                 .font(.system(size: AppTheme.fontSizeDisplay))
                                 .foregroundColor(.green)
@@ -1423,12 +1423,12 @@ struct NutritionTipCard: View {
     let colorScheme: ColorScheme
     
     var body: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
-            HStack(spacing: AppTheme.spacingMD) {
+        VStack(alignment: .leading, spacing: AppTheme.spacing12) {
+            HStack(spacing: AppTheme.spacing12) {
                 Text(tip.icon)
                     .font(.system(size: AppTheme.fontSizeMedium))
                 
-                VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
+                VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                     Text(tip.category)
                         .font(.caption)
                         .fontWeight(.semibold)
@@ -1448,7 +1448,7 @@ struct NutritionTipCard: View {
                 .adaptiveForegroundColor(opacity: 0.8)
                 .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(AppTheme.spacingXL)
+        .padding(AppTheme.spacing24)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background {
             if cardStyle == .solid {

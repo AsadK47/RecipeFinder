@@ -217,12 +217,12 @@ struct ErrorToast: View {
             Spacer()
             
             if isShowing {
-                HStack(spacing: AppTheme.spacingMD) {
+                HStack(spacing: AppTheme.spacing12) {
                     Image(systemName: error.severity.icon)
                         .font(.title3)
                         .foregroundColor(error.severity.color)
                     
-                    VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
+                    VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                         Text(error.severity == .warning ? "Warning" : "Error")
                             .font(.caption)
                             .fontWeight(.semibold)

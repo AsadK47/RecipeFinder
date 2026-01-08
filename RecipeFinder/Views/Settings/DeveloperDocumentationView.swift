@@ -15,7 +15,7 @@ struct DeveloperDocumentationView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
                     // Hero section with seamless header
-                    VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
+                    VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                         Text("Developer Documentation")
                             .font(.system(size: AppTheme.fontSizeLargeTitle, weight: .bold))
                             .adaptiveForegroundColor()
@@ -112,7 +112,7 @@ struct DeveloperDocumentationView: View {
                     )
                     
                     // Footer
-                    VStack(spacing: AppTheme.spacingMD) {
+                    VStack(spacing: AppTheme.spacing12) {
                         Text("© 2024-2025 Asad Khan")
                             .font(.system(size: AppTheme.fontSizeFootnote))
                             .adaptiveForegroundColor(opacity: 0.5)
@@ -169,9 +169,9 @@ struct DocSection: View {
     let cardStyle: CardStyle
     
     var body: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacingXL) {
+        VStack(alignment: .leading, spacing: AppTheme.spacing24) {
             // Section header
-            HStack(spacing: AppTheme.spacingMD) {
+            HStack(spacing: AppTheme.spacing12) {
                 Image(systemName: icon)
                     .foregroundColor(iconColor)
                     .font(.system(size: AppTheme.fontSizeTitle2))
@@ -183,7 +183,7 @@ struct DocSection: View {
             .padding(.horizontal, 24)
             
             // Content card
-            VStack(alignment: .leading, spacing: AppTheme.spacingLG) {
+            VStack(alignment: .leading, spacing: AppTheme.spacing16) {
                 ForEach(content.indices, id: \.self) { index in
                     DocPointRow(point: content[index], appTheme: appTheme)
                     
@@ -193,7 +193,7 @@ struct DocSection: View {
                     }
                 }
             }
-            .padding(AppTheme.spacingXXL)
+            .padding(AppTheme.spacing32)
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 20)

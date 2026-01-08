@@ -7,7 +7,7 @@ struct ShoppingListInputBar: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        HStack(spacing: AppTheme.spacingMD) {
+        HStack(spacing: AppTheme.spacing12) {
             HStack {
                 Image(systemName: "plus.circle.fill")
                     .foregroundColor(AppTheme.adaptiveEmphasis(for: colorScheme))
@@ -33,7 +33,7 @@ struct ShoppingListInputBar: View {
                     })
                 }
             }
-            .padding(AppTheme.spacingMD)
+            .padding(AppTheme.spacing12)
             .background(
                 RoundedRectangle(cornerRadius: 12)
                     .fill(Color(.systemGray6))

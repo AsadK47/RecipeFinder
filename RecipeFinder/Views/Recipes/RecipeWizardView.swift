@@ -86,7 +86,7 @@ struct RecipeWizardView: View {
                 
                 VStack(spacing: 0) {
                     // Header Section
-                    VStack(spacing: AppTheme.spacingMD) {
+                    VStack(spacing: AppTheme.spacing12) {
                         GeometryReader { geometry in
                             HStack {
                                 Button(action: {
@@ -131,7 +131,7 @@ struct RecipeWizardView: View {
                     
                     // Content
                     ScrollView {
-                        VStack(spacing: AppTheme.spacingXXL) {
+                        VStack(spacing: AppTheme.spacing32) {
                             stepContent
                         }
                         .padding(.top, 16)
@@ -259,7 +259,7 @@ struct RecipeWizardView: View {
     
     // MARK: - Step 1: Recipe Name
     private var recipeNameStep: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacingXL) {
+        VStack(alignment: .leading, spacing: AppTheme.spacing24) {
             stepHeader(
                 title: "Let's start with a name",
                 subtitle: "What would you like to call this recipe?",
@@ -268,7 +268,7 @@ struct RecipeWizardView: View {
             )
             
             cardContainer {
-                VStack(spacing: AppTheme.spacingLG) {
+                VStack(spacing: AppTheme.spacing16) {
                     TextField("Recipe Name", text: $recipeName)
                         .font(.title2)
                         .padding()
@@ -282,7 +282,7 @@ struct RecipeWizardView: View {
     
     // MARK: - Step 2: Basic Info
     private var basicInfoStep: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacingXL) {
+        VStack(alignment: .leading, spacing: AppTheme.spacing24) {
             stepHeader(
                 title: "Tell us more",
                 subtitle: "Add some details about your recipe",
@@ -291,9 +291,9 @@ struct RecipeWizardView: View {
             )
             
             cardContainer {
-                VStack(spacing: AppTheme.spacingXL) {
+                VStack(spacing: AppTheme.spacing24) {
                     // Prep Time
-                    VStack(alignment: .leading, spacing: AppTheme.spacingSM) {
+                    VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                         Text("Prep Time")
                             .font(.headline)
                             .foregroundColor(.primary)
@@ -307,7 +307,7 @@ struct RecipeWizardView: View {
                     Divider()
                     
                     // Cook Time
-                    VStack(alignment: .leading, spacing: AppTheme.spacingSM) {
+                    VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                         Text("Cook Time")
                             .font(.headline)
                             .foregroundColor(.primary)
@@ -321,7 +321,7 @@ struct RecipeWizardView: View {
                     Divider()
                     
                     // Difficulty
-                    VStack(alignment: .leading, spacing: AppTheme.spacingSM) {
+                    VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                         Text("Difficulty")
                             .font(.headline)
                             .foregroundColor(.primary)
@@ -337,7 +337,7 @@ struct RecipeWizardView: View {
                     Divider()
                     
                     // Category
-                    VStack(alignment: .leading, spacing: AppTheme.spacingSM) {
+                    VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                         Text("Category")
                             .font(.headline)
                             .foregroundColor(.primary)
@@ -357,7 +357,7 @@ struct RecipeWizardView: View {
     
     // MARK: - Step 3: Servings
     private var servingsStep: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacingXL) {
+        VStack(alignment: .leading, spacing: AppTheme.spacing24) {
             stepHeader(
                 title: "How many servings?",
                 subtitle: "This will help with ingredient quantities",
@@ -366,7 +366,7 @@ struct RecipeWizardView: View {
             )
             
             cardContainer {
-                VStack(spacing: AppTheme.spacingXL) {
+                VStack(spacing: AppTheme.spacing24) {
                     // Large display of servings
                     Text("\(servings)")
                         .font(.system(size: 72, weight: .bold))
@@ -389,7 +389,7 @@ struct RecipeWizardView: View {
     
     // MARK: - Step 4: Ingredients
     private var ingredientsStep: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacingXL) {
+        VStack(alignment: .leading, spacing: AppTheme.spacing24) {
             stepHeader(
                 title: "Ingredients",
                 subtitle: "Add your ingredients with quantities",
@@ -398,15 +398,15 @@ struct RecipeWizardView: View {
             )
             
             cardContainer {
-                VStack(spacing: AppTheme.spacingLG) {
+                VStack(spacing: AppTheme.spacing16) {
                     ForEach(Array(ingredientItems.enumerated()), id: \.offset) { index, _ in
-                        HStack(spacing: AppTheme.spacingMD) {
+                        HStack(spacing: AppTheme.spacing12) {
                             // Combined Quantity field (amount + unit)
-                            VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
+                            VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                                 Text("Quantity")
                                     .font(.caption2)
                                     .foregroundColor(.secondary)
-                                HStack(spacing: AppTheme.spacingXS) {
+                                HStack(spacing: AppTheme.spacing4) {
                                     TextField("Qty", text: $ingredientItems[index].quantity)
                                         .keyboardType(.decimalPad)
                                         .textFieldStyle(.roundedBorder)
@@ -418,7 +418,7 @@ struct RecipeWizardView: View {
                             }
                             
                             // Ingredient Name
-                            VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
+                            VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                                 Text("Ingredient")
                                     .font(.caption2)
                                     .foregroundColor(.secondary)
@@ -462,7 +462,7 @@ struct RecipeWizardView: View {
     
     // MARK: - Step 5: Pre-prep Instructions
     private var prePrepStep: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacingXL) {
+        VStack(alignment: .leading, spacing: AppTheme.spacing24) {
             stepHeader(
                 title: "Pre-prep Instructions",
                 subtitle: "Any prep work before cooking? (Optional)",
@@ -471,9 +471,9 @@ struct RecipeWizardView: View {
             )
             
             cardContainer {
-                VStack(spacing: AppTheme.spacingMD) {
+                VStack(spacing: AppTheme.spacing12) {
                     ForEach(Array(prePrepSteps.enumerated()), id: \.offset) { index, _ in
-                        VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                             HStack {
                                 Text("Step \(index + 1)")
                                     .font(.caption)
@@ -519,7 +519,7 @@ struct RecipeWizardView: View {
     
     // MARK: - Step 6: Main Instructions
     private var instructionsStep: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacingXL) {
+        VStack(alignment: .leading, spacing: AppTheme.spacing24) {
             stepHeader(
                 title: "Cooking Instructions",
                 subtitle: "Walk us through the cooking process",
@@ -528,9 +528,9 @@ struct RecipeWizardView: View {
             )
             
             cardContainer {
-                VStack(spacing: AppTheme.spacingMD) {
+                VStack(spacing: AppTheme.spacing12) {
                     ForEach(Array(mainInstructions.enumerated()), id: \.offset) { index, _ in
-                        VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                             HStack {
                                 Text("Step \(index + 1)")
                                     .font(.caption)
@@ -576,7 +576,7 @@ struct RecipeWizardView: View {
     
     // MARK: - Step 7: Notes
     private var notesStep: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacingXL) {
+        VStack(alignment: .leading, spacing: AppTheme.spacing24) {
             stepHeader(
                 title: "Final Notes",
                 subtitle: prefilledData?.notes != nil && !notes.isEmpty ? "Review notes or add your own" : "Any tips, variations, or additional notes? (Optional)",
@@ -585,7 +585,7 @@ struct RecipeWizardView: View {
             )
             
             cardContainer {
-                VStack(spacing: AppTheme.spacingXL) {
+                VStack(spacing: AppTheme.spacing24) {
                     // Show a preview label if there are existing notes from import/edit
                     if prefilledData?.notes != nil && !notes.isEmpty {
                         HStack {
@@ -602,7 +602,7 @@ struct RecipeWizardView: View {
                     // Notes text editor with better styling
                     ZStack(alignment: .topLeading) {
                         if notes.isEmpty {
-                            VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
+                            VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                                 Text("Add your notes here...")
                                     .foregroundColor(.secondary.opacity(0.5))
                                     .padding(.horizontal, 4)
@@ -633,20 +633,20 @@ struct RecipeWizardView: View {
                         TextField("", text: $notes, axis: .vertical)
                             .textFieldStyle(.plain)
                             .lineLimit(8...15)
-                            .padding(AppTheme.spacingXS)
+                            .padding(AppTheme.spacing4)
                     }
-                    .padding(AppTheme.spacingSM)
+                    .padding(AppTheme.spacing8)
                     .background(Color(.systemGray6))
                     .cornerRadius(8)
                     
                     // Quick add buttons for common note types (always show)
-                    VStack(alignment: .leading, spacing: AppTheme.spacingSM) {
+                    VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                         Text("Quick Add:")
                             .font(.caption)
                             .foregroundColor(.secondary)
                         
                         ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: AppTheme.spacingSM) {
+                            HStack(spacing: AppTheme.spacing8) {
                                 quickNoteButton(icon: "leaf.fill", text: "Make it healthier", template: "💚 Healthier Option:\n• ")
                                 quickNoteButton(icon: "carrot.fill", text: "Make it vegan", template: "🌱 Vegan Version:\n• ")
                                 quickNoteButton(icon: "clock.fill", text: "Save time", template: "⏰ Time-Saving Tip:\n• ")
@@ -661,7 +661,7 @@ struct RecipeWizardView: View {
                 Divider()
                     
                     // Summary
-                    VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
+                    VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                         Text("Recipe Summary")
                             .font(.headline)
                         
@@ -689,7 +689,7 @@ struct RecipeWizardView: View {
             }
             notes += template
         }) {
-            HStack(spacing: AppTheme.spacingXS) {
+            HStack(spacing: AppTheme.spacing4) {
                 Image(systemName: icon)
                     .font(.caption)
                 Text(text)
@@ -705,7 +705,7 @@ struct RecipeWizardView: View {
     
     // MARK: - Helper Views
     private func stepHeader(title: String, subtitle: String, stepNumber: Int, illustration: String) -> some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
+        VStack(alignment: .leading, spacing: AppTheme.spacing12) {
             // Step indicator
             Text("Step \(stepNumber) of \(totalSteps)")
                 .font(.caption)
@@ -714,7 +714,7 @@ struct RecipeWizardView: View {
             
             // Title with icon overlay
             HStack(alignment: .firstTextBaseline, spacing: 0) {
-                VStack(alignment: .leading, spacing: AppTheme.spacingSM) {
+                VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                     Text(title)
                         .font(.title2)
                         .fontWeight(.bold)
@@ -737,7 +737,7 @@ struct RecipeWizardView: View {
     }
     
     private func summaryRow(icon: String, label: String, value: String) -> some View {
-        HStack(spacing: AppTheme.spacingMD) {
+        HStack(spacing: AppTheme.spacing12) {
             Image(systemName: icon)
                 .adaptiveForegroundColor()
                 .frame(width: 20)
@@ -773,7 +773,7 @@ struct RecipeWizardView: View {
     
     // MARK: - Navigation
     private var navigationButtons: some View {
-        HStack(spacing: AppTheme.spacingLG) {
+        HStack(spacing: AppTheme.spacing16) {
             if currentStep > 0 {
                 Button(action: {
                     HapticManager.shared.selection()

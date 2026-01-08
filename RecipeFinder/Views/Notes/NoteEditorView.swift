@@ -39,7 +39,7 @@ struct NoteEditorView: View {
                     .ignoresSafeArea()
                 
                 ScrollView {
-                    VStack(spacing: AppTheme.spacingXL) {
+                    VStack(spacing: AppTheme.spacing24) {
                         // Title Input
                         titleSection
                         
@@ -52,7 +52,7 @@ struct NoteEditorView: View {
                         // Tags Input
                         tagsSection
                     }
-                    .padding(AppTheme.spacingXL)
+                    .padding(AppTheme.spacing24)
                 }
             }
             .navigationTitle(note == nil ? "New Note" : "Edit Note")
@@ -66,7 +66,7 @@ struct NoteEditorView: View {
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    HStack(spacing: AppTheme.spacingMD) {
+                    HStack(spacing: AppTheme.spacing12) {
                         // Pin Toggle
                         Button(action: {
                             HapticManager.shared.light()
@@ -115,7 +115,7 @@ struct NoteEditorView: View {
     
     private var contentSection: some View {
         cardContainer {
-            VStack(alignment: .leading, spacing: AppTheme.spacingSM) {
+            VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                 Text("CONTENT")
                     .font(.caption)
                     .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
@@ -133,13 +133,13 @@ struct NoteEditorView: View {
     
     private var categorySection: some View {
         cardContainer {
-            VStack(alignment: .leading, spacing: AppTheme.spacingLG) {
+            VStack(alignment: .leading, spacing: AppTheme.spacing16) {
                 Text("CATEGORY")
                     .font(.caption)
                     .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
                     .textCase(.uppercase)
                 
-                VStack(spacing: AppTheme.spacingMD) {
+                VStack(spacing: AppTheme.spacing12) {
                     ForEach(NoteCategory.allCases, id: \.self) { category in
                         categoryRow(category)
                     }
@@ -156,7 +156,7 @@ struct NoteEditorView: View {
             HapticManager.shared.selection()
             selectedCategory = category
         }) {
-            HStack(spacing: AppTheme.spacingMD) {
+            HStack(spacing: AppTheme.spacing12) {
                 Image(systemName: category.icon)
                     .font(.title3)
                     .foregroundColor(isSelected ? .white : AppTheme.accentColor(for: appTheme))
@@ -175,7 +175,7 @@ struct NoteEditorView: View {
                         .font(.title3)
                 }
             }
-            .padding(AppTheme.spacingMD)
+            .padding(AppTheme.spacing12)
             .background(
                 RoundedRectangle(cornerRadius: 12)
                     .fill(isSelected ? AppTheme.accentColor(for: appTheme) : Color.secondary.opacity(0.1))
@@ -185,7 +185,7 @@ struct NoteEditorView: View {
     
     private var tagsSection: some View {
         cardContainer {
-            VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
+            VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                 Text("TAGS")
                     .font(.caption)
                     .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
@@ -214,7 +214,7 @@ struct NoteEditorView: View {
                 
                 // Tag list
                 if !tags.isEmpty {
-                    FlowLayout(spacing: AppTheme.spacingSM) {
+                    FlowLayout(spacing: AppTheme.spacing8) {
                         ForEach(tags, id: \.self) { tag in
                             tagChip(tag)
                         }

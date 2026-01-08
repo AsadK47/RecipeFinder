@@ -52,7 +52,7 @@ struct CookTimerView: View {
                 
                 VStack(spacing: 0) {
                     // Header
-                    VStack(spacing: AppTheme.spacingMD) {
+                    VStack(spacing: AppTheme.spacing12) {
                         GeometryReader { geometry in
                             HStack(spacing: 0) {
                                 // Back button
@@ -127,7 +127,7 @@ struct CookTimerView: View {
                     .padding(.top, 16)
                     
                     ScrollView {
-                        VStack(spacing: AppTheme.spacingXXL) {
+                        VStack(spacing: AppTheme.spacing32) {
                             // Quick Presets - Always show, but disable when max reached
                             quickPresetsSection
                             
@@ -156,7 +156,7 @@ struct CookTimerView: View {
             }
             .overlay(alignment: .top) {
                 // Stackable completion banners
-                VStack(spacing: AppTheme.spacingSM) {
+                VStack(spacing: AppTheme.spacing8) {
                     ForEach(completedTimers) { completedTimer in
                         CompletedTimerBannerView(
                             timerName: completedTimer.timerName,
@@ -204,8 +204,8 @@ struct CookTimerView: View {
     
     // Quick Presets
     private var quickPresetsSection: some View {
-        VStack(spacing: AppTheme.spacingLG) {
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: AppTheme.spacingMD) {
+        VStack(spacing: AppTheme.spacing16) {
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: AppTheme.spacing12) {
                 presetButton(seconds: 30, title: "30 sec")
                 presetButton(minutes: 1, title: "1 min")
                 defaultPresetButton()
@@ -226,7 +226,7 @@ struct CookTimerView: View {
             addTimer(name: "Default (\(title))", seconds: defaultTimerDuration)
             HapticManager.shared.light()
         }) {
-            VStack(spacing: AppTheme.spacingSM) {
+            VStack(spacing: AppTheme.spacing8) {
                 Image(systemName: "star.fill")
                     .font(.title2)
                 
@@ -259,7 +259,7 @@ struct CookTimerView: View {
             addTimer(name: title, seconds: totalSeconds)
             HapticManager.shared.light()
         }) {
-            VStack(spacing: AppTheme.spacingSM) {
+            VStack(spacing: AppTheme.spacing8) {
                 Image(systemName: "timer")
                     .font(.title2)
                 
@@ -323,7 +323,7 @@ struct CookTimerView: View {
                 
                 VStack(spacing: 0) {
                     // Header Section
-                    VStack(spacing: AppTheme.spacingMD) {
+                    VStack(spacing: AppTheme.spacing12) {
                         GeometryReader { geometry in
                             HStack {
                                 Button(action: {
@@ -370,9 +370,9 @@ struct CookTimerView: View {
                     .padding(.top, 16)
                     
                     ScrollView {
-                        VStack(spacing: AppTheme.spacing3XL) {
+                        VStack(spacing: AppTheme.spacing40) {
                             // Timer Name Input
-                            VStack(alignment: .leading, spacing: AppTheme.spacingSM) {
+                            VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                         Text("Timer Name (Optional)")
                             .font(.caption)
                             .adaptiveForegroundColor(opacity: 0.7)
@@ -384,8 +384,8 @@ struct CookTimerView: View {
                     .padding(.horizontal, 20)
                     
                     // Time Pickers
-                    HStack(spacing: AppTheme.spacingXL) {
-                        VStack(spacing: AppTheme.spacingSM) {
+                    HStack(spacing: AppTheme.spacing24) {
+                        VStack(spacing: AppTheme.spacing8) {
                             Text("Hours")
                                 .font(.caption)
                                 .adaptiveForegroundColor(opacity: 0.7)
@@ -406,7 +406,7 @@ struct CookTimerView: View {
                             .adaptiveForegroundColor()
                             .padding(.top, 20)
                         
-                        VStack(spacing: AppTheme.spacingSM) {
+                        VStack(spacing: AppTheme.spacing8) {
                             Text("Minutes")
                                 .font(.caption)
                                 .adaptiveForegroundColor(opacity: 0.7)
@@ -427,7 +427,7 @@ struct CookTimerView: View {
                             .adaptiveForegroundColor()
                             .padding(.top, 20)
                         
-                        VStack(spacing: AppTheme.spacingSM) {
+                        VStack(spacing: AppTheme.spacing8) {
                             Text("Seconds")
                                 .font(.caption)
                                 .adaptiveForegroundColor(opacity: 0.7)
@@ -494,7 +494,7 @@ struct CookTimerView: View {
     
     // Active Timers Section
     private var activeTimersSection: some View {
-        VStack(spacing: AppTheme.spacingLG) {
+        VStack(spacing: AppTheme.spacing16) {
             HStack {
                 Text("Active Timers")
                     .font(.title3)
@@ -523,7 +523,7 @@ struct CookTimerView: View {
     
     // Max timers warning banner
     private var maxTimersWarning: some View {
-        HStack(spacing: AppTheme.spacingMD) {
+        HStack(spacing: AppTheme.spacing12) {
             Image(systemName: "exclamationmark.triangle.fill")
                 .font(.body)
                 .foregroundColor(.orange)
@@ -534,7 +534,7 @@ struct CookTimerView: View {
             
             Spacer()
         }
-        .padding(AppTheme.spacingLG)
+        .padding(AppTheme.spacing16)
         .background {
             if cardStyle == .solid {
                 RoundedRectangle(cornerRadius: 12)
@@ -712,10 +712,10 @@ struct TimerCard: View {
     }
     
     var body: some View {
-        VStack(spacing: AppTheme.spacingLG) {
+        VStack(spacing: AppTheme.spacing16) {
             // Timer name and status
             HStack {
-                VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
+                VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                     Text(timer.name)
                         .font(.headline)
                         .adaptiveForegroundColor()
@@ -749,7 +749,7 @@ struct TimerCard: View {
             .frame(width: 140, height: 140)
             
             // Control Buttons
-            HStack(spacing: AppTheme.spacingMD) {
+            HStack(spacing: AppTheme.spacing12) {
                 Button(action: onTogglePause) {
                     HStack {
                         Image(systemName: timer.isPaused ? "play.fill" : "pause.fill")
@@ -779,7 +779,7 @@ struct TimerCard: View {
                 .buttonStyle(PlainButtonStyle())
             }
         }
-        .padding(AppTheme.spacingXL)
+        .padding(AppTheme.spacing24)
         .background {
             if cardStyle == .solid {
                 RoundedRectangle(cornerRadius: 20)
@@ -800,7 +800,7 @@ struct CompletedTimerBannerView: View {
     let colorScheme: ColorScheme
     
     var body: some View {
-        HStack(spacing: AppTheme.spacingMD) {
+        HStack(spacing: AppTheme.spacing12) {
             // Animated checkmark icon
             ZStack {
                 Circle()
@@ -812,7 +812,7 @@ struct CompletedTimerBannerView: View {
                     .adaptiveForegroundColor()
             }
             
-            VStack(alignment: .leading, spacing: AppTheme.spacingXXS) {
+            VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                 Text("Timer Complete!")
                     .font(.subheadline)
                     .fontWeight(.semibold)
@@ -833,7 +833,7 @@ struct CompletedTimerBannerView: View {
             .accessibilityLabel("Dismiss notification")
             .accessibilityHint("Closes timer completion notification")
         }
-        .padding(AppTheme.spacingLG)
+        .padding(AppTheme.spacing16)
         .background {
             RoundedRectangle(cornerRadius: 16)
                 .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white)

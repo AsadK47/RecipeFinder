@@ -111,7 +111,7 @@ struct RecipeDetailView: View {
     }
     
     private var recipeInfoCardsView: some View {
-        VStack(spacing: AppTheme.spacingLG) {
+        VStack(spacing: AppTheme.spacing16) {
             timeInfoCard
             detailsInfoCard
             servingsCard
@@ -141,7 +141,7 @@ struct RecipeDetailView: View {
     
     private var servingsCard: some View {
         GlassCard {
-            VStack(spacing: AppTheme.spacingLG) {
+            VStack(spacing: AppTheme.spacing16) {
                 HStack {
                     servingsDisplay
                     
@@ -162,7 +162,7 @@ struct RecipeDetailView: View {
     }
     
     private var servingsDisplay: some View {
-        VStack(spacing: AppTheme.spacingSM) {
+        VStack(spacing: AppTheme.spacing8) {
             Image(systemName: "person.2.fill")
                 .font(.title2)
                 .foregroundColor(.cyan)
@@ -172,7 +172,7 @@ struct RecipeDetailView: View {
                 .foregroundColor(.secondary)
                 .accessibilityHidden(true)
             
-            HStack(spacing: AppTheme.spacingXS) {
+            HStack(spacing: AppTheme.spacing4) {
                 Text("\(recipe.currentServings)")
                     .font(.title2)
                     .fontWeight(.bold)
@@ -192,7 +192,7 @@ struct RecipeDetailView: View {
     }
     
     private var servingsControls: some View {
-        HStack(spacing: AppTheme.spacingMD) {
+        HStack(spacing: AppTheme.spacing12) {
             servingsButton(icon: "minus", action: decreaseServings, isEnabled: recipe.currentServings > 1)
             servingsButton(icon: "plus", action: increaseServings, isEnabled: true)
         }
@@ -200,7 +200,7 @@ struct RecipeDetailView: View {
     }
     
     private var quickScaleButtons: some View {
-        HStack(spacing: AppTheme.spacingSM) {
+        HStack(spacing: AppTheme.spacing8) {
             quickScaleButton(label: "½x", multiplier: 0.5)
             quickScaleButton(label: "1x", multiplier: 1.0)
             quickScaleButton(label: "2x", multiplier: 2.0)
@@ -251,7 +251,7 @@ struct RecipeDetailView: View {
     }
     
     private var ingredientsSection: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
+        VStack(alignment: .leading, spacing: AppTheme.spacing12) {
             ingredientsSectionHeader
             
             if expandedSections.contains("Ingredients") {
@@ -267,9 +267,9 @@ struct RecipeDetailView: View {
     }
     
     private var ingredientsSectionHeader: some View {
-        HStack(spacing: AppTheme.spacingSM) {
+        HStack(spacing: AppTheme.spacing8) {
             Button(action: { toggleSection("Ingredients") }) {
-                HStack(spacing: AppTheme.spacingSM) {
+                HStack(spacing: AppTheme.spacing8) {
                     Image(systemName: "leaf.fill")
                         .adaptiveForegroundColor()
                         .font(.title3)
@@ -329,10 +329,10 @@ struct RecipeDetailView: View {
     
     private var ingredientsList: some View {
         GlassCard {
-            VStack(spacing: AppTheme.spacingLG) {
+            VStack(spacing: AppTheme.spacing16) {
                 // Swipe hint banner (shows once)
                 if !hasSeenSwipeHint {
-                    HStack(spacing: AppTheme.spacingSM) {
+                    HStack(spacing: AppTheme.spacing8) {
                         Image(systemName: "hand.draw")
                             .font(.system(size: AppTheme.fontSizeBody))
                             .foregroundColor(AppTheme.accentColor)
@@ -384,7 +384,7 @@ struct RecipeDetailView: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(AppTheme.spacingXL)
+            .padding(AppTheme.spacing24)
         }
         .sheet(item: Binding(
             get: { editingIngredientIndex.map { EditingIngredient(index: $0) } },
@@ -401,7 +401,7 @@ struct RecipeDetailView: View {
     
     private var prePrepSection: some View {
         collapsibleSection(title: "Pre-Prep", icon: "list.clipboard") {
-            VStack(alignment: .leading, spacing: AppTheme.spacingLG) {
+            VStack(alignment: .leading, spacing: AppTheme.spacing16) {
                 ForEach(recipe.prePrepInstructions.indices, id: \.self) { index in
                     instructionRow(
                         number: index + 1,
@@ -420,7 +420,7 @@ struct RecipeDetailView: View {
     
     private var instructionsSection: some View {
         collapsibleSection(title: "Instructions", icon: "text.alignleft") {
-            VStack(alignment: .leading, spacing: AppTheme.spacingLG) {
+            VStack(alignment: .leading, spacing: AppTheme.spacing16) {
                 ForEach(recipe.instructions.indices, id: \.self) { index in
                     instructionRow(
                         number: index + 1,
@@ -439,11 +439,11 @@ struct RecipeDetailView: View {
     
     private var notesSection: some View {
         collapsibleSection(title: "Notes", icon: "note.text") {
-            VStack(alignment: .leading, spacing: AppTheme.spacingSM) {
+            VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                 ForEach(notesSentences, id: \.self) { sentence in
                     let trimmed = sentence.trimmingCharacters(in: .whitespaces)
                     if !trimmed.isEmpty {
-                        HStack(alignment: .top, spacing: AppTheme.spacingSM) {
+                        HStack(alignment: .top, spacing: AppTheme.spacing8) {
                             Image(systemName: "circle.fill")
                                 .font(.system(size: AppTheme.fontSizeTinyIcon))
                                 .foregroundColor(.orange)
@@ -459,7 +459,7 @@ struct RecipeDetailView: View {
     }
     
     private var toolbarButtons: some View {
-        HStack(spacing: AppTheme.spacingLG) {
+        HStack(spacing: AppTheme.spacing16) {
             Button(action: { showTimerSheet = true }) {
                 Image(systemName: "timer")
                     .font(.title3)
@@ -508,7 +508,7 @@ struct RecipeDetailView: View {
     @ViewBuilder
     private var feedbackOverlay: some View {
         if let feedback = showAddedFeedback {
-            HStack(spacing: AppTheme.spacingMD) {
+            HStack(spacing: AppTheme.spacing12) {
                 Image(systemName: "basket.fill")
                     .adaptiveForegroundColor()
                 Text("\(feedback) added to shopping list")
@@ -587,7 +587,7 @@ struct RecipeDetailView: View {
     private func collapsibleSection<Content: View>(title: String, icon: String, @ViewBuilder content: () -> Content) -> some View {
         let isExpanded = expandedSections.contains(title)
         
-        return VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
+        return VStack(alignment: .leading, spacing: AppTheme.spacing12) {
             // Tappable header
             Button(
                 action: {
@@ -600,7 +600,7 @@ struct RecipeDetailView: View {
                     }
                 },
                 label: {
-                    HStack(spacing: AppTheme.spacingSM) {
+                    HStack(spacing: AppTheme.spacing8) {
                         Image(systemName: icon)
                             .adaptiveForegroundColor()
                             .font(.title3)
@@ -629,7 +629,7 @@ struct RecipeDetailView: View {
                 GlassCard {
                     content()
                         .frame(maxWidth: .infinity, alignment: .leading) // Force full width
-                        .padding(AppTheme.spacingXL)
+                        .padding(AppTheme.spacing24)
                 }
                 .transition(.asymmetric(
                     insertion: .scale(scale: 0.95).combined(with: .opacity),
@@ -645,7 +645,7 @@ struct RecipeDetailView: View {
     
     private func instructionRow(number: Int, text: String, isChecked: Bool, toggle: @escaping () -> Void) -> some View {
         Button(action: toggle, label: {
-            HStack(alignment: .center, spacing: AppTheme.spacingMD) {
+            HStack(alignment: .center, spacing: AppTheme.spacing12) {
                 ZStack {
                     Circle()
                         .fill(AppTheme.accentColor)

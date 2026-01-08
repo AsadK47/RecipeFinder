@@ -8,8 +8,8 @@ struct ModernSearchBar: View {
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
     var body: some View {
-        HStack(spacing: AppTheme.spacingMD) {
-            HStack(spacing: AppTheme.spacingMD) {
+        HStack(spacing: AppTheme.spacing12) {
+            HStack(spacing: AppTheme.spacing12) {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(AppTheme.adaptiveHighEmphasis(for: colorScheme))
                     .font(.body)

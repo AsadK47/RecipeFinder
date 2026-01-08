@@ -26,7 +26,7 @@ struct NutritionalTipsView: View {
             
             VStack(spacing: 0) {
                 // Header
-                VStack(spacing: AppTheme.spacingMD) {
+                VStack(spacing: AppTheme.spacing12) {
                     GeometryReader { geometry in
                         HStack(spacing: 0) {
                             // Back button
@@ -93,7 +93,7 @@ struct NutritionalTipsView: View {
                 .padding(.top, 16)
                 
                 ScrollView {
-                    VStack(spacing: AppTheme.spacingXL) {
+                    VStack(spacing: AppTheme.spacing24) {
                         // Tip of the Day
                         tipOfTheDayCard
                         
@@ -123,7 +123,7 @@ struct NutritionalTipsView: View {
             showTipDetail = true
             HapticManager.shared.light()
         }) {
-            HStack(spacing: AppTheme.spacingLG) {
+            HStack(spacing: AppTheme.spacing16) {
                 Text(tip.icon)
                     .font(.system(size: AppTheme.fontSizeEmoji))
                 
@@ -175,7 +175,7 @@ struct NutritionalTipsView: View {
             filteredTips = NutritionalTipsDatabase.allTips
         }
         
-        return LazyVStack(spacing: AppTheme.spacingLG) {
+        return LazyVStack(spacing: AppTheme.spacing16) {
             ForEach(filteredTips) { tip in
                 NutritionalTipCard(tip: tip) {
                     selectedTip = tip
@@ -211,7 +211,7 @@ struct NutritionalTipCard: View {
     
     var body: some View {
         Button(action: action) {
-            HStack(spacing: AppTheme.spacingLG) {
+            HStack(spacing: AppTheme.spacing16) {
                 Text(tip.icon)
                     .font(.system(size: 40))
                 
@@ -228,7 +228,7 @@ struct NutritionalTipCard: View {
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
                     
-                    HStack(spacing: AppTheme.spacingSM) {
+                    HStack(spacing: AppTheme.spacing8) {
                         Text(tip.category.icon)
                             .font(.caption2)
                         Text(tip.category.rawValue)
@@ -271,7 +271,7 @@ struct EvidenceBadge: View {
     let level: EvidenceLevel
     
     var body: some View {
-        HStack(spacing: AppTheme.spacingXS) {
+        HStack(spacing: AppTheme.spacing4) {
             Image(systemName: level == .strong ? "checkmark.seal.fill" : level == .moderate ? "checkmark.circle.fill" : "sparkles")
                 .font(.caption2)
             Text(level.rawValue)
@@ -313,13 +313,13 @@ struct TipDetailView: View {
                     .ignoresSafeArea()
                 
                 ScrollView {
-                    VStack(alignment: .leading, spacing: AppTheme.spacingXXL) {
+                    VStack(alignment: .leading, spacing: AppTheme.spacing32) {
                         // Header
                         HStack {
                             Text(tip.icon)
                                 .font(.system(size: AppTheme.fontSizeDisplay))
                             
-                            VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
+                            VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                                 Text(tip.title)
                                     .font(.title2)
                                     .fontWeight(.bold)
@@ -336,7 +336,7 @@ struct TipDetailView: View {
                         EvidenceBadge(level: tip.evidenceLevel)
                         
                         // Description
-                        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                             Text("What the Science Says")
                                 .font(.headline)
                                 .adaptiveForegroundColor()
@@ -352,13 +352,13 @@ struct TipDetailView: View {
                         }
                         
                         // Actionable Steps
-                        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                             Text("What You Can Do")
                                 .font(.headline)
                                 .adaptiveForegroundColor()
                             
                             ForEach(Array(tip.actionableSteps.enumerated()), id: \.offset) { index, step in
-                                HStack(alignment: .top, spacing: AppTheme.spacingMD) {
+                                HStack(alignment: .top, spacing: AppTheme.spacing12) {
                                     Text("\(index + 1)")
                                         .font(.caption)
                                         .fontWeight(.bold)
@@ -381,7 +381,7 @@ struct TipDetailView: View {
                         }
                         
                         // Sources
-                        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                             HStack {
                                 Image(systemName: "graduationcap.fill")
                                 Text("Scientific Sources")
@@ -397,9 +397,9 @@ struct TipDetailView: View {
                                         HapticManager.shared.light()
                                     }
                                 }) {
-                                    VStack(alignment: .leading, spacing: AppTheme.spacingSM) {
+                                    VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                                         HStack {
-                                            VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
+                                            VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                                                 Text(source.institution)
                                                     .font(.subheadline)
                                                     .fontWeight(.semibold)

@@ -46,7 +46,7 @@ struct QuickSnackSheet: View {
                 .padding(.bottom, 8)
                 
                 ScrollView {
-                    VStack(spacing: AppTheme.spacingXXL) {
+                    VStack(spacing: AppTheme.spacing32) {
                         HeaderView()
                         
                         EmojiSelectorView(
@@ -187,7 +187,7 @@ class QuickSnackViewModel: ObservableObject {
 
 struct HeaderView: View {
     var body: some View {
-        VStack(spacing: AppTheme.spacingSM) {
+        VStack(spacing: AppTheme.spacing8) {
             Text("Quick Add Snack")
                 .font(.title2)
                 .fontWeight(.bold)
@@ -217,7 +217,7 @@ struct EmojiSelectorView: View {
     ]
     
     var body: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
+        VStack(alignment: .leading, spacing: AppTheme.spacing12) {
             Text("Icon")
                 .font(.headline)
                 .foregroundColor(.white)
@@ -246,7 +246,7 @@ struct EmojiSelectorView: View {
             .accessibilityAddTraits(.isButton)
             
             if showEmojiPicker {
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: AppTheme.spacingSM), count: 8), spacing: AppTheme.spacingSM) {
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: AppTheme.spacing8), count: 8), spacing: AppTheme.spacing8) {
                     ForEach(emojiOptions, id: \.self) { emoji in
                         Button(action: {
                             selectedEmoji = emoji
@@ -292,12 +292,12 @@ struct DietaryFilterView: View {
     ]
     
     var body: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
+        VStack(alignment: .leading, spacing: AppTheme.spacing12) {
             Text("Dietary Filters")
                 .font(.headline)
                 .foregroundColor(.white)
             
-            FlowLayout(spacing: AppTheme.spacingSM) {
+            FlowLayout(spacing: AppTheme.spacing8) {
                 ForEach(commonFilters, id: \.self) { filter in
                     DietaryFilterChip(
                         filter: filter,
@@ -324,7 +324,7 @@ struct DietaryFilterChip: View {
     
     var body: some View {
         Button(action: action) {
-            HStack(spacing: AppTheme.spacingXS) {
+            HStack(spacing: AppTheme.spacing4) {
                 Text(filter.icon)
                     .font(.caption)
                 Text(filter.rawValue)
@@ -351,7 +351,7 @@ struct SnackSuggestionsView: View {
     let colorScheme: ColorScheme
     
     var body: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
+        VStack(alignment: .leading, spacing: AppTheme.spacing12) {
             HStack {
                 Text("Quick Picks")
                     .font(.headline)
@@ -366,12 +366,12 @@ struct SnackSuggestionsView: View {
             .padding(.horizontal)
             
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: AppTheme.spacingMD) {
+                HStack(spacing: AppTheme.spacing12) {
                     ForEach(filteredSnacks.prefix(20)) { snack in
                         Button(action: {
                             onSnackSelected(snack)
                         }) {
-                            VStack(spacing: AppTheme.spacingSM) {
+                            VStack(spacing: AppTheme.spacing8) {
                                 Text(snack.emoji)
                                     .font(.system(size: AppTheme.fontSizeMedium))
                                 Text(snack.name)
@@ -406,7 +406,7 @@ struct SnackNameInputView: View {
     let colorScheme: ColorScheme
     
     var body: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
+        VStack(alignment: .leading, spacing: AppTheme.spacing12) {
             Text("Snack Name")
                 .font(.headline)
                 .foregroundColor(.white)
@@ -429,12 +429,12 @@ struct ServingsControlView: View {
     let selectedTheme: AppTheme.ThemeType
     
     var body: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
+        VStack(alignment: .leading, spacing: AppTheme.spacing12) {
             Text("Servings")
                 .font(.headline)
                 .foregroundColor(.white)
             
-            HStack(spacing: AppTheme.spacingLG) {
+            HStack(spacing: AppTheme.spacing16) {
                 Button(action: {
                     if servings > 1 {
                         servings -= 1
@@ -476,12 +476,12 @@ struct DietaryTagsDisplayView: View {
     let calories: Int?
     
     var body: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
+        VStack(alignment: .leading, spacing: AppTheme.spacing12) {
             Text("Dietary Info")
                 .font(.headline)
                 .foregroundColor(.white)
             
-            VStack(spacing: AppTheme.spacingSM) {
+            VStack(spacing: AppTheme.spacing8) {
                 if let calories = calories {
                     HStack {
                         Image(systemName: "flame.fill")
@@ -495,7 +495,7 @@ struct DietaryTagsDisplayView: View {
                 if !tags.isEmpty {
                     FlowLayout(spacing: AppTheme.spacing6) {
                         ForEach(tags, id: \.self) { tag in
-                            HStack(spacing: AppTheme.spacingXS) {
+                            HStack(spacing: AppTheme.spacing4) {
                                 Text(tag.icon)
                                     .font(.caption2)
                                 Text(tag.rawValue)

@@ -117,7 +117,7 @@ struct AnimatedHeartButton: View {
         AppTheme.backgroundGradient(for: AppTheme.ThemeType.teal, colorScheme: .dark)
             .ignoresSafeArea()
         
-        VStack(spacing: AppTheme.spacing4XL) {
+        VStack(spacing: AppTheme.spacing48) {
             Text("Tap the heart!")
                 .foregroundColor(.white)
                 .font(.title2)

@@ -20,7 +20,7 @@ struct PasswordVerificationSheet: View {
                 AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
                 
-                VStack(spacing: AppTheme.spacingXXL) {
+                VStack(spacing: AppTheme.spacing32) {
                     Spacer()
                     
                     // Lock Icon
@@ -44,7 +44,7 @@ struct PasswordVerificationSheet: View {
                     }
                     .padding(.bottom, 8)
                     
-                    VStack(spacing: AppTheme.spacingMD) {
+                    VStack(spacing: AppTheme.spacing12) {
                         Text("Verify Your Identity")
                             .font(.system(size: AppTheme.fontSizeTitle1, weight: .bold))
                             .adaptiveForegroundColor()
@@ -57,7 +57,7 @@ struct PasswordVerificationSheet: View {
                     }
                     
                     // Email Display
-                    HStack(spacing: AppTheme.spacingSM) {
+                    HStack(spacing: AppTheme.spacing8) {
                         Image(systemName: "envelope.fill")
                             .font(.caption)
                             .adaptiveForegroundColor(opacity: 0.7)
@@ -77,7 +77,7 @@ struct PasswordVerificationSheet: View {
                     )
                     
                     // Password Field
-                    VStack(alignment: .leading, spacing: AppTheme.spacingSM) {
+                    VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                         Text("Password")
                             .font(.subheadline)
                             .fontWeight(.medium)
@@ -106,7 +106,7 @@ struct PasswordVerificationSheet: View {
                     .padding(.top, 8)
                     
                     if showError {
-                        HStack(spacing: AppTheme.spacingSM) {
+                        HStack(spacing: AppTheme.spacing8) {
                             Image(systemName: "exclamationmark.triangle.fill")
                                 .foregroundColor(.red)
                             Text(errorMessage)
@@ -123,7 +123,7 @@ struct PasswordVerificationSheet: View {
                                 ProgressView()
                                     .progressViewStyle(CircularProgressViewStyle(tint: .white))
                             } else {
-                                HStack(spacing: AppTheme.spacingMD) {
+                                HStack(spacing: AppTheme.spacing12) {
                                     Image(systemName: "checkmark.shield.fill")
                                     Text("Verify & Continue")
                                         .fontWeight(.semibold)

@@ -13,7 +13,7 @@ struct MoreView: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                    VStack(spacing: AppTheme.spacingMD) {
+                    VStack(spacing: AppTheme.spacing12) {
                         Text("More")
                             .font(.system(size: AppTheme.fontSizeLargeTitle, weight: .bold))
                             .adaptiveForegroundColor()
@@ -24,7 +24,7 @@ struct MoreView: View {
                     .padding(.top, 16)
                     
                     ScrollView {
-                        VStack(spacing: AppTheme.spacingXXL) {
+                        VStack(spacing: AppTheme.spacing32) {
                             MoreCard {
                                 NavigationLink(destination: SettingsTabView()
                                 ) {
@@ -134,7 +134,7 @@ struct MoreRow: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        HStack(spacing: AppTheme.spacingLG) {
+        HStack(spacing: AppTheme.spacing16) {
             ZStack {
                 Circle()
                     .fill(iconColor)
@@ -145,7 +145,7 @@ struct MoreRow: View {
                     .adaptiveForegroundColor()
             }
             
-            VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
+            VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                 Text(title)
                     .font(.body)
                     .fontWeight(.semibold)

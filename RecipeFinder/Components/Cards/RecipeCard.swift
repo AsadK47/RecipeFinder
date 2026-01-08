@@ -57,7 +57,7 @@ struct RecipeCard: View {
             }
             
             // Content in the middle
-            VStack(alignment: .leading, spacing: AppTheme.spacingSM) {
+            VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                 // Title 
                 Text(recipe.name)
                     .font(.system(size: AppTheme.fontSizeBody, weight: .semibold))
@@ -91,7 +91,7 @@ struct RecipeCard: View {
                 .font(.system(size: AppTheme.fontSizeSubheadline, weight: .semibold))
                 .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
         }
-        .padding(AppTheme.spacingLG)
+        .padding(AppTheme.spacing16)
         .background {
             cardBackground
         }

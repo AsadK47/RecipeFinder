@@ -24,12 +24,12 @@ struct CookingTipDetailView: View {
                     .ignoresSafeArea()
                 
                 ScrollView(.vertical, showsIndicators: true) {
-                    VStack(alignment: .leading, spacing: AppTheme.spacingXXL) {
+                    VStack(alignment: .leading, spacing: AppTheme.spacing32) {
                         // Title with blended card background
-                        VStack(alignment: .leading, spacing: AppTheme.spacingLG) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacing16) {
                             // Category and Difficulty Badges
                             HStack {
-                                HStack(spacing: AppTheme.spacingSM) {
+                                HStack(spacing: AppTheme.spacing8) {
                                     Image(systemName: tip.category.icon)
                                         .font(.subheadline)
                                     Text(tip.category.rawValue)
@@ -68,7 +68,7 @@ struct CookingTipDetailView: View {
                                 .adaptiveForegroundColor()
                                 .fixedSize(horizontal: false, vertical: true)
                         }
-                        .padding(AppTheme.spacingXL)
+                        .padding(AppTheme.spacing24)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background {
                             if cardStyle == .solid {
@@ -121,7 +121,7 @@ struct CookingTipDetailView: View {
     // MARK: - Content Card
     
     private var contentCard: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacingLG) {
+        VStack(alignment: .leading, spacing: AppTheme.spacing16) {
             // Icon
             ZStack {
                 Circle()
@@ -141,7 +141,7 @@ struct CookingTipDetailView: View {
                 .lineSpacing(6)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(AppTheme.spacingXL)
+        .padding(AppTheme.spacing24)
         .background {
             if cardStyle == .solid {
                 RoundedRectangle(cornerRadius: 20)
@@ -160,7 +160,7 @@ struct CookingTipDetailView: View {
     // MARK: - Tags Section
     
     private var tagsSection: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
+        VStack(alignment: .leading, spacing: AppTheme.spacing12) {
             HStack(spacing: AppTheme.spacing6) {
                 Image(systemName: "tag.fill")
                     .font(.caption)
@@ -170,9 +170,9 @@ struct CookingTipDetailView: View {
             }
             .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.7))
             
-            FlowLayout(spacing: AppTheme.spacingSM) {
+            FlowLayout(spacing: AppTheme.spacing8) {
                 ForEach(tip.tags, id: \.self) { tag in
-                    HStack(spacing: AppTheme.spacingXS) {
+                    HStack(spacing: AppTheme.spacing4) {
                         Image(systemName: "number")
                             .font(.system(size: 8))
                         Text(tag)

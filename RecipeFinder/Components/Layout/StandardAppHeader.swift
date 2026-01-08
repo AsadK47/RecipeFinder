@@ -8,7 +8,7 @@ struct StandardAppHeader<MenuContent: View>: View {
     @ViewBuilder var menuContent: () -> MenuContent
     
     var body: some View {
-        VStack(spacing: AppTheme.spacingMD) {
+        VStack(spacing: AppTheme.spacing12) {
             GeometryReader { geometry in
                 HStack(spacing: 0) {
                     Spacer(minLength: 8)
@@ -52,7 +52,7 @@ struct SimpleAppHeader: View {
     var searchPlaceholder: String = "Search..."
     
     var body: some View {
-        VStack(spacing: AppTheme.spacingMD) {
+        VStack(spacing: AppTheme.spacing12) {
             GeometryReader { geometry in
                 HStack(spacing: 0) {
                     Spacer()

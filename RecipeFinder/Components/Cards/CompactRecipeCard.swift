@@ -59,7 +59,7 @@ struct CompactRecipeCard: View {
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity)
                 
-                HStack(spacing: AppTheme.spacingXS) {
+                HStack(spacing: AppTheme.spacing4) {
                     Image(systemName: "clock.fill")
                         .font(.system(size: 8))
                         .foregroundColor(.orange)

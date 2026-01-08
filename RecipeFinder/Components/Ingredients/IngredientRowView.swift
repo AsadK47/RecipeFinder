@@ -13,7 +13,7 @@ struct IngredientRowView: View {
     var body: some View {
         HStack(spacing: 0) {
             // Left column: Ingredient name with optional prep notes
-            VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
+            VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                 Text(ingredient.mainIngredientName)
                     .font(.body)
                     .fontWeight(.semibold)
@@ -43,7 +43,7 @@ struct IngredientRowView: View {
             Button(action: {
                 onTapQuantity?()
             }) {
-                HStack(spacing: AppTheme.spacingXS) {
+                HStack(spacing: AppTheme.spacing4) {
                     // Quantity - bold and prominent
                     Text(formatQuantity(ingredient.scaledQuantity(for: scaleFactor)))
                         .font(.subheadline)

@@ -38,7 +38,7 @@ struct InfoItem: View {
     }
     
     var body: some View {
-        VStack(spacing: AppTheme.spacingSM) {
+        VStack(spacing: AppTheme.spacing8) {
             // Icon or Bars with fixed height for alignment
             Group {
                 if icon == "chart.bar" {

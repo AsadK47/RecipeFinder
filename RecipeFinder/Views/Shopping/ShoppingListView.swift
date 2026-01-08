@@ -174,7 +174,7 @@ struct ShoppingListView: View {
     
     private var searchResultsView: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
+            VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                 Text("Suggested Ingredients")
                     .font(.title3)
                     .fontWeight(.bold)
@@ -189,7 +189,7 @@ struct ShoppingListView: View {
                         .padding(.horizontal, 20)
                         .padding(.vertical, 20)
                 } else {
-                    LazyVStack(spacing: AppTheme.spacingSM) {
+                    LazyVStack(spacing: AppTheme.spacing8) {
                         ForEach(searchResults, id: \.self) { ingredient in
                             ingredientButton(ingredient)
                         }
@@ -203,7 +203,7 @@ struct ShoppingListView: View {
     
     // MARK: - Header
     private var header: some View {
-        VStack(spacing: AppTheme.spacingMD) {
+        VStack(spacing: AppTheme.spacing12) {
             GeometryReader { geometry in
                 HStack(spacing: 0) {
                     // Empty space to balance menu button
@@ -282,8 +282,8 @@ struct ShoppingListView: View {
             .padding(.top, 16)
             
             // Search bar with cancel option
-            HStack(spacing: AppTheme.spacingMD) {
-                HStack(spacing: AppTheme.spacingMD) {
+            HStack(spacing: AppTheme.spacing12) {
+                HStack(spacing: AppTheme.spacing12) {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(AppTheme.adaptiveHighEmphasis(for: colorScheme))
                         .font(.body)
@@ -347,7 +347,7 @@ struct ShoppingListView: View {
     // MARK: - Empty State
     private var emptyStateView: some View {
         ScrollView {
-            VStack(spacing: AppTheme.spacingLG) {
+            VStack(spacing: AppTheme.spacing16) {
                 Image(systemName: "cart.circle.fill")
                     .font(.system(size: 70))
                     .adaptiveForegroundColor(opacity: 0.4)
@@ -435,7 +435,7 @@ struct ShoppingListView: View {
                 }
             },
             label: {
-                HStack(spacing: AppTheme.spacingMD) {
+                HStack(spacing: AppTheme.spacing12) {
                     Image(systemName: categoryIcon(for: category))
                         .font(.title3)
                         .foregroundColor(categoryColor(for: category))
@@ -512,7 +512,7 @@ struct ShoppingListView: View {
                 addItemFromSearch(ingredient)
             },
             label: {
-                HStack(spacing: AppTheme.spacingMD) {
+                HStack(spacing: AppTheme.spacing12) {
                     Image(systemName: CategoryClassifier.categoryIcon(for: category))
                         .foregroundStyle(CategoryClassifier.categoryColor(for: category))
                         .font(.body)
@@ -570,7 +570,7 @@ struct ShoppingListItemRow: View {
     var body: some View {
         ZStack {
             GlassCard {
-                HStack(spacing: AppTheme.spacingLG) {
+                HStack(spacing: AppTheme.spacing16) {
                     Button(action: onToggle, label: {
                         ZStack {
                             Circle()
@@ -613,7 +613,7 @@ struct ShoppingListItemRow: View {
                     
                     Spacer()
                     
-                    HStack(spacing: AppTheme.spacingMD) {
+                    HStack(spacing: AppTheme.spacing12) {
                         // Decrement button
                         Button(action: {
                             if item.quantity > 1 {
@@ -733,12 +733,12 @@ struct ShoppingFeatureRow: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        HStack(spacing: AppTheme.spacingMD) {
+        HStack(spacing: AppTheme.spacing12) {
             Image(systemName: icon)
                 .adaptiveForegroundColor()
                 .font(.body)
                 .frame(width: 24)
-            VStack(alignment: .leading, spacing: AppTheme.spacingXXS) {
+            VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                 Text(title)
                     .font(.subheadline)
                     .fontWeight(.semibold)
@@ -769,7 +769,7 @@ struct HelpSheetView: View {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 0) {
                         // Hero section with seamless header
-                        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                             Text("Shopping List Features")
                                 .font(.system(size: AppTheme.fontSizeLargeTitle, weight: .bold))
                                 .adaptiveForegroundColor()
@@ -784,7 +784,7 @@ struct HelpSheetView: View {
                         .padding(.bottom, 32)
                         
                         // Feature cards with beautiful styling
-                        VStack(alignment: .leading, spacing: AppTheme.spacingLG) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacing16) {
                             ShoppingFeatureRow(icon: "sparkles", title: "Smart Categories", description: "Items are automatically sorted into categories", appTheme: appTheme)
                             ShoppingFeatureRow(icon: "chevron.up.chevron.down", title: "Collapse Categories", description: "Tap category headers to show or hide items", appTheme: appTheme)
                             ShoppingFeatureRow(icon: "checkmark.circle", title: "Check Off Items", description: "Tap checkbox to mark items as purchased", appTheme: appTheme)
@@ -794,7 +794,7 @@ struct HelpSheetView: View {
                             ShoppingFeatureRow(icon: "trash", title: "Delete Items", description: "Swipe left on any item to remove it", appTheme: appTheme)
                             ShoppingFeatureRow(icon: "square.and.arrow.up", title: "Share List", description: "Export your list via menu (≡)", appTheme: appTheme)
                         }
-                        .padding(AppTheme.spacingXXL)
+                        .padding(AppTheme.spacing32)
                         .background {
                             if cardStyle == .solid {
                                 RoundedRectangle(cornerRadius: 20)

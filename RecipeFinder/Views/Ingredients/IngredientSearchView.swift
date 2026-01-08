@@ -79,7 +79,7 @@ struct IngredientSearchView: View {
     }
     
     var gridColumns: [GridItem] {
-        Array(repeating: GridItem(.flexible(), spacing: AppTheme.spacingMD), count: viewMode.columns)
+        Array(repeating: GridItem(.flexible(), spacing: AppTheme.spacing12), count: viewMode.columns)
     }
     
     var body: some View {
@@ -88,8 +88,8 @@ struct IngredientSearchView: View {
                 AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
                 
-                VStack(spacing: AppTheme.spacingXL) {
-                    VStack(spacing: AppTheme.spacingLG) {
+                VStack(spacing: AppTheme.spacing24) {
+                    VStack(spacing: AppTheme.spacing16) {
                         HStack {
                             // Filter button
                             if selectedIngredient == nil {
@@ -98,7 +98,7 @@ struct IngredientSearchView: View {
                                         Image(systemName: "line.3.horizontal.decrease.circle")
                                             .font(.title2)
                                             .foregroundColor(cardStyle == .solid && colorScheme == .light ? .black : .white)
-                                            .padding(AppTheme.spacingMD)
+                                            .padding(AppTheme.spacing12)
                                             .background {
                                                 if cardStyle == .solid {
                                                     Circle()
@@ -151,7 +151,7 @@ struct IngredientSearchView: View {
                                     Image(systemName: viewMode.icon)
                                         .font(.title2)
                                         .foregroundColor(cardStyle == .solid && colorScheme == .light ? .black : .white)
-                                        .padding(AppTheme.spacingMD)
+                                        .padding(AppTheme.spacing12)
                                         .background {
                                             if cardStyle == .solid {
                                                 Circle()
@@ -175,7 +175,7 @@ struct IngredientSearchView: View {
                         // Active filters chips
                         if activeFilterCount > 0 {
                             ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: AppTheme.spacingSM) {
+                                HStack(spacing: AppTheme.spacing8) {
                                     ForEach(Array(selectedCategories), id: \.self) { category in
                                         FilterChip(
                                             label: category,
@@ -230,9 +230,9 @@ struct IngredientSearchView: View {
     // Search Results View
     private var searchResultsView: some View {
         ScrollView {
-            LazyVStack(spacing: AppTheme.spacingMD) {
+            LazyVStack(spacing: AppTheme.spacing12) {
                 if searchResults.isEmpty {
-                    VStack(spacing: AppTheme.spacingLG) {
+                    VStack(spacing: AppTheme.spacing16) {
                         Image(systemName: "magnifyingglass")
                             .font(.system(size: AppTheme.fontSizeDisplay))
                             .adaptiveForegroundColor(opacity: 0.5)
@@ -261,9 +261,9 @@ struct IngredientSearchView: View {
     // Main Ingredient Browser
     private var ingredientBrowserView: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: AppTheme.spacingXXL) {
+            VStack(alignment: .leading, spacing: AppTheme.spacing32) {
                 // Categories Section
-                VStack(alignment: .leading, spacing: AppTheme.spacingLG) {
+                VStack(alignment: .leading, spacing: AppTheme.spacing16) {
                     Text("Browse by Category")
                         .font(.title3)
                         .fontWeight(.bold)
@@ -303,7 +303,7 @@ struct IngredientSearchView: View {
                     }
                 },
                 label: {
-                    HStack(spacing: AppTheme.spacingMD) {
+                    HStack(spacing: AppTheme.spacing12) {
                     Image(systemName: categoryIcon(for: category))
                         .foregroundColor(categoryColor(for: category))
                         .font(.body)
@@ -431,7 +431,7 @@ struct IngredientSearchView: View {
                         }
                     },
                     label: {
-                        HStack(spacing: AppTheme.spacingSM) {
+                        HStack(spacing: AppTheme.spacing8) {
                             Image(systemName: "chevron.left")
                                 .font(.body)
                             Text("Back")
@@ -463,7 +463,7 @@ struct IngredientSearchView: View {
                         Image(systemName: viewMode.icon)
                             .font(.title2)
                             .foregroundColor(cardStyle == .solid && colorScheme == .light ? .black : .white)
-                            .padding(AppTheme.spacingMD)
+                            .padding(AppTheme.spacing12)
                             .background {
                                 if cardStyle == .solid {
                                     Circle()
@@ -480,7 +480,7 @@ struct IngredientSearchView: View {
             
             // Selected ingredient header
             if let ingredient = selectedIngredient {
-                HStack(spacing: AppTheme.spacingMD) {
+                HStack(spacing: AppTheme.spacing12) {
                     Image(systemName: "leaf.fill")
                         .adaptiveForegroundColor()
                         .font(.title3)
@@ -503,7 +503,7 @@ struct IngredientSearchView: View {
             // Recipe results
             ScrollView {
                 if viewMode == .list {
-                    LazyVStack(spacing: AppTheme.spacingLG) {
+                    LazyVStack(spacing: AppTheme.spacing16) {
                         ForEach(filteredRecipes) { recipe in
                             NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
                                 RecipeCard(recipe: recipe, viewMode: .list)
@@ -513,7 +513,7 @@ struct IngredientSearchView: View {
                     }
                     .padding(.horizontal, 20)
                 } else {
-                    LazyVGrid(columns: gridColumns, spacing: AppTheme.spacingLG) {
+                    LazyVGrid(columns: gridColumns, spacing: AppTheme.spacing16) {
                         ForEach(filteredRecipes) { recipe in
                             NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
                                 CompactRecipeCard(recipe: recipe)
@@ -591,7 +591,7 @@ struct QuickMatchRecipeCard: View {
     }
     
     private var matchBadge: some View {
-        HStack(spacing: AppTheme.spacingXS) {
+        HStack(spacing: AppTheme.spacing4) {
             Image(systemName: "checkmark.circle.fill")
                 .font(.caption2)
                 .adaptiveForegroundColor()
@@ -609,11 +609,11 @@ struct QuickMatchRecipeCard: View {
     }
     
     private var contentSection: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacingSM) {
+        VStack(alignment: .leading, spacing: AppTheme.spacing8) {
             recipeNameText
             metadataRow
         }
-        .padding(AppTheme.spacingMD)
+        .padding(AppTheme.spacing12)
         .frame(width: 220, alignment: .leading)
         .background(contentBackground)
     }
@@ -715,7 +715,7 @@ struct CategoryCard: View {
                     }
                 },
                 label: {
-                    HStack(spacing: AppTheme.spacingLG) {
+                    HStack(spacing: AppTheme.spacing16) {
                         ZStack {
                             Circle()
                                 .fill(categoryColor.opacity(0.3))
@@ -726,7 +726,7 @@ struct CategoryCard: View {
                                 .font(.title3)
                         }
                         
-                        VStack(alignment: .leading, spacing: AppTheme.spacingXXS) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                             Text(category)
                                 .font(.headline)
                                 .adaptiveForegroundColor()
@@ -742,7 +742,7 @@ struct CategoryCard: View {
                             .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
                             .font(.caption)
                     }
-                    .padding(AppTheme.spacingLG)
+                    .padding(AppTheme.spacing16)
                     .background {
                         if cardStyle == .solid {
                             RoundedRectangle(cornerRadius: 12)
@@ -758,7 +758,7 @@ struct CategoryCard: View {
             
             // Ingredients List
             if isExpanded {
-                VStack(spacing: AppTheme.spacingSM) {
+                VStack(spacing: AppTheme.spacing8) {
                     ForEach(ingredients, id: \.self) { mainIngredient in
                         ingredientGroup(mainIngredient)
                     }
@@ -773,7 +773,7 @@ struct CategoryCard: View {
         let variations = getVariations(mainIngredient)
         let isGroupExpanded = expandedIngredients.contains(mainIngredient)
         
-        return VStack(spacing: AppTheme.spacingXS) {
+        return VStack(spacing: AppTheme.spacing4) {
             // Main ingredient row
             HStack(spacing: 0) {
                 Button(
@@ -790,7 +790,7 @@ struct CategoryCard: View {
                         onSelectIngredient(variations[0])
                     }
                 }) {
-                    HStack(spacing: AppTheme.spacingMD) {
+                    HStack(spacing: AppTheme.spacing12) {
                         Text(mainIngredient)
                             .font(.subheadline)
                             .fontWeight(.medium)
@@ -856,7 +856,7 @@ struct CategoryCard: View {
             
             // Sub-ingredients (variations)
             if isGroupExpanded && variations.count > 1 {
-                VStack(spacing: AppTheme.spacingXS) {
+                VStack(spacing: AppTheme.spacing4) {
                     ForEach(variations, id: \.self) { variation in
                         variationRow(variation)
                     }
@@ -875,7 +875,7 @@ struct CategoryCard: View {
                     onSelectIngredient(ingredient)
                 },
                 label: {
-                    HStack(spacing: AppTheme.spacingMD) {
+                    HStack(spacing: AppTheme.spacing12) {
                         Image(systemName: "circle.fill")
                             .font(.system(size: 4))
                             .foregroundColor(AppTheme.adaptiveSecondaryIndicator(for: colorScheme))
@@ -937,9 +937,9 @@ struct IngredientFilterSheet: View {
                     .ignoresSafeArea()
                 
                 ScrollView {
-                    VStack(alignment: .leading, spacing: AppTheme.spacingXXL) {
+                    VStack(alignment: .leading, spacing: AppTheme.spacing32) {
                         // Categories Section
-                        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                             Text("Ingredient Categories")
                                 .font(.headline)
                                 .adaptiveForegroundColor()
@@ -948,7 +948,7 @@ struct IngredientFilterSheet: View {
                             LazyVGrid(columns: [
                                 GridItem(.flexible()),
                                 GridItem(.flexible())
-                            ], spacing: AppTheme.spacingMD) {
+                            ], spacing: AppTheme.spacing12) {
                                 ForEach(categories, id: \.self) { category in
                                     FilterButton(
                                         label: category,

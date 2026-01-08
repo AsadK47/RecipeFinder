@@ -57,7 +57,7 @@ struct AccountView: View {
             
             VStack(spacing: 0) {
                 // Header
-                VStack(spacing: AppTheme.spacingMD) {
+                VStack(spacing: AppTheme.spacing12) {
                     GeometryReader { geometry in
                         HStack(spacing: 0) {
                             Spacer()
@@ -77,7 +77,7 @@ struct AccountView: View {
                 .padding(.top, 16)
                 
                 ScrollView {
-                    VStack(spacing: AppTheme.spacingXL) {
+                    VStack(spacing: AppTheme.spacing24) {
                         // Profile Avatar
                         profileAvatar
                         
@@ -112,7 +112,7 @@ struct AccountView: View {
                         
                         // Success Feedback
                         if showSuccessFeedback {
-                            HStack(spacing: AppTheme.spacingSM) {
+                            HStack(spacing: AppTheme.spacing8) {
                                 Image(systemName: "checkmark.circle.fill")
                                     .foregroundColor(.green)
                                 Text("Profile saved successfully!")
@@ -190,7 +190,7 @@ struct AccountView: View {
     // MARK: - Profile Avatar
     
     private var profileAvatar: some View {
-        VStack(spacing: AppTheme.spacingMD) {
+        VStack(spacing: AppTheme.spacing12) {
             Button(action: {
                 showImagePicker = true
                 HapticManager.shared.light()
@@ -281,13 +281,13 @@ struct AccountView: View {
                         .background(Color.secondary.opacity(0.1))
                         .padding(.leading, 60)
                     
-                    HStack(spacing: AppTheme.spacingLG) {
+                    HStack(spacing: AppTheme.spacing16) {
                         Image(systemName: "envelope.fill")
                             .font(.title3)
                             .foregroundColor(.secondary)
                             .frame(width: 28)
                         
-                        VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                             Text("Email")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
@@ -318,7 +318,7 @@ struct AccountView: View {
     // MARK: - Chef Type Section
     
     private var chefTypeSection: some View {
-        VStack(spacing: AppTheme.spacingMD) {
+        VStack(spacing: AppTheme.spacing12) {
             HStack {
                 Image(systemName: "fork.knife.circle.fill")
                     .adaptiveForegroundColor()
@@ -330,7 +330,7 @@ struct AccountView: View {
             .padding(.horizontal, 20)
             .padding(.top, 16)
             
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: AppTheme.spacingMD) {
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: AppTheme.spacing12) {
                 ForEach(ChefType.allCases, id: \.self) { type in
                     ChefTypeCard(
                         chefType: type,
@@ -364,7 +364,7 @@ struct AccountView: View {
         Button(action: {
             HapticManager.shared.light()
         }) {
-            VStack(spacing: AppTheme.spacingXL) {
+            VStack(spacing: AppTheme.spacing24) {
                 // Avatar
                 ZStack(alignment: .bottomTrailing) {
                     if let profileImage = profileImage {
@@ -397,13 +397,13 @@ struct AccountView: View {
                 }
                 
                 // Name & Chef Type
-                VStack(spacing: AppTheme.spacingSM) {
+                VStack(spacing: AppTheme.spacing8) {
                     Text(displayName.isEmpty ? "Set Your Name" : displayName)
                         .font(.title2)
                         .fontWeight(.bold)
                         .adaptiveForegroundColor()
                     
-                    HStack(spacing: AppTheme.spacingSM) {
+                    HStack(spacing: AppTheme.spacing8) {
                         Image(systemName: accountManager.chefType.icon)
                             .font(.caption)
                         Text(accountManager.chefType.rawValue)
@@ -440,15 +440,15 @@ struct AccountView: View {
     // MARK: - Account Actions
     
     private var accountActionsSection: some View {
-        VStack(spacing: AppTheme.spacingMD) {
+        VStack(spacing: AppTheme.spacing12) {
             // Sign in with Apple (if not already using it) - Under Construction
             if authManager.currentUser?.appleUserID == nil {
-                VStack(spacing: AppTheme.spacingSM) {
+                VStack(spacing: AppTheme.spacing8) {
                     Button {
                         // Disabled during testing
                         HapticManager.shared.light()
                     } label: {
-                        HStack(spacing: AppTheme.spacingMD) {
+                        HStack(spacing: AppTheme.spacing12) {
                             Image(systemName: "applelogo")
                                 .font(.system(size: AppTheme.fontSizeBody + 2, weight: .semibold))
                             Text("Link Apple ID")
@@ -474,7 +474,7 @@ struct AccountView: View {
                     }
                     .disabled(true)
                     
-                    HStack(spacing: AppTheme.spacingXS) {
+                    HStack(spacing: AppTheme.spacing4) {
                         Image(systemName: "wrench.and.screwdriver.fill")
                             .font(.system(size: AppTheme.fontSizeCaption2))
                         Text("Under Construction • Please Wait Patiently")
@@ -487,7 +487,7 @@ struct AccountView: View {
             // Face ID / Touch ID Settings
             if authManager.biometricsAvailable {
                 NavigationLink(destination: PrivacySettingsView()) {
-                    HStack(spacing: AppTheme.spacingMD) {
+                    HStack(spacing: AppTheme.spacing12) {
                         Image(systemName: authManager.biometricType == "Face ID" ? "faceid" : "touchid")
                             .font(.system(size: AppTheme.fontSizeBody + 2, weight: .semibold))
                         Text("Configure \(authManager.biometricType)")
@@ -662,12 +662,12 @@ struct AccountView: View {
             
             // Collapsible Content
             if badgesSectionExpanded {
-                VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
+                VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                     let recipeCount = PersistenceController.shared.getRecipeCount()
                     let allBadges = badgeManager.getAllBadges(recipeCount: recipeCount)
                         .sorted { $0.isUnlocked && !$1.isUnlocked } // Unlocked first
                     
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: AppTheme.spacingMD) {
+                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: AppTheme.spacing12) {
                         ForEach(allBadges) { badge in
                             Button(action: {
                                 selectedBadge = badge
@@ -682,7 +682,7 @@ struct AccountView: View {
                         }
                     }
                 }
-                .padding(AppTheme.spacingXL)
+                .padding(AppTheme.spacing24)
             }
         }
         .background {
@@ -711,7 +711,7 @@ struct AccountRowButton: View {
     
     var body: some View {
         Button(action: action) {
-            HStack(spacing: AppTheme.spacingLG) {
+            HStack(spacing: AppTheme.spacing16) {
                 // Icon with background circle
                 ZStack {
                     Circle()
@@ -723,7 +723,7 @@ struct AccountRowButton: View {
                         .adaptiveForegroundColor()
                 }
                 
-                VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
+                VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                     Text(title)
                         .font(.body)
                         .foregroundColor(colorScheme == .dark ? .white : .primary)
@@ -763,8 +763,8 @@ struct StatBadge: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        VStack(spacing: AppTheme.spacingXS) {
-            HStack(spacing: AppTheme.spacingXS) {
+        VStack(spacing: AppTheme.spacing4) {
+            HStack(spacing: AppTheme.spacing4) {
                 Image(systemName: icon)
                     .font(.caption2)
                 Text("\(count)")
@@ -830,7 +830,7 @@ struct DataImportView: View {
     
     var body: some View {
         NavigationView {
-            VStack(spacing: AppTheme.spacingXXL) {
+            VStack(spacing: AppTheme.spacing32) {
                 Spacer()
                 
                 Image(systemName: "square.and.arrow.up.fill")
@@ -847,7 +847,7 @@ struct DataImportView: View {
                     .padding(.horizontal)
                 
                 // Merge Mode Picker
-                VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
+                VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                     Text("Import Mode")
                         .font(.subheadline)
                         .fontWeight(.semibold)
@@ -861,7 +861,7 @@ struct DataImportView: View {
                                 Image(systemName: mergeMode == mode ? "checkmark.circle.fill" : "circle")
                                     .foregroundColor(mergeMode == mode ? .orange : .secondary)
                                 
-                                VStack(alignment: .leading, spacing: AppTheme.spacingXXS) {
+                                VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                                     Text(mode.rawValue)
                                         .font(.body)
                                         .foregroundColor(.primary)
@@ -1098,13 +1098,13 @@ struct ProfileTextField: View {
     let colorScheme: ColorScheme
     
     var body: some View {
-        HStack(spacing: AppTheme.spacingLG) {
+        HStack(spacing: AppTheme.spacing16) {
             Image(systemName: icon)
                 .font(.title3)
                 .foregroundColor(.secondary)
                 .frame(width: 28)
             
-            VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
+            VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                 Text(label)
                     .font(.caption)
                     .foregroundColor(.secondary)
@@ -1129,7 +1129,7 @@ struct ChefTypeCard: View {
     
     var body: some View {
         Button(action: action) {
-            VStack(spacing: AppTheme.spacingSM) {
+            VStack(spacing: AppTheme.spacing8) {
                 Image(systemName: chefType.icon)
                     .font(.system(size: AppTheme.fontSizeMedium))
                     .foregroundColor(isSelected ? AppTheme.accentColor(for: selectedTheme) : .secondary)
@@ -1177,7 +1177,7 @@ struct BadgeCard: View {
     }
     
     var body: some View {
-        VStack(spacing: AppTheme.spacingSM) {
+        VStack(spacing: AppTheme.spacing8) {
             ZStack {
                 Circle()
                     .fill(badge.isUnlocked ? badgeColor.opacity(0.2) : AppTheme.secondaryText.opacity(0.1))
@@ -1253,7 +1253,7 @@ struct BadgeDetailView: View {
             AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
-            VStack(spacing: AppTheme.spacingXXL) {
+            VStack(spacing: AppTheme.spacing32) {
                 // Close button
                 HStack {
                     Spacer()
@@ -1294,8 +1294,8 @@ struct BadgeDetailView: View {
                 
                 // Status/Date
                 if badge.isUnlocked, let date = badge.dateEarned {
-                    VStack(spacing: AppTheme.spacingSM) {
-                        HStack(spacing: AppTheme.spacingSM) {
+                    VStack(spacing: AppTheme.spacing8) {
+                        HStack(spacing: AppTheme.spacing8) {
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundColor(.green)
                             Text("Unlocked!")
@@ -1319,8 +1319,8 @@ struct BadgeDetailView: View {
                         }
                     }
                 } else {
-                    VStack(spacing: AppTheme.spacingSM) {
-                        HStack(spacing: AppTheme.spacingSM) {
+                    VStack(spacing: AppTheme.spacing8) {
+                        HStack(spacing: AppTheme.spacing8) {
                             Image(systemName: "lock.fill")
                                 .foregroundColor(.gray)
                             Text("Locked")
@@ -1333,7 +1333,7 @@ struct BadgeDetailView: View {
                             Divider()
                                 .padding(.vertical, 4)
                             
-                            VStack(alignment: .leading, spacing: AppTheme.spacingSM) {
+                            VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                                 Text("How to Earn:")
                                     .font(.caption)
                                     .fontWeight(.semibold)

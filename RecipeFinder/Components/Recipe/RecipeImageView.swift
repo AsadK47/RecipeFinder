@@ -35,7 +35,7 @@ struct RecipeImageView: View {
                 ZStack {
                     Color.gray.opacity(0.2)
                     
-                    VStack(spacing: AppTheme.spacingSM) {
+                    VStack(spacing: AppTheme.spacing8) {
                         Image(systemName: "photo")
                             .font(.system(size: 40))
                             .foregroundColor(.gray.opacity(0.5))
