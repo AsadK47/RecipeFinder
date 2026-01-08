@@ -242,10 +242,10 @@ struct MealPlanningView: View {
                         .background {
                             if viewMode == mode {
                                 Capsule()
-                                    .fill(colorScheme == .dark ? Color.white.opacity(0.2) : Color.black.opacity(0.15))
+                                    .fill(colorScheme == .dark ? Color.white.opacity(AppTheme.overlayLightOpacity) : Color.black.opacity(0.15))
                             } else {
                                 Capsule()
-                                    .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.black.opacity(0.3), lineWidth: 1)
+                                    .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.black.opacity(AppTheme.shadowDarkOpacity), lineWidth: 1)
                             }
                         }
                     }
@@ -267,7 +267,7 @@ struct MealPlanningView: View {
                         .font(.system(size: 18, weight: .semibold))
                         .adaptiveForegroundColor()
                         .frame(width: 40, height: 40)
-                        .background(Circle().fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1)))
+                        .background(Circle().fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity)))
                 }
                 
                 Spacer()
@@ -283,7 +283,7 @@ struct MealPlanningView: View {
                         .font(.system(size: 18, weight: .semibold))
                         .adaptiveForegroundColor()
                         .frame(width: 40, height: 40)
-                        .background(Circle().fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1)))
+                        .background(Circle().fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity)))
                 }
             }
             .padding(.horizontal, 4)
@@ -326,7 +326,7 @@ struct MealPlanningView: View {
                         .font(.system(size: 18, weight: .semibold))
                         .adaptiveForegroundColor()
                         .frame(width: 40, height: 40)
-                        .background(Circle().fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1)))
+                        .background(Circle().fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity)))
                 }
                 
                 Spacer()
@@ -354,7 +354,7 @@ struct MealPlanningView: View {
                         .font(.system(size: 18, weight: .semibold))
                         .adaptiveForegroundColor()
                         .frame(width: 40, height: 40)
-                        .background(Circle().fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1)))
+                        .background(Circle().fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity)))
                 }
             }
             .padding(.horizontal, 4)
@@ -535,7 +535,7 @@ struct MealPlanningView: View {
                     .padding(.vertical, 14)
                     .background(
                         Capsule()
-                            .fill(colorScheme == .dark ? Color.white.opacity(0.2) : Color.black.opacity(0.15))
+                            .fill(colorScheme == .dark ? Color.white.opacity(AppTheme.overlayLightOpacity) : Color.black.opacity(0.15))
                     )
                 }
             }
@@ -583,7 +583,7 @@ struct MealPlanningView: View {
                 .padding(.vertical, 14)
                 .background(
                     Capsule()
-                        .fill(Color.white.opacity(0.2))
+                        .fill(Color.white.opacity(AppTheme.overlayLightOpacity))
                 )
             }
         }
@@ -768,7 +768,7 @@ struct CalendarDayView: View {
                     .shadow(color: Color.white.opacity(0.3), radius: 8, x: 0, y: 4)
             } else if isToday {
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(colorScheme == .dark ? Color.white.opacity(0.5) : Color.black.opacity(0.5), lineWidth: 2)
+                    .stroke(colorScheme == .dark ? Color.white.opacity(AppTheme.glassLightOpacity) : Color.black.opacity(0.5), lineWidth: 2)
             }
         }
         .scaleEffect(isSelected ? 1.05 : 1.0)
@@ -857,7 +857,7 @@ struct MealTimeCard: View {
         }
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .stroke(recipe != nil ? Color.green.opacity(0.3) : Color.white.opacity(0.1), lineWidth: 1)
+                .stroke(recipe != nil ? AppTheme.success.opacity(0.3) : Color.white.opacity(0.1), lineWidth: 1)
         )
     }
 }
@@ -927,8 +927,8 @@ struct MealTimeSelectorSheet: View {
                                         ZStack {
                                             Circle()
                                                 .fill(selectedMealTimes.contains(mealTime) 
-                                                      ? Color.green.opacity(0.2) 
-                                                      : (colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1)))
+                                                      ? AppTheme.success.opacity(0.2) 
+                                                      : (colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity)))
                                                 .frame(width: 50, height: 50)
                                             
                                             Image(systemName: mealTime.icon)
@@ -975,8 +975,8 @@ struct MealTimeSelectorSheet: View {
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 16)
                                             .stroke(selectedMealTimes.contains(mealTime) 
-                                                    ? Color.green.opacity(0.5) 
-                                                    : (colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1)), 
+                                                    ? AppTheme.success.opacity(0.5) 
+                                                    : (colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity)), 
                                                     lineWidth: selectedMealTimes.contains(mealTime) ? 2 : 1)
                                     )
                                 }
@@ -1215,7 +1215,7 @@ struct WeekDayRow: View {
                 ForEach(["☀️", "🍽️", "🌙"], id: \.self) { icon in
                     Button(action: onAddMeal) {
                         Circle()
-                            .fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1))
+                            .fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity))
                             .frame(width: 32, height: 32)
                             .overlay {
                                 Text(icon)
@@ -1237,15 +1237,15 @@ struct WeekDayRow: View {
         .background {
             if cardStyle == .solid {
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(isToday ? (colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1)) : (colorScheme == .dark ? Color.white.opacity(0.05) : Color.black.opacity(0.05)))
+                    .fill(isToday ? (colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity)) : (colorScheme == .dark ? Color.white.opacity(0.05) : Color.black.opacity(0.05)))
             } else {
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(isToday ? (colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1)) : Color.clear)
+                    .fill(isToday ? (colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity)) : Color.clear)
             }
         }
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(isToday ? Color.green.opacity(0.5) : (colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1)), lineWidth: isToday ? 2 : 1)
+                .stroke(isToday ? AppTheme.success.opacity(0.5) : (colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity)), lineWidth: isToday ? 2 : 1)
         )
     }
 }
@@ -1461,7 +1461,7 @@ struct NutritionTipCard: View {
         }
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.green.opacity(0.2), lineWidth: 1)
+                .stroke(AppTheme.success.opacity(0.2), lineWidth: 1)
         )
     }
 }

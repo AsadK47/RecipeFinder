@@ -1,15 +1,6 @@
 import Foundation
 import UIKit
 
-// Debug Logging
-/// Prints debug messages only in DEBUG builds
-func debugLog(_ message: String) {
-    #if DEBUG
-    // swiftlint:disable:next no_print
-    print(message)
-    #endif
-}
-
 // Array Safe Subscript
 extension Array {
     /// Safely access array elements by index

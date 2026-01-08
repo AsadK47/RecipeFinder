@@ -269,7 +269,7 @@ struct EmojiSelectorView: View {
                 .background {
                     if cardStyle == .solid {
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.95))
+                            .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightHighOpacity))
                     } else {
                         RoundedRectangle(cornerRadius: 12)
                             .fill(.ultraThinMaterial)
@@ -336,7 +336,7 @@ struct DietaryFilterChip: View {
             .background(
                 isSelected ?
                 Color.green.opacity(0.8) :
-                Color.white.opacity(0.2)
+                Color.white.opacity(AppTheme.overlayLightOpacity)
             )
             .foregroundColor(.white)
             .cornerRadius(16)
@@ -503,7 +503,7 @@ struct DietaryTagsDisplayView: View {
                             }
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
-                            .background(Color.white.opacity(0.2))
+                            .background(Color.white.opacity(AppTheme.overlayLightOpacity))
                             .foregroundColor(.white)
                             .cornerRadius(12)
                         }
@@ -551,7 +551,7 @@ private func cardBackground(cardStyle: CardStyle, colorScheme: ColorScheme) -> s
     Group {
         if cardStyle == .solid {
             RoundedRectangle(cornerRadius: 12)
-                .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
+                .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(AppTheme.cardLightOpacity))
         } else {
             RoundedRectangle(cornerRadius: 12)
                 .fill(.ultraThinMaterial)

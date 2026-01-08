@@ -34,7 +34,7 @@ struct ModernSearchBar: View {
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
+                        .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(AppTheme.cardLightOpacity))
                 } else {
                     // Pure frosted glass - exactly like Settings
                     RoundedRectangle(cornerRadius: 12)

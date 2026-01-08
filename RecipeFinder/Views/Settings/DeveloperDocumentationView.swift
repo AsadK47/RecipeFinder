@@ -145,7 +145,7 @@ struct DeveloperDocumentationView: View {
                                     .fill(Color.white.opacity(0.15))
                                     .overlay(
                                         Capsule()
-                                            .stroke(Color.white.opacity(0.2), lineWidth: 0.5)
+                                            .stroke(Color.white.opacity(AppTheme.overlayLightOpacity), lineWidth: 0.5)
                                     )
                             )
                     }
@@ -189,7 +189,7 @@ struct DocSection: View {
                     
                     if index < content.count - 1 {
                         Divider()
-                            .background(Color.white.opacity(0.1))
+                            .background(Color.white.opacity(AppTheme.dividerOpacity))
                     }
                 }
             }
@@ -197,7 +197,7 @@ struct DocSection: View {
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 20)
-                        .fill(colorScheme == .dark ? Color(white: 0.15).opacity(0.6) : Color.white.opacity(0.85))
+                        .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity).opacity(0.6) : Color.white.opacity(0.85))
                 } else {
                     RoundedRectangle(cornerRadius: 20)
                         .fill(.ultraThinMaterial.opacity(0.85))

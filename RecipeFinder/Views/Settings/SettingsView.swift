@@ -267,7 +267,7 @@ struct SettingsCard<Content: View>: View {
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+                        .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
                 } else {
                     RoundedRectangle(cornerRadius: 16)
                         .fill(.ultraThinMaterial)
@@ -427,7 +427,7 @@ struct AppearanceAndThemeSettingsView: View {
                                             Spacer()
                                         }
                                         .padding(12)
-                                        .background(selectedTheme == theme ? AppTheme.accentColor(for: theme).opacity(0.15) : Color.gray.opacity(0.05))
+                                        .background(selectedTheme == theme ? AppTheme.accentColor(for: theme).opacity(0.15) : AppTheme.secondaryText.opacity(0.05))
                                         .cornerRadius(12)
                                     }
                                     .buttonStyle(PlainButtonStyle())
@@ -704,7 +704,7 @@ struct ThemeSettingsView: View {
                                         }
                                     }
                                     .padding(16)
-                                    .background(selectedTheme == theme ? Color.white.opacity(0.2) : Color.clear)
+                                    .background(selectedTheme == theme ? Color.white.opacity(AppTheme.overlayLightOpacity) : Color.clear)
                                     .cornerRadius(12)
                                 }
                                 .buttonStyle(PlainButtonStyle())
@@ -1111,7 +1111,7 @@ struct TimerSettingsView: View {
                                         .padding(12)
                                         .background(
                                             RoundedRectangle(cornerRadius: 10)
-                                                .fill(defaultTimerDuration == seconds ? Color.gray.opacity(0.2) : Color.clear)
+                                                .fill(defaultTimerDuration == seconds ? AppTheme.secondaryText.opacity(0.2) : Color.clear)
                                         )
                                     }
                                     .buttonStyle(PlainButtonStyle())
@@ -1157,7 +1157,7 @@ struct TimerSettingsView: View {
                                         .padding(12)
                                         .background(
                                             RoundedRectangle(cornerRadius: 10)
-                                                .fill(timerSound == sound ? Color.gray.opacity(0.2) : Color.clear)
+                                                .fill(timerSound == sound ? AppTheme.secondaryText.opacity(0.2) : Color.clear)
                                         )
                                     }
                                     .buttonStyle(PlainButtonStyle())
@@ -1321,7 +1321,7 @@ struct UnitsSettingsView: View {
                                         }
                                     }
                                     .padding(16)
-                                    .background(measurementSystem == system ? Color.gray.opacity(0.2) : Color.clear)
+                                    .background(measurementSystem == system ? AppTheme.secondaryText.opacity(0.2) : Color.clear)
                                     .cornerRadius(12)
                                 }
                                 .buttonStyle(PlainButtonStyle())

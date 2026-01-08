@@ -272,7 +272,7 @@ struct RecipeWizardView: View {
                     TextField("Recipe Name", text: $recipeName)
                         .font(.title2)
                         .padding()
-                        .background(Color.white.opacity(0.1))
+                        .background(Color.white.opacity(AppTheme.dividerOpacity))
                         .cornerRadius(12)
                 }
                 .padding()
@@ -759,7 +759,7 @@ struct RecipeWizardView: View {
                 content()
                     .background(
                         RoundedRectangle(cornerRadius: 16)
-                            .fill(colorScheme == .dark ? Color(white: 0.15) : .white)
+                            .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : .white)
                     )
             } else {
                 content()
@@ -815,7 +815,7 @@ struct RecipeWizardView: View {
                 .fontWeight(.semibold)
                 .frame(maxWidth: .infinity)
                 .padding()
-                .background(canProceed ? Color.white : Color.white.opacity(0.5))
+                .background(canProceed ? Color.white : Color.white.opacity(AppTheme.glassLightOpacity))
                 .foregroundColor(canProceed ? AppTheme.accentColor(for: appTheme) : .white)
                 .cornerRadius(12)
             }

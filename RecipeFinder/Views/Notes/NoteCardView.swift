@@ -70,7 +70,7 @@ struct NoteCardView: View {
                                 .padding(.vertical, 4)
                                 .background(
                                     Capsule()
-                                        .fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1))
+                                        .fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity))
                                 )
                         }
                     }
@@ -82,7 +82,7 @@ struct NoteCardView: View {
             Group {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(colorScheme == .dark ? Color(white: 0.15) : .white)
+                        .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : .white)
                         .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
                 } else {
                     RoundedRectangle(cornerRadius: 16)
@@ -123,6 +123,6 @@ struct NoteCardView: View {
         ))
     }
     .padding()
-    .background(Color.gray.opacity(0.2))
+    .background(AppTheme.secondaryText.opacity(0.2))
     .environment(\.appTheme, .teal)
 }

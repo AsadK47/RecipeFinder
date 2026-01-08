@@ -132,6 +132,11 @@ enum AppTheme {
     static let secondaryText = Color(red: 142/255, green: 142/255, blue: 147/255) // Softer gray
     static let tertiaryText = Color(red: 99/255, green: 99/255, blue: 102/255) // Even softer
     
+    // Status colors
+    static let success = Color.green
+    static let warning = Color.orange
+    static let error = Color.red
+    
     // Dividers and borders (subtle, not harsh)
     static let dividerColor = Color(red: 60/255, green: 60/255, blue: 67/255).opacity(0.36)
     static let borderColor = Color(red: 72/255, green: 72/255, blue: 74/255)
@@ -139,6 +144,18 @@ enum AppTheme {
     // Shadows and overlays
     static let shadowColor = Color.black.opacity(0.08) // Subtle shadow
     static let overlayColor = Color.black.opacity(0.4) // For modals/sheets
+    
+    // MARK: - Design Tokens (Opacity & Dimensions)
+    
+    // Opacity values for consistent transparency
+    static let cardDarkOpacity: Double = 0.15 // Dark mode card backgrounds
+    static let cardLightOpacity: Double = 0.9 // Light mode card backgrounds
+    static let cardLightHighOpacity: Double = 0.95 // Light mode elevated cards
+    static let glassLightOpacity: Double = 0.5 // Glassmorphism light backgrounds
+    static let dividerOpacity: Double = 0.1 // Divider/border transparency
+    static let overlayLightOpacity: Double = 0.2 // Light overlay backgrounds
+    static let shadowLightOpacity: Double = 0.1 // Light mode shadows
+    static let shadowDarkOpacity: Double = 0.3 // Dark mode shadows
     
     // MARK: - Dynamic Color Helpers (Starling-Style)
     

@@ -240,7 +240,7 @@ struct CookTimerView: View {
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 16)
-                        .fill((colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9)).opacity(isDisabled ? 0.5 : 1.0))
+                        .fill((colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity)).opacity(isDisabled ? 0.5 : 1.0))
                 } else {
                     RoundedRectangle(cornerRadius: 16)
                         .fill(.ultraThinMaterial.opacity(isDisabled ? 0.5 : 1.0))
@@ -273,7 +273,7 @@ struct CookTimerView: View {
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 16)
-                        .fill((colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9)).opacity(isDisabled ? 0.5 : 1.0))
+                        .fill((colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity)).opacity(isDisabled ? 0.5 : 1.0))
                 } else {
                     RoundedRectangle(cornerRadius: 16)
                         .fill(.ultraThinMaterial.opacity(isDisabled ? 0.5 : 1.0))
@@ -304,7 +304,7 @@ struct CookTimerView: View {
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 16)
-                        .fill((colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9)).opacity(isDisabled ? 0.5 : 1.0))
+                        .fill((colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity)).opacity(isDisabled ? 0.5 : 1.0))
                 } else {
                     RoundedRectangle(cornerRadius: 16)
                         .fill(.ultraThinMaterial.opacity(isDisabled ? 0.5 : 1.0))
@@ -731,7 +731,7 @@ struct TimerCard: View {
             // Circular Progress
             ZStack {
                 Circle()
-                    .stroke(Color.gray.opacity(0.3), lineWidth: 8)
+                    .stroke(AppTheme.secondaryText.opacity(0.3), lineWidth: 8)
                 
                 Circle()
                     .trim(from: 0, to: progress)
@@ -836,12 +836,12 @@ struct CompletedTimerBannerView: View {
         .padding(16)
         .background {
             RoundedRectangle(cornerRadius: 16)
-                .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white)
+                .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white)
                 .shadow(color: .black.opacity(0.2), radius: 10, y: 5)
         }
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(Color.green.opacity(0.3), lineWidth: 2)
+                .strokeBorder(AppTheme.success.opacity(0.3), lineWidth: 2)
         )
     }
 }

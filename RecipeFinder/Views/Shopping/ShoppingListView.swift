@@ -316,7 +316,7 @@ struct ShoppingListView: View {
                 .background {
                     if cardStyle == .solid {
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+                            .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
                     } else {
                         RoundedRectangle(cornerRadius: 12)
                             .fill(.ultraThinMaterial)
@@ -463,7 +463,7 @@ struct ShoppingListView: View {
                 .background {
                     if cardStyle == .solid {
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+                            .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
                     } else {
                         RoundedRectangle(cornerRadius: 12)
                             .fill(.ultraThinMaterial)
@@ -532,7 +532,7 @@ struct ShoppingListView: View {
                 .background {
                     if cardStyle == .solid {
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+                            .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
                     } else {
                         RoundedRectangle(cornerRadius: 12)
                             .fill(.ultraThinMaterial)
@@ -798,7 +798,7 @@ struct HelpSheetView: View {
                         .background {
                             if cardStyle == .solid {
                                 RoundedRectangle(cornerRadius: 20)
-                                    .fill(colorScheme == .dark ? Color(white: 0.15).opacity(0.6) : Color.white.opacity(0.85))
+                                    .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity).opacity(0.6) : Color.white.opacity(0.85))
                             } else {
                                 RoundedRectangle(cornerRadius: 20)
                                     .fill(.ultraThinMaterial.opacity(0.85))
@@ -827,7 +827,7 @@ struct HelpSheetView: View {
                                         .fill(Color.white.opacity(0.15))
                                         .overlay(
                                             Capsule()
-                                                .stroke(Color.white.opacity(0.2), lineWidth: 0.5)
+                                                .stroke(Color.white.opacity(AppTheme.overlayLightOpacity), lineWidth: 0.5)
                                         )
                                 )
                         }

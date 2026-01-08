@@ -73,7 +73,7 @@ struct CookingTipDetailView: View {
                         .background {
                             if cardStyle == .solid {
                                 RoundedRectangle(cornerRadius: 20)
-                                    .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+                                    .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
                             } else {
                                 RoundedRectangle(cornerRadius: 20)
                                     .fill(.ultraThinMaterial)
@@ -145,7 +145,7 @@ struct CookingTipDetailView: View {
         .background {
             if cardStyle == .solid {
                 RoundedRectangle(cornerRadius: 20)
-                    .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+                    .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
             } else {
                 RoundedRectangle(cornerRadius: 20)
                     .fill(.ultraThinMaterial)

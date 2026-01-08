@@ -108,7 +108,7 @@ struct AuthenticationView: View {
                         .frame(height: 50)
                         .background(
                             RoundedRectangle(cornerRadius: 12)
-                                .fill(Color.white.opacity(0.2))
+                                .fill(Color.white.opacity(AppTheme.overlayLightOpacity))
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 12)
                                         .stroke(Color.white.opacity(0.3), lineWidth: 1)

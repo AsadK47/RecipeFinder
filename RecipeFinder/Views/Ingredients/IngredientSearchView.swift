@@ -538,7 +538,7 @@ struct QuickMatchRecipeCard: View {
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
     private var borderColor: Color {
-        colorScheme == .dark ? Color.white.opacity(0.15) : Color.gray.opacity(0.15)
+        colorScheme == .dark ? Color.white.opacity(0.15) : AppTheme.secondaryText.opacity(0.15)
     }
     
     private var shadowOpacity: Double {

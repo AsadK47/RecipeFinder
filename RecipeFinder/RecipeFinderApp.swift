@@ -31,7 +31,7 @@ struct RecipeFinderApp: App {
         // Request asynchronously without blocking main thread
         Task {
             NotificationManager.shared.requestPermission { granted in
-                debugLog(granted ? "✅ User granted notification permissions" : "⚠️ User denied notification permissions")
+                logger.info("\(granted ? "✅" : "⚠️") User \(granted ? "granted" : "denied") notification permissions")
             }
         }
     }

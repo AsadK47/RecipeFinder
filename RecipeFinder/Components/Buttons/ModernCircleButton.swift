@@ -18,7 +18,7 @@ struct ModernCircleButton: View {
                 .background {
                     if cardStyle == .solid {
                         Circle()
-                            .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
+                            .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(AppTheme.cardLightOpacity))
                     } else {
                         Circle()
                             .fill(.ultraThinMaterial)

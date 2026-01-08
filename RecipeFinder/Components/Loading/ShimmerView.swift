@@ -114,7 +114,7 @@ struct RecipeCardSkeleton: View {
         }
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+                .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
         )
     }
 }
@@ -149,7 +149,7 @@ struct RecipeDetailSkeleton: View {
                     .padding()
                     .background(
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+                            .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
                     )
                 }
             }
@@ -169,7 +169,7 @@ struct RecipeDetailSkeleton: View {
                 .padding(16)
                 .background(
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+                        .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
                 )
                 .padding(.horizontal, 20)
             }
@@ -199,7 +199,7 @@ struct ListItemSkeleton: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+                .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
         )
     }
 }

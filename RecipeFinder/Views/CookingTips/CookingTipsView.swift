@@ -219,7 +219,7 @@ struct CookingTipsView: View {
         .background {
             if cardStyle == .solid {
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+                    .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
             } else {
                 RoundedRectangle(cornerRadius: 12)
                     .fill(.ultraThinMaterial)
@@ -329,7 +329,7 @@ struct CookingTipsView: View {
                                     .padding(.vertical, 4)
                                     .background(
                                         Capsule()
-                                            .fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1))
+                                            .fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity))
                                     )
                                 
                                 Image(systemName: expandedCategories.contains(category.rawValue) ? "chevron.up" : "chevron.down")
@@ -493,7 +493,7 @@ struct CompactTipRow: View {
             .padding(.vertical, 8)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.5))
+                    .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.glassLightOpacity))
             )
         }
         .buttonStyle(PlainButtonStyle())
@@ -610,7 +610,7 @@ struct CookingTipCard: View {
                 
                 // Divider
                 Rectangle()
-                    .fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1))
+                    .fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity))
                     .frame(height: 1)
                 
                 // Preview of content
@@ -662,8 +662,8 @@ struct CookingTipCard: View {
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 20)
-                        .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
-                        .shadow(color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.1), radius: 8, x: 0, y: 4)
+                        .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
+                        .shadow(color: Color.black.opacity(colorScheme == .dark ? AppTheme.shadowDarkOpacity : AppTheme.shadowLightOpacity), radius: 8, x: 0, y: 4)
                 } else {
                     RoundedRectangle(cornerRadius: 20)
                         .fill(.ultraThinMaterial)
@@ -883,7 +883,7 @@ struct FiltersSheet: View {
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+                        .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
                 } else {
                     RoundedRectangle(cornerRadius: 16)
                         .fill(.ultraThinMaterial)

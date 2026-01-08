@@ -637,12 +637,4 @@ extension PersonNameComponents {
     }
 }
 
-// MARK: - Debug Logging
 
-extension AuthenticationManager {
-    private func debugLog(_ message: String) {
-        #if DEBUG
-        logger.info("[AuthenticationManager] \(message)")
-        #endif
-    }
-}

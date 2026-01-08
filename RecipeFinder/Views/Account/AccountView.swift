@@ -119,7 +119,7 @@ struct AccountView: View {
                                     .fontWeight(.medium)
                             }
                             .padding()
-                            .background(Color.green.opacity(0.1))
+                            .background(AppTheme.success.opacity(0.1))
                             .cornerRadius(10)
                             .transition(.scale.combined(with: .opacity))
                         }
@@ -216,7 +216,7 @@ struct AccountView: View {
                     
                     ZStack {
                         Circle()
-                            .fill(colorScheme == .dark ? Color(white: 0.15) : .white)
+                            .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : .white)
                             .frame(width: 28, height: 28)
                         
                         Image(systemName: "camera.fill")
@@ -307,7 +307,7 @@ struct AccountView: View {
         .background {
             if cardStyle == .solid {
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+                    .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
             } else {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(.ultraThinMaterial)
@@ -350,7 +350,7 @@ struct AccountView: View {
         .background {
             if cardStyle == .solid {
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+                    .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
             } else {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(.ultraThinMaterial)
@@ -387,7 +387,7 @@ struct AccountView: View {
                     
                     ZStack {
                         Circle()
-                            .fill(colorScheme == .dark ? Color(white: 0.15) : .white)
+                            .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : .white)
                             .frame(width: 32, height: 32)
                         
                         Image(systemName: "pencil")
@@ -429,7 +429,7 @@ struct AccountView: View {
         .background {
             if cardStyle == .solid {
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+                    .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
             } else {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(.ultraThinMaterial)
@@ -461,7 +461,7 @@ struct AccountView: View {
                         .background {
                             if cardStyle == .solid {
                                 RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color.black.opacity(0.3))
+                                    .fill(Color.black.opacity(AppTheme.shadowDarkOpacity))
                             } else {
                                 RoundedRectangle(cornerRadius: 12)
                                     .fill(Color.black.opacity(0.4))
@@ -500,7 +500,7 @@ struct AccountView: View {
                     .background {
                         if cardStyle == .solid {
                             RoundedRectangle(cornerRadius: 12)
-                                .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.8))
+                                .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(0.8))
                         } else {
                             RoundedRectangle(cornerRadius: 12)
                                 .fill(.ultraThinMaterial)
@@ -527,7 +527,7 @@ struct AccountView: View {
                     .background {
                         if cardStyle == .solid {
                             RoundedRectangle(cornerRadius: 12)
-                                .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white)
+                                .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white)
                         } else {
                             RoundedRectangle(cornerRadius: 12)
                                 .fill(.ultraThinMaterial)
@@ -548,7 +548,7 @@ struct AccountView: View {
                         .background {
                             if cardStyle == .solid {
                                 RoundedRectangle(cornerRadius: 12)
-                                    .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white)
+                                    .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white)
                             } else {
                                 RoundedRectangle(cornerRadius: 12)
                                     .fill(.ultraThinMaterial)
@@ -688,7 +688,7 @@ struct AccountView: View {
         .background {
             if cardStyle == .solid {
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+                    .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
             } else {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(.ultraThinMaterial)
@@ -1180,7 +1180,7 @@ struct BadgeCard: View {
         VStack(spacing: 8) {
             ZStack {
                 Circle()
-                    .fill(badge.isUnlocked ? badgeColor.opacity(0.2) : Color.gray.opacity(0.1))
+                    .fill(badge.isUnlocked ? badgeColor.opacity(0.2) : AppTheme.secondaryText.opacity(0.1))
                     .frame(width: 60, height: 60)
                 
                 Image(systemName: badge.icon)
@@ -1209,7 +1209,7 @@ struct BadgeCard: View {
         .background {
             if cardStyle == .solid {
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(colorScheme == .dark ? Color(white: 0.1) : Color.white.opacity(0.5))
+                    .fill(colorScheme == .dark ? Color(white: 0.1) : Color.white.opacity(AppTheme.glassLightOpacity))
             } else {
                 RoundedRectangle(cornerRadius: 12)
                     .fill(.ultraThinMaterial.opacity(0.5))
@@ -1218,7 +1218,7 @@ struct BadgeCard: View {
         .overlay {
             if !badge.isUnlocked {
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.black.opacity(0.3))
+                    .fill(Color.black.opacity(AppTheme.shadowDarkOpacity))
             }
         }
     }
@@ -1271,7 +1271,7 @@ struct BadgeDetailView: View {
                 // Badge Icon
                 ZStack {
                     Circle()
-                        .fill(badge.isUnlocked ? badgeColor.opacity(0.2) : Color.gray.opacity(0.1))
+                        .fill(badge.isUnlocked ? badgeColor.opacity(0.2) : AppTheme.secondaryText.opacity(0.1))
                         .frame(width: 120, height: 120)
                     
                     Image(systemName: badge.icon)
@@ -1312,7 +1312,7 @@ struct BadgeDetailView: View {
                     .background {
                         if cardStyle == .solid {
                             RoundedRectangle(cornerRadius: 12)
-                                .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+                                .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
                         } else {
                             RoundedRectangle(cornerRadius: 12)
                                 .fill(.ultraThinMaterial)
@@ -1352,7 +1352,7 @@ struct BadgeDetailView: View {
                     .background {
                         if cardStyle == .solid {
                             RoundedRectangle(cornerRadius: 12)
-                                .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+                                .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
                         } else {
                             RoundedRectangle(cornerRadius: 12)
                                 .fill(.ultraThinMaterial)

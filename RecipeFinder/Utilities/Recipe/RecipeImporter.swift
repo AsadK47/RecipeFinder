@@ -30,12 +30,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
         let cuisine: String?
     }
     
-    private func debugLog(_ message: String) {
-        #if DEBUG
-        logger.info("[RecipeImporter] \(message)")
-        #endif
-    }
-    
     // MARK: - Main Import Function with RecipeParser
     
     /// Import recipe from URL using intelligent RecipeParser

@@ -253,7 +253,7 @@ struct NoteEditorView: View {
                 content()
                     .background(
                         RoundedRectangle(cornerRadius: 16)
-                            .fill(colorScheme == .dark ? Color(white: 0.15) : .white)
+                            .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : .white)
                     )
             } else {
                 content()

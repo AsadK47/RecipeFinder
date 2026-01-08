@@ -331,7 +331,7 @@ struct RecipeSearchView: View {
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+                        .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
                 } else {
                     RoundedRectangle(cornerRadius: 12)
                         .fill(.ultraThinMaterial)
@@ -627,7 +627,7 @@ struct RecipeSearchView: View {
                             Group {
                                 if cardStyle == .solid {
                                     Capsule()
-                                        .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+                                        .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
                                 } else {
                                     Capsule()
                                         .fill(.ultraThinMaterial)

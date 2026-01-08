@@ -26,7 +26,7 @@ struct PasswordVerificationSheet: View {
                     // Lock Icon
                     ZStack {
                         Circle()
-                            .fill(Color.white.opacity(0.1))
+                            .fill(Color.white.opacity(AppTheme.dividerOpacity))
                             .frame(width: 100, height: 100)
                         
                         Image(systemName: "lock.shield.fill")

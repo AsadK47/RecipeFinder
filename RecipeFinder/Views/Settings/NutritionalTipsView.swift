@@ -190,7 +190,7 @@ struct NutritionalTipsView: View {
         Group {
             if cardStyle == .solid {
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
+                    .fill(colorScheme == .dark ? Color(white: 0.2) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
             } else {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(.ultraThinMaterial)
@@ -254,7 +254,7 @@ struct NutritionalTipCard: View {
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9))
+                        .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
                 } else {
                     RoundedRectangle(cornerRadius: 12)
                         .fill(.ultraThinMaterial)
@@ -494,7 +494,7 @@ struct TipDetailView: View {
         Group {
             if cardStyle == .solid {
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(0.9))
+                    .fill(colorScheme == .dark ? Color(white: 0.2) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
             } else {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(.ultraThinMaterial)
