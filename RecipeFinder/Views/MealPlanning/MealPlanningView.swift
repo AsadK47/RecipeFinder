@@ -176,7 +176,7 @@ struct MealPlanningView: View {
                 // Title
                 Text("Meal Planner")
                     .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .adaptiveForegroundColor()
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
                 
@@ -210,7 +210,7 @@ struct MealPlanningView: View {
                 } label: {
                     Image(systemName: "line.3.horizontal")
                         .font(.system(size: 20))
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .adaptiveForegroundColor()
                         .frame(width: 44, height: 44)
                 }
             }
@@ -236,7 +236,7 @@ struct MealPlanningView: View {
                             Text(mode == .calendar ? "Calendar" : "Weekly")
                                 .font(.system(size: 14, weight: .semibold))
                         }
-                        .foregroundColor(viewMode == mode ? (colorScheme == .dark ? .white : .black) : (colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6)))
+                        .foregroundColor(viewMode == mode ? AppTheme.textColor(for: colorScheme) : AppTheme.textColor(for: colorScheme, opacity: 0.6))
                         .padding(.horizontal, 16)
                         .padding(.vertical, 10)
                         .background {
@@ -265,7 +265,7 @@ struct MealPlanningView: View {
                 Button(action: previousWeek) {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .adaptiveForegroundColor()
                         .frame(width: 40, height: 40)
                         .background(Circle().fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1)))
                 }
@@ -274,14 +274,14 @@ struct MealPlanningView: View {
                 
                 Text(weekRangeString)
                     .font(.system(size: 18, weight: .bold))
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .adaptiveForegroundColor()
                 
                 Spacer()
                 
                 Button(action: nextWeek) {
                     Image(systemName: "chevron.right")
                         .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .adaptiveForegroundColor()
                         .frame(width: 40, height: 40)
                         .background(Circle().fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1)))
                 }
@@ -324,7 +324,7 @@ struct MealPlanningView: View {
                 Button(action: previousMonth) {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .adaptiveForegroundColor()
                         .frame(width: 40, height: 40)
                         .background(Circle().fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1)))
                 }
@@ -338,7 +338,7 @@ struct MealPlanningView: View {
                     HStack(spacing: 6) {
                         Text(monthYearString)
                             .font(.system(size: 22, weight: .bold))
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                            .adaptiveForegroundColor()
                         
                         Image(systemName: "calendar.circle")
                             .font(.system(size: 16, weight: .semibold))
@@ -352,7 +352,7 @@ struct MealPlanningView: View {
                 Button(action: nextMonth) {
                     Image(systemName: "chevron.right")
                         .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .adaptiveForegroundColor()
                         .frame(width: 40, height: 40)
                         .background(Circle().fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1)))
                 }
@@ -419,7 +419,7 @@ struct MealPlanningView: View {
             HStack {
                 Text("Planned Meals")
                     .font(.system(size: 20, weight: .bold))
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .adaptiveForegroundColor()
                 
                 Spacer()
                 
@@ -496,7 +496,7 @@ struct MealPlanningView: View {
             HStack {
                 Text("Meals for")
                     .font(.system(size: 20, weight: .bold))
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .adaptiveForegroundColor()
                 
                 Spacer()
                 
@@ -509,16 +509,16 @@ struct MealPlanningView: View {
             VStack(spacing: 16) {
                 Image(systemName: "calendar.badge.plus")
                     .font(.system(size: 70))
-                    .foregroundColor(Color(colorScheme == .dark ? .white : .black).opacity(0.4))
+                    .adaptiveForegroundColor(opacity: 0.4)
                 
                 Text("No Meals Planned for This Day")
                     .font(.title2)
                     .fontWeight(.bold)
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .adaptiveForegroundColor()
                 
                 Text("Tap below to add meals for \(shortDateString)")
                     .font(.subheadline)
-                    .foregroundColor(Color(colorScheme == .dark ? .white : .black).opacity(0.7))
+                    .adaptiveForegroundColor(opacity: 0.7)
                     .multilineTextAlignment(.center)
                 
                 Button(action: {
@@ -530,7 +530,7 @@ struct MealPlanningView: View {
                         Text("Add Meal")
                             .fontWeight(.semibold)
                     }
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .adaptiveForegroundColor()
                     .padding(.horizontal, 24)
                     .padding(.vertical, 14)
                     .background(
@@ -808,7 +808,7 @@ struct MealTimeCard: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text(mealTime.rawValue)
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .adaptiveForegroundColor()
                 
                 HStack(spacing: 4) {
                     Image(systemName: "clock")
@@ -939,7 +939,7 @@ struct MealTimeSelectorSheet: View {
                                         VStack(alignment: .leading, spacing: 6) {
                                             Text(mealTime.rawValue)
                                                 .font(.system(size: 18, weight: .semibold))
-                                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                                .adaptiveForegroundColor()
                                             
                                             HStack(spacing: 4) {
                                                 Image(systemName: "clock")
@@ -1199,7 +1199,7 @@ struct WeekDayRow: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(dayString)
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .adaptiveForegroundColor()
                 
                 if isToday {
                     Text("Today")

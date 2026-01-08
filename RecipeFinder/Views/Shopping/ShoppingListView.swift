@@ -211,7 +211,7 @@ struct ShoppingListView: View {
                     
                     Text("Shopping List")
                         .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .adaptiveForegroundColor()
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
                     
@@ -267,7 +267,7 @@ struct ShoppingListView: View {
                     } label: {
                         Image(systemName: "line.3.horizontal")
                             .font(.system(size: 20))
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                            .adaptiveForegroundColor()
                             .frame(width: 44, height: 44)
                     }
                     .accessibilityLabel("Shopping list menu")
@@ -293,7 +293,7 @@ struct ShoppingListView: View {
                         TextField("", text: $searchText)
                             .focused($isSearchFocused)
                             .autocorrectionDisabled()
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                            .adaptiveForegroundColor()
                             .onSubmit(addItem)
                     }
                     
@@ -347,16 +347,16 @@ struct ShoppingListView: View {
             VStack(spacing: 16) {
                 Image(systemName: "cart.circle.fill")
                     .font(.system(size: 70))
-                    .foregroundColor(Color(colorScheme == .dark ? .white : .black).opacity(0.4))
+                    .adaptiveForegroundColor(opacity: 0.4)
                 
                 Text("Start Your Shopping List")
                     .font(.title2)
                     .fontWeight(.bold)
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .adaptiveForegroundColor()
                 
                 Text("Add items to begin shopping")
                     .font(.subheadline)
-                    .foregroundColor(Color(colorScheme == .dark ? .white : .black).opacity(0.7))
+                    .adaptiveForegroundColor(opacity: 0.7)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 32)
             }
@@ -441,7 +441,7 @@ struct ShoppingListView: View {
                     Text(category)
                         .font(.title3)
                         .fontWeight(.bold)
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .adaptiveForegroundColor()
                     
                     Text("(\(items.filter { !$0.isChecked }.count)/\(items.count))")
                         .font(.subheadline)
@@ -516,7 +516,7 @@ struct ShoppingListView: View {
                     
                     Text(ingredient)
                         .font(.body)
-                        .foregroundStyle(colorScheme == .dark ? .white : .black)
+                        .foregroundStyle(AppTheme.textColor(for: colorScheme))
                     
                     Spacer()
                     
@@ -638,7 +638,7 @@ struct ShoppingListItemRow: View {
                         Text("\(item.quantity)")
                             .font(.subheadline)
                             .fontWeight(.bold)
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                            .adaptiveForegroundColor()
                             .frame(minWidth: 20)
                         
                         // Increment button
@@ -739,7 +739,7 @@ struct ShoppingFeatureRow: View {
                 Text(title)
                     .font(.subheadline)
                     .fontWeight(.semibold)
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .adaptiveForegroundColor()
                 Text(description)
                     .font(.caption)
                     .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))

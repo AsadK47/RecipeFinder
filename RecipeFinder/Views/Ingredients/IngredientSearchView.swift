@@ -310,7 +310,7 @@ struct IngredientSearchView: View {
                     
                     Text(ingredient)
                         .font(.body)
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .adaptiveForegroundColor()
                     
                     Spacer()
                     
@@ -482,7 +482,7 @@ struct IngredientSearchView: View {
             if let ingredient = selectedIngredient {
                 HStack(spacing: 12) {
                     Image(systemName: "leaf.fill")
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .adaptiveForegroundColor()
                         .font(.title3)
                     
                     Text(ingredient)
@@ -626,7 +626,7 @@ struct QuickMatchRecipeCard: View {
         Text(recipe.name)
             .font(.headline)
             .fontWeight(.semibold)
-            .foregroundColor(colorScheme == .dark ? .white : .black)
+            .adaptiveForegroundColor()
             .lineLimit(2)
             .multilineTextAlignment(.leading)
             .fixedSize(horizontal: false, vertical: true)
@@ -729,7 +729,7 @@ struct CategoryCard: View {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(category)
                                 .font(.headline)
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .adaptiveForegroundColor()
                             
                             Text("\(ingredients.count) ingredient\(ingredients.count == 1 ? "" : "s")")
                                 .font(.caption)

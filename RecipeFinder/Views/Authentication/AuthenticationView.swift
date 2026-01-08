@@ -44,7 +44,7 @@ struct AuthenticationView: View {
                     
                     Text("RecipeFinder")
                         .font(.system(size: 42, weight: .bold, design: .rounded))
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .adaptiveForegroundColor()
                     
                     Text("Discover, Create, Cook")
                         .font(.system(size: 18, weight: .medium))
@@ -70,7 +70,7 @@ struct AuthenticationView: View {
                                     .fontWeight(.bold)
                                     .font(.system(size: 17))
                             }
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                            .adaptiveForegroundColor()
                             .frame(maxWidth: .infinity)
                             .frame(height: 56)
                             .background(
@@ -103,7 +103,7 @@ struct AuthenticationView: View {
                             Text("Sign In with Email")
                                 .fontWeight(.semibold)
                         }
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .adaptiveForegroundColor()
                         .frame(maxWidth: .infinity)
                         .frame(height: 50)
                         .background(
@@ -120,7 +120,7 @@ struct AuthenticationView: View {
                     Button(action: { showSignUp = true }) {
                         Text("Don't have an account? **Sign Up**")
                             .font(.subheadline)
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                            .adaptiveForegroundColor()
                     }
                     .padding(.top, 8)
                 }

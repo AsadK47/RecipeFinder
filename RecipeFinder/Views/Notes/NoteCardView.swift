@@ -46,7 +46,7 @@ struct NoteCardView: View {
                 Text(note.title)
                     .font(.headline)
                     .fontWeight(.semibold)
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .adaptiveForegroundColor()
                     .lineLimit(2)
             }
             

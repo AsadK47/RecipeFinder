@@ -65,7 +65,7 @@ struct CookingTipDetailView: View {
                             // Title
                             Text(tip.title)
                                 .font(.system(size: 28, weight: .bold))
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .adaptiveForegroundColor()
                                 .fixedSize(horizontal: false, vertical: true)
                         }
                         .padding(20)
@@ -179,7 +179,7 @@ struct CookingTipDetailView: View {
                             .font(.caption)
                     }
                     .fontWeight(.medium)
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .adaptiveForegroundColor()
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
                     .background {

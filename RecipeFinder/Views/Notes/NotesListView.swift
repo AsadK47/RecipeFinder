@@ -94,7 +94,7 @@ struct NotesListView: View {
                             
                             Text("Notes")
                                 .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .adaptiveForegroundColor()
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.7)
                             
@@ -349,7 +349,7 @@ struct FilterMenuView: View {
                             Toggle(isOn: $showPinnedOnly) {
                                 HStack {
                                     Image(systemName: "pin.fill")
-                                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        .adaptiveForegroundColor()
                                     Text("Show Pinned Only")
                                 }
                             }
@@ -429,13 +429,13 @@ struct FilterMenuView: View {
                 
                 Text(category.rawValue)
                     .font(.body)
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .adaptiveForegroundColor()
                 
                 Spacer()
                 
                 if selectedCategory == category {
                     Image(systemName: "checkmark")
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .adaptiveForegroundColor()
                         .fontWeight(.semibold)
                 }
                 
@@ -465,7 +465,7 @@ struct FilterMenuView: View {
                 Text("#\(tag)")
                 .font(.subheadline)
                 .fontWeight(.medium)
-                .foregroundColor(selectedTag == tag ? .white : (colorScheme == .dark ? .white : .black))
+                .foregroundColor(selectedTag == tag ? .white : AppTheme.textColor(for: colorScheme))
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
                 .background(

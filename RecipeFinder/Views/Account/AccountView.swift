@@ -242,10 +242,10 @@ struct AccountView: View {
             // Section Header
             HStack {
                 Image(systemName: "person.fill")
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .adaptiveForegroundColor()
                 Text("Personal Information")
                     .font(.headline)
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .adaptiveForegroundColor()
                 Spacer()
             }
             .padding(.horizontal, 20)
@@ -291,7 +291,7 @@ struct AccountView: View {
                             
                             Text(displayEmail)
                                 .font(.body)
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .adaptiveForegroundColor()
                         }
                         
                         Spacer()
@@ -318,10 +318,10 @@ struct AccountView: View {
         VStack(spacing: 12) {
             HStack {
                 Image(systemName: "fork.knife.circle.fill")
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .adaptiveForegroundColor()
                 Text("Chef Type")
                     .font(.headline)
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .adaptiveForegroundColor()
                 Spacer()
             }
             .padding(.horizontal, 20)
@@ -398,7 +398,7 @@ struct AccountView: View {
                     Text(displayName.isEmpty ? "Set Your Name" : displayName)
                         .font(.title2)
                         .fontWeight(.bold)
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .adaptiveForegroundColor()
                     
                     HStack(spacing: 8) {
                         Image(systemName: accountManager.chefType.icon)
@@ -642,10 +642,10 @@ struct AccountView: View {
             }) {
                 HStack {
                     Image(systemName: "trophy.fill")
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .adaptiveForegroundColor()
                     Text("Achievements")
                         .font(.headline)
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .adaptiveForegroundColor()
                     Spacer()
                     Image(systemName: badgesSectionExpanded ? "chevron.up" : "chevron.down")
                         .foregroundColor(.secondary)
@@ -1107,7 +1107,7 @@ struct ProfileTextField: View {
                     .foregroundColor(.secondary)
                 
                 TextField(placeholder, text: $text)
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .adaptiveForegroundColor()
                     .autocapitalization(.words)
             }
         }
@@ -1134,7 +1134,7 @@ struct ChefTypeCard: View {
                 Text(chefType.rawValue)
                     .font(.caption)
                     .fontWeight(isSelected ? .semibold : .regular)
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .adaptiveForegroundColor()
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 16)

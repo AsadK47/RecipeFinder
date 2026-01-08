@@ -48,7 +48,7 @@ struct ContentView: View {
                     .tag(4)
             }
             .environment(\.appTheme, themeBinding)
-            .tint(colorScheme == .dark ? .white : .black)
+            .tint(AppTheme.textColor(for: colorScheme))
             .onAppear {
                 configureTabBarAppearance()
             }

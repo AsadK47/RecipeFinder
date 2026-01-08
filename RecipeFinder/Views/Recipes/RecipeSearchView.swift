@@ -271,7 +271,7 @@ struct RecipeSearchView: View {
                 
                 Text("RecipeFinder")
                     .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .adaptiveForegroundColor()
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
                 
@@ -309,8 +309,8 @@ struct RecipeSearchView: View {
                         .focused($isSearchFocused)
                         .autocorrectionDisabled()
                         .font(.system(size: 16))
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
-                        .tint(colorScheme == .dark ? .white : .black)
+                        .adaptiveForegroundColor()
+                        .tint(AppTheme.textColor(for: colorScheme))
                 }
                 
                 if !searchText.isEmpty {

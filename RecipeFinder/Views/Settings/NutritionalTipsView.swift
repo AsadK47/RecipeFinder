@@ -44,7 +44,7 @@ struct NutritionalTipsView: View {
                             
                             Text("Nutrition Tips")
                                 .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .adaptiveForegroundColor()
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.7)
                             

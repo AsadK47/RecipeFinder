@@ -72,7 +72,7 @@ struct CookTimerView: View {
                                 
                                 Text("Cook Timers")
                                     .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    .adaptiveForegroundColor()
                                     .lineLimit(1)
                                     .minimumScaleFactor(0.7)
                                 
@@ -718,7 +718,7 @@ struct TimerCard: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(timer.name)
                         .font(.headline)
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .adaptiveForegroundColor()
                     
                     Text(timer.isPaused ? "Paused" : "Running")
                         .font(.caption)
@@ -744,7 +744,7 @@ struct TimerCard: View {
                 
                 Text(timeString)
                     .font(.system(size: 32, weight: .bold, design: .rounded))
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .adaptiveForegroundColor()
             }
             .frame(width: 140, height: 140)
             
@@ -816,7 +816,7 @@ struct CompletedTimerBannerView: View {
                 Text("Timer Complete!")
                     .font(.subheadline)
                     .fontWeight(.semibold)
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .adaptiveForegroundColor()
                 
                 Text(timerName)
                     .font(.caption)

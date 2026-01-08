@@ -35,12 +35,12 @@ struct LegalInformationView: View {
                             HStack {
                                 Image(systemName: "building.2.fill")
                                     .font(.title2)
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    .adaptiveForegroundColor()
                                 
                                 Text("Company Information")
                                     .font(.title3)
                                     .fontWeight(.semibold)
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    .adaptiveForegroundColor()
                             }
                             
                             Divider()
@@ -62,12 +62,12 @@ struct LegalInformationView: View {
                             HStack {
                                 Image(systemName: "envelope.fill")
                                     .font(.title2)
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    .adaptiveForegroundColor()
                                 
                                 Text("Contact Information")
                                     .font(.title3)
                                     .fontWeight(.semibold)
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    .adaptiveForegroundColor()
                             }
                             
                             Divider()
@@ -80,7 +80,7 @@ struct LegalInformationView: View {
                             }) {
                                 HStack(spacing: 12) {
                                     Image(systemName: "envelope.circle.fill")
-                                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        .adaptiveForegroundColor()
                                         .font(.title3)
                                     
                                     VStack(alignment: .leading, spacing: 4) {
@@ -89,7 +89,7 @@ struct LegalInformationView: View {
                                             .foregroundColor(.secondary)
                                         Text("recipefinderlimited@icloud.com")
                                             .font(.subheadline)
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                            .adaptiveForegroundColor()
                                     }
                                     
                                     Spacer()
@@ -111,7 +111,7 @@ struct LegalInformationView: View {
                             }) {
                                 HStack(spacing: 12) {
                                     Image(systemName: "globe")
-                                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        .adaptiveForegroundColor()
                                         .font(.title3)
                                     
                                     VStack(alignment: .leading, spacing: 4) {
@@ -120,7 +120,7 @@ struct LegalInformationView: View {
                                             .foregroundColor(.secondary)
                                         Text("recipefinder.uk")
                                             .font(.subheadline)
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                            .adaptiveForegroundColor()
                                     }
                                     
                                     Spacer()
@@ -147,7 +147,7 @@ struct LegalInformationView: View {
                             }) {
                                 LegalDocRow(
                                     icon: "hand.raised.fill",
-                                    iconColor: colorScheme == .dark ? .white : .black,
+                                    iconColor: AppTheme.textColor(for: colorScheme),
                                     title: "Privacy Policy",
                                     subtitle: "How we handle your data"
                                 )
@@ -163,7 +163,7 @@ struct LegalInformationView: View {
                             }) {
                                 LegalDocRow(
                                     icon: "doc.text.fill",
-                                    iconColor: colorScheme == .dark ? .white : .black,
+                                    iconColor: AppTheme.textColor(for: colorScheme),
                                     title: "Terms of Service",
                                     subtitle: "Terms and conditions of use"
                                 )
@@ -179,7 +179,7 @@ struct LegalInformationView: View {
                             }) {
                                 LegalDocRow(
                                     icon: "checkmark.shield.fill",
-                                    iconColor: colorScheme == .dark ? .white : .black,
+                                    iconColor: AppTheme.textColor(for: colorScheme),
                                     title: "UK Company Compliance",
                                     subtitle: "Companies Act 2006 compliance"
                                 )
@@ -194,12 +194,12 @@ struct LegalInformationView: View {
                             HStack {
                                 Image(systemName: "shield.checkered")
                                     .font(.title2)
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    .adaptiveForegroundColor()
                                 
                                 Text("Regulatory Compliance")
                                     .font(.title3)
                                     .fontWeight(.semibold)
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    .adaptiveForegroundColor()
                             }
                             
                             Divider()
@@ -209,28 +209,28 @@ struct LegalInformationView: View {
                                 icon: "checkmark.seal.fill",
                                 title: "UK GDPR",
                                 description: "Compliant with UK General Data Protection Regulation",
-                                color: colorScheme == .dark ? .white : .black
+                                color: AppTheme.textColor(for: colorScheme)
                             )
                             
                             ComplianceBadge(
                                 icon: "lock.shield.fill",
                                 title: "Data Protection Act 2018",
                                 description: "Adherence to UK data protection legislation",
-                                color: colorScheme == .dark ? .white : .black
+                                color: AppTheme.textColor(for: colorScheme)
                             )
                             
                             ComplianceBadge(
                                 icon: "building.columns.fill",
                                 title: "Companies Act 2006",
                                 description: "Registered and compliant with UK company law",
-                                color: colorScheme == .dark ? .white : .black
+                                color: AppTheme.textColor(for: colorScheme)
                             )
                             
                             ComplianceBadge(
                                 icon: "doc.text.fill",
                                 title: "Companies House",
                                 description: "Active registration in England and Wales",
-                                color: colorScheme == .dark ? .white : .black
+                                color: AppTheme.textColor(for: colorScheme)
                             )
                         }
                         .padding(20)
@@ -242,12 +242,12 @@ struct LegalInformationView: View {
                             HStack {
                                 Image(systemName: "person.crop.circle.badge.checkmark")
                                     .font(.title2)
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    .adaptiveForegroundColor()
                                 
                                 Text("Company Directors")
                                     .font(.title3)
                                     .fontWeight(.semibold)
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    .adaptiveForegroundColor()
                             }
                             
                             Divider()
@@ -256,7 +256,7 @@ struct LegalInformationView: View {
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("Asad Khan")
                                     .font(.headline)
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    .adaptiveForegroundColor()
                                 
                                 Label("Director", systemImage: "briefcase.fill")
                                     .font(.caption)
@@ -327,7 +327,7 @@ struct CompanyInfoRow: View {
             Text(value)
                 .font(.subheadline)
                 .fontWeight(.medium)
-                .foregroundColor(valueColor == .primary ? (colorScheme == .dark ? .white : .black) : valueColor)
+                .foregroundColor(valueColor == .primary ? AppTheme.textColor(for: colorScheme) : valueColor)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(.vertical, 4)
@@ -352,7 +352,7 @@ struct LegalDocRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(.subheadline)
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .adaptiveForegroundColor()
                 Text(subtitle)
                     .font(.caption)
                     .foregroundColor(.secondary)
@@ -392,7 +392,7 @@ struct ComplianceBadge: View {
                 Text(title)
                     .font(.subheadline)
                     .fontWeight(.semibold)
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .adaptiveForegroundColor()
                 
                 Text(description)
                     .font(.caption)
@@ -529,7 +529,7 @@ struct PrivacyPolicyView: View {
                         Group {
                             Text("Privacy Policy")
                                 .font(.system(size: 32, weight: .bold))
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .adaptiveForegroundColor()
                             
                             Text("Last Updated: \(currentDateFormatted)")
                                 .font(.caption)
@@ -652,7 +652,7 @@ struct TermsOfServiceView: View {
                         Group {
                             Text("Terms of Service")
                                 .font(.system(size: 32, weight: .bold))
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .adaptiveForegroundColor()
                             
                             Text("Last Updated: \(currentDateFormatted)")
                                 .font(.caption)
@@ -781,7 +781,7 @@ struct CompanyComplianceView: View {
                         Group {
                             Text("UK Company Compliance")
                                 .font(.system(size: 32, weight: .bold))
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .adaptiveForegroundColor()
                             
                             Text("Companies Act 2006")
                                 .font(.caption)
@@ -876,7 +876,7 @@ struct SectionTitle: View {
         Text(text)
             .font(.title3)
             .fontWeight(.bold)
-            .foregroundColor(colorScheme == .dark ? .white : .black)
+            .adaptiveForegroundColor()
             .padding(.top, 8)
     }
 }
@@ -932,7 +932,7 @@ struct CompanyDetailRow: View {
             Text(value)
                 .font(.subheadline)
                 .fontWeight(.medium)
-                .foregroundColor(colorScheme == .dark ? .white : .black)
+                .adaptiveForegroundColor()
         }
         .padding(.vertical, 2)
     }

@@ -106,7 +106,7 @@ struct NoteEditorView: View {
             TextField("Note Title", text: $title, axis: .vertical)
                 .font(.title3)
                 .fontWeight(.semibold)
-                .foregroundColor(colorScheme == .dark ? .white : .black)
+                .adaptiveForegroundColor()
                 .focused($isTitleFocused)
                 .lineLimit(2...3)
                 .padding()
@@ -123,7 +123,7 @@ struct NoteEditorView: View {
                 
                 TextField("Write your note here...", text: $content, axis: .vertical)
                     .font(.body)
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .adaptiveForegroundColor()
                     .focused($isContentFocused)
                     .lineLimit(10...30)
             }
@@ -165,7 +165,7 @@ struct NoteEditorView: View {
                 Text(category.rawValue)
                     .font(.body)
                     .fontWeight(isSelected ? .semibold : .regular)
-                    .foregroundColor(isSelected ? .white : (colorScheme == .dark ? .white : .black))
+                    .foregroundColor(isSelected ? .white : AppTheme.textColor(for: colorScheme))
                 
                 Spacer()
                 
@@ -194,7 +194,7 @@ struct NoteEditorView: View {
                 // Tag input
                 HStack {
                     TextField("Add Tag...", text: $currentTag)
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .adaptiveForegroundColor()
                         .onSubmit {
                             addTag()
                         }
@@ -202,7 +202,7 @@ struct NoteEditorView: View {
                     if !currentTag.isEmpty {
                         Button(action: addTag) {
                             Image(systemName: "plus.circle.fill")
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .adaptiveForegroundColor()
                         }
                     }
                 }

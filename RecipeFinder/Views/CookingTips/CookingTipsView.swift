@@ -48,7 +48,7 @@ struct CookingTipsView: View {
                             
                             Text("Cooking Tips")
                                 .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .adaptiveForegroundColor()
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.7)
                             
@@ -179,7 +179,7 @@ struct CookingTipsView: View {
                 // Title
                 Text("Cooking Tips")
                     .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .adaptiveForegroundColor()
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
                 
@@ -317,7 +317,7 @@ struct CookingTipsView: View {
                                 Text(category.rawValue)
                                     .font(.title3)
                                     .fontWeight(.bold)
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    .adaptiveForegroundColor()
                                 
                                 Spacer()
                                 
@@ -365,16 +365,16 @@ struct CookingTipsView: View {
         VStack(spacing: 20) {
             Image(systemName: "magnifyingglass.circle")
                 .font(.system(size: 70))
-                .foregroundColor(Color(colorScheme == .dark ? .white : .black).opacity(0.4))
+                .adaptiveForegroundColor(opacity: 0.4)
             
             Text("No Tips Found")
                 .font(.title2)
                 .fontWeight(.bold)
-                .foregroundColor(colorScheme == .dark ? .white : .black)
+                .adaptiveForegroundColor()
             
             Text("Try adjusting your filters or search terms")
                 .font(.subheadline)
-                .foregroundColor(Color(colorScheme == .dark ? .white : .black).opacity(0.7))
+                .adaptiveForegroundColor(opacity: 0.7)
                 .multilineTextAlignment(.center)
             
             Button(action: {
@@ -448,7 +448,7 @@ struct CompactTipRow: View {
                     Text(tip.title)
                         .font(.subheadline)
                         .fontWeight(.medium)
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .adaptiveForegroundColor()
                         .multilineTextAlignment(.leading)
                         .lineLimit(1)
                     
@@ -554,7 +554,7 @@ struct CookingTipCard: View {
                         Text(tip.title)
                             .font(.headline)
                             .fontWeight(.bold)
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                            .adaptiveForegroundColor()
                             .multilineTextAlignment(.leading)
                             .lineLimit(2)
                             .fixedSize(horizontal: false, vertical: true)
@@ -762,7 +762,7 @@ struct FiltersSheet: View {
                                         .font(.body)
                                     Text("Show Favorites Only")
                                         .fontWeight(.medium)
-                                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        .adaptiveForegroundColor()
                                 }
                             }
                             .tint(AppTheme.accentColor(for: selectedTheme))
@@ -776,7 +776,7 @@ struct FiltersSheet: View {
                                     .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                                 Text("Category")
                                     .font(.headline)
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    .adaptiveForegroundColor()
                             }
                             
                             filterCard {
@@ -802,7 +802,7 @@ struct FiltersSheet: View {
                                                         .font(.body)
                                                 }
                                             }
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                            .adaptiveForegroundColor()
                                             .padding(.vertical, 8)
                                         }
                                         
@@ -822,7 +822,7 @@ struct FiltersSheet: View {
                                     .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                                 Text("Difficulty")
                                     .font(.headline)
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    .adaptiveForegroundColor()
                             }
                             
                             filterCard {
@@ -848,7 +848,7 @@ struct FiltersSheet: View {
                                                         .font(.body)
                                                 }
                                             }
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                            .adaptiveForegroundColor()
                                             .padding(.vertical, 8)
                                         }
                                         

@@ -16,7 +16,7 @@ struct MoreView: View {
                     VStack(spacing: 12) {
                         Text("More")
                             .font(.system(size: 34, weight: .bold))
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                            .adaptiveForegroundColor()
                             .frame(maxWidth: .infinity)
                             .frame(height: 44)
                     }
@@ -149,7 +149,7 @@ struct MoreRow: View {
                 Text(title)
                     .font(.body)
                     .fontWeight(.semibold)
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .adaptiveForegroundColor()
                 
                 Text(subtitle)
                     .font(.caption)

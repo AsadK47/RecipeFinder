@@ -102,7 +102,7 @@ struct RecipeDetailView: View {
     private var recipeTitleView: some View {
         Text(recipe.name)
             .font(.system(size: 34, weight: .bold))
-            .foregroundColor(colorScheme == .dark ? .white : .black)
+            .adaptiveForegroundColor()
             .multilineTextAlignment(.center)
             .frame(maxWidth: .infinity, alignment: .center)
             .padding(.horizontal, 20)
@@ -271,12 +271,12 @@ struct RecipeDetailView: View {
             Button(action: { toggleSection("Ingredients") }) {
                 HStack(spacing: 8) {
                     Image(systemName: "leaf.fill")
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .adaptiveForegroundColor()
                         .font(.title3)
                     Text("Ingredients")
                         .font(.title2)
                         .fontWeight(.bold)
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .adaptiveForegroundColor()
                 }
             }
             .buttonStyle(PlainButtonStyle())
@@ -298,7 +298,7 @@ struct RecipeDetailView: View {
                     .font(.subheadline)
                     .fontWeight(.medium)
             }
-            .foregroundColor(colorScheme == .dark ? .white : .black)
+            .adaptiveForegroundColor()
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
             .background(
@@ -602,12 +602,12 @@ struct RecipeDetailView: View {
                 label: {
                     HStack(spacing: 8) {
                         Image(systemName: icon)
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                            .adaptiveForegroundColor()
                             .font(.title3)
                         Text(title)
                             .font(.title2)
                             .fontWeight(.bold)
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                            .adaptiveForegroundColor()
                         
                         Spacer()
                         

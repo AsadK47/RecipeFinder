@@ -225,7 +225,7 @@ struct DocPointRow: View {
         VStack(alignment: .leading, spacing: 6) {
             Text(point.title)
                 .font(.system(size: 17, weight: .semibold))
-                .foregroundColor(colorScheme == .dark ? .white : .black)
+                .adaptiveForegroundColor()
             
             Text(point.description)
                 .font(.system(size: 15))

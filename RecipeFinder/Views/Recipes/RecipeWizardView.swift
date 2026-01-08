@@ -739,7 +739,7 @@ struct RecipeWizardView: View {
     private func summaryRow(icon: String, label: String, value: String) -> some View {
         HStack(spacing: 12) {
             Image(systemName: icon)
-                .foregroundColor(colorScheme == .dark ? .white : .black)
+                .adaptiveForegroundColor()
                 .frame(width: 20)
             
             Text(label)

@@ -132,7 +132,7 @@ struct KitchenView: View {
                     
                     Text("Kitchen")
                         .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .adaptiveForegroundColor()
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
                     
@@ -160,7 +160,7 @@ struct KitchenView: View {
                     } label: {
                         Image(systemName: "line.3.horizontal")
                             .font(.system(size: 20))
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                            .adaptiveForegroundColor()
                             .frame(width: 44, height: 44)
                     }
                     .accessibilityLabel("Kitchen menu")
@@ -186,7 +186,7 @@ struct KitchenView: View {
                         TextField("", text: $searchText)
                             .focused($isSearchFocused)
                             .autocorrectionDisabled()
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                            .adaptiveForegroundColor()
                     }
                     
                     if !searchText.isEmpty {
@@ -239,16 +239,16 @@ struct KitchenView: View {
         VStack(spacing: 16) {
             Image(systemName: "refrigerator")
                 .font(.system(size: 70))
-                .foregroundColor(Color(colorScheme == .dark ? .white : .black).opacity(0.4))
+                .adaptiveForegroundColor(opacity: 0.4)
             
             Text("Your Kitchen is Empty")
                 .font(.title2)
                 .fontWeight(.bold)
-                .foregroundColor(colorScheme == .dark ? .white : .black)
+                .adaptiveForegroundColor()
             
             Text("Add ingredients to see matching recipes")
                 .font(.subheadline)
-                .foregroundColor(Color(colorScheme == .dark ? .white : .black).opacity(0.7))
+                .adaptiveForegroundColor(opacity: 0.7)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
         }
@@ -264,7 +264,7 @@ struct KitchenView: View {
                     Text("My Kitchen")
                         .font(.title3)
                         .fontWeight(.bold)
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .adaptiveForegroundColor()
                     
                     Text("\(manager.items.count) ingredients")
                         .font(.caption)
@@ -321,7 +321,7 @@ struct KitchenView: View {
             Text("Search Results")
                 .font(.title3)
                 .fontWeight(.bold)
-                .foregroundColor(colorScheme == .dark ? .white : .black)
+                .adaptiveForegroundColor()
                 .padding(.horizontal, 20)
             
             if searchResults.isEmpty {
@@ -358,7 +358,7 @@ struct KitchenView: View {
                     
                     Text(ingredient)
                         .font(.body)
-                        .foregroundStyle(colorScheme == .dark ? .white : .black)
+                        .foregroundStyle(AppTheme.textColor(for: colorScheme))
                     
                     Spacer()
                     
@@ -391,7 +391,7 @@ struct KitchenView: View {
                     
                     Text("Quick Recipe Matches")
                         .font(.system(size: 26, weight: .bold))
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .adaptiveForegroundColor()
                 }
                 
                 Text(matchCountText)
@@ -525,7 +525,7 @@ struct KitchenCategoryCard: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(category)
                             .font(.headline)
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                            .adaptiveForegroundColor()
                         
                         Text("\(items.count) items")
                             .font(.caption)
@@ -590,7 +590,7 @@ struct KitchenItemChip: View {
             Text(item.name)
                 .font(.subheadline)
                 .fontWeight(.medium)
-                .foregroundColor(colorScheme == .dark ? .white : .black)
+                .adaptiveForegroundColor()
             
             Button(
                 action: {
@@ -699,7 +699,7 @@ struct AddIngredientSheet: View {
                                 Text(category)
                                     .font(.title2)
                                     .fontWeight(.bold)
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    .adaptiveForegroundColor()
                                     .padding(.horizontal, 20)
                                 
                                 LazyVStack(spacing: 8) {
@@ -755,7 +755,7 @@ struct AddIngredientSheet: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(category)
                         .font(.headline)
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .adaptiveForegroundColor()
                     
                     Text("\(FoodsList.getFoods(forCategory: category).count) items")
                         .font(.caption)
@@ -799,7 +799,7 @@ struct AddIngredientSheet: View {
                 
                 Text(food)
                     .font(.body)
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .adaptiveForegroundColor()
                 
                 Spacer()
                 

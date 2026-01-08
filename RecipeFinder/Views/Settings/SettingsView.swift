@@ -45,7 +45,7 @@ struct SettingsTabView: View {
                                 
                                 Text("Settings")
                                     .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    .adaptiveForegroundColor()
                                     .lineLimit(1)
                                     .minimumScaleFactor(0.7)
                                 
@@ -98,7 +98,7 @@ struct SettingsTabView: View {
                                     VStack(alignment: .leading, spacing: scrollGeometry.size.width * 0.01) {
                                         Text(accountManager.fullName.isEmpty ? "Account" : accountManager.fullName)
                                             .font(.headline)
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                            .adaptiveForegroundColor()
                                         
                                         if let email = authManager.currentUser?.email, !email.isEmpty {
                                             Text(email)
@@ -310,7 +310,7 @@ struct SettingsRow: View {
             
             Text(title)
                 .font(.body)
-                .foregroundColor(colorScheme == .dark ? .white : .black)
+                .adaptiveForegroundColor()
             
             Spacer()
             
@@ -357,7 +357,7 @@ struct AppearanceAndThemeSettingsView: View {
                             
                             Text("Appearance & Theme")
                                 .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .adaptiveForegroundColor()
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.7)
                             
@@ -386,7 +386,7 @@ struct AppearanceAndThemeSettingsView: View {
                                 Text("Color Theme")
                                     .font(.title3)
                                     .fontWeight(.semibold)
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    .adaptiveForegroundColor()
                             }
                             
                             Text("Choose your favorite accent color for the app.")
@@ -415,7 +415,7 @@ struct AppearanceAndThemeSettingsView: View {
                                             VStack(alignment: .leading, spacing: 2) {
                                                 Text(theme.rawValue)
                                                     .font(.subheadline)
-                                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                                    .adaptiveForegroundColor()
                                                 
                                                 if selectedTheme == theme {
                                                     Image(systemName: "checkmark")
@@ -482,7 +482,7 @@ struct AppearanceSettingsView: View {
                                 Text("Appearance")
                                     .font(.title3)
                                     .fontWeight(.semibold)
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    .adaptiveForegroundColor()
                             }
                             
                             Text("Choose your preferred appearance mode. Each mode automatically applies the best card style.")
@@ -518,7 +518,7 @@ struct AppearanceSettingsView: View {
                                         VStack(alignment: .leading, spacing: 4) {
                                             Text("System")
                                                 .font(.headline)
-                                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                                .adaptiveForegroundColor()
                                             
                                             Text("Follows device settings")
                                                 .font(.caption)
@@ -566,7 +566,7 @@ struct AppearanceSettingsView: View {
                                         VStack(alignment: .leading, spacing: 4) {
                                             Text("Frost Light")
                                                 .font(.headline)
-                                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                                .adaptiveForegroundColor()
                                             
                                             Text("Translucent frosted glass cards")
                                                 .font(.caption)
@@ -610,7 +610,7 @@ struct AppearanceSettingsView: View {
                                         VStack(alignment: .leading, spacing: 4) {
                                             Text("Ember Dark")
                                                 .font(.headline)
-                                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                                .adaptiveForegroundColor()
                                             
                                             Text("Solid dark cards")
                                                 .font(.caption)
@@ -668,7 +668,7 @@ struct ThemeSettingsView: View {
                         VStack(alignment: .leading, spacing: 20) {
                             Text("Select Theme")
                                 .font(.headline)
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .adaptiveForegroundColor()
                             
                             ForEach(AppTheme.ThemeType.allCases) { theme in
                                 Button(action: {
@@ -687,7 +687,7 @@ struct ThemeSettingsView: View {
                                         
                                         VStack(alignment: .leading, spacing: 4) {
                                             Text(theme.rawValue)
-                                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                                .adaptiveForegroundColor()
                                                 .font(.body)
                                             
                                             Text(themeDescription(for: theme))
@@ -790,7 +790,7 @@ struct NotificationSettingsView: View {
                             
                             Text("Notifications")
                                 .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .adaptiveForegroundColor()
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.7)
                             
@@ -820,7 +820,7 @@ struct NotificationSettingsView: View {
                                     Text("Notifications Disabled")
                                         .font(.title2)
                                         .fontWeight(.bold)
-                                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        .adaptiveForegroundColor()
                                     
                                     Text("Enable notifications in Settings to receive reminders and alerts for timers, meal plans, and shopping lists.")
                                         .font(.subheadline)
@@ -858,17 +858,17 @@ struct NotificationSettingsView: View {
                         VStack(alignment: .leading, spacing: 20) {
                             Text("Notification Types")
                                 .font(.headline)
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .adaptiveForegroundColor()
                             
                             Toggle(isOn: $timerNotifications) {
                                 HStack(spacing: 12) {
                                     Image(systemName: "timer")
-                                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        .adaptiveForegroundColor()
                                         .frame(width: 30)
                                     
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text("Timer Alerts")
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                            .adaptiveForegroundColor()
                                         Text("Get notified when timers complete")
                                             .font(.caption)
                                             .foregroundColor(.secondary)
@@ -883,12 +883,12 @@ struct NotificationSettingsView: View {
                             Toggle(isOn: $mealPlanReminders) {
                                 HStack(spacing: 12) {
                                     Image(systemName: "calendar")
-                                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        .adaptiveForegroundColor()
                                         .frame(width: 30)
                                     
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text("Meal Plan Reminders")
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                            .adaptiveForegroundColor()
                                         Text("Daily reminders for planned meals")
                                             .font(.caption)
                                             .foregroundColor(.secondary)
@@ -903,12 +903,12 @@ struct NotificationSettingsView: View {
                             Toggle(isOn: $shoppingListReminders) {
                                 HStack(spacing: 12) {
                                     Image(systemName: "cart")
-                                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        .adaptiveForegroundColor()
                                         .frame(width: 30)
                                     
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text("Shopping List Reminders")
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                            .adaptiveForegroundColor()
                                         Text("Remind me about shopping list items")
                                             .font(.caption)
                                             .foregroundColor(.secondary)
@@ -925,18 +925,18 @@ struct NotificationSettingsView: View {
                             VStack(alignment: .leading, spacing: 20) {
                                 Text("Reminder Time")
                                     .font(.headline)
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    .adaptiveForegroundColor()
                                 
                                 Button(action: {
                                     showingTimePicker = true
                                 }) {
                                     HStack {
                                         Image(systemName: "clock")
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                            .adaptiveForegroundColor()
                                             .frame(width: 30)
                                         
                                         Text("Daily reminder at")
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                            .adaptiveForegroundColor()
                                         
                                         Spacer()
                                         
@@ -1061,7 +1061,7 @@ struct TimerSettingsView: View {
                             
                             Text("Timers")
                                 .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .adaptiveForegroundColor()
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.7)
                             
@@ -1084,7 +1084,7 @@ struct TimerSettingsView: View {
                         VStack(alignment: .leading, spacing: 20) {
                             Text("Default Timer Duration")
                                 .font(.headline)
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .adaptiveForegroundColor()
                             
                             VStack(spacing: 12) {
                                 ForEach([60, 300, 600, 900, 1800, 3600], id: \.self) { seconds in
@@ -1095,17 +1095,17 @@ struct TimerSettingsView: View {
                                     }) {
                                         HStack {
                                             Image(systemName: "timer")
-                                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                                .adaptiveForegroundColor()
                                                 .frame(width: 30)
                                             
                                             Text(label)
-                                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                                .adaptiveForegroundColor()
                                             
                                             Spacer()
                                             
                                             if defaultTimerDuration == seconds {
                                                 Image(systemName: "checkmark.circle.fill")
-                                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                                    .adaptiveForegroundColor()
                                             }
                                         }
                                         .padding(12)
@@ -1126,7 +1126,7 @@ struct TimerSettingsView: View {
                         VStack(alignment: .leading, spacing: 20) {
                             Text("Sound & Alerts")
                                 .font(.headline)
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .adaptiveForegroundColor()
                             
                             // Timer Sound
                             VStack(alignment: .leading, spacing: 12) {
@@ -1141,17 +1141,17 @@ struct TimerSettingsView: View {
                                     }) {
                                         HStack {
                                             Image(systemName: sound == .silent ? "speaker.slash" : "speaker.wave.2")
-                                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                                .adaptiveForegroundColor()
                                                 .frame(width: 30)
                                             
                                             Text(sound.rawValue)
-                                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                                .adaptiveForegroundColor()
                                             
                                             Spacer()
                                             
                                             if timerSound == sound {
                                                 Image(systemName: "checkmark.circle.fill")
-                                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                                    .adaptiveForegroundColor()
                                             }
                                         }
                                         .padding(12)
@@ -1171,12 +1171,12 @@ struct TimerSettingsView: View {
                             Toggle(isOn: $timerVibration) {
                                 HStack(spacing: 12) {
                                     Image(systemName: "iphone.radiowaves.left.and.right")
-                                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        .adaptiveForegroundColor()
                                         .frame(width: 30)
                                     
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text("Vibration")
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                            .adaptiveForegroundColor()
                                         Text("Vibrate when timer completes")
                                             .font(.caption)
                                             .foregroundColor(.secondary)
@@ -1193,17 +1193,17 @@ struct TimerSettingsView: View {
                         VStack(alignment: .leading, spacing: 20) {
                             Text("Behavior")
                                 .font(.headline)
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .adaptiveForegroundColor()
                             
                             Toggle(isOn: $showTimerInNotifications) {
                                 HStack(spacing: 12) {
                                     Image(systemName: "app.badge")
-                                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        .adaptiveForegroundColor()
                                         .frame(width: 30)
                                     
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text("Show in Notifications")
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                            .adaptiveForegroundColor()
                                         Text("Display running timers in notification center")
                                             .font(.caption)
                                             .foregroundColor(.secondary)
@@ -1270,7 +1270,7 @@ struct UnitsSettingsView: View {
                             
                             Text("Units & Measurements")
                                 .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .adaptiveForegroundColor()
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.7)
                             
@@ -1292,7 +1292,7 @@ struct UnitsSettingsView: View {
                         VStack(alignment: .leading, spacing: 20) {
                             Text("Measurement System")
                                 .font(.headline)
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .adaptiveForegroundColor()
                             
                             ForEach(MeasurementSystem.allCases, id: \.self) { system in
                                 Button(action: {
@@ -1302,12 +1302,12 @@ struct UnitsSettingsView: View {
                                     HStack(spacing: 16) {
                                         Image(systemName: system == .metric ? "ruler" : "ruler.fill")
                                             .font(.title3)
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                            .adaptiveForegroundColor()
                                             .frame(width: 30)
                                         
                                         VStack(alignment: .leading, spacing: 4) {
                                             Text(system.rawValue)
-                                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                                .adaptiveForegroundColor()
                                             Text(system == .metric ? "kg, g, ml, l" : "lb, oz, cups, fl oz")
                                                 .font(.caption)
                                                 .foregroundColor(.secondary)
@@ -1317,7 +1317,7 @@ struct UnitsSettingsView: View {
                                         
                                         if measurementSystem == system {
                                             Image(systemName: "checkmark.circle.fill")
-                                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                                .adaptiveForegroundColor()
                                         }
                                     }
                                     .padding(16)
@@ -1374,7 +1374,7 @@ struct DisplaySettingsView: View {
                             
                             Text("Display")
                                 .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .adaptiveForegroundColor()
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.7)
                             
@@ -1397,17 +1397,17 @@ struct DisplaySettingsView: View {
                         VStack(alignment: .leading, spacing: 20) {
                             Text("Screen Settings")
                                 .font(.headline)
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .adaptiveForegroundColor()
                             
                             Toggle(isOn: $keepScreenAwake) {
                                 HStack(spacing: 12) {
                                     Image(systemName: "light.max")
-                                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        .adaptiveForegroundColor()
                                         .frame(width: 30)
                                     
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text("Keep Screen Awake")
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                            .adaptiveForegroundColor()
                                         Text("Prevent screen from dimming while cooking")
                                             .font(.caption)
                                             .foregroundColor(.secondary)
@@ -1429,7 +1429,7 @@ struct DisplaySettingsView: View {
                                 
                                 Text("About This Setting")
                                     .font(.headline)
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    .adaptiveForegroundColor()
                             }
                             
                             Text("When enabled, your screen will stay on while you're viewing recipes or using timers. This is helpful when cooking and you need to reference instructions without constantly touching your device.")
@@ -1488,7 +1488,7 @@ struct PrivacySettingsView: View {
                             VStack(alignment: .leading, spacing: 20) {
                                 Text("Security")
                                     .font(.headline)
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    .adaptiveForegroundColor()
                                 
                                 Toggle(isOn: Binding(
                                     get: { biometricsEnabled },
@@ -1505,12 +1505,12 @@ struct PrivacySettingsView: View {
                                 )) {
                                     HStack(spacing: 12) {
                                         Image(systemName: authManager.biometricType == "Face ID" ? "faceid" : "touchid")
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                            .adaptiveForegroundColor()
                                             .frame(width: 30)
                                         
                                         VStack(alignment: .leading, spacing: 2) {
                                             Text("\(authManager.biometricType)")
-                                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                                .adaptiveForegroundColor()
                                             Text("Sign in with \(authManager.biometricType) instead of password")
                                                 .font(.caption)
                                                 .foregroundColor(.secondary)
@@ -1537,7 +1537,7 @@ struct PrivacySettingsView: View {
                                     
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text("Privacy Policy")
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                            .adaptiveForegroundColor()
                                         Text("View our privacy and data practices")
                                             .font(.caption)
                                             .foregroundColor(.secondary)
@@ -1560,7 +1560,7 @@ struct PrivacySettingsView: View {
                         VStack(alignment: .leading, spacing: 16) {
                             Text("Confirmation Dialogs")
                                 .font(.headline)
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .adaptiveForegroundColor()
                             
                             HStack(spacing: 16) {
                                 ZStack {
@@ -1576,7 +1576,7 @@ struct PrivacySettingsView: View {
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text("Delete Confirmations")
                                         .font(.body)
-                                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        .adaptiveForegroundColor()
                                     
                                     Text("Currently: \(skipDeleteConfirmation ? "Disabled" : "Enabled")")
                                         .font(.caption)
@@ -1647,7 +1647,7 @@ struct PrivacySettingsView: View {
                         VStack(alignment: .leading, spacing: 16) {
                             Text("Data Privacy")
                                 .font(.headline)
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .adaptiveForegroundColor()
                             
                             VStack(spacing: 16) {
                                 PrivacyInfoRow(
@@ -1693,14 +1693,14 @@ struct PrivacySettingsView: View {
                                 
                                 HStack(alignment: .top, spacing: 12) {
                                     Image(systemName: "info.circle.fill")
-                                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        .adaptiveForegroundColor()
                                         .font(.system(size: 16))
                                     
                                     VStack(alignment: .leading, spacing: 4) {
                                         Text("Backup Your Data")
                                             .font(.subheadline)
                                             .fontWeight(.semibold)
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                            .adaptiveForegroundColor()
                                         
                                         Text("Since data is stored locally, we recommend regularly exporting your data from the Account tab for safekeeping")
                                             .font(.caption)
@@ -1773,7 +1773,7 @@ struct PrivacyInfoRow: View {
                 Text(title)
                     .font(.body)
                     .fontWeight(.semibold)
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .adaptiveForegroundColor()
                 
                 Text(description)
                     .font(.caption)
@@ -1811,7 +1811,7 @@ struct DataManagementSettingsView: View {
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text("Reset App to Default")
                                         .font(.headline)
-                                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        .adaptiveForegroundColor()
                                     
                                     Text("Use this option if something goes wrong")
                                         .font(.caption)
@@ -1942,7 +1942,7 @@ struct HelpView: View {
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text("Take the App Tour")
                                         .font(.headline)
-                                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        .adaptiveForegroundColor()
                                     
                                     Text("Learn how to use RecipeFinder")
                                         .font(.caption)
@@ -1964,7 +1964,7 @@ struct HelpView: View {
                         VStack(alignment: .leading, spacing: 20) {
                             Text("Getting Started")
                                 .font(.headline)
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .adaptiveForegroundColor()
                             
                             HelpItem(
                                 icon: "magnifyingglass",
@@ -2015,7 +2015,7 @@ struct HelpView: View {
                         VStack(alignment: .leading, spacing: 20) {
                             Text("Tips & Tricks")
                                 .font(.headline)
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .adaptiveForegroundColor()
                             
                             HelpItem(
                                 icon: "square.and.arrow.up",
@@ -2048,7 +2048,7 @@ struct HelpView: View {
                         VStack(alignment: .leading, spacing: 16) {
                             Text("Contact Support")
                                 .font(.headline)
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .adaptiveForegroundColor()
                             
                             Button(action: {
                                 if let url = URL(string: "mailto:recipefinderlimited@icloud.com?subject=RecipeFinder%20Support") {
@@ -2058,12 +2058,12 @@ struct HelpView: View {
                                 HStack(spacing: 16) {
                                     Image(systemName: "envelope.fill")
                                         .font(.title3)
-                                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        .adaptiveForegroundColor()
                                         .frame(width: 30)
                                     
                                     VStack(alignment: .leading, spacing: 4) {
                                         Text("Email Support")
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                            .adaptiveForegroundColor()
                                         Text("recipefinderlimited@icloud.com")
                                             .font(.caption)
                                             .foregroundColor(.secondary)
@@ -2087,12 +2087,12 @@ struct HelpView: View {
                                 HStack(spacing: 16) {
                                     Image(systemName: "globe")
                                         .font(.title3)
-                                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        .adaptiveForegroundColor()
                                         .frame(width: 30)
                                     
                                     VStack(alignment: .leading, spacing: 4) {
                                         Text("Visit Website")
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                            .adaptiveForegroundColor()
                                         Text("recipefinder.uk")
                                             .font(.caption)
                                             .foregroundColor(.secondary)
@@ -2115,7 +2115,7 @@ struct HelpView: View {
                         VStack(alignment: .leading, spacing: 20) {
                             Text("Frequently Asked Questions")
                                 .font(.headline)
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .adaptiveForegroundColor()
                             
                             FAQItem(
                                 question: "Is RecipeFinder free to use?",
@@ -2183,14 +2183,14 @@ struct HelpItem: View {
         HStack(alignment: .top, spacing: 16) {
             Image(systemName: icon)
                 .font(.title3)
-                .foregroundColor(colorScheme == .dark ? .white : .black)
+                .adaptiveForegroundColor()
                 .frame(width: 30)
             
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.subheadline)
                     .fontWeight(.semibold)
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .adaptiveForegroundColor()
                 
                 Text(description)
                     .font(.caption)
@@ -2225,7 +2225,7 @@ struct FAQItem: View {
                     Text(question)
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .adaptiveForegroundColor()
                         .multilineTextAlignment(.leading)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -2290,7 +2290,7 @@ struct AboutView: View {
                                 Spacer()
                                 Text(appVersion)
                                     .fontWeight(.medium)
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    .adaptiveForegroundColor()
                             }
                             
                             Divider()
@@ -2301,7 +2301,7 @@ struct AboutView: View {
                                 Spacer()
                                 Text(buildNumber)
                                     .fontWeight(.medium)
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    .adaptiveForegroundColor()
                             }
                         }
                         .padding(20)
@@ -2312,7 +2312,7 @@ struct AboutView: View {
                         VStack(alignment: .leading, spacing: 16) {
                             Text("Legal Information")
                                 .font(.headline)
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .adaptiveForegroundColor()
                             
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("© 2025 RecipeFinder")
@@ -2339,7 +2339,7 @@ struct AboutView: View {
                         VStack(alignment: .leading, spacing: 12) {
                             Text("Support")
                                 .font(.headline)
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .adaptiveForegroundColor()
                             
                             Button(action: {
                                 if let url = URL(string: "mailto:support@recipefinder.com") {
@@ -2351,7 +2351,7 @@ struct AboutView: View {
                                         .foregroundColor(AppTheme.accentColor(for: appTheme))
                                     Text("support@recipefinder.com")
                                         .font(.subheadline)
-                                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        .adaptiveForegroundColor()
                                 }
                             }
                         }
@@ -2427,7 +2427,7 @@ struct PartyTimeView: View {
                             
                             Text("Party Time")
                                 .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .adaptiveForegroundColor()
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.7)
                             
@@ -2528,7 +2528,7 @@ struct PartyTimeView: View {
                                         .foregroundColor(.blue)
                                     Text("How it works")
                                         .font(.headline)
-                                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        .adaptiveForegroundColor()
                                 }
                                 
                                 VStack(alignment: .leading, spacing: 8) {
