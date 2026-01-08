@@ -32,7 +32,7 @@ struct AuthenticationView: View {
                 // App Logo and Title
                 VStack(spacing: 16) {
                     Image(systemName: "fork.knife.circle.fill")
-                        .font(.system(size: 80))
+                        .font(.system(size: AppTheme.fontSize80))
                         .foregroundStyle(
                             LinearGradient(
                                 gradient: Gradient(colors: [.white, .white.opacity(AppTheme.highEmphasisOpacity)]),
@@ -43,7 +43,7 @@ struct AuthenticationView: View {
                         .shadow(color: .black.opacity(AppTheme.overlayLightOpacity), radius: 10, x: 0, y: 5)
                     
                     Text("RecipeFinder")
-                        .font(.system(size: 42, weight: .bold, design: .rounded))
+                        .font(.system(size: AppTheme.fontSize42, weight: .bold, design: .rounded))
                         .adaptiveForegroundColor()
                     
                     Text("Discover, Create, Cook")
@@ -65,10 +65,10 @@ struct AuthenticationView: View {
                         }) {
                             HStack(spacing: 12) {
                                 Image(systemName: authManager.biometricType == "Face ID" ? "faceid" : "touchid")
-                                    .font(.system(size: 22))
+                                    .font(.system(size: AppTheme.fontSize22))
                                 Text("Sign In with \(authManager.biometricType)")
                                     .fontWeight(.bold)
-                                    .font(.system(size: 17))
+                                    .font(.system(size: AppTheme.fontSize17))
                             }
                             .adaptiveForegroundColor()
                             .frame(maxWidth: .infinity)
@@ -99,7 +99,7 @@ struct AuthenticationView: View {
                     NavigationLink(destination: EmailSignInView()) {
                         HStack {
                             Image(systemName: "envelope.fill")
-                                .font(.system(size: 20))
+                                .font(.system(size: AppTheme.fontSize20))
                             Text("Sign In with Email")
                                 .fontWeight(.semibold)
                         }
@@ -216,12 +216,12 @@ struct EmailSignInView: View {
                     // Header
                     VStack(spacing: 8) {
                         Image(systemName: "person.crop.circle.fill")
-                            .font(.system(size: 60))
+                            .font(.system(size: AppTheme.fontSize60))
                             .adaptiveForegroundColor(opacity: 0.9)
                             .padding(.top, 40)
                         
                         Text("Welcome Back")
-                            .font(.system(size: 32, weight: .bold))
+                            .font(.system(size: AppTheme.fontSize32, weight: .bold))
                             .adaptiveForegroundColor()
                         
                         Text("Sign in to continue")
@@ -399,12 +399,12 @@ struct SignUpView: View {
                         // Header
                         VStack(spacing: 8) {
                             Image(systemName: "person.crop.circle.badge.plus")
-                                .font(.system(size: 60))
+                                .font(.system(size: AppTheme.fontSize60))
                                 .adaptiveForegroundColor(opacity: 0.9)
                                 .padding(.top, 40)
                             
                             Text("Create Account")
-                                .font(.system(size: 32, weight: .bold))
+                                .font(.system(size: AppTheme.fontSize32, weight: .bold))
                                 .adaptiveForegroundColor()
                             
                             Text("Join RecipeFinder today")

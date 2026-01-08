@@ -35,7 +35,7 @@ struct QuickSnackSheet: View {
                             Image(systemName: "xmark.circle.fill")
                                 .font(.title2)
                             Text("Cancel")
-                                .font(.system(size: AppTheme.fontSizeBody, weight: .semibold))
+                                .font(.system(size: AppTheme.fontSize16, weight: .semibold))
                         }
                         .foregroundColor(.white.opacity(0.9))
                         .shadow(color: .black.opacity(AppTheme.shadowDarkOpacity), radius: 2, x: 0, y: 1)
@@ -228,7 +228,7 @@ struct EmojiSelectorView: View {
             }) {
                 HStack {
                     Text(selectedEmoji)
-                        .font(.system(size: AppTheme.fontSizeEmoji))
+                        .font(.system(size: AppTheme.fontSize50))
                     
                     Spacer()
                     
@@ -254,7 +254,7 @@ struct EmojiSelectorView: View {
                             HapticManager.shared.light()
                         }) {
                             Text(emoji)
-                                .font(.system(size: 30))
+                                .font(.system(size: AppTheme.fontSize32))
                                 .frame(width: 40, height: 40)
                                 .background {
                                     if selectedEmoji == emoji {
@@ -339,7 +339,7 @@ struct DietaryFilterChip: View {
                 Color.white.opacity(AppTheme.overlayLightOpacity)
             )
             .foregroundColor(.white)
-            .cornerRadius(16)
+            .cornerRadius(AppTheme.cornerRadius16)
         }
     }
 }
@@ -373,7 +373,7 @@ struct SnackSuggestionsView: View {
                         }) {
                             VStack(spacing: AppTheme.spacing8) {
                                 Text(snack.emoji)
-                                    .font(.system(size: AppTheme.fontSizeMedium))
+                                    .font(.system(size: AppTheme.fontSize32))
                                 Text(snack.name)
                                     .font(.caption)
                                     .foregroundColor(.white)
@@ -505,7 +505,7 @@ struct DietaryTagsDisplayView: View {
                             .padding(.vertical, 4)
                             .background(Color.white.opacity(AppTheme.overlayLightOpacity))
                             .foregroundColor(.white)
-                            .cornerRadius(12)
+                            .cornerRadius(AppTheme.cornerRadius12)
                         }
                     }
                 }
@@ -539,7 +539,7 @@ struct AddButtonView: View {
                     .opacity(isEnabled ? 1.0 : 0.5)
             )
             .foregroundColor(.white)
-            .cornerRadius(12)
+            .cornerRadius(AppTheme.cornerRadius12)
         }
         .disabled(!isEnabled)
     }

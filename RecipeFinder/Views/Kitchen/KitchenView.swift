@@ -159,7 +159,7 @@ struct KitchenView: View {
                         }
                     } label: {
                         Image(systemName: "line.3.horizontal")
-                            .font(.system(size: AppTheme.fontSizeTitle3))
+                            .font(.system(size: AppTheme.fontSize20))
                             .adaptiveForegroundColor()
                             .frame(width: 44, height: 44)
                     }
@@ -201,7 +201,7 @@ struct KitchenView: View {
                         )
                     }
                 }
-                .padding(14)
+                .padding(AppTheme.spacing16)
                 .background {
                     if cardStyle == .solid {
                         RoundedRectangle(cornerRadius: 12)
@@ -238,7 +238,7 @@ struct KitchenView: View {
     private var emptyPromptView: some View {
         VStack(spacing: AppTheme.spacing16) {
             Image(systemName: "refrigerator")
-                .font(.system(size: 70))
+                .font(.system(size: AppTheme.fontSize60))
                 .adaptiveForegroundColor(opacity: 0.4)
             
             Text("Your Kitchen is Empty")
@@ -386,11 +386,11 @@ struct KitchenView: View {
             VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                 HStack(spacing: AppTheme.spacing10) {
                     Image(systemName: "sparkles")
-                        .font(.system(size: AppTheme.fontSizeTitle1))
+                        .font(.system(size: AppTheme.fontSize28))
                         .foregroundColor(.yellow)
                     
                     Text("Quick Recipe Matches")
-                        .font(.system(size: 26, weight: .bold))
+                        .font(.system(size: AppTheme.fontSize28, weight: .bold))
                         .adaptiveForegroundColor()
                 }
                 
@@ -601,7 +601,7 @@ struct KitchenItemChip: View {
                 },
                 label: {
                     Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: AppTheme.fontSizeBody))
+                        .font(.system(size: AppTheme.fontSize16))
                         .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.lowEmphasisOpacity) : .black.opacity(0.3))
                 }
             )

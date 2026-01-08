@@ -22,30 +22,29 @@ extension EnvironmentValues {
 enum AppTheme {
     // MARK: - Typography System
     
-    // Font Sizes - Semantic naming based on Apple's Human Interface Guidelines
-    static let fontSizeLargeTitle: CGFloat = 34      // Large titles, hero text
-    static let fontSizeTitle1: CGFloat = 28          // Primary section titles
-    static let fontSizeTitle2: CGFloat = 22          // Secondary section titles
-    static let fontSizeTitle3: CGFloat = 20          // Tertiary titles
-    static let fontSizeHeadline: CGFloat = 17        // Prominent body text, headlines
-    static let fontSizeBody: CGFloat = 16            // Standard body text
-    static let fontSizeCallout: CGFloat = 15         // Callouts, less prominent body
-    static let fontSizeSubheadline: CGFloat = 14     // Subheadings, captions
-    static let fontSizeFootnote: CGFloat = 13        // Footnotes, auxiliary info
-    static let fontSizeCaption1: CGFloat = 12        // Small captions, labels
-    static let fontSizeCaption2: CGFloat = 11        // Smallest readable text
-    static let fontSizeTiny: CGFloat = 10            // Minimal text (badges, etc.)
-    
-    // Special sizes for specific use cases
-    static let fontSizeHero: CGFloat = 80            // Hero/splash screens
-    static let fontSizeDisplay: CGFloat = 60         // Large display text
-    static let fontSizeLarge: CGFloat = 42           // Large accent text
-    static let fontSizeMediumLarge: CGFloat = 38     // Medium-large display
-    static let fontSizeMedium: CGFloat = 32          // Medium display
-    static let fontSizeEmoji: CGFloat = 50           // Emoji displays
-    static let fontSizeIcon: CGFloat = 24            // Icon sizing
-    static let fontSizeTinyIcon: CGFloat = 6         // Tiny icons/indicators
-    static let fontSizeTinyText: CGFloat = 7         // Very small text
+    // Font sizes - numeric and explicit like spacing
+    static let fontSize6: CGFloat = 6
+    static let fontSize7: CGFloat = 7
+    static let fontSize8: CGFloat = 8
+    static let fontSize10: CGFloat = 10
+    static let fontSize11: CGFloat = 11
+    static let fontSize12: CGFloat = 12
+    static let fontSize13: CGFloat = 13
+    static let fontSize14: CGFloat = 14
+    static let fontSize15: CGFloat = 15
+    static let fontSize16: CGFloat = 16
+    static let fontSize17: CGFloat = 17
+    static let fontSize20: CGFloat = 20
+    static let fontSize22: CGFloat = 22
+    static let fontSize24: CGFloat = 24
+    static let fontSize28: CGFloat = 28
+    static let fontSize32: CGFloat = 32
+    static let fontSize34: CGFloat = 34
+    static let fontSize38: CGFloat = 38
+    static let fontSize42: CGFloat = 42
+    static let fontSize50: CGFloat = 50
+    static let fontSize60: CGFloat = 60
+    static let fontSize80: CGFloat = 80
     
     // MARK: - Spacing System
     

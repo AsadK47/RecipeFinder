@@ -269,7 +269,7 @@ struct ShoppingListView: View {
                         }
                     } label: {
                         Image(systemName: "line.3.horizontal")
-                            .font(.system(size: AppTheme.fontSizeTitle3))
+                            .font(.system(size: AppTheme.fontSize20))
                             .adaptiveForegroundColor()
                             .frame(width: 44, height: 44)
                     }
@@ -312,7 +312,7 @@ struct ShoppingListView: View {
                         )
                     }
                 }
-                .padding(14)
+                .padding(AppTheme.spacing16)
                 .background {
                     if cardStyle == .solid {
                         RoundedRectangle(cornerRadius: 12)
@@ -349,7 +349,7 @@ struct ShoppingListView: View {
         ScrollView {
             VStack(spacing: AppTheme.spacing16) {
                 Image(systemName: "cart.circle.fill")
-                    .font(.system(size: 70))
+                    .font(.system(size: AppTheme.fontSize60))
                     .adaptiveForegroundColor(opacity: 0.4)
                 
                 Text("Start Your Shopping List")
@@ -582,7 +582,7 @@ struct ShoppingListItemRow: View {
                             
                             if item.isChecked {
                                 Image(systemName: "checkmark")
-                                    .font(.system(size: AppTheme.fontSizeSubheadline, weight: .bold))
+                                    .font(.system(size: AppTheme.fontSize14, weight: .bold))
                                     .adaptiveForegroundColor()
                                     .frame(width: 28, height: 28)
                                     .background(Circle().fill(AppTheme.accentColor))
@@ -621,7 +621,7 @@ struct ShoppingListItemRow: View {
                             }
                         }) {
                             Image(systemName: "minus")
-                                .font(.system(size: AppTheme.fontSizeSubheadline, weight: .semibold))
+                                .font(.system(size: AppTheme.fontSize14, weight: .semibold))
                                 .foregroundColor(item.quantity > 1 ? (AppTheme.adaptiveEmphasis(for: colorScheme)) : .gray)
                                 .frame(width: 32, height: 32)
                                 .background {
@@ -651,7 +651,7 @@ struct ShoppingListItemRow: View {
                             }
                         }) {
                             Image(systemName: "plus")
-                                .font(.system(size: AppTheme.fontSizeSubheadline, weight: .semibold))
+                                .font(.system(size: AppTheme.fontSize14, weight: .semibold))
                                 .foregroundColor(item.quantity < 99 ? (AppTheme.adaptiveEmphasis(for: colorScheme)) : .gray)
                                 .frame(width: 32, height: 32)
                                 .background {
@@ -669,7 +669,7 @@ struct ShoppingListItemRow: View {
                     }
                     .opacity(item.isChecked ? 0.5 : 1)
                 }
-                .padding(14)
+                .padding(AppTheme.spacing16)
             }
             .opacity(item.isChecked ? 0.6 : 1)
         }
@@ -771,11 +771,11 @@ struct HelpSheetView: View {
                         // Hero section with seamless header
                         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                             Text("Shopping List Features")
-                                .font(.system(size: AppTheme.fontSizeLargeTitle, weight: .bold))
+                                .font(.system(size: AppTheme.fontSize34, weight: .bold))
                                 .adaptiveForegroundColor()
                             
                             Text("Learn how to make the most of your shopping list with these powerful features.")
-                                .font(.system(size: AppTheme.fontSizeHeadline))
+                                .font(.system(size: AppTheme.fontSize17))
                                 .adaptiveForegroundColor(opacity: 0.85)
                                 .lineSpacing(4)
                         }
@@ -818,7 +818,7 @@ struct HelpSheetView: View {
                             dismiss()
                         } label: {
                             Text("Done")
-                                .font(.system(size: AppTheme.fontSizeHeadline, weight: .semibold))
+                                .font(.system(size: AppTheme.fontSize17, weight: .semibold))
                                 .adaptiveForegroundColor()
                                 .padding(.horizontal, 20)
                                 .padding(.vertical, 8)

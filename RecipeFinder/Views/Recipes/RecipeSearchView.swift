@@ -297,18 +297,18 @@ struct RecipeSearchView: View {
             HStack(spacing: AppTheme.spacing12) {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(AppTheme.adaptiveHighEmphasis(for: colorScheme))
-                    .font(.system(size: AppTheme.fontSizeBody + 2, weight: .medium))
+                    .font(.system(size: AppTheme.fontSize16 + 2, weight: .medium))
                 
                 ZStack(alignment: .leading) {
                     if searchText.isEmpty {
                         Text("What would you like to eat...?")
-                            .font(.system(size: AppTheme.fontSizeBody))
+                            .font(.system(size: AppTheme.fontSize16))
                             .foregroundColor(colorScheme == .dark ? .white.opacity(0.65) : .black.opacity(0.65))
                     }
                     TextField("", text: $searchText)
                         .focused($isSearchFocused)
                         .autocorrectionDisabled()
-                        .font(.system(size: AppTheme.fontSizeBody))
+                        .font(.system(size: AppTheme.fontSize16))
                         .adaptiveForegroundColor()
                         .tint(AppTheme.textColor(for: colorScheme))
                 }
@@ -320,7 +320,7 @@ struct RecipeSearchView: View {
                         },
                         label: {
                             Image(systemName: "xmark.circle.fill")
-                                .font(.system(size: AppTheme.fontSizeBody + 2))
+                                .font(.system(size: AppTheme.fontSize16 + 2))
                                 .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
                         }
                     )
@@ -346,7 +346,7 @@ struct RecipeSearchView: View {
                     },
                     label: {
                         Text("Cancel")
-                            .font(.system(size: AppTheme.fontSizeBody, weight: .semibold))
+                            .font(.system(size: AppTheme.fontSize16, weight: .semibold))
                             .adaptiveForegroundColor()
                     }
                 )
@@ -600,7 +600,7 @@ struct RecipeSearchView: View {
         ScrollView {
             VStack(spacing: AppTheme.spacing24) {
                 Image(systemName: "magnifyingglass")
-                    .font(.system(size: 70))
+                    .font(.system(size: AppTheme.fontSize60))
                     .adaptiveForegroundColor(opacity: 0.4)
                 
                 Text("No Recipes Found")
@@ -967,7 +967,7 @@ struct RecipeDeleteConfirmationSheet: View {
                                 .frame(width: 80, height: 80)
                             
                             Image(systemName: "fork.knife.circle.fill")
-                                .font(.system(size: AppTheme.fontSizeEmoji))
+                                .font(.system(size: AppTheme.fontSize50))
                                 .foregroundColor(.orange)
                         }
                         .padding(.top, 20)
@@ -1030,7 +1030,7 @@ struct RecipeDeleteConfirmationSheet: View {
                                     .frame(maxWidth: geometry.size.width - 48)
                                     .padding(.vertical, 16)
                                     .background(Color.orange)
-                                    .cornerRadius(14)
+                                    .cornerRadius(AppTheme.cornerRadius12)
                             }
                             .buttonStyle(PlainButtonStyle())
                             
@@ -1044,7 +1044,7 @@ struct RecipeDeleteConfirmationSheet: View {
                                     .frame(maxWidth: geometry.size.width - 48)
                                     .padding(.vertical, 16)
                                     .background(Color.white.opacity(0.15))
-                                    .cornerRadius(14)
+                                    .cornerRadius(AppTheme.cornerRadius12)
                             }
                             .buttonStyle(PlainButtonStyle())
                         }

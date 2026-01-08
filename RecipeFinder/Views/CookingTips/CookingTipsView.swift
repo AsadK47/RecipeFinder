@@ -364,7 +364,7 @@ struct CookingTipsView: View {
     private var emptyStateView: some View {
         VStack(spacing: AppTheme.spacing24) {
             Image(systemName: "magnifyingglass.circle")
-                .font(.system(size: 70))
+                .font(.system(size: AppTheme.fontSize60))
                 .adaptiveForegroundColor(opacity: 0.4)
             
             Text("No Tips Found")
@@ -545,7 +545,7 @@ struct CookingTipCard: View {
                             .frame(width: 48, height: 48)
                         
                         Image(systemName: tip.category.icon)
-                            .font(.system(size: AppTheme.fontSizeTitle2))
+                            .font(.system(size: AppTheme.fontSize22))
                             .foregroundColor(colorForCategory(tip.category))
                     }
                     
@@ -627,7 +627,7 @@ struct CookingTipCard: View {
                         ForEach(tip.tags.prefix(3), id: \.self) { tag in
                             HStack(spacing: AppTheme.spacing4) {
                                 Image(systemName: "tag.fill")
-                                    .font(.system(size: 8))
+                                    .font(.system(size: AppTheme.fontSize11))
                                 Text(tag)
                                     .font(.caption2)
                             }

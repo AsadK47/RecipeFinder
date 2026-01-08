@@ -50,7 +50,7 @@ struct RecipeImportView: View {
                     // Header
                     VStack(spacing: AppTheme.spacing12) {
                         Image(systemName: "arrow.down.doc.fill")
-                            .font(.system(size: AppTheme.fontSizeDisplay))
+                            .font(.system(size: AppTheme.fontSize60))
                             .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                     
                     Text("Import Recipe")
@@ -92,7 +92,7 @@ struct RecipeImportView: View {
                     }
                     .padding()
                     .background(Color(.systemGray6))
-                    .cornerRadius(12)
+                    .cornerRadius(AppTheme.cornerRadius12)
                 }
                 .padding(.horizontal)
                 
@@ -146,7 +146,7 @@ struct RecipeImportView: View {
                         .frame(maxWidth: .infinity)
                         .frame(height: 56)
                         .background(urlText.isEmpty ? Color.gray : AppTheme.accentColor(for: selectedTheme))
-                        .cornerRadius(16)
+                        .cornerRadius(AppTheme.cornerRadius16)
                     })
                     .disabled(urlText.isEmpty)
                     .padding(.horizontal)
@@ -171,7 +171,7 @@ struct RecipeImportView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
                     .background(Color.orange.opacity(0.1))
-                    .cornerRadius(12)
+                    .cornerRadius(AppTheme.cornerRadius12)
                     .padding(.horizontal)
                 }
                 

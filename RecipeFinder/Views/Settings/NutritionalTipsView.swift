@@ -125,7 +125,7 @@ struct NutritionalTipsView: View {
         }) {
             HStack(spacing: AppTheme.spacing16) {
                 Text(tip.icon)
-                    .font(.system(size: AppTheme.fontSizeEmoji))
+                    .font(.system(size: AppTheme.fontSize50))
                 
                 VStack(alignment: .leading, spacing: AppTheme.spacing6) {
                     HStack {
@@ -213,7 +213,7 @@ struct NutritionalTipCard: View {
         Button(action: action) {
             HStack(spacing: AppTheme.spacing16) {
                 Text(tip.icon)
-                    .font(.system(size: 40))
+                    .font(.system(size: AppTheme.fontSize42))
                 
                 VStack(alignment: .leading, spacing: AppTheme.spacing6) {
                     Text(tip.title)
@@ -282,7 +282,7 @@ struct EvidenceBadge: View {
         .padding(.vertical, 4)
         .background(badgeColor.opacity(0.2))
         .foregroundColor(badgeColor)
-        .cornerRadius(8)
+        .cornerRadius(AppTheme.cornerRadius8)
     }
     
     private var badgeColor: Color {
@@ -317,7 +317,7 @@ struct TipDetailView: View {
                         // Header
                         HStack {
                             Text(tip.icon)
-                                .font(.system(size: AppTheme.fontSizeDisplay))
+                                .font(.system(size: AppTheme.fontSize60))
                             
                             VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                                 Text(tip.title)

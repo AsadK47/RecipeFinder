@@ -44,7 +44,7 @@ struct FilterButton: View {
         } label: {
             HStack(spacing: AppTheme.spacing8) {
                 Image(systemName: icon)
-                    .font(.system(size: AppTheme.fontSizeBody))
+                    .font(.system(size: AppTheme.fontSize16))
                     .foregroundColor(isSelected ? .white : color)
                 
                 Text(label)
@@ -57,7 +57,7 @@ struct FilterButton: View {
                 
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: AppTheme.fontSizeBody + 2))
+                        .font(.system(size: AppTheme.fontSize16 + 2))
                         .foregroundColor(.white)
                 }
             }

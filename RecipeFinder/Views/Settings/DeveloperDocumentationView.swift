@@ -17,11 +17,11 @@ struct DeveloperDocumentationView: View {
                     // Hero section with seamless header
                     VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                         Text("Developer Documentation")
-                            .font(.system(size: AppTheme.fontSizeLargeTitle, weight: .bold))
+                            .font(.system(size: AppTheme.fontSize34, weight: .bold))
                             .adaptiveForegroundColor()
                         
                         Text("RecipeFinder is built with SwiftUI and Core Data, featuring modern iOS development patterns and best practices.")
-                            .font(.system(size: AppTheme.fontSizeHeadline))
+                            .font(.system(size: AppTheme.fontSize17))
                             .adaptiveForegroundColor(opacity: 0.85)
                             .lineSpacing(4)
                     }
@@ -114,11 +114,11 @@ struct DeveloperDocumentationView: View {
                     // Footer
                     VStack(spacing: AppTheme.spacing12) {
                         Text("© 2024-2025 Asad Khan")
-                            .font(.system(size: AppTheme.fontSizeFootnote))
+                            .font(.system(size: AppTheme.fontSize13))
                             .adaptiveForegroundColor(opacity: 0.5)
                         
                         Text("Built with ❤️ using SwiftUI and Core Data")
-                            .font(.system(size: AppTheme.fontSizeFootnote))
+                            .font(.system(size: AppTheme.fontSize13))
                             .adaptiveForegroundColor(opacity: 0.5)
                     }
                     .frame(maxWidth: .infinity)
@@ -136,7 +136,7 @@ struct DeveloperDocumentationView: View {
                         dismiss()
                     } label: {
                         Text("Done")
-                            .font(.system(size: AppTheme.fontSizeHeadline, weight: .semibold))
+                            .font(.system(size: AppTheme.fontSize17, weight: .semibold))
                             .adaptiveForegroundColor()
                             .padding(.horizontal, 20)
                             .padding(.vertical, 8)
@@ -174,10 +174,10 @@ struct DocSection: View {
             HStack(spacing: AppTheme.spacing12) {
                 Image(systemName: icon)
                     .foregroundColor(iconColor)
-                    .font(.system(size: AppTheme.fontSizeTitle2))
+                    .font(.system(size: AppTheme.fontSize22))
                 
                 Text(title)
-                    .font(.system(size: AppTheme.fontSizeIcon, weight: .bold))
+                    .font(.system(size: AppTheme.fontSize24, weight: .bold))
                     .adaptiveForegroundColor()
             }
             .padding(.horizontal, 24)
@@ -224,11 +224,11 @@ struct DocPointRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing6) {
             Text(point.title)
-                .font(.system(size: AppTheme.fontSizeHeadline, weight: .semibold))
+                .font(.system(size: AppTheme.fontSize17, weight: .semibold))
                 .adaptiveForegroundColor()
             
             Text(point.description)
-                .font(.system(size: AppTheme.fontSizeCallout))
+                .font(.system(size: AppTheme.fontSize15))
                 .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
                 .lineSpacing(3)
         }

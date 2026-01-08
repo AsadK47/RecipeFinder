@@ -64,7 +64,7 @@ struct CookingTipDetailView: View {
                             
                             // Title
                             Text(tip.title)
-                                .font(.system(size: AppTheme.fontSizeTitle1, weight: .bold))
+                                .font(.system(size: AppTheme.fontSize28, weight: .bold))
                                 .adaptiveForegroundColor()
                                 .fixedSize(horizontal: false, vertical: true)
                         }
@@ -129,7 +129,7 @@ struct CookingTipDetailView: View {
                     .frame(width: 60, height: 60)
                 
                 Image(systemName: tip.category.icon)
-                    .font(.system(size: AppTheme.fontSizeTitle1))
+                    .font(.system(size: AppTheme.fontSize28))
                     .foregroundColor(colorForCategory(tip.category))
             }
             
@@ -174,7 +174,7 @@ struct CookingTipDetailView: View {
                 ForEach(tip.tags, id: \.self) { tag in
                     HStack(spacing: AppTheme.spacing4) {
                         Image(systemName: "number")
-                            .font(.system(size: 8))
+                            .font(.system(size: AppTheme.fontSize11))
                         Text(tag)
                             .font(.caption)
                     }

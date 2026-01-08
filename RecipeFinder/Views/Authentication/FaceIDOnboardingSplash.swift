@@ -183,7 +183,7 @@ struct FaceIDOnboardingSplash: View {
                     VStack(spacing: spacing.xxl) {
                         VStack(spacing: spacing.md) {
                             Text("Set Up \(biometricName)")
-                                .font(.system(size: 38, weight: .bold, design: .rounded))
+                                .font(.system(size: AppTheme.fontSize38, weight: .bold, design: .rounded))
                                 .foregroundStyle(
                                     LinearGradient(
                                         gradient: Gradient(colors: [
@@ -198,14 +198,14 @@ struct FaceIDOnboardingSplash: View {
                                 .shadow(color: .black.opacity(0.25), radius: 12, x: 0, y: 6)
                             
                             Text("Quick, secure, and effortless")
-                                .font(.system(size: 20, weight: .medium, design: .rounded))
+                                .font(.system(size: AppTheme.fontSize20, weight: .medium, design: .rounded))
                                 .adaptiveForegroundColor(opacity: 0.85)
                                 .multilineTextAlignment(.center)
                         }
                         
                         VStack(spacing: spacing.lg) {
                             Text("Sign in with just a glance or touch")
-                                .font(.system(size: 17, weight: .medium))
+                                .font(.system(size: AppTheme.fontSize17, weight: .medium))
                                 .adaptiveForegroundColor(opacity: 0.9)
                                 .multilineTextAlignment(.center)
                                 .lineSpacing(4)
@@ -252,9 +252,9 @@ struct FaceIDOnboardingSplash: View {
                                         .progressViewStyle(CircularProgressViewStyle(tint: .white))
                                 } else {
                                     Image(systemName: biometricIcon)
-                                        .font(.system(size: 22, weight: .semibold))
+                                        .font(.system(size: AppTheme.fontSize22, weight: .semibold))
                                     Text("Enable \(biometricName)")
-                                        .font(.system(size: 19, weight: .bold))
+                                        .font(.system(size: AppTheme.fontSize20, weight: .bold))
                                 }
                             }
                             .adaptiveForegroundColor()
@@ -298,7 +298,7 @@ struct FaceIDOnboardingSplash: View {
                         // Skip Button - more prominent
                         Button(action: skipSetup) {
                             Text("Set Up Later")
-                                .font(.system(size: 17, weight: .semibold))
+                                .font(.system(size: AppTheme.fontSize17, weight: .semibold))
                                 .foregroundColor(.white.opacity(0.9))
                                 .frame(maxWidth: .infinity)
                                 .frame(height: spacing.buttonHeight)
@@ -441,11 +441,11 @@ private struct BiometricBenefitRow: View {
             
             VStack(alignment: .leading, spacing: spacing.xxs) {
                 Text(title)
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.system(size: AppTheme.fontSize16, weight: .semibold))
                     .foregroundColor(.white.opacity(0.95))
                 
                 Text(description)
-                    .font(.system(size: 14, weight: .medium))
+                    .font(.system(size: AppTheme.fontSize14, weight: .medium))
                     .foregroundColor(.white.opacity(0.7))
             }
             .frame(maxWidth: .infinity, alignment: .leading)

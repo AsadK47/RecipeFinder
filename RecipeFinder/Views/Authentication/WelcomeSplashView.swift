@@ -177,7 +177,7 @@ struct WelcomeSplashView: View {
     
     private var titleText: some View {
         Text("Welcome Aboard!")
-            .font(.system(size: 40, weight: .bold, design: .rounded))
+            .font(.system(size: AppTheme.fontSize42, weight: .bold, design: .rounded))
             .foregroundStyle(titleGradient)
             .multilineTextAlignment(.center)
             .frame(maxWidth: .infinity)
@@ -195,7 +195,7 @@ struct WelcomeSplashView: View {
     
     private var subtitleText: some View {
         Text("Your culinary journey begins now")
-            .font(.system(size: 20, weight: .medium, design: .rounded))
+            .font(.system(size: AppTheme.fontSize20, weight: .medium, design: .rounded))
             .foregroundColor(AppTheme.textColor(for: colorScheme, opacity: 0.9))
             .multilineTextAlignment(.center)
             .frame(maxWidth: .infinity)
@@ -220,7 +220,7 @@ struct WelcomeSplashView: View {
                 .font(.system(size: 18))
                 .foregroundStyle(AppTheme.accentColor(for: appTheme))
             Text("Account created successfully")
-                .font(.system(size: 16, weight: .semibold))
+                .font(.system(size: AppTheme.fontSize16, weight: .semibold))
                 .adaptiveForegroundColor()
         }
     }
@@ -228,10 +228,10 @@ struct WelcomeSplashView: View {
     private var emailConfirmationRow: some View {
         HStack(spacing: 8) {
             Image(systemName: "envelope.fill")
-                .font(.system(size: 14))
+                .font(.system(size: AppTheme.fontSize14))
                 .adaptiveForegroundColor(opacity: 0.6)
             Text(email)
-                .font(.system(size: 15, weight: .medium))
+                .font(.system(size: AppTheme.fontSize15, weight: .medium))
                 .adaptiveForegroundColor(opacity: 0.8)
         }
     }
@@ -274,7 +274,7 @@ struct WelcomeSplashView: View {
             Text("Continue to Sign In")
                 .font(.system(size: 18, weight: .semibold))
             Image(systemName: "arrow.right.circle.fill")
-                .font(.system(size: 20))
+                .font(.system(size: AppTheme.fontSize20))
         }
         .adaptiveForegroundColor()
         .frame(maxWidth: .infinity)
@@ -361,12 +361,12 @@ struct FeatureRow: View {
     var body: some View {
         HStack(spacing: spacing.md) {
             Image(systemName: icon)
-                .font(.system(size: 16, weight: .semibold))
+                .font(.system(size: AppTheme.fontSize16, weight: .semibold))
                 .adaptiveForegroundColor(opacity: 0.9)
                 .frame(width: spacing.iconMedium)
             
             Text(text)
-                .font(.system(size: 15, weight: .medium))
+                .font(.system(size: AppTheme.fontSize15, weight: .medium))
                 .adaptiveForegroundColor(opacity: 0.85)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }

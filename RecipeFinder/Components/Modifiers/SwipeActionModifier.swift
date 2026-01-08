@@ -27,7 +27,7 @@ struct SwipeActionModifier: ViewModifier {
                         performAction(trailing.action)
                     }) {
                         Image(systemName: trailing.icon)
-                            .font(.system(size: AppTheme.fontSizeTitle3))
+                            .font(.system(size: AppTheme.fontSize20))
                             .foregroundColor(.white)
                             .frame(width: 60)
                     }

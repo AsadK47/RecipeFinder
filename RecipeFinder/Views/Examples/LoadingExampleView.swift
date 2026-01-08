@@ -27,12 +27,12 @@ struct LoadingExampleView: View {
                             Toggle("Show Loading State", isOn: $isLoading)
                                 .padding()
                                 .background(.ultraThinMaterial)
-                                .cornerRadius(12)
+                                .cornerRadius(AppTheme.cornerRadius12)
                             
                             Toggle("Show Skeleton Loader", isOn: $showSkeleton)
                                 .padding()
                                 .background(.ultraThinMaterial)
-                                .cornerRadius(12)
+                                .cornerRadius(AppTheme.cornerRadius12)
                         }
                         .padding(.horizontal)
                         

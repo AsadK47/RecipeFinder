@@ -85,7 +85,7 @@ struct IngredientRowView: View {
                 } 
             }, label: {
                 Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: AppTheme.fontSizeTitle1))
+                    .font(.system(size: AppTheme.fontSize28))
                     .foregroundColor(isChecked ? .green : .gray.opacity(0.4))
                     .frame(width: 32, height: 32)
                     .contentShape(Rectangle())

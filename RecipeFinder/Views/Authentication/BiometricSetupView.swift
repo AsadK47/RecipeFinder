@@ -95,7 +95,7 @@ struct BiometricSetupView: View {
     private func titleAndBenefits(spacing: AdaptiveSpacing) -> some View {
         VStack(spacing: spacing.md + spacing.md) {
             Text("Secure Your Account")
-                .font(.system(size: AppTheme.fontSizeMediumLarge - 2, weight: .bold, design: .rounded))
+                .font(.system(size: AppTheme.fontSize38 - 2, weight: .bold, design: .rounded))
                 .foregroundStyle(
                     LinearGradient(
                         colors: [.white, .white.opacity(0.95)],
@@ -108,7 +108,7 @@ struct BiometricSetupView: View {
             
             VStack(spacing: spacing.lg) {
                 Text("Enable \(authManager.biometricType) for quick and secure access")
-                    .font(.system(size: AppTheme.fontSizeBody + 2, weight: .medium))
+                    .font(.system(size: AppTheme.fontSize16 + 2, weight: .medium))
                     .adaptiveForegroundColor(opacity: 0.9)
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
@@ -139,7 +139,7 @@ struct BiometricSetupView: View {
             
             Button(action: skipSetup) {
                 Text("Maybe Later")
-                    .font(.system(size: AppTheme.fontSizeBody, weight: .semibold))
+                    .font(.system(size: AppTheme.fontSize16, weight: .semibold))
                     .adaptiveForegroundColor(opacity: 0.85)
                     .frame(maxWidth: .infinity)
                     .frame(height: spacing.buttonHeight)
@@ -340,7 +340,7 @@ private struct BiometricIconView: View {
     
     private var iconImage: some View {
         Image(systemName: icon)
-            .font(.system(size: 65, weight: .medium))
+            .font(.system(size: AppTheme.fontSize60, weight: .medium))
             .foregroundStyle(
                 LinearGradient(
                     colors: [accentColor, accentColor.opacity(0.8)],
@@ -423,9 +423,9 @@ private struct EnableButton: View {
                         .progressViewStyle(CircularProgressViewStyle(tint: AppTheme.textColor(for: colorScheme)))
                 } else {
                     Image(systemName: biometricIcon)
-                        .font(.system(size: AppTheme.fontSizeTitle3, weight: .semibold))
+                        .font(.system(size: AppTheme.fontSize20, weight: .semibold))
                     Text("Enable \(biometricType)")
-                        .font(.system(size: AppTheme.fontSizeBody + 2, weight: .bold))
+                        .font(.system(size: AppTheme.fontSize16 + 2, weight: .bold))
                 }
             }
             .adaptiveForegroundColor()
@@ -474,12 +474,12 @@ struct BenefitRow: View {
     var body: some View {
         HStack(spacing: spacing.md) {
             Image(systemName: icon)
-                .font(.system(size: AppTheme.fontSizeBody, weight: .semibold))
+                .font(.system(size: AppTheme.fontSize16, weight: .semibold))
                 .adaptiveForegroundColor(opacity: 0.9)
                 .frame(width: spacing.md + spacing.md)
             
             Text(text)
-                .font(.system(size: AppTheme.fontSizeCallout, weight: .medium))
+                .font(.system(size: AppTheme.fontSize15, weight: .medium))
                 .adaptiveForegroundColor(opacity: 0.85)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }

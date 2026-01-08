@@ -99,7 +99,7 @@ struct RecipeWizardView: View {
                                         .padding(.horizontal, 16)
                                         .padding(.vertical, 8)
                                         .background(.ultraThinMaterial)
-                                        .cornerRadius(12)
+                                        .cornerRadius(AppTheme.cornerRadius12)
                                 }
                                 
                                 Spacer()
@@ -273,7 +273,7 @@ struct RecipeWizardView: View {
                         .font(.title2)
                         .padding()
                         .background(Color.white.opacity(AppTheme.dividerOpacity))
-                        .cornerRadius(12)
+                        .cornerRadius(AppTheme.cornerRadius12)
                 }
                 .padding()
             }
@@ -369,7 +369,7 @@ struct RecipeWizardView: View {
                 VStack(spacing: AppTheme.spacing24) {
                     // Large display of servings
                     Text("\(servings)")
-                        .font(.system(size: 72, weight: .bold))
+                        .font(.system(size: AppTheme.fontSize80, weight: .bold))
                         .foregroundColor(AppTheme.accentColor(for: appTheme))
                     
                     Text("servings")
@@ -382,7 +382,7 @@ struct RecipeWizardView: View {
                     Stepper("Adjust servings", value: $servings, in: 1...20)
                         .labelsHidden()
                 }
-                .padding(30)
+                .padding(AppTheme.spacing32)
             }
         }
     }
@@ -434,7 +434,7 @@ struct RecipeWizardView: View {
                                 }) {
                                     Image(systemName: "minus.circle.fill")
                                         .foregroundColor(.red)
-                                        .font(.system(size: AppTheme.fontSizeIcon))
+                                        .font(.system(size: AppTheme.fontSize24))
                                 }
                             }
                         }
@@ -637,7 +637,7 @@ struct RecipeWizardView: View {
                     }
                     .padding(AppTheme.spacing8)
                     .background(Color(.systemGray6))
-                    .cornerRadius(8)
+                    .cornerRadius(AppTheme.cornerRadius8)
                     
                     // Quick add buttons for common note types (always show)
                     VStack(alignment: .leading, spacing: AppTheme.spacing8) {
@@ -698,7 +698,7 @@ struct RecipeWizardView: View {
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
             .background(Color(.systemGray5))
-            .cornerRadius(16)
+            .cornerRadius(AppTheme.cornerRadius16)
         }
         .buttonStyle(PlainButtonStyle())
     }
@@ -730,7 +730,7 @@ struct RecipeWizardView: View {
             .overlay(alignment: .topTrailing) {
                 // Icon positioned absolutely, doesn't affect layout
                 Image(systemName: illustration)
-                    .font(.system(size: 44, weight: .medium))
+                    .font(.system(size: AppTheme.fontSize42, weight: .medium))
                     .adaptiveForegroundColor(opacity: 0.6)
             }
         }
@@ -790,7 +790,7 @@ struct RecipeWizardView: View {
                     .padding()
                     .background(Color.white.opacity(0.3))
                     .adaptiveForegroundColor()
-                    .cornerRadius(12)
+                    .cornerRadius(AppTheme.cornerRadius12)
                 }
             }
             
@@ -817,7 +817,7 @@ struct RecipeWizardView: View {
                 .padding()
                 .background(canProceed ? Color.white : Color.white.opacity(AppTheme.glassLightOpacity))
                 .foregroundColor(canProceed ? AppTheme.accentColor(for: appTheme) : .white)
-                .cornerRadius(12)
+                .cornerRadius(AppTheme.cornerRadius12)
             }
             .disabled(!canProceed)
         }

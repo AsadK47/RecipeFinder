@@ -209,7 +209,7 @@ struct MealPlanningView: View {
                     }
                 } label: {
                     Image(systemName: "line.3.horizontal")
-                        .font(.system(size: AppTheme.fontSizeTitle3))
+                        .font(.system(size: AppTheme.fontSize20))
                         .adaptiveForegroundColor()
                         .frame(width: 44, height: 44)
                 }
@@ -232,9 +232,9 @@ struct MealPlanningView: View {
                     }) {
                         HStack(spacing: AppTheme.spacing6) {
                             Image(systemName: mode == .calendar ? "calendar" : "list.bullet")
-                                .font(.system(size: AppTheme.fontSizeSubheadline, weight: .semibold))
+                                .font(.system(size: AppTheme.fontSize14, weight: .semibold))
                             Text(mode == .calendar ? "Calendar" : "Weekly")
-                                .font(.system(size: AppTheme.fontSizeSubheadline, weight: .semibold))
+                                .font(.system(size: AppTheme.fontSize14, weight: .semibold))
                         }
                         .foregroundColor(viewMode == mode ? AppTheme.textColor(for: colorScheme) : AppTheme.textColor(for: colorScheme, opacity: 0.6))
                         .padding(.horizontal, 16)
@@ -264,7 +264,7 @@ struct MealPlanningView: View {
             HStack {
                 Button(action: previousWeek) {
                     Image(systemName: "chevron.left")
-                        .font(.system(size: AppTheme.fontSizeBody + 2, weight: .semibold))
+                        .font(.system(size: AppTheme.fontSize16 + 2, weight: .semibold))
                         .adaptiveForegroundColor()
                         .frame(width: 40, height: 40)
                         .background(Circle().fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity)))
@@ -273,14 +273,14 @@ struct MealPlanningView: View {
                 Spacer()
                 
                 Text(weekRangeString)
-                    .font(.system(size: AppTheme.fontSizeBody + 2, weight: .bold))
+                    .font(.system(size: AppTheme.fontSize16 + 2, weight: .bold))
                     .adaptiveForegroundColor()
                 
                 Spacer()
                 
                 Button(action: nextWeek) {
                     Image(systemName: "chevron.right")
-                        .font(.system(size: AppTheme.fontSizeBody + 2, weight: .semibold))
+                        .font(.system(size: AppTheme.fontSize16 + 2, weight: .semibold))
                         .adaptiveForegroundColor()
                         .frame(width: 40, height: 40)
                         .background(Circle().fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity)))
@@ -323,7 +323,7 @@ struct MealPlanningView: View {
             HStack {
                 Button(action: previousMonth) {
                     Image(systemName: "chevron.left")
-                        .font(.system(size: AppTheme.fontSizeBody + 2, weight: .semibold))
+                        .font(.system(size: AppTheme.fontSize16 + 2, weight: .semibold))
                         .adaptiveForegroundColor()
                         .frame(width: 40, height: 40)
                         .background(Circle().fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity)))
@@ -337,11 +337,11 @@ struct MealPlanningView: View {
                 }) {
                     HStack(spacing: AppTheme.spacing6) {
                         Text(monthYearString)
-                            .font(.system(size: AppTheme.fontSizeTitle2, weight: .bold))
+                            .font(.system(size: AppTheme.fontSize22, weight: .bold))
                             .adaptiveForegroundColor()
                         
                         Image(systemName: "calendar.circle")
-                            .font(.system(size: AppTheme.fontSizeBody, weight: .semibold))
+                            .font(.system(size: AppTheme.fontSize16, weight: .semibold))
                             .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                     }
                 }
@@ -351,7 +351,7 @@ struct MealPlanningView: View {
                 
                 Button(action: nextMonth) {
                     Image(systemName: "chevron.right")
-                        .font(.system(size: AppTheme.fontSizeBody + 2, weight: .semibold))
+                        .font(.system(size: AppTheme.fontSize16 + 2, weight: .semibold))
                         .adaptiveForegroundColor()
                         .frame(width: 40, height: 40)
                         .background(Circle().fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity)))
@@ -364,7 +364,7 @@ struct MealPlanningView: View {
                 // Weekday headers
                 ForEach(["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], id: \.self) { day in
                     Text(day)
-                        .font(.system(size: AppTheme.fontSizeCaption1, weight: .semibold))
+                        .font(.system(size: AppTheme.fontSize12, weight: .semibold))
                         .foregroundColor(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
                         .frame(maxWidth: .infinity)
                 }
@@ -418,7 +418,7 @@ struct MealPlanningView: View {
         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
             HStack {
                 Text("Planned Meals")
-                    .font(.system(size: AppTheme.fontSizeTitle3, weight: .bold))
+                    .font(.system(size: AppTheme.fontSize20, weight: .bold))
                     .adaptiveForegroundColor()
                 
                 Spacer()
@@ -468,7 +468,7 @@ struct MealPlanningView: View {
                         .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                     
                     Text("Add Another Meal")
-                        .font(.system(size: AppTheme.fontSizeBody, weight: .semibold))
+                        .font(.system(size: AppTheme.fontSize16, weight: .semibold))
                         .adaptiveForegroundColor()
                     
                     Spacer()
@@ -495,7 +495,7 @@ struct MealPlanningView: View {
         VStack(alignment: .leading, spacing: AppTheme.spacing16) {
             HStack {
                 Text("Meals for")
-                    .font(.system(size: AppTheme.fontSizeTitle3, weight: .bold))
+                    .font(.system(size: AppTheme.fontSize20, weight: .bold))
                     .adaptiveForegroundColor()
                 
                 Spacer()
@@ -508,7 +508,7 @@ struct MealPlanningView: View {
             
             VStack(spacing: AppTheme.spacing16) {
                 Image(systemName: "calendar.badge.plus")
-                    .font(.system(size: 70))
+                    .font(.system(size: AppTheme.fontSize60))
                     .adaptiveForegroundColor(opacity: 0.4)
                 
                 Text("No Meals Planned for This Day")
@@ -556,7 +556,7 @@ struct MealPlanningView: View {
     private var emptyStateView: some View {
         VStack(spacing: AppTheme.spacing16) {
             Image(systemName: "calendar.badge.plus")
-                .font(.system(size: 70))
+                .font(.system(size: AppTheme.fontSize60))
                 .adaptiveForegroundColor(opacity: 0.4)
             
             Text("No Meals Planned Yet")
@@ -749,7 +749,7 @@ struct CalendarDayView: View {
     var body: some View {
         VStack(spacing: AppTheme.spacing4) {
             Text("\(Calendar.current.component(.day, from: date))")
-                .font(.system(size: AppTheme.fontSizeBody, weight: isSelected ? .bold : (isToday ? .semibold : .regular)))
+                .font(.system(size: AppTheme.fontSize16, weight: isSelected ? .bold : (isToday ? .semibold : .regular)))
                 .foregroundColor(textColor)
             
             // Meal indicator dot
@@ -801,13 +801,13 @@ struct MealTimeCard: View {
                     .frame(width: 52, height: 52)
                 
                 Image(systemName: mealTime.icon)
-                    .font(.system(size: AppTheme.fontSizeTitle2, weight: .semibold))
+                    .font(.system(size: AppTheme.fontSize22, weight: .semibold))
                     .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.cardLightOpacity) : .black.opacity(0.9))
             }
             
             VStack(alignment: .leading, spacing: AppTheme.spacing6) {
                 Text(mealTime.rawValue)
-                    .font(.system(size: AppTheme.fontSizeBody + 2, weight: .semibold))
+                    .font(.system(size: AppTheme.fontSize16 + 2, weight: .semibold))
                     .adaptiveForegroundColor()
                 
                 HStack(spacing: AppTheme.spacing4) {
@@ -842,7 +842,7 @@ struct MealTimeCard: View {
             Spacer()
             
             Image(systemName: recipe != nil ? "pencil.circle" : "chevron.right")
-                .font(.system(size: AppTheme.fontSizeSubheadline, weight: .semibold))
+                .font(.system(size: AppTheme.fontSize14, weight: .semibold))
                 .adaptiveForegroundColor(opacity: 0.4)
         }
         .padding(AppTheme.spacing16)
@@ -890,7 +890,7 @@ struct MealTimeSelectorSheet: View {
                                 Image(systemName: "xmark.circle.fill")
                                     .font(.title2)
                                 Text("Cancel")
-                                    .font(.system(size: AppTheme.fontSizeBody, weight: .semibold))
+                                    .font(.system(size: AppTheme.fontSize16, weight: .semibold))
                             }
                             .adaptiveForegroundColor(opacity: 0.9)
                         }
@@ -899,7 +899,7 @@ struct MealTimeSelectorSheet: View {
                     .padding(.top, 20)
                     
                     Text("Plan a Meal")
-                        .font(.system(size: AppTheme.fontSizeTitle1, weight: .bold))
+                        .font(.system(size: AppTheme.fontSize28, weight: .bold))
                         .adaptiveForegroundColor()
                         .shadow(color: .black.opacity(AppTheme.overlayLightOpacity), radius: 2, x: 0, y: 1)
                     
@@ -907,7 +907,7 @@ struct MealTimeSelectorSheet: View {
                         Image(systemName: "calendar")
                             .font(.subheadline)
                         Text(dateString)
-                            .font(.system(size: AppTheme.fontSizeBody, weight: .medium))
+                            .font(.system(size: AppTheme.fontSize16, weight: .medium))
                     }
                     .adaptiveForegroundColor(opacity: 0.85)
                 }
@@ -932,13 +932,13 @@ struct MealTimeSelectorSheet: View {
                                                 .frame(width: 50, height: 50)
                                             
                                             Image(systemName: mealTime.icon)
-                                                .font(.system(size: AppTheme.fontSizeTitle2, weight: .semibold))
+                                                .font(.system(size: AppTheme.fontSize22, weight: .semibold))
                                                 .foregroundColor(selectedMealTimes.contains(mealTime) ? .green : (colorScheme == .dark ? .white.opacity(AppTheme.cardLightOpacity) : .black.opacity(0.9)))
                                         }
                                         
                                         VStack(alignment: .leading, spacing: AppTheme.spacing6) {
                                             Text(mealTime.rawValue)
-                                                .font(.system(size: AppTheme.fontSizeBody + 2, weight: .semibold))
+                                                .font(.system(size: AppTheme.fontSize16 + 2, weight: .semibold))
                                                 .adaptiveForegroundColor()
                                             
                                             HStack(spacing: AppTheme.spacing4) {
@@ -1098,7 +1098,7 @@ struct RecipeSelectionSheet: View {
                                             endPoint: .bottomTrailing
                                         )
                                     )
-                                    .cornerRadius(16)
+                                    .cornerRadius(AppTheme.cornerRadius16)
                                 }
                             }
                             
@@ -1126,7 +1126,7 @@ struct RecipeSelectionSheet: View {
                                         endPoint: .bottomTrailing
                                     )
                                 )
-                                .cornerRadius(16)
+                                .cornerRadius(AppTheme.cornerRadius16)
                             }
                             
                             // Add from Existing button
@@ -1155,7 +1155,7 @@ struct RecipeSelectionSheet: View {
                                         endPoint: .bottomTrailing
                                     )
                                 )
-                                .cornerRadius(16)
+                                .cornerRadius(AppTheme.cornerRadius16)
                             }
                         }
                         .padding(.horizontal)
@@ -1198,7 +1198,7 @@ struct WeekDayRow: View {
             // Date
             VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                 Text(dayString)
-                    .font(.system(size: AppTheme.fontSizeBody, weight: .semibold))
+                    .font(.system(size: AppTheme.fontSize16, weight: .semibold))
                     .adaptiveForegroundColor()
                 
                 if isToday {
@@ -1320,11 +1320,11 @@ struct NutritionTipsSheet: View {
                         // Header
                         VStack(spacing: AppTheme.spacing12) {
                             Image(systemName: "heart.circle.fill")
-                                .font(.system(size: AppTheme.fontSizeDisplay))
+                                .font(.system(size: AppTheme.fontSize60))
                                 .foregroundColor(.green)
                             
                             Text("Healthy Eating Guide")
-                                .font(.system(size: AppTheme.fontSizeTitle1, weight: .bold))
+                                .font(.system(size: AppTheme.fontSize28, weight: .bold))
                                 .adaptiveForegroundColor()
                             
                             Text("8 tips for planning nutritious meals")
@@ -1426,7 +1426,7 @@ struct NutritionTipCard: View {
         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
             HStack(spacing: AppTheme.spacing12) {
                 Text(tip.icon)
-                    .font(.system(size: AppTheme.fontSizeMedium))
+                    .font(.system(size: AppTheme.fontSize32))
                 
                 VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                     Text(tip.category)
@@ -1436,7 +1436,7 @@ struct NutritionTipCard: View {
                         .textCase(.uppercase)
                     
                     Text(tip.title)
-                        .font(.system(size: AppTheme.fontSizeBody + 2, weight: .bold))
+                        .font(.system(size: AppTheme.fontSize16 + 2, weight: .bold))
                         .adaptiveForegroundColor()
                 }
                 
@@ -1444,7 +1444,7 @@ struct NutritionTipCard: View {
             }
             
             Text(tip.description)
-                .font(.system(size: AppTheme.fontSizeCallout))
+                .font(.system(size: AppTheme.fontSize15))
                 .adaptiveForegroundColor(opacity: 0.8)
                 .fixedSize(horizontal: false, vertical: true)
         }

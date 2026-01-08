@@ -104,7 +104,7 @@ struct AccountView: View {
                             .padding()
                             .background(AppTheme.accentColor(for: selectedTheme))
                             .adaptiveForegroundColor()
-                            .cornerRadius(12)
+                            .cornerRadius(AppTheme.cornerRadius12)
                         }
                         .opacity(showSuccessFeedback ? 0.6 : 1)
                         .disabled(showSuccessFeedback)
@@ -120,7 +120,7 @@ struct AccountView: View {
                             }
                             .padding()
                             .background(AppTheme.success.opacity(0.1))
-                            .cornerRadius(10)
+                            .cornerRadius(AppTheme.cornerRadius12)
                             .transition(.scale.combined(with: .opacity))
                         }
                         
@@ -209,7 +209,7 @@ struct AccountView: View {
                                 .frame(width: 100, height: 100)
                             
                             Text(getInitials())
-                                .font(.system(size: 40, weight: .bold))
+                                .font(.system(size: AppTheme.fontSize42, weight: .bold))
                                 .adaptiveForegroundColor()
                         }
                     }
@@ -220,7 +220,7 @@ struct AccountView: View {
                             .frame(width: 28, height: 28)
                         
                         Image(systemName: "camera.fill")
-                            .font(.system(size: AppTheme.fontSizeCaption1, weight: .semibold))
+                            .font(.system(size: AppTheme.fontSize12, weight: .semibold))
                             .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                     }
                 }
@@ -380,7 +380,7 @@ struct AccountView: View {
                                 .frame(width: 100, height: 100)
                             
                             Text(displayInitials)
-                                .font(.system(size: 40, weight: .semibold))
+                                .font(.system(size: AppTheme.fontSize42, weight: .semibold))
                                 .adaptiveForegroundColor()
                         }
                     }
@@ -391,7 +391,7 @@ struct AccountView: View {
                             .frame(width: 32, height: 32)
                         
                         Image(systemName: "pencil")
-                            .font(.system(size: AppTheme.fontSizeSubheadline, weight: .semibold))
+                            .font(.system(size: AppTheme.fontSize14, weight: .semibold))
                             .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                     }
                 }
@@ -450,7 +450,7 @@ struct AccountView: View {
                     } label: {
                         HStack(spacing: AppTheme.spacing12) {
                             Image(systemName: "applelogo")
-                                .font(.system(size: AppTheme.fontSizeBody + 2, weight: .semibold))
+                                .font(.system(size: AppTheme.fontSize16 + 2, weight: .semibold))
                             Text("Link Apple ID")
                                 .font(.body)
                                 .fontWeight(.semibold)
@@ -476,9 +476,9 @@ struct AccountView: View {
                     
                     HStack(spacing: AppTheme.spacing4) {
                         Image(systemName: "wrench.and.screwdriver.fill")
-                            .font(.system(size: AppTheme.fontSizeCaption2))
+                            .font(.system(size: AppTheme.fontSize11))
                         Text("Under Construction • Please Wait Patiently")
-                            .font(.system(size: AppTheme.fontSizeCaption2, weight: .medium))
+                            .font(.system(size: AppTheme.fontSize11, weight: .medium))
                     }
                     .foregroundColor(.orange.opacity(0.8))
                 }
@@ -489,7 +489,7 @@ struct AccountView: View {
                 NavigationLink(destination: PrivacySettingsView()) {
                     HStack(spacing: AppTheme.spacing12) {
                         Image(systemName: authManager.biometricType == "Face ID" ? "faceid" : "touchid")
-                            .font(.system(size: AppTheme.fontSizeBody + 2, weight: .semibold))
+                            .font(.system(size: AppTheme.fontSize16 + 2, weight: .semibold))
                         Text("Configure \(authManager.biometricType)")
                             .font(.body)
                             .fontWeight(.semibold)
@@ -719,7 +719,7 @@ struct AccountRowButton: View {
                         .frame(width: 40, height: 40)
                     
                     Image(systemName: icon)
-                        .font(.system(size: AppTheme.fontSizeBody + 2, weight: .semibold))
+                        .font(.system(size: AppTheme.fontSize16 + 2, weight: .semibold))
                         .adaptiveForegroundColor()
                 }
                 
@@ -739,7 +739,7 @@ struct AccountRowButton: View {
                 
                 if showChevron {
                     Image(systemName: "chevron.right")
-                        .font(.system(size: AppTheme.fontSizeFootnote, weight: .semibold))
+                        .font(.system(size: AppTheme.fontSize13, weight: .semibold))
                         .foregroundColor(.secondary)
                 }
             }
@@ -834,7 +834,7 @@ struct DataImportView: View {
                 Spacer()
                 
                 Image(systemName: "square.and.arrow.up.fill")
-                    .font(.system(size: AppTheme.fontSizeDisplay))
+                    .font(.system(size: AppTheme.fontSize60))
                     .foregroundColor(.orange)
                 
                 Text("Import Your Data")
@@ -875,7 +875,7 @@ struct DataImportView: View {
                             }
                             .padding()
                             .background(Color.secondary.opacity(0.1))
-                            .cornerRadius(12)
+                            .cornerRadius(AppTheme.cornerRadius12)
                         }
                     }
                 }
@@ -921,7 +921,7 @@ struct DataImportView: View {
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color.orange)
-                    .cornerRadius(12)
+                    .cornerRadius(AppTheme.cornerRadius12)
                 }
                 .disabled(isImporting)
                 .padding(.horizontal)
@@ -1131,7 +1131,7 @@ struct ChefTypeCard: View {
         Button(action: action) {
             VStack(spacing: AppTheme.spacing8) {
                 Image(systemName: chefType.icon)
-                    .font(.system(size: AppTheme.fontSizeMedium))
+                    .font(.system(size: AppTheme.fontSize32))
                     .foregroundColor(isSelected ? AppTheme.accentColor(for: selectedTheme) : .secondary)
                 
                 Text(chefType.rawValue)
@@ -1184,7 +1184,7 @@ struct BadgeCard: View {
                     .frame(width: 60, height: 60)
                 
                 Image(systemName: badge.icon)
-                    .font(.system(size: AppTheme.fontSizeTitle1))
+                    .font(.system(size: AppTheme.fontSize28))
                     .foregroundColor(badge.isUnlocked ? badgeColor : .gray.opacity(0.5))
             }
             
@@ -1196,11 +1196,11 @@ struct BadgeCard: View {
             
             if badge.isUnlocked, let date = badge.dateEarned {
                 Text(date.formatted(date: .abbreviated, time: .omitted))
-                    .font(.system(size: 9))
+                    .font(.system(size: AppTheme.fontSize11))
                     .foregroundColor(.secondary)
             } else {
                 Text("Locked")
-                    .font(.system(size: 9))
+                    .font(.system(size: AppTheme.fontSize11))
                     .foregroundColor(.gray)
             }
         }
@@ -1275,14 +1275,14 @@ struct BadgeDetailView: View {
                         .frame(width: 120, height: 120)
                     
                     Image(systemName: badge.icon)
-                        .font(.system(size: AppTheme.fontSizeDisplay))
+                        .font(.system(size: AppTheme.fontSize60))
                         .foregroundColor(badge.isUnlocked ? badgeColor : .gray.opacity(0.5))
                 }
                 .shadow(color: badge.isUnlocked ? badgeColor.opacity(0.3) : .clear, radius: 20)
                 
                 // Title
                 Text(badge.title)
-                    .font(.system(size: AppTheme.fontSizeTitle1, weight: .bold))
+                    .font(.system(size: AppTheme.fontSize28, weight: .bold))
                     .adaptiveForegroundColor()
                     .multilineTextAlignment(.center)
                 

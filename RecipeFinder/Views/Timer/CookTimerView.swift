@@ -475,7 +475,7 @@ struct CookTimerView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 18)
                         .background(AppTheme.accentColor(for: selectedTheme))
-                        .cornerRadius(16)
+                        .cornerRadius(AppTheme.cornerRadius16)
                     }
                     .disabled(customHours == 0 && customMinutes == 0 && customSeconds == 0)
                     .opacity((customHours == 0 && customMinutes == 0 && customSeconds == 0) ? 0.5 : 1.0)
@@ -743,7 +743,7 @@ struct TimerCard: View {
                     .animation(.linear, value: progress)
                 
                 Text(timeString)
-                    .font(.system(size: AppTheme.fontSizeMedium, weight: .bold, design: .rounded))
+                    .font(.system(size: AppTheme.fontSize32, weight: .bold, design: .rounded))
                     .adaptiveForegroundColor()
             }
             .frame(width: 140, height: 140)
@@ -760,7 +760,7 @@ struct TimerCard: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
                     .background(Color.orange)
-                    .cornerRadius(12)
+                    .cornerRadius(AppTheme.cornerRadius12)
                 }
                 .buttonStyle(PlainButtonStyle())
                 
@@ -774,7 +774,7 @@ struct TimerCard: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
                     .background(Color.red)
-                    .cornerRadius(12)
+                    .cornerRadius(AppTheme.cornerRadius12)
                 }
                 .buttonStyle(PlainButtonStyle())
             }
@@ -808,7 +808,7 @@ struct CompletedTimerBannerView: View {
                     .frame(width: 40, height: 40)
                 
                 Image(systemName: "checkmark")
-                    .font(.system(size: AppTheme.fontSizeTitle3, weight: .bold))
+                    .font(.system(size: AppTheme.fontSize20, weight: .bold))
                     .adaptiveForegroundColor()
             }
             

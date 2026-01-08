@@ -38,7 +38,7 @@ struct RecipeCard: View {
                             .shadow(color: .black.opacity(AppTheme.overlayLightOpacity), radius: 2)
                         
                         Image(systemName: "heart.fill")
-                            .font(.system(size: AppTheme.fontSizeCaption1))
+                            .font(.system(size: AppTheme.fontSize12))
                             .foregroundStyle(
                                 LinearGradient(
                                     gradient: Gradient(colors: [
@@ -60,7 +60,7 @@ struct RecipeCard: View {
             VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                 // Title 
                 Text(recipe.name)
-                    .font(.system(size: AppTheme.fontSizeBody, weight: .semibold))
+                    .font(.system(size: AppTheme.fontSize16, weight: .semibold))
                     .foregroundColor(AppTheme.adaptiveEmphasis(for: colorScheme))
                     .lineLimit(2)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -70,17 +70,17 @@ struct RecipeCard: View {
                 HStack(spacing: AppTheme.spacing10) {
                     HStack(spacing: AppTheme.spacing5) {
                         Image(systemName: "clock.fill")
-                            .font(.system(size: AppTheme.fontSizeCaption1, weight: .medium))
+                            .font(.system(size: AppTheme.fontSize12, weight: .medium))
                             .foregroundColor(.orange)
                         Text(recipe.totalTime)
-                            .font(.system(size: AppTheme.fontSizeFootnote, weight: .medium))
+                            .font(.system(size: AppTheme.fontSize13, weight: .medium))
                             .foregroundColor(AppTheme.adaptiveCardTextEmphasis(for: colorScheme))
                     }
                     
                     HStack(spacing: AppTheme.spacing6) {
                         DifficultyBarsView(difficulty: recipe.difficulty, size: 3.5)
                         Text(recipe.difficulty)
-                            .font(.system(size: AppTheme.fontSizeFootnote, weight: .medium))
+                            .font(.system(size: AppTheme.fontSize13, weight: .medium))
                             .foregroundColor(AppTheme.adaptiveCardTextEmphasis(for: colorScheme))
                     }
                 }
@@ -88,7 +88,7 @@ struct RecipeCard: View {
             
             // Chevron on the right
             Image(systemName: "chevron.right")
-                .font(.system(size: AppTheme.fontSizeSubheadline, weight: .semibold))
+                .font(.system(size: AppTheme.fontSize14, weight: .semibold))
                 .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
         }
         .padding(AppTheme.spacing16)

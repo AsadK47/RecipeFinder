@@ -304,7 +304,7 @@ struct SettingsRow: View {
                     .frame(width: 29, height: 29)
                 
                 Image(systemName: icon)
-                    .font(.system(size: AppTheme.fontSizeCallout, weight: .semibold))
+                    .font(.system(size: AppTheme.fontSize15, weight: .semibold))
                     .adaptiveForegroundColor()
             }
             
@@ -428,7 +428,7 @@ struct AppearanceAndThemeSettingsView: View {
                                         }
                                         .padding(AppTheme.spacing12)
                                         .background(selectedTheme == theme ? AppTheme.accentColor(for: theme).opacity(0.15) : AppTheme.secondaryText.opacity(0.05))
-                                        .cornerRadius(12)
+                                        .cornerRadius(AppTheme.cornerRadius12)
                                     }
                                     .buttonStyle(PlainButtonStyle())
                                 }
@@ -705,7 +705,7 @@ struct ThemeSettingsView: View {
                                     }
                                     .padding(AppTheme.spacing16)
                                     .background(selectedTheme == theme ? Color.white.opacity(AppTheme.overlayLightOpacity) : Color.clear)
-                                    .cornerRadius(12)
+                                    .cornerRadius(AppTheme.cornerRadius12)
                                 }
                                 .buttonStyle(PlainButtonStyle())
                             }
@@ -812,7 +812,7 @@ struct NotificationSettingsView: View {
                         SettingsCard {
                             VStack(alignment: .center, spacing: AppTheme.spacing24) {
                                 Image(systemName: "bell.slash.fill")
-                                    .font(.system(size: AppTheme.fontSizeDisplay))
+                                    .font(.system(size: AppTheme.fontSize60))
                                     .foregroundColor(.orange)
                                     .padding(.top, 10)
                                 
@@ -843,7 +843,7 @@ struct NotificationSettingsView: View {
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 14)
                                     .background(AppTheme.accentColor)
-                                    .cornerRadius(12)
+                                    .cornerRadius(AppTheme.cornerRadius12)
                                 }
                                 .buttonStyle(PlainButtonStyle())
                                 .padding(.bottom, 10)
@@ -1322,7 +1322,7 @@ struct UnitsSettingsView: View {
                                     }
                                     .padding(AppTheme.spacing16)
                                     .background(measurementSystem == system ? AppTheme.secondaryText.opacity(0.2) : Color.clear)
-                                    .cornerRadius(12)
+                                    .cornerRadius(AppTheme.cornerRadius12)
                                 }
                                 .buttonStyle(PlainButtonStyle())
                             }
@@ -1569,7 +1569,7 @@ struct PrivacySettingsView: View {
                                         .frame(width: 40, height: 40)
                                     
                                     Image(systemName: "exclamationmark.triangle.fill")
-                                        .font(.system(size: AppTheme.fontSizeBody + 2, weight: .semibold))
+                                        .font(.system(size: AppTheme.fontSize16 + 2, weight: .semibold))
                                         .adaptiveForegroundColor()
                                 }
                                 
@@ -1616,7 +1616,7 @@ struct PrivacySettingsView: View {
                                         .frame(maxWidth: .infinity)
                                         .padding(.vertical, 12)
                                         .background(AppTheme.accentColor)
-                                        .cornerRadius(10)
+                                        .cornerRadius(AppTheme.cornerRadius12)
                                     }
                                     .buttonStyle(PlainButtonStyle())
                                 }
@@ -1694,7 +1694,7 @@ struct PrivacySettingsView: View {
                                 HStack(alignment: .top, spacing: AppTheme.spacing12) {
                                     Image(systemName: "info.circle.fill")
                                         .adaptiveForegroundColor()
-                                        .font(.system(size: AppTheme.fontSizeBody))
+                                        .font(.system(size: AppTheme.fontSize16))
                                     
                                     VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                                         Text("Backup Your Data")
@@ -1765,7 +1765,7 @@ struct PrivacyInfoRow: View {
                     .frame(width: 40, height: 40)
                 
                 Image(systemName: icon)
-                    .font(.system(size: AppTheme.fontSizeBody + 2, weight: .semibold))
+                    .font(.system(size: AppTheme.fontSize16 + 2, weight: .semibold))
                     .foregroundColor(iconColor)
             }
             
@@ -1841,7 +1841,7 @@ struct DataManagementSettingsView: View {
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 12)
                                 .background(Color.orange)
-                                .cornerRadius(10)
+                                .cornerRadius(AppTheme.cornerRadius12)
                             }
                             .buttonStyle(PlainButtonStyle())
                         }
@@ -2267,11 +2267,11 @@ struct AboutView: View {
                     // App Icon & Name
                     VStack(spacing: AppTheme.spacing16) {
                         Image(systemName: "book.circle.fill")
-                            .font(.system(size: AppTheme.fontSizeHero))
+                            .font(.system(size: AppTheme.fontSize80))
                             .foregroundColor(AppTheme.accentColor(for: appTheme))
                         
                         Text("RecipeFinder")
-                            .font(.system(size: AppTheme.fontSizeMedium, weight: .bold))
+                            .font(.system(size: AppTheme.fontSize32, weight: .bold))
                             .adaptiveForegroundColor()
                         
                         Text("Your Personal Cooking Companion")
@@ -2448,7 +2448,7 @@ struct PartyTimeView: View {
                         // Header Info
                         VStack(spacing: AppTheme.spacing12) {
                             Image(systemName: "party.popper.fill")
-                                .font(.system(size: AppTheme.fontSizeDisplay))
+                                .font(.system(size: AppTheme.fontSize60))
                                 .foregroundColor(AppTheme.accentColor(for: appTheme))
                                 .symbolEffect(.bounce, value: isVibrating)
                             
@@ -2502,7 +2502,7 @@ struct PartyTimeView: View {
                                     .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: isVibrating)
                                 
                                 Image(systemName: isVibrating ? "iphone.radiowaves.left.and.right" : "hand.tap.fill")
-                                    .font(.system(size: 70))
+                                    .font(.system(size: AppTheme.fontSize60))
                                     .adaptiveForegroundColor()
                                     .symbolEffect(.bounce, options: .repeating, value: isVibrating)
                             }

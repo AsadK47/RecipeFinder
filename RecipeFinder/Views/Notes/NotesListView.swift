@@ -288,7 +288,7 @@ struct NotesListView: View {
     private var emptyStateView: some View {
         VStack(spacing: AppTheme.spacing24) {
             Image(systemName: searchText.isEmpty ? "note.text" : "magnifyingglass")
-                .font(.system(size: 70))
+                .font(.system(size: AppTheme.fontSize60))
                 .adaptiveForegroundColor(opacity: 0.4)
             
             Text(searchText.isEmpty ? "No Notes Yet" : "No Matching Notes")

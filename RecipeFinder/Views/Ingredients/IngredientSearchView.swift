@@ -128,7 +128,7 @@ struct IngredientSearchView: View {
                             Spacer()
                             
                             Text("Ingredients")
-                                .font(.system(size: AppTheme.fontSizeLargeTitle, weight: .bold))
+                                .font(.system(size: AppTheme.fontSize34, weight: .bold))
                                 .adaptiveForegroundColor()
                             
                             Spacer()
@@ -234,7 +234,7 @@ struct IngredientSearchView: View {
                 if searchResults.isEmpty {
                     VStack(spacing: AppTheme.spacing16) {
                         Image(systemName: "magnifyingglass")
-                            .font(.system(size: AppTheme.fontSizeDisplay))
+                            .font(.system(size: AppTheme.fontSize60))
                             .adaptiveForegroundColor(opacity: 0.5)
                         
                         Text("No ingredients found")
@@ -338,7 +338,7 @@ struct IngredientSearchView: View {
                 label: {
                     Image(systemName: isAdded ? "basket.fill" : "basket")
                         .foregroundColor(isAdded ? AppTheme.accentColor : (AppTheme.adaptiveSubtitle(for: colorScheme)))
-                        .font(.system(size: AppTheme.fontSizeTitle3))
+                        .font(.system(size: AppTheme.fontSize20))
                         .frame(width: 44, height: 44)
                         .scaleEffect(isAdded ? 1.2 : 1.0)
                         .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isAdded)
@@ -834,7 +834,7 @@ struct CategoryCard: View {
                         label: {
                             Image(systemName: isAdded ? "basket.fill" : "basket")
                                 .foregroundColor(isAdded ? AppTheme.accentColor : (AppTheme.adaptiveSubtitle(for: colorScheme)))
-                                .font(.system(size: AppTheme.fontSizeBody + 2))
+                                .font(.system(size: AppTheme.fontSize16 + 2))
                                 .frame(width: 44, height: 44)
                                 .scaleEffect(isAdded ? 1.2 : 1.0)
                                 .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isAdded)
@@ -901,7 +901,7 @@ struct CategoryCard: View {
                 label: {
                     Image(systemName: isAdded ? "basket.fill" : "basket")
                         .foregroundColor(isAdded ? AppTheme.accentColor : (AppTheme.adaptiveSubtitle(for: colorScheme)))
-                        .font(.system(size: AppTheme.fontSizeBody + 2))
+                        .font(.system(size: AppTheme.fontSize16 + 2))
                         .frame(width: 44, height: 44)
                         .scaleEffect(isAdded ? 1.2 : 1.0)
                         .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isAdded)

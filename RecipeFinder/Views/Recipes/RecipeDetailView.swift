@@ -101,7 +101,7 @@ struct RecipeDetailView: View {
     
     private var recipeTitleView: some View {
         Text(recipe.name)
-            .font(.system(size: AppTheme.fontSizeLargeTitle, weight: .bold))
+            .font(.system(size: AppTheme.fontSize34, weight: .bold))
             .adaptiveForegroundColor()
             .multilineTextAlignment(.center)
             .frame(maxWidth: .infinity, alignment: .center)
@@ -239,7 +239,7 @@ struct RecipeDetailView: View {
     private func servingsButton(icon: String, action: @escaping () -> Void, isEnabled: Bool) -> some View {
         Button(action: action) {
             Image(systemName: icon)
-                .font(.system(size: AppTheme.fontSizeBody + 2, weight: .semibold))
+                .font(.system(size: AppTheme.fontSize16 + 2, weight: .semibold))
                 .adaptiveForegroundColor()
                 .frame(width: 44, height: 44)
                 .background(Circle().fill(isEnabled ? AppTheme.accentColor : Color.gray))
@@ -334,7 +334,7 @@ struct RecipeDetailView: View {
                 if !hasSeenSwipeHint {
                     HStack(spacing: AppTheme.spacing8) {
                         Image(systemName: "hand.draw")
-                            .font(.system(size: AppTheme.fontSizeBody))
+                            .font(.system(size: AppTheme.fontSize16))
                             .foregroundColor(AppTheme.accentColor)
                         
                         Text("Swipe left to add to shopping list")
@@ -349,7 +349,7 @@ struct RecipeDetailView: View {
                             }
                         }) {
                             Image(systemName: "xmark.circle.fill")
-                                .font(.system(size: AppTheme.fontSizeBody))
+                                .font(.system(size: AppTheme.fontSize16))
                                 .foregroundColor(.secondary.opacity(0.5))
                         }                        .accessibilityLabel("Dismiss hint")
                         .accessibilityHint("Closes swipe instruction banner")                    }
@@ -445,7 +445,7 @@ struct RecipeDetailView: View {
                     if !trimmed.isEmpty {
                         HStack(alignment: .top, spacing: AppTheme.spacing8) {
                             Image(systemName: "circle.fill")
-                                .font(.system(size: AppTheme.fontSizeTinyIcon))
+                                .font(.system(size: AppTheme.fontSize6))
                                 .foregroundColor(.orange)
                                 .padding(.top, 6)
                             Text(trimmed)
@@ -652,7 +652,7 @@ struct RecipeDetailView: View {
                         .frame(width: 10, height: 10)
                     
                     Text("\(number)")
-                        .font(.system(size: AppTheme.fontSizeTinyText))
+                        .font(.system(size: AppTheme.fontSize7))
                         .fontWeight(.bold)
                         .adaptiveForegroundColor()
                 }
@@ -668,7 +668,7 @@ struct RecipeDetailView: View {
                 Spacer()
                 
                 Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: AppTheme.fontSizeTitle1))
+                    .font(.system(size: AppTheme.fontSize28))
                     .foregroundColor(isChecked ? .green : .gray.opacity(0.4))
             }
             .frame(maxWidth: .infinity, alignment: .leading)

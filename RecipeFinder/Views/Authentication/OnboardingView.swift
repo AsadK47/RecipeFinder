@@ -75,7 +75,7 @@ struct OnboardingView: View {
                                 }
                             }) {
                                 Text("Skip")
-                                    .font(.system(size: 16, weight: .semibold))
+                                    .font(.system(size: AppTheme.fontSize16, weight: .semibold))
                                     .foregroundColor(.white.opacity(0.9))
                                     .padding(.horizontal, spacing.xl)
                                     .padding(.vertical, spacing.sm + 2)
@@ -248,7 +248,7 @@ struct OnboardingSlideView: View {
                     
                     // Main icon with breathing animation
                     Image(systemName: slide.icon)
-                        .font(.system(size: 80, weight: .semibold))
+                        .font(.system(size: AppTheme.fontSize80, weight: .semibold))
                         .foregroundStyle(
                             LinearGradient(
                                 gradient: Gradient(colors: [
@@ -275,7 +275,7 @@ struct OnboardingSlideView: View {
                 // Title and Description
                 VStack(spacing: spacing.xl) {
                     Text(slide.title)
-                        .font(.system(size: 36, weight: .bold, design: .rounded))
+                        .font(.system(size: AppTheme.fontSize38, weight: .bold, design: .rounded))
                         .foregroundStyle(
                             LinearGradient(
                                 gradient: Gradient(colors: [
@@ -291,7 +291,7 @@ struct OnboardingSlideView: View {
                         .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 5)
                     
                     Text(slide.description)
-                        .font(.system(size: 17, weight: .regular))
+                        .font(.system(size: AppTheme.fontSize17, weight: .regular))
                         .foregroundColor(.white.opacity(0.9))
                         .multilineTextAlignment(.center)
                         .lineSpacing(6)
@@ -321,7 +321,7 @@ struct OnboardingSlideView: View {
                                     .frame(width: spacing.touchTarget + spacing.xs, height: spacing.touchTarget + spacing.xs)
                                 
                                 Image(systemName: feature.icon)
-                                    .font(.system(size: 24, weight: .semibold))
+                                    .font(.system(size: AppTheme.fontSize24, weight: .semibold))
                                     .foregroundStyle(
                                         LinearGradient(
                                             gradient: Gradient(colors: [
@@ -337,11 +337,11 @@ struct OnboardingSlideView: View {
                             // Text content
                             VStack(alignment: .leading, spacing: spacing.xxs) {
                                 Text(feature.title)
-                                    .font(.system(size: 17, weight: .semibold))
+                                    .font(.system(size: AppTheme.fontSize17, weight: .semibold))
                                     .adaptiveForegroundColor()
                                 
                                 Text(feature.subtitle)
-                                    .font(.system(size: 14, weight: .regular))
+                                    .font(.system(size: AppTheme.fontSize14, weight: .regular))
                                     .adaptiveForegroundColor(opacity: 0.7)
                             }
                             
@@ -374,9 +374,9 @@ struct OnboardingSlideView: View {
                     }) {
                         HStack(spacing: spacing.md) {
                             Text("Get Started")
-                                .font(.system(size: 19, weight: .bold))
+                                .font(.system(size: AppTheme.fontSize20, weight: .bold))
                             Image(systemName: "arrow.right.circle.fill")
-                                .font(.system(size: 22))
+                                .font(.system(size: AppTheme.fontSize22))
                         }
                         .adaptiveForegroundColor()
                         .frame(maxWidth: .infinity)
@@ -404,7 +404,7 @@ struct OnboardingSlideView: View {
                     // Swipe hint - More prominent
                     HStack(spacing: spacing.sm + 2) {
                         Text("Swipe to continue")
-                            .font(.system(size: 15, weight: .medium))
+                            .font(.system(size: AppTheme.fontSize15, weight: .medium))
                             .foregroundColor(.white.opacity(0.7))
                         
                         HStack(spacing: spacing.xxs) {
@@ -414,7 +414,7 @@ struct OnboardingSlideView: View {
                                 .offset(x: isAnimating ? 8 : 0)
                             
                             Image(systemName: "chevron.right")
-                                .font(.system(size: 14, weight: .semibold))
+                                .font(.system(size: AppTheme.fontSize14, weight: .semibold))
                                 .foregroundColor(.white.opacity(0.7))
                                 .offset(x: isAnimating ? 8 : 0)
                         }
@@ -445,7 +445,7 @@ struct OnboardingSlideView: View {
         if showScrollIndicator && !isLastSlide {
             VStack(spacing: spacing.sm) {
                 Image(systemName: "chevron.down")
-                    .font(.system(size: 20, weight: .semibold))
+                    .font(.system(size: AppTheme.fontSize20, weight: .semibold))
                     .foregroundColor(.white.opacity(0.8))
                     .offset(y: isAnimating ? 8 : 0)
                     .animation(
@@ -455,7 +455,7 @@ struct OnboardingSlideView: View {
                     )
                 
                 Text("Scroll to see more")
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.system(size: AppTheme.fontSize13, weight: .medium))
                     .foregroundColor(.white.opacity(0.7))
             }
             .padding(.bottom, spacing.xl + spacing.lg)

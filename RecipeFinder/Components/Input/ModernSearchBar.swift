@@ -30,7 +30,7 @@ struct ModernSearchBar: View {
                     })
                 }
             }
-            .padding(14)
+            .padding(AppTheme.spacing16)
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 12)

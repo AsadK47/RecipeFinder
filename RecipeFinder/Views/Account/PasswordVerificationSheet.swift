@@ -30,7 +30,7 @@ struct PasswordVerificationSheet: View {
                             .frame(width: 100, height: 100)
                         
                         Image(systemName: "lock.shield.fill")
-                            .font(.system(size: AppTheme.fontSizeEmoji))
+                            .font(.system(size: AppTheme.fontSize50))
                             .foregroundStyle(
                                 LinearGradient(
                                     gradient: Gradient(colors: [
@@ -46,7 +46,7 @@ struct PasswordVerificationSheet: View {
                     
                     VStack(spacing: AppTheme.spacing12) {
                         Text("Verify Your Identity")
-                            .font(.system(size: AppTheme.fontSizeTitle1, weight: .bold))
+                            .font(.system(size: AppTheme.fontSize28, weight: .bold))
                             .adaptiveForegroundColor()
                         
                         Text("Enter your password to update account details")
@@ -62,7 +62,7 @@ struct PasswordVerificationSheet: View {
                             .font(.caption)
                             .adaptiveForegroundColor(opacity: 0.7)
                         Text(email)
-                            .font(.system(size: AppTheme.fontSizeCallout, weight: .medium))
+                            .font(.system(size: AppTheme.fontSize15, weight: .medium))
                             .adaptiveForegroundColor(opacity: 0.9)
                     }
                     .padding(.horizontal, 20)

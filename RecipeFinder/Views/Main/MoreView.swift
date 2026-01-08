@@ -15,7 +15,7 @@ struct MoreView: View {
                 VStack(spacing: 0) {
                     VStack(spacing: AppTheme.spacing12) {
                         Text("More")
-                            .font(.system(size: AppTheme.fontSizeLargeTitle, weight: .bold))
+                            .font(.system(size: AppTheme.fontSize34, weight: .bold))
                             .adaptiveForegroundColor()
                             .frame(maxWidth: .infinity)
                             .frame(height: 44)
@@ -141,7 +141,7 @@ struct MoreRow: View {
                     .frame(width: 40, height: 40)
                 
                 Image(systemName: icon)
-                    .font(.system(size: AppTheme.fontSizeBody + 2, weight: .semibold))
+                    .font(.system(size: AppTheme.fontSize16 + 2, weight: .semibold))
                     .adaptiveForegroundColor()
             }
             
@@ -158,7 +158,7 @@ struct MoreRow: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             
             Image(systemName: "chevron.right")
-                .font(.system(size: AppTheme.fontSizeFootnote, weight: .semibold))
+                .font(.system(size: AppTheme.fontSize13, weight: .semibold))
                 .foregroundColor(AppTheme.adaptiveSecondaryIndicator(for: colorScheme))
         }
         .padding(.horizontal, 16)

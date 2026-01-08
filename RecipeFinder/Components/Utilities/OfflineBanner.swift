@@ -29,7 +29,7 @@ struct OfflineBanner: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
             .background(Color.orange)
-            .cornerRadius(8)
+            .cornerRadius(AppTheme.cornerRadius8)
             .padding(.horizontal)
             .transition(.move(edge: .top).combined(with: .opacity))
         }

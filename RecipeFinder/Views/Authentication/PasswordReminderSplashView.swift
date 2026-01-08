@@ -28,7 +28,7 @@ struct PasswordReminderSplashView: View {
                             .scaleEffect(scale)
                         
                         Image(systemName: "key.fill")
-                            .font(.system(size: 50))
+                            .font(.system(size: AppTheme.fontSize50))
                             .foregroundStyle(
                                 LinearGradient(
                                     colors: [.yellow, .orange],
@@ -42,7 +42,7 @@ struct PasswordReminderSplashView: View {
                     
                     VStack(spacing: spacing.lg) {
                         Text("Remember Your Password!")
-                            .font(.system(size: 28, weight: .bold))
+                            .font(.system(size: AppTheme.fontSize28, weight: .bold))
                             .adaptiveForegroundColor()
                             .multilineTextAlignment(.center)
                             .opacity(opacity)
@@ -55,11 +55,11 @@ struct PasswordReminderSplashView: View {
                                 
                                 VStack(alignment: .leading, spacing: spacing.xxs) {
                                 Text("Account Created!")
-                                    .font(.system(size: 17, weight: .semibold))
+                                    .font(.system(size: AppTheme.fontSize17, weight: .semibold))
                                     .adaptiveForegroundColor()
                                 
                                 Text(email)
-                                    .font(.system(size: 15))
+                                    .font(.system(size: AppTheme.fontSize15))
                                     .adaptiveForegroundColor(opacity: 0.8)
                             }
                                 
@@ -78,12 +78,12 @@ struct PasswordReminderSplashView: View {
                                         .font(.system(size: spacing.xl))
                                     
                                     Text("Use iOS Password Manager")
-                                        .font(.system(size: 16, weight: .medium))
+                                        .font(.system(size: AppTheme.fontSize16, weight: .medium))
                                         .adaptiveForegroundColor()
                                 }
                                 
                                 Text("Your password is saved in iCloud Keychain and will auto-fill when you sign in.")
-                                    .font(.system(size: 14))
+                                    .font(.system(size: AppTheme.fontSize14))
                                     .adaptiveForegroundColor(opacity: 0.8)
                                     .lineSpacing(2)
                             }
@@ -102,7 +102,7 @@ struct PasswordReminderSplashView: View {
                                 .foregroundColor(.orange)
                                 
                                 Text("You'll need to sign in each time you log out")
-                                    .font(.system(size: 14))
+                                    .font(.system(size: AppTheme.fontSize14))
                                     .adaptiveForegroundColor(opacity: 0.9)
                             }
                             .padding(spacing.md)

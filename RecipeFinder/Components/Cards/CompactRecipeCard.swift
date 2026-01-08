@@ -27,7 +27,7 @@ struct CompactRecipeCard: View {
                             .shadow(color: .black.opacity(AppTheme.overlayLightOpacity), radius: 2)
                         
                         Image(systemName: "heart.fill")
-                            .font(.system(size: AppTheme.fontSizeTiny))
+                            .font(.system(size: AppTheme.fontSize10))
                             .foregroundStyle(
                                 LinearGradient(
                                     gradient: Gradient(colors: [
@@ -61,10 +61,10 @@ struct CompactRecipeCard: View {
                 
                 HStack(spacing: AppTheme.spacing4) {
                     Image(systemName: "clock.fill")
-                        .font(.system(size: 8))
+                        .font(.system(size: AppTheme.fontSize11))
                         .foregroundColor(.orange)
                     Text(recipe.totalTime)
-                        .font(.system(size: 9))
+                        .font(.system(size: AppTheme.fontSize11))
                         .foregroundColor(AppTheme.adaptiveCardTextEmphasis(for: colorScheme))
                 }
                 
@@ -72,7 +72,7 @@ struct CompactRecipeCard: View {
                 HStack(spacing: AppTheme.spacing6) {
                     DifficultyBarsView(difficulty: recipe.difficulty, size: 2.5)
                     Text(recipe.difficulty)
-                        .font(.system(size: 9))
+                        .font(.system(size: AppTheme.fontSize11))
                         .foregroundColor(AppTheme.adaptiveCardTextEmphasis(for: colorScheme))
                 }
             }

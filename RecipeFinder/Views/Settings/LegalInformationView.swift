@@ -100,7 +100,7 @@ struct LegalInformationView: View {
                                 }
                                 .padding(AppTheme.spacing12)
                                 .background(Color.white.opacity(colorScheme == .dark ? AppTheme.dividerOpacity : 0.05))
-                                .cornerRadius(10)
+                                .cornerRadius(AppTheme.cornerRadius12)
                             }
                             .buttonStyle(PlainButtonStyle())
                             
@@ -131,7 +131,7 @@ struct LegalInformationView: View {
                                 }
                                 .padding(AppTheme.spacing12)
                                 .background(Color.white.opacity(colorScheme == .dark ? AppTheme.dividerOpacity : 0.05))
-                                .cornerRadius(10)
+                                .cornerRadius(AppTheme.cornerRadius12)
                             }
                             .buttonStyle(PlainButtonStyle())
                         }
@@ -269,7 +269,7 @@ struct LegalInformationView: View {
                             .padding(AppTheme.spacing12)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .background(Color.white.opacity(colorScheme == .dark ? AppTheme.dividerOpacity : 0.05))
-                            .cornerRadius(10)
+                            .cornerRadius(AppTheme.cornerRadius12)
                         }
                         .padding(AppTheme.spacing24)
                     }
@@ -384,7 +384,7 @@ struct ComplianceBadge: View {
                     .frame(width: 40, height: 40)
                 
                 Image(systemName: icon)
-                    .font(.system(size: AppTheme.fontSizeBody + 2, weight: .semibold))
+                    .font(.system(size: AppTheme.fontSize16 + 2, weight: .semibold))
                     .foregroundColor(color)
             }
             
@@ -424,7 +424,7 @@ struct PDFViewerSheet: View {
                 } else {
                     VStack(spacing: AppTheme.spacing16) {
                         Image(systemName: "doc.text.fill")
-                            .font(.system(size: AppTheme.fontSizeDisplay))
+                            .font(.system(size: AppTheme.fontSize60))
                             .foregroundColor(.red)
                         
                         Text("PDF Not Found")
@@ -528,7 +528,7 @@ struct PrivacyPolicyView: View {
                     VStack(alignment: .leading, spacing: AppTheme.spacing24) {
                         Group {
                             Text("Privacy Policy")
-                                .font(.system(size: AppTheme.fontSizeMedium, weight: .bold))
+                                .font(.system(size: AppTheme.fontSize32, weight: .bold))
                                 .adaptiveForegroundColor()
                             
                             Text("Last Updated: \(currentDateFormatted)")
@@ -651,7 +651,7 @@ struct TermsOfServiceView: View {
                     VStack(alignment: .leading, spacing: AppTheme.spacing24) {
                         Group {
                             Text("Terms of Service")
-                                .font(.system(size: AppTheme.fontSizeMedium, weight: .bold))
+                                .font(.system(size: AppTheme.fontSize32, weight: .bold))
                                 .adaptiveForegroundColor()
                             
                             Text("Last Updated: \(currentDateFormatted)")
@@ -780,7 +780,7 @@ struct CompanyComplianceView: View {
                     VStack(alignment: .leading, spacing: AppTheme.spacing24) {
                         Group {
                             Text("UK Company Compliance")
-                                .font(.system(size: AppTheme.fontSizeMedium, weight: .bold))
+                                .font(.system(size: AppTheme.fontSize32, weight: .bold))
                                 .adaptiveForegroundColor()
                             
                             Text("Companies Act 2006")

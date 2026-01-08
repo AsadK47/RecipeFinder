@@ -95,7 +95,7 @@ struct QueenEasterEggView: View {
     private var heartsAroundCrown: some View {
         ForEach(0..<5) { index in
             Image(systemName: "heart.fill")
-                .font(.system(size: 20))
+                .font(.system(size: AppTheme.fontSize20))
                 .foregroundColor(.pink)
                 .offset(
                     x: cos(Double(index) * .pi * 2 / 5) * 70,
@@ -114,11 +114,11 @@ struct QueenEasterEggView: View {
                 nameText
                 
                 Text("Queen of My Heart")
-                    .font(.system(size: 20, weight: .medium, design: .rounded))
+                    .font(.system(size: AppTheme.fontSize20, weight: .medium, design: .rounded))
                     .adaptiveForegroundColor(opacity: 0.9)
                 
                 Text("❤️")
-                    .font(.system(size: 40))
+                    .font(.system(size: AppTheme.fontSize42))
                     .scaleEffect(heartScale)
             }
             
@@ -130,7 +130,7 @@ struct QueenEasterEggView: View {
     
     private var romanticQuote: some View {
         Text("\"In every recipe of life,\nyou're the secret ingredient\nthat makes everything perfect\"")
-            .font(.system(size: 16, weight: .medium, design: .serif))
+            .font(.system(size: AppTheme.fontSize16, weight: .medium, design: .serif))
             .italic()
             .adaptiveForegroundColor(opacity: 0.85)
             .multilineTextAlignment(.center)
@@ -217,7 +217,7 @@ struct QueenEasterEggView: View {
     
     private var titleText: some View {
         Text("👑 The Queen 👑")
-            .font(.system(size: 38, weight: .bold, design: .rounded))
+            .font(.system(size: AppTheme.fontSize38, weight: .bold, design: .rounded))
             .foregroundStyle(
                 LinearGradient(
                     gradient: Gradient(colors: [
@@ -234,7 +234,7 @@ struct QueenEasterEggView: View {
     
     private var nameText: some View {
         Text("Kelly")
-            .font(.system(size: 32, weight: .bold, design: .serif))
+            .font(.system(size: AppTheme.fontSize32, weight: .bold, design: .serif))
             .foregroundStyle(
                 LinearGradient(
                     gradient: Gradient(colors: [
