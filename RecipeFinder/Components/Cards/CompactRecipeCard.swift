@@ -24,7 +24,7 @@ struct CompactRecipeCard: View {
                         Circle()
                             .fill(.white)
                             .frame(width: 20, height: 20)
-                            .shadow(color: .black.opacity(0.2), radius: 2)
+                            .shadow(color: .black.opacity(AppTheme.overlayLightOpacity), radius: 2)
                         
                         Image(systemName: "heart.fill")
                             .font(.system(size: 10))
@@ -54,7 +54,7 @@ struct CompactRecipeCard: View {
                 Text(recipe.name)
                     .font(.caption)
                     .fontWeight(.semibold)
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .foregroundColor(AppTheme.adaptiveEmphasis(for: colorScheme))
                     .lineLimit(3)
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity)
@@ -65,7 +65,7 @@ struct CompactRecipeCard: View {
                         .foregroundColor(.orange)
                     Text(recipe.totalTime)
                         .font(.system(size: 9))
-                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.9) : .black.opacity(0.7))
+                        .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.cardLightOpacity) : .black.opacity(0.7))
                 }
                 
                 // Difficulty text and bars inline
@@ -73,7 +73,7 @@ struct CompactRecipeCard: View {
                     DifficultyBarsView(difficulty: recipe.difficulty, size: 2.5)
                     Text(recipe.difficulty)
                         .font(.system(size: 9))
-                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.9) : .black.opacity(0.7))
+                        .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.cardLightOpacity) : .black.opacity(0.7))
                 }
             }
             .padding(.bottom, 12)

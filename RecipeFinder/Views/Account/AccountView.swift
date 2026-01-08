@@ -464,7 +464,7 @@ struct AccountView: View {
                                     .fill(Color.black.opacity(AppTheme.shadowDarkOpacity))
                             } else {
                                 RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color.black.opacity(0.4))
+                                    .fill(Color.black.opacity(AppTheme.lowEmphasisOpacity))
                             }
                         }
                         .overlay(
@@ -500,7 +500,7 @@ struct AccountView: View {
                     .background {
                         if cardStyle == .solid {
                             RoundedRectangle(cornerRadius: 12)
-                                .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(0.8))
+                                .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.highEmphasisOpacity))
                         } else {
                             RoundedRectangle(cornerRadius: 12)
                                 .fill(.ultraThinMaterial)
@@ -1191,7 +1191,7 @@ struct BadgeCard: View {
             Text(badge.title.components(separatedBy: " ").first ?? badge.title)
                 .font(.caption2)
                 .fontWeight(.semibold)
-                .foregroundColor(badge.isUnlocked ? (colorScheme == .dark ? .white : .black) : .gray)
+                .foregroundColor(badge.isUnlocked ? (AppTheme.adaptiveEmphasis(for: colorScheme)) : .gray)
                 .lineLimit(1)
             
             if badge.isUnlocked, let date = badge.dateEarned {

@@ -234,7 +234,7 @@ struct CookTimerView: View {
                     .font(.subheadline)
                     .fontWeight(.semibold)
             }
-            .foregroundColor(isDisabled ? (colorScheme == .dark ? .white.opacity(0.3) : .black.opacity(0.3)) : (colorScheme == .dark ? .white : .black))
+            .foregroundColor(isDisabled ? (colorScheme == .dark ? .white.opacity(0.3) : .black.opacity(0.3)) : (AppTheme.adaptiveEmphasis(for: colorScheme)))
             .frame(maxWidth: .infinity)
             .padding(.vertical, 20)
             .background {
@@ -267,7 +267,7 @@ struct CookTimerView: View {
                     .font(.subheadline)
                     .fontWeight(.semibold)
             }
-            .foregroundColor(isDisabled ? (colorScheme == .dark ? .white.opacity(0.3) : .black.opacity(0.3)) : (colorScheme == .dark ? .white : .black))
+            .foregroundColor(isDisabled ? (colorScheme == .dark ? .white.opacity(0.3) : .black.opacity(0.3)) : (AppTheme.adaptiveEmphasis(for: colorScheme)))
             .frame(maxWidth: .infinity)
             .padding(.vertical, 20)
             .background {
@@ -298,7 +298,7 @@ struct CookTimerView: View {
                 Text("Custom Timer")
                     .fontWeight(.semibold)
             }
-            .foregroundColor(isDisabled ? (colorScheme == .dark ? .white.opacity(0.3) : .black.opacity(0.3)) : (colorScheme == .dark ? .white : .black))
+            .foregroundColor(isDisabled ? (colorScheme == .dark ? .white.opacity(0.3) : .black.opacity(0.3)) : (AppTheme.adaptiveEmphasis(for: colorScheme)))
             .frame(maxWidth: .infinity)
             .padding(.vertical, 16)
             .background {
@@ -837,7 +837,7 @@ struct CompletedTimerBannerView: View {
         .background {
             RoundedRectangle(cornerRadius: 16)
                 .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white)
-                .shadow(color: .black.opacity(0.2), radius: 10, y: 5)
+                .shadow(color: .black.opacity(AppTheme.overlayLightOpacity), radius: 10, y: 5)
         }
         .overlay(
             RoundedRectangle(cornerRadius: 16)

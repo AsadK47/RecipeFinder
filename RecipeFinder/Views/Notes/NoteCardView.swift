@@ -38,7 +38,7 @@ struct NoteCardView: View {
                 // Date
                 Text(formatDate(note.modifiedDate))
                     .font(.caption2)
-                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.5) : .black.opacity(0.4))
+                    .foregroundColor(AppTheme.adaptiveSecondaryIndicator(for: colorScheme))
             }
             
             // Title
@@ -54,7 +54,7 @@ struct NoteCardView: View {
             if !note.content.isEmpty {
                 Text(note.content)
                     .font(.subheadline)
-                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
+                    .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
                     .lineLimit(3)
             }
             
@@ -65,7 +65,7 @@ struct NoteCardView: View {
                         ForEach(note.tags, id: \.self) { tag in
                             Text("#\(tag)")
                                 .font(.caption)
-                                .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
+                                .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
                                 .background(

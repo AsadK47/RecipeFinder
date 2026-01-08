@@ -35,12 +35,12 @@ struct AuthenticationView: View {
                         .font(.system(size: 80))
                         .foregroundStyle(
                             LinearGradient(
-                                gradient: Gradient(colors: [.white, .white.opacity(0.8)]),
+                                gradient: Gradient(colors: [.white, .white.opacity(AppTheme.highEmphasisOpacity)]),
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
                         )
-                        .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 5)
+                        .shadow(color: .black.opacity(AppTheme.overlayLightOpacity), radius: 10, x: 0, y: 5)
                     
                     Text("RecipeFinder")
                         .font(.system(size: 42, weight: .bold, design: .rounded))
@@ -48,7 +48,7 @@ struct AuthenticationView: View {
                     
                     Text("Discover, Create, Cook")
                         .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.7))
+                        .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.highEmphasisOpacity) : .black.opacity(0.7))
                 }
                 .padding(.bottom, 20)
                 

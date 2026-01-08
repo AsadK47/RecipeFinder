@@ -278,13 +278,13 @@ struct LegalInformationView: View {
                     VStack(spacing: 4) {
                         Text("RecipeFinder")
                             .font(.caption)
-                            .foregroundColor(.white.opacity(0.6))
+                            .foregroundColor(.white.opacity(AppTheme.mediumEmphasisOpacity))
                         Text("Version 1.0.0 (Build 1)")
                             .font(.caption2)
-                            .foregroundColor(.white.opacity(0.5))
+                            .foregroundColor(.white.opacity(AppTheme.glassLightOpacity))
                         Text("© 2025 RECIPEFINDER LIMITED")
                             .font(.caption2)
-                            .foregroundColor(.white.opacity(0.5))
+                            .foregroundColor(.white.opacity(AppTheme.glassLightOpacity))
                     }
                     .padding(.top, 24)
                     .padding(.bottom, 40)
@@ -892,7 +892,7 @@ struct BodyText: View {
     var body: some View {
         Text(text)
             .font(.body)
-            .foregroundColor(colorScheme == .dark ? .white.opacity(0.9) : .black.opacity(0.8))
+            .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.cardLightOpacity) : .black.opacity(AppTheme.highEmphasisOpacity))
             .fixedSize(horizontal: false, vertical: true)
     }
 }
@@ -911,7 +911,7 @@ private struct BulletPoint: View {
                 .foregroundColor(.secondary)
             Text(text)
                 .font(.body)
-                .foregroundColor(colorScheme == .dark ? .white.opacity(0.9) : .black.opacity(0.8))
+                .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.cardLightOpacity) : .black.opacity(AppTheme.highEmphasisOpacity))
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(.leading, 8)

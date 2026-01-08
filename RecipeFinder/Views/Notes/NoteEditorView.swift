@@ -85,7 +85,7 @@ struct NoteEditorView: View {
                                 showValidationError = true
                             }
                         }
-                        .foregroundColor(canSave ? .white : .white.opacity(0.5))
+                        .foregroundColor(canSave ? .white : .white.opacity(AppTheme.glassLightOpacity))
                         .fontWeight(.semibold)
                     }
                 }
@@ -118,7 +118,7 @@ struct NoteEditorView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("CONTENT")
                     .font(.caption)
-                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.5))
+                    .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.mediumEmphasisOpacity) : .black.opacity(0.5))
                     .textCase(.uppercase)
                 
                 TextField("Write your note here...", text: $content, axis: .vertical)
@@ -136,7 +136,7 @@ struct NoteEditorView: View {
             VStack(alignment: .leading, spacing: 16) {
                 Text("CATEGORY")
                     .font(.caption)
-                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.5))
+                    .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.mediumEmphasisOpacity) : .black.opacity(0.5))
                     .textCase(.uppercase)
                 
                 VStack(spacing: 12) {
@@ -188,7 +188,7 @@ struct NoteEditorView: View {
             VStack(alignment: .leading, spacing: 12) {
                 Text("TAGS")
                     .font(.caption)
-                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.5))
+                    .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.mediumEmphasisOpacity) : .black.opacity(0.5))
                     .textCase(.uppercase)
                 
                 // Tag input

@@ -11,16 +11,16 @@ struct ModernSearchBar: View {
         HStack(spacing: 12) {
             HStack(spacing: 12) {
                 Image(systemName: "magnifyingglass")
-                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.6))
+                    .foregroundColor(AppTheme.adaptiveHighEmphasis(for: colorScheme))
                     .font(.body)
                 
                 TextField(placeholder, text: $text)
                     .focused($isFocused)
                     .autocorrectionDisabled()
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .foregroundColor(AppTheme.adaptiveEmphasis(for: colorScheme))
                     .placeholder(when: text.isEmpty) {
                         Text(placeholder)
-                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6))
+                            .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.mediumEmphasisOpacity) : .black.opacity(AppTheme.mediumEmphasisOpacity))
                     }
                 
                 if !text.isEmpty {
@@ -34,7 +34,7 @@ struct ModernSearchBar: View {
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(AppTheme.cardLightOpacity))
+                        .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkMediumOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
                 } else {
                     // Pure frosted glass - exactly like Settings
                     RoundedRectangle(cornerRadius: 12)
@@ -47,7 +47,7 @@ struct ModernSearchBar: View {
                     text = ""
                     isFocused = false
                 }
-                .foregroundColor(colorScheme == .dark ? .white : .black)
+                .foregroundColor(AppTheme.adaptiveEmphasis(for: colorScheme))
                 .fontWeight(.semibold)
                 .transition(.move(edge: .trailing).combined(with: .opacity))
             }

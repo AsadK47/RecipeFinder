@@ -16,15 +16,15 @@ struct FilterChip: View {
             Button(action: onRemove, label: {
                 Image(systemName: "xmark.circle.fill")
                     .font(.caption)
-                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.6))
+                    .foregroundColor(AppTheme.adaptiveHighEmphasis(for: colorScheme))
             })
         }
-        .foregroundColor(colorScheme == .dark ? .white : .black)
+        .foregroundColor(AppTheme.adaptiveEmphasis(for: colorScheme))
         .padding(.horizontal, 12)
         .padding(.vertical, 6)
         .background(
             Capsule()
-                .fill(colorScheme == .dark ? Color(white: 0.2).opacity(0.8) : Color(white: 0.9).opacity(0.9))
+                .fill(AppTheme.adaptiveFilterChip(for: colorScheme))
         )
     }
 }
@@ -50,7 +50,7 @@ struct FilterButton: View {
                 Text(label)
                     .font(.subheadline)
                     .fontWeight(isSelected ? .semibold : .regular)
-                    .foregroundColor(isSelected ? .white : (colorScheme == .dark ? .white : .black))
+                    .foregroundColor(isSelected ? .white : (AppTheme.adaptiveEmphasis(for: colorScheme)))
                     .lineLimit(1)
                 
                 Spacer()
@@ -64,7 +64,7 @@ struct FilterButton: View {
             .padding(12)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(isSelected ? color : (colorScheme == .dark ? Color(white: 0.2).opacity(0.8) : Color(white: 0.9).opacity(0.9)))
+                    .fill(isSelected ? color : AppTheme.adaptiveFilterChip(for: colorScheme))
             )
         }
     }

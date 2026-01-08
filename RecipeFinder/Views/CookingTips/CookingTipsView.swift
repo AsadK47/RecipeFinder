@@ -667,7 +667,7 @@ struct CookingTipCard: View {
                 } else {
                     RoundedRectangle(cornerRadius: 20)
                         .fill(.ultraThinMaterial)
-                        .shadow(color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.1), radius: 8, x: 0, y: 4)
+                        .shadow(color: AppTheme.adaptiveShadow(for: colorScheme), radius: 8, x: 0, y: 4)
                 }
             }
             .overlay(

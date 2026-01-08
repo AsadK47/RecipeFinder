@@ -175,13 +175,13 @@ struct KitchenView: View {
             HStack(spacing: 12) {
                 HStack(spacing: 12) {
                     Image(systemName: "magnifyingglass")
-                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.6))
+                        .foregroundColor(AppTheme.adaptiveHighEmphasis(for: colorScheme))
                         .font(.body)
                     
                     ZStack(alignment: .leading) {
                         if searchText.isEmpty {
                             Text("Search ingredients...")
-                                .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6))
+                                .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.mediumEmphasisOpacity) : .black.opacity(AppTheme.mediumEmphasisOpacity))
                         }
                         TextField("", text: $searchText)
                             .focused($isSearchFocused)
@@ -268,7 +268,7 @@ struct KitchenView: View {
                     
                     Text("\(manager.items.count) ingredients")
                         .font(.caption)
-                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
+                        .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
                 }
                 
                 Spacer()
@@ -327,7 +327,7 @@ struct KitchenView: View {
             if searchResults.isEmpty {
                 Text("No ingredients found")
                     .font(.body)
-                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
+                    .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
                     .padding(.horizontal, 20)
                     .padding(.vertical, 20)
             } else {
@@ -396,11 +396,11 @@ struct KitchenView: View {
                 
                 Text(matchCountText)
                     .font(.body)
-                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.9) : .black.opacity(0.8))
+                    .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.cardLightOpacity) : .black.opacity(AppTheme.highEmphasisOpacity))
                 
                 Text("Tap any recipe to view full details and cooking instructions")
                     .font(.caption)
-                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
+                    .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 20)
@@ -602,7 +602,7 @@ struct KitchenItemChip: View {
                 label: {
                     Image(systemName: "xmark.circle.fill")
                         .font(.system(size: 16))
-                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.4) : .black.opacity(0.3))
+                        .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.lowEmphasisOpacity) : .black.opacity(0.3))
                 }
             )
             .buttonStyle(.plain)

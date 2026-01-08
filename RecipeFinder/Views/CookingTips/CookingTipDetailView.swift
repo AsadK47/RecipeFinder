@@ -136,7 +136,7 @@ struct CookingTipDetailView: View {
             // Content
             Text(tip.content)
                 .font(.body)
-                .foregroundColor(colorScheme == .dark ? .white.opacity(0.9) : .black.opacity(0.9))
+                .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.cardLightOpacity) : .black.opacity(0.9))
                 .fixedSize(horizontal: false, vertical: true)
                 .lineSpacing(6)
         }

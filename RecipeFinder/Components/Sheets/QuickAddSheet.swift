@@ -74,7 +74,7 @@ struct ShoppingQuickAddSheet: View {
                         .font(.title2)
                         .fontWeight(.bold)
                         .foregroundColor(.white)
-                        .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
+                        .shadow(color: .black.opacity(AppTheme.shadowDarkOpacity), radius: 2, x: 0, y: 1)
                     
                     Spacer()
                     
@@ -84,7 +84,7 @@ struct ShoppingQuickAddSheet: View {
                         Image(systemName: "xmark.circle.fill")
                             .font(.title2)
                             .foregroundColor(.white.opacity(0.9))
-                            .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
+                            .shadow(color: .black.opacity(AppTheme.shadowDarkOpacity), radius: 2, x: 0, y: 1)
                     }
                 }
                 .padding(.horizontal, 20)
@@ -165,7 +165,7 @@ struct KitchenQuickAddSheet: View {
                         .font(.title2)
                         .fontWeight(.bold)
                         .foregroundColor(.white)
-                        .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
+                        .shadow(color: .black.opacity(AppTheme.shadowDarkOpacity), radius: 2, x: 0, y: 1)
                     
                     Spacer()
                     
@@ -175,7 +175,7 @@ struct KitchenQuickAddSheet: View {
                         Image(systemName: "xmark.circle.fill")
                             .font(.title2)
                             .foregroundColor(.white.opacity(0.9))
-                            .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
+                            .shadow(color: .black.opacity(AppTheme.shadowDarkOpacity), radius: 2, x: 0, y: 1)
                     }
                 }
                 .padding(.horizontal, 20)

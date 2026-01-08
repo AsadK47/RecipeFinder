@@ -317,7 +317,7 @@ struct RecipeDetailView: View {
             Image(systemName: "chevron.down")
                 .font(.title3)
                 .fontWeight(.semibold)
-                .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.6))
+                .foregroundColor(AppTheme.adaptiveHighEmphasis(for: colorScheme))
                 .rotationEffect(.degrees(expandedSections.contains(section) ? 0 : -90))
                 .animation(.spring(response: 0.3), value: expandedSections.contains(section))
         }
@@ -520,7 +520,7 @@ struct RecipeDetailView: View {
             .background(
                 Capsule()
                     .fill(AppTheme.accentColor)
-                    .shadow(color: .black.opacity(0.2), radius: 8, y: 4)
+                    .shadow(color: .black.opacity(AppTheme.overlayLightOpacity), radius: 8, y: 4)
             )
             .padding(.bottom, 20)
             .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -615,7 +615,7 @@ struct RecipeDetailView: View {
                         Image(systemName: "chevron.down")
                             .font(.title3)
                             .fontWeight(.semibold)
-                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.6))
+                            .foregroundColor(AppTheme.adaptiveHighEmphasis(for: colorScheme))
                             .rotationEffect(.degrees(isExpanded ? 0 : -90))
                             .animation(.spring(response: 0.3), value: isExpanded)
                     }

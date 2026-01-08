@@ -35,7 +35,7 @@ struct RecipeCard: View {
                         Circle()
                             .fill(.white)
                             .frame(width: 24, height: 24)
-                            .shadow(color: .black.opacity(0.2), radius: 2)
+                            .shadow(color: .black.opacity(AppTheme.overlayLightOpacity), radius: 2)
                         
                         Image(systemName: "heart.fill")
                             .font(.system(size: 12))
@@ -61,7 +61,7 @@ struct RecipeCard: View {
                 // Title 
                 Text(recipe.name)
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .foregroundColor(AppTheme.adaptiveEmphasis(for: colorScheme))
                     .lineLimit(2)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .minimumScaleFactor(0.9)
@@ -74,14 +74,14 @@ struct RecipeCard: View {
                             .foregroundColor(.orange)
                         Text(recipe.totalTime)
                             .font(.system(size: 13, weight: .medium))
-                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.95) : .black.opacity(0.75))
+                            .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.cardLightHighOpacity) : .black.opacity(0.75))
                     }
                     
                     HStack(spacing: 6) {
                         DifficultyBarsView(difficulty: recipe.difficulty, size: 3.5)
                         Text(recipe.difficulty)
                             .font(.system(size: 13, weight: .medium))
-                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.95) : .black.opacity(0.75))
+                            .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.cardLightHighOpacity) : .black.opacity(0.75))
                     }
                 }
             }

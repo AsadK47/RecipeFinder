@@ -10,17 +10,17 @@ struct ShoppingListInputBar: View {
         HStack(spacing: 12) {
             HStack {
                 Image(systemName: "plus.circle.fill")
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .foregroundColor(AppTheme.adaptiveEmphasis(for: colorScheme))
                 
                 ZStack(alignment: .leading) {
                     if text.isEmpty {
                         Text("Add item...")
-                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6))
+                            .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.mediumEmphasisOpacity) : .black.opacity(AppTheme.mediumEmphasisOpacity))
                     }
                     TextField("", text: $text)
                         .focused($isFocused)
                         .autocorrectionDisabled()
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .foregroundColor(AppTheme.adaptiveEmphasis(for: colorScheme))
                         .onSubmit {
                             onAdd()
                         }

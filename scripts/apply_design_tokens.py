@@ -2,14 +2,9 @@
 """
 Apply Design Tokens - Replace Magic Numbers with AppTheme Constants
 
-Replaces hardcoded opacity values with semantic design tokens:
-- 0.15 → cardDarkOpacity (dark mode backgrounds)
-- 0.9 → cardLightOpacity (light mode backgrounds)
-- 0.95 → cardLightHighOpacity (elevated cards)
-- 0.5 → glassLightOpacity (glassmorphism)
-- 0.1 → dividerOpacity or shadowLightOpacity (context-dependent)
-- 0.3 → shadowDarkOpacity (dark mode shadows)
-- 0.2 → overlayLightOpacity (light overlays)
+Replaces hardcoded opacity values and verbose ternaries with semantic helpers:
+- colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9) 
+  → AppTheme.adaptiveCard(for: colorScheme)
 """
 
 import os
@@ -29,32 +24,89 @@ SKIP_FILES = {
     "EmailConfirmationSplashView.swift",  # Confirmation effects
 }
 
-# Patterns to replace with design tokens
+# Patterns to replace (ORDER MATTERS - most specific first!)
 REPLACEMENTS = [
-    # Pattern 1: Color(white: 0.15) - Dark mode card backgrounds
+    # ========== HELPER METHOD REPLACEMENTS (Complex Ternaries) ==========
+    
+    # Pattern 1: Filter chip background (double opacity)
+    (r'colorScheme\s*==\s*\.dark\s*\?\s*Color\(white:\s*(?:AppTheme\.)?cardDarkMediumOpacity\)\.opacity\(0\.8\)\s*:\s*Color\(white:\s*0\.9\)\.opacity\(0\.9\)',
+     'AppTheme.adaptiveFilterChip(for: colorScheme)'),
+    
+    # Pattern 2: Subtitle text (0.7 dark / 0.6 light) - BEFORE other 0.7/0.6 patterns
+    (r'colorScheme\s*==\s*\.dark\s*\?\s*\.white\.opacity\(0\.7\)\s*:\s*\.black\.opacity\((?:0\.6|AppTheme\.mediumEmphasisOpacity)\)',
+     'AppTheme.adaptiveSubtitle(for: colorScheme)'),
+    (r'colorScheme\s*==\s*\.dark\s*\?\s*Color\.white\.opacity\(0\.7\)\s*:\s*Color\.black\.opacity\((?:0\.6|AppTheme\.mediumEmphasisOpacity)\)',
+     'AppTheme.adaptiveSubtitle(for: colorScheme)'),
+    
+    # Pattern 3: Secondary indicators like chevrons (0.5 dark / 0.4 light)
+    (r'colorScheme\s*==\s*\.dark\s*\?\s*\.white\.opacity\((?:0\.5|AppTheme\.glassLightOpacity)\)\s*:\s*\.black\.opacity\((?:0\.4|AppTheme\.lowEmphasisOpacity)\)',
+     'AppTheme.adaptiveSecondaryIndicator(for: colorScheme)'),
+    (r'colorScheme\s*==\s*\.dark\s*\?\s*Color\.white\.opacity\((?:0\.5|AppTheme\.glassLightOpacity)\)\s*:\s*Color\.black\.opacity\((?:0\.4|AppTheme\.lowEmphasisOpacity)\)',
+     'AppTheme.adaptiveSecondaryIndicator(for: colorScheme)'),
+    
+    # Pattern 4: High emphasis text (0.8 dark / 0.6 light)
+    (r'colorScheme\s*==\s*\.dark\s*\?\s*\.white\.opacity\(0\.8\)\s*:\s*\.black\.opacity\(0\.6\)',
+     'AppTheme.adaptiveHighEmphasis(for: colorScheme)'),
+    (r'colorScheme\s*==\s*\.dark\s*\?\s*Color\.white\.opacity\(0\.8\)\s*:\s*Color\.black\.opacity\(0\.6\)',
+     'AppTheme.adaptiveHighEmphasis(for: colorScheme)'),
+    
+    # Pattern 3: Standard card backgrounds
+    (r'colorScheme\s*==\s*\.dark\s*\?\s*Color\(white:\s*0\.15\)\s*:\s*Color\.white\.opacity\(0\.9\)',
+     'AppTheme.adaptiveCard(for: colorScheme)'),
+    
+    # Pattern 4: High opacity cards
+    (r'colorScheme\s*==\s*\.dark\s*\?\s*Color\(white:\s*0\.15\)\s*:\s*Color\.white\.opacity\(0\.95\)',
+     'AppTheme.adaptiveCardHigh(for: colorScheme)'),
+    
+    # Pattern 5: Medium cards (search bars)
+    (r'colorScheme\s*==\s*\.dark\s*\?\s*Color\(white:\s*0\.2\)\s*:\s*Color\.white\.opacity\(0\.9\)',
+     'AppTheme.adaptiveCardMedium(for: colorScheme)'),
+    
+    # Pattern 6: Glass effect
+    (r'colorScheme\s*==\s*\.dark\s*\?\s*Color\(white:\s*0\.15\)\s*:\s*Color\.white\.opacity\(0\.5\)',
+     'AppTheme.adaptiveGlass(for: colorScheme)'),
+    
+    # Pattern 7: Adaptive shadow
+    (r'Color\.black\.opacity\(colorScheme\s*==\s*\.dark\s*\?\s*0\.3\s*:\s*0\.1\)',
+     'AppTheme.adaptiveShadow(for: colorScheme)'),
+    
+    # Pattern 8: Generic emphasis with ternary (catch-all for text colors)
+    (r'colorScheme\s*==\s*\.dark\s*\?\s*\.white\s*:\s*\.black',
+     'AppTheme.adaptiveEmphasis(for: colorScheme)'),
+    (r'colorScheme\s*==\s*\.dark\s*\?\s*Color\.white\s*:\s*Color\.black',
+     'AppTheme.adaptiveEmphasis(for: colorScheme)'),
+    
+    # ========== STANDALONE CONSTANT REPLACEMENTS ==========
+    
+    # Pattern 9: Standalone Color(white:) values
     (r'Color\(white:\s*0\.15\)', 'Color(white: AppTheme.cardDarkOpacity)'),
+    (r'Color\(white:\s*0\.2\)', 'Color(white: AppTheme.cardDarkMediumOpacity)'),
+    (r'Color\(white:\s*0\.9\)', 'Color(white: AppTheme.cardLightOpacity)'),
     
-    # Pattern 2: Color.white.opacity(0.9) - Light mode cards
-    (r'Color\.white\.opacity\(0\.9\)', 'Color.white.opacity(AppTheme.cardLightOpacity)'),
+    # Pattern 10: Standalone opacity values (non-ternary contexts)
+    (r'\.white\.opacity\(0\.9\)(?!\))', '.white.opacity(AppTheme.cardLightOpacity)'),
+    (r'\.white\.opacity\(0\.95\)', '.white.opacity(AppTheme.cardLightHighOpacity)'),
+    (r'\.white\.opacity\(0\.8\)(?!\))', '.white.opacity(AppTheme.highEmphasisOpacity)'),
+    (r'\.white\.opacity\(0\.7\)(?!\))', '.white.opacity(0.7)'),  # Subtitle - keep for now, context dependent
+    (r'\.white\.opacity\(0\.6\)', '.white.opacity(AppTheme.mediumEmphasisOpacity)'),
+    (r'\.white\.opacity\(0\.5\)', '.white.opacity(AppTheme.glassLightOpacity)'),
+    (r'\.white\.opacity\(0\.4\)', '.white.opacity(AppTheme.lowEmphasisOpacity)'),
+    (r'\.white\.opacity\(0\.2\)', '.white.opacity(AppTheme.overlayLightOpacity)'),
+    (r'\.white\.opacity\(0\.1\)(?=\s*\))', '.white.opacity(AppTheme.dividerOpacity)'),
     
-    # Pattern 3: Color.white.opacity(0.95) - Elevated light cards
+    (r'\.black\.opacity\(0\.8\)', '.black.opacity(AppTheme.highEmphasisOpacity)'),
+    (r'\.black\.opacity\(0\.6\)', '.black.opacity(AppTheme.mediumEmphasisOpacity)'),
+    (r'\.black\.opacity\(0\.4\)', '.black.opacity(AppTheme.lowEmphasisOpacity)'),
+    (r'\.black\.opacity\(0\.3\)(?!\))', '.black.opacity(AppTheme.shadowDarkOpacity)'),
+    (r'\.black\.opacity\(0\.2\)', '.black.opacity(AppTheme.overlayLightOpacity)'),
+    (r'\.black\.opacity\(0\.1\)(?=\s*\))', '.black.opacity(AppTheme.dividerOpacity)'),
+    
+    # Pattern 11: Color.white/black.opacity patterns
+    (r'Color\.white\.opacity\(0\.9\)(?!\))', 'Color.white.opacity(AppTheme.cardLightOpacity)'),
     (r'Color\.white\.opacity\(0\.95\)', 'Color.white.opacity(AppTheme.cardLightHighOpacity)'),
-    
-    # Pattern 4: Color.white.opacity(0.5) - Glassmorphism
+    (r'Color\.white\.opacity\(0\.8\)', 'Color.white.opacity(AppTheme.highEmphasisOpacity)'),
+    (r'Color\.white\.opacity\(0\.6\)', 'Color.white.opacity(AppTheme.mediumEmphasisOpacity)'),
     (r'Color\.white\.opacity\(0\.5\)', 'Color.white.opacity(AppTheme.glassLightOpacity)'),
-    
-    # Pattern 5: .opacity(0.1) in divider/border contexts (contextual)
-    # Look for .opacity(0.1) after white or black in fill/stroke contexts
-    (r'(Color\.white|Color\.black)\.opacity\(0\.1\)(?=\s*\))', r'\1.opacity(AppTheme.dividerOpacity)'),
-    
-    # Pattern 6: Color.black.opacity(0.3) - Dark mode shadows
-    (r'Color\.black\.opacity\(0\.3\)', 'Color.black.opacity(AppTheme.shadowDarkOpacity)'),
-    
-    # Pattern 7: Color.black.opacity(0.1) - Light mode shadows (when in shadow context)
-    # This is tricky - needs to be in shadow radius context
-    (r'shadow\(color:\s*Color\.black\.opacity\(0\.1\)', 'shadow(color: Color.black.opacity(AppTheme.shadowLightOpacity)'),
-    
-    # Pattern 8: .opacity(0.2) for overlays/backgrounds
     (r'Color\.white\.opacity\(0\.2\)', 'Color.white.opacity(AppTheme.overlayLightOpacity)'),
 ]
 
@@ -109,17 +161,19 @@ def scan_and_apply():
 
 def main():
     print("=" * 70)
-    print("Applying Design Tokens - Replacing Magic Numbers")
+    print("Applying Design Tokens - Replacing Magic Numbers & Verbose Ternaries")
     print("=" * 70)
     print()
+    print("Simplifications:")
+    print("  Before: colorScheme == .dark ? Color(white: 0.15) : Color.white.opacity(0.9)")
+    print("  After:  AppTheme.adaptiveCard(for: colorScheme)")
+    print()
     print("Design Token Mappings:")
-    print("  • 0.15  → AppTheme.cardDarkOpacity")
-    print("  • 0.9   → AppTheme.cardLightOpacity")
-    print("  • 0.95  → AppTheme.cardLightHighOpacity")
-    print("  • 0.5   → AppTheme.glassLightOpacity")
-    print("  • 0.1   → AppTheme.dividerOpacity / shadowLightOpacity")
-    print("  • 0.3   → AppTheme.shadowDarkOpacity")
-    print("  • 0.2   → AppTheme.overlayLightOpacity")
+    print("  • adaptiveCard()       → Standard card backgrounds")
+    print("  • adaptiveCardMedium() → Search bars, inputs (0.2 dark)")
+    print("  • adaptiveCardHigh()   → Elevated cards (0.95 light)")
+    print("  • adaptiveGlass()      → Glassmorphism (0.5 light)")
+    print("  • adaptiveShadow()     → Smart shadow colors")
     print()
     
     fixed_files, skipped_files = scan_and_apply()

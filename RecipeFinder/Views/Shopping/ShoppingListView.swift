@@ -285,13 +285,13 @@ struct ShoppingListView: View {
             HStack(spacing: 12) {
                 HStack(spacing: 12) {
                     Image(systemName: "magnifyingglass")
-                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.6))
+                        .foregroundColor(AppTheme.adaptiveHighEmphasis(for: colorScheme))
                         .font(.body)
                     
                     ZStack(alignment: .leading) {
                         if searchText.isEmpty {
                             Text("Add item...")
-                                .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6))
+                                .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.mediumEmphasisOpacity) : .black.opacity(AppTheme.mediumEmphasisOpacity))
                         }
                         TextField("", text: $searchText)
                             .focused($isSearchFocused)
@@ -448,13 +448,13 @@ struct ShoppingListView: View {
                     
                     Text("(\(items.filter { !$0.isChecked }.count)/\(items.count))")
                         .font(.subheadline)
-                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.4))
+                        .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.mediumEmphasisOpacity) : .black.opacity(AppTheme.lowEmphasisOpacity))
                     
                     Spacer()
                     
                     Image(systemName: collapsedCategories.contains(category) ? "chevron.down" : "chevron.up")
                         .font(.caption)
-                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.4))
+                        .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.mediumEmphasisOpacity) : .black.opacity(AppTheme.lowEmphasisOpacity))
                         .rotationEffect(.degrees(collapsedCategories.contains(category) ? 0 : 180))
                 }
                 .padding(.horizontal, 16)
@@ -595,7 +595,7 @@ struct ShoppingListItemRow: View {
                         .font(.subheadline)
                         .fontWeight(.medium)
                         .strikethrough(item.isChecked)
-                        .foregroundColor(item.isChecked ? .gray: (colorScheme == .dark ? .white: .black))
+                        .foregroundColor(item.isChecked ? .gray: (AppTheme.adaptiveEmphasis(for: colorScheme)))
                     
                     // Store badge
                     if let store = item.preferredStore {
@@ -622,12 +622,12 @@ struct ShoppingListItemRow: View {
                         }) {
                             Image(systemName: "minus")
                                 .font(.system(size: 14, weight: .semibold))
-                                .foregroundColor(item.quantity > 1 ? (colorScheme == .dark ? .white : .black) : .gray)
+                                .foregroundColor(item.quantity > 1 ? (AppTheme.adaptiveEmphasis(for: colorScheme)) : .gray)
                                 .frame(width: 32, height: 32)
                                 .background {
                                     if cardStyle == .solid {
                                         Circle()
-                                            .fill(colorScheme == .dark ? Color(white: 0.2) : Color(white: 0.95))
+                                            .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkMediumOpacity) : Color(white: 0.95))
                                     } else {
                                         Circle()
                                             .fill(.ultraThinMaterial)
@@ -652,12 +652,12 @@ struct ShoppingListItemRow: View {
                         }) {
                             Image(systemName: "plus")
                                 .font(.system(size: 14, weight: .semibold))
-                                .foregroundColor(item.quantity < 99 ? (colorScheme == .dark ? .white : .black) : .gray)
+                                .foregroundColor(item.quantity < 99 ? (AppTheme.adaptiveEmphasis(for: colorScheme)) : .gray)
                                 .frame(width: 32, height: 32)
                                 .background {
                                     if cardStyle == .solid {
                                         Circle()
-                                            .fill(colorScheme == .dark ? Color(white: 0.2) : Color(white: 0.95))
+                                            .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkMediumOpacity) : Color(white: 0.95))
                                     } else {
                                         Circle()
                                             .fill(.ultraThinMaterial)

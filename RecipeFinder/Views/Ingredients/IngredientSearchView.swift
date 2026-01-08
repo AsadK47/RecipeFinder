@@ -604,7 +604,7 @@ struct QuickMatchRecipeCard: View {
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
         .background(Capsule().fill(Color.green))
-        .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
+        .shadow(color: Color.black.opacity(AppTheme.overlayLightOpacity), radius: 4, x: 0, y: 2)
         .padding(10)
     }
     
@@ -639,7 +639,7 @@ struct QuickMatchRecipeCard: View {
             
             Text("•")
                 .font(.caption)
-                .foregroundColor(colorScheme == .dark ? .white.opacity(0.4) : .black.opacity(0.4))
+                .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.lowEmphasisOpacity) : .black.opacity(AppTheme.lowEmphasisOpacity))
             
             categoryText
         }
@@ -652,14 +652,14 @@ struct QuickMatchRecipeCard: View {
                 .foregroundColor(.orange)
             Text(recipe.prepTime)
                 .font(.caption)
-                .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
+                .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
         }
     }
     
     private var categoryText: some View {
         Text(recipe.category)
             .font(.caption)
-            .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
+            .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
             .lineLimit(1)
     }
 }
@@ -794,7 +794,7 @@ struct CategoryCard: View {
                         Text(mainIngredient)
                             .font(.subheadline)
                             .fontWeight(.medium)
-                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.95) : .black.opacity(0.9))
+                            .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.cardLightHighOpacity) : .black.opacity(0.9))
                         
                         // Kitchen indicator
                         if variations.contains(where: { KitchenInventoryManager.shared.hasItem($0) }) {
@@ -806,7 +806,7 @@ struct CategoryCard: View {
                         if variations.count > 1 {
                             Text("(\(variations.count))")
                                 .font(.caption)
-                                .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.4))
+                                .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.mediumEmphasisOpacity) : .black.opacity(AppTheme.lowEmphasisOpacity))
                         }
                         
                         Spacer()
@@ -814,7 +814,7 @@ struct CategoryCard: View {
                         if variations.count > 1 {
                             Image(systemName: isGroupExpanded ? "chevron.up" : "chevron.down")
                                 .font(.caption2)
-                                .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.4))
+                                .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.mediumEmphasisOpacity) : .black.opacity(AppTheme.lowEmphasisOpacity))
                         }
                     }
                     .padding(.horizontal, 16)
@@ -878,7 +878,7 @@ struct CategoryCard: View {
                     HStack(spacing: 12) {
                         Image(systemName: "circle.fill")
                             .font(.system(size: 4))
-                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.5) : .black.opacity(0.4))
+                            .foregroundColor(AppTheme.adaptiveSecondaryIndicator(for: colorScheme))
                         
                         Text(ingredient)
                             .font(.subheadline)

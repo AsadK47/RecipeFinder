@@ -365,7 +365,7 @@ struct MealPlanningView: View {
                 ForEach(["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], id: \.self) { day in
                     Text(day)
                         .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6))
+                        .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.mediumEmphasisOpacity) : .black.opacity(AppTheme.mediumEmphasisOpacity))
                         .frame(maxWidth: .infinity)
                 }
                 
@@ -779,9 +779,9 @@ struct CalendarDayView: View {
         if isSelected {
             return Color.blue
         } else if isToday {
-            return colorScheme == .dark ? .white : .black
+            return AppTheme.adaptiveEmphasis(for: colorScheme)
         } else {
-            return colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.8)
+            return colorScheme == .dark ? .white.opacity(AppTheme.highEmphasisOpacity) : .black.opacity(AppTheme.highEmphasisOpacity)
         }
     }
 }
@@ -802,7 +802,7 @@ struct MealTimeCard: View {
                 
                 Image(systemName: mealTime.icon)
                     .font(.system(size: 22, weight: .semibold))
-                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.9) : .black.opacity(0.9))
+                    .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.cardLightOpacity) : .black.opacity(0.9))
             }
             
             VStack(alignment: .leading, spacing: 6) {
@@ -816,7 +816,7 @@ struct MealTimeCard: View {
                     Text(mealTime.timeRange)
                         .font(.caption)
                 }
-                .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6))
+                .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.mediumEmphasisOpacity) : .black.opacity(AppTheme.mediumEmphasisOpacity))
                 
                 if let recipe = recipe {
                     HStack(spacing: 6) {
@@ -901,7 +901,7 @@ struct MealTimeSelectorSheet: View {
                     Text("Plan a Meal")
                         .font(.system(size: 28, weight: .bold))
                         .adaptiveForegroundColor()
-                        .shadow(color: .black.opacity(0.2), radius: 2, x: 0, y: 1)
+                        .shadow(color: .black.opacity(AppTheme.overlayLightOpacity), radius: 2, x: 0, y: 1)
                     
                     HStack(spacing: 8) {
                         Image(systemName: "calendar")
@@ -933,7 +933,7 @@ struct MealTimeSelectorSheet: View {
                                             
                                             Image(systemName: mealTime.icon)
                                                 .font(.system(size: 22, weight: .semibold))
-                                                .foregroundColor(selectedMealTimes.contains(mealTime) ? .green : (colorScheme == .dark ? .white.opacity(0.9) : .black.opacity(0.9)))
+                                                .foregroundColor(selectedMealTimes.contains(mealTime) ? .green : (colorScheme == .dark ? .white.opacity(AppTheme.cardLightOpacity) : .black.opacity(0.9)))
                                         }
                                         
                                         VStack(alignment: .leading, spacing: 6) {
@@ -947,7 +947,7 @@ struct MealTimeSelectorSheet: View {
                                                 Text(mealTime.timeRange)
                                                     .font(.caption)
                                             }
-                                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6))
+                                            .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.mediumEmphasisOpacity) : .black.opacity(AppTheme.mediumEmphasisOpacity))
                                         }
                                         
                                         Spacer()
@@ -959,7 +959,7 @@ struct MealTimeSelectorSheet: View {
                                         } else {
                                             Image(systemName: "plus.circle")
                                                 .font(.title3)
-                                                .foregroundColor(colorScheme == .dark ? .white.opacity(0.4) : .black.opacity(0.4))
+                                                .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.lowEmphasisOpacity) : .black.opacity(AppTheme.lowEmphasisOpacity))
                                         }
                                     }
                                     .padding(16)
@@ -1230,7 +1230,7 @@ struct WeekDayRow: View {
             Button(action: onAddMeal) {
                 Image(systemName: "plus.circle")
                     .font(.title3)
-                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6))
+                    .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.mediumEmphasisOpacity) : .black.opacity(AppTheme.mediumEmphasisOpacity))
             }
         }
         .padding(12)

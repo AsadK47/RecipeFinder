@@ -38,7 +38,7 @@ struct QuickSnackSheet: View {
                                 .font(.system(size: 16, weight: .semibold))
                         }
                         .foregroundColor(.white.opacity(0.9))
-                        .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
+                        .shadow(color: .black.opacity(AppTheme.shadowDarkOpacity), radius: 2, x: 0, y: 1)
                     }
                 }
                 .padding(.horizontal, 20)
@@ -233,7 +233,7 @@ struct EmojiSelectorView: View {
                     Spacer()
                     
                     Image(systemName: "chevron.down")
-                        .foregroundColor(.white.opacity(0.5))
+                        .foregroundColor(.white.opacity(AppTheme.glassLightOpacity))
                         .rotationEffect(.degrees(showEmojiPicker ? 180 : 0))
                 }
                 .padding()
@@ -361,7 +361,7 @@ struct SnackSuggestionsView: View {
                 
                 Text("\(filteredSnacks.count) snacks")
                     .font(.caption)
-                    .foregroundColor(.white.opacity(0.6))
+                    .foregroundColor(.white.opacity(AppTheme.mediumEmphasisOpacity))
             }
             .padding(.horizontal)
             
@@ -383,7 +383,7 @@ struct SnackSuggestionsView: View {
                                 if let calories = snack.calories {
                                     Text("\(calories) cal")
                                         .font(.caption2)
-                                        .foregroundColor(.white.opacity(0.6))
+                                        .foregroundColor(.white.opacity(AppTheme.mediumEmphasisOpacity))
                                 }
                             }
                             .frame(width: 80, height: 100)
@@ -417,7 +417,7 @@ struct SnackNameInputView: View {
                 .background {
                     cardBackground(cardStyle: cardStyle, colorScheme: colorScheme)
                 }
-                .foregroundColor(colorScheme == .dark ? .white : .black)
+                .foregroundColor(AppTheme.adaptiveEmphasis(for: colorScheme))
         }
     }
 }
@@ -551,7 +551,7 @@ private func cardBackground(cardStyle: CardStyle, colorScheme: ColorScheme) -> s
     Group {
         if cardStyle == .solid {
             RoundedRectangle(cornerRadius: 12)
-                .fill(colorScheme == .dark ? Color(white: 0.2) : Color.white.opacity(AppTheme.cardLightOpacity))
+                .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkMediumOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
         } else {
             RoundedRectangle(cornerRadius: 12)
                 .fill(.ultraThinMaterial)

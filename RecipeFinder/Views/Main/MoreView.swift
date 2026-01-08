@@ -117,7 +117,7 @@ struct MoreCard<Content: View>: View {
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
+                        .fill(AppTheme.adaptiveCard(for: colorScheme))
                 } else {
                     RoundedRectangle(cornerRadius: 16)
                         .fill(.ultraThinMaterial)
@@ -153,13 +153,13 @@ struct MoreRow: View {
                 
                 Text(subtitle)
                     .font(.caption)
-                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
+                    .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             
             Image(systemName: "chevron.right")
                 .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(colorScheme == .dark ? .white.opacity(0.5) : .black.opacity(0.4))
+                .foregroundColor(AppTheme.adaptiveSecondaryIndicator(for: colorScheme))
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)

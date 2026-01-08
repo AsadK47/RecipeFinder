@@ -80,18 +80,18 @@ final class ThemeManager: ObservableObject, @unchecked Sendable {
     
     /// Get secondary text color for cards
     func cardSecondaryTextColor(for colorScheme: ColorScheme) -> Color {
-        return .black.opacity(0.6)
+        return .black.opacity(AppTheme.mediumEmphasisOpacity)
     }
     
     /// Get primary text color based on color scheme (for non-card text)
     /// Use this for text on gradient backgrounds, headers, etc.
     func primaryTextColor(for colorScheme: ColorScheme) -> Color {
-        return colorScheme == .dark ? .white : .black
+        return AppTheme.adaptiveEmphasis(for: colorScheme)
     }
     
     /// Get secondary text color based on color scheme (for non-card text)
     func secondaryTextColor(for colorScheme: ColorScheme) -> Color {
-        return colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6)
+        return AppTheme.adaptiveSubtitle(for: colorScheme)
     }
     
     /// Get the background gradient for the current theme
@@ -109,12 +109,12 @@ final class ThemeManager: ObservableObject, @unchecked Sendable {
 extension Color {
     /// Text color that adapts to light/dark mode - black in light, white in dark
     static func adaptiveText(for colorScheme: ColorScheme) -> Color {
-        return colorScheme == .dark ? .white : .black
+        return AppTheme.adaptiveEmphasis(for: colorScheme)
     }
     
     /// Secondary text color that adapts to light/dark mode
     static func adaptiveSecondaryText(for colorScheme: ColorScheme) -> Color {
-        return colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6)
+        return AppTheme.adaptiveSubtitle(for: colorScheme)
     }
 }
 

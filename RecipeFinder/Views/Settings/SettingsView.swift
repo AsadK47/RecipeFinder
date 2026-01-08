@@ -2386,7 +2386,7 @@ struct AboutFeatureRow: View {
             
             Text(text)
                 .font(.subheadline)
-                .foregroundColor(colorScheme == .dark ? .white.opacity(0.9) : .primary)
+                .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.cardLightOpacity) : .primary)
         }
     }
 }

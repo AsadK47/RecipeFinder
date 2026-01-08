@@ -149,6 +149,7 @@ enum AppTheme {
     
     // Opacity values for consistent transparency
     static let cardDarkOpacity: Double = 0.15 // Dark mode card backgrounds
+    static let cardDarkMediumOpacity: Double = 0.2 // Dark mode medium backgrounds (search bars, inputs)
     static let cardLightOpacity: Double = 0.9 // Light mode card backgrounds
     static let cardLightHighOpacity: Double = 0.95 // Light mode elevated cards
     static let glassLightOpacity: Double = 0.5 // Glassmorphism light backgrounds
@@ -156,6 +157,11 @@ enum AppTheme {
     static let overlayLightOpacity: Double = 0.2 // Light overlay backgrounds
     static let shadowLightOpacity: Double = 0.1 // Light mode shadows
     static let shadowDarkOpacity: Double = 0.3 // Dark mode shadows
+    
+    // Text/Icon emphasis levels (for foreground colors)
+    static let highEmphasisOpacity: Double = 0.8 // High emphasis (important secondary text)
+    static let mediumEmphasisOpacity: Double = 0.6 // Medium emphasis (tertiary text)
+    static let lowEmphasisOpacity: Double = 0.4 // Low emphasis (disabled/placeholder)
     
     // MARK: - Dynamic Color Helpers (Starling-Style)
     
@@ -178,6 +184,65 @@ enum AppTheme {
     static func textColor(for colorScheme: ColorScheme, opacity: Double = 1.0) -> Color {
         let baseColor = colorScheme == .dark ? Color.white : Color.black
         return opacity == 1.0 ? baseColor : baseColor.opacity(opacity)
+    }
+    
+    // MARK: - Adaptive Background Helpers
+    
+    /// Standard adaptive card background (most common pattern)
+    static func adaptiveCard(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark ? Color(white: cardDarkOpacity) : Color.white.opacity(cardLightOpacity)
+    }
+    
+    /// Medium opacity card background (for search bars, inputs)
+    static func adaptiveCardMedium(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark ? Color(white: cardDarkMediumOpacity) : Color.white.opacity(cardLightOpacity)
+    }
+    
+    /// High opacity card background (for elevated/prominent cards)
+    static func adaptiveCardHigh(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark ? Color(white: cardDarkOpacity) : Color.white.opacity(cardLightHighOpacity)
+    }
+    
+    /// Glass effect background (lighter, more transparent)
+    static func adaptiveGlass(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark ? Color(white: cardDarkOpacity) : Color.white.opacity(glassLightOpacity)
+    }
+    
+    /// Adaptive shadow color
+    static func adaptiveShadow(for colorScheme: ColorScheme) -> Color {
+        Color.black.opacity(colorScheme == .dark ? shadowDarkOpacity : shadowLightOpacity)
+    }
+    
+    /// Dimmed filter/chip background (commonly used in FilterChip, overlays)
+    static func adaptiveFilterChip(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark 
+            ? Color(white: cardDarkMediumOpacity).opacity(highEmphasisOpacity) 
+            : Color(white: cardLightOpacity).opacity(cardLightOpacity)
+    }
+    
+    /// Adaptive text/icon color with emphasis levels
+    static func adaptiveEmphasis(for colorScheme: ColorScheme, level: Double = 1.0) -> Color {
+        colorScheme == .dark ? Color.white.opacity(level) : Color.black.opacity(level)
+    }
+    
+    /// High emphasis text/icon (0.8 opacity for secondary important elements)
+    static func adaptiveHighEmphasis(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark ? Color.white.opacity(highEmphasisOpacity) : Color.black.opacity(mediumEmphasisOpacity)
+    }
+    
+    /// Medium emphasis text/icon (0.6 opacity for tertiary elements)
+    static func adaptiveMediumEmphasis(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark ? Color.white.opacity(mediumEmphasisOpacity) : Color.black.opacity(lowEmphasisOpacity)
+    }
+    
+    /// Custom emphasis for secondary indicators (chevrons, arrows, etc) - 0.5 dark / 0.4 light
+    static func adaptiveSecondaryIndicator(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark ? Color.white.opacity(glassLightOpacity) : Color.black.opacity(lowEmphasisOpacity)
+    }
+    
+    /// Medium-high emphasis for subtitles (0.7 dark / 0.6 light)
+    static func adaptiveSubtitle(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark ? Color.white.opacity(0.7) : Color.black.opacity(mediumEmphasisOpacity)
     }
     
     // Dynamic accent color based on theme

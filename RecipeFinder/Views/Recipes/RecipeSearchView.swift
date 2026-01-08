@@ -296,7 +296,7 @@ struct RecipeSearchView: View {
         HStack(spacing: 12) {
             HStack(spacing: 12) {
                 Image(systemName: "magnifyingglass")
-                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.6))
+                    .foregroundColor(AppTheme.adaptiveHighEmphasis(for: colorScheme))
                     .font(.system(size: 18, weight: .medium))
                 
                 ZStack(alignment: .leading) {
@@ -1005,7 +1005,7 @@ struct RecipeDeleteConfirmationSheet: View {
                             HStack(spacing: 12) {
                                 Image(systemName: dontAskAgain ? "checkmark.square.fill" : "square")
                                     .font(.title3)
-                                    .foregroundColor(dontAskAgain ? AppTheme.accentColor : .white.opacity(0.6))
+                                    .foregroundColor(dontAskAgain ? AppTheme.accentColor : .white.opacity(AppTheme.mediumEmphasisOpacity))
                                 
                                 Text("Don't ask me again")
                                     .font(.subheadline)

@@ -229,7 +229,7 @@ struct DocPointRow: View {
             
             Text(point.description)
                 .font(.system(size: 15))
-                .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
+                .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
                 .lineSpacing(3)
         }
     }
