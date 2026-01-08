@@ -46,11 +46,11 @@ struct RecipeImportView: View {
     var body: some View {
         NavigationView {
             ZStack(alignment: .top) {
-                VStack(spacing: 24) {
+                VStack(spacing: AppTheme.spacingXXL) {
                     // Header
-                    VStack(spacing: 12) {
+                    VStack(spacing: AppTheme.spacingMD) {
                         Image(systemName: "arrow.down.doc.fill")
-                            .font(.system(size: 60))
+                            .font(.system(size: AppTheme.fontSizeDisplay))
                             .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                     
                     Text("Import Recipe")
@@ -67,7 +67,7 @@ struct RecipeImportView: View {
                 .opacity(importer.isLoading ? 0.5 : 1.0)
                 
                 // URL Input
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: AppTheme.spacingSM) {
                     Text("Recipe URL")
                         .font(.headline)
                         .foregroundColor(.secondary)
@@ -99,7 +99,7 @@ struct RecipeImportView: View {
                 // Import Button or Loading State
                 if importer.isLoading {
                     // Enhanced loading view with stages
-                    VStack(spacing: 20) {
+                    VStack(spacing: AppTheme.spacingXL) {
                         ZStack {
                             // Animated circle background
                             Circle()
@@ -121,7 +121,7 @@ struct RecipeImportView: View {
                                 .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                         }
                         
-                        VStack(spacing: 8) {
+                        VStack(spacing: AppTheme.spacingSM) {
                             Text(loadingStage.message)
                                 .font(.headline)
                                 .foregroundColor(.primary)
@@ -154,8 +154,8 @@ struct RecipeImportView: View {
                 
                 // Error Message
                 if let error = importer.errorMessage {
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack(spacing: 12) {
+                    VStack(alignment: .leading, spacing: AppTheme.spacingSM) {
+                        HStack(spacing: AppTheme.spacingMD) {
                             Image(systemName: "exclamationmark.triangle.fill")
                                 .foregroundColor(.orange)
                             
@@ -176,7 +176,7 @@ struct RecipeImportView: View {
                 }
                 
                 // Example URLs
-                VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
                     Text("Try these examples:")
                         .font(.subheadline)
                         .fontWeight(.semibold)
@@ -184,7 +184,7 @@ struct RecipeImportView: View {
                         .padding(.horizontal)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: AppTheme.spacingSM) {
                         exampleButton(
                             url: "https://www.allrecipes.com/recipe/223042/chicken-parmesan/", 
                             title: "Chicken Parmesan",
@@ -208,22 +208,22 @@ struct RecipeImportView: View {
                 Spacer()
                 
                 // Info
-                VStack(spacing: 8) {
-                    HStack(spacing: 8) {
+                VStack(spacing: AppTheme.spacingSM) {
+                    HStack(spacing: AppTheme.spacingSM) {
                         Image(systemName: "sparkles")
                             .foregroundColor(.purple)
                         Text("AI-powered recipe parsing")
                             .font(.caption)
                     }
                     
-                    HStack(spacing: 8) {
+                    HStack(spacing: AppTheme.spacingSM) {
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundColor(.green)
                         Text("Works with most recipe websites")
                             .font(.caption)
                     }
                     
-                    HStack(spacing: 8) {
+                    HStack(spacing: AppTheme.spacingSM) {
                         Image(systemName: "lock.fill")
                             .foregroundColor(.blue)
                         Text("Your data stays on your device")
@@ -354,7 +354,7 @@ struct RecipeImportView: View {
                 HapticManager.shared.light()
             },
             label: {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
                     Text(title)
                         .font(.subheadline)
                         .fontWeight(.semibold)

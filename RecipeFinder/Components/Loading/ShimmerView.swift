@@ -86,12 +86,12 @@ struct RecipeCardSkeleton: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
             // Image placeholder
             SkeletonRectangle(cornerRadius: 12)
                 .frame(height: 180)
             
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: AppTheme.spacingSM) {
                 // Title
                 SkeletonRectangle(cornerRadius: 6)
                     .frame(height: 20)
@@ -102,7 +102,7 @@ struct RecipeCardSkeleton: View {
                     .frame(width: 150, height: 14)
                 
                 // Tags
-                HStack(spacing: 8) {
+                HStack(spacing: AppTheme.spacingSM) {
                     SkeletonCapsule()
                         .frame(width: 60, height: 24)
                     SkeletonCapsule()
@@ -114,7 +114,7 @@ struct RecipeCardSkeleton: View {
         }
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
+                .fill(AppTheme.adaptiveCard(for: colorScheme))
         )
     }
 }
@@ -123,9 +123,9 @@ struct RecipeDetailSkeleton: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: AppTheme.spacingXL) {
             // Header
-            VStack(spacing: 12) {
+            VStack(spacing: AppTheme.spacingMD) {
                 SkeletonRectangle(cornerRadius: 8)
                     .frame(height: 28)
                     .frame(maxWidth: 250)
@@ -137,9 +137,9 @@ struct RecipeDetailSkeleton: View {
             .padding(.top, 20)
             
             // Info cards
-            HStack(spacing: 12) {
+            HStack(spacing: AppTheme.spacingMD) {
                 ForEach(0..<3) { _ in
-                    VStack(spacing: 8) {
+                    VStack(spacing: AppTheme.spacingSM) {
                         SkeletonCircle()
                             .frame(width: 40, height: 40)
                         SkeletonRectangle(cornerRadius: 4)
@@ -149,7 +149,7 @@ struct RecipeDetailSkeleton: View {
                     .padding()
                     .background(
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
+                            .fill(AppTheme.adaptiveCard(for: colorScheme))
                     )
                 }
             }
@@ -157,7 +157,7 @@ struct RecipeDetailSkeleton: View {
             
             // Sections
             ForEach(0..<2) { _ in
-                VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
                     SkeletonRectangle(cornerRadius: 6)
                         .frame(width: 120, height: 20)
                     
@@ -166,10 +166,10 @@ struct RecipeDetailSkeleton: View {
                             .frame(height: 50)
                     }
                 }
-                .padding(16)
+                .padding(AppTheme.spacingLG)
                 .background(
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
+                        .fill(AppTheme.adaptiveCard(for: colorScheme))
                 )
                 .padding(.horizontal, 20)
             }
@@ -183,11 +183,11 @@ struct ListItemSkeleton: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: AppTheme.spacingMD) {
             SkeletonCircle()
                 .frame(width: 40, height: 40)
             
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: AppTheme.spacing6) {
                 SkeletonRectangle(cornerRadius: 4)
                     .frame(height: 16)
                     .frame(maxWidth: .infinity)
@@ -199,7 +199,7 @@ struct ListItemSkeleton: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
+                .fill(AppTheme.adaptiveCard(for: colorScheme))
         )
     }
 }
@@ -217,7 +217,7 @@ struct LoadingStateView: View {
     }
     
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: AppTheme.spacingXL) {
             // Animated spinner
             ProgressView()
                 .progressViewStyle(CircularProgressViewStyle(tint: AppTheme.accentColor(for: selectedTheme)))
@@ -231,7 +231,7 @@ struct LoadingStateView: View {
             
             // Progress bar if available
             if let progress = progress {
-                VStack(spacing: 8) {
+                VStack(spacing: AppTheme.spacingSM) {
                     ProgressView(value: progress, total: 1.0)
                         .progressViewStyle(LinearProgressViewStyle(tint: AppTheme.accentColor(for: selectedTheme)))
                         .frame(width: 200)
@@ -243,14 +243,14 @@ struct LoadingStateView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(40)
+        .padding(AppTheme.spacing4XL)
     }
 }
 
 // MARK: - Preview
 
 #Preview {
-    VStack(spacing: 20) {
+    VStack(spacing: AppTheme.spacingXL) {
         RecipeCardSkeleton()
             .padding()
         

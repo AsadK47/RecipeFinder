@@ -20,7 +20,7 @@ struct PasswordVerificationSheet: View {
                 AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
                 
-                VStack(spacing: 24) {
+                VStack(spacing: AppTheme.spacingXXL) {
                     Spacer()
                     
                     // Lock Icon
@@ -30,7 +30,7 @@ struct PasswordVerificationSheet: View {
                             .frame(width: 100, height: 100)
                         
                         Image(systemName: "lock.shield.fill")
-                            .font(.system(size: 50))
+                            .font(.system(size: AppTheme.fontSizeEmoji))
                             .foregroundStyle(
                                 LinearGradient(
                                     gradient: Gradient(colors: [
@@ -44,9 +44,9 @@ struct PasswordVerificationSheet: View {
                     }
                     .padding(.bottom, 8)
                     
-                    VStack(spacing: 12) {
+                    VStack(spacing: AppTheme.spacingMD) {
                         Text("Verify Your Identity")
-                            .font(.system(size: 28, weight: .bold))
+                            .font(.system(size: AppTheme.fontSizeTitle1, weight: .bold))
                             .adaptiveForegroundColor()
                         
                         Text("Enter your password to update account details")
@@ -57,12 +57,12 @@ struct PasswordVerificationSheet: View {
                     }
                     
                     // Email Display
-                    HStack(spacing: 8) {
+                    HStack(spacing: AppTheme.spacingSM) {
                         Image(systemName: "envelope.fill")
                             .font(.caption)
                             .adaptiveForegroundColor(opacity: 0.7)
                         Text(email)
-                            .font(.system(size: 15, weight: .medium))
+                            .font(.system(size: AppTheme.fontSizeCallout, weight: .medium))
                             .adaptiveForegroundColor(opacity: 0.9)
                     }
                     .padding(.horizontal, 20)
@@ -77,7 +77,7 @@ struct PasswordVerificationSheet: View {
                     )
                     
                     // Password Field
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: AppTheme.spacingSM) {
                         Text("Password")
                             .font(.subheadline)
                             .fontWeight(.medium)
@@ -106,7 +106,7 @@ struct PasswordVerificationSheet: View {
                     .padding(.top, 8)
                     
                     if showError {
-                        HStack(spacing: 8) {
+                        HStack(spacing: AppTheme.spacingSM) {
                             Image(systemName: "exclamationmark.triangle.fill")
                                 .foregroundColor(.red)
                             Text(errorMessage)
@@ -123,7 +123,7 @@ struct PasswordVerificationSheet: View {
                                 ProgressView()
                                     .progressViewStyle(CircularProgressViewStyle(tint: .white))
                             } else {
-                                HStack(spacing: 12) {
+                                HStack(spacing: AppTheme.spacingMD) {
                                     Image(systemName: "checkmark.shield.fill")
                                     Text("Verify & Continue")
                                         .fontWeight(.semibold)

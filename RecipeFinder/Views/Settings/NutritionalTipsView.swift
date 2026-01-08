@@ -26,7 +26,7 @@ struct NutritionalTipsView: View {
             
             VStack(spacing: 0) {
                 // Header
-                VStack(spacing: 12) {
+                VStack(spacing: AppTheme.spacingMD) {
                     GeometryReader { geometry in
                         HStack(spacing: 0) {
                             // Back button
@@ -93,7 +93,7 @@ struct NutritionalTipsView: View {
                 .padding(.top, 16)
                 
                 ScrollView {
-                    VStack(spacing: 20) {
+                    VStack(spacing: AppTheme.spacingXL) {
                         // Tip of the Day
                         tipOfTheDayCard
                         
@@ -123,11 +123,11 @@ struct NutritionalTipsView: View {
             showTipDetail = true
             HapticManager.shared.light()
         }) {
-            HStack(spacing: 16) {
+            HStack(spacing: AppTheme.spacingLG) {
                 Text(tip.icon)
-                    .font(.system(size: 50))
+                    .font(.system(size: AppTheme.fontSizeEmoji))
                 
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: AppTheme.spacing6) {
                     HStack {
                         Text("💡")
                             .font(.caption2)
@@ -175,7 +175,7 @@ struct NutritionalTipsView: View {
             filteredTips = NutritionalTipsDatabase.allTips
         }
         
-        return LazyVStack(spacing: 16) {
+        return LazyVStack(spacing: AppTheme.spacingLG) {
             ForEach(filteredTips) { tip in
                 NutritionalTipCard(tip: tip) {
                     selectedTip = tip
@@ -190,7 +190,7 @@ struct NutritionalTipsView: View {
         Group {
             if cardStyle == .solid {
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkMediumOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
+                    .fill(AppTheme.adaptiveCardMedium(for: colorScheme))
             } else {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(.ultraThinMaterial)
@@ -211,11 +211,11 @@ struct NutritionalTipCard: View {
     
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 16) {
+            HStack(spacing: AppTheme.spacingLG) {
                 Text(tip.icon)
                     .font(.system(size: 40))
                 
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: AppTheme.spacing6) {
                     Text(tip.title)
                         .font(.subheadline)
                         .fontWeight(.semibold)
@@ -228,7 +228,7 @@ struct NutritionalTipCard: View {
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
                     
-                    HStack(spacing: 8) {
+                    HStack(spacing: AppTheme.spacingSM) {
                         Text(tip.category.icon)
                             .font(.caption2)
                         Text(tip.category.rawValue)
@@ -254,7 +254,7 @@ struct NutritionalTipCard: View {
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
+                        .fill(AppTheme.adaptiveCard(for: colorScheme))
                 } else {
                     RoundedRectangle(cornerRadius: 12)
                         .fill(.ultraThinMaterial)
@@ -271,7 +271,7 @@ struct EvidenceBadge: View {
     let level: EvidenceLevel
     
     var body: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: AppTheme.spacingXS) {
             Image(systemName: level == .strong ? "checkmark.seal.fill" : level == .moderate ? "checkmark.circle.fill" : "sparkles")
                 .font(.caption2)
             Text(level.rawValue)
@@ -313,13 +313,13 @@ struct TipDetailView: View {
                     .ignoresSafeArea()
                 
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 24) {
+                    VStack(alignment: .leading, spacing: AppTheme.spacingXXL) {
                         // Header
                         HStack {
                             Text(tip.icon)
-                                .font(.system(size: 60))
+                                .font(.system(size: AppTheme.fontSizeDisplay))
                             
-                            VStack(alignment: .leading, spacing: 4) {
+                            VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
                                 Text(tip.title)
                                     .font(.title2)
                                     .fontWeight(.bold)
@@ -336,7 +336,7 @@ struct TipDetailView: View {
                         EvidenceBadge(level: tip.evidenceLevel)
                         
                         // Description
-                        VStack(alignment: .leading, spacing: 12) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
                             Text("What the Science Says")
                                 .font(.headline)
                                 .adaptiveForegroundColor()
@@ -352,13 +352,13 @@ struct TipDetailView: View {
                         }
                         
                         // Actionable Steps
-                        VStack(alignment: .leading, spacing: 12) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
                             Text("What You Can Do")
                                 .font(.headline)
                                 .adaptiveForegroundColor()
                             
                             ForEach(Array(tip.actionableSteps.enumerated()), id: \.offset) { index, step in
-                                HStack(alignment: .top, spacing: 12) {
+                                HStack(alignment: .top, spacing: AppTheme.spacingMD) {
                                     Text("\(index + 1)")
                                         .font(.caption)
                                         .fontWeight(.bold)
@@ -381,7 +381,7 @@ struct TipDetailView: View {
                         }
                         
                         // Sources
-                        VStack(alignment: .leading, spacing: 12) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
                             HStack {
                                 Image(systemName: "graduationcap.fill")
                                 Text("Scientific Sources")
@@ -397,9 +397,9 @@ struct TipDetailView: View {
                                         HapticManager.shared.light()
                                     }
                                 }) {
-                                    VStack(alignment: .leading, spacing: 8) {
+                                    VStack(alignment: .leading, spacing: AppTheme.spacingSM) {
                                         HStack {
-                                            VStack(alignment: .leading, spacing: 4) {
+                                            VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
                                                 Text(source.institution)
                                                     .font(.subheadline)
                                                     .fontWeight(.semibold)
@@ -455,7 +455,7 @@ struct TipDetailView: View {
                                 .background(Color.white.opacity(0.3))
                                 .padding(.vertical, 8)
                             
-                            HStack(spacing: 6) {
+                            HStack(spacing: AppTheme.spacing6) {
                                 Image(systemName: "checkmark.shield.fill")
                                     .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                                 Text("Tap any source with a link icon to read the full peer-reviewed research.")
@@ -494,7 +494,7 @@ struct TipDetailView: View {
         Group {
             if cardStyle == .solid {
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkMediumOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
+                    .fill(AppTheme.adaptiveCardMedium(for: colorScheme))
             } else {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(.ultraThinMaterial)

@@ -14,7 +14,7 @@ struct CardView<Content: View>: View {
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                        .fill(AppTheme.cardBackground(for: colorScheme))
                         .shadow(color: Color.black.opacity(0.25), radius: 8, x: 0, y: 4)
                 } else {
                     // Pure frosted glass - exactly like Settings
@@ -41,7 +41,7 @@ struct GlassCard<Content: View>: View {
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                        .fill(AppTheme.cardBackground(for: colorScheme))
                         .shadow(color: Color.black.opacity(0.25), radius: 8, x: 0, y: 4)
                 } else {
                     // Pure frosted glass - exactly like Settings

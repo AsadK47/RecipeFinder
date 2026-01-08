@@ -267,7 +267,7 @@ struct SettingsCard<Content: View>: View {
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
+                        .fill(AppTheme.adaptiveCard(for: colorScheme))
                 } else {
                     RoundedRectangle(cornerRadius: 16)
                         .fill(.ultraThinMaterial)
@@ -297,14 +297,14 @@ struct SettingsRow: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: AppTheme.spacingMD) {
             ZStack {
                 RoundedRectangle(cornerRadius: 6, style: .continuous)
                     .fill(iconColor)
                     .frame(width: 29, height: 29)
                 
                 Image(systemName: icon)
-                    .font(.system(size: 15, weight: .semibold))
+                    .font(.system(size: AppTheme.fontSizeCallout, weight: .semibold))
                     .adaptiveForegroundColor()
             }
             
@@ -374,10 +374,10 @@ struct AppearanceAndThemeSettingsView: View {
                 .frame(height: max(72, UIScreen.main.bounds.width * 0.18))
                 
                 ScrollView {
-                    VStack(spacing: 24) {
+                    VStack(spacing: AppTheme.spacingXXL) {
                         // Color Theme Section
                         SettingsCard {
-                            VStack(alignment: .leading, spacing: 20) {
+                            VStack(alignment: .leading, spacing: AppTheme.spacingXL) {
                             HStack {
                                 Image(systemName: "sparkles")
                                     .font(.title2)
@@ -397,13 +397,13 @@ struct AppearanceAndThemeSettingsView: View {
                             Divider()
                                 .padding(.vertical, 4)
                             
-                            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: AppTheme.spacingMD) {
                                 ForEach(AppTheme.ThemeType.allCases) { theme in
                                     Button(action: {
                                         selectedTheme = theme
                                         HapticManager.shared.selection()
                                     }) {
-                                        HStack(spacing: 12) {
+                                        HStack(spacing: AppTheme.spacingMD) {
                                             Circle()
                                                 .fill(AppTheme.accentColor(for: theme))
                                                 .frame(width: 32, height: 32)
@@ -412,7 +412,7 @@ struct AppearanceAndThemeSettingsView: View {
                                                         .strokeBorder(selectedTheme == theme ? Color.white : Color.clear, lineWidth: 2)
                                                 )
                                             
-                                            VStack(alignment: .leading, spacing: 2) {
+                                            VStack(alignment: .leading, spacing: AppTheme.spacingXXS) {
                                                 Text(theme.rawValue)
                                                     .font(.subheadline)
                                                     .adaptiveForegroundColor()
@@ -426,7 +426,7 @@ struct AppearanceAndThemeSettingsView: View {
                                             
                                             Spacer()
                                         }
-                                        .padding(12)
+                                        .padding(AppTheme.spacingMD)
                                         .background(selectedTheme == theme ? AppTheme.accentColor(for: theme).opacity(0.15) : AppTheme.secondaryText.opacity(0.05))
                                         .cornerRadius(12)
                                     }
@@ -434,10 +434,10 @@ struct AppearanceAndThemeSettingsView: View {
                                 }
                             }
                         }
-                        .padding(20)
+                        .padding(AppTheme.spacingXL)
                     }
                 }
-                .padding(20)
+                .padding(AppTheme.spacingXL)
             }
         }
         }
@@ -470,10 +470,10 @@ struct AppearanceSettingsView: View {
                 .ignoresSafeArea()
             
             ScrollView {
-                VStack(spacing: 24) {
+                VStack(spacing: AppTheme.spacingXXL) {
                     // Header Info
                     SettingsCard {
-                        VStack(alignment: .leading, spacing: 12) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
                             HStack {
                                 Image(systemName: "paintpalette.fill")
                                     .font(.title2)
@@ -490,7 +490,7 @@ struct AppearanceSettingsView: View {
                                 .foregroundColor(.secondary)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
-                        .padding(20)
+                        .padding(AppTheme.spacingXL)
                     }
                     
                     // Appearance Modes
@@ -504,7 +504,7 @@ struct AppearanceSettingsView: View {
                                 HapticManager.shared.selection()
                             }) {
                                 VStack(spacing: 0) {
-                                    HStack(spacing: 16) {
+                                    HStack(spacing: AppTheme.spacingLG) {
                                         ZStack {
                                             Circle()
                                                 .fill(AppTheme.accentColor(for: selectedTheme).opacity(0.2))
@@ -515,7 +515,7 @@ struct AppearanceSettingsView: View {
                                                 .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                                         }
                                         
-                                        VStack(alignment: .leading, spacing: 4) {
+                                        VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
                                             Text("System")
                                                 .font(.headline)
                                                 .adaptiveForegroundColor()
@@ -537,7 +537,7 @@ struct AppearanceSettingsView: View {
                                                 .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                                         }
                                     }
-                                    .padding(20)
+                                    .padding(AppTheme.spacingXL)
                                 }
                             }
                             .buttonStyle(PlainButtonStyle())
@@ -552,7 +552,7 @@ struct AppearanceSettingsView: View {
                                 HapticManager.shared.selection()
                             }) {
                                 VStack(spacing: 0) {
-                                    HStack(spacing: 16) {
+                                    HStack(spacing: AppTheme.spacingLG) {
                                         ZStack {
                                             Circle()
                                                 .fill(Color.cyan.opacity(0.2))
@@ -563,7 +563,7 @@ struct AppearanceSettingsView: View {
                                                 .foregroundColor(.cyan)
                                         }
                                         
-                                        VStack(alignment: .leading, spacing: 4) {
+                                        VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
                                             Text("Frost Light")
                                                 .font(.headline)
                                                 .adaptiveForegroundColor()
@@ -581,7 +581,7 @@ struct AppearanceSettingsView: View {
                                                 .foregroundColor(.cyan)
                                         }
                                     }
-                                    .padding(20)
+                                    .padding(AppTheme.spacingXL)
                                 }
                             }
                             .buttonStyle(PlainButtonStyle())
@@ -596,7 +596,7 @@ struct AppearanceSettingsView: View {
                                 HapticManager.shared.selection()
                             }) {
                                 VStack(spacing: 0) {
-                                    HStack(spacing: 16) {
+                                    HStack(spacing: AppTheme.spacingLG) {
                                         ZStack {
                                             Circle()
                                                 .fill(Color.orange.opacity(0.2))
@@ -607,7 +607,7 @@ struct AppearanceSettingsView: View {
                                                 .foregroundColor(.orange)
                                         }
                                         
-                                        VStack(alignment: .leading, spacing: 4) {
+                                        VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
                                             Text("Ember Dark")
                                                 .font(.headline)
                                                 .adaptiveForegroundColor()
@@ -625,14 +625,14 @@ struct AppearanceSettingsView: View {
                                                 .foregroundColor(.orange)
                                         }
                                     }
-                                    .padding(20)
+                                    .padding(AppTheme.spacingXL)
                                 }
                             }
                             .buttonStyle(PlainButtonStyle())
                         }
                     }
                 }
-                .padding(20)
+                .padding(AppTheme.spacingXL)
             }
         }
         .navigationTitle("Appearance")
@@ -663,9 +663,9 @@ struct ThemeSettingsView: View {
                 .ignoresSafeArea()
             
             ScrollView {
-                VStack(spacing: 24) {
+                VStack(spacing: AppTheme.spacingXXL) {
                     SettingsCard {
-                        VStack(alignment: .leading, spacing: 20) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingXL) {
                             Text("Select Theme")
                                 .font(.headline)
                                 .adaptiveForegroundColor()
@@ -675,7 +675,7 @@ struct ThemeSettingsView: View {
                                     selectedTheme = theme
                                     HapticManager.shared.selection()
                                 }) {
-                                    HStack(spacing: 16) {
+                                    HStack(spacing: AppTheme.spacingLG) {
                                         // Theme preview circle with gradient
                                         Circle()
                                             .fill(AppTheme.accentColor(for: theme))
@@ -685,7 +685,7 @@ struct ThemeSettingsView: View {
                                                     .stroke(selectedTheme == theme ? Color.white : Color.clear, lineWidth: 3)
                                             )
                                         
-                                        VStack(alignment: .leading, spacing: 4) {
+                                        VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
                                             Text(theme.rawValue)
                                                 .adaptiveForegroundColor()
                                                 .font(.body)
@@ -703,17 +703,17 @@ struct ThemeSettingsView: View {
                                                 .font(.title3)
                                         }
                                     }
-                                    .padding(16)
+                                    .padding(AppTheme.spacingLG)
                                     .background(selectedTheme == theme ? Color.white.opacity(AppTheme.overlayLightOpacity) : Color.clear)
                                     .cornerRadius(12)
                                 }
                                 .buttonStyle(PlainButtonStyle())
                             }
                         }
-                        .padding(20)
+                        .padding(AppTheme.spacingXL)
                     }
                 }
-                .padding(20)
+                .padding(AppTheme.spacingXL)
             }
         }
         .navigationTitle("Theme")
@@ -807,16 +807,16 @@ struct NotificationSettingsView: View {
                 .frame(height: max(72, UIScreen.main.bounds.width * 0.18))
                 
                 ScrollView {
-                VStack(spacing: 24) {
+                VStack(spacing: AppTheme.spacingXXL) {
                     if notificationPermission != .authorized {
                         SettingsCard {
-                            VStack(alignment: .center, spacing: 20) {
+                            VStack(alignment: .center, spacing: AppTheme.spacingXL) {
                                 Image(systemName: "bell.slash.fill")
-                                    .font(.system(size: 60))
+                                    .font(.system(size: AppTheme.fontSizeDisplay))
                                     .foregroundColor(.orange)
                                     .padding(.top, 10)
                                 
-                                VStack(spacing: 8) {
+                                VStack(spacing: AppTheme.spacingSM) {
                                     Text("Notifications Disabled")
                                         .font(.title2)
                                         .fontWeight(.bold)
@@ -855,18 +855,18 @@ struct NotificationSettingsView: View {
                     }
                     
                     SettingsCard {
-                        VStack(alignment: .leading, spacing: 20) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingXL) {
                             Text("Notification Types")
                                 .font(.headline)
                                 .adaptiveForegroundColor()
                             
                             Toggle(isOn: $timerNotifications) {
-                                HStack(spacing: 12) {
+                                HStack(spacing: AppTheme.spacingMD) {
                                     Image(systemName: "timer")
                                         .adaptiveForegroundColor()
                                         .frame(width: 30)
                                     
-                                    VStack(alignment: .leading, spacing: 2) {
+                                    VStack(alignment: .leading, spacing: AppTheme.spacingXXS) {
                                         Text("Timer Alerts")
                                             .adaptiveForegroundColor()
                                         Text("Get notified when timers complete")
@@ -881,12 +881,12 @@ struct NotificationSettingsView: View {
                                 .padding(.horizontal, 60)
                             
                             Toggle(isOn: $mealPlanReminders) {
-                                HStack(spacing: 12) {
+                                HStack(spacing: AppTheme.spacingMD) {
                                     Image(systemName: "calendar")
                                         .adaptiveForegroundColor()
                                         .frame(width: 30)
                                     
-                                    VStack(alignment: .leading, spacing: 2) {
+                                    VStack(alignment: .leading, spacing: AppTheme.spacingXXS) {
                                         Text("Meal Plan Reminders")
                                             .adaptiveForegroundColor()
                                         Text("Daily reminders for planned meals")
@@ -901,12 +901,12 @@ struct NotificationSettingsView: View {
                                 .padding(.horizontal, 60)
                             
                             Toggle(isOn: $shoppingListReminders) {
-                                HStack(spacing: 12) {
+                                HStack(spacing: AppTheme.spacingMD) {
                                     Image(systemName: "cart")
                                         .adaptiveForegroundColor()
                                         .frame(width: 30)
                                     
-                                    VStack(alignment: .leading, spacing: 2) {
+                                    VStack(alignment: .leading, spacing: AppTheme.spacingXXS) {
                                         Text("Shopping List Reminders")
                                             .adaptiveForegroundColor()
                                         Text("Remind me about shopping list items")
@@ -917,12 +917,12 @@ struct NotificationSettingsView: View {
                             }
                             .tint(AppTheme.accentColor)
                         }
-                        .padding(20)
+                        .padding(AppTheme.spacingXL)
                     }
                     
                     if mealPlanReminders || shoppingListReminders {
                         SettingsCard {
-                            VStack(alignment: .leading, spacing: 20) {
+                            VStack(alignment: .leading, spacing: AppTheme.spacingXL) {
                                 Text("Reminder Time")
                                     .font(.headline)
                                     .adaptiveForegroundColor()
@@ -948,15 +948,15 @@ struct NotificationSettingsView: View {
                                             .foregroundColor(.secondary)
                                             .font(.caption)
                                     }
-                                    .padding(16)
+                                    .padding(AppTheme.spacingLG)
                                 }
                                 .buttonStyle(PlainButtonStyle())
                             }
-                            .padding(20)
+                            .padding(AppTheme.spacingXL)
                         }
                     }
                 }
-                .padding(20)
+                .padding(AppTheme.spacingXL)
             }
         }
         }
@@ -1078,15 +1078,15 @@ struct TimerSettingsView: View {
                 .frame(height: max(72, UIScreen.main.bounds.width * 0.18))
                 
                 ScrollView {
-                VStack(spacing: 24) {
+                VStack(spacing: AppTheme.spacingXXL) {
                     // Default Duration
                     SettingsCard {
-                        VStack(alignment: .leading, spacing: 20) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingXL) {
                             Text("Default Timer Duration")
                                 .font(.headline)
                                 .adaptiveForegroundColor()
                             
-                            VStack(spacing: 12) {
+                            VStack(spacing: AppTheme.spacingMD) {
                                 ForEach([60, 300, 600, 900, 1800, 3600], id: \.self) { seconds in
                                     let label = formatDuration(seconds)
                                     Button(action: {
@@ -1108,7 +1108,7 @@ struct TimerSettingsView: View {
                                                     .adaptiveForegroundColor()
                                             }
                                         }
-                                        .padding(12)
+                                        .padding(AppTheme.spacingMD)
                                         .background(
                                             RoundedRectangle(cornerRadius: 10)
                                                 .fill(defaultTimerDuration == seconds ? AppTheme.secondaryText.opacity(0.2) : Color.clear)
@@ -1118,18 +1118,18 @@ struct TimerSettingsView: View {
                                 }
                             }
                         }
-                        .padding(20)
+                        .padding(AppTheme.spacingXL)
                     }
                     
                     // Sound Settings
                     SettingsCard {
-                        VStack(alignment: .leading, spacing: 20) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingXL) {
                             Text("Sound & Alerts")
                                 .font(.headline)
                                 .adaptiveForegroundColor()
                             
                             // Timer Sound
-                            VStack(alignment: .leading, spacing: 12) {
+                            VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
                                 Text("Completion Sound")
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
@@ -1154,7 +1154,7 @@ struct TimerSettingsView: View {
                                                     .adaptiveForegroundColor()
                                             }
                                         }
-                                        .padding(12)
+                                        .padding(AppTheme.spacingMD)
                                         .background(
                                             RoundedRectangle(cornerRadius: 10)
                                                 .fill(timerSound == sound ? AppTheme.secondaryText.opacity(0.2) : Color.clear)
@@ -1169,12 +1169,12 @@ struct TimerSettingsView: View {
                             
                             // Vibration
                             Toggle(isOn: $timerVibration) {
-                                HStack(spacing: 12) {
+                                HStack(spacing: AppTheme.spacingMD) {
                                     Image(systemName: "iphone.radiowaves.left.and.right")
                                         .adaptiveForegroundColor()
                                         .frame(width: 30)
                                     
-                                    VStack(alignment: .leading, spacing: 2) {
+                                    VStack(alignment: .leading, spacing: AppTheme.spacingXXS) {
                                         Text("Vibration")
                                             .adaptiveForegroundColor()
                                         Text("Vibrate when timer completes")
@@ -1185,23 +1185,23 @@ struct TimerSettingsView: View {
                             }
                             .tint(AppTheme.accentColor)
                         }
-                        .padding(20)
+                        .padding(AppTheme.spacingXL)
                     }
                     
                     // Behavior Settings
                     SettingsCard {
-                        VStack(alignment: .leading, spacing: 20) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingXL) {
                             Text("Behavior")
                                 .font(.headline)
                                 .adaptiveForegroundColor()
                             
                             Toggle(isOn: $showTimerInNotifications) {
-                                HStack(spacing: 12) {
+                                HStack(spacing: AppTheme.spacingMD) {
                                     Image(systemName: "app.badge")
                                         .adaptiveForegroundColor()
                                         .frame(width: 30)
                                     
-                                    VStack(alignment: .leading, spacing: 2) {
+                                    VStack(alignment: .leading, spacing: AppTheme.spacingXXS) {
                                         Text("Show in Notifications")
                                             .adaptiveForegroundColor()
                                         Text("Display running timers in notification center")
@@ -1212,10 +1212,10 @@ struct TimerSettingsView: View {
                             }
                             .tint(AppTheme.accentColor)
                         }
-                        .padding(20)
+                        .padding(AppTheme.spacingXL)
                     }
                 }
-                .padding(20)
+                .padding(AppTheme.spacingXL)
             }
         }
         }
@@ -1287,9 +1287,9 @@ struct UnitsSettingsView: View {
                 .frame(height: max(72, UIScreen.main.bounds.width * 0.18))
                 
                 ScrollView {
-                VStack(spacing: 24) {
+                VStack(spacing: AppTheme.spacingXXL) {
                     SettingsCard {
-                        VStack(alignment: .leading, spacing: 20) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingXL) {
                             Text("Measurement System")
                                 .font(.headline)
                                 .adaptiveForegroundColor()
@@ -1299,13 +1299,13 @@ struct UnitsSettingsView: View {
                                     measurementSystem = system
                                     HapticManager.shared.selection()
                                 }) {
-                                    HStack(spacing: 16) {
+                                    HStack(spacing: AppTheme.spacingLG) {
                                         Image(systemName: system == .metric ? "ruler" : "ruler.fill")
                                             .font(.title3)
                                             .adaptiveForegroundColor()
                                             .frame(width: 30)
                                         
-                                        VStack(alignment: .leading, spacing: 4) {
+                                        VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
                                             Text(system.rawValue)
                                                 .adaptiveForegroundColor()
                                             Text(system == .metric ? "kg, g, ml, l" : "lb, oz, cups, fl oz")
@@ -1320,17 +1320,17 @@ struct UnitsSettingsView: View {
                                                 .adaptiveForegroundColor()
                                         }
                                     }
-                                    .padding(16)
+                                    .padding(AppTheme.spacingLG)
                                     .background(measurementSystem == system ? AppTheme.secondaryText.opacity(0.2) : Color.clear)
                                     .cornerRadius(12)
                                 }
                                 .buttonStyle(PlainButtonStyle())
                             }
                         }
-                        .padding(20)
+                        .padding(AppTheme.spacingXL)
                     }
                 }
-                .padding(20)
+                .padding(AppTheme.spacingXL)
             }
         }
         }
@@ -1391,21 +1391,21 @@ struct DisplaySettingsView: View {
                 .frame(height: max(72, UIScreen.main.bounds.width * 0.18))
                 
                 ScrollView {
-                VStack(spacing: 24) {
+                VStack(spacing: AppTheme.spacingXXL) {
                     // Screen Settings
                     SettingsCard {
-                        VStack(alignment: .leading, spacing: 20) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingXL) {
                             Text("Screen Settings")
                                 .font(.headline)
                                 .adaptiveForegroundColor()
                             
                             Toggle(isOn: $keepScreenAwake) {
-                                HStack(spacing: 12) {
+                                HStack(spacing: AppTheme.spacingMD) {
                                     Image(systemName: "light.max")
                                         .adaptiveForegroundColor()
                                         .frame(width: 30)
                                     
-                                    VStack(alignment: .leading, spacing: 2) {
+                                    VStack(alignment: .leading, spacing: AppTheme.spacingXXS) {
                                         Text("Keep Screen Awake")
                                             .adaptiveForegroundColor()
                                         Text("Prevent screen from dimming while cooking")
@@ -1416,13 +1416,13 @@ struct DisplaySettingsView: View {
                             }
                             .tint(AppTheme.accentColor)
                         }
-                        .padding(20)
+                        .padding(AppTheme.spacingXL)
                     }
                     
                     // Information Card
                     SettingsCard {
-                        VStack(alignment: .leading, spacing: 12) {
-                            HStack(spacing: 12) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
+                            HStack(spacing: AppTheme.spacingMD) {
                                 Image(systemName: "info.circle.fill")
                                     .foregroundColor(.blue)
                                     .font(.title3)
@@ -1440,7 +1440,7 @@ struct DisplaySettingsView: View {
                             Divider()
                                 .padding(.vertical, 4)
                             
-                            HStack(spacing: 8) {
+                            HStack(spacing: AppTheme.spacingSM) {
                                 Image(systemName: "battery.100")
                                     .foregroundColor(.green)
                                     .font(.caption)
@@ -1450,10 +1450,10 @@ struct DisplaySettingsView: View {
                                     .foregroundColor(.secondary)
                             }
                         }
-                        .padding(20)
+                        .padding(AppTheme.spacingXL)
                     }
                 }
-                .padding(20)
+                .padding(AppTheme.spacingXL)
             }
         }
         }
@@ -1481,11 +1481,11 @@ struct PrivacySettingsView: View {
                 .ignoresSafeArea()
             
             ScrollView {
-                VStack(spacing: 24) {
+                VStack(spacing: AppTheme.spacingXXL) {
                     // Biometric Authentication (if available)
                     if authManager.biometricsAvailable {
                         SettingsCard {
-                            VStack(alignment: .leading, spacing: 20) {
+                            VStack(alignment: .leading, spacing: AppTheme.spacingXL) {
                                 Text("Security")
                                     .font(.headline)
                                     .adaptiveForegroundColor()
@@ -1503,12 +1503,12 @@ struct PrivacySettingsView: View {
                                         }
                                     }
                                 )) {
-                                    HStack(spacing: 12) {
+                                    HStack(spacing: AppTheme.spacingMD) {
                                         Image(systemName: authManager.biometricType == "Face ID" ? "faceid" : "touchid")
                                             .adaptiveForegroundColor()
                                             .frame(width: 30)
                                         
-                                        VStack(alignment: .leading, spacing: 2) {
+                                        VStack(alignment: .leading, spacing: AppTheme.spacingXXS) {
                                             Text("\(authManager.biometricType)")
                                                 .adaptiveForegroundColor()
                                             Text("Sign in with \(authManager.biometricType) instead of password")
@@ -1519,7 +1519,7 @@ struct PrivacySettingsView: View {
                                 }
                                 .tint(AppTheme.accentColor)
                             }
-                            .padding(20)
+                            .padding(AppTheme.spacingXL)
                         }
                     }
                     
@@ -1530,12 +1530,12 @@ struct PrivacySettingsView: View {
                                 showPrivacyPolicy = true
                                 HapticManager.shared.light()
                             }) {
-                                HStack(spacing: 12) {
+                                HStack(spacing: AppTheme.spacingMD) {
                                     Image(systemName: "hand.raised.fill")
                                         .foregroundColor(.blue)
                                         .frame(width: 30)
                                     
-                                    VStack(alignment: .leading, spacing: 2) {
+                                    VStack(alignment: .leading, spacing: AppTheme.spacingXXS) {
                                         Text("Privacy Policy")
                                             .adaptiveForegroundColor()
                                         Text("View our privacy and data practices")
@@ -1549,7 +1549,7 @@ struct PrivacySettingsView: View {
                                         .foregroundColor(.gray)
                                         .font(.caption)
                                 }
-                                .padding(20)
+                                .padding(AppTheme.spacingXL)
                             }
                             .buttonStyle(PlainButtonStyle())
                         }
@@ -1557,23 +1557,23 @@ struct PrivacySettingsView: View {
                     
                     // Confirmation Preferences
                     SettingsCard {
-                        VStack(alignment: .leading, spacing: 16) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingLG) {
                             Text("Confirmation Dialogs")
                                 .font(.headline)
                                 .adaptiveForegroundColor()
                             
-                            HStack(spacing: 16) {
+                            HStack(spacing: AppTheme.spacingLG) {
                                 ZStack {
                                     Circle()
                                         .fill(.orange)
                                         .frame(width: 40, height: 40)
                                     
                                     Image(systemName: "exclamationmark.triangle.fill")
-                                        .font(.system(size: 18, weight: .semibold))
+                                        .font(.system(size: AppTheme.fontSizeBody + 2, weight: .semibold))
                                         .adaptiveForegroundColor()
                                 }
                                 
-                                VStack(alignment: .leading, spacing: 4) {
+                                VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
                                     Text("Delete Confirmations")
                                         .font(.body)
                                         .adaptiveForegroundColor()
@@ -1587,7 +1587,7 @@ struct PrivacySettingsView: View {
                             }
                             
                             if skipDeleteConfirmation {
-                                VStack(alignment: .leading, spacing: 12) {
+                                VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
                                     Text("⚠️ Delete confirmations are disabled")
                                         .font(.caption)
                                         .foregroundColor(.orange)
@@ -1629,7 +1629,7 @@ struct PrivacySettingsView: View {
                             }
                             
                             if showResetSuccess {
-                                HStack(spacing: 8) {
+                                HStack(spacing: AppTheme.spacingSM) {
                                     Image(systemName: "checkmark.circle.fill")
                                         .foregroundColor(.green)
                                     Text("Delete confirmations re-enabled")
@@ -1639,17 +1639,17 @@ struct PrivacySettingsView: View {
                                 .transition(.opacity.combined(with: .move(edge: .top)))
                             }
                         }
-                        .padding(20)
+                        .padding(AppTheme.spacingXL)
                     }
                     
                     // Data Privacy Info
                     SettingsCard {
-                        VStack(alignment: .leading, spacing: 16) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingLG) {
                             Text("Data Privacy")
                                 .font(.headline)
                                 .adaptiveForegroundColor()
                             
-                            VStack(spacing: 16) {
+                            VStack(spacing: AppTheme.spacingLG) {
                                 PrivacyInfoRow(
                                     icon: "externaldrive.fill",
                                     iconColor: .green,
@@ -1687,16 +1687,16 @@ struct PrivacySettingsView: View {
                             }
                             
                             // Export & Import reminder
-                            VStack(alignment: .leading, spacing: 8) {
+                            VStack(alignment: .leading, spacing: AppTheme.spacingSM) {
                                 Divider()
                                     .padding(.vertical, 4)
                                 
-                                HStack(alignment: .top, spacing: 12) {
+                                HStack(alignment: .top, spacing: AppTheme.spacingMD) {
                                     Image(systemName: "info.circle.fill")
                                         .adaptiveForegroundColor()
-                                        .font(.system(size: 16))
+                                        .font(.system(size: AppTheme.fontSizeBody))
                                     
-                                    VStack(alignment: .leading, spacing: 4) {
+                                    VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
                                         Text("Backup Your Data")
                                             .font(.subheadline)
                                             .fontWeight(.semibold)
@@ -1710,10 +1710,10 @@ struct PrivacySettingsView: View {
                                 }
                             }
                         }
-                        .padding(20)
+                        .padding(AppTheme.spacingXL)
                     }
                 }
-                .padding(20)
+                .padding(AppTheme.spacingXL)
             }
         }
         .navigationTitle("Privacy")
@@ -1758,18 +1758,18 @@ struct PrivacyInfoRow: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        HStack(alignment: .top, spacing: 16) {
+        HStack(alignment: .top, spacing: AppTheme.spacingLG) {
             ZStack {
                 Circle()
                     .fill(iconColor.opacity(0.15))
                     .frame(width: 40, height: 40)
                 
                 Image(systemName: icon)
-                    .font(.system(size: 18, weight: .semibold))
+                    .font(.system(size: AppTheme.fontSizeBody + 2, weight: .semibold))
                     .foregroundColor(iconColor)
             }
             
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
                 Text(title)
                     .font(.body)
                     .fontWeight(.semibold)
@@ -1799,16 +1799,16 @@ struct DataManagementSettingsView: View {
                 .ignoresSafeArea()
             
             ScrollView {
-                VStack(spacing: 24) {
+                VStack(spacing: AppTheme.spacingXXL) {
                     // Warning Card
                     SettingsCard {
-                        VStack(alignment: .leading, spacing: 16) {
-                            HStack(spacing: 12) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingLG) {
+                            HStack(spacing: AppTheme.spacingMD) {
                                 Image(systemName: "exclamationmark.triangle.fill")
                                     .font(.title2)
                                     .foregroundColor(.orange)
                                 
-                                VStack(alignment: .leading, spacing: 4) {
+                                VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
                                     Text("Reset App to Default")
                                         .font(.headline)
                                         .adaptiveForegroundColor()
@@ -1845,7 +1845,7 @@ struct DataManagementSettingsView: View {
                             }
                             .buttonStyle(PlainButtonStyle())
                         }
-                        .padding(20)
+                        .padding(AppTheme.spacingXL)
                     }
                     
                     if dataCleared {
@@ -1854,7 +1854,7 @@ struct DataManagementSettingsView: View {
                             .padding()
                     }
                 }
-                .padding(20)
+                .padding(AppTheme.spacingXL)
             }
         }
         .navigationTitle("Data Management")
@@ -1921,14 +1921,14 @@ struct HelpView: View {
                 .ignoresSafeArea()
             
             ScrollView {
-                VStack(spacing: 24) {
+                VStack(spacing: AppTheme.spacingXXL) {
                     // App Tour Section
                     SettingsCard {
                         Button(action: {
                             showOnboarding = true
                             HapticManager.shared.light()
                         }) {
-                            HStack(spacing: 16) {
+                            HStack(spacing: AppTheme.spacingLG) {
                                 ZStack {
                                     Circle()
                                         .fill(Color.purple.opacity(0.15))
@@ -1939,7 +1939,7 @@ struct HelpView: View {
                                         .foregroundColor(.purple)
                                 }
                                 
-                                VStack(alignment: .leading, spacing: 4) {
+                                VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
                                     Text("Take the App Tour")
                                         .font(.headline)
                                         .adaptiveForegroundColor()
@@ -1955,13 +1955,13 @@ struct HelpView: View {
                                     .foregroundColor(.gray)
                                     .font(.caption)
                             }
-                            .padding(20)
+                            .padding(AppTheme.spacingXL)
                         }
                         .buttonStyle(PlainButtonStyle())
                     }
                     
                     SettingsCard {
-                        VStack(alignment: .leading, spacing: 20) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingXL) {
                             Text("Getting Started")
                                 .font(.headline)
                                 .adaptiveForegroundColor()
@@ -2008,11 +2008,11 @@ struct HelpView: View {
                                 description: "Add personal notes, modifications, and ratings to any recipe to remember what worked."
                             )
                         }
-                        .padding(20)
+                        .padding(AppTheme.spacingXL)
                     }
                     
                     SettingsCard {
-                        VStack(alignment: .leading, spacing: 20) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingXL) {
                             Text("Tips & Tricks")
                                 .font(.headline)
                                 .adaptiveForegroundColor()
@@ -2041,11 +2041,11 @@ struct HelpView: View {
                                 description: "Paste any recipe URL in the burger menu to automatically import it into your collection."
                             )
                         }
-                        .padding(20)
+                        .padding(AppTheme.spacingXL)
                     }
                     
                     SettingsCard {
-                        VStack(alignment: .leading, spacing: 16) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingLG) {
                             Text("Contact Support")
                                 .font(.headline)
                                 .adaptiveForegroundColor()
@@ -2055,13 +2055,13 @@ struct HelpView: View {
                                     UIApplication.shared.open(url)
                                 }
                             }) {
-                                HStack(spacing: 16) {
+                                HStack(spacing: AppTheme.spacingLG) {
                                     Image(systemName: "envelope.fill")
                                         .font(.title3)
                                         .adaptiveForegroundColor()
                                         .frame(width: 30)
                                     
-                                    VStack(alignment: .leading, spacing: 4) {
+                                    VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
                                         Text("Email Support")
                                             .adaptiveForegroundColor()
                                         Text("recipefinderlimited@icloud.com")
@@ -2075,7 +2075,7 @@ struct HelpView: View {
                                         .foregroundColor(.secondary)
                                         .font(.caption)
                                 }
-                                .padding(16)
+                                .padding(AppTheme.spacingLG)
                             }
                             .buttonStyle(PlainButtonStyle())
                             
@@ -2084,13 +2084,13 @@ struct HelpView: View {
                                     UIApplication.shared.open(url)
                                 }
                             }) {
-                                HStack(spacing: 16) {
+                                HStack(spacing: AppTheme.spacingLG) {
                                     Image(systemName: "globe")
                                         .font(.title3)
                                         .adaptiveForegroundColor()
                                         .frame(width: 30)
                                     
-                                    VStack(alignment: .leading, spacing: 4) {
+                                    VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
                                         Text("Visit Website")
                                             .adaptiveForegroundColor()
                                         Text("recipefinder.uk")
@@ -2104,15 +2104,15 @@ struct HelpView: View {
                                         .foregroundColor(.secondary)
                                         .font(.caption)
                                 }
-                                .padding(16)
+                                .padding(AppTheme.spacingLG)
                             }
                             .buttonStyle(PlainButtonStyle())
                         }
-                        .padding(20)
+                        .padding(AppTheme.spacingXL)
                     }
                     
                     SettingsCard {
-                        VStack(alignment: .leading, spacing: 20) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingXL) {
                             Text("Frequently Asked Questions")
                                 .font(.headline)
                                 .adaptiveForegroundColor()
@@ -2157,10 +2157,10 @@ struct HelpView: View {
                                 answer: "Go to Settings > Account > Delete Account. Note that this will remove all your data permanently."
                             )
                         }
-                        .padding(20)
+                        .padding(AppTheme.spacingXL)
                     }
                 }
-                .padding(20)
+                .padding(AppTheme.spacingXL)
             }
         }
         .navigationTitle("Help & Support")
@@ -2180,13 +2180,13 @@ struct HelpItem: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        HStack(alignment: .top, spacing: 16) {
+        HStack(alignment: .top, spacing: AppTheme.spacingLG) {
             Image(systemName: icon)
                 .font(.title3)
                 .adaptiveForegroundColor()
                 .frame(width: 30)
             
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
                 Text(title)
                     .font(.subheadline)
                     .fontWeight(.semibold)
@@ -2209,14 +2209,14 @@ struct FAQItem: View {
     @State private var isExpanded = false
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
             Button(action: {
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                     isExpanded.toggle()
                 }
                 HapticManager.shared.light()
             }) {
-                HStack(alignment: .top, spacing: 12) {
+                HStack(alignment: .top, spacing: AppTheme.spacingMD) {
                     Image(systemName: isExpanded ? "chevron.down.circle.fill" : "chevron.right.circle.fill")
                         .font(.title3)
                         .foregroundColor(AppTheme.accentColor)
@@ -2263,15 +2263,15 @@ struct AboutView: View {
                 .ignoresSafeArea()
             
             ScrollView {
-                VStack(spacing: 32) {
+                VStack(spacing: AppTheme.spacing3XL) {
                     // App Icon & Name
-                    VStack(spacing: 16) {
+                    VStack(spacing: AppTheme.spacingLG) {
                         Image(systemName: "book.circle.fill")
-                            .font(.system(size: 80))
+                            .font(.system(size: AppTheme.fontSizeHero))
                             .foregroundColor(AppTheme.accentColor(for: appTheme))
                         
                         Text("RecipeFinder")
-                            .font(.system(size: 32, weight: .bold))
+                            .font(.system(size: AppTheme.fontSizeMedium, weight: .bold))
                             .adaptiveForegroundColor()
                         
                         Text("Your Personal Cooking Companion")
@@ -2283,7 +2283,7 @@ struct AboutView: View {
                     
                     // Version Info
                     SettingsCard {
-                        VStack(spacing: 16) {
+                        VStack(spacing: AppTheme.spacingLG) {
                             HStack {
                                 Text("Version")
                                     .foregroundColor(.secondary)
@@ -2304,17 +2304,17 @@ struct AboutView: View {
                                     .adaptiveForegroundColor()
                             }
                         }
-                        .padding(20)
+                        .padding(AppTheme.spacingXL)
                     }
                     
                     // Legal Information
                     SettingsCard {
-                        VStack(alignment: .leading, spacing: 16) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingLG) {
                             Text("Legal Information")
                                 .font(.headline)
                                 .adaptiveForegroundColor()
                             
-                            VStack(alignment: .leading, spacing: 8) {
+                            VStack(alignment: .leading, spacing: AppTheme.spacingSM) {
                                 Text("© 2025 RecipeFinder")
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
@@ -2331,12 +2331,12 @@ struct AboutView: View {
                                 .foregroundColor(.secondary)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
-                        .padding(20)
+                        .padding(AppTheme.spacingXL)
                     }
                     
                     // Contact
                     SettingsCard {
-                        VStack(alignment: .leading, spacing: 12) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
                             Text("Support")
                                 .font(.headline)
                                 .adaptiveForegroundColor()
@@ -2355,7 +2355,7 @@ struct AboutView: View {
                                 }
                             }
                         }
-                        .padding(20)
+                        .padding(AppTheme.spacingXL)
                     }
                     
                     Text("Made with ❤️ for home cooks")
@@ -2379,14 +2379,14 @@ struct AboutFeatureRow: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: AppTheme.spacingMD) {
             Image(systemName: icon)
                 .foregroundColor(color)
                 .frame(width: 20)
             
             Text(text)
                 .font(.subheadline)
-                .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.cardLightOpacity) : .primary)
+                .foregroundColor(AppTheme.adaptiveEmphasis(for: colorScheme, level: AppTheme.cardLightOpacity))
         }
     }
 }
@@ -2444,11 +2444,11 @@ struct PartyTimeView: View {
                 .frame(height: max(72, UIScreen.main.bounds.width * 0.18))
                 
                 ScrollView {
-                    VStack(spacing: 32) {
+                    VStack(spacing: AppTheme.spacing3XL) {
                         // Header Info
-                        VStack(spacing: 12) {
+                        VStack(spacing: AppTheme.spacingMD) {
                             Image(systemName: "party.popper.fill")
-                                .font(.system(size: 60))
+                                .font(.system(size: AppTheme.fontSizeDisplay))
                                 .foregroundColor(AppTheme.accentColor(for: appTheme))
                                 .symbolEffect(.bounce, value: isVibrating)
                             
@@ -2466,7 +2466,7 @@ struct PartyTimeView: View {
                         .padding(.top, 40)
                         
                         // Vibration Button
-                        VStack(spacing: 16) {
+                        VStack(spacing: AppTheme.spacingLG) {
                             ZStack {
                                 // Animated rings when vibrating
                                 if isVibrating {
@@ -2522,7 +2522,7 @@ struct PartyTimeView: View {
                         
                         // Info Card
                         SettingsCard {
-                            VStack(alignment: .leading, spacing: 16) {
+                            VStack(alignment: .leading, spacing: AppTheme.spacingLG) {
                                 HStack {
                                     Image(systemName: "info.circle.fill")
                                         .foregroundColor(.blue)
@@ -2531,14 +2531,14 @@ struct PartyTimeView: View {
                                         .adaptiveForegroundColor()
                                 }
                                 
-                                VStack(alignment: .leading, spacing: 8) {
+                                VStack(alignment: .leading, spacing: AppTheme.spacingSM) {
                                     BulletPoint("Press and hold the button")
                                     BulletPoint("Your device will vibrate continuously")
                                     BulletPoint("Release to stop the vibration")
                                     BulletPoint("Perfect for getting attention or just having fun!")
                                 }
                             }
-                            .padding(20)
+                            .padding(AppTheme.spacingXL)
                         }
                         
                         Spacer(minLength: 40)
@@ -2582,12 +2582,12 @@ private struct BulletPoint: View {
     }
     
     var body: some View {
-        HStack(alignment: .top, spacing: 8) {
+        HStack(alignment: .top, spacing: AppTheme.spacingSM) {
             Text("•")
-                .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .primary)
+                .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
             Text(text)
                 .font(.subheadline)
-                .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .primary)
+                .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
         }
     }
 }

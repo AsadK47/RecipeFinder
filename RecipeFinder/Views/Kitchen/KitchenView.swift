@@ -82,7 +82,7 @@ struct KitchenView: View {
                     header
                     
                     ScrollView {
-                        VStack(alignment: .leading, spacing: 24) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingXXL) {
                             if manager.items.isEmpty && searchText.isEmpty {
                                 emptyPromptView
                             } else if !searchText.isEmpty {
@@ -121,7 +121,7 @@ struct KitchenView: View {
     }
     
     private var header: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: AppTheme.spacingMD) {
             GeometryReader { geometry in
                 HStack(spacing: 0) {
                     // Empty space to balance menu button
@@ -159,7 +159,7 @@ struct KitchenView: View {
                         }
                     } label: {
                         Image(systemName: "line.3.horizontal")
-                            .font(.system(size: 20))
+                            .font(.system(size: AppTheme.fontSizeTitle3))
                             .adaptiveForegroundColor()
                             .frame(width: 44, height: 44)
                     }
@@ -172,8 +172,8 @@ struct KitchenView: View {
             .padding(.top, 16)
             
             // Search bar with cancel option
-            HStack(spacing: 12) {
-                HStack(spacing: 12) {
+            HStack(spacing: AppTheme.spacingMD) {
+                HStack(spacing: AppTheme.spacingMD) {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(AppTheme.adaptiveHighEmphasis(for: colorScheme))
                         .font(.body)
@@ -181,7 +181,7 @@ struct KitchenView: View {
                     ZStack(alignment: .leading) {
                         if searchText.isEmpty {
                             Text("Search ingredients...")
-                                .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.mediumEmphasisOpacity) : .black.opacity(AppTheme.mediumEmphasisOpacity))
+                                .foregroundColor(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
                         }
                         TextField("", text: $searchText)
                             .focused($isSearchFocused)
@@ -196,7 +196,7 @@ struct KitchenView: View {
                             },
                             label: {
                                 Image(systemName: "xmark.circle.fill")
-                                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
+                                    .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
                             }
                         )
                     }
@@ -205,7 +205,7 @@ struct KitchenView: View {
                 .background {
                     if cardStyle == .solid {
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
+                            .fill(AppTheme.adaptiveCard(for: colorScheme))
                     } else {
                         RoundedRectangle(cornerRadius: 12)
                             .fill(.ultraThinMaterial)
@@ -236,7 +236,7 @@ struct KitchenView: View {
     
     // MARK: - Empty Prompt
     private var emptyPromptView: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: AppTheme.spacingLG) {
             Image(systemName: "refrigerator")
                 .font(.system(size: 70))
                 .adaptiveForegroundColor(opacity: 0.4)
@@ -257,10 +257,10 @@ struct KitchenView: View {
     }
     
     private var kitchenItemsView: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: AppTheme.spacingLG) {
             // Compact header with count and add button
-            HStack(spacing: 12) {
-                VStack(alignment: .leading, spacing: 2) {
+            HStack(spacing: AppTheme.spacingMD) {
+                VStack(alignment: .leading, spacing: AppTheme.spacingXXS) {
                     Text("My Kitchen")
                         .font(.title3)
                         .fontWeight(.bold)
@@ -277,7 +277,7 @@ struct KitchenView: View {
                     showAddIngredientSheet = true
                     HapticManager.shared.light()
                 }) {
-                    HStack(spacing: 6) {
+                    HStack(spacing: AppTheme.spacing6) {
                         Image(systemName: "plus.circle.fill")
                             .font(.caption)
                         Text("Add More")
@@ -317,7 +317,7 @@ struct KitchenView: View {
     }
     
     private var searchResultsView: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
             Text("Search Results")
                 .font(.title3)
                 .fontWeight(.bold)
@@ -331,7 +331,7 @@ struct KitchenView: View {
                     .padding(.horizontal, 20)
                     .padding(.vertical, 20)
             } else {
-                LazyVStack(spacing: 8) {
+                LazyVStack(spacing: AppTheme.spacingSM) {
                     ForEach(searchResults, id: \.self) { ingredient in
                         kitchenIngredientButton(ingredient)
                     }
@@ -351,7 +351,7 @@ struct KitchenView: View {
                 HapticManager.shared.light()
             }
         } label: {
-            HStack(spacing: 12) {
+            HStack(spacing: AppTheme.spacingMD) {
                     Image(systemName: CategoryClassifier.categoryIcon(for: category))
                         .foregroundStyle(CategoryClassifier.categoryColor(for: category))
                         .font(.body)
@@ -371,7 +371,7 @@ struct KitchenView: View {
                 .background {
                     if cardStyle == .solid {
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
+                            .fill(AppTheme.adaptiveCard(for: colorScheme))
                     } else {
                         RoundedRectangle(cornerRadius: 12)
                             .fill(.ultraThinMaterial)
@@ -382,11 +382,11 @@ struct KitchenView: View {
     }
     
     private var quickRecipeMatchesView: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            VStack(alignment: .leading, spacing: 8) {
-                HStack(spacing: 10) {
+        VStack(alignment: .leading, spacing: AppTheme.spacingLG) {
+            VStack(alignment: .leading, spacing: AppTheme.spacingSM) {
+                HStack(spacing: AppTheme.spacing10) {
                     Image(systemName: "sparkles")
-                        .font(.system(size: 28))
+                        .font(.system(size: AppTheme.fontSizeTitle1))
                         .foregroundColor(.yellow)
                     
                     Text("Quick Recipe Matches")
@@ -423,7 +423,7 @@ struct KitchenView: View {
             .padding(.horizontal, 20)
             
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 16) {
+                HStack(spacing: AppTheme.spacingLG) {
                     ForEach(quickMatchRecipes.prefix(10)) { recipe in
                         NavigationLink(destination: RecipeDetailView(recipe: recipe, onFavoriteToggle: {
                             // Refresh recipes when favorite is toggled
@@ -511,9 +511,9 @@ struct KitchenCategoryCard: View {
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
             Button(action: onToggleCollapse) {
-                HStack(spacing: 12) {
+                HStack(spacing: AppTheme.spacingMD) {
                     Circle()
                         .fill(CategoryClassifier.categoryColor(for: category).opacity(0.2))
                         .frame(width: 40, height: 40)
@@ -522,7 +522,7 @@ struct KitchenCategoryCard: View {
                                 .foregroundColor(CategoryClassifier.categoryColor(for: category))
                         )
                     
-                    VStack(alignment: .leading, spacing: 2) {
+                    VStack(alignment: .leading, spacing: AppTheme.spacingXXS) {
                         Text(category)
                             .font(.headline)
                             .adaptiveForegroundColor()
@@ -542,18 +542,18 @@ struct KitchenCategoryCard: View {
             .buttonStyle(PlainButtonStyle())
             
             if !isCollapsed {
-                FlowLayout(spacing: 8) {
+                FlowLayout(spacing: AppTheme.spacingSM) {
                     ForEach(items) { item in
                         KitchenItemChip(item: item)
                     }
                 }
             }
         }
-        .padding(16)
+        .padding(AppTheme.spacingLG)
         .background {
             if cardStyle == .solid {
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
+                    .fill(AppTheme.adaptiveCard(for: colorScheme))
             } else {
                 RoundedRectangle(cornerRadius: 12)
                     .fill(.ultraThinMaterial)
@@ -576,7 +576,7 @@ struct KitchenItemChip: View {
     }
     
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: AppTheme.spacingSM) {
             // Category icon
             Image(systemName: categoryInfo.icon)
                 .font(.caption)
@@ -601,7 +601,7 @@ struct KitchenItemChip: View {
                 },
                 label: {
                     Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 16))
+                        .font(.system(size: AppTheme.fontSizeBody))
                         .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.lowEmphasisOpacity) : .black.opacity(0.3))
                 }
             )
@@ -669,7 +669,7 @@ struct AddIngredientSheet: View {
                     if !searchText.isEmpty {
                         // Search Results
                         ScrollView {
-                            LazyVStack(spacing: 8) {
+                            LazyVStack(spacing: AppTheme.spacingSM) {
                                 ForEach(searchResults, id: \.self) { food in
                                     foodButton(food)
                                 }
@@ -680,7 +680,7 @@ struct AddIngredientSheet: View {
                     } else if let category = selectedCategory {
                         // Category Foods
                         ScrollView {
-                            VStack(alignment: .leading, spacing: 16) {
+                            VStack(alignment: .leading, spacing: AppTheme.spacingLG) {
                                 Button(action: {
                                     withAnimation {
                                         selectedCategory = nil
@@ -702,7 +702,7 @@ struct AddIngredientSheet: View {
                                     .adaptiveForegroundColor()
                                     .padding(.horizontal, 20)
                                 
-                                LazyVStack(spacing: 8) {
+                                LazyVStack(spacing: AppTheme.spacingSM) {
                                     ForEach(FoodsList.getFoods(forCategory: category), id: \.self) { food in
                                         foodButton(food)
                                     }
@@ -714,7 +714,7 @@ struct AddIngredientSheet: View {
                     } else {
                         // Categories List
                         ScrollView {
-                            LazyVStack(spacing: 12) {
+                            LazyVStack(spacing: AppTheme.spacingMD) {
                                 ForEach(filteredCategories, id: \.self) { category in
                                     categoryButton(category)
                                 }
@@ -746,13 +746,13 @@ struct AddIngredientSheet: View {
                 HapticManager.shared.light()
             }
         }) {
-            HStack(spacing: 12) {
+            HStack(spacing: AppTheme.spacingMD) {
                 Image(systemName: CategoryClassifier.categoryIcon(for: category))
                     .font(.title3)
                     .foregroundColor(CategoryClassifier.categoryColor(for: category))
                     .frame(width: 40)
                 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
                     Text(category)
                         .font(.headline)
                         .adaptiveForegroundColor()
@@ -768,11 +768,11 @@ struct AddIngredientSheet: View {
                     .foregroundColor(.gray)
                     .font(.caption)
             }
-            .padding(16)
+            .padding(AppTheme.spacingLG)
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
+                        .fill(AppTheme.adaptiveCard(for: colorScheme))
                 } else {
                     RoundedRectangle(cornerRadius: 12)
                         .fill(.ultraThinMaterial)
@@ -792,7 +792,7 @@ struct AddIngredientSheet: View {
                 HapticManager.shared.light()
             }
         }) {
-            HStack(spacing: 12) {
+            HStack(spacing: AppTheme.spacingMD) {
                 Image(systemName: CategoryClassifier.categoryIcon(for: category))
                     .foregroundColor(CategoryClassifier.categoryColor(for: category))
                     .font(.body)
@@ -812,7 +812,7 @@ struct AddIngredientSheet: View {
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
+                        .fill(AppTheme.adaptiveCard(for: colorScheme))
                 } else {
                     RoundedRectangle(cornerRadius: 12)
                         .fill(.ultraThinMaterial)

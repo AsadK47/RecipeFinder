@@ -97,7 +97,7 @@ struct ShoppingListView: View {
                     
                     // Progress bar
                     if !manager.items.isEmpty && !showingSearchResults {
-                        VStack(spacing: 6) {
+                        VStack(spacing: AppTheme.spacing6) {
                             ProgressView(value: Double(checkedCount), total: Double(totalCount))
                                 .progressViewStyle(LinearProgressViewStyle(tint: AppTheme.accentColor(for: selectedTheme)))
                                 .frame(height: 8)
@@ -174,7 +174,7 @@ struct ShoppingListView: View {
     
     private var searchResultsView: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
                 Text("Suggested Ingredients")
                     .font(.title3)
                     .fontWeight(.bold)
@@ -189,7 +189,7 @@ struct ShoppingListView: View {
                         .padding(.horizontal, 20)
                         .padding(.vertical, 20)
                 } else {
-                    LazyVStack(spacing: 8) {
+                    LazyVStack(spacing: AppTheme.spacingSM) {
                         ForEach(searchResults, id: \.self) { ingredient in
                             ingredientButton(ingredient)
                         }
@@ -203,7 +203,7 @@ struct ShoppingListView: View {
     
     // MARK: - Header
     private var header: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: AppTheme.spacingMD) {
             GeometryReader { geometry in
                 HStack(spacing: 0) {
                     // Empty space to balance menu button
@@ -269,7 +269,7 @@ struct ShoppingListView: View {
                         }
                     } label: {
                         Image(systemName: "line.3.horizontal")
-                            .font(.system(size: 20))
+                            .font(.system(size: AppTheme.fontSizeTitle3))
                             .adaptiveForegroundColor()
                             .frame(width: 44, height: 44)
                     }
@@ -282,8 +282,8 @@ struct ShoppingListView: View {
             .padding(.top, 16)
             
             // Search bar with cancel option
-            HStack(spacing: 12) {
-                HStack(spacing: 12) {
+            HStack(spacing: AppTheme.spacingMD) {
+                HStack(spacing: AppTheme.spacingMD) {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(AppTheme.adaptiveHighEmphasis(for: colorScheme))
                         .font(.body)
@@ -291,7 +291,7 @@ struct ShoppingListView: View {
                     ZStack(alignment: .leading) {
                         if searchText.isEmpty {
                             Text("Add item...")
-                                .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.mediumEmphasisOpacity) : .black.opacity(AppTheme.mediumEmphasisOpacity))
+                                .foregroundColor(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
                         }
                         TextField("", text: $searchText)
                             .focused($isSearchFocused)
@@ -307,7 +307,7 @@ struct ShoppingListView: View {
                             },
                             label: {
                                 Image(systemName: "xmark.circle.fill")
-                                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
+                                    .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
                             }
                         )
                     }
@@ -316,7 +316,7 @@ struct ShoppingListView: View {
                 .background {
                     if cardStyle == .solid {
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
+                            .fill(AppTheme.adaptiveCard(for: colorScheme))
                     } else {
                         RoundedRectangle(cornerRadius: 12)
                             .fill(.ultraThinMaterial)
@@ -347,7 +347,7 @@ struct ShoppingListView: View {
     // MARK: - Empty State
     private var emptyStateView: some View {
         ScrollView {
-            VStack(spacing: 16) {
+            VStack(spacing: AppTheme.spacingLG) {
                 Image(systemName: "cart.circle.fill")
                     .font(.system(size: 70))
                     .adaptiveForegroundColor(opacity: 0.4)
@@ -435,7 +435,7 @@ struct ShoppingListView: View {
                 }
             },
             label: {
-                HStack(spacing: 12) {
+                HStack(spacing: AppTheme.spacingMD) {
                     Image(systemName: categoryIcon(for: category))
                         .font(.title3)
                         .foregroundColor(categoryColor(for: category))
@@ -448,13 +448,13 @@ struct ShoppingListView: View {
                     
                     Text("(\(items.filter { !$0.isChecked }.count)/\(items.count))")
                         .font(.subheadline)
-                        .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.mediumEmphasisOpacity) : .black.opacity(AppTheme.lowEmphasisOpacity))
+                        .foregroundColor(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
                     
                     Spacer()
                     
                     Image(systemName: collapsedCategories.contains(category) ? "chevron.down" : "chevron.up")
                         .font(.caption)
-                        .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.mediumEmphasisOpacity) : .black.opacity(AppTheme.lowEmphasisOpacity))
+                        .foregroundColor(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
                         .rotationEffect(.degrees(collapsedCategories.contains(category) ? 0 : 180))
                 }
                 .padding(.horizontal, 16)
@@ -463,7 +463,7 @@ struct ShoppingListView: View {
                 .background {
                     if cardStyle == .solid {
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
+                            .fill(AppTheme.adaptiveCard(for: colorScheme))
                     } else {
                         RoundedRectangle(cornerRadius: 12)
                             .fill(.ultraThinMaterial)
@@ -512,7 +512,7 @@ struct ShoppingListView: View {
                 addItemFromSearch(ingredient)
             },
             label: {
-                HStack(spacing: 12) {
+                HStack(spacing: AppTheme.spacingMD) {
                     Image(systemName: CategoryClassifier.categoryIcon(for: category))
                         .foregroundStyle(CategoryClassifier.categoryColor(for: category))
                         .font(.body)
@@ -532,7 +532,7 @@ struct ShoppingListView: View {
                 .background {
                     if cardStyle == .solid {
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
+                            .fill(AppTheme.adaptiveCard(for: colorScheme))
                     } else {
                         RoundedRectangle(cornerRadius: 12)
                             .fill(.ultraThinMaterial)
@@ -570,7 +570,7 @@ struct ShoppingListItemRow: View {
     var body: some View {
         ZStack {
             GlassCard {
-                HStack(spacing: 16) {
+                HStack(spacing: AppTheme.spacingLG) {
                     Button(action: onToggle, label: {
                         ZStack {
                             Circle()
@@ -582,7 +582,7 @@ struct ShoppingListItemRow: View {
                             
                             if item.isChecked {
                                 Image(systemName: "checkmark")
-                                    .font(.system(size: 14, weight: .bold))
+                                    .font(.system(size: AppTheme.fontSizeSubheadline, weight: .bold))
                                     .adaptiveForegroundColor()
                                     .frame(width: 28, height: 28)
                                     .background(Circle().fill(AppTheme.accentColor))
@@ -613,7 +613,7 @@ struct ShoppingListItemRow: View {
                     
                     Spacer()
                     
-                    HStack(spacing: 12) {
+                    HStack(spacing: AppTheme.spacingMD) {
                         // Decrement button
                         Button(action: {
                             if item.quantity > 1 {
@@ -621,7 +621,7 @@ struct ShoppingListItemRow: View {
                             }
                         }) {
                             Image(systemName: "minus")
-                                .font(.system(size: 14, weight: .semibold))
+                                .font(.system(size: AppTheme.fontSizeSubheadline, weight: .semibold))
                                 .foregroundColor(item.quantity > 1 ? (AppTheme.adaptiveEmphasis(for: colorScheme)) : .gray)
                                 .frame(width: 32, height: 32)
                                 .background {
@@ -651,7 +651,7 @@ struct ShoppingListItemRow: View {
                             }
                         }) {
                             Image(systemName: "plus")
-                                .font(.system(size: 14, weight: .semibold))
+                                .font(.system(size: AppTheme.fontSizeSubheadline, weight: .semibold))
                                 .foregroundColor(item.quantity < 99 ? (AppTheme.adaptiveEmphasis(for: colorScheme)) : .gray)
                                 .frame(width: 32, height: 32)
                                 .background {
@@ -733,19 +733,19 @@ struct ShoppingFeatureRow: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: AppTheme.spacingMD) {
             Image(systemName: icon)
                 .adaptiveForegroundColor()
                 .font(.body)
                 .frame(width: 24)
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: AppTheme.spacingXXS) {
                 Text(title)
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .adaptiveForegroundColor()
                 Text(description)
                     .font(.caption)
-                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
+                    .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
             }
             Spacer()
         }
@@ -769,13 +769,13 @@ struct HelpSheetView: View {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 0) {
                         // Hero section with seamless header
-                        VStack(alignment: .leading, spacing: 12) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
                             Text("Shopping List Features")
-                                .font(.system(size: 34, weight: .bold))
+                                .font(.system(size: AppTheme.fontSizeLargeTitle, weight: .bold))
                                 .adaptiveForegroundColor()
                             
                             Text("Learn how to make the most of your shopping list with these powerful features.")
-                                .font(.system(size: 17))
+                                .font(.system(size: AppTheme.fontSizeHeadline))
                                 .adaptiveForegroundColor(opacity: 0.85)
                                 .lineSpacing(4)
                         }
@@ -784,7 +784,7 @@ struct HelpSheetView: View {
                         .padding(.bottom, 32)
                         
                         // Feature cards with beautiful styling
-                        VStack(alignment: .leading, spacing: 16) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingLG) {
                             ShoppingFeatureRow(icon: "sparkles", title: "Smart Categories", description: "Items are automatically sorted into categories", appTheme: appTheme)
                             ShoppingFeatureRow(icon: "chevron.up.chevron.down", title: "Collapse Categories", description: "Tap category headers to show or hide items", appTheme: appTheme)
                             ShoppingFeatureRow(icon: "checkmark.circle", title: "Check Off Items", description: "Tap checkbox to mark items as purchased", appTheme: appTheme)
@@ -794,11 +794,11 @@ struct HelpSheetView: View {
                             ShoppingFeatureRow(icon: "trash", title: "Delete Items", description: "Swipe left on any item to remove it", appTheme: appTheme)
                             ShoppingFeatureRow(icon: "square.and.arrow.up", title: "Share List", description: "Export your list via menu (≡)", appTheme: appTheme)
                         }
-                        .padding(24)
+                        .padding(AppTheme.spacingXXL)
                         .background {
                             if cardStyle == .solid {
                                 RoundedRectangle(cornerRadius: 20)
-                                    .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity).opacity(0.6) : Color.white.opacity(0.85))
+                                    .fill(AppTheme.adaptiveCardMedium(for: colorScheme).opacity(0.7))
                             } else {
                                 RoundedRectangle(cornerRadius: 20)
                                     .fill(.ultraThinMaterial.opacity(0.85))
@@ -818,7 +818,7 @@ struct HelpSheetView: View {
                             dismiss()
                         } label: {
                             Text("Done")
-                                .font(.system(size: 17, weight: .semibold))
+                                .font(.system(size: AppTheme.fontSizeHeadline, weight: .semibold))
                                 .adaptiveForegroundColor()
                                 .padding(.horizontal, 20)
                                 .padding(.vertical, 8)

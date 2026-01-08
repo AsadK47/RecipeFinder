@@ -72,7 +72,7 @@ struct NotesListView: View {
             
             VStack(spacing: 0) {
                 // Header
-                VStack(spacing: 12) {
+                VStack(spacing: AppTheme.spacingMD) {
                     GeometryReader { geometry in
                         HStack(spacing: 0) {
                             // Left side - back button with spacer to match right side width
@@ -145,7 +145,7 @@ struct NotesListView: View {
                 // Active filters chips
                 if activeFilterCount > 0 {
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 8) {
+                        HStack(spacing: AppTheme.spacingSM) {
                             if showPinnedOnly {
                                 FilterChip(label: "Pinned", icon: "pin.fill") {
                                     HapticManager.shared.light()
@@ -237,7 +237,7 @@ struct NotesListView: View {
     // MARK: - Notes List
     private var notesList: some View {
         ScrollView {
-            LazyVStack(spacing: 12) {
+            LazyVStack(spacing: AppTheme.spacingMD) {
                 ForEach(filteredNotes) { note in
                     NoteCardView(note: note)
                         .onTapGesture {
@@ -286,7 +286,7 @@ struct NotesListView: View {
     
     // MARK: - Empty State
     private var emptyStateView: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: AppTheme.spacingXL) {
             Image(systemName: searchText.isEmpty ? "note.text" : "magnifyingglass")
                 .font(.system(size: 70))
                 .adaptiveForegroundColor(opacity: 0.4)
@@ -303,7 +303,7 @@ struct NotesListView: View {
             
             if searchText.isEmpty {
                 // Show animated arrow pointing upward to the + button
-                VStack(spacing: 12) {
+                VStack(spacing: AppTheme.spacingMD) {
                     Image(systemName: "arrow.up")
                         .font(.title)
                         .foregroundColor(AppTheme.accentColor(for: selectedTheme))
@@ -317,7 +317,7 @@ struct NotesListView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(40)
+        .padding(AppTheme.spacing4XL)
     }
 }
 
@@ -343,7 +343,7 @@ struct FilterMenuView: View {
                     .ignoresSafeArea()
                 
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 24) {
+                    VStack(alignment: .leading, spacing: AppTheme.spacingXXL) {
                         // Pinned Filter
                         filterSection(title: "Quick Filters") {
                             Toggle(isOn: $showPinnedOnly) {
@@ -366,7 +366,7 @@ struct FilterMenuView: View {
                         // Tags Filter
                         if !allTags.isEmpty {
                             filterSection(title: "Filter by Tag") {
-                                FlowLayout(spacing: 8) {
+                                FlowLayout(spacing: AppTheme.spacingSM) {
                                     ForEach(allTags, id: \.self) { tag in
                                         tagButton(tag)
                                     }
@@ -396,7 +396,7 @@ struct FilterMenuView: View {
     }
     
     private func filterSection<Content: View>(title: String, @ViewBuilder content: () -> Content) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
             Text(title)
                 .font(.headline)
                 .adaptiveForegroundColor()
@@ -421,7 +421,7 @@ struct FilterMenuView: View {
                 selectedCategory = category
             }
         }) {
-            HStack(spacing: 12) {
+            HStack(spacing: AppTheme.spacingMD) {
                 Image(systemName: category.icon)
                     .font(.title3)
                     .foregroundColor(AppTheme.accentColor(for: selectedTheme))

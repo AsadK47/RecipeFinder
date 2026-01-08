@@ -27,7 +27,7 @@ struct CompactRecipeCard: View {
                             .shadow(color: .black.opacity(AppTheme.overlayLightOpacity), radius: 2)
                         
                         Image(systemName: "heart.fill")
-                            .font(.system(size: 10))
+                            .font(.system(size: AppTheme.fontSizeTiny))
                             .foregroundStyle(
                                 LinearGradient(
                                     gradient: Gradient(colors: [
@@ -50,7 +50,7 @@ struct CompactRecipeCard: View {
                 .frame(height: 12)
             
             // Recipe info
-            VStack(spacing: 6) {
+            VStack(spacing: AppTheme.spacing6) {
                 Text(recipe.name)
                     .font(.caption)
                     .fontWeight(.semibold)
@@ -59,21 +59,21 @@ struct CompactRecipeCard: View {
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity)
                 
-                HStack(spacing: 4) {
+                HStack(spacing: AppTheme.spacingXS) {
                     Image(systemName: "clock.fill")
                         .font(.system(size: 8))
                         .foregroundColor(.orange)
                     Text(recipe.totalTime)
                         .font(.system(size: 9))
-                        .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.cardLightOpacity) : .black.opacity(0.7))
+                        .foregroundColor(AppTheme.adaptiveCardTextEmphasis(for: colorScheme))
                 }
                 
                 // Difficulty text and bars inline
-                HStack(spacing: 6) {
+                HStack(spacing: AppTheme.spacing6) {
                     DifficultyBarsView(difficulty: recipe.difficulty, size: 2.5)
                     Text(recipe.difficulty)
                         .font(.system(size: 9))
-                        .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.cardLightOpacity) : .black.opacity(0.7))
+                        .foregroundColor(AppTheme.adaptiveCardTextEmphasis(for: colorScheme))
                 }
             }
             .padding(.bottom, 12)
@@ -91,7 +91,7 @@ struct CompactRecipeCard: View {
     private var cardBackground: some View {
         if cardStyle == .solid {
             RoundedRectangle(cornerRadius: Self.cornerRadius)
-                .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                .fill(AppTheme.cardBackground(for: colorScheme))
                 .shadow(color: Color.black.opacity(0.25), radius: 8, x: 0, y: 4)
         } else {
             // Frosted glass - exactly like Shopping List

@@ -38,7 +38,7 @@ struct RecipeCard: View {
                             .shadow(color: .black.opacity(AppTheme.overlayLightOpacity), radius: 2)
                         
                         Image(systemName: "heart.fill")
-                            .font(.system(size: 12))
+                            .font(.system(size: AppTheme.fontSizeCaption1))
                             .foregroundStyle(
                                 LinearGradient(
                                     gradient: Gradient(colors: [
@@ -57,41 +57,41 @@ struct RecipeCard: View {
             }
             
             // Content in the middle
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: AppTheme.spacingSM) {
                 // Title 
                 Text(recipe.name)
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.system(size: AppTheme.fontSizeBody, weight: .semibold))
                     .foregroundColor(AppTheme.adaptiveEmphasis(for: colorScheme))
                     .lineLimit(2)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .minimumScaleFactor(0.9)
                 
                 // Time and difficulty on same line
-                HStack(spacing: 10) {
-                    HStack(spacing: 5) {
+                HStack(spacing: AppTheme.spacing10) {
+                    HStack(spacing: AppTheme.spacing5) {
                         Image(systemName: "clock.fill")
-                            .font(.system(size: 12, weight: .medium))
+                            .font(.system(size: AppTheme.fontSizeCaption1, weight: .medium))
                             .foregroundColor(.orange)
                         Text(recipe.totalTime)
-                            .font(.system(size: 13, weight: .medium))
-                            .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.cardLightHighOpacity) : .black.opacity(0.75))
+                            .font(.system(size: AppTheme.fontSizeFootnote, weight: .medium))
+                            .foregroundColor(AppTheme.adaptiveCardTextEmphasis(for: colorScheme))
                     }
                     
-                    HStack(spacing: 6) {
+                    HStack(spacing: AppTheme.spacing6) {
                         DifficultyBarsView(difficulty: recipe.difficulty, size: 3.5)
                         Text(recipe.difficulty)
-                            .font(.system(size: 13, weight: .medium))
-                            .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.cardLightHighOpacity) : .black.opacity(0.75))
+                            .font(.system(size: AppTheme.fontSizeFootnote, weight: .medium))
+                            .foregroundColor(AppTheme.adaptiveCardTextEmphasis(for: colorScheme))
                     }
                 }
             }
             
             // Chevron on the right
             Image(systemName: "chevron.right")
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
+                .font(.system(size: AppTheme.fontSizeSubheadline, weight: .semibold))
+                .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
         }
-        .padding(16)
+        .padding(AppTheme.spacingLG)
         .background {
             cardBackground
         }
@@ -106,7 +106,7 @@ struct RecipeCard: View {
     private var cardBackground: some View {
         if cardStyle == .solid {
             RoundedRectangle(cornerRadius: cornerRadius)
-                .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                .fill(AppTheme.cardBackground(for: colorScheme))
                 .shadow(color: Color.black.opacity(0.25), radius: 8, x: 0, y: 4)
         } else {
             // Frosted glass - exactly like Shopping List

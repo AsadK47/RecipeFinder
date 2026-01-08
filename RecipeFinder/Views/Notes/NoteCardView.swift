@@ -7,11 +7,11 @@ struct NoteCardView: View {
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
             // Header with category and pin
             HStack {
                 // Category badge
-                HStack(spacing: 6) {
+                HStack(spacing: AppTheme.spacing6) {
                     Image(systemName: note.category.icon)
                         .font(.caption)
                     Text(note.category.rawValue)
@@ -61,7 +61,7 @@ struct NoteCardView: View {
             // Tags
             if !note.tags.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
+                    HStack(spacing: AppTheme.spacingSM) {
                         ForEach(note.tags, id: \.self) { tag in
                             Text("#\(tag)")
                                 .font(.caption)
@@ -77,7 +77,7 @@ struct NoteCardView: View {
                 }
             }
         }
-        .padding(16)
+        .padding(AppTheme.spacingLG)
         .background(
             Group {
                 if cardStyle == .solid {
@@ -105,7 +105,7 @@ struct NoteCardView: View {
 }
 
 #Preview {
-    VStack(spacing: 16) {
+    VStack(spacing: AppTheme.spacingLG) {
         NoteCardView(note: NoteModel(
             title: "Pasta Recipe Ideas",
             content: "Try making carbonara with pancetta instead of bacon. Add extra parmesan for creaminess.",

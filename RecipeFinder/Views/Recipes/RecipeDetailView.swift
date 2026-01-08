@@ -101,7 +101,7 @@ struct RecipeDetailView: View {
     
     private var recipeTitleView: some View {
         Text(recipe.name)
-            .font(.system(size: 34, weight: .bold))
+            .font(.system(size: AppTheme.fontSizeLargeTitle, weight: .bold))
             .adaptiveForegroundColor()
             .multilineTextAlignment(.center)
             .frame(maxWidth: .infinity, alignment: .center)
@@ -111,7 +111,7 @@ struct RecipeDetailView: View {
     }
     
     private var recipeInfoCardsView: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: AppTheme.spacingLG) {
             timeInfoCard
             detailsInfoCard
             servingsCard
@@ -141,7 +141,7 @@ struct RecipeDetailView: View {
     
     private var servingsCard: some View {
         GlassCard {
-            VStack(spacing: 16) {
+            VStack(spacing: AppTheme.spacingLG) {
                 HStack {
                     servingsDisplay
                     
@@ -162,7 +162,7 @@ struct RecipeDetailView: View {
     }
     
     private var servingsDisplay: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: AppTheme.spacingSM) {
             Image(systemName: "person.2.fill")
                 .font(.title2)
                 .foregroundColor(.cyan)
@@ -172,7 +172,7 @@ struct RecipeDetailView: View {
                 .foregroundColor(.secondary)
                 .accessibilityHidden(true)
             
-            HStack(spacing: 4) {
+            HStack(spacing: AppTheme.spacingXS) {
                 Text("\(recipe.currentServings)")
                     .font(.title2)
                     .fontWeight(.bold)
@@ -192,7 +192,7 @@ struct RecipeDetailView: View {
     }
     
     private var servingsControls: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: AppTheme.spacingMD) {
             servingsButton(icon: "minus", action: decreaseServings, isEnabled: recipe.currentServings > 1)
             servingsButton(icon: "plus", action: increaseServings, isEnabled: true)
         }
@@ -200,7 +200,7 @@ struct RecipeDetailView: View {
     }
     
     private var quickScaleButtons: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: AppTheme.spacingSM) {
             quickScaleButton(label: "½x", multiplier: 0.5)
             quickScaleButton(label: "1x", multiplier: 1.0)
             quickScaleButton(label: "2x", multiplier: 2.0)
@@ -239,7 +239,7 @@ struct RecipeDetailView: View {
     private func servingsButton(icon: String, action: @escaping () -> Void, isEnabled: Bool) -> some View {
         Button(action: action) {
             Image(systemName: icon)
-                .font(.system(size: 18, weight: .semibold))
+                .font(.system(size: AppTheme.fontSizeBody + 2, weight: .semibold))
                 .adaptiveForegroundColor()
                 .frame(width: 44, height: 44)
                 .background(Circle().fill(isEnabled ? AppTheme.accentColor : Color.gray))
@@ -251,7 +251,7 @@ struct RecipeDetailView: View {
     }
     
     private var ingredientsSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
             ingredientsSectionHeader
             
             if expandedSections.contains("Ingredients") {
@@ -267,9 +267,9 @@ struct RecipeDetailView: View {
     }
     
     private var ingredientsSectionHeader: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: AppTheme.spacingSM) {
             Button(action: { toggleSection("Ingredients") }) {
-                HStack(spacing: 8) {
+                HStack(spacing: AppTheme.spacingSM) {
                     Image(systemName: "leaf.fill")
                         .adaptiveForegroundColor()
                         .font(.title3)
@@ -291,7 +291,7 @@ struct RecipeDetailView: View {
     
     private var measurementToggle: some View {
         Button(action: toggleMeasurementSystem) {
-            HStack(spacing: 6) {
+            HStack(spacing: AppTheme.spacing6) {
                 Image(systemName: measurementSystem.icon)
                     .font(.caption)
                 Text(measurementSystem.rawValue)
@@ -329,12 +329,12 @@ struct RecipeDetailView: View {
     
     private var ingredientsList: some View {
         GlassCard {
-            VStack(spacing: 16) {
+            VStack(spacing: AppTheme.spacingLG) {
                 // Swipe hint banner (shows once)
                 if !hasSeenSwipeHint {
-                    HStack(spacing: 8) {
+                    HStack(spacing: AppTheme.spacingSM) {
                         Image(systemName: "hand.draw")
-                            .font(.system(size: 16))
+                            .font(.system(size: AppTheme.fontSizeBody))
                             .foregroundColor(AppTheme.accentColor)
                         
                         Text("Swipe left to add to shopping list")
@@ -349,7 +349,7 @@ struct RecipeDetailView: View {
                             }
                         }) {
                             Image(systemName: "xmark.circle.fill")
-                                .font(.system(size: 16))
+                                .font(.system(size: AppTheme.fontSizeBody))
                                 .foregroundColor(.secondary.opacity(0.5))
                         }                        .accessibilityLabel("Dismiss hint")
                         .accessibilityHint("Closes swipe instruction banner")                    }
@@ -384,7 +384,7 @@ struct RecipeDetailView: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(20)
+            .padding(AppTheme.spacingXL)
         }
         .sheet(item: Binding(
             get: { editingIngredientIndex.map { EditingIngredient(index: $0) } },
@@ -401,7 +401,7 @@ struct RecipeDetailView: View {
     
     private var prePrepSection: some View {
         collapsibleSection(title: "Pre-Prep", icon: "list.clipboard") {
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: AppTheme.spacingLG) {
                 ForEach(recipe.prePrepInstructions.indices, id: \.self) { index in
                     instructionRow(
                         number: index + 1,
@@ -420,7 +420,7 @@ struct RecipeDetailView: View {
     
     private var instructionsSection: some View {
         collapsibleSection(title: "Instructions", icon: "text.alignleft") {
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: AppTheme.spacingLG) {
                 ForEach(recipe.instructions.indices, id: \.self) { index in
                     instructionRow(
                         number: index + 1,
@@ -439,13 +439,13 @@ struct RecipeDetailView: View {
     
     private var notesSection: some View {
         collapsibleSection(title: "Notes", icon: "note.text") {
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: AppTheme.spacingSM) {
                 ForEach(notesSentences, id: \.self) { sentence in
                     let trimmed = sentence.trimmingCharacters(in: .whitespaces)
                     if !trimmed.isEmpty {
-                        HStack(alignment: .top, spacing: 8) {
+                        HStack(alignment: .top, spacing: AppTheme.spacingSM) {
                             Image(systemName: "circle.fill")
-                                .font(.system(size: 6))
+                                .font(.system(size: AppTheme.fontSizeTinyIcon))
                                 .foregroundColor(.orange)
                                 .padding(.top, 6)
                             Text(trimmed)
@@ -459,7 +459,7 @@ struct RecipeDetailView: View {
     }
     
     private var toolbarButtons: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: AppTheme.spacingLG) {
             Button(action: { showTimerSheet = true }) {
                 Image(systemName: "timer")
                     .font(.title3)
@@ -508,7 +508,7 @@ struct RecipeDetailView: View {
     @ViewBuilder
     private var feedbackOverlay: some View {
         if let feedback = showAddedFeedback {
-            HStack(spacing: 12) {
+            HStack(spacing: AppTheme.spacingMD) {
                 Image(systemName: "basket.fill")
                     .adaptiveForegroundColor()
                 Text("\(feedback) added to shopping list")
@@ -587,7 +587,7 @@ struct RecipeDetailView: View {
     private func collapsibleSection<Content: View>(title: String, icon: String, @ViewBuilder content: () -> Content) -> some View {
         let isExpanded = expandedSections.contains(title)
         
-        return VStack(alignment: .leading, spacing: 12) {
+        return VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
             // Tappable header
             Button(
                 action: {
@@ -600,7 +600,7 @@ struct RecipeDetailView: View {
                     }
                 },
                 label: {
-                    HStack(spacing: 8) {
+                    HStack(spacing: AppTheme.spacingSM) {
                         Image(systemName: icon)
                             .adaptiveForegroundColor()
                             .font(.title3)
@@ -629,7 +629,7 @@ struct RecipeDetailView: View {
                 GlassCard {
                     content()
                         .frame(maxWidth: .infinity, alignment: .leading) // Force full width
-                        .padding(20)
+                        .padding(AppTheme.spacingXL)
                 }
                 .transition(.asymmetric(
                     insertion: .scale(scale: 0.95).combined(with: .opacity),
@@ -645,14 +645,14 @@ struct RecipeDetailView: View {
     
     private func instructionRow(number: Int, text: String, isChecked: Bool, toggle: @escaping () -> Void) -> some View {
         Button(action: toggle, label: {
-            HStack(alignment: .center, spacing: 12) {
+            HStack(alignment: .center, spacing: AppTheme.spacingMD) {
                 ZStack {
                     Circle()
                         .fill(AppTheme.accentColor)
                         .frame(width: 10, height: 10)
                     
                     Text("\(number)")
-                        .font(.system(size: 7))
+                        .font(.system(size: AppTheme.fontSizeTinyText))
                         .fontWeight(.bold)
                         .adaptiveForegroundColor()
                 }
@@ -668,7 +668,7 @@ struct RecipeDetailView: View {
                 Spacer()
                 
                 Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: 28))
+                    .font(.system(size: AppTheme.fontSizeTitle1))
                     .foregroundColor(isChecked ? .green : .gray.opacity(0.4))
             }
             .frame(maxWidth: .infinity, alignment: .leading)

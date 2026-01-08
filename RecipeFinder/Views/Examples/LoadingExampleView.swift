@@ -21,9 +21,9 @@ struct LoadingExampleView: View {
                     .ignoresSafeArea()
                 
                 ScrollView {
-                    VStack(spacing: 20) {
+                    VStack(spacing: AppTheme.spacingXL) {
                         // Toggle controls
-                        VStack(spacing: 16) {
+                        VStack(spacing: AppTheme.spacingLG) {
                             Toggle("Show Loading State", isOn: $isLoading)
                                 .padding()
                                 .background(.ultraThinMaterial)
@@ -50,7 +50,7 @@ struct LoadingExampleView: View {
                         
                         // Skeleton Loader Examples
                         if showSkeleton {
-                            VStack(spacing: 20) {
+                            VStack(spacing: AppTheme.spacingXL) {
                                 Text("Recipe Card Skeleton")
                                     .font(.headline)
                                     .adaptiveForegroundColor()
@@ -72,7 +72,7 @@ struct LoadingExampleView: View {
                         
                         // Actual Content Example (when not loading)
                         if !isLoading && !showSkeleton {
-                            VStack(spacing: 16) {
+                            VStack(spacing: AppTheme.spacingLG) {
                                 Text("✨ Content Loaded!")
                                     .font(.title2)
                                     .fontWeight(.bold)

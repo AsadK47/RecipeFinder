@@ -214,7 +214,7 @@ struct RecipeSearchView: View {
     }
     
     private var searchHeaderGroup: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: AppTheme.spacingMD) {
             headerSection
             searchBarSection
         }
@@ -293,22 +293,22 @@ struct RecipeSearchView: View {
     }
     
     private var searchBarSection: some View {
-        HStack(spacing: 12) {
-            HStack(spacing: 12) {
+        HStack(spacing: AppTheme.spacingMD) {
+            HStack(spacing: AppTheme.spacingMD) {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(AppTheme.adaptiveHighEmphasis(for: colorScheme))
-                    .font(.system(size: 18, weight: .medium))
+                    .font(.system(size: AppTheme.fontSizeBody + 2, weight: .medium))
                 
                 ZStack(alignment: .leading) {
                     if searchText.isEmpty {
                         Text("What would you like to eat...?")
-                            .font(.system(size: 16))
+                            .font(.system(size: AppTheme.fontSizeBody))
                             .foregroundColor(colorScheme == .dark ? .white.opacity(0.65) : .black.opacity(0.65))
                     }
                     TextField("", text: $searchText)
                         .focused($isSearchFocused)
                         .autocorrectionDisabled()
-                        .font(.system(size: 16))
+                        .font(.system(size: AppTheme.fontSizeBody))
                         .adaptiveForegroundColor()
                         .tint(AppTheme.textColor(for: colorScheme))
                 }
@@ -320,8 +320,8 @@ struct RecipeSearchView: View {
                         },
                         label: {
                             Image(systemName: "xmark.circle.fill")
-                                .font(.system(size: 18))
-                                .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.5))
+                                .font(.system(size: AppTheme.fontSizeBody + 2))
+                                .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
                         }
                     )
                 }
@@ -331,7 +331,7 @@ struct RecipeSearchView: View {
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
+                        .fill(AppTheme.adaptiveCard(for: colorScheme))
                 } else {
                     RoundedRectangle(cornerRadius: 12)
                         .fill(.ultraThinMaterial)
@@ -346,7 +346,7 @@ struct RecipeSearchView: View {
                     },
                     label: {
                         Text("Cancel")
-                            .font(.system(size: 16, weight: .semibold))
+                            .font(.system(size: AppTheme.fontSizeBody, weight: .semibold))
                             .adaptiveForegroundColor()
                     }
                 )
@@ -399,7 +399,7 @@ struct RecipeSearchView: View {
     
     private var activeFiltersView: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
+            HStack(spacing: AppTheme.spacingSM) {
                 if showFavoritesOnly {
                     FilterChip(label: "Favorites", icon: "heart.fill") {
                         HapticManager.shared.light()
@@ -598,7 +598,7 @@ struct RecipeSearchView: View {
     
     private var emptyStateView: some View {
         ScrollView {
-            VStack(spacing: 20) {
+            VStack(spacing: AppTheme.spacingXL) {
                 Image(systemName: "magnifyingglass")
                     .font(.system(size: 70))
                     .adaptiveForegroundColor(opacity: 0.4)
@@ -614,7 +614,7 @@ struct RecipeSearchView: View {
                 
                 if activeFilterCount > 0 {
                     Button(action: clearAllFilters, label: {
-                        HStack(spacing: 8) {
+                        HStack(spacing: AppTheme.spacingSM) {
                             Image(systemName: "xmark.circle.fill")
                             Text("Clear All Filters")
                         }
@@ -627,7 +627,7 @@ struct RecipeSearchView: View {
                             Group {
                                 if cardStyle == .solid {
                                     Capsule()
-                                        .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
+                                        .fill(AppTheme.adaptiveCard(for: colorScheme))
                                 } else {
                                     Capsule()
                                         .fill(.ultraThinMaterial)
@@ -685,7 +685,7 @@ struct FilterSheet: View {
     let dietaryOptions = ["Vegetarian", "Vegan", "Gluten-Free", "Dairy-Free", "Nut-Free", "Low-Carb", "Keto"]
     
     private let columns = [
-        GridItem(.adaptive(minimum: 100, maximum: 120), spacing: 8, alignment: .center)
+        GridItem(.adaptive(minimum: 100, maximum: 120), spacing: AppTheme.spacingSM, alignment: .center)
     ]
     
     var body: some View {
@@ -695,9 +695,9 @@ struct FilterSheet: View {
                     .ignoresSafeArea()
                 
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 24) {
+                    VStack(alignment: .leading, spacing: AppTheme.spacingXXL) {
                         // Favorites Toggle
-                        VStack(alignment: .leading, spacing: 12) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
                             HStack {
                                 Text("Show Favorites Only")
                                     .font(.headline)
@@ -714,9 +714,9 @@ struct FilterSheet: View {
                             .background(Color.white.opacity(0.3))
                         
                         // What Can I Make Filter
-                        VStack(alignment: .leading, spacing: 12) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
                             HStack {
-                                VStack(alignment: .leading, spacing: 4) {
+                                VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
                                     Text("What Can I Make?")
                                         .font(.headline)
                                         .adaptiveForegroundColor()
@@ -743,14 +743,14 @@ struct FilterSheet: View {
                             .background(Color.white.opacity(0.3))
                         
                         // Search by Ingredient
-                        VStack(alignment: .leading, spacing: 12) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
                             Text("Search by Ingredient")
                                 .font(.headline)
                                 .adaptiveForegroundColor()
                             
                             TextField("E.g., Chicken, Tomato...", text: $ingredientSearchText)
                                 .textFieldStyle(.plain)
-                                .padding(12)
+                                .padding(AppTheme.spacingMD)
                                 .background(
                                     RoundedRectangle(cornerRadius: 10)
                                         .fill(Color.white.opacity(0.15))
@@ -762,12 +762,12 @@ struct FilterSheet: View {
                             .background(Color.white.opacity(0.3))
                         
                         // Dietary Filters
-                        VStack(alignment: .leading, spacing: 12) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
                             Text("Dietary Preferences")
                                 .font(.headline)
                                 .adaptiveForegroundColor()
                             
-                            LazyVGrid(columns: columns, spacing: 8) {
+                            LazyVGrid(columns: columns, spacing: AppTheme.spacingSM) {
                                 ForEach(dietaryOptions, id: \.self) { diet in
                                     RecipeFilterButton(
                                         label: diet,
@@ -784,12 +784,12 @@ struct FilterSheet: View {
                         
                         // Tags
                         if !availableTags.isEmpty {
-                            VStack(alignment: .leading, spacing: 12) {
+                            VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
                                 Text("Tags")
                                     .font(.headline)
                                     .adaptiveForegroundColor()
                                 
-                                LazyVGrid(columns: columns, spacing: 8) {
+                                LazyVGrid(columns: columns, spacing: AppTheme.spacingSM) {
                                     ForEach(availableTags, id: \.self) { tag in
                                         RecipeFilterButton(
                                             label: tag,
@@ -806,12 +806,12 @@ struct FilterSheet: View {
                         }
                         
                         // Category Filter
-                        VStack(alignment: .leading, spacing: 12) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
                             Text("Course / Category")
                                 .font(.headline)
                                 .adaptiveForegroundColor()
                             
-                            LazyVGrid(columns: columns, spacing: 8) {
+                            LazyVGrid(columns: columns, spacing: AppTheme.spacingSM) {
                                 ForEach(categories, id: \.self) { category in
                                     RecipeFilterButton(
                                         label: category,
@@ -827,12 +827,12 @@ struct FilterSheet: View {
                             .background(Color.white.opacity(0.3))
                         
                         // Difficulty Filter
-                        VStack(alignment: .leading, spacing: 12) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
                             Text("Difficulty")
                                 .font(.headline)
                                 .adaptiveForegroundColor()
                             
-                            LazyVGrid(columns: columns, spacing: 8) {
+                            LazyVGrid(columns: columns, spacing: AppTheme.spacingSM) {
                                 ForEach(difficulties, id: \.self) { difficulty in
                                     RecipeFilterButton(
                                         label: difficulty,
@@ -848,12 +848,12 @@ struct FilterSheet: View {
                             .background(Color.white.opacity(0.3))
                         
                         // Cook Time Filter
-                        VStack(alignment: .leading, spacing: 12) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
                             Text("Max Cooking Time")
                                 .font(.headline)
                                 .adaptiveForegroundColor()
                             
-                            LazyVGrid(columns: columns, spacing: 8) {
+                            LazyVGrid(columns: columns, spacing: AppTheme.spacingSM) {
                                 ForEach(cookTimeOptions, id: \.self) { time in
                                     RecipeFilterButton(
                                         label: time > 120 ? "> 120 min" : "≤ \(time) min",
@@ -865,7 +865,7 @@ struct FilterSheet: View {
                             }
                         }
                     }
-                    .padding(20)
+                    .padding(AppTheme.spacingXL)
                 }
             }
             .navigationTitle("Filters")
@@ -959,7 +959,7 @@ struct RecipeDeleteConfirmationSheet: View {
                         .frame(width: 40, height: 5)
                         .padding(.top, 12)
                     
-                    VStack(spacing: 24) {
+                    VStack(spacing: AppTheme.spacingXXL) {
                         // Icon
                         ZStack {
                             Circle()
@@ -967,13 +967,13 @@ struct RecipeDeleteConfirmationSheet: View {
                                 .frame(width: 80, height: 80)
                             
                             Image(systemName: "fork.knife.circle.fill")
-                                .font(.system(size: 50))
+                                .font(.system(size: AppTheme.fontSizeEmoji))
                                 .foregroundColor(.orange)
                         }
                         .padding(.top, 20)
                         
                         // Title and Message
-                        VStack(spacing: 12) {
+                        VStack(spacing: AppTheme.spacingMD) {
                             Text("Remove this recipe?")
                                 .font(.title2)
                                 .fontWeight(.bold)
@@ -1002,7 +1002,7 @@ struct RecipeDeleteConfirmationSheet: View {
                             dontAskAgain.toggle()
                             HapticManager.shared.selection()
                         }) {
-                            HStack(spacing: 12) {
+                            HStack(spacing: AppTheme.spacingMD) {
                                 Image(systemName: dontAskAgain ? "checkmark.square.fill" : "square")
                                     .font(.title3)
                                     .foregroundColor(dontAskAgain ? AppTheme.accentColor : .white.opacity(AppTheme.mediumEmphasisOpacity))
@@ -1019,7 +1019,7 @@ struct RecipeDeleteConfirmationSheet: View {
                         .buttonStyle(PlainButtonStyle())
                         
                         // Action Buttons
-                        VStack(spacing: 12) {
+                        VStack(spacing: AppTheme.spacingMD) {
                             Button(action: {
                                 HapticManager.shared.light()
                                 onConfirm()

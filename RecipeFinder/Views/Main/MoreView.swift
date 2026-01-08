@@ -13,9 +13,9 @@ struct MoreView: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                    VStack(spacing: 12) {
+                    VStack(spacing: AppTheme.spacingMD) {
                         Text("More")
-                            .font(.system(size: 34, weight: .bold))
+                            .font(.system(size: AppTheme.fontSizeLargeTitle, weight: .bold))
                             .adaptiveForegroundColor()
                             .frame(maxWidth: .infinity)
                             .frame(height: 44)
@@ -24,7 +24,7 @@ struct MoreView: View {
                     .padding(.top, 16)
                     
                     ScrollView {
-                        VStack(spacing: 24) {
+                        VStack(spacing: AppTheme.spacingXXL) {
                             MoreCard {
                                 NavigationLink(destination: SettingsTabView()
                                 ) {
@@ -134,18 +134,18 @@ struct MoreRow: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: AppTheme.spacingLG) {
             ZStack {
                 Circle()
                     .fill(iconColor)
                     .frame(width: 40, height: 40)
                 
                 Image(systemName: icon)
-                    .font(.system(size: 18, weight: .semibold))
+                    .font(.system(size: AppTheme.fontSizeBody + 2, weight: .semibold))
                     .adaptiveForegroundColor()
             }
             
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
                 Text(title)
                     .font(.body)
                     .fontWeight(.semibold)
@@ -158,7 +158,7 @@ struct MoreRow: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             
             Image(systemName: "chevron.right")
-                .font(.system(size: 13, weight: .semibold))
+                .font(.system(size: AppTheme.fontSizeFootnote, weight: .semibold))
                 .foregroundColor(AppTheme.adaptiveSecondaryIndicator(for: colorScheme))
         }
         .padding(.horizontal, 16)

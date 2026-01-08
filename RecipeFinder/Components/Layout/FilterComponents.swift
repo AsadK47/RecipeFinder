@@ -7,7 +7,7 @@ struct FilterChip: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: AppTheme.spacing6) {
             Image(systemName: icon)
                 .font(.caption2)
             Text(label)
@@ -42,9 +42,9 @@ struct FilterButton: View {
         Button {
             action()
         } label: {
-            HStack(spacing: 8) {
+            HStack(spacing: AppTheme.spacingSM) {
                 Image(systemName: icon)
-                    .font(.system(size: 16))
+                    .font(.system(size: AppTheme.fontSizeBody))
                     .foregroundColor(isSelected ? .white : color)
                 
                 Text(label)
@@ -57,11 +57,11 @@ struct FilterButton: View {
                 
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 18))
+                        .font(.system(size: AppTheme.fontSizeBody + 2))
                         .foregroundColor(.white)
                 }
             }
-            .padding(12)
+            .padding(AppTheme.spacingMD)
             .background(
                 RoundedRectangle(cornerRadius: 12)
                     .fill(isSelected ? color : AppTheme.adaptiveFilterChip(for: colorScheme))

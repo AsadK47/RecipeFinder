@@ -15,13 +15,13 @@ struct DeveloperDocumentationView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
                     // Hero section with seamless header
-                    VStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: AppTheme.spacingMD) {
                         Text("Developer Documentation")
-                            .font(.system(size: 34, weight: .bold))
+                            .font(.system(size: AppTheme.fontSizeLargeTitle, weight: .bold))
                             .adaptiveForegroundColor()
                         
                         Text("RecipeFinder is built with SwiftUI and Core Data, featuring modern iOS development patterns and best practices.")
-                            .font(.system(size: 17))
+                            .font(.system(size: AppTheme.fontSizeHeadline))
                             .adaptiveForegroundColor(opacity: 0.85)
                             .lineSpacing(4)
                     }
@@ -112,13 +112,13 @@ struct DeveloperDocumentationView: View {
                     )
                     
                     // Footer
-                    VStack(spacing: 12) {
+                    VStack(spacing: AppTheme.spacingMD) {
                         Text("© 2024-2025 Asad Khan")
-                            .font(.system(size: 13))
+                            .font(.system(size: AppTheme.fontSizeFootnote))
                             .adaptiveForegroundColor(opacity: 0.5)
                         
                         Text("Built with ❤️ using SwiftUI and Core Data")
-                            .font(.system(size: 13))
+                            .font(.system(size: AppTheme.fontSizeFootnote))
                             .adaptiveForegroundColor(opacity: 0.5)
                     }
                     .frame(maxWidth: .infinity)
@@ -136,7 +136,7 @@ struct DeveloperDocumentationView: View {
                         dismiss()
                     } label: {
                         Text("Done")
-                            .font(.system(size: 17, weight: .semibold))
+                            .font(.system(size: AppTheme.fontSizeHeadline, weight: .semibold))
                             .adaptiveForegroundColor()
                             .padding(.horizontal, 20)
                             .padding(.vertical, 8)
@@ -169,21 +169,21 @@ struct DocSection: View {
     let cardStyle: CardStyle
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: AppTheme.spacingXL) {
             // Section header
-            HStack(spacing: 12) {
+            HStack(spacing: AppTheme.spacingMD) {
                 Image(systemName: icon)
                     .foregroundColor(iconColor)
-                    .font(.system(size: 22))
+                    .font(.system(size: AppTheme.fontSizeTitle2))
                 
                 Text(title)
-                    .font(.system(size: 24, weight: .bold))
+                    .font(.system(size: AppTheme.fontSizeIcon, weight: .bold))
                     .adaptiveForegroundColor()
             }
             .padding(.horizontal, 24)
             
             // Content card
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: AppTheme.spacingLG) {
                 ForEach(content.indices, id: \.self) { index in
                     DocPointRow(point: content[index], appTheme: appTheme)
                     
@@ -193,11 +193,11 @@ struct DocSection: View {
                     }
                 }
             }
-            .padding(24)
+            .padding(AppTheme.spacingXXL)
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 20)
-                        .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity).opacity(0.6) : Color.white.opacity(0.85))
+                        .fill(AppTheme.adaptiveCardMedium(for: colorScheme).opacity(0.7))
                 } else {
                     RoundedRectangle(cornerRadius: 20)
                         .fill(.ultraThinMaterial.opacity(0.85))
@@ -222,13 +222,13 @@ struct DocPointRow: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: AppTheme.spacing6) {
             Text(point.title)
-                .font(.system(size: 17, weight: .semibold))
+                .font(.system(size: AppTheme.fontSizeHeadline, weight: .semibold))
                 .adaptiveForegroundColor()
             
             Text(point.description)
-                .font(.system(size: 15))
+                .font(.system(size: AppTheme.fontSizeCallout))
                 .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
                 .lineSpacing(3)
         }

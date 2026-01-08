@@ -28,7 +28,7 @@ struct EmailConfirmationSplashView: View {
                             .scaleEffect(scale)
                         
                         Image(systemName: "envelope.fill")
-                            .font(.system(size: 50))
+                            .font(.system(size: AppTheme.fontSizeEmoji))
                             .foregroundStyle(
                                 LinearGradient(
                                     colors: [.blue, .cyan],
@@ -49,19 +49,19 @@ struct EmailConfirmationSplashView: View {
                     
                     VStack(spacing: spacing.lg) {
                         Text("Check Your Email")
-                            .font(.system(size: 28, weight: .bold))
+                            .font(.system(size: AppTheme.fontSizeTitle1, weight: .bold))
                             .adaptiveForegroundColor()
                             .multilineTextAlignment(.center)
                             .opacity(opacity)
                         
                         VStack(spacing: spacing.sm) {
                             Text("We've sent a confirmation link to:")
-                                .font(.system(size: 16))
+                                .font(.system(size: AppTheme.fontSizeBody))
                                 .adaptiveForegroundColor(opacity: 0.9)
                                 .multilineTextAlignment(.center)
                             
                             Text(email)
-                                .font(.system(size: 16, weight: .semibold))
+                                .font(.system(size: AppTheme.fontSizeBody, weight: .semibold))
                                 .adaptiveForegroundColor()
                                 .multilineTextAlignment(.center)
                                 .padding(.horizontal, spacing.screenEdge + spacing.lg)
@@ -69,7 +69,7 @@ struct EmailConfirmationSplashView: View {
                         .opacity(opacity)
                         
                         Text("📧 For testing purposes, email confirmation is simulated. In production, you'd receive a real email.")
-                            .font(.system(size: 14))
+                            .font(.system(size: AppTheme.fontSizeSubheadline))
                             .adaptiveForegroundColor(opacity: 0.7)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, spacing.xxl + spacing.xl)

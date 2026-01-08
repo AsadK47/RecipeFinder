@@ -28,10 +28,10 @@ struct LegalInformationView: View {
                 .ignoresSafeArea()
             
             ScrollView {
-                VStack(spacing: 24) {
+                VStack(spacing: AppTheme.spacingXXL) {
                     // Company Information Header
                     SettingsCard {
-                        VStack(alignment: .leading, spacing: 16) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingLG) {
                             HStack {
                                 Image(systemName: "building.2.fill")
                                     .font(.title2)
@@ -53,12 +53,12 @@ struct LegalInformationView: View {
                             CompanyInfoRow(label: "Company Type", value: "Private Limited Company")
                             CompanyInfoRow(label: "Status", value: "Active", valueColor: colorScheme == .dark ? .green : Color(red: 0.0, green: 0.6, blue: 0.0))
                         }
-                        .padding(20)
+                        .padding(AppTheme.spacingXL)
                     }
                     
                     // Contact Information
                     SettingsCard {
-                        VStack(alignment: .leading, spacing: 16) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingLG) {
                             HStack {
                                 Image(systemName: "envelope.fill")
                                     .font(.title2)
@@ -78,12 +78,12 @@ struct LegalInformationView: View {
                                     UIApplication.shared.open(url)
                                 }
                             }) {
-                                HStack(spacing: 12) {
+                                HStack(spacing: AppTheme.spacingMD) {
                                     Image(systemName: "envelope.circle.fill")
                                         .adaptiveForegroundColor()
                                         .font(.title3)
                                     
-                                    VStack(alignment: .leading, spacing: 4) {
+                                    VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
                                         Text("Company Email")
                                             .font(.caption)
                                             .foregroundColor(.secondary)
@@ -98,8 +98,8 @@ struct LegalInformationView: View {
                                         .foregroundColor(.secondary)
                                         .font(.caption)
                                 }
-                                .padding(12)
-                                .background(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.05))
+                                .padding(AppTheme.spacingMD)
+                                .background(Color.white.opacity(colorScheme == .dark ? AppTheme.dividerOpacity : 0.05))
                                 .cornerRadius(10)
                             }
                             .buttonStyle(PlainButtonStyle())
@@ -109,12 +109,12 @@ struct LegalInformationView: View {
                                     UIApplication.shared.open(url)
                                 }
                             }) {
-                                HStack(spacing: 12) {
+                                HStack(spacing: AppTheme.spacingMD) {
                                     Image(systemName: "globe")
                                         .adaptiveForegroundColor()
                                         .font(.title3)
                                     
-                                    VStack(alignment: .leading, spacing: 4) {
+                                    VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
                                         Text("Website")
                                             .font(.caption)
                                             .foregroundColor(.secondary)
@@ -129,13 +129,13 @@ struct LegalInformationView: View {
                                         .foregroundColor(.secondary)
                                         .font(.caption)
                                 }
-                                .padding(12)
-                                .background(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.05))
+                                .padding(AppTheme.spacingMD)
+                                .background(Color.white.opacity(colorScheme == .dark ? AppTheme.dividerOpacity : 0.05))
                                 .cornerRadius(10)
                             }
                             .buttonStyle(PlainButtonStyle())
                         }
-                        .padding(20)
+                        .padding(AppTheme.spacingXL)
                     }
                     
                     // Legal Documents
@@ -190,7 +190,7 @@ struct LegalInformationView: View {
                     
                     // Compliance Badges
                     SettingsCard {
-                        VStack(alignment: .leading, spacing: 16) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingLG) {
                             HStack {
                                 Image(systemName: "shield.checkered")
                                     .font(.title2)
@@ -233,12 +233,12 @@ struct LegalInformationView: View {
                                 color: AppTheme.textColor(for: colorScheme)
                             )
                         }
-                        .padding(20)
+                        .padding(AppTheme.spacingXL)
                     }
                     
                     // Director Information
                     SettingsCard {
-                        VStack(alignment: .leading, spacing: 16) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacingLG) {
                             HStack {
                                 Image(systemName: "person.crop.circle.badge.checkmark")
                                     .font(.title2)
@@ -253,7 +253,7 @@ struct LegalInformationView: View {
                             Divider()
                                 .padding(.vertical, 4)
                             
-                            VStack(alignment: .leading, spacing: 8) {
+                            VStack(alignment: .leading, spacing: AppTheme.spacingSM) {
                                 Text("Asad Khan")
                                     .font(.headline)
                                     .adaptiveForegroundColor()
@@ -266,16 +266,16 @@ struct LegalInformationView: View {
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
-                            .padding(12)
+                            .padding(AppTheme.spacingMD)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.05))
+                            .background(Color.white.opacity(colorScheme == .dark ? AppTheme.dividerOpacity : 0.05))
                             .cornerRadius(10)
                         }
-                        .padding(20)
+                        .padding(AppTheme.spacingXL)
                     }
                     
                     // App Version Info
-                    VStack(spacing: 4) {
+                    VStack(spacing: AppTheme.spacingXS) {
                         Text("RecipeFinder")
                             .font(.caption)
                             .foregroundColor(.white.opacity(AppTheme.mediumEmphasisOpacity))
@@ -289,7 +289,7 @@ struct LegalInformationView: View {
                     .padding(.top, 24)
                     .padding(.bottom, 40)
                 }
-                .padding(20)
+                .padding(AppTheme.spacingXL)
             }
         }
         .navigationTitle("Legal Information")
@@ -343,13 +343,13 @@ struct LegalDocRow: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: AppTheme.spacingMD) {
             Image(systemName: icon)
                 .foregroundColor(iconColor)
                 .font(.title3)
                 .frame(width: 30)
             
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: AppTheme.spacingXXS) {
                 Text(title)
                     .font(.subheadline)
                     .adaptiveForegroundColor()
@@ -364,7 +364,7 @@ struct LegalDocRow: View {
                 .font(.caption)
                 .foregroundColor(.gray)
         }
-        .padding(20)
+        .padding(AppTheme.spacingXL)
     }
 }
 
@@ -377,18 +377,18 @@ struct ComplianceBadge: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
+        HStack(alignment: .top, spacing: AppTheme.spacingMD) {
             ZStack {
                 Circle()
                     .fill(color.opacity(0.15))
                     .frame(width: 40, height: 40)
                 
                 Image(systemName: icon)
-                    .font(.system(size: 18, weight: .semibold))
+                    .font(.system(size: AppTheme.fontSizeBody + 2, weight: .semibold))
                     .foregroundColor(color)
             }
             
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
                 Text(title)
                     .font(.subheadline)
                     .fontWeight(.semibold)
@@ -422,9 +422,9 @@ struct PDFViewerSheet: View {
                     PDFKitView(url: pdfURL)
                         .ignoresSafeArea(edges: .bottom)
                 } else {
-                    VStack(spacing: 16) {
+                    VStack(spacing: AppTheme.spacingLG) {
                         Image(systemName: "doc.text.fill")
-                            .font(.system(size: 60))
+                            .font(.system(size: AppTheme.fontSizeDisplay))
                             .foregroundColor(.red)
                         
                         Text("PDF Not Found")
@@ -525,10 +525,10 @@ struct PrivacyPolicyView: View {
                     .ignoresSafeArea()
                 
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 20) {
+                    VStack(alignment: .leading, spacing: AppTheme.spacingXL) {
                         Group {
                             Text("Privacy Policy")
-                                .font(.system(size: 32, weight: .bold))
+                                .font(.system(size: AppTheme.fontSizeMedium, weight: .bold))
                                 .adaptiveForegroundColor()
                             
                             Text("Last Updated: \(currentDateFormatted)")
@@ -615,7 +615,7 @@ struct PrivacyPolicyView: View {
                             BodyText("Website: recipefinder.uk")
                         }
                     }
-                    .padding(24)
+                    .padding(AppTheme.spacingXXL)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
@@ -648,10 +648,10 @@ struct TermsOfServiceView: View {
                     .ignoresSafeArea()
                 
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 20) {
+                    VStack(alignment: .leading, spacing: AppTheme.spacingXL) {
                         Group {
                             Text("Terms of Service")
-                                .font(.system(size: 32, weight: .bold))
+                                .font(.system(size: AppTheme.fontSizeMedium, weight: .bold))
                                 .adaptiveForegroundColor()
                             
                             Text("Last Updated: \(currentDateFormatted)")
@@ -750,7 +750,7 @@ struct TermsOfServiceView: View {
                             BodyText("Website: recipefinder.uk")
                         }
                     }
-                    .padding(24)
+                    .padding(AppTheme.spacingXXL)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
@@ -777,10 +777,10 @@ struct CompanyComplianceView: View {
                     .ignoresSafeArea()
                 
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 20) {
+                    VStack(alignment: .leading, spacing: AppTheme.spacingXL) {
                         Group {
                             Text("UK Company Compliance")
-                                .font(.system(size: 32, weight: .bold))
+                                .font(.system(size: AppTheme.fontSizeMedium, weight: .bold))
                                 .adaptiveForegroundColor()
                             
                             Text("Companies Act 2006")
@@ -847,7 +847,7 @@ struct CompanyComplianceView: View {
                             BodyText("Email: recipefinderlimited@icloud.com")
                         }
                     }
-                    .padding(24)
+                    .padding(AppTheme.spacingXXL)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
@@ -906,7 +906,7 @@ private struct BulletPoint: View {
     }
     
     var body: some View {
-        HStack(alignment: .top, spacing: 8) {
+        HStack(alignment: .top, spacing: AppTheme.spacingSM) {
             Text("•")
                 .foregroundColor(.secondary)
             Text(text)

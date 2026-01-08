@@ -20,6 +20,58 @@ extension EnvironmentValues {
 
 // Theme Configuration
 enum AppTheme {
+    // MARK: - Typography System
+    
+    // Font Sizes - Semantic naming based on Apple's Human Interface Guidelines
+    static let fontSizeLargeTitle: CGFloat = 34      // Large titles, hero text
+    static let fontSizeTitle1: CGFloat = 28          // Primary section titles
+    static let fontSizeTitle2: CGFloat = 22          // Secondary section titles
+    static let fontSizeTitle3: CGFloat = 20          // Tertiary titles
+    static let fontSizeHeadline: CGFloat = 17        // Prominent body text, headlines
+    static let fontSizeBody: CGFloat = 16            // Standard body text
+    static let fontSizeCallout: CGFloat = 15         // Callouts, less prominent body
+    static let fontSizeSubheadline: CGFloat = 14     // Subheadings, captions
+    static let fontSizeFootnote: CGFloat = 13        // Footnotes, auxiliary info
+    static let fontSizeCaption1: CGFloat = 12        // Small captions, labels
+    static let fontSizeCaption2: CGFloat = 11        // Smallest readable text
+    static let fontSizeTiny: CGFloat = 10            // Minimal text (badges, etc.)
+    
+    // Special sizes for specific use cases
+    static let fontSizeHero: CGFloat = 80            // Hero/splash screens
+    static let fontSizeDisplay: CGFloat = 60         // Large display text
+    static let fontSizeLarge: CGFloat = 42           // Large accent text
+    static let fontSizeMediumLarge: CGFloat = 38     // Medium-large display
+    static let fontSizeMedium: CGFloat = 32          // Medium display
+    static let fontSizeEmoji: CGFloat = 50           // Emoji displays
+    static let fontSizeIcon: CGFloat = 24            // Icon sizing
+    static let fontSizeTinyIcon: CGFloat = 6         // Tiny icons/indicators
+    static let fontSizeTinyText: CGFloat = 7         // Very small text
+    
+    // MARK: - Spacing System
+    
+    // Base spacing unit (8pt grid system)
+    static let spacingBase: CGFloat = 8
+    
+    // Spacing scale (multiples of base unit)
+    static let spacingXXS: CGFloat = 2               // 2pt
+    static let spacingXS: CGFloat = 4                // 4pt
+    static let spacingSM: CGFloat = 8                // 8pt (1x base)
+    static let spacingMD: CGFloat = 12               // 12pt (1.5x base)
+    static let spacingLG: CGFloat = 16               // 16pt (2x base)
+    static let spacingXL: CGFloat = 20               // 20pt (2.5x base)
+    static let spacingXXL: CGFloat = 24              // 24pt (3x base)
+    static let spacing3XL: CGFloat = 32              // 32pt (4x base)
+    static let spacing4XL: CGFloat = 40              // 40pt (5x base)
+    static let spacing5XL: CGFloat = 48              // 48pt (6x base)
+    
+    // Common spacing values that don't fit the grid perfectly
+    static let spacing5: CGFloat = 5                 // Small gap
+    static let spacing6: CGFloat = 6                 // Small gap
+    static let spacing10: CGFloat = 10               // Medium gap
+    static let spacing18: CGFloat = 18               // Specific use cases
+    
+    // MARK: - Layout Constants
+    
     //  Golden Ratio Constants
     static let goldenRatio: CGFloat = 1.618
     static let goldenRatioInverse: CGFloat = 0.618
@@ -29,6 +81,35 @@ enum AppTheme {
     static let cardVerticalSpacing: CGFloat = 12 // Golden ratio relationship to padding
     static let cardCornerRadius: CGFloat = 16
     static let cardImageSize: CGFloat = 70
+    
+    // Corner radii for different UI elements
+    static let cornerRadiusXS: CGFloat = 4
+    static let cornerRadiusSM: CGFloat = 8
+    static let cornerRadiusMD: CGFloat = 12
+    static let cornerRadiusLG: CGFloat = 16
+    static let cornerRadiusXL: CGFloat = 20
+    static let cornerRadiusXXL: CGFloat = 24
+    static let cornerRadiusPill: CGFloat = 999      // Fully rounded pill shape
+    
+    // Common dimension values
+    static let iconSizeSmall: CGFloat = 20
+    static let iconSizeMedium: CGFloat = 24
+    static let iconSizeLarge: CGFloat = 28
+    static let iconSizeXLarge: CGFloat = 32
+    
+    static let buttonHeight: CGFloat = 44            // Minimum touch target
+    static let buttonHeightCompact: CGFloat = 36
+    static let buttonHeightLarge: CGFloat = 52
+    
+    // Shadow values
+    static let shadowRadiusSmall: CGFloat = 2
+    static let shadowRadiusMedium: CGFloat = 4
+    static let shadowRadiusLarge: CGFloat = 8
+    static let shadowRadiusXL: CGFloat = 12
+    
+    static let shadowOffsetSmall: CGFloat = 1
+    static let shadowOffsetMedium: CGFloat = 2
+    static let shadowOffsetLarge: CGFloat = 4
     
     // Gradient cache
     nonisolated(unsafe) private static var gradientCache: [String: LinearGradient] = [:]
@@ -162,6 +243,7 @@ enum AppTheme {
     static let highEmphasisOpacity: Double = 0.8 // High emphasis (important secondary text)
     static let mediumEmphasisOpacity: Double = 0.6 // Medium emphasis (tertiary text)
     static let lowEmphasisOpacity: Double = 0.4 // Low emphasis (disabled/placeholder)
+    static let cardHighEmphasisLightOpacity: Double = 0.75 // Card-specific high emphasis text (light mode)
     
     // MARK: - Dynamic Color Helpers (Starling-Style)
     
@@ -243,6 +325,13 @@ enum AppTheme {
     /// Medium-high emphasis for subtitles (0.7 dark / 0.6 light)
     static func adaptiveSubtitle(for colorScheme: ColorScheme) -> Color {
         colorScheme == .dark ? Color.white.opacity(0.7) : Color.black.opacity(mediumEmphasisOpacity)
+    }
+    
+    /// Card-specific high emphasis text (time, difficulty labels) - 0.95 dark / 0.75 light
+    static func adaptiveCardTextEmphasis(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark 
+            ? Color.white.opacity(cardLightHighOpacity) 
+            : Color.black.opacity(cardHighEmphasisLightOpacity)
     }
     
     // Dynamic accent color based on theme

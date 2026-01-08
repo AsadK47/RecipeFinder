@@ -14,11 +14,11 @@ struct ModernCircleButton: View {
             Image(systemName: icon)
                 .font(.title2)
                 .foregroundColor(AppTheme.adaptiveEmphasis(for: colorScheme))
-                .padding(12)
+                .padding(AppTheme.spacingMD)
                 .background {
                     if cardStyle == .solid {
                         Circle()
-                            .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkMediumOpacity) : Color.white.opacity(AppTheme.cardLightOpacity))
+                            .fill(AppTheme.adaptiveCardMedium(for: colorScheme))
                     } else {
                         Circle()
                             .fill(.ultraThinMaterial)

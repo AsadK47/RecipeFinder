@@ -67,7 +67,7 @@ final class ThemeManager: ObservableObject, @unchecked Sendable {
     /// Get the appropriate card background based on current card style and color scheme
     func cardBackground(for colorScheme: ColorScheme) -> some ShapeStyle {
         if cardStyle == .solid {
-            return AnyShapeStyle(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+            return AnyShapeStyle(AppTheme.cardBackground(for: colorScheme))
         } else {
             return AnyShapeStyle(.regularMaterial)
         }

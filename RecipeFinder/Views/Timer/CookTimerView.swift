@@ -52,7 +52,7 @@ struct CookTimerView: View {
                 
                 VStack(spacing: 0) {
                     // Header
-                    VStack(spacing: 12) {
+                    VStack(spacing: AppTheme.spacingMD) {
                         GeometryReader { geometry in
                             HStack(spacing: 0) {
                                 // Back button
@@ -127,7 +127,7 @@ struct CookTimerView: View {
                     .padding(.top, 16)
                     
                     ScrollView {
-                        VStack(spacing: 24) {
+                        VStack(spacing: AppTheme.spacingXXL) {
                             // Quick Presets - Always show, but disable when max reached
                             quickPresetsSection
                             
@@ -156,7 +156,7 @@ struct CookTimerView: View {
             }
             .overlay(alignment: .top) {
                 // Stackable completion banners
-                VStack(spacing: 8) {
+                VStack(spacing: AppTheme.spacingSM) {
                     ForEach(completedTimers) { completedTimer in
                         CompletedTimerBannerView(
                             timerName: completedTimer.timerName,
@@ -204,8 +204,8 @@ struct CookTimerView: View {
     
     // Quick Presets
     private var quickPresetsSection: some View {
-        VStack(spacing: 16) {
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+        VStack(spacing: AppTheme.spacingLG) {
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: AppTheme.spacingMD) {
                 presetButton(seconds: 30, title: "30 sec")
                 presetButton(minutes: 1, title: "1 min")
                 defaultPresetButton()
@@ -226,7 +226,7 @@ struct CookTimerView: View {
             addTimer(name: "Default (\(title))", seconds: defaultTimerDuration)
             HapticManager.shared.light()
         }) {
-            VStack(spacing: 8) {
+            VStack(spacing: AppTheme.spacingSM) {
                 Image(systemName: "star.fill")
                     .font(.title2)
                 
@@ -240,7 +240,7 @@ struct CookTimerView: View {
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 16)
-                        .fill((colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity)).opacity(isDisabled ? 0.5 : 1.0))
+                        .fill((AppTheme.adaptiveCard(for: colorScheme)).opacity(isDisabled ? 0.5 : 1.0))
                 } else {
                     RoundedRectangle(cornerRadius: 16)
                         .fill(.ultraThinMaterial.opacity(isDisabled ? 0.5 : 1.0))
@@ -259,7 +259,7 @@ struct CookTimerView: View {
             addTimer(name: title, seconds: totalSeconds)
             HapticManager.shared.light()
         }) {
-            VStack(spacing: 8) {
+            VStack(spacing: AppTheme.spacingSM) {
                 Image(systemName: "timer")
                     .font(.title2)
                 
@@ -273,7 +273,7 @@ struct CookTimerView: View {
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 16)
-                        .fill((colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity)).opacity(isDisabled ? 0.5 : 1.0))
+                        .fill((AppTheme.adaptiveCard(for: colorScheme)).opacity(isDisabled ? 0.5 : 1.0))
                 } else {
                     RoundedRectangle(cornerRadius: 16)
                         .fill(.ultraThinMaterial.opacity(isDisabled ? 0.5 : 1.0))
@@ -304,7 +304,7 @@ struct CookTimerView: View {
             .background {
                 if cardStyle == .solid {
                     RoundedRectangle(cornerRadius: 16)
-                        .fill((colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.cardLightOpacity)).opacity(isDisabled ? 0.5 : 1.0))
+                        .fill((AppTheme.adaptiveCard(for: colorScheme)).opacity(isDisabled ? 0.5 : 1.0))
                 } else {
                     RoundedRectangle(cornerRadius: 16)
                         .fill(.ultraThinMaterial.opacity(isDisabled ? 0.5 : 1.0))
@@ -323,7 +323,7 @@ struct CookTimerView: View {
                 
                 VStack(spacing: 0) {
                     // Header Section
-                    VStack(spacing: 12) {
+                    VStack(spacing: AppTheme.spacingMD) {
                         GeometryReader { geometry in
                             HStack {
                                 Button(action: {
@@ -337,7 +337,7 @@ struct CookTimerView: View {
                                         .background {
                                             if cardStyle == .solid {
                                                 RoundedRectangle(cornerRadius: 12)
-                                                    .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                                                    .fill(AppTheme.cardBackground(for: colorScheme))
                                             } else {
                                                 RoundedRectangle(cornerRadius: 12)
                                                     .fill(.regularMaterial)
@@ -370,9 +370,9 @@ struct CookTimerView: View {
                     .padding(.top, 16)
                     
                     ScrollView {
-                        VStack(spacing: 32) {
+                        VStack(spacing: AppTheme.spacing3XL) {
                             // Timer Name Input
-                            VStack(alignment: .leading, spacing: 8) {
+                            VStack(alignment: .leading, spacing: AppTheme.spacingSM) {
                         Text("Timer Name (Optional)")
                             .font(.caption)
                             .adaptiveForegroundColor(opacity: 0.7)
@@ -384,8 +384,8 @@ struct CookTimerView: View {
                     .padding(.horizontal, 20)
                     
                     // Time Pickers
-                    HStack(spacing: 20) {
-                        VStack(spacing: 8) {
+                    HStack(spacing: AppTheme.spacingXL) {
+                        VStack(spacing: AppTheme.spacingSM) {
                             Text("Hours")
                                 .font(.caption)
                                 .adaptiveForegroundColor(opacity: 0.7)
@@ -406,7 +406,7 @@ struct CookTimerView: View {
                             .adaptiveForegroundColor()
                             .padding(.top, 20)
                         
-                        VStack(spacing: 8) {
+                        VStack(spacing: AppTheme.spacingSM) {
                             Text("Minutes")
                                 .font(.caption)
                                 .adaptiveForegroundColor(opacity: 0.7)
@@ -427,7 +427,7 @@ struct CookTimerView: View {
                             .adaptiveForegroundColor()
                             .padding(.top, 20)
                         
-                        VStack(spacing: 8) {
+                        VStack(spacing: AppTheme.spacingSM) {
                             Text("Seconds")
                                 .font(.caption)
                                 .adaptiveForegroundColor(opacity: 0.7)
@@ -446,7 +446,7 @@ struct CookTimerView: View {
                     .background {
                         if cardStyle == .solid {
                             RoundedRectangle(cornerRadius: 20)
-                                .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                                .fill(AppTheme.cardBackground(for: colorScheme))
                         } else {
                             RoundedRectangle(cornerRadius: 20)
                                 .fill(.regularMaterial)
@@ -494,7 +494,7 @@ struct CookTimerView: View {
     
     // Active Timers Section
     private var activeTimersSection: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: AppTheme.spacingLG) {
             HStack {
                 Text("Active Timers")
                     .font(.title3)
@@ -523,7 +523,7 @@ struct CookTimerView: View {
     
     // Max timers warning banner
     private var maxTimersWarning: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: AppTheme.spacingMD) {
             Image(systemName: "exclamationmark.triangle.fill")
                 .font(.body)
                 .foregroundColor(.orange)
@@ -534,7 +534,7 @@ struct CookTimerView: View {
             
             Spacer()
         }
-        .padding(16)
+        .padding(AppTheme.spacingLG)
         .background {
             if cardStyle == .solid {
                 RoundedRectangle(cornerRadius: 12)
@@ -712,10 +712,10 @@ struct TimerCard: View {
     }
     
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: AppTheme.spacingLG) {
             // Timer name and status
             HStack {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
                     Text(timer.name)
                         .font(.headline)
                         .adaptiveForegroundColor()
@@ -743,13 +743,13 @@ struct TimerCard: View {
                     .animation(.linear, value: progress)
                 
                 Text(timeString)
-                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .font(.system(size: AppTheme.fontSizeMedium, weight: .bold, design: .rounded))
                     .adaptiveForegroundColor()
             }
             .frame(width: 140, height: 140)
             
             // Control Buttons
-            HStack(spacing: 12) {
+            HStack(spacing: AppTheme.spacingMD) {
                 Button(action: onTogglePause) {
                     HStack {
                         Image(systemName: timer.isPaused ? "play.fill" : "pause.fill")
@@ -779,11 +779,11 @@ struct TimerCard: View {
                 .buttonStyle(PlainButtonStyle())
             }
         }
-        .padding(20)
+        .padding(AppTheme.spacingXL)
         .background {
             if cardStyle == .solid {
                 RoundedRectangle(cornerRadius: 20)
-                    .fill(colorScheme == .dark ? AppTheme.cardBackgroundDark : AppTheme.cardBackground)
+                    .fill(AppTheme.cardBackground(for: colorScheme))
             } else {
                 RoundedRectangle(cornerRadius: 20)
                     .fill(.regularMaterial)
@@ -800,7 +800,7 @@ struct CompletedTimerBannerView: View {
     let colorScheme: ColorScheme
     
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: AppTheme.spacingMD) {
             // Animated checkmark icon
             ZStack {
                 Circle()
@@ -808,11 +808,11 @@ struct CompletedTimerBannerView: View {
                     .frame(width: 40, height: 40)
                 
                 Image(systemName: "checkmark")
-                    .font(.system(size: 20, weight: .bold))
+                    .font(.system(size: AppTheme.fontSizeTitle3, weight: .bold))
                     .adaptiveForegroundColor()
             }
             
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: AppTheme.spacingXXS) {
                 Text("Timer Complete!")
                     .font(.subheadline)
                     .fontWeight(.semibold)
@@ -833,7 +833,7 @@ struct CompletedTimerBannerView: View {
             .accessibilityLabel("Dismiss notification")
             .accessibilityHint("Closes timer completion notification")
         }
-        .padding(16)
+        .padding(AppTheme.spacingLG)
         .background {
             RoundedRectangle(cornerRadius: 16)
                 .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white)

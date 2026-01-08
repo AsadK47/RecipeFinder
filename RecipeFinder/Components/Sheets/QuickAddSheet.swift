@@ -96,7 +96,7 @@ struct ShoppingQuickAddSheet: View {
                     LazyVGrid(columns: [
                         GridItem(.flexible()),
                         GridItem(.flexible())
-                    ], spacing: 12) {
+                    ], spacing: AppTheme.spacingMD) {
                         ForEach(QuickAddItems.items, id: \.self) { item in
                             quickAddButton(item)
                         }
@@ -116,7 +116,7 @@ struct ShoppingQuickAddSheet: View {
             shoppingManager.addItem(name: String(ingredient))
             HapticManager.shared.success()
         }) {
-            HStack(spacing: 8) {
+            HStack(spacing: AppTheme.spacingSM) {
                 Text(item)
                     .font(.subheadline)
                     .foregroundColor(.white)
@@ -187,7 +187,7 @@ struct KitchenQuickAddSheet: View {
                     LazyVGrid(columns: [
                         GridItem(.flexible()),
                         GridItem(.flexible())
-                    ], spacing: 12) {
+                    ], spacing: AppTheme.spacingMD) {
                         ForEach(QuickAddItems.items, id: \.self) { item in
                             quickAddButton(item)
                         }
@@ -207,7 +207,7 @@ struct KitchenQuickAddSheet: View {
             kitchenManager.toggleItem(String(ingredient))
             HapticManager.shared.success()
         }) {
-            HStack(spacing: 8) {
+            HStack(spacing: AppTheme.spacingSM) {
                 Text(item)
                     .font(.subheadline)
                     .foregroundColor(.white)

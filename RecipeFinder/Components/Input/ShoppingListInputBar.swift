@@ -7,7 +7,7 @@ struct ShoppingListInputBar: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: AppTheme.spacingMD) {
             HStack {
                 Image(systemName: "plus.circle.fill")
                     .foregroundColor(AppTheme.adaptiveEmphasis(for: colorScheme))
@@ -15,7 +15,7 @@ struct ShoppingListInputBar: View {
                 ZStack(alignment: .leading) {
                     if text.isEmpty {
                         Text("Add item...")
-                            .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.mediumEmphasisOpacity) : .black.opacity(AppTheme.mediumEmphasisOpacity))
+                            .foregroundColor(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
                     }
                     TextField("", text: $text)
                         .focused($isFocused)
@@ -33,7 +33,7 @@ struct ShoppingListInputBar: View {
                     })
                 }
             }
-            .padding(12)
+            .padding(AppTheme.spacingMD)
             .background(
                 RoundedRectangle(cornerRadius: 12)
                     .fill(Color(.systemGray6))

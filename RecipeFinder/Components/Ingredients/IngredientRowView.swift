@@ -13,7 +13,7 @@ struct IngredientRowView: View {
     var body: some View {
         HStack(spacing: 0) {
             // Left column: Ingredient name with optional prep notes
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: AppTheme.spacingXS) {
                 Text(ingredient.mainIngredientName)
                     .font(.body)
                     .fontWeight(.semibold)
@@ -43,7 +43,7 @@ struct IngredientRowView: View {
             Button(action: {
                 onTapQuantity?()
             }) {
-                HStack(spacing: 4) {
+                HStack(spacing: AppTheme.spacingXS) {
                     // Quantity - bold and prominent
                     Text(formatQuantity(ingredient.scaledQuantity(for: scaleFactor)))
                         .font(.subheadline)
@@ -85,7 +85,7 @@ struct IngredientRowView: View {
                 } 
             }, label: {
                 Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: 28))
+                    .font(.system(size: AppTheme.fontSizeTitle1))
                     .foregroundColor(isChecked ? .green : .gray.opacity(0.4))
                     .frame(width: 32, height: 32)
                     .contentShape(Rectangle())
