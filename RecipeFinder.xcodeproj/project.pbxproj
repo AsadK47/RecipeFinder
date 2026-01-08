@@ -16,6 +16,7 @@
 		9E2E34212E9D9F8500E2E49F /* KitchenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E2E34202E9D9F8500E2E49F /* KitchenView.swift */; };
 		9E40CAEF2EB9882700ED9594 /* KitchenInventoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E40CAEE2EB9882700ED9594 /* KitchenInventoryModel.swift */; };
 		9E40CAF12EB9891700ED9594 /* ShoppingListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E40CAF02EB9891700ED9594 /* ShoppingListModel.swift */; };
+		9E48AD9E2F0FDDC300CF840F /* AppLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E48AD9D2F0FDDC200CF840F /* AppLogger.swift */; };
 		9E4DC7382E9BF19700E17DDF /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E4DC7372E9BF19700E17DDF /* AppTheme.swift */; };
 		9E4DC7502E9C11FB00E17DDF /* RecipeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E4DC74F2E9C11F400E17DDF /* RecipeDetailView.swift */; };
 		9E4DC7522E9C12A900E17DDF /* IngredientSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E4DC7512E9C129C00E17DDF /* IngredientSearchView.swift */; };
@@ -141,6 +142,7 @@
 		9E40CAEE2EB9882700ED9594 /* KitchenInventoryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KitchenInventoryModel.swift; sourceTree = "<group>"; };
 		9E40CAF02EB9891700ED9594 /* ShoppingListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListModel.swift; sourceTree = "<group>"; };
 		9E45FAE32DC690E300F46909 /* RecipeModel 8.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 8.xcdatamodel"; sourceTree = "<group>"; };
+		9E48AD9D2F0FDDC200CF840F /* AppLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLogger.swift; sourceTree = "<group>"; };
 		9E4DC7372E9BF19700E17DDF /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		9E4DC74F2E9C11F400E17DDF /* RecipeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeDetailView.swift; sourceTree = "<group>"; };
 		9E4DC7512E9C129C00E17DDF /* IngredientSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientSearchView.swift; sourceTree = "<group>"; };
@@ -489,6 +491,7 @@
 		9E6DEA7B2EF5EFE8001E7B24 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				9E48AD9D2F0FDDC200CF840F /* AppLogger.swift */,
 				9E6DEA782EF5EFE8001E7B24 /* AdaptiveSpacing.swift */,
 				9E6DEA792EF5EFE8001E7B24 /* Extensions.swift */,
 				9E6DEA7A2EF5EFE8001E7B24 /* TestHelpers.swift */,
@@ -999,6 +1002,7 @@
 				9E6DEA962EF5EFE8001E7B24 /* IngredientNormalizer.swift in Sources */,
 				9E834DF12ECA6508008F8A11 /* CookingTipModel.swift in Sources */,
 				9E7691702EF46CD400277ADF /* BadgeModel.swift in Sources */,
+				9E48AD9E2F0FDDC300CF840F /* AppLogger.swift in Sources */,
 				9E51C3A12EB406AD0064B917 /* CookTimerView.swift in Sources */,
 				9E6DEA5F2EF5EF47001E7B24 /* ShoppingListInputBar.swift in Sources */,
 				9E6DEA602EF5EF47001E7B24 /* DifficultyBarsView.swift in Sources */,

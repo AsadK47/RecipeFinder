@@ -3,12 +3,10 @@ import AuthenticationServices
 import SwiftUI
 import LocalAuthentication
 
-private let logger = AppLogger.logger(category: "Authentication")
-
-
 @MainActor
 final class AuthenticationManager: NSObject, ObservableObject {
     static let shared = AuthenticationManager()
+    private let logger = AppLogger.logger(category: "Authentication")
     private let credentialManager = SecureCredentialManager.shared
     
     // Authentication State

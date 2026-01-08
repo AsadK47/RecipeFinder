@@ -1,13 +1,11 @@
 import Combine
 import Foundation
 
-private let logger = AppLogger.logger(category: "CookingTips")
-
-
 /// Manages cooking tips with filtering, searching, and favorites
 @MainActor
 final class CookingTipsManager: ObservableObject {
     static let shared = CookingTipsManager()
+    private let logger = AppLogger.logger(category: "CookingTips")
     
     @Published private(set) var tips: [CookingTipModel] = []
     @Published var searchText: String = ""
@@ -123,18 +121,18 @@ final class CookingTipsManager: ObservableObject {
         // Try to load saved tips first
         if let data = UserDefaults.standard.data(forKey: saveKey),
            let decoded = try? JSONDecoder().decode([CookingTipModel].self, from: data) {
-            tips = decoded
-            logger.debug("✅ Loaded \(tips.count) cooking tips")
+            self.tips = decoded
+            logger.debug("✅ Loaded \(self.tips.count) cooking tips")
         } else {
             // First time - populate with sample tips
-            tips = CookingTipModel.samples
+            self.tips = CookingTipModel.samples
             saveTips()
-            logger.debug("📚 Populated \(tips.count) sample cooking tips")
+            logger.debug("📚 Populated \(self.tips.count) sample cooking tips")
         }
     }
     
     private func saveTips() {
-        if let encoded = try? JSONEncoder().encode(tips) {
+        if let encoded = try? JSONEncoder().encode(self.tips) {
             UserDefaults.standard.set(encoded, forKey: saveKey)
         }
     }
@@ -142,7 +140,7 @@ final class CookingTipsManager: ObservableObject {
     // MARK: - Utility
     
     func resetToSamples() {
-        tips = CookingTipModel.samples
+        self.tips = CookingTipModel.samples
         saveTips()
         logger.debug("🔄 Reset to sample cooking tips")
     }

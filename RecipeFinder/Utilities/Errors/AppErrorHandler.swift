@@ -150,12 +150,21 @@ enum RecipeFinderError: LocalizedError, Identifiable {
     }
 }
 
-enum ErrorSeverity {
+enum ErrorSeverity: CustomStringConvertible {
     case warning
     case error
     case critical
     case security
     
+    
+    var description: String {
+        switch self {
+        case .warning: return "Warning"
+        case .error: return "Error"
+        case .critical: return "Critical"
+        case .security: return "Security"
+        }
+    }
     var icon: String {
         switch self {
         case .warning: return "exclamationmark.triangle.fill"
