@@ -69,14 +69,19 @@ struct WelcomeSplashView: View {
     
     // MARK: - Content Layer
     private func contentLayer(spacing: AdaptiveSpacing) -> some View {
-        VStack(spacing: 0) {
-            Spacer()
-            successIconSection(spacing: spacing)
-            welcomeMessageSection(spacing: spacing)
-            featureHighlightsSection(spacing: spacing)
-            Spacer()
-            continueButton(spacing: spacing)
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 0) {
+                Spacer()
+                    .frame(height: spacing.xl + spacing.xxl)
+                successIconSection(spacing: spacing)
+                welcomeMessageSection(spacing: spacing)
+                featureHighlightsSection(spacing: spacing)
+                Spacer()
+                    .frame(height: spacing.xl + spacing.xxl)
+                continueButton(spacing: spacing)
+            }
         }
+        .scrollDisabled(true)
     }
     
     // MARK: - Success Icon Section
@@ -176,8 +181,8 @@ struct WelcomeSplashView: View {
     }
     
     private var titleText: some View {
-        Text("Welcome Aboard!")
-            .font(.system(size: AppTheme.fontSize42, weight: .bold, design: .rounded))
+        Text("Welcome to RecipeFinder")
+            .font(.system(size: AppTheme.fontSize38, weight: .bold, design: .rounded))
             .foregroundStyle(titleGradient)
             .multilineTextAlignment(.center)
             .frame(maxWidth: .infinity)
@@ -194,9 +199,9 @@ struct WelcomeSplashView: View {
     }
     
     private var subtitleText: some View {
-        Text("Your culinary journey begins now")
-            .font(.system(size: AppTheme.fontSize20, weight: .medium, design: .rounded))
-            .foregroundColor(AppTheme.textColor(for: colorScheme, opacity: 0.9))
+        Text("Find, save, and share recipes you love")
+            .font(.system(size: AppTheme.fontSize17, weight: .medium, design: .rounded))
+            .foregroundColor(AppTheme.textColor(for: colorScheme, opacity: 0.85))
             .multilineTextAlignment(.center)
             .frame(maxWidth: .infinity)
             .opacity(contentOpacity)
@@ -248,9 +253,9 @@ struct WelcomeSplashView: View {
     // MARK: - Feature Highlights Section
     private func featureHighlightsSection(spacing: AdaptiveSpacing) -> some View {
         VStack(spacing: spacing.lg) {
-            FeatureRow(icon: "fork.knife.circle.fill", text: "Discover amazing recipes", spacing: spacing)
-            FeatureRow(icon: "calendar.badge.plus", text: "Plan your weekly meals", spacing: spacing)
-            FeatureRow(icon: "cart.fill", text: "Smart shopping lists", spacing: spacing)
+            FeatureRow(icon: "fork.knife.circle.fill", text: "Explore thousands of recipes", spacing: spacing)
+            FeatureRow(icon: "calendar.badge.plus", text: "Plan meals for the week", spacing: spacing)
+            FeatureRow(icon: "cart.fill", text: "Create smart shopping lists", spacing: spacing)
         }
         .opacity(contentOpacity)
         .padding(.horizontal, spacing.xxl + spacing.lg)
@@ -261,17 +266,17 @@ struct WelcomeSplashView: View {
         Button(action: handleContinueAction) {
             buttonContent(spacing: spacing)
         }
-        .buttonStyle(.plain) // Ensure button responds to taps
+        .buttonStyle(.plain)
         .scaleEffect(buttonScale)
         .padding(.horizontal, spacing.screenEdge + spacing.lg)
-        .padding(.bottom, spacing.xl + spacing.xxl)
+        .padding(.bottom, spacing.md)
         .opacity(contentOpacity)
-        .allowsHitTesting(true) // Explicitly allow hit testing
+        .allowsHitTesting(true)
     }
     
     private func buttonContent(spacing: AdaptiveSpacing) -> some View {
         HStack(spacing: spacing.md) {
-            Text("Continue to Sign In")
+            Text("Get Started")
                 .font(.system(size: 18, weight: .semibold))
             Image(systemName: "arrow.right.circle.fill")
                 .font(.system(size: AppTheme.fontSize20))

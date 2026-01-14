@@ -78,7 +78,7 @@ struct FaceIDOnboardingSplash: View {
                 VStack(spacing: 0) {
                     // Adaptive top spacing based on screen height
                     Spacer()
-                        .frame(height: spacing.heightPercent(0.05, min: 30))
+                        .frame(height: spacing.heightPercent(0.08, min: 40))
                     
                     // Enhanced Icon with animations
                     ZStack {
@@ -176,7 +176,7 @@ struct FaceIDOnboardingSplash: View {
                             .rotationEffect(.degrees(iconRotation))
                     }
                     .frame(height: spacing.imageHero)
-                    .padding(.bottom, spacing.xl + spacing.xxl)
+                    .padding(.bottom, spacing.xl + spacing.xxl + spacing.lg)
                     .opacity(contentOpacity)
                     
                     // Title and Description with enhanced styling
@@ -197,14 +197,14 @@ struct FaceIDOnboardingSplash: View {
                                 .multilineTextAlignment(.center)
                                 .shadow(color: .black.opacity(0.25), radius: 12, x: 0, y: 6)
                             
-                            Text("Quick, secure, and effortless")
+                            Text("Secure access in seconds")
                                 .font(.system(size: AppTheme.fontSize20, weight: .medium, design: .rounded))
                                 .adaptiveForegroundColor(opacity: 0.85)
                                 .multilineTextAlignment(.center)
                         }
                         
                         VStack(spacing: spacing.lg) {
-                            Text("Sign in with just a glance or touch")
+                            Text("Intuitive and secure authentication")
                                 .font(.system(size: AppTheme.fontSize17, weight: .medium))
                                 .adaptiveForegroundColor(opacity: 0.9)
                                 .multilineTextAlignment(.center)
@@ -215,20 +215,8 @@ struct FaceIDOnboardingSplash: View {
                             VStack(spacing: spacing.md) {
                                 BiometricBenefitRow(
                                     icon: "bolt.fill",
-                                    title: "Lightning Fast",
-                                    description: "Sign in instantly",
-                                    spacing: spacing
-                                )
-                                BiometricBenefitRow(
-                                    icon: "lock.shield.fill",
-                                    title: "Secure & Private",
-                                    description: "Built with security in mind",
-                                    spacing: spacing
-                                )
-                                BiometricBenefitRow(
-                                    icon: "hand.raised.fill",
-                                    title: "No Passwords",
-                                    description: "Never type again",
+                                    title: "Simple Glance",
+                                    description: "Securely unlock with just a look",
                                     spacing: spacing
                                 )
                             }
@@ -238,9 +226,9 @@ struct FaceIDOnboardingSplash: View {
                     .padding(.horizontal, spacing.screenEdge + spacing.xl)
                     .opacity(contentOpacity)
                     
-                    // Adaptive bottom spacing - smaller on compact devices
+                    // Adaptive bottom spacing - pushed up more
                     Spacer()
-                        .frame(height: spacing.heightPercent(0.02, min: 15))
+                        .frame(height: spacing.heightPercent(0.05, min: 25))
                     
                     // Enhanced Buttons
                     VStack(spacing: spacing.md + 2) {

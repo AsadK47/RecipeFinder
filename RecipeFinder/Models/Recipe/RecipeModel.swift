@@ -248,6 +248,7 @@ struct RecipeModel: Identifiable, Codable, Hashable {
     var isFavorite: Bool
     var tags: [String]
     var dietaryInfo: DietaryInfo
+    var isSampleRecipe: Bool
 
     init(
         id: UUID = UUID(),
@@ -265,7 +266,8 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         imageName: String? = nil,
         isFavorite: Bool = false,
         tags: [String] = [],
-        dietaryInfo: DietaryInfo = DietaryInfo()
+        dietaryInfo: DietaryInfo = DietaryInfo(),
+        isSampleRecipe: Bool = false
     ) {
         self.id = id
         self.name = name
@@ -283,6 +285,7 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         self.isFavorite = isFavorite
         self.tags = tags
         self.dietaryInfo = dietaryInfo
+        self.isSampleRecipe = isSampleRecipe
     }
     
     //  Hashable Conformance
@@ -384,6 +387,7 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         self.isFavorite = isFavorite
         self.tags = []
         self.dietaryInfo = DietaryInfo()
+        self.isSampleRecipe = false
     }
 }
 

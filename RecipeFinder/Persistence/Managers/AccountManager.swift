@@ -20,7 +20,7 @@ final class AccountManager: ObservableObject {
     @Published private(set) var kitchenItemCount: Int = 0
     @Published private(set) var shoppingListCount: Int = 0
     
-    // UserDefaults keys (non-sensitive only!)
+    // UserScopedStorage keys (per-user isolation)
     private let uuidKey = "accountUUID"
     private let firstNameKey = "accountFirstName"
     private let lastNameKey = "accountLastName"
@@ -85,17 +85,17 @@ final class AccountManager: ObservableObject {
     
     func loadProfile() {
         // Load or generate UUID
-        if let savedUUID = UserDefaults.standard.string(forKey: uuidKey) {
+        if let savedUUID = UserScopedStorage.shared.string(forKey: uuidKey) {
             uuid = savedUUID
         } else {
             uuid = UUID().uuidString
-            UserDefaults.standard.set(uuid, forKey: uuidKey)
+            UserScopedStorage.shared.set(uuid, forKey: uuidKey)
         }
         
-        firstName = UserDefaults.standard.string(forKey: firstNameKey) ?? ""
-        lastName = UserDefaults.standard.string(forKey: lastNameKey) ?? ""
+        firstName = UserScopedStorage.shared.string(forKey: firstNameKey) ?? ""
+        lastName = UserScopedStorage.shared.string(forKey: lastNameKey) ?? ""
         
-        if let chefTypeRaw = UserDefaults.standard.string(forKey: chefTypeKey),
+        if let chefTypeRaw = UserScopedStorage.shared.string(forKey: chefTypeKey),
            let savedChefType = ChefType(rawValue: chefTypeRaw) {
             chefType = savedChefType
         }
@@ -113,9 +113,9 @@ final class AccountManager: ObservableObject {
         self.lastName = trimmedLastName
         self.chefType = chefType
         
-        UserDefaults.standard.set(trimmedFirstName, forKey: firstNameKey)
-        UserDefaults.standard.set(trimmedLastName, forKey: lastNameKey)
-        UserDefaults.standard.set(chefType.rawValue, forKey: chefTypeKey)
+        UserScopedStorage.shared.set(trimmedFirstName, forKey: firstNameKey)
+        UserScopedStorage.shared.set(trimmedLastName, forKey: lastNameKey)
+        UserScopedStorage.shared.set(chefType.rawValue, forKey: chefTypeKey)
         
         HapticManager.shared.success()
     }
@@ -125,21 +125,21 @@ final class AccountManager: ObservableObject {
     func saveProfileImage(_ image: UIImage?) {
         if let image = image,
            let imageData = image.jpegData(compressionQuality: 0.8) {
-            UserDefaults.standard.set(imageData, forKey: profileImageKey)
+            UserScopedStorage.shared.set(imageData, forKey: profileImageKey)
         } else {
-            UserDefaults.standard.removeObject(forKey: profileImageKey)
+            UserScopedStorage.shared.removeObject(forKey: profileImageKey)
         }
     }
     
     func loadProfileImage() -> UIImage? {
-        guard let imageData = UserDefaults.standard.data(forKey: profileImageKey) else {
+        guard let imageData = UserScopedStorage.shared.data(forKey: profileImageKey) else {
             return nil
         }
         return UIImage(data: imageData)
     }
     
     func clearProfileImage() {
-        UserDefaults.standard.removeObject(forKey: profileImageKey)
+        UserScopedStorage.shared.removeObject(forKey: profileImageKey)
     }
     
     // Stats
@@ -163,8 +163,9 @@ final class AccountManager: ObservableObject {
     
     // MARK: - Data Management
     
+    /// Clear all user data (recipes, kitchen, shopping) - used for account deletion
     func clearAllData() {
-        // Clear all UserDefaults data (except account info)
+        // Clear all UserDefaults data
         let keysToRemove = [
             Constants.UserDefaultsKeys.kitchenItems,
             Constants.UserDefaultsKeys.shoppingListItems,
@@ -178,17 +179,44 @@ final class AccountManager: ObservableObject {
         // Clear Core Data recipes
         PersistenceController.shared.clearAllRecipes()
         
+        // Clear profile data
+        clearProfileData()
+        
+        updateStats()
+        
+        logger.debug("🗑️ All user data cleared")
+        
+        // Notify other views to refresh
+        NotificationCenter.default.post(name: NSNotification.Name("DataDidChange"), object: nil)
+    }
+    
+    /// Clear profile data only (name, image, chef type)
+    func clearProfileData() {
+        UserScopedStorage.shared.removeObject(forKey: firstNameKey)
+        UserScopedStorage.shared.removeObject(forKey: lastNameKey)
+        UserScopedStorage.shared.removeObject(forKey: chefTypeKey)
+        UserScopedStorage.shared.removeObject(forKey: profileImageKey)
+        UserScopedStorage.shared.removeObject(forKey: uuidKey)
+        
+        // Reset to defaults
+        firstName = ""
+        lastName = ""
+        chefType = .homeCook
+        uuid = UUID().uuidString
+        
+        logger.debug("🗑️ Profile data cleared")
+    }
+    
+    /// Reset to defaults - clears and repopulates (used for reset feature)
+    func resetToDefaults() {
+        clearAllData()
+        
         // Repopulate with sample recipes
         PersistenceController.shared.populateDatabase()
         UserDefaults.standard.set(true, forKey: Constants.UserDefaultsKeys.hasPopulatedDatabase)
         
-        updateStats()
-        
         HapticManager.shared.success()
-        logger.debug("🗑️ All data cleared and reset to defaults")
-        
-        // Notify other views to refresh
-        NotificationCenter.default.post(name: NSNotification.Name("DataDidChange"), object: nil)
+        logger.debug("🔄 Reset to defaults complete")
     }
 }
 

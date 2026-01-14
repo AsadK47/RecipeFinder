@@ -510,8 +510,11 @@ final class AuthenticationManager: NSObject, ObservableObject {
         UserDefaults.standard.removeObject(forKey: biometricsEnabledKey)
         UserDefaults.standard.removeObject(forKey: currentEmailKey)
         
-        // Clear all app data
+        // Clear all app data (recipes, kitchen, shopping, profile)
         AccountManager.shared.clearAllData()
+        
+        // Clear user-scoped storage
+        UserScopedStorage.shared.clearCurrentUserData()
         
         isAuthenticated = false
         currentUser = nil

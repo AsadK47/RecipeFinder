@@ -38,49 +38,50 @@ struct RecipeFinderApp: App {
     
     var body: some Scene {
         WindowGroup {
-            rootView
-                .animation(.easeInOut(duration: 0.3), value: authManager.isAuthenticated)
-                .fullScreenCover(isPresented: $showFaceIDOnboarding) {
-                    FaceIDOnboardingSplash {
-                        // Save user-scoped Face ID onboarding completion
-                        UserScopedStorage.shared.set(true, forKey: "hasSeenBiometricOnboarding")
-                        hasSeenBiometricOnboarding = true
-                        showFaceIDOnboarding = false
-                        // Show main onboarding after Face ID setup
-                        if !hasCompletedOnboarding {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                showOnboarding = true
+            ZStack {
+                rootView
+                    .animation(.easeInOut(duration: 0.3), value: authManager.isAuthenticated)
+                    .fullScreenCover(isPresented: $showFaceIDOnboarding) {
+                        FaceIDOnboardingSplash {
+                            UserScopedStorage.shared.set(true, forKey: "hasSeenBiometricOnboarding")
+                            hasSeenBiometricOnboarding = true
+                            showFaceIDOnboarding = false
+                            if !hasCompletedOnboarding {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                    showOnboarding = true
+                                }
                             }
                         }
                     }
-                }
-                .fullScreenCover(isPresented: $showOnboarding) {
-                    OnboardingView()
-                        .onDisappear {
-                            // Save user-scoped onboarding completion
-                            UserScopedStorage.shared.set(true, forKey: "hasCompletedOnboarding")
-                            hasCompletedOnboarding = true
-                        }
-                }
-                .onAppear {
-                    // Load user-scoped onboarding flags
-                    loadUserOnboardingFlags()
-                    
-                    // Check what to show on first launch after authentication
-                    if authManager.isAuthenticated {
-                        handleOnboardingFlow()
+                    .fullScreenCover(isPresented: $showOnboarding) {
+                        OnboardingView()
+                            .onDisappear {
+                                UserScopedStorage.shared.set(true, forKey: "hasCompletedOnboarding")
+                                hasCompletedOnboarding = true
+                            }
                     }
-                }
-                .onChange(of: authManager.isAuthenticated) { _, isAuthenticated in
-                    // Handle onboarding flow when user first signs in
-                    if isAuthenticated {
+                    .onAppear {
                         loadUserOnboardingFlags()
-                        handleOnboardingFlow()
+                        if authManager.isAuthenticated {
+                            handleOnboardingFlow()
+                        }
                     }
+                    .onChange(of: authManager.isAuthenticated) { _, isAuthenticated in
+                        if isAuthenticated {
+                            loadUserOnboardingFlags()
+                            handleOnboardingFlow()
+                        }
+                    }
+                    .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                        authManager.checkSessionExpiration()
+                    }
+                
+                if showFaceIDOnboarding || showOnboarding {
+                    Color.black
+                        .ignoresSafeArea()
+                        .allowsHitTesting(false)
                 }
-                .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-                    authManager.checkSessionExpiration()
-                }
+            }
         }
     }
     

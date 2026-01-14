@@ -19,6 +19,7 @@ struct RecipeSearchView: View {
     @State private var dontAskAgainDelete: Bool = false
     @State private var cachedFilteredRecipes: [RecipeModel] = []
     @State private var lastFilterHash: Int = 0
+    @State private var hideSampleRecipes = false
     @FocusState private var isSearchFocused: Bool
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
@@ -477,13 +478,97 @@ struct RecipeSearchView: View {
     private var recipeListView: some View {
         ScrollView {
             LazyVStack(spacing: AppTheme.cardVerticalSpacing) {
-                ForEach(filteredRecipes) { recipe in
-                    recipeNavigationLink(for: recipe)
+                let userRecipes = filteredRecipes.filter { !$0.isSampleRecipe }
+                let sampleRecipes = filteredRecipes.filter { $0.isSampleRecipe }
+                
+                if !userRecipes.isEmpty {
+                    recipeSectionHeader(title: "My Recipes", count: userRecipes.count, isCollapsible: false)
+                    ForEach(userRecipes) { recipe in
+                        recipeNavigationLink(for: recipe)
+                    }
+                }
+                
+                if !sampleRecipes.isEmpty && !hideSampleRecipes {
+                    recipeSectionHeader(title: "Sample Recipes", count: sampleRecipes.count, isCollapsible: true)
+                    ForEach(sampleRecipes) { recipe in
+                        recipeNavigationLink(for: recipe)
+                    }
+                } else if !sampleRecipes.isEmpty && hideSampleRecipes && searchText.isEmpty && activeFilterCount == 0 && !showFavoritesOnly {
+                    collapsedSampleRecipesIndicator(count: sampleRecipes.count)
                 }
             }
             .padding(.horizontal, AppTheme.cardHorizontalPadding)
             .padding(.bottom, AppTheme.cardHorizontalPadding)
         }
+    }
+    
+    private func recipeSectionHeader(title: String, count: Int, isCollapsible: Bool) -> some View {
+        HStack(spacing: AppTheme.spacing8) {
+            Image(systemName: title == "My Recipes" ? "person.fill" : "sparkles")
+                .font(.system(size: AppTheme.fontSize14, weight: .semibold))
+                .adaptiveForegroundColor(opacity: 0.7)
+            Text(title)
+                .font(.system(size: AppTheme.fontSize15, weight: .semibold))
+                .adaptiveForegroundColor(opacity: 0.7)
+            Text("(\(count))")
+                .font(.system(size: AppTheme.fontSize13, weight: .medium))
+                .adaptiveForegroundColor(opacity: 0.5)
+            Spacer()
+            if isCollapsible {
+                Button(action: {
+                    withAnimation(.spring(response: 0.3)) {
+                        hideSampleRecipes.toggle()
+                    }
+                    HapticManager.shared.light()
+                }) {
+                    Image(systemName: hideSampleRecipes ? "chevron.down" : "chevron.up")
+                        .font(.system(size: AppTheme.fontSize12, weight: .semibold))
+                        .adaptiveForegroundColor(opacity: 0.6)
+                        .frame(width: 32, height: 32)
+                        .background(
+                            Circle()
+                                .fill(Color.white.opacity(0.1))
+                        )
+                }
+            }
+        }
+        .padding(.horizontal, 4)
+        .padding(.top, 8)
+        .padding(.bottom, 4)
+    }
+    
+    private func collapsedSampleRecipesIndicator(count: Int) -> some View {
+        Button(action: {
+            withAnimation(.spring(response: 0.3)) {
+                hideSampleRecipes = false
+            }
+            HapticManager.shared.light()
+        }) {
+            HStack(spacing: AppTheme.spacing12) {
+                Image(systemName: "sparkles")
+                    .font(.system(size: AppTheme.fontSize16, weight: .semibold))
+                    .adaptiveForegroundColor(opacity: 0.6)
+                Text("\(count) sample recipes hidden")
+                    .font(.system(size: AppTheme.fontSize15, weight: .medium))
+                    .adaptiveForegroundColor(opacity: 0.7)
+                Spacer()
+                Image(systemName: "chevron.down")
+                    .font(.system(size: AppTheme.fontSize12, weight: .semibold))
+                    .adaptiveForegroundColor(opacity: 0.6)
+            }
+            .padding(.horizontal, AppTheme.spacing16)
+            .padding(.vertical, AppTheme.spacing12)
+            .background(
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                    .fill(Color.white.opacity(0.08))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                            .stroke(Color.white.opacity(0.15), lineWidth: 1)
+                    )
+            )
+        }
+        .buttonStyle(PlainButtonStyle())
+        .padding(.horizontal, 4)
     }
     
     private func recipeNavigationLink(for recipe: RecipeModel) -> some View {

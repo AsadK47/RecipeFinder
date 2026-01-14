@@ -5,6 +5,36 @@ import UniformTypeIdentifiers
 private let logger = AppLogger.logger(category: "Account")
 
 
+enum AccountSheet: Identifiable {
+    case privacyPolicy
+    case imagePicker
+    case passwordVerification
+    case badge(Badge)
+    
+    var id: String {
+        switch self {
+        case .privacyPolicy: return "privacyPolicy"
+        case .imagePicker: return "imagePicker"
+        case .passwordVerification: return "passwordVerification"
+        case .badge(let badge): return "badge_\(badge.id)"
+        }
+    }
+}
+
+enum AccountAlert: Identifiable {
+    case signOut
+    case deleteAccount
+    case authError(String)
+    
+    var id: String {
+        switch self {
+        case .signOut: return "signOut"
+        case .deleteAccount: return "deleteAccount"
+        case .authError: return "authError"
+        }
+    }
+}
+
 struct AccountView: View {
     @StateObject private var accountManager = AccountManager.shared
     @StateObject private var authManager = AuthenticationManager.shared
@@ -13,21 +43,14 @@ struct AccountView: View {
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
+    @State private var activeSheet: AccountSheet?
+    @State private var activeAlert: AccountAlert?
+    @State private var profileImage: UIImage?
     @State private var editingName = false
     @State private var tempName = ""
-    @State private var showingSignOutAlert = false
-    @State private var showingDeleteAccountAlert = false
-    @State private var showingPrivacyPolicy = false
-    @State private var showingAuthError = false
-    @State private var authErrorMessage = ""
     @State private var showSuccessFeedback = false
-    @State private var showImagePicker = false
-    @State private var profileImage: UIImage?
-    @State private var showPasswordVerification = false
-    @State private var badgesSectionExpanded = true // Collapsible badges
-    @State private var selectedBadge: Badge? = nil
+    @State private var badgesSectionExpanded = true
     
-    // Profile fields
     @State private var firstName: String = ""
     @State private var lastName: String = ""
     @State private var selectedChefType: ChefType = .homeCook
@@ -92,8 +115,7 @@ struct AccountView: View {
                         
                         // Save Button
                         Button(action: {
-                            // Show password verification first
-                            showPasswordVerification = true
+                            activeSheet = .passwordVerification
                         }) {
                             HStack {
                                 Image(systemName: "checkmark.circle.fill")
@@ -137,44 +159,51 @@ struct AccountView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbarColorScheme(.dark, for: .navigationBar)
-        .sheet(isPresented: $showingPrivacyPolicy) {
-            PrivacyPolicyView()
-        }
-        .sheet(isPresented: $showImagePicker) {
-            ImagePicker(image: $profileImage)
-        }
-        .sheet(isPresented: $showPasswordVerification) {
-            PasswordVerificationSheet(email: displayEmail) {
-                saveProfile()
-            }
-        }
-        .sheet(item: $selectedBadge) { badge in
-            BadgeDetailView(badge: badge)
-                .presentationDetents([.large])
-                .presentationDragIndicator(.hidden)
-        }
-        .alert("Sign Out", isPresented: $showingSignOutAlert) {
-            Button("Cancel", role: .cancel) {}
-            Button("Sign Out", role: .destructive) {
-                signOut()
-            }
-        } message: {
-            Text("Are you sure you want to sign out?")
-        }
-        .alert("Delete Account", isPresented: $showingDeleteAccountAlert) {
-            Button("Cancel", role: .cancel) {}
-            Button("Delete", role: .destructive) {
-                Task {
-                    await deleteAccount()
+        .sheet(item: $activeSheet) { sheet in
+            switch sheet {
+            case .privacyPolicy:
+                PrivacyPolicyView()
+            case .imagePicker:
+                ImagePicker(image: $profileImage)
+            case .passwordVerification:
+                PasswordVerificationSheet(email: displayEmail) {
+                    saveProfile()
                 }
+            case .badge(let badge):
+                BadgeDetailView(badge: badge)
+                    .presentationDetents([.large])
+                    .presentationDragIndicator(.hidden)
             }
-        } message: {
-            Text("This action cannot be undone. All your data will be permanently deleted.")
         }
-        .alert("Sign In Error", isPresented: $showingAuthError) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text(authErrorMessage)
+        .alert(item: $activeAlert) { alert in
+            switch alert {
+            case .signOut:
+                return Alert(
+                    title: Text("Sign Out"),
+                    message: Text("Are you sure you want to sign out?"),
+                    primaryButton: .cancel(),
+                    secondaryButton: .destructive(Text("Sign Out")) {
+                        signOut()
+                    }
+                )
+            case .deleteAccount:
+                return Alert(
+                    title: Text("Delete Account"),
+                    message: Text("This action cannot be undone. All your data will be permanently deleted."),
+                    primaryButton: .cancel(),
+                    secondaryButton: .destructive(Text("Delete")) {
+                        Task {
+                            await deleteAccount()
+                        }
+                    }
+                )
+            case .authError(let message):
+                return Alert(
+                    title: Text("Sign In Error"),
+                    message: Text(message),
+                    dismissButton: .cancel(Text("OK"))
+                )
+            }
         }
         .animation(.spring(response: 0.3), value: editingName)
         .animation(.spring(response: 0.3), value: showSuccessFeedback)
@@ -192,7 +221,7 @@ struct AccountView: View {
     private var profileAvatar: some View {
         VStack(spacing: AppTheme.spacing12) {
             Button(action: {
-                showImagePicker = true
+                activeSheet = .imagePicker
                 HapticManager.shared.light()
             }) {
                 ZStack(alignment: .bottomTrailing) {
@@ -515,7 +544,7 @@ struct AccountView: View {
             }
             
             Button {
-                showingSignOutAlert = true
+                activeAlert = .signOut
                 HapticManager.shared.light()
             } label: {
                 Text("Sign Out")
@@ -536,7 +565,7 @@ struct AccountView: View {
             }
             
             Button {
-                showingDeleteAccountAlert = true
+                activeAlert = .deleteAccount
                     HapticManager.shared.light()
                 } label: {
                     Text("Delete Account")
@@ -670,7 +699,7 @@ struct AccountView: View {
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: AppTheme.spacing12) {
                         ForEach(allBadges) { badge in
                             Button(action: {
-                                selectedBadge = badge
+                                activeSheet = .badge(badge)
                                 HapticManager.shared.light()
                             }) {
                                 BadgeCard(badge: badge, colorScheme: colorScheme, cardStyle: cardStyle)
