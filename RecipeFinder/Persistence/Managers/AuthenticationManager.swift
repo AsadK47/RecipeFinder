@@ -118,6 +118,7 @@ final class AuthenticationManager: NSObject, ObservableObject {
                 UserScopedStorage.shared.currentUserId = user.id
                 
                 // Reload all managers
+                AccountManager.shared.loadProfile()
                 ShoppingListManager.shared.reloadForCurrentUser()
                 NotesManager().reloadForCurrentUser()
                 BadgeManager.shared.reloadForCurrentUser()
@@ -227,6 +228,7 @@ final class AuthenticationManager: NSObject, ObservableObject {
         UserScopedStorage.shared.currentUserId = user.id
         
         // Reload all managers for the current user
+        AccountManager.shared.loadProfile()
         ShoppingListManager.shared.reloadForCurrentUser()
         NotesManager().reloadForCurrentUser()
         BadgeManager.shared.reloadForCurrentUser()
@@ -433,7 +435,8 @@ final class AuthenticationManager: NSObject, ObservableObject {
         // Clear user ID for scoped storage
         UserScopedStorage.shared.currentUserId = nil
         
-        // Clear managers
+        // Clear managers (loadProfile will reset to empty values when currentUserId is nil)
+        AccountManager.shared.loadProfile()
         ShoppingListManager.shared.reloadForCurrentUser()
         NotesManager().reloadForCurrentUser()
         BadgeManager.shared.reloadForCurrentUser()

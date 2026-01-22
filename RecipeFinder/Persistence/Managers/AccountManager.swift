@@ -83,7 +83,18 @@ final class AccountManager: ObservableObject {
     
     // Profile Management
     
+    /// Reload profile data from UserScopedStorage for the current user
+    /// This method should be called whenever the currentUserId changes
     func loadProfile() {
+        // If no user is logged in, reset to defaults without saving
+        guard UserScopedStorage.shared.currentUserId != nil else {
+            uuid = ""
+            firstName = ""
+            lastName = ""
+            chefType = .homeCook
+            return
+        }
+        
         // Load or generate UUID
         if let savedUUID = UserScopedStorage.shared.string(forKey: uuidKey) {
             uuid = savedUUID
@@ -95,6 +106,7 @@ final class AccountManager: ObservableObject {
         firstName = UserScopedStorage.shared.string(forKey: firstNameKey) ?? ""
         lastName = UserScopedStorage.shared.string(forKey: lastNameKey) ?? ""
         
+        // Load chef type if available, otherwise keeps default .homeCook
         if let chefTypeRaw = UserScopedStorage.shared.string(forKey: chefTypeKey),
            let savedChefType = ChefType(rawValue: chefTypeRaw) {
             chefType = savedChefType
