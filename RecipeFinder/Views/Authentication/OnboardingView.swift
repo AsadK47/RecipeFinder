@@ -276,23 +276,14 @@ struct OnboardingSlideView: View {
                 VStack(spacing: spacing.xl) {
                     Text(slide.title)
                         .font(.system(size: AppTheme.fontSize38, weight: .bold, design: .rounded))
-                        .foregroundStyle(
-                            LinearGradient(
-                                gradient: Gradient(colors: [
-                                    .white,
-                                    .white.opacity(0.95)
-                                ]),
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                        )
+                        .adaptiveForegroundColor()
                         .multilineTextAlignment(.center)
                         .lineSpacing(4)
-                        .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 5)
+                        .shadow(color: colorScheme == .dark ? .black.opacity(0.2) : .clear, radius: 10, x: 0, y: 5)
                     
                     Text(slide.description)
                         .font(.system(size: AppTheme.fontSize17, weight: .regular))
-                        .foregroundColor(.white.opacity(0.9))
+                        .adaptiveForegroundColor(opacity: 0.85)
                         .multilineTextAlignment(.center)
                         .lineSpacing(6)
                         .padding(.horizontal, spacing.screenEdge + spacing.lg)
