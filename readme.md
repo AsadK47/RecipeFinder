@@ -28,7 +28,7 @@
 
 ## ✨ Why RecipeFinder?
 
-- **Privacy First** - All data stays on your device. No accounts required, no tracking, no analytics
+- **Privacy First** - Designed with your privacy in mind. See our Privacy Policy for details
 - **Beautiful Design** - Six elegant color themes with seamless light/dark mode
 - **Complete Toolkit** - Recipes, shopping lists, meal planning, kitchen inventory, and timers in one app
 - **Smart Import** - Grab recipes from any website with automatic ingredient parsing
@@ -61,7 +61,7 @@ open RecipeFinder.xcodeproj  # Press ⌘+R to run
 ### Security & Privacy
 - **🔐 Local Authentication** - Face ID/Touch ID support with SHA-256 password hashing
 - **🔒 Secure Storage** - iOS Keychain integration with Secure Enclave
-- **🚫 Zero Tracking** - No analytics, no data collection, GDPR/CCPA compliant
+- **� Privacy-Focused** - Designed with data protection and privacy in mind
 
 ### Design & Accessibility
 - **🎨 Six Color Themes** - Beautiful palettes that work in light and dark modes
@@ -74,7 +74,7 @@ open RecipeFinder.xcodeproj  # Press ⌘+R to run
 **Dependencies**: Zero external dependencies - 100% native Swift and Apple frameworks  
 **Performance**: Hardware-accelerated rendering • Async image loading • Optimized Core Data fetches  
 **Security**: Local-first storage • SHA-256 password hashing • iOS Keychain • Secure Enclave biometrics  
-**Privacy**: No analytics • No tracking • GDPR/CCPA compliant • All data stays on device  
+**Privacy**: Privacy-focused design • See Privacy Policy for details  
 **Accessibility**: VoiceOver support • Dynamic Type • WCAG 2.1 AA contrast • 44pt tap targets
 
 ## 🛠 For Developers

@@ -83,10 +83,10 @@ struct DeveloperDocumentationView: View {
                         icon: "lock.shield.fill",
                         iconColor: .green,
                         content: [
-                            DocPoint(title: "100% Local Storage", description: "All data stored on device with Core Data"),
-                            DocPoint(title: "No Analytics", description: "Zero tracking or telemetry"),
-                            DocPoint(title: "No Third-Party SDKs", description: "Built entirely with native frameworks"),
-                            DocPoint(title: "iOS Encryption", description: "Protected with Data Protection API")
+                            DocPoint(title: "Data Layer", description: "Persistent storage with efficient data management"),
+                            DocPoint(title: "Authentication", description: "Face ID/Touch ID support with secure credential storage"),
+                            DocPoint(title: "Encryption", description: "Leverages iOS Keychain and Data Protection APIs"),
+                            DocPoint(title: "Privacy Design", description: "Architecture prioritizes user data privacy")
                         ],
                         appTheme: appTheme,
                         colorScheme: colorScheme,

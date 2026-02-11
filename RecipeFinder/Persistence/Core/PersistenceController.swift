@@ -143,6 +143,7 @@ final class PersistenceController {
     // MARK: - Recipe Save Parameters
     
     struct RecipeSaveParameters {
+        let id: UUID?  // Optional ID - if nil, creates new; if provided, uses that ID
         let name: String
         let category: String
         let difficulty: String
@@ -159,6 +160,7 @@ final class PersistenceController {
         
         // Memberwise initializer for direct parameter passing
         init(
+            id: UUID? = nil,
             name: String,
             category: String,
             difficulty: String,
@@ -173,6 +175,7 @@ final class PersistenceController {
             imageName: String,
             isFavorite: Bool
         ) {
+            self.id = id
             self.name = name
             self.category = category
             self.difficulty = difficulty
@@ -190,6 +193,7 @@ final class PersistenceController {
         
         // Convenience initializer from RecipeModel
         init(from recipe: RecipeModel) {
+            self.id = recipe.id
             self.name = recipe.name
             self.category = recipe.category
             self.difficulty = recipe.difficulty
@@ -226,8 +230,9 @@ final class PersistenceController {
             return
         }
         
-        // Set values using constants
-        recipe.setValue(UUID(), forKey: RecipeKey.id)
+        // Set values using constants - use provided ID or generate new one
+        let recipeId = parameters.id ?? UUID()
+        recipe.setValue(recipeId, forKey: RecipeKey.id)
         recipe.setValue(parameters.name, forKey: RecipeKey.name)
         recipe.setValue(parameters.category, forKey: RecipeKey.category)
         recipe.setValue(parameters.difficulty, forKey: RecipeKey.difficulty)
@@ -260,8 +265,28 @@ final class PersistenceController {
     }
     
     func saveRecipeModel(_ recipe: RecipeModel) {
-        let parameters = RecipeSaveParameters(from: recipe)
-        saveRecipe(parameters: parameters)
+        // Check if recipe already exists - if so, update it instead of creating a new one
+        let context = container.viewContext
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
+        fetchRequest.predicate = NSPredicate(format: "\(RecipeKey.id) == %@", recipe.id as CVarArg)
+        fetchRequest.fetchLimit = 1
+        
+        do {
+            let existingRecipes = try context.fetch(fetchRequest)
+            if !existingRecipes.isEmpty {
+                // Recipe exists - update it
+                updateRecipe(recipe)
+            } else {
+                // Recipe doesn't exist - create new one
+                let parameters = RecipeSaveParameters(from: recipe)
+                saveRecipe(parameters: parameters)
+            }
+        } catch {
+            // If fetch fails, try to create new recipe
+            logger.debug("⚠️ Failed to check if recipe exists, creating new: \(error.localizedDescription)")
+            let parameters = RecipeSaveParameters(from: recipe)
+            saveRecipe(parameters: parameters)
+        }
     }
     
     // MARK: - Fetch Operations

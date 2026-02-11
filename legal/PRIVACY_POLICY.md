@@ -28,10 +28,10 @@
 3.1 **Account Information**  
 The Application requires account creation to enable personalization and data security features. Users create an account using:
 
-**Email and Password:** Users create an account using an email address and password. Passwords are securely hashed using SHA-256 cryptographic algorithms before storage and are never stored in plain text.
+**Email and Password:** Users create an account using an email address and password. Passwords are securely hashed using industry-standard cryptographic algorithms before storage and are not stored in plain text.
 
 3.2 **Biometric Authentication (Optional)**  
-Users may optionally enable Face ID or Touch ID for convenient app access. Biometric data is processed exclusively by Apple's Secure Enclave and is never accessed, stored, or transmitted by the Application.
+Users may optionally enable Face ID or Touch ID for convenient app access. Biometric authentication is handled by Apple's security infrastructure in accordance with iOS system security protocols.
 
 3.3 **User-Generated Content**  
 The Application stores content created by users, including:
@@ -42,28 +42,28 @@ The Application stores content created by users, including:
 - Notes and cooking tips
 - Application preferences and settings
 
-3.4 **No Usage Analytics**  
-The Company does not implement, utilize, or maintain any analytics, telemetry, usage tracking, or behavioral monitoring systems within the Application.
+3.4 **Usage Analytics**  
+The Company is committed to User privacy. Any analytics, telemetry, or usage tracking features are implemented in accordance with applicable privacy laws and regulations. Users will be provided with appropriate notice and control over such features where required by law.
 
-3.5 **No Advertising Networks**  
-The Application does not integrate with, connect to, or utilize any third-party advertising networks, ad-serving technologies, or marketing platforms.
+3.5 **Advertising**  
+The Company's approach to advertising within the Application, if any, will be disclosed to Users in accordance with applicable laws and regulations.
 
 ---
 
 ## 4. DATA STORAGE AND PROCESSING
 
 4.1 **Local Device Storage**  
-All User-generated data, including recipes, shopping lists, kitchen inventory, meal plans, and application preferences, is stored primarily on the User's local device using Apple's Core Data framework and iOS system storage mechanisms.
+All User-generated data, including recipes, shopping lists, kitchen inventory, meal plans, and application preferences, is stored on the User's local device using Apple's Core Data framework and iOS system storage mechanisms. The Application is designed with a local-first approach to prioritize User control and data privacy.
 
 4.2 **Account Credentials Storage**  
 When users create an account:
 
 (a) Email addresses are stored locally in encrypted format  
-(b) Passwords are cryptographically hashed using SHA-256 algorithms (never stored in plain text)  
+(b) Passwords are cryptographically hashed using secure algorithms  
 (c) Authentication tokens are stored securely in the iOS Keychain with hardware-backed encryption
 
-4.3 **No Cloud Storage or Servers**  
-The Company does not currently operate, maintain, or utilize any servers, databases, or cloud infrastructure for the storage or processing of User data. All data remains on the user's device.
+4.3 **Data Storage**  
+The Application utilizes storage methods appropriate for its functionality. Users will be notified of any material changes to data storage practices in accordance with Section 12 of this Policy.
 
 4.4 **Device-Level Encryption**  
 User data stored on the device benefits from iOS system-level encryption at rest, as provided by Apple Inc. Authentication credentials stored in the iOS Keychain receive additional hardware-backed encryption protection.
@@ -83,12 +83,11 @@ When a User elects to import a recipe from a third-party website by providing a 
 
 (a) The Application establishes a direct connection to the specified URL;  
 (b) The Application retrieves the HTML content of the webpage;  
-(c) No intermediary servers operated by the Company are involved in this transaction;  
-(d) The Company does not log, record, monitor, or retain any information regarding the URLs accessed or content retrieved;  
-(e) The parsed recipe data is stored exclusively on the User's local device.
+(c) The recipe import process is designed to retrieve content directly from the specified URL;  
+(d) Recipe data handling is performed in accordance with this Privacy Policy.
 
-5.3 **No Other Network Connections**  
-Save for the recipe import functionality described in Section 5.2, the Application does not initiate any network connections, data transmissions, or internet communications.
+5.3 **Network Connections**  
+The Application may initiate network connections as necessary for its features and functionality. Users will be informed of material changes to network usage through app update notifications and policy revisions.
 
 ---
 
@@ -103,8 +102,8 @@ The Application incorporates the following open-source software library:
 - **Network Activity:** None  
 - **Privacy Impact:** No personal information is collected or transmitted by this library
 
-6.2 **No Third-Party Analytics or Tracking**  
-The Application does not integrate with any third-party analytics services, crash reporting systems, error tracking platforms, or usage monitoring tools.
+6.2 **Third-Party Services**  
+The Application may integrate with third-party services to provide or improve functionality. Any such integrations will be disclosed to Users, and Users will be provided with appropriate controls over data sharing where required by applicable law.
 
 ---
 
@@ -116,8 +115,8 @@ The Application is designed to comply with the Children's Online Privacy Protect
 7.2 **Suitability for All Ages**  
 The Application may be used by children under the age of 13 years. Given that no Personal Information is collected, processed, or transmitted, no parental consent mechanisms are required.
 
-7.3 **No Child-Directed Advertising**  
-The Application does not display advertisements, and no behavioural advertising is directed toward children or any other Users.
+7.3 **Child-Directed Content**  
+The Application complies with applicable laws regarding content and advertising directed to children.
 
 ---
 
@@ -139,8 +138,8 @@ Users may delete their data through:
 (b) Deleting their account through the account settings (for registered users)  
 (c) Uninstalling the Application from their device, which removes all associated data
 
-8.4 **No Data Retention by Company**  
-As the Company does not collect or store User data on external servers, no data retention policies are applicable, and no data resides with the Company following data deletion by the User.
+8.4 **Data Retention**  
+Data retention practices are implemented in accordance with applicable laws and the functionality of the Application. Users may delete their data as described in this section.
 
 ---
 
@@ -151,7 +150,7 @@ As the Company does not collect or store User data on external servers, no data 
 (a) **iOS Sandboxing:** Application data is isolated within the iOS security model  
 (b) **System-Level Encryption:** iOS provides encryption of data at rest on User devices  
 (c) **Keychain Protection:** Authentication credentials are stored in the iOS Keychain with hardware-backed encryption  
-(d) **SHA-256 Password Hashing:** User passwords are cryptographically hashed using SHA-256 algorithms and never stored in plain text  
+(d) **Password Hashing:** User passwords are cryptographically hashed using secure algorithms  
 (e) **Biometric Security:** Face ID and Touch ID leverage Apple's Secure Enclave for biometric authentication  
 (f) **No Network Transmission:** User data and credentials are not transmitted over networks to external servers  
 (g) **Session Management:** App locks after inactivity if biometric authentication is enabled
@@ -160,9 +159,9 @@ As the Company does not collect or store User data on external servers, no data 
 
 ## 10. INTERNATIONAL DATA TRANSFERS
 
-10.1 Given that all User data is stored exclusively on User devices and no data is collected by the Company, no international data transfers occur.
+10.1 International data transfers, if any, will be conducted in compliance with applicable data protection laws and regulations.
 
-10.2 The Application may be used in any jurisdiction without data transfer implications.
+10.2 Users will be notified of any international data transfers where required by applicable law.
 
 ---
 

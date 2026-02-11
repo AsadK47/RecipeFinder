@@ -1642,73 +1642,33 @@ struct PrivacySettingsView: View {
                         .padding(AppTheme.spacing24)
                     }
                     
-                    // Data Privacy Info
+                    // Privacy Policy Link
                     SettingsCard {
                         VStack(alignment: .leading, spacing: AppTheme.spacing16) {
-                            Text("Data Privacy")
+                            Text("Privacy")
                                 .font(.headline)
                                 .adaptiveForegroundColor()
                             
-                            VStack(spacing: AppTheme.spacing16) {
-                                PrivacyInfoRow(
-                                    icon: "externaldrive.fill",
-                                    iconColor: .green,
-                                    title: "Local Storage Only",
-                                    description: "All your recipes, lists, and preferences are stored locally on your device using Core Data"
-                                )
-                                
-                                PrivacyInfoRow(
-                                    icon: "cloud.slash.fill",
-                                    iconColor: .blue,
-                                    title: "No Cloud Services",
-                                    description: "RecipeFinder doesn't use any cloud services or remote servers. Your data never leaves your device"
-                                )
-                                
-                                PrivacyInfoRow(
-                                    icon: "chart.bar.xaxis",
-                                    iconColor: .purple,
-                                    title: "No Analytics or Tracking",
-                                    description: "We don't collect usage data, analytics, crash reports, or any telemetry. Your privacy is paramount"
-                                )
-                                
-                                PrivacyInfoRow(
-                                    icon: "network.slash",
-                                    iconColor: .orange,
-                                    title: "No Third-Party SDKs",
-                                    description: "No advertising networks, no social media trackers, no third-party libraries with data collection"
-                                )
-                                
-                                PrivacyInfoRow(
-                                    icon: "person.badge.shield.checkmark.fill",
-                                    iconColor: .indigo,
-                                    title: "GDPR & DPA 2018 Compliant",
-                                    description: "Built with UK GDPR and Data Protection Act 2018 compliance as a core principle"
-                                )
-                            }
+                            Text("For information about how we handle your data, please review our Privacy Policy")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
                             
-                            // Export & Import reminder
-                            VStack(alignment: .leading, spacing: AppTheme.spacing8) {
-                                Divider()
-                                    .padding(.vertical, 4)
-                                
-                                HStack(alignment: .top, spacing: AppTheme.spacing12) {
-                                    Image(systemName: "info.circle.fill")
-                                        .adaptiveForegroundColor()
-                                        .font(.system(size: AppTheme.fontSize16))
-                                    
-                                    VStack(alignment: .leading, spacing: AppTheme.spacing4) {
-                                        Text("Backup Your Data")
-                                            .font(.subheadline)
-                                            .fontWeight(.semibold)
-                                            .adaptiveForegroundColor()
-                                        
-                                        Text("Since data is stored locally, we recommend regularly exporting your data from the Account tab for safekeeping")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                            .fixedSize(horizontal: false, vertical: true)
-                                    }
+                            Button(action: {
+                                showPrivacyPolicy = true
+                                HapticManager.shared.light()
+                            }) {
+                                HStack {
+                                    Text("View Privacy Policy")
+                                        .fontWeight(.medium)
+                                    Spacer()
+                                    Image(systemName: "arrow.right.circle.fill")
                                 }
+                                .padding()
+                                .background(AppTheme.accentColor(for: selectedTheme).opacity(0.15))
+                                .adaptiveForegroundColor()
+                                .cornerRadius(AppTheme.cornerRadius12)
                             }
+                            .buttonStyle(PlainButtonStyle())
                         }
                         .padding(AppTheme.spacing24)
                     }
@@ -2124,7 +2084,7 @@ struct HelpView: View {
                             
                             FAQItem(
                                 question: "Does the app work offline?",
-                                answer: "Yes. All your saved recipes, favorites, and data are stored locally and work without internet."
+                                answer: "Yes. Your saved recipes and data are accessible offline."
                             )
                             
                             FAQItem(
@@ -2134,7 +2094,7 @@ struct HelpView: View {
                             
                             FAQItem(
                                 question: "How do I backup my data?",
-                                answer: "Your data is automatically saved to your device. For cloud backup, enable iCloud sync in your device settings."
+                                answer: "Your data is automatically saved. You can also export your data from the Account tab."
                             )
                             
                             FAQItem(
@@ -2149,7 +2109,7 @@ struct HelpView: View {
                             
                             FAQItem(
                                 question: "Is my data private and secure?",
-                                answer: "Yes. All data is stored locally on your device. We don't collect or transmit any personal information. See our Privacy Policy for details."
+                                answer: "Yes. See our Privacy Policy for full details on how we handle your information."
                             )
                             
                             FAQItem(

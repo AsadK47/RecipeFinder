@@ -31,7 +31,6 @@ RecipeFinder is a recipe management app developed and operated by RECIPEFINDER L
 
 ### Recipes You Create
 - You own the recipes you create in the app
-- Your recipes are stored locally on your device
 - We don't claim ownership of your personal recipes
 
 ### Imported Recipes
@@ -51,11 +50,7 @@ The app is provided for your personal use only. You may not copy, modify, or red
 
 ## 5. Privacy & Data
 
-Your privacy is important to us:
-- All your data is stored locally on your device
-- We don't collect or transmit your personal information
-- We don't track your usage or behavior
-- See our [Privacy Policy](PRIVACY_POLICY.md) for full details
+Your privacy is important to us. For complete information about how we handle your data, see our [Privacy Policy](PRIVACY_POLICY.md)
 
 ## 6. No Warranties (Important!)
 
@@ -152,7 +147,7 @@ Questions about these Terms?
 
 ✅ Use RecipeFinder for personal recipe management  
 ✅ You own your recipes; respect others' recipes  
-✅ We protect your privacy (no tracking, local storage)  
+✅ We protect your privacy - see our Privacy Policy  
 ✅ Use common sense with food safety and allergies  
 ✅ App provided "as is" - use at your own risk  
 ✅ Be nice, don't break the law  

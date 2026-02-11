@@ -441,26 +441,7 @@ struct OnboardingSlideView: View {
             }
         }
         
-        // Animated scroll indicator
-        if showScrollIndicator && !isLastSlide {
-            VStack(spacing: spacing.sm) {
-                Image(systemName: "chevron.down")
-                    .font(.system(size: AppTheme.fontSize20, weight: .semibold))
-                    .foregroundColor(.white.opacity(0.8))
-                    .offset(y: isAnimating ? 8 : 0)
-                    .animation(
-                        .easeInOut(duration: 1.0)
-                        .repeatForever(autoreverses: true),
-                        value: isAnimating
-                    )
-                
-                Text("Scroll to see more")
-                    .font(.system(size: AppTheme.fontSize13, weight: .medium))
-                    .foregroundColor(.white.opacity(0.7))
-            }
-            .padding(.bottom, spacing.xl + spacing.lg)
-            .transition(.opacity)
-        }
+
     }
         .onAppear {
             withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
