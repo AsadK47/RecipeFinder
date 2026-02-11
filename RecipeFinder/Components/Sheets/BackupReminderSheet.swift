@@ -77,7 +77,7 @@ struct BackupReminderSheet: View {
                             Text("Export Data Now")
                         }
                         .font(.headline)
-                        .foregroundColor(.white)
+                        .adaptiveForegroundColor()
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(Color.orange)

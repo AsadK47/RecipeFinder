@@ -396,17 +396,17 @@ struct OnboardingSlideView: View {
                     HStack(spacing: spacing.sm + 2) {
                         Text("Swipe to continue")
                             .font(.system(size: AppTheme.fontSize15, weight: .medium))
-                            .foregroundColor(.white.opacity(0.7))
+                            .adaptiveForegroundColor(opacity: 0.7)
                         
                         HStack(spacing: spacing.xxs) {
                             Circle()
-                                .fill(Color.white.opacity(0.7))
+                                .fill(AppTheme.textColor(for: colorScheme).opacity(0.7))
                                 .frame(width: spacing.xs, height: spacing.xs)
                                 .offset(x: isAnimating ? 8 : 0)
                             
                             Image(systemName: "chevron.right")
                                 .font(.system(size: AppTheme.fontSize14, weight: .semibold))
-                                .foregroundColor(.white.opacity(0.7))
+                                .adaptiveForegroundColor(opacity: 0.7)
                                 .offset(x: isAnimating ? 8 : 0)
                         }
                         .animation(

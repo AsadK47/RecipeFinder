@@ -43,7 +43,7 @@ struct ShoppingListInputBar: View {
                 Button(action: onAdd, label: {
                     Image(systemName: "arrow.up.circle.fill")
                         .font(.title2)
-                        .foregroundColor(.white)
+                        .adaptiveForegroundColor()
                         .frame(width: 40, height: 40)
                         .background(
                             Circle()

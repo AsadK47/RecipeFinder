@@ -15,7 +15,7 @@ struct StandardAppHeader<MenuContent: View>: View {
                     
                     Text(title)
                         .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                        .foregroundColor(.white)
+                        .adaptiveForegroundColor()
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
                     
@@ -59,7 +59,7 @@ struct SimpleAppHeader: View {
                     
                     Text(title)
                         .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                        .foregroundColor(.white)
+                        .adaptiveForegroundColor()
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
                     

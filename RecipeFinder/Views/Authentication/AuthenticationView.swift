@@ -35,12 +35,15 @@ struct AuthenticationView: View {
                         .font(.system(size: AppTheme.fontSize80))
                         .foregroundStyle(
                             LinearGradient(
-                                gradient: Gradient(colors: [.white, .white.opacity(AppTheme.highEmphasisOpacity)]),
+                                gradient: Gradient(colors: [
+                                    AppTheme.textColor(for: colorScheme),
+                                    AppTheme.textColor(for: colorScheme).opacity(AppTheme.highEmphasisOpacity)
+                                ]),
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
                         )
-                        .shadow(color: .black.opacity(AppTheme.overlayLightOpacity), radius: 10, x: 0, y: 5)
+                        .shadow(color: colorScheme == .dark ? .black.opacity(AppTheme.overlayLightOpacity) : .clear, radius: 10, x: 0, y: 5)
                     
                     Text("RecipeFinder")
                         .font(.system(size: AppTheme.fontSize42, weight: .bold, design: .rounded))
@@ -464,7 +467,7 @@ struct SignUpView: View {
                                     VStack(alignment: .leading, spacing: 4) {
                                         Text("Password must contain:")
                                             .font(.caption2)
-                                            .foregroundColor(.white.opacity(0.8))
+                                            .adaptiveForegroundColor(opacity: 0.8)
                                         Text("• 8+ characters")
                                             .font(.caption2)
                                             .foregroundColor(password.count >= 8 ? .green : .red.opacity(0.8))

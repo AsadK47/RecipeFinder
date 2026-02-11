@@ -25,7 +25,7 @@ struct OfflineBanner: View {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .font(.subheadline)
             }
-            .foregroundColor(.white)
+            .adaptiveForegroundColor()
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
             .background(Color.orange)

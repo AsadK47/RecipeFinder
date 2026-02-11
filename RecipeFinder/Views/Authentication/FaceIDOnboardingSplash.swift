@@ -64,7 +64,7 @@ struct FaceIDOnboardingSplash: View {
                 ForEach(Array(particleData.enumerated()), id: \.offset) { index, particle in
                     Image(systemName: particle.icon)
                         .font(.system(size: particle.size))
-                        .foregroundColor(.white.opacity(0.08))
+                        .adaptiveForegroundColor(opacity: 0.08)
                         .position(x: particle.x, y: particle.y)
                         .opacity(particlesOpacity)
                         .animation(
@@ -287,7 +287,7 @@ struct FaceIDOnboardingSplash: View {
                         Button(action: skipSetup) {
                             Text("Set Up Later")
                                 .font(.system(size: AppTheme.fontSize17, weight: .semibold))
-                                .foregroundColor(.white.opacity(0.9))
+                                .adaptiveForegroundColor(opacity: 0.9)
                                 .frame(maxWidth: .infinity)
                                 .frame(height: spacing.buttonHeight)
                                 .background(
@@ -424,17 +424,17 @@ private struct BiometricBenefitRow: View {
                 
                 Image(systemName: icon)
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(.white.opacity(0.95))
+                    .adaptiveForegroundColor(opacity: 0.95)
             }
             
             VStack(alignment: .leading, spacing: spacing.xxs) {
                 Text(title)
                     .font(.system(size: AppTheme.fontSize16, weight: .semibold))
-                    .foregroundColor(.white.opacity(0.95))
+                    .adaptiveForegroundColor(opacity: 0.95)
                 
                 Text(description)
                     .font(.system(size: AppTheme.fontSize14, weight: .medium))
-                    .foregroundColor(.white.opacity(0.7))
+                    .adaptiveForegroundColor(opacity: 0.7)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }

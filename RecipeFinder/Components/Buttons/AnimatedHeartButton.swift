@@ -119,7 +119,7 @@ struct AnimatedHeartButton: View {
         
         VStack(spacing: AppTheme.spacing48) {
             Text("Tap the heart!")
-                .foregroundColor(.white)
+                .adaptiveForegroundColor()
                 .font(.title2)
             
             AnimatedHeartButton(isFavorite: .constant(false)) {

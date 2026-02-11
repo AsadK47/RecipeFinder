@@ -45,12 +45,12 @@ struct FilterButton: View {
             HStack(spacing: AppTheme.spacing8) {
                 Image(systemName: icon)
                     .font(.system(size: AppTheme.fontSize16))
-                    .foregroundColor(isSelected ? .white : color)
+                    .foregroundColor(isSelected ? AppTheme.textColor(for: colorScheme) : color)
                 
                 Text(label)
                     .font(.subheadline)
                     .fontWeight(isSelected ? .semibold : .regular)
-                    .foregroundColor(isSelected ? .white : (AppTheme.adaptiveEmphasis(for: colorScheme)))
+                    .foregroundColor(isSelected ? AppTheme.textColor(for: colorScheme) : (AppTheme.adaptiveEmphasis(for: colorScheme)))
                     .lineLimit(1)
                 
                 Spacer()
@@ -58,7 +58,7 @@ struct FilterButton: View {
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.system(size: AppTheme.fontSize16 + 2))
-                        .foregroundColor(.white)
+                        .adaptiveForegroundColor()
                 }
             }
             .padding(AppTheme.spacing12)

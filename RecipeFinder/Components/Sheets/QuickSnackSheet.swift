@@ -37,7 +37,7 @@ struct QuickSnackSheet: View {
                             Text("Cancel")
                                 .font(.system(size: AppTheme.fontSize16, weight: .semibold))
                         }
-                        .foregroundColor(.white.opacity(0.9))
+                        .adaptiveForegroundColor(opacity: 0.9)
                         .shadow(color: .black.opacity(AppTheme.shadowDarkOpacity), radius: 2, x: 0, y: 1)
                     }
                 }
@@ -191,11 +191,11 @@ struct HeaderView: View {
             Text("Quick Add Snack")
                 .font(.title2)
                 .fontWeight(.bold)
-                .foregroundColor(.white)
+                .adaptiveForegroundColor()
             
             Text("Add a simple snack in seconds")
                 .font(.subheadline)
-                .foregroundColor(.white.opacity(0.7))
+                .adaptiveForegroundColor(opacity: 0.7)
         }
         .padding(.top)
     }
@@ -220,7 +220,7 @@ struct EmojiSelectorView: View {
         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
             Text("Icon")
                 .font(.headline)
-                .foregroundColor(.white)
+                .adaptiveForegroundColor()
             
             Button(action: {
                 showEmojiPicker.toggle()
@@ -233,7 +233,7 @@ struct EmojiSelectorView: View {
                     Spacer()
                     
                     Image(systemName: "chevron.down")
-                        .foregroundColor(.white.opacity(AppTheme.glassLightOpacity))
+                        .adaptiveForegroundColor(opacity: AppTheme.glassLightOpacity)
                         .rotationEffect(.degrees(showEmojiPicker ? 180 : 0))
                 }
                 .padding()
@@ -295,7 +295,7 @@ struct DietaryFilterView: View {
         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
             Text("Dietary Filters")
                 .font(.headline)
-                .foregroundColor(.white)
+                .adaptiveForegroundColor()
             
             FlowLayout(spacing: AppTheme.spacing8) {
                 ForEach(commonFilters, id: \.self) { filter in
@@ -338,7 +338,7 @@ struct DietaryFilterChip: View {
                 Color.green.opacity(0.8) :
                 Color.white.opacity(AppTheme.overlayLightOpacity)
             )
-            .foregroundColor(.white)
+            .adaptiveForegroundColor()
             .cornerRadius(AppTheme.cornerRadius16)
         }
     }
@@ -355,13 +355,13 @@ struct SnackSuggestionsView: View {
             HStack {
                 Text("Quick Picks")
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .adaptiveForegroundColor()
                 
                 Spacer()
                 
                 Text("\(filteredSnacks.count) snacks")
                     .font(.caption)
-                    .foregroundColor(.white.opacity(AppTheme.mediumEmphasisOpacity))
+                    .adaptiveForegroundColor(opacity: AppTheme.mediumEmphasisOpacity)
             }
             .padding(.horizontal)
             
@@ -376,14 +376,14 @@ struct SnackSuggestionsView: View {
                                     .font(.system(size: AppTheme.fontSize32))
                                 Text(snack.name)
                                     .font(.caption)
-                                    .foregroundColor(.white)
+                                    .adaptiveForegroundColor()
                                     .lineLimit(2)
                                     .multilineTextAlignment(.center)
                                 
                                 if let calories = snack.calories {
                                     Text("\(calories) cal")
                                         .font(.caption2)
-                                        .foregroundColor(.white.opacity(AppTheme.mediumEmphasisOpacity))
+                                        .adaptiveForegroundColor(opacity: AppTheme.mediumEmphasisOpacity)
                                 }
                             }
                             .frame(width: 80, height: 100)
@@ -409,7 +409,7 @@ struct SnackNameInputView: View {
         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
             Text("Snack Name")
                 .font(.headline)
-                .foregroundColor(.white)
+                .adaptiveForegroundColor()
             
             TextField("E.g., Apple Slices", text: $snackName)
                 .textFieldStyle(.plain)
@@ -432,7 +432,7 @@ struct ServingsControlView: View {
         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
             Text("Servings")
                 .font(.headline)
-                .foregroundColor(.white)
+                .adaptiveForegroundColor()
             
             HStack(spacing: AppTheme.spacing16) {
                 Button(action: {
@@ -450,7 +450,7 @@ struct ServingsControlView: View {
                 Text("\(servings)")
                     .font(.title)
                     .fontWeight(.bold)
-                    .foregroundColor(.white)
+                    .adaptiveForegroundColor()
                     .frame(minWidth: 50)
                 
                 Button(action: {
@@ -479,7 +479,7 @@ struct DietaryTagsDisplayView: View {
         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
             Text("Dietary Info")
                 .font(.headline)
-                .foregroundColor(.white)
+                .adaptiveForegroundColor()
             
             VStack(spacing: AppTheme.spacing8) {
                 if let calories = calories {
@@ -489,7 +489,7 @@ struct DietaryTagsDisplayView: View {
                             .font(.subheadline)
                         Spacer()
                     }
-                    .foregroundColor(.white.opacity(0.9))
+                    .adaptiveForegroundColor(opacity: 0.9)
                 }
                 
                 if !tags.isEmpty {
@@ -504,7 +504,7 @@ struct DietaryTagsDisplayView: View {
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
                             .background(Color.white.opacity(AppTheme.overlayLightOpacity))
-                            .foregroundColor(.white)
+                            .adaptiveForegroundColor()
                             .cornerRadius(AppTheme.cornerRadius12)
                         }
                     }
@@ -538,7 +538,7 @@ struct AddButtonView: View {
                 AppTheme.accentColor(for: selectedTheme)
                     .opacity(isEnabled ? 1.0 : 0.5)
             )
-            .foregroundColor(.white)
+            .adaptiveForegroundColor()
             .cornerRadius(AppTheme.cornerRadius12)
         }
         .disabled(!isEnabled)

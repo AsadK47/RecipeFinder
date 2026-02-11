@@ -73,7 +73,7 @@ struct ShoppingQuickAddSheet: View {
                     Text("Quick Add")
                         .font(.title2)
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .adaptiveForegroundColor()
                         .shadow(color: .black.opacity(AppTheme.shadowDarkOpacity), radius: 2, x: 0, y: 1)
                     
                     Spacer()
@@ -83,7 +83,7 @@ struct ShoppingQuickAddSheet: View {
                     } label: {
                         Image(systemName: "xmark.circle.fill")
                             .font(.title2)
-                            .foregroundColor(.white.opacity(0.9))
+                            .adaptiveForegroundColor(opacity: 0.9)
                             .shadow(color: .black.opacity(AppTheme.shadowDarkOpacity), radius: 2, x: 0, y: 1)
                     }
                 }
@@ -119,7 +119,7 @@ struct ShoppingQuickAddSheet: View {
             HStack(spacing: AppTheme.spacing8) {
                 Text(item)
                     .font(.subheadline)
-                    .foregroundColor(.white)
+                    .adaptiveForegroundColor()
                 
                 Spacer()
                 
@@ -164,7 +164,7 @@ struct KitchenQuickAddSheet: View {
                     Text("Quick Add")
                         .font(.title2)
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .adaptiveForegroundColor()
                         .shadow(color: .black.opacity(AppTheme.shadowDarkOpacity), radius: 2, x: 0, y: 1)
                     
                     Spacer()
@@ -174,7 +174,7 @@ struct KitchenQuickAddSheet: View {
                     } label: {
                         Image(systemName: "xmark.circle.fill")
                             .font(.title2)
-                            .foregroundColor(.white.opacity(0.9))
+                            .adaptiveForegroundColor(opacity: 0.9)
                             .shadow(color: .black.opacity(AppTheme.shadowDarkOpacity), radius: 2, x: 0, y: 1)
                     }
                 }
@@ -210,7 +210,7 @@ struct KitchenQuickAddSheet: View {
             HStack(spacing: AppTheme.spacing8) {
                 Text(item)
                     .font(.subheadline)
-                    .foregroundColor(.white)
+                    .adaptiveForegroundColor()
                 
                 Spacer()
                 

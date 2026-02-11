@@ -96,15 +96,9 @@ struct BiometricSetupView: View {
         VStack(spacing: spacing.md + spacing.md) {
             Text("Secure Your Account")
                 .font(.system(size: AppTheme.fontSize38 - 2, weight: .bold, design: .rounded))
-                .foregroundStyle(
-                    LinearGradient(
-                        colors: [.white, .white.opacity(0.95)],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
+                .adaptiveForegroundColor()
                 .multilineTextAlignment(.center)
-                .shadow(color: .black.opacity(0.2), radius: spacing.xs, x: 0, y: 5)
+                .shadow(color: colorScheme == .dark ? .black.opacity(0.2) : .clear, radius: spacing.xs, x: 0, y: 5)
             
             VStack(spacing: spacing.lg) {
                 Text("Enable \(authManager.biometricType) for quick and secure access")
@@ -245,7 +239,7 @@ private struct ParticleView: View {
     var body: some View {
         Image(systemName: particle.icon)
             .font(.system(size: particle.size))
-            .foregroundColor(.white.opacity(0.08))
+            .adaptiveForegroundColor(opacity: 0.08)
             .position(x: particle.x, y: particle.y)
             .opacity(opacity)
             .animation(
@@ -263,6 +257,8 @@ private struct BiometricIconView: View {
     let spacing: AdaptiveSpacing
     let iconScale: CGFloat
     let iconRotation: Double
+    
+    @Environment(\.colorScheme) private var colorScheme
     
     private var accentColor: Color {
         AppTheme.accentColor(for: selectedTheme)
@@ -326,8 +322,8 @@ private struct BiometricIconView: View {
                     .stroke(
                         LinearGradient(
                             colors: [
-                                Color.white.opacity(0.4),
-                                Color.white.opacity(0.2)
+                                AppTheme.textColor(for: colorScheme, opacity: 0.4),
+                                AppTheme.textColor(for: colorScheme, opacity: 0.2)
                             ],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
