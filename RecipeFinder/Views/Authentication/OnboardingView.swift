@@ -76,15 +76,15 @@ struct OnboardingView: View {
                             }) {
                                 Text("Skip")
                                     .font(.system(size: AppTheme.fontSize16, weight: .semibold))
-                                    .foregroundColor(.white.opacity(0.9))
+                                    .adaptiveForegroundColor(opacity: 0.9)
                                     .padding(.horizontal, spacing.xl)
                                     .padding(.vertical, spacing.sm + 2)
                                     .background(
                                         Capsule()
-                                            .fill(Color.white.opacity(0.2))
+                                            .fill(AppTheme.textColor(for: colorScheme).opacity(0.2))
                                             .overlay(
                                                 Capsule()
-                                                    .stroke(Color.white.opacity(0.3), lineWidth: 1)
+                                                    .stroke(AppTheme.textColor(for: colorScheme).opacity(0.3), lineWidth: 1)
                                             )
                                     )
                             }
@@ -252,15 +252,15 @@ struct OnboardingSlideView: View {
                         .foregroundStyle(
                             LinearGradient(
                                 gradient: Gradient(colors: [
-                                    .white,
-                                    Color.white.opacity(0.9)
+                                    AppTheme.textColor(for: colorScheme),
+                                    AppTheme.textColor(for: colorScheme).opacity(0.9)
                                 ]),
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
                         )
                         .scaleEffect(isAnimating ? 1.05 : 0.95)
-                        .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 5)
+                        .shadow(color: colorScheme == .dark ? .black.opacity(0.2) : .clear, radius: 10, x: 0, y: 5)
                         .animation(
                             .easeInOut(duration: 2.0)
                             .repeatForever(autoreverses: true),
