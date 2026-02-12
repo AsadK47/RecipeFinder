@@ -33,7 +33,7 @@ struct RecipeCard: View {
                 if recipe.isFavorite {
                     ZStack {
                         Circle()
-                            .fill(.white)
+                            .fill(colorScheme == .dark ? .white : .white)
                             .frame(width: 24, height: 24)
                             .shadow(color: .black.opacity(AppTheme.overlayLightOpacity), radius: 2)
                         

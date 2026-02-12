@@ -48,7 +48,8 @@ struct FaceIDOnboardingSplash: View {
     }
     
     private var biometricName: String {
-        authManager.biometricType
+        let type = authManager.biometricType
+        return type == "None" ? "Biometrics" : type
     }
     
     var body: some View {
@@ -187,26 +188,25 @@ struct FaceIDOnboardingSplash: View {
                                 .foregroundStyle(
                                     LinearGradient(
                                         gradient: Gradient(colors: [
-                                            .white,
-                                            .white.opacity(0.95)
+                                            AppTheme.textColor(for: colorScheme),
+                                            AppTheme.textColor(for: colorScheme, opacity: 0.95)
                                         ]),
                                         startPoint: .top,
                                         endPoint: .bottom
                                     )
                                 )
                                 .multilineTextAlignment(.center)
-                                .shadow(color: .black.opacity(0.25), radius: 12, x: 0, y: 6)
                             
                             Text("Secure access in seconds")
                                 .font(.system(size: AppTheme.fontSize20, weight: .medium, design: .rounded))
-                                .adaptiveForegroundColor(opacity: 0.85)
+                                .foregroundColor(AppTheme.textColor(for: colorScheme))
                                 .multilineTextAlignment(.center)
                         }
                         
                         VStack(spacing: spacing.lg) {
                             Text("Intuitive and secure authentication")
                                 .font(.system(size: AppTheme.fontSize17, weight: .medium))
-                                .adaptiveForegroundColor(opacity: 0.9)
+                                .foregroundColor(AppTheme.textColor(for: colorScheme))
                                 .multilineTextAlignment(.center)
                                 .lineSpacing(4)
                                 .padding(.horizontal, spacing.xl)
@@ -245,7 +245,7 @@ struct FaceIDOnboardingSplash: View {
                                         .font(.system(size: AppTheme.fontSize20, weight: .bold))
                                 }
                             }
-                            .adaptiveForegroundColor()
+                            .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .frame(height: spacing.buttonHeightLarge)
                             .background(
@@ -287,7 +287,7 @@ struct FaceIDOnboardingSplash: View {
                         Button(action: skipSetup) {
                             Text("Set Up Later")
                                 .font(.system(size: AppTheme.fontSize17, weight: .semibold))
-                                .adaptiveForegroundColor(opacity: 0.9)
+                                .foregroundColor(AppTheme.textColor(for: colorScheme))
                                 .frame(maxWidth: .infinity)
                                 .frame(height: spacing.buttonHeight)
                                 .background(
@@ -404,6 +404,7 @@ private struct BiometricBenefitRow: View {
     let title: String
     let description: String
     let spacing: AdaptiveSpacing
+    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         HStack(spacing: spacing.lg) {
@@ -424,17 +425,17 @@ private struct BiometricBenefitRow: View {
                 
                 Image(systemName: icon)
                     .font(.system(size: 18, weight: .semibold))
-                    .adaptiveForegroundColor(opacity: 0.95)
+                    .foregroundColor(AppTheme.textColor(for: colorScheme))
             }
             
             VStack(alignment: .leading, spacing: spacing.xxs) {
                 Text(title)
                     .font(.system(size: AppTheme.fontSize16, weight: .semibold))
-                    .adaptiveForegroundColor(opacity: 0.95)
+                    .foregroundColor(AppTheme.textColor(for: colorScheme))
                 
                 Text(description)
                     .font(.system(size: AppTheme.fontSize14, weight: .medium))
-                    .adaptiveForegroundColor(opacity: 0.7)
+                    .foregroundColor(AppTheme.textColor(for: colorScheme, opacity: 0.85))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }

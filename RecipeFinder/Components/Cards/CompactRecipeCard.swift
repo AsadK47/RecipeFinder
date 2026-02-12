@@ -22,7 +22,7 @@ struct CompactRecipeCard: View {
                 if recipe.isFavorite {
                     ZStack {
                         Circle()
-                            .fill(.white)
+                            .fill(colorScheme == .dark ? .white : .white)
                             .frame(width: 20, height: 20)
                             .shadow(color: .black.opacity(AppTheme.overlayLightOpacity), radius: 2)
                         

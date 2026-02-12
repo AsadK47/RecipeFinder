@@ -89,7 +89,7 @@ struct SettingsTabView: View {
                                                 .overlay {
                                                     Text(accountManager.initials)
                                                         .font(.system(size: profileImageSize * 0.4, weight: .semibold))
-                                                        .foregroundStyle(.white)
+                                                        .foregroundStyle(colorScheme == .dark ? .white : .black)
                                                 }
                                         }
                                     }

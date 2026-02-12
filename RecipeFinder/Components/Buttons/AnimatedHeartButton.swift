@@ -7,6 +7,7 @@ struct AnimatedHeartButton: View {
     @Binding var isFavorite: Bool
     let action: () -> Void
     
+    @Environment(\.colorScheme) var colorScheme
     @State private var isAnimating = false
     @State private var scale: CGFloat = 1.0
     @State private var particlesVisible = false
@@ -41,7 +42,7 @@ struct AnimatedHeartButton: View {
                 // Heart icon
                 Image(systemName: isFavorite ? "heart.fill" : "heart")
                     .font(.title3)
-                    .foregroundStyle(isFavorite ? heartGradient : LinearGradient(gradient: Gradient(colors: [.white]), startPoint: .top, endPoint: .bottom))
+                    .foregroundStyle(isFavorite ? heartGradient : LinearGradient(gradient: Gradient(colors: [AppTheme.textColor(for: colorScheme)]), startPoint: .top, endPoint: .bottom))
                     .scaleEffect(scale)
                     .animation(.spring(response: 0.3, dampingFraction: 0.6), value: scale)
             }
