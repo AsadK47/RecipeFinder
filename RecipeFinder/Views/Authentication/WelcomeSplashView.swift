@@ -192,7 +192,10 @@ struct WelcomeSplashView: View {
     
     private var titleGradient: LinearGradient {
         LinearGradient(
-            gradient: Gradient(colors: [.white, .white.opacity(0.95)]),
+            gradient: Gradient(colors: [
+                AppTheme.textColor(for: colorScheme),
+                AppTheme.textColor(for: colorScheme, opacity: 0.95)
+            ]),
             startPoint: .top,
             endPoint: .bottom
         )
@@ -201,7 +204,7 @@ struct WelcomeSplashView: View {
     private var subtitleText: some View {
         Text("Find, save, and share recipes you love")
             .font(.system(size: AppTheme.fontSize17, weight: .medium, design: .rounded))
-            .foregroundColor(AppTheme.textColor(for: colorScheme, opacity: 0.85))
+            .foregroundColor(AppTheme.textColor(for: colorScheme))
             .multilineTextAlignment(.center)
             .frame(maxWidth: .infinity)
             .opacity(contentOpacity)
@@ -367,12 +370,12 @@ struct FeatureRow: View {
         HStack(spacing: spacing.md) {
             Image(systemName: icon)
                 .font(.system(size: AppTheme.fontSize16, weight: .semibold))
-                .adaptiveForegroundColor(opacity: 0.9)
+                .foregroundColor(AppTheme.textColor(for: colorScheme))
                 .frame(width: spacing.iconMedium)
             
             Text(text)
                 .font(.system(size: AppTheme.fontSize15, weight: .medium))
-                .adaptiveForegroundColor(opacity: 0.85)
+                .foregroundColor(AppTheme.textColor(for: colorScheme))
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
     }

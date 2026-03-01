@@ -203,8 +203,27 @@ final class AuthenticationManager: NSObject, ObservableObject {
         let givenName = components.first
         let familyName = components.count > 1 ? components.dropFirst().joined(separator: " ") : nil
         
+        // Use the stable userId stored in the Keychain so the same user always gets
+        // the same ID across sign-outs / sign-ins. Without this, every login produces
+        // a new UUID which makes all previously saved recipes invisible (they are
+        // filtered by userId in Core Data) and triggers populateDatabase() every time.
+        let stableId: String
+        if let keychainId = credentialManager.getUserId(email: email) {
+            // Happy path: userId is stored in Keychain (accounts created/updated after this fix)
+            stableId = keychainId
+        } else if let data = UserDefaults.standard.data(forKey: userDataKey),
+                  let existingUser = try? JSONDecoder().decode(User.self, from: data),
+                  existingUser.email == email {
+            // Migration path: account pre-dates this fix. Reuse the persisted ID so
+            // existing recipes/data are still visible under the same userId.
+            stableId = existingUser.id
+        } else {
+            // Fallback: genuinely new identity (should not happen via normal signIn flow)
+            stableId = UUID().uuidString
+        }
+        
         return User(
-            id: UUID().uuidString,
+            id: stableId,
             email: email,
             fullName: userInfo.fullName,
             givenName: givenName,
@@ -299,8 +318,13 @@ final class AuthenticationManager: NSObject, ObservableObject {
         let givenName = components.first
         let familyName = components.count > 1 ? components.dropFirst().joined(separator: " ") : nil
         
+        // Use the stable userId that was just stored in the Keychain by saveCredentials.
+        // Using a different UUID here would cause recipes/data to be orphaned on the
+        // next sign-in (which calls createUser → credentialManager.getUserId).
+        let stableId = credentialManager.getUserId(email: email) ?? UUID().uuidString
+        
         let user = User(
-            id: UUID().uuidString,
+            id: stableId,
             email: email,
             fullName: fullName.isEmpty ? nil : fullName,
             givenName: givenName,
@@ -317,6 +341,24 @@ final class AuthenticationManager: NSObject, ObservableObject {
         UserDefaults.standard.set(true, forKey: isAuthenticatedKey)
         UserDefaults.standard.set(email, forKey: currentEmailKey)
         updateLastActiveTimestamp()
+        
+        // Set user ID for scoped storage so any data saved in this session is
+        // tagged correctly, and populateDatabase() can assign the right userId.
+        UserScopedStorage.shared.currentUserId = user.id
+        
+        // Reload managers for the new user
+        AccountManager.shared.loadProfile()
+        ShoppingListManager.shared.reloadForCurrentUser()
+        NotesManager().reloadForCurrentUser()
+        BadgeManager.shared.reloadForCurrentUser()
+        
+        // Populate sample recipes for this brand-new account
+        let userKey = "user_\(user.id)_initialized"
+        if !UserDefaults.standard.bool(forKey: userKey) {
+            PersistenceController.shared.populateDatabase()
+            UserDefaults.standard.set(true, forKey: userKey)
+            BadgeManager.shared.unlockBadge(.welcomeAboard)
+        }
         
         // Update AccountManager with user info
         if let givenName = givenName {
@@ -391,6 +433,16 @@ final class AuthenticationManager: NSObject, ObservableObject {
                 UserDefaults.standard.set(true, forKey: isAuthenticatedKey)
                 updateLastActiveTimestamp()
                 loadUser()
+                
+                // Restore user-scoped storage and managers (mirrors checkAuthenticationStatus)
+                if let user = currentUser {
+                    UserScopedStorage.shared.currentUserId = user.id
+                    AccountManager.shared.loadProfile()
+                    ShoppingListManager.shared.reloadForCurrentUser()
+                    NotesManager().reloadForCurrentUser()
+                    BadgeManager.shared.reloadForCurrentUser()
+                }
+                
                 HapticManager.shared.success()
             }
         } catch {
@@ -473,17 +525,21 @@ final class AuthenticationManager: NSObject, ObservableObject {
             return
         }
         
-        // Ensure published property updates happen on the main thread
-        DispatchQueue.main.async {
-            self.currentUser = user
-            
-            // Sync with AccountManager
-            AccountManager.shared.updateProfile(
-                firstName: user.givenName ?? "",
-                lastName: user.familyName ?? "",
-                chefType: .homeCook
-            )
-        }
+        // We are already isolated to @MainActor, so assign synchronously.
+        // Using DispatchQueue.main.async here would defer the assignment to the next
+        // run loop iteration, making currentUser still nil when checkAuthenticationStatus
+        // reads it immediately after calling loadUser() — causing UserScopedStorage
+        // to never receive the current user ID on session restore.
+        self.currentUser = user
+        
+        // Sync name into AccountManager, but preserve the user's stored chefType
+        // (previous code hardcoded .homeCook which reset it on every app launch).
+        let existingChefType = AccountManager.shared.chefType
+        AccountManager.shared.updateProfile(
+            firstName: user.givenName ?? "",
+            lastName: user.familyName ?? "",
+            chefType: existingChefType
+        )
     }
     
     // Update Current User
@@ -566,7 +622,7 @@ extension AuthenticationManager: ASAuthorizationControllerDelegate {
         }
         
         let user = User(
-            id: UUID().uuidString,
+            id: appleIDCredential.user, // Stable Apple user identifier — never changes across sign-ins
             email: email,
             fullName: fullName,
             givenName: givenName,
@@ -585,11 +641,29 @@ extension AuthenticationManager: ASAuthorizationControllerDelegate {
                 UserDefaults.standard.set(true, forKey: isAuthenticatedKey)
                 updateLastActiveTimestamp()
                 
-                // Update AccountManager
+                // Set user ID for scoped storage
+                UserScopedStorage.shared.currentUserId = user.id
+                
+                // Reload all managers for this user
+                AccountManager.shared.loadProfile()
+                ShoppingListManager.shared.reloadForCurrentUser()
+                NotesManager().reloadForCurrentUser()
+                BadgeManager.shared.reloadForCurrentUser()
+                
+                // Populate sample recipes only once per user
+                let userKey = "user_\(user.id)_initialized"
+                if !UserDefaults.standard.bool(forKey: userKey) {
+                    PersistenceController.shared.populateDatabase()
+                    UserDefaults.standard.set(true, forKey: userKey)
+                    BadgeManager.shared.unlockBadge(.welcomeAboard)
+                }
+                
+                // Sync name — preserve the stored chef type rather than overwriting with .homeCook
+                let existingChefType = AccountManager.shared.chefType
                 AccountManager.shared.updateProfile(
                     firstName: user.givenName ?? "",
                     lastName: user.familyName ?? "",
-                    chefType: .homeCook
+                    chefType: existingChefType
                 )
                 
                 HapticManager.shared.success()

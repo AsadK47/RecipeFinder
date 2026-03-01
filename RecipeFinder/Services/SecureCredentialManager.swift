@@ -106,6 +106,10 @@ final class SecureCredentialManager: @unchecked Sendable {
         
         let hashedEmail = hashEmail(email)
         
+        // Preserve existing userId if the account already exists, otherwise generate a new stable one
+        let existingUserId = getUserId(email: email)
+        let stableUserId = existingUserId ?? UUID().uuidString
+        
         // Store hashed credentials with salt
         let credentials: [String: Any] = [
             "email": email, // Store original for display/autofill
@@ -113,6 +117,7 @@ final class SecureCredentialManager: @unchecked Sendable {
             "hashedPassword": hashedPassword,
             "salt": salt, // Store salt for verification
             "fullName": fullName,
+            "userId": stableUserId, // Stable identifier tied to this account
             "createdAt": Date().timeIntervalSince1970
         ]
         
@@ -197,6 +202,16 @@ final class SecureCredentialManager: @unchecked Sendable {
         }
         
         return (storedEmail, fullName)
+    }
+    
+    /// Get the stable user ID stored for this email account.
+    /// Returns nil if the account doesn't exist or was created before userId storage was added.
+    func getUserId(email: String) -> String? {
+        let hashedEmail = hashEmail(email)
+        guard let credentials = retrieveCredentials(hashedEmail: hashedEmail) else {
+            return nil
+        }
+        return credentials["userId"] as? String
     }
     
     /// Delete stored credentials
