@@ -579,10 +579,7 @@ struct RecipeDetailView: View {
         
         if allIngredientsChecked && allPrePrepChecked && allInstructionsChecked {
             HapticManager.shared.success()
-            // 🎰 Gamified confetti: 1 in 7 chance (like a lucky surprise!)
-            if Int.random(in: 1...7) == 7 {
-                confettiCounter += 1
-            }
+            confettiCounter += 1
         }
     }
     
