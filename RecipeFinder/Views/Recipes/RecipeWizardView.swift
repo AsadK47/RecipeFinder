@@ -805,7 +805,7 @@ struct RecipeWizardView: View {
                 }
             }) {
                 HStack {
-                    Text(currentStep < totalSteps - 1 ? "Next" : "Create Recipe")
+                    Text(currentStep < totalSteps - 1 ? "Next" : (editingRecipeId != nil ? "Update Recipe" : "Create Recipe"))
                     if currentStep < totalSteps - 1 {
                         Image(systemName: "chevron.right")
                     } else {

@@ -20,10 +20,10 @@ struct RecipeDetailView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
     
-    // Performance: Pre-compute expensive checks
-    private let hasPrePrep: Bool
-    private let hasNotes: Bool
-    private let notesSentences: [Substring]
+    // Computed from @State recipe so they stay in sync after edits
+    private var hasPrePrep: Bool { !recipe.prePrepInstructions.isEmpty }
+    private var hasNotes: Bool { !recipe.notes.isEmpty }
+    private var notesSentences: [Substring] { recipe.notes.split(separator: ".") }
     
     // Callback to refresh recipes list when favorite is toggled
     var onFavoriteToggle: (() -> Void)?
@@ -32,15 +32,10 @@ struct RecipeDetailView: View {
         _recipe = State(initialValue: recipe)
         self.onFavoriteToggle = onFavoriteToggle
         
-        // Pre-compute state arrays
+        // Size state arrays to match the initial recipe
         _ingredientsState = State(initialValue: Array(repeating: false, count: recipe.ingredients.count))
         _instructionsState = State(initialValue: Array(repeating: false, count: recipe.instructions.count))
         _prePrepState = State(initialValue: Array(repeating: false, count: recipe.prePrepInstructions.count))
-        
-        // Pre-compute expensive checks
-        self.hasPrePrep = !recipe.prePrepInstructions.isEmpty
-        self.hasNotes = !recipe.notes.isEmpty
-        self.notesSentences = recipe.notes.split(separator: ".")
     }
     
     var body: some View {
@@ -89,6 +84,20 @@ struct RecipeDetailView: View {
         .confettiCannon(trigger: $confettiCounter, num: 50, radius: 500.0)
         .onChange(of: instructionsState) { _, newValue in
             checkForCompletion(newValue)
+        }
+        .onChange(of: recipe) { _, newRecipe in
+            // Resize the checkbox state arrays whenever the recipe is updated (e.g. after an edit).
+            // Without this, ForEach iterates over the new recipe's indices but the state arrays
+            // still have the old count → index-out-of-bounds crash if any count changed.
+            if ingredientsState.count != newRecipe.ingredients.count {
+                ingredientsState = Array(repeating: false, count: newRecipe.ingredients.count)
+            }
+            if instructionsState.count != newRecipe.instructions.count {
+                instructionsState = Array(repeating: false, count: newRecipe.instructions.count)
+            }
+            if prePrepState.count != newRecipe.prePrepInstructions.count {
+                prePrepState = Array(repeating: false, count: newRecipe.prePrepInstructions.count)
+            }
         }
     }
     
