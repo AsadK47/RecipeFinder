@@ -235,7 +235,7 @@ struct WelcomeSplashView: View {
     
     private var emailConfirmationRow: some View {
         HStack(spacing: 8) {
-            Image(systemName: "envelope.fill")
+            Image(systemName: "at")
                 .font(.system(size: AppTheme.fontSize14))
                 .adaptiveForegroundColor(opacity: 0.6)
             Text(email)

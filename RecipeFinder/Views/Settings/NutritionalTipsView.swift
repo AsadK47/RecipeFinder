@@ -303,8 +303,7 @@ struct TipDetailView: View {
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismiss
-    @State private var safariURL: URL?
-    @State private var showSafari = false
+    @State private var safariItem: IdentifiableURL?
     
     var body: some View {
         NavigationView {
@@ -392,8 +391,7 @@ struct TipDetailView: View {
                             ForEach(tip.sources) { source in
                                 Button(action: {
                                     if let urlString = source.url, let url = URL(string: urlString) {
-                                        safariURL = url
-                                        showSafari = true
+                                        safariItem = IdentifiableURL(url: url)
                                         HapticManager.shared.light()
                                     }
                                 }) {
@@ -481,11 +479,9 @@ struct TipDetailView: View {
                     .adaptiveForegroundColor()
                 }
             }
-            .fullScreenCover(isPresented: $showSafari) {
-                if let url = safariURL {
-                    SafariView(url: url)
-                        .ignoresSafeArea()
-                }
+            .fullScreenCover(item: $safariItem) { item in
+                SafariView(url: item.url)
+                    .ignoresSafeArea()
             }
         }
     }
@@ -501,6 +497,16 @@ struct TipDetailView: View {
             }
         }
     }
+}
+
+// MARK: - Identifiable URL Wrapper
+
+/// Wraps URL as Identifiable so fullScreenCover(item:) can be used.
+/// This avoids the race condition where `showSafari = true` fires before
+/// `safariURL` is committed, causing the cover to read nil on the first tap.
+private struct IdentifiableURL: Identifiable {
+    let id = UUID()
+    let url: URL
 }
 
 // MARK: - Safari View Wrapper

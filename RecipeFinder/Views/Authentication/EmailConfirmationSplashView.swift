@@ -5,7 +5,6 @@ struct EmailConfirmationSplashView: View {
     @Environment(\.colorScheme) var colorScheme
     @State private var scale: CGFloat = 0.8
     @State private var opacity: Double = 0
-    @State private var envelopeOffset: CGFloat = -20
     let email: String
     let onContinue: () -> Void
     
@@ -20,42 +19,35 @@ struct EmailConfirmationSplashView: View {
                 VStack(spacing: spacing.screenEdge + spacing.lg) {
                     Spacer()
                     
-                    // Email Icon
+                    // Success icon
                     ZStack {
                         Circle()
                             .fill(Color.white.opacity(0.1))
                             .frame(width: spacing.imageMedium, height: spacing.imageMedium)
                             .scaleEffect(scale)
                         
-                        Image(systemName: "envelope.fill")
+                        Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: AppTheme.fontSize50))
                             .foregroundStyle(
                                 LinearGradient(
-                                    colors: [.blue, .cyan],
+                                    colors: [.green, .mint],
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
                                 )
                             )
-                            .offset(y: envelopeOffset)
-                            .opacity(opacity)
-                        
-                        Image(systemName: "checkmark.circle.fill")
-                            .font(.system(size: AppTheme.fontSize32))
-                            .foregroundColor(.green)
-                            .background(Circle().fill(Color.white))
-                            .offset(x: 35, y: 35)
                             .scaleEffect(scale)
+                            .opacity(opacity)
                     }
                     
                     VStack(spacing: spacing.lg) {
-                        Text("Check Your Email")
+                        Text("Account Created!")
                             .font(.system(size: AppTheme.fontSize28, weight: .bold))
                             .adaptiveForegroundColor()
                             .multilineTextAlignment(.center)
                             .opacity(opacity)
                         
                         VStack(spacing: spacing.sm) {
-                            Text("We've sent a confirmation link to:")
+                            Text("You're all set.")
                                 .font(.system(size: AppTheme.fontSize16))
                                 .adaptiveForegroundColor(opacity: 0.9)
                                 .multilineTextAlignment(.center)
@@ -67,14 +59,6 @@ struct EmailConfirmationSplashView: View {
                                 .padding(.horizontal, spacing.screenEdge + spacing.lg)
                         }
                         .opacity(opacity)
-                        
-                        Text("📧 For testing purposes, email confirmation is simulated. In production, you'd receive a real email.")
-                            .font(.system(size: AppTheme.fontSize14))
-                            .adaptiveForegroundColor(opacity: 0.7)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, spacing.xxl + spacing.xl)
-                            .padding(.top, spacing.sm)
-                            .opacity(opacity)
                     }
                     
                     Spacer()
@@ -110,7 +94,6 @@ struct EmailConfirmationSplashView: View {
         .onAppear {
             withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
                 scale = 1.0
-                envelopeOffset = 0
             }
             withAnimation(.easeOut(duration: 0.5)) {
                 opacity = 1.0
