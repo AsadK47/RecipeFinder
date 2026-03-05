@@ -4,11 +4,18 @@ import Foundation
 /// Manages meal plans using the MealPlanModel for structured meal planning
 @MainActor
 final class MealPlanningManager: ObservableObject {
+    static let shared = MealPlanningManager()
+
     @Published private(set) var mealPlans: [MealPlanModel] = []
     
     private let saveKey = "mealPlansStorage"
+    private let storage = UserScopedStorage.shared
     
-    init() {
+    private init() {
+        loadMealPlans()
+    }
+
+    func reloadForCurrentUser() {
         loadMealPlans()
     }
     
@@ -131,14 +138,16 @@ final class MealPlanningManager: ObservableObject {
     
     private func saveMealPlans() {
         if let encoded = try? JSONEncoder().encode(mealPlans) {
-            UserDefaults.standard.set(encoded, forKey: saveKey)
+            storage.set(encoded, forKey: saveKey)
         }
     }
     
     private func loadMealPlans() {
-        if let data = UserDefaults.standard.data(forKey: saveKey),
+        if let data = storage.data(forKey: saveKey),
            let decoded = try? JSONDecoder().decode([MealPlanModel].self, from: data) {
             mealPlans = decoded
+        } else {
+            mealPlans = []
         }
     }
 }

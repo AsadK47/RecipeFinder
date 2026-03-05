@@ -2,7 +2,7 @@ import SwiftUI
 
 struct NotesListView: View {
     @Environment(\.dismiss) private var dismiss
-    @StateObject private var notesManager = NotesManager()
+    @ObservedObject private var notesManager = NotesManager.shared
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted

@@ -25,14 +25,10 @@ struct RecipeSearchView: View {
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @AppStorage("skipRecipeDeleteConfirmation") private var skipDeleteConfirmation: Bool = false
-    @AppStorage("kitchenInventory") private var kitchenInventoryJSON: String = "[]"
-    
+    @ObservedObject private var kitchenManager = KitchenInventoryManager.shared
+
     private var availableIngredients: Set<String> {
-        guard let data = kitchenInventoryJSON.data(using: .utf8),
-              let items = try? JSONDecoder().decode([String].self, from: data) else {
-            return []
-        }
-        return Set(items.map { $0.lowercased() })
+        Set(kitchenManager.items.map { $0.name.lowercased() })
     }
 
     // Optimized filtered recipes with caching

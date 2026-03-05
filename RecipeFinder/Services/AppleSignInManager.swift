@@ -49,7 +49,7 @@ final class AppleSignInManager: NSObject, ObservableObject {
                     
                     // Reload all managers for the current user
                     ShoppingListManager.shared.reloadForCurrentUser()
-                    NotesManager().reloadForCurrentUser()
+                    NotesManager.shared.reloadForCurrentUser()
                     BadgeManager.shared.reloadForCurrentUser()
                 case .revoked, .notFound:
                     self.signOut()
@@ -89,7 +89,7 @@ final class AppleSignInManager: NSObject, ObservableObject {
         // Clear managers
         Task { @MainActor in
             ShoppingListManager.shared.reloadForCurrentUser()
-            NotesManager().reloadForCurrentUser()
+            NotesManager.shared.reloadForCurrentUser()
             BadgeManager.shared.reloadForCurrentUser()
         }
         
@@ -129,7 +129,7 @@ final class AppleSignInManager: NSObject, ObservableObject {
         // Reload all managers for the new user
         Task { @MainActor in
             ShoppingListManager.shared.reloadForCurrentUser()
-            NotesManager().reloadForCurrentUser()
+            NotesManager.shared.reloadForCurrentUser()
             BadgeManager.shared.reloadForCurrentUser()
             
             // If new user, populate with sample recipes

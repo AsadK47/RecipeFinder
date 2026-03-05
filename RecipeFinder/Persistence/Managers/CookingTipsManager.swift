@@ -14,6 +14,7 @@ final class CookingTipsManager: ObservableObject {
     @Published var showFavoritesOnly: Bool = false
     
     private let saveKey = "cookingTipsStorage"
+    private let storage = UserScopedStorage.shared
     private var cancellables = Set<AnyCancellable>()
     
     private init() {
@@ -117,9 +118,13 @@ final class CookingTipsManager: ObservableObject {
     
     // MARK: - Persistence
     
+    func reloadForCurrentUser() {
+        loadTips()
+    }
+
     private func loadTips() {
         // Try to load saved tips first
-        if let data = UserDefaults.standard.data(forKey: saveKey),
+        if let data = storage.data(forKey: saveKey),
            let decoded = try? JSONDecoder().decode([CookingTipModel].self, from: data) {
             self.tips = decoded
             logger.debug("✅ Loaded \(self.tips.count) cooking tips")
@@ -133,7 +138,7 @@ final class CookingTipsManager: ObservableObject {
     
     private func saveTips() {
         if let encoded = try? JSONEncoder().encode(self.tips) {
-            UserDefaults.standard.set(encoded, forKey: saveKey)
+            storage.set(encoded, forKey: saveKey)
         }
     }
     

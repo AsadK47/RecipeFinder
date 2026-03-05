@@ -120,7 +120,10 @@ final class AuthenticationManager: NSObject, ObservableObject {
                 // Reload all managers
                 AccountManager.shared.loadProfile()
                 ShoppingListManager.shared.reloadForCurrentUser()
-                NotesManager().reloadForCurrentUser()
+                NotesManager.shared.reloadForCurrentUser()
+                KitchenInventoryManager.shared.reloadForCurrentUser()
+                MealPlanningManager.shared.reloadForCurrentUser()
+                CookingTipsManager.shared.reloadForCurrentUser()
                 BadgeManager.shared.reloadForCurrentUser()
             }
             
@@ -249,7 +252,10 @@ final class AuthenticationManager: NSObject, ObservableObject {
         // Reload all managers for the current user
         AccountManager.shared.loadProfile()
         ShoppingListManager.shared.reloadForCurrentUser()
-        NotesManager().reloadForCurrentUser()
+        NotesManager.shared.reloadForCurrentUser()
+        KitchenInventoryManager.shared.reloadForCurrentUser()
+        MealPlanningManager.shared.reloadForCurrentUser()
+        CookingTipsManager.shared.reloadForCurrentUser()
         BadgeManager.shared.reloadForCurrentUser()
         
         // Check if this is a new user (first time sign-in)
@@ -349,7 +355,10 @@ final class AuthenticationManager: NSObject, ObservableObject {
         // Reload managers for the new user
         AccountManager.shared.loadProfile()
         ShoppingListManager.shared.reloadForCurrentUser()
-        NotesManager().reloadForCurrentUser()
+        NotesManager.shared.reloadForCurrentUser()
+        KitchenInventoryManager.shared.reloadForCurrentUser()
+        MealPlanningManager.shared.reloadForCurrentUser()
+        CookingTipsManager.shared.reloadForCurrentUser()
         BadgeManager.shared.reloadForCurrentUser()
         
         // Populate sample recipes for this brand-new account
@@ -439,7 +448,10 @@ final class AuthenticationManager: NSObject, ObservableObject {
                     UserScopedStorage.shared.currentUserId = user.id
                     AccountManager.shared.loadProfile()
                     ShoppingListManager.shared.reloadForCurrentUser()
-                    NotesManager().reloadForCurrentUser()
+                    NotesManager.shared.reloadForCurrentUser()
+                    KitchenInventoryManager.shared.reloadForCurrentUser()
+                    MealPlanningManager.shared.reloadForCurrentUser()
+                    CookingTipsManager.shared.reloadForCurrentUser()
                     BadgeManager.shared.reloadForCurrentUser()
                 }
                 
@@ -490,7 +502,10 @@ final class AuthenticationManager: NSObject, ObservableObject {
         // Clear managers (loadProfile will reset to empty values when currentUserId is nil)
         AccountManager.shared.loadProfile()
         ShoppingListManager.shared.reloadForCurrentUser()
-        NotesManager().reloadForCurrentUser()
+        NotesManager.shared.reloadForCurrentUser()
+        KitchenInventoryManager.shared.reloadForCurrentUser()
+        MealPlanningManager.shared.reloadForCurrentUser()
+        CookingTipsManager.shared.reloadForCurrentUser()
         BadgeManager.shared.reloadForCurrentUser()
         
         // Ensure UI updates happen immediately on main thread
@@ -647,7 +662,10 @@ extension AuthenticationManager: ASAuthorizationControllerDelegate {
                 // Reload all managers for this user
                 AccountManager.shared.loadProfile()
                 ShoppingListManager.shared.reloadForCurrentUser()
-                NotesManager().reloadForCurrentUser()
+                NotesManager.shared.reloadForCurrentUser()
+                KitchenInventoryManager.shared.reloadForCurrentUser()
+                MealPlanningManager.shared.reloadForCurrentUser()
+                CookingTipsManager.shared.reloadForCurrentUser()
                 BadgeManager.shared.reloadForCurrentUser()
                 
                 // Populate sample recipes only once per user

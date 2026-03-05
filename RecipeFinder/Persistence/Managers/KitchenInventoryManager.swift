@@ -12,6 +12,7 @@ final class KitchenInventoryManager: ObservableObject {
 	private let saveKey = Constants.UserDefaultsKeys.kitchenItems
 	private let inventorySaveKey = "kitchenInventoryItems"
 	private let migrationKey = "kitchenItemsMigrationCompleted_v1"
+    private let storage = UserScopedStorage.shared
     
     // Cache items in memory for performance
     @Published private(set) var items: [KitchenItem] = []
@@ -25,17 +26,26 @@ final class KitchenInventoryManager: ObservableObject {
     
     // MARK: - Loading
     
+    func reloadForCurrentUser() {
+        loadItems()
+        loadInventoryItems()
+    }
+
     private func loadItems() {
-        if let data = UserDefaults.standard.data(forKey: saveKey),
+        if let data = storage.data(forKey: saveKey),
            let decoded = try? JSONDecoder().decode([KitchenItem].self, from: data) {
             items = decoded
+        } else {
+            items = []
         }
     }
     
     private func loadInventoryItems() {
-        if let data = UserDefaults.standard.data(forKey: inventorySaveKey),
+        if let data = storage.data(forKey: inventorySaveKey),
            let decoded = try? JSONDecoder().decode([KitchenInventoryModel].self, from: data) {
             inventoryItems = decoded
+        } else {
+            inventoryItems = []
         }
     }
 	
@@ -243,14 +253,14 @@ final class KitchenInventoryManager: ObservableObject {
 	// Persistence
 	private func saveItems(_ newItems: [KitchenItem]) {
 		if let encoded = try? JSONEncoder().encode(newItems) {
-			UserDefaults.standard.set(encoded, forKey: saveKey)
+			storage.set(encoded, forKey: saveKey)
             items = newItems // Update cache
 		}
 	}
 	
 	private func saveInventoryItems(_ newInventoryItems: [KitchenInventoryModel]) {
 		if let encoded = try? JSONEncoder().encode(newInventoryItems) {
-			UserDefaults.standard.set(encoded, forKey: inventorySaveKey)
+			storage.set(encoded, forKey: inventorySaveKey)
             inventoryItems = newInventoryItems // Update cache
 		}
 	}

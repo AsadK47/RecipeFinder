@@ -3,12 +3,14 @@ import Combine
 
 @MainActor
 class NotesManager: ObservableObject {
+    static let shared = NotesManager()
+
     @Published var notes: [NoteModel] = []
     
     private let notesKey = "saved_notes"
     private let storage = UserScopedStorage.shared
     
-    init() {
+    private init() {
         loadNotes()
     }
     
