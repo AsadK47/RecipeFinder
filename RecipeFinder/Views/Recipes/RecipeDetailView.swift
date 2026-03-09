@@ -404,8 +404,8 @@ struct RecipeDetailView: View {
     }
     
     private struct EditingIngredient: Identifiable {
-        let id = UUID()
         let index: Int
+        var id: Int { index }
     }
     
     private var prePrepSection: some View {
@@ -763,31 +763,64 @@ struct RecipeDetailView: View {
         HapticManager.shared.success()
     }
     
+    // Grouped cooking units for the picker
+    private let cookingUnits: [(group: String, units: [String])] = [
+        ("Volume – Metric",   ["ml", "cl", "dl", "l"]),
+        ("Volume – Imperial", ["tsp", "tbsp", "fl oz", "cup", "pt", "qt", "gal"]),
+        ("Weight – Metric",   ["g", "kg"]),
+        ("Weight – Imperial", ["oz", "lb"]),
+        ("Count & Other",     ["piece", "whole", "slice", "clove", "can", "jar",
+                               "package", "bunch", "sprig", "leaf", "sheet",
+                               "pinch", "dash", "drop", "handful"]),
+    ]
+
+    private var allUnits: [String] {
+        cookingUnits.flatMap { $0.units }
+    }
+
+    private func groupLabel(for unit: String) -> String {
+        cookingUnits.first { $0.units.contains(unit) }?.group ?? "Other"
+    }
+
     private func ingredientEditSheet(for index: Int) -> some View {
         NavigationStack {
             Form {
-                Section("Edit Quantity") {
+                Section {
+                    Text(recipe.ingredients[index].name)
+                        .font(.headline)
+                } header: {
+                    Text("Ingredient")
+                }
+
+                Section {
                     HStack {
                         Text("Amount")
                         Spacer()
-                        TextField("Quantity", text: $editingQuantity)
+                        TextField("0", text: $editingQuantity)
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
-                            .frame(width: 100)
+                            .frame(width: 80)
                     }
-                    
-                    HStack {
-                        Text("Unit")
-                        Spacer()
-                        TextField("Unit (ml, g, cups, etc.)", text: $editingUnit)
-                            .multilineTextAlignment(.trailing)
-                            .frame(maxWidth: 150)
+
+                    Picker("Unit", selection: $editingUnit) {
+                        // "None" option for bare counts like "2 eggs"
+                        Text("none").tag("")
+                        ForEach(cookingUnits, id: \.group) { group in
+                            Section(group.group) {
+                                ForEach(group.units, id: \.self) { unit in
+                                    Text(unit).tag(unit)
+                                }
+                            }
+                        }
                     }
-                }
-                
-                Section {
-                    Text("Ingredient: \(recipe.ingredients[index].name)")
-                        .foregroundColor(.secondary)
+                } header: {
+                    Text("Quantity")
+                } footer: {
+                    if !editingUnit.isEmpty {
+                        Text("Group: \(groupLabel(for: editingUnit))")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
             .navigationTitle("Edit Ingredient")
@@ -802,6 +835,7 @@ struct RecipeDetailView: View {
                     Button("Save") {
                         saveIngredientEdit(at: index)
                     }
+                    .fontWeight(.semibold)
                 }
             }
         }

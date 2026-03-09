@@ -11,78 +11,65 @@ struct IngredientRowView: View {
     var onTapQuantity: (() -> Void)?
     
     var body: some View {
-        HStack(spacing: 0) {
-            // Left column: Ingredient name with optional prep notes
-            VStack(alignment: .leading, spacing: AppTheme.spacing4) {
+        HStack(alignment: .center, spacing: 0) {
+            // Left column: name stacked above quantity pill
+            VStack(alignment: .leading, spacing: 10) {
+                // Ingredient name — gets all available width, wraps freely
                 Text(ingredient.mainIngredientName)
                     .font(.body)
                     .fontWeight(.semibold)
                     .strikethrough(isChecked)
                     .foregroundStyle(isChecked ? .secondary : .primary)
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.8)
-                    
-                // Show preparation notes if any
+                    .fixedSize(horizontal: false, vertical: true)
+
+                // Preparation notes (e.g. "finely chopped")
                 if let prepNotes = ingredient.preparationNotes {
                     Text(prepNotes)
                         .font(.caption)
-                        .foregroundColor(.secondary)
-                        .lineLimit(1)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
+
+                // Quantity + unit pill, tappable for scaling
+                Button(action: { onTapQuantity?() }) {
+                    HStack(spacing: 4) {
+                        Text(formatQuantity(ingredient.scaledQuantity(for: scaleFactor)))
+                            .font(.caption)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.primary)
+
+                        if !ingredient.unit.isEmpty {
+                            Text(formatUnit(ingredient.unit, system: measurementSystem))
+                                .font(.caption)
+                                .fontWeight(.regular)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(
+                        Capsule()
+                            .fill(AppTheme.accentColor.opacity(0.13))
+                    )
+                }
+                .buttonStyle(.plain)
+                .disabled(onTapQuantity == nil)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.trailing, 8)
-            .layoutPriority(1)
-            
-            // First separator
+            .padding(.vertical, 10)
+
+            // Vertical divider
             Rectangle()
-                .fill(Color.secondary.opacity(0.3))
-                .frame(width: 1, height: 40)
-            
-            // Middle column: Quantity with unit
-            Button(action: {
-                onTapQuantity?()
-            }) {
-                HStack(spacing: AppTheme.spacing4) {
-                    // Quantity - bold and prominent
-                    Text(formatQuantity(ingredient.scaledQuantity(for: scaleFactor)))
-                        .font(.subheadline)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.primary)
-                    
-                    // Unit - lighter weight
-                    if !ingredient.unit.isEmpty {
-                        Text(formatUnit(ingredient.unit, system: measurementSystem))
-                            .font(.caption)
-                            .fontWeight(.regular)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-                .padding(.horizontal, 8)
-                .padding(.vertical, 8)
-                .background(
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(AppTheme.accentColor.opacity(0.12))
-                )
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .disabled(onTapQuantity == nil)
-            .frame(minWidth: 60, maxWidth: 75)
-            .padding(.horizontal, 8)
-            .allowsHitTesting(true)
-            
-            // Second separator
-            Rectangle()
-                .fill(Color.secondary.opacity(0.3))
-                .frame(width: 1, height: 40)
-            
+                .fill(Color.secondary.opacity(0.2))
+                .frame(width: 1)
+                .padding(.vertical, 6)
+
             // Right column: Checkbox
-            Button(action: { 
+            Button(action: {
                 HapticManager.shared.light()
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) { 
-                    toggle() 
-                } 
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                    toggle()
+                }
             }, label: {
                 Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
                     .font(.system(size: AppTheme.fontSize28))
@@ -91,12 +78,10 @@ struct IngredientRowView: View {
                     .contentShape(Rectangle())
             })
             .buttonStyle(.plain)
-            .frame(width: 44)
-            .padding(.leading, 8)
+            .frame(width: 48)
             .allowsHitTesting(true)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 8)
         .contentShape(Rectangle())
         .contextMenu {
             if let onAddToShopping = onAddToShopping {
