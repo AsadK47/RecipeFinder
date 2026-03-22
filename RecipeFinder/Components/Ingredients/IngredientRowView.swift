@@ -33,13 +33,13 @@ struct IngredientRowView: View {
                 // Quantity + unit pill, tappable for scaling
                 Button(action: { onTapQuantity?() }) {
                     HStack(spacing: 4) {
-                        Text(formatQuantity(ingredient.scaledQuantity(for: scaleFactor)))
+                        Text(formatQuantity(convertedIngredient.quantity))
                             .font(.caption)
                             .fontWeight(.bold)
                             .foregroundStyle(.primary)
 
-                        if !ingredient.unit.isEmpty {
-                            Text(formatUnit(ingredient.unit, system: measurementSystem))
+                        if !convertedIngredient.unit.isEmpty {
+                            Text(convertedIngredient.unit)
                                 .font(.caption)
                                 .fontWeight(.regular)
                                 .foregroundStyle(.secondary)
@@ -98,7 +98,17 @@ struct IngredientRowView: View {
     }
     
     // MARK: - Helper Functions
-    
+
+    /// Runs unit conversion once so both quantity and unit stay in sync
+    private var convertedIngredient: (quantity: Double, unit: String) {
+        UnitConversion.convert(
+            value: ingredient.scaledQuantity(for: scaleFactor),
+            unit: ingredient.unit,
+            to: measurementSystem,
+            ingredientName: ingredient.name
+        )
+    }
+
     /// Format quantity with smart rounding
     /// - Small values (< 5): show 1 decimal place (2.1, 3.5)
     /// - Medium values (5-100): show whole numbers (44, 75)
@@ -126,16 +136,5 @@ struct IngredientRowView: View {
         return String(format: "%.0f", quantity)
     }
     
-    /// Format unit with proper conversion and abbreviation
-    private func formatUnit(_ unit: String, system: MeasurementSystem) -> String {
-        // Convert if needed
-        let converted = UnitConversion.convert(
-            value: ingredient.scaledQuantity(for: scaleFactor),
-            unit: unit,
-            to: system,
-            ingredientName: ingredient.name
-        )
-        
-        return converted.unit
-    }
 }
+

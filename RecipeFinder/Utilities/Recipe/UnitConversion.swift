@@ -63,6 +63,10 @@ struct UnitConversion {
         switch normalizedFrom {
         case "ml", "milliliters", "milliliter":
             ml = value
+        case "cl", "centiliters", "centiliter":
+            ml = value * 10.0
+        case "dl", "deciliters", "deciliter":
+            ml = value * 100.0
         case "l", "liters", "liter":
             ml = value * 1000.0  // Exact
         case "cup", "cups":
@@ -73,6 +77,12 @@ struct UnitConversion {
             ml = value * 4.92892159375  // USDA exact: 1 US tsp = 4.92892159375 ml (1/3 tbsp)
         case "fl oz", "fluid ounce", "fluid ounces":
             ml = value * 29.5735295625  // NIST exact: 1 US fl oz = 29.5735295625 ml
+        case "pt", "pint", "pints":
+            ml = value * 473.176473  // NIST exact: 1 US liquid pint
+        case "qt", "quart", "quarts":
+            ml = value * 946.352946  // NIST exact: 1 US liquid quart
+        case "gal", "gallon", "gallons":
+            ml = value * 3785.411784  // NIST exact: 1 US gallon
         default:
             return value
         }
@@ -81,6 +91,10 @@ struct UnitConversion {
         switch normalizedTo {
         case "ml", "milliliters", "milliliter":
             return ml
+        case "cl", "centiliters", "centiliter":
+            return ml / 10.0
+        case "dl", "deciliters", "deciliter":
+            return ml / 100.0
         case "l", "liters", "liter":
             return ml / 1000.0  // Exact
         case "cup", "cups":
@@ -91,6 +105,12 @@ struct UnitConversion {
             return ml / 4.92892159375  // USDA exact
         case "fl oz", "fluid ounce", "fluid ounces":
             return ml / 29.5735295625  // NIST exact
+        case "pt", "pint", "pints":
+            return ml / 473.176473
+        case "qt", "quart", "quarts":
+            return ml / 946.352946
+        case "gal", "gallon", "gallons":
+            return ml / 3785.411784
         default:
             return value
         }
@@ -107,9 +127,13 @@ struct UnitConversion {
             return .weight
             
         // Volume units
-        case "ml", "milliliters", "milliliter", "l", "liters", "liter",
+        case "ml", "milliliters", "milliliter",
+             "cl", "centiliters", "centiliter",
+             "dl", "deciliters", "deciliter",
+             "l", "liters", "liter",
              "cup", "cups", "tbsp", "tablespoon", "tablespoons",
-             "tsp", "teaspoon", "teaspoons", "fl oz", "fluid ounce", "fluid ounces":
+             "tsp", "teaspoon", "teaspoons", "fl oz", "fluid ounce", "fluid ounces",
+             "pt", "pint", "pints", "qt", "quart", "quarts", "gal", "gallon", "gallons":
             return .volume
             
         // No conversion needed
@@ -326,7 +350,10 @@ struct UnitConversion {
         switch system {
         case .metric:
             // If already metric, return as is
-            if ["ml", "milliliters", "milliliter", "l", "liters", "liter"].contains(normalized) {
+            if ["ml", "milliliters", "milliliter",
+                "cl", "centiliters", "centiliter",
+                "dl", "deciliters", "deciliter",
+                "l", "liters", "liter"].contains(normalized) {
                 return (value, unit)
             }
             // Convert to ml or l
@@ -340,7 +367,8 @@ struct UnitConversion {
         case .imperial:
             // If already imperial, return as is
             if ["cup", "cups", "tbsp", "tablespoon", "tablespoons",
-                "tsp", "teaspoon", "teaspoons", "fl oz", "fluid ounce", "fluid ounces"].contains(normalized) {
+                "tsp", "teaspoon", "teaspoons", "fl oz", "fluid ounce", "fluid ounces",
+                "pt", "pint", "pints", "qt", "quart", "quarts", "gal", "gallon", "gallons"].contains(normalized) {
                 return (value, unit)
             }
             // Keep common imperial units
@@ -349,6 +377,8 @@ struct UnitConversion {
             // Prioritize common cooking measurements
             let cups = ml / 236.588
             if cups >= 1 {
+                // Use qt for very large volumes (≥4 cups)
+                if cups >= 4 { return (cups / 4, "qt") }
                 return (cups, "cup")
             }
             

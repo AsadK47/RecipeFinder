@@ -27,7 +27,7 @@ struct RecipeWizardView: View {
     
     // Step tracking
     @State private var currentStep = 0
-    private let totalSteps = 7
+    private let totalSteps = 6
     
     // Step 1: Recipe Name
     @State private var recipeName = ""
@@ -68,6 +68,17 @@ struct RecipeWizardView: View {
     
     let difficulties = ["Basic", "Intermediate", "Expert"]
     let categories = ["Breakfast", "Starter", "Main", "Side", "Soup", "Dessert", "Drink"]
+
+    // Grouped cooking units — same set used in RecipeDetailView's ingredient edit sheet
+    let cookingUnitGroups: [(group: String, units: [String])] = [
+        ("Volume – Metric",   ["ml", "cl", "dl", "l"]),
+        ("Volume – Imperial", ["tsp", "tbsp", "fl oz", "cup", "pt", "qt", "gal"]),
+        ("Weight – Metric",   ["g", "kg"]),
+        ("Weight – Imperial", ["oz", "lb"]),
+        ("Count & Other",     ["piece", "whole", "slice", "clove", "can", "jar",
+                               "package", "bunch", "sprig", "leaf", "sheet",
+                               "pinch", "dash", "drop", "handful"]),
+    ]
     
     // Helper struct for ingredient input
     struct IngredientItem: Identifiable {
@@ -243,14 +254,12 @@ struct RecipeWizardView: View {
         case 1:
             basicInfoStep
         case 2:
-            servingsStep
-        case 3:
             ingredientsStep
-        case 4:
+        case 3:
             prePrepStep
-        case 5:
+        case 4:
             instructionsStep
-        case 6:
+        case 5:
             notesStep
         default:
             EmptyView()
@@ -349,102 +358,125 @@ struct RecipeWizardView: View {
                         }
                         .pickerStyle(.menu)
                     }
+
+                    Divider()
+
+                    // Servings
+                    VStack(alignment: .leading, spacing: AppTheme.spacing8) {
+                        Text("Servings")
+                            .font(.headline)
+                            .foregroundColor(.primary)
+
+                        HStack {
+                            Stepper(
+                                value: $servings, in: 1...20,
+                                label: {
+                                    HStack(spacing: AppTheme.spacing8) {
+                                        Text("\(servings)")
+                                            .font(.title2)
+                                            .fontWeight(.bold)
+                                            .foregroundColor(AppTheme.accentColor(for: appTheme))
+                                            .frame(minWidth: 32)
+                                        Text(servings == 1 ? "serving" : "servings")
+                                            .font(.body)
+                                            .foregroundColor(.secondary)
+                                    }
+                                }
+                            )
+                        }
+                    }
                 }
                 .padding()
             }
         }
     }
     
-    // MARK: - Step 3: Servings
-    private var servingsStep: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacing24) {
-            stepHeader(
-                title: "How many servings?",
-                subtitle: "This will help with ingredient quantities",
-                stepNumber: 3,
-                illustration: "person.2.fill"
-            )
-            
-            cardContainer {
-                VStack(spacing: AppTheme.spacing24) {
-                    // Large display of servings
-                    Text("\(servings)")
-                        .font(.system(size: AppTheme.fontSize80, weight: .bold))
-                        .foregroundColor(AppTheme.accentColor(for: appTheme))
-                    
-                    Text("servings")
-                        .font(.title3)
-                        .foregroundColor(.secondary)
-                    
-                    Divider()
-                    
-                    // Stepper
-                    Stepper("Adjust servings", value: $servings, in: 1...20)
-                        .labelsHidden()
-                }
-                .padding(AppTheme.spacing32)
-            }
-        }
-    }
-    
-    // MARK: - Step 4: Ingredients
+    // MARK: - Step 3: Ingredients
     private var ingredientsStep: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing24) {
             stepHeader(
                 title: "Ingredients",
                 subtitle: "Add your ingredients with quantities",
-                stepNumber: 4,
+                stepNumber: 3,
                 illustration: "cart.fill"
             )
             
             cardContainer {
-                VStack(spacing: AppTheme.spacing16) {
+                VStack(spacing: AppTheme.spacing12) {
                     ForEach(Array(ingredientItems.enumerated()), id: \.offset) { index, _ in
-                        HStack(spacing: AppTheme.spacing12) {
-                            // Combined Quantity field (amount + unit)
-                            VStack(alignment: .leading, spacing: AppTheme.spacing4) {
-                                Text("Quantity")
-                                    .font(.caption2)
-                                    .foregroundColor(.secondary)
-                                HStack(spacing: AppTheme.spacing4) {
-                                    TextField("Qty", text: $ingredientItems[index].quantity)
-                                        .keyboardType(.decimalPad)
+                        VStack(alignment: .leading, spacing: AppTheme.spacing8) {
+                            // Row 1: Ingredient name + delete button
+                            HStack(spacing: AppTheme.spacing8) {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Ingredient")
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary)
+                                    TextField("e.g. Chicken breast", text: $ingredientItems[index].name)
                                         .textFieldStyle(.roundedBorder)
-                                        .frame(width: 50)
-                                    TextField("Unit", text: $ingredientItems[index].unit)
-                                        .textFieldStyle(.roundedBorder)
-                                        .frame(width: 60)
+                                }
+
+                                if ingredientItems.count > 1 {
+                                    Button(action: {
+                                        HapticManager.shared.light()
+                                        ingredientItems.remove(at: index)
+                                    }) {
+                                        Image(systemName: "minus.circle.fill")
+                                            .foregroundColor(.red)
+                                            .font(.system(size: AppTheme.fontSize22))
+                                    }
+                                    .padding(.top, 14) // align with textfield
                                 }
                             }
-                            
-                            // Ingredient Name
-                            VStack(alignment: .leading, spacing: AppTheme.spacing4) {
-                                Text("Ingredient")
-                                    .font(.caption2)
-                                    .foregroundColor(.secondary)
-                                TextField("Ingredient Name", text: $ingredientItems[index].name)
-                                    .textFieldStyle(.roundedBorder)
-                            }
-                            
-                            // Delete button
-                            if ingredientItems.count > 1 {
-                                Button(action: {
-                                    HapticManager.shared.light()
-                                    ingredientItems.remove(at: index)
-                                }) {
-                                    Image(systemName: "minus.circle.fill")
-                                        .foregroundColor(.red)
-                                        .font(.system(size: AppTheme.fontSize24))
+
+                            // Row 2: Amount + Unit picker
+                            HStack(alignment: .top, spacing: AppTheme.spacing8) {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Amount")
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary)
+                                    TextField("0", text: $ingredientItems[index].quantity)
+                                        .keyboardType(.decimalPad)
+                                        .textFieldStyle(.roundedBorder)
+                                        .frame(width: 70)
+                                }
+
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Unit")
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary)
+                                    // Match the height of .roundedBorder TextField (~34 pt)
+                                    Picker("", selection: $ingredientItems[index].unit) {
+                                        Text("none").tag("")
+                                        ForEach(cookingUnitGroups, id: \.group) { group in
+                                            Section(group.group) {
+                                                ForEach(group.units, id: \.self) { unit in
+                                                    Text(unit).tag(unit)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    .pickerStyle(.menu)
+                                    .labelsHidden()
+                                    .frame(maxWidth: .infinity, minHeight: 34, alignment: .leading)
+                                    .padding(.horizontal, 6)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 6)
+                                            .fill(Color(.systemGray6))
+                                    )
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 6)
+                                            .stroke(Color(.systemGray4), lineWidth: 0.5)
+                                    )
                                 }
                             }
                         }
-                        .padding(.vertical, 8)
-                        
+                        .padding(.vertical, 4)
+
                         if index < ingredientItems.count - 1 {
                             Divider()
                         }
                     }
-                    
+
                     Button(action: {
                         HapticManager.shared.light()
                         ingredientItems.append(IngredientItem())
@@ -460,13 +492,13 @@ struct RecipeWizardView: View {
         }
     }
     
-    // MARK: - Step 5: Pre-prep Instructions
+    // MARK: - Step 4: Pre-prep Instructions
     private var prePrepStep: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing24) {
             stepHeader(
                 title: "Pre-prep Instructions",
                 subtitle: "Any prep work before cooking? (Optional)",
-                stepNumber: 5,
+                stepNumber: 4,
                 illustration: "list.bullet.clipboard.fill"
             )
             
@@ -517,13 +549,13 @@ struct RecipeWizardView: View {
         }
     }
     
-    // MARK: - Step 6: Main Instructions
+    // MARK: - Step 5: Main Instructions
     private var instructionsStep: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing24) {
             stepHeader(
                 title: "Cooking Instructions",
                 subtitle: "Walk us through the cooking process",
-                stepNumber: 6,
+                stepNumber: 5,
                 illustration: "flame.fill"
             )
             
@@ -574,13 +606,13 @@ struct RecipeWizardView: View {
         }
     }
     
-    // MARK: - Step 7: Notes
+    // MARK: - Step 6: Notes
     private var notesStep: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing24) {
             stepHeader(
                 title: "Final Notes",
                 subtitle: prefilledData?.notes != nil && !notes.isEmpty ? "Review notes or add your own" : "Any tips, variations, or additional notes? (Optional)",
-                stepNumber: 7,
+                stepNumber: 6,
                 illustration: "note.text"
             )
             
@@ -829,16 +861,14 @@ struct RecipeWizardView: View {
         case 0:
             return !recipeName.trimmingCharacters(in: .whitespaces).isEmpty
         case 1:
-            return true // Basic info always valid with defaults
+            return servings > 0 // Basic info including servings
         case 2:
-            return servings > 0
-        case 3:
             return ingredientItems.contains { !$0.name.isEmpty }
-        case 4:
+        case 3:
             return true // Pre-prep is optional
-        case 5:
+        case 4:
             return mainInstructions.contains { !$0.isEmpty }
-        case 6:
+        case 5:
             return true // Notes are optional
         default:
             return false
