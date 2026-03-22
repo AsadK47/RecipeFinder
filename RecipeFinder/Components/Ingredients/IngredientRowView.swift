@@ -109,31 +109,8 @@ struct IngredientRowView: View {
         )
     }
 
-    /// Format quantity with smart rounding
-    /// - Small values (< 5): show 1 decimal place (2.1, 3.5)
-    /// - Medium values (5-100): show whole numbers (44, 75)
-    /// - Large values (> 100): show whole numbers (250, 1000)
     private func formatQuantity(_ quantity: Double) -> String {
-        // Handle fractions nicely
-        if quantity < 1 {
-            // Check common fractions
-            if abs(quantity - 0.25) < 0.01 { return "¼" }
-            if abs(quantity - 0.33) < 0.02 { return "⅓" }
-            if abs(quantity - 0.5) < 0.01 { return "½" }
-            if abs(quantity - 0.66) < 0.02 { return "⅔" }
-            if abs(quantity - 0.75) < 0.01 { return "¾" }
-        }
-        
-        // For small quantities, show 1 decimal if meaningful
-        if quantity < 5 {
-            if quantity.truncatingRemainder(dividingBy: 1) < 0.1 {
-                return String(format: "%.0f", quantity)
-            }
-            return String(format: "%.1f", quantity)
-        }
-        
-        // For larger quantities, round to whole numbers
-        return String(format: "%.0f", quantity)
+        FractionFormatter.format(quantity)
     }
     
 }

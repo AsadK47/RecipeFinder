@@ -40,24 +40,7 @@ struct Ingredient: Identifiable, Codable, Hashable {
     }
     
     func formattedQuantity(for scaleFactor: Double) -> String {
-        let quantity = scaledQuantity(for: scaleFactor)
-        
-        // Return whole number if no fraction
-        if quantity.truncatingRemainder(dividingBy: 1) == 0 {
-            return String(format: "%.0f", quantity)
-        }
-        
-        // Try to convert to fraction
-        if let fraction = FractionFormatter.toFraction(quantity) {
-            return fraction
-        }
-        
-        // Fall back to decimal
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.maximumFractionDigits = 2
-        formatter.minimumFractionDigits = 0
-        return formatter.string(from: NSNumber(value: quantity)) ?? "\(quantity)"
+        FractionFormatter.format(scaledQuantity(for: scaleFactor))
     }
     
     // Unit Conversion (for metric/imperial)
@@ -68,26 +51,7 @@ struct Ingredient: Identifiable, Codable, Hashable {
     
     func formattedWithUnit(for scaleFactor: Double, system: MeasurementSystem) -> String {
         let converted = converted(to: system, scaleFactor: scaleFactor)
-        
-        let formattedValue: String
-        
-        // Return whole number if no fraction
-        if converted.quantity.truncatingRemainder(dividingBy: 1) == 0 {
-            formattedValue = String(format: "%.0f", converted.quantity)
-        }
-        // Try to convert to fraction
-        else if let fraction = FractionFormatter.toFraction(converted.quantity) {
-            formattedValue = fraction
-        }
-        // Fall back to decimal
-        else {
-            let formatter = NumberFormatter()
-            formatter.numberStyle = .decimal
-            formatter.maximumFractionDigits = 2
-            formatter.minimumFractionDigits = 0
-            formattedValue = formatter.string(from: NSNumber(value: converted.quantity)) ?? "\(converted.quantity)"
-        }
-        
+        let formattedValue = FractionFormatter.format(converted.quantity)
         return converted.unit.isEmpty ? formattedValue : "\(formattedValue) \(converted.unit)"
     }
     
@@ -417,6 +381,25 @@ enum FractionFormatter {
         }
         
         return nil
+    }
+
+    /// Single canonical formatter used everywhere a quantity is displayed.
+    /// Whole numbers → "2", known fractions → "1½", everything else → up to 2 decimal places.
+    static func format(_ value: Double) -> String {
+        // Whole number — no decimal noise
+        if value.truncatingRemainder(dividingBy: 1) == 0 {
+            return String(format: "%.0f", value)
+        }
+        // Known fraction symbol (handles both < 1 and mixed numbers like 1.5)
+        if let fraction = toFraction(value) {
+            return fraction
+        }
+        // Fallback: up to 2 significant decimal places, no trailing zeros
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.maximumFractionDigits = 2
+        formatter.minimumFractionDigits = 0
+        return formatter.string(from: NSNumber(value: value)) ?? String(format: "%.2g", value)
     }
 }
 

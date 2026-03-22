@@ -494,7 +494,7 @@ struct RecipeDetailView: View {
             prefilledData: RecipeWizardView.PrefilledRecipeData(
                 name: recipe.name,
                 description: nil,
-                ingredients: recipe.ingredients.map { "\($0.baseQuantity) \($0.unit) \($0.name)" },
+                ingredients: recipe.ingredients.map { "\(String(format: "%g", $0.baseQuantity)) \($0.unit) \($0.name)" },
                 instructions: recipe.instructions,
                 prepTime: TimeExtractor.extractMinutes(from: recipe.prepTime),
                 cookTime: TimeExtractor.extractMinutes(from: recipe.cookingTime),
