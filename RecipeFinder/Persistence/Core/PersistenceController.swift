@@ -119,12 +119,21 @@ final class PersistenceController {
         
         let context = container.viewContext
         let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: Entity.recipe)
+        
+        // Only delete recipes belonging to the current user to avoid wiping other users' data
+        if let userId = UserScopedStorage.shared.currentUserId {
+            fetchRequest.predicate = NSPredicate(format: "userId == %@", userId)
+        } else {
+            logger.debug("⚠️ No user logged in, skipping database clear to protect other users' data")
+            return
+        }
+        
         let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
         
         do {
             try context.execute(deleteRequest)
             try context.save()
-            logger.debug("✅ Database cleared successfully")
+            logger.debug("✅ Database cleared successfully for current user")
         } catch {
             logger.error("❌ Failed to clear database: \(error.localizedDescription)")
         }

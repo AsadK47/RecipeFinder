@@ -1026,19 +1026,26 @@ struct DataImportView: View {
                     }
                 }
                 
+                // Write imported data through UserScopedStorage so it lands
+                // under the current user's scoped keys (not raw UserDefaults).
+                let scopedStorage = UserScopedStorage.shared
+                
                 // Import shopping list
                 if let shoppingListArray = json["shoppingList"] as? [[String: Any]] {
                     let jsonData = try JSONSerialization.data(withJSONObject: shoppingListArray)
                     if let newItems = try? JSONDecoder().decode([ShoppingListModel].self, from: jsonData) {
                         if selectedMergeMode == .replace {
                             let encoded = try JSONEncoder().encode(newItems)
-                            UserDefaults.standard.set(encoded, forKey: "shoppingListItems")
+                            scopedStorage.set(encoded, forKey: Constants.UserDefaultsKeys.shoppingListItems)
                         } else {
-                            if let existingData = UserDefaults.standard.data(forKey: "shoppingListItems"),
+                            if let existingData = scopedStorage.data(forKey: Constants.UserDefaultsKeys.shoppingListItems),
                                var existingItems = try? JSONDecoder().decode([ShoppingListModel].self, from: existingData) {
                                 existingItems.append(contentsOf: newItems)
                                 let encoded = try JSONEncoder().encode(existingItems)
-                                UserDefaults.standard.set(encoded, forKey: "shoppingListItems")
+                                scopedStorage.set(encoded, forKey: Constants.UserDefaultsKeys.shoppingListItems)
+                            } else {
+                                let encoded = try JSONEncoder().encode(newItems)
+                                scopedStorage.set(encoded, forKey: Constants.UserDefaultsKeys.shoppingListItems)
                             }
                         }
                     }
@@ -1050,13 +1057,16 @@ struct DataImportView: View {
                     if let newItems = try? JSONDecoder().decode([KitchenInventoryModel].self, from: jsonData) {
                         if selectedMergeMode == .replace {
                             let encoded = try JSONEncoder().encode(newItems)
-                            UserDefaults.standard.set(encoded, forKey: "kitchenInventory")
+                            scopedStorage.set(encoded, forKey: Constants.UserDefaultsKeys.kitchenItems)
                         } else {
-                            if let existingData = UserDefaults.standard.data(forKey: "kitchenInventory"),
+                            if let existingData = scopedStorage.data(forKey: Constants.UserDefaultsKeys.kitchenItems),
                                var existingItems = try? JSONDecoder().decode([KitchenInventoryModel].self, from: existingData) {
                                 existingItems.append(contentsOf: newItems)
                                 let encoded = try JSONEncoder().encode(existingItems)
-                                UserDefaults.standard.set(encoded, forKey: "kitchenInventory")
+                                scopedStorage.set(encoded, forKey: Constants.UserDefaultsKeys.kitchenItems)
+                            } else {
+                                let encoded = try JSONEncoder().encode(newItems)
+                                scopedStorage.set(encoded, forKey: Constants.UserDefaultsKeys.kitchenItems)
                             }
                         }
                     }
@@ -1068,13 +1078,16 @@ struct DataImportView: View {
                     if let newPlans = try? JSONDecoder().decode([MealPlanModel].self, from: jsonData) {
                         if selectedMergeMode == .replace {
                             let encoded = try JSONEncoder().encode(newPlans)
-                            UserDefaults.standard.set(encoded, forKey: "mealPlans")
+                            scopedStorage.set(encoded, forKey: "mealPlansStorage")
                         } else {
-                            if let existingData = UserDefaults.standard.data(forKey: "mealPlans"),
+                            if let existingData = scopedStorage.data(forKey: "mealPlansStorage"),
                                var existingPlans = try? JSONDecoder().decode([MealPlanModel].self, from: existingData) {
                                 existingPlans.append(contentsOf: newPlans)
                                 let encoded = try JSONEncoder().encode(existingPlans)
-                                UserDefaults.standard.set(encoded, forKey: "mealPlans")
+                                scopedStorage.set(encoded, forKey: "mealPlansStorage")
+                            } else {
+                                let encoded = try JSONEncoder().encode(newPlans)
+                                scopedStorage.set(encoded, forKey: "mealPlansStorage")
                             }
                         }
                     }
@@ -1084,18 +1097,28 @@ struct DataImportView: View {
                 if let notes = json["recipeNotes"] as? [String: String] {
                     if selectedMergeMode == .replace {
                         let encoded = try JSONEncoder().encode(notes)
-                        UserDefaults.standard.set(encoded, forKey: "recipeNotes")
+                        scopedStorage.set(encoded, forKey: "saved_notes")
                     } else {
-                        if let existingData = UserDefaults.standard.data(forKey: "recipeNotes"),
+                        if let existingData = scopedStorage.data(forKey: "saved_notes"),
                            var existingNotes = try? JSONDecoder().decode([String: String].self, from: existingData) {
                             existingNotes.merge(notes) { _, new in new }
                             let encoded = try JSONEncoder().encode(existingNotes)
-                            UserDefaults.standard.set(encoded, forKey: "recipeNotes")
+                            scopedStorage.set(encoded, forKey: "saved_notes")
+                        } else {
+                            let encoded = try JSONEncoder().encode(notes)
+                            scopedStorage.set(encoded, forKey: "saved_notes")
                         }
                     }
                 }
                 
                 DispatchQueue.main.async {
+                    // Reload all managers so in-memory caches pick up the imported data
+                    ShoppingListManager.shared.reloadForCurrentUser()
+                    KitchenInventoryManager.shared.reloadForCurrentUser()
+                    MealPlanningManager.shared.reloadForCurrentUser()
+                    NotesManager.shared.reloadForCurrentUser()
+                    AccountManager.shared.updateStats()
+                    
                     self.isImporting = false
                     self.importResult = .success("Data imported successfully!")
                     HapticManager.shared.success()

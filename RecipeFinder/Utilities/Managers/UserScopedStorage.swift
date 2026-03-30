@@ -24,10 +24,11 @@ final class UserScopedStorage {
     }
     
     /// Create a user-scoped key
+    /// Returns a prefixed key to prevent data leaking between user accounts.
+    /// When no user is logged in, uses a "no_user" prefix so writes never
+    /// collide with any real user's scoped data.
     private func scopedKey(_ key: String) -> String {
-        guard let userId = currentUserId else {
-            return key // Fallback to global key if no user
-        }
+        let userId = currentUserId ?? "no_user"
         return "\(userId)_\(key)"
     }
     
