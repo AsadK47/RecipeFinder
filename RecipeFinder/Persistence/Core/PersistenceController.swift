@@ -143,9 +143,9 @@ final class PersistenceController {
     func resetDatabase() {
         logger.debug("🔄 Resetting database...")
         clearDatabase()
-        UserDefaults.standard.set(false, forKey: Constants.UserDefaultsKeys.hasPopulatedDatabase)
+        UserScopedStorage.shared.set(false, forKey: Constants.UserDefaultsKeys.hasPopulatedDatabase)
         populateDatabase()
-        UserDefaults.standard.set(true, forKey: Constants.UserDefaultsKeys.hasPopulatedDatabase)
+        UserScopedStorage.shared.set(true, forKey: Constants.UserDefaultsKeys.hasPopulatedDatabase)
         logger.debug("✅ Database reset complete")
     }
     

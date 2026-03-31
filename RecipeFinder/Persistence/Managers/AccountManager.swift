@@ -230,7 +230,7 @@ final class AccountManager: ObservableObject {
         
         // Repopulate with sample recipes
         PersistenceController.shared.populateDatabase()
-        UserDefaults.standard.set(true, forKey: Constants.UserDefaultsKeys.hasPopulatedDatabase)
+        UserScopedStorage.shared.set(true, forKey: Constants.UserDefaultsKeys.hasPopulatedDatabase)
         
         HapticManager.shared.success()
         logger.debug("🔄 Reset to defaults complete")
