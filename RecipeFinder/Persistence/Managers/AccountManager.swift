@@ -201,11 +201,9 @@ final class AccountManager: ObservableObject {
         // Clear profile data
         clearProfileData()
         
-        updateStats()
-        
         logger.debug("🗑️ All user data cleared")
         
-        // Notify other views to refresh
+        // Notify other views to refresh (also triggers updateStats via observer)
         NotificationCenter.default.post(name: NSNotification.Name("DataDidChange"), object: nil)
     }
     
