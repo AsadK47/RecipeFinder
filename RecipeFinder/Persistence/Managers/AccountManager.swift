@@ -192,7 +192,7 @@ final class AccountManager: ObservableObject {
         ]
         
         for key in keysToRemove {
-            UserDefaults.standard.removeObject(forKey: key)
+            UserScopedStorage.shared.removeObject(forKey: key)
         }
         
         // Clear Core Data recipes
