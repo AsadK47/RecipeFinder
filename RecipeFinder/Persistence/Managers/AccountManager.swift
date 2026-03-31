@@ -219,7 +219,7 @@ final class AccountManager: ObservableObject {
         firstName = ""
         lastName = ""
         chefType = .homeCook
-        uuid = UUID().uuidString
+        uuid = ""
         
         logger.debug("🗑️ Profile data cleared")
     }
