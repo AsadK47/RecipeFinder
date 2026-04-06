@@ -2,6 +2,7 @@ import Foundation
 import AuthenticationServices
 import SwiftUI
 import LocalAuthentication
+import Security
 
 @MainActor
 final class AuthenticationManager: NSObject, ObservableObject {
@@ -96,39 +97,34 @@ final class AuthenticationManager: NSObject, ObservableObject {
     
     func checkAuthenticationStatus() {
         isAuthenticated = UserDefaults.standard.bool(forKey: isAuthenticatedKey)
+        guard isAuthenticated else { return }
         
         // Check if session has expired (user was away too long)
-        if isAuthenticated {
-            if let lastActive = UserDefaults.standard.object(forKey: lastActiveTimestampKey) as? Date {
-                let timeAway = Date().timeIntervalSince(lastActive)
-                if timeAway > sessionTimeoutSeconds {
-                    // Session expired - require re-authentication
-                    logger.debug("⏱️ Session expired after \(Int(timeAway))s away")
-                    signOut()
-                    return
-                }
+        if let lastActive = UserDefaults.standard.object(forKey: lastActiveTimestampKey) as? Date {
+            let timeAway = Date().timeIntervalSince(lastActive)
+            guard timeAway <= sessionTimeoutSeconds else {
+                logger.debug("⏱️ Session expired after \(Int(timeAway))s away")
+                signOut()
+                return
             }
         }
         
-        if isAuthenticated {
-            loadUser()
-            
-            // Restore user ID for scoped storage
-            if let user = currentUser {
-                UserScopedStorage.shared.currentUserId = user.id
-                
-                // Reload all managers
-                AccountManager.shared.loadProfile()
-                ShoppingListManager.shared.reloadForCurrentUser()
-                NotesManager.shared.reloadForCurrentUser()
-                KitchenInventoryManager.shared.reloadForCurrentUser()
-                MealPlanningManager.shared.reloadForCurrentUser()
-                CookingTipsManager.shared.reloadForCurrentUser()
-                BadgeManager.shared.reloadForCurrentUser()
-            }
-            
-            updateLastActiveTimestamp()
-        }
+        loadUser()
+        guard let user = currentUser else { return }
+        
+        // Restore user ID for scoped storage
+        UserScopedStorage.shared.currentUserId = user.id
+        
+        // Reload all managers
+        AccountManager.shared.loadProfile()
+        ShoppingListManager.shared.reloadForCurrentUser()
+        NotesManager.shared.reloadForCurrentUser()
+        KitchenInventoryManager.shared.reloadForCurrentUser()
+        MealPlanningManager.shared.reloadForCurrentUser()
+        CookingTipsManager.shared.reloadForCurrentUser()
+        BadgeManager.shared.reloadForCurrentUser()
+        
+        updateLastActiveTimestamp()
     }
     
     /// Update the last active timestamp when app comes to foreground
@@ -139,13 +135,13 @@ final class AuthenticationManager: NSObject, ObservableObject {
     /// Check if session is expired and sign out if needed
     func checkSessionExpiration() {
         guard isAuthenticated else { return }
+        guard let lastActive = UserDefaults.standard.object(forKey: lastActiveTimestampKey) as? Date else { return }
         
-        if let lastActive = UserDefaults.standard.object(forKey: lastActiveTimestampKey) as? Date {
-            let timeAway = Date().timeIntervalSince(lastActive)
-            if timeAway > sessionTimeoutSeconds {
-                logger.debug("⏱️ Session expired - signing out")
-                signOut()
-            }
+        let timeAway = Date().timeIntervalSince(lastActive)
+        guard timeAway <= sessionTimeoutSeconds else {
+            logger.debug("⏱️ Session expired - signing out")
+            signOut()
+            return
         }
     }
     
@@ -206,6 +202,14 @@ final class AuthenticationManager: NSObject, ObservableObject {
         let givenName = components.first
         let familyName = components.count > 1 ? components.dropFirst().joined(separator: " ") : nil
         
+        // Load existing user data (if any) to preserve stable ID and creation date
+        let existingUser: User? = {
+            guard let data = loadUserData(),
+                  let user = try? JSONDecoder().decode(User.self, from: data),
+                  user.email == email else { return nil }
+            return user
+        }()
+        
         // Use the stable userId stored in the Keychain so the same user always gets
         // the same ID across sign-outs / sign-ins. Without this, every login produces
         // a new UUID which makes all previously saved recipes invisible (they are
@@ -214,9 +218,7 @@ final class AuthenticationManager: NSObject, ObservableObject {
         if let keychainId = credentialManager.getUserId(email: email) {
             // Happy path: userId is stored in Keychain (accounts created/updated after this fix)
             stableId = keychainId
-        } else if let data = UserDefaults.standard.data(forKey: userDataKey),
-                  let existingUser = try? JSONDecoder().decode(User.self, from: data),
-                  existingUser.email == email {
+        } else if let existingUser {
             // Migration path: account pre-dates this fix. Reuse the persisted ID so
             // existing recipes/data are still visible under the same userId.
             stableId = existingUser.id
@@ -232,7 +234,7 @@ final class AuthenticationManager: NSObject, ObservableObject {
             givenName: givenName,
             familyName: familyName,
             appleUserID: nil,
-            createdAt: Date(),
+            createdAt: existingUser?.createdAt ?? Date(),
             lastLoginAt: Date()
         )
     }
@@ -388,7 +390,7 @@ final class AuthenticationManager: NSObject, ObservableObject {
         }
         
         // Check if user already exists
-        if credentialManager.getUserInfo(email: email) != nil {
+        guard credentialManager.getUserInfo(email: email) == nil else {
             throw AuthError.accountAlreadyExists
         }
         
@@ -403,19 +405,8 @@ final class AuthenticationManager: NSObject, ObservableObject {
             throw AuthError.userCreationFailed
         }
         
-        // Parse full name into components and populate AccountManager
-        let nameComponents = fullName.components(separatedBy: " ").filter { !$0.isEmpty }
-        let firstName = nameComponents.first ?? ""
-        let lastName = nameComponents.count > 1 ? nameComponents.last ?? "" : ""
-        
-        // Update AccountManager with parsed name
-        AccountManager.shared.updateProfile(
-            firstName: firstName,
-            lastName: lastName,
-            chefType: .homeCook
-        )
-        
-        // Don't authenticate - user must sign in manually (defensive)
+        // Don't authenticate or update AccountManager - user must sign in manually (defensive)
+        // Profile will be populated when the user actually signs in
         logger.debug("✅ Account created for \(email) - user must sign in manually")
     }
     
@@ -436,27 +427,26 @@ final class AuthenticationManager: NSObject, ObservableObject {
                 .deviceOwnerAuthenticationWithBiometrics,
                 localizedReason: reason
             )
+            guard success else { return }
             
-            if success {
-                self.isAuthenticated = true
-                UserDefaults.standard.set(true, forKey: isAuthenticatedKey)
-                updateLastActiveTimestamp()
-                loadUser()
-                
-                // Restore user-scoped storage and managers (mirrors checkAuthenticationStatus)
-                if let user = currentUser {
-                    UserScopedStorage.shared.currentUserId = user.id
-                    AccountManager.shared.loadProfile()
-                    ShoppingListManager.shared.reloadForCurrentUser()
-                    NotesManager.shared.reloadForCurrentUser()
-                    KitchenInventoryManager.shared.reloadForCurrentUser()
-                    MealPlanningManager.shared.reloadForCurrentUser()
-                    CookingTipsManager.shared.reloadForCurrentUser()
-                    BadgeManager.shared.reloadForCurrentUser()
-                }
-                
-                HapticManager.shared.success()
+            self.isAuthenticated = true
+            UserDefaults.standard.set(true, forKey: isAuthenticatedKey)
+            updateLastActiveTimestamp()
+            loadUser()
+            
+            // Restore user-scoped storage and managers (mirrors checkAuthenticationStatus)
+            if let user = currentUser {
+                UserScopedStorage.shared.currentUserId = user.id
+                AccountManager.shared.loadProfile()
+                ShoppingListManager.shared.reloadForCurrentUser()
+                NotesManager.shared.reloadForCurrentUser()
+                KitchenInventoryManager.shared.reloadForCurrentUser()
+                MealPlanningManager.shared.reloadForCurrentUser()
+                CookingTipsManager.shared.reloadForCurrentUser()
+                BadgeManager.shared.reloadForCurrentUser()
             }
+            
+            HapticManager.shared.success()
         } catch {
             throw AuthError.biometricsFailed
         }
@@ -523,38 +513,72 @@ final class AuthenticationManager: NSObject, ObservableObject {
     // MARK: - User Persistence
     
     private func saveUser(_ user: User) throws {
-        do {
-            let encoder = JSONEncoder()
-            let data = try encoder.encode(user)
-            
-            // Save to secure storage (Keychain in production)
-            UserDefaults.standard.set(data, forKey: userDataKey)
-        } catch {
+        guard let data = try? JSONEncoder().encode(user) else {
             throw AuthError.userCreationFailed
         }
+        
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: userDataKey,
+            kSecAttrService as String: "com.recipefinder.userdata",
+            kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlockedThisDeviceOnly
+        ]
+        
+        SecItemDelete(query as CFDictionary)
+        
+        var addQuery = query
+        addQuery[kSecValueData as String] = data
+        
+        let status = SecItemAdd(addQuery as CFDictionary, nil)
+        guard status == errSecSuccess else {
+            throw AuthError.userCreationFailed
+        }
+        
+        // Clean up legacy UserDefaults storage if present
+        UserDefaults.standard.removeObject(forKey: userDataKey)
     }
     
     private func loadUser() {
-        guard let data = UserDefaults.standard.data(forKey: userDataKey),
-              let user = try? JSONDecoder().decode(User.self, from: data) else {
-            return
+        guard let data = loadUserData(),
+              let user = try? JSONDecoder().decode(User.self, from: data) else { return }
+        self.currentUser = user
+    }
+    
+    /// Load user data from Keychain, falling back to UserDefaults for migration
+    private func loadUserData() -> Data? {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: userDataKey,
+            kSecAttrService as String: "com.recipefinder.userdata",
+            kSecReturnData as String: true,
+            kSecMatchLimit as String: kSecMatchLimitOne
+        ]
+        
+        var result: AnyObject?
+        if SecItemCopyMatching(query as CFDictionary, &result) == errSecSuccess,
+           let data = result as? Data {
+            return data
         }
         
-        // We are already isolated to @MainActor, so assign synchronously.
-        // Using DispatchQueue.main.async here would defer the assignment to the next
-        // run loop iteration, making currentUser still nil when checkAuthenticationStatus
-        // reads it immediately after calling loadUser() — causing UserScopedStorage
-        // to never receive the current user ID on session restore.
-        self.currentUser = user
+        // Migration: move legacy data from UserDefaults to Keychain
+        guard let legacyData = UserDefaults.standard.data(forKey: userDataKey) else {
+            return nil
+        }
         
-        // Sync name into AccountManager, but preserve the user's stored chefType
-        // (previous code hardcoded .homeCook which reset it on every app launch).
-        let existingChefType = AccountManager.shared.chefType
-        AccountManager.shared.updateProfile(
-            firstName: user.givenName ?? "",
-            lastName: user.familyName ?? "",
-            chefType: existingChefType
-        )
+        let addQuery: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: userDataKey,
+            kSecAttrService as String: "com.recipefinder.userdata",
+            kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
+            kSecValueData as String: legacyData
+        ]
+        
+        if SecItemAdd(addQuery as CFDictionary, nil) == errSecSuccess {
+            UserDefaults.standard.removeObject(forKey: userDataKey)
+            logger.debug("✅ Migrated user data from UserDefaults to Keychain")
+        }
+        
+        return legacyData
     }
     
     // Update Current User
@@ -562,33 +586,42 @@ final class AuthenticationManager: NSObject, ObservableObject {
     /// Update the current user's information (called when editing profile)
     func updateCurrentUser(_ user: User) {
         currentUser = user
-        
-        // Save to persistent storage
-        if let encoded = try? JSONEncoder().encode(user) {
-            UserDefaults.standard.set(encoded, forKey: userDataKey)
-        }
-        
+        try? saveUser(user)
         logger.debug("✅ Current user updated: \(user.displayName)")
     }
     
     func deleteAccount() async throws {
+        let userId = currentUser?.id
+        
         // Delete from Keychain
         if let email = UserDefaults.standard.string(forKey: currentEmailKey) {
             credentialManager.deleteCredentials(email: email)
             credentialManager.deleteSessionToken(for: email)
         }
         
-        // Clear all user data
-        UserDefaults.standard.removeObject(forKey: userDataKey)
+        // Clear user data from Keychain
+        let userDataQuery: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: userDataKey,
+            kSecAttrService as String: "com.recipefinder.userdata"
+        ]
+        SecItemDelete(userDataQuery as CFDictionary)
+        UserDefaults.standard.removeObject(forKey: userDataKey) // legacy cleanup
         UserDefaults.standard.removeObject(forKey: isAuthenticatedKey)
         UserDefaults.standard.removeObject(forKey: biometricsEnabledKey)
         UserDefaults.standard.removeObject(forKey: currentEmailKey)
+        UserDefaults.standard.removeObject(forKey: lastActiveTimestampKey)
+        UserDefaults.standard.removeObject(forKey: appleUserCacheKey)
+        if let userId {
+            UserDefaults.standard.removeObject(forKey: "user_\(userId)_initialized")
+        }
         
         // Clear all app data (recipes, kitchen, shopping, profile)
         AccountManager.shared.clearAllData()
         
-        // Clear user-scoped storage
+        // Clear user-scoped storage and reset scope
         UserScopedStorage.shared.clearCurrentUserData()
+        UserScopedStorage.shared.currentUserId = nil
         
         isAuthenticated = false
         currentUser = nil
@@ -695,13 +728,8 @@ extension AuthenticationManager: ASAuthorizationControllerDelegate {
         controller: ASAuthorizationController,
         didCompleteWithError error: Error
     ) {
-        if let authError = error as? ASAuthorizationError {
-            if authError.code == .canceled {
-                self.authError = .signInCancelled
-            } else {
-                self.authError = .signInFailed
-            }
-        }
+        guard let authError = error as? ASAuthorizationError else { return }
+        self.authError = authError.code == .canceled ? .signInCancelled : .signInFailed
     }
 }
 
