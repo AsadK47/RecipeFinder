@@ -23,7 +23,6 @@ struct SettingsTabView: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                    // Header
                     GeometryReader { geometry in
                         let buttonSize = max(44, geometry.size.width * 0.11)
                         let horizontalPadding = geometry.size.width * 0.05
@@ -31,7 +30,6 @@ struct SettingsTabView: View {
                         
                         VStack(spacing: headerSpacing) {
                             HStack(spacing: 0) {
-                                // Back button
                                 Button(action: {
                                     dismiss()
                                 }) {
@@ -51,7 +49,6 @@ struct SettingsTabView: View {
                                 
                                 Spacer()
                                 
-                                // Empty space for symmetry
                                 Color.clear
                                     .frame(width: buttonSize, height: buttonSize)
                             }
@@ -70,11 +67,9 @@ struct SettingsTabView: View {
                         
                         ScrollView {
                             VStack(spacing: cardSpacing) {
-                            // Account Card
                             SettingsCard {
                                 NavigationLink(destination: AccountView()) {
                                 HStack(spacing: itemSpacing) {
-                                    // Profile picture or initials
                                     ZStack {
                                         if let profileImage = profileImage {
                                             Image(uiImage: profileImage)
@@ -222,7 +217,6 @@ struct SettingsTabView: View {
                             .buttonStyle(PlainButtonStyle())
                         }
                         
-                        // App Info
                         VStack(spacing: scrollGeometry.size.width * 0.01) {
                             Text("RecipeFinder")
                                 .font(.caption)
@@ -242,15 +236,12 @@ struct SettingsTabView: View {
             }
             .navigationBarHidden(true)
             .onAppear {
-                // Load profile image
                 profileImage = accountManager.loadProfileImage()
                 refreshID = UUID()
             }
         }
     }
 }
-
-// Settings Components
 
 struct SettingsCard<Content: View>: View {
     @Environment(\.colorScheme) var colorScheme
@@ -321,8 +312,6 @@ struct SettingsRow: View {
     }
 }
 
-// Settings Detail Views
-
 struct AppearanceAndThemeSettingsView: View {
     @AppStorage("appearanceMode") private var appearanceMode: AppearanceMode = .system
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
@@ -336,7 +325,6 @@ struct AppearanceAndThemeSettingsView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header
                 GeometryReader { geometry in
                     let buttonSize = max(44, geometry.size.width * 0.11)
                     let horizontalPadding = geometry.size.width * 0.05
@@ -375,7 +363,6 @@ struct AppearanceAndThemeSettingsView: View {
                 
                 ScrollView {
                     VStack(spacing: AppTheme.spacing32) {
-                        // Color Theme Section
                         SettingsCard {
                             VStack(alignment: .leading, spacing: AppTheme.spacing24) {
                             HStack {
@@ -445,14 +432,12 @@ struct AppearanceAndThemeSettingsView: View {
     }
 }
 
-// Keep old views for backwards compatibility but mark as deprecated
 struct AppearanceSettingsView: View {
     @AppStorage("appearanceMode") private var appearanceMode: AppearanceMode = .system
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
-    // Computed property that returns the effective card style based on mode
     private var effectiveCardStyle: CardStyle {
         switch appearanceMode {
         case .system:
@@ -471,7 +456,6 @@ struct AppearanceSettingsView: View {
             
             ScrollView {
                 VStack(spacing: AppTheme.spacing32) {
-                    // Header Info
                     SettingsCard {
                         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                             HStack {
@@ -493,13 +477,10 @@ struct AppearanceSettingsView: View {
                         .padding(AppTheme.spacing24)
                     }
                     
-                    // Appearance Modes
                     SettingsCard {
                         VStack(spacing: 0) {
-                            // System
                             Button(action: {
                                 appearanceMode = .system
-                                // Update card style based on current system scheme
                                 cardStyle = colorScheme == .dark ? .solid : .frosted
                                 HapticManager.shared.selection()
                             }) {
@@ -545,7 +526,6 @@ struct AppearanceSettingsView: View {
                             Divider()
                                 .padding(.leading, 86)
                             
-                            // Frost Light
                             Button(action: {
                                 appearanceMode = .light
                                 cardStyle = .frosted
@@ -589,7 +569,6 @@ struct AppearanceSettingsView: View {
                             Divider()
                                 .padding(.leading, 86)
                             
-                            // Ember Dark
                             Button(action: {
                                 appearanceMode = .dark
                                 cardStyle = .solid
@@ -639,7 +618,6 @@ struct AppearanceSettingsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
         .onChange(of: appearanceMode) { _, newMode in
-            // Auto-update card style when mode changes
             switch newMode {
             case .system:
                 cardStyle = colorScheme == .dark ? .solid : .frosted
@@ -676,7 +654,6 @@ struct ThemeSettingsView: View {
                                     HapticManager.shared.selection()
                                 }) {
                                     HStack(spacing: AppTheme.spacing16) {
-                                        // Theme preview circle with gradient
                                         Circle()
                                             .fill(AppTheme.accentColor(for: theme))
                                             .frame(width: 40, height: 40)
@@ -769,7 +746,6 @@ struct NotificationSettingsView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header
                 GeometryReader { geometry in
                     let buttonSize = max(44, geometry.size.width * 0.11)
                     let horizontalPadding = geometry.size.width * 0.05
@@ -1016,7 +992,7 @@ struct TimePickerSheet: View {
 }
 
 struct TimerSettingsView: View {
-    @AppStorage("defaultTimerDuration") private var defaultTimerDuration: Int = 300 // 5 minutes in seconds
+    @AppStorage("defaultTimerDuration") private var defaultTimerDuration: Int = 300
     @AppStorage("timerSound") private var timerSound: TimerSound = .default
     @AppStorage("timerVibration") private var timerVibration: Bool = true
     @AppStorage("showTimerInNotifications") private var showTimerInNotifications: Bool = true
@@ -1040,7 +1016,6 @@ struct TimerSettingsView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header
                 GeometryReader { geometry in
                     let buttonSize = max(44, geometry.size.width * 0.11)
                     let horizontalPadding = geometry.size.width * 0.05
@@ -1079,7 +1054,6 @@ struct TimerSettingsView: View {
                 
                 ScrollView {
                 VStack(spacing: AppTheme.spacing32) {
-                    // Default Duration
                     SettingsCard {
                         VStack(alignment: .leading, spacing: AppTheme.spacing24) {
                             Text("Default Timer Duration")
@@ -1121,14 +1095,12 @@ struct TimerSettingsView: View {
                         .padding(AppTheme.spacing24)
                     }
                     
-                    // Sound Settings
                     SettingsCard {
                         VStack(alignment: .leading, spacing: AppTheme.spacing24) {
                             Text("Sound & Alerts")
                                 .font(.headline)
                                 .adaptiveForegroundColor()
                             
-                            // Timer Sound
                             VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                                 Text("Completion Sound")
                                     .font(.subheadline)
@@ -1167,7 +1139,6 @@ struct TimerSettingsView: View {
                             Divider()
                                 .padding(.vertical, 4)
                             
-                            // Vibration
                             Toggle(isOn: $timerVibration) {
                                 HStack(spacing: AppTheme.spacing12) {
                                     Image(systemName: "iphone.radiowaves.left.and.right")
@@ -1188,7 +1159,6 @@ struct TimerSettingsView: View {
                         .padding(AppTheme.spacing24)
                     }
                     
-                    // Behavior Settings
                     SettingsCard {
                         VStack(alignment: .leading, spacing: AppTheme.spacing24) {
                             Text("Behavior")
@@ -1249,7 +1219,6 @@ struct UnitsSettingsView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header
                 GeometryReader { geometry in
                     let buttonSize = max(44, geometry.size.width * 0.11)
                     let horizontalPadding = geometry.size.width * 0.05
@@ -1353,7 +1322,6 @@ struct DisplaySettingsView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header
                 GeometryReader { geometry in
                     let buttonSize = max(44, geometry.size.width * 0.11)
                     let horizontalPadding = geometry.size.width * 0.05
@@ -1392,7 +1360,6 @@ struct DisplaySettingsView: View {
                 
                 ScrollView {
                 VStack(spacing: AppTheme.spacing32) {
-                    // Screen Settings
                     SettingsCard {
                         VStack(alignment: .leading, spacing: AppTheme.spacing24) {
                             Text("Screen Settings")
@@ -1419,7 +1386,6 @@ struct DisplaySettingsView: View {
                         .padding(AppTheme.spacing24)
                     }
                     
-                    // Information Card
                     SettingsCard {
                         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                             HStack(spacing: AppTheme.spacing12) {
@@ -1461,8 +1427,6 @@ struct DisplaySettingsView: View {
     }
 }
 
-// MeasurementSystem enum is defined in UnitConversion.swift
-
 struct PrivacySettingsView: View {
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
@@ -1482,7 +1446,6 @@ struct PrivacySettingsView: View {
             
             ScrollView {
                 VStack(spacing: AppTheme.spacing32) {
-                    // Biometric Authentication (if available)
                     if authManager.biometricsAvailable {
                         SettingsCard {
                             VStack(alignment: .leading, spacing: AppTheme.spacing24) {
@@ -1494,10 +1457,8 @@ struct PrivacySettingsView: View {
                                     get: { biometricsEnabled },
                                     set: { newValue in
                                         if newValue {
-                                            // Enable biometrics
                                             enableBiometrics()
                                         } else {
-                                            // Disable biometrics
                                             biometricsEnabled = false
                                             HapticManager.shared.light()
                                         }
@@ -1523,7 +1484,6 @@ struct PrivacySettingsView: View {
                         }
                     }
                     
-                    // Privacy Documents
                     SettingsCard {
                         VStack(spacing: 0) {
                             Button(action: {
@@ -1555,7 +1515,6 @@ struct PrivacySettingsView: View {
                         }
                     }
                     
-                    // Confirmation Preferences
                     SettingsCard {
                         VStack(alignment: .leading, spacing: AppTheme.spacing16) {
                             Text("Confirmation Dialogs")
@@ -1642,7 +1601,6 @@ struct PrivacySettingsView: View {
                         .padding(AppTheme.spacing24)
                     }
                     
-                    // Privacy Policy Link
                     SettingsCard {
                         VStack(alignment: .leading, spacing: AppTheme.spacing16) {
                             Text("Privacy")
@@ -1760,7 +1718,6 @@ struct DataManagementSettingsView: View {
             
             ScrollView {
                 VStack(spacing: AppTheme.spacing32) {
-                    // Warning Card
                     SettingsCard {
                         VStack(alignment: .leading, spacing: AppTheme.spacing16) {
                             HStack(spacing: AppTheme.spacing12) {
@@ -1833,30 +1790,25 @@ struct DataManagementSettingsView: View {
     private func resetToDefault() {
         let context = PersistenceController.shared.container.viewContext
         
-        // 1. Clear Core Data (all recipes)
         let recipeFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "Recipe")
         let recipeBatchDelete = NSBatchDeleteRequest(fetchRequest: recipeFetch)
         _ = try? context.execute(recipeBatchDelete)
         _ = try? context.save()
         
-        // 2. Clear all managers
         KitchenInventoryManager.shared.clearAll()
         ShoppingListManager.shared.clearAllItems()
         
-        // 3. Clear all UserDefaults except critical ones
         let defaults = UserDefaults.standard
         if let domain = Bundle.main.bundleIdentifier {
             defaults.removePersistentDomain(forName: domain)
             defaults.synchronize()
         }
         
-        // 4. Restore default settings
         defaults.set("teal", forKey: "appTheme")
         defaults.set("frosted", forKey: "cardStyle")
         defaults.set("metric", forKey: "measurementSystem")
-        defaults.set(300, forKey: "defaultTimerDuration") // 5 minutes
+        defaults.set(300, forKey: "defaultTimerDuration")
         
-        // 5. Restore sample recipes
         PersistenceController.shared.populateDatabase()
         
         dataCleared = true
@@ -1867,8 +1819,6 @@ struct DataManagementSettingsView: View {
         }
     }
 }
-
-// ShareSheet is defined in RecipeDetailView.swift
 
 struct HelpView: View {
     @Environment(\.colorScheme) var colorScheme
@@ -1882,7 +1832,6 @@ struct HelpView: View {
             
             ScrollView {
                 VStack(spacing: AppTheme.spacing32) {
-                    // App Tour Section
                     SettingsCard {
                         Button(action: {
                             showOnboarding = true
@@ -2208,7 +2157,6 @@ struct AboutView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
     
-    // Get real app version info from Info.plist
     private var appVersion: String {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
     }
@@ -2224,7 +2172,6 @@ struct AboutView: View {
             
             ScrollView {
                 VStack(spacing: AppTheme.spacing40) {
-                    // App Icon & Name
                     VStack(spacing: AppTheme.spacing16) {
                         Image(systemName: "book.circle.fill")
                             .font(.system(size: AppTheme.fontSize80))
@@ -2241,7 +2188,6 @@ struct AboutView: View {
                     }
                     .padding(.top, 40)
                     
-                    // Version Info
                     SettingsCard {
                         VStack(spacing: AppTheme.spacing16) {
                             HStack {
@@ -2267,7 +2213,6 @@ struct AboutView: View {
                         .padding(AppTheme.spacing24)
                     }
                     
-                    // Legal Information
                     SettingsCard {
                         VStack(alignment: .leading, spacing: AppTheme.spacing16) {
                             Text("Legal Information")
@@ -2294,7 +2239,6 @@ struct AboutView: View {
                         .padding(AppTheme.spacing24)
                     }
                     
-                    // Contact
                     SettingsCard {
                         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                             Text("Support")
@@ -2351,7 +2295,6 @@ struct AboutFeatureRow: View {
     }
 }
 
-// MARK: - Party Time View
 struct PartyTimeView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
@@ -2366,7 +2309,6 @@ struct PartyTimeView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header
                 GeometryReader { geometry in
                     let buttonSize = max(44, geometry.size.width * 0.11)
                     let horizontalPadding = geometry.size.width * 0.05
@@ -2405,7 +2347,6 @@ struct PartyTimeView: View {
                 
                 ScrollView {
                     VStack(spacing: AppTheme.spacing40) {
-                        // Header Info
                         VStack(spacing: AppTheme.spacing12) {
                             Image(systemName: "party.popper.fill")
                                 .font(.system(size: AppTheme.fontSize60))
@@ -2425,10 +2366,8 @@ struct PartyTimeView: View {
                         }
                         .padding(.top, 40)
                         
-                        // Vibration Button
                         VStack(spacing: AppTheme.spacing16) {
                             ZStack {
-                                // Animated rings when vibrating
                                 if isVibrating {
                                     ForEach(0..<3) { index in
                                         Circle()
@@ -2445,7 +2384,6 @@ struct PartyTimeView: View {
                                     }
                                 }
                                 
-                                // Main button
                                 Circle()
                                     .fill(
                                         LinearGradient(
@@ -2480,7 +2418,6 @@ struct PartyTimeView: View {
                         }
                         .padding(.vertical, 40)
                         
-                        // Info Card
                         SettingsCard {
                             VStack(alignment: .leading, spacing: AppTheme.spacing16) {
                                 HStack {
@@ -2516,11 +2453,8 @@ struct PartyTimeView: View {
     private func startVibration() {
         isVibrating = true
         
-        // Use AudioServicesPlaySystemSound for continuous vibration
-        // Vibrate immediately
         AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
         
-        // Continue vibrating every 0.3 seconds for truly continuous feel (shorter interval = more continuous)
         vibrationTimer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true) { _ in
             AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
         }

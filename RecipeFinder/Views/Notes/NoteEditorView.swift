@@ -34,22 +34,17 @@ struct NoteEditorView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                // Background
                 AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
                 
                 ScrollView {
                     VStack(spacing: AppTheme.spacing24) {
-                        // Title Input
                         titleSection
                         
-                        // Content Input
                         contentSection
                         
-                        // Category Picker
                         categorySection
                         
-                        // Tags Input
                         tagsSection
                     }
                     .padding(AppTheme.spacing24)
@@ -67,7 +62,6 @@ struct NoteEditorView: View {
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     HStack(spacing: AppTheme.spacing12) {
-                        // Pin Toggle
                         Button(action: {
                             HapticManager.shared.light()
                             isPinned.toggle()
@@ -76,7 +70,6 @@ struct NoteEditorView: View {
                                 .foregroundColor(isPinned ? AppTheme.accentColor(for: appTheme) : .white)
                         }
                         
-                        // Save Button
                         Button("Save") {
                             if canSave {
                                 saveNote()
@@ -98,8 +91,6 @@ struct NoteEditorView: View {
             }
         }
     }
-    
-    // MARK: - Sections
     
     private var titleSection: some View {
         cardContainer {
@@ -191,7 +182,6 @@ struct NoteEditorView: View {
                     .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
                     .textCase(.uppercase)
                 
-                // Tag input
                 HStack {
                     TextField("Add Tag...", text: $currentTag)
                         .adaptiveForegroundColor()
@@ -212,7 +202,6 @@ struct NoteEditorView: View {
                         .fill(Color.secondary.opacity(0.1))
                 )
                 
-                // Tag list
                 if !tags.isEmpty {
                     FlowLayout(spacing: AppTheme.spacing8) {
                         ForEach(tags, id: \.self) { tag in
@@ -264,8 +253,6 @@ struct NoteEditorView: View {
             }
         }
     }
-    
-    // MARK: - Actions
     
     private func addTag() {
         let trimmed = currentTag.trimmingCharacters(in: .whitespacesAndNewlines)

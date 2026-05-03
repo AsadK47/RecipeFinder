@@ -1,16 +1,9 @@
-//
-//  AppleSignInManager.swift
-//  RecipeFinder
-//
-//  Sign in with Apple implementation
-//
 
 import Foundation
 import AuthenticationServices
 import SwiftUI
 
 private let logger = AppLogger.logger(category: "AppleSignIn")
-
 
 @MainActor
 final class AppleSignInManager: NSObject, ObservableObject {
@@ -27,7 +20,6 @@ final class AppleSignInManager: NSObject, ObservableObject {
         checkAuthenticationState()
     }
     
-    // Check if user is already signed in
     func checkAuthenticationState() {
         guard let userID = UserDefaults.standard.string(forKey: "appleUserIdentifier") else {
             isAuthenticated = false
@@ -35,7 +27,6 @@ final class AppleSignInManager: NSObject, ObservableObject {
             return
         }
         
-        // Set the current user ID
         UserScopedStorage.shared.currentUserId = userID
         
         let provider = ASAuthorizationAppleIDProvider()
@@ -47,7 +38,6 @@ final class AppleSignInManager: NSObject, ObservableObject {
                     self.userIdentifier = userID
                     self.loadUserData()
                     
-                    // Reload all managers for the current user
                     ShoppingListManager.shared.reloadForCurrentUser()
                     NotesManager.shared.reloadForCurrentUser()
                     BadgeManager.shared.reloadForCurrentUser()
@@ -61,7 +51,6 @@ final class AppleSignInManager: NSObject, ObservableObject {
         }
     }
     
-    // Sign in with Apple
     func signIn() {
         let request = ASAuthorizationAppleIDProvider().createRequest()
         request.requestedScopes = [.fullName, .email]
@@ -72,13 +61,11 @@ final class AppleSignInManager: NSObject, ObservableObject {
         controller.performRequests()
     }
     
-    // Sign out
     func signOut() {
         UserDefaults.standard.removeObject(forKey: "appleUserIdentifier")
         UserDefaults.standard.removeObject(forKey: "appleUserEmail")
         UserDefaults.standard.removeObject(forKey: "appleUserName")
         
-        // Clear the current user ID
         UserScopedStorage.shared.currentUserId = nil
         
         isAuthenticated = false
@@ -86,7 +73,6 @@ final class AppleSignInManager: NSObject, ObservableObject {
         userEmail = nil
         fullName = nil
         
-        // Clear managers
         Task { @MainActor in
             ShoppingListManager.shared.reloadForCurrentUser()
             NotesManager.shared.reloadForCurrentUser()
@@ -96,20 +82,16 @@ final class AppleSignInManager: NSObject, ObservableObject {
         HapticManager.shared.success()
     }
     
-    // Load saved user data
     private func loadUserData() {
         userEmail = UserDefaults.standard.string(forKey: "appleUserEmail")
         fullName = UserDefaults.standard.string(forKey: "appleUserName")
     }
     
-    // Save user data
     private func saveUserData(identifier: String, email: String?, name: PersonNameComponents?) {
         UserDefaults.standard.set(identifier, forKey: "appleUserIdentifier")
         
-        // Set the current user ID for scoped storage
         UserScopedStorage.shared.currentUserId = identifier
         
-        // Check if this is a new user (first time sign-in)
         let userKey = "user_\(identifier)_initialized"
         let isNewUser = !UserDefaults.standard.bool(forKey: userKey)
         
@@ -126,26 +108,22 @@ final class AppleSignInManager: NSObject, ObservableObject {
             }
         }
         
-        // Reload all managers for the new user
         Task { @MainActor in
             ShoppingListManager.shared.reloadForCurrentUser()
             NotesManager.shared.reloadForCurrentUser()
             BadgeManager.shared.reloadForCurrentUser()
             
-            // If new user, populate with sample recipes
             if isNewUser {
                 logger.debug("🆕 New user detected - populating sample recipes")
                 PersistenceController.shared.populateDatabase()
                 UserDefaults.standard.set(true, forKey: userKey)
                 
-                // Unlock welcome badge
                 BadgeManager.shared.unlockBadge(.welcomeAboard)
             }
         }
     }
 }
 
-// MARK: - ASAuthorizationControllerDelegate
 extension AppleSignInManager: ASAuthorizationControllerDelegate {
     func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
         guard let credential = authorization.credential as? ASAuthorizationAppleIDCredential else {
@@ -153,14 +131,12 @@ extension AppleSignInManager: ASAuthorizationControllerDelegate {
             return
         }
         
-        // Save user data
         let userID = credential.user
         let email = credential.email
         let name = credential.fullName
         
         saveUserData(identifier: userID, email: email, name: name)
         
-        // Update state
         userIdentifier = userID
         userEmail = email ?? UserDefaults.standard.string(forKey: "appleUserEmail")
         
@@ -183,7 +159,6 @@ extension AppleSignInManager: ASAuthorizationControllerDelegate {
     func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
         let authError = error as NSError
         
-        // User cancelled
         if authError.code == 1001 {
             errorMessage = nil
             logger.debug("ℹ️ [AppleSignIn] User cancelled sign in")
@@ -197,23 +172,19 @@ extension AppleSignInManager: ASAuthorizationControllerDelegate {
     }
 }
 
-// MARK: - ASAuthorizationControllerPresentationContextProviding
 extension AppleSignInManager: ASAuthorizationControllerPresentationContextProviding {
     func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
-        // Safely find the window scene and window
         if let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
            let window = scene.windows.first(where: { $0.isKeyWindow }) ?? scene.windows.first {
             return window
         }
         
-        // Fallback: try any connected scene
         if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
            let window = scene.windows.first {
             logger.debug("Warning: Using fallback window for Apple Sign In presentation")
             return window
         }
         
-        // Last resort: create a new window (should never happen in normal circumstances)
         logger.debug("Critical: No existing window found for Apple Sign In, creating fallback")
         let window = UIWindow(frame: UIScreen.main.bounds)
         window.rootViewController = UIViewController()

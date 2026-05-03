@@ -23,13 +23,11 @@ struct RecipeCard: View {
     
     var body: some View {
         HStack(spacing: contentSpacing) {
-            // Image on the left with rounded corners
             ZStack(alignment: .topLeading) {
                 RecipeImageView(imageName: recipe.imageName, height: imageSize)
                     .frame(width: imageSize, height: imageSize)
                     .clipShape(RoundedRectangle(cornerRadius: cornerRadius * AppTheme.goldenRatioInverse))
                 
-                // Favorite badge
                 if recipe.isFavorite {
                     ZStack {
                         Circle()
@@ -56,9 +54,7 @@ struct RecipeCard: View {
                 }
             }
             
-            // Content in the middle
             VStack(alignment: .leading, spacing: AppTheme.spacing8) {
-                // Title 
                 Text(recipe.name)
                     .font(.system(size: AppTheme.fontSize16, weight: .semibold))
                     .foregroundColor(AppTheme.adaptiveEmphasis(for: colorScheme))
@@ -66,7 +62,6 @@ struct RecipeCard: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .minimumScaleFactor(0.9)
                 
-                // Time and difficulty on same line
                 HStack(spacing: AppTheme.spacing10) {
                     HStack(spacing: AppTheme.spacing5) {
                         Image(systemName: "clock.fill")
@@ -86,7 +81,6 @@ struct RecipeCard: View {
                 }
             }
             
-            // Chevron on the right
             Image(systemName: "chevron.right")
                 .font(.system(size: AppTheme.fontSize14, weight: .semibold))
                 .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
@@ -101,7 +95,6 @@ struct RecipeCard: View {
         .accessibilityHint("Double tap to view recipe details")
     }
     
-    // Extracted background to reduce body complexity
     @ViewBuilder
     private var cardBackground: some View {
         if cardStyle == .solid {
@@ -109,7 +102,6 @@ struct RecipeCard: View {
                 .fill(AppTheme.cardBackground(for: colorScheme))
                 .shadow(color: Color.black.opacity(0.25), radius: 8, x: 0, y: 4)
         } else {
-            // Frosted glass - exactly like Shopping List
             RoundedRectangle(cornerRadius: cornerRadius)
                 .fill(.ultraThinMaterial)
         }

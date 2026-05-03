@@ -1,12 +1,8 @@
 import PDFKit
 import SwiftUI
 
-/// High-performance utility for sharing and exporting recipes
 class RecipeShareUtility {
     
-    // Drawing Configuration
-    
-    /// Configuration for drawing PDF sections
     private struct SectionDrawConfig {
         let context: CGContext
         let title: String
@@ -16,22 +12,17 @@ class RecipeShareUtility {
         let accentColor: UIColor
     }
     
-    // Text Format Export (Blazing Fast)
-    
-    /// Generate a beautiful, well-formatted text version of the recipe
     static func generateTextFormat(recipe: RecipeModel, measurementSystem: MeasurementSystem = .metric) -> String {
         var text = ""
-        text.reserveCapacity(2500) // Pre-allocate for performance
+        text.reserveCapacity(2500)
         
         let divider = String(repeating: "━", count: 50)
         let sectionDivider = String(repeating: "─", count: 50)
         
-        // Title with decorative border
         text += divider + "\n"
         text += "🍽️  \(recipe.name.uppercased())\n"
         text += divider + "\n\n"
         
-        // Recipe info in a clean box format
         text += "📋 RECIPE INFORMATION\n"
         text += sectionDivider + "\n"
         text += "📁 Category    : \(recipe.category)\n"
@@ -41,7 +32,6 @@ class RecipeShareUtility {
         text += "👥 Servings    : \(recipe.baseServings)\n"
         text += "\n"
         
-        // Ingredients with prettier formatting
         text += "🥘 INGREDIENTS\n"
         text += sectionDivider + "\n"
         for ingredient in recipe.ingredients {
@@ -50,7 +40,6 @@ class RecipeShareUtility {
         }
         text += "\n"
         
-        // Pre-prep instructions
         if !recipe.prePrepInstructions.isEmpty {
             text += "🔪 PREPARATION STEPS\n"
             text += sectionDivider + "\n"
@@ -59,7 +48,6 @@ class RecipeShareUtility {
             }
         }
         
-        // Instructions with clear numbering
         text += "👨‍🍳 COOKING INSTRUCTIONS\n"
         text += sectionDivider + "\n"
         for (index, instruction) in recipe.instructions.enumerated() {
@@ -67,14 +55,12 @@ class RecipeShareUtility {
             text += "\(instruction)\n\n"
         }
         
-        // Notes in a highlighted section
         if !recipe.notes.isEmpty {
             text += "📝 CHEF'S NOTES\n"
             text += sectionDivider + "\n"
             text += recipe.notes + "\n\n"
         }
         
-        // Footer with branding
         text += divider + "\n"
         text += "Created with ❤️ using RecipeFinder\n"
         text += divider + "\n"
@@ -82,9 +68,6 @@ class RecipeShareUtility {
         return text
     }
     
-    // MARK: - PDF Export
-    
-    /// Generate a beautiful iPhone-width PDF that looks exactly like the app
     static func generatePDF(
         recipe: RecipeModel,
         measurementSystem: MeasurementSystem = .metric,
@@ -137,8 +120,6 @@ class RecipeShareUtility {
         }
     }
     
-    // MARK: - PDF Configuration
-    
     private static func createPDFFormat(for recipe: RecipeModel) -> UIGraphicsPDFRendererFormat {
         let format = UIGraphicsPDFRendererFormat()
         format.documentInfo = [
@@ -164,8 +145,6 @@ class RecipeShareUtility {
             ]
         }
     }
-    
-    // MARK: - Drawing Functions
     
     private static func drawBackground(context: CGContext, pageWidth: CGFloat, pageHeight: CGFloat, colors: [UIColor]) {
         guard let gradient = CGGradient(
@@ -211,11 +190,9 @@ class RecipeShareUtility {
         let cardWidth = (contentWidth - cardSpacing) / 2
         let cardHeight: CGFloat = 90
         
-        // Time card
         drawGlassCardExact(context: context, rect: CGRect(x: margin, y: yPos, width: cardWidth, height: cardHeight))
         drawTimeCardContent(recipe: recipe, context: context, x: margin, y: yPos)
         
-        // Difficulty card
         let rightCardX = margin + cardWidth + cardSpacing
         drawGlassCardExact(context: context, rect: CGRect(x: rightCardX, y: yPos, width: cardWidth, height: cardHeight))
         drawDifficultyCardContent(recipe: recipe, context: context, x: rightCardX, y: yPos)
@@ -460,8 +437,6 @@ class RecipeShareUtility {
         )
     }
     
-    // MARK: - Helper Functions
-    
     private static func drawGlassCardExact(context: CGContext, rect: CGRect) {
         context.saveGState()
         let path = CGPath(roundedRect: rect, cornerWidth: 16, cornerHeight: 16, transform: nil)
@@ -480,7 +455,6 @@ class RecipeShareUtility {
         config: SectionDrawConfig,
         contentBlock: @escaping () -> CGFloat
     ) -> CGFloat {
-        // White section title (exactly like app)
         (config.title as NSString).draw(
             at: CGPoint(x: config.margin, y: config.yPos),
             withAttributes: [
@@ -491,18 +465,15 @@ class RecipeShareUtility {
         
         let cardY = config.yPos + 32
         
-        // Calculate content height (content draws to measure itself)
         config.context.saveGState()
         config.context.translateBy(x: config.margin, y: cardY)
         
-        // Render transparently to measure content height before drawing background
         config.context.setAlpha(0)
         let contentHeight = contentBlock()
         config.context.setAlpha(1)
         
         config.context.restoreGState()
         
-        // NOW draw the glass card background
         let cardRect = CGRect(x: config.margin, y: cardY, width: config.width, height: contentHeight)
         let path = CGPath(roundedRect: cardRect, cornerWidth: 16, cornerHeight: 16, transform: nil)
         config.context.addPath(path)
@@ -514,7 +485,6 @@ class RecipeShareUtility {
         config.context.setLineWidth(0.5)
         config.context.strokePath()
         
-        // NOW draw the actual visible content
         config.context.saveGState()
         config.context.translateBy(x: config.margin, y: cardY)
         _ = contentBlock()
@@ -523,25 +493,19 @@ class RecipeShareUtility {
         return cardY + contentHeight
     }
     
-    /// Calculate total height needed for content
     private static func calculateContentHeight(recipe: RecipeModel, measurementSystem: MeasurementSystem) -> CGFloat {
-        var height: CGFloat = 150 // Title + top padding
+        var height: CGFloat = 150
         
-        // Info cards
         height += 90 + 24
         
-        // Ingredients
         height += 32 + 60 + (CGFloat(recipe.ingredients.count) * 24) + 20
         
-        // Pre-prep
         if !recipe.prePrepInstructions.isEmpty {
             height += 32 + 60 + (CGFloat(recipe.prePrepInstructions.count) * 45) + 20
         }
         
-        // Instructions
         height += 32 + 60 + (CGFloat(recipe.instructions.count) * 60) + 20
         
-        // Notes
         if !recipe.notes.isEmpty {
             height += 32 + 100 + 20
         }

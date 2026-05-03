@@ -1,7 +1,6 @@
 import Combine
 import Foundation
 
-/// Manages cooking tips with filtering, searching, and favorites
 @MainActor
 final class CookingTipsManager: ObservableObject {
     static let shared = CookingTipsManager()
@@ -22,12 +21,9 @@ final class CookingTipsManager: ObservableObject {
         setupPublishers()
     }
     
-    // MARK: - Publishers
-    
     private func setupPublishers() {
-        // Save tips whenever they change
         $tips
-            .dropFirst() // Skip initial load
+            .dropFirst()
             .debounce(for: 0.5, scheduler: RunLoop.main)
             .sink { [weak self] _ in
                 self?.saveTips()
@@ -35,27 +31,21 @@ final class CookingTipsManager: ObservableObject {
             .store(in: &cancellables)
     }
     
-    // MARK: - Computed Properties
-    
     var filteredTips: [CookingTipModel] {
         var filtered = tips
         
-        // Filter by favorites
         if showFavoritesOnly {
             filtered = filtered.filter { $0.isFavorite }
         }
         
-        // Filter by category
         if let category = selectedCategory {
             filtered = filtered.filter { $0.category == category }
         }
         
-        // Filter by difficulty
         if let difficulty = selectedDifficulty {
             filtered = filtered.filter { $0.difficulty == difficulty }
         }
         
-        // Filter by search text
         if !searchText.isEmpty {
             filtered = filtered.filter { tip in
                 tip.title.localizedCaseInsensitiveContains(searchText) ||
@@ -74,8 +64,6 @@ final class CookingTipsManager: ObservableObject {
     var favoriteTips: [CookingTipModel] {
         tips.filter { $0.isFavorite }
     }
-    
-    // MARK: - CRUD Operations
     
     func addTip(_ tip: CookingTipModel) {
         tips.append(tip)
@@ -99,8 +87,6 @@ final class CookingTipsManager: ObservableObject {
         HapticManager.shared.light()
     }
     
-    // MARK: - Filtering
-    
     func clearFilters() {
         selectedCategory = nil
         selectedDifficulty = nil
@@ -116,20 +102,16 @@ final class CookingTipsManager: ObservableObject {
         tips.filter { $0.difficulty == difficulty }
     }
     
-    // MARK: - Persistence
-    
     func reloadForCurrentUser() {
         loadTips()
     }
 
     private func loadTips() {
-        // Try to load saved tips first
         if let data = storage.data(forKey: saveKey),
            let decoded = try? JSONDecoder().decode([CookingTipModel].self, from: data) {
             self.tips = decoded
             logger.debug("✅ Loaded \(self.tips.count) cooking tips")
         } else {
-            // First time - populate with sample tips
             self.tips = CookingTipModel.samples
             saveTips()
             logger.debug("📚 Populated \(self.tips.count) sample cooking tips")
@@ -141,8 +123,6 @@ final class CookingTipsManager: ObservableObject {
             storage.set(encoded, forKey: saveKey)
         }
     }
-    
-    // MARK: - Utility
     
     func resetToSamples() {
         self.tips = CookingTipModel.samples

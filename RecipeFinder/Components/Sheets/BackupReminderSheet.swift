@@ -13,7 +13,6 @@ struct BackupReminderSheet: View {
             VStack(spacing: AppTheme.spacing32) {
                 Spacer()
                 
-                // Icon
                 ZStack {
                     Circle()
                         .fill(Color.orange.opacity(0.15))
@@ -25,7 +24,6 @@ struct BackupReminderSheet: View {
                 }
                 .padding(.top, AppTheme.spacing32)
                 
-                // Title & Message
                 VStack(spacing: AppTheme.spacing12) {
                     Text("Backup Your Data")
                         .font(.title2)
@@ -38,7 +36,6 @@ struct BackupReminderSheet: View {
                         .padding(.horizontal, AppTheme.spacing32)
                 }
                 
-                // Info Cards
                 VStack(spacing: AppTheme.spacing12) {
                     InfoCard(
                         icon: "shield.checkmark.fill",
@@ -62,9 +59,7 @@ struct BackupReminderSheet: View {
                 
                 Spacer()
                 
-                // Actions
                 VStack(spacing: AppTheme.spacing12) {
-                    // Export Button
                     Button {
                         HapticManager.shared.light()
                         dismiss()
@@ -84,7 +79,6 @@ struct BackupReminderSheet: View {
                         .cornerRadius(AppTheme.cornerRadius12)
                     }
                     
-                    // Remind Later Button
                     Button {
                         HapticManager.shared.light()
                         backupManager.dismissReminder()

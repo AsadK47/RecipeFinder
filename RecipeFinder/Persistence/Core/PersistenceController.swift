@@ -3,7 +3,6 @@ import Foundation
 
 private let logger = AppLogger.logger(category: "PersistenceController")
 
-
 final class PersistenceController {
     nonisolated(unsafe) static let shared = PersistenceController()
     
@@ -11,7 +10,6 @@ final class PersistenceController {
     private(set) var loadError: Error?
     private(set) var isStoreLoaded = false
     
-    // Constants for entity and keys
     private enum Entity {
         static let recipe = "Recipe"
     }
@@ -46,7 +44,6 @@ final class PersistenceController {
         description.setOption(true as NSNumber, forKey: NSMigratePersistentStoresAutomaticallyOption)
         description.setOption(true as NSNumber, forKey: NSInferMappingModelAutomaticallyOption)
         
-        // Enable automatic merging of changes
         container.viewContext.automaticallyMergesChangesFromParent = true
         container.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
     }
@@ -71,7 +68,6 @@ final class PersistenceController {
         }
     }
     
-    /// Attempts to recover from a store loading failure by removing corrupted data
     private func attemptStoreRecovery() {
         logger.debug("🔄 Attempting to recover from Core Data store failure...")
         
@@ -104,7 +100,6 @@ final class PersistenceController {
         }
     }
     
-    /// Checks if the persistent store is ready for operations
     @discardableResult
     private func ensureStoreIsReady() -> Bool {
         guard isStoreLoaded else {
@@ -120,7 +115,6 @@ final class PersistenceController {
         let context = container.viewContext
         let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: Entity.recipe)
         
-        // Only delete recipes belonging to the current user to avoid wiping other users' data
         if let userId = UserScopedStorage.shared.currentUserId {
             fetchRequest.predicate = NSPredicate(format: "userId == %@", userId)
         } else {
@@ -139,7 +133,6 @@ final class PersistenceController {
         }
     }
     
-    /// Resets the database by clearing all data and repopulating with sample recipes
     func resetDatabase() {
         logger.debug("🔄 Resetting database...")
         clearDatabase()
@@ -149,10 +142,8 @@ final class PersistenceController {
         logger.debug("✅ Database reset complete")
     }
     
-    // MARK: - Recipe Save Parameters
-    
     struct RecipeSaveParameters {
-        let id: UUID?  // Optional ID - if nil, creates new; if provided, uses that ID
+        let id: UUID?
         let name: String
         let category: String
         let difficulty: String
@@ -167,7 +158,6 @@ final class PersistenceController {
         let imageName: String
         let isFavorite: Bool
         
-        // Memberwise initializer for direct parameter passing
         init(
             id: UUID? = nil,
             name: String,
@@ -200,7 +190,6 @@ final class PersistenceController {
             self.isFavorite = isFavorite
         }
         
-        // Convenience initializer from RecipeModel
         init(from recipe: RecipeModel) {
             self.id = recipe.id
             self.name = recipe.name
@@ -219,8 +208,6 @@ final class PersistenceController {
         }
     }
     
-    // MARK: - Save Operations
-    
     func saveRecipe(parameters: RecipeSaveParameters) {
         guard ensureStoreIsReady() else { return }
         
@@ -233,13 +220,11 @@ final class PersistenceController {
         
         let recipe = NSManagedObject(entity: entity, insertInto: context)
         
-        // Encode ingredients
         guard let ingredientData = try? JSONEncoder().encode(parameters.ingredients) else {
             logger.error("❌ Failed to encode ingredients for recipe: \(parameters.name)")
             return
         }
         
-        // Set values using constants - use provided ID or generate new one
         let recipeId = parameters.id ?? UUID()
         recipe.setValue(recipeId, forKey: RecipeKey.id)
         recipe.setValue(parameters.name, forKey: RecipeKey.name)
@@ -256,7 +241,6 @@ final class PersistenceController {
         recipe.setValue(parameters.imageName, forKey: RecipeKey.imageName)
         recipe.setValue(parameters.isFavorite, forKey: RecipeKey.isFavorite)
         
-        // Set user ID for multi-user support
         if let userId = UserScopedStorage.shared.currentUserId {
             recipe.setValue(userId, forKey: "userId")
         }
@@ -265,7 +249,6 @@ final class PersistenceController {
             try context.save()
             logger.debug("✅ Recipe '\(parameters.name)' saved successfully")
             
-            // Check and unlock badges after saving
             let recipeCount = getRecipeCount()
             BadgeManager.shared.checkAndUnlockBadges(recipeCount: recipeCount)
         } catch {
@@ -274,7 +257,6 @@ final class PersistenceController {
     }
     
     func saveRecipeModel(_ recipe: RecipeModel) {
-        // Check if recipe already exists - if so, update it instead of creating a new one
         let context = container.viewContext
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
         fetchRequest.predicate = NSPredicate(format: "\(RecipeKey.id) == %@", recipe.id as CVarArg)
@@ -283,22 +265,17 @@ final class PersistenceController {
         do {
             let existingRecipes = try context.fetch(fetchRequest)
             if !existingRecipes.isEmpty {
-                // Recipe exists - update it
                 updateRecipe(recipe)
             } else {
-                // Recipe doesn't exist - create new one
                 let parameters = RecipeSaveParameters(from: recipe)
                 saveRecipe(parameters: parameters)
             }
         } catch {
-            // If fetch fails, try to create new recipe
             logger.debug("⚠️ Failed to check if recipe exists, creating new: \(error.localizedDescription)")
             let parameters = RecipeSaveParameters(from: recipe)
             saveRecipe(parameters: parameters)
         }
     }
-    
-    // MARK: - Fetch Operations
     
     func fetchRecipes() -> [RecipeModel] {
         guard ensureStoreIsReady() else { return [] }
@@ -314,11 +291,9 @@ final class PersistenceController {
             )
         ]
         
-        // Filter by current user if user is logged in
         if let userId = UserScopedStorage.shared.currentUserId {
             fetchRequest.predicate = NSPredicate(format: "userId == %@", userId)
         } else {
-            // If no user, return empty (require authentication)
             return []
         }
         
@@ -338,7 +313,6 @@ final class PersistenceController {
         let context = container.viewContext
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
         
-        // Filter by current user if user is logged in
         if let userId = UserScopedStorage.shared.currentUserId {
             fetchRequest.predicate = NSPredicate(format: "userId == %@", userId)
         } else {
@@ -353,12 +327,9 @@ final class PersistenceController {
         }
     }
     
-    /// Convenience method for badge system
     func getRecipeCount() -> Int {
         return fetchRecipeCount()
     }
-    
-    // MARK: - Mapping
     
     private func mapToRecipeModel(_ object: NSManagedObject) -> RecipeModel? {
         guard 
@@ -370,7 +341,6 @@ final class PersistenceController {
             return nil
         }
         
-        // Decode ingredients
         guard let ingredients = try? JSONDecoder().decode([Ingredient].self, from: ingredientsData) else {
             logger.error("❌ Failed to decode ingredients for '\(name)'")
             return nil
@@ -406,8 +376,6 @@ final class PersistenceController {
         )
     }
     
-    // MARK: - Delete Operations
-    
     func deleteRecipe(withId id: UUID) {
         guard ensureStoreIsReady() else { return }
         
@@ -434,8 +402,6 @@ final class PersistenceController {
         clearDatabase()
     }
     
-    // MARK: - Update Operations
-    
     func updateRecipe(_ recipe: RecipeModel) {
         guard ensureStoreIsReady() else { return }
         
@@ -450,13 +416,11 @@ final class PersistenceController {
                 return
             }
             
-            // Encode ingredients
             guard let ingredientData = try? JSONEncoder().encode(recipe.ingredients) else {
                 logger.error("❌ Failed to encode ingredients for recipe: \(recipe.name)")
                 return
             }
             
-            // Update values
             managedRecipe.setValue(recipe.name, forKey: RecipeKey.name)
             managedRecipe.setValue(recipe.category, forKey: RecipeKey.category)
             managedRecipe.setValue(recipe.difficulty, forKey: RecipeKey.difficulty)

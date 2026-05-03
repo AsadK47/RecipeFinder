@@ -1,49 +1,14 @@
 import Foundation
 import UserNotifications
 
-/// NotificationManager - Handles all local notifications in the app
-///
-/// HOW NOTIFICATIONS WORK IN iOS:
-/// ================================
-/// 1. REQUEST PERMISSION: First, you must ask the user for permission to send notifications
-/// 2. CREATE CONTENT: Define what the notification says (title, body, sound, badge)
-/// 3. CREATE TRIGGER: Define when to show it (time-based, location-based, or immediately)
-/// 4. SCHEDULE: Combine content + trigger into a request and add to notification center
-/// 5. HANDLE RESPONSE: Optional - respond when user taps the notification
-///
-/// TYPES OF NOTIFICATIONS:
-/// - Time-based: Show after X seconds/minutes (UNTimeIntervalNotificationTrigger)
-/// - Calendar-based: Show at specific date/time (UNCalendarNotificationTrigger)
-/// - Location-based: Show at specific location (UNLocationNotificationTrigger)
-/// - Immediate: Show right now (trigger = nil)
-///
-/// EXAMPLE USAGE:
-/// ```
-/// // Request permission first (usually on app launch)
-/// NotificationManager.shared.requestPermission { granted in
-///     logger.info("Permission: \(granted)")
-/// }
-///
-/// // Schedule a notification
-/// NotificationManager.shared.scheduleTimerNotification(
-///     title: "Timer Done!",
-///     body: "Your pasta is ready",
-///     timeInterval: 600 // 10 minutes
-/// )
-/// ```
-
 import Foundation
 import UserNotifications
 
 private let logger = AppLogger.logger(category: "Notification")
 
-
- 
 final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sendable {
-    /// Shared singleton instance for global access
     static let shared = NotificationManager()
 
-    /// Backwards-compatible alias used in some files
     static var notificationManager: NotificationManager { shared }
     
     override init() {
@@ -52,10 +17,6 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         checkAuthorizationStatus()
     }
     
-    // MARK: - Permission Management
-    
-    /// Request permission to send notifications
-    /// Call this when the app launches or when user enables notifications in settings
     func requestPermission(completion: @escaping @Sendable (Bool) -> Void) {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             Task { @MainActor in
@@ -71,10 +32,8 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         }
     }
     
-    /// Check current notification permission status
     func checkAuthorizationStatus() {
         UNUserNotificationCenter.current().getNotificationSettings { @Sendable settings in
-            // Extract values before crossing actor boundary
             let authStatus = settings.authorizationStatus
             let alertSetting = settings.alertSetting
             let soundSetting = settings.soundSetting
@@ -89,15 +48,6 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         }
     }
     
-    // MARK: - Timer Notifications
-    
-    /// Schedule a timer completion notification
-    /// - Parameters:
-    ///   - title: Notification title (e.g., "Timer Complete!")
-    ///   - body: Notification message (e.g., "Pasta timer is done")
-    ///   - timeInterval: Seconds until notification (e.g., 600 for 10 minutes)
-    ///   - identifier: Unique ID to cancel later (optional, auto-generated if not provided)
-    /// - Returns: The notification identifier (useful for canceling later)
     @discardableResult
     func scheduleTimerNotification(
         title: String,
@@ -107,30 +57,25 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
     ) -> String {
         let notificationId = identifier ?? "timer-\(UUID().uuidString)"
         
-        // 1. Create the notification content
         let content = UNMutableNotificationContent()
         content.title = title
         content.body = body
         content.sound = .default
-        content.badge = 1 // Show badge on app icon
+        content.badge = 1
         
-        // Add custom data (useful for handling different notification types)
         content.userInfo = ["type": "timer", "identifier": notificationId]
         
-        // 2. Create the trigger (when to show the notification)
         let trigger = UNTimeIntervalNotificationTrigger(
             timeInterval: timeInterval,
             repeats: false
         )
         
-        // 3. Create the request combining content + trigger
         let request = UNNotificationRequest(
             identifier: notificationId,
             content: content,
             trigger: trigger
         )
         
-        // 4. Schedule it!
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
                 logger.error("❌ Failed to schedule notification: \(error.localizedDescription)")
@@ -142,8 +87,6 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         return notificationId
     }
     
-    /// Send an immediate notification (no delay)
-    /// Useful for when a timer completes while app is in foreground
     func sendImmediateNotification(title: String, body: String, identifier: String? = nil) {
         let notificationId = identifier ?? "immediate-\(UUID().uuidString)"
         
@@ -152,7 +95,6 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         content.body = body
         content.sound = .default
         
-        // trigger = nil means "show immediately"
         let request = UNNotificationRequest(
             identifier: notificationId,
             content: content,
@@ -166,14 +108,6 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         }
     }
     
-    // MARK: - Meal Planning Notifications
-    
-    /// Schedule a meal reminder notification
-    /// - Parameters:
-    ///   - mealName: Name of the meal (e.g., "Dinner")
-    ///   - recipeName: Name of the recipe (e.g., "Spaghetti Bolognese")
-    ///   - date: When to show the notification
-    ///   - identifier: Unique ID (optional)
     @discardableResult
     func scheduleMealReminder(
         mealName: String,
@@ -190,7 +124,6 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         content.badge = 1
         content.userInfo = ["type": "meal", "identifier": notificationId]
         
-        // Use calendar trigger for specific date/time
         let dateComponents = Calendar.current.dateComponents(
             [.year, .month, .day, .hour, .minute],
             from: date
@@ -217,11 +150,6 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         return notificationId
     }
     
-    /// Schedule a daily cooking reminder
-    /// - Parameters:
-    ///   - hour: Hour of day (0-23)
-    ///   - minute: Minute of hour (0-59)
-    ///   - identifier: Unique ID
     @discardableResult
     func scheduleDailyCookingReminder(
         hour: Int,
@@ -234,14 +162,13 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         content.sound = .default
         content.userInfo = ["type": "daily-reminder"]
         
-        // Daily repeating trigger
         var dateComponents = DateComponents()
         dateComponents.hour = hour
         dateComponents.minute = minute
         
         let trigger = UNCalendarNotificationTrigger(
             dateMatching: dateComponents,
-            repeats: true // Repeats daily!
+            repeats: true
         )
         
         let request = UNNotificationRequest(
@@ -261,9 +188,6 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         return identifier
     }
     
-    // MARK: - Shopping List Notifications
-    
-    /// Send notification when shopping list is updated
     func notifyShoppingListUpdate(itemsCount: Int) {
         let content = UNMutableNotificationContent()
         content.title = "🛒 Shopping List Updated"
@@ -279,15 +203,11 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         UNUserNotificationCenter.current().add(request)
     }
     
-    // MARK: - Notification Management
-    
-    /// Cancel a specific notification by ID
     func cancelNotification(identifier: String) {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [identifier])
         logger.debug("🗑️ Canceled notification: \(identifier)")
     }
     
-    /// Cancel all timer notifications
     func cancelAllTimerNotifications() {
         UNUserNotificationCenter.current().getPendingNotificationRequests { @Sendable requests in
             let timerIds = requests
@@ -301,42 +221,33 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         }
     }
     
-    /// Cancel ALL pending notifications
     func cancelAllNotifications() {
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         logger.debug("🗑️ Canceled all notifications")
     }
     
-    /// Get list of all pending notifications
     func getPendingNotifications(completion: @escaping @Sendable ([UNNotificationRequest]) -> Void) {
         UNUserNotificationCenter.current().getPendingNotificationRequests { @Sendable requests in
             completion(requests)
         }
     }
     
-    /// Remove badge from app icon
     func clearBadge() {
         UNUserNotificationCenter.current().setBadgeCount(0)
     }
 }
 
-// MARK: - UNUserNotificationCenterDelegate
-
 extension NotificationManager {
-    /// Called when notification is received while app is in FOREGROUND
-    /// By default, notifications don't show when app is open - this allows them to show
     nonisolated func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
-        // Show banner and play sound even when app is open
         completionHandler([.banner, .sound, .badge])
         
         logger.debug("📬 Received notification while app is foreground: \(notification.request.content.title)")
     }
     
-    /// Called when user TAPS on a notification
     nonisolated func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse,
@@ -347,11 +258,8 @@ extension NotificationManager {
         
         logger.debug("👆 User tapped notification of type: \(notificationType)")
         
-        // Handle different notification types
         switch notificationType {
         case "timer":
-            // Navigate to timer tab or show timer screen
-            // You can post a NotificationCenter notification to handle navigation
             NotificationCenter.default.post(
                 name: NSNotification.Name("OpenTimer"),
                 object: nil,
@@ -359,7 +267,6 @@ extension NotificationManager {
             )
             
         case "meal":
-            // Navigate to meal planning screen
             NotificationCenter.default.post(
                 name: NSNotification.Name("OpenMealPlan"),
                 object: nil,
@@ -367,7 +274,6 @@ extension NotificationManager {
             )
             
         case "daily-reminder":
-            // Open main recipes screen
             NotificationCenter.default.post(
                 name: NSNotification.Name("OpenRecipes"),
                 object: nil
@@ -380,8 +286,6 @@ extension NotificationManager {
         completionHandler()
     }
 }
-
-// MARK: - Helper Extensions
 
 extension UNAuthorizationStatus {
     var description: String {

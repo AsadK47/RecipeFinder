@@ -3,7 +3,6 @@ import ConfettiSwiftUI
 
 private let logger = AppLogger.logger(category: "WelcomeSplash")
 
-
 struct WelcomeSplashView: View {
     @Environment(\.appTheme) var appTheme
     @Environment(\.colorScheme) var colorScheme
@@ -19,7 +18,6 @@ struct WelcomeSplashView: View {
     let email: String
     let onContinue: () -> Void
     
-    // Pre-computed particle positions for performance
     private let particlePositions: [(x: CGFloat, y: CGFloat, size: CGFloat)] = {
         (0..<20).map { _ in
             (
@@ -43,13 +41,11 @@ struct WelcomeSplashView: View {
         .onAppear(perform: startAnimations)
     }
     
-    // MARK: - Background Layer
     private var backgroundLayer: some View {
         AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
             .ignoresSafeArea()
     }
     
-    // MARK: - Particle Layer
     private var particleLayer: some View {
         ForEach(Array(particlePositions.enumerated()), id: \.offset) { index, particle in
             Circle()
@@ -57,7 +53,7 @@ struct WelcomeSplashView: View {
                 .frame(width: particle.size, height: particle.size)
                 .position(x: particle.x, y: particle.y)
                 .opacity(particlesOpacity)
-                .allowsHitTesting(false) // Particles should not block touches
+                .allowsHitTesting(false)
                 .animation(
                     .easeInOut(duration: Double.random(in: 2...4))
                     .repeatForever(autoreverses: true)
@@ -67,7 +63,6 @@ struct WelcomeSplashView: View {
         }
     }
     
-    // MARK: - Content Layer
     private func contentLayer(spacing: AdaptiveSpacing) -> some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 0) {
@@ -84,7 +79,6 @@ struct WelcomeSplashView: View {
         .scrollDisabled(true)
     }
     
-    // MARK: - Success Icon Section
     private func successIconSection(spacing: AdaptiveSpacing) -> some View {
         ZStack {
             pulsingRings(spacing: spacing)
@@ -169,7 +163,6 @@ struct WelcomeSplashView: View {
         )
     }
     
-    // MARK: - Welcome Message Section
     private func welcomeMessageSection(spacing: AdaptiveSpacing) -> some View {
         VStack(spacing: spacing.xl) {
             titleText
@@ -253,7 +246,6 @@ struct WelcomeSplashView: View {
             )
     }
     
-    // MARK: - Feature Highlights Section
     private func featureHighlightsSection(spacing: AdaptiveSpacing) -> some View {
         VStack(spacing: spacing.lg) {
             FeatureRow(icon: "fork.knife.circle.fill", text: "Explore thousands of recipes", spacing: spacing)
@@ -264,7 +256,6 @@ struct WelcomeSplashView: View {
         .padding(.horizontal, spacing.xxl + spacing.lg)
     }
     
-    // MARK: - Continue Button
     private func continueButton(spacing: AdaptiveSpacing) -> some View {
         Button(action: handleContinueAction) {
             buttonContent(spacing: spacing)
@@ -307,7 +298,6 @@ struct WelcomeSplashView: View {
         )
     }
     
-    // MARK: - Actions
     private func handleContinueAction() {
         logger.debug("🔘 WelcomeSplash: Continue button tapped")
         HapticManager.shared.success()
@@ -324,7 +314,6 @@ struct WelcomeSplashView: View {
     }
     
     private func startAnimations() {
-        // Orchestrated animation sequence
         withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
             scale = 1.0
             ringOpacity = 0.5
@@ -335,7 +324,6 @@ struct WelcomeSplashView: View {
             ringScale = 1.2
         }
         
-        // Trigger confetti
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             confettiCounter += 1
             HapticManager.shared.success()
@@ -349,7 +337,6 @@ struct WelcomeSplashView: View {
             particlesOpacity = 1.0
         }
         
-        // Continuous ring animation
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
             withAnimation(.easeOut(duration: 1.5).repeatForever(autoreverses: false)) {
                 ringScale = 1.5
@@ -359,7 +346,6 @@ struct WelcomeSplashView: View {
     }
 }
 
-// Helper view for feature rows
 struct FeatureRow: View {
     let icon: String
     let text: String

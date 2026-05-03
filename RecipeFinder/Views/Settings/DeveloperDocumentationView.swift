@@ -8,13 +8,11 @@ struct DeveloperDocumentationView: View {
     
     var body: some View {
         ZStack {
-            // Beautiful gradient background
             AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    // Hero section with seamless header
                     VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                         Text("Developer Documentation")
                             .font(.system(size: AppTheme.fontSize34, weight: .bold))
@@ -29,7 +27,6 @@ struct DeveloperDocumentationView: View {
                     .padding(.top, 60)
                     .padding(.bottom, 32)
                     
-                    // Architecture Overview
                     DocSection(
                         title: "Architecture",
                         icon: "building.columns.fill",
@@ -45,7 +42,6 @@ struct DeveloperDocumentationView: View {
                         cardStyle: cardStyle
                     )
                     
-                    // Key Features
                     DocSection(
                         title: "Core Components",
                         icon: "gearshape.2.fill",
@@ -61,7 +57,6 @@ struct DeveloperDocumentationView: View {
                         cardStyle: cardStyle
                     )
                     
-                    // Tech Stack
                     DocSection(
                         title: "Tech Stack",
                         icon: "hammer.fill",
@@ -77,7 +72,6 @@ struct DeveloperDocumentationView: View {
                         cardStyle: cardStyle
                     )
                     
-                    // Privacy & Security
                     DocSection(
                         title: "Privacy & Security",
                         icon: "lock.shield.fill",
@@ -93,7 +87,6 @@ struct DeveloperDocumentationView: View {
                         cardStyle: cardStyle
                     )
                     
-                    // Project Structure
                     DocSection(
                         title: "Project Structure",
                         icon: "folder.fill",
@@ -111,7 +104,6 @@ struct DeveloperDocumentationView: View {
                         cardStyle: cardStyle
                     )
                     
-                    // Footer
                     VStack(spacing: AppTheme.spacing12) {
                         Text("© 2024-2025 Asad Khan")
                             .font(.system(size: AppTheme.fontSize13))
@@ -128,7 +120,6 @@ struct DeveloperDocumentationView: View {
             }
             .ignoresSafeArea(edges: .top)
             
-            // Floating Done button
             VStack {
                 HStack {
                     Spacer()
@@ -158,7 +149,6 @@ struct DeveloperDocumentationView: View {
     }
 }
 
-// MARK: - Documentation Section
 struct DocSection: View {
     let title: String
     let icon: String
@@ -170,7 +160,6 @@ struct DocSection: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing24) {
-            // Section header
             HStack(spacing: AppTheme.spacing12) {
                 Image(systemName: icon)
                     .foregroundColor(iconColor)
@@ -182,7 +171,6 @@ struct DocSection: View {
             }
             .padding(.horizontal, 24)
             
-            // Content card
             VStack(alignment: .leading, spacing: AppTheme.spacing16) {
                 ForEach(content.indices, id: \.self) { index in
                     DocPointRow(point: content[index], appTheme: appTheme)
@@ -209,13 +197,11 @@ struct DocSection: View {
     }
 }
 
-// MARK: - Documentation Point
 struct DocPoint {
     let title: String
     let description: String
 }
 
-// MARK: - Documentation Point Row
 struct DocPointRow: View {
     let point: DocPoint
     let appTheme: AppTheme.ThemeType

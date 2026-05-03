@@ -3,9 +3,6 @@ import SwiftUI
 
 private let logger = AppLogger.logger(category: "RecipeImporter")
 
-
-/// Smart Recipe Importer - Now powered by RecipeParser engine
- 
 final class RecipeImporter: ObservableObject, @unchecked Sendable {
     @Published var isLoading = false
     @Published var errorMessage: String?
@@ -15,13 +12,12 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
     struct ExtractedRecipeData: Equatable {
         let name: String
         let description: String?
-        let matchedIngredients: [String]  // Ingredients
-        let rawIngredients: [String]  // Raw ingredient strings with quantities
-        let rawText: String  // For preview/editing
+        let matchedIngredients: [String]
+        let rawIngredients: [String]
+        let rawText: String
         let instructions: [String]
         let sourceURL: URL
         
-        // Enhanced metadata
         let cookTimeMinutes: Int?
         let prepTimeMinutes: Int?
         let servings: Int?
@@ -30,11 +26,7 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
         let cuisine: String?
     }
     
-    // MARK: - Main Import Function with RecipeParser
-    
-    /// Import recipe from URL using intelligent RecipeParser
     func importRecipe(from url: URL, redirectCount: Int = 0) async {
-        // Prevent infinite redirect loops
         guard redirectCount < 5 else {
             await MainActor.run {
                 isLoading = false
@@ -49,7 +41,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             extractedData = nil
         }
         
-        // Check network connectivity first
         let isConnected = await NetworkMonitor.shared.isConnected
         guard isConnected else {
             await MainActor.run {
@@ -62,14 +53,12 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
         do {
             logger.debug("🌐 Fetching recipe from: \(url.absoluteString)")
             
-            // Create request with user agent to avoid blocking
             var request = URLRequest(url: url)
             request.setValue("Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1", forHTTPHeaderField: "User-Agent")
             request.setValue("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", forHTTPHeaderField: "Accept")
             request.setValue("en-US,en;q=0.9", forHTTPHeaderField: "Accept-Language")
             request.timeoutInterval = 30
             
-            // Fetch HTML
             let (data, response) = try await URLSession.shared.data(for: request)
             
             guard let httpResponse = response as? HTTPURLResponse else {
@@ -78,7 +67,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             
             logger.debug("📊 HTTP Status: \(httpResponse.statusCode)")
             
-            // Handle redirects and different status codes
             if httpResponse.statusCode == 301 || httpResponse.statusCode == 302 {
                 if let location = httpResponse.value(forHTTPHeaderField: "Location"),
                    let redirectURL = URL(string: location, relativeTo: url) {
@@ -98,7 +86,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             
             logger.debug("✅ HTML fetched (\(html.count) chars)")
             
-            // Use RecipeParser to extract structured data
             let parsed = RecipeParser.parse(html: html)
             
             await MainActor.run {
@@ -106,7 +93,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             }
             logger.debug("🎯 Parse confidence: \(Int(parsed.confidence * 100))%")
             
-            // Validate minimum requirements
             guard let name = parsed.name, !name.isEmpty else {
                 throw ImportError.missingRequiredData("Recipe name not found")
             }
@@ -119,12 +105,10 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
                 throw ImportError.missingRequiredData("No instructions found")
             }
             
-            // Match ingredients against database
             let matchedIngredients = matchIngredientsWithUSDA(parsed.ingredients)
             
             logger.debug("✅ Matched \(matchedIngredients.count)/\(parsed.ingredients.count) ingredients")
             
-            // Create extracted data
             let extractedData = ExtractedRecipeData(
                 name: name,
                 description: parsed.description,
@@ -156,29 +140,22 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
         }
     }
     
-    // MARK: - USDA Ingredient Matching
-    
-    /// Match parsed ingredients against USDA food database
     private func matchIngredientsWithUSDA(_ ingredients: [String]) -> [String] {
         var matched: [String] = []
         
         for ingredient in ingredients {
-            // Normalize the ingredient using IngredientNormalizer
             let normalized = IngredientNormalizer.normalize(ingredient)
             
-            // Check if normalized ingredient exists in USDA database
             let usdaFoods = FoodsList.getAllFoods()
             if usdaFoods.contains(normalized) {
                 matched.append(normalized)
             } else {
-                // Try to extract just the food name (remove quantities/modifiers)
                 let foodName = extractFoodName(from: ingredient)
                 let normalizedFoodName = IngredientNormalizer.normalize(foodName)
                 
                 if usdaFoods.contains(normalizedFoodName) {
                     matched.append(normalizedFoodName)
                 } else {
-                    // Include the normalized version anyway for user review
                     matched.append(normalized)
                 }
             }
@@ -187,15 +164,12 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
         return matched
     }
     
-    /// Extract food name from ingredient line (remove quantities, units, modifiers)
     private func extractFoodName(from ingredient: String) -> String {
         var cleaned = ingredient.lowercased()
         
-        // Remove quantities and units
         let quantityPattern = #"\b\d+[\d\/\.\s]*\s*(cup|tbsp|tsp|oz|lb|g|kg|ml|l)s?\b"#
         cleaned = cleaned.replacingOccurrences(of: quantityPattern, with: "", options: .regularExpression)
         
-        // Remove modifiers
         let modifiers = ["diced", "chopped", "sliced", "minced", "crushed", "grated", "fresh", "dried", "frozen"]
         for modifier in modifiers {
             cleaned = cleaned.replacingOccurrences(of: "\\b\(modifier)\\b", with: "", options: .regularExpression)
@@ -203,8 +177,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
         
         return cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
     }
-    
-    // MARK: - Error Types
     
     enum ImportError: LocalizedError {
         case invalidURL
@@ -235,14 +207,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
         }
     }
     
-    // MARK: - Intelligent Category Classification
-    
-    /// Multi-strategy category classification using:
-    /// 1. Schema.org recipeCategory
-    /// 2. Recipe name analysis (keyword matching)
-    /// 3. Ingredient-based classification
-    /// 4. Cuisine heuristics
-    /// Reference: USDA Food Categories, culinary taxonomy
     private func classifyCategory(
         schemaCategory: String?,
         recipeName: String,
@@ -250,7 +214,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
         cuisine: String?
     ) -> String {
         
-        // Strategy 1: Use Schema.org category if available and valid
         if let schema = schemaCategory {
             let normalized = normalizeCategory(schema)
             if isValidCategory(normalized) {
@@ -259,19 +222,16 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             }
         }
         
-        // Strategy 2: Name-based classification (keyword matching)
         if let nameCategory = classifyCategoryFromName(recipeName) {
             logger.debug("📂 Category from name: \(nameCategory)")
             return nameCategory
         }
         
-        // Strategy 3: Ingredient-based classification (machine learning approach)
         if let ingredientCategory = classifyCategoryFromIngredients(ingredients) {
             logger.debug("📂 Category from ingredients: \(ingredientCategory)")
             return ingredientCategory
         }
         
-        // Strategy 4: Cuisine-based default
         if let cuisine = cuisine?.lowercased() {
             if ["italian", "french", "american"].contains(cuisine) {
                 return "Main"
@@ -280,25 +240,19 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             }
         }
         
-        // Default fallback
         logger.debug("📂 Category: Using default (Main)")
         return "Main"
     }
     
-    /// Normalize category strings from various sources to standard categories
-    /// Maps common variations to canonical categories
     private func normalizeCategory(_ category: String) -> String {
         let lower = category.lowercased().trimmingCharacters(in: .whitespaces)
         
-        // Mapping of common variations to standard categories
         let categoryMap: [String: String] = [
-            // Breakfast variations
             "breakfast": "Breakfast",
             "breakfast and brunch": "Breakfast",
             "brunch": "Breakfast",
             "morning": "Breakfast",
             
-            // Appetizer/Starter variations
             "appetizer": "Starter",
             "appetizers": "Starter",
             "starter": "Starter",
@@ -307,7 +261,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             "finger food": "Starter",
             "snack": "Starter",
             
-            // Main course variations
             "main": "Main",
             "main course": "Main",
             "main dish": "Main",
@@ -316,20 +269,17 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             "dinner": "Main",
             "lunch": "Main",
             
-            // Side dish variations
             "side": "Side",
             "side dish": "Side",
             "sides": "Side",
             "accompaniment": "Side",
             
-            // Soup variations
             "soup": "Soup",
             "soups": "Soup",
             "stew": "Soup",
             "chowder": "Soup",
             "bisque": "Soup",
             
-            // Dessert variations
             "dessert": "Dessert",
             "desserts": "Dessert",
             "sweet": "Dessert",
@@ -339,7 +289,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             "cookie": "Dessert",
             "pie": "Dessert",
             
-            // Drink variations
             "drink": "Drink",
             "drinks": "Drink",
             "beverage": "Drink",
@@ -351,18 +300,14 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
         return categoryMap[lower] ?? "Main"
     }
     
-    /// Check if category is valid (matches one of our 7 categories)
     private func isValidCategory(_ category: String) -> Bool {
         let validCategories = ["Breakfast", "Starter", "Main", "Side", "Soup", "Dessert", "Drink"]
         return validCategories.contains(category)
     }
     
-    /// Classify category based on recipe name keywords
-    /// Uses extensive keyword dictionary from major recipe sites
     private func classifyCategoryFromName(_ name: String) -> String? {
         let lower = name.lowercased()
         
-        // Breakfast keywords (high confidence)
         let breakfastKeywords = [
             "pancake", "waffle", "french toast", "omelette", "omelet", "scrambled egg",
             "fried egg", "poached egg", "breakfast", "brunch", "cereal", "oatmeal",
@@ -372,7 +317,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             return "Breakfast"
         }
         
-        // Dessert keywords (high confidence)
         let dessertKeywords = [
             "cake", "cookie", "brownie", "cupcake", "pie", "tart", "cheesecake",
             "pudding", "mousse", "ice cream", "sorbet", "gelato", "macaron",
@@ -384,7 +328,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             return "Dessert"
         }
         
-        // Soup keywords
         let soupKeywords = [
             "soup", "stew", "chowder", "bisque", "broth", "consomme", "gazpacho",
             "minestrone", "ramen", "pho", "chili", "gumbo"
@@ -393,7 +336,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             return "Soup"
         }
         
-        // Drink keywords
         let drinkKeywords = [
             "smoothie", "juice", "cocktail", "mocktail", "latte", "cappuccino",
             "espresso", "tea", "lemonade", "shake", "milkshake", "drink", "beverage"
@@ -402,7 +344,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             return "Drink"
         }
         
-        // Starter/Appetizer keywords
         let starterKeywords = [
             "dip", "salsa", "guacamole", "hummus", "bruschetta", "crostini",
             "appetizer", "starter", "canapé", "tapas", "mezze", "antipasto",
@@ -412,7 +353,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             return "Starter"
         }
         
-        // Side dish keywords
         let sideKeywords = [
             "side", "fries", "coleslaw", "potato salad", "mac and cheese",
             "roasted vegetables", "sautéed", "steamed vegetables"
@@ -424,8 +364,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
         return nil
     }
     
-    /// Classify category based on ingredient composition
-    /// Uses weighted scoring algorithm for classification confidence
     private func classifyCategoryFromIngredients(_ ingredients: [String]) -> String? {
         let ingredientText = ingredients.joined(separator: " ").lowercased()
         
@@ -437,14 +375,12 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             "Main": 0
         ]
         
-        // Breakfast indicators (eggs, bacon, etc.)
         if ingredientText.contains("egg") { scores["Breakfast"]! += 3 }
         if ingredientText.contains("bacon") { scores["Breakfast"]! += 3 }
         if ingredientText.contains("sausage") && !ingredientText.contains("italian") { scores["Breakfast"]! += 2 }
         if ingredientText.contains("maple syrup") { scores["Breakfast"]! += 4 }
         if ingredientText.contains("oat") { scores["Breakfast"]! += 2 }
         
-        // Dessert indicators (flour + sugar + butter = baking)
         let hasFlour = ingredientText.contains("flour")
         let hasSugar = ingredientText.contains("sugar")
         let hasButter = ingredientText.contains("butter")
@@ -456,7 +392,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
         if hasVanilla { scores["Dessert"]! += 2 }
         if ingredientText.contains("cream") && hasSugar { scores["Dessert"]! += 3 }
         
-        // Soup indicators (broth/stock + vegetables)
         if ingredientText.contains("broth") || ingredientText.contains("stock") {
             scores["Soup"]! += 4
         }
@@ -464,7 +399,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             scores["Soup"]! += 3
         }
         
-        // Drink indicators
         if ingredientText.contains("milk") && !hasFlour && ingredients.count <= 5 {
             scores["Drink"]! += 3
         }
@@ -472,13 +406,11 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             scores["Drink"]! += 4
         }
         
-        // Main course indicators (protein-heavy)
         let proteins = ["chicken", "beef", "pork", "fish", "salmon", "shrimp", "lamb", "turkey"]
         if proteins.contains(where: { ingredientText.contains($0) }) {
             scores["Main"]! += 4
         }
         
-        // Return highest scoring category if confidence is high enough
         if let maxScore = scores.values.max(), maxScore >= 4 {
             if let category = scores.first(where: { $0.value == maxScore })?.key {
                 return category
@@ -488,11 +420,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
         return nil
     }
     
-    // MARK: - Difficulty Estimation
-    
-    /// Estimate recipe difficulty using complexity heuristics
-    /// Factors: ingredient count, instruction complexity, technique keywords
-    /// Reference: Culinary Institute of America skill classifications
     private func estimateDifficulty(
         ingredientCount: Int,
         instructionCount: Int,
@@ -501,21 +428,18 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
         
         var complexityScore = 0
         
-        // Factor 1: Ingredient count (more ingredients = more complex)
         if ingredientCount > 15 {
             complexityScore += 2
         } else if ingredientCount > 10 {
             complexityScore += 1
         }
         
-        // Factor 2: Number of steps
         if instructionCount > 10 {
             complexityScore += 2
         } else if instructionCount > 6 {
             complexityScore += 1
         }
         
-        // Factor 3: Advanced technique keywords
         let advancedTechniques = [
             "sous vide", "flambé", "emulsify", "temper", "confit", "braise",
             "deglaze", "fold", "proof", "knead", "reduce", "clarify",
@@ -531,14 +455,12 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             complexityScore += 1
         }
         
-        // Factor 4: Time-intensive processes
         if instructionText.contains("overnight") || instructionText.contains("24 hour") {
             complexityScore += 2
         } else if instructionText.contains("rest") || instructionText.contains("chill") {
             complexityScore += 1
         }
         
-        // Classification based on score
         if complexityScore >= 5 {
             return "Expert"
         } else if complexityScore >= 2 {
@@ -548,7 +470,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
         }
     }
     
-    /// Main import function - extracts recipe data and matches USDA ingredients
     func importRecipe(from urlString: String) async {
         isLoading = true
         errorMessage = nil
@@ -563,7 +484,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
         }
         
         do {
-            // 1. Fetch HTML
             logger.debug("📥 Fetching HTML...")
             let (data, _) = try await URLSession.shared.data(from: url)
             guard let html = String(data: data, encoding: .utf8) else {
@@ -571,7 +491,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             }
             logger.debug("✅ HTML fetched: \(html.count) chars")
             
-            // 2. Extract recipe data (try Schema.org first, then fallback to text extraction)
             logger.debug("🔍 Extracting recipe data...")
             let schemaRecipe = extractSchemaRecipe(from: html)
             
@@ -585,7 +504,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
                 instructions = schema.recipeInstructions?.steps ?? []
                 logger.debug("✅ Extracted via Schema.org: \(ingredientTexts.count) ingredients")
             } else {
-                // Fallback: extract from HTML text
                 logger.debug("⚠️ No Schema.org data, extracting from HTML text...")
                 let extracted = extractFromHTML(html)
                 recipeName = extracted.name
@@ -594,12 +512,10 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
                 logger.debug("✅ Extracted from HTML: \(ingredientTexts.count) ingredient lines")
             }
             
-            // 3. Match ingredients against food list
             logger.debug("🎯 Matching ingredients against foods...")
             let matchedIngredients = matchUSDAIngredients(from: ingredientTexts)
             logger.debug("✅ Matched \(matchedIngredients.count) ingredients")
             
-            // 4. Return extracted data for Recipe Wizard
             let extracted = ExtractedRecipeData(
                 name: recipeName,
                 description: nil,
@@ -626,7 +542,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
         }
     }
     
-    /// Match ingredient texts against USDA food database - ENHANCED VERSION
     private func matchUSDAIngredients(from texts: [String]) -> [String] {
         let usdaFoods = FoodsList.getAllFoods()
         let usdaLowercased = usdaFoods.map { $0.lowercased() }
@@ -634,7 +549,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
         var matched: [String] = []
         var matchedLower: Set<String> = []
         
-        // Common cooking words to skip
         let skipWords = Set(["and", "the", "with", "for", "into", "from", "about", "approximately", "roughly", "optional", "fresh", "dried", "chopped", "diced", "sliced", "minced", "grated", "shredded", "melted", "softened", "room", "temperature", "large", "small", "medium", "to", "taste", "as", "needed", "cup", "cups", "tbsp", "tsp", "tablespoon", "tablespoons", "teaspoon", "teaspoons", "ounce", "ounces", "oz", "pound", "pounds", "lb", "lbs", "gram", "grams", "g", "kg", "kilogram", "ml", "milliliter", "liter", "l", "pinch", "dash", "clove", "cloves"])
         
         for text in texts {
@@ -646,7 +560,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             let words = cleanText.components(separatedBy: .whitespaces)
                 .filter { !$0.isEmpty && $0.count > 2 && !skipWords.contains($0) }
             
-            // Strategy 1: Try exact multi-word matches first (e.g., "chicken breast")
             if words.count >= 2 {
                 for i in 0..<words.count-1 {
                     let twoWords = "\(words[i]) \(words[i+1])"
@@ -662,7 +575,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
                 }
             }
             
-            // Strategy 2: Try exact single food match
             for food in usdaFoods {
                 let foodLower = food.lowercased()
                 if cleanText == foodLower || cleanText.contains(" \(foodLower) ") || cleanText.starts(with: "\(foodLower) ") || cleanText.hasSuffix(" \(foodLower)") {
@@ -675,12 +587,9 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
                 }
             }
             
-            // Strategy 3: Look through individual words for food matches
             for word in words {
-                // Skip if already found a match for this ingredient text
                 if matched.count > matchedLower.count { break }
                 
-                // Try to find a food that matches or contains this word
                 if let matchIndex = usdaLowercased.firstIndex(where: { foodLower in
                     let foodWords = foodLower.components(separatedBy: .whitespaces)
                     return foodWords.contains(word) || word.contains(foodLower) || foodLower.contains(word)
@@ -695,8 +604,7 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
                 }
             }
             
-            // Strategy 4: Partial matching - look for foods contained in the text
-            if matched.count == matchedLower.count { // No match yet
+            if matched.count == matchedLower.count {
                 for (index, foodLower) in usdaLowercased.enumerated() {
                     if cleanText.contains(foodLower) && foodLower.count > 3 {
                         let match = usdaFoods[index]
@@ -715,9 +623,7 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
         return matched
     }
     
-    /// Extract from HTML when no Schema.org data available - ENHANCED VERSION
     private func extractFromHTML(_ html: String) -> (name: String, ingredients: [String], instructions: [String]) {
-        // Strip HTML tags but preserve line breaks
         var text = html.replacingOccurrences(of: "<br[^>]*>", with: "\n", options: .regularExpression)
         text = text.replacingOccurrences(of: "</p>", with: "\n", options: .regularExpression)
         text = text.replacingOccurrences(of: "</li>", with: "\n", options: .regularExpression)
@@ -730,10 +636,8 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             .map { $0.trimmingCharacters(in: .whitespaces) }
             .filter { !$0.isEmpty && $0.count > 3 }
         
-        // SMART RECIPE NAME EXTRACTION
         var name = "Imported Recipe"
         
-        // Try <title> tag first
         if let titleRange = html.range(of: "<title[^>]*>([^<]+)</title>", options: .regularExpression) {
             let titleText = String(html[titleRange])
             if let extracted = titleText.range(of: ">([^<]+)<", options: .regularExpression) {
@@ -743,7 +647,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
                     .trimmingCharacters(in: .whitespaces)
                     .decodeHTMLEntities()
                 
-                // Clean up title (remove site names, separators)
                 let cleaned = rawTitle
                     .components(separatedBy: ["|", "-", "–", "—"])
                     .first?
@@ -755,7 +658,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             }
         }
         
-        // Fallback: Look for <h1> tags
         if name == "Imported Recipe" {
             if let h1Range = html.range(of: "<h1[^>]*>([^<]+)</h1>", options: .regularExpression) {
                 let h1Text = String(html[h1Range])
@@ -772,24 +674,20 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             }
         }
         
-        // SMART INGREDIENT EXTRACTION
         var ingredientLines: [String] = []
         
-        // Look for sections with "ingredient" in nearby text
         var inIngredientSection = false
         var foundIngredientHeader = false
         
         for line in lines {
             let lowercased = line.lowercased()
             
-            // Check if this is an ingredient section header
             if lowercased.contains("ingredient") && line.count < 50 {
                 inIngredientSection = true
                 foundIngredientHeader = true
                 continue
             }
             
-            // Check if we've left the ingredient section
             if inIngredientSection && 
                (lowercased.contains("instruction") || 
                 lowercased.contains("direction") || 
@@ -798,7 +696,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
                 inIngredientSection = false
             }
             
-            // Extract ingredient-like lines
             if inIngredientSection || !foundIngredientHeader {
                 let hasNumber = line.range(of: #"[\d/]"#, options: .regularExpression) != nil
                 let hasUnit = ["cup", "cups", "tbsp", "tsp", "teaspoon", "tablespoon", "oz", "ounce", "lb", "pound", "gram", "g", "kg", "ml", "liter", "clove", "pinch", "dash", "slice"].contains(where: { lowercased.contains($0) })
@@ -806,7 +703,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
                 let isShort = line.count < 150
                 
                 if (hasNumber && hasUnit) || (hasNumber && hasFoodWord) || (hasFoodWord && isShort) {
-                    // Skip if it looks like a title or instruction
                     if !lowercased.contains("step") && !lowercased.contains("preheat") {
                         ingredientLines.append(line)
                     }
@@ -816,7 +712,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             if ingredientLines.count >= 30 { break }
         }
         
-        // SMART INSTRUCTION EXTRACTION
         var instructionLines: [String] = []
         var inInstructionSection = false
         var currentInstruction = ""
@@ -824,7 +719,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
         for line in lines {
             let lowercased = line.lowercased()
             
-            // Check if this is an instruction section header
             if (lowercased.contains("instruction") || 
                 lowercased.contains("direction") || 
                 lowercased.contains("preparation") ||
@@ -835,13 +729,11 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             }
             
             if inInstructionSection {
-                // Look for instruction-like content
                 let hasVerb = ["add", "mix", "stir", "cook", "heat", "bake", "boil", "fry", "season", "place", "pour", "combine", "whisk", "blend", "chop", "cut", "slice", "dice", "preheat", "serve"].contains(where: { lowercased.contains($0) })
                 let isReasonableLength = line.count > 20 && line.count < 500
                 let startsWithNumber = line.first?.isNumber == true
                 
                 if (hasVerb && isReasonableLength) || startsWithNumber {
-                    // If previous instruction was building up, save it
                     if !currentInstruction.isEmpty {
                         instructionLines.append(currentInstruction)
                         currentInstruction = ""
@@ -849,13 +741,11 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
                     
                     currentInstruction = line
                     
-                    // If line seems complete, add it
                     if line.hasSuffix(".") || line.hasSuffix("!") || startsWithNumber {
                         instructionLines.append(currentInstruction)
                         currentInstruction = ""
                     }
                 } else if !currentInstruction.isEmpty && isReasonableLength {
-                    // Continue building current instruction
                     currentInstruction += " " + line
                     if line.hasSuffix(".") || line.hasSuffix("!") {
                         instructionLines.append(currentInstruction)
@@ -867,12 +757,10 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             if instructionLines.count >= 25 { break }
         }
         
-        // Add any remaining instruction
         if !currentInstruction.isEmpty {
             instructionLines.append(currentInstruction)
         }
         
-        // If we didn't find enough, try broader search
         if ingredientLines.count < 3 {
             ingredientLines = lines.filter { line in
                 let lowercased = line.lowercased()
@@ -896,7 +784,6 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
         return (name, Array(ingredientLines.prefix(30)), Array(instructionLines.prefix(20)))
     }
     
-    // Keep Schema.org extraction for sites that support it
     private func extractSchemaRecipe(from html: String) -> SchemaRecipe? {
         let pattern = #"<script[^>]*type\s*=\s*["\']application/ld\+json["\'][^>]*>(.*?)</script>"#
         guard let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive, .dotMatchesLineSeparators]) else {
@@ -911,18 +798,15 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             let jsonString = String(html[jsonRange]).trimmingCharacters(in: .whitespacesAndNewlines)
             guard let jsonData = jsonString.data(using: .utf8) else { continue }
             
-            // Try single recipe
             if let recipe = try? JSONDecoder().decode(SchemaRecipe.self, from: jsonData), recipe.name != nil {
                 return recipe
             }
             
-            // Try array
             if let array = try? JSONDecoder().decode([SchemaRecipe].self, from: jsonData),
                let recipe = array.first(where: { $0.name != nil }) {
                 return recipe
             }
             
-            // Try @graph
             if let json = try? JSONSerialization.jsonObject(with: jsonData) as? [String: Any],
                let graph = json["@graph"] as? [[String: Any]] {
                 for item in graph {
@@ -947,20 +831,18 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
     }
 }
 
-// Enhanced Schema.org Recipe Structure with full metadata extraction
 struct SchemaRecipe: Codable {
     let name: String?
     let recipeIngredient: [String]?
     let recipeInstructions: InstructionType?
-    let totalTime: String?           // ISO 8601 duration (e.g., "PT45M")
-    let cookTime: String?             // ISO 8601 duration
-    let prepTime: String?             // ISO 8601 duration
-    let recipeCategory: CategoryType? // Can be string or array
-    let recipeCuisine: String?        // "Italian", "Mexican", etc.
-    let recipeYield: YieldType?       // Can be string or number
-    let difficulty: String?           // Some sites include this
+    let totalTime: String?
+    let cookTime: String?
+    let prepTime: String?
+    let recipeCategory: CategoryType?
+    let recipeCuisine: String?
+    let recipeYield: YieldType?
+    let difficulty: String?
     
-    // Support both string and array for category
     enum CategoryType: Codable {
         case string(String)
         case array([String])
@@ -984,7 +866,6 @@ struct SchemaRecipe: Codable {
         }
     }
     
-    // Support both string and number for yield
     enum YieldType: Codable {
         case string(String)
         case number(Int)
@@ -1004,7 +885,6 @@ struct SchemaRecipe: Codable {
             switch self {
             case .number(let n): return n
             case .string(let s):
-                // Extract number from string like "4 servings" or "Serves 6"
                 let digits = s.filter { $0.isNumber }
                 return Int(digits) ?? 4
             }
@@ -1042,14 +922,10 @@ struct SchemaRecipe: Codable {
     }
 }
 
-// MARK: - HTML Entity Decoding Extension
-
 extension String {
-    /// Decode HTML entities like &amp;, &quot;, &nbsp;, {one pot}, etc.
     func decodeHTMLEntities() -> String {
         var result = self
         
-        // Common HTML entities
         let entities: [String: String] = [
             "&amp;": "&",
             "&lt;": "<",
@@ -1062,22 +938,20 @@ extension String {
             "&mdash;": "—",
             "&ndash;": "–",
             "&hellip;": "...",
-            "&ldquo;": "\u{201C}",  // Left double quotation mark
-            "&rdquo;": "\u{201D}",  // Right double quotation mark
-            "&lsquo;": "\u{2018}",  // Left single quotation mark
-            "&rsquo;": "\u{2019}",  // Right single quotation mark
+            "&ldquo;": "\u{201C}",
+            "&rdquo;": "\u{201D}",
+            "&lsquo;": "\u{2018}",
+            "&rsquo;": "\u{2019}",
             "&deg;": "°",
             "&frac12;": "½",
             "&frac14;": "¼",
             "&frac34;": "¾"
         ]
         
-        // Replace known entities
         for (entity, replacement) in entities {
             result = result.replacingOccurrences(of: entity, with: replacement)
         }
         
-        // Handle numeric entities (&#123;)
         let decimalPattern = "&#(\\d+);"
         if let regex = try? NSRegularExpression(pattern: decimalPattern, options: []) {
             let nsString = result as NSString
@@ -1096,7 +970,6 @@ extension String {
             }
         }
         
-        // Handle hex numeric entities (&#xAB;)
         let hexPattern = "&#x([0-9A-Fa-f]+);"
         if let regex = try? NSRegularExpression(pattern: hexPattern, options: []) {
             let nsString = result as NSString
@@ -1115,7 +988,6 @@ extension String {
             }
         }
         
-        // Handle curly brace patterns like {one pot} -> remove braces
         result = result.replacingOccurrences(of: #"\{([^}]+)\}"#, with: "$1", options: .regularExpression)
         
         return result

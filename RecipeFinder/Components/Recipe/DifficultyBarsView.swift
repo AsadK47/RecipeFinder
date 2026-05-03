@@ -14,7 +14,7 @@ struct DifficultyBarsView: View {
         case "easy": return 1
         case "medium": return 2
         case "hard": return 3
-        default: return 2 // Default to medium if unspecified
+        default: return 2
         }
     }
     
@@ -33,9 +33,9 @@ struct DifficultyBarsView: View {
     
     private func cascadingHeight(for index: Int) -> CGFloat {
         switch index {
-        case 0: return size * 3  // Small bar
-        case 1: return size * 4  // Medium bar
-        case 2: return size * 5  // Large bar
+        case 0: return size * 3
+        case 1: return size * 4
+        case 2: return size * 5
         default: return size * 4
         }
     }

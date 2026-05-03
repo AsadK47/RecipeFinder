@@ -20,19 +20,16 @@ struct RecipeDetailView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
     
-    // Computed from @State recipe so they stay in sync after edits
     private var hasPrePrep: Bool { !recipe.prePrepInstructions.isEmpty }
     private var hasNotes: Bool { !recipe.notes.isEmpty }
     private var notesSentences: [Substring] { recipe.notes.split(separator: ".") }
     
-    // Callback to refresh recipes list when favorite is toggled
     var onFavoriteToggle: (() -> Void)?
     
     init(recipe: RecipeModel, onFavoriteToggle: (() -> Void)? = nil) {
         _recipe = State(initialValue: recipe)
         self.onFavoriteToggle = onFavoriteToggle
         
-        // Size state arrays to match the initial recipe
         _ingredientsState = State(initialValue: Array(repeating: false, count: recipe.ingredients.count))
         _instructionsState = State(initialValue: Array(repeating: false, count: recipe.instructions.count))
         _prePrepState = State(initialValue: Array(repeating: false, count: recipe.prePrepInstructions.count))
@@ -86,9 +83,6 @@ struct RecipeDetailView: View {
             checkForCompletion(newValue)
         }
         .onChange(of: recipe) { _, newRecipe in
-            // Resize the checkbox state arrays whenever the recipe is updated (e.g. after an edit).
-            // Without this, ForEach iterates over the new recipe's indices but the state arrays
-            // still have the old count → index-out-of-bounds crash if any count changed.
             if ingredientsState.count != newRecipe.ingredients.count {
                 ingredientsState = Array(repeating: false, count: newRecipe.ingredients.count)
             }
@@ -100,8 +94,6 @@ struct RecipeDetailView: View {
             }
         }
     }
-    
-    // MARK: - View Components
     
     private var backgroundView: some View {
         AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
@@ -339,7 +331,6 @@ struct RecipeDetailView: View {
     private var ingredientsList: some View {
         GlassCard {
             VStack(spacing: AppTheme.spacing16) {
-                // Swipe hint banner (shows once)
                 if !hasSeenSwipeHint {
                     HStack(spacing: AppTheme.spacing8) {
                         Image(systemName: "hand.draw")
@@ -507,7 +498,6 @@ struct RecipeDetailView: View {
             editingRecipeId: recipe.id,
             onComplete: { updatedRecipe in
                 recipe = updatedRecipe
-                // Update in Core Data
                 PersistenceController.shared.saveRecipeModel(updatedRecipe)
                 HapticManager.shared.success()
             }
@@ -536,8 +526,6 @@ struct RecipeDetailView: View {
             .opacity(showAddedFeedback != nil ? 1 : 0)
         }
     }
-    
-    // MARK: - Helper Methods
     
     private func toggleSection(_ section: String) {
         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
@@ -583,18 +571,14 @@ struct RecipeDetailView: View {
         }
     }
     
-    // Overload for when we need to check without the onChange parameter
     private func checkForCompletion() {
         checkForCompletion(instructionsState)
     }
-    
-    // MARK: - Collapsible Section
     
     private func collapsibleSection<Content: View>(title: String, icon: String, @ViewBuilder content: () -> Content) -> some View {
         let isExpanded = expandedSections.contains(title)
         
         return VStack(alignment: .leading, spacing: AppTheme.spacing12) {
-            // Tappable header
             Button(
                 action: {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
@@ -617,7 +601,6 @@ struct RecipeDetailView: View {
                         
                         Spacer()
                         
-                        // Chevron indicator
                         Image(systemName: "chevron.down")
                             .font(.title3)
                             .fontWeight(.semibold)
@@ -630,11 +613,10 @@ struct RecipeDetailView: View {
             )
             .buttonStyle(PlainButtonStyle())
             
-            // Collapsible content
             if isExpanded {
                 GlassCard {
                     content()
-                        .frame(maxWidth: .infinity, alignment: .leading) // Force full width
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(AppTheme.spacing24)
                 }
                 .transition(.asymmetric(
@@ -643,11 +625,9 @@ struct RecipeDetailView: View {
                 ))
             }
         }
-        .frame(maxWidth: .infinity) // Ensure container fills width
+        .frame(maxWidth: .infinity)
         .padding(.horizontal, 20)
     }
-    
-    // MARK: - Instruction Row
     
     private func instructionRow(number: Int, text: String, isChecked: Bool, toggle: @escaping () -> Void) -> some View {
         Button(action: toggle, label: {
@@ -683,32 +663,23 @@ struct RecipeDetailView: View {
         .buttonStyle(.plain)
     }
     
-    // MARK: - Shopping List Management
-    
     private func addIngredientToShoppingList(_ ingredient: Ingredient) {
-        // Haptic feedback
         HapticManager.shared.light()
         
-        // Normalize ingredient name to USDA standard (e.g., "beef slices" -> "Beef Steak")
         let normalizedName = IngredientNormalizer.normalize(ingredient.name)
         
-        // Add only the ingredient name (no measurements)
         ShoppingListManager.shared.addItem(name: normalizedName, quantity: 1, category: nil)
         
-        // Mark as added immediately for UI update
         addedIngredients.insert(ingredient.name)
         
-        // Show feedback with normalized name
         showAddedFeedback = normalizedName
         
-        // Keep basket purple and start fading after 1.5 seconds
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
             withAnimation(.easeOut(duration: 0.8)) {
                 showAddedFeedback = nil
             }
         }
         
-        // Clear the added state after 2 seconds (basket returns to normal)
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             withAnimation {
                 _ = addedIngredients.remove(ingredient.name)
@@ -717,15 +688,11 @@ struct RecipeDetailView: View {
     }
     
     private func isIngredientInShoppingList(_ ingredient: Ingredient) -> Bool {
-        // Check if recently added (basket stays purple temporarily)
         if addedIngredients.contains(ingredient.name) {
             return true
         }
-        // Don't check actual shopping list - let user add multiple times if needed
         return false
     }
-    
-    // MARK: - Ingredient Editing
     
     private func startEditingIngredient(at index: Int) {
         HapticManager.shared.light()
@@ -737,14 +704,11 @@ struct RecipeDetailView: View {
     
     private func saveIngredientEdit(at index: Int) {
         guard let quantity = Double(editingQuantity), quantity > 0 else {
-            // Invalid input - just close
             editingIngredientIndex = nil
             return
         }
         
-        // Create updated ingredient
         let updatedIngredient = recipe.ingredients[index]
-        // Since baseQuantity is let, we need to create a new Ingredient
         let newIngredient = Ingredient(
             id: updatedIngredient.id,
             baseQuantity: quantity,
@@ -752,18 +716,14 @@ struct RecipeDetailView: View {
             name: updatedIngredient.name
         )
         
-        // Update recipe
         recipe.ingredients[index] = newIngredient
         
-        // Update in Core Data
         PersistenceController.shared.updateRecipe(recipe)
         
-        // Close sheet
         editingIngredientIndex = nil
         HapticManager.shared.success()
     }
     
-    // Grouped cooking units for the picker
     private let cookingUnits: [(group: String, units: [String])] = [
         ("Volume – Metric",   ["ml", "cl", "dl", "l"]),
         ("Volume – Imperial", ["tsp", "tbsp", "fl oz", "cup", "pt", "qt", "gal"]),
@@ -803,7 +763,6 @@ struct RecipeDetailView: View {
                     }
 
                     Picker("Unit", selection: $editingUnit) {
-                        // "None" option for bare counts like "2 eggs"
                         Text("none").tag("")
                         ForEach(cookingUnits, id: \.group) { group in
                             Section(group.group) {
@@ -841,16 +800,12 @@ struct RecipeDetailView: View {
         }
     }
     
-    // MARK: - Favorites
-    
     private func toggleFavorite() {
         HapticManager.shared.light()
         recipe.isFavorite.toggle()
         
-        // Update in Core Data
         PersistenceController.shared.toggleFavorite(withId: recipe.id)
         
-        // Trigger callback if provided
         onFavoriteToggle?()
     }
 }

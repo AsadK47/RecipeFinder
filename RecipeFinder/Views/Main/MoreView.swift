@@ -100,8 +100,6 @@ struct MoreView: View {
         }
     }
 
-// MARK: - More View Components
-
 struct MoreCard<Content: View>: View {
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted

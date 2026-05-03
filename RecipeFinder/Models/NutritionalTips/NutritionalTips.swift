@@ -1,13 +1,5 @@
-//
-//  NutritionalTips.swift
-//  RecipeFinder
-//
-//  Created on 12/19/2025.
-//
 
 import Foundation
-
-// MARK: - Nutritional Tip Model
 
 struct NutritionalTip: Identifiable, Codable {
     let id: UUID
@@ -43,8 +35,6 @@ struct NutritionalTip: Identifiable, Codable {
     }
 }
 
-// MARK: - Tip Category
-
 enum NutritionalTipCategory: String, Codable, CaseIterable, Identifiable {
     case plateComposition = "Plate Composition"
     case wholeGrains = "Whole Grains"
@@ -75,8 +65,6 @@ enum NutritionalTipCategory: String, Codable, CaseIterable, Identifiable {
     }
 }
 
-// MARK: - Evidence Level
-
 enum EvidenceLevel: String, Codable {
     case strong = "Strong Evidence"
     case moderate = "Moderate Evidence"
@@ -98,8 +86,6 @@ enum EvidenceLevel: String, Codable {
         }
     }
 }
-
-// MARK: - Scientific Source
 
 struct ScientificSource: Codable, Identifiable {
     let id: UUID
@@ -134,15 +120,10 @@ struct ScientificSource: Codable, Identifiable {
     }
 }
 
-// MARK: - Nutritional Tips Database
-
 struct NutritionalTipsDatabase {
-    
-    // MARK: - All Tips
     
     static let allTips: [NutritionalTip] = [
         
-        // 1. Plate Composition - Harvard Healthy Eating Plate
         NutritionalTip(
             title: "Follow the Healthy Plate Method",
             summary: "Fill half your plate with vegetables and fruits, a quarter with whole grains, and a quarter with healthy protein.",
@@ -167,7 +148,6 @@ struct NutritionalTipsDatabase {
             evidenceLevel: .strong
         ),
         
-        // 2. Whole Grains Priority
         NutritionalTip(
             title: "Choose Whole Over Refined Grains",
             summary: "Whole grains have a milder effect on blood sugar and provide more nutrients than refined grains.",
@@ -198,7 +178,6 @@ struct NutritionalTipsDatabase {
             evidenceLevel: .strong
         ),
         
-        // 3. Protein Diversity
         NutritionalTip(
             title: "Diversify Your Protein Sources",
             summary: "Choose fish, poultry, beans, and nuts over red and processed meats.",
@@ -229,7 +208,6 @@ struct NutritionalTipsDatabase {
             evidenceLevel: .strong
         ),
         
-        // 4. Vegetable and Fruit Variety
         NutritionalTip(
             title: "Eat a Rainbow of Vegetables and Fruits",
             summary: "Aim for variety and color to get the full spectrum of nutrients and antioxidants.",
@@ -260,7 +238,6 @@ struct NutritionalTipsDatabase {
             evidenceLevel: .strong
         ),
         
-        // 5. Healthy Fats
         NutritionalTip(
             title: "Choose Healthy Oils and Fats",
             summary: "Use olive, canola, and other vegetable oils while avoiding trans fats.",
@@ -291,7 +268,6 @@ struct NutritionalTipsDatabase {
             evidenceLevel: .strong
         ),
         
-        // 6. Hydration
         NutritionalTip(
             title: "Prioritize Water Over Sugary Drinks",
             summary: "Skip sugary beverages and limit juice; choose water, coffee, or tea instead.",
@@ -322,7 +298,6 @@ struct NutritionalTipsDatabase {
             evidenceLevel: .strong
         ),
         
-        // 7. Limit Ultra-Processed Foods
         NutritionalTip(
             title: "Minimize Ultra-Processed Foods",
             summary: "Focus on whole foods and minimize consumption of heavily processed products.",
@@ -353,7 +328,6 @@ struct NutritionalTipsDatabase {
             evidenceLevel: .strong
         ),
         
-        // 8. Portion Awareness
         NutritionalTip(
             title: "Practice Mindful Portion Control",
             summary: "Use visual cues and listen to hunger signals rather than eating to fullness.",
@@ -384,7 +358,6 @@ struct NutritionalTipsDatabase {
             evidenceLevel: .strong
         ),
         
-        // 9. Meal Regularity
         NutritionalTip(
             title: "Maintain Regular Meal Patterns",
             summary: "Eating at consistent times helps regulate metabolism and prevent overeating.",
@@ -415,7 +388,6 @@ struct NutritionalTipsDatabase {
             evidenceLevel: .moderate
         ),
         
-        // 10. Sustainable Eating
         NutritionalTip(
             title: "Consider Your Plate's Impact on the Planet",
             summary: "Foods that are good for your health often align with environmental sustainability.",
@@ -447,14 +419,11 @@ struct NutritionalTipsDatabase {
         )
     ]
     
-    // MARK: - Query Methods
-    
     static func tips(forCategory category: NutritionalTipCategory) -> [NutritionalTip] {
         allTips.filter { $0.category == category }
     }
     
     static func tipOfTheDay() -> NutritionalTip {
-        // Returns a different tip based on the day of the year
         let dayOfYear = Calendar.current.ordinality(of: .day, in: .year, for: Date()) ?? 1
         let index = (dayOfYear - 1) % allTips.count
         return allTips[index]
@@ -465,7 +434,6 @@ struct NutritionalTipsDatabase {
     }
     
     static func essentialTips() -> [NutritionalTip] {
-        // Returns the most fundamental tips
         allTips.filter { $0.evidenceLevel == .strong }.prefix(5).map { $0 }
     }
 }

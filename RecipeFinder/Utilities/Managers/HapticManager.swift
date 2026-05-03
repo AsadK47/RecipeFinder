@@ -1,13 +1,11 @@
 import UIKit
 import AudioToolbox
 
-/// Centralized haptic feedback manager for consistent tactile responses throughout the app
 final class HapticManager: Sendable {
     static let shared = HapticManager()
     
     private init() {}
     
-    // Light tap - for subtle interactions
     func light() {
         Task { @MainActor in
             let generator = UIImpactFeedbackGenerator(style: .light)
@@ -15,7 +13,6 @@ final class HapticManager: Sendable {
         }
     }
     
-    // Medium impact - for standard interactions
     func medium() {
         Task { @MainActor in
             let generator = UIImpactFeedbackGenerator(style: .medium)
@@ -23,7 +20,6 @@ final class HapticManager: Sendable {
         }
     }
     
-    // Heavy impact - for important actions
     func heavy() {
         Task { @MainActor in
             let generator = UIImpactFeedbackGenerator(style: .heavy)
@@ -31,7 +27,6 @@ final class HapticManager: Sendable {
         }
     }
     
-    // Soft impact - for very gentle feedback
     func soft() {
         Task { @MainActor in
             let generator = UIImpactFeedbackGenerator(style: .soft)
@@ -39,7 +34,6 @@ final class HapticManager: Sendable {
         }
     }
     
-    // Rigid impact - for firm, definitive actions
     func rigid() {
         Task { @MainActor in
             let generator = UIImpactFeedbackGenerator(style: .rigid)
@@ -47,7 +41,6 @@ final class HapticManager: Sendable {
         }
     }
     
-    // Success notification - for successful operations
     func success() {
         DispatchQueue.main.async {
             let generator = UINotificationFeedbackGenerator()
@@ -55,7 +48,6 @@ final class HapticManager: Sendable {
         }
     }
     
-    // Warning notification - for warnings
     func warning() {
         DispatchQueue.main.async {
             let generator = UINotificationFeedbackGenerator()
@@ -63,7 +55,6 @@ final class HapticManager: Sendable {
         }
     }
     
-    // Error notification - for errors
     func error() {
         DispatchQueue.main.async {
             let generator = UINotificationFeedbackGenerator()
@@ -71,7 +62,6 @@ final class HapticManager: Sendable {
         }
     }
     
-    // Selection changed - for picker/selection changes
     func selection() {
         Task { @MainActor in
             let generator = UISelectionFeedbackGenerator()
@@ -79,39 +69,33 @@ final class HapticManager: Sendable {
         }
     }
     
-    // Custom patterns for special interactions
-    
-    // Double tap pattern - light-light quickly
     func doubleTap() {
         light()
         Task { @MainActor in
-            try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+            try? await Task.sleep(nanoseconds: 100_000_000)
             self.light()
         }
     }
     
-    // Success celebration - uses native vibration pattern
     func celebrate() {
         Task { @MainActor in
             let generator = UINotificationFeedbackGenerator()
             generator.notificationOccurred(.success)
             AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
             
-            try? await Task.sleep(nanoseconds: 150_000_000) // 0.15 seconds
+            try? await Task.sleep(nanoseconds: 150_000_000)
             self.light()
         }
     }
     
-    // Delete pattern - warning + rigid
     func delete() {
         warning()
         Task { @MainActor in
-            try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+            try? await Task.sleep(nanoseconds: 100_000_000)
             self.rigid()
         }
     }
     
-    // Toggle pattern - soft feedback
     func toggle() {
         soft()
     }

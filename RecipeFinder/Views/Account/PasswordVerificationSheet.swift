@@ -23,7 +23,6 @@ struct PasswordVerificationSheet: View {
                 VStack(spacing: AppTheme.spacing32) {
                     Spacer()
                     
-                    // Lock Icon
                     ZStack {
                         Circle()
                             .fill(Color.white.opacity(AppTheme.dividerOpacity))
@@ -56,7 +55,6 @@ struct PasswordVerificationSheet: View {
                             .padding(.horizontal, 32)
                     }
                     
-                    // Email Display
                     HStack(spacing: AppTheme.spacing8) {
                         Image(systemName: "envelope.fill")
                             .font(.caption)
@@ -76,7 +74,6 @@ struct PasswordVerificationSheet: View {
                             )
                     )
                     
-                    // Password Field
                     VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                         Text("Password")
                             .font(.subheadline)
@@ -116,7 +113,6 @@ struct PasswordVerificationSheet: View {
                         .transition(.opacity)
                     }
                     
-                    // Verify Button
                     Button(action: verifyPassword) {
                         Group {
                             if isVerifying {
@@ -158,7 +154,6 @@ struct PasswordVerificationSheet: View {
             }
             .toolbarBackground(.hidden, for: .navigationBar)
             .onAppear {
-                // Auto-focus password field after a small delay
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     isPasswordFocused = true
                 }
@@ -174,7 +169,6 @@ struct PasswordVerificationSheet: View {
         HapticManager.shared.light()
         
         Task {
-            // Verify password using SecureCredentialManager
             let credentialManager = SecureCredentialManager.shared
             let isValid = credentialManager.verifyCredentials(email: email, password: password)
             

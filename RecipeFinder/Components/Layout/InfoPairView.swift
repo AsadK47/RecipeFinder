@@ -26,7 +26,6 @@ struct InfoItem: View {
     let label: String
     let value: String
     
-    // Custom icon colors for better visibility
     private var iconColor: Color {
         switch icon {
         case "clock": return .orange
@@ -39,17 +38,15 @@ struct InfoItem: View {
     
     var body: some View {
         VStack(spacing: AppTheme.spacing8) {
-            // Icon or Bars with fixed height for alignment
             Group {
                 if icon == "chart.bar" {
-                    // Show difficulty bars at top (replacing icon)
                     DifficultyBarsView(difficulty: value, size: 4)
-                        .frame(height: 28) // Match icon height
+                        .frame(height: 28)
                 } else {
                     Image(systemName: icon)
                         .font(.title2)
                         .foregroundColor(iconColor)
-                        .frame(height: 28) // Fixed height for alignment
+                        .frame(height: 28)
                 }
             }
             

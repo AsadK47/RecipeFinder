@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// Modern circular button that adapts to color scheme
-/// Uses material background in dark mode, solid white in light mode
 struct ModernCircleButton: View {
     let icon: String
     let action: () -> Void

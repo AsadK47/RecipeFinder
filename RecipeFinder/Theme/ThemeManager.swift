@@ -1,21 +1,11 @@
-//
-//  ThemeManager.swift
-//  RecipeFinder
-//
-//  Created by GitHub Copilot on 11/01/2025.
-//
 
 import SwiftUI
 import Combine
-
-// Card Style
 
 enum CardStyle: String, CaseIterable {
     case frosted = "Frost Light"
     case solid = "Ember Dark"
 }
-
-// Appearance Mode
 
 enum AppearanceMode: String, CaseIterable {
     case system = "System"
@@ -31,10 +21,6 @@ enum AppearanceMode: String, CaseIterable {
     }
 }
 
-// Theme Manager
-
-/// Centralized theme manager that controls app-wide theme and card style settings
-/// Use as @EnvironmentObject to access throughout the app
 import SwiftUI
 import Combine
 
@@ -64,7 +50,6 @@ final class ThemeManager: ObservableObject, @unchecked Sendable {
     
     private init() {}
     
-    /// Get the appropriate card background based on current card style and color scheme
     func cardBackground(for colorScheme: ColorScheme) -> some ShapeStyle {
         if cardStyle == .solid {
             return AnyShapeStyle(AppTheme.cardBackground(for: colorScheme))
@@ -73,52 +58,41 @@ final class ThemeManager: ObservableObject, @unchecked Sendable {
         }
     }
     
-    /// Get text color that works on cards - black for readability
     func cardTextColor(for colorScheme: ColorScheme) -> Color {
         return .black
     }
     
-    /// Get secondary text color for cards
     func cardSecondaryTextColor(for colorScheme: ColorScheme) -> Color {
         return .black.opacity(AppTheme.mediumEmphasisOpacity)
     }
     
-    /// Get primary text color based on color scheme (for non-card text)
-    /// Use this for text on gradient backgrounds, headers, etc.
     func primaryTextColor(for colorScheme: ColorScheme) -> Color {
         return AppTheme.adaptiveEmphasis(for: colorScheme)
     }
     
-    /// Get secondary text color based on color scheme (for non-card text)
     func secondaryTextColor(for colorScheme: ColorScheme) -> Color {
         return AppTheme.adaptiveSubtitle(for: colorScheme)
     }
     
-    /// Get the background gradient for the current theme
     func backgroundGradient(for colorScheme: ColorScheme) -> LinearGradient {
         return AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
     }
     
-    /// Get the accent color for the current theme
     var accentColor: Color {
         return AppTheme.accentColor(for: selectedTheme)
     }
 }
 
-// Convenience extension for all text colors
 extension Color {
-    /// Text color that adapts to light/dark mode - black in light, white in dark
     static func adaptiveText(for colorScheme: ColorScheme) -> Color {
         return AppTheme.adaptiveEmphasis(for: colorScheme)
     }
     
-    /// Secondary text color that adapts to light/dark mode
     static func adaptiveSecondaryText(for colorScheme: ColorScheme) -> Color {
         return AppTheme.adaptiveSubtitle(for: colorScheme)
     }
 }
 
-// Environment key for ThemeManager
 private struct ThemeManagerKey: EnvironmentKey {
     static let defaultValue = ThemeManager.shared
 }
@@ -130,14 +104,12 @@ extension EnvironmentValues {
     }
 }
 
-// View extension for easy access
 extension View {
     func withThemeManager() -> some View {
         self.environmentObject(ThemeManager.shared)
     }
 }
 
-// Notification names for theme changes
 extension Notification.Name {
     static let themeDidChange = Notification.Name("themeDidChange")
     static let cardStyleDidChange = Notification.Name("cardStyleDidChange")

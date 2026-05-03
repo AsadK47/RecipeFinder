@@ -1,13 +1,6 @@
-//
-//  LoadingExampleView.swift
-//  RecipeFinder
-//
-//  Example showing how to use loading states with skeleton loaders
-//
 
 import SwiftUI
 
-/// Example view showing loading state implementations
 struct LoadingExampleView: View {
     @State private var isLoading = true
     @State private var showSkeleton = true
@@ -22,7 +15,6 @@ struct LoadingExampleView: View {
                 
                 ScrollView {
                     VStack(spacing: AppTheme.spacing24) {
-                        // Toggle controls
                         VStack(spacing: AppTheme.spacing16) {
                             Toggle("Show Loading State", isOn: $isLoading)
                                 .padding()
@@ -39,7 +31,6 @@ struct LoadingExampleView: View {
                         Divider()
                             .padding(.vertical)
                         
-                        // Loading State Example
                         if isLoading {
                             LoadingStateView(
                                 message: "Loading your recipes...",
@@ -48,7 +39,6 @@ struct LoadingExampleView: View {
                             .frame(height: 200)
                         }
                         
-                        // Skeleton Loader Examples
                         if showSkeleton {
                             VStack(spacing: AppTheme.spacing24) {
                                 Text("Recipe Card Skeleton")
@@ -70,7 +60,6 @@ struct LoadingExampleView: View {
                             }
                         }
                         
-                        // Actual Content Example (when not loading)
                         if !isLoading && !showSkeleton {
                             VStack(spacing: AppTheme.spacing16) {
                                 Text("✨ Content Loaded!")

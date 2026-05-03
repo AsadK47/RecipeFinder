@@ -1,13 +1,6 @@
-//
-//  QuickAddSheet.swift
-//  RecipeFinder
-//
-//  Created on 1/11/2025.
-//
 
 import SwiftUI
 
-// MARK: - Shared Quick Add Items
 struct QuickAddItems {
     static let items = [
         "🍎 Apples",
@@ -52,7 +45,6 @@ struct QuickAddItems {
     ]
 }
 
-// MARK: - Shopping List Quick Add Sheet
 struct ShoppingQuickAddSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) var colorScheme
@@ -63,12 +55,10 @@ struct ShoppingQuickAddSheet: View {
     
     var body: some View {
         ZStack {
-            // Background gradient
             AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header
                 HStack {
                     Text("Quick Add")
                         .font(.title2)
@@ -91,7 +81,6 @@ struct ShoppingQuickAddSheet: View {
                 .padding(.top, 20)
                 .padding(.bottom, 16)
                 
-                // Content
                 ScrollView {
                     LazyVGrid(columns: [
                         GridItem(.flexible()),
@@ -144,7 +133,6 @@ struct ShoppingQuickAddSheet: View {
     }
 }
 
-// MARK: - Kitchen Quick Add Sheet
 struct KitchenQuickAddSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) var colorScheme
@@ -154,12 +142,10 @@ struct KitchenQuickAddSheet: View {
     
     var body: some View {
         ZStack {
-            // Background gradient
             AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header
                 HStack {
                     Text("Quick Add")
                         .font(.title2)
@@ -182,7 +168,6 @@ struct KitchenQuickAddSheet: View {
                 .padding(.top, 20)
                 .padding(.bottom, 16)
                 
-                // Content
                 ScrollView {
                     LazyVGrid(columns: [
                         GridItem(.flexible()),

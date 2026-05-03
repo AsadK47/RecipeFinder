@@ -2,7 +2,6 @@ import SwiftUI
 
 private let logger = AppLogger.logger(category: "RecipeImport")
 
-
 struct RecipeImportView: View {
     @Environment(\.dismiss) var dismiss
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
@@ -47,7 +46,6 @@ struct RecipeImportView: View {
         NavigationView {
             ZStack(alignment: .top) {
                 VStack(spacing: AppTheme.spacing32) {
-                    // Header
                     VStack(spacing: AppTheme.spacing12) {
                         Image(systemName: "arrow.down.doc.fill")
                             .font(.system(size: AppTheme.fontSize60))
@@ -66,7 +64,6 @@ struct RecipeImportView: View {
                 .padding(.top, 40)
                 .opacity(importer.isLoading ? 0.5 : 1.0)
                 
-                // URL Input
                 VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                     Text("Recipe URL")
                         .font(.headline)
@@ -96,12 +93,9 @@ struct RecipeImportView: View {
                 }
                 .padding(.horizontal)
                 
-                // Import Button or Loading State
                 if importer.isLoading {
-                    // Enhanced loading view with stages
                     VStack(spacing: AppTheme.spacing24) {
                         ZStack {
-                            // Animated circle background
                             Circle()
                                 .stroke(AppTheme.accentColor(for: selectedTheme).opacity(0.3), lineWidth: 4)
                                 .frame(width: 80, height: 80)
@@ -152,7 +146,6 @@ struct RecipeImportView: View {
                     .padding(.horizontal)
                 }
                 
-                // Error Message
                 if let error = importer.errorMessage {
                     VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                         HStack(spacing: AppTheme.spacing12) {
@@ -175,7 +168,6 @@ struct RecipeImportView: View {
                     .padding(.horizontal)
                 }
                 
-                // Example URLs
                 VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                     Text("Try these examples:")
                         .font(.subheadline)
@@ -207,7 +199,6 @@ struct RecipeImportView: View {
                 
                 Spacer()
                 
-                // Info
                 VStack(spacing: AppTheme.spacing8) {
                     HStack(spacing: AppTheme.spacing8) {
                         Image(systemName: "sparkles")
@@ -234,7 +225,6 @@ struct RecipeImportView: View {
                 .padding(.bottom, 40)
             }
             
-            // Offline Banner on top of content
             OfflineBanner()
             }
             .navigationBarTitleDisplayMode(.inline)
@@ -248,7 +238,6 @@ struct RecipeImportView: View {
         }
         .onChange(of: importer.extractedData) { _, newValue in
             if newValue != nil {
-                // Data extracted successfully - open wizard directly with pre-filled data
                 showRecipeWizard = true
             }
         }
@@ -277,47 +266,35 @@ struct RecipeImportView: View {
         }
     }
     
-    // MARK: - Helper Functions
-    
-    /// Generate comprehensive notes from imported recipe data
-    /// Follows the format of the Achari Chicken Curry sample recipe
     private func generateImportNotes(from data: RecipeImporter.ExtractedRecipeData) -> String {
         var notes: [String] = []
         
-        // 1. Recipe description (if available) - PRIMARY CONTENT
         if let description = data.description, !description.isEmpty {
-            // Clean up the description
             let cleanDescription = description
                 .trimmingCharacters(in: .whitespacesAndNewlines)
                 .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
             notes.append(cleanDescription)
         }
         
-        // 2. Add cuisine-specific tips (if available)
         if let cuisine = data.cuisine, !cuisine.isEmpty {
-            notes.append("") // Blank line
+            notes.append("")
             notes.append("💡 Cuisine: \(cuisine)")
         }
         
-        // 3. Add pairing suggestions based on category
         if let category = data.category {
             let pairingSuggestion = getPairingSuggestion(for: category)
             if !pairingSuggestion.isEmpty {
-                notes.append("") // Blank line
+                notes.append("")
                 notes.append(pairingSuggestion)
             }
         }
         
-        // 4. Source attribution (minimal, at the end)
-        notes.append("") // Blank line
+        notes.append("")
         let domain = data.sourceURL.host ?? "Unknown"
         let cleanDomain = domain.replacingOccurrences(of: "www.", with: "")
         notes.append("---")
         notes.append("Imported from \(cleanDomain)")
         
-        // 4. Description if available
-        
-        // Add date for record-keeping (subtle)
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .medium
         notes.append("Imported \(dateFormatter.string(from: Date()))")
@@ -325,7 +302,6 @@ struct RecipeImportView: View {
         return notes.joined(separator: "\n")
     }
     
-    /// Get pairing suggestions based on recipe category
     private func getPairingSuggestion(for category: String) -> String {
         switch category.lowercased() {
         case "main", "dinner", "entree", "entrée":
@@ -391,10 +367,9 @@ struct RecipeImportView: View {
         
         let importerRef = importer
         
-        // Simulate loading stages for better UX
         Task {
             loadingStage = .fetching
-            try? await Task.sleep(nanoseconds: 500_000_000) // 0.5s
+            try? await Task.sleep(nanoseconds: 500_000_000)
             
             loadingStage = .parsing
             
@@ -402,11 +377,11 @@ struct RecipeImportView: View {
             
             if importerRef.extractedData != nil {
                 loadingStage = .extracting
-                try? await Task.sleep(nanoseconds: 300_000_000) // 0.3s
+                try? await Task.sleep(nanoseconds: 300_000_000)
                 
                 loadingStage = .complete
                 HapticManager.shared.success()
-                try? await Task.sleep(nanoseconds: 200_000_000) // 0.2s
+                try? await Task.sleep(nanoseconds: 200_000_000)
             } else {
                 loadingStage = .idle
                 HapticManager.shared.error()

@@ -8,9 +8,7 @@ struct NoteCardView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
-            // Header with category and pin
             HStack {
-                // Category badge
                 HStack(spacing: AppTheme.spacing6) {
                     Image(systemName: note.category.icon)
                         .font(.caption)
@@ -28,20 +26,17 @@ struct NoteCardView: View {
                 
                 Spacer()
                 
-                // Pin indicator
                 if note.isPinned {
                     Image(systemName: "pin.fill")
                         .font(.caption)
                         .foregroundColor(AppTheme.accentColor(for: appTheme))
                 }
                 
-                // Date
                 Text(formatDate(note.modifiedDate))
                     .font(.caption2)
                     .foregroundColor(AppTheme.adaptiveSecondaryIndicator(for: colorScheme))
             }
             
-            // Title
             if !note.title.isEmpty {
                 Text(note.title)
                     .font(.headline)
@@ -50,7 +45,6 @@ struct NoteCardView: View {
                     .lineLimit(2)
             }
             
-            // Content preview
             if !note.content.isEmpty {
                 Text(note.content)
                     .font(.subheadline)
@@ -58,7 +52,6 @@ struct NoteCardView: View {
                     .lineLimit(3)
             }
             
-            // Tags
             if !note.tags.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: AppTheme.spacing8) {

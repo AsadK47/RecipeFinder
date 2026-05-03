@@ -4,7 +4,6 @@ struct RecipeImageView: View {
     let imageName: String?
     let height: CGFloat
     
-    // Cache the image check result to avoid repeated lookups
     @State private var cachedImage: UIImage?
     private let cornerRadius: CGFloat = 16
     
@@ -31,7 +30,6 @@ struct RecipeImageView: View {
                         cachedImage = uiImage
                     }
             } else {
-                // Default placeholder with SF Symbol
                 ZStack {
                     Color.gray.opacity(0.2)
                     
@@ -47,6 +45,6 @@ struct RecipeImageView: View {
         .frame(height: height)
         .frame(maxWidth: .infinity)
         .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
-        .drawingGroup() // Performance optimization for complex image rendering
+        .drawingGroup()
     }
 }

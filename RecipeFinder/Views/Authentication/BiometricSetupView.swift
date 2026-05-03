@@ -54,8 +54,6 @@ struct BiometricSetupView: View {
         .onAppear(perform: setupAnimations)
     }
     
-    // MARK: - View Components
-    
     private var backgroundView: some View {
         AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
             .ignoresSafeArea()
@@ -152,8 +150,6 @@ struct BiometricSetupView: View {
         .opacity(contentOpacity)
     }
     
-    // MARK: - Actions
-    
     private func setupAnimations() {
         withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
             iconScale = 1.0
@@ -220,8 +216,6 @@ struct BiometricSetupView: View {
         }
     }
 }
-
-// MARK: - Supporting Views
 
 private struct ParticleView: View {
     let particle: (icon: String, size: CGFloat, x: CGFloat, y: CGFloat)
@@ -460,7 +454,6 @@ private struct EnableButton: View {
     }
 }
 
-// Helper view for benefit rows
 struct BenefitRow: View {
     let icon: String
     let text: String

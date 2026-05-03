@@ -18,8 +18,6 @@ class NotesManager: ObservableObject {
         loadNotes()
     }
     
-    // MARK: - CRUD Operations
-    
     func addNote(_ note: NoteModel) {
         var newNote = note
         newNote.createdDate = Date()
@@ -55,22 +53,17 @@ class NotesManager: ObservableObject {
         }
     }
     
-    // MARK: - Filtering and Sorting
-    
     func filteredNotes(searchText: String, category: NoteCategory?, showPinnedOnly: Bool) -> [NoteModel] {
         var filtered = notes
         
-        // Filter by search text
         if !searchText.isEmpty {
             filtered = filtered.filter { $0.matches(searchText: searchText) }
         }
         
-        // Filter by category
         if let category = category {
             filtered = filtered.filter { $0.category == category }
         }
         
-        // Filter by pinned
         if showPinnedOnly {
             filtered = filtered.filter { $0.isPinned }
         }
@@ -88,16 +81,12 @@ class NotesManager: ObservableObject {
     
     private func sortNotes() {
         notes.sort { note1, note2 in
-            // Pinned notes first
             if note1.isPinned != note2.isPinned {
                 return note1.isPinned
             }
-            // Then by modified date
             return note1.modifiedDate > note2.modifiedDate
         }
     }
-    
-    // MARK: - Persistence
     
     private func saveNotes() {
         if let encoded = try? JSONEncoder().encode(notes) {
@@ -114,8 +103,6 @@ class NotesManager: ObservableObject {
             notes = []
         }
     }
-    
-    // MARK: - Statistics
     
     var totalNotes: Int {
         notes.count

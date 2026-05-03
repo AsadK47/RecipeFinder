@@ -1,9 +1,3 @@
-//
-//  NutritionalTipsView.swift
-//  RecipeFinder
-//
-//  Created on 12/19/2025.
-//
 
 import SwiftUI
 import SafariServices
@@ -25,11 +19,9 @@ struct NutritionalTipsView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header
                 VStack(spacing: AppTheme.spacing12) {
                     GeometryReader { geometry in
                         HStack(spacing: 0) {
-                            // Back button
                             Button(action: {
                                 HapticManager.shared.light()
                                 dismiss()
@@ -50,7 +42,6 @@ struct NutritionalTipsView: View {
                             
                             Spacer()
                             
-                            // Menu button
                             Menu {
                                 Button(action: {
                                     selectedCategory = nil
@@ -94,10 +85,8 @@ struct NutritionalTipsView: View {
                 
                 ScrollView {
                     VStack(spacing: AppTheme.spacing24) {
-                        // Tip of the Day
                         tipOfTheDayCard
                         
-                        // Tips List
                         tipsGrid
                     }
                     .padding(.horizontal, 20)
@@ -113,7 +102,6 @@ struct NutritionalTipsView: View {
             }
         }
     }
-    
     
     private var tipOfTheDayCard: some View {
         let tip = NutritionalTipsDatabase.tipOfTheDay()
@@ -199,8 +187,6 @@ struct NutritionalTipsView: View {
     }
 }
 
-// MARK: - Tip Card
-
 struct NutritionalTipCard: View {
     let tip: NutritionalTip
     let action: () -> Void
@@ -265,8 +251,6 @@ struct NutritionalTipCard: View {
     }
 }
 
-// MARK: - Evidence Badge
-
 struct EvidenceBadge: View {
     let level: EvidenceLevel
     
@@ -294,8 +278,6 @@ struct EvidenceBadge: View {
     }
 }
 
-// MARK: - Tip Detail View
-
 struct TipDetailView: View {
     let tip: NutritionalTip
     
@@ -313,7 +295,6 @@ struct TipDetailView: View {
                 
                 ScrollView {
                     VStack(alignment: .leading, spacing: AppTheme.spacing32) {
-                        // Header
                         HStack {
                             Text(tip.icon)
                                 .font(.system(size: AppTheme.fontSize60))
@@ -334,7 +315,6 @@ struct TipDetailView: View {
                         
                         EvidenceBadge(level: tip.evidenceLevel)
                         
-                        // Description
                         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                             Text("What the Science Says")
                                 .font(.headline)
@@ -350,7 +330,6 @@ struct TipDetailView: View {
                             cardBackground()
                         }
                         
-                        // Actionable Steps
                         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                             Text("What You Can Do")
                                 .font(.headline)
@@ -379,7 +358,6 @@ struct TipDetailView: View {
                             cardBackground()
                         }
                         
-                        // Sources
                         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                             HStack {
                                 Image(systemName: "graduationcap.fill")
@@ -499,17 +477,10 @@ struct TipDetailView: View {
     }
 }
 
-// MARK: - Identifiable URL Wrapper
-
-/// Wraps URL as Identifiable so fullScreenCover(item:) can be used.
-/// This avoids the race condition where `showSafari = true` fires before
-/// `safariURL` is committed, causing the cover to read nil on the first tap.
 private struct IdentifiableURL: Identifiable {
     let id = UUID()
     let url: URL
 }
-
-// MARK: - Safari View Wrapper
 
 struct SafariView: UIViewControllerRepresentable {
     let url: URL
@@ -522,8 +493,6 @@ struct SafariView: UIViewControllerRepresentable {
     
     func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {}
 }
-
-// MARK: - Preview
 
 struct NutritionalTipsView_Previews: PreviewProvider {
     static var previews: some View {

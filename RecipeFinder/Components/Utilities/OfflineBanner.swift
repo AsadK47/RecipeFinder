@@ -1,14 +1,6 @@
-//
-//  OfflineBanner.swift
-//  RecipeFinder
-//
-//  Banner to show network connection status
-//
 
 import SwiftUI
 
-/// Shows when the device is offline - useful for recipe import features
-/// This explains to users why certain features may not work
 struct OfflineBanner: View {
     var body: some View {
         if !NetworkMonitor.shared.isConnected {

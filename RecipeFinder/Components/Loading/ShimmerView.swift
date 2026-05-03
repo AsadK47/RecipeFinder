@@ -1,13 +1,5 @@
-//
-//  ShimmerView.swift
-//  RecipeFinder
-//
-//  Reusable shimmer effect for loading states
-//
 
 import SwiftUI
-
-// MARK: - Shimmer Modifier
 
 struct ShimmerModifier: ViewModifier {
     @State private var phase: CGFloat = 0
@@ -48,8 +40,6 @@ extension View {
     }
 }
 
-// MARK: - Skeleton Shapes
-
 struct SkeletonRectangle: View {
     let cornerRadius: CGFloat
     
@@ -80,28 +70,22 @@ struct SkeletonCapsule: View {
     }
 }
 
-// MARK: - Common Loading Skeletons
-
 struct RecipeCardSkeleton: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
-            // Image placeholder
             SkeletonRectangle(cornerRadius: AppTheme.cornerRadius12)
                 .frame(height: AppTheme.height180)
             
             VStack(alignment: .leading, spacing: AppTheme.spacing8) {
-                // Title
                 SkeletonRectangle(cornerRadius: AppTheme.cornerRadius6)
                     .frame(height: AppTheme.height20)
                     .frame(maxWidth: .infinity)
                 
-                // Subtitle
                 SkeletonRectangle(cornerRadius: AppTheme.cornerRadius6)
                     .frame(width: AppTheme.width150, height: AppTheme.height14)
                 
-                // Tags
                 HStack(spacing: AppTheme.spacing8) {
                     SkeletonCapsule()
                         .frame(width: AppTheme.width60, height: AppTheme.height24)
@@ -124,7 +108,6 @@ struct RecipeDetailSkeleton: View {
     
     var body: some View {
         VStack(spacing: AppTheme.spacing20) {
-            // Header
             VStack(spacing: AppTheme.spacing12) {
                 SkeletonRectangle(cornerRadius: AppTheme.cornerRadius8)
                     .frame(height: AppTheme.height28)
@@ -136,7 +119,6 @@ struct RecipeDetailSkeleton: View {
             }
             .padding(.top, AppTheme.spacing20)
             
-            // Info cards
             HStack(spacing: AppTheme.spacing12) {
                 ForEach(0..<3) { _ in
                     VStack(spacing: AppTheme.spacing8) {
@@ -155,7 +137,6 @@ struct RecipeDetailSkeleton: View {
             }
             .padding(.horizontal, AppTheme.spacing20)
             
-            // Sections
             ForEach(0..<2) { _ in
                 VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                     SkeletonRectangle(cornerRadius: AppTheme.cornerRadius6)
@@ -204,8 +185,6 @@ struct ListItemSkeleton: View {
     }
 }
 
-// MARK: - Loading State View
-
 struct LoadingStateView: View {
     let message: String
     let progress: Double?
@@ -218,18 +197,15 @@ struct LoadingStateView: View {
     
     var body: some View {
         VStack(spacing: AppTheme.spacing20) {
-            // Animated spinner
             ProgressView()
                 .progressViewStyle(CircularProgressViewStyle(tint: AppTheme.accentColor(for: selectedTheme)))
                 .scaleEffect(AppTheme.shimmerDuration)
             
-            // Message
             Text(message)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
             
-            // Progress bar if available
             if let progress = progress {
                 VStack(spacing: AppTheme.spacing8) {
                     ProgressView(value: progress, total: 1.0)
@@ -246,8 +222,6 @@ struct LoadingStateView: View {
         .padding(AppTheme.spacing40)
     }
 }
-
-// MARK: - Preview
 
 #Preview {
     VStack(spacing: AppTheme.spacing20) {

@@ -12,9 +12,7 @@ struct IngredientRowView: View {
     
     var body: some View {
         HStack(alignment: .center, spacing: 0) {
-            // Left column: name stacked above quantity pill
             VStack(alignment: .leading, spacing: 10) {
-                // Ingredient name — gets all available width, wraps freely
                 Text(ingredient.mainIngredientName)
                     .font(.body)
                     .fontWeight(.semibold)
@@ -22,7 +20,6 @@ struct IngredientRowView: View {
                     .foregroundStyle(isChecked ? .secondary : .primary)
                     .fixedSize(horizontal: false, vertical: true)
 
-                // Preparation notes (e.g. "finely chopped")
                 if let prepNotes = ingredient.preparationNotes {
                     Text(prepNotes)
                         .font(.caption)
@@ -30,7 +27,6 @@ struct IngredientRowView: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
 
-                // Quantity + unit pill, tappable for scaling
                 Button(action: { onTapQuantity?() }) {
                     HStack(spacing: 4) {
                         Text(formatQuantity(convertedIngredient.quantity))
@@ -58,13 +54,11 @@ struct IngredientRowView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.vertical, 10)
 
-            // Vertical divider
             Rectangle()
                 .fill(Color.secondary.opacity(0.2))
                 .frame(width: 1)
                 .padding(.vertical, 6)
 
-            // Right column: Checkbox
             Button(action: {
                 HapticManager.shared.light()
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
@@ -97,9 +91,6 @@ struct IngredientRowView: View {
         }
     }
     
-    // MARK: - Helper Functions
-
-    /// Runs unit conversion once so both quantity and unit stay in sync
     private var convertedIngredient: (quantity: Double, unit: String) {
         UnitConversion.convert(
             value: ingredient.scaledQuantity(for: scaleFactor),

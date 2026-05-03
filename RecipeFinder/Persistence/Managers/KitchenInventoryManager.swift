@@ -2,9 +2,6 @@ import Foundation
 
 private let logger = AppLogger.logger(category: "KitchenInventory")
 
-
-// MARK: - Kitchen Inventory Manager
-
 @MainActor
 final class KitchenInventoryManager: ObservableObject {
 	static let shared = KitchenInventoryManager()
@@ -14,7 +11,6 @@ final class KitchenInventoryManager: ObservableObject {
 	private let migrationKey = "kitchenItemsMigrationCompleted_v1"
     private let storage = UserScopedStorage.shared
     
-    // Cache items in memory for performance
     @Published private(set) var items: [KitchenItem] = []
     @Published private(set) var inventoryItems: [KitchenInventoryModel] = []
     
@@ -23,8 +19,6 @@ final class KitchenInventoryManager: ObservableObject {
         loadItems()
         loadInventoryItems()
 	}
-    
-    // MARK: - Loading
     
     func reloadForCurrentUser() {
         loadItems()
@@ -49,8 +43,6 @@ final class KitchenInventoryManager: ObservableObject {
         }
     }
 	
-	// MARK: - Getters (Deprecated - use @Published properties instead)
-	
 	func getItems() -> [KitchenItem] {
 		return items
 	}
@@ -59,17 +51,13 @@ final class KitchenInventoryManager: ObservableObject {
 		return inventoryItems
 	}
 	
-	// MARK: - Full Inventory Item Management (New Model)
-	
 	func addInventoryItem(_ item: KitchenInventoryModel) {
-		// Don't add duplicates by name
 		guard !inventoryItems.contains(where: { $0.name.lowercased() == item.name.lowercased() }) else {
 			HapticManager.shared.warning()
 			logger.debug("⚠️ Duplicate item '\(item.name)' not added")
 			return
 		}
 		
-		// Validate expiry date is not in the past (allow same-day)
 		if let expiryDate = item.expiryDate {
 			let calendar = Calendar.current
 			if calendar.startOfDay(for: expiryDate) < calendar.startOfDay(for: Date()) {
@@ -79,7 +67,6 @@ final class KitchenInventoryManager: ObservableObject {
 			}
 		}
 		
-		// Validate quantity is positive
 		guard item.quantity > 0 else {
 			logger.debug("⚠️ Cannot add item '\(item.name)' with zero or negative quantity")
 			HapticManager.shared.error()
@@ -94,7 +81,6 @@ final class KitchenInventoryManager: ObservableObject {
 	}
 	
 	func updateInventoryItem(_ item: KitchenInventoryModel) {
-		// Validate expiry date is not in the past
 		if let expiryDate = item.expiryDate {
 			let calendar = Calendar.current
 			if calendar.startOfDay(for: expiryDate) < calendar.startOfDay(for: Date()) {
@@ -104,7 +90,6 @@ final class KitchenInventoryManager: ObservableObject {
 			}
 		}
 		
-		// Validate quantity is positive
 		guard item.quantity > 0 else {
 			logger.debug("⚠️ Cannot update item '\(item.name)' with zero or negative quantity")
 			HapticManager.shared.error()
@@ -131,7 +116,6 @@ final class KitchenInventoryManager: ObservableObject {
 		inventoryItems.contains { $0.name.lowercased() == name.lowercased() }
 	}
 	
-	// Computed properties for filtering
 	func expiredItems() -> [KitchenInventoryModel] {
 		inventoryItems.filter { $0.isExpired }
 	}
@@ -160,16 +144,11 @@ final class KitchenInventoryManager: ObservableObject {
 		}
 	}
 	
-	// MARK: - Simple Kitchen Items (Legacy - for backward compatibility)
-	
-	// Data Migration - Remove food items automatically on first app launch after update
 	private func migrateOldDataIfNeeded() {
 		guard !UserDefaults.standard.bool(forKey: migrationKey) else { return }
 		
-		// Get all valid food items
 		let validFoods = Set(FoodsList.getAllFoods().map { $0.lowercased() })
 		
-		// Filter out items that don't match food items
 		let oldCount = items.count
 		let filteredItems = items.filter { item in
 			validFoods.contains(item.name.lowercased())
@@ -181,11 +160,9 @@ final class KitchenInventoryManager: ObservableObject {
 			saveItems(filteredItems)
 		}
 		
-		// Mark migration as complete
 		UserDefaults.standard.set(true, forKey: migrationKey)
 	}
     
-	// Add/Remove Items
 	func addItem(name: String, category: String? = nil) {
 		let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
 		guard !trimmedName.isEmpty else { return }
@@ -193,7 +170,6 @@ final class KitchenInventoryManager: ObservableObject {
 		let detectedCategory = category ?? CategoryClassifier.categorize(trimmedName)
 		let newItem = KitchenItem(name: trimmedName, category: detectedCategory)
         
-		// Don't add duplicates
 		guard !items.contains(where: { $0.name.lowercased() == trimmedName.lowercased() }) else {
 			HapticManager.shared.warning()
 			return
@@ -240,7 +216,6 @@ final class KitchenInventoryManager: ObservableObject {
 		saveItems([])
 	}
     
-	// Grouped Items
 	func groupedItems() -> [(category: String, items: [KitchenItem])] {
 		let categories = Set(items.map { $0.category }).sorted()
         
@@ -250,23 +225,20 @@ final class KitchenInventoryManager: ObservableObject {
 		}
 	}
     
-	// Persistence
 	private func saveItems(_ newItems: [KitchenItem]) {
 		if let encoded = try? JSONEncoder().encode(newItems) {
 			storage.set(encoded, forKey: saveKey)
-            items = newItems // Update cache
+            items = newItems
 		}
 	}
 	
 	private func saveInventoryItems(_ newInventoryItems: [KitchenInventoryModel]) {
 		if let encoded = try? JSONEncoder().encode(newInventoryItems) {
 			storage.set(encoded, forKey: inventorySaveKey)
-            inventoryItems = newInventoryItems // Update cache
+            inventoryItems = newInventoryItems
 		}
 	}
 }
-
-// MARK: - Legacy Kitchen Item Model (for backward compatibility)
 
 struct KitchenItem: Identifiable, Codable, Equatable, Hashable {
 	let id: UUID

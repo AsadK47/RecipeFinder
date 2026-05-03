@@ -53,15 +53,12 @@ struct ContentView: View {
                 configureTabBarAppearance()
             }
             .onChange(of: selectedTheme) { _, _ in
-                // Already on main thread - no need for DispatchQueue
                 configureTabBarAppearance()
             }
             .onChange(of: cardStyle) { _, _ in
-                // Already on main thread - no need for DispatchQueue
                 configureTabBarAppearance()
             }
             .onChange(of: colorScheme) { _, newScheme in
-                // Force immediate refresh when color scheme changes
                 configureTabBarAppearance()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                     configureTabBarAppearance()
@@ -72,13 +69,11 @@ struct ContentView: View {
             }
         }
         .onAppear {
-            // Load recipes only once on appear
             if recipes.isEmpty {
                 loadRecipes()
             }
         }
         .onChange(of: authManager.isAuthenticated) { _, isAuthenticated in
-            // Reload recipes when user signs in
             if isAuthenticated {
                 loadRecipes()
             } else {
@@ -90,14 +85,12 @@ struct ContentView: View {
     private func configureTabBarAppearance() {
         let appearance = UITabBarAppearance()
         
-        // Simple rule: Dark mode = white text, Light mode = black text
         let isDarkMode = colorScheme == .dark
         let textColor: UIColor = isDarkMode ? .white : .black
         let dimmedTextColor: UIColor = isDarkMode 
             ? UIColor.white.withAlphaComponent(0.6) 
             : UIColor.black.withAlphaComponent(0.6)
         
-        // Background styling based on card style preference
         if cardStyle == .solid {
             appearance.configureWithOpaqueBackground()
             appearance.backgroundColor = isDarkMode 
@@ -111,25 +104,21 @@ struct ContentView: View {
                 : UIColor(white: 0.95, alpha: 0.90)
         }
         
-        // Selected tab: Full brightness text color
         appearance.stackedLayoutAppearance.selected.iconColor = textColor
         appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
             .foregroundColor: textColor,
             .font: UIFont.systemFont(ofSize: 11, weight: .semibold)
         ]
         
-        // Unselected tab: Dimmed text color
         appearance.stackedLayoutAppearance.normal.iconColor = dimmedTextColor
         appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
             .foregroundColor: dimmedTextColor,
             .font: UIFont.systemFont(ofSize: 11, weight: .medium)
         ]
         
-        // Apply the appearance
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
         
-        // Update existing tab bars (already on main thread in SwiftUI)
         UIApplication.shared.connectedScenes
             .compactMap { $0 as? UIWindowScene }
             .flatMap { $0.windows }

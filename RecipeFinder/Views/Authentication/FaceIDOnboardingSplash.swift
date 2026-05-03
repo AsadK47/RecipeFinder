@@ -21,7 +21,6 @@ struct FaceIDOnboardingSplash: View {
     
     let onComplete: () -> Void
     
-    // Pre-computed particle data for performance
     private let particleData: [(icon: String, size: CGFloat, x: CGFloat, y: CGFloat)] = {
         let icons = ["lock.fill", "key.fill", "shield.fill", "faceid", "touchid"]
         return (0..<20).map { _ in
@@ -57,11 +56,9 @@ struct FaceIDOnboardingSplash: View {
             let spacing = AdaptiveSpacing(geometry: geometry)
             
             ZStack {
-                // Background gradient
                 AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
                 
-                // Floating security particles
                 ForEach(Array(particleData.enumerated()), id: \.offset) { index, particle in
                     Image(systemName: particle.icon)
                         .font(.system(size: particle.size))
@@ -77,13 +74,10 @@ struct FaceIDOnboardingSplash: View {
                 }
                 
                 VStack(spacing: 0) {
-                    // Adaptive top spacing based on screen height
                     Spacer()
                         .frame(height: spacing.heightPercent(0.08, min: 40))
                     
-                    // Enhanced Icon with animations
                     ZStack {
-                        // Pulsing rings
                         ForEach(0..<3) { index in
                             Circle()
                                 .stroke(
@@ -108,7 +102,6 @@ struct FaceIDOnboardingSplash: View {
                                 )
                         }
                         
-                        // Enhanced background glow with pulsing effect
                         Circle()
                             .fill(
                                 RadialGradient(
@@ -130,7 +123,6 @@ struct FaceIDOnboardingSplash: View {
                                 value: glowIntensity
                             )
                         
-                        // Main circle with enhanced gradient
                         Circle()
                             .fill(
                                 LinearGradient(
@@ -159,7 +151,6 @@ struct FaceIDOnboardingSplash: View {
                             )
                             .shadow(color: AppTheme.accentColor(for: selectedTheme).opacity(0.4), radius: 25, x: 0, y: 12)
                         
-                        // Icon with special effects
                         Image(systemName: biometricIcon)
                             .font(.system(size: 75, weight: .medium))
                             .foregroundStyle(
@@ -180,7 +171,6 @@ struct FaceIDOnboardingSplash: View {
                     .padding(.bottom, spacing.xl + spacing.xxl + spacing.lg)
                     .opacity(contentOpacity)
                     
-                    // Title and Description with enhanced styling
                     VStack(spacing: spacing.xxl) {
                         VStack(spacing: spacing.md) {
                             Text("Set Up \(biometricName)")
@@ -211,7 +201,6 @@ struct FaceIDOnboardingSplash: View {
                                 .lineSpacing(4)
                                 .padding(.horizontal, spacing.xl)
                             
-                            // Enhanced Benefits list
                             VStack(spacing: spacing.md) {
                                 BiometricBenefitRow(
                                     icon: "bolt.fill",
@@ -226,13 +215,10 @@ struct FaceIDOnboardingSplash: View {
                     .padding(.horizontal, spacing.screenEdge + spacing.xl)
                     .opacity(contentOpacity)
                     
-                    // Adaptive bottom spacing - pushed up more
                     Spacer()
                         .frame(height: spacing.heightPercent(0.05, min: 25))
                     
-                    // Enhanced Buttons
                     VStack(spacing: spacing.md + 2) {
-                        // Enable Button
                         Button(action: enableBiometrics) {
                             HStack(spacing: spacing.md) {
                                 if isEnabling {
@@ -262,7 +248,6 @@ struct FaceIDOnboardingSplash: View {
                                             )
                                         )
                                     
-                                    // Shimmer effect
                                     RoundedRectangle(cornerRadius: 18)
                                         .fill(
                                             LinearGradient(
@@ -283,7 +268,6 @@ struct FaceIDOnboardingSplash: View {
                         .disabled(isEnabling)
                         .opacity(isEnabling ? 0.7 : 1.0)
                         
-                        // Skip Button - more prominent
                         Button(action: skipSetup) {
                             Text("Set Up Later")
                                 .font(.system(size: AppTheme.fontSize17, weight: .semibold))
@@ -312,7 +296,6 @@ struct FaceIDOnboardingSplash: View {
             Text(errorMessage)
         }
         .onAppear {
-            // Animated entrance
             withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
                 iconScale = 1.0
                 contentOpacity = 1.0
@@ -322,12 +305,10 @@ struct FaceIDOnboardingSplash: View {
                 particlesOpacity = 1.0
             }
             
-            // Pulsing glow effect
             withAnimation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true)) {
                 glowIntensity = 0.6
             }
             
-            // Continuous shimmer effect
             withAnimation(.linear(duration: 2.5).repeatForever(autoreverses: false)) {
                 shimmerOffset = 400
             }
@@ -345,10 +326,8 @@ struct FaceIDOnboardingSplash: View {
         
         Task {
             do {
-                // Test biometric authentication
                 try await authManager.authenticateWithBiometrics()
                 
-                // If successful, enable it
                 DispatchQueue.main.async {
                     biometricsEnabled = true
                     hasSeenBiometricOnboarding = true
@@ -398,7 +377,6 @@ struct FaceIDOnboardingSplash: View {
     }
 }
 
-// Enhanced benefit row component
 private struct BiometricBenefitRow: View {
     let icon: String
     let title: String
@@ -408,7 +386,6 @@ private struct BiometricBenefitRow: View {
     
     var body: some View {
         HStack(spacing: spacing.lg) {
-            // Icon with gradient background
             ZStack {
                 Circle()
                     .fill(

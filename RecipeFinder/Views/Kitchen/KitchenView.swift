@@ -13,18 +13,15 @@ struct KitchenView: View {
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
 
-    // Use categorized foods list instead of recipe ingredients
     var allIngredients: [String] {
         FoodsList.getAllFoods()
     }
     
     var categorizedIngredients: [(category: String, ingredients: [String])] {
-        // Return cached value if available
         guard cachedCategorizedIngredients.isEmpty else {
             return cachedCategorizedIngredients
         }
         
-        // Use categorized foods
         var result: [(category: String, ingredients: [String])] = []
         
         for category in FoodsList.categories {
@@ -51,7 +48,6 @@ struct KitchenView: View {
         
         return recipes.filter { recipe in
             let recipeIngredients = recipe.ingredients.map { $0.name.lowercased() }
-            // Show as soon as even 1 ingredient matches
             return recipeIngredients.contains { recipeIng in
                 kitchenIngredients.contains { kitchenIng in
                     recipeIng.contains(kitchenIng) || kitchenIng.contains(recipeIng)
@@ -88,12 +84,10 @@ struct KitchenView: View {
                             } else if !searchText.isEmpty {
                                 searchResultsView
                             } else {
-                                // Recipe Matches at the TOP
                                 if !quickMatchRecipes.isEmpty {
                                     quickRecipeMatchesView
                                 }
                                 
-                                // Kitchen items grouped by category (collapsible)
                                 kitchenItemsView
                             }
                         }
@@ -111,7 +105,6 @@ struct KitchenView: View {
             AddIngredientSheet()
         }
         .onAppear {
-            // Cache categorized ingredients on first load
             refreshCategorizedIngredients()
         }
     }
@@ -124,7 +117,6 @@ struct KitchenView: View {
         VStack(spacing: AppTheme.spacing12) {
             GeometryReader { geometry in
                 HStack(spacing: 0) {
-                    // Empty space to balance menu button
                     Color.clear
                         .frame(width: 44, height: 44)
                     
@@ -138,7 +130,6 @@ struct KitchenView: View {
                     
                     Spacer()
                     
-                    // Menu button
                     Menu {
                         Button(action: {
                             showQuickAdd = true
@@ -171,7 +162,6 @@ struct KitchenView: View {
             .padding(.horizontal, 20)
             .padding(.top, 16)
             
-            // Search bar with cancel option
             HStack(spacing: AppTheme.spacing12) {
                 HStack(spacing: AppTheme.spacing12) {
                     Image(systemName: "magnifyingglass")
@@ -233,8 +223,6 @@ struct KitchenView: View {
         }
     }
     
-    
-    // MARK: - Empty Prompt
     private var emptyPromptView: some View {
         VStack(spacing: AppTheme.spacing16) {
             Image(systemName: "refrigerator")
@@ -258,7 +246,6 @@ struct KitchenView: View {
     
     private var kitchenItemsView: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing16) {
-            // Compact header with count and add button
             HStack(spacing: AppTheme.spacing12) {
                 VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                     Text("My Kitchen")
@@ -295,7 +282,6 @@ struct KitchenView: View {
             }
             .padding(.horizontal, 20)
             
-            // Category Groups
             ForEach(KitchenInventoryManager.shared.groupedItems(), id: \.category) { group in
                 KitchenCategoryCard(
                     category: group.category,
@@ -426,7 +412,6 @@ struct KitchenView: View {
                 HStack(spacing: AppTheme.spacing16) {
                     ForEach(quickMatchRecipes.prefix(10)) { recipe in
                         NavigationLink(destination: RecipeDetailView(recipe: recipe, onFavoriteToggle: {
-                            // Refresh recipes when favorite is toggled
                             recipes = PersistenceController.shared.fetchRecipes()
                         })) {
                             QuickMatchRecipeCard(
@@ -473,13 +458,11 @@ struct KitchenView: View {
         text += String(repeating: "━", count: 40) + "\n"
         text += "Created with RecipeFinder\n"
         
-        // Use proper view finder
         guard let windowScene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
               let rootViewController = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController else {
             return
         }
         
-        // Find the topmost presented view controller
         var topController = rootViewController
         while let presented = topController.presentedViewController {
             topController = presented
@@ -490,7 +473,6 @@ struct KitchenView: View {
             applicationActivities: nil
         )
         
-        // iPad support
         if let popover = activityController.popoverPresentationController {
             popover.sourceView = topController.view
             popover.sourceRect = CGRect(x: topController.view.bounds.midX, y: topController.view.bounds.midY, width: 0, height: 0)
@@ -501,7 +483,6 @@ struct KitchenView: View {
     }
 }
 
-// Kitchen Category Card
 struct KitchenCategoryCard: View {
     let category: String
     let items: [KitchenItem]
@@ -577,7 +558,6 @@ struct KitchenItemChip: View {
     
     var body: some View {
         HStack(spacing: AppTheme.spacing8) {
-            // Category icon
             Image(systemName: categoryInfo.icon)
                 .font(.caption)
                 .foregroundColor(categoryInfo.color)
@@ -630,7 +610,6 @@ struct KitchenItemChip: View {
     }
 }
 
-// MARK: - Add Ingredient Sheet
 struct AddIngredientSheet: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
@@ -660,14 +639,12 @@ struct AddIngredientSheet: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                    // Search Bar
                     ModernSearchBar(text: $searchText, placeholder: "Search Foods...")
                         .padding(.horizontal, 20)
                         .padding(.top, 16)
                         .padding(.bottom, 12)
                     
                     if !searchText.isEmpty {
-                        // Search Results
                         ScrollView {
                             LazyVStack(spacing: AppTheme.spacing8) {
                                 ForEach(searchResults, id: \.self) { food in
@@ -678,7 +655,6 @@ struct AddIngredientSheet: View {
                             .padding(.vertical, 12)
                         }
                     } else if let category = selectedCategory {
-                        // Category Foods
                         ScrollView {
                             VStack(alignment: .leading, spacing: AppTheme.spacing16) {
                                 Button(action: {
@@ -712,7 +688,6 @@ struct AddIngredientSheet: View {
                             .padding(.vertical, 12)
                         }
                     } else {
-                        // Categories List
                         ScrollView {
                             LazyVStack(spacing: AppTheme.spacing12) {
                                 ForEach(filteredCategories, id: \.self) { category in

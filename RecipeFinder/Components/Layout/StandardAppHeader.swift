@@ -21,7 +21,6 @@ struct StandardAppHeader<MenuContent: View>: View {
                     
                     Spacer(minLength: 8)
                     
-                    // Burger menu
                     Menu {
                         menuContent()
                     } label: {
@@ -44,7 +43,6 @@ struct StandardAppHeader<MenuContent: View>: View {
     }
 }
 
-// Version without menu for simpler views
 struct SimpleAppHeader: View {
     let title: String
     var showSearch: Bool = false

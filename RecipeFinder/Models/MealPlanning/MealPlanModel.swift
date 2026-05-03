@@ -1,6 +1,5 @@
 import Foundation
 
-/// Represents a planned meal for a specific date and time
 struct MealPlanModel: Identifiable, Codable, Hashable {
     var id: UUID
     var recipeId: UUID
@@ -34,28 +33,22 @@ struct MealPlanModel: Identifiable, Codable, Hashable {
         self.createdDate = createdDate
     }
     
-    /// Normalized date (start of day) for consistent comparisons
     var normalizedDate: Date {
         Calendar.current.startOfDay(for: date)
     }
     
-    /// Whether this meal is today
     var isToday: Bool {
         Calendar.current.isDateInToday(date)
     }
     
-    /// Whether this meal is in the past
     var isPast: Bool {
         date < Date()
     }
     
-    /// Whether this meal is upcoming (future but not today)
     var isUpcoming: Bool {
         !isToday && !isPast
     }
 }
-
-// MARK: - Meal Times
 
 enum MealTime: String, Codable, CaseIterable {
     case breakfast = "Breakfast"
@@ -72,7 +65,6 @@ enum MealTime: String, Codable, CaseIterable {
         }
     }
     
-    /// Typical time range for this meal
     var timeRange: String {
         switch self {
         case .breakfast: return "Morning"
@@ -82,7 +74,6 @@ enum MealTime: String, Codable, CaseIterable {
         }
     }
     
-    /// Order for displaying meals throughout the day
     var sortOrder: Int {
         switch self {
         case .breakfast: return 0
@@ -92,8 +83,6 @@ enum MealTime: String, Codable, CaseIterable {
         }
     }
 }
-
-// MARK: - Weekly Meal Plan Helper
 
 struct WeeklyMealPlan: Identifiable {
     let id = UUID()
@@ -107,25 +96,20 @@ struct WeeklyMealPlan: Identifiable {
         self.meals = meals
     }
     
-    /// Meals grouped by date
     var mealsByDay: [Date: [MealPlanModel]] {
         Dictionary(grouping: meals) { meal in
             Calendar.current.startOfDay(for: meal.date)
         }
     }
     
-    /// Total number of planned meals this week
     var totalMealsPlanned: Int {
         meals.count
     }
     
-    /// Number of completed meals this week
     var completedMealsCount: Int {
         meals.filter { $0.isCompleted }.count
     }
 }
-
-// MARK: - Sample Data
 
 extension MealPlanModel {
     static let samples: [MealPlanModel] = [

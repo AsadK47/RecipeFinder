@@ -1,9 +1,3 @@
-//
-//  AuthenticationView.swift
-//  RecipeFinder
-//
-//  Native iOS authentication interface
-//
 
 import SwiftUI
 import AuthenticationServices
@@ -29,7 +23,6 @@ struct AuthenticationView: View {
             VStack(spacing: 40) {
                 Spacer()
                 
-                // App Logo and Title
                 VStack(spacing: 16) {
                     Image(systemName: "fork.knife.circle.fill")
                         .font(.system(size: AppTheme.fontSize80))
@@ -57,9 +50,7 @@ struct AuthenticationView: View {
                 
                 Spacer()
                 
-                // Authentication Options
                 VStack(spacing: 16) {
-                    // Biometric Sign In (preferred if available and enabled)
                     if authManager.biometricsAvailable && biometricsEnabled {
                         Button(action: {
                             Task {
@@ -98,7 +89,6 @@ struct AuthenticationView: View {
                         }
                     }
                     
-                    // Email Sign In Button
                     NavigationLink(destination: EmailSignInView()) {
                         HStack {
                             Image(systemName: "envelope.fill")
@@ -119,7 +109,6 @@ struct AuthenticationView: View {
                         )
                     }
                     
-                    // Sign Up Link
                     Button(action: { showSignUp = true }) {
                         Text("Don't have an account? **Sign Up**")
                             .font(.subheadline)
@@ -143,7 +132,6 @@ struct AuthenticationView: View {
         .fullScreenCover(isPresented: $showWelcomeSplash) {
             WelcomeSplashView(email: newUserEmail) {
                 showWelcomeSplash = false
-                // Small delay then show sign-in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
                     showSignIn = true
                 }
@@ -162,8 +150,6 @@ struct AuthenticationView: View {
             }
         }
         .onChange(of: authManager.isAuthenticated) { oldValue, newValue in
-            // Onboarding is now handled by RecipeFinderApp
-            // Only handle biometric setup prompt here
             if newValue && !hasBeenPromptedForBiometrics && !biometricsEnabled {
                 if authManager.biometricsAvailable {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
@@ -175,8 +161,6 @@ struct AuthenticationView: View {
         }
     }
 }
-
-// Email Sign In View
 
 struct EmailSignInView: View {
     @StateObject private var authManager = AuthenticationManager.shared
@@ -190,11 +174,9 @@ struct EmailSignInView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismiss
     
-    // Test credentials for easy sign-in
     private let testEmail = "test@recipefinder.com"
     private let testPassword = "test123"
     
-    // Email validation
     private var isValidEmail: Bool {
         let emailRegex = "^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
         let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
@@ -216,7 +198,6 @@ struct EmailSignInView: View {
             
             ScrollView {
                 VStack(spacing: 24) {
-                    // Header
                     VStack(spacing: 8) {
                         Image(systemName: "person.crop.circle.fill")
                             .font(.system(size: AppTheme.fontSize60))
@@ -233,9 +214,7 @@ struct EmailSignInView: View {
                     }
                     .padding(.bottom, 20)
                     
-                    // Form
                     VStack(spacing: 16) {
-                        // Email Field
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Email")
                                 .font(.subheadline)
@@ -245,7 +224,7 @@ struct EmailSignInView: View {
                             TextField("", text: $email)
                                 .textFieldStyle(AuthTextFieldStyle())
                                 .keyboardType(.emailAddress)
-                                .textContentType(.username) // Changed from .emailAddress for better autofill
+                                .textContentType(.username)
                                 .autocapitalization(.none)
                                 .autocorrectionDisabled()
                             
@@ -256,7 +235,6 @@ struct EmailSignInView: View {
                             }
                         }
                         
-                        // Password Field
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Password")
                                 .font(.subheadline)
@@ -266,7 +244,7 @@ struct EmailSignInView: View {
                             SecureField("", text: $password)
                                 .textFieldStyle(AuthTextFieldStyle())
                                 .textContentType(.password)
-                                .submitLabel(.go) // Allow quick submission with keyboard
+                                .submitLabel(.go)
                                 .onSubmit {
                                     if canSignIn {
                                         signIn()
@@ -274,7 +252,6 @@ struct EmailSignInView: View {
                                 }
                         }
                         
-                        // Sign In Button
                         Button(action: signIn) {
                             Group {
                                 if isLoading {
@@ -328,10 +305,8 @@ struct EmailSignInView: View {
                     HapticManager.shared.success()
                     dismiss()
                     
-                    // Prompt for biometric setup if not already enabled
                     if authManager.biometricsAvailable && !UserDefaults.standard.bool(forKey: "biometricsEnabled") {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            // This will be caught by the parent view's onChange
                             UserDefaults.standard.set(true, forKey: "shouldPromptBiometrics")
                         }
                     }
@@ -348,8 +323,6 @@ struct EmailSignInView: View {
     }
 }
 
-// Sign Up View
-
 struct SignUpView: View {
     @StateObject private var authManager = AuthenticationManager.shared
     @State private var fullName = ""
@@ -364,7 +337,6 @@ struct SignUpView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismiss
     
-    // Email validation
     private var isValidEmail: Bool {
         let emailRegex = "^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
         let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
@@ -380,7 +352,6 @@ struct SignUpView: View {
         isPasswordStrong
     }
     
-    // Industry-standard password strength check
     private var isPasswordStrong: Bool {
         let hasUppercase = password.rangeOfCharacter(from: .uppercaseLetters) != nil
         let hasLowercase = password.rangeOfCharacter(from: .lowercaseLetters) != nil
@@ -399,7 +370,6 @@ struct SignUpView: View {
                 
                 ScrollView {
                     VStack(spacing: 24) {
-                        // Header
                         VStack(spacing: 8) {
                             Image(systemName: "person.crop.circle.badge.plus")
                                 .font(.system(size: AppTheme.fontSize60))
@@ -416,9 +386,7 @@ struct SignUpView: View {
                         }
                         .padding(.bottom, 20)
                         
-                        // Form
                         VStack(spacing: 16) {
-                            // Full Name Field
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("Full Name")
                                     .font(.subheadline)
@@ -431,7 +399,6 @@ struct SignUpView: View {
                                     .autocorrectionDisabled()
                             }
                             
-                            // Email Field
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("Email")
                                     .font(.subheadline)
@@ -441,7 +408,7 @@ struct SignUpView: View {
                                 TextField("", text: $email)
                                     .textFieldStyle(AuthTextFieldStyle())
                                     .keyboardType(.emailAddress)
-                                    .textContentType(.username) // Changed for better autofill on new accounts
+                                    .textContentType(.username)
                                     .autocapitalization(.none)
                                     .autocorrectionDisabled()
                                 
@@ -452,7 +419,6 @@ struct SignUpView: View {
                                 }
                             }
                             
-                            // Password Field
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("Password")
                                     .font(.subheadline)
@@ -485,7 +451,6 @@ struct SignUpView: View {
                                 }
                             }
                             
-                            // Confirm Password Field
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("Confirm Password")
                                     .font(.subheadline)
@@ -495,7 +460,7 @@ struct SignUpView: View {
                                 SecureField("", text: $confirmPassword)
                                     .textFieldStyle(AuthTextFieldStyle())
                                     .textContentType(.newPassword)
-                                    .submitLabel(.go) // Allow quick submission with keyboard
+                                    .submitLabel(.go)
                                     .onSubmit {
                                         if isFormValid {
                                             signUp()
@@ -509,7 +474,6 @@ struct SignUpView: View {
                                 }
                             }
                             
-                            // Sign Up Button
                             Button(action: signUp) {
                                 Group {
                                     if isLoading {
@@ -562,13 +526,11 @@ struct SignUpView: View {
         
         Task {
             do {
-                // Create account WITHOUT auto-login (defensive programming)
                 try await authManager.signUpWithoutLogin(email: email, password: password, fullName: fullName)
                 DispatchQueue.main.async {
                     HapticManager.shared.success()
                     isLoading = false
                     dismiss()
-                    // Notify parent with email for welcome splash
                     onSignUpSuccess(email)
                 }
             } catch {
@@ -582,8 +544,6 @@ struct SignUpView: View {
         }
     }
 }
-
-// Custom Text Field Style
 
 struct AuthTextFieldStyle: TextFieldStyle {
     @Environment(\.colorScheme) var colorScheme

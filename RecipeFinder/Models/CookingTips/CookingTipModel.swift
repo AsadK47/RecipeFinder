@@ -1,6 +1,5 @@
 import Foundation
 
-/// Represents a cooking tip with category and practical advice
 struct CookingTipModel: Identifiable, Codable, Hashable {
     var id: UUID
     var title: String
@@ -31,8 +30,6 @@ struct CookingTipModel: Identifiable, Codable, Hashable {
         self.createdDate = createdDate
     }
 }
-
-// MARK: - Tip Category
 
 enum CookingTipCategory: String, Codable, CaseIterable, Identifiable {
     case basics = "Cooking Basics"
@@ -79,8 +76,6 @@ enum CookingTipCategory: String, Codable, CaseIterable, Identifiable {
     }
 }
 
-// MARK: - Tip Difficulty
-
 enum TipDifficulty: String, Codable, CaseIterable {
     case beginner = "Beginner"
     case intermediate = "Intermediate"
@@ -95,11 +90,8 @@ enum TipDifficulty: String, Codable, CaseIterable {
     }
 }
 
-// MARK: - Sample Data
-
 extension CookingTipModel {
     static let samples: [CookingTipModel] = [
-        // Basics
         CookingTipModel(
             title: "Why Do Chef's Kitchens Look So Organized?",
             content: "Before you start cooking, prep all your ingredients. Chop vegetables, measure spices, and have everything ready to go. This French technique means 'everything in its place' and makes cooking so much smoother and less stressful. You'll avoid burning garlic while frantically chopping onions!",
@@ -116,7 +108,6 @@ extension CookingTipModel {
             tags: ["salt", "seasoning", "flavor"]
         ),
         
-        // Techniques
         CookingTipModel(
             title: "Is Your Knife Actually Putting You in Danger?",
             content: "Keep your knife sharp - a dull knife is more dangerous than a sharp one. Use the 'claw grip' with your guiding hand, tucking fingertips inward. Let the knife do the work with a rocking motion. For herbs, roll them tightly and slice across for a chiffonade cut.",
@@ -141,7 +132,6 @@ extension CookingTipModel {
             tags: ["sauce", "fond", "flavor"]
         ),
         
-        // Ingredients
         CookingTipModel(
             title: "Did You Know Slicing Changes Garlic's Flavor?",
             content: "How you cut garlic affects its intensity. Minced garlic is stronger than sliced. Crushed or grated garlic is the most pungent. For mellow flavor, roast whole cloves. Add garlic near the end of cooking aromatics to prevent burning and bitterness.",
@@ -166,7 +156,6 @@ extension CookingTipModel {
             tags: ["citrus", "zest", "technique"]
         ),
         
-        // Equipment
         CookingTipModel(
             title: "Why Does Everything Stick to Your Pan?",
             content: "Give your pan 2-3 minutes to heat up properly. Test it by adding a drop of water - it should sizzle and evaporate immediately. A properly preheated pan prevents sticking and ensures even cooking. This is especially important for searing and stir-frying.",
@@ -183,7 +172,6 @@ extension CookingTipModel {
             tags: ["cast iron", "maintenance", "cleaning"]
         ),
         
-        // Safety
         CookingTipModel(
             title: "How Do You Know When Meat is Really Done?",
             content: "Use a meat thermometer for safety and perfection. Chicken: 165°F (74°C), Pork: 145°F (63°C), Beef medium-rare: 135°F (57°C). Insert in the thickest part, away from bone. Let meat rest 5-10 minutes - temperature rises 5°F during rest.",
@@ -200,7 +188,6 @@ extension CookingTipModel {
             tags: ["hygiene", "food safety", "essential"]
         ),
         
-        // Storage
         CookingTipModel(
             title: "Why Do Your Fresh Herbs Wilt So Fast?",
             content: "Store soft herbs (cilantro, parsley) like flowers in water in the fridge, covered loosely with plastic. Wrap hardy herbs in damp paper towels in the crisper. Freeze herbs in olive oil in ice cube trays for easy cooking additions.",
@@ -217,7 +204,6 @@ extension CookingTipModel {
             tags: ["leftovers", "refrigeration", "food safety"]
         ),
         
-        // Substitutions
         CookingTipModel(
             title: "Out of Buttermilk? Try This 5-Minute Trick",
             content: "No buttermilk? Add 1 tablespoon of lemon juice or white vinegar to 1 cup of regular milk. Let it sit for 5-10 minutes until it curdles slightly. This works perfectly in baking recipes that call for buttermilk.",
@@ -234,7 +220,6 @@ extension CookingTipModel {
             tags: ["eggs", "baking", "vegan"]
         ),
         
-        // Time-Saving
         CookingTipModel(
             title: "What If You Cooked Once and Ate All Week?",
             content: "Cook grains, beans, and proteins in bulk on weekends. Store in portioned containers. Make double batches of sauces and freeze in ice cube trays. Prep vegetables for the week - store cut veggies in water to keep crisp.",
@@ -251,7 +236,6 @@ extension CookingTipModel {
             tags: ["onions", "shortcuts", "hack"]
         ),
         
-        // Presentation
         CookingTipModel(
             title: "Why Do Restaurant Plates Look So Impressive?",
             content: "Plate in odd numbers (3 or 5 pieces) for visual appeal. Use the 'clock method': protein at 6 o'clock, starch at 2 o'clock, vegetables at 10 o'clock. Height adds drama - don't make everything flat. Leave some white space.",
@@ -268,7 +252,6 @@ extension CookingTipModel {
             tags: ["garnish", "presentation", "finishing"]
         ),
         
-        // Seasoning & Flavor
         CookingTipModel(
             title: "Why Does Your Cooking Taste Flat?",
             content: "Great dishes balance sweet, salty, sour, bitter, and umami. Dish taste flat? Add acid (lemon, vinegar). Too acidic? Add sweetness. Too sweet? Add salt or acid. Bitter? Add fat or salt. Learn to taste and adjust.",

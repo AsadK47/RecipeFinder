@@ -1,7 +1,6 @@
 import Combine
 import Foundation
 
-/// Manages meal plans using the MealPlanModel for structured meal planning
 @MainActor
 final class MealPlanningManager: ObservableObject {
     static let shared = MealPlanningManager()
@@ -19,18 +18,13 @@ final class MealPlanningManager: ObservableObject {
         loadMealPlans()
     }
     
-    // MARK: - CRUD Operations
-    
     func addMealPlan(_ mealPlan: MealPlanModel) {
-        // Check for existing meal at same date/time
         if let existingIndex = mealPlans.firstIndex(where: {
             Calendar.current.isDate($0.date, inSameDayAs: mealPlan.date) &&
             $0.mealTime == mealPlan.mealTime
         }) {
-            // Replace existing meal
             mealPlans[existingIndex] = mealPlan
         } else {
-            // Add new meal
             mealPlans.append(mealPlan)
         }
         
@@ -77,8 +71,6 @@ final class MealPlanningManager: ObservableObject {
         saveMealPlans()
     }
     
-    // MARK: - Query Methods
-    
     func mealPlan(for date: Date, mealTime: MealTime) -> MealPlanModel? {
         mealPlans.first {
             Calendar.current.isDate($0.date, inSameDayAs: date) &&
@@ -111,7 +103,6 @@ final class MealPlanningManager: ObservableObject {
         return WeeklyMealPlan(startDate: start, meals: weekMeals)
     }
     
-    // Computed properties
     var todaysMealPlans: [MealPlanModel] {
         mealPlans(for: Date())
     }
@@ -133,8 +124,6 @@ final class MealPlanningManager: ObservableObject {
         return grouped.sorted { $0.key < $1.key }
             .map { (date: $0.key, meals: $0.value.sorted { $0.mealTime.sortOrder < $1.mealTime.sortOrder }) }
     }
-    
-    // MARK: - Persistence
     
     private func saveMealPlans() {
         if let encoded = try? JSONEncoder().encode(mealPlans) {

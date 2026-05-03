@@ -19,7 +19,6 @@ struct EmailConfirmationSplashView: View {
                 VStack(spacing: spacing.screenEdge + spacing.lg) {
                     Spacer()
                     
-                    // Success icon
                     ZStack {
                         Circle()
                             .fill(Color.white.opacity(0.1))
@@ -63,7 +62,6 @@ struct EmailConfirmationSplashView: View {
                     
                     Spacer()
                     
-                    // Continue Button
                     Button(action: {
                         HapticManager.shared.medium()
                         onContinue()

@@ -31,50 +31,41 @@ struct RecipeSearchView: View {
         Set(kitchenManager.items.map { $0.name.lowercased() })
     }
 
-    // Optimized filtered recipes with caching
     private var filteredRecipes: [RecipeModel] {
         let currentHash = computeFilterHash()
         
-        // Return cached result if filters haven't changed
         if currentHash == lastFilterHash && !cachedFilteredRecipes.isEmpty {
             return cachedFilteredRecipes
         }
         
         var results = recipes
         
-        // Favorites filter
         if showFavoritesOnly {
             results = results.filter { $0.isFavorite }
         }
         
-        // Search filter (recipe name)
         if !searchText.isEmpty {
             results = results.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
         }
         
-        // Ingredient search filter
         if !ingredientSearchText.isEmpty {
             results = results.filter { $0.containsIngredient(ingredientSearchText) }
         }
         
-        // Available ingredients only
         if availableIngredientsOnly && !availableIngredients.isEmpty {
             results = results.filter { recipe in
                 recipe.ingredientMatchPercentage(availableIngredients: availableIngredients) >= 0.8
             }
         }
         
-        // Category filter
         if !selectedCategories.isEmpty {
             results = results.filter { selectedCategories.contains($0.category) }
         }
         
-        // Difficulty filter
         if !selectedDifficulties.isEmpty {
             results = results.filter { selectedDifficulties.contains($0.difficulty) }
         }
         
-        // Cook time filter
         if !selectedCookTimes.isEmpty {
             results = results.filter { recipe in
                 let time = TimeExtractor.extractMinutes(from: recipe.cookingTime)
@@ -82,7 +73,6 @@ struct RecipeSearchView: View {
             }
         }
         
-        // Dietary filters
         if !selectedDietaryFilters.isEmpty {
             results = results.filter { recipe in
                 selectedDietaryFilters.allSatisfy { dietaryTag in
@@ -100,14 +90,12 @@ struct RecipeSearchView: View {
             }
         }
         
-        // Tags filter
         if !selectedTags.isEmpty {
             results = results.filter { recipe in
                 !Set(recipe.tags).isDisjoint(with: selectedTags)
             }
         }
         
-        // Sort by ingredient match if using "what can I make" mode
         if availableIngredientsOnly && !availableIngredients.isEmpty {
             results.sort { recipe1, recipe2 in
                 let match1 = recipe1.ingredientMatchPercentage(availableIngredients: availableIngredients)
@@ -119,7 +107,6 @@ struct RecipeSearchView: View {
         return results
     }
     
-    // Helper to compute hash of current filter state
     private func computeFilterHash() -> Int {
         var hasher = Hasher()
         hasher.combine(searchText)
@@ -193,8 +180,6 @@ struct RecipeSearchView: View {
         }
     }
     
-    // MARK: - Main Content Orchestration
-    
     private var mainContentView: some View {
         ZStack {
             backgroundView
@@ -235,8 +220,6 @@ struct RecipeSearchView: View {
         }
     }
     
-    // MARK: - Toolbar Components
-    
     @ToolbarContentBuilder
     private var keyboardToolbar: some ToolbarContent {
         ToolbarItemGroup(placement: .keyboard) {
@@ -250,8 +233,6 @@ struct RecipeSearchView: View {
         }
     }
     
-    // MARK: - View Components
-    
     private var backgroundView: some View {
         AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
             .ignoresSafeArea()
@@ -260,7 +241,6 @@ struct RecipeSearchView: View {
     private var headerSection: some View {
         GeometryReader { geometry in
             HStack(spacing: 0) {
-                // Left spacer for balance - 15% of width or fixed size
                 Color.clear
                     .frame(width: max(44, geometry.size.width * 0.15))
                 
@@ -274,7 +254,6 @@ struct RecipeSearchView: View {
                 
                 Spacer(minLength: 8)
                 
-                // Right menu - 15% of width or fixed size
                 Menu {
                     menuContent
                 } label: {
@@ -357,7 +336,6 @@ struct RecipeSearchView: View {
     
     private var menuContent: some View {
         Group {
-            // Filter option
             Button(
                 action: {
                     HapticManager.shared.light()
@@ -370,7 +348,6 @@ struct RecipeSearchView: View {
             
             Divider()
             
-            // Import option
             Button(
                 action: {
                     HapticManager.shared.selection()
@@ -381,7 +358,6 @@ struct RecipeSearchView: View {
                 }
             )
             
-            // Recipe Wizard option
             Button(
                 action: {
                     HapticManager.shared.selection()
@@ -614,10 +590,8 @@ struct RecipeSearchView: View {
     
     private var recipeImportSheet: some View {
         RecipeImportView { importedRecipe in
-            // Add the imported recipe to the list
             recipes.append(importedRecipe)
             
-            // Save to Core Data
             PersistenceController.shared.saveRecipeModel(importedRecipe)
             
             HapticManager.shared.success()
@@ -626,10 +600,8 @@ struct RecipeSearchView: View {
     
     private var recipeWizardSheet: some View {
         RecipeWizardView(prefilledData: nil) { newRecipe in
-            // Add the new recipe to the list
             recipes.append(newRecipe)
             
-            // Save to Core Data
             PersistenceController.shared.saveRecipeModel(newRecipe)
             
             HapticManager.shared.success()
@@ -659,7 +631,6 @@ struct RecipeSearchView: View {
         )
     }
     
-    // Update cache when filters change
     private func updateFilterCache() {
         let newHash = computeFilterHash()
         if newHash != lastFilterHash {
@@ -668,7 +639,6 @@ struct RecipeSearchView: View {
         }
     }
     
-    // Delete recipe
     private func deleteRecipe(_ recipe: RecipeModel) {
         withAnimation {
             recipes.removeAll { $0.id == recipe.id }
@@ -737,12 +707,10 @@ struct RecipeSearchView: View {
     }
     
     private func refreshRecipes() {
-        // Reload recipes from Core Data to get updated favorite status
         recipes = PersistenceController.shared.fetchRecipes()
     }
 }
 
-// Filter Sheet
 struct FilterSheet: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
@@ -777,7 +745,6 @@ struct FilterSheet: View {
                 
                 ScrollView {
                     VStack(alignment: .leading, spacing: AppTheme.spacing32) {
-                        // Favorites Toggle
                         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                             HStack {
                                 Text("Show Favorites Only")
@@ -794,7 +761,6 @@ struct FilterSheet: View {
                         Divider()
                             .background(Color.white.opacity(0.3))
                         
-                        // What Can I Make Filter
                         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                             HStack {
                                 VStack(alignment: .leading, spacing: AppTheme.spacing4) {
@@ -823,7 +789,6 @@ struct FilterSheet: View {
                         Divider()
                             .background(Color.white.opacity(0.3))
                         
-                        // Search by Ingredient
                         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                             Text("Search by Ingredient")
                                 .font(.headline)
@@ -842,7 +807,6 @@ struct FilterSheet: View {
                         Divider()
                             .background(Color.white.opacity(0.3))
                         
-                        // Dietary Filters
                         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                             Text("Dietary Preferences")
                                 .font(.headline)
@@ -863,7 +827,6 @@ struct FilterSheet: View {
                         Divider()
                             .background(Color.white.opacity(0.3))
                         
-                        // Tags
                         if !availableTags.isEmpty {
                             VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                                 Text("Tags")
@@ -886,7 +849,6 @@ struct FilterSheet: View {
                                 .background(Color.white.opacity(0.3))
                         }
                         
-                        // Category Filter
                         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                             Text("Course / Category")
                                 .font(.headline)
@@ -907,7 +869,6 @@ struct FilterSheet: View {
                         Divider()
                             .background(Color.white.opacity(0.3))
                         
-                        // Difficulty Filter
                         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                             Text("Difficulty")
                                 .font(.headline)
@@ -928,7 +889,6 @@ struct FilterSheet: View {
                         Divider()
                             .background(Color.white.opacity(0.3))
                         
-                        // Cook Time Filter
                         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                             Text("Max Cooking Time")
                                 .font(.headline)
@@ -987,7 +947,6 @@ struct FilterSheet: View {
     }
 }
 
-// Recipe Filter Button Component (specific styling for recipe filters)
 struct RecipeFilterButton: View {
     let label: String
     let isSelected: Bool
@@ -1016,7 +975,6 @@ struct RecipeFilterButton: View {
     }
 }
 
-// Recipe Delete Confirmation Sheet
 struct RecipeDeleteConfirmationSheet: View {
     let recipeName: String
     @Binding var dontAskAgain: Bool
@@ -1034,14 +992,12 @@ struct RecipeDeleteConfirmationSheet: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                    // Handle bar
                     RoundedRectangle(cornerRadius: 3)
                         .fill(Color.white.opacity(0.3))
                         .frame(width: 40, height: 5)
                         .padding(.top, 12)
                     
                     VStack(spacing: AppTheme.spacing32) {
-                        // Icon
                         ZStack {
                             Circle()
                                 .fill(Color.orange.opacity(0.15))
@@ -1053,7 +1009,6 @@ struct RecipeDeleteConfirmationSheet: View {
                         }
                         .padding(.top, 20)
                         
-                        // Title and Message
                         VStack(spacing: AppTheme.spacing12) {
                             Text("Remove this recipe?")
                                 .font(.title2)
@@ -1078,7 +1033,6 @@ struct RecipeDeleteConfirmationSheet: View {
                         }
                         .padding(.horizontal, 24)
                     
-                        // Don't ask again checkbox
                         Button(action: {
                             dontAskAgain.toggle()
                             HapticManager.shared.selection()
@@ -1099,7 +1053,6 @@ struct RecipeDeleteConfirmationSheet: View {
                         }
                         .buttonStyle(PlainButtonStyle())
                         
-                        // Action Buttons
                         VStack(spacing: AppTheme.spacing12) {
                             Button(action: {
                                 HapticManager.shared.light()
@@ -1141,9 +1094,6 @@ struct RecipeDeleteConfirmationSheet: View {
     }
 }
 
-// MARK: - View Modifiers
-
-/// Encapsulates all sheet presentation logic following Single Responsibility Principle
 struct SheetPresentationModifier: ViewModifier {
     @Binding var showFilters: Bool
     @Binding var showImportSheet: Bool
@@ -1190,7 +1140,6 @@ struct SheetPresentationModifier: ViewModifier {
     }
 }
 
-/// Manages filter state change observation and cache updates
 struct FilterCacheUpdateModifier: ViewModifier {
     let searchText: String
     let ingredientSearchText: String

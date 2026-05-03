@@ -16,13 +16,10 @@ struct NotesListView: View {
     @State private var showCategoryExpanded = false
     @State private var showFilterMenu = false
     
-    // Cache for expensive tag extraction (performance optimization)
     @State private var cachedTags: [String] = []
     @State private var lastNotesCount: Int = 0
     
-    // All unique tags from all notes (memoized)
     var allTags: [String] {
-        // Only recompute if notes have changed
         if notesManager.notes.count != lastNotesCount {
             return Array(Set(notesManager.notes.flatMap { $0.tags })).sorted()
         }
@@ -32,22 +29,18 @@ struct NotesListView: View {
     var filteredNotes: [NoteModel] {
         var filtered = notesManager.notes
         
-        // Filter by search text
         if !searchText.isEmpty {
             filtered = filtered.filter { $0.matches(searchText: searchText) }
         }
         
-        // Filter by category
         if let category = selectedCategory {
             filtered = filtered.filter { $0.category == category }
         }
         
-        // Filter by tag
         if let tag = selectedTag {
             filtered = filtered.filter { $0.tags.contains(tag) }
         }
         
-        // Filter by pinned
         if showPinnedOnly {
             filtered = filtered.filter { $0.isPinned }
         }
@@ -66,16 +59,13 @@ struct NotesListView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-            // Background
             AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header
                 VStack(spacing: AppTheme.spacing12) {
                     GeometryReader { geometry in
                         HStack(spacing: 0) {
-                            // Left side - back button with spacer to match right side width
                             HStack(spacing: 0) {
                                 Button(action: {
                                     HapticManager.shared.light()
@@ -88,7 +78,7 @@ struct NotesListView: View {
                                 }
                                 Spacer()
                             }
-                            .frame(width: 88) // Match right side width
+                            .frame(width: 88)
                             
                             Spacer()
                             
@@ -100,10 +90,8 @@ struct NotesListView: View {
                             
                             Spacer()
                             
-                            // Right side - menu and add buttons
                             HStack(spacing: 0) {
                                 Menu {
-                                    // Filter option
                                     Button(
                                         action: {
                                             HapticManager.shared.light()
@@ -130,19 +118,17 @@ struct NotesListView: View {
                                 }
                                 .frame(width: 44, height: 44)
                             }
-                            .frame(width: 88) // 44 + 44
+                            .frame(width: 88)
                         }
                     }
                     .frame(height: 44)
                     
-                    // Search Bar
                     ModernSearchBar(text: $searchText, placeholder: "Search Notes...")
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 16)
                 .padding(.bottom, 12)
                 
-                // Active filters chips
                 if activeFilterCount > 0 {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: AppTheme.spacing8) {
@@ -190,7 +176,6 @@ struct NotesListView: View {
                     }
                 }
                 
-                // Notes List
                 if filteredNotes.isEmpty {
                     emptyStateView
                 } else {
@@ -228,13 +213,11 @@ struct NotesListView: View {
         }
     }
     
-    // Update tag cache (performance optimization)
     private func updateTagCache() {
         cachedTags = Array(Set(notesManager.notes.flatMap { $0.tags })).sorted()
         lastNotesCount = notesManager.notes.count
     }
     
-    // MARK: - Notes List
     private var notesList: some View {
         ScrollView {
             LazyVStack(spacing: AppTheme.spacing12) {
@@ -284,7 +267,6 @@ struct NotesListView: View {
         }
     }
     
-    // MARK: - Empty State
     private var emptyStateView: some View {
         VStack(spacing: AppTheme.spacing24) {
             Image(systemName: searchText.isEmpty ? "note.text" : "magnifyingglass")
@@ -302,7 +284,6 @@ struct NotesListView: View {
                 .multilineTextAlignment(.center)
             
             if searchText.isEmpty {
-                // Show animated arrow pointing upward to the + button
                 VStack(spacing: AppTheme.spacing12) {
                     Image(systemName: "arrow.up")
                         .font(.title)
@@ -321,7 +302,6 @@ struct NotesListView: View {
     }
 }
 
-// MARK: - Filter Menu View
 struct FilterMenuView: View {
     @Environment(\.dismiss) private var dismiss
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
@@ -344,7 +324,6 @@ struct FilterMenuView: View {
                 
                 ScrollView {
                     VStack(alignment: .leading, spacing: AppTheme.spacing32) {
-                        // Pinned Filter
                         filterSection(title: "Quick Filters") {
                             Toggle(isOn: $showPinnedOnly) {
                                 HStack {
@@ -356,14 +335,12 @@ struct FilterMenuView: View {
                             .tint(AppTheme.accentColor(for: selectedTheme))
                         }
                         
-                        // All Categories in one list
                         filterSection(title: "Categories") {
                             ForEach(NoteCategory.allCases, id: \.self) { category in
                                 categoryButton(category)
                             }
                         }
                         
-                        // Tags Filter
                         if !allTags.isEmpty {
                             filterSection(title: "Filter by Tag") {
                                 FlowLayout(spacing: AppTheme.spacing8) {

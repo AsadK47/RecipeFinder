@@ -1,11 +1,5 @@
 import SwiftUI
 
-// TODO: Future Enhancement - Add support for helpful pictures and videos to cooking tips
-// - Add media attachments to CookingTipModel (images, video URLs)
-// - Display images in tip cards
-// - Support embedded video playback in detail view
-// - Allow users to add their own media to tips
-
 struct CookingTipsView: View {
     @StateObject private var tipsManager = CookingTipsManager.shared
     @Environment(\.colorScheme) var colorScheme
@@ -29,11 +23,9 @@ struct CookingTipsView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header
                 VStack(spacing: AppTheme.spacing12) {
                     GeometryReader { geometry in
                         HStack(spacing: 0) {
-                            // Back button
                             Button(action: {
                                 HapticManager.shared.light()
                                 dismiss()
@@ -54,9 +46,7 @@ struct CookingTipsView: View {
                             
                             Spacer()
                             
-                            // Menu button
                             Menu {
-                                // View mode toggle
                                 Button(action: {
                                     withAnimation(.spring(response: 0.3)) {
                                         viewMode = viewMode == .card ? .list : .card
@@ -71,7 +61,6 @@ struct CookingTipsView: View {
                                 
                                 Divider()
                                 
-                                // Filters
                                 Button(action: {
                                     showFilters = true
                                     HapticManager.shared.light()
@@ -82,7 +71,6 @@ struct CookingTipsView: View {
                                     )
                                 }
                                 
-                                // Clear filters option if active
                                 if hasActiveFilters {
                                     Button(action: {
                                         tipsManager.clearFilters()
@@ -93,7 +81,6 @@ struct CookingTipsView: View {
                                 }
                             } label: {
                                 ZStack {
-                                    // Badge indicator if filters are active
                                     if hasActiveFilters {
                                         Circle()
                                             .fill(AppTheme.accentColor(for: selectedTheme))
@@ -116,19 +103,16 @@ struct CookingTipsView: View {
                 
                 GeometryReader { geometry in
                     VStack(spacing: 0) {
-                        // Search Bar
                         searchBar
                             .padding(.horizontal, 20)
                             .padding(.top, 12)
                     
-                    // Filter Pills
                     if hasActiveFilters {
                         activeFiltersPills
                             .padding(.horizontal, 20)
                             .padding(.top, 12)
                     }
                     
-                    // Content
                     ScrollView(.vertical, showsIndicators: true) {
                         VStack(spacing: AppTheme.spacing32) {
                             if tipsManager.filteredTips.isEmpty {
@@ -167,8 +151,6 @@ struct CookingTipsView: View {
         }
     }
     
-    // MARK: - Header
-    
     private var header: some View {
         GeometryReader { geometry in
             let spacing = AdaptiveSpacing(geometry: geometry)
@@ -176,7 +158,6 @@ struct CookingTipsView: View {
             HStack(spacing: 0) {
                 Spacer()
                 
-                // Title
                 Text("Cooking Tips")
                     .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
                     .adaptiveForegroundColor()
@@ -191,8 +172,6 @@ struct CookingTipsView: View {
         .padding(.horizontal, 20)
         .padding(.top, 16)
     }
-    
-    // MARK: - Search Bar
     
     private var searchBar: some View {
         HStack(spacing: AppTheme.spacing12) {
@@ -226,8 +205,6 @@ struct CookingTipsView: View {
             }
         }
     }
-    
-    // MARK: - Active Filters Pills
     
     private var activeFiltersPills: some View {
         FlowLayout(spacing: AppTheme.spacing8) {
@@ -269,8 +246,6 @@ struct CookingTipsView: View {
         }
     }
     
-    // MARK: - Compact List View
-    
     private var compactListView: some View {
         VStack(spacing: AppTheme.spacing8) {
             ForEach(tipsManager.filteredTips) { tip in
@@ -284,8 +259,6 @@ struct CookingTipsView: View {
         }
     }
     
-    // MARK: - Category Grid View
-    
     private var categoryGridView: some View {
         VStack(spacing: AppTheme.spacing24) {
             ForEach(CookingTipCategory.allCases) { category in
@@ -298,7 +271,6 @@ struct CookingTipsView: View {
                 
                 if !categoryTips.isEmpty {
                     VStack(alignment: .leading, spacing: AppTheme.spacing12) {
-                        // Category Header - Tappable to expand/collapse
                         Button(action: {
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                                 if expandedCategories.contains(category.rawValue) {
@@ -339,7 +311,6 @@ struct CookingTipsView: View {
                         }
                         .buttonStyle(.plain)
                         
-                        // Tips in Category - Only show if expanded
                         if expandedCategories.contains(category.rawValue) {
                             VStack(spacing: AppTheme.spacing12) {
                                 ForEach(categoryTips) { tip in
@@ -358,8 +329,6 @@ struct CookingTipsView: View {
             }
         }
     }
-    
-    // MARK: - Empty State
     
     private var emptyStateView: some View {
         VStack(spacing: AppTheme.spacing24) {
@@ -399,8 +368,6 @@ struct CookingTipsView: View {
         .padding(AppTheme.spacing48)
     }
     
-    // MARK: - Helpers
-    
     private var hasActiveFilters: Bool {
         tipsManager.selectedCategory != nil ||
         tipsManager.selectedDifficulty != nil ||
@@ -424,8 +391,6 @@ struct CookingTipsView: View {
     }
 }
 
-// MARK: - Compact Tip Row
-
 struct CompactTipRow: View {
     let tip: CookingTipModel
     let onTap: () -> Void
@@ -437,14 +402,12 @@ struct CompactTipRow: View {
     var body: some View {
         Button(action: onTap) {
             HStack(spacing: AppTheme.spacing12) {
-                // Category Icon
                 Image(systemName: tip.category.icon)
                     .font(.body)
                     .foregroundColor(colorForCategory(tip.category))
                     .frame(width: 32)
                 
                 VStack(alignment: .leading, spacing: AppTheme.spacing4) {
-                    // Title
                     Text(tip.title)
                         .font(.subheadline)
                         .fontWeight(.medium)
@@ -452,7 +415,6 @@ struct CompactTipRow: View {
                         .multilineTextAlignment(.leading)
                         .lineLimit(1)
                     
-                    // Category and Difficulty
                     HStack(spacing: AppTheme.spacing8) {
                         Text(tip.category.rawValue)
                             .font(.caption2)
@@ -474,7 +436,6 @@ struct CompactTipRow: View {
                 
                 Spacer(minLength: 8)
                 
-                // Favorite button
                 Button(action: {
                     onToggleFavorite()
                 }) {
@@ -484,7 +445,6 @@ struct CompactTipRow: View {
                 }
                 .buttonStyle(PlainButtonStyle())
                 
-                // Chevron
                 Image(systemName: "chevron.right")
                     .font(.caption)
                     .foregroundColor(.secondary)
@@ -516,8 +476,6 @@ struct CompactTipRow: View {
     }
 }
 
-// MARK: - Tip Card
-
 struct CookingTipCard: View {
     let tip: CookingTipModel
     let onTap: () -> Void
@@ -530,9 +488,7 @@ struct CookingTipCard: View {
     var body: some View {
         Button(action: onTap) {
             VStack(alignment: .leading, spacing: AppTheme.spacing16) {
-                // Header with icon and favorite
                 HStack(alignment: .top, spacing: AppTheme.spacing12) {
-                    // Category icon with gradient background
                     ZStack {
                         Circle()
                             .fill(
@@ -550,7 +506,6 @@ struct CookingTipCard: View {
                     }
                     
                     VStack(alignment: .leading, spacing: AppTheme.spacing6) {
-                        // Title
                         Text(tip.title)
                             .font(.headline)
                             .fontWeight(.bold)
@@ -559,7 +514,6 @@ struct CookingTipCard: View {
                             .lineLimit(2)
                             .fixedSize(horizontal: false, vertical: true)
                         
-                        // Category and Difficulty badges
                         HStack(spacing: AppTheme.spacing8) {
                             HStack(spacing: AppTheme.spacing4) {
                                 Image(systemName: "bookmark.fill")
@@ -596,7 +550,6 @@ struct CookingTipCard: View {
                     
                     Spacer(minLength: 4)
                     
-                    // Favorite button
                     Button(action: {
                         onToggleFavorite()
                     }) {
@@ -608,12 +561,10 @@ struct CookingTipCard: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
-                // Divider
                 Rectangle()
                     .fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity))
                     .frame(height: 1)
                 
-                // Preview of content
                 Text(tip.content)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
@@ -621,7 +572,6 @@ struct CookingTipCard: View {
                     .multilineTextAlignment(.leading)
                     .lineSpacing(4)
                 
-                // Tags
                 if !tip.tags.isEmpty {
                     FlowLayout(spacing: AppTheme.spacing6) {
                         ForEach(tip.tags.prefix(3), id: \.self) { tag in
@@ -643,7 +593,6 @@ struct CookingTipCard: View {
                     }
                 }
                 
-                // Footer with chevron
                 HStack {
                     Spacer()
                     
@@ -702,8 +651,6 @@ struct CookingTipCard: View {
     }
 }
 
-// MARK: - Filter Pill
-
 struct FilterPill: View {
     let text: String
     let color: Color
@@ -733,8 +680,6 @@ struct FilterPill: View {
     }
 }
 
-// MARK: - Filters Sheet
-
 struct FiltersSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) var colorScheme
@@ -753,7 +698,6 @@ struct FiltersSheet: View {
                 
                     ScrollView(.vertical, showsIndicators: true) {
                     VStack(alignment: .leading, spacing: AppTheme.spacing32) {
-                        // Favorites Toggle
                         filterCard {
                             Toggle(isOn: $showFavoritesOnly) {
                                 HStack(spacing: AppTheme.spacing12) {
@@ -768,7 +712,6 @@ struct FiltersSheet: View {
                             .tint(AppTheme.accentColor(for: selectedTheme))
                         }
                         
-                        // Category Filter
                         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                             HStack(spacing: AppTheme.spacing8) {
                                 Image(systemName: "square.grid.2x2.fill")
@@ -814,7 +757,6 @@ struct FiltersSheet: View {
                             }
                         }
                         
-                        // Difficulty Filter
                         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                             HStack(spacing: AppTheme.spacing8) {
                                 Image(systemName: "chart.bar.fill")

@@ -3,7 +3,6 @@ import Combine
 
 private let logger = AppLogger.logger(category: "ShoppingList")
 
-
 @MainActor
 final class ShoppingListManager: ObservableObject {
     static let shared = ShoppingListManager()
@@ -11,7 +10,6 @@ final class ShoppingListManager: ObservableObject {
     private let saveKey = Constants.UserDefaultsKeys.shoppingListItems
     private let storage = UserScopedStorage.shared
     
-    // PERFORMANCE: Cache items in memory and only read from UserDefaults once
     @Published private(set) var items: [ShoppingListModel] = []
     
     private init() {
@@ -50,24 +48,20 @@ final class ShoppingListManager: ObservableObject {
             return
         }
         
-        // Validate quantity
         guard quantity > 0 else {
             logger.error("❌ ShoppingListManager: Invalid quantity for '\(trimmedName)'")
             HapticManager.shared.error()
             return
         }
         
-        // Prevent unreasonably large quantities
         guard quantity <= 999 else {
             logger.error("❌ ShoppingListManager: Quantity too large for '\(trimmedName)'")
             HapticManager.shared.error()
             return
         }
         
-        // Check for duplicates - if exists, just increase quantity
         if let existingIndex = items.firstIndex(where: { $0.name.lowercased() == trimmedName.lowercased() }) {
             logger.debug("✅ ShoppingListManager: Updating existing item '\(trimmedName)'")
-            // Ensure combined quantity doesn't exceed limit
             let newQuantity = items[existingIndex].quantity + quantity
             items[existingIndex].quantity = min(newQuantity, 999)
             saveItems(items)
@@ -112,7 +106,6 @@ final class ShoppingListManager: ObservableObject {
         guard index < items.count else { return }
         items[index].isChecked.toggle()
         
-        // Celebratory haptic when checking off, soft when unchecking
         if items[index].isChecked {
             HapticManager.shared.success()
         } else {

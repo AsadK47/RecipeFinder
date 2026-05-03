@@ -19,7 +19,6 @@ struct SwipeActionModifier: ViewModifier {
     
     func body(content: Content) -> some View {
         ZStack(alignment: .trailing) {
-            // Background action button
             if let trailing = trailing, enabled {
                 HStack {
                     Spacer()
@@ -37,7 +36,6 @@ struct SwipeActionModifier: ViewModifier {
                 .opacity(offset < 0 ? 1 : 0)
             }
             
-            // Main content
             content
                 .frame(maxWidth: .infinity)
                 .background(Color(UIColor.systemBackground).opacity(0.001))
@@ -46,8 +44,6 @@ struct SwipeActionModifier: ViewModifier {
                 .gesture(
                     enabled ? DragGesture(minimumDistance: minimumDragDistance)
                         .onChanged { value in
-                            // Only allow swipe from right to left (negative offset)
-                            // Require horizontal movement to be 2x greater than vertical for swipe
                             let horizontalMovement = abs(value.translation.width)
                             let verticalMovement = abs(value.translation.height)
                             

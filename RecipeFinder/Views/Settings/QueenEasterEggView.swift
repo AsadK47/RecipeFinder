@@ -1,9 +1,3 @@
-//
-//  QueenEasterEggView.swift
-//  RecipeFinder
-//
-//  A special tribute to the one and only 👑 
-//
 
 import SwiftUI
 import ConfettiSwiftUI
@@ -22,7 +16,6 @@ struct QueenEasterEggView: View {
     @State private var particlesOpacity: Double = 0
     @State private var shimmerOffset: CGFloat = -200
     
-    // Particle data for romantic effect
     private let particleData: [(icon: String, size: CGFloat, x: CGFloat, y: CGFloat)] = {
         let icons = ["heart.fill", "sparkles", "star.fill", "crown.fill"]
         return (0..<15).map { _ in
@@ -34,7 +27,6 @@ struct QueenEasterEggView: View {
         }
     }()
     
-    // MARK: - Helper Views
     private var floatingParticles: some View {
         ForEach(Array(particleData.enumerated()), id: \.offset) { index, particle in
             Image(systemName: particle.icon)
@@ -152,7 +144,6 @@ struct QueenEasterEggView: View {
         .padding(.top, 12)
     }
     
-    // MARK: - Actions
     private func closeAction() {
         HapticManager.shared.success()
         withAnimation(.easeOut(duration: 0.3)) {
@@ -164,7 +155,6 @@ struct QueenEasterEggView: View {
         }
     }
     
-    // MARK: - Computed Properties
     private var backgroundGradient: some View {
         LinearGradient(
             gradient: Gradient(colors: [
@@ -298,30 +288,24 @@ struct QueenEasterEggView: View {
     
     var body: some View {
         ZStack {
-            // Romantic gradient background
             backgroundGradient
             
-            // Floating romantic particles
             floatingParticles
             
             VStack(spacing: 32) {
                 Spacer()
                 
-                // Crown Icon
                 crownSection
                     .confettiCannon(trigger: $confettiCounter, num: 50, colors: [.yellow, .orange, .pink, .red, .purple], confettiSize: 15, radius: 400)
                 
-                // Text content
                 textContent
                 
                 Spacer()
                 
-                // Close button
                 closeButton
             }
         }
         .onAppear {
-            // Entrance animations
             withAnimation(.spring(response: 0.8, dampingFraction: 0.6)) {
                 crownScale = 1.1
                 contentOpacity = 1.0
@@ -335,17 +319,14 @@ struct QueenEasterEggView: View {
                 particlesOpacity = 1.0
             }
             
-            // Pulsing glow
             withAnimation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true)) {
                 glowIntensity = 0.8
             }
             
-            // Shimmer effect
             withAnimation(.linear(duration: 2.5).repeatForever(autoreverses: false)) {
                 shimmerOffset = 400
             }
             
-            // Trigger confetti after a delay
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 confettiCounter += 1
                 HapticManager.shared.celebrate()

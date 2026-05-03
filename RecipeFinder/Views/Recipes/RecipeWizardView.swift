@@ -8,9 +8,8 @@ struct RecipeWizardView: View {
     
     let onComplete: (RecipeModel) -> Void
     let prefilledData: PrefilledRecipeData?
-    let editingRecipeId: UUID?  // For preserving recipe ID when editing
+    let editingRecipeId: UUID?
     
-    // Struct for pre-filling wizard with imported data
     struct PrefilledRecipeData {
         let name: String?
         let description: String?
@@ -21,45 +20,33 @@ struct RecipeWizardView: View {
         let servings: Int?
         let difficulty: String?
         let notes: String?
-        let category: String?  // Add category support
-        let isFavorite: Bool?  // Preserve favorite status
+        let category: String?
+        let isFavorite: Bool?
     }
     
-    // Step tracking
     @State private var currentStep = 0
     private let totalSteps = 6
     
-    // Step 1: Recipe Name
     @State private var recipeName = ""
     
-    // Step 2: Basic Info (prep time, cook time, difficulty, category)
     @State private var prepTime = 15
     @State private var cookTime = 30
     @State private var difficulty = "Intermediate"
     @State private var category = "Main"
     
-    // Step 3: Servings
     @State private var servings = 4
     
-    // Step 4: Ingredients with quantities
     @State private var ingredientItems: [IngredientItem] = [IngredientItem()]
     
-    // Step 5: Pre-prep instructions
     @State private var prePrepSteps: [String] = [""]
     
-    // Step 6: Main instructions
     @State private var mainInstructions: [String] = [""]
     
-    // Step 7: Notes
     @State private var notes = ""
     
-    // Validation
     @State private var showError = false
     @State private var errorMessage = ""
     
-    // Initializer with optional prefilled data
-    // SIMPLE LOGIC: Always start from step 0, whether creating or editing
-    // Pre-filled data just populates the fields, that's it!
     init(prefilledData: PrefilledRecipeData? = nil, editingRecipeId: UUID? = nil, onComplete: @escaping (RecipeModel) -> Void) {
         self.prefilledData = prefilledData
         self.editingRecipeId = editingRecipeId
@@ -69,7 +56,6 @@ struct RecipeWizardView: View {
     let difficulties = ["Basic", "Intermediate", "Expert"]
     let categories = ["Breakfast", "Starter", "Main", "Side", "Soup", "Dessert", "Drink"]
 
-    // Grouped cooking units — same set used in RecipeDetailView's ingredient edit sheet
     let cookingUnitGroups: [(group: String, units: [String])] = [
         ("Volume – Metric",   ["ml", "cl", "dl", "l"]),
         ("Volume – Imperial", ["tsp", "tbsp", "fl oz", "cup", "pt", "qt", "gal"]),
@@ -80,7 +66,6 @@ struct RecipeWizardView: View {
                                "pinch", "dash", "drop", "handful"]),
     ]
     
-    // Helper struct for ingredient input
     struct IngredientItem: Identifiable {
         let id = UUID()
         var quantity: String = ""
@@ -91,12 +76,10 @@ struct RecipeWizardView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                // Background gradient
                 AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                    // Header Section
                     VStack(spacing: AppTheme.spacing12) {
                         GeometryReader { geometry in
                             HStack {
@@ -121,7 +104,6 @@ struct RecipeWizardView: View {
                                 
                                 Spacer()
                                 
-                                // Invisible button for balance
                                 Button(action: {}) {
                                     Text("Cancel")
                                         .font(.body)
@@ -137,10 +119,8 @@ struct RecipeWizardView: View {
                     .padding(.horizontal, 20)
                     .padding(.top, 16)
                     
-                    // Progress indicator
                     progressBar
                     
-                    // Content
                     ScrollView {
                         VStack(spacing: AppTheme.spacing32) {
                             stepContent
@@ -149,7 +129,6 @@ struct RecipeWizardView: View {
                         .padding(.horizontal, 20)
                     }
                     
-                    // Navigation buttons
                     navigationButtons
                 }
             }
@@ -164,21 +143,17 @@ struct RecipeWizardView: View {
         }
     }
     
-    // Apply prefilled data from import
     private func applyPrefilledData() {
         guard let data = prefilledData else { return }
         
-        // Pre-fill recipe name
         if let name = data.name, !name.isEmpty {
             recipeName = name
         }
         
-        // Pre-fill category
         if let category = data.category, !category.isEmpty {
             self.category = category
         }
         
-        // Pre-fill times
         if let prepTime = data.prepTime {
             self.prepTime = prepTime
         }
@@ -186,14 +161,11 @@ struct RecipeWizardView: View {
             self.cookTime = cookTime
         }
         
-        // Pre-fill servings
         if let servings = data.servings {
             self.servings = servings
         }
         
-        // Pre-fill difficulty
         if let difficulty = data.difficulty, !difficulty.isEmpty {
-            // Normalize to match our options
             let normalized = difficulty.lowercased()
             if normalized.contains("easy") || normalized.contains("basic") || normalized.contains("beginner") {
                 self.difficulty = "Basic"
@@ -204,27 +176,22 @@ struct RecipeWizardView: View {
             }
         }
         
-        // Pre-fill ingredients (parse full ingredient strings from import)
         if let ingredients = data.ingredients, !ingredients.isEmpty {
             ingredientItems = ingredients.map { fullIngredient in
                 return parseIngredientString(fullIngredient)
             }
-            // Add one empty row for user to add more
             if !ingredients.isEmpty {
                 ingredientItems.append(IngredientItem())
             }
         }
         
-        // Pre-fill instructions
         if let instructions = data.instructions, !instructions.isEmpty {
             mainInstructions = instructions.isEmpty ? [""] : instructions
-            // Add one empty step for user to add more
             if !instructions.isEmpty {
                 mainInstructions.append("")
             }
         }
         
-        // Pre-fill notes
         if let notes = data.notes, !notes.isEmpty {
             self.notes = notes
         }
@@ -266,7 +233,6 @@ struct RecipeWizardView: View {
         }
     }
     
-    // MARK: - Step 1: Recipe Name
     private var recipeNameStep: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing24) {
             stepHeader(
@@ -289,7 +255,6 @@ struct RecipeWizardView: View {
         }
     }
     
-    // MARK: - Step 2: Basic Info
     private var basicInfoStep: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing24) {
             stepHeader(
@@ -301,7 +266,6 @@ struct RecipeWizardView: View {
             
             cardContainer {
                 VStack(spacing: AppTheme.spacing24) {
-                    // Prep Time
                     VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                         Text("Prep Time")
                             .font(.headline)
@@ -315,7 +279,6 @@ struct RecipeWizardView: View {
                     
                     Divider()
                     
-                    // Cook Time
                     VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                         Text("Cook Time")
                             .font(.headline)
@@ -329,7 +292,6 @@ struct RecipeWizardView: View {
                     
                     Divider()
                     
-                    // Difficulty
                     VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                         Text("Difficulty")
                             .font(.headline)
@@ -345,7 +307,6 @@ struct RecipeWizardView: View {
                     
                     Divider()
                     
-                    // Category
                     VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                         Text("Category")
                             .font(.headline)
@@ -361,7 +322,6 @@ struct RecipeWizardView: View {
 
                     Divider()
 
-                    // Servings
                     VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                         Text("Servings")
                             .font(.headline)
@@ -391,7 +351,6 @@ struct RecipeWizardView: View {
         }
     }
     
-    // MARK: - Step 3: Ingredients
     private var ingredientsStep: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing24) {
             stepHeader(
@@ -405,7 +364,6 @@ struct RecipeWizardView: View {
                 VStack(spacing: AppTheme.spacing12) {
                     ForEach(Array(ingredientItems.enumerated()), id: \.offset) { index, _ in
                         VStack(alignment: .leading, spacing: AppTheme.spacing8) {
-                            // Row 1: Ingredient name + delete button
                             HStack(spacing: AppTheme.spacing8) {
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text("Ingredient")
@@ -424,11 +382,10 @@ struct RecipeWizardView: View {
                                             .foregroundColor(.red)
                                             .font(.system(size: AppTheme.fontSize22))
                                     }
-                                    .padding(.top, 14) // align with textfield
+                                    .padding(.top, 14)
                                 }
                             }
 
-                            // Row 2: Amount + Unit picker
                             HStack(alignment: .top, spacing: AppTheme.spacing8) {
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text("Amount")
@@ -444,7 +401,6 @@ struct RecipeWizardView: View {
                                     Text("Unit")
                                         .font(.caption2)
                                         .foregroundColor(.secondary)
-                                    // Match the height of .roundedBorder TextField (~34 pt)
                                     Picker("", selection: $ingredientItems[index].unit) {
                                         Text("none").tag("")
                                         ForEach(cookingUnitGroups, id: \.group) { group in
@@ -492,7 +448,6 @@ struct RecipeWizardView: View {
         }
     }
     
-    // MARK: - Step 4: Pre-prep Instructions
     private var prePrepStep: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing24) {
             stepHeader(
@@ -549,7 +504,6 @@ struct RecipeWizardView: View {
         }
     }
     
-    // MARK: - Step 5: Main Instructions
     private var instructionsStep: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing24) {
             stepHeader(
@@ -606,7 +560,6 @@ struct RecipeWizardView: View {
         }
     }
     
-    // MARK: - Step 6: Notes
     private var notesStep: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing24) {
             stepHeader(
@@ -618,7 +571,6 @@ struct RecipeWizardView: View {
             
             cardContainer {
                 VStack(spacing: AppTheme.spacing24) {
-                    // Show a preview label if there are existing notes from import/edit
                     if prefilledData?.notes != nil && !notes.isEmpty {
                         HStack {
                             Image(systemName: "info.circle.fill")
@@ -631,7 +583,6 @@ struct RecipeWizardView: View {
                         .padding(.bottom, 8)
                     }
                     
-                    // Notes text editor with better styling
                     ZStack(alignment: .topLeading) {
                         if notes.isEmpty {
                             VStack(alignment: .leading, spacing: AppTheme.spacing4) {
@@ -671,7 +622,6 @@ struct RecipeWizardView: View {
                     .background(Color(.systemGray6))
                     .cornerRadius(AppTheme.cornerRadius8)
                     
-                    // Quick add buttons for common note types (always show)
                     VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                         Text("Quick Add:")
                             .font(.caption)
@@ -692,7 +642,6 @@ struct RecipeWizardView: View {
                 
                 Divider()
                     
-                    // Summary
                     VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                         Text("Recipe Summary")
                             .font(.headline)
@@ -712,7 +661,6 @@ struct RecipeWizardView: View {
         }
     }
     
-    // Quick note button helper
     private func quickNoteButton(icon: String, text: String, template: String) -> some View {
         Button(action: {
             HapticManager.shared.light()
@@ -735,16 +683,13 @@ struct RecipeWizardView: View {
         .buttonStyle(PlainButtonStyle())
     }
     
-    // MARK: - Helper Views
     private func stepHeader(title: String, subtitle: String, stepNumber: Int, illustration: String) -> some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
-            // Step indicator
             Text("Step \(stepNumber) of \(totalSteps)")
                 .font(.caption)
                 .fontWeight(.medium)
                 .adaptiveForegroundColor(opacity: 0.8)
             
-            // Title with icon overlay
             HStack(alignment: .firstTextBaseline, spacing: 0) {
                 VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                     Text(title)
@@ -760,7 +705,6 @@ struct RecipeWizardView: View {
                 Spacer()
             }
             .overlay(alignment: .topTrailing) {
-                // Icon positioned absolutely, doesn't affect layout
                 Image(systemName: illustration)
                     .font(.system(size: AppTheme.fontSize42, weight: .medium))
                     .adaptiveForegroundColor(opacity: 0.6)
@@ -803,7 +747,6 @@ struct RecipeWizardView: View {
         }
     }
     
-    // MARK: - Navigation
     private var navigationButtons: some View {
         HStack(spacing: AppTheme.spacing16) {
             if currentStep > 0 {
@@ -861,23 +804,21 @@ struct RecipeWizardView: View {
         case 0:
             return !recipeName.trimmingCharacters(in: .whitespaces).isEmpty
         case 1:
-            return servings > 0 // Basic info including servings
+            return servings > 0
         case 2:
             return ingredientItems.contains { !$0.name.isEmpty }
         case 3:
-            return true // Pre-prep is optional
+            return true
         case 4:
             return mainInstructions.contains { !$0.isEmpty }
         case 5:
-            return true // Notes are optional
+            return true
         default:
             return false
         }
     }
     
-    // MARK: - Recipe Creation
     private func createRecipe() {
-        // Validate recipe name
         do {
             try Validator.validateRecipeName(recipeName)
         } catch {
@@ -887,7 +828,6 @@ struct RecipeWizardView: View {
             return
         }
         
-        // Validate servings
         do {
             try Validator.validateServings(servings)
         } catch {
@@ -897,7 +837,6 @@ struct RecipeWizardView: View {
             return
         }
         
-        // Convert ingredient items to Ingredient objects
         let ingredients = ingredientItems
             .filter { !$0.name.isEmpty }
             .map { item in
@@ -909,7 +848,6 @@ struct RecipeWizardView: View {
                 )
             }
         
-        // Ensure at least one ingredient
         guard !ingredients.isEmpty else {
             errorMessage = "Please add at least one ingredient"
             showError = true
@@ -917,11 +855,9 @@ struct RecipeWizardView: View {
             return
         }
         
-        // Filter out empty steps
         let filteredPrePrep = prePrepSteps.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
         let filteredInstructions = mainInstructions.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
         
-        // Ensure at least one instruction
         guard !filteredInstructions.isEmpty else {
             errorMessage = "Please add at least one cooking instruction"
             showError = true
@@ -929,7 +865,6 @@ struct RecipeWizardView: View {
             return
         }
         
-        // Determine if we're creating a new recipe or updating an existing one
         let recipeId = editingRecipeId ?? UUID()
         let isFavorite = prefilledData?.isFavorite ?? false
         
@@ -955,12 +890,9 @@ struct RecipeWizardView: View {
         dismiss()
     }
     
-    // Parse ingredient string like "1 tbsp Sunflower oil" or "600 g Chicken breast, Cut into cubes"
     private func parseIngredientString(_ fullIngredient: String) -> IngredientItem {
         let trimmed = fullIngredient.trimmingCharacters(in: .whitespaces)
         
-        // Pattern: [quantity] [unit] [name][, notes]
-        // Try to extract quantity (number or fraction at start)
         let quantityPattern = #"^([\d\./\-]+)\s+"#
         var quantity = ""
         var remaining = trimmed
@@ -974,7 +906,6 @@ struct RecipeWizardView: View {
             }
         }
         
-        // Try to extract unit (common cooking units) - must be followed by a space or end of string
         let unitPattern = #"^(tbsp|tsp|cup|cups|ml|l|liter|liters|g|kg|oz|lb|lbs|cloves|clove|pieces|piece|pinch|dash)(\s+|$)"#
         var unit = ""
         
@@ -983,23 +914,19 @@ struct RecipeWizardView: View {
             if let match = regex.firstMatch(in: remaining, options: [], range: NSRange(location: 0, length: nsString.length)) {
                 let unitRange = match.range(at: 1)
                 unit = nsString.substring(with: unitRange)
-                // Move past the unit and any following space
                 let afterUnit = match.range.location + match.range.length
                 remaining = nsString.substring(from: afterUnit)
             }
         }
         
-        // The rest is the name (and optional notes after comma)
         var name = remaining.trimmingCharacters(in: .whitespaces)
         
-        // Remove notes if present (after comma)
         if let commaIndex = name.firstIndex(of: ",") {
             name = String(name[..<commaIndex])
         }
         
         name = name.trimmingCharacters(in: .whitespaces)
         
-        // If we didn't find quantity/unit, treat entire string as name
         if quantity.isEmpty && unit.isEmpty && name.isEmpty {
             name = trimmed
         }

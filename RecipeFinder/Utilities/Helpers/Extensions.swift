@@ -1,34 +1,26 @@
 import Foundation
 import UIKit
 
-// Array Safe Subscript
 extension Array {
-    /// Safely access array elements by index
-    /// Returns nil if index is out of bounds instead of crashing
     subscript(safe index: Index) -> Element? {
         return indices.contains(index) ? self[index] : nil
     }
 }
 
-// String Extensions
 extension String {
-    /// Capitalizes only the first letter of the string
     var capitalizedFirst: String {
         guard !isEmpty else { return self }
         return prefix(1).uppercased() + dropFirst()
     }
     
-    /// Removes extra whitespace and newlines
     var trimmed: String {
         trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
-    /// Checks if string contains only whitespace
     var isBlank: Bool {
         trimmed.isEmpty
     }
     
-    /// Find all ranges matching a pattern
     func ranges(of pattern: String, options: NSString.CompareOptions = []) -> [Range<String.Index>] {
         var ranges: [Range<String.Index>] = []
         var searchRange = startIndex..<endIndex
@@ -42,9 +34,7 @@ extension String {
     }
 }
 
-// UIColor Extensions for Tab Bar Styling
 extension UIColor {
-    /// Blends this color with another color
     func blended(with color: UIColor, ratio: CGFloat = 0.5) -> UIColor {
         var r1: CGFloat = 0, g1: CGFloat = 0, b1: CGFloat = 0, a1: CGFloat = 0
         var r2: CGFloat = 0, g2: CGFloat = 0, b2: CGFloat = 0, a2: CGFloat = 0
@@ -62,12 +52,10 @@ extension UIColor {
         )
     }
     
-    /// Creates a lighter version of the color
     func lighter(by percentage: CGFloat = 0.2) -> UIColor {
         return adjust(by: abs(percentage))
     }
     
-    /// Creates a darker version of the color
     func darker(by percentage: CGFloat = 0.2) -> UIColor {
         return adjust(by: -abs(percentage))
     }

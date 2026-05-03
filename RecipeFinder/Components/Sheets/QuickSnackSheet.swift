@@ -1,13 +1,5 @@
-//
-//  QuickSnackSheet.swift
-//  RecipeFinder
-//
-//  Created on 12/19/2025.
-//
 
 import SwiftUI
-
-// MARK: - Main View
 
 struct QuickSnackSheet: View {
     @Environment(\.dismiss) var dismiss
@@ -26,7 +18,6 @@ struct QuickSnackSheet: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Custom Header
                 HStack {
                     Spacer()
                     
@@ -125,8 +116,6 @@ struct QuickSnackSheet: View {
     }
 }
 
-// MARK: - View Model
-
 class QuickSnackViewModel: ObservableObject {
     @Published var snackName: String = ""
     @Published var servings: Int = 1
@@ -182,8 +171,6 @@ class QuickSnackViewModel: ObservableObject {
         )
     }
 }
-
-// MARK: - Sub Views
 
 struct HeaderView: View {
     var body: some View {
@@ -545,8 +532,6 @@ struct AddButtonView: View {
     }
 }
 
-// MARK: - Helper Functions
-
 private func cardBackground(cardStyle: CardStyle, colorScheme: ColorScheme) -> some View {
     Group {
         if cardStyle == .solid {
@@ -558,8 +543,6 @@ private func cardBackground(cardStyle: CardStyle, colorScheme: ColorScheme) -> s
         }
     }
 }
-
-// MARK: - Preview
 
 struct QuickSnackSheet_Previews: PreviewProvider {
     static var previews: some View {

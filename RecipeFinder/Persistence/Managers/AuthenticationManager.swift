@@ -10,21 +10,18 @@ final class AuthenticationManager: NSObject, ObservableObject {
     private let logger = AppLogger.logger(category: "Authentication")
     private let credentialManager = SecureCredentialManager.shared
     
-    // Authentication State
     @Published private(set) var isAuthenticated: Bool = false
     @Published private(set) var currentUser: User?
     @Published var authError: AuthError?
     
-    // UserDefaults Keys
     private let isAuthenticatedKey = "isAuthenticated"
     private let userDataKey = "userData"
     private let biometricsEnabledKey = "biometricsEnabled"
     private let currentEmailKey = "currentUserEmail"
     private let lastActiveTimestampKey = "lastActiveTimestamp"
-    private let appleUserCacheKey = "appleUserCache" // Cache Apple ID user data
-    private let sessionTimeoutSeconds: TimeInterval = 86400 // 24 hours (24 * 60 * 60)
+    private let appleUserCacheKey = "appleUserCache"
+    private let sessionTimeoutSeconds: TimeInterval = 86400
     
-    // User Model
     struct User: Codable {
         let id: String
         let email: String?
@@ -58,7 +55,6 @@ final class AuthenticationManager: NSObject, ObservableObject {
         }
     }
     
-    // Authentication Errors
     enum AuthError: LocalizedError {
         case signInFailed
         case signInCancelled
@@ -93,13 +89,10 @@ final class AuthenticationManager: NSObject, ObservableObject {
         checkAuthenticationStatus()
     }
     
-    // MARK: - Authentication Status
-    
     func checkAuthenticationStatus() {
         isAuthenticated = UserDefaults.standard.bool(forKey: isAuthenticatedKey)
         guard isAuthenticated else { return }
         
-        // Check if session has expired (user was away too long)
         if let lastActive = UserDefaults.standard.object(forKey: lastActiveTimestampKey) as? Date {
             let timeAway = Date().timeIntervalSince(lastActive)
             guard timeAway <= sessionTimeoutSeconds else {
@@ -112,10 +105,8 @@ final class AuthenticationManager: NSObject, ObservableObject {
         loadUser()
         guard let user = currentUser else { return }
         
-        // Restore user ID for scoped storage
         UserScopedStorage.shared.currentUserId = user.id
         
-        // Reload all managers
         AccountManager.shared.loadProfile()
         ShoppingListManager.shared.reloadForCurrentUser()
         NotesManager.shared.reloadForCurrentUser()
@@ -127,12 +118,10 @@ final class AuthenticationManager: NSObject, ObservableObject {
         updateLastActiveTimestamp()
     }
     
-    /// Update the last active timestamp when app comes to foreground
     func updateLastActiveTimestamp() {
         UserDefaults.standard.set(Date(), forKey: lastActiveTimestampKey)
     }
     
-    /// Check if session is expired and sign out if needed
     func checkSessionExpiration() {
         guard isAuthenticated else { return }
         guard let lastActive = UserDefaults.standard.object(forKey: lastActiveTimestampKey) as? Date else { return }
@@ -145,8 +134,6 @@ final class AuthenticationManager: NSObject, ObservableObject {
         }
     }
     
-    // Apple Sign In
-    
     func signInWithApple() async throws {
         let request = ASAuthorizationAppleIDProvider().createRequest()
         request.requestedScopes = [.fullName, .email]
@@ -157,8 +144,6 @@ final class AuthenticationManager: NSObject, ObservableObject {
         authorizationController.performRequests()
     }
     
-    // MARK: - Email/Password Sign In (Local with Secure Storage)
-    
     func signIn(email: String, password: String) async throws {
         try validateSignInInput(email: email, password: password)
         let userInfo = try verifyAndRetrieveUser(email: email, password: password)
@@ -167,7 +152,6 @@ final class AuthenticationManager: NSObject, ObservableObject {
     }
     
     private func validateSignInInput(email: String, password: String) throws {
-        // Validate email and password are not empty
         guard !email.isEmpty else {
             throw AppError.emptyField(field: "Email")
         }
@@ -175,7 +159,6 @@ final class AuthenticationManager: NSObject, ObservableObject {
             throw AppError.emptyField(field: "Password")
         }
         
-        // Validate email format
         guard Validator.isValidEmail(email) else {
             throw AppError.invalidEmail
         }
@@ -202,7 +185,6 @@ final class AuthenticationManager: NSObject, ObservableObject {
         let givenName = components.first
         let familyName = components.count > 1 ? components.dropFirst().joined(separator: " ") : nil
         
-        // Load existing user data (if any) to preserve stable ID and creation date
         let existingUser: User? = {
             guard let data = loadUserData(),
                   let user = try? JSONDecoder().decode(User.self, from: data),
@@ -210,20 +192,12 @@ final class AuthenticationManager: NSObject, ObservableObject {
             return user
         }()
         
-        // Use the stable userId stored in the Keychain so the same user always gets
-        // the same ID across sign-outs / sign-ins. Without this, every login produces
-        // a new UUID which makes all previously saved recipes invisible (they are
-        // filtered by userId in Core Data) and triggers populateDatabase() every time.
         let stableId: String
         if let keychainId = credentialManager.getUserId(email: email) {
-            // Happy path: userId is stored in Keychain (accounts created/updated after this fix)
             stableId = keychainId
         } else if let existingUser {
-            // Migration path: account pre-dates this fix. Reuse the persisted ID so
-            // existing recipes/data are still visible under the same userId.
             stableId = existingUser.id
         } else {
-            // Fallback: genuinely new identity (should not happen via normal signIn flow)
             stableId = UUID().uuidString
         }
         
@@ -248,10 +222,8 @@ final class AuthenticationManager: NSObject, ObservableObject {
         UserDefaults.standard.set(email, forKey: currentEmailKey)
         updateLastActiveTimestamp()
         
-        // Set user ID for scoped storage
         UserScopedStorage.shared.currentUserId = user.id
         
-        // Reload all managers for the current user
         AccountManager.shared.loadProfile()
         ShoppingListManager.shared.reloadForCurrentUser()
         NotesManager.shared.reloadForCurrentUser()
@@ -260,7 +232,6 @@ final class AuthenticationManager: NSObject, ObservableObject {
         CookingTipsManager.shared.reloadForCurrentUser()
         BadgeManager.shared.reloadForCurrentUser()
         
-        // Check if this is a new user (first time sign-in)
         let userKey = "user_\(user.id)_initialized"
         let isNewUser = !UserDefaults.standard.bool(forKey: userKey)
         
@@ -269,14 +240,11 @@ final class AuthenticationManager: NSObject, ObservableObject {
             PersistenceController.shared.populateDatabase()
             UserDefaults.standard.set(true, forKey: userKey)
             
-            // Unlock welcome badge
             BadgeManager.shared.unlockBadge(.welcomeAboard)
         }
         
-        // Sync user data to AccountManager if not already set
         let accountManager = AccountManager.shared
         if accountManager.firstName.isEmpty {
-            // Parse full name into components
             let fullName = user.fullName ?? ""
             let nameComponents = fullName.components(separatedBy: " ").filter { !$0.isEmpty }
             let firstName = nameComponents.first ?? ""
@@ -285,29 +253,23 @@ final class AuthenticationManager: NSObject, ObservableObject {
             accountManager.updateProfile(
                 firstName: firstName,
                 lastName: lastName,
-                chefType: accountManager.chefType // Keep existing chef type
+                chefType: accountManager.chefType
             )
         }
         HapticManager.shared.success()
     }
     
-    // Sign Up (with Secure Password Storage)
-    
     func signUp(email: String, password: String, fullName: String) async throws {
-        // Validate email format
         guard Validator.isValidEmail(email) else {
             throw AppError.invalidEmail
         }
         
-        // Validate password strength
         try Validator.validatePassword(password)
         
-        // Validate full name
         guard !fullName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             throw AppError.emptyField(field: "Full name")
         }
         
-        // Save hashed credentials to Keychain
         let saved = credentialManager.saveCredentials(
             email: email,
             password: password,
@@ -318,7 +280,6 @@ final class AuthenticationManager: NSObject, ObservableObject {
             throw AuthError.userCreationFailed
         }
         
-        // Generate session token
         let sessionToken = credentialManager.generateSessionToken()
         credentialManager.saveSessionToken(sessionToken, for: email)
         
@@ -326,9 +287,6 @@ final class AuthenticationManager: NSObject, ObservableObject {
         let givenName = components.first
         let familyName = components.count > 1 ? components.dropFirst().joined(separator: " ") : nil
         
-        // Use the stable userId that was just stored in the Keychain by saveCredentials.
-        // Using a different UUID here would cause recipes/data to be orphaned on the
-        // next sign-in (which calls createUser → credentialManager.getUserId).
         let stableId = credentialManager.getUserId(email: email) ?? UUID().uuidString
         
         let user = User(
@@ -350,11 +308,8 @@ final class AuthenticationManager: NSObject, ObservableObject {
         UserDefaults.standard.set(email, forKey: currentEmailKey)
         updateLastActiveTimestamp()
         
-        // Set user ID for scoped storage so any data saved in this session is
-        // tagged correctly, and populateDatabase() can assign the right userId.
         UserScopedStorage.shared.currentUserId = user.id
         
-        // Reload managers for the new user
         AccountManager.shared.loadProfile()
         ShoppingListManager.shared.reloadForCurrentUser()
         NotesManager.shared.reloadForCurrentUser()
@@ -363,7 +318,6 @@ final class AuthenticationManager: NSObject, ObservableObject {
         CookingTipsManager.shared.reloadForCurrentUser()
         BadgeManager.shared.reloadForCurrentUser()
         
-        // Populate sample recipes for this brand-new account
         let userKey = "user_\(user.id)_initialized"
         if !UserDefaults.standard.bool(forKey: userKey) {
             PersistenceController.shared.populateDatabase()
@@ -371,7 +325,6 @@ final class AuthenticationManager: NSObject, ObservableObject {
             BadgeManager.shared.unlockBadge(.welcomeAboard)
         }
         
-        // Update AccountManager with user info
         if let givenName = givenName {
             AccountManager.shared.updateProfile(
                 firstName: givenName,
@@ -383,18 +336,15 @@ final class AuthenticationManager: NSObject, ObservableObject {
         HapticManager.shared.success()
     }
     
-    // Sign Up Without Auto-Login (Defensive Programming)
     func signUpWithoutLogin(email: String, password: String, fullName: String) async throws {
         guard !email.isEmpty, !password.isEmpty, password.count >= 6 else {
             throw AuthError.invalidCredentials
         }
         
-        // Check if user already exists
         guard credentialManager.getUserInfo(email: email) == nil else {
             throw AuthError.accountAlreadyExists
         }
         
-        // Save hashed credentials to Keychain
         let saved = credentialManager.saveCredentials(
             email: email,
             password: password,
@@ -405,12 +355,8 @@ final class AuthenticationManager: NSObject, ObservableObject {
             throw AuthError.userCreationFailed
         }
         
-        // Don't authenticate or update AccountManager - user must sign in manually (defensive)
-        // Profile will be populated when the user actually signs in
         logger.debug("✅ Account created for \(email) - user must sign in manually")
     }
-    
-    // Biometric Authentication
     
     func authenticateWithBiometrics() async throws {
         let context = LAContext()
@@ -434,7 +380,6 @@ final class AuthenticationManager: NSObject, ObservableObject {
             updateLastActiveTimestamp()
             loadUser()
             
-            // Restore user-scoped storage and managers (mirrors checkAuthenticationStatus)
             if let user = currentUser {
                 UserScopedStorage.shared.currentUserId = user.id
                 AccountManager.shared.loadProfile()
@@ -475,21 +420,16 @@ final class AuthenticationManager: NSObject, ObservableObject {
         }
     }
     
-    // MARK: - Sign Out
-    
     func signOut() {
         logger.debug("🚪 Sign out initiated")
         
-        // Delete session token
         if let email = UserDefaults.standard.string(forKey: currentEmailKey) {
             credentialManager.deleteSessionToken(for: email)
             logger.debug("🗑️ Deleted session token for: \(email)")
         }
         
-        // Clear user ID for scoped storage
         UserScopedStorage.shared.currentUserId = nil
         
-        // Clear managers (loadProfile will reset to empty values when currentUserId is nil)
         AccountManager.shared.loadProfile()
         ShoppingListManager.shared.reloadForCurrentUser()
         NotesManager.shared.reloadForCurrentUser()
@@ -498,7 +438,6 @@ final class AuthenticationManager: NSObject, ObservableObject {
         CookingTipsManager.shared.reloadForCurrentUser()
         BadgeManager.shared.reloadForCurrentUser()
         
-        // Ensure UI updates happen immediately on main thread
         self.isAuthenticated = false
         self.currentUser = nil
         
@@ -509,8 +448,6 @@ final class AuthenticationManager: NSObject, ObservableObject {
         self.logger.debug("✅ Sign out complete - UI should now show login screen")
         HapticManager.shared.light()
     }
-    
-    // MARK: - User Persistence
     
     private func saveUser(_ user: User) throws {
         guard let data = try? JSONEncoder().encode(user) else {
@@ -534,7 +471,6 @@ final class AuthenticationManager: NSObject, ObservableObject {
             throw AuthError.userCreationFailed
         }
         
-        // Clean up legacy UserDefaults storage if present
         UserDefaults.standard.removeObject(forKey: userDataKey)
     }
     
@@ -544,7 +480,6 @@ final class AuthenticationManager: NSObject, ObservableObject {
         self.currentUser = user
     }
     
-    /// Load user data from Keychain, falling back to UserDefaults for migration
     private func loadUserData() -> Data? {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
@@ -560,7 +495,6 @@ final class AuthenticationManager: NSObject, ObservableObject {
             return data
         }
         
-        // Migration: move legacy data from UserDefaults to Keychain
         guard let legacyData = UserDefaults.standard.data(forKey: userDataKey) else {
             return nil
         }
@@ -581,9 +515,6 @@ final class AuthenticationManager: NSObject, ObservableObject {
         return legacyData
     }
     
-    // Update Current User
-    
-    /// Update the current user's information (called when editing profile)
     func updateCurrentUser(_ user: User) {
         currentUser = user
         try? saveUser(user)
@@ -593,20 +524,18 @@ final class AuthenticationManager: NSObject, ObservableObject {
     func deleteAccount() async throws {
         let userId = currentUser?.id
         
-        // Delete from Keychain
         if let email = UserDefaults.standard.string(forKey: currentEmailKey) {
             credentialManager.deleteCredentials(email: email)
             credentialManager.deleteSessionToken(for: email)
         }
         
-        // Clear user data from Keychain
         let userDataQuery: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: userDataKey,
             kSecAttrService as String: "com.recipefinder.userdata"
         ]
         SecItemDelete(userDataQuery as CFDictionary)
-        UserDefaults.standard.removeObject(forKey: userDataKey) // legacy cleanup
+        UserDefaults.standard.removeObject(forKey: userDataKey)
         UserDefaults.standard.removeObject(forKey: isAuthenticatedKey)
         UserDefaults.standard.removeObject(forKey: biometricsEnabledKey)
         UserDefaults.standard.removeObject(forKey: currentEmailKey)
@@ -616,10 +545,8 @@ final class AuthenticationManager: NSObject, ObservableObject {
             UserDefaults.standard.removeObject(forKey: "user_\(userId)_initialized")
         }
         
-        // Clear all app data (recipes, kitchen, shopping, profile)
         AccountManager.shared.clearAllData()
         
-        // Clear user-scoped storage and reset scope
         UserScopedStorage.shared.clearCurrentUserData()
         UserScopedStorage.shared.currentUserId = nil
         
@@ -628,8 +555,6 @@ final class AuthenticationManager: NSObject, ObservableObject {
         HapticManager.shared.success()
     }
 }
-
-// MARK: - ASAuthorizationControllerDelegate
 
 extension AuthenticationManager: ASAuthorizationControllerDelegate {
     func authorizationController(
@@ -641,7 +566,6 @@ extension AuthenticationManager: ASAuthorizationControllerDelegate {
             return
         }
         
-        // Try to get cached user data first (for returning users)
         var cachedUserData: (email: String?, fullName: String?, givenName: String?, familyName: String?)?
         if let cachedData = UserDefaults.standard.data(forKey: appleUserCacheKey),
            let cached = try? JSONDecoder().decode(AppleUserCache.self, from: cachedData),
@@ -649,13 +573,11 @@ extension AuthenticationManager: ASAuthorizationControllerDelegate {
             cachedUserData = (cached.email, cached.fullName, cached.givenName, cached.familyName)
         }
         
-        // Use fresh data if available, otherwise fall back to cached data
         let email = appleIDCredential.email ?? cachedUserData?.email
         let givenName = appleIDCredential.fullName?.givenName ?? cachedUserData?.givenName
         let familyName = appleIDCredential.fullName?.familyName ?? cachedUserData?.familyName
         let fullName = appleIDCredential.fullName?.formatted() ?? cachedUserData?.fullName ?? "Apple User"
         
-        // Cache the user data for future sign-ins
         if appleIDCredential.email != nil || appleIDCredential.fullName != nil {
             let cache = AppleUserCache(
                 appleUserID: appleIDCredential.user,
@@ -670,7 +592,7 @@ extension AuthenticationManager: ASAuthorizationControllerDelegate {
         }
         
         let user = User(
-            id: appleIDCredential.user, // Stable Apple user identifier — never changes across sign-ins
+            id: appleIDCredential.user,
             email: email,
             fullName: fullName,
             givenName: givenName,
@@ -689,10 +611,8 @@ extension AuthenticationManager: ASAuthorizationControllerDelegate {
                 UserDefaults.standard.set(true, forKey: isAuthenticatedKey)
                 updateLastActiveTimestamp()
                 
-                // Set user ID for scoped storage
                 UserScopedStorage.shared.currentUserId = user.id
                 
-                // Reload all managers for this user
                 AccountManager.shared.loadProfile()
                 ShoppingListManager.shared.reloadForCurrentUser()
                 NotesManager.shared.reloadForCurrentUser()
@@ -701,7 +621,6 @@ extension AuthenticationManager: ASAuthorizationControllerDelegate {
                 CookingTipsManager.shared.reloadForCurrentUser()
                 BadgeManager.shared.reloadForCurrentUser()
                 
-                // Populate sample recipes only once per user
                 let userKey = "user_\(user.id)_initialized"
                 if !UserDefaults.standard.bool(forKey: userKey) {
                     PersistenceController.shared.populateDatabase()
@@ -709,7 +628,6 @@ extension AuthenticationManager: ASAuthorizationControllerDelegate {
                     BadgeManager.shared.unlockBadge(.welcomeAboard)
                 }
                 
-                // Sync name — preserve the stored chef type rather than overwriting with .homeCook
                 let existingChefType = AccountManager.shared.chefType
                 AccountManager.shared.updateProfile(
                     firstName: user.givenName ?? "",
@@ -733,8 +651,6 @@ extension AuthenticationManager: ASAuthorizationControllerDelegate {
     }
 }
 
-// MARK: - Apple User Cache Model
-
 private struct AppleUserCache: Codable {
     let appleUserID: String
     let email: String?
@@ -743,16 +659,12 @@ private struct AppleUserCache: Codable {
     let familyName: String?
 }
 
-// MARK: - ASAuthorizationControllerPresentationContextProviding
-
 extension AuthenticationManager: ASAuthorizationControllerPresentationContextProviding {
     func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
         let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene
         return scene?.windows.first ?? ASPresentationAnchor()
     }
 }
-
-// MARK: - PersonNameComponents Extension
 
 extension PersonNameComponents {
     func formatted() -> String {
@@ -762,5 +674,4 @@ extension PersonNameComponents {
         return parts.joined(separator: " ")
     }
 }
-
 

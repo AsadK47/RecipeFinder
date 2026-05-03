@@ -1,7 +1,5 @@
 import Foundation
 
-// MARK: - Badge Model
-
 struct Badge: Identifiable, Codable {
     let id: String
     let title: String
@@ -23,8 +21,6 @@ struct Badge: Identifiable, Codable {
         self.howToEarn = howToEarn
     }
 }
-
-// MARK: - Badge Types
 
 enum BadgeType: String, CaseIterable {
     case welcomeAboard = "welcome_aboard"
@@ -132,13 +128,11 @@ enum BadgeType: String, CaseIterable {
         case .twentyFiveRecipes: return 25
         case .fiftyRecipes: return 50
         case .hundredRecipes: return 100
-        case .mealPlanner: return 0 // Special achievement
-        case .shoppingExpert: return 0 // Special achievement
+        case .mealPlanner: return 0
+        case .shoppingExpert: return 0
         }
     }
 }
-
-// MARK: - Badge Manager
 
 class BadgeManager: ObservableObject {
     nonisolated(unsafe) static let shared = BadgeManager()

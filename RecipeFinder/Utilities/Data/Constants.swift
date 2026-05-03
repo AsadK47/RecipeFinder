@@ -1,16 +1,13 @@
 import Foundation
 
-// App Constants
 enum Constants {
     
-    // UserDefaults Keys
     enum UserDefaultsKeys {
         static let hasPopulatedDatabase = "hasPopulatedDatabase"
     static let shoppingListItems = "ShoppingListItems"
         static let kitchenItems = "KitchenItems"
     }
     
-    // UI Constants
     enum UILayout {
         static let cornerRadius: CGFloat = 12
         static let largeShadowRadius: CGFloat = 10
@@ -22,14 +19,12 @@ enum Constants {
         static let largeSpacing: CGFloat = 20
     }
     
-    // Animation Constants
     enum Animation {
         static let springResponse: Double = 0.3
         static let springDamping: Double = 0.8
         static let feedbackDuration: Double = 1.5
     }
     
-    // Size Constants
     enum Sizes {
         static let iconSmall: CGFloat = 10
         static let iconMedium: CGFloat = 18

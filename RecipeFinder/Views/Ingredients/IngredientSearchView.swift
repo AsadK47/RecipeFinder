@@ -1,4 +1,3 @@
-// swiftlint:disable file_length
 import SwiftUI
 
 struct IngredientSearchView: View {
@@ -20,7 +19,6 @@ struct IngredientSearchView: View {
     }
     
     var popularIngredients: [String] {
-        // Get top 12 most common ingredients
         let ingredientCounts = recipes.flatMap { $0.ingredients.map { $0.name } }
             .reduce(into: [:]) { counts, ingredient in
                 counts[ingredient, default: 0] += 1
@@ -38,13 +36,11 @@ struct IngredientSearchView: View {
                     ingredient.localizedCaseInsensitiveContains(keyword)
                 }
             }
-            // Group similar ingredients and capitalize
             let grouped = CategoryClassifier.groupSimilarIngredients(matchedIngredients)
             return grouped.isEmpty ? nil : (category, grouped.sorted())
         }
     }
     
-    // Get all variations of a main ingredient
     private func getIngredientVariations(_ mainIngredient: String) -> [String] {
         return allIngredients.filter { ingredient in
             ingredient.localizedCaseInsensitiveContains(mainIngredient)
@@ -91,7 +87,6 @@ struct IngredientSearchView: View {
                 VStack(spacing: AppTheme.spacing24) {
                     VStack(spacing: AppTheme.spacing16) {
                         HStack {
-                            // Filter button
                             if selectedIngredient == nil {
                                 Button(action: { showFilters.toggle() }, label: {
                                     ZStack(alignment: .topTrailing) {
@@ -172,7 +167,6 @@ struct IngredientSearchView: View {
                         ModernSearchBar(text: $searchText, placeholder: "Search for Ingredients...")
                             .padding(.horizontal, 20)
                         
-                        // Active filters chips
                         if activeFilterCount > 0 {
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: AppTheme.spacing8) {
@@ -227,7 +221,6 @@ struct IngredientSearchView: View {
         }
     }
     
-    // Search Results View
     private var searchResultsView: some View {
         ScrollView {
             LazyVStack(spacing: AppTheme.spacing12) {
@@ -258,11 +251,9 @@ struct IngredientSearchView: View {
         }
     }
     
-    // Main Ingredient Browser
     private var ingredientBrowserView: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: AppTheme.spacing32) {
-                // Categories Section
                 VStack(alignment: .leading, spacing: AppTheme.spacing16) {
                     Text("Browse by Category")
                         .font(.title3)
@@ -290,7 +281,6 @@ struct IngredientSearchView: View {
         }
     }
     
-    // Helper Views
     private func ingredientButton(_ ingredient: String) -> some View {
         let category = CategoryClassifier.suggestCategory(for: ingredient)
         let isAdded = addedIngredients.contains(ingredient)
@@ -330,7 +320,6 @@ struct IngredientSearchView: View {
             })
             .buttonStyle(PlainButtonStyle())
             
-            // Basket button
             Button(
                 action: {
                     addToShoppingList(ingredient)
@@ -363,14 +352,12 @@ struct IngredientSearchView: View {
         addedIngredients.insert(ingredient)
         showAddedFeedback = ingredient
         
-        // Remove the visual feedback after a delay
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             if self.showAddedFeedback == ingredient {
                 self.showAddedFeedback = nil
             }
         }
         
-        // Reset the added state after a delay
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
             self.addedIngredients.remove(ingredient)
         }
@@ -387,7 +374,7 @@ struct IngredientSearchView: View {
         case "Produce": return "leaf.fill"
         case "Meat": return "fork.knife.circle.fill"
         case "Seafood": return "fish.fill"
-        case "Meat & Seafood": return "fish.fill" // Legacy support
+        case "Meat & Seafood": return "fish.fill"
         case "Dairy & Eggs": return "drop.fill"
         case "Bakery": return "birthday.cake.fill"
         case "Kitchen": return "cabinet.fill"
@@ -403,7 +390,7 @@ struct IngredientSearchView: View {
         case "Produce": return .green
         case "Meat": return .red
         case "Seafood": return .blue
-        case "Meat & Seafood": return .red // Legacy support
+        case "Meat & Seafood": return .red
         case "Dairy & Eggs": return .blue
         case "Bakery": return .orange
         case "Kitchen": return .brown
@@ -422,7 +409,6 @@ struct IngredientSearchView: View {
     
     private var recipeResultsView: some View {
         VStack(spacing: 0) {
-            // Back button with selected ingredient
             HStack {
                 Button(
                     action: {
@@ -478,7 +464,6 @@ struct IngredientSearchView: View {
                 }
             }
             
-            // Selected ingredient header
             if let ingredient = selectedIngredient {
                 HStack(spacing: AppTheme.spacing12) {
                     Image(systemName: "leaf.fill")
@@ -500,7 +485,6 @@ struct IngredientSearchView: View {
                 .padding(.bottom, 16)
             }
             
-            // Recipe results
             ScrollView {
                 if viewMode == .list {
                     LazyVStack(spacing: AppTheme.spacing16) {
@@ -529,7 +513,6 @@ struct IngredientSearchView: View {
     }
 }
 
-// Quick Match Recipe Card Component
 struct QuickMatchRecipeCard: View {
     let recipe: RecipeModel
     let matchCount: Int
@@ -569,11 +552,9 @@ struct QuickMatchRecipeCard: View {
                 .fill(AppTheme.cardBackground(for: colorScheme))
         } else {
             ZStack {
-                // Base layer for subtle contrast - allows gradient to show through
                 RoundedRectangle(cornerRadius: 16)
                     .fill(colorScheme == .dark ? Color.black.opacity(0.15) : Color.white.opacity(0.3))
                 
-                // Frosted glass layer on top - adapts to color scheme automatically
                 RoundedRectangle(cornerRadius: 16)
                     .fill(.regularMaterial)
             }
@@ -664,7 +645,6 @@ struct QuickMatchRecipeCard: View {
     }
 }
 
-// Category Card Component
 struct CategoryCard: View {
     let category: String
     let ingredients: [String]
@@ -681,7 +661,7 @@ struct CategoryCard: View {
         switch category {
         case "Meat": return "fork.knife.circle.fill"
         case "Seafood": return "fish.fill"
-        case "Proteins": return "fork.knife" // Legacy support
+        case "Proteins": return "fork.knife"
         case "Vegetables": return "carrot.fill"
         case "Spices & Herbs": return "leaf.fill"
         case "Dairy & Eggs": return "cup.and.saucer.fill"
@@ -695,7 +675,7 @@ struct CategoryCard: View {
         switch category {
         case "Meat": return .red
         case "Seafood": return .blue
-        case "Proteins": return .red // Legacy support
+        case "Proteins": return .red
         case "Vegetables": return .green
         case "Spices & Herbs": return .orange
         case "Dairy & Eggs": return .blue
@@ -707,7 +687,6 @@ struct CategoryCard: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Category Header - Tappable
             Button(
                 action: {
                     withAnimation(.spring(response: 0.3)) {
@@ -756,7 +735,6 @@ struct CategoryCard: View {
             )
             .buttonStyle(PlainButtonStyle())
             
-            // Ingredients List
             if isExpanded {
                 VStack(spacing: AppTheme.spacing8) {
                     ForEach(ingredients, id: \.self) { mainIngredient in
@@ -768,13 +746,11 @@ struct CategoryCard: View {
         }
     }
     
-    // swiftlint:disable:next function_body_length
     private func ingredientGroup(_ mainIngredient: String) -> some View {
         let variations = getVariations(mainIngredient)
         let isGroupExpanded = expandedIngredients.contains(mainIngredient)
         
         return VStack(spacing: AppTheme.spacing4) {
-            // Main ingredient row
             HStack(spacing: 0) {
                 Button(
                     action: {
@@ -796,7 +772,6 @@ struct CategoryCard: View {
                             .fontWeight(.medium)
                             .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.cardLightHighOpacity) : .black.opacity(0.9))
                         
-                        // Kitchen indicator
                         if variations.contains(where: { KitchenInventoryManager.shared.hasItem($0) }) {
                             Image(systemName: "checkmark.circle.fill")
                                 .font(.caption)
@@ -822,7 +797,6 @@ struct CategoryCard: View {
                 }
                 .buttonStyle(PlainButtonStyle())
                 
-                // Basket button for single variation
                 if variations.count == 1 {
                     let ingredient = variations[0]
                     let isAdded = addedIngredients.contains(ingredient)
@@ -854,7 +828,6 @@ struct CategoryCard: View {
                 }
             }
             
-            // Sub-ingredients (variations)
             if isGroupExpanded && variations.count > 1 {
                 VStack(spacing: AppTheme.spacing4) {
                     ForEach(variations, id: \.self) { variation in
@@ -893,7 +866,6 @@ struct CategoryCard: View {
             )
             .buttonStyle(PlainButtonStyle())
             
-            // Basket button
             Button(
                 action: {
                     onAddToShoppingList(ingredient)
@@ -922,7 +894,6 @@ struct CategoryCard: View {
     }
 }
 
-// Ingredient Filter Sheet
 struct IngredientFilterSheet: View {
     let categories: [String]
     @Binding var selectedCategories: Set<String>
@@ -938,7 +909,6 @@ struct IngredientFilterSheet: View {
                 
                 ScrollView {
                     VStack(alignment: .leading, spacing: AppTheme.spacing32) {
-                        // Categories Section
                         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                             Text("Ingredient Categories")
                                 .font(.headline)
@@ -999,7 +969,7 @@ struct IngredientFilterSheet: View {
         case "produce": return "leaf.fill"
         case "meat": return "fork.knife.circle.fill"
         case "seafood": return "fish.fill"
-        case "meat & seafood": return "fish.fill" // Legacy support
+        case "meat & seafood": return "fish.fill"
         case "dairy & eggs": return "drop.fill"
         case "bakery": return "birthday.cake.fill"
         case "kitchen": return "shippingbox.fill"
@@ -1015,7 +985,7 @@ struct IngredientFilterSheet: View {
         case "produce": return .green
         case "meat": return .red
         case "seafood": return .blue
-        case "meat & seafood": return .red // Legacy support
+        case "meat & seafood": return .red
         case "dairy & eggs": return .blue
         case "bakery": return .orange
         case "kitchen": return .brown

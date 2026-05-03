@@ -1,9 +1,3 @@
-//
-//  OnboardingView.swift
-//  RecipeFinder
-//
-//  Beautiful 3-slide onboarding with SF Symbols
-//
 
 import SwiftUI
 
@@ -64,7 +58,6 @@ struct OnboardingView: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                    // Top bar with skip button
                     HStack {
                         Spacer()
                         if currentPage < slides.count - 1 {
@@ -94,7 +87,6 @@ struct OnboardingView: View {
                     .frame(height: spacing.imageSmall)
                     .padding(.horizontal, spacing.xl)
                 
-                    // Slides with enhanced transitions
                     TabView(selection: $currentPage) {
                         ForEach(0..<slides.count, id: \.self) { index in
                             OnboardingSlideView(
@@ -119,17 +111,14 @@ struct OnboardingView: View {
                         HapticManager.shared.light()
                     }
                     
-                    // Enhanced page indicators
                     HStack(spacing: spacing.sm + 2) {
                         ForEach(0..<slides.count, id: \.self) { index in
                             if currentPage == index {
-                                // Active indicator - elongated capsule
                                 Capsule()
                                     .fill(Color.white)
                                     .frame(width: spacing.iconMedium, height: spacing.xs + 2)
                                     .shadow(color: .white.opacity(0.5), radius: 4, x: 0, y: 2)
                             } else {
-                                // Inactive indicator - small circle
                                 Circle()
                                     .fill(Color.white.opacity(0.4))
                                     .frame(width: spacing.xs + 2, height: spacing.xs + 2)
@@ -145,8 +134,6 @@ struct OnboardingView: View {
     }
 }
 
-// MARK: - Onboarding Slide Model
-
 struct OnboardingSlide {
     let icon: String
     let title: String
@@ -154,8 +141,6 @@ struct OnboardingSlide {
     let accentColor: Color
     let features: [(icon: String, title: String, subtitle: String)]
 }
-
-// MARK: - Individual Slide View
 
 struct OnboardingSlideView: View {
     let slide: OnboardingSlide
@@ -183,9 +168,7 @@ struct OnboardingSlideView: View {
                 .frame(height: 0)
                 
                 VStack(spacing: 0) {
-                    // Main Icon with Enhanced Animation
                     ZStack {
-                    // Animated glow rings
                     ForEach(0..<3) { index in
                         Circle()
                             .stroke(
@@ -210,7 +193,6 @@ struct OnboardingSlideView: View {
                             )
                     }
                     
-                    // Gradient background with glow
                     Circle()
                         .fill(
                             RadialGradient(
@@ -227,7 +209,6 @@ struct OnboardingSlideView: View {
                         .frame(width: spacing.imageXLarge, height: spacing.imageXLarge)
                         .blur(radius: 2)
                     
-                    // Icon background circle
                     Circle()
                         .fill(
                             LinearGradient(
@@ -246,7 +227,6 @@ struct OnboardingSlideView: View {
                         )
                         .shadow(color: .black.opacity(0.1), radius: 20, x: 0, y: 10)
                     
-                    // Main icon with breathing animation
                     Image(systemName: slide.icon)
                         .font(.system(size: AppTheme.fontSize80, weight: .semibold))
                         .foregroundStyle(
@@ -272,7 +252,6 @@ struct OnboardingSlideView: View {
                 .scaleEffect(contentScale)
                 .opacity(contentOpacity)
                 
-                // Title and Description
                 VStack(spacing: spacing.xl) {
                     Text(slide.title)
                         .font(.system(size: AppTheme.fontSize38, weight: .bold, design: .rounded))
@@ -292,11 +271,9 @@ struct OnboardingSlideView: View {
                 .scaleEffect(contentScale)
                 .opacity(contentOpacity)
                 
-                // Enhanced Features Grid with cards
                 VStack(spacing: spacing.lg) {
                     ForEach(Array(slide.features.enumerated()), id: \.offset) { index, feature in
                         HStack(spacing: spacing.lg) {
-                            // Icon container
                             ZStack {
                                 Circle()
                                     .fill(
@@ -325,7 +302,6 @@ struct OnboardingSlideView: View {
                                     )
                             }
                             
-                            // Text content
                             VStack(alignment: .leading, spacing: spacing.xxs) {
                                 Text(feature.title)
                                     .font(.system(size: AppTheme.fontSize17, weight: .semibold))
@@ -356,9 +332,7 @@ struct OnboardingSlideView: View {
                 .padding(.horizontal, spacing.screenEdge + spacing.lg)
                 .padding(.bottom, spacing.xxl + spacing.xl)
                 
-                // Action button area
                 if isLastSlide {
-                    // Get Started Button - Enhanced
                     Button(action: {
                         HapticManager.shared.success()
                         onGetStarted()
@@ -392,7 +366,6 @@ struct OnboardingSlideView: View {
                     .scaleEffect(contentScale)
                     .opacity(contentOpacity)
                 } else {
-                    // Swipe hint - More prominent
                     HStack(spacing: spacing.sm + 2) {
                         Text("Swipe to continue")
                             .font(.system(size: AppTheme.fontSize15, weight: .medium))
@@ -424,7 +397,6 @@ struct OnboardingSlideView: View {
         .coordinateSpace(name: "scroll")
         .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in
             scrollOffset = value
-            // Hide scroll indicator when user starts scrolling
             if scrollOffset < -10 && showScrollIndicator {
                 withAnimation(.easeOut(duration: 0.3)) {
                     showScrollIndicator = false
@@ -432,7 +404,6 @@ struct OnboardingSlideView: View {
             }
         }
         
-
     }
         .onAppear {
             withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
@@ -440,15 +411,12 @@ struct OnboardingSlideView: View {
                 contentOpacity = 1.0
             }
             
-            // Start continuous animations
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 isAnimating = true
             }
         }
     }
 }
-
-// MARK: - Scroll Offset Preference Key
 
 struct ScrollOffsetPreferenceKey: PreferenceKey {
     static let defaultValue: CGFloat = 0

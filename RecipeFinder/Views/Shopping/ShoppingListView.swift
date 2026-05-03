@@ -3,7 +3,6 @@ import SwiftUI
 
 private let logger = AppLogger.logger(category: "ShoppingList")
 
-
 struct ShoppingListView: View {
     @StateObject private var manager = ShoppingListManager.shared
     @State private var searchText: String = ""
@@ -16,7 +15,6 @@ struct ShoppingListView: View {
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
-    // PERFORMANCE: Cache computed values
     private var sortedGroupedItems: [(key: String, value: [ShoppingListModel])] {
         Dictionary(grouping: manager.items, by: { $0.category })
             .map { (key: $0.key, value: $0.value.sorted { !$0.isChecked && $1.isChecked }) }
@@ -59,13 +57,11 @@ struct ShoppingListView: View {
             text += "\n"
         }
         
-        // Use proper window scene access
         guard let windowScene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
               let rootViewController = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController else {
             return
         }
         
-        // Find the topmost presented view controller
         var topController = rootViewController
         while let presented = topController.presentedViewController {
             topController = presented
@@ -76,7 +72,6 @@ struct ShoppingListView: View {
             applicationActivities: nil
         )
         
-        // Configure for iPad
         if let popover = activityController.popoverPresentationController {
             popover.sourceView = topController.view
             popover.sourceRect = CGRect(x: topController.view.bounds.midX, y: topController.view.bounds.midY, width: 0, height: 0)
@@ -95,7 +90,6 @@ struct ShoppingListView: View {
                 VStack(spacing: 0) {
                     header
                     
-                    // Progress bar
                     if !manager.items.isEmpty && !showingSearchResults {
                         VStack(spacing: AppTheme.spacing6) {
                             ProgressView(value: Double(checkedCount), total: Double(totalCount))
@@ -116,7 +110,6 @@ struct ShoppingListView: View {
                         .padding(.bottom, 8)
                     }
                     
-                    // Content
                     if showingSearchResults {
                         searchResultsView
                     } else {
@@ -147,7 +140,6 @@ struct ShoppingListView: View {
                 radius: 500.0
             )
             .onChange(of: checkedCount) { _, newValue in
-                // Trigger confetti when all items are checked
                 if !manager.items.isEmpty && newValue == totalCount {
                     HapticManager.shared.success()
                     confettiTrigger += 1
@@ -201,12 +193,10 @@ struct ShoppingListView: View {
         }
     }
     
-    // MARK: - Header
     private var header: some View {
         VStack(spacing: AppTheme.spacing12) {
             GeometryReader { geometry in
                 HStack(spacing: 0) {
-                    // Empty space to balance menu button
                     Color.clear
                         .frame(width: 44, height: 44)
                     
@@ -220,7 +210,6 @@ struct ShoppingListView: View {
                     
                     Spacer()
                     
-                    // Menu button
                     Menu {
                         Button(action: {
                             HapticManager.shared.light()
@@ -281,7 +270,6 @@ struct ShoppingListView: View {
             .padding(.horizontal, 20)
             .padding(.top, 16)
             
-            // Search bar with cancel option
             HStack(spacing: AppTheme.spacing12) {
                 HStack(spacing: AppTheme.spacing12) {
                     Image(systemName: "magnifyingglass")
@@ -344,7 +332,6 @@ struct ShoppingListView: View {
         }
     }
     
-    // MARK: - Empty State
     private var emptyStateView: some View {
         ScrollView {
             VStack(spacing: AppTheme.spacing16) {
@@ -383,7 +370,6 @@ struct ShoppingListView: View {
     private func categorySection(for category: String, items: [ShoppingListModel]) -> some View {
         Section {
             if !collapsedCategories.contains(category) {
-                // PERFORMANCE: Use items directly instead of searching
                 ForEach(items) { item in
                     ShoppingListItemRow(
                         item: item,
@@ -495,9 +481,7 @@ struct ShoppingListView: View {
     private func addItemFromSearch(_ ingredient: String) {
         logger.debug("🔍 ShoppingListView: Adding item from search '\(ingredient)'")
         manager.addItem(name: ingredient)
-        // Reset state to allow continuous adding
         searchText = ""
-        // Keep focus so user can continue typing
         isSearchFocused = true
         HapticManager.shared.success()
         logger.debug("📊 ShoppingListView: Manager now has \(manager.items.count) items")
@@ -553,7 +537,6 @@ struct ShoppingListView: View {
     }
 }
 
-// Shopping List Item Row
 struct ShoppingListItemRow: View {
     let item: ShoppingListModel
     let onToggle: () -> Void
@@ -597,7 +580,6 @@ struct ShoppingListItemRow: View {
                         .strikethrough(item.isChecked)
                         .foregroundColor(item.isChecked ? .gray: (AppTheme.adaptiveEmphasis(for: colorScheme)))
                     
-                    // Store badge
                     if let store = item.preferredStore {
                         Text(store)
                             .font(.caption2)
@@ -614,7 +596,6 @@ struct ShoppingListItemRow: View {
                     Spacer()
                     
                     HStack(spacing: AppTheme.spacing12) {
-                        // Decrement button
                         Button(action: {
                             if item.quantity > 1 {
                                 onQuantityChange(item.quantity - 1)
@@ -637,14 +618,12 @@ struct ShoppingListItemRow: View {
                         .buttonStyle(PlainButtonStyle())
                         .disabled(item.quantity <= 1)
                         
-                        // Quantity display
                         Text("\(item.quantity)")
                             .font(.subheadline)
                             .fontWeight(.bold)
                             .adaptiveForegroundColor()
                             .frame(minWidth: 20)
                         
-                        // Increment button
                         Button(action: {
                             if item.quantity < 99 {
                                 onQuantityChange(item.quantity + 1)
@@ -722,9 +701,6 @@ struct ShoppingListItemRow: View {
     }
 }
 
-// Edit Item Sheet
-
-// MARK: - Feature Row Component
 struct ShoppingFeatureRow: View {
     let icon: String
     let title: String
@@ -752,7 +728,6 @@ struct ShoppingFeatureRow: View {
     }
 }
 
-// MARK: - Help Sheet View
 struct HelpSheetView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.appTheme) var appTheme
@@ -762,13 +737,11 @@ struct HelpSheetView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                // Beautiful gradient background
                 AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
                 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 0) {
-                        // Hero section with seamless header
                         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                             Text("Shopping List Features")
                                 .font(.system(size: AppTheme.fontSize34, weight: .bold))
@@ -783,7 +756,6 @@ struct HelpSheetView: View {
                         .padding(.top, 60)
                         .padding(.bottom, 32)
                         
-                        // Feature cards with beautiful styling
                         VStack(alignment: .leading, spacing: AppTheme.spacing16) {
                             ShoppingFeatureRow(icon: "sparkles", title: "Smart Categories", description: "Items are automatically sorted into categories", appTheme: appTheme)
                             ShoppingFeatureRow(icon: "chevron.up.chevron.down", title: "Collapse Categories", description: "Tap category headers to show or hide items", appTheme: appTheme)
@@ -810,7 +782,6 @@ struct HelpSheetView: View {
                 }
                 .ignoresSafeArea(edges: .top)
                 
-                // Floating Done button
                 VStack {
                     HStack {
                         Spacer()

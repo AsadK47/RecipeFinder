@@ -2,7 +2,6 @@ import Foundation
 
 struct FoodsList {
     
-    // MARK: - Food Categories
     static let categories = [
         "Fruits",
         "Vegetables",
@@ -21,7 +20,6 @@ struct FoodsList {
         "Canned Goods"
     ]
     
-    // MARK: - Food Database
     static let foodsByCategory: [String: [String]] = [
         "Fruits": [
             "Apple", "Banana", "Orange", "Strawberry", "Blueberry", "Raspberry",
@@ -63,51 +61,39 @@ struct FoodsList {
         ],
         
         "Meat & Poultry": [
-            // Chicken
             "Chicken Breast", "Boneless Chicken Breast", "Chicken Breast with Skin",
             "Chicken Thigh", "Boneless Chicken Thigh", "Chicken Thigh with Skin",
             "Chicken Wings", "Chicken Drumsticks", "Chicken Legs",
             "Whole Chicken", "Ground Chicken", "Chicken Tenders",
-            // Turkey
             "Turkey Breast", "Ground Turkey", "Whole Turkey", "Turkey Legs",
             "Turkey Thigh", "Turkey Wings", "Turkey Tenderloin",
-            // Other Poultry
             "Duck", "Duck Breast", "Duck Legs", "Whole Duck",
             "Quail", "Cornish Hen", "Goose", "Pheasant",
-            // Beef - Steaks
             "Beef Steak", "Ribeye Steak", "Sirloin Steak", "T-Bone Steak",
             "Porterhouse Steak", "Filet Mignon", "New York Strip", "Flank Steak",
             "Skirt Steak", "Hanger Steak", "Flat Iron Steak", "Tri-Tip Steak",
-            // Beef - Roasts & Cuts
             "Chuck Roast", "Brisket", "Beef Short Ribs", "Beef Tenderloin",
             "Prime Rib", "Top Sirloin Roast", "Bottom Round Roast", "Eye of Round",
             "Beef Shank", "Oxtail", "Beef Ribs", "Back Ribs",
-            // Beef - Ground & Processed
             "Ground Beef", "Lean Ground Beef", "Ground Chuck", "Ground Sirloin",
             "Minced Beef", "Beef Mince",
             "Beef Patties", "Beef Meatballs",
-            // Pork
             "Pork Chop", "Bone-In Pork Chop", "Boneless Pork Chop",
             "Pork Tenderloin", "Pork Loin", "Pork Shoulder", "Pork Butt",
             "Pork Belly", "Ground Pork", "Pork Ribs", "Baby Back Ribs",
             "Spare Ribs", "Country Style Ribs", "Pork Hock", "Pork Shank",
-            // Pork - Cured & Processed
             "Ham", "Prosciutto", "Bacon", "Pancetta", "Canadian Bacon",
             "Pork Sausage", "Italian Sausage", "Chorizo", "Bratwurst",
             "Andouille Sausage", "Kielbasa", "Hot Dogs", "Salami", "Pepperoni",
             "Mortadella", "Coppa", "Soppressata",
-            // Lamb
             "Lamb Chop", "Lamb Loin Chop", "Lamb Shoulder Chop",
             "Leg of Lamb", "Lamb Shank", "Lamb Shoulder", "Rack of Lamb",
             "Ground Lamb", "Lamb Ribs", "Lamb Stew Meat",
-            // Veal
             "Veal Cutlet", "Veal Chop", "Veal Shank", "Veal Scallopini",
             "Ground Veal", "Veal Osso Buco",
-            // Game & Specialty
             "Venison", "Venison Steak", "Ground Venison",
             "Bison", "Bison Steak", "Ground Bison",
             "Elk", "Wild Boar", "Rabbit",
-            // Organ Meats
             "Beef Liver", "Chicken Liver", "Beef Heart", "Beef Tongue",
             "Beef Kidney", "Sweetbreads", "Tripe"
         ],
@@ -242,7 +228,6 @@ struct FoodsList {
         ]
     ]
     
-    // MARK: - Helper Functions
     static func getAllFoods() -> [String] {
         return foodsByCategory.values.flatMap { $0 }.sorted()
     }

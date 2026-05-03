@@ -3,7 +3,7 @@ import SwiftUI
 
 struct Ingredient: Identifiable, Codable, Hashable {
     var id: UUID = UUID()
-    let baseQuantity: Double  // Changed to let - should never be mutated
+    let baseQuantity: Double
     let unit: String
     private var _name: String
     
@@ -19,13 +19,11 @@ struct Ingredient: Identifiable, Codable, Hashable {
         self._name = name
     }
     
-    // Codable
     enum CodingKeys: String, CodingKey {
         case id, baseQuantity, unit
         case _name = "name"
     }
     
-    // Hashable Conformance
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
@@ -34,7 +32,6 @@ struct Ingredient: Identifiable, Codable, Hashable {
         lhs.id == rhs.id
     }
     
-    // Computed Properties (Required for scaling)
     func scaledQuantity(for scaleFactor: Double) -> Double {
         baseQuantity * scaleFactor
     }
@@ -43,7 +40,6 @@ struct Ingredient: Identifiable, Codable, Hashable {
         FractionFormatter.format(scaledQuantity(for: scaleFactor))
     }
     
-    // Unit Conversion (for metric/imperial)
     func converted(to system: MeasurementSystem, scaleFactor: Double = 1.0) -> (quantity: Double, unit: String) {
         let scaledQty = scaledQuantity(for: scaleFactor)
         return UnitConversion.convert(value: scaledQty, unit: unit, to: system, ingredientName: name)
@@ -55,29 +51,21 @@ struct Ingredient: Identifiable, Codable, Hashable {
         return converted.unit.isEmpty ? formattedValue : "\(formattedValue) \(converted.unit)"
     }
     
-    // MARK: - Smart Name Parsing
-    
-    /// Returns the display name with proper title case formatting
     var displayName: String {
         return IngredientNameFormatter.formatForDisplay(name)
     }
     
-    /// Returns the main ingredient name (without prep notes)
     var mainIngredientName: String {
         return IngredientNameFormatter.extractMainName(name)
     }
     
-    /// Returns preparation notes if any (e.g., "diced", "chopped", "boneless")
     var preparationNotes: String? {
         return IngredientNameFormatter.extractPreparationNotes(name)
     }
 }
 
-// MARK: - Ingredient Name Formatter
-
 struct IngredientNameFormatter {
     
-    // Common preparation keywords that indicate secondary information
     private static let preparationKeywords = [
         "diced", "chopped", "sliced", "minced", "grated", "shredded",
         "cut", "bite-sized", "pieces", "cubed", "julienned",
@@ -86,42 +74,31 @@ struct IngredientNameFormatter {
         "room temperature", "softened", "melted", "beaten"
     ]
     
-    /// Format ingredient name with proper title case
     static func formatForDisplay(_ name: String) -> String {
-        // Keep parenthetical names intact: "Fenugreek (Methi) Seeds"
         return name.capitalized
     }
     
-    /// Extract the main ingredient name from a complex string
-    /// "Skinless And Boneless Chicken Thighs, Cut Into Bite-Sized Pieces" → "Chicken Thighs"
     static func extractMainName(_ name: String) -> String {
         let lowercased = name.lowercased()
         
-        // Check if contains comma - often separates main ingredient from prep
         if let commaIndex = lowercased.firstIndex(of: ",") {
             let mainPart = String(name[..<commaIndex]).trimmingCharacters(in: .whitespaces)
-            // Remove leading prep words from main part
             return removeLeadingPrepWords(mainPart)
         }
         
-        // No comma, but might have prep words at the start
         return removeLeadingPrepWords(name)
     }
     
-    /// Extract preparation notes from the ingredient name
-    /// "Skinless And Boneless Chicken Thighs, Cut Into Bite-Sized Pieces" → "skinless, boneless, bite-sized"
     static func extractPreparationNotes(_ name: String) -> String? {
         var notes: [String] = []
         let lowercased = name.lowercased()
         
-        // Check for comma-separated prep instructions
         if let commaIndex = lowercased.firstIndex(of: ",") {
             let prepPart = String(name[name.index(after: commaIndex)...])
                 .trimmingCharacters(in: .whitespaces)
             notes.append(prepPart.lowercased())
         }
         
-        // Extract prep words from the beginning
         let words = name.components(separatedBy: .whitespaces)
         for word in words {
             let cleanWord = word.trimmingCharacters(in: CharacterSet.punctuationCharacters)
@@ -130,16 +107,13 @@ struct IngredientNameFormatter {
             }
         }
         
-        // Remove duplicates and format
         let uniqueNotes = Array(Set(notes)).sorted()
         return uniqueNotes.isEmpty ? nil : uniqueNotes.joined(separator: ", ")
     }
     
-    /// Remove leading preparation words
     private static func removeLeadingPrepWords(_ text: String) -> String {
         var words = text.components(separatedBy: .whitespaces)
         
-        // Remove prep words from the beginning
         while let firstWord = words.first {
             let cleanedWord = firstWord.trimmingCharacters(in: CharacterSet.punctuationCharacters)
             if preparationKeywords.contains(cleanedWord.lowercased()) {
@@ -152,8 +126,6 @@ struct IngredientNameFormatter {
         return words.joined(separator: " ")
     }
 }
-
-// MARK: - Dietary Info
 
 struct DietaryInfo: Codable, Hashable {
     var isVegetarian: Bool
@@ -252,7 +224,6 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         self.isSampleRecipe = isSampleRecipe
     }
     
-    //  Hashable Conformance
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
@@ -264,7 +235,6 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         lhs.isFavorite == rhs.isFavorite
     }
     
-    //  Computed Properties (Required for UI)
     var totalTime: String {
         let prepMinutes = TimeExtractor.extractMinutes(from: prepTime)
         let cookMinutes = TimeExtractor.extractMinutes(from: cookingTime)
@@ -272,7 +242,6 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         return "\(total) minutes"
     }
     
-    //  Scaling Methods (Required for RecipeDetailView)
     var scaleFactor: Double {
         Double(currentServings) / Double(baseServings)
     }
@@ -281,9 +250,6 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         currentServings = servings
     }
     
-    // MARK: - Ingredient Matching
-    
-    /// Check if recipe contains a specific ingredient (fuzzy matching)
     func containsIngredient(_ searchTerm: String) -> Bool {
         let normalized = searchTerm.lowercased().trimmingCharacters(in: .whitespaces)
         return ingredients.contains { ingredient in
@@ -292,7 +258,6 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         }
     }
     
-    /// Get percentage of ingredients you have
     func ingredientMatchPercentage(availableIngredients: Set<String>) -> Double {
         guard !ingredients.isEmpty else { return 0 }
         
@@ -307,7 +272,6 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         return Double(matchCount) / Double(ingredients.count)
     }
     
-    /// Get list of missing ingredients
     func missingIngredients(from availableIngredients: Set<String>) -> [Ingredient] {
         ingredients.filter { ingredient in
             let mainName = ingredient.mainIngredientName.lowercased()
@@ -318,9 +282,6 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         }
     }
     
-    // MARK: - Convenience Initializers
-    
-    /// Simplified initializer for quick snacks with minimal data
     init(
         name: String,
         ingredients: [Ingredient],
@@ -355,16 +316,12 @@ struct RecipeModel: Identifiable, Codable, Hashable {
     }
 }
 
-// MARK: - Fraction Formatter
-
 enum FractionFormatter {
-    /// Converts a decimal to a fraction string (e.g., 0.5 → "½", 1.5 → "1½", 0.75 → "¾")
     static func toFraction(_ value: Double) -> String? {
         let tolerance = 0.001
         let whole = Int(value)
         let decimal = value - Double(whole)
         
-        // Check common fractions
         let fractions: [(Double, String)] = [
             (0.125, "⅛"), (0.25, "¼"), (0.333, "⅓"), (0.375, "⅜"),
             (0.5, "½"), (0.625, "⅝"), (0.666, "⅔"), (0.75, "¾"), (0.875, "⅞")
@@ -383,18 +340,13 @@ enum FractionFormatter {
         return nil
     }
 
-    /// Single canonical formatter used everywhere a quantity is displayed.
-    /// Whole numbers → "2", known fractions → "1½", everything else → up to 2 decimal places.
     static func format(_ value: Double) -> String {
-        // Whole number — no decimal noise
         if value.truncatingRemainder(dividingBy: 1) == 0 {
             return String(format: "%.0f", value)
         }
-        // Known fraction symbol (handles both < 1 and mixed numbers like 1.5)
         if let fraction = toFraction(value) {
             return fraction
         }
-        // Fallback: up to 2 significant decimal places, no trailing zeros
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         formatter.maximumFractionDigits = 2
@@ -403,7 +355,6 @@ enum FractionFormatter {
     }
 }
 
-// Time Extraction Helper
 enum TimeExtractor {
     static func extractMinutes(from timeString: String) -> Int {
         let components = timeString.components(separatedBy: " ")
@@ -414,7 +365,6 @@ enum TimeExtractor {
     }
 }
 
-// Helper Function
 func formattedImageName(for recipeName: String) -> String {
     return recipeName
         .lowercased()

@@ -20,7 +20,6 @@ struct PasswordReminderSplashView: View {
                 VStack(spacing: spacing.screenEdge + spacing.lg) {
                     Spacer()
                     
-                    // Key Icon
                     ZStack {
                         Circle()
                             .fill(Color.white.opacity(0.1))
@@ -117,7 +116,6 @@ struct PasswordReminderSplashView: View {
                     
                     Spacer()
                     
-                    // Continue Button
                     Button(action: {
                         HapticManager.shared.medium()
                         onContinue()

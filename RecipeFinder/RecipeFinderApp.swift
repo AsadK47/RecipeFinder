@@ -4,7 +4,6 @@ import UIKit
 
 private let logger = AppLogger.logger(category: "RecipeFinderApp")
 
-
 @main
 struct RecipeFinderApp: App {
     let persistenceController = PersistenceController.shared
@@ -21,14 +20,11 @@ struct RecipeFinderApp: App {
         requestNotificationPermissions()
         
         #if DEBUG
-        // Auto-create test account for easy sign-in during development
         AuthTestHelper.ensureTestAccountExists()
         #endif
     }
     
-    /// Request notification permissions on app launch
     private func requestNotificationPermissions() {
-        // Request asynchronously without blocking main thread
         Task {
             NotificationManager.shared.requestPermission { granted in
                 logger.info("\(granted ? "✅" : "⚠️") User \(granted ? "granted" : "denied") notification permissions")
@@ -85,25 +81,19 @@ struct RecipeFinderApp: App {
         }
     }
     
-    // MARK: - Onboarding Flow
-    
     private func loadUserOnboardingFlags() {
         hasCompletedOnboarding = UserScopedStorage.shared.bool(forKey: "hasCompletedOnboarding")
         hasSeenBiometricOnboarding = UserScopedStorage.shared.bool(forKey: "hasSeenBiometricOnboarding")
     }
     
     private func handleOnboardingFlow() {
-        // Priority 1: Face ID onboarding (if biometrics available and not seen)
         if authManager.biometricsAvailable && !hasSeenBiometricOnboarding {
             showFaceIDOnboarding = true
         }
-        // Priority 2: Main app onboarding
         else if !hasCompletedOnboarding {
             showOnboarding = true
         }
     }
-    
-    // Views
     
     @ViewBuilder
     private var rootView: some View {
@@ -122,15 +112,9 @@ struct RecipeFinderApp: App {
         }
     }
     
-    // Initialization
-    
     private func initializeDatabase() {
-        // Database population now happens per-user after authentication
-        // No global flag needed - see AuthenticationManager
         logger.debug("✅ Database initialized")
     }
-    
-    // Appearance Configuration
     
     private func configureAppearance() {
         configureTabBar()
@@ -182,7 +166,6 @@ struct RecipeFinderApp: App {
             attributes: [.foregroundColor: UIColor.secondaryLabel]
         )
         
-        // Make all TextField placeholders more readable
         UITextField.appearance().attributedPlaceholder = NSAttributedString(
             string: "",
             attributes: [.foregroundColor: UIColor.label.withAlphaComponent(0.6)]

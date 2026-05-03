@@ -1,99 +1,75 @@
-//
-//  RecipeParser.swift
-//  RecipeFinder
-//
-//  Intelligent recipe parser that extracts structured data from HTML/text
-//
 
 import Foundation
 
 struct RecipeParser {
     
-    // Parse Result
     struct ParsedRecipe {
         var name: String?
         var description: String?
         var ingredients: [String] = []
         var instructions: [String] = []
-        var prepTime: Int? // minutes
-        var cookTime: Int? // minutes
+        var prepTime: Int?
+        var cookTime: Int?
         var servings: Int?
         var difficulty: String?
         var cuisine: String?
         var category: String?
-        var confidence: Double = 0.0 // 0.0 to 1.0
+        var confidence: Double = 0.0
     }
     
-    /// Parse recipe from HTML or plain text
     static func parse(html: String) -> ParsedRecipe {
         var result = ParsedRecipe()
         var confidenceScore = 0.0
-        let maxScore = 8.0 // Total number of extraction attempts
+        let maxScore = 8.0
         
-        // Priority 1: Check for JSON-LD structured data (schema.org Recipe format)
-        // This is the most reliable and widely used format (70%+ of modern recipe sites)
         if let jsonLD = extractJSONLD(from: html) {
             return jsonLD
         }
         
-        // Priority 2: Check for WPRM (WP Recipe Maker) plugin format
-        // Common WordPress recipe plugin (20% of recipe blogs)
         if let wprm = extractWPRM(from: html) {
             return wprm
         }
         
-        // Priority 3: Fallback to HTML parsing with regex patterns
-        // Last resort for unstructured content (10% of sites)
-        
-        // Clean HTML to plain text
         let text = cleanHTML(html)
         let lines = text.components(separatedBy: .newlines).filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
         
-        // 1. Extract recipe name (title)
         if let name = extractRecipeName(from: html, text: text) {
             result.name = name
             confidenceScore += 1.0
         }
         
-        // 2. Extract description
         if let description = extractDescription(from: text, lines: lines) {
             result.description = description
             confidenceScore += 0.5
         }
         
-        // 3. Extract prep time
         if let prepTime = extractTime(from: text, type: .prep) {
             result.prepTime = prepTime
             confidenceScore += 1.0
         }
         
-        // 4. Extract cook time
         if let cookTime = extractTime(from: text, type: .cook) {
             result.cookTime = cookTime
             confidenceScore += 1.0
         }
         
-        // 5. Extract servings
         if let servings = extractServings(from: text) {
             result.servings = servings
             confidenceScore += 1.0
         }
         
-        // 6. Extract ingredients
         let ingredients = extractIngredients(from: text, lines: lines)
         if !ingredients.isEmpty {
             result.ingredients = ingredients
             confidenceScore += 1.5
         }
         
-        // 7. Extract instructions
         let instructions = extractInstructions(from: text, lines: lines)
         if !instructions.isEmpty {
             result.instructions = instructions
             confidenceScore += 1.5
         }
         
-        // 8. Extract difficulty
         if let difficulty = extractDifficulty(from: text) {
             result.difficulty = difficulty
             confidenceScore += 0.5
@@ -103,13 +79,7 @@ struct RecipeParser {
         return result
     }
     
-    // MARK: - JSON-LD Schema.org Parser
-    
-    /// Extract recipe from JSON-LD structured data (schema.org Recipe format)
-    /// This is the industry standard used by AllRecipes, NYT Cooking, BBC Good Food, etc.
-    /// Returns ParsedRecipe with confidence 0.95 if successful, nil if not found
     private static func extractJSONLD(from html: String) -> ParsedRecipe? {
-        // Find all JSON-LD script tags
         let pattern = #"<script[^>]*type=["\']application/ld\+json["\'][^>]*>([\s\S]*?)</script>"#
         
         guard let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive]) else {
@@ -125,13 +95,11 @@ struct RecipeParser {
             let jsonRange = match.range(at: 1)
             let jsonString = nsString.substring(with: jsonRange)
             
-            // Try to parse as JSON
             guard let jsonData = jsonString.data(using: .utf8),
                   let json = try? JSONSerialization.jsonObject(with: jsonData) else {
                 continue
             }
             
-            // Handle both single Recipe object and @graph array
             if let recipe = parseRecipeFromJSON(json) {
                 return recipe
             }
@@ -140,17 +108,13 @@ struct RecipeParser {
         return nil
     }
     
-    /// Parse Recipe object from JSON-LD data
-    /// Handles both direct Recipe objects and Recipe within @graph array
     private static func parseRecipeFromJSON(_ json: Any) -> ParsedRecipe? {
         var recipeData: [String: Any]?
         
-        // Check if json is directly a Recipe object
         if let dict = json as? [String: Any] {
             if let type = dict["@type"] as? String, type == "Recipe" {
                 recipeData = dict
             } else if let graph = dict["@graph"] as? [[String: Any]] {
-                // Look for Recipe in @graph array
                 recipeData = graph.first { item in
                     if let type = item["@type"] as? String {
                         return type == "Recipe"
@@ -159,7 +123,6 @@ struct RecipeParser {
                 }
             }
         } else if let array = json as? [[String: Any]] {
-            // Sometimes the root is an array
             recipeData = array.first { item in
                 if let type = item["@type"] as? String {
                     return type == "Recipe"
@@ -173,19 +136,16 @@ struct RecipeParser {
         }
         
         var result = ParsedRecipe()
-        result.confidence = 0.95 // High confidence for structured data
+        result.confidence = 0.95
         
-        // Extract name
         if let name = data["name"] as? String {
             result.name = decodeHTMLEntities(name.trimmingCharacters(in: .whitespacesAndNewlines))
         }
         
-        // Extract description
         if let description = data["description"] as? String {
             result.description = decodeHTMLEntities(description.trimmingCharacters(in: .whitespacesAndNewlines))
         }
         
-        // Extract ingredients (can be array of strings or array of objects)
         if let ingredientsArray = data["recipeIngredient"] as? [Any] {
             result.ingredients = ingredientsArray.compactMap { ingredient in
                 if let str = ingredient as? String {
@@ -197,17 +157,14 @@ struct RecipeParser {
             }.filter { !$0.isEmpty }
         }
         
-        // Extract instructions (can be array of strings or array of HowToStep objects)
         if let instructionsData = data["recipeInstructions"] as? [Any] {
             result.instructions = instructionsData.compactMap { instruction in
                 if let str = instruction as? String {
                     return decodeHTMLEntities(str.trimmingCharacters(in: .whitespacesAndNewlines))
                 } else if let dict = instruction as? [String: Any] {
-                    // Handle HowToStep or HowToSection objects
                     if let text = dict["text"] as? String {
                         return decodeHTMLEntities(text.trimmingCharacters(in: .whitespacesAndNewlines))
                     } else if let itemList = dict["itemListElement"] as? [[String: Any]] {
-                        // Handle nested HowToSection with steps inside
                         return decodeHTMLEntities(itemList.compactMap { step in
                             if let stepText = step["text"] as? String {
                                 return stepText.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -219,24 +176,20 @@ struct RecipeParser {
                 return nil
             }.filter { !$0.isEmpty && $0.count >= 10 }
         } else if let instructionsString = data["recipeInstructions"] as? String {
-            // Sometimes instructions is a single string - split by newlines or periods
             let steps = instructionsString.components(separatedBy: .newlines)
                 .map { decodeHTMLEntities($0.trimmingCharacters(in: .whitespacesAndNewlines)) }
                 .filter { !$0.isEmpty && $0.count >= 10 }
             result.instructions = steps
         }
         
-        // Extract prep time (ISO 8601 duration format: PT15M)
         if let prepTime = data["prepTime"] as? String {
             result.prepTime = parseISO8601Duration(prepTime)
         }
         
-        // Extract cook time
         if let cookTime = data["cookTime"] as? String {
             result.cookTime = parseISO8601Duration(cookTime)
         }
         
-        // Extract servings/yield
         if let yield = data["recipeYield"] as? String {
             result.servings = extractServingsFromYield(yield)
         } else if let yieldInt = data["recipeYield"] as? Int {
@@ -249,21 +202,18 @@ struct RecipeParser {
             }
         }
         
-        // Extract category
         if let category = data["recipeCategory"] as? String {
             result.category = category
         } else if let categoryArray = data["recipeCategory"] as? [String], let first = categoryArray.first {
             result.category = first
         }
         
-        // Extract cuisine
         if let cuisine = data["recipeCuisine"] as? String {
             result.cuisine = cuisine
         } else if let cuisineArray = data["recipeCuisine"] as? [String], let first = cuisineArray.first {
             result.cuisine = first
         }
         
-        // Only return if we have essential data
         if result.name != nil && !result.ingredients.isEmpty && !result.instructions.isEmpty {
             return result
         }
@@ -271,8 +221,6 @@ struct RecipeParser {
         return nil
     }
     
-    /// Parse ISO 8601 duration format (e.g., "PT15M", "PT1H30M", "P1DT2H")
-    /// Returns time in minutes
     private static func parseISO8601Duration(_ duration: String) -> Int? {
         let pattern = #"PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?"#
         
@@ -287,7 +235,6 @@ struct RecipeParser {
         
         var totalMinutes = 0
         
-        // Extract hours
         if match.numberOfRanges > 1 {
             let hoursRange = match.range(at: 1)
             if hoursRange.location != NSNotFound {
@@ -298,7 +245,6 @@ struct RecipeParser {
             }
         }
         
-        // Extract minutes
         if match.numberOfRanges > 2 {
             let minutesRange = match.range(at: 2)
             if minutesRange.location != NSNotFound {
@@ -309,14 +255,10 @@ struct RecipeParser {
             }
         }
         
-        // Ignore seconds for now (match.range(at: 3))
-        
         return totalMinutes > 0 ? totalMinutes : nil
     }
     
-    /// Extract servings number from yield string (e.g., "8 servings", "Makes 12", "4-6 servings")
     private static func extractServingsFromYield(_ yieldString: String) -> Int? {
-        // Try to extract first number
         let pattern = #"(\d+)"#
         if let range = yieldString.range(of: pattern, options: .regularExpression),
            let servings = Int(yieldString[range]) {
@@ -325,20 +267,14 @@ struct RecipeParser {
         return nil
     }
     
-    // MARK: - WPRM Plugin Support
-    
-    /// Extract recipe from WPRM (WP Recipe Maker) plugin format
-    /// This plugin is used by many WordPress recipe sites
     private static func extractWPRM(from html: String) -> ParsedRecipe? {
-        // Check if this is a WPRM recipe
         guard html.contains("wprm-recipe") || html.contains("wp-recipe-maker") else {
             return nil
         }
         
         var result = ParsedRecipe()
-        result.confidence = 0.95 // High confidence for structured data
+        result.confidence = 0.95
         
-        // Extract recipe name from wprm-recipe-name class
         if let nameMatch = html.range(of: "class=\"wprm-recipe-name[^\"]*\">([^<]+)<", options: .regularExpression) {
             let matched = String(html[nameMatch])
             if let contentRange = matched.range(of: ">([^<]+)<", options: .regularExpression) {
@@ -346,14 +282,11 @@ struct RecipeParser {
                     .replacingOccurrences(of: ">", with: "")
                     .replacingOccurrences(of: "<", with: "")
                     .trimmingCharacters(in: .whitespacesAndNewlines)
-                // Decode HTML entities
                 name = decodeHTMLEntities(name)
                 result.name = name
             }
         }
         
-        // Extract times - look for the time values in the class structure
-        // The actual time value is in a span like: <span class="wprm-recipe-prep_time-minutes">15</span>
         let prepTimePattern = #"wprm-recipe-prep_time-minutes[^>]*>(\d+)<"#
         if let regex = try? NSRegularExpression(pattern: prepTimePattern, options: []) {
             let nsString = html as NSString
@@ -378,7 +311,6 @@ struct RecipeParser {
             }
         }
         
-        // Fallback: Try data-minutes attribute if above patterns don't work
         if result.prepTime == nil {
             let prepDataPattern = #"wprm-recipe-prep[^>]*?data-minutes="(\d+)""#
             if let regex = try? NSRegularExpression(pattern: prepDataPattern, options: []) {
@@ -407,8 +339,6 @@ struct RecipeParser {
             }
         }
         
-        // Extract servings - the value is in the text content of the servings span
-        // Pattern: <span class="wprm-recipe-servings..." data-recipe="22976">4</span>
         let servingsPattern = #"wprm-recipe-servings[^>]*data-recipe="\d+"[^>]*>(\d+)<"#
         if let regex = try? NSRegularExpression(pattern: servingsPattern, options: []) {
             let nsString = html as NSString
@@ -423,7 +353,6 @@ struct RecipeParser {
             }
         }
         
-        // Fallback: Try data-servings attribute
         if result.servings == nil {
             let dataServingsPattern = #"wprm-recipe-servings[^>]*?data-servings="(\d+)""#
             if let regex = try? NSRegularExpression(pattern: dataServingsPattern, options: []) {
@@ -440,10 +369,8 @@ struct RecipeParser {
             }
         }
         
-        // Extract ingredients from wprm-recipe-ingredient with proper parsing
         var ingredients: [String] = []
         
-        // Pattern to match each ingredient <li> tag
         let ingredientPattern = #"<li[^>]*class="[^"]*wprm-recipe-ingredient[^"]*"[^>]*>([\s\S]*?)</li>"#
         
         if let regex = try? NSRegularExpression(pattern: ingredientPattern, options: []) {
@@ -458,7 +385,6 @@ struct RecipeParser {
                 var name = ""
                 var notes = ""
                 
-                // Extract amount from wprm-recipe-ingredient-amount
                 let amountPattern = #"class="wprm-recipe-ingredient-amount">([^<]+)<"#
                 if let amountRegex = try? NSRegularExpression(pattern: amountPattern, options: []) {
                     let amountMatches = amountRegex.matches(in: liContent, options: [], range: NSRange(location: 0, length: (liContent as NSString).length))
@@ -468,7 +394,6 @@ struct RecipeParser {
                     }
                 }
                 
-                // Extract unit from wprm-recipe-ingredient-unit
                 let unitPattern = #"class="wprm-recipe-ingredient-unit">([^<]+)<"#
                 if let unitRegex = try? NSRegularExpression(pattern: unitPattern, options: []) {
                     let unitMatches = unitRegex.matches(in: liContent, options: [], range: NSRange(location: 0, length: (liContent as NSString).length))
@@ -478,7 +403,6 @@ struct RecipeParser {
                     }
                 }
                 
-                // Extract name from wprm-recipe-ingredient-name
                 let namePattern = #"class="wprm-recipe-ingredient-name">([^<]+)<"#
                 if let nameRegex = try? NSRegularExpression(pattern: namePattern, options: []) {
                     let nameMatches = nameRegex.matches(in: liContent, options: [], range: NSRange(location: 0, length: (liContent as NSString).length))
@@ -488,7 +412,6 @@ struct RecipeParser {
                     }
                 }
                 
-                // Extract notes from wprm-recipe-ingredient-notes (optional)
                 let notesPattern = #"class="wprm-recipe-ingredient-notes[^\"]*\">([^<]+)<"#
                 if let notesRegex = try? NSRegularExpression(pattern: notesPattern, options: []) {
                     let notesMatches = notesRegex.matches(in: liContent, options: [], range: NSRange(location: 0, length: (liContent as NSString).length))
@@ -497,8 +420,6 @@ struct RecipeParser {
                         notes = (liContent as NSString).substring(with: notesRange).trimmingCharacters(in: .whitespaces)
                     }
                 }
-                
-                // Build the full ingredient string
                 
                 var fullIngredient = ""
                 if !amount.isEmpty {
@@ -514,7 +435,6 @@ struct RecipeParser {
                     fullIngredient += ", " + notes
                 }
                 
-                // Decode HTML entities
                 fullIngredient = decodeHTMLEntities(fullIngredient.trimmingCharacters(in: .whitespaces))
                 
                 if !fullIngredient.isEmpty && !ingredients.contains(fullIngredient) {
@@ -525,10 +445,8 @@ struct RecipeParser {
         
         result.ingredients = ingredients
         
-        // Extract instructions from wprm-recipe-instruction-text
         var instructions: [String] = []
         
-        // Pattern to match the entire instruction list item
         let instructionPattern = #"<li[^>]*class="[^"]*wprm-recipe-instruction[^"]*"[^>]*>([\s\S]*?)</li>"#
         
         if let regex = try? NSRegularExpression(pattern: instructionPattern, options: []) {
@@ -538,7 +456,6 @@ struct RecipeParser {
             for match in matches {
                 let liContent = nsString.substring(with: match.range)
                 
-                // Look for the instruction-text div and extract its content
                 let textPattern = #"wprm-recipe-instruction-text[^>]*>([\s\S]*?)</div>"#
                 if let textRegex = try? NSRegularExpression(pattern: textPattern, options: []) {
                     let textMatches = textRegex.matches(in: liContent, options: [], range: NSRange(location: 0, length: (liContent as NSString).length))
@@ -547,7 +464,6 @@ struct RecipeParser {
                         let textRange = textMatch.range(at: 1)
                         var instruction = (liContent as NSString).substring(with: textRange)
                         
-                        // Clean up: remove HTML tags, normalize whitespace, decode entities
                         instruction = instruction.replacingOccurrences(of: "<[^>]+>", with: " ", options: .regularExpression)
                         instruction = instruction.replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
                         instruction = decodeHTMLEntities(instruction)
@@ -563,7 +479,6 @@ struct RecipeParser {
         
         result.instructions = instructions
         
-        // Extract cuisine
         if let cuisineMatch = html.range(of: "wprm-recipe-cuisine[^>]*>([^<]+)<", options: .regularExpression) {
             let matched = String(html[cuisineMatch])
             if let contentRange = matched.range(of: ">([^<]+)<", options: .regularExpression) {
@@ -575,7 +490,6 @@ struct RecipeParser {
             }
         }
         
-        // Extract course (category)
         if let courseMatch = html.range(of: "wprm-recipe-course[^>]*>([^<]+)<", options: .regularExpression) {
             let matched = String(html[courseMatch])
             if let contentRange = matched.range(of: ">([^<]+)<", options: .regularExpression) {
@@ -587,14 +501,11 @@ struct RecipeParser {
             }
         }
         
-        // Only return if we found the essential data
         if result.name != nil && !result.ingredients.isEmpty && !result.instructions.isEmpty {
             return result
         }
         
-        // If we found some data but not instructions, try fallback extraction
         if result.name != nil && !result.ingredients.isEmpty {
-            // Try to extract instructions using general method
             let text = cleanHTML(html)
             let lines = text.components(separatedBy: .newlines).filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
             let fallbackInstructions = extractInstructions(from: text, lines: lines)
@@ -608,45 +519,36 @@ struct RecipeParser {
         return nil
     }
     
-    // Clean HTML to plain text
     private static func cleanHTML(_ html: String) -> String {
         var text = html
         
-        // Remove script and style tags
         text = text.replacingOccurrences(of: "<script[^>]*>[\\s\\S]*?</script>", with: "", options: .regularExpression)
         text = text.replacingOccurrences(of: "<style[^>]*>[\\s\\S]*?</style>", with: "", options: .regularExpression)
         
-        // Replace <br> with newlines
         text = text.replacingOccurrences(of: "<br\\s*/?>", with: "\n", options: .regularExpression)
         text = text.replacingOccurrences(of: "</p>", with: "\n\n", options: .regularExpression)
         text = text.replacingOccurrences(of: "</div>", with: "\n", options: .regularExpression)
         text = text.replacingOccurrences(of: "</li>", with: "\n", options: .regularExpression)
         
-        // Remove all HTML tags
         text = text.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
         
-        // Decode HTML entities
         text = decodeHTMLEntities(text)
         
-        // Clean up whitespace
         text = text.replacingOccurrences(of: "[ \\t]+", with: " ", options: .regularExpression)
         text = text.replacingOccurrences(of: "\\n\\s*\\n\\s*\\n+", with: "\n\n", options: .regularExpression)
         
         return text.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
-    // Decode HTML entities - OPTIMIZED with memoization and better string manipulation
     nonisolated(unsafe) private static var entityCache: [String: String] = [:]
     
     private static func decodeHTMLEntities(_ text: String) -> String {
-        // Check cache first
         if let cached = entityCache[text] {
             return cached
         }
         
         var result = text
         
-        // Common named entities - ordered by frequency
         let entities: [(String, String)] = [
             ("&nbsp;", " "),
             ("&amp;", "&"),
@@ -667,23 +569,20 @@ struct RecipeParser {
             ("&trade;", "™"),
             ("&reg;", "®"),
             ("&copy;", "©"),
-            ("&rsquo;", "\u{2019}"),  // Right single quotation mark
-            ("&lsquo;", "\u{2018}"),  // Left single quotation mark
-            ("&rdquo;", "\u{201D}"),  // Right double quotation mark
-            ("&ldquo;", "\u{201C}")   // Left double quotation mark
+            ("&rsquo;", "\u{2019}"),
+            ("&lsquo;", "\u{2018}"),
+            ("&rdquo;", "\u{201D}"),
+            ("&ldquo;", "\u{201C}")
         ]
         
-        // Use array instead of dictionary for faster iteration
         for (entity, replacement) in entities {
             if result.contains(entity) {
                 result = result.replacingOccurrences(of: entity, with: replacement)
             }
         }
         
-        // Decode numeric entities like &#39; and &#039; - OPTIMIZED
         let numericPattern = "&#(\\d+);"
         if result.contains("&#"), let regex = try? NSRegularExpression(pattern: numericPattern, options: []) {
-            // Build replacement string in one pass
             var replacements: [(NSRange, String)] = []
             let nsString = result as NSString
             let matches = regex.matches(in: result, options: [], range: NSRange(location: 0, length: nsString.length))
@@ -701,7 +600,6 @@ struct RecipeParser {
                 }
             }
             
-            // Apply replacements in reverse to maintain indices
             for (range, replacement) in replacements.reversed() {
                 let start = result.index(result.startIndex, offsetBy: range.location)
                 let end = result.index(start, offsetBy: range.length)
@@ -709,11 +607,9 @@ struct RecipeParser {
             }
         }
         
-        // Cache result for future use (limit cache size)
         if entityCache.count < 100 {
             entityCache[text] = result
         } else if entityCache.count > 150 {
-            // Clear half the cache when it gets too large
             let keepCount = 75
             let keysToKeep = Array(entityCache.keys.prefix(keepCount))
             entityCache = entityCache.filter { keysToKeep.contains($0.key) }
@@ -722,16 +618,13 @@ struct RecipeParser {
         return result
     }
     
-    // Extract recipe name
     private static func extractRecipeName(from html: String, text: String) -> String? {
-        // Try <title> tag first
         if let titleMatch = html.range(of: "<title[^>]*>([^<]+)</title>", options: .regularExpression) {
             var title = String(html[titleMatch])
             title = title.replacingOccurrences(of: "<title[^>]*>", with: "", options: .regularExpression)
             title = title.replacingOccurrences(of: "</title>", with: "")
             title = title.trimmingCharacters(in: .whitespacesAndNewlines)
             
-            // Remove common suffixes
             let suffixes = [" - Recipe", " Recipe", " | RecipeName", " - Cooking", " | Food"]
             for suffix in suffixes {
                 if title.hasSuffix(suffix) {
@@ -744,7 +637,6 @@ struct RecipeParser {
             }
         }
         
-        // Try <h1> tag
         if let h1Match = html.range(of: "<h1[^>]*>([^<]+)</h1>", options: .regularExpression) {
             var h1 = String(html[h1Match])
             h1 = h1.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
@@ -755,7 +647,6 @@ struct RecipeParser {
             }
         }
         
-        // Fallback: First non-empty line
         if let firstLine = text.components(separatedBy: .newlines).first(where: { !$0.isEmpty && $0.count < 100 }) {
             return firstLine
         }
@@ -763,20 +654,16 @@ struct RecipeParser {
         return nil
     }
     
-    // Extract description
     private static func extractDescription(from text: String, lines: [String]) -> String? {
-        // Look for lines that seem like descriptions (after title, before ingredients)
         var descriptionLines: [String] = []
         
         for (index, line) in lines.enumerated() {
-            if index == 0 { continue } // Skip title
+            if index == 0 { continue }
             
-            // Stop if we hit ingredients
             if line.lowercased().contains("ingredient") || isIngredientLine(line) {
                 break
             }
             
-            // Look for descriptive text (sentences, not lists)
             if line.count > 30 && line.count < 300 && !line.hasPrefix("-") && !line.hasPrefix("•") {
                 descriptionLines.append(line)
             }
@@ -791,14 +678,12 @@ struct RecipeParser {
         return nil
     }
     
-    // Time extraction types
     enum TimeType {
         case prep
         case cook
         case total
     }
     
-    // Extract time (prep/cook/total)
     private static func extractTime(from text: String, type: TimeType) -> Int? {
         let patterns: [String]
         
@@ -826,9 +711,8 @@ struct RecipeParser {
                 if let valueRange = match.range(of: "[0-9]+", options: .regularExpression),
                    let value = Int(match[valueRange]) {
                     
-                    // Check if it's in hours
                     if match.lowercased().contains("hour") || match.lowercased().contains("hr") {
-                        return value * 60 // Convert to minutes
+                        return value * 60
                     }
                     return value
                 }
@@ -838,7 +722,6 @@ struct RecipeParser {
         return nil
     }
     
-    // Extract servings
     private static func extractServings(from text: String) -> Int? {
         let patterns = [
             "serves:?\\s*([0-9]+)",
@@ -860,7 +743,6 @@ struct RecipeParser {
         return nil
     }
     
-    // Extract ingredients
     private static func extractIngredients(from text: String, lines: [String]) -> [String] {
         var ingredients: [String] = []
         var uniqueIngredients = Set<String>()
@@ -871,11 +753,9 @@ struct RecipeParser {
         for line in lines {
             let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
             
-            // Skip empty lines but track them
             if trimmed.isEmpty {
                 if inIngredientSection && foundFirstIngredient {
                     emptyLineCount += 1
-                    // If we've had 3+ empty lines, assume we've left the ingredient section
                     if emptyLineCount >= 3 {
                         break
                     }
@@ -885,9 +765,7 @@ struct RecipeParser {
                 emptyLineCount = 0
             }
             
-            // Detect ingredient section start
             if trimmed.lowercased().contains("ingredient") && trimmed.count < 50 {
-                // If we already have ingredients, this might be a duplicate section - stop
                 if ingredients.count > 5 {
                     break
                 }
@@ -895,7 +773,6 @@ struct RecipeParser {
                 continue
             }
             
-            // Detect section end (instructions, method, notes, nutrition, etc.)
             if inIngredientSection && foundFirstIngredient {
                 let lower = trimmed.lowercased()
                 if lower.contains("instruction") || 
@@ -911,11 +788,9 @@ struct RecipeParser {
                 }
             }
             
-            // Extract ingredient lines
             if inIngredientSection && isIngredientLine(trimmed) {
                 let cleaned = cleanIngredientLine(trimmed)
                 if !cleaned.isEmpty {
-                    // Check for duplicates (case-insensitive)
                     let normalizedKey = cleaned.lowercased()
                     if !uniqueIngredients.contains(normalizedKey) {
                         ingredients.append(cleaned)
@@ -929,14 +804,11 @@ struct RecipeParser {
         return ingredients
     }
     
-    // Check if line is an ingredient
     private static func isIngredientLine(_ line: String) -> Bool {
         let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
         
-        // Must have reasonable length
         guard trimmed.count >= 3 && trimmed.count < 200 else { return false }
         
-        // Common ingredient indicators - expanded for ANY website
         let indicators = [
             "cup", "cups", "tbsp", "tsp", "teaspoon", "tablespoon", "oz", "ounce", "lb", "pound",
             "gram", "grams", "kg", "kilogram", "ml", "milliliter", "liter", "l",
@@ -944,26 +816,22 @@ struct RecipeParser {
             "diced", "chopped", "sliced", "minced", "crushed", "grated", "shredded",
             "fresh", "dried", "frozen", "canned", "whole", "ground",
             "optional", "to taste", "as needed", "for serving",
-            // Fractions and numbers
             "½", "¼", "¾", "⅓", "⅔", "⅛", "⅜", "⅝", "⅞"
         ]
         
         let lowercased = trimmed.lowercased()
         
-        // Check for indicators
         for indicator in indicators {
             if lowercased.contains(indicator) {
                 return true
             }
         }
         
-        // Check for number patterns (e.g., "2 eggs", "1/2 onion")
         let numberPattern = "^[0-9]|\\s[0-9]|^[½¼¾⅓⅔⅛⅜⅝⅞]|\\s[½¼¾⅓⅔⅛⅜⅝⅞]"
         if lowercased.range(of: numberPattern, options: .regularExpression) != nil {
             return true
         }
         
-        // If line is short and contains common food words, it's likely an ingredient
         if trimmed.count < 80 {
             let foodWords = ["oil", "salt", "pepper", "sugar", "butter", "egg", "flour", "water", "milk", "cheese", "onion", "garlic", "tomato", "chicken", "beef", "pork", "rice", "pasta"]
             for food in foodWords {
@@ -976,12 +844,10 @@ struct RecipeParser {
         return false
     }
     
-    // Additional check - is this line too generic or a header?
     private static func isLikelyIngredient(_ line: String) -> Bool {
         let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
         let lowercased = trimmed.lowercased()
         
-        // Exclude headers and navigation
         let excludePatterns = ["ingredient", "instruction", "method", "step", "nutrition", "calories", "print", "save", "share", "comment", "recipe by", "posted", "updated"]
         for pattern in excludePatterns {
             if lowercased == pattern || lowercased.starts(with: pattern + ":") {
@@ -992,14 +858,11 @@ struct RecipeParser {
         return isIngredientLine(line)
     }
     
-    // Original isIngredientLine that was here before
     private static func isIngredientLineOld(_ line: String) -> Bool {
         let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
         
-        // Must have reasonable length
         guard trimmed.count >= 3 && trimmed.count < 200 else { return false }
         
-        // Common ingredient indicators
         let indicators = [
             "cup", "tbsp", "tsp", "oz", "lb", "gram", "kg", "ml", "liter",
             "clove", "pinch", "dash", "sprig", "bunch", "piece", "slice",
@@ -1013,14 +876,11 @@ struct RecipeParser {
             }
         }
         
-        // Check against USDA food list by trying to normalize
         let normalized = IngredientNormalizer.normalize(trimmed)
-        // If normalization significantly changed the text, it likely matched something valid
         if normalized != trimmed.capitalized && !normalized.isEmpty {
             return true
         }
         
-        // Has numbers (quantities)
         if trimmed.range(of: "[0-9]", options: .regularExpression) != nil {
             return true
         }
@@ -1028,18 +888,15 @@ struct RecipeParser {
         return false
     }
     
-    // Clean ingredient line
     private static func cleanIngredientLine(_ line: String) -> String {
         var cleaned = line
         
-        // Remove bullet points and list markers
         cleaned = cleaned.replacingOccurrences(of: "^[•\\-*]\\s*", with: "", options: .regularExpression)
         cleaned = cleaned.replacingOccurrences(of: "^[0-9]+\\.\\s*", with: "", options: .regularExpression)
         
         return cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
-    // Extract instructions
     private static func extractInstructions(from text: String, lines: [String]) -> [String] {
         var instructions: [String] = []
         var uniqueInstructions = Set<String>()
@@ -1050,11 +907,9 @@ struct RecipeParser {
         for line in lines {
             let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
             
-            // Skip empty lines but track them
             if trimmed.isEmpty {
                 if inInstructionSection && foundFirstInstruction {
                     emptyLineCount += 1
-                    // If we've had 3+ empty lines, assume we've left the instruction section
                     if emptyLineCount >= 3 {
                         break
                     }
@@ -1064,11 +919,9 @@ struct RecipeParser {
                 emptyLineCount = 0
             }
             
-            // Detect instruction section start
             if (trimmed.lowercased().contains("instruction") || 
                 trimmed.lowercased().contains("method") ||
                 trimmed.lowercased().contains("direction")) && trimmed.count < 50 {
-                // If we already have instructions, this might be a duplicate section - stop
                 if instructions.count > 3 {
                     break
                 }
@@ -1076,7 +929,6 @@ struct RecipeParser {
                 continue
             }
             
-            // Detect section end (notes, nutrition, etc.)
             if inInstructionSection && foundFirstInstruction {
                 let lower = trimmed.lowercased()
                 if lower.contains("notes") ||
@@ -1087,11 +939,9 @@ struct RecipeParser {
                 }
             }
             
-            // Extract instruction steps
             if inInstructionSection && isInstructionLine(trimmed) {
                 let cleaned = cleanInstructionLine(trimmed)
                 if !cleaned.isEmpty {
-                    // Check for duplicates (case-insensitive)
                     let normalizedKey = cleaned.lowercased()
                     if !uniqueInstructions.contains(normalizedKey) {
                         instructions.append(cleaned)
@@ -1105,14 +955,11 @@ struct RecipeParser {
         return instructions
     }
     
-    // Check if line is an instruction
     private static func isInstructionLine(_ line: String) -> Bool {
         let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
         
-        // Must have reasonable length
         guard trimmed.count >= 10 && trimmed.count < 500 else { return false }
         
-        // Exclude if it's likely a header
         let lowercased = trimmed.lowercased()
         let excludeHeaders = ["instructions:", "method:", "directions:", "steps:", "preparation:"]
         for header in excludeHeaders {
@@ -1121,7 +968,6 @@ struct RecipeParser {
             }
         }
         
-        // Action verbs common in cooking - EXPANDED for ANY website
         let actionVerbs = [
             "add", "mix", "stir", "cook", "bake", "heat", "boil", "simmer",
             "chop", "dice", "slice", "pour", "place", "remove", "combine",
@@ -1133,14 +979,12 @@ struct RecipeParser {
             "brush", "coat", "dip", "toss", "roll", "spread", "layer"
         ]
         
-        // Check if starts with action verb
         for verb in actionVerbs {
             if lowercased.starts(with: verb + " ") || lowercased.starts(with: verb + "s ") {
                 return true
             }
         }
         
-        // Check if contains common cooking phrases
         let cookingPhrases = [
             "until", "for about", "minutes", "hours", "degrees", "°f", "°c",
             "in a", "on a", "into the", "to the", "with the",
@@ -1153,7 +997,6 @@ struct RecipeParser {
             }
         }
         
-        // If line is a complete sentence with cooking action, likely an instruction
         if trimmed.contains(".") || trimmed.contains(",") {
             for verb in actionVerbs {
                 if lowercased.contains(" \(verb) ") || lowercased.contains(" \(verb)s ") {
@@ -1165,11 +1008,9 @@ struct RecipeParser {
         return false
     }
     
-    // Clean instruction line
     private static func cleanInstructionLine(_ line: String) -> String {
         var cleaned = line
         
-        // Remove step numbers and bullets
         cleaned = cleaned.replacingOccurrences(of: "^[•\\-*]\\s*", with: "", options: .regularExpression)
         cleaned = cleaned.replacingOccurrences(of: "^Step\\s*[0-9]+[:.)]?\\s*", with: "", options: [.regularExpression, .caseInsensitive])
         cleaned = cleaned.replacingOccurrences(of: "^[0-9]+[:.)]\\s*", with: "", options: .regularExpression)
@@ -1177,7 +1018,6 @@ struct RecipeParser {
         return cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
-    // Extract difficulty
     private static func extractDifficulty(from text: String) -> String? {
         let difficulties = ["easy", "medium", "moderate", "hard", "difficult", "beginner", "intermediate", "advanced"]
         

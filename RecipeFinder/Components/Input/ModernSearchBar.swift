@@ -36,7 +36,6 @@ struct ModernSearchBar: View {
                     RoundedRectangle(cornerRadius: 12)
                         .fill(AppTheme.adaptiveCardMedium(for: colorScheme))
                 } else {
-                    // Pure frosted glass - exactly like Settings
                     RoundedRectangle(cornerRadius: 12)
                         .fill(.ultraThinMaterial)
                 }
@@ -56,7 +55,6 @@ struct ModernSearchBar: View {
     }
 }
 
-// Extension to add placeholder modifier
 extension View {
     func placeholder<Content: View>(
         when shouldShow: Bool,

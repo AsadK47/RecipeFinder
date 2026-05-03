@@ -25,9 +25,7 @@ struct CookingTipDetailView: View {
                 
                 ScrollView(.vertical, showsIndicators: true) {
                     VStack(alignment: .leading, spacing: AppTheme.spacing32) {
-                        // Title with blended card background
                         VStack(alignment: .leading, spacing: AppTheme.spacing16) {
-                            // Category and Difficulty Badges
                             HStack {
                                 HStack(spacing: AppTheme.spacing8) {
                                     Image(systemName: tip.category.icon)
@@ -62,7 +60,6 @@ struct CookingTipDetailView: View {
                                 )
                             }
                             
-                            // Title
                             Text(tip.title)
                                 .font(.system(size: AppTheme.fontSize28, weight: .bold))
                                 .adaptiveForegroundColor()
@@ -82,17 +79,14 @@ struct CookingTipDetailView: View {
                         .padding(.horizontal, 20)
                         .padding(.top, 8)
                         
-                        // Content Card
                         contentCard
                             .padding(.horizontal, 20)
                         
-                        // Tags
                         if !tip.tags.isEmpty {
                             tagsSection
                                 .padding(.horizontal, 20)
                         }
                         
-                        // Date
                         HStack {
                             Image(systemName: "calendar")
                                 .font(.caption)
@@ -118,11 +112,8 @@ struct CookingTipDetailView: View {
         }
     }
     
-    // MARK: - Content Card
-    
     private var contentCard: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing16) {
-            // Icon
             ZStack {
                 Circle()
                     .fill(colorForCategory(tip.category).opacity(0.2))
@@ -133,7 +124,6 @@ struct CookingTipDetailView: View {
                     .foregroundColor(colorForCategory(tip.category))
             }
             
-            // Content
             Text(tip.content)
                 .font(.body)
                 .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.cardLightOpacity) : .black.opacity(0.9))
@@ -156,8 +146,6 @@ struct CookingTipDetailView: View {
                 .stroke(colorForCategory(tip.category).opacity(0.3), lineWidth: 1)
         )
     }
-    
-    // MARK: - Tags Section
     
     private var tagsSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
@@ -199,8 +187,6 @@ struct CookingTipDetailView: View {
             }
         }
     }
-    
-    // MARK: - Helpers
     
     private func colorForCategory(_ category: CookingTipCategory) -> Color {
         switch category.color {

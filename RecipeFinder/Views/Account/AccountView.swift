@@ -4,7 +4,6 @@ import UniformTypeIdentifiers
 
 private let logger = AppLogger.logger(category: "Account")
 
-
 enum AccountSheet: Identifiable {
     case privacyPolicy
     case imagePicker
@@ -79,7 +78,6 @@ struct AccountView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header
                 VStack(spacing: AppTheme.spacing12) {
                     GeometryReader { geometry in
                         HStack(spacing: 0) {
@@ -101,19 +99,14 @@ struct AccountView: View {
                 
                 ScrollView {
                     VStack(spacing: AppTheme.spacing24) {
-                        // Profile Avatar
                         profileAvatar
                         
-                        // Personal Information Section
                         personalInfoSection
                         
-                        // Achievements/Badges Section (collapsible)
                         badgesSection
                         
-                        // Chef Type Section
                         chefTypeSection
                         
-                        // Save Button
                         Button(action: {
                             activeSheet = .passwordVerification
                         }) {
@@ -132,7 +125,6 @@ struct AccountView: View {
                         .disabled(showSuccessFeedback)
                         .padding(.top, 8)
                         
-                        // Success Feedback
                         if showSuccessFeedback {
                             HStack(spacing: AppTheme.spacing8) {
                                 Image(systemName: "checkmark.circle.fill")
@@ -146,7 +138,6 @@ struct AccountView: View {
                             .transition(.scale.combined(with: .opacity))
                         }
                         
-                        // Account Actions
                         accountActionsSection
                     }
                     .padding(.top, 16)
@@ -211,12 +202,9 @@ struct AccountView: View {
             loadCurrentProfile()
         }
         .onChange(of: profileImage) { _, newImage in
-            // Save profile image whenever it changes
             accountManager.saveProfileImage(newImage)
         }
     }
-    
-    // MARK: - Profile Avatar
     
     private var profileAvatar: some View {
         VStack(spacing: AppTheme.spacing12) {
@@ -267,11 +255,8 @@ struct AccountView: View {
         .padding(.vertical, 20)
     }
     
-    // MARK: - Personal Information Section
-    
     private var personalInfoSection: some View {
         VStack(spacing: 0) {
-            // Section Header
             HStack {
                 Image(systemName: "person.fill")
                     .adaptiveForegroundColor()
@@ -344,8 +329,6 @@ struct AccountView: View {
         }
     }
     
-    // MARK: - Chef Type Section
-    
     private var chefTypeSection: some View {
         VStack(spacing: AppTheme.spacing12) {
             HStack {
@@ -387,14 +370,11 @@ struct AccountView: View {
         }
     }
     
-    // MARK: - Profile Display Card
-    
     private var profileDisplayCard: some View {
         Button(action: {
             HapticManager.shared.light()
         }) {
             VStack(spacing: AppTheme.spacing24) {
-                // Avatar
                 ZStack(alignment: .bottomTrailing) {
                     if let profileImage = profileImage {
                         Image(uiImage: profileImage)
@@ -425,7 +405,6 @@ struct AccountView: View {
                     }
                 }
                 
-                // Name & Chef Type
                 VStack(spacing: AppTheme.spacing8) {
                     Text(displayName.isEmpty ? "Set Your Name" : displayName)
                         .font(.title2)
@@ -441,7 +420,6 @@ struct AccountView: View {
                     .foregroundColor(.secondary)
                 }
                 
-                // Edit Hint
                 HStack(spacing: AppTheme.spacing6) {
                     Image(systemName: "info.circle.fill")
                         .font(.caption)
@@ -466,15 +444,11 @@ struct AccountView: View {
         }
     }
     
-    // MARK: - Account Actions
-    
     private var accountActionsSection: some View {
         VStack(spacing: AppTheme.spacing12) {
-            // Sign in with Apple (if not already using it) - Under Construction
             if authManager.currentUser?.appleUserID == nil {
                 VStack(spacing: AppTheme.spacing8) {
                     Button {
-                        // Disabled during testing
                         HapticManager.shared.light()
                     } label: {
                         HStack(spacing: AppTheme.spacing12) {
@@ -513,7 +487,6 @@ struct AccountView: View {
                 }
             }
             
-            // Face ID / Touch ID Settings
             if authManager.biometricsAvailable {
                 NavigationLink(destination: PrivacySettingsView()) {
                     HStack(spacing: AppTheme.spacing12) {
@@ -588,19 +561,15 @@ struct AccountView: View {
         }
     }
     
-    // MARK: - Helper Functions
-    
     private func signOut() {
         logger.debug("🔓 [AccountView] Sign out button tapped")
         authManager.signOut()
-        // Navigation handled automatically by app root view
     }
     
     private func deleteAccount() async {
         do {
             logger.debug("🗑️ [AccountView] Delete account requested")
             try await authManager.deleteAccount()
-            // Navigation handled automatically by app root view
         } catch {
             logger.debug("Error deleting account: \(error)")
         }
@@ -613,25 +582,21 @@ struct AccountView: View {
     }
     
     private func loadCurrentProfile() {
-        // Load current values from AccountManager
         firstName = accountManager.firstName
         lastName = accountManager.lastName
         selectedChefType = accountManager.chefType
         
-        // Load profile image
         profileImage = accountManager.loadProfileImage()
         
     }
     
     private func saveProfile() {
-        // Save to AccountManager using the updateProfile method
         accountManager.updateProfile(
             firstName: firstName,
             lastName: lastName,
             chefType: selectedChefType
         )
         
-        // Update AuthManager if signed in
         if let currentUser = authManager.currentUser {
             let fullName = [firstName, lastName]
                 .filter { !$0.isEmpty }
@@ -651,21 +616,16 @@ struct AccountView: View {
             authManager.updateCurrentUser(updatedUser)
         }
         
-        // Show success feedback
         showSuccessFeedback = true
         HapticManager.shared.success()
         
-        // Hide after 2 seconds
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             showSuccessFeedback = false
         }
     }
     
-    // MARK: - Badges Section
-    
     var badgesSection: some View {
         VStack(spacing: 0) {
-            // Collapsible Header
             Button(action: {
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                     badgesSectionExpanded.toggle()
@@ -689,12 +649,11 @@ struct AccountView: View {
             }
             .buttonStyle(PlainButtonStyle())
             
-            // Collapsible Content
             if badgesSectionExpanded {
                 VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                     let recipeCount = PersistenceController.shared.getRecipeCount()
                     let allBadges = badgeManager.getAllBadges(recipeCount: recipeCount)
-                        .sorted { $0.isUnlocked && !$1.isUnlocked } // Unlocked first
+                        .sorted { $0.isUnlocked && !$1.isUnlocked }
                     
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: AppTheme.spacing12) {
                         ForEach(allBadges) { badge in
@@ -726,8 +685,6 @@ struct AccountView: View {
     }
 }
 
-// MARK: - Account Row Button Component
-
 struct AccountRowButton: View {
     let icon: String
     var iconColor: Color = .blue
@@ -741,7 +698,6 @@ struct AccountRowButton: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: AppTheme.spacing16) {
-                // Icon with background circle
                 ZStack {
                     Circle()
                         .fill(iconColor)
@@ -780,10 +736,6 @@ struct AccountRowButton: View {
     }
 }
 
-// MARK: - Data Privacy View
-
-// MARK: - Data Download View
-
 struct StatBadge: View {
     let icon: String
     let count: Int
@@ -815,15 +767,12 @@ struct StatBadge: View {
     }
 }
 
-// Account Share Sheet
-
 struct AccountShareSheet: UIViewControllerRepresentable {
     let items: [Any]
     
     func makeUIViewController(context: Context) -> UIActivityViewController {
         let controller = UIActivityViewController(activityItems: items, applicationActivities: nil)
         
-        // Configure for iPad if needed
         if let popover = controller.popoverPresentationController,
            let windowScene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
            let window = windowScene.windows.first(where: { $0.isKeyWindow }) {
@@ -837,8 +786,6 @@ struct AccountShareSheet: UIViewControllerRepresentable {
     
     func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }
-
-// MARK: - Data Import View
 
 struct DataImportView: View {
     @Environment(\.dismiss) private var dismiss
@@ -875,7 +822,6 @@ struct DataImportView: View {
                     .foregroundColor(.secondary)
                     .padding(.horizontal)
                 
-                // Merge Mode Picker
                 VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                     Text("Import Mode")
                         .font(.subheadline)
@@ -979,7 +925,6 @@ struct DataImportView: View {
         isImporting = true
         importResult = nil
         
-        // Capture mergeMode value before entering background thread
         let selectedMergeMode = mergeMode
         
         DispatchQueue.global(qos: .userInitiated).async {
@@ -999,7 +944,6 @@ struct DataImportView: View {
                     throw NSError(domain: "ImportError", code: 3, userInfo: [NSLocalizedDescriptionKey: "Invalid JSON format"])
                 }
                 
-                // Import preferences
                 if let preferences = json["preferences"] as? [String: Any] {
                     if let theme = preferences["theme"] as? String {
                         UserDefaults.standard.set(theme, forKey: "appTheme")
@@ -1012,7 +956,6 @@ struct DataImportView: View {
                     }
                 }
                 
-                // Import favorites
                 if selectedMergeMode == .replace {
                     if let favorites = json["favoriteRecipes"] as? [String] {
                         UserDefaults.standard.set(favorites, forKey: "favoriteRecipeIDs")
@@ -1026,11 +969,8 @@ struct DataImportView: View {
                     }
                 }
                 
-                // Write imported data through UserScopedStorage so it lands
-                // under the current user's scoped keys (not raw UserDefaults).
                 let scopedStorage = UserScopedStorage.shared
                 
-                // Import shopping list
                 if let shoppingListArray = json["shoppingList"] as? [[String: Any]] {
                     let jsonData = try JSONSerialization.data(withJSONObject: shoppingListArray)
                     if let newItems = try? JSONDecoder().decode([ShoppingListModel].self, from: jsonData) {
@@ -1051,7 +991,6 @@ struct DataImportView: View {
                     }
                 }
                 
-                // Import kitchen inventory
                 if let inventoryArray = json["kitchenInventory"] as? [[String: Any]] {
                     let jsonData = try JSONSerialization.data(withJSONObject: inventoryArray)
                     if let newItems = try? JSONDecoder().decode([KitchenInventoryModel].self, from: jsonData) {
@@ -1072,7 +1011,6 @@ struct DataImportView: View {
                     }
                 }
                 
-                // Import meal plans
                 if let mealPlansArray = json["mealPlans"] as? [[String: Any]] {
                     let jsonData = try JSONSerialization.data(withJSONObject: mealPlansArray)
                     if let newPlans = try? JSONDecoder().decode([MealPlanModel].self, from: jsonData) {
@@ -1093,7 +1031,6 @@ struct DataImportView: View {
                     }
                 }
                 
-                // Import notes
                 if let notes = json["recipeNotes"] as? [String: String] {
                     if selectedMergeMode == .replace {
                         let encoded = try JSONEncoder().encode(notes)
@@ -1112,7 +1049,6 @@ struct DataImportView: View {
                 }
                 
                 DispatchQueue.main.async {
-                    // Reload all managers so in-memory caches pick up the imported data
                     ShoppingListManager.shared.reloadForCurrentUser()
                     KitchenInventoryManager.shared.reloadForCurrentUser()
                     MealPlanningManager.shared.reloadForCurrentUser()
@@ -1123,7 +1059,6 @@ struct DataImportView: View {
                     self.importResult = .success("Data imported successfully!")
                     HapticManager.shared.success()
                     
-                    // Auto-dismiss after 2 seconds
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                         dismiss()
                     }
@@ -1139,8 +1074,6 @@ struct DataImportView: View {
         }
     }
 }
-
-// MARK: - Supporting Components
 
 struct ProfileTextField: View {
     let icon: String
@@ -1276,8 +1209,6 @@ struct BadgeCard: View {
     }
 }
 
-// MARK: - Badge Detail View
-
 struct BadgeDetailView: View {
     let badge: Badge
     @Environment(\.dismiss) var dismiss
@@ -1306,7 +1237,6 @@ struct BadgeDetailView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: AppTheme.spacing32) {
-                // Close button
                 HStack {
                     Spacer()
                     Button(action: { dismiss() }) {
@@ -1320,7 +1250,6 @@ struct BadgeDetailView: View {
                 
                 Spacer()
                 
-                // Badge Icon
                 ZStack {
                     Circle()
                         .fill(badge.isUnlocked ? badgeColor.opacity(0.2) : AppTheme.secondaryText.opacity(0.1))
@@ -1332,19 +1261,16 @@ struct BadgeDetailView: View {
                 }
                 .shadow(color: badge.isUnlocked ? badgeColor.opacity(0.3) : .clear, radius: 20)
                 
-                // Title
                 Text(badge.title)
                     .font(.system(size: AppTheme.fontSize28, weight: .bold))
                     .adaptiveForegroundColor()
                     .multilineTextAlignment(.center)
                 
-                // Description
                 Text(badge.description)
                     .font(.title3)
                     .adaptiveForegroundColor(opacity: 0.8)
                     .multilineTextAlignment(.center)
                 
-                // Status/Date
                 if badge.isUnlocked, let date = badge.dateEarned {
                     VStack(spacing: AppTheme.spacing8) {
                         HStack(spacing: AppTheme.spacing8) {

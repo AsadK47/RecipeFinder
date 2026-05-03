@@ -1,16 +1,7 @@
-//
-//  DietaryInfo.swift
-//  RecipeFinder
-//
-//  Created on 12/19/2025.
-//
 
 import Foundation
 
-// MARK: - Dietary Tags
-
 enum DietaryTag: String, Codable, CaseIterable {
-    // Diet Types
     case vegetarian = "Vegetarian"
     case vegan = "Vegan"
     case pescatarian = "Pescatarian"
@@ -20,7 +11,6 @@ enum DietaryTag: String, Codable, CaseIterable {
     case highProtein = "High Protein"
     case whole30 = "Whole30"
     
-    // Allergen-Free
     case glutenFree = "Gluten-Free"
     case dairyFree = "Dairy-Free"
     case nutFree = "Nut-Free"
@@ -29,7 +19,6 @@ enum DietaryTag: String, Codable, CaseIterable {
     case shellfishFree = "Shellfish-Free"
     case fishFree = "Fish-Free"
     
-    // Health Goals
     case lowCalorie = "Low Calorie"
     case lowSodium = "Low Sodium"
     case lowSugar = "Low Sugar"
@@ -74,14 +63,12 @@ enum DietaryTag: String, Codable, CaseIterable {
     }
 }
 
-// MARK: - Snack Data Model
-
 struct SnackItem: Identifiable, Codable, Hashable {
     let id: UUID
     let emoji: String
     let name: String
     let dietaryTags: [DietaryTag]
-    let calories: Int? // per serving
+    let calories: Int?
     let category: SnackCategory
     
     init(
@@ -110,8 +97,6 @@ struct SnackItem: Identifiable, Codable, Hashable {
     }
 }
 
-// MARK: - Snack Categories
-
 enum SnackCategory: String, Codable, CaseIterable {
     case fruit = "Fruit"
     case vegetables = "Vegetables"
@@ -138,11 +123,8 @@ enum SnackCategory: String, Codable, CaseIterable {
     }
 }
 
-// MARK: - Snack Database
-
 struct SnackDatabase {
     static let allSnacks: [SnackItem] = [
-        // Fruits
         SnackItem(emoji: "🍎", name: "Apple", dietaryTags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree, .lowCalorie, .highFiber], calories: 95, category: .fruit),
         SnackItem(emoji: "🍌", name: "Banana", dietaryTags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree, .highFiber], calories: 105, category: .fruit),
         SnackItem(emoji: "🍊", name: "Orange", dietaryTags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree, .lowCalorie], calories: 62, category: .fruit),
@@ -153,7 +135,6 @@ struct SnackDatabase {
         SnackItem(emoji: "🥝", name: "Kiwi", dietaryTags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree, .lowCalorie], calories: 42, category: .fruit),
         SnackItem(emoji: "🍉", name: "Watermelon", dietaryTags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree, .lowCalorie, .lowSugar], calories: 46, category: .fruit),
         
-        // Vegetables
         SnackItem(emoji: "🥕", name: "Carrots", dietaryTags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree, .lowCalorie, .highFiber], calories: 25, category: .vegetables),
         SnackItem(emoji: "🥒", name: "Cucumber", dietaryTags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree, .lowCalorie, .lowCarb, .keto], calories: 16, category: .vegetables),
         SnackItem(emoji: "🫑", name: "Bell Peppers", dietaryTags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree, .lowCalorie, .lowCarb], calories: 24, category: .vegetables),
@@ -161,19 +142,16 @@ struct SnackDatabase {
         SnackItem(emoji: "🍅", name: "Cherry Tomatoes", dietaryTags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree, .lowCalorie, .lowCarb], calories: 27, category: .vegetables),
         SnackItem(emoji: "🥬", name: "Celery", dietaryTags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree, .lowCalorie, .lowCarb, .keto], calories: 14, category: .vegetables),
         
-        // Nuts & Seeds
         SnackItem(emoji: "🥜", name: "Peanuts", dietaryTags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .highProtein, .highFiber], calories: 161, category: .nuts),
         SnackItem(emoji: "🌰", name: "Almonds", dietaryTags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .keto, .paleo, .highProtein, .highFiber], calories: 164, category: .nuts),
         SnackItem(emoji: "🥜", name: "Cashews", dietaryTags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .highProtein], calories: 157, category: .nuts),
         SnackItem(emoji: "🌻", name: "Sunflower Seeds", dietaryTags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree, .highProtein], calories: 165, category: .nuts),
         SnackItem(emoji: "🥜", name: "Trail Mix", dietaryTags: [.vegetarian, .glutenFree, .highProtein, .highFiber], calories: 131, category: .nuts),
         
-        // Dairy
         SnackItem(emoji: "🧀", name: "Cheese", dietaryTags: [.vegetarian, .glutenFree, .nutFree, .lowCarb, .keto, .highProtein], calories: 114, category: .dairy),
         SnackItem(emoji: "🥛", name: "Yogurt", dietaryTags: [.vegetarian, .glutenFree, .nutFree, .highProtein], calories: 100, category: .dairy),
         SnackItem(emoji: "🧀", name: "String Cheese", dietaryTags: [.vegetarian, .glutenFree, .nutFree, .lowCarb, .highProtein], calories: 80, category: .dairy),
         
-        // Grains & Crackers
         SnackItem(emoji: "🍿", name: "Popcorn", dietaryTags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree, .lowCalorie, .highFiber], calories: 31, category: .grains),
         SnackItem(emoji: "🥨", name: "Pretzel", dietaryTags: [.vegan, .vegetarian, .dairyFree, .nutFree, .lowCalorie], calories: 108, category: .grains),
         SnackItem(emoji: "🍞", name: "Rice Cakes", dietaryTags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree, .lowCalorie], calories: 35, category: .grains),
@@ -181,26 +159,22 @@ struct SnackDatabase {
         SnackItem(emoji: "🍪", name: "Granola Bar", dietaryTags: [.vegetarian, .highFiber], calories: 100, category: .grains),
         SnackItem(emoji: "🥐", name: "Crisps", dietaryTags: [.vegan, .vegetarian, .dairyFree], calories: 152, category: .grains),
         
-        // Protein
         SnackItem(emoji: "🥚", name: "Hard Boiled Egg", dietaryTags: [.vegetarian, .glutenFree, .dairyFree, .nutFree, .lowCarb, .keto, .paleo, .highProtein], calories: 78, category: .protein),
         SnackItem(emoji: "🍗", name: "Chicken Strips", dietaryTags: [.glutenFree, .dairyFree, .nutFree, .lowCarb, .highProtein, .paleo], calories: 150, category: .protein),
         SnackItem(emoji: "🥓", name: "Beef Jerky", dietaryTags: [.glutenFree, .dairyFree, .nutFree, .lowCarb, .keto, .paleo, .highProtein], calories: 116, category: .protein),
         SnackItem(emoji: "🦃", name: "Turkey Slices", dietaryTags: [.glutenFree, .dairyFree, .nutFree, .lowCarb, .highProtein], calories: 29, category: .protein),
         
-        // Sweets
         SnackItem(emoji: "🍪", name: "Cookie", dietaryTags: [.vegetarian], calories: 142, category: .sweets),
         SnackItem(emoji: "🍫", name: "Dark Chocolate", dietaryTags: [.vegetarian, .glutenFree, .nutFree], calories: 155, category: .sweets),
         SnackItem(emoji: "🍩", name: "Donut", dietaryTags: [.vegetarian], calories: 269, category: .sweets),
         SnackItem(emoji: "🧁", name: "Muffin", dietaryTags: [.vegetarian], calories: 174, category: .sweets),
         SnackItem(emoji: "🍬", name: "Gummy Bears", dietaryTags: [.glutenFree, .dairyFree, .nutFree, .lowCalorie], calories: 87, category: .sweets),
         
-        // Beverages
         SnackItem(emoji: "🧃", name: "Juice Box", dietaryTags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree], calories: 100, category: .beverages),
         SnackItem(emoji: "🥤", name: "Smoothie", dietaryTags: [.vegetarian, .glutenFree, .nutFree, .highFiber], calories: 150, category: .beverages),
         SnackItem(emoji: "☕️", name: "Coffee", dietaryTags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree, .lowCalorie], calories: 2, category: .beverages),
         SnackItem(emoji: "🍵", name: "Tea", dietaryTags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree, .lowCalorie], calories: 2, category: .beverages),
         
-        // Other
         SnackItem(emoji: "🥪", name: "Mini Sandwich", dietaryTags: [.highProtein], calories: 200, category: .other),
         SnackItem(emoji: "🌮", name: "Protein Bar", dietaryTags: [.highProtein, .highFiber], calories: 200, category: .other),
         SnackItem(emoji: "🍱", name: "Edamame", dietaryTags: [.vegan, .vegetarian, .glutenFree, .dairyFree, .nutFree, .highProtein, .highFiber], calories: 189, category: .other),
@@ -218,7 +192,6 @@ struct SnackDatabase {
     }
     
     static func popularSnacks() -> [SnackItem] {
-        // Return most common snacks
         return [
             allSnacks.first { $0.name == "Apple" }!,
             allSnacks.first { $0.name == "Banana" }!,

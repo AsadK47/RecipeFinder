@@ -2,18 +2,14 @@ import Foundation
 
 private let logger = AppLogger.logger(category: "SampleRecipeData")
 
-
 extension PersistenceController {
-    // swiftlint:disable function_body_length
     func populateDatabase() {
         let context = container.viewContext
         let fetchRequest = Recipe.fetchRequest()
         
-        // Filter by current user if user is logged in
         if let userId = UserScopedStorage.shared.currentUserId {
             fetchRequest.predicate = NSPredicate(format: "userId == %@", userId)
         } else {
-            // No user logged in - skip population
             logger.debug("⚠️ No user logged in, skipping database population")
             return
         }
@@ -87,15 +83,12 @@ extension PersistenceController {
             baseServings: 6,
             currentServings: 6,
             ingredients: [
-                // Puff Pastry
                 Ingredient(baseQuantity: 231, unit: "g", name: "plain flour"),
                 Ingredient(baseQuantity: 104, unit: "g", name: "unsalted butter, cold and cubed"),
                 Ingredient(baseQuantity: 0.22, unit: "tsp", name: "salt"),
                 Ingredient(baseQuantity: 229, unit: "ml", name: "cold water"),
-                // Egg Wash
                 Ingredient(baseQuantity: 1, unit: "", name: "egg, for egg wash"),
                 Ingredient(baseQuantity: 1, unit: "tbsp", name: "water, for egg wash"),
-                // Filling
                 Ingredient(baseQuantity: 500, unit: "g", name: "chicken breast, cubed (1 inch)"),
                 Ingredient(baseQuantity: 220, unit: "g", name: "mushrooms, sliced"),
                 Ingredient(baseQuantity: 1, unit: "", name: "medium onion, diced"),
@@ -259,5 +252,4 @@ extension PersistenceController {
         
         logger.debug("✅ Default recipes added!")
     }
-    // swiftlint:enable function_body_length
 }

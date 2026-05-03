@@ -1,9 +1,3 @@
-//
-//  LegalInformationView.swift
-//  RecipeFinder
-//
-//  Created by RecipeFinder on 5 November 2025.
-//
 
 import SwiftUI
 import PDFKit
@@ -29,7 +23,6 @@ struct LegalInformationView: View {
             
             ScrollView {
                 VStack(spacing: AppTheme.spacing32) {
-                    // Company Information Header
                     SettingsCard {
                         VStack(alignment: .leading, spacing: AppTheme.spacing16) {
                             HStack {
@@ -56,7 +49,6 @@ struct LegalInformationView: View {
                         .padding(AppTheme.spacing24)
                     }
                     
-                    // Contact Information
                     SettingsCard {
                         VStack(alignment: .leading, spacing: AppTheme.spacing16) {
                             HStack {
@@ -138,7 +130,6 @@ struct LegalInformationView: View {
                         .padding(AppTheme.spacing24)
                     }
                     
-                    // Legal Documents
                     SettingsCard {
                         VStack(spacing: 0) {
                             Button(action: {
@@ -188,7 +179,6 @@ struct LegalInformationView: View {
                         }
                     }
                     
-                    // Compliance Badges
                     SettingsCard {
                         VStack(alignment: .leading, spacing: AppTheme.spacing16) {
                             HStack {
@@ -236,7 +226,6 @@ struct LegalInformationView: View {
                         .padding(AppTheme.spacing24)
                     }
                     
-                    // Director Information
                     SettingsCard {
                         VStack(alignment: .leading, spacing: AppTheme.spacing16) {
                             HStack {
@@ -274,7 +263,6 @@ struct LegalInformationView: View {
                         .padding(AppTheme.spacing24)
                     }
                     
-                    // App Version Info
                     VStack(spacing: AppTheme.spacing4) {
                         Text("RecipeFinder")
                             .font(.caption)
@@ -307,8 +295,6 @@ struct LegalInformationView: View {
         }
     }
 }
-
-// MARK: - Supporting Views
 
 struct CompanyInfoRow: View {
     let label: String
@@ -404,8 +390,6 @@ struct ComplianceBadge: View {
     }
 }
 
-// MARK: - PDF Viewer
-
 struct PDFViewerSheet: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
@@ -472,7 +456,6 @@ struct PDFViewerSheet: View {
            let window = windowScene.windows.first,
            let rootVC = window.rootViewController {
             
-            // For iPad
             if let popover = activityVC.popoverPresentationController {
                 popover.sourceView = window
                 popover.sourceRect = CGRect(x: window.bounds.midX, y: window.bounds.midY, width: 0, height: 0)
@@ -501,11 +484,8 @@ struct PDFKitView: UIViewRepresentable {
     }
     
     func updateUIView(_ pdfView: PDFView, context: Context) {
-        // No updates needed
     }
 }
-
-// MARK: - Document Views
 
 struct PrivacyPolicyView: View {
     @Environment(\.dismiss) var dismiss
@@ -861,8 +841,6 @@ struct CompanyComplianceView: View {
         }
     }
 }
-
-// MARK: - Text Styling Views
 
 struct SectionTitle: View {
     let text: String

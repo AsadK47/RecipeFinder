@@ -5,20 +5,17 @@ struct CompactRecipeCard: View {
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
-    // Performance: Pre-compute static values
     private static let imageSize: CGFloat = 100
     private static let cornerRadius: CGFloat = 12
     private static let cardHeight: CGFloat = 220
     
     var body: some View {
         VStack(alignment: .center, spacing: 0) {
-            // Image with rounded corners
             ZStack(alignment: .topLeading) {
                 RecipeImageView(imageName: recipe.imageName, height: Self.imageSize)
                     .frame(width: Self.imageSize, height: Self.imageSize, alignment: .center)
                     .clipShape(RoundedRectangle(cornerRadius: Self.cornerRadius))
                 
-                // Favorite badge
                 if recipe.isFavorite {
                     ZStack {
                         Circle()
@@ -49,7 +46,6 @@ struct CompactRecipeCard: View {
             Spacer()
                 .frame(height: 12)
             
-            // Recipe info
             VStack(spacing: AppTheme.spacing6) {
                 Text(recipe.name)
                     .font(.caption)
@@ -68,7 +64,6 @@ struct CompactRecipeCard: View {
                         .foregroundColor(AppTheme.adaptiveCardTextEmphasis(for: colorScheme))
                 }
                 
-                // Difficulty text and bars inline
                 HStack(spacing: AppTheme.spacing6) {
                     DifficultyBarsView(difficulty: recipe.difficulty, size: 2.5)
                     Text(recipe.difficulty)
@@ -86,7 +81,6 @@ struct CompactRecipeCard: View {
         .clipShape(RoundedRectangle(cornerRadius: Self.cornerRadius))
     }
     
-    // Extract background to reduce body complexity
     @ViewBuilder
     private var cardBackground: some View {
         if cardStyle == .solid {
@@ -94,7 +88,6 @@ struct CompactRecipeCard: View {
                 .fill(AppTheme.cardBackground(for: colorScheme))
                 .shadow(color: Color.black.opacity(0.25), radius: 8, x: 0, y: 4)
         } else {
-            // Frosted glass - exactly like Shopping List
             RoundedRectangle(cornerRadius: Self.cornerRadius)
                 .fill(.ultraThinMaterial)
         }

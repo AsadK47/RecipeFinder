@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// A custom layout that arranges its subviews in a flowing manner,
-/// wrapping to the next line when there's not enough horizontal space.
 struct FlowLayout: Layout {
     let spacing: CGFloat
     
@@ -42,7 +40,6 @@ struct FlowLayout: Layout {
                 let size = subview.sizeThatFits(.unspecified)
                 
                 if currentX + size.width > maxWidth && currentX > 0 {
-                    // Move to next line
                     currentX = 0
                     currentY += lineHeight + spacing
                     lineHeight = 0

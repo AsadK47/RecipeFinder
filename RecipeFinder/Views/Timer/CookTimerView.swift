@@ -1,7 +1,6 @@
 import SwiftUI
 import UserNotifications
 
-// Timer Instance Model
 struct TimerInstance: Identifiable {
     let id = UUID()
     var name: String
@@ -12,7 +11,6 @@ struct TimerInstance: Identifiable {
     var startTime: Date?
 }
 
-// Completed Timer Banner Model
 struct CompletedTimerBanner: Identifiable {
     let id = UUID()
     let timerName: String
@@ -32,7 +30,7 @@ struct CookTimerView: View {
     
     @AppStorage("cardStyle") private var cardStyleString: String = "frosted"
     @AppStorage("keepScreenAwake") private var keepScreenAwake: Bool = false
-    @AppStorage("defaultTimerDuration") private var defaultTimerDuration: Int = 300 // 5 minutes in seconds
+    @AppStorage("defaultTimerDuration") private var defaultTimerDuration: Int = 300
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @Environment(\.scenePhase) var scenePhase
@@ -51,11 +49,9 @@ struct CookTimerView: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                    // Header
                     VStack(spacing: AppTheme.spacing12) {
                         GeometryReader { geometry in
                             HStack(spacing: 0) {
-                                // Back button
                                 Button(action: {
                                     HapticManager.shared.light()
                                     dismiss()
@@ -78,7 +74,6 @@ struct CookTimerView: View {
                                 
                                 Spacer()
                                 
-                                // Menu button
                                 Menu {
                                     Button(action: {
                                         HapticManager.shared.light()
@@ -128,18 +123,14 @@ struct CookTimerView: View {
                     
                     ScrollView {
                         VStack(spacing: AppTheme.spacing32) {
-                            // Quick Presets - Always show, but disable when max reached
                             quickPresetsSection
                             
-                            // Custom Time Input Button - Always show, but disable when max reached
                             customTimeButton
                             
-                            // Max timers warning (show when at max)
                             if timers.count >= maxTimers {
                                 maxTimersWarning
                             }
                             
-                            // Active Timers
                             if !timers.isEmpty {
                                 activeTimersSection
                             }
@@ -155,7 +146,6 @@ struct CookTimerView: View {
                 customTimeInputSheet
             }
             .overlay(alignment: .top) {
-                // Stackable completion banners
                 VStack(spacing: AppTheme.spacing8) {
                     ForEach(completedTimers) { completedTimer in
                         CompletedTimerBannerView(
@@ -202,7 +192,6 @@ struct CookTimerView: View {
         }
     }
     
-    // Quick Presets
     private var quickPresetsSection: some View {
         VStack(spacing: AppTheme.spacing16) {
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: AppTheme.spacing12) {
@@ -283,7 +272,6 @@ struct CookTimerView: View {
         .disabled(isDisabled)
     }
     
-    // Custom Time Button
     private var customTimeButton: some View {
         let isDisabled = timers.count >= maxTimers
         
@@ -314,7 +302,6 @@ struct CookTimerView: View {
         .disabled(isDisabled)
     }
     
-    // Custom Time Input Sheet
     private var customTimeInputSheet: some View {
         NavigationStack {
             ZStack {
@@ -322,7 +309,6 @@ struct CookTimerView: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                    // Header Section
                     VStack(spacing: AppTheme.spacing12) {
                         GeometryReader { geometry in
                             HStack {
@@ -353,7 +339,6 @@ struct CookTimerView: View {
                                 
                                 Spacer()
                                 
-                                // Invisible button for balance
                                 Button(action: {}) {
                                     Text("Cancel")
                                         .font(.body)
@@ -371,7 +356,6 @@ struct CookTimerView: View {
                     
                     ScrollView {
                         VStack(spacing: AppTheme.spacing40) {
-                            // Timer Name Input
                             VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                         Text("Timer Name (Optional)")
                             .font(.caption)
@@ -383,7 +367,6 @@ struct CookTimerView: View {
                     }
                     .padding(.horizontal, 20)
                     
-                    // Time Pickers
                     HStack(spacing: AppTheme.spacing24) {
                         VStack(spacing: AppTheme.spacing8) {
                             Text("Hours")
@@ -453,7 +436,6 @@ struct CookTimerView: View {
                         }
                     }
                     
-                    // Start Button
                     Button(action: {
                         let totalSeconds = customHours * 3600 + customMinutes * 60 + customSeconds
                         if totalSeconds > 0 {
@@ -492,7 +474,6 @@ struct CookTimerView: View {
         .presentationDetents([.medium, .large])
     }
     
-    // Active Timers Section
     private var activeTimersSection: some View {
         VStack(spacing: AppTheme.spacing16) {
             HStack {
@@ -521,7 +502,6 @@ struct CookTimerView: View {
         }
     }
     
-    // Max timers warning banner
     private var maxTimersWarning: some View {
         HStack(spacing: AppTheme.spacing12) {
             Image(systemName: "exclamationmark.triangle.fill")
@@ -554,7 +534,6 @@ struct CookTimerView: View {
         }
     }
     
-    // Timer Functions
     private func addTimer(name: String, seconds: Int) {
         guard timers.count < maxTimers else { return }
         
@@ -607,7 +586,6 @@ struct CookTimerView: View {
                 if timers[index].timeRemaining > 0 {
                     timers[index].timeRemaining -= 1
                 } else {
-                    // Timer completed
                     timerCompleted(timers[index])
                     timers.remove(at: index)
                     return
@@ -617,21 +595,17 @@ struct CookTimerView: View {
     }
     
     private func timerCompleted(_ timer: TimerInstance) {
-        // Add to completed timers list
         let completedTimer = CompletedTimerBanner(timerName: timer.name)
         withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
             completedTimers.append(completedTimer)
         }
         
-        // Start vibration if not already vibrating
         if vibrationTimer == nil {
             startContinuousVibration()
         }
         
-        // Send notification
         sendNotification(for: timer)
         
-        // Auto-dismiss after 5 seconds
         DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
             withAnimation {
                 dismissCompletedTimer(completedTimer)
@@ -642,17 +616,14 @@ struct CookTimerView: View {
     private func dismissCompletedTimer(_ completedTimer: CompletedTimerBanner) {
         completedTimers.removeAll { $0.id == completedTimer.id }
         
-        // Stop vibration if no more completed timers
         if completedTimers.isEmpty {
             stopVibration()
         }
     }
     
     private func startContinuousVibration() {
-        // Initial strong vibration
         HapticManager.shared.celebrate()
         
-        // Continue vibrating every 2 seconds until stopped
         vibrationTimer?.invalidate()
         vibrationTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { _ in
             HapticManager.shared.celebrate()
@@ -685,7 +656,6 @@ struct CookTimerView: View {
     }
 }
 
-// Timer Card
 struct TimerCard: View {
     let timer: TimerInstance
     let onTogglePause: () -> Void
@@ -713,7 +683,6 @@ struct TimerCard: View {
     
     var body: some View {
         VStack(spacing: AppTheme.spacing16) {
-            // Timer name and status
             HStack {
                 VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                     Text(timer.name)
@@ -728,7 +697,6 @@ struct TimerCard: View {
                 Spacer()
             }
             
-            // Circular Progress
             ZStack {
                 Circle()
                     .stroke(AppTheme.secondaryText.opacity(0.3), lineWidth: 8)
@@ -748,7 +716,6 @@ struct TimerCard: View {
             }
             .frame(width: 140, height: 140)
             
-            // Control Buttons
             HStack(spacing: AppTheme.spacing12) {
                 Button(action: onTogglePause) {
                     HStack {
@@ -792,7 +759,6 @@ struct TimerCard: View {
     }
 }
 
-// MARK: - Completed Timer Banner
 struct CompletedTimerBannerView: View {
     let timerName: String
     let onDismiss: () -> Void
@@ -801,7 +767,6 @@ struct CompletedTimerBannerView: View {
     
     var body: some View {
         HStack(spacing: AppTheme.spacing12) {
-            // Animated checkmark icon
             ZStack {
                 Circle()
                     .fill(Color.green)

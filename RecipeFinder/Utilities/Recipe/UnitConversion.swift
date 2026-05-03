@@ -14,52 +14,45 @@ enum MeasurementSystem: String, CaseIterable, Codable {
 
 struct UnitConversion {
     
-    // Weight Conversions - VERIFIED ACCURATE (USDA/NIST Standards)
     static func convertWeight(value: Double, from fromUnit: String, to toUnit: String) -> Double {
         let normalizedFrom = fromUnit.lowercased().trimmingCharacters(in: .whitespaces)
         let normalizedTo = toUnit.lowercased().trimmingCharacters(in: .whitespaces)
         
-        // Convert to grams first (base unit)
         var grams: Double = 0
         
-        // From conversions (EXACT values from NIST)
         switch normalizedFrom {
         case "g", "grams", "gram":
             grams = value
         case "kg", "kilograms", "kilogram":
-            grams = value * 1000.0  // Exact
+            grams = value * 1000.0
         case "lbs", "lb", "pounds", "pound":
-            grams = value * 453.59237  // NIST exact: 1 lb = 453.59237 g
+            grams = value * 453.59237
         case "oz", "ounces", "ounce":
-            grams = value * 28.349523125  // NIST exact: 1 oz = 28.349523125 g
+            grams = value * 28.349523125
         default:
-            return value // No conversion needed
+            return value
         }
         
-        // To conversions (EXACT values from NIST)
         switch normalizedTo {
         case "g", "grams", "gram":
             return grams
         case "kg", "kilograms", "kilogram":
-            return grams / 1000.0  // Exact
+            return grams / 1000.0
         case "lbs", "lb", "pounds", "pound":
-            return grams / 453.59237  // NIST exact
+            return grams / 453.59237
         case "oz", "ounces", "ounce":
-            return grams / 28.349523125  // NIST exact
+            return grams / 28.349523125
         default:
             return value
         }
     }
     
-    // Volume Conversions - VERIFIED ACCURATE (USDA/NIST Standards)
     static func convertVolume(value: Double, from fromUnit: String, to toUnit: String) -> Double {
         let normalizedFrom = fromUnit.lowercased().trimmingCharacters(in: .whitespaces)
         let normalizedTo = toUnit.lowercased().trimmingCharacters(in: .whitespaces)
         
-        // Convert to ml first (base unit)
         var ml: Double = 0
         
-        // From conversions (EXACT values from NIST/USDA)
         switch normalizedFrom {
         case "ml", "milliliters", "milliliter":
             ml = value
@@ -68,26 +61,25 @@ struct UnitConversion {
         case "dl", "deciliters", "deciliter":
             ml = value * 100.0
         case "l", "liters", "liter":
-            ml = value * 1000.0  // Exact
+            ml = value * 1000.0
         case "cup", "cups":
-            ml = value * 236.5882365  // USDA exact: 1 US cup = 236.5882365 ml
+            ml = value * 236.5882365
         case "tbsp", "tablespoon", "tablespoons":
-            ml = value * 14.78676478125  // USDA exact: 1 US tbsp = 14.78676478125 ml (1/16 cup)
+            ml = value * 14.78676478125
         case "tsp", "teaspoon", "teaspoons":
-            ml = value * 4.92892159375  // USDA exact: 1 US tsp = 4.92892159375 ml (1/3 tbsp)
+            ml = value * 4.92892159375
         case "fl oz", "fluid ounce", "fluid ounces":
-            ml = value * 29.5735295625  // NIST exact: 1 US fl oz = 29.5735295625 ml
+            ml = value * 29.5735295625
         case "pt", "pint", "pints":
-            ml = value * 473.176473  // NIST exact: 1 US liquid pint
+            ml = value * 473.176473
         case "qt", "quart", "quarts":
-            ml = value * 946.352946  // NIST exact: 1 US liquid quart
+            ml = value * 946.352946
         case "gal", "gallon", "gallons":
-            ml = value * 3785.411784  // NIST exact: 1 US gallon
+            ml = value * 3785.411784
         default:
             return value
         }
         
-        // To conversions (EXACT values from NIST/USDA)
         switch normalizedTo {
         case "ml", "milliliters", "milliliter":
             return ml
@@ -96,15 +88,15 @@ struct UnitConversion {
         case "dl", "deciliters", "deciliter":
             return ml / 100.0
         case "l", "liters", "liter":
-            return ml / 1000.0  // Exact
+            return ml / 1000.0
         case "cup", "cups":
-            return ml / 236.5882365  // USDA exact
+            return ml / 236.5882365
         case "tbsp", "tablespoon", "tablespoons":
-            return ml / 14.78676478125  // USDA exact
+            return ml / 14.78676478125
         case "tsp", "teaspoon", "teaspoons":
-            return ml / 4.92892159375  // USDA exact
+            return ml / 4.92892159375
         case "fl oz", "fluid ounce", "fluid ounces":
-            return ml / 29.5735295625  // NIST exact
+            return ml / 29.5735295625
         case "pt", "pint", "pints":
             return ml / 473.176473
         case "qt", "quart", "quarts":
@@ -116,17 +108,14 @@ struct UnitConversion {
         }
     }
     
-    // Unit Type Detection
     static func getUnitType(_ unit: String) -> UnitType {
         let normalized = unit.lowercased().trimmingCharacters(in: .whitespaces)
         
         switch normalized {
-        // Weight units
         case "g", "grams", "gram", "kg", "kilograms", "kilogram",
              "lbs", "lb", "pounds", "pound", "oz", "ounces", "ounce":
             return .weight
             
-        // Volume units
         case "ml", "milliliters", "milliliter",
              "cl", "centiliters", "centiliter",
              "dl", "deciliters", "deciliter",
@@ -136,13 +125,11 @@ struct UnitConversion {
              "pt", "pint", "pints", "qt", "quart", "quarts", "gal", "gallon", "gallons":
             return .volume
             
-        // No conversion needed
         default:
             return .none
         }
     }
     
-    // Smart Conversion
     static func convert(
         value: Double,
         unit: String,
@@ -155,12 +142,9 @@ struct UnitConversion {
         case .weight:
             return convertWeightToSystem(value: value, unit: unit, system: system)
         case .volume:
-            // If it's a volume unit (tsp, tbsp, cup), check if the ingredient is a solid
             if let name = ingredientName, isSolidIngredient(name) {
-                // Convert volume to weight for solid ingredients (spices, flour, sugar, etc.)
                 return convertVolumeToWeightForSolids(value: value, unit: unit, system: system, ingredientName: name)
             } else {
-                // Treat as liquid - normal volume conversion
                 return convertVolumeToSystem(value: value, unit: unit, system: system)
             }
         case .none:
@@ -168,11 +152,9 @@ struct UnitConversion {
         }
     }
     
-    // Solid Ingredient Detection
     private static func isSolidIngredient(_ ingredientName: String) -> Bool {
         let name = ingredientName.lowercased()
         
-        // Liquids (check first to avoid false positives)
         let liquids = ["oil", "water", "milk", "cream", "stock", "broth", "juice",
                       "sauce", "vinegar", "wine", "soy sauce", "coconut milk", "honey",
                       "syrup", "extract", "liquid", "melted"]
@@ -181,7 +163,6 @@ struct UnitConversion {
             return false
         }
         
-        // Common spices and dry herbs
         let spices = ["cumin", "coriander", "turmeric", "paprika", "chili", "chilli", 
                      "cinnamon", "nutmeg", "clove", "cardamom", "pepper", "ginger",
                      "garlic", "onion", "fennel", "mustard", "fenugreek", "bay leaf",
@@ -190,7 +171,6 @@ struct UnitConversion {
                      "saffron", "sumac", "za'atar", "curry", "masala", "garam",
                      "star anise", "peppercorn", "sesame", "poppy", "caraway"]
         
-        // Dry ingredients (baking, grains, etc.)
         let dryIngredients = ["flour", "sugar", "salt", "rice", "pasta", "oats",
                              "breadcrumb", "cornstarch", "cornflour", "baking powder", 
                              "baking soda", "yeast", "cocoa", "coffee", "tea", "seed",
@@ -198,7 +178,6 @@ struct UnitConversion {
                              "lentil", "bean", "chickpea", "grain", "quinoa", "couscous",
                              "dried", "powder", "ground", "crushed", "flake", "granule"]
         
-        // Check if any keyword matches
         for keyword in spices + dryIngredients where name.contains(keyword) {
             return true
         }
@@ -206,15 +185,11 @@ struct UnitConversion {
         return false
     }
     
-    // Specific Density Conversions
     private static func getDensityConversion(ingredientName: String, unit: String) -> Double? {
         let name = ingredientName.lowercased()
         let normalized = unit.lowercased().trimmingCharacters(in: .whitespaces)
         
-        // More accurate conversions for common ingredients (grams per tsp/tbsp/cup)
-        // swiftlint:disable:next large_tuple
         let densityMap: [String: (tsp: Double, tbsp: Double, cup: Double)] = [
-            // Spices (grams)
             "salt": (tsp: 6, tbsp: 18, cup: 288),
             "sugar": (tsp: 4, tbsp: 12.5, cup: 200),
             "flour": (tsp: 2.5, tbsp: 8, cup: 125),
@@ -230,19 +205,16 @@ struct UnitConversion {
             "black pepper": (tsp: 2.1, tbsp: 6.3, cup: 100),
             "chili powder": (tsp: 2.7, tbsp: 8.1, cup: 130),
             
-            // Common baking ingredients
             "cocoa": (tsp: 1.4, tbsp: 4.3, cup: 68),
             "baking powder": (tsp: 4.6, tbsp: 14, cup: 224),
             "baking soda": (tsp: 4.6, tbsp: 14, cup: 224),
             "cornstarch": (tsp: 2.5, tbsp: 8, cup: 128),
             "yeast": (tsp: 3.1, tbsp: 9.3, cup: 150),
             
-            // Seeds and nuts
             "sesame seed": (tsp: 3, tbsp: 9, cup: 144),
             "poppy seed": (tsp: 3.3, tbsp: 10, cup: 160)
         ]
         
-        // Find matching density
         for (ingredient, densities) in densityMap where name.contains(ingredient) {
             switch normalized {
             case "tsp", "teaspoon", "teaspoons":
@@ -259,7 +231,6 @@ struct UnitConversion {
         return nil
     }
     
-    // Volume to Weight Conversion for Solids
     private static func convertVolumeToWeightForSolids(
         value: Double,
         unit: String,
@@ -268,17 +239,12 @@ struct UnitConversion {
     ) -> (quantity: Double, unit: String) {
         let normalized = unit.lowercased().trimmingCharacters(in: .whitespaces)
         
-        // For imperial system, keep volume units (tsp/tbsp) as-is for spices/dry ingredients
-        // Only convert to grams for metric system
         switch system {
         case .imperial:
-            // Keep the original volume unit for imperial (tsp, tbsp, cups are standard in US cooking)
             return (value, unit)
             
         case .metric:
-            // Convert volume to weight (grams) for metric system
             
-            // Try to get specific density conversion first
             if let specificGrams = getDensityConversion(ingredientName: ingredientName, unit: unit) {
                 let grams = value * specificGrams
                 
@@ -289,18 +255,16 @@ struct UnitConversion {
                 }
             }
             
-            // Fall back to generic density conversions
             var grams: Double = 0
             
             switch normalized {
             case "tsp", "teaspoon", "teaspoons":
-                grams = value * 5 // Generic: 1 tsp ≈ 5g
+                grams = value * 5
             case "tbsp", "tablespoon", "tablespoons":
-                grams = value * 15 // Generic: 1 tbsp ≈ 15g
+                grams = value * 15
             case "cup", "cups":
-                grams = value * 125 // Generic: 1 cup ≈ 125g (varies widely)
+                grams = value * 125
             default:
-                // If it's already a weight unit or unknown, fall back to volume conversion
                 return convertVolumeToSystem(value: value, unit: unit, system: system)
             }
             
@@ -317,11 +281,9 @@ struct UnitConversion {
         
         switch system {
         case .metric:
-            // If already metric, return as is
             if ["g", "grams", "gram", "kg", "kilograms", "kilogram"].contains(normalized) {
                 return (value, unit)
             }
-            // Convert to grams or kg
             let grams = convertWeight(value: value, from: unit, to: "g")
             if grams >= 1000 {
                 return (grams / 1000, "kg")
@@ -330,11 +292,9 @@ struct UnitConversion {
             }
             
         case .imperial:
-            // If already imperial, return as is
             if ["lbs", "lb", "pounds", "pound", "oz", "ounces", "ounce"].contains(normalized) {
                 return (value, unit)
             }
-            // Convert to oz or lbs
             let oz = convertWeight(value: value, from: unit, to: "oz")
             if oz >= 16 {
                 return (oz / 16, "lbs")
@@ -349,14 +309,12 @@ struct UnitConversion {
         
         switch system {
         case .metric:
-            // If already metric, return as is
             if ["ml", "milliliters", "milliliter",
                 "cl", "centiliters", "centiliter",
                 "dl", "deciliters", "deciliter",
                 "l", "liters", "liter"].contains(normalized) {
                 return (value, unit)
             }
-            // Convert to ml or l
             let ml = convertVolume(value: value, from: unit, to: "ml")
             if ml >= 1000 {
                 return (ml / 1000, "l")
@@ -365,19 +323,15 @@ struct UnitConversion {
             }
             
         case .imperial:
-            // If already imperial, return as is
             if ["cup", "cups", "tbsp", "tablespoon", "tablespoons",
                 "tsp", "teaspoon", "teaspoons", "fl oz", "fluid ounce", "fluid ounces",
                 "pt", "pint", "pints", "qt", "quart", "quarts", "gal", "gallon", "gallons"].contains(normalized) {
                 return (value, unit)
             }
-            // Keep common imperial units
             let ml = convertVolume(value: value, from: unit, to: "ml")
             
-            // Prioritize common cooking measurements
             let cups = ml / 236.588
             if cups >= 1 {
-                // Use qt for very large volumes (≥4 cups)
                 if cups >= 4 { return (cups / 4, "qt") }
                 return (cups, "cup")
             }

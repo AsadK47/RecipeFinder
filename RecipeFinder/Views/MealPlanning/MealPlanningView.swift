@@ -31,12 +31,10 @@ struct MealPlanningView: View {
             VStack(spacing: 0) {
                 header
                 
-                // View Mode Picker
                 viewModePicker
                 
                 ScrollView {
                     VStack(spacing: AppTheme.spacing32) {
-                        // Main Content
                         if viewMode == .calendar {
                             calendarView
                                 .transition(.scale.combined(with: .opacity))
@@ -49,7 +47,6 @@ struct MealPlanningView: View {
                             selectedMealsSection
                                 .transition(.move(edge: .bottom).combined(with: .opacity))
                         } else if Calendar.current.isDate(selectedDate, inSameDayAs: Date()) || hasMealPlans(for: selectedDate) || selectedDate > Date().addingTimeInterval(-86400) {
-                            // Show empty state for selected day (today or future or recently viewed)
                             selectedDayEmptyState
                                 .transition(.opacity)
                         } else {
@@ -74,7 +71,6 @@ struct MealPlanningView: View {
                 onContinue: { mealTime in
                     currentMealTime = mealTime
                     showMealTimeSelector = false
-                    // Show options for wizard vs existing recipe
                     showRecipeSelector = true
                 }
             )
@@ -95,7 +91,6 @@ struct MealPlanningView: View {
                     showRecipeWizard = true
                 },
                 onSelectExisting: { recipe in
-                    // Save meal plan entry
                     if let mealTime = currentMealTime {
                         saveMealPlan(recipe: recipe, for: selectedDate, mealTime: mealTime)
                     }
@@ -110,7 +105,6 @@ struct MealPlanningView: View {
         }
         .sheet(isPresented: $showQuickSnackSheet) {
             QuickSnackSheet(recipes: $recipes) { snackRecipe in
-                // Save the quick snack to meal plan
                 if let mealTime = currentMealTime {
                     saveMealPlan(recipe: snackRecipe, for: selectedDate, mealTime: mealTime)
                 }
@@ -123,8 +117,6 @@ struct MealPlanningView: View {
         }
     }
     
-    // Meal Plan Management
-    
     private func saveMealPlan(recipe: RecipeModel, for date: Date, mealTime: MealTime) {
         let mealPlan = MealPlanModel(
             recipeId: recipe.id,
@@ -135,7 +127,6 @@ struct MealPlanningView: View {
         )
         mealPlanningManager.addMealPlan(mealPlan)
         
-        // Add to selected meal times for display
         selectedMealTimes.insert(mealTime)
         
         HapticManager.shared.success()
@@ -145,14 +136,12 @@ struct MealPlanningView: View {
         guard let mealPlan = mealPlanningManager.mealPlan(for: date, mealTime: mealTime) else {
             return nil
         }
-        // Find the recipe by ID
         return recipes.first { $0.id == mealPlan.recipeId }
     }
     
     private func removeMealPlan(for date: Date, mealTime: MealTime) {
         mealPlanningManager.removeMealPlan(for: date, mealTime: mealTime)
         
-        // Remove from selected meal times if no recipe
         if mealPlanningManager.mealPlan(for: date, mealTime: mealTime) == nil {
             selectedMealTimes.remove(mealTime)
         }
@@ -167,13 +156,11 @@ struct MealPlanningView: View {
             let spacing = AdaptiveSpacing(geometry: geometry)
             
             HStack(spacing: 0) {
-                // Empty space to balance menu button
                 Color.clear
                     .frame(width: 44, height: 44)
                 
                 Spacer()
                 
-                // Title
                 Text("Meal Planner")
                     .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
                     .adaptiveForegroundColor()
@@ -182,7 +169,6 @@ struct MealPlanningView: View {
                 
                 Spacer()
                 
-                // Menu button
                 Menu {
                     Button(action: {
                         HapticManager.shared.light()
@@ -260,7 +246,6 @@ struct MealPlanningView: View {
     
     private var weeklyPlanView: some View {
         VStack(spacing: AppTheme.spacing16) {
-            // Week navigation
             HStack {
                 Button(action: previousWeek) {
                     Image(systemName: "chevron.left")
@@ -288,7 +273,6 @@ struct MealPlanningView: View {
             }
             .padding(.horizontal, 4)
             
-            // Weekly meal grid
             VStack(spacing: AppTheme.spacing12) {
                 ForEach(daysInCurrentWeek, id: \.self) { date in
                     WeekDayRow(
@@ -319,7 +303,6 @@ struct MealPlanningView: View {
     
     private var calendarView: some View {
         VStack(spacing: AppTheme.spacing16) {
-            // Month/Year header with better styling
             HStack {
                 Button(action: previousMonth) {
                     Image(systemName: "chevron.left")
@@ -359,9 +342,7 @@ struct MealPlanningView: View {
             }
             .padding(.horizontal, 4)
             
-            // Calendar grid - only show actual weeks needed
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: AppTheme.spacing4), count: 7), spacing: AppTheme.spacing8) {
-                // Weekday headers
                 ForEach(["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], id: \.self) { day in
                     Text(day)
                         .font(.system(size: AppTheme.fontSize12, weight: .semibold))
@@ -369,7 +350,6 @@ struct MealPlanningView: View {
                         .frame(maxWidth: .infinity)
                 }
                 
-                // Calendar days - only show needed rows
                 ForEach(Array(compactDaysInMonth.enumerated()), id: \.offset) { index, date in
                     if let date = date {
                         CalendarDayView(
@@ -383,9 +363,7 @@ struct MealPlanningView: View {
                         .onTapGesture {
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                                 selectedDate = date
-                                // Load meal times for selected date
                                 updateSelectedMealTimes(for: date)
-                                // Immediately show meal selector
                                 showMealTimeSelector = true
                             }
                             HapticManager.shared.light()
@@ -457,7 +435,6 @@ struct MealPlanningView: View {
                 }
             }
             
-            // Add more meals button
             Button(action: {
                 showMealTimeSelector = true
                 HapticManager.shared.light()
@@ -591,8 +568,6 @@ struct MealPlanningView: View {
         .padding(AppTheme.spacing48)
     }
     
-    // Helper Properties
-    
     private var monthYearString: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMMM yyyy"
@@ -647,7 +622,6 @@ struct MealPlanningView: View {
         return days
     }
     
-    // Compact calendar that only shows the weeks needed for the current month
     private var compactDaysInMonth: [Date?] {
         guard let monthInterval = Calendar.current.dateInterval(of: .month, for: selectedDate),
               let monthFirstWeek = Calendar.current.dateInterval(of: .weekOfMonth, for: monthInterval.start) else {
@@ -658,15 +632,12 @@ struct MealPlanningView: View {
         var currentDate = monthFirstWeek.start
         let monthEnd = monthInterval.end
         
-        // Only add weeks that contain days in the current month
         while currentDate < monthEnd {
             if Calendar.current.isDate(currentDate, equalTo: selectedDate, toGranularity: .month) {
                 days.append(currentDate)
             } else if !days.isEmpty && days.count % 7 != 0 {
-                // Add placeholder for days outside month but in same week row
                 days.append(nil)
             } else if days.isEmpty {
-                // Add leading placeholders for first week
                 days.append(nil)
             }
             
@@ -675,13 +646,11 @@ struct MealPlanningView: View {
             }
             currentDate = nextDate
             
-            // Stop after we've passed the month and completed the week
             if currentDate > monthEnd && days.count % 7 == 0 {
                 break
             }
         }
         
-        // Fill remaining days in the last week if needed
         while days.count % 7 != 0 {
             days.append(nil)
         }
@@ -698,7 +667,7 @@ struct MealPlanningView: View {
         var days: [Date?] = []
         var currentDate = monthFirstWeek.start
         
-        while days.count < 42 { // 6 weeks
+        while days.count < 42 {
             if Calendar.current.isDate(currentDate, equalTo: selectedDate, toGranularity: .month) {
                 days.append(currentDate)
             } else {
@@ -712,8 +681,6 @@ struct MealPlanningView: View {
         
         return days
     }
-    
-    // Helper Methods
     
     private func previousMonth() {
         selectedDate = Calendar.current.date(byAdding: .month, value: -1, to: selectedDate) ?? selectedDate
@@ -736,8 +703,6 @@ struct MealPlanningView: View {
     }
 }
 
-// Supporting Views
-
 struct CalendarDayView: View {
     let date: Date
     let isSelected: Bool
@@ -752,7 +717,6 @@ struct CalendarDayView: View {
                 .font(.system(size: AppTheme.fontSize16, weight: isSelected ? .bold : (isToday ? .semibold : .regular)))
                 .foregroundColor(textColor)
             
-            // Meal indicator dot
             if hasPlannedMeals {
                 Circle()
                     .fill(Color.green)
@@ -794,7 +758,6 @@ struct MealTimeCard: View {
     
     var body: some View {
         HStack(spacing: AppTheme.spacing16) {
-            // Icon with background
             ZStack {
                 Circle()
                     .fill(colorScheme == .dark ? Color.white.opacity(0.15) : Color.black.opacity(0.15))
@@ -862,8 +825,6 @@ struct MealTimeCard: View {
     }
 }
 
-// Sheets
-
 struct MealTimeSelectorSheet: View {
     let selectedDate: Date
     @Binding var selectedMealTimes: Set<MealTime>
@@ -880,7 +841,6 @@ struct MealTimeSelectorSheet: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header section with better blending
                 VStack(spacing: AppTheme.spacing12) {
                     HStack {
                         Spacer()
@@ -913,7 +873,6 @@ struct MealTimeSelectorSheet: View {
                 }
                 .padding(.bottom, 20)
                 
-                // Meal times list
                 ScrollView {
                     VStack(spacing: AppTheme.spacing12) {
                             ForEach(MealTime.allCases, id: \.self) { mealTime in
@@ -923,7 +882,6 @@ struct MealTimeSelectorSheet: View {
                                     HapticManager.shared.light()
                                 }) {
                                     HStack(spacing: AppTheme.spacing16) {
-                                        // Icon with styled background
                                         ZStack {
                                             Circle()
                                                 .fill(selectedMealTimes.contains(mealTime) 
@@ -1026,9 +984,7 @@ struct RecipeSelectionSheet: View {
                 
                 VStack(spacing: 0) {
                     if showRecipeList {
-                        // Recipe List View
                         VStack(spacing: AppTheme.spacing12) {
-                            // Back button
                             HStack {
                                 Button(action: {
                                     withAnimation {
@@ -1071,9 +1027,7 @@ struct RecipeSelectionSheet: View {
                             }
                         }
                     } else {
-                        // Button View
                         VStack(spacing: AppTheme.spacing16) {
-                            // Add a Snack button (for snacks only)
                             if mealTime == .snack {
                                 Button(action: {
                                     onQuickSnack()
@@ -1102,7 +1056,6 @@ struct RecipeSelectionSheet: View {
                                 }
                             }
                             
-                            // Create Recipe button
                             Button(action: {
                                 onCreateNew()
                                 HapticManager.shared.light()
@@ -1129,7 +1082,6 @@ struct RecipeSelectionSheet: View {
                                 .cornerRadius(AppTheme.cornerRadius16)
                             }
                             
-                            // Add from Existing button
                             Button(action: {
                                 withAnimation {
                                     showRecipeList = true
@@ -1178,8 +1130,6 @@ struct RecipeSelectionSheet: View {
     }
 }
 
-// MARK: - Weekly View Components
-
 struct WeekDayRow: View {
     let date: Date
     let isToday: Bool
@@ -1195,7 +1145,6 @@ struct WeekDayRow: View {
     
     var body: some View {
         HStack(spacing: AppTheme.spacing12) {
-            // Date
             VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                 Text(dayString)
                     .font(.system(size: AppTheme.fontSize16, weight: .semibold))
@@ -1210,7 +1159,6 @@ struct WeekDayRow: View {
             
             Spacer()
             
-            // Meal indicators (placeholder - would show actual planned meals)
             HStack(spacing: AppTheme.spacing8) {
                 ForEach(["☀️", "🍽️", "🌙"], id: \.self) { icon in
                     Button(action: onAddMeal) {
@@ -1226,7 +1174,6 @@ struct WeekDayRow: View {
                 }
             }
             
-            // Add button
             Button(action: onAddMeal) {
                 Image(systemName: "plus.circle")
                     .font(.title3)
@@ -1249,8 +1196,6 @@ struct WeekDayRow: View {
         )
     }
 }
-
-// MARK: - Nutrition Tips Sheet
 
 struct NutritionTipsSheet: View {
     @Environment(\.dismiss) var dismiss
@@ -1317,7 +1262,6 @@ struct NutritionTipsSheet: View {
                 
                 ScrollView {
                     VStack(spacing: AppTheme.spacing24) {
-                        // Header
                         VStack(spacing: AppTheme.spacing12) {
                             Image(systemName: "heart.circle.fill")
                                 .font(.system(size: AppTheme.fontSize60))
@@ -1334,7 +1278,6 @@ struct NutritionTipsSheet: View {
                         .padding(.top, 20)
                         .padding(.bottom, 10)
                         
-                        // Tips
                         ForEach(tips) { tip in
                             NutritionTipCard(tip: tip, cardStyle: cardStyle, colorScheme: colorScheme)
                         }
@@ -1358,7 +1301,6 @@ struct NutritionTipsSheet: View {
     }
 }
 
-// MARK: - Month/Year Picker Sheet
 struct MonthYearPickerSheet: View {
     @Binding var selectedDate: Date
     @Environment(\.dismiss) var dismiss

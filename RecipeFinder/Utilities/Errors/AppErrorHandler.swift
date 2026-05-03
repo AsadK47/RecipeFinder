@@ -1,54 +1,39 @@
-//
-//  AppErrorHandler.swift
-//  RecipeFinder
-//
-//  Centralized error handling and user-friendly error messages
-//
 
 import Foundation
 import SwiftUI
 
 private let logger = AppLogger.logger(category: "AppErrorHandler")
 
-
-/// Comprehensive error types for the app
 enum RecipeFinderError: LocalizedError, Identifiable {
     var id: String { errorDescription ?? "Unknown error" }
     
-    // Import Errors
     case importFailed(reason: String)
     case parsingFailed(details: String)
     case invalidURL
     case networkUnavailable
     case unsupportedFormat
     
-    // Recipe Errors
     case recipeNotFound
     case invalidRecipeData
     case missingIngredients
     case missingInstructions
     
-    // Storage Errors
     case saveFailed
     case deleteFailed
     case loadFailed
     case exportFailed
     
-    // Kitchen Inventory Errors
     case inventoryUpdateFailed
     case itemNotFound
     case duplicateItem
     
-    // Shopping List Errors
     case shoppingListError(String)
     
-    // Authentication Errors
     case biometricAuthFailed
     case notAuthenticated
     
     var errorDescription: String? {
         switch self {
-        // Import Errors
         case .importFailed(let reason):
             return "Failed to import recipe: \(reason)"
         case .parsingFailed(let details):
@@ -60,7 +45,6 @@ enum RecipeFinderError: LocalizedError, Identifiable {
         case .unsupportedFormat:
             return "This recipe format is not supported. Try a different source."
             
-        // Recipe Errors
         case .recipeNotFound:
             return "Recipe could not be found"
         case .invalidRecipeData:
@@ -70,7 +54,6 @@ enum RecipeFinderError: LocalizedError, Identifiable {
         case .missingInstructions:
             return "Recipe must have at least one instruction step"
             
-        // Storage Errors
         case .saveFailed:
             return "Failed to save data. Please try again."
         case .deleteFailed:
@@ -80,7 +63,6 @@ enum RecipeFinderError: LocalizedError, Identifiable {
         case .exportFailed:
             return "Failed to export data. Check storage permissions."
             
-        // Kitchen Inventory Errors
         case .inventoryUpdateFailed:
             return "Failed to update kitchen inventory"
         case .itemNotFound:
@@ -88,11 +70,9 @@ enum RecipeFinderError: LocalizedError, Identifiable {
         case .duplicateItem:
             return "This item already exists in your inventory"
             
-        // Shopping List Errors
         case .shoppingListError(let message):
             return "Shopping list error: \(message)"
             
-        // Authentication Errors
         case .biometricAuthFailed:
             return "Biometric authentication failed. Please try again."
         case .notAuthenticated:
@@ -156,7 +136,6 @@ enum ErrorSeverity: CustomStringConvertible {
     case critical
     case security
     
-    
     var description: String {
         switch self {
         case .warning: return "Warning"
@@ -184,7 +163,6 @@ enum ErrorSeverity: CustomStringConvertible {
     }
 }
 
-/// View modifier for handling errors consistently
 struct ErrorAlert: ViewModifier {
     @Binding var error: RecipeFinderError?
     
@@ -201,13 +179,11 @@ struct ErrorAlert: ViewModifier {
 }
 
 extension View {
-    /// Attach error handling to any view
     func handleError(_ error: Binding<RecipeFinderError?>) -> some View {
         modifier(ErrorAlert(error: error))
     }
 }
 
-/// Custom error toast for non-blocking notifications
 struct ErrorToast: View {
     let error: RecipeFinderError
     @Binding var isShowing: Bool
@@ -252,7 +228,6 @@ struct ErrorToast: View {
                 .transition(.move(edge: .bottom).combined(with: .opacity))
                 .animation(.spring(response: 0.3), value: isShowing)
                 .onAppear {
-                    // Auto-dismiss after 5 seconds
                     DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
                         isShowing = false
                     }
@@ -263,7 +238,6 @@ struct ErrorToast: View {
 }
 
 extension View {
-    /// Show error as a toast notification
     func errorToast(error: RecipeFinderError?, isShowing: Binding<Bool>) -> some View {
         ZStack {
             self
@@ -275,7 +249,6 @@ extension View {
     }
 }
 
-/// Error Logger for debugging
 final class ErrorLogger: @unchecked Sendable {
     static let shared = ErrorLogger()
     
@@ -294,8 +267,6 @@ final class ErrorLogger: @unchecked Sendable {
         logger.info("─────────────────────────────────────────")
         #endif
         
-        // In production, you might want to send to analytics service
-        // Analytics.shared.trackError(error)
     }
     
     func logSuccess(_ message: String) {
@@ -305,11 +276,8 @@ final class ErrorLogger: @unchecked Sendable {
     }
 }
 
-// MARK: - Usage Examples
-
 /*
  
- // Example 1: Using in a View with Alert
  struct ImportRecipeView: View {
      @State private var error: RecipeFinderError?
      
@@ -328,14 +296,12 @@ final class ErrorLogger: @unchecked Sendable {
      }
  }
  
- // Example 2: Using with Toast
  struct RecipeListView: View {
      @State private var error: RecipeFinderError?
      @State private var showErrorToast = false
      
      var body: some View {
          List {
-             // content
          }
          .errorToast(error: error, isShowing: $showErrorToast)
          .onAppear {
@@ -355,12 +321,10 @@ final class ErrorLogger: @unchecked Sendable {
      }
  }
  
- // Example 3: Manual Error Handling
  func deleteRecipe(_ recipe: RecipeModel) {
      guard recipe.id != nil else {
          let error = RecipeFinderError.recipeNotFound
          ErrorLogger.shared.log(error)
-         // Show error to user
          return
      }
      
@@ -370,7 +334,6 @@ final class ErrorLogger: @unchecked Sendable {
      } catch {
          let error = RecipeFinderError.deleteFailed
          ErrorLogger.shared.log(error)
-         // Show error to user
      }
  }
  

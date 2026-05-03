@@ -1,32 +1,18 @@
-//
-//  TestHelpers.swift
-//  RecipeFinder
-//
-//  Debug-only helpers for testing authentication
-//
 
 import Foundation
 
 private let logger = AppLogger.logger(category: "TestHelpers")
 
-
 #if DEBUG
 
-/// Test Helper for Authentication Testing
 struct AuthTestHelper {
-    
-    // MARK: - Test Credentials
     
     static let testEmail = "test@email.com"
     static let testPassword = "Password123!"
     
-    // MARK: - Auto-Create Test Account
-    
-    /// Ensures the test account exists in Keychain (call on app launch in DEBUG)
     static func ensureTestAccountExists() {
         let credentialManager = SecureCredentialManager.shared
         
-        // Only create if it doesn't already exist
         if credentialManager.getUserInfo(email: testEmail) == nil {
             let success = credentialManager.saveCredentials(
                 email: testEmail,
@@ -44,12 +30,8 @@ struct AuthTestHelper {
         }
     }
     
-    // MARK: - Clear All Auth Data
-    
-    /// Clear all authentication data for clean testing
     @MainActor
     static func clearAllAuthData() {
-        // Clear UserDefaults
         UserDefaults.standard.removeObject(forKey: "isAuthenticated")
         UserDefaults.standard.removeObject(forKey: "userData")
         UserDefaults.standard.removeObject(forKey: "currentUserEmail")
@@ -59,16 +41,13 @@ struct AuthTestHelper {
         UserDefaults.standard.removeObject(forKey: "hasSeenBiometricOnboarding")
         UserDefaults.standard.removeObject(forKey: "appleUserCache")
         
-        // Clear Keychain credentials
         SecureCredentialManager.shared.deleteAllCredentials()
         
-        // Sign out
         AuthenticationManager.shared.signOut()
         
         logger.debug("🧹 All authentication data cleared (UserDefaults + Keychain)")
     }
     
-    /// Delete a specific user from Keychain
     static func deleteUser(email: String) {
         SecureCredentialManager.shared.deleteCredentials(email: email)
         logger.debug("🗑️ Deleted user: \(email)")

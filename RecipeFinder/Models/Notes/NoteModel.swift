@@ -36,12 +36,10 @@ struct NoteModel: Identifiable, Codable {
 }
 
 enum NoteCategory: String, Codable, CaseIterable {
-    // Top 3 prominent categories
     case general = "General"
     case recipe = "Recipe Ideas"
     case shopping = "Shopping"
     
-    // Additional 6 categories (collapsed)
     case mealPlan = "Meal Planning"
     case tips = "Cooking Tips"
     case journal = "Food Journal"
@@ -49,7 +47,6 @@ enum NoteCategory: String, Codable, CaseIterable {
     case techniques = "Techniques"
     case restaurants = "Restaurants"
     
-    // Catch-all
     case other = "Other"
     
     var icon: String {
@@ -67,18 +64,15 @@ enum NoteCategory: String, Codable, CaseIterable {
         }
     }
     
-    // Top 3 categories to show prominently
     static var topCategories: [NoteCategory] {
         [.general, .recipe, .shopping]
     }
     
-    // Other categories (collapsed by default)
     static var moreCategories: [NoteCategory] {
         [.mealPlan, .tips, .journal, .ingredients, .techniques, .restaurants, .other]
     }
 }
 
-// Extension for search and filtering
 extension NoteModel {
     func matches(searchText: String) -> Bool {
         guard !searchText.isEmpty else { return true }

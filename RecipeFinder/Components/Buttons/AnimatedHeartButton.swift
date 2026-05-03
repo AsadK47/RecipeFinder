@@ -2,7 +2,6 @@ import SwiftUI
 
 private let logger = AppLogger.logger(category: "AnimatedHeartButton")
 
-
 struct AnimatedHeartButton: View {
     @Binding var isFavorite: Bool
     let action: () -> Void
@@ -12,13 +11,12 @@ struct AnimatedHeartButton: View {
     @State private var scale: CGFloat = 1.0
     @State private var particlesVisible = false
     
-    // Instagram-style gradient colors (pink to red to orange)
     private let heartGradient = LinearGradient(
         gradient: Gradient(colors: [
-            Color(red: 1.0, green: 0.2, blue: 0.4),      // Pink-red
-            Color(red: 0.96, green: 0.26, blue: 0.21),   // Red
-            Color(red: 1.0, green: 0.38, blue: 0.27),    // Red-orange
-            Color(red: 1.0, green: 0.5, blue: 0.0)       // Orange
+            Color(red: 1.0, green: 0.2, blue: 0.4),
+            Color(red: 0.96, green: 0.26, blue: 0.21),
+            Color(red: 1.0, green: 0.38, blue: 0.27),
+            Color(red: 1.0, green: 0.5, blue: 0.0)
         ]),
         startPoint: .topLeading,
         endPoint: .bottomTrailing
@@ -27,7 +25,6 @@ struct AnimatedHeartButton: View {
     var body: some View {
         Button(action: handleTap) {
             ZStack {
-                // Particle effects layer
                 if particlesVisible && isFavorite {
                     ForEach(0..<8, id: \.self) { index in
                         Circle()
@@ -39,7 +36,6 @@ struct AnimatedHeartButton: View {
                     }
                 }
                 
-                // Heart icon
                 Image(systemName: isFavorite ? "heart.fill" : "heart")
                     .font(.title3)
                     .foregroundStyle(isFavorite ? heartGradient : LinearGradient(gradient: Gradient(colors: [AppTheme.textColor(for: colorScheme)]), startPoint: .top, endPoint: .bottom))
@@ -57,53 +53,47 @@ struct AnimatedHeartButton: View {
         }
     }
     
-    // Actions
     private func handleTap() {
         HapticManager.shared.light()
         action()
     }
     
     private func animateHeart() {
-        // Initial bounce
         withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
             scale = 1.4
         }
         
-        // Show particles
         withAnimation(.easeOut(duration: 0.6).delay(0.1)) {
             particlesVisible = true
         }
         
-        // Return to normal size
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
                 scale = 1.0
             }
         }
         
-        // Hide particles
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
             particlesVisible = false
         }
     }
     
-    // Particle Helpers
     private func particleColor(for index: Int) -> Color {
         let colors: [Color] = [
-            Color(red: 1.0, green: 0.2, blue: 0.4),      // Pink-red
-            Color(red: 0.96, green: 0.26, blue: 0.21),   // Red
-            Color(red: 1.0, green: 0.38, blue: 0.27),    // Red-orange
-            Color(red: 1.0, green: 0.5, blue: 0.0),      // Orange
-            Color(red: 1.0, green: 0.65, blue: 0.0),     // Light orange
-            Color(red: 1.0, green: 0.75, blue: 0.8),     // Light pink
-            Color(red: 0.8, green: 0.2, blue: 0.6),      // Magenta
-            Color(red: 1.0, green: 0.4, blue: 0.5)       // Pink
+            Color(red: 1.0, green: 0.2, blue: 0.4),
+            Color(red: 0.96, green: 0.26, blue: 0.21),
+            Color(red: 1.0, green: 0.38, blue: 0.27),
+            Color(red: 1.0, green: 0.5, blue: 0.0),
+            Color(red: 1.0, green: 0.65, blue: 0.0),
+            Color(red: 1.0, green: 0.75, blue: 0.8),
+            Color(red: 0.8, green: 0.2, blue: 0.6),
+            Color(red: 1.0, green: 0.4, blue: 0.5)
         ]
         return colors[index % colors.count]
     }
     
     private func particleOffset(for index: Int) -> CGSize {
-        let angle = Double(index) * .pi / 4.0  // 8 particles, 45° apart
+        let angle = Double(index) * .pi / 4.0
         let radius: CGFloat = 25
         return CGSize(
             width: Foundation.cos(angle) * radius,
@@ -112,7 +102,6 @@ struct AnimatedHeartButton: View {
     }
 }
 
-// Preview
 #Preview {
     ZStack {
         AppTheme.backgroundGradient(for: AppTheme.ThemeType.teal, colorScheme: .dark)

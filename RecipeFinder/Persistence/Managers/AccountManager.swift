@@ -4,30 +4,24 @@ import Combine
 
 private let logger = AppLogger.logger(category: "Account")
 
-
 @MainActor
 final class AccountManager: ObservableObject {
     static let shared = AccountManager()
     
-    // Profile fields - MINIMAL DATA COLLECTION
     @Published private(set) var uuid: String = ""
     @Published private(set) var firstName: String = ""
     @Published private(set) var lastName: String = ""
     @Published private(set) var chefType: ChefType = .homeCook
     
-    // Stats (non-PII)
     @Published private(set) var recipeCount: Int = 0
     @Published private(set) var kitchenItemCount: Int = 0
     @Published private(set) var shoppingListCount: Int = 0
     
-    // UserScopedStorage keys (per-user isolation)
     private let uuidKey = "accountUUID"
     private let firstNameKey = "accountFirstName"
     private let lastNameKey = "accountLastName"
     private let chefTypeKey = "accountChefType"
     private let profileImageKey = "accountProfileImage"
-    
-    // Note: Email and password are handled by AuthenticationManager/Keychain ONLY
     
     var fullName: String {
         if firstName.isEmpty && lastName.isEmpty {
@@ -55,10 +49,8 @@ final class AccountManager: ObservableObject {
         loadProfile()
         updateStats()
         
-        // Unlock welcome badge on first launch
         unlockWelcomeBadge()
         
-        // Observe data changes to update stats
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(updateStats),
@@ -68,25 +60,17 @@ final class AccountManager: ObservableObject {
     }
     
     private func unlockWelcomeBadge() {
-        // Only unlock once
         if !BadgeManager.shared.isBadgeUnlocked(BadgeType.welcomeAboard.rawValue) {
-            // Use the account creation date if available, otherwise use current date
             let signupDate = UserScopedStorage.shared.object(forKey: "accountCreationDate") as? Date ?? Date()
             BadgeManager.shared.unlockBadge(.welcomeAboard, customDate: signupDate)
             
-            // Save account creation date for future reference
             if UserScopedStorage.shared.object(forKey: "accountCreationDate") == nil {
                 UserScopedStorage.shared.set(Date(), forKey: "accountCreationDate")
             }
         }
     }
     
-    // Profile Management
-    
-    /// Reload profile data from UserScopedStorage for the current user
-    /// This method should be called whenever the currentUserId changes
     func loadProfile() {
-        // If no user is logged in, reset to defaults without saving
         guard UserScopedStorage.shared.currentUserId != nil else {
             uuid = ""
             firstName = ""
@@ -95,7 +79,6 @@ final class AccountManager: ObservableObject {
             return
         }
         
-        // Load or generate UUID
         if let savedUUID = UserScopedStorage.shared.string(forKey: uuidKey) {
             uuid = savedUUID
         } else {
@@ -106,7 +89,6 @@ final class AccountManager: ObservableObject {
         firstName = UserScopedStorage.shared.string(forKey: firstNameKey) ?? ""
         lastName = UserScopedStorage.shared.string(forKey: lastNameKey) ?? ""
         
-        // Load chef type if available, otherwise keeps default .homeCook
         if let chefTypeRaw = UserScopedStorage.shared.string(forKey: chefTypeKey),
            let savedChefType = ChefType(rawValue: chefTypeRaw) {
             chefType = savedChefType
@@ -132,8 +114,6 @@ final class AccountManager: ObservableObject {
         HapticManager.shared.success()
     }
     
-    // Profile Image Management
-    
     func saveProfileImage(_ image: UIImage?) {
         if let image = image,
            let imageData = image.jpegData(compressionQuality: 0.8) {
@@ -154,16 +134,11 @@ final class AccountManager: ObservableObject {
         UserScopedStorage.shared.removeObject(forKey: profileImageKey)
     }
     
-    // Stats
-    
     @objc func updateStats() {
-        // Update recipe count from Core Data
         self.recipeCount = PersistenceController.shared.fetchRecipeCount()
         
-        // Read from UserScopedStorage so counts reflect the current user's data
         let storage = UserScopedStorage.shared
         
-        // Update kitchen items count
         if let data = storage.data(forKey: Constants.UserDefaultsKeys.kitchenItems),
            let items = try? JSONDecoder().decode([KitchenItem].self, from: data) {
             self.kitchenItemCount = items.count
@@ -171,7 +146,6 @@ final class AccountManager: ObservableObject {
             self.kitchenItemCount = 0
         }
         
-        // Update shopping list count
         if let data = storage.data(forKey: Constants.UserDefaultsKeys.shoppingListItems),
            let items = try? JSONDecoder().decode([ShoppingListModel].self, from: data) {
             self.shoppingListCount = items.count
@@ -180,11 +154,7 @@ final class AccountManager: ObservableObject {
         }
     }
     
-    // MARK: - Data Management
-    
-    /// Clear all user data (recipes, kitchen, shopping) - used for account deletion
     func clearAllData() {
-        // Clear all UserDefaults data
         let keysToRemove = [
             Constants.UserDefaultsKeys.kitchenItems,
             Constants.UserDefaultsKeys.shoppingListItems,
@@ -195,19 +165,15 @@ final class AccountManager: ObservableObject {
             UserScopedStorage.shared.removeObject(forKey: key)
         }
         
-        // Clear Core Data recipes
         PersistenceController.shared.clearAllRecipes()
         
-        // Clear profile data
         clearProfileData()
         
         logger.debug("🗑️ All user data cleared")
         
-        // Notify other views to refresh (also triggers updateStats via observer)
         NotificationCenter.default.post(name: NSNotification.Name("DataDidChange"), object: nil)
     }
     
-    /// Clear profile data only (name, image, chef type)
     func clearProfileData() {
         UserScopedStorage.shared.removeObject(forKey: firstNameKey)
         UserScopedStorage.shared.removeObject(forKey: lastNameKey)
@@ -215,7 +181,6 @@ final class AccountManager: ObservableObject {
         UserScopedStorage.shared.removeObject(forKey: profileImageKey)
         UserScopedStorage.shared.removeObject(forKey: uuidKey)
         
-        // Reset to defaults
         firstName = ""
         lastName = ""
         chefType = .homeCook
@@ -224,11 +189,9 @@ final class AccountManager: ObservableObject {
         logger.debug("🗑️ Profile data cleared")
     }
     
-    /// Reset to defaults - clears and repopulates (used for reset feature)
     func resetToDefaults() {
         clearAllData()
         
-        // Repopulate with sample recipes
         PersistenceController.shared.populateDatabase()
         UserScopedStorage.shared.set(true, forKey: Constants.UserDefaultsKeys.hasPopulatedDatabase)
         
@@ -236,8 +199,6 @@ final class AccountManager: ObservableObject {
         logger.debug("🔄 Reset to defaults complete")
     }
 }
-
-// MARK: - Chef Type Enum
 
 enum ChefType: String, CaseIterable {
     case homeCook = "Home Cook"

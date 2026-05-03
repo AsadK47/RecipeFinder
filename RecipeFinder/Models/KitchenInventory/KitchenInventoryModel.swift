@@ -1,6 +1,5 @@
 import Foundation
 
-/// Represents an item in the kitchen inventory with expiration tracking and storage location
 struct KitchenInventoryModel: Identifiable, Codable, Hashable {
     var id: UUID
     var name: String
@@ -40,9 +39,6 @@ struct KitchenInventoryModel: Identifiable, Codable, Hashable {
         self.minimumQuantity = minimumQuantity
     }
     
-    // MARK: - Expiration Status
-    
-    /// Days until the item expires (negative if already expired)
     var daysUntilExpiry: Int? {
         guard let expiryDate = expiryDate else { return nil }
         let calendar = Calendar.current
@@ -50,19 +46,16 @@ struct KitchenInventoryModel: Identifiable, Codable, Hashable {
         return components.day
     }
     
-    /// Whether the item is expiring soon (within 3 days)
     var isExpiringSoon: Bool {
         guard let days = daysUntilExpiry else { return false }
         return days >= 0 && days <= 3
     }
     
-    /// Whether the item has expired
     var isExpired: Bool {
         guard let days = daysUntilExpiry else { return false }
         return days < 0
     }
     
-    /// Status text for display
     var expiryStatusText: String {
         guard let days = daysUntilExpiry else { return "No expiry date" }
         
@@ -79,14 +72,11 @@ struct KitchenInventoryModel: Identifiable, Codable, Hashable {
         }
     }
     
-    /// Stock status check
     var needsRestock: Bool {
         guard let min = minimumQuantity else { return isLowStock }
         return quantity <= min
     }
 }
-
-// MARK: - Ingredient Categories
 
 enum IngredientCategory: String, Codable, CaseIterable {
     case produce = "Produce"
@@ -119,7 +109,6 @@ enum IngredientCategory: String, Codable, CaseIterable {
         }
     }
     
-    /// Typical expiry duration in days for this category
     var typicalExpiryDays: Int {
         switch self {
         case .produce: return 7
@@ -137,8 +126,6 @@ enum IngredientCategory: String, Codable, CaseIterable {
         }
     }
 }
-
-// MARK: - Storage Locations
 
 enum StorageLocation: String, Codable, CaseIterable {
     case pantry = "Pantry"
@@ -158,7 +145,6 @@ enum StorageLocation: String, Codable, CaseIterable {
     }
 }
 
-// MARK: - Extensions
 extension KitchenInventoryModel {
     static var placeholderIngredients: [KitchenInventoryModel] {
         [
