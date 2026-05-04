@@ -2,12 +2,19 @@ import Foundation
 
 enum RecipeViewMode: String, CaseIterable {
     case list = "List"
-    
+    case grid = "Grid"
+
     var columns: Int {
-        return 1
+        switch self {
+        case .list: return 1
+        case .grid: return 2
+        }
     }
-    
+
     var icon: String {
-        return "rectangle.grid.1x2"
+        switch self {
+        case .list: return "list.bullet"
+        case .grid: return "square.grid.2x2"
+        }
     }
 }
