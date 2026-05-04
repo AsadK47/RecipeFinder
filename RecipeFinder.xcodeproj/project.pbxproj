@@ -75,6 +75,7 @@
 		9E834DF12ECA6508008F8A11 /* CookingTipModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E834DEF2ECA6508008F8A11 /* CookingTipModel.swift */; };
 		9E834DF52ECA651C008F8A11 /* CookingTipsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E834DF32ECA651C008F8A11 /* CookingTipsView.swift */; };
 		9E834DF62ECA651C008F8A11 /* CookingTipDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E834DF22ECA651C008F8A11 /* CookingTipDetailView.swift */; };
+		9E85E3552FA9403D000136E1 /* CardViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E85E3532FA9403D000136E1 /* CardViewTests.swift */; };
 		9E87BC922EF54E17003F9157 /* DietaryInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E87BC8E2EF54E17003F9157 /* DietaryInfo.swift */; };
 		9E87BC932EF54E17003F9157 /* NutritionalTips.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E87BC902EF54E17003F9157 /* NutritionalTips.swift */; };
 		9E87BC952EF54F26003F9157 /* NutritionalTipsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E87BC942EF54F26003F9157 /* NutritionalTipsView.swift */; };
@@ -196,6 +197,7 @@
 		9E834DEF2ECA6508008F8A11 /* CookingTipModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookingTipModel.swift; sourceTree = "<group>"; };
 		9E834DF22ECA651C008F8A11 /* CookingTipDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookingTipDetailView.swift; sourceTree = "<group>"; };
 		9E834DF32ECA651C008F8A11 /* CookingTipsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookingTipsView.swift; sourceTree = "<group>"; };
+		9E85E3532FA9403D000136E1 /* CardViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardViewTests.swift; sourceTree = "<group>"; };
 		9E87BC8E2EF54E17003F9157 /* DietaryInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DietaryInfo.swift; sourceTree = "<group>"; };
 		9E87BC902EF54E17003F9157 /* NutritionalTips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionalTips.swift; sourceTree = "<group>"; };
 		9E87BC942EF54F26003F9157 /* NutritionalTipsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionalTipsView.swift; sourceTree = "<group>"; };
@@ -645,6 +647,14 @@
 			path = CookingTips;
 			sourceTree = "<group>";
 		};
+		9E85E3542FA9403D000136E1 /* Cards */ = {
+			isa = PBXGroup;
+			children = (
+				9E85E3532FA9403D000136E1 /* CardViewTests.swift */,
+			);
+			path = Cards;
+			sourceTree = "<group>";
+		};
 		9E87BC8F2EF54E17003F9157 /* DietaryInfo */ = {
 			isa = PBXGroup;
 			children = (
@@ -664,6 +674,7 @@
 		9E90AAFC2FA9022600096D9D /* RecipeFinderTests */ = {
 			isa = PBXGroup;
 			children = (
+				9E85E3542FA9403D000136E1 /* Cards */,
 				9E90AB012FA9247B00096D9D /* Components */,
 				9E90AB002FA9030000096D9D /* Utilities */,
 			);
@@ -1064,6 +1075,7 @@
 			files = (
 				9E90AAFE2FA9029E00096D9D /* UnitConversionTests.swift in Sources */,
 				9E90AB022FA9247B00096D9D /* AnimatedHeartButtonTests.swift in Sources */,
+				9E85E3552FA9403D000136E1 /* CardViewTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

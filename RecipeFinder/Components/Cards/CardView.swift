@@ -1,53 +1,57 @@
 import SwiftUI
 
+private enum CardViewLayout {
+    static let cornerRadius: CGFloat = 16
+    static let shadowRadius: CGFloat = 8
+    static let shadowRadiusFrosted: CGFloat = 10
+    static let shadowY: CGFloat = 4
+    static let shadowOpacitySolid: Double = 0.25
+    static let shadowOpacityFrostedDark: Double = 0.3
+    static let shadowOpacityFrostedLight: Double = 0.15
+}
+
 struct CardView<Content: View>: View {
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     let content: Content
-    
+
     init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
-    
+
     var body: some View {
         content
-            .background {
-                if cardStyle == .solid {
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(AppTheme.cardBackground(for: colorScheme))
-                        .shadow(color: Color.black.opacity(0.25), radius: 8, x: 0, y: 4)
-                } else {
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(.ultraThinMaterial)
-                        .shadow(color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.15), radius: 10, x: 0, y: 4)
-                }
-            }
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .background { cardBackground }
+            .clipShape(RoundedRectangle(cornerRadius: CardViewLayout.cornerRadius))
+    }
+
+    @ViewBuilder
+    private var cardBackground: some View {
+        if cardStyle == .solid {
+            RoundedRectangle(cornerRadius: CardViewLayout.cornerRadius)
+                .fill(AppTheme.cardBackground(for: colorScheme))
+                .shadow(
+                    color: Color.black.opacity(CardViewLayout.shadowOpacitySolid),
+                    radius: CardViewLayout.shadowRadius,
+                    x: 0,
+                    y: CardViewLayout.shadowY
+                )
+        } else {
+            RoundedRectangle(cornerRadius: CardViewLayout.cornerRadius)
+                .fill(.ultraThinMaterial)
+                .shadow(
+                    color: Color.black.opacity(frostedShadowOpacity(for: colorScheme)),
+                    radius: CardViewLayout.shadowRadiusFrosted,
+                    x: 0,
+                    y: CardViewLayout.shadowY
+                )
+        }
+    }
+
+    func frostedShadowOpacity(for colorScheme: ColorScheme) -> Double {
+        colorScheme == .dark ? CardViewLayout.shadowOpacityFrostedDark : CardViewLayout.shadowOpacityFrostedLight
     }
 }
 
-struct GlassCard<Content: View>: View {
-    @Environment(\.colorScheme) var colorScheme
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
-    let content: Content
-    
-    init(@ViewBuilder content: () -> Content) {
-        self.content = content()
-    }
-    
-    var body: some View {
-        content
-            .background {
-                if cardStyle == .solid {
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(AppTheme.cardBackground(for: colorScheme))
-                        .shadow(color: Color.black.opacity(0.25), radius: 8, x: 0, y: 4)
-                } else {
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(.ultraThinMaterial)
-                        .shadow(color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.15), radius: 10, x: 0, y: 4)
-                }
-            }
-            .clipShape(RoundedRectangle(cornerRadius: 16))
-    }
-}
+// GlassCard is an alias — identical behaviour, kept for call-site compatibility
+typealias GlassCard = CardView
