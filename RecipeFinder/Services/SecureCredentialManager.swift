@@ -81,7 +81,6 @@ final class SecureCredentialManager: @unchecked Sendable {
         let stableUserId = existingUserId ?? UUID().uuidString
         
         let credentials: [String: Any] = [
-            "email": email,
             "hashedEmail": hashedEmail,
             "hashedPassword": hashedPassword,
             "salt": salt,
@@ -147,14 +146,13 @@ final class SecureCredentialManager: @unchecked Sendable {
     
     func getUserInfo(email: String) -> (email: String, fullName: String)? {
         let hashedEmail = hashEmail(email)
-        
+
         guard let credentials = retrieveCredentials(hashedEmail: hashedEmail),
-              let storedEmail = credentials["email"] as? String,
               let fullName = credentials["fullName"] as? String else {
             return nil
         }
-        
-        return (storedEmail, fullName)
+
+        return (email, fullName)
     }
     
     func getUserId(email: String) -> String? {
