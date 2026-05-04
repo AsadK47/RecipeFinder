@@ -6,7 +6,7 @@ import CommonCrypto
 
 private let logger = AppLogger.logger(category: "SecureCredential")
 
-final class SecureCredentialManager: @unchecked Sendable {
+final class SecureCredentialManager: Sendable {
     static let shared = SecureCredentialManager()
     
     private init() {}

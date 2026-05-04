@@ -3,8 +3,9 @@ import Foundation
 
 private let logger = AppLogger.logger(category: "PersistenceController")
 
+@MainActor
 final class PersistenceController {
-    nonisolated(unsafe) static let shared = PersistenceController()
+    static let shared = PersistenceController()
     
     let container: NSPersistentContainer
     private(set) var loadError: Error?
@@ -50,20 +51,22 @@ final class PersistenceController {
     
     private func loadStore() {
         container.loadPersistentStores { [weak self] storeDescription, error in
-            guard let self = self else { return }
-            let storeURL = storeDescription.url?.absoluteString ?? "unknown location"
-            
-            if let error = error as NSError? {
-                logger.error("❌ Failed to load persistent store: \(error.localizedDescription)")
-                logger.error("❌ Error details: \(error.userInfo)")
-                
-                self.loadError = error
-                self.isStoreLoaded = false
-                self.attemptStoreRecovery()
-            } else {
-                logger.debug("✅ Core Data store loaded successfully at: \(storeURL)")
-                self.isStoreLoaded = true
-                self.loadError = nil
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                let storeURL = storeDescription.url?.absoluteString ?? "unknown location"
+
+                if let error = error as NSError? {
+                    logger.error("❌ Failed to load persistent store: \(error.localizedDescription)")
+                    logger.error("❌ Error details: \(error.userInfo)")
+
+                    self.loadError = error
+                    self.isStoreLoaded = false
+                    self.attemptStoreRecovery()
+                } else {
+                    logger.debug("✅ Core Data store loaded successfully at: \(storeURL)")
+                    self.isStoreLoaded = true
+                    self.loadError = nil
+                }
             }
         }
     }
@@ -81,17 +84,19 @@ final class PersistenceController {
             logger.debug("✅ Removed corrupted store file")
             
             container.loadPersistentStores { [weak self] _, error in
-                guard let self = self else { return }
-                
-                if let error {
-                    logger.error("❌ Recovery failed: \(error.localizedDescription)")
-                    self.loadError = error
-                    self.isStoreLoaded = false
-                } else {
-                    logger.debug("✅ Store recovered successfully")
-                    self.isStoreLoaded = true
-                    self.loadError = nil
-                    self.populateDatabase()
+                Task { @MainActor [weak self] in
+                    guard let self else { return }
+
+                    if let error {
+                        logger.error("❌ Recovery failed: \(error.localizedDescription)")
+                        self.loadError = error
+                        self.isStoreLoaded = false
+                    } else {
+                        logger.debug("✅ Store recovered successfully")
+                        self.isStoreLoaded = true
+                        self.loadError = nil
+                        self.populateDatabase()
+                    }
                 }
             }
         } catch {
