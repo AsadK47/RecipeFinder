@@ -5,99 +5,134 @@ private let logger = AppLogger.logger(category: "AnimatedHeartButton")
 struct AnimatedHeartButton: View {
     @Binding var isFavorite: Bool
     let action: () -> Void
-    
+
     @Environment(\.colorScheme) var colorScheme
     @State private var isAnimating = false
-    @State private var scale: CGFloat = 1.0
+    @State private var scale: CGFloat = Timing.scaleReset
     @State private var particlesVisible = false
-    
+
+    // MARK: - Constants
+
+    private enum HeartPalette {
+        static let coralRed   = Color(red: 1.00, green: 0.20, blue: 0.40)
+        static let tomato     = Color(red: 0.96, green: 0.26, blue: 0.21)
+        static let salmon     = Color(red: 1.00, green: 0.38, blue: 0.27)
+        static let deepOrange = Color(red: 1.00, green: 0.50, blue: 0.00)
+        static let amber      = Color(red: 1.00, green: 0.65, blue: 0.00)
+        static let blush      = Color(red: 1.00, green: 0.75, blue: 0.80)
+        static let magenta    = Color(red: 0.80, green: 0.20, blue: 0.60)
+        static let rose       = Color(red: 1.00, green: 0.40, blue: 0.50)
+
+        static let gradientColors: [Color] = [coralRed, tomato, salmon, deepOrange]
+        static let particleColors: [Color] = [coralRed, tomato, salmon, deepOrange, amber, blush, magenta, rose]
+    }
+
+    private enum Layout {
+        static let particleCount: Int = 8
+        static let particleSize: CGFloat = 4
+        static let particleRadius: CGFloat = 25
+        static let particleAngleStep: Double = .pi / 4
+        static let particleScaleCollapsed: CGFloat = 0.5
+        static let particleScaleExpanded: CGFloat = 1.5
+        static let particleOpacityHidden: Double = 0
+    }
+
+    private enum Timing {
+        static let scaleUp: CGFloat = 1.4
+        static let scaleReset: CGFloat = 1.0
+        static let springResponseUp: Double = 0.3
+        static let dampingUp: Double = 0.5
+        static let springResponseReset: Double = 0.4
+        static let dampingReset: Double = 0.7
+        static let particleDuration: Double = 0.6
+        static let particleDelay: Double = 0.1
+        static let scaleResetDelay: Double = 0.2
+        static let particleHideDelay: Double = 0.7
+    }
+
     private let heartGradient = LinearGradient(
-        gradient: Gradient(colors: [
-            Color(red: 1.0, green: 0.2, blue: 0.4),
-            Color(red: 0.96, green: 0.26, blue: 0.21),
-            Color(red: 1.0, green: 0.38, blue: 0.27),
-            Color(red: 1.0, green: 0.5, blue: 0.0)
-        ]),
+        gradient: Gradient(colors: HeartPalette.gradientColors),
         startPoint: .topLeading,
         endPoint: .bottomTrailing
     )
-    
+
+    // MARK: - Body
+
     var body: some View {
         Button(action: handleTap) {
             ZStack {
                 if particlesVisible && isFavorite {
-                    ForEach(0..<8, id: \.self) { index in
+                    ForEach(0..<Layout.particleCount, id: \.self) { index in
                         Circle()
                             .fill(particleColor(for: index))
-                            .frame(width: 4, height: 4)
+                            .frame(width: Layout.particleSize, height: Layout.particleSize)
                             .offset(particleOffset(for: index))
-                            .opacity(particlesVisible ? 0 : 1)
-                            .scaleEffect(particlesVisible ? 0.5 : 1.5)
+                            .opacity(particlesVisible ? Layout.particleOpacityHidden : 1)
+                            .scaleEffect(particlesVisible ? Layout.particleScaleCollapsed : Layout.particleScaleExpanded)
                     }
                 }
-                
+
                 Image(systemName: isFavorite ? "heart.fill" : "heart")
                     .font(.title3)
-                    .foregroundStyle(isFavorite ? heartGradient : LinearGradient(gradient: Gradient(colors: [AppTheme.textColor(for: colorScheme)]), startPoint: .top, endPoint: .bottom))
+                    .foregroundStyle(
+                        isFavorite
+                            ? heartGradient
+                            : LinearGradient(
+                                gradient: Gradient(colors: [AppTheme.textColor(for: colorScheme)]),
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                    )
                     .scaleEffect(scale)
-                    .animation(.spring(response: 0.3, dampingFraction: 0.6), value: scale)
+                    .animation(.spring(response: Timing.springResponseUp, dampingFraction: Timing.dampingUp), value: scale)
             }
         }
         .accessibilityLabel(isFavorite ? "Remove from favorites" : "Add to favorites")
         .accessibilityHint(isFavorite ? "Double tap to unfavorite" : "Double tap to mark as favorite")
         .accessibilityAddTraits(.isButton)
         .onChange(of: isFavorite) { _, newValue in
-            if newValue {
-                animateHeart()
-            }
+            if newValue { animateHeart() }
         }
     }
-    
+
+    // MARK: - Actions
+
     private func handleTap() {
         HapticManager.shared.light()
         action()
     }
-    
+
     private func animateHeart() {
-        withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
-            scale = 1.4
+        withAnimation(.spring(response: Timing.springResponseUp, dampingFraction: Timing.dampingUp)) {
+            scale = Timing.scaleUp
         }
-        
-        withAnimation(.easeOut(duration: 0.6).delay(0.1)) {
+
+        withAnimation(.easeOut(duration: Timing.particleDuration).delay(Timing.particleDelay)) {
             particlesVisible = true
         }
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
-                scale = 1.0
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + Timing.scaleResetDelay) {
+            withAnimation(.spring(response: Timing.springResponseReset, dampingFraction: Timing.dampingReset)) {
+                scale = Timing.scaleReset
             }
         }
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + Timing.particleHideDelay) {
             particlesVisible = false
         }
     }
-    
-    private func particleColor(for index: Int) -> Color {
-        let colors: [Color] = [
-            Color(red: 1.0, green: 0.2, blue: 0.4),
-            Color(red: 0.96, green: 0.26, blue: 0.21),
-            Color(red: 1.0, green: 0.38, blue: 0.27),
-            Color(red: 1.0, green: 0.5, blue: 0.0),
-            Color(red: 1.0, green: 0.65, blue: 0.0),
-            Color(red: 1.0, green: 0.75, blue: 0.8),
-            Color(red: 0.8, green: 0.2, blue: 0.6),
-            Color(red: 1.0, green: 0.4, blue: 0.5)
-        ]
-        return colors[index % colors.count]
+
+    // MARK: - Helpers (internal for testability)
+
+    func particleColor(for index: Int) -> Color {
+        HeartPalette.particleColors[index % HeartPalette.particleColors.count]
     }
-    
-    private func particleOffset(for index: Int) -> CGSize {
-        let angle = Double(index) * .pi / 4.0
-        let radius: CGFloat = 25
+
+    func particleOffset(for index: Int) -> CGSize {
+        let angle = Double(index) * Layout.particleAngleStep
         return CGSize(
-            width: Foundation.cos(angle) * radius,
-            height: Foundation.sin(angle) * radius
+            width: Foundation.cos(angle) * Layout.particleRadius,
+            height: Foundation.sin(angle) * Layout.particleRadius
         )
     }
 }
@@ -106,16 +141,16 @@ struct AnimatedHeartButton: View {
     ZStack {
         AppTheme.backgroundGradient(for: AppTheme.ThemeType.teal, colorScheme: .dark)
             .ignoresSafeArea()
-        
+
         VStack(spacing: AppTheme.spacing48) {
             Text("Tap the heart!")
                 .adaptiveForegroundColor()
                 .font(.title2)
-            
+
             AnimatedHeartButton(isFavorite: .constant(false)) {
                 logger.debug("Heart tapped!")
             }
-            
+
             AnimatedHeartButton(isFavorite: .constant(true)) {
                 logger.debug("Already favorited!")
             }

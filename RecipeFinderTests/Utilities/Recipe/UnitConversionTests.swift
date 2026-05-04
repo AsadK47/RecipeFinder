@@ -1,7 +1,9 @@
 import XCTest
 @testable import RecipeFinder
 
-class UnitNormalizationTests: XCTestCase {
+final class UnitConversionTests: XCTestCase {
+
+    // MARK: - Input normalisation
 
     func testCaseInsensitiveConversion() {
         XCTAssertEqual(UnitConversion.convertWeight(value: 1000, from: "G", to: "KG"), 1.0)
@@ -14,9 +16,8 @@ class UnitNormalizationTests: XCTestCase {
     func testWhitespaceTrimming() {
         XCTAssertEqual(UnitConversion.getUnitType(" kg "), UnitType.weight)
     }
-}
 
-class UnitTypeTests: XCTestCase {
+    // MARK: - Unit type detection
 
     func testCup() {
         XCTAssertEqual(UnitConversion.getUnitType("cup"), UnitType.volume)
@@ -58,12 +59,11 @@ class UnitTypeTests: XCTestCase {
         XCTAssertEqual(UnitConversion.getUnitType("tsp"), UnitType.volume)
     }
 
-    func testUnknown() {
+    func testUnknownUnitType() {
         XCTAssertEqual(UnitConversion.getUnitType("xyz"), UnitType.none)
     }
-}
 
-class VolumeConversionTests: XCTestCase {
+    // MARK: - Volume conversions
 
     func testCupsToMilliliters() {
         XCTAssertEqual(UnitConversion.convertVolume(value: 1, from: "cup", to: "ml"), 236.5882365, accuracy: 0.001)
@@ -121,7 +121,7 @@ class VolumeConversionTests: XCTestCase {
         XCTAssertEqual(UnitConversion.convertVolume(value: 1, from: "qt", to: "ml"), 946.352946, accuracy: 0.001)
     }
 
-    func testSameUnit() {
+    func testVolumeSameUnit() {
         XCTAssertEqual(UnitConversion.convertVolume(value: 5, from: "ml", to: "ml"), 5.0)
     }
 
@@ -137,12 +137,11 @@ class VolumeConversionTests: XCTestCase {
         XCTAssertEqual(UnitConversion.convertVolume(value: 1, from: "tsp", to: "ml"), 4.92892159375, accuracy: 0.0001)
     }
 
-    func testUnknownUnitPassthrough() {
+    func testUnknownVolumeUnitPassthrough() {
         XCTAssertEqual(UnitConversion.convertVolume(value: 3, from: "xyz", to: "ml"), 3.0)
     }
-}
 
-class WeightConversionTests: XCTestCase {
+    // MARK: - Weight conversions
 
     func testGramAlias() {
         XCTAssertEqual(UnitConversion.convertWeight(value: 1000, from: "gram", to: "kilogram"), 1.0)
@@ -200,11 +199,11 @@ class WeightConversionTests: XCTestCase {
         XCTAssertEqual(UnitConversion.convertWeight(value: 1, from: "lbs", to: "oz"), 16.0, accuracy: 0.0001)
     }
 
-    func testSameUnit() {
+    func testWeightSameUnit() {
         XCTAssertEqual(UnitConversion.convertWeight(value: 5, from: "g", to: "g"), 5.0)
     }
 
-    func testUnknownUnitPassthrough() {
+    func testUnknownWeightUnitPassthrough() {
         XCTAssertEqual(UnitConversion.convertWeight(value: 7, from: "xyz", to: "g"), 7.0)
     }
 }

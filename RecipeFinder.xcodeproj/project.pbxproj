@@ -83,8 +83,9 @@
 		9E87D3302EB696A400FFA1D1 /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E87D32F2EB696A400FFA1D1 /* ThemeManager.swift */; };
 		9E87D3342EB6C05700FFA1D1 /* WelcomeSplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E87D3332EB6C05700FFA1D1 /* WelcomeSplashView.swift */; };
 		9E87D3362EB6C0E900FFA1D1 /* PasswordVerificationSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E87D3352EB6C0E900FFA1D1 /* PasswordVerificationSheet.swift */; };
-		9E90AB032FA9040100096D9D /* RecipeViewMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E90AB022FA9040000096D9D /* RecipeViewMode.swift */; };
 		9E90AAFE2FA9029E00096D9D /* UnitConversionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E90AAFB2FA9022600096D9D /* UnitConversionTests.swift */; };
+		9E90AB022FA9247B00096D9D /* AnimatedHeartButtonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E90AAFF2FA9247B00096D9D /* AnimatedHeartButtonTests.swift */; };
+		9E90AB032FA9040100096D9D /* RecipeViewMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E90AB022FA9040000096D9D /* RecipeViewMode.swift */; };
 		9E9DE5FD2ECCA111005CD593 /* create_account.png in Resources */ = {isa = PBXBuildFile; fileRef = 9E9DE5F92ECCA111005CD593 /* create_account.png */; };
 		9E9DE5FE2ECCA111005CD593 /* PRIVACY_POLICY.md in Resources */ = {isa = PBXBuildFile; fileRef = 9E9DE5F52ECCA111005CD593 /* PRIVACY_POLICY.md */; };
 		9E9DE5FF2ECCA111005CD593 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 9E9DE5F82ECCA111005CD593 /* LICENSE */; };
@@ -203,8 +204,9 @@
 		9E87D32F2EB696A400FFA1D1 /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
 		9E87D3332EB6C05700FFA1D1 /* WelcomeSplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeSplashView.swift; sourceTree = "<group>"; };
 		9E87D3352EB6C0E900FFA1D1 /* PasswordVerificationSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordVerificationSheet.swift; sourceTree = "<group>"; };
-		9E90AB022FA9040000096D9D /* RecipeViewMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeViewMode.swift; sourceTree = "<group>"; };
 		9E90AAFB2FA9022600096D9D /* UnitConversionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitConversionTests.swift; sourceTree = "<group>"; };
+		9E90AAFF2FA9247B00096D9D /* AnimatedHeartButtonTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedHeartButtonTests.swift; sourceTree = "<group>"; };
+		9E90AB022FA9040000096D9D /* RecipeViewMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeViewMode.swift; sourceTree = "<group>"; };
 		9E9DE5F52ECCA111005CD593 /* PRIVACY_POLICY.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = PRIVACY_POLICY.md; sourceTree = "<group>"; };
 		9E9DE5F62ECCA111005CD593 /* TERMS_OF_SERVICE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = TERMS_OF_SERVICE.md; sourceTree = "<group>"; };
 		9E9DE5F82ECCA111005CD593 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
@@ -659,12 +661,29 @@
 			path = NutritionalTips;
 			sourceTree = "<group>";
 		};
+		9E90AAFC2FA9022600096D9D /* RecipeFinderTests */ = {
+			isa = PBXGroup;
+			children = (
+				9E90AB012FA9247B00096D9D /* Components */,
+				9E90AB002FA9030000096D9D /* Utilities */,
+			);
+			path = RecipeFinderTests;
+			sourceTree = "<group>";
+		};
 		9E90AB002FA9030000096D9D /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
 				9E90AB012FA9030100096D9D /* Recipe */,
 			);
 			path = Utilities;
+			sourceTree = "<group>";
+		};
+		9E90AB002FA9247B00096D9D /* Buttons */ = {
+			isa = PBXGroup;
+			children = (
+				9E90AAFF2FA9247B00096D9D /* AnimatedHeartButtonTests.swift */,
+			);
+			path = Buttons;
 			sourceTree = "<group>";
 		};
 		9E90AB012FA9030100096D9D /* Recipe */ = {
@@ -675,12 +694,12 @@
 			path = Recipe;
 			sourceTree = "<group>";
 		};
-		9E90AAFC2FA9022600096D9D /* RecipeFinderTests */ = {
+		9E90AB012FA9247B00096D9D /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				9E90AB002FA9030000096D9D /* Utilities */,
+				9E90AB002FA9247B00096D9D /* Buttons */,
 			);
-			path = RecipeFinderTests;
+			path = Components;
 			sourceTree = "<group>";
 		};
 		9E9DE5F72ECCA111005CD593 /* legal */ = {
@@ -1044,6 +1063,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9E90AAFE2FA9029E00096D9D /* UnitConversionTests.swift in Sources */,
+				9E90AB022FA9247B00096D9D /* AnimatedHeartButtonTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
