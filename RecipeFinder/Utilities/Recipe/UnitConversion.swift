@@ -13,7 +13,33 @@ enum MeasurementSystem: String, CaseIterable, Codable {
 }
 
 struct UnitConversion {
-    
+
+    private enum Weight {
+        static let gramsPerKg     = 1000.0
+        static let gramsPerPound  = 453.59237
+        static let gramsPerOunce  = 28.349523125
+        static let ouncesPerPound = 16.0
+    }
+
+    private enum Volume {
+        static let mlPerCL     = 10.0
+        static let mlPerDL     = 100.0
+        static let mlPerL      = 1000.0
+        static let mlPerCup    = 236.5882365
+        static let mlPerTbsp   = 14.78676478125
+        static let mlPerTsp    = 4.92892159375
+        static let mlPerFlOz   = 29.5735295625
+        static let mlPerPint   = 473.176473
+        static let mlPerQuart  = 946.352946
+        static let mlPerGallon = 3785.411784
+    }
+
+    private enum SolidDensity {
+        static let gramsPerTsp  = 5.0
+        static let gramsPerTbsp = 15.0
+        static let gramsPerCup  = 125.0
+    }
+
     static func convertWeight(value: Double, from fromUnit: String, to toUnit: String) -> Double {
         let normalizedFrom = fromUnit.lowercased().trimmingCharacters(in: .whitespaces)
         let normalizedTo = toUnit.lowercased().trimmingCharacters(in: .whitespaces)
@@ -24,11 +50,11 @@ struct UnitConversion {
         case "g", "grams", "gram":
             grams = value
         case "kg", "kilograms", "kilogram":
-            grams = value * 1000.0
+            grams = value * Weight.gramsPerKg
         case "lbs", "lb", "pounds", "pound":
-            grams = value * 453.59237
+            grams = value * Weight.gramsPerPound
         case "oz", "ounces", "ounce":
-            grams = value * 28.349523125
+            grams = value * Weight.gramsPerOunce
         default:
             return value
         }
@@ -37,11 +63,11 @@ struct UnitConversion {
         case "g", "grams", "gram":
             return grams
         case "kg", "kilograms", "kilogram":
-            return grams / 1000.0
+            return grams / Weight.gramsPerKg
         case "lbs", "lb", "pounds", "pound":
-            return grams / 453.59237
+            return grams / Weight.gramsPerPound
         case "oz", "ounces", "ounce":
-            return grams / 28.349523125
+            return grams / Weight.gramsPerOunce
         default:
             return value
         }
@@ -57,25 +83,25 @@ struct UnitConversion {
         case "ml", "milliliters", "milliliter":
             ml = value
         case "cl", "centiliters", "centiliter":
-            ml = value * 10.0
+            ml = value * Volume.mlPerCL
         case "dl", "deciliters", "deciliter":
-            ml = value * 100.0
+            ml = value * Volume.mlPerDL
         case "l", "liters", "liter":
-            ml = value * 1000.0
+            ml = value * Volume.mlPerL
         case "cup", "cups":
-            ml = value * 236.5882365
+            ml = value * Volume.mlPerCup
         case "tbsp", "tablespoon", "tablespoons":
-            ml = value * 14.78676478125
+            ml = value * Volume.mlPerTbsp
         case "tsp", "teaspoon", "teaspoons":
-            ml = value * 4.92892159375
+            ml = value * Volume.mlPerTsp
         case "fl oz", "fluid ounce", "fluid ounces":
-            ml = value * 29.5735295625
+            ml = value * Volume.mlPerFlOz
         case "pt", "pint", "pints":
-            ml = value * 473.176473
+            ml = value * Volume.mlPerPint
         case "qt", "quart", "quarts":
-            ml = value * 946.352946
+            ml = value * Volume.mlPerQuart
         case "gal", "gallon", "gallons":
-            ml = value * 3785.411784
+            ml = value * Volume.mlPerGallon
         default:
             return value
         }
@@ -84,25 +110,25 @@ struct UnitConversion {
         case "ml", "milliliters", "milliliter":
             return ml
         case "cl", "centiliters", "centiliter":
-            return ml / 10.0
+            return ml / Volume.mlPerCL
         case "dl", "deciliters", "deciliter":
-            return ml / 100.0
+            return ml / Volume.mlPerDL
         case "l", "liters", "liter":
-            return ml / 1000.0
+            return ml / Volume.mlPerL
         case "cup", "cups":
-            return ml / 236.5882365
+            return ml / Volume.mlPerCup
         case "tbsp", "tablespoon", "tablespoons":
-            return ml / 14.78676478125
+            return ml / Volume.mlPerTbsp
         case "tsp", "teaspoon", "teaspoons":
-            return ml / 4.92892159375
+            return ml / Volume.mlPerTsp
         case "fl oz", "fluid ounce", "fluid ounces":
-            return ml / 29.5735295625
+            return ml / Volume.mlPerFlOz
         case "pt", "pint", "pints":
-            return ml / 473.176473
+            return ml / Volume.mlPerPint
         case "qt", "quart", "quarts":
-            return ml / 946.352946
+            return ml / Volume.mlPerQuart
         case "gal", "gallon", "gallons":
-            return ml / 3785.411784
+            return ml / Volume.mlPerGallon
         default:
             return value
         }
@@ -248,28 +274,28 @@ struct UnitConversion {
             if let specificGrams = getDensityConversion(ingredientName: ingredientName, unit: unit) {
                 let grams = value * specificGrams
                 
-                if grams >= 1000 {
-                    return (grams / 1000, "kg")
+                if grams >= Weight.gramsPerKg {
+                    return (grams / Weight.gramsPerKg, "kg")
                 } else {
                     return (grams, "g")
                 }
             }
-            
+
             var grams: Double = 0
-            
+
             switch normalized {
             case "tsp", "teaspoon", "teaspoons":
-                grams = value * 5
+                grams = value * SolidDensity.gramsPerTsp
             case "tbsp", "tablespoon", "tablespoons":
-                grams = value * 15
+                grams = value * SolidDensity.gramsPerTbsp
             case "cup", "cups":
-                grams = value * 125
+                grams = value * SolidDensity.gramsPerCup
             default:
                 return convertVolumeToSystem(value: value, unit: unit, system: system)
             }
-            
-            if grams >= 1000 {
-                return (grams / 1000, "kg")
+
+            if grams >= Weight.gramsPerKg {
+                return (grams / Weight.gramsPerKg, "kg")
             } else {
                 return (grams, "g")
             }
@@ -285,8 +311,8 @@ struct UnitConversion {
                 return (value, unit)
             }
             let grams = convertWeight(value: value, from: unit, to: "g")
-            if grams >= 1000 {
-                return (grams / 1000, "kg")
+            if grams >= Weight.gramsPerKg {
+                return (grams / Weight.gramsPerKg, "kg")
             } else {
                 return (grams, "g")
             }
@@ -296,8 +322,8 @@ struct UnitConversion {
                 return (value, unit)
             }
             let oz = convertWeight(value: value, from: unit, to: "oz")
-            if oz >= 16 {
-                return (oz / 16, "lbs")
+            if oz >= Weight.ouncesPerPound {
+                return (oz / Weight.ouncesPerPound, "lbs")
             } else {
                 return (oz, "oz")
             }
@@ -316,8 +342,8 @@ struct UnitConversion {
                 return (value, unit)
             }
             let ml = convertVolume(value: value, from: unit, to: "ml")
-            if ml >= 1000 {
-                return (ml / 1000, "l")
+            if ml >= Volume.mlPerL {
+                return (ml / Volume.mlPerL, "l")
             } else {
                 return (ml, "ml")
             }
@@ -330,18 +356,18 @@ struct UnitConversion {
             }
             let ml = convertVolume(value: value, from: unit, to: "ml")
             
-            let cups = ml / 236.588
+            let cups = ml / Volume.mlPerCup
             if cups >= 1 {
                 if cups >= 4 { return (cups / 4, "qt") }
                 return (cups, "cup")
             }
-            
-            let tbsp = ml / 14.7868
+
+            let tbsp = ml / Volume.mlPerTbsp
             if tbsp >= 1 {
                 return (tbsp, "tbsp")
             }
-            
-            let tsp = ml / 4.92892
+
+            let tsp = ml / Volume.mlPerTsp
             return (tsp, "tsp")
         }
     }
