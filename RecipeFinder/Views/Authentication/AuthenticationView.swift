@@ -408,7 +408,7 @@ struct SignUpView: View {
                                 TextField("", text: $email)
                                     .textFieldStyle(AuthTextFieldStyle())
                                     .keyboardType(.emailAddress)
-                                    .textContentType(.username)
+                                    .textContentType(.emailAddress)
                                     .autocapitalization(.none)
                                     .autocorrectionDisabled()
                                 

@@ -20,20 +20,6 @@ enum AccountSheet: Identifiable {
     }
 }
 
-enum AccountAlert: Identifiable {
-    case signOut
-    case deleteAccount
-    case authError(String)
-    
-    var id: String {
-        switch self {
-        case .signOut: return "signOut"
-        case .deleteAccount: return "deleteAccount"
-        case .authError: return "authError"
-        }
-    }
-}
-
 struct AccountView: View {
     @StateObject private var accountManager = AccountManager.shared
     @StateObject private var authManager = AuthenticationManager.shared
@@ -43,7 +29,8 @@ struct AccountView: View {
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
     @State private var activeSheet: AccountSheet?
-    @State private var activeAlert: AccountAlert?
+    @State private var showSignOutAlert = false
+    @State private var showDeleteAccountAlert = false
     @State private var profileImage: UIImage?
     @State private var editingName = false
     @State private var tempName = ""
@@ -71,7 +58,7 @@ struct AccountView: View {
         }
         return accountManager.initials
     }
-    
+
     var body: some View {
         ZStack {
             AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
@@ -166,35 +153,19 @@ struct AccountView: View {
                     .presentationDragIndicator(.hidden)
             }
         }
-        .alert(item: $activeAlert) { alert in
-            switch alert {
-            case .signOut:
-                return Alert(
-                    title: Text("Sign Out"),
-                    message: Text("Are you sure you want to sign out?"),
-                    primaryButton: .cancel(),
-                    secondaryButton: .destructive(Text("Sign Out")) {
-                        signOut()
-                    }
-                )
-            case .deleteAccount:
-                return Alert(
-                    title: Text("Delete Account"),
-                    message: Text("This action cannot be undone. All your data will be permanently deleted."),
-                    primaryButton: .cancel(),
-                    secondaryButton: .destructive(Text("Delete")) {
-                        Task {
-                            await deleteAccount()
-                        }
-                    }
-                )
-            case .authError(let message):
-                return Alert(
-                    title: Text("Sign In Error"),
-                    message: Text(message),
-                    dismissButton: .cancel(Text("OK"))
-                )
+        .alert("Sign Out", isPresented: $showSignOutAlert) {
+            Button("Cancel", role: .cancel) {}
+            Button("Sign Out", role: .destructive) { signOut() }
+        } message: {
+            Text("Are you sure you want to sign out?")
+        }
+        .alert("Delete Account", isPresented: $showDeleteAccountAlert) {
+            Button("Cancel", role: .cancel) {}
+            Button("Delete", role: .destructive) {
+                Task { await deleteAccount() }
             }
+        } message: {
+            Text("This action cannot be undone. All your data will be permanently deleted.")
         }
         .animation(.spring(response: 0.3), value: editingName)
         .animation(.spring(response: 0.3), value: showSuccessFeedback)
@@ -517,7 +488,7 @@ struct AccountView: View {
             }
             
             Button {
-                activeAlert = .signOut
+                showSignOutAlert = true
                 HapticManager.shared.light()
             } label: {
                 Text("Sign Out")
@@ -538,7 +509,7 @@ struct AccountView: View {
             }
             
             Button {
-                activeAlert = .deleteAccount
+                showDeleteAccountAlert = true
                     HapticManager.shared.light()
                 } label: {
                     Text("Delete Account")
