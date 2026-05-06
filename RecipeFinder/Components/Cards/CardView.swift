@@ -1,6 +1,6 @@
 import SwiftUI
 
-private enum CardViewLayout {
+enum CardViewLayout {
     static let cornerRadius: CGFloat = 16
     static let shadowRadius: CGFloat = 8
     static let shadowRadiusFrosted: CGFloat = 10

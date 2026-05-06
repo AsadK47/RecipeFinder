@@ -9,12 +9,12 @@ final class CardViewTests: XCTestCase {
 
     func testFrostedShadowOpacityIsDarkInDarkMode() {
         let sut = CardView { EmptyView() }
-        XCTAssertEqual(sut.frostedShadowOpacity(for: .dark), 0.3)
+        XCTAssertEqual(sut.frostedShadowOpacity(for: .dark), CardViewLayout.shadowOpacityFrostedDark)
     }
 
     func testFrostedShadowOpacityIsLightInLightMode() {
         let sut = CardView { EmptyView() }
-        XCTAssertEqual(sut.frostedShadowOpacity(for: .light), 0.15)
+        XCTAssertEqual(sut.frostedShadowOpacity(for: .light), CardViewLayout.shadowOpacityFrostedLight)
     }
 
     func testFrostedShadowOpacityDarkIsGreaterThanLight() {
