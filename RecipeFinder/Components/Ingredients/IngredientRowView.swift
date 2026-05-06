@@ -10,9 +10,23 @@ struct IngredientRowView: View {
     var isInShoppingList: Bool = false
     var onTapQuantity: (() -> Void)?
     
+    private enum Layout {
+        static let dividerWidth: CGFloat = 1
+        static let dividerOpacity: Double = 0.2
+        static let checkButtonSize: CGFloat = AppTheme.iconSize32
+        static let checkButtonFrameWidth: CGFloat = 48
+        static let uncheckedOpacity: Double = 0.4
+        static let quantityPillOpacity: Double = 0.13
+    }
+
+    private enum Timing {
+        static let springResponse: Double = 0.3
+        static let springDamping: Double = 0.6
+    }
+
     var body: some View {
         HStack(alignment: .center, spacing: 0) {
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: AppTheme.spacing10) {
                 Text(ingredient.mainIngredientName)
                     .font(.body)
                     .fontWeight(.semibold)
@@ -28,7 +42,7 @@ struct IngredientRowView: View {
                 }
 
                 Button(action: { onTapQuantity?() }) {
-                    HStack(spacing: 4) {
+                    HStack(spacing: AppTheme.spacing4) {
                         Text(formatQuantity(convertedIngredient.quantity))
                             .font(.caption)
                             .fontWeight(.bold)
@@ -41,38 +55,38 @@ struct IngredientRowView: View {
                                 .foregroundStyle(.secondary)
                         }
                     }
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
+                    .padding(.horizontal, AppTheme.spacing8)
+                    .padding(.vertical, AppTheme.spacing4)
                     .background(
                         Capsule()
-                            .fill(AppTheme.accentColor.opacity(0.13))
+                            .fill(AppTheme.accentColor.opacity(Layout.quantityPillOpacity))
                     )
                 }
                 .buttonStyle(.plain)
                 .disabled(onTapQuantity == nil)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.vertical, 10)
+            .padding(.vertical, AppTheme.spacing10)
 
             Rectangle()
-                .fill(Color.secondary.opacity(0.2))
-                .frame(width: 1)
-                .padding(.vertical, 6)
+                .fill(Color.secondary.opacity(Layout.dividerOpacity))
+                .frame(width: Layout.dividerWidth)
+                .padding(.vertical, AppTheme.spacing6)
 
             Button(action: {
                 HapticManager.shared.light()
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                withAnimation(.spring(response: Timing.springResponse, dampingFraction: Timing.springDamping)) {
                     toggle()
                 }
             }, label: {
                 Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
                     .font(.system(size: AppTheme.fontSize28))
-                    .foregroundColor(isChecked ? .green : .gray.opacity(0.4))
-                    .frame(width: 32, height: 32)
+                    .foregroundColor(isChecked ? .green : .gray.opacity(Layout.uncheckedOpacity))
+                    .frame(width: Layout.checkButtonSize, height: Layout.checkButtonSize)
                     .contentShape(Rectangle())
             })
             .buttonStyle(.plain)
-            .frame(width: 48)
+            .frame(width: Layout.checkButtonFrameWidth)
             .allowsHitTesting(true)
         }
         .frame(maxWidth: .infinity)

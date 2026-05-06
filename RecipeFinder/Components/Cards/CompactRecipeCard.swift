@@ -9,6 +9,7 @@ struct CompactRecipeCard: View {
         static let cardHeight: CGFloat = 220
         static let difficultyBarSize: CGFloat = 2.5
         static let favoriteBadgeOffset: CGFloat = -AppTheme.spacing4
+        static let nameLineLimit: Int = 3
     }
 
     var body: some View {
@@ -42,7 +43,7 @@ struct CompactRecipeCard: View {
                     .font(.caption)
                     .fontWeight(.semibold)
                     .foregroundColor(AppTheme.adaptiveEmphasis(for: colorScheme))
-                    .lineLimit(3)
+                    .lineLimit(Layout.nameLineLimit)
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity)
 
