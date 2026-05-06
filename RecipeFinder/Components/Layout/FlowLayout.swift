@@ -30,27 +30,29 @@ struct FlowLayout: Layout {
     struct FlowResult {
         var size: CGSize = .zero
         var positions: [CGPoint] = []
-        
-        init(in maxWidth: CGFloat, subviews: Subviews, spacing: CGFloat) {
+
+        init(in maxWidth: CGFloat, sizes: [CGSize], spacing: CGFloat) {
             var currentX: CGFloat = 0
             var currentY: CGFloat = 0
             var lineHeight: CGFloat = 0
-            
-            for subview in subviews {
-                let size = subview.sizeThatFits(.unspecified)
-                
+
+            for size in sizes {
                 if currentX + size.width > maxWidth && currentX > 0 {
                     currentX = 0
                     currentY += lineHeight + spacing
                     lineHeight = 0
                 }
-                
+
                 positions.append(CGPoint(x: currentX, y: currentY))
                 currentX += size.width + spacing
                 lineHeight = max(lineHeight, size.height)
             }
-            
+
             self.size = CGSize(width: maxWidth, height: currentY + lineHeight)
+        }
+
+        init(in maxWidth: CGFloat, subviews: Subviews, spacing: CGFloat) {
+            self.init(in: maxWidth, sizes: subviews.map { $0.sizeThatFits(.unspecified) }, spacing: spacing)
         }
     }
 }
