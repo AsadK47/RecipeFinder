@@ -13,7 +13,7 @@ struct AnimatedHeartButton: View {
 
     // MARK: - Constants
 
-    private enum HeartPalette {
+    enum HeartPalette {
         static let coralRed   = Color(red: 1.00, green: 0.20, blue: 0.40)
         static let tomato     = Color(red: 0.96, green: 0.26, blue: 0.21)
         static let salmon     = Color(red: 1.00, green: 0.38, blue: 0.27)
@@ -27,7 +27,7 @@ struct AnimatedHeartButton: View {
         static let particleColors: [Color] = [coralRed, tomato, salmon, deepOrange, amber, blush, magenta, rose]
     }
 
-    private enum Layout {
+    enum Layout {
         static let particleCount: Int = 8
         static let particleSize: CGFloat = 4
         static let particleRadius: CGFloat = 25
@@ -37,7 +37,7 @@ struct AnimatedHeartButton: View {
         static let particleOpacityHidden: Double = 0
     }
 
-    private enum Timing {
+    enum Timing {
         static let scaleUp: CGFloat = 1.4
         static let scaleReset: CGFloat = 1.0
         static let springResponseUp: Double = 0.3
