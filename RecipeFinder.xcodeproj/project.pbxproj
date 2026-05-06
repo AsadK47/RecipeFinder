@@ -30,16 +30,16 @@
 		9E5447BA2EB0409700AD6D0A /* RecipeImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5447B92EB0409700AD6D0A /* RecipeImportView.swift */; };
 		9E5B397F2FABB7D300C96DB3 /* HeartPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5B397E2FABB7D300C96DB3 /* HeartPalette.swift */; };
 		9E5B39802FABB7D300C96DB3 /* HeartPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5B397E2FABB7D300C96DB3 /* HeartPalette.swift */; };
+		9E5B39822FABC2C700C96DB3 /* CircleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5B39812FABC2C700C96DB3 /* CircleButton.swift */; };
+		9E5B39842FABC30700C96DB3 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5B39832FABC30700C96DB3 /* SearchBar.swift */; };
 		9E6060032D09CB6400236896 /* RecipeModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9E6060002D09CB6400236896 /* RecipeModel.xcdatamodeld */; };
 		9E6DEA602EF5EF47001E7B24 /* DifficultyBarsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA572EF5EF47001E7B24 /* DifficultyBarsView.swift */; };
 		9E6DEA622EF5EF47001E7B24 /* QuickAddSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA5A2EF5EF47001E7B24 /* QuickAddSheet.swift */; };
 		9E6DEA632EF5EF47001E7B24 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA462EF5EF47001E7B24 /* CardView.swift */; };
 		9E6DEA642EF5EF47001E7B24 /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA512EF5EF47001E7B24 /* FlowLayout.swift */; };
-		9E6DEA652EF5EF47001E7B24 /* ModernCircleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA442EF5EF47001E7B24 /* ModernCircleButton.swift */; };
 		9E6DEA662EF5EF47001E7B24 /* OfflineBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA5D2EF5EF47001E7B24 /* OfflineBanner.swift */; };
 		9E6DEA672EF5EF47001E7B24 /* IngredientRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA4B2EF5EF47001E7B24 /* IngredientRowView.swift */; };
 		9E6DEA682EF5EF47001E7B24 /* InfoPairView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA522EF5EF47001E7B24 /* InfoPairView.swift */; };
-		9E6DEA692EF5EF47001E7B24 /* ModernSearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA4D2EF5EF47001E7B24 /* ModernSearchBar.swift */; };
 		9E6DEA6A2EF5EF47001E7B24 /* FilterComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA502EF5EF47001E7B24 /* FilterComponents.swift */; };
 		9E6DEA6B2EF5EF47001E7B24 /* RecipeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA482EF5EF47001E7B24 /* RecipeCard.swift */; };
 		9E6DEA6C2EF5EF47001E7B24 /* AnimatedHeartButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA432EF5EF47001E7B24 /* AnimatedHeartButton.swift */; };
@@ -152,15 +152,15 @@
 		9E51C3A62EB40DC90064B917 /* AuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationView.swift; sourceTree = "<group>"; };
 		9E5447B92EB0409700AD6D0A /* RecipeImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeImportView.swift; sourceTree = "<group>"; };
 		9E5B397E2FABB7D300C96DB3 /* HeartPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartPalette.swift; sourceTree = "<group>"; };
+		9E5B39812FABC2C700C96DB3 /* CircleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleButton.swift; sourceTree = "<group>"; };
+		9E5B39832FABC30700C96DB3 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		9E6060012D09CB6400236896 /* RecipeModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = RecipeModel.xcdatamodel; sourceTree = "<group>"; };
 		9E6060022D09CB6400236896 /* RecipeModel 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 2.xcdatamodel"; sourceTree = "<group>"; };
 		9E6DEA432EF5EF47001E7B24 /* AnimatedHeartButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedHeartButton.swift; sourceTree = "<group>"; };
-		9E6DEA442EF5EF47001E7B24 /* ModernCircleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModernCircleButton.swift; sourceTree = "<group>"; };
 		9E6DEA462EF5EF47001E7B24 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		9E6DEA472EF5EF47001E7B24 /* CompactRecipeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompactRecipeCard.swift; sourceTree = "<group>"; };
 		9E6DEA482EF5EF47001E7B24 /* RecipeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeCard.swift; sourceTree = "<group>"; };
 		9E6DEA4B2EF5EF47001E7B24 /* IngredientRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientRowView.swift; sourceTree = "<group>"; };
-		9E6DEA4D2EF5EF47001E7B24 /* ModernSearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModernSearchBar.swift; sourceTree = "<group>"; };
 		9E6DEA502EF5EF47001E7B24 /* FilterComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterComponents.swift; sourceTree = "<group>"; };
 		9E6DEA512EF5EF47001E7B24 /* FlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowLayout.swift; sourceTree = "<group>"; };
 		9E6DEA522EF5EF47001E7B24 /* InfoPairView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoPairView.swift; sourceTree = "<group>"; };
@@ -270,13 +270,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		9E09460F2EFB428D0072BDFE /* Loading */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Loading;
-			sourceTree = "<group>";
-		};
 		9E0946132EFB42AA0072BDFE /* Examples */ = {
 			isa = PBXGroup;
 			children = (
@@ -295,13 +288,11 @@
 		9E4DC7322E9BF10900E17DDF /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				9E09460F2EFB428D0072BDFE /* Loading */,
 				9E6DEA452EF5EF47001E7B24 /* Buttons */,
 				9E6DEA492EF5EF47001E7B24 /* Cards */,
 				9E6DEA4C2EF5EF47001E7B24 /* Ingredients */,
 				9E6DEA4F2EF5EF47001E7B24 /* Input */,
 				9E6DEA542EF5EF47001E7B24 /* Layout */,
-				9E6DEA562EF5EF47001E7B24 /* Modifiers */,
 				9E6DEA592EF5EF47001E7B24 /* Recipe */,
 				9E6DEA5C2EF5EF47001E7B24 /* Sheets */,
 				9E6DEA5E2EF5EF47001E7B24 /* Utilities */,
@@ -383,8 +374,8 @@
 		9E6DEA452EF5EF47001E7B24 /* Buttons */ = {
 			isa = PBXGroup;
 			children = (
+				9E5B39812FABC2C700C96DB3 /* CircleButton.swift */,
 				9E6DEA432EF5EF47001E7B24 /* AnimatedHeartButton.swift */,
-				9E6DEA442EF5EF47001E7B24 /* ModernCircleButton.swift */,
 			);
 			path = Buttons;
 			sourceTree = "<group>";
@@ -410,7 +401,7 @@
 		9E6DEA4F2EF5EF47001E7B24 /* Input */ = {
 			isa = PBXGroup;
 			children = (
-				9E6DEA4D2EF5EF47001E7B24 /* ModernSearchBar.swift */,
+				9E5B39832FABC30700C96DB3 /* SearchBar.swift */,
 			);
 			path = Input;
 			sourceTree = "<group>";
@@ -423,13 +414,6 @@
 				9E6DEA522EF5EF47001E7B24 /* InfoPairView.swift */,
 			);
 			path = Layout;
-			sourceTree = "<group>";
-		};
-		9E6DEA562EF5EF47001E7B24 /* Modifiers */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Modifiers;
 			sourceTree = "<group>";
 		};
 		9E6DEA592EF5EF47001E7B24 /* Recipe */ = {
@@ -1041,15 +1025,15 @@
 				9E48AD9E2F0FDDC300CF840F /* AppLogger.swift in Sources */,
 				9E51C3A12EB406AD0064B917 /* CookTimerView.swift in Sources */,
 				9E6DEA602EF5EF47001E7B24 /* DifficultyBarsView.swift in Sources */,
+				9E5B39822FABC2C700C96DB3 /* CircleButton.swift in Sources */,
 				9E6DEA622EF5EF47001E7B24 /* QuickAddSheet.swift in Sources */,
+				9E5B39842FABC30700C96DB3 /* SearchBar.swift in Sources */,
 				9E6DEA632EF5EF47001E7B24 /* CardView.swift in Sources */,
 				9E6DEA642EF5EF47001E7B24 /* FlowLayout.swift in Sources */,
-				9E6DEA652EF5EF47001E7B24 /* ModernCircleButton.swift in Sources */,
 				9E0946202F0415F40072BDFE /* UserScopedStorage.swift in Sources */,
 				9E6DEA662EF5EF47001E7B24 /* OfflineBanner.swift in Sources */,
 				9E6DEA672EF5EF47001E7B24 /* IngredientRowView.swift in Sources */,
 				9E6DEA682EF5EF47001E7B24 /* InfoPairView.swift in Sources */,
-				9E6DEA692EF5EF47001E7B24 /* ModernSearchBar.swift in Sources */,
 				9E6DEA6A2EF5EF47001E7B24 /* FilterComponents.swift in Sources */,
 				9E6DEA6B2EF5EF47001E7B24 /* RecipeCard.swift in Sources */,
 				9E6DEA6C2EF5EF47001E7B24 /* AnimatedHeartButton.swift in Sources */,

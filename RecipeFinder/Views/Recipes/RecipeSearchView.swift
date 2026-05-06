@@ -257,7 +257,7 @@ struct RecipeSearchView: View {
                 Menu {
                     menuContent
                 } label: {
-                    ModernCircleButton(icon: "line.3.horizontal") {}
+                    CircleButton(icon: "line.3.horizontal") {}
                         .allowsHitTesting(false)
                 }
                 .frame(width: max(44, geometry.size.width * 0.15))

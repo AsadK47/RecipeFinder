@@ -639,7 +639,7 @@ struct AddIngredientSheet: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                    ModernSearchBar(text: $searchText, placeholder: "Search Foods...")
+                    SearchBar(text: $searchText, placeholder: "Search Foods...")
                         .padding(.horizontal, 20)
                         .padding(.top, 16)
                         .padding(.bottom, 12)

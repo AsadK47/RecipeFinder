@@ -164,7 +164,7 @@ struct IngredientSearchView: View {
                         }
                         .padding(.horizontal, 20)
                         
-                        ModernSearchBar(text: $searchText, placeholder: "Search for Ingredients...")
+                        SearchBar(text: $searchText, placeholder: "Search for Ingredients...")
                             .padding(.horizontal, 20)
                         
                         if activeFilterCount > 0 {

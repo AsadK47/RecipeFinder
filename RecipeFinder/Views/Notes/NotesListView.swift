@@ -123,7 +123,7 @@ struct NotesListView: View {
                     }
                     .frame(height: 44)
                     
-                    ModernSearchBar(text: $searchText, placeholder: "Search Notes...")
+                    SearchBar(text: $searchText, placeholder: "Search Notes...")
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 16)

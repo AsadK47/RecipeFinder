@@ -1,12 +1,12 @@
 import SwiftUI
 
-struct ModernCircleButton: View {
+struct CircleButton: View {
     let icon: String
     let action: () -> Void
-    
+
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
-    
+
     var body: some View {
         Button(action: action) {
             Image(systemName: icon)
@@ -32,8 +32,8 @@ struct ModernCircleButton: View {
     ZStack {
         Color.blue
         HStack {
-            ModernCircleButton(icon: "plus.circle.fill") {}
-            ModernCircleButton(icon: "ellipsis.circle.fill") {}
+            CircleButton(icon: "plus.circle.fill") {}
+            CircleButton(icon: "ellipsis.circle.fill") {}
         }
     }
 }

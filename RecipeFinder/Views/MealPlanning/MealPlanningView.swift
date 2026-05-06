@@ -1004,7 +1004,7 @@ struct RecipeSelectionSheet: View {
                                 Spacer()
                             }
                             
-                            ModernSearchBar(text: $searchText, placeholder: "Search Recipes...")
+                            SearchBar(text: $searchText, placeholder: "Search Recipes...")
                                 .padding(.horizontal)
                             
                             ScrollView {

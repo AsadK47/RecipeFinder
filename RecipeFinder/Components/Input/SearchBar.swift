@@ -1,19 +1,23 @@
 import SwiftUI
 
-struct ModernSearchBar: View {
+struct SearchBar: View {
     @Binding var text: String
     var placeholder: String
     @FocusState private var isFocused: Bool
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
-    
+
+    private enum Timing {
+        static let springResponse: Double = 0.3
+    }
+
     var body: some View {
         HStack(spacing: AppTheme.spacing12) {
             HStack(spacing: AppTheme.spacing12) {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(AppTheme.adaptiveHighEmphasis(for: colorScheme))
                     .font(.body)
-                
+
                 TextField(placeholder, text: $text)
                     .focused($isFocused)
                     .autocorrectionDisabled()
@@ -22,7 +26,7 @@ struct ModernSearchBar: View {
                         Text(placeholder)
                             .foregroundColor(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
                     }
-                
+
                 if !text.isEmpty {
                     Button(action: { text = "" }, label: {
                         Image(systemName: "xmark.circle.fill")
@@ -33,14 +37,14 @@ struct ModernSearchBar: View {
             .padding(AppTheme.spacing16)
             .background {
                 if cardStyle == .solid {
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                         .fill(AppTheme.adaptiveCardMedium(for: colorScheme))
                 } else {
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                         .fill(.ultraThinMaterial)
                 }
             }
-            
+
             if isFocused {
                 Button("Cancel") {
                     text = ""
@@ -51,7 +55,7 @@ struct ModernSearchBar: View {
                 .transition(.move(edge: .trailing).combined(with: .opacity))
             }
         }
-        .animation(.spring(response: 0.3), value: isFocused)
+        .animation(.spring(response: Timing.springResponse), value: isFocused)
     }
 }
 
@@ -60,7 +64,7 @@ extension View {
         when shouldShow: Bool,
         alignment: Alignment = .leading,
         @ViewBuilder placeholder: () -> Content) -> some View {
-        
+
         ZStack(alignment: alignment) {
             placeholder().opacity(shouldShow ? 1 : 0)
             self
