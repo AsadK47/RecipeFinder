@@ -2,7 +2,7 @@ import XCTest
 import SwiftUI
 @testable import RecipeFinder
 
-private typealias Palette = AnimatedHeartButton.HeartPalette
+private typealias Palette = HeartPalette
 private typealias Layout  = AnimatedHeartButton.Layout
 
 @MainActor

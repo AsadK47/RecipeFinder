@@ -31,26 +31,15 @@ struct RecipeCard: View {
                 if recipe.isFavorite {
                     ZStack {
                         Circle()
-                            .fill(colorScheme == .dark ? .white : .white)
-                            .frame(width: 24, height: 24)
+                            .fill(Color.white)
+                            .frame(width: AppTheme.iconSize24, height: AppTheme.iconSize24)
                             .shadow(color: .black.opacity(AppTheme.overlayLightOpacity), radius: 2)
-                        
+
                         Image(systemName: "heart.fill")
                             .font(.system(size: AppTheme.fontSize12))
-                            .foregroundStyle(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [
-                                        Color(red: 1.0, green: 0.2, blue: 0.4),
-                                        Color(red: 0.96, green: 0.26, blue: 0.21),
-                                        Color(red: 1.0, green: 0.38, blue: 0.27),
-                                        Color(red: 1.0, green: 0.5, blue: 0.0)
-                                    ]),
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
+                            .foregroundStyle(HeartPalette.gradient)
                     }
-                    .offset(x: -4, y: -4)
+                    .offset(x: -AppTheme.spacing4, y: -AppTheme.spacing4)
                 }
             }
             
@@ -100,7 +89,7 @@ struct RecipeCard: View {
         if cardStyle == .solid {
             RoundedRectangle(cornerRadius: cornerRadius)
                 .fill(AppTheme.cardBackground(for: colorScheme))
-                .shadow(color: Color.black.opacity(0.25), radius: 8, x: 0, y: 4)
+                .shadow(color: Color.black.opacity(CardViewLayout.shadowOpacitySolid), radius: AppTheme.shadowRadiusLarge, x: 0, y: AppTheme.shadowOffsetLarge)
         } else {
             RoundedRectangle(cornerRadius: cornerRadius)
                 .fill(.ultraThinMaterial)
