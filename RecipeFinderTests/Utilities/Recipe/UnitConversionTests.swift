@@ -1,12 +1,16 @@
 import XCTest
 @testable import RecipeFinder
 
+private typealias Weight       = UnitConversion.Weight
+private typealias Volume       = UnitConversion.Volume
+private typealias SolidDensity = UnitConversion.SolidDensity
+
 final class UnitConversionTests: XCTestCase {
 
     // MARK: - Input normalisation
 
     func testCaseInsensitiveConversion() {
-        XCTAssertEqual(UnitConversion.convertWeight(value: 1000, from: "G", to: "KG"), 1.0)
+        XCTAssertEqual(UnitConversion.convertWeight(value: Weight.gramsPerKg, from: "G", to: "KG"), 1.0)
     }
 
     func testUppercaseInput() {
@@ -66,59 +70,59 @@ final class UnitConversionTests: XCTestCase {
     // MARK: - Volume conversions
 
     func testCupsToMilliliters() {
-        XCTAssertEqual(UnitConversion.convertVolume(value: 1, from: "cup", to: "ml"), 236.5882365, accuracy: 0.001)
+        XCTAssertEqual(UnitConversion.convertVolume(value: 1, from: "cup", to: "ml"), Volume.mlPerCup, accuracy: 0.001)
     }
 
     func testFluidOuncesToMilliliters() {
-        XCTAssertEqual(UnitConversion.convertVolume(value: 1, from: "fl oz", to: "ml"), 29.5735295625, accuracy: 0.0001)
+        XCTAssertEqual(UnitConversion.convertVolume(value: 1, from: "fl oz", to: "ml"), Volume.mlPerFlOz, accuracy: 0.0001)
     }
 
     func testGallonsToMilliliters() {
-        XCTAssertEqual(UnitConversion.convertVolume(value: 1, from: "gal", to: "ml"), 3785.411784, accuracy: 0.001)
+        XCTAssertEqual(UnitConversion.convertVolume(value: 1, from: "gal", to: "ml"), Volume.mlPerGallon, accuracy: 0.001)
     }
 
     func testLiterAlias() {
-        XCTAssertEqual(UnitConversion.convertVolume(value: 1, from: "liter", to: "milliliter"), 1000.0)
+        XCTAssertEqual(UnitConversion.convertVolume(value: 1, from: "liter", to: "milliliter"), Volume.mlPerL)
     }
 
     func testLitersToMilliliters() {
-        XCTAssertEqual(UnitConversion.convertVolume(value: 1, from: "l", to: "ml"), 1000.0)
+        XCTAssertEqual(UnitConversion.convertVolume(value: 1, from: "l", to: "ml"), Volume.mlPerL)
     }
 
     func testMillilitersToCentiliters() {
-        XCTAssertEqual(UnitConversion.convertVolume(value: 10, from: "ml", to: "cl"), 1.0)
+        XCTAssertEqual(UnitConversion.convertVolume(value: Volume.mlPerCL, from: "ml", to: "cl"), 1.0)
     }
 
     func testMillilitersToCups() {
-        XCTAssertEqual(UnitConversion.convertVolume(value: 236.5882365, from: "ml", to: "cup"), 1.0, accuracy: 0.0001)
+        XCTAssertEqual(UnitConversion.convertVolume(value: Volume.mlPerCup, from: "ml", to: "cup"), 1.0, accuracy: 0.0001)
     }
 
     func testMillilitersToDeciliters() {
-        XCTAssertEqual(UnitConversion.convertVolume(value: 100, from: "ml", to: "dl"), 1.0)
+        XCTAssertEqual(UnitConversion.convertVolume(value: Volume.mlPerDL, from: "ml", to: "dl"), 1.0)
     }
 
     func testMillilitersToFluidOunces() {
-        XCTAssertEqual(UnitConversion.convertVolume(value: 29.5735295625, from: "ml", to: "fl oz"), 1.0, accuracy: 0.0001)
+        XCTAssertEqual(UnitConversion.convertVolume(value: Volume.mlPerFlOz, from: "ml", to: "fl oz"), 1.0, accuracy: 0.0001)
     }
 
     func testMillilitersToLiters() {
-        XCTAssertEqual(UnitConversion.convertVolume(value: 1000, from: "ml", to: "l"), 1.0)
+        XCTAssertEqual(UnitConversion.convertVolume(value: Volume.mlPerL, from: "ml", to: "l"), 1.0)
     }
 
     func testMillilitersToTablespoons() {
-        XCTAssertEqual(UnitConversion.convertVolume(value: 14.78676478125, from: "ml", to: "tbsp"), 1.0, accuracy: 0.0001)
+        XCTAssertEqual(UnitConversion.convertVolume(value: Volume.mlPerTbsp, from: "ml", to: "tbsp"), 1.0, accuracy: 0.0001)
     }
 
     func testMillilitersToTeaspoons() {
-        XCTAssertEqual(UnitConversion.convertVolume(value: 4.92892159375, from: "ml", to: "tsp"), 1.0, accuracy: 0.0001)
+        XCTAssertEqual(UnitConversion.convertVolume(value: Volume.mlPerTsp, from: "ml", to: "tsp"), 1.0, accuracy: 0.0001)
     }
 
     func testPintsToMilliliters() {
-        XCTAssertEqual(UnitConversion.convertVolume(value: 1, from: "pt", to: "ml"), 473.176473, accuracy: 0.001)
+        XCTAssertEqual(UnitConversion.convertVolume(value: 1, from: "pt", to: "ml"), Volume.mlPerPint, accuracy: 0.001)
     }
 
     func testQuartsToMilliliters() {
-        XCTAssertEqual(UnitConversion.convertVolume(value: 1, from: "qt", to: "ml"), 946.352946, accuracy: 0.001)
+        XCTAssertEqual(UnitConversion.convertVolume(value: 1, from: "qt", to: "ml"), Volume.mlPerQuart, accuracy: 0.001)
     }
 
     func testVolumeSameUnit() {
@@ -126,15 +130,19 @@ final class UnitConversionTests: XCTestCase {
     }
 
     func testTablespoonAlias() {
-        XCTAssertEqual(UnitConversion.convertVolume(value: 1, from: "tablespoon", to: "teaspoon"), 3.0, accuracy: 0.0001)
+        XCTAssertEqual(
+            UnitConversion.convertVolume(value: 1, from: "tablespoon", to: "teaspoon"),
+            Volume.mlPerTbsp / Volume.mlPerTsp,
+            accuracy: 0.0001
+        )
     }
 
     func testTablespoonsToMilliliters() {
-        XCTAssertEqual(UnitConversion.convertVolume(value: 1, from: "tbsp", to: "ml"), 14.78676478125, accuracy: 0.0001)
+        XCTAssertEqual(UnitConversion.convertVolume(value: 1, from: "tbsp", to: "ml"), Volume.mlPerTbsp, accuracy: 0.0001)
     }
 
     func testTeaspoonsToMilliliters() {
-        XCTAssertEqual(UnitConversion.convertVolume(value: 1, from: "tsp", to: "ml"), 4.92892159375, accuracy: 0.0001)
+        XCTAssertEqual(UnitConversion.convertVolume(value: 1, from: "tsp", to: "ml"), Volume.mlPerTsp, accuracy: 0.0001)
     }
 
     func testUnknownVolumeUnitPassthrough() {
@@ -144,59 +152,75 @@ final class UnitConversionTests: XCTestCase {
     // MARK: - Weight conversions
 
     func testGramAlias() {
-        XCTAssertEqual(UnitConversion.convertWeight(value: 1000, from: "gram", to: "kilogram"), 1.0)
+        XCTAssertEqual(UnitConversion.convertWeight(value: Weight.gramsPerKg, from: "gram", to: "kilogram"), 1.0)
     }
 
     func testGramsToKilograms() {
-        XCTAssertEqual(UnitConversion.convertWeight(value: 1000, from: "g", to: "kg"), 1.0)
+        XCTAssertEqual(UnitConversion.convertWeight(value: Weight.gramsPerKg, from: "g", to: "kg"), 1.0)
     }
 
     func testGramsToOunces() {
-        XCTAssertEqual(UnitConversion.convertWeight(value: 28.349523125, from: "g", to: "oz"), 1.0, accuracy: 0.0001)
+        XCTAssertEqual(UnitConversion.convertWeight(value: Weight.gramsPerOunce, from: "g", to: "oz"), 1.0, accuracy: 0.0001)
     }
 
     func testGramsToPounds() {
-        XCTAssertEqual(UnitConversion.convertWeight(value: 453.59237, from: "g", to: "lbs"), 1.0, accuracy: 0.0001)
+        XCTAssertEqual(UnitConversion.convertWeight(value: Weight.gramsPerPound, from: "g", to: "lbs"), 1.0, accuracy: 0.0001)
     }
 
     func testKilogramsToGrams() {
-        XCTAssertEqual(UnitConversion.convertWeight(value: 1, from: "kg", to: "g"), 1000.0)
+        XCTAssertEqual(UnitConversion.convertWeight(value: 1, from: "kg", to: "g"), Weight.gramsPerKg)
     }
 
     func testKilogramsToOunces() {
-        XCTAssertEqual(UnitConversion.convertWeight(value: 1, from: "kg", to: "oz"), 35.27396, accuracy: 0.0001)
+        XCTAssertEqual(
+            UnitConversion.convertWeight(value: 1, from: "kg", to: "oz"),
+            Weight.gramsPerKg / Weight.gramsPerOunce,
+            accuracy: 0.0001
+        )
     }
 
     func testKilogramsToPounds() {
-        XCTAssertEqual(UnitConversion.convertWeight(value: 1, from: "kg", to: "lbs"), 2.20462, accuracy: 0.0001)
+        XCTAssertEqual(
+            UnitConversion.convertWeight(value: 1, from: "kg", to: "lbs"),
+            Weight.gramsPerKg / Weight.gramsPerPound,
+            accuracy: 0.0001
+        )
     }
 
     func testOuncesToGrams() {
-        XCTAssertEqual(UnitConversion.convertWeight(value: 1, from: "oz", to: "g"), 28.349523125, accuracy: 0.0001)
+        XCTAssertEqual(UnitConversion.convertWeight(value: 1, from: "oz", to: "g"), Weight.gramsPerOunce, accuracy: 0.0001)
     }
 
     func testOuncesToKilograms() {
-        XCTAssertEqual(UnitConversion.convertWeight(value: 1, from: "oz", to: "kg"), 0.0283495, accuracy: 0.0001)
+        XCTAssertEqual(
+            UnitConversion.convertWeight(value: 1, from: "oz", to: "kg"),
+            Weight.gramsPerOunce / Weight.gramsPerKg,
+            accuracy: 0.0001
+        )
     }
 
     func testOuncesToPounds() {
-        XCTAssertEqual(UnitConversion.convertWeight(value: 16, from: "oz", to: "lbs"), 1.0, accuracy: 0.0001)
+        XCTAssertEqual(UnitConversion.convertWeight(value: Weight.ouncesPerPound, from: "oz", to: "lbs"), 1.0, accuracy: 0.0001)
     }
 
     func testPoundAlias() {
-        XCTAssertEqual(UnitConversion.convertWeight(value: 1, from: "pound", to: "ounce"), 16.0, accuracy: 0.0001)
+        XCTAssertEqual(UnitConversion.convertWeight(value: 1, from: "pound", to: "ounce"), Weight.ouncesPerPound, accuracy: 0.0001)
     }
 
     func testPoundsToGrams() {
-        XCTAssertEqual(UnitConversion.convertWeight(value: 1, from: "lbs", to: "g"), 453.59237, accuracy: 0.01)
+        XCTAssertEqual(UnitConversion.convertWeight(value: 1, from: "lbs", to: "g"), Weight.gramsPerPound, accuracy: 0.01)
     }
 
     func testPoundsToKilograms() {
-        XCTAssertEqual(UnitConversion.convertWeight(value: 1, from: "lbs", to: "kg"), 0.45359237, accuracy: 0.0001)
+        XCTAssertEqual(
+            UnitConversion.convertWeight(value: 1, from: "lbs", to: "kg"),
+            Weight.gramsPerPound / Weight.gramsPerKg,
+            accuracy: 0.0001
+        )
     }
 
     func testPoundsToOunces() {
-        XCTAssertEqual(UnitConversion.convertWeight(value: 1, from: "lbs", to: "oz"), 16.0, accuracy: 0.0001)
+        XCTAssertEqual(UnitConversion.convertWeight(value: 1, from: "lbs", to: "oz"), Weight.ouncesPerPound, accuracy: 0.0001)
     }
 
     func testWeightSameUnit() {

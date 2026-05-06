@@ -14,14 +14,14 @@ enum MeasurementSystem: String, CaseIterable, Codable {
 
 struct UnitConversion {
 
-    private enum Weight {
+    enum Weight {
         static let gramsPerKg     = 1000.0
         static let gramsPerPound  = 453.59237
         static let gramsPerOunce  = 28.349523125
         static let ouncesPerPound = 16.0
     }
 
-    private enum Volume {
+    enum Volume {
         static let mlPerCL     = 10.0
         static let mlPerDL     = 100.0
         static let mlPerL      = 1000.0
@@ -34,7 +34,7 @@ struct UnitConversion {
         static let mlPerGallon = 3785.411784
     }
 
-    private enum SolidDensity {
+    enum SolidDensity {
         static let gramsPerTsp  = 5.0
         static let gramsPerTbsp = 15.0
         static let gramsPerCup  = 125.0
