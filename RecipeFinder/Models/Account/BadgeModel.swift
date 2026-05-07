@@ -179,22 +179,7 @@ class BadgeManager: ObservableObject {
     }
     
     func getAllBadges(recipeCount: Int) -> [Badge] {
-        return BadgeType.allCases.map { badgeType in
-            if let unlocked = unlockedBadges[badgeType.rawValue] {
-                return unlocked
-            } else {
-                let badge = badgeType.badge
-                return Badge(
-                    id: badge.id,
-                    title: badge.title,
-                    description: badge.description,
-                    icon: badge.icon,
-                    color: badge.color,
-                    dateEarned: nil,
-                    isUnlocked: false
-                )
-            }
-        }
+        BadgeType.allCases.map { unlockedBadges[$0.rawValue] ?? $0.badge }
     }
     
     private func saveBadges() {
