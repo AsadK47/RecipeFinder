@@ -225,7 +225,6 @@ struct RecipeImportView: View {
                 .padding(.bottom, 40)
             }
             
-            OfflineBanner()
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
