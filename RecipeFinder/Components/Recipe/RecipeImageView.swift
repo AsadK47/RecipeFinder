@@ -3,15 +3,20 @@ import SwiftUI
 struct RecipeImageView: View {
     let imageName: String?
     let height: CGFloat
-    
+
     @State private var cachedImage: UIImage?
-    private let cornerRadius: CGFloat = 16
-    
-    init(imageName: String?, height: CGFloat = 200) {
+
+    private enum Layout {
+        static let defaultHeight: CGFloat = 200
+        static let placeholderBackgroundOpacity: Double = 0.2
+        static let placeholderIconOpacity: Double = 0.5
+    }
+
+    init(imageName: String?, height: CGFloat = Layout.defaultHeight) {
         self.imageName = imageName
         self.height = height
     }
-    
+
     var body: some View {
         Group {
             if let cachedImage = cachedImage {
@@ -31,20 +36,18 @@ struct RecipeImageView: View {
                     }
             } else {
                 ZStack {
-                    Color.gray.opacity(0.2)
-                    
-                    VStack(spacing: AppTheme.spacing8) {
-                        Image(systemName: "photo")
-                            .font(.system(size: AppTheme.fontSize42))
-                            .foregroundColor(.gray.opacity(0.5))
-                    }
+                    Color.gray.opacity(Layout.placeholderBackgroundOpacity)
+
+                    Image(systemName: "photo")
+                        .font(.system(size: AppTheme.fontSize42))
+                        .foregroundColor(.gray.opacity(Layout.placeholderIconOpacity))
                 }
                 .frame(height: height)
             }
         }
         .frame(height: height)
         .frame(maxWidth: .infinity)
-        .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+        .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius16))
         .drawingGroup()
     }
 }
