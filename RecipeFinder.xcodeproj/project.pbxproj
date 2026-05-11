@@ -43,6 +43,7 @@
 		9E5B39992FACFF9000C96DB3 /* QuickAddItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5B39942FACFF9000C96DB3 /* QuickAddItems.swift */; };
 		9E5B399A2FACFF9000C96DB3 /* QuickAddSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5B39952FACFF9000C96DB3 /* QuickAddSheetView.swift */; };
 		9E5B399D2FAD024A00C96DB3 /* BadgeModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5B399B2FAD024A00C96DB3 /* BadgeModelTests.swift */; };
+		9E5D201D2FB24B9B00F2896A /* CookingTipModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5D201C2FB24B9B00F2896A /* CookingTipModelTests.swift */; };
 		9E6060032D09CB6400236896 /* RecipeModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9E6060002D09CB6400236896 /* RecipeModel.xcdatamodeld */; };
 		9E6DEA602EF5EF47001E7B24 /* DifficultyBarsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA572EF5EF47001E7B24 /* DifficultyBarsView.swift */; };
 		9E6DEA632EF5EF47001E7B24 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA462EF5EF47001E7B24 /* CardView.swift */; };
@@ -173,6 +174,7 @@
 		9E5B39952FACFF9000C96DB3 /* QuickAddSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddSheetView.swift; sourceTree = "<group>"; };
 		9E5B39962FACFF9000C96DB3 /* ShoppingQuickAddSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingQuickAddSheet.swift; sourceTree = "<group>"; };
 		9E5B399B2FAD024A00C96DB3 /* BadgeModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeModelTests.swift; sourceTree = "<group>"; };
+		9E5D201C2FB24B9B00F2896A /* CookingTipModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookingTipModelTests.swift; sourceTree = "<group>"; };
 		9E6060012D09CB6400236896 /* RecipeModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = RecipeModel.xcdatamodel; sourceTree = "<group>"; };
 		9E6060022D09CB6400236896 /* RecipeModel 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 2.xcdatamodel"; sourceTree = "<group>"; };
 		9E6DEA432EF5EF47001E7B24 /* AnimatedHeartButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedHeartButton.swift; sourceTree = "<group>"; };
@@ -406,6 +408,7 @@
 		9E5B399C2FAD024A00C96DB3 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				9E5D201C2FB24B9B00F2896A /* CookingTipModelTests.swift */,
 				9E5B399B2FAD024A00C96DB3 /* BadgeModelTests.swift */,
 			);
 			path = Models;
@@ -1113,6 +1116,7 @@
 				9E90AB022FA9247B00096D9D /* AnimatedHeartButtonTests.swift in Sources */,
 				9E5B398F2FABC95300C96DB3 /* InfoItemTests.swift in Sources */,
 				9E85E3552FA9403D000136E1 /* CardViewTests.swift in Sources */,
+				9E5D201D2FB24B9B00F2896A /* CookingTipModelTests.swift in Sources */,
 				9E5B399D2FAD024A00C96DB3 /* BadgeModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
