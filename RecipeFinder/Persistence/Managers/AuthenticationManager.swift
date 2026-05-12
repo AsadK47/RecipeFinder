@@ -84,7 +84,7 @@ final class AuthenticationManager: NSObject, ObservableObject {
         }
     }
     
-    override init() {
+    private override init() {
         super.init()
         checkAuthenticationStatus()
     }
@@ -414,13 +414,13 @@ final class AuthenticationManager: NSObject, ObservableObject {
     }
     
     private func reloadAllManagers() {
-        AccountManager.shared.loadProfile()
         ShoppingListManager.shared.reloadForCurrentUser()
         NotesManager.shared.reloadForCurrentUser()
         KitchenInventoryManager.shared.reloadForCurrentUser()
         MealPlanningManager.shared.reloadForCurrentUser()
         CookingTipsManager.shared.reloadForCurrentUser()
         BadgeManager.shared.reloadForCurrentUser()
+        AccountManager.shared.loadProfile()
     }
     
     private func saveUser(_ user: User) throws {

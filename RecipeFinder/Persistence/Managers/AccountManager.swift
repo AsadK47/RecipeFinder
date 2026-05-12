@@ -136,22 +136,8 @@ final class AccountManager: ObservableObject {
     
     @objc func updateStats() {
         self.recipeCount = PersistenceController.shared.fetchRecipeCount()
-        
-        let storage = UserScopedStorage.shared
-        
-        if let data = storage.data(forKey: Constants.UserDefaultsKeys.kitchenItems),
-           let items = try? JSONDecoder().decode([KitchenItem].self, from: data) {
-            self.kitchenItemCount = items.count
-        } else {
-            self.kitchenItemCount = 0
-        }
-        
-        if let data = storage.data(forKey: Constants.UserDefaultsKeys.shoppingListItems),
-           let items = try? JSONDecoder().decode([ShoppingListModel].self, from: data) {
-            self.shoppingListCount = items.count
-        } else {
-            self.shoppingListCount = 0
-        }
+        self.kitchenItemCount = KitchenInventoryManager.shared.items.count
+        self.shoppingListCount = ShoppingListManager.shared.items.count
     }
     
     func clearAllData() {
