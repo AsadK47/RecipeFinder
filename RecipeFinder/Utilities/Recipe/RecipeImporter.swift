@@ -8,6 +8,8 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
     @Published var errorMessage: String?
     @Published var extractedData: ExtractedRecipeData?
     @Published var parseConfidence: Double = 0.0
+
+    var isNetworkAvailable: () async -> Bool = { await NetworkMonitor.shared.isConnected }
     
     struct ExtractedRecipeData: Equatable {
         let name: String
@@ -41,7 +43,7 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             extractedData = nil
         }
         
-        let isConnected = await NetworkMonitor.shared.isConnected
+        let isConnected = await isNetworkAvailable()
         guard isConnected else {
             await MainActor.run {
                 self.isLoading = false
