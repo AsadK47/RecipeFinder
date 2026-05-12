@@ -107,6 +107,10 @@ final class CookingTipsManager: ObservableObject {
     }
 
     private func loadTips() {
+        guard storage.currentUserId != nil else {
+            self.tips = []
+            return
+        }
         if let data = storage.data(forKey: saveKey),
            let decoded = try? JSONDecoder().decode([CookingTipModel].self, from: data) {
             self.tips = decoded

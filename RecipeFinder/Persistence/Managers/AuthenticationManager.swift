@@ -106,15 +106,7 @@ final class AuthenticationManager: NSObject, ObservableObject {
         guard let user = currentUser else { return }
         
         UserScopedStorage.shared.currentUserId = user.id
-        
-        AccountManager.shared.loadProfile()
-        ShoppingListManager.shared.reloadForCurrentUser()
-        NotesManager.shared.reloadForCurrentUser()
-        KitchenInventoryManager.shared.reloadForCurrentUser()
-        MealPlanningManager.shared.reloadForCurrentUser()
-        CookingTipsManager.shared.reloadForCurrentUser()
-        BadgeManager.shared.reloadForCurrentUser()
-        
+        reloadAllManagers()
         updateLastActiveTimestamp()
     }
     
@@ -223,14 +215,7 @@ final class AuthenticationManager: NSObject, ObservableObject {
         updateLastActiveTimestamp()
         
         UserScopedStorage.shared.currentUserId = user.id
-        
-        AccountManager.shared.loadProfile()
-        ShoppingListManager.shared.reloadForCurrentUser()
-        NotesManager.shared.reloadForCurrentUser()
-        KitchenInventoryManager.shared.reloadForCurrentUser()
-        MealPlanningManager.shared.reloadForCurrentUser()
-        CookingTipsManager.shared.reloadForCurrentUser()
-        BadgeManager.shared.reloadForCurrentUser()
+        reloadAllManagers()
         
         let userKey = "user_\(user.id)_initialized"
         let isNewUser = !UserDefaults.standard.bool(forKey: userKey)
@@ -309,14 +294,7 @@ final class AuthenticationManager: NSObject, ObservableObject {
         updateLastActiveTimestamp()
         
         UserScopedStorage.shared.currentUserId = user.id
-        
-        AccountManager.shared.loadProfile()
-        ShoppingListManager.shared.reloadForCurrentUser()
-        NotesManager.shared.reloadForCurrentUser()
-        KitchenInventoryManager.shared.reloadForCurrentUser()
-        MealPlanningManager.shared.reloadForCurrentUser()
-        CookingTipsManager.shared.reloadForCurrentUser()
-        BadgeManager.shared.reloadForCurrentUser()
+        reloadAllManagers()
         
         let userKey = "user_\(user.id)_initialized"
         if !UserDefaults.standard.bool(forKey: userKey) {
@@ -382,13 +360,7 @@ final class AuthenticationManager: NSObject, ObservableObject {
             
             if let user = currentUser {
                 UserScopedStorage.shared.currentUserId = user.id
-                AccountManager.shared.loadProfile()
-                ShoppingListManager.shared.reloadForCurrentUser()
-                NotesManager.shared.reloadForCurrentUser()
-                KitchenInventoryManager.shared.reloadForCurrentUser()
-                MealPlanningManager.shared.reloadForCurrentUser()
-                CookingTipsManager.shared.reloadForCurrentUser()
-                BadgeManager.shared.reloadForCurrentUser()
+                reloadAllManagers()
             }
             
             HapticManager.shared.success()
@@ -430,14 +402,6 @@ final class AuthenticationManager: NSObject, ObservableObject {
         
         UserScopedStorage.shared.currentUserId = nil
         
-        AccountManager.shared.loadProfile()
-        ShoppingListManager.shared.reloadForCurrentUser()
-        NotesManager.shared.reloadForCurrentUser()
-        KitchenInventoryManager.shared.reloadForCurrentUser()
-        MealPlanningManager.shared.reloadForCurrentUser()
-        CookingTipsManager.shared.reloadForCurrentUser()
-        BadgeManager.shared.reloadForCurrentUser()
-        
         self.isAuthenticated = false
         self.currentUser = nil
         
@@ -447,6 +411,16 @@ final class AuthenticationManager: NSObject, ObservableObject {
         
         self.logger.debug("✅ Sign out complete - UI should now show login screen")
         HapticManager.shared.light()
+    }
+    
+    private func reloadAllManagers() {
+        AccountManager.shared.loadProfile()
+        ShoppingListManager.shared.reloadForCurrentUser()
+        NotesManager.shared.reloadForCurrentUser()
+        KitchenInventoryManager.shared.reloadForCurrentUser()
+        MealPlanningManager.shared.reloadForCurrentUser()
+        CookingTipsManager.shared.reloadForCurrentUser()
+        BadgeManager.shared.reloadForCurrentUser()
     }
     
     private func saveUser(_ user: User) throws {
@@ -612,14 +586,7 @@ extension AuthenticationManager: ASAuthorizationControllerDelegate {
                 updateLastActiveTimestamp()
                 
                 UserScopedStorage.shared.currentUserId = user.id
-                
-                AccountManager.shared.loadProfile()
-                ShoppingListManager.shared.reloadForCurrentUser()
-                NotesManager.shared.reloadForCurrentUser()
-                KitchenInventoryManager.shared.reloadForCurrentUser()
-                MealPlanningManager.shared.reloadForCurrentUser()
-                CookingTipsManager.shared.reloadForCurrentUser()
-                BadgeManager.shared.reloadForCurrentUser()
+                reloadAllManagers()
                 
                 let userKey = "user_\(user.id)_initialized"
                 if !UserDefaults.standard.bool(forKey: userKey) {
