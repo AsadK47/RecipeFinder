@@ -1,6 +1,7 @@
 import XCTest
 @testable import RecipeFinder
 
+@MainActor
 final class DifficultyBarsViewTests: XCTestCase {
 
     private typealias Layout = DifficultyBarsView.Layout

@@ -2,6 +2,7 @@ import XCTest
 import SwiftUI
 @testable import RecipeFinder
 
+@MainActor
 final class InfoItemTests: XCTestCase {
 
     // MARK: - iconColor

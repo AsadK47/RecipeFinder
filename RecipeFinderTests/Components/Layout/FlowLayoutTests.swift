@@ -1,6 +1,7 @@
 import XCTest
 @testable import RecipeFinder
 
+@MainActor
 final class FlowLayoutTests: XCTestCase {
 
     private enum Fixture {
