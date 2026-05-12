@@ -1,26 +1,70 @@
 
 import SwiftUI
 
+// MARK: - Layout Constants
+
+private enum QuickSnackLayout {
+    static let headerHorizontalPadding: CGFloat = AppTheme.spacing20
+    static let headerTopPadding: CGFloat = AppTheme.spacing20
+    static let headerBottomPadding: CGFloat = AppTheme.spacing8
+    static let addButtonTopPadding: CGFloat = AppTheme.spacing8
+    static let scrollBottomPadding: CGFloat = 100
+    static let emojiGridColumnCount = 8
+    static let emojiGridItemSize: CGFloat = AppTheme.iconSize40
+    static let snackCardWidth: CGFloat = AppTheme.width80
+    static let snackCardHeight: CGFloat = 100
+    static let maxVisibleSnacks = 20
+    static let servingsDisplayMinWidth: CGFloat = 50
+    static let minimumServings = 1
+}
+
+// MARK: - Card Background Modifier
+
+private struct CardBackgroundModifier: ViewModifier {
+    let cardStyle: CardStyle
+    let colorScheme: ColorScheme
+
+    func body(content: Content) -> some View {
+        content.background {
+            if cardStyle == .solid {
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                    .fill(AppTheme.adaptiveCardMedium(for: colorScheme))
+            } else {
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                    .fill(.ultraThinMaterial)
+            }
+        }
+    }
+}
+
+private extension View {
+    func snackCardBackground(cardStyle: CardStyle, colorScheme: ColorScheme) -> some View {
+        modifier(CardBackgroundModifier(cardStyle: cardStyle, colorScheme: colorScheme))
+    }
+}
+
+// MARK: - QuickSnackSheet
+
 struct QuickSnackSheet: View {
     @Environment(\.dismiss) var dismiss
     @Binding var recipes: [RecipeModel]
     let onSnackAdded: (RecipeModel) -> Void
-    
+
     @StateObject private var viewModel = QuickSnackViewModel()
-    
+
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @Environment(\.colorScheme) var colorScheme
-    
+
     var body: some View {
         ZStack {
             AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
-            
+
             VStack(spacing: 0) {
                 HStack {
                     Spacer()
-                    
+
                     Button(action: { dismiss() }) {
                         HStack(spacing: AppTheme.spacing6) {
                             Image(systemName: "xmark.circle.fill")
@@ -32,14 +76,14 @@ struct QuickSnackSheet: View {
                         .shadow(color: .black.opacity(AppTheme.shadowDarkOpacity), radius: 2, x: 0, y: 1)
                     }
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 20)
-                .padding(.bottom, 8)
-                
+                .padding(.horizontal, QuickSnackLayout.headerHorizontalPadding)
+                .padding(.top, QuickSnackLayout.headerTopPadding)
+                .padding(.bottom, QuickSnackLayout.headerBottomPadding)
+
                 ScrollView {
                     VStack(spacing: AppTheme.spacing32) {
-                        HeaderView()
-                        
+                        QuickSnackHeaderView()
+
                         EmojiSelectorView(
                             selectedEmoji: $viewModel.selectedEmoji,
                             showEmojiPicker: $viewModel.showEmojiPicker,
@@ -48,7 +92,7 @@ struct QuickSnackSheet: View {
                             selectedTheme: selectedTheme
                         )
                         .padding(.horizontal)
-                        
+
                         if !viewModel.hasCustomInput {
                             DietaryFilterView(
                                 selectedFilters: $viewModel.selectedDietaryFilters,
@@ -56,7 +100,7 @@ struct QuickSnackSheet: View {
                                 colorScheme: colorScheme
                             )
                             .padding(.horizontal)
-                            
+
                             SnackSuggestionsView(
                                 filteredSnacks: viewModel.filteredSnacks,
                                 onSnackSelected: { snack in
@@ -66,14 +110,14 @@ struct QuickSnackSheet: View {
                                 colorScheme: colorScheme
                             )
                         }
-                        
+
                         SnackNameInputView(
                             snackName: $viewModel.snackName,
                             cardStyle: cardStyle,
                             colorScheme: colorScheme
                         )
                         .padding(.horizontal)
-                        
+
                         ServingsControlView(
                             servings: $viewModel.servings,
                             cardStyle: cardStyle,
@@ -81,7 +125,7 @@ struct QuickSnackSheet: View {
                             selectedTheme: selectedTheme
                         )
                         .padding(.horizontal)
-                        
+
                         if let selectedSnack = viewModel.selectedSnack {
                             DietaryTagsDisplayView(
                                 tags: selectedSnack.dietaryTags,
@@ -89,7 +133,7 @@ struct QuickSnackSheet: View {
                             )
                             .padding(.horizontal)
                         }
-                        
+
                         AddButtonView(
                             isEnabled: viewModel.canAddSnack,
                             selectedTheme: selectedTheme,
@@ -98,15 +142,15 @@ struct QuickSnackSheet: View {
                             }
                         )
                         .padding(.horizontal)
-                        .padding(.top, 8)
+                        .padding(.top, QuickSnackLayout.addButtonTopPadding)
                     }
-                    .padding(.bottom, 100)
+                    .padding(.bottom, QuickSnackLayout.scrollBottomPadding)
                 }
             }
         }
         .animation(.spring(response: 0.3, dampingFraction: 0.8), value: viewModel.showEmojiPicker)
     }
-    
+
     private func addSnack() {
         let snackRecipe = viewModel.createSnackRecipe()
         recipes.append(snackRecipe)
@@ -116,33 +160,39 @@ struct QuickSnackSheet: View {
     }
 }
 
+// MARK: - ViewModel
+
 class QuickSnackViewModel: ObservableObject {
     @Published var snackName: String = ""
-    @Published var servings: Int = 1
+    @Published var servings: Int = QuickSnackLayout.minimumServings
     @Published var selectedEmoji: String = "🍎"
     @Published var showEmojiPicker = false
     @Published var selectedDietaryFilters: Set<DietaryTag> = []
     @Published var selectedSnack: SnackItem?
-    
+
+    private static let snackCategory = "Snack"
+    private static let snackPrepTime = "0 min"
+    private static let snackDifficulty = 1
+
     var hasCustomInput: Bool {
         !snackName.isEmpty
     }
-    
+
     var canAddSnack: Bool {
         !snackName.isEmpty
     }
-    
+
     var filteredSnacks: [SnackItem] {
         SnackDatabase.snacks(matching: selectedDietaryFilters)
     }
-    
+
     func selectSnack(_ snack: SnackItem) {
         selectedEmoji = snack.emoji
         snackName = snack.name
         selectedSnack = snack
         HapticManager.shared.light()
     }
-    
+
     func createSnackRecipe() -> RecipeModel {
         var notes = "Quick snack - \(selectedEmoji)"
         if let selectedSnack = selectedSnack {
@@ -154,14 +204,14 @@ class QuickSnackViewModel: ObservableObject {
                 notes += "\nCalories: ~\(calories) per serving"
             }
         }
-        
+
         return RecipeModel(
             name: snackName,
             ingredients: [],
             instructions: "Enjoy your \(snackName)!",
-            prepTime: "0 min",
-            category: "Snack",
-            difficulty: 1,
+            prepTime: QuickSnackViewModel.snackPrepTime,
+            category: QuickSnackViewModel.snackCategory,
+            difficulty: QuickSnackViewModel.snackDifficulty,
             currentServings: servings,
             baseServings: servings,
             defaultServings: servings,
@@ -172,7 +222,9 @@ class QuickSnackViewModel: ObservableObject {
     }
 }
 
-struct HeaderView: View {
+// MARK: - Subviews
+
+struct QuickSnackHeaderView: View {
     var body: some View {
         VStack(spacing: AppTheme.spacing8) {
             Text("Quick Add Snack")
@@ -216,24 +268,28 @@ struct EmojiSelectorView: View {
                 HStack {
                     Text(selectedEmoji)
                         .font(.system(size: AppTheme.fontSize50))
-                    
+
                     Spacer()
-                    
+
                     Image(systemName: "chevron.down")
                         .adaptiveForegroundColor(opacity: AppTheme.glassLightOpacity)
                         .rotationEffect(.degrees(showEmojiPicker ? 180 : 0))
                 }
                 .padding()
-                .background {
-                    cardBackground(cardStyle: cardStyle, colorScheme: colorScheme)
-                }
+                .snackCardBackground(cardStyle: cardStyle, colorScheme: colorScheme)
             }
             .accessibilityLabel("Selected emoji: \(selectedEmoji)")
             .accessibilityHint("Double tap to choose a different emoji icon")
             .accessibilityAddTraits(.isButton)
             
             if showEmojiPicker {
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: AppTheme.spacing8), count: 8), spacing: AppTheme.spacing8) {
+                LazyVGrid(
+                    columns: Array(
+                        repeating: GridItem(.flexible(), spacing: AppTheme.spacing8),
+                        count: QuickSnackLayout.emojiGridColumnCount
+                    ),
+                    spacing: AppTheme.spacing8
+                ) {
                     ForEach(emojiOptions, id: \.self) { emoji in
                         Button(action: {
                             selectedEmoji = emoji
@@ -242,10 +298,10 @@ struct EmojiSelectorView: View {
                         }) {
                             Text(emoji)
                                 .font(.system(size: AppTheme.fontSize32))
-                                .frame(width: 40, height: 40)
+                                .frame(width: QuickSnackLayout.emojiGridItemSize, height: QuickSnackLayout.emojiGridItemSize)
                                 .background {
                                     if selectedEmoji == emoji {
-                                        RoundedRectangle(cornerRadius: 8)
+                                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius8)
                                             .fill(AppTheme.accentColor(for: selectedTheme).opacity(0.3))
                                     }
                                 }
@@ -255,10 +311,10 @@ struct EmojiSelectorView: View {
                 .padding()
                 .background {
                     if cardStyle == .solid {
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                             .fill(AppTheme.adaptiveCardHigh(for: colorScheme))
                     } else {
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                             .fill(.ultraThinMaterial)
                     }
                 }
@@ -290,17 +346,21 @@ struct DietaryFilterView: View {
                         filter: filter,
                         isSelected: selectedFilters.contains(filter),
                         action: {
-                            if selectedFilters.contains(filter) {
-                                selectedFilters.remove(filter)
-                            } else {
-                                selectedFilters.insert(filter)
-                            }
-                            HapticManager.shared.light()
+                            toggleFilter(filter)
                         }
                     )
                 }
             }
         }
+    }
+
+    private func toggleFilter(_ filter: DietaryTag) {
+        if selectedFilters.contains(filter) {
+            selectedFilters.remove(filter)
+        } else {
+            selectedFilters.insert(filter)
+        }
+        HapticManager.shared.light()
     }
 }
 
@@ -318,8 +378,8 @@ struct DietaryFilterChip: View {
                     .font(.caption)
                     .fontWeight(.medium)
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
+            .padding(.horizontal, AppTheme.spacing12)
+            .padding(.vertical, AppTheme.spacing6)
             .background(
                 isSelected ?
                 Color.green.opacity(0.8) :
@@ -354,7 +414,7 @@ struct SnackSuggestionsView: View {
             
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: AppTheme.spacing12) {
-                    ForEach(filteredSnacks.prefix(20)) { snack in
+                    ForEach(filteredSnacks.prefix(QuickSnackLayout.maxVisibleSnacks)) { snack in
                         Button(action: {
                             onSnackSelected(snack)
                         }) {
@@ -373,10 +433,8 @@ struct SnackSuggestionsView: View {
                                         .adaptiveForegroundColor(opacity: AppTheme.mediumEmphasisOpacity)
                                 }
                             }
-                            .frame(width: 80, height: 100)
-                            .background {
-                                cardBackground(cardStyle: cardStyle, colorScheme: colorScheme)
-                            }
+                            .frame(width: QuickSnackLayout.snackCardWidth, height: QuickSnackLayout.snackCardHeight)
+                            .snackCardBackground(cardStyle: cardStyle, colorScheme: colorScheme)
                         }
                     }
                 }
@@ -401,9 +459,7 @@ struct SnackNameInputView: View {
             TextField("E.g., Apple Slices", text: $snackName)
                 .textFieldStyle(.plain)
                 .padding()
-                .background {
-                    cardBackground(cardStyle: cardStyle, colorScheme: colorScheme)
-                }
+                .snackCardBackground(cardStyle: cardStyle, colorScheme: colorScheme)
                 .foregroundColor(AppTheme.adaptiveEmphasis(for: colorScheme))
         }
     }
@@ -423,22 +479,22 @@ struct ServingsControlView: View {
             
             HStack(spacing: AppTheme.spacing16) {
                 Button(action: {
-                    if servings > 1 {
+                    if servings > QuickSnackLayout.minimumServings {
                         servings -= 1
                         HapticManager.shared.light()
                     }
                 }) {
                     Image(systemName: "minus.circle.fill")
                         .font(.title2)
-                        .foregroundColor(servings > 1 ? AppTheme.accentColor(for: selectedTheme) : .gray)
+                        .foregroundColor(servings > QuickSnackLayout.minimumServings ? AppTheme.accentColor(for: selectedTheme) : .gray)
                 }
-                .disabled(servings <= 1)
+                .disabled(servings <= QuickSnackLayout.minimumServings)
                 
                 Text("\(servings)")
                     .font(.title)
                     .fontWeight(.bold)
                     .adaptiveForegroundColor()
-                    .frame(minWidth: 50)
+                    .frame(minWidth: QuickSnackLayout.servingsDisplayMinWidth)
                 
                 Button(action: {
                     servings += 1
@@ -451,9 +507,7 @@ struct ServingsControlView: View {
             }
             .padding()
             .frame(maxWidth: .infinity)
-            .background {
-                cardBackground(cardStyle: cardStyle, colorScheme: colorScheme)
-            }
+            .snackCardBackground(cardStyle: cardStyle, colorScheme: colorScheme)
         }
     }
 }
@@ -488,8 +542,8 @@ struct DietaryTagsDisplayView: View {
                                 Text(tag.rawValue)
                                     .font(.caption2)
                             }
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
+                            .padding(.horizontal, AppTheme.spacing8)
+                            .padding(.vertical, AppTheme.spacing4)
                             .background(Color.white.opacity(AppTheme.overlayLightOpacity))
                             .adaptiveForegroundColor()
                             .cornerRadius(AppTheme.cornerRadius12)
@@ -500,7 +554,7 @@ struct DietaryTagsDisplayView: View {
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
             .background {
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                     .fill(.ultraThinMaterial)
             }
         }
@@ -532,17 +586,7 @@ struct AddButtonView: View {
     }
 }
 
-private func cardBackground(cardStyle: CardStyle, colorScheme: ColorScheme) -> some View {
-    Group {
-        if cardStyle == .solid {
-            RoundedRectangle(cornerRadius: 12)
-                .fill(AppTheme.adaptiveCardMedium(for: colorScheme))
-        } else {
-            RoundedRectangle(cornerRadius: 12)
-                .fill(.ultraThinMaterial)
-        }
-    }
-}
+// MARK: - Previews
 
 struct QuickSnackSheet_Previews: PreviewProvider {
     static var previews: some View {
