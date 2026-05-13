@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 struct Badge: Identifiable, Codable {
     let id: String
@@ -19,6 +20,20 @@ struct Badge: Identifiable, Codable {
         self.dateEarned = dateEarned
         self.isUnlocked = isUnlocked
         self.howToEarn = howToEarn
+    }
+
+    static func color(for colorName: String) -> Color {
+        switch colorName {
+        case "purple": return .purple
+        case "green":  return .green
+        case "mint":   return .mint
+        case "blue":   return .blue
+        case "orange": return .orange
+        case "yellow", "gold": return .yellow
+        case "teal":   return .teal
+        case "indigo": return .indigo
+        default:       return .gray
+        }
     }
 }
 

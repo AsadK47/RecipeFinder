@@ -53,4 +53,27 @@ final class BadgeModelTests: XCTestCase {
             XCTAssertFalse(badge.howToEarn.isEmpty, "\(type) has empty howToEarn")
         }
     }
+
+    // MARK: - Badge.color(for:)
+
+    func testColorFor_namedColors() {
+        XCTAssertEqual(Badge.color(for: "purple"), .purple)
+        XCTAssertEqual(Badge.color(for: "green"),  .green)
+        XCTAssertEqual(Badge.color(for: "mint"),   .mint)
+        XCTAssertEqual(Badge.color(for: "blue"),   .blue)
+        XCTAssertEqual(Badge.color(for: "orange"), .orange)
+        XCTAssertEqual(Badge.color(for: "yellow"), .yellow)
+        XCTAssertEqual(Badge.color(for: "teal"),   .teal)
+        XCTAssertEqual(Badge.color(for: "indigo"), .indigo)
+    }
+
+    func testColorFor_goldMapsToYellow() {
+        XCTAssertEqual(Badge.color(for: "gold"), .yellow)
+    }
+
+    func testColorFor_unknownFallsBackToGray() {
+        XCTAssertEqual(Badge.color(for: ""),        .gray)
+        XCTAssertEqual(Badge.color(for: "crimson"), .gray)
+        XCTAssertEqual(Badge.color(for: "PURPLE"),  .gray) // case-sensitive
+    }
 }
