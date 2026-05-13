@@ -103,7 +103,7 @@ struct BiometricSetupView: View {
                     .font(.system(size: AppTheme.fontSize18, weight: .medium))
                     .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
                     .multilineTextAlignment(.center)
-                    .lineSpacing(4)
+                    .lineSpacing(AppTheme.lineSpacingNormal)
                 
                 VStack(spacing: spacing.md) {
                     BenefitRow(icon: "bolt.fill", text: "Sign in instantly", spacing: spacing)
@@ -372,7 +372,7 @@ private struct PulsingRing: View {
                 LinearGradient(
                     colors: [
                         accentColor.opacity(AppTheme.lowEmphasisOpacity),
-                        accentColor.opacity(0.0)
+                        accentColor.opacity(AppTheme.zeroOpacity)
                     ],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing

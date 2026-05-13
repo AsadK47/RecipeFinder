@@ -178,6 +178,20 @@ enum AppTheme {
     static let shadowOffsetLarge: CGFloat = 4
     static let shadowOffsetAccent: CGFloat = 5
     static let shadowOffsetNone: CGFloat = 0
+
+    static let shadowRadiusGlow: CGFloat = 15
+    static let shadowRadiusGlowActive: CGFloat = 30
+
+    static let scaleNeutral: CGFloat = 1.0
+    static let scaleEffectBounce: CGFloat = 1.3
+
+    static let lineSpacingTight: CGFloat = 2
+    static let lineSpacingNormal: CGFloat = 4
+    static let lineSpacingRelaxed: CGFloat = 6
+
+    static let hapticIntervalBase: UInt64 = 200_000_000
+    static let hapticIntervalLong: UInt64 = 300_000_000
+    static let hapticIntervalXLong: UInt64 = 500_000_000
     
     nonisolated(unsafe) private static var gradientCache: [String: LinearGradient] = [:]
     

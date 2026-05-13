@@ -368,7 +368,7 @@ struct RecipeImportView: View {
         
         Task {
             loadingStage = .fetching
-            try? await Task.sleep(nanoseconds: 500_000_000)
+            try? await Task.sleep(nanoseconds: AppTheme.hapticIntervalXLong)
             
             loadingStage = .parsing
             
@@ -376,11 +376,11 @@ struct RecipeImportView: View {
             
             if importerRef.extractedData != nil {
                 loadingStage = .extracting
-                try? await Task.sleep(nanoseconds: 300_000_000)
+                try? await Task.sleep(nanoseconds: AppTheme.hapticIntervalLong)
                 
                 loadingStage = .complete
                 HapticManager.shared.success()
-                try? await Task.sleep(nanoseconds: 200_000_000)
+                try? await Task.sleep(nanoseconds: AppTheme.hapticIntervalBase)
             } else {
                 loadingStage = .idle
                 HapticManager.shared.error()

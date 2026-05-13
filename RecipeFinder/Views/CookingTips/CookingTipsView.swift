@@ -570,7 +570,7 @@ struct CookingTipCard: View {
                     .foregroundColor(.secondary)
                     .lineLimit(3)
                     .multilineTextAlignment(.leading)
-                    .lineSpacing(4)
+                    .lineSpacing(AppTheme.lineSpacingNormal)
                 
                 if !tip.tags.isEmpty {
                     FlowLayout(spacing: AppTheme.spacing6) {

@@ -750,7 +750,7 @@ struct HelpSheetView: View {
                             Text("Learn how to make the most of your shopping list with these powerful features.")
                                 .font(.system(size: AppTheme.fontSize17))
                                 .adaptiveForegroundColor(opacity: AppTheme.nearSolidOpacity)
-                                .lineSpacing(4)
+                                .lineSpacing(AppTheme.lineSpacingNormal)
                         }
                         .padding(.horizontal, AppTheme.spacing24)
                         .padding(.top, AppTheme.spacing60)

@@ -2373,8 +2373,8 @@ struct PartyTimeView: View {
                                         Circle()
                                             .stroke(AppTheme.accentColor(for: appTheme).opacity(0.3), lineWidth: 2)
                                             .frame(width: AppTheme.width200, height: AppTheme.height200)
-                                            .scaleEffect(isVibrating ? 1.3 : 1.0)
-                                            .opacity(isVibrating ? 0 : 0.8)
+                                            .scaleEffect(isVibrating ? AppTheme.scaleEffectBounce : AppTheme.scaleNeutral)
+                                            .opacity(isVibrating ? AppTheme.zeroOpacity : AppTheme.highEmphasisOpacity)
                                             .animation(
                                                 .easeOut(duration: AppTheme.animationDelayXLong)
                                                 .repeatForever(autoreverses: false)
@@ -2395,8 +2395,8 @@ struct PartyTimeView: View {
                                         )
                                     )
                                     .frame(width: AppTheme.width200, height: AppTheme.height200)
-                                    .shadow(color: AppTheme.accentColor(for: appTheme).opacity(0.5), radius: isVibrating ? 30 : 15)
-                                    .scaleEffect(isVibrating ? 1.05 : 1.0)
+                                    .shadow(color: AppTheme.accentColor(for: appTheme).opacity(0.5), radius: isVibrating ? AppTheme.shadowRadiusGlowActive : AppTheme.shadowRadiusGlow)
+                                    .scaleEffect(isVibrating ? AppTheme.transitionScaleUp : AppTheme.scaleNeutral)
                                     .animation(.easeInOut(duration: AppTheme.animationDelayMedium).repeatForever(autoreverses: true), value: isVibrating)
                                 
                                 Image(systemName: isVibrating ? "iphone.radiowaves.left.and.right" : "hand.tap.fill")

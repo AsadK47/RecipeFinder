@@ -198,7 +198,7 @@ struct FaceIDOnboardingSplash: View {
                                 .font(.system(size: AppTheme.fontSize17, weight: .medium))
                                 .foregroundColor(AppTheme.textColor(for: colorScheme))
                                 .multilineTextAlignment(.center)
-                                .lineSpacing(4)
+                                .lineSpacing(AppTheme.lineSpacingNormal)
                                 .padding(.horizontal, spacing.xl)
                             
                             VStack(spacing: spacing.md) {

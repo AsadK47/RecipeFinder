@@ -594,7 +594,7 @@ struct KitchenItemChip: View {
                 .fill(
                     LinearGradient(
                         colors: [
-                            categoryInfo.color.opacity(0.25),
+                            categoryInfo.color.opacity(AppTheme.softOverlayOpacity),
                             categoryInfo.color.opacity(AppTheme.cardDarkOpacity)
                         ],
                         startPoint: .leading,

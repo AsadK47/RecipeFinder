@@ -175,7 +175,7 @@ struct OnboardingSlideView: View {
                                 LinearGradient(
                                     gradient: Gradient(colors: [
                                         slide.accentColor.opacity(AppTheme.shadowDarkOpacity),
-                                        slide.accentColor.opacity(0.0)
+                                        slide.accentColor.opacity(AppTheme.zeroOpacity)
                                     ]),
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
@@ -183,8 +183,8 @@ struct OnboardingSlideView: View {
                                 lineWidth: 2
                             )
                             .frame(width: spacing.imageLarge + spacing.xl + CGFloat(index * 40), height: spacing.imageLarge + spacing.xl + CGFloat(index * 40))
-                            .scaleEffect(isAnimating ? 1.3 : 1.0)
-                            .opacity(isAnimating ? 0 : 0.6)
+                            .scaleEffect(isAnimating ? AppTheme.scaleEffectBounce : AppTheme.scaleNeutral)
+                            .opacity(isAnimating ? AppTheme.zeroOpacity : AppTheme.mediumEmphasisOpacity)
                             .animation(
                                 .easeOut(duration: AppTheme.animationDuration25)
                                 .repeatForever(autoreverses: false)
@@ -199,7 +199,7 @@ struct OnboardingSlideView: View {
                                 gradient: Gradient(colors: [
                                     slide.accentColor.opacity(AppTheme.lowEmphasisOpacity),
                                     slide.accentColor.opacity(AppTheme.overlayLightOpacity),
-                                    slide.accentColor.opacity(0.0)
+                                    slide.accentColor.opacity(AppTheme.zeroOpacity)
                                 ]),
                                 center: .center,
                                 startRadius: 0,
@@ -257,14 +257,14 @@ struct OnboardingSlideView: View {
                         .font(.system(size: AppTheme.fontSize38, weight: .bold, design: .rounded))
                         .adaptiveForegroundColor()
                         .multilineTextAlignment(.center)
-                        .lineSpacing(4)
+                        .lineSpacing(AppTheme.lineSpacingNormal)
                         .shadow(color: colorScheme == .dark ? .black.opacity(AppTheme.overlayLightOpacity) : .clear, radius: 10, x: 0, y: 5)
                     
                     Text(slide.description)
                         .font(.system(size: AppTheme.fontSize17, weight: .regular))
                         .adaptiveForegroundColor(opacity: AppTheme.nearSolidOpacity)
                         .multilineTextAlignment(.center)
-                        .lineSpacing(6)
+                        .lineSpacing(AppTheme.lineSpacingRelaxed)
                         .padding(.horizontal, spacing.screenEdge + spacing.lg)
                 }
                 .padding(.bottom, spacing.xxl + spacing.lg)

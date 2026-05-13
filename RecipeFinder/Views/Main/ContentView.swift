@@ -107,13 +107,13 @@ struct ContentView: View {
         appearance.stackedLayoutAppearance.selected.iconColor = textColor
         appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
             .foregroundColor: textColor,
-            .font: UIFont.systemFont(ofSize: 11, weight: .semibold)
+            .font: UIFont.systemFont(ofSize: AppTheme.fontSize11, weight: .semibold)
         ]
         
         appearance.stackedLayoutAppearance.normal.iconColor = dimmedTextColor
         appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
             .foregroundColor: dimmedTextColor,
-            .font: UIFont.systemFont(ofSize: 11, weight: .medium)
+            .font: UIFont.systemFont(ofSize: AppTheme.fontSize11, weight: .medium)
         ]
         
         UITabBar.appearance().standardAppearance = appearance

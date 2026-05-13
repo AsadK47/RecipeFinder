@@ -84,7 +84,7 @@ struct PasswordReminderSplashView: View {
                                 Text("Your password is saved in iCloud Keychain and will auto-fill when you sign in.")
                                     .font(.system(size: AppTheme.fontSize14))
                                     .adaptiveForegroundColor(opacity: AppTheme.highEmphasisOpacity)
-                                    .lineSpacing(2)
+                                    .lineSpacing(AppTheme.lineSpacingTight)
                             }
                             .padding(spacing.lg)
                             .background(
