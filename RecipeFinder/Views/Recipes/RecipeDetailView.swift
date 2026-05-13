@@ -78,7 +78,7 @@ struct RecipeDetailView: View {
             feedbackOverlay
         }
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: showAddedFeedback)
-        .confettiCannon(trigger: $confettiCounter, num: 50, radius: 500.0)
+        .confettiCannon(trigger: $confettiCounter, num: AppTheme.confettiCount, radius: AppTheme.confettiRadius)
         .onChange(of: instructionsState) { _, newValue in
             checkForCompletion(newValue)
         }
@@ -258,8 +258,8 @@ struct RecipeDetailView: View {
             if expandedSections.contains("Ingredients") {
                 ingredientsList
                     .transition(.asymmetric(
-                        insertion: .scale(scale: 0.95).combined(with: .opacity),
-                        removal: .scale(scale: 0.95).combined(with: .opacity)
+                        insertion: .scale(scale: AppTheme.transitionScaleDown).combined(with: .opacity),
+                        removal: .scale(scale: AppTheme.transitionScaleDown).combined(with: .opacity)
                     ))
             }
         }
@@ -620,8 +620,8 @@ struct RecipeDetailView: View {
                         .padding(AppTheme.spacing24)
                 }
                 .transition(.asymmetric(
-                    insertion: .scale(scale: 0.95).combined(with: .opacity),
-                    removal: .scale(scale: 0.95).combined(with: .opacity)
+                    insertion: .scale(scale: AppTheme.transitionScaleDown).combined(with: .opacity),
+                    removal: .scale(scale: AppTheme.transitionScaleDown).combined(with: .opacity)
                 ))
             }
         }
@@ -675,7 +675,7 @@ struct RecipeDetailView: View {
         showAddedFeedback = normalizedName
         
         DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayXLong) {
-            withAnimation(.easeOut(duration: 0.8)) {
+            withAnimation(.easeOut(duration: AppTheme.animationDuration08)) {
                 showAddedFeedback = nil
             }
         }

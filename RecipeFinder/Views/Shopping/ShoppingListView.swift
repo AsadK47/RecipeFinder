@@ -136,8 +136,8 @@ struct ShoppingListView: View {
             .toolbarBackground(.hidden, for: .navigationBar)
             .confettiCannon(
                 trigger: $confettiTrigger,
-                num: 50,
-                radius: 500.0
+                num: AppTheme.confettiCount,
+                radius: AppTheme.confettiRadius
             )
             .onChange(of: checkedCount) { _, newValue in
                 if !manager.items.isEmpty && newValue == totalCount {
@@ -622,7 +622,7 @@ struct ShoppingListItemRow: View {
                             .font(.subheadline)
                             .fontWeight(.bold)
                             .adaptiveForegroundColor()
-                            .frame(minWidth: 20)
+                            .frame(minWidth: AppTheme.iconSize20)
                         
                         Button(action: {
                             if item.quantity < 99 {

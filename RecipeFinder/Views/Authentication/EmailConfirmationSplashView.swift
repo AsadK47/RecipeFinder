@@ -93,7 +93,7 @@ struct EmailConfirmationSplashView: View {
             withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
                 scale = 1.0
             }
-            withAnimation(.easeOut(duration: 0.5)) {
+            withAnimation(.easeOut(duration: AppTheme.animationDelayMedium)) {
                 opacity = 1.0
             }
         }

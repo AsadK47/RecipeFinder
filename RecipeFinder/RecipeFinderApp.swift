@@ -36,7 +36,7 @@ struct RecipeFinderApp: App {
         WindowGroup {
             ZStack {
                 rootView
-                    .animation(.easeInOut(duration: 0.3), value: authManager.isAuthenticated)
+                    .animation(.easeInOut(duration: AppTheme.animationDelayXShort), value: authManager.isAuthenticated)
                     .fullScreenCover(isPresented: $showFaceIDOnboarding) {
                         FaceIDOnboardingSplash {
                             UserScopedStorage.shared.set(true, forKey: "hasSeenBiometricOnboarding")
@@ -102,13 +102,13 @@ struct RecipeFinderApp: App {
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .environmentObject(themeManager)
                 .onAppear { authManager.updateLastActiveTimestamp() }
-                .transition(.opacity.combined(with: .scale(scale: 0.95)))
+                .transition(.opacity.combined(with: .scale(scale: AppTheme.transitionScaleDown)))
         } else {
             NavigationStack {
                 AuthenticationView()
             }
             .environmentObject(themeManager)
-            .transition(.opacity.combined(with: .scale(scale: 1.05)))
+            .transition(.opacity.combined(with: .scale(scale: AppTheme.transitionScaleUp)))
         }
     }
     

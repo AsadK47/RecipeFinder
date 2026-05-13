@@ -108,7 +108,7 @@ struct RecipeImportView: View {
                                 )
                                 .frame(width: AppTheme.width80, height: 80)
                                 .rotationEffect(.degrees(-90))
-                                .animation(.easeInOut(duration: 0.5), value: loadingStage)
+                                .animation(.easeInOut(duration: AppTheme.animationDelayMedium), value: loadingStage)
                             
                             Image(systemName: "sparkles")
                                 .font(.title)

@@ -2376,7 +2376,7 @@ struct PartyTimeView: View {
                                             .scaleEffect(isVibrating ? 1.3 : 1.0)
                                             .opacity(isVibrating ? 0 : 0.8)
                                             .animation(
-                                                .easeOut(duration: 1.5)
+                                                .easeOut(duration: AppTheme.animationDelayXLong)
                                                 .repeatForever(autoreverses: false)
                                                 .delay(Double(index) * 0.3),
                                                 value: isVibrating
@@ -2397,7 +2397,7 @@ struct PartyTimeView: View {
                                     .frame(width: AppTheme.width200, height: AppTheme.height200)
                                     .shadow(color: AppTheme.accentColor(for: appTheme).opacity(0.5), radius: isVibrating ? 30 : 15)
                                     .scaleEffect(isVibrating ? 1.05 : 1.0)
-                                    .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: isVibrating)
+                                    .animation(.easeInOut(duration: AppTheme.animationDelayMedium).repeatForever(autoreverses: true), value: isVibrating)
                                 
                                 Image(systemName: isVibrating ? "iphone.radiowaves.left.and.right" : "hand.tap.fill")
                                     .font(.system(size: AppTheme.fontSize60))

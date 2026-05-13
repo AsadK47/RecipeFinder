@@ -13,6 +13,7 @@ extension EnvironmentValues {
 
 enum AppTheme {
     
+    static let fontSize4: CGFloat = 4
     static let fontSize6: CGFloat = 6
     static let fontSize7: CGFloat = 7
     static let fontSize8: CGFloat = 8
@@ -103,6 +104,7 @@ enum AppTheme {
     static let height20: CGFloat = 20
     static let height24: CGFloat = 24
     static let height28: CGFloat = 28
+    static let height34: CGFloat = 34
     static let height36: CGFloat = 36
     static let height40: CGFloat = 40
     static let height44: CGFloat = 44
@@ -145,7 +147,22 @@ enum AppTheme {
     static let animationDelayXLong: Double = 1.5
     static let animationDelayFeedback: Double = 2.0
     static let animationDelayXXLong: Double = 5.0
-    
+
+    static let animationDuration07: Double = 0.7
+    static let animationDuration08: Double = 0.8
+    static let animationDuration25: Double = 2.5
+
+    static let blurRadiusHairline: CGFloat = 1
+    static let blurRadiusTiny: CGFloat = 2
+    static let blurRadiusHeavy: CGFloat = 30
+
+    static let transitionScaleDown: Double = 0.95
+    static let transitionScaleUp: Double = 1.05
+
+    static let confettiCount: Int = 50
+    static let confettiRadius: CGFloat = 500
+    static let confettiRadiusSmall: CGFloat = 400
+
     static let buttonHeight: CGFloat = 44
     static let buttonHeightCompact: CGFloat = 36
     static let buttonHeightLarge: CGFloat = 52

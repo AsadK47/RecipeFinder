@@ -95,7 +95,7 @@ struct FaceIDOnboardingSplash: View {
                                 .scaleEffect(iconScale + CGFloat(index) * 0.15)
                                 .opacity(1.0 - Double(index) * 0.3)
                                 .animation(
-                                    .easeInOut(duration: 2.5)
+                                    .easeInOut(duration: AppTheme.animationDuration25)
                                     .repeatForever(autoreverses: true)
                                     .delay(Double(index) * 0.4),
                                     value: iconScale
@@ -116,9 +116,9 @@ struct FaceIDOnboardingSplash: View {
                                 )
                             )
                             .frame(width: spacing.imageHero, height: spacing.imageHero)
-                            .blur(radius: 30)
+                            .blur(radius: AppTheme.blurRadiusHeavy)
                             .animation(
-                                .easeInOut(duration: 2.0)
+                                .easeInOut(duration: AppTheme.animationDelayFeedback)
                                 .repeatForever(autoreverses: true),
                                 value: glowIntensity
                             )
@@ -301,15 +301,15 @@ struct FaceIDOnboardingSplash: View {
                 contentOpacity = 1.0
             }
             
-            withAnimation(.easeInOut(duration: 0.8).delay(0.3)) {
+            withAnimation(.easeInOut(duration: AppTheme.animationDuration08).delay(AppTheme.animationDelayXShort)) {
                 particlesOpacity = 1.0
             }
             
-            withAnimation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true)) {
+            withAnimation(.easeInOut(duration: AppTheme.animationDelayFeedback).repeatForever(autoreverses: true)) {
                 glowIntensity = 0.6
             }
             
-            withAnimation(.linear(duration: 2.5).repeatForever(autoreverses: false)) {
+            withAnimation(.linear(duration: AppTheme.animationDuration25).repeatForever(autoreverses: false)) {
                 shimmerOffset = 400
             }
         }
@@ -339,7 +339,7 @@ struct FaceIDOnboardingSplash: View {
                     }
                     
                     DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayShort) {
-                        withAnimation(.easeOut(duration: 0.3)) {
+                        withAnimation(.easeOut(duration: AppTheme.animationDelayXShort)) {
                             contentOpacity = 0
                         }
                         DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayXShort) {
@@ -367,7 +367,7 @@ struct FaceIDOnboardingSplash: View {
         HapticManager.shared.light()
         hasSeenBiometricOnboarding = true
         
-        withAnimation(.easeOut(duration: 0.3)) {
+        withAnimation(.easeOut(duration: AppTheme.animationDelayXShort)) {
             contentOpacity = 0
         }
         

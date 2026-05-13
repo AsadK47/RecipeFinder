@@ -156,11 +156,11 @@ struct BiometricSetupView: View {
             contentOpacity = 1.0
         }
         
-        withAnimation(.easeInOut(duration: 0.8).delay(0.3)) {
+        withAnimation(.easeInOut(duration: AppTheme.animationDuration08).delay(AppTheme.animationDelayXShort)) {
             particlesOpacity = 1.0
         }
         
-        withAnimation(.linear(duration: 2.5).repeatForever(autoreverses: false)) {
+        withAnimation(.linear(duration: AppTheme.animationDuration25).repeatForever(autoreverses: false)) {
             shimmerOffset = 400
         }
     }
@@ -208,7 +208,7 @@ struct BiometricSetupView: View {
     
     private func skipSetup() {
         HapticManager.shared.light()
-        withAnimation(.easeOut(duration: 0.3)) {
+        withAnimation(.easeOut(duration: AppTheme.animationDelayXShort)) {
             contentOpacity = 0
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
@@ -383,7 +383,7 @@ private struct PulsingRing: View {
             .scaleEffect(ringScale)
             .opacity(ringOpacity)
             .animation(
-                .easeInOut(duration: 2.0)
+                .easeInOut(duration: AppTheme.animationDelayFeedback)
                 .repeatForever(autoreverses: true)
                 .delay(ringDelay),
                 value: iconScale

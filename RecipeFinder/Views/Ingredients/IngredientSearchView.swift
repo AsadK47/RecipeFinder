@@ -850,7 +850,7 @@ struct CategoryCard: View {
                 label: {
                     HStack(spacing: AppTheme.spacing12) {
                         Image(systemName: "circle.fill")
-                            .font(.system(size: 4))
+                            .font(.system(size: AppTheme.fontSize4))
                             .foregroundColor(AppTheme.adaptiveSecondaryIndicator(for: colorScheme))
                         
                         Text(ingredient)

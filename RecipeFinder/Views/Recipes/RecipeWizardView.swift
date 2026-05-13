@@ -336,7 +336,7 @@ struct RecipeWizardView: View {
                                             .font(.title2)
                                             .fontWeight(.bold)
                                             .foregroundColor(AppTheme.accentColor(for: appTheme))
-                                            .frame(minWidth: 32)
+                                            .frame(minWidth: AppTheme.iconSize32)
                                         Text(servings == 1 ? "serving" : "servings")
                                             .font(.body)
                                             .foregroundColor(.secondary)
@@ -413,7 +413,7 @@ struct RecipeWizardView: View {
                                     }
                                     .pickerStyle(.menu)
                                     .labelsHidden()
-                                    .frame(maxWidth: .infinity, minHeight: 34, alignment: .leading)
+                                    .frame(maxWidth: .infinity, minHeight: AppTheme.height34, alignment: .leading)
                                     .padding(.horizontal, AppTheme.spacing6)
                                     .background(
                                         RoundedRectangle(cornerRadius: AppTheme.cornerRadius6)

@@ -88,7 +88,7 @@ struct WelcomeSplashView: View {
         }
         .frame(height: spacing.imageXLarge)
         .padding(.bottom, spacing.xl + spacing.xxl)
-        .confettiCannon(trigger: $confettiCounter, num: 50, radius: 400)
+        .confettiCannon(trigger: $confettiCounter, num: AppTheme.confettiCount, radius: AppTheme.confettiRadiusSmall)
     }
     
     private func pulsingRings(spacing: AdaptiveSpacing) -> some View {
@@ -99,7 +99,7 @@ struct WelcomeSplashView: View {
                 .scaleEffect(ringScale)
                 .opacity(ringOpacity)
                 .animation(
-                    .easeOut(duration: 1.5)
+                    .easeOut(duration: AppTheme.animationDelayXLong)
                     .repeatForever(autoreverses: false)
                     .delay(Double(index) * 0.2),
                     value: ringScale
@@ -112,7 +112,7 @@ struct WelcomeSplashView: View {
             .fill(radialGradient)
             .frame(width: spacing.imageMedium + spacing.xxl, height: spacing.imageMedium + spacing.xxl)
             .scaleEffect(scale)
-            .blur(radius: 1)
+            .blur(radius: AppTheme.blurRadiusHairline)
     }
     
     private var radialGradient: RadialGradient {
@@ -329,16 +329,16 @@ struct WelcomeSplashView: View {
             HapticManager.shared.success()
         }
         
-        withAnimation(.easeOut(duration: 0.7).delay(0.4)) {
+        withAnimation(.easeOut(duration: AppTheme.animationDuration07).delay(AppTheme.animationDelayShort)) {
             contentOpacity = 1.0
         }
         
-        withAnimation(.easeOut(duration: 0.5).delay(0.5)) {
+        withAnimation(.easeOut(duration: AppTheme.animationDelayMedium).delay(AppTheme.animationDelayMedium)) {
             particlesOpacity = 1.0
         }
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-            withAnimation(.easeOut(duration: 1.5).repeatForever(autoreverses: false)) {
+            withAnimation(.easeOut(duration: AppTheme.animationDelayXLong).repeatForever(autoreverses: false)) {
                 ringScale = 1.5
                 ringOpacity = 0
             }

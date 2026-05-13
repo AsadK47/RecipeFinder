@@ -186,7 +186,7 @@ struct OnboardingSlideView: View {
                             .scaleEffect(isAnimating ? 1.3 : 1.0)
                             .opacity(isAnimating ? 0 : 0.6)
                             .animation(
-                                .easeOut(duration: 2.5)
+                                .easeOut(duration: AppTheme.animationDuration25)
                                 .repeatForever(autoreverses: false)
                                 .delay(Double(index) * 0.4),
                                 value: isAnimating
@@ -207,7 +207,7 @@ struct OnboardingSlideView: View {
                             )
                         )
                         .frame(width: spacing.imageXLarge, height: spacing.imageXLarge)
-                        .blur(radius: 2)
+                        .blur(radius: AppTheme.blurRadiusTiny)
                     
                     Circle()
                         .fill(
@@ -242,7 +242,7 @@ struct OnboardingSlideView: View {
                         .scaleEffect(isAnimating ? 1.05 : 0.95)
                         .shadow(color: colorScheme == .dark ? .black.opacity(AppTheme.overlayLightOpacity) : .clear, radius: 10, x: 0, y: 5)
                         .animation(
-                            .easeInOut(duration: 2.0)
+                            .easeInOut(duration: AppTheme.animationDelayFeedback)
                             .repeatForever(autoreverses: true),
                             value: isAnimating
                         )
@@ -383,7 +383,7 @@ struct OnboardingSlideView: View {
                                 .offset(x: isAnimating ? 8 : 0)
                         }
                         .animation(
-                            .easeInOut(duration: 1.0)
+                            .easeInOut(duration: AppTheme.animationDelayLong)
                             .repeatForever(autoreverses: true),
                             value: isAnimating
                         )
@@ -398,7 +398,7 @@ struct OnboardingSlideView: View {
         .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in
             scrollOffset = value
             if scrollOffset < -10 && showScrollIndicator {
-                withAnimation(.easeOut(duration: 0.3)) {
+                withAnimation(.easeOut(duration: AppTheme.animationDelayXShort)) {
                     showScrollIndicator = false
                 }
             }
