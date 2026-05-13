@@ -46,7 +46,7 @@ struct AuthenticationView: View {
                         .font(.system(size: 18, weight: .medium))
                         .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.highEmphasisOpacity) : .black.opacity(0.7))
                 }
-                .padding(.bottom, 20)
+                .padding(.bottom, AppTheme.spacing20)
                 
                 Spacer()
                 
@@ -66,10 +66,10 @@ struct AuthenticationView: View {
                             }
                             .adaptiveForegroundColor()
                             .frame(maxWidth: .infinity)
-                            .frame(height: 56)
+                            .frame(height: AppTheme.height56)
                             .background(
                                 ZStack {
-                                    RoundedRectangle(cornerRadius: 14)
+                                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius14)
                                         .fill(
                                             LinearGradient(
                                                 gradient: Gradient(colors: [
@@ -81,8 +81,8 @@ struct AuthenticationView: View {
                                             )
                                         )
                                     
-                                    RoundedRectangle(cornerRadius: 14)
-                                        .stroke(Color.white.opacity(0.3), lineWidth: 1.5)
+                                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius14)
+                                        .stroke(Color.white.opacity(AppTheme.shadowDarkOpacity), lineWidth: 1.5)
                                 }
                             )
                             .shadow(color: AppTheme.accentColor(for: selectedTheme).opacity(0.4), radius: 15, x: 0, y: 8)
@@ -98,13 +98,13 @@ struct AuthenticationView: View {
                         }
                         .adaptiveForegroundColor()
                         .frame(maxWidth: .infinity)
-                        .frame(height: 50)
+                        .frame(height: AppTheme.height50)
                         .background(
-                            RoundedRectangle(cornerRadius: 12)
+                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                                 .fill(Color.white.opacity(AppTheme.overlayLightOpacity))
                                 .overlay(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .stroke(Color.white.opacity(0.3), lineWidth: 1)
+                                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                                        .stroke(Color.white.opacity(AppTheme.shadowDarkOpacity), lineWidth: 1)
                                 )
                         )
                     }
@@ -114,9 +114,9 @@ struct AuthenticationView: View {
                             .font(.subheadline)
                             .adaptiveForegroundColor()
                     }
-                    .padding(.top, 8)
+                    .padding(.top, AppTheme.spacing8)
                 }
-                .padding(.horizontal, 32)
+                .padding(.horizontal, AppTheme.spacing32)
                 .padding(.bottom, 50)
             }
         }
@@ -202,7 +202,7 @@ struct EmailSignInView: View {
                         Image(systemName: "person.crop.circle.fill")
                             .font(.system(size: AppTheme.fontSize60))
                             .adaptiveForegroundColor(opacity: 0.9)
-                            .padding(.top, 40)
+                            .padding(.top, AppTheme.spacing40)
                         
                         Text("Welcome Back")
                             .font(.system(size: AppTheme.fontSize32, weight: .bold))
@@ -212,7 +212,7 @@ struct EmailSignInView: View {
                             .font(.subheadline)
                             .adaptiveForegroundColor(opacity: 0.8)
                     }
-                    .padding(.bottom, 20)
+                    .padding(.bottom, AppTheme.spacing20)
                     
                     VStack(spacing: 16) {
                         VStack(alignment: .leading, spacing: 8) {
@@ -264,17 +264,17 @@ struct EmailSignInView: View {
                             }
                             .adaptiveForegroundColor()
                             .frame(maxWidth: .infinity)
-                            .frame(height: 50)
+                            .frame(height: AppTheme.height50)
                             .background(
-                                RoundedRectangle(cornerRadius: 12)
+                                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                                     .fill(AppTheme.accentColor(for: selectedTheme))
                             )
                         }
                         .disabled(!canSignIn || isLoading)
                         .opacity((!canSignIn || isLoading) ? 0.6 : 1.0)
-                        .padding(.top, 8)
+                        .padding(.top, AppTheme.spacing8)
                     }
-                    .padding(.horizontal, 32)
+                    .padding(.horizontal, AppTheme.spacing32)
                     
                     Spacer()
                 }
@@ -374,7 +374,7 @@ struct SignUpView: View {
                             Image(systemName: "person.crop.circle.badge.plus")
                                 .font(.system(size: AppTheme.fontSize60))
                                 .adaptiveForegroundColor(opacity: 0.9)
-                                .padding(.top, 40)
+                                .padding(.top, AppTheme.spacing40)
                             
                             Text("Create Account")
                                 .font(.system(size: AppTheme.fontSize32, weight: .bold))
@@ -384,7 +384,7 @@ struct SignUpView: View {
                                 .font(.subheadline)
                                 .adaptiveForegroundColor(opacity: 0.8)
                         }
-                        .padding(.bottom, 20)
+                        .padding(.bottom, AppTheme.spacing20)
                         
                         VStack(spacing: 16) {
                             VStack(alignment: .leading, spacing: 8) {
@@ -447,7 +447,7 @@ struct SignUpView: View {
                                             .font(.caption2)
                                             .foregroundColor(password.rangeOfCharacter(from: CharacterSet(charactersIn: "!@#$%^&*()_+-=[]{}|;:',.<>?/~`")) != nil ? .green : .red.opacity(0.8))
                                     }
-                                    .padding(.top, 4)
+                                    .padding(.top, AppTheme.spacing4)
                                 }
                             }
                             
@@ -486,17 +486,17 @@ struct SignUpView: View {
                                 }
                                 .adaptiveForegroundColor()
                                 .frame(maxWidth: .infinity)
-                                .frame(height: 50)
+                                .frame(height: AppTheme.height50)
                                 .background(
-                                    RoundedRectangle(cornerRadius: 12)
+                                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                                         .fill(AppTheme.accentColor(for: selectedTheme))
                                 )
                             }
                             .disabled(!isFormValid || isLoading)
                             .opacity((!isFormValid || isLoading) ? 0.6 : 1.0)
-                            .padding(.top, 8)
+                            .padding(.top, AppTheme.spacing8)
                         }
-                        .padding(.horizontal, 32)
+                        .padding(.horizontal, AppTheme.spacing32)
                         
                         Spacer()
                     }
@@ -552,10 +552,10 @@ struct AuthTextFieldStyle: TextFieldStyle {
         configuration
             .padding()
             .background(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                     .fill(AppTheme.textColor(for: colorScheme, opacity: 0.15))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                             .stroke(AppTheme.textColor(for: colorScheme, opacity: 0.3), lineWidth: 1)
                     )
             )

@@ -67,6 +67,7 @@ enum AppTheme {
     static let cornerRadius6: CGFloat = 6
     static let cornerRadius8: CGFloat = 8
     static let cornerRadius12: CGFloat = 12
+    static let cornerRadius14: CGFloat = 14
     static let cornerRadius16: CGFloat = 16
     static let cornerRadius20: CGFloat = 20
     static let cornerRadius24: CGFloat = 24
@@ -86,6 +87,8 @@ enum AppTheme {
     static let height28: CGFloat = 28
     static let height40: CGFloat = 40
     static let height50: CGFloat = 50
+    static let height54: CGFloat = 54
+    static let height56: CGFloat = 56
     static let height180: CGFloat = 180
     
     static let width60: CGFloat = 60

@@ -78,10 +78,10 @@ struct AccountView: View {
                             Spacer()
                         }
                     }
-                    .frame(height: 44)
+                    .frame(height: AppTheme.buttonHeight)
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 16)
+                .padding(.horizontal, AppTheme.cardHorizontalPadding)
+                .padding(.top, AppTheme.spacing16)
                 
                 ScrollView {
                     VStack(spacing: AppTheme.spacing24) {
@@ -109,7 +109,7 @@ struct AccountView: View {
                         }
                         .opacity(showSuccessFeedback ? 0.6 : 1)
                         .disabled(showSuccessFeedback)
-                        .padding(.top, 8)
+                        .padding(.top, AppTheme.spacing8)
                         
                         if showSuccessFeedback {
                             HStack(spacing: AppTheme.spacing8) {
@@ -126,8 +126,8 @@ struct AccountView: View {
                         
                         accountActionsSection
                     }
-                    .padding(.top, 16)
-                    .padding(.horizontal, 20)
+                    .padding(.top, AppTheme.spacing16)
+                    .padding(.horizontal, AppTheme.cardHorizontalPadding)
                     .padding(.bottom, 100)
                 }
             }
@@ -187,13 +187,13 @@ struct AccountView: View {
                         Image(uiImage: profileImage)
                             .resizable()
                             .scaledToFill()
-                            .frame(width: 100, height: 100)
+                            .frame(width: AppTheme.width100, height: AppTheme.width100)
                             .clipShape(Circle())
                     } else {
                         ZStack {
                             Circle()
                                 .fill(AppTheme.accentColor(for: selectedTheme))
-                                .frame(width: 100, height: 100)
+                                .frame(width: AppTheme.width100, height: AppTheme.width100)
                             
                             Text(getInitials())
                                 .font(.system(size: AppTheme.fontSize42, weight: .bold))
@@ -204,7 +204,7 @@ struct AccountView: View {
                     ZStack {
                         Circle()
                             .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : .white)
-                            .frame(width: 28, height: 28)
+                            .frame(width: AppTheme.iconSize28, height: AppTheme.iconSize28)
                         
                         Image(systemName: "camera.fill")
                             .font(.system(size: AppTheme.fontSize12, weight: .semibold))
@@ -222,7 +222,7 @@ struct AccountView: View {
             .foregroundColor(.secondary)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 20)
+        .padding(.vertical, AppTheme.spacing20)
     }
     
     private var personalInfoSection: some View {
@@ -235,9 +235,9 @@ struct AccountView: View {
                     .adaptiveForegroundColor()
                 Spacer()
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
-            .background(Color.secondary.opacity(0.1))
+            .padding(.horizontal, AppTheme.cardHorizontalPadding)
+            .padding(.vertical, AppTheme.spacing12)
+            .background(Color.secondary.opacity(AppTheme.shadowLightOpacity))
             
             VStack(spacing: 0) {
                 ProfileTextField(
@@ -249,7 +249,7 @@ struct AccountView: View {
                 )
                 
                 Divider()
-                    .background(Color.secondary.opacity(0.1))
+                    .background(Color.secondary.opacity(AppTheme.shadowLightOpacity))
                     .padding(.leading, 60)
                 
                 ProfileTextField(
@@ -262,14 +262,14 @@ struct AccountView: View {
                 
                 if !displayEmail.isEmpty {
                     Divider()
-                        .background(Color.secondary.opacity(0.1))
+                        .background(Color.secondary.opacity(AppTheme.shadowLightOpacity))
                         .padding(.leading, 60)
                     
                     HStack(spacing: AppTheme.spacing16) {
                         Image(systemName: "envelope.fill")
                             .font(.title3)
                             .foregroundColor(.secondary)
-                            .frame(width: 28)
+                            .frame(width: AppTheme.iconSize28)
                         
                         VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                             Text("Email")
@@ -283,17 +283,17 @@ struct AccountView: View {
                         
                         Spacer()
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 16)
+                    .padding(.horizontal, AppTheme.cardHorizontalPadding)
+                    .padding(.vertical, AppTheme.spacing16)
                 }
             }
         }
         .background {
             if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                     .fill(AppTheme.adaptiveCard(for: colorScheme))
             } else {
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                     .fill(.ultraThinMaterial)
             }
         }
@@ -309,8 +309,8 @@ struct AccountView: View {
                     .adaptiveForegroundColor()
                 Spacer()
             }
-            .padding(.horizontal, 20)
-            .padding(.top, 16)
+            .padding(.horizontal, AppTheme.cardHorizontalPadding)
+            .padding(.top, AppTheme.spacing16)
             
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: AppTheme.spacing12) {
                 ForEach(ChefType.allCases, id: \.self) { type in
@@ -326,15 +326,15 @@ struct AccountView: View {
                     }
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.bottom, 16)
+            .padding(.horizontal, AppTheme.cardHorizontalPadding)
+            .padding(.bottom, AppTheme.spacing16)
         }
         .background {
             if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                     .fill(AppTheme.adaptiveCard(for: colorScheme))
             } else {
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                     .fill(.ultraThinMaterial)
             }
         }
@@ -354,21 +354,21 @@ struct AccountView: View {
                                 .font(.body)
                                 .fontWeight(.semibold)
                         }
-                        .adaptiveForegroundColor(opacity: 0.5)
+                        .adaptiveForegroundColor(opacity: AppTheme.glassLightOpacity)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
+                        .padding(.vertical, AppTheme.spacing16)
                         .background {
                             if cardStyle == .solid {
-                                RoundedRectangle(cornerRadius: 12)
+                                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                                     .fill(Color.black.opacity(AppTheme.shadowDarkOpacity))
                             } else {
-                                RoundedRectangle(cornerRadius: 12)
+                                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                                     .fill(Color.black.opacity(AppTheme.lowEmphasisOpacity))
                             }
                         }
                         .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color.orange.opacity(0.4), lineWidth: 1)
+                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                                .stroke(Color.orange.opacity(AppTheme.lowEmphasisOpacity), lineWidth: 1)
                         )
                     }
                     .disabled(true)
@@ -379,7 +379,7 @@ struct AccountView: View {
                         Text("Under Construction • Please Wait Patiently")
                             .font(.system(size: AppTheme.fontSize11, weight: .medium))
                     }
-                    .foregroundColor(.orange.opacity(0.8))
+                    .foregroundColor(.orange.opacity(AppTheme.highEmphasisOpacity))
                 }
             }
             
@@ -394,19 +394,19 @@ struct AccountView: View {
                     }
                     .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
+                    .padding(.vertical, AppTheme.spacing16)
                     .background {
                         if cardStyle == .solid {
-                            RoundedRectangle(cornerRadius: 12)
+                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                                 .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.highEmphasisOpacity))
                         } else {
-                            RoundedRectangle(cornerRadius: 12)
+                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                                 .fill(.ultraThinMaterial)
                         }
                     }
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(AppTheme.accentColor(for: selectedTheme).opacity(0.3), lineWidth: 1)
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                            .stroke(AppTheme.accentColor(for: selectedTheme).opacity(AppTheme.shadowDarkOpacity), lineWidth: 1)
                     )
                 }
                 .buttonStyle(PlainButtonStyle())
@@ -421,13 +421,13 @@ struct AccountView: View {
                     .fontWeight(.semibold)
                     .foregroundColor(.red)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
+                    .padding(.vertical, AppTheme.spacing16)
                     .background {
                         if cardStyle == .solid {
-                            RoundedRectangle(cornerRadius: 12)
+                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                                 .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white)
                         } else {
-                            RoundedRectangle(cornerRadius: 12)
+                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                                 .fill(.ultraThinMaterial)
                         }
                     }
@@ -442,13 +442,13 @@ struct AccountView: View {
                         .fontWeight(.semibold)
                         .foregroundColor(.red)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
+                        .padding(.vertical, AppTheme.spacing16)
                         .background {
                             if cardStyle == .solid {
-                                RoundedRectangle(cornerRadius: 12)
+                                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                                     .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white)
                             } else {
-                                RoundedRectangle(cornerRadius: 12)
+                                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                                     .fill(.ultraThinMaterial)
                             }
                         }
@@ -539,9 +539,9 @@ struct AccountView: View {
                         .foregroundColor(.secondary)
                         .font(.caption)
                 }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 12)
-                .background(Color.secondary.opacity(0.1))
+                .padding(.horizontal, AppTheme.cardHorizontalPadding)
+                .padding(.vertical, AppTheme.spacing12)
+                .background(Color.secondary.opacity(AppTheme.shadowLightOpacity))
             }
             .buttonStyle(PlainButtonStyle())
             
@@ -571,10 +571,10 @@ struct AccountView: View {
         }
         .background {
             if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                     .fill(AppTheme.adaptiveCard(for: colorScheme))
             } else {
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                     .fill(.ultraThinMaterial)
             }
         }

@@ -26,7 +26,7 @@ struct PasswordVerificationSheet: View {
                     ZStack {
                         Circle()
                             .fill(Color.white.opacity(AppTheme.dividerOpacity))
-                            .frame(width: 100, height: 100)
+                            .frame(width: AppTheme.width100, height: AppTheme.width100)
                         
                         Image(systemName: "lock.shield.fill")
                             .font(.system(size: AppTheme.fontSize50))
@@ -41,7 +41,7 @@ struct PasswordVerificationSheet: View {
                                 )
                             )
                     }
-                    .padding(.bottom, 8)
+                    .padding(.bottom, AppTheme.spacing8)
                     
                     VStack(spacing: AppTheme.spacing12) {
                         Text("Verify Your Identity")
@@ -52,7 +52,7 @@ struct PasswordVerificationSheet: View {
                             .font(.subheadline)
                             .adaptiveForegroundColor(opacity: 0.85)
                             .multilineTextAlignment(.center)
-                            .padding(.horizontal, 32)
+                            .padding(.horizontal, AppTheme.spacing32)
                     }
                     
                     HStack(spacing: AppTheme.spacing8) {
@@ -63,14 +63,14 @@ struct PasswordVerificationSheet: View {
                             .font(.system(size: AppTheme.fontSize15, weight: .medium))
                             .adaptiveForegroundColor(opacity: 0.9)
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 12)
+                    .padding(.horizontal, AppTheme.cardHorizontalPadding)
+                    .padding(.vertical, AppTheme.spacing12)
                     .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color.white.opacity(0.15))
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                            .fill(Color.white.opacity(AppTheme.cardDarkOpacity))
                             .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.white.opacity(0.3), lineWidth: 1)
+                                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                                    .stroke(Color.white.opacity(AppTheme.shadowDarkOpacity), lineWidth: 1)
                             )
                     )
                     
@@ -83,11 +83,11 @@ struct PasswordVerificationSheet: View {
                         SecureField("Enter your password", text: $password)
                             .padding()
                             .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color.white.opacity(0.15))
+                                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                                    .fill(Color.white.opacity(AppTheme.cardDarkOpacity))
                                     .overlay(
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .stroke(Color.white.opacity(0.3), lineWidth: 1)
+                                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                                            .stroke(Color.white.opacity(AppTheme.shadowDarkOpacity), lineWidth: 1)
                                     )
                             )
                             .adaptiveForegroundColor()
@@ -99,8 +99,8 @@ struct PasswordVerificationSheet: View {
                                 verifyPassword()
                             }
                     }
-                    .padding(.horizontal, 32)
-                    .padding(.top, 8)
+                    .padding(.horizontal, AppTheme.spacing32)
+                    .padding(.top, AppTheme.spacing8)
                     
                     if showError {
                         HStack(spacing: AppTheme.spacing8) {
@@ -128,17 +128,17 @@ struct PasswordVerificationSheet: View {
                         }
                         .adaptiveForegroundColor()
                         .frame(maxWidth: .infinity)
-                        .frame(height: 54)
+                        .frame(height: AppTheme.height54)
                         .background(
-                            RoundedRectangle(cornerRadius: 16)
+                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                                 .fill(AppTheme.accentColor(for: selectedTheme))
                                 .shadow(color: AppTheme.accentColor(for: selectedTheme).opacity(0.4), radius: 10, x: 0, y: 5)
                         )
                     }
                     .disabled(password.isEmpty || isVerifying)
                     .opacity((password.isEmpty || isVerifying) ? 0.6 : 1.0)
-                    .padding(.horizontal, 32)
-                    .padding(.top, 8)
+                    .padding(.horizontal, AppTheme.spacing32)
+                    .padding(.top, AppTheme.spacing8)
                     
                     Spacer()
                 }
