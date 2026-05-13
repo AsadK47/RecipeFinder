@@ -273,7 +273,7 @@ struct RecipeSearchView: View {
             HStack(spacing: AppTheme.spacing12) {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(AppTheme.adaptiveHighEmphasis(for: colorScheme))
-                    .font(.system(size: AppTheme.fontSize16 + 2, weight: .medium))
+                    .font(.system(size: AppTheme.fontSize18, weight: .medium))
                 
                 ZStack(alignment: .leading) {
                     if searchText.isEmpty {
@@ -296,7 +296,7 @@ struct RecipeSearchView: View {
                         },
                         label: {
                             Image(systemName: "xmark.circle.fill")
-                                .font(.system(size: AppTheme.fontSize16 + 2))
+                                .font(.system(size: AppTheme.fontSize18))
                                 .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
                         }
                     )

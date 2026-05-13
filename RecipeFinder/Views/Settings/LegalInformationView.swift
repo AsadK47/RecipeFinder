@@ -370,7 +370,7 @@ struct ComplianceBadge: View {
                     .frame(width: 40, height: 40)
                 
                 Image(systemName: icon)
-                    .font(.system(size: AppTheme.fontSize16 + 2, weight: .semibold))
+                    .font(.system(size: AppTheme.fontSize18, weight: .semibold))
                     .foregroundColor(color)
             }
             

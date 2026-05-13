@@ -808,7 +808,7 @@ struct CategoryCard: View {
                         label: {
                             Image(systemName: isAdded ? "basket.fill" : "basket")
                                 .foregroundColor(isAdded ? AppTheme.accentColor : (AppTheme.adaptiveSubtitle(for: colorScheme)))
-                                .font(.system(size: AppTheme.fontSize16 + 2))
+                                .font(.system(size: AppTheme.fontSize18))
                                 .frame(width: 44, height: 44)
                                 .scaleEffect(isAdded ? 1.2 : 1.0)
                                 .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isAdded)
@@ -873,7 +873,7 @@ struct CategoryCard: View {
                 label: {
                     Image(systemName: isAdded ? "basket.fill" : "basket")
                         .foregroundColor(isAdded ? AppTheme.accentColor : (AppTheme.adaptiveSubtitle(for: colorScheme)))
-                        .font(.system(size: AppTheme.fontSize16 + 2))
+                        .font(.system(size: AppTheme.fontSize18))
                         .frame(width: 44, height: 44)
                         .scaleEffect(isAdded ? 1.2 : 1.0)
                         .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isAdded)

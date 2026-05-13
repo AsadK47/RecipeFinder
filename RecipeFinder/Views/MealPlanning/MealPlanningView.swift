@@ -249,7 +249,7 @@ struct MealPlanningView: View {
             HStack {
                 Button(action: previousWeek) {
                     Image(systemName: "chevron.left")
-                        .font(.system(size: AppTheme.fontSize16 + 2, weight: .semibold))
+                        .font(.system(size: AppTheme.fontSize18, weight: .semibold))
                         .adaptiveForegroundColor()
                         .frame(width: 40, height: 40)
                         .background(Circle().fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity)))
@@ -258,14 +258,14 @@ struct MealPlanningView: View {
                 Spacer()
                 
                 Text(weekRangeString)
-                    .font(.system(size: AppTheme.fontSize16 + 2, weight: .bold))
+                    .font(.system(size: AppTheme.fontSize18, weight: .bold))
                     .adaptiveForegroundColor()
                 
                 Spacer()
                 
                 Button(action: nextWeek) {
                     Image(systemName: "chevron.right")
-                        .font(.system(size: AppTheme.fontSize16 + 2, weight: .semibold))
+                        .font(.system(size: AppTheme.fontSize18, weight: .semibold))
                         .adaptiveForegroundColor()
                         .frame(width: 40, height: 40)
                         .background(Circle().fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity)))
@@ -306,7 +306,7 @@ struct MealPlanningView: View {
             HStack {
                 Button(action: previousMonth) {
                     Image(systemName: "chevron.left")
-                        .font(.system(size: AppTheme.fontSize16 + 2, weight: .semibold))
+                        .font(.system(size: AppTheme.fontSize18, weight: .semibold))
                         .adaptiveForegroundColor()
                         .frame(width: 40, height: 40)
                         .background(Circle().fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity)))
@@ -334,7 +334,7 @@ struct MealPlanningView: View {
                 
                 Button(action: nextMonth) {
                     Image(systemName: "chevron.right")
-                        .font(.system(size: AppTheme.fontSize16 + 2, weight: .semibold))
+                        .font(.system(size: AppTheme.fontSize18, weight: .semibold))
                         .adaptiveForegroundColor()
                         .frame(width: 40, height: 40)
                         .background(Circle().fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity)))
@@ -770,7 +770,7 @@ struct MealTimeCard: View {
             
             VStack(alignment: .leading, spacing: AppTheme.spacing6) {
                 Text(mealTime.rawValue)
-                    .font(.system(size: AppTheme.fontSize16 + 2, weight: .semibold))
+                    .font(.system(size: AppTheme.fontSize18, weight: .semibold))
                     .adaptiveForegroundColor()
                 
                 HStack(spacing: AppTheme.spacing4) {
@@ -896,7 +896,7 @@ struct MealTimeSelectorSheet: View {
                                         
                                         VStack(alignment: .leading, spacing: AppTheme.spacing6) {
                                             Text(mealTime.rawValue)
-                                                .font(.system(size: AppTheme.fontSize16 + 2, weight: .semibold))
+                                                .font(.system(size: AppTheme.fontSize18, weight: .semibold))
                                                 .adaptiveForegroundColor()
                                             
                                             HStack(spacing: AppTheme.spacing4) {
@@ -1378,7 +1378,7 @@ struct NutritionTipCard: View {
                         .textCase(.uppercase)
                     
                     Text(tip.title)
-                        .font(.system(size: AppTheme.fontSize16 + 2, weight: .bold))
+                        .font(.system(size: AppTheme.fontSize18, weight: .bold))
                         .adaptiveForegroundColor()
                 }
                 

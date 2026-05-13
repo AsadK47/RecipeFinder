@@ -240,7 +240,7 @@ struct RecipeDetailView: View {
     private func servingsButton(icon: String, action: @escaping () -> Void, isEnabled: Bool) -> some View {
         Button(action: action) {
             Image(systemName: icon)
-                .font(.system(size: AppTheme.fontSize16 + 2, weight: .semibold))
+                .font(.system(size: AppTheme.fontSize18, weight: .semibold))
                 .adaptiveForegroundColor()
                 .frame(width: 44, height: 44)
                 .background(Circle().fill(isEnabled ? AppTheme.accentColor : Color.gray))

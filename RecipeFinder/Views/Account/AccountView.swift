@@ -349,7 +349,7 @@ struct AccountView: View {
                     } label: {
                         HStack(spacing: AppTheme.spacing12) {
                             Image(systemName: "applelogo")
-                                .font(.system(size: AppTheme.fontSize16 + 2, weight: .semibold))
+                                .font(.system(size: AppTheme.fontSize18, weight: .semibold))
                             Text("Link Apple ID")
                                 .font(.body)
                                 .fontWeight(.semibold)
@@ -387,7 +387,7 @@ struct AccountView: View {
                 NavigationLink(destination: PrivacySettingsView()) {
                     HStack(spacing: AppTheme.spacing12) {
                         Image(systemName: authManager.biometricType == "Face ID" ? "faceid" : "touchid")
-                            .font(.system(size: AppTheme.fontSize16 + 2, weight: .semibold))
+                            .font(.system(size: AppTheme.fontSize18, weight: .semibold))
                         Text("Configure \(authManager.biometricType)")
                             .font(.body)
                             .fontWeight(.semibold)

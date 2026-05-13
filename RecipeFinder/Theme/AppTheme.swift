@@ -24,12 +24,14 @@ enum AppTheme {
     static let fontSize15: CGFloat = 15
     static let fontSize16: CGFloat = 16
     static let fontSize17: CGFloat = 17
+    static let fontSize18: CGFloat = 18
     static let fontSize20: CGFloat = 20
     static let fontSize22: CGFloat = 22
     static let fontSize24: CGFloat = 24
     static let fontSize28: CGFloat = 28
     static let fontSize32: CGFloat = 32
     static let fontSize34: CGFloat = 34
+    static let fontSize36: CGFloat = 36
     static let fontSize38: CGFloat = 38
     static let fontSize42: CGFloat = 42
     static let fontSize50: CGFloat = 50

@@ -93,14 +93,14 @@ struct BiometricSetupView: View {
     private func titleAndBenefits(spacing: AdaptiveSpacing) -> some View {
         VStack(spacing: spacing.md + spacing.md) {
             Text("Secure Your Account")
-                .font(.system(size: AppTheme.fontSize38 - 2, weight: .bold, design: .rounded))
+                .font(.system(size: AppTheme.fontSize36, weight: .bold, design: .rounded))
                 .adaptiveForegroundColor()
                 .multilineTextAlignment(.center)
                 .shadow(color: colorScheme == .dark ? .black.opacity(0.2) : .clear, radius: spacing.xs, x: 0, y: 5)
             
             VStack(spacing: spacing.lg) {
                 Text("Enable \(authManager.biometricType) for quick and secure access")
-                    .font(.system(size: AppTheme.fontSize16 + 2, weight: .medium))
+                    .font(.system(size: AppTheme.fontSize18, weight: .medium))
                     .adaptiveForegroundColor(opacity: 0.9)
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
@@ -415,7 +415,7 @@ private struct EnableButton: View {
                     Image(systemName: biometricIcon)
                         .font(.system(size: AppTheme.fontSize20, weight: .semibold))
                     Text("Enable \(biometricType)")
-                        .font(.system(size: AppTheme.fontSize16 + 2, weight: .bold))
+                        .font(.system(size: AppTheme.fontSize18, weight: .bold))
                 }
             }
             .adaptiveForegroundColor()

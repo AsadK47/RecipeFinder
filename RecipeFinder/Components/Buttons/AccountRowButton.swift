@@ -19,7 +19,7 @@ struct AccountRowButton: View {
                         .frame(width: AppTheme.iconSize40, height: AppTheme.iconSize40)
 
                     Image(systemName: icon)
-                        .font(.system(size: AppTheme.fontSize16 + 2, weight: .semibold))
+                        .font(.system(size: AppTheme.fontSize18, weight: .semibold))
                         .adaptiveForegroundColor()
                 }
 
