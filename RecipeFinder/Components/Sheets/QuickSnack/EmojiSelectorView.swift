@@ -33,7 +33,7 @@ struct EmojiSelectorView: View {
 
                     Image(systemName: "chevron.down")
                         .adaptiveForegroundColor(opacity: AppTheme.glassLightOpacity)
-                        .rotationEffect(.degrees(showEmojiPicker ? 180 : 0))
+                        .rotationEffect(.degrees(showEmojiPicker ? AppTheme.rotationFlipped : AppTheme.rotationNeutral))
                 }
                 .padding()
                 .snackCardBackground(cardStyle: cardStyle, colorScheme: colorScheme)

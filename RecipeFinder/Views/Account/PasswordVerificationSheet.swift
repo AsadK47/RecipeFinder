@@ -132,11 +132,11 @@ struct PasswordVerificationSheet: View {
                         .background(
                             RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                                 .fill(AppTheme.accentColor(for: selectedTheme))
-                                .shadow(color: AppTheme.accentColor(for: selectedTheme).opacity(0.4), radius: 10, x: 0, y: 5)
+                                .shadow(color: AppTheme.accentColor(for: selectedTheme).opacity(AppTheme.lowEmphasisOpacity), radius: AppTheme.shadowRadiusAccent, x: 0, y: AppTheme.shadowOffsetAccent)
                         )
                     }
                     .disabled(password.isEmpty || isVerifying)
-                    .opacity((password.isEmpty || isVerifying) ? 0.6 : 1.0)
+                    .opacity((password.isEmpty || isVerifying) ? AppTheme.mediumEmphasisOpacity : AppTheme.fullOpacity)
                     .padding(.horizontal, AppTheme.spacing32)
                     .padding(.top, AppTheme.spacing8)
                     

@@ -170,11 +170,14 @@ enum AppTheme {
     static let shadowRadiusSmall: CGFloat = 2
     static let shadowRadiusMedium: CGFloat = 4
     static let shadowRadiusLarge: CGFloat = 8
+    static let shadowRadiusAccent: CGFloat = 10
     static let shadowRadiusXL: CGFloat = 12
     
     static let shadowOffsetSmall: CGFloat = 1
     static let shadowOffsetMedium: CGFloat = 2
     static let shadowOffsetLarge: CGFloat = 4
+    static let shadowOffsetAccent: CGFloat = 5
+    static let shadowOffsetNone: CGFloat = 0
     
     nonisolated(unsafe) private static var gradientCache: [String: LinearGradient] = [:]
     
@@ -285,6 +288,8 @@ enum AppTheme {
     static let softOverlayOpacity: Double = 0.25
     static let mediumOverlayOpacity: Double = 0.35
     static let glassSubtleOpacity: Double = 0.05
+    static let zeroOpacity: Double = 0.0
+    static let fullOpacity: Double = 1.0
     static let highEmphasisOpacity: Double = 0.8
     static let mediumEmphasisOpacity: Double = 0.6
     static let subduedEmphasisOpacity: Double = 0.7
@@ -294,6 +299,13 @@ enum AppTheme {
     static let veryHighEmphasisOpacity: Double = 0.9
     static let cardHighEmphasisLightOpacity: Double = 0.75
     static let bannerHeightRatio: Double = 0.18
+
+    static let rotationFlipped: Double = 180
+    static let rotationNeutral: Double = 0
+
+    static let jpegCompressionQuality: Double = 0.8
+    static let hapticIntervalShort: UInt64 = 100_000_000
+    static let hapticIntervalMedium: UInt64 = 150_000_000
     
     static func cardBackground(for colorScheme: ColorScheme) -> Color {
         colorScheme == .dark ? cardBackgroundDark : cardBackground

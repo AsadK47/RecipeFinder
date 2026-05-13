@@ -139,12 +139,12 @@ struct RecipeFinderApp: App {
         
         appearance.titleTextAttributes = [
             .foregroundColor: UIColor.white,
-            .font: UIFont.systemFont(ofSize: 18, weight: .semibold)
+            .font: UIFont.systemFont(ofSize: AppTheme.fontSize18, weight: .semibold)
         ]
         
         appearance.largeTitleTextAttributes = [
             .foregroundColor: UIColor.white,
-            .font: UIFont.systemFont(ofSize: 34, weight: .bold)
+            .font: UIFont.systemFont(ofSize: AppTheme.fontSize34, weight: .bold)
         ]
         
         appearance.backButtonAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.white]

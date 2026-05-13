@@ -116,7 +116,7 @@ final class AccountManager: ObservableObject {
     
     func saveProfileImage(_ image: UIImage?) {
         if let image = image,
-           let imageData = image.jpegData(compressionQuality: 0.8) {
+           let imageData = image.jpegData(compressionQuality: AppTheme.jpegCompressionQuality) {
             UserScopedStorage.shared.set(imageData, forKey: profileImageKey)
         } else {
             UserScopedStorage.shared.removeObject(forKey: profileImageKey)

@@ -49,7 +49,7 @@ struct AnimatedHeartButton: View {
                             .fill(particleColor(for: index))
                             .frame(width: Layout.particleSize, height: Layout.particleSize)
                             .offset(particleOffset(for: index))
-                            .opacity(particlesVisible ? Layout.particleOpacityHidden : 1)
+                            .opacity(particlesVisible ? Layout.particleOpacityHidden : AppTheme.fullOpacity)
                             .scaleEffect(particlesVisible ? Layout.particleScaleCollapsed : Layout.particleScaleExpanded)
                     }
                 }

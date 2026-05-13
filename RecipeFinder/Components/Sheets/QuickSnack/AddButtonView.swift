@@ -16,7 +16,7 @@ struct AddButtonView: View {
             .padding()
             .background(
                 AppTheme.accentColor(for: selectedTheme)
-                    .opacity(isEnabled ? 1.0 : 0.5)
+                    .opacity(isEnabled ? AppTheme.fullOpacity : AppTheme.glassLightOpacity)
             )
             .adaptiveForegroundColor()
             .cornerRadius(AppTheme.cornerRadius12)

@@ -541,7 +541,7 @@ struct QuickMatchRecipeCard: View {
             RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                 .stroke(borderColor, lineWidth: 1)
         )
-        .shadow(color: Color.black.opacity(shadowOpacity), radius: 8, x: 0, y: 4)
+        .shadow(color: Color.black.opacity(shadowOpacity), radius: AppTheme.shadowRadiusLarge, x: 0, y: AppTheme.shadowOffsetLarge)
         .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius16))
     }
     

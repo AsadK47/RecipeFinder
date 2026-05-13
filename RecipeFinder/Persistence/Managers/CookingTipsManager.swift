@@ -24,7 +24,7 @@ final class CookingTipsManager: ObservableObject {
     private func setupPublishers() {
         $tips
             .dropFirst()
-            .debounce(for: 0.5, scheduler: RunLoop.main)
+            .debounce(for: AppTheme.animationDelayMedium, scheduler: RunLoop.main)
             .sink { [weak self] _ in
                 self?.saveTips()
             }

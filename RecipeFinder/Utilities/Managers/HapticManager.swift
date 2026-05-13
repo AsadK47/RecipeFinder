@@ -72,7 +72,7 @@ final class HapticManager: Sendable {
     func doubleTap() {
         light()
         Task { @MainActor in
-            try? await Task.sleep(nanoseconds: 100_000_000)
+            try? await Task.sleep(nanoseconds: AppTheme.hapticIntervalShort)
             self.light()
         }
     }
@@ -83,7 +83,7 @@ final class HapticManager: Sendable {
             generator.notificationOccurred(.success)
             AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
             
-            try? await Task.sleep(nanoseconds: 150_000_000)
+            try? await Task.sleep(nanoseconds: AppTheme.hapticIntervalMedium)
             self.light()
         }
     }
@@ -91,7 +91,7 @@ final class HapticManager: Sendable {
     func delete() {
         warning()
         Task { @MainActor in
-            try? await Task.sleep(nanoseconds: 100_000_000)
+            try? await Task.sleep(nanoseconds: AppTheme.hapticIntervalShort)
             self.rigid()
         }
     }
