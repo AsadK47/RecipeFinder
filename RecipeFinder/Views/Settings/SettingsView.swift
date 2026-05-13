@@ -57,7 +57,7 @@ struct SettingsTabView: View {
                             .padding(.top, horizontalPadding * 0.8)
                         }
                     }
-                    .frame(height: max(72, UIScreen.main.bounds.width * 0.18))
+                    .frame(height: max(72, UIScreen.main.bounds.width * AppTheme.bannerHeightRatio))
                     
                     GeometryReader { scrollGeometry in
                         let cardSpacing = scrollGeometry.size.width * 0.05
@@ -134,7 +134,7 @@ struct SettingsTabView: View {
                                 .buttonStyle(PlainButtonStyle())
                                 
                                 Divider()
-                                    .padding(.leading, 60)
+                                    .padding(.leading, AppTheme.spacing60)
                                 
                                 NavigationLink(destination: TimerSettingsView()) {
                                     SettingsRow(icon: "timer", iconColor: .orange, title: "Timers")
@@ -143,7 +143,7 @@ struct SettingsTabView: View {
                                 .buttonStyle(PlainButtonStyle())
                                 
                                 Divider()
-                                    .padding(.leading, 60)
+                                    .padding(.leading, AppTheme.spacing60)
                                 
                                 NavigationLink(destination: UnitsSettingsView()) {
                                     SettingsRow(icon: "ruler.fill", iconColor: .blue, title: "Units & Measurements")
@@ -152,7 +152,7 @@ struct SettingsTabView: View {
                                 .buttonStyle(PlainButtonStyle())
                                 
                                 Divider()
-                                    .padding(.leading, 60)
+                                    .padding(.leading, AppTheme.spacing60)
                                 
                                 NavigationLink(destination: DisplaySettingsView()) {
                                     SettingsRow(icon: "display", iconColor: .cyan, title: "Display")
@@ -161,7 +161,7 @@ struct SettingsTabView: View {
                                 .buttonStyle(PlainButtonStyle())
                                 
                                 Divider()
-                                    .padding(.leading, 60)
+                                    .padding(.leading, AppTheme.spacing60)
                                 
                                 NavigationLink(destination: PartyTimeView()) {
                                     SettingsRow(icon: "party.popper.fill", iconColor: .purple, title: "Party Time")
@@ -180,7 +180,7 @@ struct SettingsTabView: View {
                                 .buttonStyle(PlainButtonStyle())
                                 
                                 Divider()
-                                    .padding(.leading, 60)
+                                    .padding(.leading, AppTheme.spacing60)
                                 
                                 NavigationLink(destination: DataManagementSettingsView()) {
                                     SettingsRow(icon: "externaldrive.fill", iconColor: .gray, title: "Data Management")
@@ -199,7 +199,7 @@ struct SettingsTabView: View {
                                 .buttonStyle(PlainButtonStyle())
                                 
                                 Divider()
-                                    .padding(.leading, 60)
+                                    .padding(.leading, AppTheme.spacing60)
                                 
                                 NavigationLink(destination: AboutView()) {
                                     SettingsRow(icon: "info.circle.fill", iconColor: .gray, title: "About RecipeFinder")
@@ -220,10 +220,10 @@ struct SettingsTabView: View {
                         VStack(spacing: scrollGeometry.size.width * 0.01) {
                             Text("RecipeFinder")
                                 .font(.caption)
-                                .adaptiveForegroundColor(opacity: 0.6)
+                                .adaptiveForegroundColor(opacity: AppTheme.mediumEmphasisOpacity)
                             Text("Version 1.0.0 (Build 1)")
                                 .font(.caption2)
-                                .adaptiveForegroundColor(opacity: 0.5)
+                                .adaptiveForegroundColor(opacity: AppTheme.glassLightOpacity)
                         }
                         .padding(.top, contentPadding * 0.8)
                         .padding(.bottom, contentPadding * 2)
@@ -257,10 +257,10 @@ struct SettingsCard<Content: View>: View {
             .frame(maxWidth: .infinity)
             .background {
                 if cardStyle == .solid {
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                         .fill(AppTheme.adaptiveCard(for: colorScheme))
                 } else {
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                         .fill(.ultraThinMaterial)
                 }
             }
@@ -274,9 +274,9 @@ struct SettingsSectionHeader: View {
         Text(title)
             .font(.headline)
             .fontWeight(.semibold)
-            .adaptiveForegroundColor(opacity: 0.8)
+            .adaptiveForegroundColor(opacity: AppTheme.highEmphasisOpacity)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 4)
+            .padding(.horizontal, AppTheme.spacing4)
             .padding(.top, 0)
     }
 }
@@ -290,9 +290,9 @@ struct SettingsRow: View {
     var body: some View {
         HStack(spacing: AppTheme.spacing12) {
             ZStack {
-                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius6, style: .continuous)
                     .fill(iconColor)
-                    .frame(width: 29, height: 29)
+                    .frame(width: AppTheme.width29, height: AppTheme.width29)
                 
                 Image(systemName: icon)
                     .font(.system(size: AppTheme.fontSize15, weight: .semibold))
@@ -359,7 +359,7 @@ struct AppearanceAndThemeSettingsView: View {
                         .padding(.top, horizontalPadding * 0.8)
                     }
                 }
-                .frame(height: max(72, UIScreen.main.bounds.width * 0.18))
+                .frame(height: max(72, UIScreen.main.bounds.width * AppTheme.bannerHeightRatio))
                 
                 ScrollView {
                     VStack(spacing: AppTheme.spacing32) {
@@ -382,7 +382,7 @@ struct AppearanceAndThemeSettingsView: View {
                                 .fixedSize(horizontal: false, vertical: true)
                             
                             Divider()
-                                .padding(.vertical, 4)
+                                .padding(.vertical, AppTheme.spacing4)
                             
                             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: AppTheme.spacing12) {
                                 ForEach(AppTheme.ThemeType.allCases) { theme in
@@ -393,7 +393,7 @@ struct AppearanceAndThemeSettingsView: View {
                                         HStack(spacing: AppTheme.spacing12) {
                                             Circle()
                                                 .fill(AppTheme.accentColor(for: theme))
-                                                .frame(width: 32, height: 32)
+                                                .frame(width: AppTheme.iconSize32, height: 32)
                                                 .overlay(
                                                     Circle()
                                                         .strokeBorder(selectedTheme == theme ? Color.white : Color.clear, lineWidth: 2)
@@ -489,7 +489,7 @@ struct AppearanceSettingsView: View {
                                         ZStack {
                                             Circle()
                                                 .fill(AppTheme.accentColor(for: selectedTheme).opacity(0.2))
-                                                .frame(width: 50, height: 50)
+                                                .frame(width: 50, height: AppTheme.height50)
                                             
                                             Image(systemName: "circle.lefthalf.filled")
                                                 .font(.title3)
@@ -524,7 +524,7 @@ struct AppearanceSettingsView: View {
                             .buttonStyle(PlainButtonStyle())
                             
                             Divider()
-                                .padding(.leading, 86)
+                                .padding(.leading, AppTheme.spacing86)
                             
                             Button(action: {
                                 appearanceMode = .light
@@ -535,8 +535,8 @@ struct AppearanceSettingsView: View {
                                     HStack(spacing: AppTheme.spacing16) {
                                         ZStack {
                                             Circle()
-                                                .fill(Color.cyan.opacity(0.2))
-                                                .frame(width: 50, height: 50)
+                                                .fill(Color.cyan.opacity(AppTheme.overlayLightOpacity))
+                                                .frame(width: 50, height: AppTheme.height50)
                                             
                                             Image(systemName: "sparkles")
                                                 .font(.title3)
@@ -567,7 +567,7 @@ struct AppearanceSettingsView: View {
                             .buttonStyle(PlainButtonStyle())
                             
                             Divider()
-                                .padding(.leading, 86)
+                                .padding(.leading, AppTheme.spacing86)
                             
                             Button(action: {
                                 appearanceMode = .dark
@@ -578,8 +578,8 @@ struct AppearanceSettingsView: View {
                                     HStack(spacing: AppTheme.spacing16) {
                                         ZStack {
                                             Circle()
-                                                .fill(Color.orange.opacity(0.2))
-                                                .frame(width: 50, height: 50)
+                                                .fill(Color.orange.opacity(AppTheme.overlayLightOpacity))
+                                                .frame(width: 50, height: AppTheme.height50)
                                             
                                             Image(systemName: "flame.fill")
                                                 .font(.title3)
@@ -656,7 +656,7 @@ struct ThemeSettingsView: View {
                                     HStack(spacing: AppTheme.spacing16) {
                                         Circle()
                                             .fill(AppTheme.accentColor(for: theme))
-                                            .frame(width: 40, height: 40)
+                                            .frame(width: 40, height: AppTheme.height40)
                                             .overlay(
                                                 Circle()
                                                     .stroke(selectedTheme == theme ? Color.white : Color.clear, lineWidth: 3)
@@ -780,7 +780,7 @@ struct NotificationSettingsView: View {
                         .padding(.top, horizontalPadding * 0.8)
                     }
                 }
-                .frame(height: max(72, UIScreen.main.bounds.width * 0.18))
+                .frame(height: max(72, UIScreen.main.bounds.width * AppTheme.bannerHeightRatio))
                 
                 ScrollView {
                 VStack(spacing: AppTheme.spacing32) {
@@ -790,7 +790,7 @@ struct NotificationSettingsView: View {
                                 Image(systemName: "bell.slash.fill")
                                     .font(.system(size: AppTheme.fontSize60))
                                     .foregroundColor(.orange)
-                                    .padding(.top, 10)
+                                    .padding(.top, AppTheme.spacing10)
                                 
                                 VStack(spacing: AppTheme.spacing8) {
                                     Text("Notifications Disabled")
@@ -817,15 +817,15 @@ struct NotificationSettingsView: View {
                                     .font(.headline)
                                     .adaptiveForegroundColor()
                                     .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 14)
+                                    .padding(.vertical, AppTheme.spacing14)
                                     .background(AppTheme.accentColor)
                                     .cornerRadius(AppTheme.cornerRadius12)
                                 }
                                 .buttonStyle(PlainButtonStyle())
-                                .padding(.bottom, 10)
+                                .padding(.bottom, AppTheme.spacing10)
                             }
-                            .padding(.horizontal, 24)
-                            .padding(.vertical, 20)
+                            .padding(.horizontal, AppTheme.spacing24)
+                            .padding(.vertical, AppTheme.spacing20)
                             .frame(maxWidth: .infinity)
                         }
                     }
@@ -840,7 +840,7 @@ struct NotificationSettingsView: View {
                                 HStack(spacing: AppTheme.spacing12) {
                                     Image(systemName: "timer")
                                         .adaptiveForegroundColor()
-                                        .frame(width: 30)
+                                        .frame(width: AppTheme.width30)
                                     
                                     VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                                         Text("Timer Alerts")
@@ -854,13 +854,13 @@ struct NotificationSettingsView: View {
                             .tint(AppTheme.accentColor)
                             
                             Divider()
-                                .padding(.horizontal, 60)
+                                .padding(.horizontal, AppTheme.spacing60)
                             
                             Toggle(isOn: $mealPlanReminders) {
                                 HStack(spacing: AppTheme.spacing12) {
                                     Image(systemName: "calendar")
                                         .adaptiveForegroundColor()
-                                        .frame(width: 30)
+                                        .frame(width: AppTheme.width30)
                                     
                                     VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                                         Text("Meal Plan Reminders")
@@ -874,13 +874,13 @@ struct NotificationSettingsView: View {
                             .tint(AppTheme.accentColor)
                             
                             Divider()
-                                .padding(.horizontal, 60)
+                                .padding(.horizontal, AppTheme.spacing60)
                             
                             Toggle(isOn: $shoppingListReminders) {
                                 HStack(spacing: AppTheme.spacing12) {
                                     Image(systemName: "cart")
                                         .adaptiveForegroundColor()
-                                        .frame(width: 30)
+                                        .frame(width: AppTheme.width30)
                                     
                                     VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                                         Text("Shopping List Reminders")
@@ -909,7 +909,7 @@ struct NotificationSettingsView: View {
                                     HStack {
                                         Image(systemName: "clock")
                                             .adaptiveForegroundColor()
-                                            .frame(width: 30)
+                                            .frame(width: AppTheme.width30)
                                         
                                         Text("Daily reminder at")
                                             .adaptiveForegroundColor()
@@ -1050,7 +1050,7 @@ struct TimerSettingsView: View {
                         .padding(.top, horizontalPadding * 0.8)
                     }
                 }
-                .frame(height: max(72, UIScreen.main.bounds.width * 0.18))
+                .frame(height: max(72, UIScreen.main.bounds.width * AppTheme.bannerHeightRatio))
                 
                 ScrollView {
                 VStack(spacing: AppTheme.spacing32) {
@@ -1070,7 +1070,7 @@ struct TimerSettingsView: View {
                                         HStack {
                                             Image(systemName: "timer")
                                                 .adaptiveForegroundColor()
-                                                .frame(width: 30)
+                                                .frame(width: AppTheme.width30)
                                             
                                             Text(label)
                                                 .adaptiveForegroundColor()
@@ -1084,7 +1084,7 @@ struct TimerSettingsView: View {
                                         }
                                         .padding(AppTheme.spacing12)
                                         .background(
-                                            RoundedRectangle(cornerRadius: 10)
+                                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius10)
                                                 .fill(defaultTimerDuration == seconds ? AppTheme.secondaryText.opacity(0.2) : Color.clear)
                                         )
                                     }
@@ -1114,7 +1114,7 @@ struct TimerSettingsView: View {
                                         HStack {
                                             Image(systemName: sound == .silent ? "speaker.slash" : "speaker.wave.2")
                                                 .adaptiveForegroundColor()
-                                                .frame(width: 30)
+                                                .frame(width: AppTheme.width30)
                                             
                                             Text(sound.rawValue)
                                                 .adaptiveForegroundColor()
@@ -1128,7 +1128,7 @@ struct TimerSettingsView: View {
                                         }
                                         .padding(AppTheme.spacing12)
                                         .background(
-                                            RoundedRectangle(cornerRadius: 10)
+                                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius10)
                                                 .fill(timerSound == sound ? AppTheme.secondaryText.opacity(0.2) : Color.clear)
                                         )
                                     }
@@ -1137,13 +1137,13 @@ struct TimerSettingsView: View {
                             }
                             
                             Divider()
-                                .padding(.vertical, 4)
+                                .padding(.vertical, AppTheme.spacing4)
                             
                             Toggle(isOn: $timerVibration) {
                                 HStack(spacing: AppTheme.spacing12) {
                                     Image(systemName: "iphone.radiowaves.left.and.right")
                                         .adaptiveForegroundColor()
-                                        .frame(width: 30)
+                                        .frame(width: AppTheme.width30)
                                     
                                     VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                                         Text("Vibration")
@@ -1169,7 +1169,7 @@ struct TimerSettingsView: View {
                                 HStack(spacing: AppTheme.spacing12) {
                                     Image(systemName: "app.badge")
                                         .adaptiveForegroundColor()
-                                        .frame(width: 30)
+                                        .frame(width: AppTheme.width30)
                                     
                                     VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                                         Text("Show in Notifications")
@@ -1253,7 +1253,7 @@ struct UnitsSettingsView: View {
                         .padding(.top, horizontalPadding * 0.8)
                     }
                 }
-                .frame(height: max(72, UIScreen.main.bounds.width * 0.18))
+                .frame(height: max(72, UIScreen.main.bounds.width * AppTheme.bannerHeightRatio))
                 
                 ScrollView {
                 VStack(spacing: AppTheme.spacing32) {
@@ -1272,7 +1272,7 @@ struct UnitsSettingsView: View {
                                         Image(systemName: system == .metric ? "ruler" : "ruler.fill")
                                             .font(.title3)
                                             .adaptiveForegroundColor()
-                                            .frame(width: 30)
+                                            .frame(width: AppTheme.width30)
                                         
                                         VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                                             Text(system.rawValue)
@@ -1356,7 +1356,7 @@ struct DisplaySettingsView: View {
                         .padding(.top, horizontalPadding * 0.8)
                     }
                 }
-                .frame(height: max(72, UIScreen.main.bounds.width * 0.18))
+                .frame(height: max(72, UIScreen.main.bounds.width * AppTheme.bannerHeightRatio))
                 
                 ScrollView {
                 VStack(spacing: AppTheme.spacing32) {
@@ -1370,7 +1370,7 @@ struct DisplaySettingsView: View {
                                 HStack(spacing: AppTheme.spacing12) {
                                     Image(systemName: "light.max")
                                         .adaptiveForegroundColor()
-                                        .frame(width: 30)
+                                        .frame(width: AppTheme.width30)
                                     
                                     VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                                         Text("Keep Screen Awake")
@@ -1404,7 +1404,7 @@ struct DisplaySettingsView: View {
                                 .fixedSize(horizontal: false, vertical: true)
                             
                             Divider()
-                                .padding(.vertical, 4)
+                                .padding(.vertical, AppTheme.spacing4)
                             
                             HStack(spacing: AppTheme.spacing8) {
                                 Image(systemName: "battery.100")
@@ -1467,7 +1467,7 @@ struct PrivacySettingsView: View {
                                     HStack(spacing: AppTheme.spacing12) {
                                         Image(systemName: authManager.biometricType == "Face ID" ? "faceid" : "touchid")
                                             .adaptiveForegroundColor()
-                                            .frame(width: 30)
+                                            .frame(width: AppTheme.width30)
                                         
                                         VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                                             Text("\(authManager.biometricType)")
@@ -1493,7 +1493,7 @@ struct PrivacySettingsView: View {
                                 HStack(spacing: AppTheme.spacing12) {
                                     Image(systemName: "hand.raised.fill")
                                         .foregroundColor(.blue)
-                                        .frame(width: 30)
+                                        .frame(width: AppTheme.width30)
                                     
                                     VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                                         Text("Privacy Policy")
@@ -1525,7 +1525,7 @@ struct PrivacySettingsView: View {
                                 ZStack {
                                     Circle()
                                         .fill(.orange)
-                                        .frame(width: 40, height: 40)
+                                        .frame(width: 40, height: AppTheme.height40)
                                     
                                     Image(systemName: "exclamationmark.triangle.fill")
                                         .font(.system(size: AppTheme.fontSize18, weight: .semibold))
@@ -1561,7 +1561,7 @@ struct PrivacySettingsView: View {
                                         showResetSuccess = true
                                         HapticManager.shared.success()
                                         
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayFeedback) {
                                             showResetSuccess = false
                                         }
                                     }) {
@@ -1573,18 +1573,18 @@ struct PrivacySettingsView: View {
                                         .fontWeight(.semibold)
                                         .adaptiveForegroundColor()
                                         .frame(maxWidth: .infinity)
-                                        .padding(.vertical, 12)
+                                        .padding(.vertical, AppTheme.spacing12)
                                         .background(AppTheme.accentColor)
                                         .cornerRadius(AppTheme.cornerRadius12)
                                     }
                                     .buttonStyle(PlainButtonStyle())
                                 }
-                                .padding(.top, 4)
+                                .padding(.top, AppTheme.spacing4)
                             } else {
                                 Text("You will be asked to confirm before deleting recipes.")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
-                                    .padding(.top, 4)
+                                    .padding(.top, AppTheme.spacing4)
                             }
                             
                             if showResetSuccess {
@@ -1679,8 +1679,8 @@ struct PrivacyInfoRow: View {
         HStack(alignment: .top, spacing: AppTheme.spacing16) {
             ZStack {
                 Circle()
-                    .fill(iconColor.opacity(0.15))
-                    .frame(width: 40, height: 40)
+                    .fill(iconColor.opacity(AppTheme.cardDarkOpacity))
+                    .frame(width: 40, height: AppTheme.height40)
                 
                 Image(systemName: icon)
                     .font(.system(size: AppTheme.fontSize18, weight: .semibold))
@@ -1742,7 +1742,7 @@ struct DataManagementSettingsView: View {
                                 .fixedSize(horizontal: false, vertical: true)
                             
                             Divider()
-                                .padding(.vertical, 4)
+                                .padding(.vertical, AppTheme.spacing4)
                             
                             Button(action: {
                                 showingResetAlert = true
@@ -1756,7 +1756,7 @@ struct DataManagementSettingsView: View {
                                 }
                                 .adaptiveForegroundColor()
                                 .frame(maxWidth: .infinity)
-                                .padding(.vertical, 12)
+                                .padding(.vertical, AppTheme.spacing12)
                                 .background(Color.orange)
                                 .cornerRadius(AppTheme.cornerRadius12)
                             }
@@ -1814,7 +1814,7 @@ struct DataManagementSettingsView: View {
         dataCleared = true
         HapticManager.shared.success()
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayFeedback) {
             dataCleared = false
         }
     }
@@ -1840,8 +1840,8 @@ struct HelpView: View {
                             HStack(spacing: AppTheme.spacing16) {
                                 ZStack {
                                     Circle()
-                                        .fill(Color.purple.opacity(0.15))
-                                        .frame(width: 50, height: 50)
+                                        .fill(Color.purple.opacity(AppTheme.cardDarkOpacity))
+                                        .frame(width: 50, height: AppTheme.height50)
                                     
                                     Image(systemName: "play.circle.fill")
                                         .font(.title2)
@@ -1968,7 +1968,7 @@ struct HelpView: View {
                                     Image(systemName: "envelope.fill")
                                         .font(.title3)
                                         .adaptiveForegroundColor()
-                                        .frame(width: 30)
+                                        .frame(width: AppTheme.width30)
                                     
                                     VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                                         Text("Email Support")
@@ -1997,7 +1997,7 @@ struct HelpView: View {
                                     Image(systemName: "globe")
                                         .font(.title3)
                                         .adaptiveForegroundColor()
-                                        .frame(width: 30)
+                                        .frame(width: AppTheme.width30)
                                     
                                     VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                                         Text("Visit Website")
@@ -2093,7 +2093,7 @@ struct HelpItem: View {
             Image(systemName: icon)
                 .font(.title3)
                 .adaptiveForegroundColor()
-                .frame(width: 30)
+                .frame(width: AppTheme.width30)
             
             VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                 Text(title)
@@ -2129,7 +2129,7 @@ struct FAQItem: View {
                     Image(systemName: isExpanded ? "chevron.down.circle.fill" : "chevron.right.circle.fill")
                         .font(.title3)
                         .foregroundColor(AppTheme.accentColor)
-                        .frame(width: 30)
+                        .frame(width: AppTheme.width30)
                     
                     Text(question)
                         .font(.subheadline)
@@ -2146,7 +2146,7 @@ struct FAQItem: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
-                    .padding(.leading, 42)
+                    .padding(.leading, AppTheme.spacing42)
                     .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
@@ -2183,10 +2183,10 @@ struct AboutView: View {
                         
                         Text("Your Personal Cooking Companion")
                             .font(.subheadline)
-                            .adaptiveForegroundColor(opacity: 0.8)
+                            .adaptiveForegroundColor(opacity: AppTheme.highEmphasisOpacity)
                             .multilineTextAlignment(.center)
                     }
-                    .padding(.top, 40)
+                    .padding(.top, AppTheme.spacing40)
                     
                     SettingsCard {
                         VStack(spacing: AppTheme.spacing16) {
@@ -2264,10 +2264,10 @@ struct AboutView: View {
                     
                     Text("Made with ❤️ for home cooks")
                         .font(.caption)
-                        .adaptiveForegroundColor(opacity: 0.6)
-                    .padding(.bottom, 40)
+                        .adaptiveForegroundColor(opacity: AppTheme.mediumEmphasisOpacity)
+                    .padding(.bottom, AppTheme.spacing40)
                 }
-                .padding(.horizontal, 20)
+                .padding(.horizontal, AppTheme.spacing20)
             }
         }
         .navigationTitle("About")
@@ -2286,7 +2286,7 @@ struct AboutFeatureRow: View {
         HStack(spacing: AppTheme.spacing12) {
             Image(systemName: icon)
                 .foregroundColor(color)
-                .frame(width: 20)
+                .frame(width: AppTheme.iconSize20)
             
             Text(text)
                 .font(.subheadline)
@@ -2343,7 +2343,7 @@ struct PartyTimeView: View {
                         .padding(.top, horizontalPadding * 0.8)
                     }
                 }
-                .frame(height: max(72, UIScreen.main.bounds.width * 0.18))
+                .frame(height: max(72, UIScreen.main.bounds.width * AppTheme.bannerHeightRatio))
                 
                 ScrollView {
                     VStack(spacing: AppTheme.spacing40) {
@@ -2360,11 +2360,11 @@ struct PartyTimeView: View {
                             
                             Text("Press and hold the button below for continuous vibration")
                                 .font(.subheadline)
-                                .adaptiveForegroundColor(opacity: 0.7)
+                                .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                                 .multilineTextAlignment(.center)
-                                .padding(.horizontal, 40)
+                                .padding(.horizontal, AppTheme.spacing40)
                         }
-                        .padding(.top, 40)
+                        .padding(.top, AppTheme.spacing40)
                         
                         VStack(spacing: AppTheme.spacing16) {
                             ZStack {
@@ -2372,7 +2372,7 @@ struct PartyTimeView: View {
                                     ForEach(0..<3) { index in
                                         Circle()
                                             .stroke(AppTheme.accentColor(for: appTheme).opacity(0.3), lineWidth: 2)
-                                            .frame(width: 200, height: 200)
+                                            .frame(width: AppTheme.width200, height: AppTheme.height200)
                                             .scaleEffect(isVibrating ? 1.3 : 1.0)
                                             .opacity(isVibrating ? 0 : 0.8)
                                             .animation(
@@ -2394,7 +2394,7 @@ struct PartyTimeView: View {
                                             endPoint: .bottomTrailing
                                         )
                                     )
-                                    .frame(width: 200, height: 200)
+                                    .frame(width: AppTheme.width200, height: AppTheme.height200)
                                     .shadow(color: AppTheme.accentColor(for: appTheme).opacity(0.5), radius: isVibrating ? 30 : 15)
                                     .scaleEffect(isVibrating ? 1.05 : 1.0)
                                     .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: isVibrating)
@@ -2414,9 +2414,9 @@ struct PartyTimeView: View {
                             
                             Text(isVibrating ? "Release to stop" : "Press and hold to start")
                                 .font(.caption)
-                                .adaptiveForegroundColor(opacity: 0.6)
+                                .adaptiveForegroundColor(opacity: AppTheme.mediumEmphasisOpacity)
                         }
-                        .padding(.vertical, 40)
+                        .padding(.vertical, AppTheme.spacing40)
                         
                         SettingsCard {
                             VStack(alignment: .leading, spacing: AppTheme.spacing16) {
@@ -2440,7 +2440,7 @@ struct PartyTimeView: View {
                         
                         Spacer(minLength: 40)
                     }
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, AppTheme.spacing20)
                 }
             }
         }

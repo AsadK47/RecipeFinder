@@ -49,7 +49,7 @@ struct WelcomeSplashView: View {
     private var particleLayer: some View {
         ForEach(Array(particlePositions.enumerated()), id: \.offset) { index, particle in
             Circle()
-                .fill(Color.white.opacity(0.1))
+                .fill(Color.white.opacity(AppTheme.shadowLightOpacity))
                 .frame(width: particle.size, height: particle.size)
                 .position(x: particle.x, y: particle.y)
                 .opacity(particlesOpacity)
@@ -149,15 +149,15 @@ struct WelcomeSplashView: View {
     
     private var checkmarkIcon: some View {
         Image(systemName: "checkmark")
-            .font(.system(size: 55, weight: .bold))
+            .font(.system(size: AppTheme.fontSize55, weight: .bold))
             .foregroundStyle(checkmarkGradient)
             .scaleEffect(checkmarkScale)
-            .shadow(color: .black.opacity(0.2), radius: 5, x: 0, y: 2)
+            .shadow(color: .black.opacity(AppTheme.overlayLightOpacity), radius: 5, x: 0, y: 2)
     }
     
     private var checkmarkGradient: LinearGradient {
         LinearGradient(
-            gradient: Gradient(colors: [.white, .white.opacity(0.9)]),
+            gradient: Gradient(colors: [.white, .white.opacity(AppTheme.veryHighEmphasisOpacity)]),
             startPoint: .topLeading,
             endPoint: .bottomTrailing
         )
@@ -180,7 +180,7 @@ struct WelcomeSplashView: View {
             .multilineTextAlignment(.center)
             .frame(maxWidth: .infinity)
             .opacity(contentOpacity)
-            .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 5)
+            .shadow(color: .black.opacity(AppTheme.overlayLightOpacity), radius: 10, x: 0, y: 5)
     }
     
     private var titleGradient: LinearGradient {
@@ -211,14 +211,14 @@ struct WelcomeSplashView: View {
         .padding(.horizontal, spacing.iconMedium)
         .padding(.vertical, spacing.xl)
         .background(cardBackground(spacing: spacing))
-        .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
+        .shadow(color: .black.opacity(AppTheme.shadowLightOpacity), radius: 10, x: 0, y: 5)
         .opacity(contentOpacity)
     }
     
     private var successMessageRow: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: AppTheme.spacing8) {
             Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 18))
+                .font(.system(size: AppTheme.fontSize18))
                 .foregroundStyle(AppTheme.accentColor(for: appTheme))
             Text("Account created successfully")
                 .font(.system(size: AppTheme.fontSize16, weight: .semibold))
@@ -227,19 +227,19 @@ struct WelcomeSplashView: View {
     }
     
     private var emailConfirmationRow: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: AppTheme.spacing8) {
             Image(systemName: "at")
                 .font(.system(size: AppTheme.fontSize14))
-                .adaptiveForegroundColor(opacity: 0.6)
+                .adaptiveForegroundColor(opacity: AppTheme.mediumEmphasisOpacity)
             Text(email)
                 .font(.system(size: AppTheme.fontSize15, weight: .medium))
-                .adaptiveForegroundColor(opacity: 0.8)
+                .adaptiveForegroundColor(opacity: AppTheme.highEmphasisOpacity)
         }
     }
     
     private func cardBackground(spacing: AdaptiveSpacing) -> some View {
         RoundedRectangle(cornerRadius: spacing.lg)
-            .fill(Color.white.opacity(0.15))
+            .fill(Color.white.opacity(AppTheme.cardDarkOpacity))
             .overlay(
                 RoundedRectangle(cornerRadius: spacing.lg)
                     .stroke(Color.white.opacity(0.2), lineWidth: 1)
@@ -271,7 +271,7 @@ struct WelcomeSplashView: View {
     private func buttonContent(spacing: AdaptiveSpacing) -> some View {
         HStack(spacing: spacing.md) {
             Text("Get Started")
-                .font(.system(size: 18, weight: .semibold))
+                .font(.system(size: AppTheme.fontSize18, weight: .semibold))
             Image(systemName: "arrow.right.circle.fill")
                 .font(.system(size: AppTheme.fontSize20))
         }
@@ -324,7 +324,7 @@ struct WelcomeSplashView: View {
             ringScale = 1.2
         }
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayXShort) {
             confettiCounter += 1
             HapticManager.shared.success()
         }

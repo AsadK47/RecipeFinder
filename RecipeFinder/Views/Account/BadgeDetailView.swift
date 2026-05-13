@@ -20,7 +20,7 @@ struct BadgeDetailView: View {
                     Button(action: { dismiss() }) {
                         Image(systemName: "xmark.circle.fill")
                             .font(.title2)
-                            .adaptiveForegroundColor(opacity: 0.7)
+                            .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                     }
                 }
                 .padding(.horizontal, AppTheme.cardHorizontalPadding)
@@ -108,7 +108,7 @@ struct BadgeDetailView: View {
                 Spacer()
                 Spacer()
             }
-            .padding(.horizontal, 20)
+            .padding(.horizontal, AppTheme.spacing20)
         }
     }
 }

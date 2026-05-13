@@ -18,7 +18,7 @@ struct DietaryFilterChip: View {
             .padding(.vertical, AppTheme.spacing6)
             .background(
                 isSelected ?
-                Color.green.opacity(0.8) :
+                Color.green.opacity(AppTheme.highEmphasisOpacity) :
                 Color.white.opacity(AppTheme.overlayLightOpacity)
             )
             .adaptiveForegroundColor()

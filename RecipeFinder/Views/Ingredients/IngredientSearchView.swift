@@ -109,7 +109,7 @@ struct IngredientSearchView: View {
                                                 .font(.caption2)
                                                 .fontWeight(.bold)
                                                 .adaptiveForegroundColor()
-                                                .frame(width: 18, height: 18)
+                                                .frame(width: AppTheme.iconSize18, height: 18)
                                                 .background(Circle().fill(Color.red))
                                                 .offset(x: 4, y: -4)
                                         }
@@ -117,7 +117,7 @@ struct IngredientSearchView: View {
                                 })
                             } else {
                                 Color.clear
-                                    .frame(width: 48, height: 48)
+                                    .frame(width: AppTheme.iconSize48, height: AppTheme.height48)
                             }
                             
                             Spacer()
@@ -159,13 +159,13 @@ struct IngredientSearchView: View {
                                 }
                             } else {
                                 Color.clear
-                                    .frame(width: 48, height: 48)
+                                    .frame(width: AppTheme.iconSize48, height: AppTheme.height48)
                             }
                         }
-                        .padding(.horizontal, 20)
+                        .padding(.horizontal, AppTheme.spacing20)
                         
                         SearchBar(text: $searchText, placeholder: "Search for Ingredients...")
-                            .padding(.horizontal, 20)
+                            .padding(.horizontal, AppTheme.spacing20)
                         
                         if activeFilterCount > 0 {
                             ScrollView(.horizontal, showsIndicators: false) {
@@ -184,20 +184,20 @@ struct IngredientSearchView: View {
                                             .font(.caption)
                                             .fontWeight(.semibold)
                                             .adaptiveForegroundColor()
-                                            .padding(.horizontal, 12)
-                                            .padding(.vertical, 6)
+                                            .padding(.horizontal, AppTheme.spacing12)
+                                            .padding(.vertical, AppTheme.spacing6)
                                             .background(
                                                 Capsule()
-                                                    .fill(Color.red.opacity(0.8))
+                                                    .fill(Color.red.opacity(AppTheme.highEmphasisOpacity))
                                             )
                                     })
                                 }
-                                .padding(.horizontal, 20)
+                                .padding(.horizontal, AppTheme.spacing20)
                             }
                             .transition(.move(edge: .top).combined(with: .opacity))
                         }
                     }
-                    .padding(.top, 20)
+                    .padding(.top, AppTheme.spacing20)
                     
                     if selectedIngredient == nil {
                         if !searchText.isEmpty {
@@ -228,7 +228,7 @@ struct IngredientSearchView: View {
                     VStack(spacing: AppTheme.spacing16) {
                         Image(systemName: "magnifyingglass")
                             .font(.system(size: AppTheme.fontSize60))
-                            .adaptiveForegroundColor(opacity: 0.5)
+                            .adaptiveForegroundColor(opacity: AppTheme.glassLightOpacity)
                         
                         Text("No ingredients found")
                             .font(.headline)
@@ -236,18 +236,18 @@ struct IngredientSearchView: View {
                         
                         Text("Try a different search term")
                             .font(.subheadline)
-                            .adaptiveForegroundColor(opacity: 0.7)
+                            .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                     }
                     .frame(maxWidth: .infinity)
-                    .padding(.top, 60)
+                    .padding(.top, AppTheme.spacing60)
                 } else {
                     ForEach(searchResults, id: \.self) { ingredient in
                         ingredientButton(ingredient)
                     }
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 16)
+            .padding(.horizontal, AppTheme.spacing20)
+            .padding(.vertical, AppTheme.spacing16)
         }
     }
     
@@ -275,9 +275,9 @@ struct IngredientSearchView: View {
                         )
                     }
                 }
-                .padding(.horizontal, 20)
+                .padding(.horizontal, AppTheme.spacing20)
             }
-            .padding(.vertical, 16)
+            .padding(.vertical, AppTheme.spacing16)
         }
     }
     
@@ -308,15 +308,15 @@ struct IngredientSearchView: View {
                         .font(.caption)
                         .fontWeight(.semibold)
                         .adaptiveForegroundColor()
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 5)
+                        .padding(.horizontal, AppTheme.spacing10)
+                        .padding(.vertical, AppTheme.spacing5)
                         .background(
                             Capsule()
                                 .fill(AppTheme.accentColor)
                         )
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 14)
+                .padding(.horizontal, AppTheme.spacing16)
+                .padding(.vertical, AppTheme.spacing14)
             })
             .buttonStyle(PlainButtonStyle())
             
@@ -328,20 +328,20 @@ struct IngredientSearchView: View {
                     Image(systemName: isAdded ? "basket.fill" : "basket")
                         .foregroundColor(isAdded ? AppTheme.accentColor : (AppTheme.adaptiveSubtitle(for: colorScheme)))
                         .font(.system(size: AppTheme.fontSize20))
-                        .frame(width: 44, height: 44)
+                        .frame(width: AppTheme.buttonHeight, height: AppTheme.height44)
                         .scaleEffect(isAdded ? 1.2 : 1.0)
                         .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isAdded)
                 }
             )
             .buttonStyle(PlainButtonStyle())
-            .padding(.trailing, 12)
+            .padding(.trailing, AppTheme.spacing12)
         }
         .background {
             if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                     .fill(AppTheme.cardBackground(for: colorScheme))
             } else {
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                     .fill(.regularMaterial)
             }
         }
@@ -352,13 +352,13 @@ struct IngredientSearchView: View {
         addedIngredients.insert(ingredient)
         showAddedFeedback = ingredient
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayFeedback) {
             if self.showAddedFeedback == ingredient {
                 self.showAddedFeedback = nil
             }
         }
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayXLong) {
             self.addedIngredients.remove(ingredient)
         }
     }
@@ -426,8 +426,8 @@ struct IngredientSearchView: View {
                         .adaptiveForegroundColor()
                     }
                 )
-                .padding(.horizontal, 20)
-                .padding(.vertical, 12)
+                .padding(.horizontal, AppTheme.spacing20)
+                .padding(.vertical, AppTheme.spacing12)
                 
                 Spacer()
                 
@@ -460,7 +460,7 @@ struct IngredientSearchView: View {
                                 }
                             }
                     }
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, AppTheme.spacing20)
                 }
             }
             
@@ -479,10 +479,10 @@ struct IngredientSearchView: View {
                     
                     Text("\(filteredRecipes.count) recipe\(filteredRecipes.count == 1 ? "" : "s")")
                         .font(.subheadline)
-                        .adaptiveForegroundColor(opacity: 0.8)
+                        .adaptiveForegroundColor(opacity: AppTheme.highEmphasisOpacity)
                 }
-                .padding(.horizontal, 20)
-                .padding(.bottom, 16)
+                .padding(.horizontal, AppTheme.spacing20)
+                .padding(.bottom, AppTheme.spacing16)
             }
             
             ScrollView {
@@ -495,7 +495,7 @@ struct IngredientSearchView: View {
                             .buttonStyle(PlainButtonStyle())
                         }
                     }
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, AppTheme.spacing20)
                 } else {
                     LazyVGrid(columns: gridColumns, spacing: AppTheme.spacing16) {
                         ForEach(filteredRecipes) { recipe in
@@ -505,8 +505,8 @@ struct IngredientSearchView: View {
                             .buttonStyle(PlainButtonStyle())
                         }
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 8)
+                    .padding(.horizontal, AppTheme.spacing20)
+                    .padding(.vertical, AppTheme.spacing8)
                 }
             }
         }
@@ -533,29 +533,29 @@ struct QuickMatchRecipeCard: View {
             imageSection
             contentSection
         }
-        .frame(width: 220)
+        .frame(width: AppTheme.width220)
         .background {
             cardBackground
         }
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                 .stroke(borderColor, lineWidth: 1)
         )
         .shadow(color: Color.black.opacity(shadowOpacity), radius: 8, x: 0, y: 4)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius16))
     }
     
     @ViewBuilder
     private var cardBackground: some View {
         if cardStyle == .solid {
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                 .fill(AppTheme.cardBackground(for: colorScheme))
         } else {
             ZStack {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(colorScheme == .dark ? Color.black.opacity(0.15) : Color.white.opacity(0.3))
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
+                    .fill(colorScheme == .dark ? Color.black.opacity(AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.shadowDarkOpacity))
                 
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                     .fill(.regularMaterial)
             }
         }
@@ -563,8 +563,8 @@ struct QuickMatchRecipeCard: View {
     
     private var imageSection: some View {
         ZStack(alignment: .topTrailing) {
-            RecipeImageView(imageName: recipe.imageName, height: 160)
-                .frame(width: 220, height: 160)
+            RecipeImageView(imageName: recipe.imageName, height: AppTheme.height160)
+                .frame(width: AppTheme.width220, height: AppTheme.height160)
                 .clipped()
             
             matchBadge
@@ -582,8 +582,8 @@ struct QuickMatchRecipeCard: View {
                 .fontWeight(.bold)
                 .adaptiveForegroundColor()
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 4)
+        .padding(.horizontal, AppTheme.spacing8)
+        .padding(.vertical, AppTheme.spacing4)
         .background(Capsule().fill(Color.green))
         .shadow(color: Color.black.opacity(AppTheme.overlayLightOpacity), radius: 4, x: 0, y: 2)
         .padding(AppTheme.spacing10)
@@ -595,12 +595,12 @@ struct QuickMatchRecipeCard: View {
             metadataRow
         }
         .padding(AppTheme.spacing12)
-        .frame(width: 220, alignment: .leading)
+        .frame(width: AppTheme.width220, alignment: .leading)
         .background(contentBackground)
     }
     
     private var contentBackground: Color {
-        colorScheme == .dark ? Color.white.opacity(0.05) : Color.white
+        colorScheme == .dark ? Color.white.opacity(AppTheme.glassSubtleOpacity) : Color.white
     }
     
     private var recipeNameText: some View {
@@ -611,7 +611,7 @@ struct QuickMatchRecipeCard: View {
             .lineLimit(2)
             .multilineTextAlignment(.leading)
             .fixedSize(horizontal: false, vertical: true)
-            .frame(height: 40, alignment: .top)
+            .frame(height: AppTheme.height40, alignment: .top)
     }
     
     private var metadataRow: some View {
@@ -627,7 +627,7 @@ struct QuickMatchRecipeCard: View {
     }
     
     private var timeInfo: some View {
-        HStack(spacing: 3) {
+        HStack(spacing: AppTheme.spacing3) {
             Image(systemName: "clock.fill")
                 .font(.caption2)
                 .foregroundColor(.orange)
@@ -697,8 +697,8 @@ struct CategoryCard: View {
                     HStack(spacing: AppTheme.spacing16) {
                         ZStack {
                             Circle()
-                                .fill(categoryColor.opacity(0.3))
-                                .frame(width: 44, height: 44)
+                                .fill(categoryColor.opacity(AppTheme.shadowDarkOpacity))
+                                .frame(width: AppTheme.buttonHeight, height: AppTheme.height44)
                             
                             Image(systemName: categoryIcon)
                                 .foregroundColor(categoryColor)
@@ -724,10 +724,10 @@ struct CategoryCard: View {
                     .padding(AppTheme.spacing16)
                     .background {
                         if cardStyle == .solid {
-                            RoundedRectangle(cornerRadius: 12)
+                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                                 .fill(AppTheme.cardBackground(for: colorScheme))
                         } else {
-                            RoundedRectangle(cornerRadius: 12)
+                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                                 .fill(.regularMaterial)
                         }
                     }
@@ -741,7 +741,7 @@ struct CategoryCard: View {
                         ingredientGroup(mainIngredient)
                     }
                 }
-                .padding(.top, 8)
+                .padding(.top, AppTheme.spacing8)
             }
         }
     }
@@ -792,8 +792,8 @@ struct CategoryCard: View {
                                 .foregroundColor(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
                         }
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
+                    .padding(.horizontal, AppTheme.spacing16)
+                    .padding(.vertical, AppTheme.spacing12)
                 }
                 .buttonStyle(PlainButtonStyle())
                 
@@ -809,21 +809,21 @@ struct CategoryCard: View {
                             Image(systemName: isAdded ? "basket.fill" : "basket")
                                 .foregroundColor(isAdded ? AppTheme.accentColor : (AppTheme.adaptiveSubtitle(for: colorScheme)))
                                 .font(.system(size: AppTheme.fontSize18))
-                                .frame(width: 44, height: 44)
+                                .frame(width: AppTheme.buttonHeight, height: AppTheme.height44)
                                 .scaleEffect(isAdded ? 1.2 : 1.0)
                                 .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isAdded)
                         }
                     )
                     .buttonStyle(PlainButtonStyle())
-                    .padding(.trailing, 12)
+                    .padding(.trailing, AppTheme.spacing12)
                 }
             }
             .background {
                 if cardStyle == .solid {
-                    RoundedRectangle(cornerRadius: 8)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius8)
                         .fill(AppTheme.cardBackground(for: colorScheme))
                 } else {
-                    RoundedRectangle(cornerRadius: 8)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius8)
                         .fill(.regularMaterial)
                 }
             }
@@ -834,7 +834,7 @@ struct CategoryCard: View {
                         variationRow(variation)
                     }
                 }
-                .padding(.leading, 20)
+                .padding(.leading, AppTheme.spacing20)
             }
         }
     }
@@ -860,8 +860,8 @@ struct CategoryCard: View {
                         
                         Spacer()
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
+                    .padding(.horizontal, AppTheme.spacing16)
+                    .padding(.vertical, AppTheme.spacing12)
                 }
             )
             .buttonStyle(PlainButtonStyle())
@@ -874,20 +874,20 @@ struct CategoryCard: View {
                     Image(systemName: isAdded ? "basket.fill" : "basket")
                         .foregroundColor(isAdded ? AppTheme.accentColor : (AppTheme.adaptiveSubtitle(for: colorScheme)))
                         .font(.system(size: AppTheme.fontSize18))
-                        .frame(width: 44, height: 44)
+                        .frame(width: AppTheme.buttonHeight, height: AppTheme.height44)
                         .scaleEffect(isAdded ? 1.2 : 1.0)
                         .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isAdded)
                 }
             )
             .buttonStyle(PlainButtonStyle())
-            .padding(.trailing, 12)
+            .padding(.trailing, AppTheme.spacing12)
         }
         .background {
             if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius8)
                     .fill(AppTheme.cardBackground(for: colorScheme))
             } else {
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius8)
                     .fill(.regularMaterial)
             }
         }
@@ -913,7 +913,7 @@ struct IngredientFilterSheet: View {
                             Text("Ingredient Categories")
                                 .font(.headline)
                                 .adaptiveForegroundColor()
-                                .padding(.horizontal, 20)
+                                .padding(.horizontal, AppTheme.spacing20)
                             
                             LazyVGrid(columns: [
                                 GridItem(.flexible()),
@@ -934,10 +934,10 @@ struct IngredientFilterSheet: View {
                                     }
                                 }
                             }
-                            .padding(.horizontal, 20)
+                            .padding(.horizontal, AppTheme.spacing20)
                         }
                     }
-                    .padding(.vertical, 20)
+                    .padding(.vertical, AppTheme.spacing20)
                 }
             }
             .navigationTitle("Filter Ingredients")

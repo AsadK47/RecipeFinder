@@ -231,7 +231,7 @@ struct DataImportView: View {
                     self.importResult = .success("Data imported successfully!")
                     HapticManager.shared.success()
 
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) { dismiss() }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayFeedback) { dismiss() }
                 }
 
             } catch {

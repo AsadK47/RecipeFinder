@@ -17,8 +17,8 @@ struct NoteCardView: View {
                         .fontWeight(.medium)
                 }
                 .foregroundColor(AppTheme.accentColor(for: appTheme))
-                .padding(.horizontal, 10)
-                .padding(.vertical, 4)
+                .padding(.horizontal, AppTheme.spacing10)
+                .padding(.vertical, AppTheme.spacing4)
                 .background(
                     Capsule()
                         .fill(AppTheme.accentColor(for: appTheme).opacity(0.15))
@@ -59,8 +59,8 @@ struct NoteCardView: View {
                             Text("#\(tag)")
                                 .font(.caption)
                                 .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
+                                .padding(.horizontal, AppTheme.spacing8)
+                                .padding(.vertical, AppTheme.spacing4)
                                 .background(
                                     Capsule()
                                         .fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity))
@@ -74,18 +74,18 @@ struct NoteCardView: View {
         .background(
             Group {
                 if cardStyle == .solid {
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                         .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : .white)
-                        .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
+                        .shadow(color: .black.opacity(AppTheme.shadowLightOpacity), radius: 4, x: 0, y: 2)
                 } else {
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                         .fill(.ultraThinMaterial)
-                        .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
+                        .shadow(color: .black.opacity(AppTheme.shadowLightOpacity), radius: 4, x: 0, y: 2)
                 }
             }
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                 .strokeBorder(AppTheme.accentColor(for: appTheme).opacity(0.3), lineWidth: 1)
         )
     }

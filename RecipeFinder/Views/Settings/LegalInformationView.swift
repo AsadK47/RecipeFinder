@@ -37,7 +37,7 @@ struct LegalInformationView: View {
                             }
                             
                             Divider()
-                                .padding(.vertical, 4)
+                                .padding(.vertical, AppTheme.spacing4)
                             
                             CompanyInfoRow(label: "Legal Name", value: "RECIPEFINDER LIMITED")
                             CompanyInfoRow(label: "Company Number", value: "16833243")
@@ -63,7 +63,7 @@ struct LegalInformationView: View {
                             }
                             
                             Divider()
-                                .padding(.vertical, 4)
+                                .padding(.vertical, AppTheme.spacing4)
                             
                             Button(action: {
                                 if let url = URL(string: "mailto:recipefinderlimited@icloud.com") {
@@ -146,7 +146,7 @@ struct LegalInformationView: View {
                             .buttonStyle(PlainButtonStyle())
                             
                             Divider()
-                                .padding(.leading, 62)
+                                .padding(.leading, AppTheme.spacing62)
                             
                             Button(action: {
                                 showTermsOfService = true
@@ -162,7 +162,7 @@ struct LegalInformationView: View {
                             .buttonStyle(PlainButtonStyle())
                             
                             Divider()
-                                .padding(.leading, 62)
+                                .padding(.leading, AppTheme.spacing62)
                             
                             Button(action: {
                                 showCompanyCompliance = true
@@ -193,7 +193,7 @@ struct LegalInformationView: View {
                             }
                             
                             Divider()
-                                .padding(.vertical, 4)
+                                .padding(.vertical, AppTheme.spacing4)
                             
                             ComplianceBadge(
                                 icon: "checkmark.seal.fill",
@@ -240,7 +240,7 @@ struct LegalInformationView: View {
                             }
                             
                             Divider()
-                                .padding(.vertical, 4)
+                                .padding(.vertical, AppTheme.spacing4)
                             
                             VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                                 Text("Asad Khan")
@@ -274,8 +274,8 @@ struct LegalInformationView: View {
                             .font(.caption2)
                             .adaptiveForegroundColor(opacity: AppTheme.glassLightOpacity)
                     }
-                    .padding(.top, 24)
-                    .padding(.bottom, 40)
+                    .padding(.top, AppTheme.spacing24)
+                    .padding(.bottom, AppTheme.spacing40)
                 }
                 .padding(AppTheme.spacing24)
             }
@@ -308,7 +308,7 @@ struct CompanyInfoRow: View {
             Text(label)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
-                .frame(width: 140, alignment: .leading)
+                .frame(width: AppTheme.width140, alignment: .leading)
             
             Text(value)
                 .font(.subheadline)
@@ -316,7 +316,7 @@ struct CompanyInfoRow: View {
                 .foregroundColor(valueColor == .primary ? AppTheme.textColor(for: colorScheme) : valueColor)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, AppTheme.spacing4)
     }
 }
 
@@ -333,7 +333,7 @@ struct LegalDocRow: View {
             Image(systemName: icon)
                 .foregroundColor(iconColor)
                 .font(.title3)
-                .frame(width: 30)
+                .frame(width: AppTheme.width30)
             
             VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                 Text(title)
@@ -366,8 +366,8 @@ struct ComplianceBadge: View {
         HStack(alignment: .top, spacing: AppTheme.spacing12) {
             ZStack {
                 Circle()
-                    .fill(color.opacity(0.15))
-                    .frame(width: 40, height: 40)
+                    .fill(color.opacity(AppTheme.cardDarkOpacity))
+                    .frame(width: 40, height: AppTheme.height40)
                 
                 Image(systemName: icon)
                     .font(.system(size: AppTheme.fontSize18, weight: .semibold))
@@ -386,7 +386,7 @@ struct ComplianceBadge: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, AppTheme.spacing4)
     }
 }
 
@@ -855,7 +855,7 @@ struct SectionTitle: View {
             .font(.title3)
             .fontWeight(.bold)
             .adaptiveForegroundColor()
-            .padding(.top, 8)
+            .padding(.top, AppTheme.spacing8)
     }
 }
 
@@ -892,7 +892,7 @@ private struct BulletPoint: View {
                 .foregroundColor(colorScheme == .dark ? AppTheme.textColor(for: colorScheme, opacity: AppTheme.cardLightOpacity) : .black.opacity(AppTheme.highEmphasisOpacity))
                 .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(.leading, 8)
+        .padding(.leading, AppTheme.spacing8)
     }
 }
 
@@ -912,7 +912,7 @@ struct CompanyDetailRow: View {
                 .fontWeight(.medium)
                 .adaptiveForegroundColor()
         }
-        .padding(.vertical, 2)
+        .padding(.vertical, AppTheme.spacing2)
     }
 }
 

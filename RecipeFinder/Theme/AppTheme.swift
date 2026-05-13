@@ -35,26 +35,35 @@ enum AppTheme {
     static let fontSize38: CGFloat = 38
     static let fontSize42: CGFloat = 42
     static let fontSize50: CGFloat = 50
+    static let fontSize55: CGFloat = 55
     static let fontSize60: CGFloat = 60
+    static let fontSize75: CGFloat = 75
     static let fontSize80: CGFloat = 80
     
     static let spacingBase: CGFloat = 8
     
     static let spacing2: CGFloat = 2
+    static let spacing3: CGFloat = 3
     static let spacing4: CGFloat = 4
     static let spacing5: CGFloat = 5
     static let spacing6: CGFloat = 6
     static let spacing8: CGFloat = 8
     static let spacing10: CGFloat = 10
     static let spacing12: CGFloat = 12
+    static let spacing14: CGFloat = 14
     static let spacing16: CGFloat = 16
     static let spacing18: CGFloat = 18
     static let spacing20: CGFloat = 20
     static let spacing24: CGFloat = 24
     static let spacing32: CGFloat = 32
     static let spacing40: CGFloat = 40
+    static let spacing42: CGFloat = 42
     static let spacing48: CGFloat = 48
     static let spacing50: CGFloat = 50
+    static let spacing60: CGFloat = 60
+    static let spacing62: CGFloat = 62
+    static let spacing86: CGFloat = 86
+    static let spacing100: CGFloat = 100
     
     static let goldenRatio: CGFloat = 1.618
     static let goldenRatioInverse: CGFloat = 0.618
@@ -64,40 +73,64 @@ enum AppTheme {
     static let cardCornerRadius: CGFloat = 16
     static let cardImageSize: CGFloat = 70
     
+    static let cornerRadius3: CGFloat = 3
     static let cornerRadius4: CGFloat = 4
     static let cornerRadius6: CGFloat = 6
     static let cornerRadius8: CGFloat = 8
+    static let cornerRadius10: CGFloat = 10
     static let cornerRadius12: CGFloat = 12
     static let cornerRadius14: CGFloat = 14
     static let cornerRadius16: CGFloat = 16
+    static let cornerRadius18: CGFloat = 18
     static let cornerRadius20: CGFloat = 20
     static let cornerRadius24: CGFloat = 24
     static let cornerRadiusPill: CGFloat = 999
     
+    static let iconSize18: CGFloat = 18
     static let iconSize20: CGFloat = 20
     static let iconSize24: CGFloat = 24
     static let iconSize28: CGFloat = 28
     static let iconSize32: CGFloat = 32
     static let iconSize40: CGFloat = 40
+    static let iconSize48: CGFloat = 48
     
+    static let height1: CGFloat = 1
+    static let height4: CGFloat = 4
+    static let height8: CGFloat = 8
     static let height12: CGFloat = 12
     static let height14: CGFloat = 14
     static let height16: CGFloat = 16
     static let height20: CGFloat = 20
     static let height24: CGFloat = 24
     static let height28: CGFloat = 28
+    static let height36: CGFloat = 36
     static let height40: CGFloat = 40
+    static let height44: CGFloat = 44
+    static let height48: CGFloat = 48
     static let height50: CGFloat = 50
     static let height54: CGFloat = 54
     static let height56: CGFloat = 56
+    static let height60: CGFloat = 60
+    static let height80: CGFloat = 80
+    static let height100: CGFloat = 100
+    static let height120: CGFloat = 120
+    static let height140: CGFloat = 140
+    static let height160: CGFloat = 160
     static let height180: CGFloat = 180
+    static let height200: CGFloat = 200
     
+    static let width29: CGFloat = 29
+    static let width30: CGFloat = 30
     static let width60: CGFloat = 60
+    static let width70: CGFloat = 70
     static let width80: CGFloat = 80
+    static let width88: CGFloat = 88
     static let width100: CGFloat = 100
     static let width120: CGFloat = 120
+    static let width140: CGFloat = 140
     static let width150: CGFloat = 150
     static let width200: CGFloat = 200
+    static let width220: CGFloat = 220
     static let width250: CGFloat = 250
     
     static let shimmerPhaseDistance: CGFloat = 400
@@ -105,9 +138,13 @@ enum AppTheme {
     static let shimmerDuration: Double = 1.5
     static let shimmerOpacity: Double = 0.3
 
+    static let animationDelayXShort: Double = 0.3
     static let animationDelayShort: Double = 0.4
     static let animationDelayMedium: Double = 0.5
     static let animationDelayLong: Double = 1.0
+    static let animationDelayXLong: Double = 1.5
+    static let animationDelayFeedback: Double = 2.0
+    static let animationDelayXXLong: Double = 5.0
     
     static let buttonHeight: CGFloat = 44
     static let buttonHeightCompact: CGFloat = 36
@@ -225,11 +262,21 @@ enum AppTheme {
     static let shadowLightOpacity: Double = 0.1
     static let shadowDarkOpacity: Double = 0.3
     
+    static let tinyOpacity: Double = 0.08
+    static let microOpacity: Double = 0.12
+    static let dimGlassOpacity: Double = 0.18
+    static let softOverlayOpacity: Double = 0.25
+    static let mediumOverlayOpacity: Double = 0.35
+    static let glassSubtleOpacity: Double = 0.05
     static let highEmphasisOpacity: Double = 0.8
     static let mediumEmphasisOpacity: Double = 0.6
+    static let subduedEmphasisOpacity: Double = 0.7
+    static let disabledEmphasisOpacity: Double = 0.65
     static let lowEmphasisOpacity: Double = 0.4
+    static let nearSolidOpacity: Double = 0.85
     static let veryHighEmphasisOpacity: Double = 0.9
     static let cardHighEmphasisLightOpacity: Double = 0.75
+    static let bannerHeightRatio: Double = 0.18
     
     static func cardBackground(for colorScheme: ColorScheme) -> Color {
         colorScheme == .dark ? cardBackgroundDark : cardBackground

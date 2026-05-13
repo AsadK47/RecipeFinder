@@ -90,8 +90,8 @@ struct RecipeWizardView: View {
                                     Text("Cancel")
                                         .font(.body)
                                         .adaptiveForegroundColor()
-                                        .padding(.horizontal, 16)
-                                        .padding(.vertical, 8)
+                                        .padding(.horizontal, AppTheme.spacing16)
+                                        .padding(.vertical, AppTheme.spacing8)
                                         .background(.ultraThinMaterial)
                                         .cornerRadius(AppTheme.cornerRadius12)
                                 }
@@ -108,16 +108,16 @@ struct RecipeWizardView: View {
                                     Text("Cancel")
                                         .font(.body)
                                         .foregroundColor(.clear)
-                                        .padding(.horizontal, 16)
-                                        .padding(.vertical, 8)
+                                        .padding(.horizontal, AppTheme.spacing16)
+                                        .padding(.vertical, AppTheme.spacing8)
                                 }
                                 .disabled(true)
                             }
                         }
-                        .frame(height: 44)
+                        .frame(height: AppTheme.height44)
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 16)
+                    .padding(.horizontal, AppTheme.spacing20)
+                    .padding(.top, AppTheme.spacing16)
                     
                     progressBar
                     
@@ -125,8 +125,8 @@ struct RecipeWizardView: View {
                         VStack(spacing: AppTheme.spacing32) {
                             stepContent
                         }
-                        .padding(.top, 16)
-                        .padding(.horizontal, 20)
+                        .padding(.top, AppTheme.spacing16)
+                        .padding(.horizontal, AppTheme.spacing20)
                     }
                     
                     navigationButtons
@@ -201,16 +201,16 @@ struct RecipeWizardView: View {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {
                 Rectangle()
-                    .fill(Color.white.opacity(0.3))
+                    .fill(Color.white.opacity(AppTheme.shadowDarkOpacity))
                 
                 Rectangle()
                     .fill(Color.white)
                     .frame(width: geometry.size.width * CGFloat(currentStep + 1) / CGFloat(totalSteps))
             }
         }
-        .frame(height: 4)
-        .padding(.horizontal, 20)
-        .padding(.top, 8)
+        .frame(height: AppTheme.height4)
+        .padding(.horizontal, AppTheme.spacing20)
+        .padding(.top, AppTheme.spacing8)
     }
     
     @ViewBuilder
@@ -365,7 +365,7 @@ struct RecipeWizardView: View {
                     ForEach(Array(ingredientItems.enumerated()), id: \.offset) { index, _ in
                         VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                             HStack(spacing: AppTheme.spacing8) {
-                                VStack(alignment: .leading, spacing: 2) {
+                                VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                                     Text("Ingredient")
                                         .font(.caption2)
                                         .foregroundColor(.secondary)
@@ -382,22 +382,22 @@ struct RecipeWizardView: View {
                                             .foregroundColor(.red)
                                             .font(.system(size: AppTheme.fontSize22))
                                     }
-                                    .padding(.top, 14)
+                                    .padding(.top, AppTheme.spacing14)
                                 }
                             }
 
                             HStack(alignment: .top, spacing: AppTheme.spacing8) {
-                                VStack(alignment: .leading, spacing: 2) {
+                                VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                                     Text("Amount")
                                         .font(.caption2)
                                         .foregroundColor(.secondary)
                                     TextField("0", text: $ingredientItems[index].quantity)
                                         .keyboardType(.decimalPad)
                                         .textFieldStyle(.roundedBorder)
-                                        .frame(width: 70)
+                                        .frame(width: AppTheme.width70)
                                 }
 
-                                VStack(alignment: .leading, spacing: 2) {
+                                VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                                     Text("Unit")
                                         .font(.caption2)
                                         .foregroundColor(.secondary)
@@ -414,19 +414,19 @@ struct RecipeWizardView: View {
                                     .pickerStyle(.menu)
                                     .labelsHidden()
                                     .frame(maxWidth: .infinity, minHeight: 34, alignment: .leading)
-                                    .padding(.horizontal, 6)
+                                    .padding(.horizontal, AppTheme.spacing6)
                                     .background(
-                                        RoundedRectangle(cornerRadius: 6)
+                                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius6)
                                             .fill(Color(.systemGray6))
                                     )
                                     .overlay(
-                                        RoundedRectangle(cornerRadius: 6)
+                                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius6)
                                             .stroke(Color(.systemGray4), lineWidth: 0.5)
                                     )
                                 }
                             }
                         }
-                        .padding(.vertical, 4)
+                        .padding(.vertical, AppTheme.spacing4)
 
                         if index < ingredientItems.count - 1 {
                             Divider()
@@ -580,34 +580,34 @@ struct RecipeWizardView: View {
                                 .foregroundColor(.secondary)
                             Spacer()
                         }
-                        .padding(.bottom, 8)
+                        .padding(.bottom, AppTheme.spacing8)
                     }
                     
                     ZStack(alignment: .topLeading) {
                         if notes.isEmpty {
                             VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                                 Text("Add your notes here...")
-                                    .foregroundColor(.secondary.opacity(0.5))
-                                    .padding(.horizontal, 4)
-                                    .padding(.vertical, 8)
+                                    .foregroundColor(.secondary.opacity(AppTheme.glassLightOpacity))
+                                    .padding(.horizontal, AppTheme.spacing4)
+                                    .padding(.vertical, AppTheme.spacing8)
                                 
                                 Text("Try adding:")
                                     .font(.caption)
-                                    .foregroundColor(.secondary.opacity(0.4))
-                                    .padding(.horizontal, 4)
+                                    .foregroundColor(.secondary.opacity(AppTheme.lowEmphasisOpacity))
+                                    .padding(.horizontal, AppTheme.spacing4)
                                 
                                 Text("• Substitution ideas")
                                     .font(.caption)
-                                    .foregroundColor(.secondary.opacity(0.4))
-                                    .padding(.horizontal, 4)
+                                    .foregroundColor(.secondary.opacity(AppTheme.lowEmphasisOpacity))
+                                    .padding(.horizontal, AppTheme.spacing4)
                                 Text("• Storage tips")
                                     .font(.caption)
-                                    .foregroundColor(.secondary.opacity(0.4))
-                                    .padding(.horizontal, 4)
+                                    .foregroundColor(.secondary.opacity(AppTheme.lowEmphasisOpacity))
+                                    .padding(.horizontal, AppTheme.spacing4)
                                 Text("• Serving suggestions")
                                     .font(.caption)
-                                    .foregroundColor(.secondary.opacity(0.4))
-                                    .padding(.horizontal, 4)
+                                    .foregroundColor(.secondary.opacity(AppTheme.lowEmphasisOpacity))
+                                    .padding(.horizontal, AppTheme.spacing4)
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .allowsHitTesting(false)
@@ -675,8 +675,8 @@ struct RecipeWizardView: View {
                 Text(text)
                     .font(.caption)
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
+            .padding(.horizontal, AppTheme.spacing12)
+            .padding(.vertical, AppTheme.spacing6)
             .background(Color(.systemGray5))
             .cornerRadius(AppTheme.cornerRadius16)
         }
@@ -688,7 +688,7 @@ struct RecipeWizardView: View {
             Text("Step \(stepNumber) of \(totalSteps)")
                 .font(.caption)
                 .fontWeight(.medium)
-                .adaptiveForegroundColor(opacity: 0.8)
+                .adaptiveForegroundColor(opacity: AppTheme.highEmphasisOpacity)
             
             HStack(alignment: .firstTextBaseline, spacing: 0) {
                 VStack(alignment: .leading, spacing: AppTheme.spacing8) {
@@ -699,7 +699,7 @@ struct RecipeWizardView: View {
                     
                     Text(subtitle)
                         .font(.subheadline)
-                        .adaptiveForegroundColor(opacity: 0.9)
+                        .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
                 }
                 
                 Spacer()
@@ -707,7 +707,7 @@ struct RecipeWizardView: View {
             .overlay(alignment: .topTrailing) {
                 Image(systemName: illustration)
                     .font(.system(size: AppTheme.fontSize42, weight: .medium))
-                    .adaptiveForegroundColor(opacity: 0.6)
+                    .adaptiveForegroundColor(opacity: AppTheme.mediumEmphasisOpacity)
             }
         }
     }
@@ -716,7 +716,7 @@ struct RecipeWizardView: View {
         HStack(spacing: AppTheme.spacing12) {
             Image(systemName: icon)
                 .adaptiveForegroundColor()
-                .frame(width: 20)
+                .frame(width: AppTheme.iconSize20)
             
             Text(label)
                 .foregroundColor(.secondary)
@@ -734,13 +734,13 @@ struct RecipeWizardView: View {
             if cardStyle == .solid {
                 content()
                     .background(
-                        RoundedRectangle(cornerRadius: 16)
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                             .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : .white)
                     )
             } else {
                 content()
                     .background(
-                        RoundedRectangle(cornerRadius: 16)
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                             .fill(.ultraThinMaterial)
                     )
             }
@@ -763,7 +763,7 @@ struct RecipeWizardView: View {
                     .fontWeight(.semibold)
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.white.opacity(0.3))
+                    .background(Color.white.opacity(AppTheme.shadowDarkOpacity))
                     .adaptiveForegroundColor()
                     .cornerRadius(AppTheme.cornerRadius12)
                 }

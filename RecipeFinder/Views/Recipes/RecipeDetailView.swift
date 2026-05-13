@@ -56,7 +56,7 @@ struct RecipeDetailView: View {
                             notesSection
                         }
                     }
-                    .padding(.bottom, 100)
+                    .padding(.bottom, AppTheme.spacing100)
                     .frame(width: geometry.size.width)
                 }
             }
@@ -106,9 +106,9 @@ struct RecipeDetailView: View {
             .adaptiveForegroundColor()
             .multilineTextAlignment(.center)
             .frame(maxWidth: .infinity, alignment: .center)
-            .padding(.horizontal, 20)
-            .padding(.top, 8)
-            .padding(.bottom, 20)
+            .padding(.horizontal, AppTheme.spacing20)
+            .padding(.top, AppTheme.spacing8)
+            .padding(.bottom, AppTheme.spacing20)
     }
     
     private var recipeInfoCardsView: some View {
@@ -117,7 +117,7 @@ struct RecipeDetailView: View {
             detailsInfoCard
             servingsCard
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, AppTheme.spacing20)
     }
     
     private var timeInfoCard: some View {
@@ -147,14 +147,14 @@ struct RecipeDetailView: View {
                     servingsDisplay
                     
                     Divider()
-                        .frame(height: 60)
+                        .frame(height: AppTheme.height60)
                         .padding(.horizontal)
                     
                     servingsControls
                 }
                 
                 Divider()
-                    .background(Color.white.opacity(0.3))
+                    .background(Color.white.opacity(AppTheme.shadowDarkOpacity))
                 
                 quickScaleButtons
             }
@@ -225,9 +225,9 @@ struct RecipeDetailView: View {
                 .fontWeight(isActive ? .bold : .medium)
                 .foregroundColor(isActive ? .white : .primary)
                 .frame(maxWidth: .infinity)
-                .frame(height: 36)
+                .frame(height: AppTheme.height36)
                 .background(
-                    RoundedRectangle(cornerRadius: 8)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius8)
                         .fill(isActive ? AppTheme.accentColor : Color.white.opacity(0.15))
                 )
         }
@@ -242,7 +242,7 @@ struct RecipeDetailView: View {
             Image(systemName: icon)
                 .font(.system(size: AppTheme.fontSize18, weight: .semibold))
                 .adaptiveForegroundColor()
-                .frame(width: 44, height: 44)
+                .frame(width: AppTheme.buttonHeight, height: AppTheme.height44)
                 .background(Circle().fill(isEnabled ? AppTheme.accentColor : Color.gray))
         }
         .disabled(!isEnabled)
@@ -264,7 +264,7 @@ struct RecipeDetailView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(.horizontal, 20)
+        .padding(.horizontal, AppTheme.spacing20)
     }
     
     private var ingredientsSectionHeader: some View {
@@ -287,7 +287,7 @@ struct RecipeDetailView: View {
             measurementToggle
             chevronButton(for: "Ingredients")
         }
-        .padding(.top, 24)
+        .padding(.top, AppTheme.spacing24)
     }
     
     private var measurementToggle: some View {
@@ -300,10 +300,10 @@ struct RecipeDetailView: View {
                     .fontWeight(.medium)
             }
             .adaptiveForegroundColor()
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
+            .padding(.horizontal, AppTheme.spacing12)
+            .padding(.vertical, AppTheme.spacing6)
             .background(
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius8)
                     .fill(colorScheme == .dark ? Color.white.opacity(AppTheme.overlayLightOpacity) : Color.black.opacity(AppTheme.dividerOpacity))
             )
         }
@@ -350,13 +350,13 @@ struct RecipeDetailView: View {
                         }) {
                             Image(systemName: "xmark.circle.fill")
                                 .font(.system(size: AppTheme.fontSize16))
-                                .foregroundColor(.secondary.opacity(0.5))
+                                .foregroundColor(.secondary.opacity(AppTheme.glassLightOpacity))
                         }                        .accessibilityLabel("Dismiss hint")
                         .accessibilityHint("Closes swipe instruction banner")                    }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
+                    .padding(.horizontal, AppTheme.spacing12)
+                    .padding(.vertical, AppTheme.spacing8)
                     .background(
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius8)
                             .fill(AppTheme.accentColor.opacity(0.1))
                     )
                     .transition(.move(edge: .top).combined(with: .opacity))
@@ -447,7 +447,7 @@ struct RecipeDetailView: View {
                             Image(systemName: "circle.fill")
                                 .font(.system(size: AppTheme.fontSize6))
                                 .foregroundColor(.orange)
-                                .padding(.top, 6)
+                                .padding(.top, AppTheme.spacing6)
                             Text(trimmed)
                                 .font(.subheadline)
                                 .foregroundColor(.primary)
@@ -514,14 +514,14 @@ struct RecipeDetailView: View {
                     .font(.subheadline)
                     .adaptiveForegroundColor()
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
+            .padding(.horizontal, AppTheme.spacing20)
+            .padding(.vertical, AppTheme.spacing12)
             .background(
                 Capsule()
                     .fill(AppTheme.accentColor)
                     .shadow(color: .black.opacity(AppTheme.overlayLightOpacity), radius: 8, y: 4)
             )
-            .padding(.bottom, 20)
+            .padding(.bottom, AppTheme.spacing20)
             .transition(.move(edge: .bottom).combined(with: .opacity))
             .opacity(showAddedFeedback != nil ? 1 : 0)
         }
@@ -608,7 +608,7 @@ struct RecipeDetailView: View {
                             .rotationEffect(.degrees(isExpanded ? 0 : -90))
                             .animation(.spring(response: 0.3), value: isExpanded)
                     }
-                    .padding(.top, 24)
+                    .padding(.top, AppTheme.spacing24)
                 }
             )
             .buttonStyle(PlainButtonStyle())
@@ -626,7 +626,7 @@ struct RecipeDetailView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(.horizontal, 20)
+        .padding(.horizontal, AppTheme.spacing20)
     }
     
     private func instructionRow(number: Int, text: String, isChecked: Bool, toggle: @escaping () -> Void) -> some View {
@@ -635,7 +635,7 @@ struct RecipeDetailView: View {
                 ZStack {
                     Circle()
                         .fill(AppTheme.accentColor)
-                        .frame(width: 10, height: 10)
+                        .frame(width: AppTheme.spacing10, height: AppTheme.spacing10)
                     
                     Text("\(number)")
                         .font(.system(size: AppTheme.fontSize7))
@@ -655,7 +655,7 @@ struct RecipeDetailView: View {
                 
                 Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
                     .font(.system(size: AppTheme.fontSize28))
-                    .foregroundColor(isChecked ? .green : .gray.opacity(0.4))
+                    .foregroundColor(isChecked ? .green : .gray.opacity(AppTheme.lowEmphasisOpacity))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .contentShape(Rectangle())
@@ -674,13 +674,13 @@ struct RecipeDetailView: View {
         
         showAddedFeedback = normalizedName
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayXLong) {
             withAnimation(.easeOut(duration: 0.8)) {
                 showAddedFeedback = nil
             }
         }
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayFeedback) {
             withAnimation {
                 _ = addedIngredients.remove(ingredient.name)
             }
@@ -759,7 +759,7 @@ struct RecipeDetailView: View {
                         TextField("0", text: $editingQuantity)
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
-                            .frame(width: 80)
+                            .frame(width: AppTheme.width80)
                     }
 
                     Picker("Unit", selection: $editingUnit) {

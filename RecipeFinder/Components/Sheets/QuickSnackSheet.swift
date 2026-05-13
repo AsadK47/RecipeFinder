@@ -72,7 +72,7 @@ struct QuickSnackSheet: View {
                             Text("Cancel")
                                 .font(.system(size: AppTheme.fontSize16, weight: .semibold))
                         }
-                        .adaptiveForegroundColor(opacity: 0.9)
+                        .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
                         .shadow(color: .black.opacity(AppTheme.shadowDarkOpacity), radius: 2, x: 0, y: 1)
                     }
                 }
@@ -234,7 +234,7 @@ struct QuickSnackHeaderView: View {
             
             Text("Add a simple snack in seconds")
                 .font(.subheadline)
-                .adaptiveForegroundColor(opacity: 0.7)
+                .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
         }
         .padding(.top)
     }
@@ -382,7 +382,7 @@ struct DietaryFilterChip: View {
             .padding(.vertical, AppTheme.spacing6)
             .background(
                 isSelected ?
-                Color.green.opacity(0.8) :
+                Color.green.opacity(AppTheme.highEmphasisOpacity) :
                 Color.white.opacity(AppTheme.overlayLightOpacity)
             )
             .adaptiveForegroundColor()
@@ -530,7 +530,7 @@ struct DietaryTagsDisplayView: View {
                             .font(.subheadline)
                         Spacer()
                     }
-                    .adaptiveForegroundColor(opacity: 0.9)
+                    .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
                 }
                 
                 if !tags.isEmpty {

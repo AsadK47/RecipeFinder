@@ -151,7 +151,7 @@ struct NoteEditorView: View {
                 Image(systemName: category.icon)
                     .font(.title3)
                     .foregroundColor(isSelected ? .white : AppTheme.accentColor(for: appTheme))
-                    .frame(width: 32)
+                    .frame(width: AppTheme.iconSize32)
                 
                 Text(category.rawValue)
                     .font(.body)
@@ -168,7 +168,7 @@ struct NoteEditorView: View {
             }
             .padding(AppTheme.spacing12)
             .background(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                     .fill(isSelected ? AppTheme.accentColor(for: appTheme) : Color.secondary.opacity(0.1))
             )
         }
@@ -198,8 +198,8 @@ struct NoteEditorView: View {
                 }
                 .padding(AppTheme.spacing10)
                 .background(
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(Color.secondary.opacity(0.1))
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius8)
+                        .fill(Color.secondary.opacity(AppTheme.shadowLightOpacity))
                 )
                 
                 if !tags.isEmpty {
@@ -228,8 +228,8 @@ struct NoteEditorView: View {
             }
         }
         .adaptiveForegroundColor()
-        .padding(.horizontal, 12)
-        .padding(.vertical, 6)
+        .padding(.horizontal, AppTheme.spacing12)
+        .padding(.vertical, AppTheme.spacing6)
         .background(
             Capsule()
                 .fill(AppTheme.accentColor(for: appTheme))
@@ -241,13 +241,13 @@ struct NoteEditorView: View {
             if cardStyle == .solid {
                 content()
                     .background(
-                        RoundedRectangle(cornerRadius: 16)
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                             .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : .white)
                     )
             } else {
                 content()
                     .background(
-                        RoundedRectangle(cornerRadius: 16)
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                             .fill(.ultraThinMaterial)
                     )
             }

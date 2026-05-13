@@ -128,7 +128,7 @@ struct AccountView: View {
                     }
                     .padding(.top, AppTheme.spacing16)
                     .padding(.horizontal, AppTheme.cardHorizontalPadding)
-                    .padding(.bottom, 100)
+                    .padding(.bottom, AppTheme.spacing100)
                 }
             }
         }
@@ -250,7 +250,7 @@ struct AccountView: View {
                 
                 Divider()
                     .background(Color.secondary.opacity(AppTheme.shadowLightOpacity))
-                    .padding(.leading, 60)
+                    .padding(.leading, AppTheme.spacing60)
                 
                 ProfileTextField(
                     icon: "person.crop.circle",
@@ -263,7 +263,7 @@ struct AccountView: View {
                 if !displayEmail.isEmpty {
                     Divider()
                         .background(Color.secondary.opacity(AppTheme.shadowLightOpacity))
-                        .padding(.leading, 60)
+                        .padding(.leading, AppTheme.spacing60)
                     
                     HStack(spacing: AppTheme.spacing16) {
                         Image(systemName: "envelope.fill")
@@ -515,7 +515,7 @@ struct AccountView: View {
         showSuccessFeedback = true
         HapticManager.shared.success()
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayFeedback) {
             showSuccessFeedback = false
         }
     }

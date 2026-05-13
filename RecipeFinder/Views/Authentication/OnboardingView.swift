@@ -69,7 +69,7 @@ struct OnboardingView: View {
                             }) {
                                 Text("Skip")
                                     .font(.system(size: AppTheme.fontSize16, weight: .semibold))
-                                    .adaptiveForegroundColor(opacity: 0.9)
+                                    .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
                                     .padding(.horizontal, spacing.xl)
                                     .padding(.vertical, spacing.sm + 2)
                                     .background(
@@ -97,7 +97,7 @@ struct OnboardingView: View {
                                     withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
                                         showGetStarted = true
                                     }
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayXShort) {
                                         dismiss()
                                     }
                                 }
@@ -117,10 +117,10 @@ struct OnboardingView: View {
                                 Capsule()
                                     .fill(Color.white)
                                     .frame(width: spacing.iconMedium, height: spacing.xs + 2)
-                                    .shadow(color: .white.opacity(0.5), radius: 4, x: 0, y: 2)
+                                    .shadow(color: .white.opacity(AppTheme.glassLightOpacity), radius: 4, x: 0, y: 2)
                             } else {
                                 Circle()
-                                    .fill(Color.white.opacity(0.4))
+                                    .fill(Color.white.opacity(AppTheme.lowEmphasisOpacity))
                                     .frame(width: spacing.xs + 2, height: spacing.xs + 2)
                             }
                         }
@@ -174,7 +174,7 @@ struct OnboardingSlideView: View {
                             .stroke(
                                 LinearGradient(
                                     gradient: Gradient(colors: [
-                                        slide.accentColor.opacity(0.3),
+                                        slide.accentColor.opacity(AppTheme.shadowDarkOpacity),
                                         slide.accentColor.opacity(0.0)
                                     ]),
                                     startPoint: .topLeading,
@@ -197,8 +197,8 @@ struct OnboardingSlideView: View {
                         .fill(
                             RadialGradient(
                                 gradient: Gradient(colors: [
-                                    slide.accentColor.opacity(0.4),
-                                    slide.accentColor.opacity(0.2),
+                                    slide.accentColor.opacity(AppTheme.lowEmphasisOpacity),
+                                    slide.accentColor.opacity(AppTheme.overlayLightOpacity),
                                     slide.accentColor.opacity(0.0)
                                 ]),
                                 center: .center,
@@ -213,8 +213,8 @@ struct OnboardingSlideView: View {
                         .fill(
                             LinearGradient(
                                 gradient: Gradient(colors: [
-                                    Color.white.opacity(0.25),
-                                    Color.white.opacity(0.15)
+                                    Color.white.opacity(AppTheme.softOverlayOpacity),
+                                    Color.white.opacity(AppTheme.cardDarkOpacity)
                                 ]),
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
@@ -225,7 +225,7 @@ struct OnboardingSlideView: View {
                             Circle()
                                 .stroke(Color.white.opacity(0.3), lineWidth: 1.5)
                         )
-                        .shadow(color: .black.opacity(0.1), radius: 20, x: 0, y: 10)
+                        .shadow(color: .black.opacity(AppTheme.shadowLightOpacity), radius: 20, x: 0, y: 10)
                     
                     Image(systemName: slide.icon)
                         .font(.system(size: AppTheme.fontSize80, weight: .semibold))
@@ -240,7 +240,7 @@ struct OnboardingSlideView: View {
                             )
                         )
                         .scaleEffect(isAnimating ? 1.05 : 0.95)
-                        .shadow(color: colorScheme == .dark ? .black.opacity(0.2) : .clear, radius: 10, x: 0, y: 5)
+                        .shadow(color: colorScheme == .dark ? .black.opacity(AppTheme.overlayLightOpacity) : .clear, radius: 10, x: 0, y: 5)
                         .animation(
                             .easeInOut(duration: 2.0)
                             .repeatForever(autoreverses: true),
@@ -258,11 +258,11 @@ struct OnboardingSlideView: View {
                         .adaptiveForegroundColor()
                         .multilineTextAlignment(.center)
                         .lineSpacing(4)
-                        .shadow(color: colorScheme == .dark ? .black.opacity(0.2) : .clear, radius: 10, x: 0, y: 5)
+                        .shadow(color: colorScheme == .dark ? .black.opacity(AppTheme.overlayLightOpacity) : .clear, radius: 10, x: 0, y: 5)
                     
                     Text(slide.description)
                         .font(.system(size: AppTheme.fontSize17, weight: .regular))
-                        .adaptiveForegroundColor(opacity: 0.85)
+                        .adaptiveForegroundColor(opacity: AppTheme.nearSolidOpacity)
                         .multilineTextAlignment(.center)
                         .lineSpacing(6)
                         .padding(.horizontal, spacing.screenEdge + spacing.lg)
@@ -279,8 +279,8 @@ struct OnboardingSlideView: View {
                                     .fill(
                                         LinearGradient(
                                             gradient: Gradient(colors: [
-                                                slide.accentColor.opacity(0.3),
-                                                slide.accentColor.opacity(0.2)
+                                                slide.accentColor.opacity(AppTheme.shadowDarkOpacity),
+                                                slide.accentColor.opacity(AppTheme.overlayLightOpacity)
                                             ]),
                                             startPoint: .topLeading,
                                             endPoint: .bottomTrailing
@@ -294,7 +294,7 @@ struct OnboardingSlideView: View {
                                         LinearGradient(
                                             gradient: Gradient(colors: [
                                                 slide.accentColor,
-                                                slide.accentColor.opacity(0.8)
+                                                slide.accentColor.opacity(AppTheme.highEmphasisOpacity)
                                             ]),
                                             startPoint: .topLeading,
                                             endPoint: .bottomTrailing
@@ -309,7 +309,7 @@ struct OnboardingSlideView: View {
                                 
                                 Text(feature.subtitle)
                                     .font(.system(size: AppTheme.fontSize14, weight: .regular))
-                                    .adaptiveForegroundColor(opacity: 0.7)
+                                    .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                             }
                             
                             Spacer()
@@ -317,13 +317,13 @@ struct OnboardingSlideView: View {
                         .padding(spacing.lg)
                         .background(
                             RoundedRectangle(cornerRadius: spacing.lg)
-                                .fill(Color.white.opacity(0.12))
+                                .fill(Color.white.opacity(AppTheme.microOpacity))
                                 .overlay(
                                     RoundedRectangle(cornerRadius: spacing.lg)
                                         .stroke(Color.white.opacity(0.2), lineWidth: 1)
                                 )
                         )
-                        .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
+                        .shadow(color: .black.opacity(AppTheme.shadowLightOpacity), radius: 10, x: 0, y: 5)
                         .scaleEffect(contentScale)
                         .opacity(contentOpacity)
                         .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(Double(index) * 0.1), value: contentOpacity)
@@ -369,7 +369,7 @@ struct OnboardingSlideView: View {
                     HStack(spacing: spacing.sm + 2) {
                         Text("Swipe to continue")
                             .font(.system(size: AppTheme.fontSize15, weight: .medium))
-                            .adaptiveForegroundColor(opacity: 0.7)
+                            .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                         
                         HStack(spacing: spacing.xxs) {
                             Circle()
@@ -379,7 +379,7 @@ struct OnboardingSlideView: View {
                             
                             Image(systemName: "chevron.right")
                                 .font(.system(size: AppTheme.fontSize14, weight: .semibold))
-                                .adaptiveForegroundColor(opacity: 0.7)
+                                .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                                 .offset(x: isAnimating ? 8 : 0)
                         }
                         .animation(
@@ -411,7 +411,7 @@ struct OnboardingSlideView: View {
                 contentOpacity = 1.0
             }
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayXShort) {
                 isAnimating = true
             }
         }

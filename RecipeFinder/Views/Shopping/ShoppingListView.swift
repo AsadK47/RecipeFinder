@@ -94,20 +94,20 @@ struct ShoppingListView: View {
                         VStack(spacing: AppTheme.spacing6) {
                             ProgressView(value: Double(checkedCount), total: Double(totalCount))
                                 .progressViewStyle(LinearProgressViewStyle(tint: AppTheme.accentColor(for: selectedTheme)))
-                                .frame(height: 8)
+                                .frame(height: AppTheme.height8)
                                 .accessibilityLabel("Shopping progress")
                                 .accessibilityValue("\(checkedCount) of \(totalCount) items checked")
                             
                             HStack {
                                 Text("\(checkedCount)/\(totalCount) completed")
                                     .font(.caption)
-                                    .adaptiveForegroundColor(opacity: 0.8)
+                                    .adaptiveForegroundColor(opacity: AppTheme.highEmphasisOpacity)
                                     .accessibilityHidden(true)
                                 Spacer()
                             }
                         }
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 8)
+                        .padding(.horizontal, AppTheme.spacing20)
+                        .padding(.bottom, AppTheme.spacing8)
                     }
                     
                     if showingSearchResults {
@@ -171,23 +171,23 @@ struct ShoppingListView: View {
                     .font(.title3)
                     .fontWeight(.bold)
                     .adaptiveForegroundColor()
-                    .padding(.horizontal, 20)
-                    .padding(.top, 20)
+                    .padding(.horizontal, AppTheme.spacing20)
+                    .padding(.top, AppTheme.spacing20)
                 
                 if searchResults.isEmpty {
                     Text("No ingredients found")
                         .font(.body)
-                        .adaptiveForegroundColor(opacity: 0.7)
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 20)
+                        .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
+                        .padding(.horizontal, AppTheme.spacing20)
+                        .padding(.vertical, AppTheme.spacing20)
                 } else {
                     LazyVStack(spacing: AppTheme.spacing8) {
                         ForEach(searchResults, id: \.self) { ingredient in
                             ingredientButton(ingredient)
                         }
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 20)
+                    .padding(.horizontal, AppTheme.spacing20)
+                    .padding(.bottom, AppTheme.spacing20)
                 }
             }
         }
@@ -198,7 +198,7 @@ struct ShoppingListView: View {
             GeometryReader { geometry in
                 HStack(spacing: 0) {
                     Color.clear
-                        .frame(width: 44, height: 44)
+                        .frame(width: AppTheme.buttonHeight, height: AppTheme.height44)
                     
                     Spacer()
                     
@@ -260,15 +260,15 @@ struct ShoppingListView: View {
                         Image(systemName: "line.3.horizontal")
                             .font(.system(size: AppTheme.fontSize20))
                             .adaptiveForegroundColor()
-                            .frame(width: 44, height: 44)
+                            .frame(width: AppTheme.buttonHeight, height: AppTheme.height44)
                     }
                     .accessibilityLabel("Shopping list menu")
                     .accessibilityHint("Opens menu with options to add items, share list, or manage categories")
                 }
             }
-            .frame(height: 44)
-            .padding(.horizontal, 20)
-            .padding(.top, 16)
+            .frame(height: AppTheme.height44)
+            .padding(.horizontal, AppTheme.spacing20)
+            .padding(.top, AppTheme.spacing16)
             
             HStack(spacing: AppTheme.spacing12) {
                 HStack(spacing: AppTheme.spacing12) {
@@ -303,10 +303,10 @@ struct ShoppingListView: View {
                 .padding(AppTheme.spacing16)
                 .background {
                     if cardStyle == .solid {
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                             .fill(AppTheme.adaptiveCard(for: colorScheme))
                     } else {
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                             .fill(.ultraThinMaterial)
                     }
                 }
@@ -326,8 +326,8 @@ struct ShoppingListView: View {
                     .transition(.move(edge: .trailing).combined(with: .opacity))
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.bottom, 12)
+            .padding(.horizontal, AppTheme.spacing20)
+            .padding(.bottom, AppTheme.spacing12)
             .animation(.spring(response: 0.3), value: isSearchFocused)
         }
     }
@@ -337,7 +337,7 @@ struct ShoppingListView: View {
             VStack(spacing: AppTheme.spacing16) {
                 Image(systemName: "cart.circle.fill")
                     .font(.system(size: AppTheme.fontSize60))
-                    .adaptiveForegroundColor(opacity: 0.4)
+                    .adaptiveForegroundColor(opacity: AppTheme.lowEmphasisOpacity)
                 
                 Text("Start Your Shopping List")
                     .font(.title2)
@@ -346,11 +346,11 @@ struct ShoppingListView: View {
                 
                 Text("Add items to begin shopping")
                     .font(.subheadline)
-                    .adaptiveForegroundColor(opacity: 0.7)
+                    .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                     .multilineTextAlignment(.center)
-                    .padding(.horizontal, 32)
+                    .padding(.horizontal, AppTheme.spacing32)
             }
-            .padding(.top, 40)
+            .padding(.top, AppTheme.spacing40)
         }
     }
     
@@ -425,7 +425,7 @@ struct ShoppingListView: View {
                     Image(systemName: categoryIcon(for: category))
                         .font(.title3)
                         .foregroundColor(categoryColor(for: category))
-                        .frame(width: 28)
+                        .frame(width: AppTheme.iconSize28)
                     
                     Text(category)
                         .font(.title3)
@@ -443,20 +443,20 @@ struct ShoppingListView: View {
                         .foregroundColor(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
                         .rotationEffect(.degrees(collapsedCategories.contains(category) ? 0 : 180))
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
+                .padding(.horizontal, AppTheme.spacing16)
+                .padding(.vertical, AppTheme.spacing12)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background {
                     if cardStyle == .solid {
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                             .fill(AppTheme.adaptiveCard(for: colorScheme))
                     } else {
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                             .fill(.ultraThinMaterial)
                     }
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 8)
+                .padding(.horizontal, AppTheme.spacing16)
+                .padding(.top, AppTheme.spacing8)
             }
         )
         .buttonStyle(.plain)
@@ -511,14 +511,14 @@ struct ShoppingListView: View {
                         .foregroundStyle(isInList ? .green : AppTheme.accentColor(for: selectedTheme))
                         .font(.title3)
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 14)
+                .padding(.horizontal, AppTheme.spacing16)
+                .padding(.vertical, AppTheme.spacing14)
                 .background {
                     if cardStyle == .solid {
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                             .fill(AppTheme.adaptiveCard(for: colorScheme))
                     } else {
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                             .fill(.ultraThinMaterial)
                     }
                 }
@@ -561,13 +561,13 @@ struct ShoppingListItemRow: View {
                                     item.isChecked ? AppTheme.accentColor : Color.gray,
                                     lineWidth: 2
                                 )
-                                .frame(width: 28, height: 28)
+                                .frame(width: 28, height: AppTheme.height28)
                             
                             if item.isChecked {
                                 Image(systemName: "checkmark")
                                     .font(.system(size: AppTheme.fontSize14, weight: .bold))
                                     .adaptiveForegroundColor()
-                                    .frame(width: 28, height: 28)
+                                    .frame(width: 28, height: AppTheme.height28)
                                     .background(Circle().fill(AppTheme.accentColor))
                             }
                         }
@@ -585,8 +585,8 @@ struct ShoppingListItemRow: View {
                             .font(.caption2)
                             .fontWeight(.semibold)
                             .foregroundColor(colorScheme == .dark ? .black : .white)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
+                            .padding(.horizontal, AppTheme.spacing6)
+                            .padding(.vertical, AppTheme.spacing2)
                             .background(
                                 Capsule()
                                     .fill(AppTheme.accentColor.opacity(0.8))
@@ -604,7 +604,7 @@ struct ShoppingListItemRow: View {
                             Image(systemName: "minus")
                                 .font(.system(size: AppTheme.fontSize14, weight: .semibold))
                                 .foregroundColor(item.quantity > 1 ? (AppTheme.adaptiveEmphasis(for: colorScheme)) : .gray)
-                                .frame(width: 32, height: 32)
+                                .frame(width: AppTheme.iconSize32, height: 32)
                                 .background {
                                     if cardStyle == .solid {
                                         Circle()
@@ -632,7 +632,7 @@ struct ShoppingListItemRow: View {
                             Image(systemName: "plus")
                                 .font(.system(size: AppTheme.fontSize14, weight: .semibold))
                                 .foregroundColor(item.quantity < 99 ? (AppTheme.adaptiveEmphasis(for: colorScheme)) : .gray)
-                                .frame(width: 32, height: 32)
+                                .frame(width: AppTheme.iconSize32, height: 32)
                                 .background {
                                     if cardStyle == .solid {
                                         Circle()
@@ -713,7 +713,7 @@ struct ShoppingFeatureRow: View {
             Image(systemName: icon)
                 .adaptiveForegroundColor()
                 .font(.body)
-                .frame(width: 24)
+                .frame(width: AppTheme.iconSize24)
             VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                 Text(title)
                     .font(.subheadline)
@@ -749,12 +749,12 @@ struct HelpSheetView: View {
                             
                             Text("Learn how to make the most of your shopping list with these powerful features.")
                                 .font(.system(size: AppTheme.fontSize17))
-                                .adaptiveForegroundColor(opacity: 0.85)
+                                .adaptiveForegroundColor(opacity: AppTheme.nearSolidOpacity)
                                 .lineSpacing(4)
                         }
-                        .padding(.horizontal, 24)
-                        .padding(.top, 60)
-                        .padding(.bottom, 32)
+                        .padding(.horizontal, AppTheme.spacing24)
+                        .padding(.top, AppTheme.spacing60)
+                        .padding(.bottom, AppTheme.spacing32)
                         
                         VStack(alignment: .leading, spacing: AppTheme.spacing16) {
                             ShoppingFeatureRow(icon: "sparkles", title: "Smart Categories", description: "Items are automatically sorted into categories", appTheme: appTheme)
@@ -769,15 +769,15 @@ struct HelpSheetView: View {
                         .padding(AppTheme.spacing32)
                         .background {
                             if cardStyle == .solid {
-                                RoundedRectangle(cornerRadius: 20)
+                                RoundedRectangle(cornerRadius: AppTheme.cornerRadius20)
                                     .fill(AppTheme.adaptiveCardMedium(for: colorScheme).opacity(0.7))
                             } else {
-                                RoundedRectangle(cornerRadius: 20)
-                                    .fill(.ultraThinMaterial.opacity(0.85))
+                                RoundedRectangle(cornerRadius: AppTheme.cornerRadius20)
+                                    .fill(.ultraThinMaterial.opacity(AppTheme.nearSolidOpacity))
                             }
                         }
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 40)
+                        .padding(.horizontal, AppTheme.spacing20)
+                        .padding(.bottom, AppTheme.spacing40)
                     }
                 }
                 .ignoresSafeArea(edges: .top)
@@ -791,19 +791,19 @@ struct HelpSheetView: View {
                             Text("Done")
                                 .font(.system(size: AppTheme.fontSize17, weight: .semibold))
                                 .adaptiveForegroundColor()
-                                .padding(.horizontal, 20)
-                                .padding(.vertical, 8)
+                                .padding(.horizontal, AppTheme.spacing20)
+                                .padding(.vertical, AppTheme.spacing8)
                                 .background(
                                     Capsule()
-                                        .fill(Color.white.opacity(0.15))
+                                        .fill(Color.white.opacity(AppTheme.cardDarkOpacity))
                                         .overlay(
                                             Capsule()
                                                 .stroke(Color.white.opacity(AppTheme.overlayLightOpacity), lineWidth: 0.5)
                                         )
                                 )
                         }
-                        .padding(.trailing, 20)
-                        .padding(.top, 12)
+                        .padding(.trailing, AppTheme.spacing20)
+                        .padding(.top, AppTheme.spacing12)
                     }
                     Spacer()
                 }

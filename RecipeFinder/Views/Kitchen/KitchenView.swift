@@ -91,7 +91,7 @@ struct KitchenView: View {
                                 kitchenItemsView
                             }
                         }
-                        .padding(.vertical, 16)
+                        .padding(.vertical, AppTheme.spacing16)
                     }
                 }
             }
@@ -118,7 +118,7 @@ struct KitchenView: View {
             GeometryReader { geometry in
                 HStack(spacing: 0) {
                     Color.clear
-                        .frame(width: 44, height: 44)
+                        .frame(width: AppTheme.buttonHeight, height: AppTheme.height44)
                     
                     Spacer()
                     
@@ -152,15 +152,15 @@ struct KitchenView: View {
                         Image(systemName: "line.3.horizontal")
                             .font(.system(size: AppTheme.fontSize20))
                             .adaptiveForegroundColor()
-                            .frame(width: 44, height: 44)
+                            .frame(width: AppTheme.buttonHeight, height: AppTheme.height44)
                     }
                     .accessibilityLabel("Kitchen menu")
                     .accessibilityHint("Opens menu to add ingredients or clear kitchen inventory")
                 }
             }
-            .frame(height: 44)
-            .padding(.horizontal, 20)
-            .padding(.top, 16)
+            .frame(height: AppTheme.height44)
+            .padding(.horizontal, AppTheme.spacing20)
+            .padding(.top, AppTheme.spacing16)
             
             HStack(spacing: AppTheme.spacing12) {
                 HStack(spacing: AppTheme.spacing12) {
@@ -194,10 +194,10 @@ struct KitchenView: View {
                 .padding(AppTheme.spacing16)
                 .background {
                     if cardStyle == .solid {
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                             .fill(AppTheme.adaptiveCard(for: colorScheme))
                     } else {
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                             .fill(.ultraThinMaterial)
                     }
                 }
@@ -217,8 +217,8 @@ struct KitchenView: View {
                     .transition(.move(edge: .trailing).combined(with: .opacity))
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.bottom, 12)
+            .padding(.horizontal, AppTheme.spacing20)
+            .padding(.bottom, AppTheme.spacing12)
             .animation(.spring(response: 0.3), value: isSearchFocused)
         }
     }
@@ -227,7 +227,7 @@ struct KitchenView: View {
         VStack(spacing: AppTheme.spacing16) {
             Image(systemName: "refrigerator")
                 .font(.system(size: AppTheme.fontSize60))
-                .adaptiveForegroundColor(opacity: 0.4)
+                .adaptiveForegroundColor(opacity: AppTheme.lowEmphasisOpacity)
             
             Text("Your Kitchen is Empty")
                 .font(.title2)
@@ -236,11 +236,11 @@ struct KitchenView: View {
             
             Text("Add ingredients to see matching recipes")
                 .font(.subheadline)
-                .adaptiveForegroundColor(opacity: 0.7)
+                .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
+                .padding(.horizontal, AppTheme.spacing40)
         }
-        .padding(.top, 40)
+        .padding(.top, AppTheme.spacing40)
         .frame(maxWidth: .infinity)
     }
     
@@ -272,15 +272,15 @@ struct KitchenView: View {
                             .fontWeight(.semibold)
                     }
                     .adaptiveForegroundColor()
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
+                    .padding(.horizontal, AppTheme.spacing12)
+                    .padding(.vertical, AppTheme.spacing6)
                     .background(
                         Capsule()
                             .fill(AppTheme.accentColor(for: selectedTheme))
                     )
                 }
             }
-            .padding(.horizontal, 20)
+            .padding(.horizontal, AppTheme.spacing20)
             
             ForEach(KitchenInventoryManager.shared.groupedItems(), id: \.category) { group in
                 KitchenCategoryCard(
@@ -298,7 +298,7 @@ struct KitchenView: View {
                     }
                 )
             }
-            .padding(.horizontal, 20)
+            .padding(.horizontal, AppTheme.spacing20)
         }
     }
     
@@ -308,21 +308,21 @@ struct KitchenView: View {
                 .font(.title3)
                 .fontWeight(.bold)
                 .adaptiveForegroundColor()
-                .padding(.horizontal, 20)
+                .padding(.horizontal, AppTheme.spacing20)
             
             if searchResults.isEmpty {
                 Text("No ingredients found")
                     .font(.body)
                     .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 20)
+                    .padding(.horizontal, AppTheme.spacing20)
+                    .padding(.vertical, AppTheme.spacing20)
             } else {
                 LazyVStack(spacing: AppTheme.spacing8) {
                     ForEach(searchResults, id: \.self) { ingredient in
                         kitchenIngredientButton(ingredient)
                     }
                 }
-                .padding(.horizontal, 20)
+                .padding(.horizontal, AppTheme.spacing20)
             }
         }
     }
@@ -352,14 +352,14 @@ struct KitchenView: View {
                         .foregroundStyle(isInKitchen ? .green : AppTheme.accentColor(for: selectedTheme))
                         .font(.title3)
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 14)
+                .padding(.horizontal, AppTheme.spacing16)
+                .padding(.vertical, AppTheme.spacing14)
                 .background {
                     if cardStyle == .solid {
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                             .fill(AppTheme.adaptiveCard(for: colorScheme))
                     } else {
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                             .fill(.ultraThinMaterial)
                     }
                 }
@@ -388,25 +388,25 @@ struct KitchenView: View {
                     .font(.caption)
                     .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 20)
+            .padding(.horizontal, AppTheme.spacing20)
+            .padding(.vertical, AppTheme.spacing20)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
-                RoundedRectangle(cornerRadius: 20)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius20)
                     .fill(
                         LinearGradient(
                             gradient: Gradient(colors: [
-                                Color.purple.opacity(0.4),
-                                Color.pink.opacity(0.3),
-                                Color.orange.opacity(0.2)
+                                Color.purple.opacity(AppTheme.lowEmphasisOpacity),
+                                Color.pink.opacity(AppTheme.shadowDarkOpacity),
+                                Color.orange.opacity(AppTheme.overlayLightOpacity)
                             ]),
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
                     )
-                    .shadow(color: Color.purple.opacity(0.3), radius: 10, x: 0, y: 5)
+                    .shadow(color: Color.purple.opacity(AppTheme.shadowDarkOpacity), radius: 10, x: 0, y: 5)
             )
-            .padding(.horizontal, 20)
+            .padding(.horizontal, AppTheme.spacing20)
             
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: AppTheme.spacing16) {
@@ -426,7 +426,7 @@ struct KitchenView: View {
                         .buttonStyle(PlainButtonStyle())
                     }
                 }
-                .padding(.horizontal, 20)
+                .padding(.horizontal, AppTheme.spacing20)
             }
         }
     }
@@ -496,8 +496,8 @@ struct KitchenCategoryCard: View {
             Button(action: onToggleCollapse) {
                 HStack(spacing: AppTheme.spacing12) {
                     Circle()
-                        .fill(CategoryClassifier.categoryColor(for: category).opacity(0.2))
-                        .frame(width: 40, height: 40)
+                        .fill(CategoryClassifier.categoryColor(for: category).opacity(AppTheme.overlayLightOpacity))
+                        .frame(width: 40, height: AppTheme.height40)
                         .overlay(
                             Image(systemName: CategoryClassifier.categoryIcon(for: category))
                                 .foregroundColor(CategoryClassifier.categoryColor(for: category))
@@ -533,10 +533,10 @@ struct KitchenCategoryCard: View {
         .padding(AppTheme.spacing16)
         .background {
             if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                     .fill(AppTheme.adaptiveCard(for: colorScheme))
             } else {
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                     .fill(.ultraThinMaterial)
             }
         }
@@ -561,10 +561,10 @@ struct KitchenItemChip: View {
             Image(systemName: categoryInfo.icon)
                 .font(.caption)
                 .foregroundColor(categoryInfo.color)
-                .frame(width: 20, height: 20)
+                .frame(width: 20, height: AppTheme.height20)
                 .background(
                     Circle()
-                        .fill(categoryInfo.color.opacity(0.15))
+                        .fill(categoryInfo.color.opacity(AppTheme.cardDarkOpacity))
                 )
             
             Text(item.name)
@@ -587,15 +587,15 @@ struct KitchenItemChip: View {
             )
             .buttonStyle(.plain)
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 10)
+        .padding(.horizontal, AppTheme.spacing12)
+        .padding(.vertical, AppTheme.spacing10)
         .background(
             Capsule()
                 .fill(
                     LinearGradient(
                         colors: [
                             categoryInfo.color.opacity(0.25),
-                            categoryInfo.color.opacity(0.15)
+                            categoryInfo.color.opacity(AppTheme.cardDarkOpacity)
                         ],
                         startPoint: .leading,
                         endPoint: .trailing
@@ -606,7 +606,7 @@ struct KitchenItemChip: View {
                         .stroke(categoryInfo.color.opacity(0.3), lineWidth: 1)
                 )
         )
-        .shadow(color: categoryInfo.color.opacity(0.2), radius: 4, x: 0, y: 2)
+        .shadow(color: categoryInfo.color.opacity(AppTheme.overlayLightOpacity), radius: 4, x: 0, y: 2)
     }
 }
 
@@ -640,9 +640,9 @@ struct AddIngredientSheet: View {
                 
                 VStack(spacing: 0) {
                     SearchBar(text: $searchText, placeholder: "Search Foods...")
-                        .padding(.horizontal, 20)
-                        .padding(.top, 16)
-                        .padding(.bottom, 12)
+                        .padding(.horizontal, AppTheme.spacing20)
+                        .padding(.top, AppTheme.spacing16)
+                        .padding(.bottom, AppTheme.spacing12)
                     
                     if !searchText.isEmpty {
                         ScrollView {
@@ -651,8 +651,8 @@ struct AddIngredientSheet: View {
                                     foodButton(food)
                                 }
                             }
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 12)
+                            .padding(.horizontal, AppTheme.spacing20)
+                            .padding(.vertical, AppTheme.spacing12)
                         }
                     } else if let category = selectedCategory {
                         ScrollView {
@@ -668,24 +668,24 @@ struct AddIngredientSheet: View {
                                         Text("Back to Categories")
                                     }
                                     .foregroundColor(AppTheme.accentColor(for: selectedTheme))
-                                    .padding(.horizontal, 20)
-                                    .padding(.vertical, 8)
+                                    .padding(.horizontal, AppTheme.spacing20)
+                                    .padding(.vertical, AppTheme.spacing8)
                                 }
                                 
                                 Text(category)
                                     .font(.title2)
                                     .fontWeight(.bold)
                                     .adaptiveForegroundColor()
-                                    .padding(.horizontal, 20)
+                                    .padding(.horizontal, AppTheme.spacing20)
                                 
                                 LazyVStack(spacing: AppTheme.spacing8) {
                                     ForEach(FoodsList.getFoods(forCategory: category), id: \.self) { food in
                                         foodButton(food)
                                     }
                                 }
-                                .padding(.horizontal, 20)
+                                .padding(.horizontal, AppTheme.spacing20)
                             }
-                            .padding(.vertical, 12)
+                            .padding(.vertical, AppTheme.spacing12)
                         }
                     } else {
                         ScrollView {
@@ -694,8 +694,8 @@ struct AddIngredientSheet: View {
                                     categoryButton(category)
                                 }
                             }
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 12)
+                            .padding(.horizontal, AppTheme.spacing20)
+                            .padding(.vertical, AppTheme.spacing12)
                         }
                     }
                 }
@@ -725,7 +725,7 @@ struct AddIngredientSheet: View {
                 Image(systemName: CategoryClassifier.categoryIcon(for: category))
                     .font(.title3)
                     .foregroundColor(CategoryClassifier.categoryColor(for: category))
-                    .frame(width: 40)
+                    .frame(width: AppTheme.iconSize40)
                 
                 VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                     Text(category)
@@ -746,10 +746,10 @@ struct AddIngredientSheet: View {
             .padding(AppTheme.spacing16)
             .background {
                 if cardStyle == .solid {
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                         .fill(AppTheme.adaptiveCard(for: colorScheme))
                 } else {
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                         .fill(.ultraThinMaterial)
                 }
             }
@@ -782,14 +782,14 @@ struct AddIngredientSheet: View {
                     .foregroundColor(isInKitchen ? .green : AppTheme.accentColor(for: selectedTheme))
                     .font(.title3)
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 14)
+            .padding(.horizontal, AppTheme.spacing16)
+            .padding(.vertical, AppTheme.spacing14)
             .background {
                 if cardStyle == .solid {
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                         .fill(AppTheme.adaptiveCard(for: colorScheme))
                 } else {
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                         .fill(.ultraThinMaterial)
                 }
             }

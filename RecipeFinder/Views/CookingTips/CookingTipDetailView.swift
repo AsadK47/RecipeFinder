@@ -35,8 +35,8 @@ struct CookingTipDetailView: View {
                                         .fontWeight(.semibold)
                                 }
                                 .adaptiveForegroundColor()
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
+                                .padding(.horizontal, AppTheme.spacing12)
+                                .padding(.vertical, AppTheme.spacing6)
                                 .background(
                                     Capsule()
                                         .fill(colorForCategory(tip.category))
@@ -52,8 +52,8 @@ struct CookingTipDetailView: View {
                                         .fontWeight(.semibold)
                                 }
                                 .adaptiveForegroundColor()
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
+                                .padding(.horizontal, AppTheme.spacing12)
+                                .padding(.vertical, AppTheme.spacing6)
                                 .background(
                                     Capsule()
                                         .fill(.orange)
@@ -69,22 +69,22 @@ struct CookingTipDetailView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background {
                             if cardStyle == .solid {
-                                RoundedRectangle(cornerRadius: 20)
+                                RoundedRectangle(cornerRadius: AppTheme.cornerRadius20)
                                     .fill(AppTheme.adaptiveCard(for: colorScheme))
                             } else {
-                                RoundedRectangle(cornerRadius: 20)
+                                RoundedRectangle(cornerRadius: AppTheme.cornerRadius20)
                                     .fill(.ultraThinMaterial)
                             }
                         }
-                        .padding(.horizontal, 20)
-                        .padding(.top, 8)
+                        .padding(.horizontal, AppTheme.spacing20)
+                        .padding(.top, AppTheme.spacing8)
                         
                         contentCard
-                            .padding(.horizontal, 20)
+                            .padding(.horizontal, AppTheme.spacing20)
                         
                         if !tip.tags.isEmpty {
                             tagsSection
-                                .padding(.horizontal, 20)
+                                .padding(.horizontal, AppTheme.spacing20)
                         }
                         
                         HStack {
@@ -94,9 +94,9 @@ struct CookingTipDetailView: View {
                                 .font(.caption)
                         }
                         .foregroundColor(.secondary)
-                        .padding(.horizontal, 20)
+                        .padding(.horizontal, AppTheme.spacing20)
                     }
-                    .padding(.bottom, 40)
+                    .padding(.bottom, AppTheme.spacing40)
                 }
                 .scrollBounceBehavior(.basedOnSize, axes: .vertical)
             }
@@ -116,8 +116,8 @@ struct CookingTipDetailView: View {
         VStack(alignment: .leading, spacing: AppTheme.spacing16) {
             ZStack {
                 Circle()
-                    .fill(colorForCategory(tip.category).opacity(0.2))
-                    .frame(width: 60, height: 60)
+                    .fill(colorForCategory(tip.category).opacity(AppTheme.overlayLightOpacity))
+                    .frame(width: AppTheme.width60, height: 60)
                 
                 Image(systemName: tip.category.icon)
                     .font(.system(size: AppTheme.fontSize28))
@@ -134,15 +134,15 @@ struct CookingTipDetailView: View {
         .padding(AppTheme.spacing24)
         .background {
             if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: 20)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius20)
                     .fill(AppTheme.adaptiveCard(for: colorScheme))
             } else {
-                RoundedRectangle(cornerRadius: 20)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius20)
                     .fill(.ultraThinMaterial)
             }
         }
         .overlay(
-            RoundedRectangle(cornerRadius: 20)
+            RoundedRectangle(cornerRadius: AppTheme.cornerRadius20)
                 .stroke(colorForCategory(tip.category).opacity(0.3), lineWidth: 1)
         )
     }
@@ -156,7 +156,7 @@ struct CookingTipDetailView: View {
                     .font(.subheadline)
                     .fontWeight(.semibold)
             }
-            .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.7))
+            .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.subduedEmphasisOpacity) : .black.opacity(AppTheme.subduedEmphasisOpacity))
             
             FlowLayout(spacing: AppTheme.spacing8) {
                 ForEach(tip.tags, id: \.self) { tag in
@@ -168,8 +168,8 @@ struct CookingTipDetailView: View {
                     }
                     .fontWeight(.medium)
                     .adaptiveForegroundColor()
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
+                    .padding(.horizontal, AppTheme.spacing12)
+                    .padding(.vertical, AppTheme.spacing6)
                     .background {
                         if cardStyle == .solid {
                             Capsule()

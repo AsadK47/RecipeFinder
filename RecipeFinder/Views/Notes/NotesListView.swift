@@ -74,11 +74,11 @@ struct NotesListView: View {
                                     Image(systemName: "chevron.left")
                                         .font(.title3)
                                         .adaptiveForegroundColor()
-                                        .frame(width: 44, height: 44)
+                                        .frame(width: AppTheme.buttonHeight, height: AppTheme.height44)
                                 }
                                 Spacer()
                             }
-                            .frame(width: 88)
+                            .frame(width: AppTheme.width88)
                             
                             Spacer()
                             
@@ -106,7 +106,7 @@ struct NotesListView: View {
                                         .adaptiveForegroundColor()
                                         .font(.title3)
                                 }
-                                .frame(width: 44, height: 44)
+                                .frame(width: AppTheme.buttonHeight, height: AppTheme.height44)
                                 
                                 Button(action: {
                                     HapticManager.shared.medium()
@@ -116,18 +116,18 @@ struct NotesListView: View {
                                         .adaptiveForegroundColor()
                                         .font(.title3)
                                 }
-                                .frame(width: 44, height: 44)
+                                .frame(width: AppTheme.buttonHeight, height: AppTheme.height44)
                             }
-                            .frame(width: 88)
+                            .frame(width: AppTheme.width88)
                         }
                     }
-                    .frame(height: 44)
+                    .frame(height: AppTheme.height44)
                     
                     SearchBar(text: $searchText, placeholder: "Search Notes...")
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 16)
-                .padding(.bottom, 12)
+                .padding(.horizontal, AppTheme.spacing20)
+                .padding(.top, AppTheme.spacing16)
+                .padding(.bottom, AppTheme.spacing12)
                 
                 if activeFilterCount > 0 {
                     ScrollView(.horizontal, showsIndicators: false) {
@@ -163,16 +163,16 @@ struct NotesListView: View {
                                     .font(.caption)
                                     .fontWeight(.semibold)
                                     .adaptiveForegroundColor()
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 6)
+                                    .padding(.horizontal, AppTheme.spacing12)
+                                    .padding(.vertical, AppTheme.spacing6)
                                     .background(
                                         Capsule()
-                                            .fill(Color.red.opacity(0.8))
+                                            .fill(Color.red.opacity(AppTheme.highEmphasisOpacity))
                                     )
                             })
                         }
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 8)
+                        .padding(.horizontal, AppTheme.spacing20)
+                        .padding(.bottom, AppTheme.spacing8)
                     }
                 }
                 
@@ -262,8 +262,8 @@ struct NotesListView: View {
                         }
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 16)
+            .padding(.horizontal, AppTheme.spacing20)
+            .padding(.vertical, AppTheme.spacing16)
         }
     }
     
@@ -271,7 +271,7 @@ struct NotesListView: View {
         VStack(spacing: AppTheme.spacing24) {
             Image(systemName: searchText.isEmpty ? "note.text" : "magnifyingglass")
                 .font(.system(size: AppTheme.fontSize60))
-                .adaptiveForegroundColor(opacity: 0.4)
+                .adaptiveForegroundColor(opacity: AppTheme.lowEmphasisOpacity)
             
             Text(searchText.isEmpty ? "No Notes Yet" : "No Matching Notes")
                 .font(.title2)
@@ -280,7 +280,7 @@ struct NotesListView: View {
             
             Text(searchText.isEmpty ? "Tap the + button at the top to create your first note" : "Try a different search")
                 .font(.subheadline)
-                .adaptiveForegroundColor(opacity: 0.7)
+                .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                 .multilineTextAlignment(.center)
             
             if searchText.isEmpty {
@@ -294,7 +294,7 @@ struct NotesListView: View {
                         .fontWeight(.semibold)
                         .foregroundColor(AppTheme.accentColor(for: selectedTheme))
                 }
-                .padding(.top, 20)
+                .padding(.top, AppTheme.spacing20)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -351,7 +351,7 @@ struct FilterMenuView: View {
                             }
                         }
                     }
-                    .padding(.vertical, 20)
+                    .padding(.vertical, AppTheme.spacing20)
                 }
             }
             .navigationTitle("Filters")
@@ -377,7 +377,7 @@ struct FilterMenuView: View {
             Text(title)
                 .font(.headline)
                 .adaptiveForegroundColor()
-                .padding(.horizontal, 20)
+                .padding(.horizontal, AppTheme.spacing20)
             
             cardContainer {
                 VStack(spacing: 0) {
@@ -385,7 +385,7 @@ struct FilterMenuView: View {
                 }
                 .padding()
             }
-            .padding(.horizontal, 20)
+            .padding(.horizontal, AppTheme.spacing20)
         }
     }
     
@@ -402,7 +402,7 @@ struct FilterMenuView: View {
                 Image(systemName: category.icon)
                     .font(.title3)
                     .foregroundColor(AppTheme.accentColor(for: selectedTheme))
-                    .frame(width: 32)
+                    .frame(width: AppTheme.iconSize32)
                 
                 Text(category.rawValue)
                     .font(.body)
@@ -419,14 +419,14 @@ struct FilterMenuView: View {
                 Text("\(notesManager.notesCount(for: category))")
                     .font(.caption)
                     .foregroundColor(.secondary)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
+                    .padding(.horizontal, AppTheme.spacing8)
+                    .padding(.vertical, AppTheme.spacing4)
                     .background(
                         Capsule()
-                            .fill(Color.secondary.opacity(0.1))
+                            .fill(Color.secondary.opacity(AppTheme.shadowLightOpacity))
                     )
             }
-            .padding(.vertical, 8)
+            .padding(.vertical, AppTheme.spacing8)
         }
     }
     
@@ -443,8 +443,8 @@ struct FilterMenuView: View {
                 .font(.subheadline)
                 .fontWeight(.medium)
                 .foregroundColor(selectedTag == tag ? .white : AppTheme.textColor(for: colorScheme))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
+                .padding(.horizontal, AppTheme.spacing12)
+                .padding(.vertical, AppTheme.spacing6)
                 .background(
                     Capsule()
                         .fill(selectedTag == tag ? AppTheme.accentColor(for: selectedTheme) : Color.secondary.opacity(0.1))
@@ -457,13 +457,13 @@ struct FilterMenuView: View {
             if cardStyle == .solid {
                 content()
                     .background(
-                        RoundedRectangle(cornerRadius: 16)
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                             .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : .white)
                     )
             } else {
                 content()
                     .background(
-                        RoundedRectangle(cornerRadius: 16)
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                             .fill(.ultraThinMaterial)
                     )
             }

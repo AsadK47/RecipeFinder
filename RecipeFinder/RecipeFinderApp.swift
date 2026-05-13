@@ -43,7 +43,7 @@ struct RecipeFinderApp: App {
                             hasSeenBiometricOnboarding = true
                             showFaceIDOnboarding = false
                             if !hasCompletedOnboarding {
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayXShort) {
                                     showOnboarding = true
                                 }
                             }

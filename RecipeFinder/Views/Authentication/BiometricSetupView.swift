@@ -96,12 +96,12 @@ struct BiometricSetupView: View {
                 .font(.system(size: AppTheme.fontSize36, weight: .bold, design: .rounded))
                 .adaptiveForegroundColor()
                 .multilineTextAlignment(.center)
-                .shadow(color: colorScheme == .dark ? .black.opacity(0.2) : .clear, radius: spacing.xs, x: 0, y: 5)
+                .shadow(color: colorScheme == .dark ? .black.opacity(AppTheme.overlayLightOpacity) : .clear, radius: spacing.xs, x: 0, y: 5)
             
             VStack(spacing: spacing.lg) {
                 Text("Enable \(authManager.biometricType) for quick and secure access")
                     .font(.system(size: AppTheme.fontSize18, weight: .medium))
-                    .adaptiveForegroundColor(opacity: 0.9)
+                    .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
                 
@@ -132,12 +132,12 @@ struct BiometricSetupView: View {
             Button(action: skipSetup) {
                 Text("Maybe Later")
                     .font(.system(size: AppTheme.fontSize16, weight: .semibold))
-                    .adaptiveForegroundColor(opacity: 0.85)
+                    .adaptiveForegroundColor(opacity: AppTheme.nearSolidOpacity)
                     .frame(maxWidth: .infinity)
                     .frame(height: spacing.buttonHeight)
                     .background(
                         RoundedRectangle(cornerRadius: spacing.lg)
-                            .fill(Color.white.opacity(0.15))
+                            .fill(Color.white.opacity(AppTheme.cardDarkOpacity))
                             .overlay(
                                 RoundedRectangle(cornerRadius: spacing.lg)
                                     .stroke(Color.white.opacity(0.2), lineWidth: 1)
@@ -186,7 +186,7 @@ struct BiometricSetupView: View {
                         iconScale = 1.2
                     }
                     
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayXShort) {
                         dismiss()
                     }
                 }
@@ -233,7 +233,7 @@ private struct ParticleView: View {
     var body: some View {
         Image(systemName: particle.icon)
             .font(.system(size: particle.size))
-            .adaptiveForegroundColor(opacity: 0.08)
+            .adaptiveForegroundColor(opacity: AppTheme.tinyOpacity)
             .position(x: particle.x, y: particle.y)
             .opacity(opacity)
             .animation(
@@ -285,8 +285,8 @@ private struct BiometricIconView: View {
             .fill(
                 RadialGradient(
                     colors: [
-                        accentColor.opacity(0.4),
-                        accentColor.opacity(0.2),
+                        accentColor.opacity(AppTheme.lowEmphasisOpacity),
+                        accentColor.opacity(AppTheme.overlayLightOpacity),
                         Color.clear
                     ],
                     center: .center,
@@ -303,8 +303,8 @@ private struct BiometricIconView: View {
             .fill(
                 LinearGradient(
                     colors: [
-                        accentColor.opacity(0.3),
-                        accentColor.opacity(0.2)
+                        accentColor.opacity(AppTheme.shadowDarkOpacity),
+                        accentColor.opacity(AppTheme.overlayLightOpacity)
                     ],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
@@ -325,7 +325,7 @@ private struct BiometricIconView: View {
                         lineWidth: 2
                     )
             )
-            .shadow(color: accentColor.opacity(0.3), radius: spacing.xl, x: 0, y: spacing.xs)
+            .shadow(color: accentColor.opacity(AppTheme.shadowDarkOpacity), radius: spacing.xl, x: 0, y: spacing.xs)
     }
     
     private var iconImage: some View {
@@ -333,12 +333,12 @@ private struct BiometricIconView: View {
             .font(.system(size: AppTheme.fontSize60, weight: .medium))
             .foregroundStyle(
                 LinearGradient(
-                    colors: [accentColor, accentColor.opacity(0.8)],
+                    colors: [accentColor, accentColor.opacity(AppTheme.highEmphasisOpacity)],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )
             )
-            .shadow(color: .black.opacity(0.2), radius: 5, x: 0, y: 2)
+            .shadow(color: .black.opacity(AppTheme.overlayLightOpacity), radius: 5, x: 0, y: 2)
             .scaleEffect(iconScale)
             .rotationEffect(.degrees(iconRotation))
     }
@@ -371,7 +371,7 @@ private struct PulsingRing: View {
             .stroke(
                 LinearGradient(
                     colors: [
-                        accentColor.opacity(0.4),
+                        accentColor.opacity(AppTheme.lowEmphasisOpacity),
                         accentColor.opacity(0.0)
                     ],
                     startPoint: .topLeading,
@@ -426,7 +426,7 @@ private struct EnableButton: View {
                     RoundedRectangle(cornerRadius: spacing.lg)
                         .fill(
                             LinearGradient(
-                                colors: [accentColor, accentColor.opacity(0.85)],
+                                colors: [accentColor, accentColor.opacity(AppTheme.nearSolidOpacity)],
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
@@ -437,7 +437,7 @@ private struct EnableButton: View {
                             LinearGradient(
                                 colors: [
                                     Color.clear,
-                                    Color.white.opacity(0.3),
+                                    Color.white.opacity(AppTheme.shadowDarkOpacity),
                                     Color.clear
                                 ],
                                 startPoint: .leading,
@@ -447,7 +447,7 @@ private struct EnableButton: View {
                         .offset(x: shimmerOffset)
                 }
             )
-            .shadow(color: accentColor.opacity(0.5), radius: spacing.xl, x: 0, y: spacing.xs)
+            .shadow(color: accentColor.opacity(AppTheme.glassLightOpacity), radius: spacing.xl, x: 0, y: spacing.xs)
         }
         .disabled(isEnabling)
         .opacity(isEnabling ? 0.7 : 1.0)
@@ -464,12 +464,12 @@ struct BenefitRow: View {
         HStack(spacing: spacing.md) {
             Image(systemName: icon)
                 .font(.system(size: AppTheme.fontSize16, weight: .semibold))
-                .adaptiveForegroundColor(opacity: 0.9)
+                .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
                 .frame(width: spacing.md + spacing.md)
             
             Text(text)
                 .font(.system(size: AppTheme.fontSize15, weight: .medium))
-                .adaptiveForegroundColor(opacity: 0.85)
+                .adaptiveForegroundColor(opacity: AppTheme.nearSolidOpacity)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
     }

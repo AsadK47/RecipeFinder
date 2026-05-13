@@ -21,7 +21,7 @@ struct EmailConfirmationSplashView: View {
                     
                     ZStack {
                         Circle()
-                            .fill(Color.white.opacity(0.1))
+                            .fill(Color.white.opacity(AppTheme.shadowLightOpacity))
                             .frame(width: spacing.imageMedium, height: spacing.imageMedium)
                             .scaleEffect(scale)
                         
@@ -48,7 +48,7 @@ struct EmailConfirmationSplashView: View {
                         VStack(spacing: spacing.sm) {
                             Text("You're all set.")
                                 .font(.system(size: AppTheme.fontSize16))
-                                .adaptiveForegroundColor(opacity: 0.9)
+                                .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
                                 .multilineTextAlignment(.center)
                             
                             Text(email)
@@ -76,7 +76,7 @@ struct EmailConfirmationSplashView: View {
                         .frame(height: spacing.buttonHeight)
                         .background(
                             RoundedRectangle(cornerRadius: spacing.lg)
-                                .fill(Color.white.opacity(0.2))
+                                .fill(Color.white.opacity(AppTheme.overlayLightOpacity))
                                 .overlay(
                                     RoundedRectangle(cornerRadius: spacing.lg)
                                         .stroke(Color.white.opacity(0.4), lineWidth: 1.5)

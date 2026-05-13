@@ -62,7 +62,7 @@ struct FaceIDOnboardingSplash: View {
                 ForEach(Array(particleData.enumerated()), id: \.offset) { index, particle in
                     Image(systemName: particle.icon)
                         .font(.system(size: particle.size))
-                        .adaptiveForegroundColor(opacity: 0.08)
+                        .adaptiveForegroundColor(opacity: AppTheme.tinyOpacity)
                         .position(x: particle.x, y: particle.y)
                         .opacity(particlesOpacity)
                         .animation(
@@ -140,8 +140,8 @@ struct FaceIDOnboardingSplash: View {
                                     .stroke(
                                         LinearGradient(
                                             gradient: Gradient(colors: [
-                                                Color.white.opacity(0.5),
-                                                Color.white.opacity(0.25)
+                                                Color.white.opacity(AppTheme.glassLightOpacity),
+                                                Color.white.opacity(AppTheme.softOverlayOpacity)
                                             ]),
                                             startPoint: .topLeading,
                                             endPoint: .bottomTrailing
@@ -152,7 +152,7 @@ struct FaceIDOnboardingSplash: View {
                             .shadow(color: AppTheme.accentColor(for: selectedTheme).opacity(0.4), radius: 25, x: 0, y: 12)
                         
                         Image(systemName: biometricIcon)
-                            .font(.system(size: 75, weight: .medium))
+                            .font(.system(size: AppTheme.fontSize75, weight: .medium))
                             .foregroundStyle(
                                 LinearGradient(
                                     gradient: Gradient(colors: [
@@ -163,7 +163,7 @@ struct FaceIDOnboardingSplash: View {
                                     endPoint: .bottomTrailing
                                 )
                             )
-                            .shadow(color: .black.opacity(0.25), radius: 8, x: 0, y: 3)
+                            .shadow(color: .black.opacity(AppTheme.softOverlayOpacity), radius: 8, x: 0, y: 3)
                             .scaleEffect(iconScale)
                             .rotationEffect(.degrees(iconRotation))
                     }
@@ -236,7 +236,7 @@ struct FaceIDOnboardingSplash: View {
                             .frame(height: spacing.buttonHeightLarge)
                             .background(
                                 ZStack {
-                                    RoundedRectangle(cornerRadius: 18)
+                                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius18)
                                         .fill(
                                             LinearGradient(
                                                 gradient: Gradient(colors: [
@@ -248,12 +248,12 @@ struct FaceIDOnboardingSplash: View {
                                             )
                                         )
                                     
-                                    RoundedRectangle(cornerRadius: 18)
+                                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius18)
                                         .fill(
                                             LinearGradient(
                                                 gradient: Gradient(colors: [
                                                     Color.clear,
-                                                    Color.white.opacity(0.35),
+                                                    Color.white.opacity(AppTheme.mediumOverlayOpacity),
                                                     Color.clear
                                                 ]),
                                                 startPoint: .leading,
@@ -275,10 +275,10 @@ struct FaceIDOnboardingSplash: View {
                                 .frame(maxWidth: .infinity)
                                 .frame(height: spacing.buttonHeight)
                                 .background(
-                                    RoundedRectangle(cornerRadius: 18)
-                                        .fill(Color.white.opacity(0.18))
+                                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius18)
+                                        .fill(Color.white.opacity(AppTheme.dimGlassOpacity))
                                         .overlay(
-                                            RoundedRectangle(cornerRadius: 18)
+                                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius18)
                                                 .stroke(Color.white.opacity(0.25), lineWidth: 1.5)
                                         )
                                 )
@@ -338,11 +338,11 @@ struct FaceIDOnboardingSplash: View {
                         glowIntensity = 1.0
                     }
                     
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayShort) {
                         withAnimation(.easeOut(duration: 0.3)) {
                             contentOpacity = 0
                         }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayXShort) {
                             onComplete()
                         }
                     }
@@ -371,7 +371,7 @@ struct FaceIDOnboardingSplash: View {
             contentOpacity = 0
         }
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayXShort) {
             onComplete()
         }
     }
@@ -391,8 +391,8 @@ private struct BiometricBenefitRow: View {
                     .fill(
                         LinearGradient(
                             gradient: Gradient(colors: [
-                                Color.white.opacity(0.25),
-                                Color.white.opacity(0.15)
+                                Color.white.opacity(AppTheme.softOverlayOpacity),
+                                Color.white.opacity(AppTheme.cardDarkOpacity)
                             ]),
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
@@ -401,7 +401,7 @@ private struct BiometricBenefitRow: View {
                     .frame(width: spacing.touchTarget, height: spacing.touchTarget)
                 
                 Image(systemName: icon)
-                    .font(.system(size: 18, weight: .semibold))
+                    .font(.system(size: AppTheme.fontSize18, weight: .semibold))
                     .foregroundColor(AppTheme.textColor(for: colorScheme))
             }
             

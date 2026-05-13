@@ -33,7 +33,7 @@ struct CookingTipsView: View {
                                 Image(systemName: "chevron.left")
                                     .font(.title3)
                                     .adaptiveForegroundColor()
-                                    .frame(width: 44, height: 44)
+                                    .frame(width: AppTheme.buttonHeight, height: AppTheme.height44)
                             }
                             
                             Spacer()
@@ -84,33 +84,33 @@ struct CookingTipsView: View {
                                     if hasActiveFilters {
                                         Circle()
                                             .fill(AppTheme.accentColor(for: selectedTheme))
-                                            .frame(width: 8, height: 8)
+                                            .frame(width: 8, height: AppTheme.height8)
                                             .offset(x: 10, y: -10)
                                     }
                                     
                                     Image(systemName: "line.3.horizontal")
                                         .adaptiveForegroundColor()
                                         .font(.title3)
-                                        .frame(width: 44, height: 44)
+                                        .frame(width: AppTheme.buttonHeight, height: AppTheme.height44)
                                 }
                             }
                         }
                     }
-                    .frame(height: 44)
+                    .frame(height: AppTheme.height44)
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 16)
+                .padding(.horizontal, AppTheme.spacing20)
+                .padding(.top, AppTheme.spacing16)
                 
                 GeometryReader { geometry in
                     VStack(spacing: 0) {
                         searchBar
-                            .padding(.horizontal, 20)
-                            .padding(.top, 12)
+                            .padding(.horizontal, AppTheme.spacing20)
+                            .padding(.top, AppTheme.spacing12)
                     
                     if hasActiveFilters {
                         activeFiltersPills
-                            .padding(.horizontal, 20)
-                            .padding(.top, 12)
+                            .padding(.horizontal, AppTheme.spacing20)
+                            .padding(.top, AppTheme.spacing12)
                     }
                     
                     ScrollView(.vertical, showsIndicators: true) {
@@ -125,9 +125,9 @@ struct CookingTipsView: View {
                                 }
                             }
                         }
-                        .padding(.top, 16)
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 100)
+                        .padding(.top, AppTheme.spacing16)
+                        .padding(.horizontal, AppTheme.spacing20)
+                        .padding(.bottom, AppTheme.spacing100)
                         .frame(width: geometry.size.width - 40)
                     }
                     .scrollDisabled(false)
@@ -168,9 +168,9 @@ struct CookingTipsView: View {
             }
             .padding(.horizontal, spacing.md)
         }
-        .frame(height: 44)
-        .padding(.horizontal, 20)
-        .padding(.top, 16)
+        .frame(height: AppTheme.height44)
+        .padding(.horizontal, AppTheme.spacing20)
+        .padding(.top, AppTheme.spacing16)
     }
     
     private var searchBar: some View {
@@ -197,10 +197,10 @@ struct CookingTipsView: View {
         .padding(AppTheme.spacing12)
         .background {
             if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                     .fill(AppTheme.adaptiveCard(for: colorScheme))
             } else {
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                     .fill(.ultraThinMaterial)
             }
         }
@@ -240,8 +240,8 @@ struct CookingTipsView: View {
                     .font(.caption)
                     .fontWeight(.medium)
                     .foregroundColor(.red)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
+                    .padding(.horizontal, AppTheme.spacing12)
+                    .padding(.vertical, AppTheme.spacing6)
             }
         }
     }
@@ -297,8 +297,8 @@ struct CookingTipsView: View {
                                     .font(.caption)
                                     .fontWeight(.semibold)
                                     .foregroundColor(.secondary)
-                                    .padding(.horizontal, 8)
-                                    .padding(.vertical, 4)
+                                    .padding(.horizontal, AppTheme.spacing8)
+                                    .padding(.vertical, AppTheme.spacing4)
                                     .background(
                                         Capsule()
                                             .fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity))
@@ -334,7 +334,7 @@ struct CookingTipsView: View {
         VStack(spacing: AppTheme.spacing24) {
             Image(systemName: "magnifyingglass.circle")
                 .font(.system(size: AppTheme.fontSize60))
-                .adaptiveForegroundColor(opacity: 0.4)
+                .adaptiveForegroundColor(opacity: AppTheme.lowEmphasisOpacity)
             
             Text("No Tips Found")
                 .font(.title2)
@@ -343,7 +343,7 @@ struct CookingTipsView: View {
             
             Text("Try adjusting your filters or search terms")
                 .font(.subheadline)
-                .adaptiveForegroundColor(opacity: 0.7)
+                .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                 .multilineTextAlignment(.center)
             
             Button(action: {
@@ -357,8 +357,8 @@ struct CookingTipsView: View {
                         .fontWeight(.semibold)
                 }
                 .adaptiveForegroundColor()
-                .padding(.horizontal, 24)
-                .padding(.vertical, 12)
+                .padding(.horizontal, AppTheme.spacing24)
+                .padding(.vertical, AppTheme.spacing12)
                 .background(
                     Capsule()
                         .fill(AppTheme.accentColor(for: selectedTheme))
@@ -405,7 +405,7 @@ struct CompactTipRow: View {
                 Image(systemName: tip.category.icon)
                     .font(.body)
                     .foregroundColor(colorForCategory(tip.category))
-                    .frame(width: 32)
+                    .frame(width: AppTheme.iconSize32)
                 
                 VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                     Text(tip.title)
@@ -449,10 +449,10 @@ struct CompactTipRow: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
+            .padding(.horizontal, AppTheme.spacing16)
+            .padding(.vertical, AppTheme.spacing8)
             .background(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                     .fill(AppTheme.adaptiveGlass(for: colorScheme))
             )
         }
@@ -493,12 +493,12 @@ struct CookingTipCard: View {
                         Circle()
                             .fill(
                                 LinearGradient(
-                                    colors: [colorForCategory(tip.category).opacity(0.3), colorForCategory(tip.category).opacity(0.1)],
+                                    colors: [colorForCategory(tip.category).opacity(AppTheme.shadowDarkOpacity), colorForCategory(tip.category).opacity(AppTheme.shadowLightOpacity)],
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
                                 )
                             )
-                            .frame(width: 48, height: 48)
+                            .frame(width: AppTheme.iconSize48, height: AppTheme.height48)
                         
                         Image(systemName: tip.category.icon)
                             .font(.system(size: AppTheme.fontSize22))
@@ -523,11 +523,11 @@ struct CookingTipCard: View {
                                     .fontWeight(.semibold)
                             }
                             .foregroundColor(colorForCategory(tip.category))
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
+                            .padding(.horizontal, AppTheme.spacing8)
+                            .padding(.vertical, AppTheme.spacing4)
                             .background(
                                 Capsule()
-                                    .fill(colorForCategory(tip.category).opacity(0.15))
+                                    .fill(colorForCategory(tip.category).opacity(AppTheme.cardDarkOpacity))
                             )
                             
                             HStack(spacing: AppTheme.spacing4) {
@@ -538,11 +538,11 @@ struct CookingTipCard: View {
                                     .fontWeight(.semibold)
                             }
                             .foregroundColor(.orange)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
+                            .padding(.horizontal, AppTheme.spacing8)
+                            .padding(.vertical, AppTheme.spacing4)
                             .background(
                                 Capsule()
-                                    .fill(Color.orange.opacity(0.15))
+                                    .fill(Color.orange.opacity(AppTheme.cardDarkOpacity))
                             )
                         }
                     }
@@ -563,7 +563,7 @@ struct CookingTipCard: View {
                 
                 Rectangle()
                     .fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity))
-                    .frame(height: 1)
+                    .frame(height: AppTheme.height1)
                 
                 Text(tip.content)
                     .font(.subheadline)
@@ -583,8 +583,8 @@ struct CookingTipCard: View {
                             }
                             .fontWeight(.medium)
                             .foregroundColor(.secondary)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
+                            .padding(.horizontal, AppTheme.spacing8)
+                            .padding(.vertical, AppTheme.spacing4)
                             .background(
                                 Capsule()
                                     .fill(Color.white.opacity(colorScheme == .dark ? AppTheme.dividerOpacity : 0.05))
@@ -610,20 +610,20 @@ struct CookingTipCard: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background {
                 if cardStyle == .solid {
-                    RoundedRectangle(cornerRadius: 20)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius20)
                         .fill(AppTheme.adaptiveCard(for: colorScheme))
                         .shadow(color: AppTheme.adaptiveShadow(for: colorScheme), radius: 8, x: 0, y: 4)
                 } else {
-                    RoundedRectangle(cornerRadius: 20)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius20)
                         .fill(.ultraThinMaterial)
                         .shadow(color: AppTheme.adaptiveShadow(for: colorScheme), radius: 8, x: 0, y: 4)
                 }
             }
             .overlay(
-                RoundedRectangle(cornerRadius: 20)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius20)
                     .stroke(
                         LinearGradient(
-                            colors: [colorForCategory(tip.category).opacity(0.3), colorForCategory(tip.category).opacity(0.0)],
+                            colors: [colorForCategory(tip.category).opacity(AppTheme.shadowDarkOpacity), colorForCategory(tip.category).opacity(0.0)],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         ),
@@ -671,8 +671,8 @@ struct FilterPill: View {
             }
         }
         .adaptiveForegroundColor()
-        .padding(.horizontal, 12)
-        .padding(.vertical, 6)
+        .padding(.horizontal, AppTheme.spacing12)
+        .padding(.vertical, AppTheme.spacing6)
         .background(
             Capsule()
                 .fill(color)
@@ -732,7 +732,7 @@ struct FiltersSheet: View {
                                             HStack(spacing: AppTheme.spacing12) {
                                                 Image(systemName: category.icon)
                                                     .font(.body)
-                                                    .frame(width: 24)
+                                                    .frame(width: AppTheme.iconSize24)
                                                 
                                                 Text(category.rawValue)
                                                     .font(.body)
@@ -746,7 +746,7 @@ struct FiltersSheet: View {
                                                 }
                                             }
                                             .adaptiveForegroundColor()
-                                            .padding(.vertical, 8)
+                                            .padding(.vertical, AppTheme.spacing8)
                                         }
                                         
                                         if category != CookingTipCategory.allCases.last {
@@ -777,7 +777,7 @@ struct FiltersSheet: View {
                                             HStack(spacing: AppTheme.spacing12) {
                                                 Image(systemName: difficulty.icon)
                                                     .font(.body)
-                                                    .frame(width: 24)
+                                                    .frame(width: AppTheme.iconSize24)
                                                 
                                                 Text(difficulty.rawValue)
                                                     .font(.body)
@@ -791,7 +791,7 @@ struct FiltersSheet: View {
                                                 }
                                             }
                                             .adaptiveForegroundColor()
-                                            .padding(.vertical, 8)
+                                            .padding(.vertical, AppTheme.spacing8)
                                         }
                                         
                                         if difficulty != TipDifficulty.allCases.last {
@@ -824,10 +824,10 @@ struct FiltersSheet: View {
             .padding(AppTheme.spacing16)
             .background {
                 if cardStyle == .solid {
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                         .fill(AppTheme.adaptiveCard(for: colorScheme))
                 } else {
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                         .fill(.ultraThinMaterial)
                 }
             }

@@ -61,7 +61,7 @@ struct RecipeImportView: View {
                         .multilineTextAlignment(.center)
                         .padding(.horizontal)
                 }
-                .padding(.top, 40)
+                .padding(.top, AppTheme.spacing40)
                 .opacity(importer.isLoading ? 0.5 : 1.0)
                 
                 VStack(alignment: .leading, spacing: AppTheme.spacing8) {
@@ -98,7 +98,7 @@ struct RecipeImportView: View {
                         ZStack {
                             Circle()
                                 .stroke(AppTheme.accentColor(for: selectedTheme).opacity(0.3), lineWidth: 4)
-                                .frame(width: 80, height: 80)
+                                .frame(width: AppTheme.width80, height: 80)
                             
                             Circle()
                                 .trim(from: 0, to: loadingStage.progress)
@@ -106,7 +106,7 @@ struct RecipeImportView: View {
                                     AppTheme.accentColor(for: selectedTheme),
                                     style: StrokeStyle(lineWidth: 4, lineCap: .round)
                                 )
-                                .frame(width: 80, height: 80)
+                                .frame(width: AppTheme.width80, height: 80)
                                 .rotationEffect(.degrees(-90))
                                 .animation(.easeInOut(duration: 0.5), value: loadingStage)
                             
@@ -127,7 +127,7 @@ struct RecipeImportView: View {
                         .animation(.easeInOut, value: loadingStage)
                     }
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 40)
+                    .padding(.vertical, AppTheme.spacing40)
                     .padding(.horizontal)
                 } else {
                     Button(action: importRecipe, label: {
@@ -138,7 +138,7 @@ struct RecipeImportView: View {
                         .font(.headline)
                         .adaptiveForegroundColor()
                         .frame(maxWidth: .infinity)
-                        .frame(height: 56)
+                        .frame(height: AppTheme.height56)
                         .background(urlText.isEmpty ? Color.gray : AppTheme.accentColor(for: selectedTheme))
                         .cornerRadius(AppTheme.cornerRadius16)
                     })
@@ -163,7 +163,7 @@ struct RecipeImportView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
-                    .background(Color.orange.opacity(0.1))
+                    .background(Color.orange.opacity(AppTheme.shadowLightOpacity))
                     .cornerRadius(AppTheme.cornerRadius12)
                     .padding(.horizontal)
                 }
@@ -222,7 +222,7 @@ struct RecipeImportView: View {
                     }
                 }
                 .foregroundColor(.secondary)
-                .padding(.bottom, 40)
+                .padding(.bottom, AppTheme.spacing40)
             }
             
             }
@@ -340,13 +340,13 @@ struct RecipeImportView: View {
                         .foregroundColor(.secondary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
+                .padding(.horizontal, AppTheme.spacing16)
+                .padding(.vertical, AppTheme.spacing12)
                 .background(
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                         .fill(AppTheme.accentColor(for: selectedTheme).opacity(0.1))
                         .overlay(
-                            RoundedRectangle(cornerRadius: 12)
+                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                                 .stroke(AppTheme.accentColor(for: selectedTheme).opacity(0.3), lineWidth: 1)
                         )
                 )

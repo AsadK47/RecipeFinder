@@ -29,7 +29,7 @@ struct NutritionalTipsView: View {
                                 Image(systemName: "chevron.left")
                                     .font(.title3)
                                     .adaptiveForegroundColor()
-                                    .frame(width: 44, height: 44)
+                                    .frame(width: AppTheme.buttonHeight, height: AppTheme.height44)
                             }
                             
                             Spacer()
@@ -74,14 +74,14 @@ struct NutritionalTipsView: View {
                                 Image(systemName: selectedCategory == nil ? "line.3.horizontal.decrease.circle" : "line.3.horizontal.decrease.circle.fill")
                                     .adaptiveForegroundColor()
                                     .font(.title3)
-                                    .frame(width: 44, height: 44)
+                                    .frame(width: AppTheme.buttonHeight, height: AppTheme.height44)
                             }
                         }
                     }
-                    .frame(height: 44)
+                    .frame(height: AppTheme.height44)
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 16)
+                .padding(.horizontal, AppTheme.spacing20)
+                .padding(.top, AppTheme.spacing16)
                 
                 ScrollView {
                     VStack(spacing: AppTheme.spacing24) {
@@ -89,9 +89,9 @@ struct NutritionalTipsView: View {
                         
                         tipsGrid
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 16)
-                    .padding(.bottom, 100)
+                    .padding(.horizontal, AppTheme.spacing20)
+                    .padding(.top, AppTheme.spacing16)
+                    .padding(.bottom, AppTheme.spacing100)
                 }
             }
         }
@@ -132,7 +132,7 @@ struct NutritionalTipsView: View {
                     
                     Text(tip.summary)
                         .font(.caption)
-                        .adaptiveForegroundColor(opacity: 0.7)
+                        .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
                 }
@@ -147,7 +147,7 @@ struct NutritionalTipsView: View {
             .background {
                 cardBackground()
                     .overlay(
-                        RoundedRectangle(cornerRadius: 16)
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                             .stroke(AppTheme.accentColor(for: selectedTheme).opacity(0.5), lineWidth: 2)
                     )
             }
@@ -177,10 +177,10 @@ struct NutritionalTipsView: View {
     private func cardBackground() -> some View {
         Group {
             if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                     .fill(AppTheme.adaptiveCardMedium(for: colorScheme))
             } else {
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                     .fill(.ultraThinMaterial)
             }
         }
@@ -210,7 +210,7 @@ struct NutritionalTipCard: View {
                     
                     Text(tip.summary)
                         .font(.caption)
-                        .adaptiveForegroundColor(opacity: 0.65)
+                        .adaptiveForegroundColor(opacity: AppTheme.disabledEmphasisOpacity)
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
                     
@@ -219,14 +219,14 @@ struct NutritionalTipCard: View {
                             .font(.caption2)
                         Text(tip.category.rawValue)
                             .font(.caption2)
-                            .adaptiveForegroundColor(opacity: 0.5)
+                            .adaptiveForegroundColor(opacity: AppTheme.glassLightOpacity)
                         
                         Text("•")
-                            .adaptiveForegroundColor(opacity: 0.3)
+                            .adaptiveForegroundColor(opacity: AppTheme.shadowDarkOpacity)
                         
                         Text("\(tip.sources.count) sources")
                             .font(.caption2)
-                            .adaptiveForegroundColor(opacity: 0.5)
+                            .adaptiveForegroundColor(opacity: AppTheme.glassLightOpacity)
                     }
                 }
                 
@@ -234,15 +234,15 @@ struct NutritionalTipCard: View {
                 
                 Image(systemName: "chevron.right")
                     .font(.subheadline)
-                    .adaptiveForegroundColor(opacity: 0.4)
+                    .adaptiveForegroundColor(opacity: AppTheme.lowEmphasisOpacity)
             }
             .padding()
             .background {
                 if cardStyle == .solid {
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                         .fill(AppTheme.adaptiveCard(for: colorScheme))
                 } else {
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                         .fill(.ultraThinMaterial)
                 }
             }
@@ -262,9 +262,9 @@ struct EvidenceBadge: View {
                 .font(.caption2)
                 .fontWeight(.medium)
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 4)
-        .background(badgeColor.opacity(0.2))
+        .padding(.horizontal, AppTheme.spacing8)
+        .padding(.vertical, AppTheme.spacing4)
+        .background(badgeColor.opacity(AppTheme.overlayLightOpacity))
         .foregroundColor(badgeColor)
         .cornerRadius(AppTheme.cornerRadius8)
     }
@@ -307,7 +307,7 @@ struct TipDetailView: View {
                                 
                                 Text(tip.category.rawValue)
                                     .font(.subheadline)
-                                    .adaptiveForegroundColor(opacity: 0.7)
+                                    .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                             }
                             
                             Spacer()
@@ -322,7 +322,7 @@ struct TipDetailView: View {
                             
                             Text(tip.fullDescription)
                                 .font(.body)
-                                .adaptiveForegroundColor(opacity: 0.9)
+                                .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
                         .padding()
@@ -341,13 +341,13 @@ struct TipDetailView: View {
                                         .font(.caption)
                                         .fontWeight(.bold)
                                         .adaptiveForegroundColor()
-                                        .frame(width: 24, height: 24)
+                                        .frame(width: 24, height: AppTheme.height24)
                                         .background(AppTheme.accentColor(for: selectedTheme))
                                         .clipShape(Circle())
                                     
                                     Text(step)
                                         .font(.body)
-                                        .adaptiveForegroundColor(opacity: 0.9)
+                                        .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
                                     
                                     Spacer()
                                 }
@@ -384,13 +384,13 @@ struct TipDetailView: View {
                                                 if let pub = source.publication {
                                                     Text(pub)
                                                         .font(.caption)
-                                                        .adaptiveForegroundColor(opacity: 0.7)
+                                                        .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                                                 }
                                                 
                                                 if let year = source.year {
                                                     Text("Published: \(year, format: .number.grouping(.never))")
                                                         .font(.caption2)
-                                                        .adaptiveForegroundColor(opacity: 0.5)
+                                                        .adaptiveForegroundColor(opacity: AppTheme.glassLightOpacity)
                                                 }
                                             }
                                             
@@ -410,10 +410,10 @@ struct TipDetailView: View {
                                     .padding()
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .background(
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .fill(source.url != nil ? Color.white.opacity(0.15) : Color.white.opacity(0.05))
+                                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                                            .fill(source.url != nil ? Color.white.opacity(AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.glassSubtleOpacity))
                                             .overlay(
-                                                RoundedRectangle(cornerRadius: 12)
+                                                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                                                     .stroke(source.url != nil ? AppTheme.accentColor(for: selectedTheme).opacity(0.3) : Color.clear, lineWidth: 1)
                                             )
                                     )
@@ -424,12 +424,12 @@ struct TipDetailView: View {
                             
                             Text("Evidence Level: \(tip.evidenceLevel.description)")
                                 .font(.caption)
-                                .adaptiveForegroundColor(opacity: 0.6)
+                                .adaptiveForegroundColor(opacity: AppTheme.mediumEmphasisOpacity)
                                 .italic()
                             
                             Divider()
-                                .background(Color.white.opacity(0.3))
-                                .padding(.vertical, 8)
+                                .background(Color.white.opacity(AppTheme.shadowDarkOpacity))
+                                .padding(.vertical, AppTheme.spacing8)
                             
                             HStack(spacing: AppTheme.spacing6) {
                                 Image(systemName: "checkmark.shield.fill")
@@ -437,15 +437,15 @@ struct TipDetailView: View {
                                 Text("Tap any source with a link icon to read the full peer-reviewed research.")
                             }
                             .font(.caption2)
-                            .adaptiveForegroundColor(opacity: 0.7)
+                            .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                         }
                         .padding()
                         .background {
                             cardBackground()
                         }
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 100)
+                    .padding(.horizontal, AppTheme.spacing20)
+                    .padding(.bottom, AppTheme.spacing100)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
@@ -467,10 +467,10 @@ struct TipDetailView: View {
     private func cardBackground() -> some View {
         Group {
             if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                     .fill(AppTheme.adaptiveCardMedium(for: colorScheme))
             } else {
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                     .fill(.ultraThinMaterial)
             }
         }

@@ -59,7 +59,7 @@ struct CookTimerView: View {
                                     Image(systemName: "chevron.left")
                                         .font(.title3)
                                         .adaptiveForegroundColor()
-                                        .frame(width: 44, height: 44)
+                                        .frame(width: AppTheme.buttonHeight, height: AppTheme.height44)
                                 }
                                 .accessibilityLabel("Back")
                                 .accessibilityHint("Returns to previous screen")
@@ -112,14 +112,14 @@ struct CookTimerView: View {
                                     Image(systemName: "line.3.horizontal")
                                         .adaptiveForegroundColor()
                                         .font(.title3)
-                                        .frame(width: 44, height: 44)
+                                        .frame(width: AppTheme.buttonHeight, height: AppTheme.height44)
                                 }
                             }
                         }
-                        .frame(height: 44)
+                        .frame(height: AppTheme.height44)
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 16)
+                    .padding(.horizontal, AppTheme.spacing20)
+                    .padding(.top, AppTheme.spacing16)
                     
                     ScrollView {
                         VStack(spacing: AppTheme.spacing32) {
@@ -135,9 +135,9 @@ struct CookTimerView: View {
                                 activeTimersSection
                             }
                         }
-                        .padding(.top, 16)
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 100)
+                        .padding(.top, AppTheme.spacing16)
+                        .padding(.horizontal, AppTheme.spacing20)
+                        .padding(.bottom, AppTheme.spacing100)
                     }
                 }
             }
@@ -161,8 +161,8 @@ struct CookTimerView: View {
                         .transition(.move(edge: .top).combined(with: .opacity))
                     }
                 }
-                .padding(.top, 60)
-                .padding(.horizontal, 20)
+                .padding(.top, AppTheme.spacing60)
+                .padding(.horizontal, AppTheme.spacing20)
             }
         }
         .onAppear {
@@ -225,13 +225,13 @@ struct CookTimerView: View {
             }
             .foregroundColor(isDisabled ? (colorScheme == .dark ? .white.opacity(0.3) : .black.opacity(0.3)) : (AppTheme.adaptiveEmphasis(for: colorScheme)))
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 20)
+            .padding(.vertical, AppTheme.spacing20)
             .background {
                 if cardStyle == .solid {
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                         .fill((AppTheme.adaptiveCard(for: colorScheme)).opacity(isDisabled ? 0.5 : 1.0))
                 } else {
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                         .fill(.ultraThinMaterial.opacity(isDisabled ? 0.5 : 1.0))
                 }
             }
@@ -258,13 +258,13 @@ struct CookTimerView: View {
             }
             .foregroundColor(isDisabled ? (colorScheme == .dark ? .white.opacity(0.3) : .black.opacity(0.3)) : (AppTheme.adaptiveEmphasis(for: colorScheme)))
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 20)
+            .padding(.vertical, AppTheme.spacing20)
             .background {
                 if cardStyle == .solid {
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                         .fill((AppTheme.adaptiveCard(for: colorScheme)).opacity(isDisabled ? 0.5 : 1.0))
                 } else {
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                         .fill(.ultraThinMaterial.opacity(isDisabled ? 0.5 : 1.0))
                 }
             }
@@ -288,13 +288,13 @@ struct CookTimerView: View {
             }
             .foregroundColor(isDisabled ? (colorScheme == .dark ? .white.opacity(0.3) : .black.opacity(0.3)) : (AppTheme.adaptiveEmphasis(for: colorScheme)))
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
+            .padding(.vertical, AppTheme.spacing16)
             .background {
                 if cardStyle == .solid {
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                         .fill((AppTheme.adaptiveCard(for: colorScheme)).opacity(isDisabled ? 0.5 : 1.0))
                 } else {
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                         .fill(.ultraThinMaterial.opacity(isDisabled ? 0.5 : 1.0))
                 }
             }
@@ -318,14 +318,14 @@ struct CookTimerView: View {
                                     Text("Cancel")
                                         .font(.body)
                                         .adaptiveForegroundColor()
-                                        .padding(.horizontal, 16)
-                                        .padding(.vertical, 8)
+                                        .padding(.horizontal, AppTheme.spacing16)
+                                        .padding(.vertical, AppTheme.spacing8)
                                         .background {
                                             if cardStyle == .solid {
-                                                RoundedRectangle(cornerRadius: 12)
+                                                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                                                     .fill(AppTheme.cardBackground(for: colorScheme))
                                             } else {
-                                                RoundedRectangle(cornerRadius: 12)
+                                                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                                                     .fill(.regularMaterial)
                                             }
                                         }
@@ -343,35 +343,35 @@ struct CookTimerView: View {
                                     Text("Cancel")
                                         .font(.body)
                                         .foregroundColor(.clear)
-                                        .padding(.horizontal, 16)
-                                        .padding(.vertical, 8)
+                                        .padding(.horizontal, AppTheme.spacing16)
+                                        .padding(.vertical, AppTheme.spacing8)
                                 }
                                 .disabled(true)
                             }
                         }
-                        .frame(height: 44)
+                        .frame(height: AppTheme.height44)
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 16)
+                    .padding(.horizontal, AppTheme.spacing20)
+                    .padding(.top, AppTheme.spacing16)
                     
                     ScrollView {
                         VStack(spacing: AppTheme.spacing40) {
                             VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                         Text("Timer Name (Optional)")
                             .font(.caption)
-                            .adaptiveForegroundColor(opacity: 0.7)
+                            .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                         
                         TextField("E.g., Pasta, Cookies", text: $customName)
                             .textFieldStyle(.roundedBorder)
                             .autocorrectionDisabled()
                     }
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, AppTheme.spacing20)
                     
                     HStack(spacing: AppTheme.spacing24) {
                         VStack(spacing: AppTheme.spacing8) {
                             Text("Hours")
                                 .font(.caption)
-                                .adaptiveForegroundColor(opacity: 0.7)
+                                .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                             
                             Picker("Hours", selection: $customHours) {
                                 ForEach(0..<24) { hour in
@@ -379,7 +379,7 @@ struct CookTimerView: View {
                                 }
                             }
                             .pickerStyle(.wheel)
-                            .frame(width: 80, height: 120)
+                            .frame(width: AppTheme.width80, height: AppTheme.height120)
                             .clipped()
                         }
                         
@@ -387,12 +387,12 @@ struct CookTimerView: View {
                             .font(.largeTitle)
                             .fontWeight(.bold)
                             .adaptiveForegroundColor()
-                            .padding(.top, 20)
+                            .padding(.top, AppTheme.spacing20)
                         
                         VStack(spacing: AppTheme.spacing8) {
                             Text("Minutes")
                                 .font(.caption)
-                                .adaptiveForegroundColor(opacity: 0.7)
+                                .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                             
                             Picker("Minutes", selection: $customMinutes) {
                                 ForEach(0..<60) { minute in
@@ -400,7 +400,7 @@ struct CookTimerView: View {
                                 }
                             }
                             .pickerStyle(.wheel)
-                            .frame(width: 80, height: 120)
+                            .frame(width: AppTheme.width80, height: AppTheme.height120)
                             .clipped()
                         }
                         
@@ -408,12 +408,12 @@ struct CookTimerView: View {
                             .font(.largeTitle)
                             .fontWeight(.bold)
                             .adaptiveForegroundColor()
-                            .padding(.top, 20)
+                            .padding(.top, AppTheme.spacing20)
                         
                         VStack(spacing: AppTheme.spacing8) {
                             Text("Seconds")
                                 .font(.caption)
-                                .adaptiveForegroundColor(opacity: 0.7)
+                                .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                             
                             Picker("Seconds", selection: $customSeconds) {
                                 ForEach(0..<60) { second in
@@ -421,17 +421,17 @@ struct CookTimerView: View {
                                 }
                             }
                             .pickerStyle(.wheel)
-                            .frame(width: 80, height: 120)
+                            .frame(width: AppTheme.width80, height: AppTheme.height120)
                             .clipped()
                         }
                     }
                     .padding()
                     .background {
                         if cardStyle == .solid {
-                            RoundedRectangle(cornerRadius: 20)
+                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius20)
                                 .fill(AppTheme.cardBackground(for: colorScheme))
                         } else {
-                            RoundedRectangle(cornerRadius: 20)
+                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius20)
                                 .fill(.regularMaterial)
                         }
                     }
@@ -455,18 +455,18 @@ struct CookTimerView: View {
                         }
                         .adaptiveForegroundColor()
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 18)
+                        .padding(.vertical, AppTheme.spacing18)
                         .background(AppTheme.accentColor(for: selectedTheme))
                         .cornerRadius(AppTheme.cornerRadius16)
                     }
                     .disabled(customHours == 0 && customMinutes == 0 && customSeconds == 0)
                     .opacity((customHours == 0 && customMinutes == 0 && customSeconds == 0) ? 0.5 : 1.0)
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, AppTheme.spacing20)
                     
                     Spacer()
                         }
-                        .padding(.top, 16)
-                        .padding(.horizontal, 20)
+                        .padding(.top, AppTheme.spacing16)
+                        .padding(.horizontal, AppTheme.spacing20)
                     }
                 }
             }
@@ -486,7 +486,7 @@ struct CookTimerView: View {
                 
                 Text("\(timers.count)/\(maxTimers)")
                     .font(.subheadline)
-                    .adaptiveForegroundColor(opacity: 0.7)
+                    .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
             }
             
             ForEach(timers.sorted(by: { $0.timeRemaining < $1.timeRemaining })) { timer in
@@ -510,24 +510,24 @@ struct CookTimerView: View {
             
             Text("Maximum timers reached (\(maxTimers)/\(maxTimers))")
                 .font(.subheadline)
-                .adaptiveForegroundColor(opacity: 0.9)
+                .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
             
             Spacer()
         }
         .padding(AppTheme.spacing16)
         .background {
             if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.orange.opacity(0.2))
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                    .fill(Color.orange.opacity(AppTheme.overlayLightOpacity))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                             .strokeBorder(Color.orange.opacity(0.3), lineWidth: 1)
                     )
             } else {
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                     .fill(.regularMaterial)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                             .strokeBorder(Color.orange.opacity(0.3), lineWidth: 1)
                     )
             }
@@ -606,7 +606,7 @@ struct CookTimerView: View {
         
         sendNotification(for: timer)
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayXXLong) {
             withAnimation {
                 dismissCompletedTimer(completedTimer)
             }
@@ -714,7 +714,7 @@ struct TimerCard: View {
                     .font(.system(size: AppTheme.fontSize32, weight: .bold, design: .rounded))
                     .adaptiveForegroundColor()
             }
-            .frame(width: 140, height: 140)
+            .frame(width: AppTheme.width140, height: AppTheme.height140)
             
             HStack(spacing: AppTheme.spacing12) {
                 Button(action: onTogglePause) {
@@ -725,7 +725,7 @@ struct TimerCard: View {
                     }
                     .adaptiveForegroundColor()
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 14)
+                    .padding(.vertical, AppTheme.spacing14)
                     .background(Color.orange)
                     .cornerRadius(AppTheme.cornerRadius12)
                 }
@@ -739,7 +739,7 @@ struct TimerCard: View {
                     }
                     .adaptiveForegroundColor()
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 14)
+                    .padding(.vertical, AppTheme.spacing14)
                     .background(Color.red)
                     .cornerRadius(AppTheme.cornerRadius12)
                 }
@@ -749,10 +749,10 @@ struct TimerCard: View {
         .padding(AppTheme.spacing24)
         .background {
             if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: 20)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius20)
                     .fill(AppTheme.cardBackground(for: colorScheme))
             } else {
-                RoundedRectangle(cornerRadius: 20)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius20)
                     .fill(.regularMaterial)
             }
         }
@@ -770,7 +770,7 @@ struct CompletedTimerBannerView: View {
             ZStack {
                 Circle()
                     .fill(Color.green)
-                    .frame(width: 40, height: 40)
+                    .frame(width: 40, height: AppTheme.height40)
                 
                 Image(systemName: "checkmark")
                     .font(.system(size: AppTheme.fontSize20, weight: .bold))
@@ -800,12 +800,12 @@ struct CompletedTimerBannerView: View {
         }
         .padding(AppTheme.spacing16)
         .background {
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                 .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white)
                 .shadow(color: .black.opacity(AppTheme.overlayLightOpacity), radius: 10, y: 5)
         }
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                 .strokeBorder(AppTheme.success.opacity(0.3), lineWidth: 2)
         )
     }

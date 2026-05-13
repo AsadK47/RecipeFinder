@@ -54,9 +54,9 @@ struct MealPlanningView: View {
                                 .transition(.opacity)
                         }
                     }
-                    .padding(.top, 16)
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 100)
+                    .padding(.top, AppTheme.spacing16)
+                    .padding(.horizontal, AppTheme.spacing20)
+                    .padding(.bottom, AppTheme.spacing100)
                 }
             }
         }
@@ -157,7 +157,7 @@ struct MealPlanningView: View {
             
             HStack(spacing: 0) {
                 Color.clear
-                    .frame(width: 44, height: 44)
+                    .frame(width: AppTheme.buttonHeight, height: AppTheme.height44)
                 
                 Spacer()
                 
@@ -197,7 +197,7 @@ struct MealPlanningView: View {
                     Image(systemName: "line.3.horizontal")
                         .font(.system(size: AppTheme.fontSize20))
                         .adaptiveForegroundColor()
-                        .frame(width: 44, height: 44)
+                        .frame(width: AppTheme.buttonHeight, height: AppTheme.height44)
                 }
             }
             .frame(height: spacing.touchTarget)
@@ -205,7 +205,7 @@ struct MealPlanningView: View {
             .padding(.top, spacing.lg)
             .padding(.bottom, spacing.xl)
         }
-        .frame(height: 80)
+        .frame(height: AppTheme.height80)
     }
     
     private var viewModePicker: some View {
@@ -223,8 +223,8 @@ struct MealPlanningView: View {
                                 .font(.system(size: AppTheme.fontSize14, weight: .semibold))
                         }
                         .foregroundColor(viewMode == mode ? AppTheme.textColor(for: colorScheme) : AppTheme.textColor(for: colorScheme, opacity: 0.6))
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 10)
+                        .padding(.horizontal, AppTheme.spacing16)
+                        .padding(.vertical, AppTheme.spacing10)
                         .background {
                             if viewMode == mode {
                                 Capsule()
@@ -238,10 +238,10 @@ struct MealPlanningView: View {
                 }
             }
             .frame(maxWidth: .infinity)
-            .padding(.horizontal, 20)
+            .padding(.horizontal, AppTheme.spacing20)
             .padding(.bottom, max(20, geometry.size.height * 0.025))
         }
-        .frame(height: 50)
+        .frame(height: AppTheme.height50)
     }
     
     private var weeklyPlanView: some View {
@@ -251,7 +251,7 @@ struct MealPlanningView: View {
                     Image(systemName: "chevron.left")
                         .font(.system(size: AppTheme.fontSize18, weight: .semibold))
                         .adaptiveForegroundColor()
-                        .frame(width: 40, height: 40)
+                        .frame(width: 40, height: AppTheme.height40)
                         .background(Circle().fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity)))
                 }
                 
@@ -267,11 +267,11 @@ struct MealPlanningView: View {
                     Image(systemName: "chevron.right")
                         .font(.system(size: AppTheme.fontSize18, weight: .semibold))
                         .adaptiveForegroundColor()
-                        .frame(width: 40, height: 40)
+                        .frame(width: 40, height: AppTheme.height40)
                         .background(Circle().fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity)))
                 }
             }
-            .padding(.horizontal, 4)
+            .padding(.horizontal, AppTheme.spacing4)
             
             VStack(spacing: AppTheme.spacing12) {
                 ForEach(daysInCurrentWeek, id: \.self) { date in
@@ -292,10 +292,10 @@ struct MealPlanningView: View {
         .padding(AppTheme.spacing24)
         .background {
             if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(colorScheme == .dark ? Color.white.opacity(0.05) : Color.white.opacity(0.15))
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius20)
+                    .fill(colorScheme == .dark ? Color.white.opacity(AppTheme.glassSubtleOpacity) : Color.white.opacity(AppTheme.cardDarkOpacity))
             } else {
-                RoundedRectangle(cornerRadius: 20)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius20)
                     .fill(.ultraThinMaterial)
             }
         }
@@ -308,7 +308,7 @@ struct MealPlanningView: View {
                     Image(systemName: "chevron.left")
                         .font(.system(size: AppTheme.fontSize18, weight: .semibold))
                         .adaptiveForegroundColor()
-                        .frame(width: 40, height: 40)
+                        .frame(width: 40, height: AppTheme.height40)
                         .background(Circle().fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity)))
                 }
                 
@@ -336,11 +336,11 @@ struct MealPlanningView: View {
                     Image(systemName: "chevron.right")
                         .font(.system(size: AppTheme.fontSize18, weight: .semibold))
                         .adaptiveForegroundColor()
-                        .frame(width: 40, height: 40)
+                        .frame(width: 40, height: AppTheme.height40)
                         .background(Circle().fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity)))
                 }
             }
-            .padding(.horizontal, 4)
+            .padding(.horizontal, AppTheme.spacing4)
             
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: AppTheme.spacing4), count: 7), spacing: AppTheme.spacing8) {
                 ForEach(["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], id: \.self) { day in
@@ -370,7 +370,7 @@ struct MealPlanningView: View {
                         }
                     } else {
                         Color.clear
-                            .frame(height: 50)
+                            .frame(height: AppTheme.height50)
                     }
                 }
             }
@@ -378,10 +378,10 @@ struct MealPlanningView: View {
         .padding(AppTheme.spacing24)
         .background {
             if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(colorScheme == .dark ? Color.white.opacity(0.05) : Color.white.opacity(0.15))
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius20)
+                    .fill(colorScheme == .dark ? Color.white.opacity(AppTheme.glassSubtleOpacity) : Color.white.opacity(AppTheme.cardDarkOpacity))
             } else {
-                RoundedRectangle(cornerRadius: 20)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius20)
                     .fill(.ultraThinMaterial)
             }
         }
@@ -403,9 +403,9 @@ struct MealPlanningView: View {
                 
                 Text(selectedDateString)
                     .font(.subheadline)
-                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.7))
+                    .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.subduedEmphasisOpacity) : .black.opacity(AppTheme.subduedEmphasisOpacity))
             }
-            .padding(.horizontal, 4)
+            .padding(.horizontal, AppTheme.spacing4)
             
             ForEach(Array(selectedMealTimes).sorted(by: { $0.sortOrder < $1.sortOrder }), id: \.self) { mealTime in
                 Button(action: {
@@ -453,15 +453,15 @@ struct MealPlanningView: View {
                 .padding(AppTheme.spacing16)
                 .background {
                     if cardStyle == .solid {
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(colorScheme == .dark ? Color.white.opacity(0.05) : Color.white.opacity(0.15))
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
+                            .fill(colorScheme == .dark ? Color.white.opacity(AppTheme.glassSubtleOpacity) : Color.white.opacity(AppTheme.cardDarkOpacity))
                     } else {
-                        RoundedRectangle(cornerRadius: 16)
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                             .fill(.ultraThinMaterial)
                     }
                 }
                 .overlay(
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                         .stroke(Color.white.opacity(0.1), style: StrokeStyle(lineWidth: 1, dash: [5]))
                 )
             }
@@ -479,14 +479,14 @@ struct MealPlanningView: View {
                 
                 Text(selectedDateString)
                     .font(.subheadline)
-                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.7))
+                    .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.subduedEmphasisOpacity) : .black.opacity(AppTheme.subduedEmphasisOpacity))
             }
-            .padding(.horizontal, 4)
+            .padding(.horizontal, AppTheme.spacing4)
             
             VStack(spacing: AppTheme.spacing16) {
                 Image(systemName: "calendar.badge.plus")
                     .font(.system(size: AppTheme.fontSize60))
-                    .adaptiveForegroundColor(opacity: 0.4)
+                    .adaptiveForegroundColor(opacity: AppTheme.lowEmphasisOpacity)
                 
                 Text("No Meals Planned for This Day")
                     .font(.title2)
@@ -495,7 +495,7 @@ struct MealPlanningView: View {
                 
                 Text("Tap below to add meals for \(shortDateString)")
                     .font(.subheadline)
-                    .adaptiveForegroundColor(opacity: 0.7)
+                    .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                     .multilineTextAlignment(.center)
                 
                 Button(action: {
@@ -508,8 +508,8 @@ struct MealPlanningView: View {
                             .fontWeight(.semibold)
                     }
                     .adaptiveForegroundColor()
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 14)
+                    .padding(.horizontal, AppTheme.spacing24)
+                    .padding(.vertical, AppTheme.spacing14)
                     .background(
                         Capsule()
                             .fill(colorScheme == .dark ? Color.white.opacity(AppTheme.overlayLightOpacity) : Color.black.opacity(0.15))
@@ -520,10 +520,10 @@ struct MealPlanningView: View {
             .padding(AppTheme.spacing40)
             .background {
                 if cardStyle == .solid {
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(colorScheme == .dark ? Color.white.opacity(0.05) : Color.white.opacity(0.15))
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
+                        .fill(colorScheme == .dark ? Color.white.opacity(AppTheme.glassSubtleOpacity) : Color.white.opacity(AppTheme.cardDarkOpacity))
                 } else {
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                         .fill(.ultraThinMaterial)
                 }
             }
@@ -534,7 +534,7 @@ struct MealPlanningView: View {
         VStack(spacing: AppTheme.spacing16) {
             Image(systemName: "calendar.badge.plus")
                 .font(.system(size: AppTheme.fontSize60))
-                .adaptiveForegroundColor(opacity: 0.4)
+                .adaptiveForegroundColor(opacity: AppTheme.lowEmphasisOpacity)
             
             Text("No Meals Planned Yet")
                 .font(.title2)
@@ -543,7 +543,7 @@ struct MealPlanningView: View {
             
             Text("Tap on a date to start planning your meals")
                 .font(.subheadline)
-                .adaptiveForegroundColor(opacity: 0.7)
+                .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                 .multilineTextAlignment(.center)
             
             Button(action: {
@@ -556,8 +556,8 @@ struct MealPlanningView: View {
                         .fontWeight(.semibold)
                 }
                 .adaptiveForegroundColor()
-                .padding(.horizontal, 24)
-                .padding(.vertical, 14)
+                .padding(.horizontal, AppTheme.spacing24)
+                .padding(.vertical, AppTheme.spacing14)
                 .background(
                     Capsule()
                         .fill(Color.white.opacity(AppTheme.overlayLightOpacity))
@@ -720,18 +720,18 @@ struct CalendarDayView: View {
             if hasPlannedMeals {
                 Circle()
                     .fill(Color.green)
-                    .frame(width: 4, height: 4)
+                    .frame(width: 4, height: AppTheme.height4)
             }
         }
         .frame(maxWidth: .infinity)
-        .frame(height: 50)
+        .frame(height: AppTheme.height50)
         .background {
             if isSelected {
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                     .fill(Color.white)
-                    .shadow(color: Color.white.opacity(0.3), radius: 8, x: 0, y: 4)
+                    .shadow(color: Color.white.opacity(AppTheme.shadowDarkOpacity), radius: 8, x: 0, y: 4)
             } else if isToday {
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                     .stroke(colorScheme == .dark ? Color.white.opacity(AppTheme.glassLightOpacity) : Color.black.opacity(AppTheme.glassLightOpacity), lineWidth: 2)
             }
         }
@@ -760,8 +760,8 @@ struct MealTimeCard: View {
         HStack(spacing: AppTheme.spacing16) {
             ZStack {
                 Circle()
-                    .fill(colorScheme == .dark ? Color.white.opacity(0.15) : Color.black.opacity(0.15))
-                    .frame(width: 52, height: 52)
+                    .fill(colorScheme == .dark ? Color.white.opacity(AppTheme.cardDarkOpacity) : Color.black.opacity(AppTheme.cardDarkOpacity))
+                    .frame(width: 52, height: AppTheme.buttonHeightLarge)
                 
                 Image(systemName: mealTime.icon)
                     .font(.system(size: AppTheme.fontSize22, weight: .semibold))
@@ -790,7 +790,7 @@ struct MealTimeCard: View {
                             .font(.caption)
                             .lineLimit(1)
                     }
-                    .adaptiveForegroundColor(opacity: 0.9)
+                    .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
                 } else {
                     HStack(spacing: AppTheme.spacing6) {
                         Image(systemName: "fork.knife")
@@ -798,7 +798,7 @@ struct MealTimeCard: View {
                         Text("Tap to add recipe")
                             .font(.caption)
                     }
-                    .adaptiveForegroundColor(opacity: 0.5)
+                    .adaptiveForegroundColor(opacity: AppTheme.glassLightOpacity)
                 }
             }
             
@@ -806,20 +806,20 @@ struct MealTimeCard: View {
             
             Image(systemName: recipe != nil ? "pencil.circle" : "chevron.right")
                 .font(.system(size: AppTheme.fontSize14, weight: .semibold))
-                .adaptiveForegroundColor(opacity: 0.4)
+                .adaptiveForegroundColor(opacity: AppTheme.lowEmphasisOpacity)
         }
         .padding(AppTheme.spacing16)
         .background {
             if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(colorScheme == .dark ? Color.white.opacity(0.05) : Color.white.opacity(0.15))
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
+                    .fill(colorScheme == .dark ? Color.white.opacity(AppTheme.glassSubtleOpacity) : Color.white.opacity(AppTheme.cardDarkOpacity))
             } else {
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                     .fill(.ultraThinMaterial)
             }
         }
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                 .stroke(recipe != nil ? AppTheme.success.opacity(0.3) : Color.white.opacity(0.1), lineWidth: 1)
         )
     }
@@ -852,11 +852,11 @@ struct MealTimeSelectorSheet: View {
                                 Text("Cancel")
                                     .font(.system(size: AppTheme.fontSize16, weight: .semibold))
                             }
-                            .adaptiveForegroundColor(opacity: 0.9)
+                            .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
                         }
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 20)
+                    .padding(.horizontal, AppTheme.spacing20)
+                    .padding(.top, AppTheme.spacing20)
                     
                     Text("Plan a Meal")
                         .font(.system(size: AppTheme.fontSize28, weight: .bold))
@@ -869,9 +869,9 @@ struct MealTimeSelectorSheet: View {
                         Text(dateString)
                             .font(.system(size: AppTheme.fontSize16, weight: .medium))
                     }
-                    .adaptiveForegroundColor(opacity: 0.85)
+                    .adaptiveForegroundColor(opacity: AppTheme.nearSolidOpacity)
                 }
-                .padding(.bottom, 20)
+                .padding(.bottom, AppTheme.spacing20)
                 
                 ScrollView {
                     VStack(spacing: AppTheme.spacing12) {
@@ -887,7 +887,7 @@ struct MealTimeSelectorSheet: View {
                                                 .fill(selectedMealTimes.contains(mealTime) 
                                                       ? AppTheme.success.opacity(0.2) 
                                                       : (colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity)))
-                                                .frame(width: 50, height: 50)
+                                                .frame(width: 50, height: AppTheme.height50)
                                             
                                             Image(systemName: mealTime.icon)
                                                 .font(.system(size: AppTheme.fontSize22, weight: .semibold))
@@ -923,15 +923,15 @@ struct MealTimeSelectorSheet: View {
                                     .padding(AppTheme.spacing16)
                                     .background {
                                         if cardStyle == .solid {
-                                            RoundedRectangle(cornerRadius: 16)
-                                                .fill(colorScheme == .dark ? Color.white.opacity(0.05) : Color.white.opacity(0.15))
+                                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
+                                                .fill(colorScheme == .dark ? Color.white.opacity(AppTheme.glassSubtleOpacity) : Color.white.opacity(AppTheme.cardDarkOpacity))
                                         } else {
-                                            RoundedRectangle(cornerRadius: 16)
+                                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                                                 .fill(.ultraThinMaterial)
                                         }
                                     }
                                     .overlay(
-                                        RoundedRectangle(cornerRadius: 16)
+                                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                                             .stroke(selectedMealTimes.contains(mealTime) 
                                                     ? AppTheme.success.opacity(0.5) 
                                                     : (colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity)), 
@@ -941,8 +941,8 @@ struct MealTimeSelectorSheet: View {
                                 .buttonStyle(.plain)
                             }
                         }
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 100)
+                        .padding(.horizontal, AppTheme.spacing20)
+                        .padding(.bottom, AppTheme.spacing100)
                     }
                 }
             }
@@ -998,8 +998,8 @@ struct RecipeSelectionSheet: View {
                                         Text("Back")
                                     }
                                     .adaptiveForegroundColor()
-                                    .padding(.horizontal, 20)
-                                    .padding(.vertical, 12)
+                                    .padding(.horizontal, AppTheme.spacing20)
+                                    .padding(.vertical, AppTheme.spacing12)
                                 }
                                 Spacer()
                             }
@@ -1023,7 +1023,7 @@ struct RecipeSelectionSheet: View {
                                     }
                                 }
                                 .padding(.horizontal)
-                                .padding(.bottom, 100)
+                                .padding(.bottom, AppTheme.spacing100)
                             }
                         }
                     } else {
@@ -1073,7 +1073,7 @@ struct RecipeSelectionSheet: View {
                                     LinearGradient(
                                         colors: [
                                             Color.purple,
-                                            Color.purple.opacity(0.8)
+                                            Color.purple.opacity(AppTheme.highEmphasisOpacity)
                                         ],
                                         startPoint: .topLeading,
                                         endPoint: .bottomTrailing
@@ -1101,7 +1101,7 @@ struct RecipeSelectionSheet: View {
                                     LinearGradient(
                                         colors: [
                                             Color.blue,
-                                            Color.blue.opacity(0.8)
+                                            Color.blue.opacity(AppTheme.highEmphasisOpacity)
                                         ],
                                         startPoint: .topLeading,
                                         endPoint: .bottomTrailing
@@ -1111,7 +1111,7 @@ struct RecipeSelectionSheet: View {
                             }
                         }
                         .padding(.horizontal)
-                        .padding(.top, 24)
+                        .padding(.top, AppTheme.spacing24)
                         
                         Spacer()
                     }
@@ -1164,11 +1164,11 @@ struct WeekDayRow: View {
                     Button(action: onAddMeal) {
                         Circle()
                             .fill(colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity))
-                            .frame(width: 32, height: 32)
+                            .frame(width: AppTheme.iconSize32, height: 32)
                             .overlay {
                                 Text(icon)
                                     .font(.caption)
-                                    .opacity(0.5)
+                                    .opacity(AppTheme.glassLightOpacity)
                             }
                     }
                 }
@@ -1183,15 +1183,15 @@ struct WeekDayRow: View {
         .padding(AppTheme.spacing12)
         .background {
             if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                     .fill(isToday ? (colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity)) : (colorScheme == .dark ? Color.white.opacity(0.05) : Color.black.opacity(0.05)))
             } else {
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                     .fill(isToday ? (colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity)) : Color.clear)
             }
         }
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                 .stroke(isToday ? AppTheme.success.opacity(0.5) : (colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity)), lineWidth: isToday ? 2 : 1)
         )
     }
@@ -1273,17 +1273,17 @@ struct NutritionTipsSheet: View {
                             
                             Text("8 tips for planning nutritious meals")
                                 .font(.subheadline)
-                                .adaptiveForegroundColor(opacity: 0.7)
+                                .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                         }
-                        .padding(.top, 20)
-                        .padding(.bottom, 10)
+                        .padding(.top, AppTheme.spacing20)
+                        .padding(.bottom, AppTheme.spacing10)
                         
                         ForEach(tips) { tip in
                             NutritionTipCard(tip: tip, cardStyle: cardStyle, colorScheme: colorScheme)
                         }
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 100)
+                    .padding(.horizontal, AppTheme.spacing20)
+                    .padding(.bottom, AppTheme.spacing100)
                 }
             }
             .toolbar {
@@ -1324,10 +1324,10 @@ struct MonthYearPickerSheet: View {
                     .padding()
                     .background {
                         if cardStyle == .solid {
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(colorScheme == .dark ? Color.white.opacity(0.05) : Color.white.opacity(0.15))
+                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
+                                .fill(colorScheme == .dark ? Color.white.opacity(AppTheme.glassSubtleOpacity) : Color.white.opacity(AppTheme.cardDarkOpacity))
                         } else {
-                            RoundedRectangle(cornerRadius: 16)
+                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                                 .fill(.ultraThinMaterial)
                         }
                     }
@@ -1335,7 +1335,7 @@ struct MonthYearPickerSheet: View {
                     
                     Spacer()
                 }
-                .padding(.top, 20)
+                .padding(.top, AppTheme.spacing20)
             }
             .navigationTitle("Select Date")
             .navigationBarTitleDisplayMode(.inline)
@@ -1387,22 +1387,22 @@ struct NutritionTipCard: View {
             
             Text(tip.description)
                 .font(.system(size: AppTheme.fontSize15))
-                .adaptiveForegroundColor(opacity: 0.8)
+                .adaptiveForegroundColor(opacity: AppTheme.highEmphasisOpacity)
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(AppTheme.spacing24)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background {
             if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(colorScheme == .dark ? Color.white.opacity(0.05) : Color.white.opacity(0.15))
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
+                    .fill(colorScheme == .dark ? Color.white.opacity(AppTheme.glassSubtleOpacity) : Color.white.opacity(AppTheme.cardDarkOpacity))
             } else {
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                     .fill(.ultraThinMaterial)
             }
         }
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                 .stroke(AppTheme.success.opacity(0.2), lineWidth: 1)
         )
     }

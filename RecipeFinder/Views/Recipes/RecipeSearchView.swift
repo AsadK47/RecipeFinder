@@ -263,9 +263,9 @@ struct RecipeSearchView: View {
                 .frame(width: max(44, geometry.size.width * 0.15))
             }
         }
-        .frame(height: 44)
-        .padding(.horizontal, 20)
-        .padding(.top, 16)
+        .frame(height: AppTheme.height44)
+        .padding(.horizontal, AppTheme.spacing20)
+        .padding(.top, AppTheme.spacing16)
     }
     
     private var searchBarSection: some View {
@@ -279,7 +279,7 @@ struct RecipeSearchView: View {
                     if searchText.isEmpty {
                         Text("What would you like to eat...?")
                             .font(.system(size: AppTheme.fontSize16))
-                            .foregroundColor(colorScheme == .dark ? .white.opacity(0.65) : .black.opacity(0.65))
+                            .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.disabledEmphasisOpacity) : .black.opacity(AppTheme.disabledEmphasisOpacity))
                     }
                     TextField("", text: $searchText)
                         .focused($isSearchFocused)
@@ -302,14 +302,14 @@ struct RecipeSearchView: View {
                     )
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 14)
+            .padding(.horizontal, AppTheme.spacing16)
+            .padding(.vertical, AppTheme.spacing14)
             .background {
                 if cardStyle == .solid {
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                         .fill(AppTheme.adaptiveCard(for: colorScheme))
                 } else {
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                         .fill(.ultraThinMaterial)
                 }
             }
@@ -329,8 +329,8 @@ struct RecipeSearchView: View {
                 .transition(.move(edge: .trailing).combined(with: .opacity))
             }
         }
-        .padding(.horizontal, 20)
-        .padding(.bottom, 12)
+        .padding(.horizontal, AppTheme.spacing20)
+        .padding(.bottom, AppTheme.spacing12)
         .animation(.spring(response: 0.3), value: isSearchFocused)
     }
     
@@ -434,15 +434,15 @@ struct RecipeSearchView: View {
                         .font(.caption)
                         .fontWeight(.semibold)
                         .adaptiveForegroundColor()
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
+                        .padding(.horizontal, AppTheme.spacing12)
+                        .padding(.vertical, AppTheme.spacing6)
                         .background(
                             Capsule()
-                                .fill(Color.red.opacity(0.8))
+                                .fill(Color.red.opacity(AppTheme.highEmphasisOpacity))
                         )
                 })
             }
-            .padding(.horizontal, 20)
+            .padding(.horizontal, AppTheme.spacing20)
         }
         .transition(.move(edge: .top).combined(with: .opacity))
     }
@@ -478,13 +478,13 @@ struct RecipeSearchView: View {
         HStack(spacing: AppTheme.spacing8) {
             Image(systemName: title == "My Recipes" ? "person.fill" : "sparkles")
                 .font(.system(size: AppTheme.fontSize14, weight: .semibold))
-                .adaptiveForegroundColor(opacity: 0.7)
+                .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
             Text(title)
                 .font(.system(size: AppTheme.fontSize15, weight: .semibold))
-                .adaptiveForegroundColor(opacity: 0.7)
+                .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
             Text("(\(count))")
                 .font(.system(size: AppTheme.fontSize13, weight: .medium))
-                .adaptiveForegroundColor(opacity: 0.5)
+                .adaptiveForegroundColor(opacity: AppTheme.glassLightOpacity)
             Spacer()
             if isCollapsible {
                 Button(action: {
@@ -495,18 +495,18 @@ struct RecipeSearchView: View {
                 }) {
                     Image(systemName: hideSampleRecipes ? "chevron.down" : "chevron.up")
                         .font(.system(size: AppTheme.fontSize12, weight: .semibold))
-                        .adaptiveForegroundColor(opacity: 0.6)
-                        .frame(width: 32, height: 32)
+                        .adaptiveForegroundColor(opacity: AppTheme.mediumEmphasisOpacity)
+                        .frame(width: AppTheme.iconSize32, height: 32)
                         .background(
                             Circle()
-                                .fill(Color.white.opacity(0.1))
+                                .fill(Color.white.opacity(AppTheme.shadowLightOpacity))
                         )
                 }
             }
         }
-        .padding(.horizontal, 4)
-        .padding(.top, 8)
-        .padding(.bottom, 4)
+        .padding(.horizontal, AppTheme.spacing4)
+        .padding(.top, AppTheme.spacing8)
+        .padding(.bottom, AppTheme.spacing4)
     }
     
     private func collapsedSampleRecipesIndicator(count: Int) -> some View {
@@ -519,20 +519,20 @@ struct RecipeSearchView: View {
             HStack(spacing: AppTheme.spacing12) {
                 Image(systemName: "sparkles")
                     .font(.system(size: AppTheme.fontSize16, weight: .semibold))
-                    .adaptiveForegroundColor(opacity: 0.6)
+                    .adaptiveForegroundColor(opacity: AppTheme.mediumEmphasisOpacity)
                 Text("\(count) sample recipes hidden")
                     .font(.system(size: AppTheme.fontSize15, weight: .medium))
-                    .adaptiveForegroundColor(opacity: 0.7)
+                    .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                 Spacer()
                 Image(systemName: "chevron.down")
                     .font(.system(size: AppTheme.fontSize12, weight: .semibold))
-                    .adaptiveForegroundColor(opacity: 0.6)
+                    .adaptiveForegroundColor(opacity: AppTheme.mediumEmphasisOpacity)
             }
             .padding(.horizontal, AppTheme.spacing16)
             .padding(.vertical, AppTheme.spacing12)
             .background(
                 RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                    .fill(Color.white.opacity(0.08))
+                    .fill(Color.white.opacity(AppTheme.tinyOpacity))
                     .overlay(
                         RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                             .stroke(Color.white.opacity(0.15), lineWidth: 1)
@@ -540,7 +540,7 @@ struct RecipeSearchView: View {
             )
         }
         .buttonStyle(PlainButtonStyle())
-        .padding(.horizontal, 4)
+        .padding(.horizontal, AppTheme.spacing4)
     }
     
     private func recipeNavigationLink(for recipe: RecipeModel) -> some View {
@@ -652,7 +652,7 @@ struct RecipeSearchView: View {
             VStack(spacing: AppTheme.spacing24) {
                 Image(systemName: "magnifyingglass")
                     .font(.system(size: AppTheme.fontSize60))
-                    .adaptiveForegroundColor(opacity: 0.4)
+                    .adaptiveForegroundColor(opacity: AppTheme.lowEmphasisOpacity)
                 
                 Text("No Recipes Found")
                     .font(.title2)
@@ -661,7 +661,7 @@ struct RecipeSearchView: View {
                 
                 Text("Try adjusting your filters or search")
                     .font(.subheadline)
-                    .adaptiveForegroundColor(opacity: 0.7)
+                    .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                 
                 if activeFilterCount > 0 {
                     Button(action: clearAllFilters, label: {
@@ -672,8 +672,8 @@ struct RecipeSearchView: View {
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .adaptiveForegroundColor()
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 12)
+                        .padding(.horizontal, AppTheme.spacing20)
+                        .padding(.vertical, AppTheme.spacing12)
                         .background(
                             Group {
                                 if cardStyle == .solid {
@@ -688,7 +688,7 @@ struct RecipeSearchView: View {
                     })
                 }
             }
-            .padding(.top, 40)
+            .padding(.top, AppTheme.spacing40)
         }
     }
     
@@ -759,7 +759,7 @@ struct FilterSheet: View {
                         }
                         
                         Divider()
-                            .background(Color.white.opacity(0.3))
+                            .background(Color.white.opacity(AppTheme.shadowDarkOpacity))
                         
                         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                             HStack {
@@ -769,7 +769,7 @@ struct FilterSheet: View {
                                         .adaptiveForegroundColor()
                                     Text("Recipes using ingredients you have")
                                         .font(.caption)
-                                        .adaptiveForegroundColor(opacity: 0.7)
+                                        .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                                 }
                                 
                                 Spacer()
@@ -787,7 +787,7 @@ struct FilterSheet: View {
                         }
                         
                         Divider()
-                            .background(Color.white.opacity(0.3))
+                            .background(Color.white.opacity(AppTheme.shadowDarkOpacity))
                         
                         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                             Text("Search by Ingredient")
@@ -798,14 +798,14 @@ struct FilterSheet: View {
                                 .textFieldStyle(.plain)
                                 .padding(AppTheme.spacing12)
                                 .background(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .fill(Color.white.opacity(0.15))
+                                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius10)
+                                        .fill(Color.white.opacity(AppTheme.cardDarkOpacity))
                                 )
                                 .adaptiveForegroundColor()
                         }
                         
                         Divider()
-                            .background(Color.white.opacity(0.3))
+                            .background(Color.white.opacity(AppTheme.shadowDarkOpacity))
                         
                         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                             Text("Dietary Preferences")
@@ -825,7 +825,7 @@ struct FilterSheet: View {
                         }
                         
                         Divider()
-                            .background(Color.white.opacity(0.3))
+                            .background(Color.white.opacity(AppTheme.shadowDarkOpacity))
                         
                         if !availableTags.isEmpty {
                             VStack(alignment: .leading, spacing: AppTheme.spacing12) {
@@ -846,7 +846,7 @@ struct FilterSheet: View {
                             }
                             
                             Divider()
-                                .background(Color.white.opacity(0.3))
+                                .background(Color.white.opacity(AppTheme.shadowDarkOpacity))
                         }
                         
                         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
@@ -867,7 +867,7 @@ struct FilterSheet: View {
                         }
                         
                         Divider()
-                            .background(Color.white.opacity(0.3))
+                            .background(Color.white.opacity(AppTheme.shadowDarkOpacity))
                         
                         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                             Text("Difficulty")
@@ -887,7 +887,7 @@ struct FilterSheet: View {
                         }
                         
                         Divider()
-                            .background(Color.white.opacity(0.3))
+                            .background(Color.white.opacity(AppTheme.shadowDarkOpacity))
                         
                         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                             Text("Max Cooking Time")
@@ -961,7 +961,7 @@ struct RecipeFilterButton: View {
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
                 .frame(maxWidth: .infinity)
-                .frame(height: 44)
+                .frame(height: AppTheme.height44)
                 .background(
                     Capsule()
                         .fill(isSelected ? AppTheme.accentColor : Color.white.opacity(0.15))
@@ -992,22 +992,22 @@ struct RecipeDeleteConfirmationSheet: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                    RoundedRectangle(cornerRadius: 3)
-                        .fill(Color.white.opacity(0.3))
-                        .frame(width: 40, height: 5)
-                        .padding(.top, 12)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius3)
+                        .fill(Color.white.opacity(AppTheme.shadowDarkOpacity))
+                        .frame(width: AppTheme.iconSize40, height: 5)
+                        .padding(.top, AppTheme.spacing12)
                     
                     VStack(spacing: AppTheme.spacing32) {
                         ZStack {
                             Circle()
-                                .fill(Color.orange.opacity(0.15))
-                                .frame(width: 80, height: 80)
+                                .fill(Color.orange.opacity(AppTheme.cardDarkOpacity))
+                                .frame(width: AppTheme.width80, height: 80)
                             
                             Image(systemName: "fork.knife.circle.fill")
                                 .font(.system(size: AppTheme.fontSize50))
                                 .foregroundColor(.orange)
                         }
-                        .padding(.top, 20)
+                        .padding(.top, AppTheme.spacing20)
                         
                         VStack(spacing: AppTheme.spacing12) {
                             Text("Remove this recipe?")
@@ -1018,20 +1018,20 @@ struct RecipeDeleteConfirmationSheet: View {
                             
                             Text(recipeName.isEmpty ? "This recipe will be removed from your collection." : "\(recipeName) will be removed from your collection.")
                                 .font(.body)
-                                .adaptiveForegroundColor(opacity: 0.85)
+                                .adaptiveForegroundColor(opacity: AppTheme.nearSolidOpacity)
                                 .multilineTextAlignment(.center)
                                 .fixedSize(horizontal: false, vertical: true)
                                 .frame(maxWidth: geometry.size.width - 48)
                             
                             Text("This can't be undone, but you can always import it again! 📖")
                                 .font(.subheadline)
-                                .adaptiveForegroundColor(opacity: 0.7)
+                                .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                                 .multilineTextAlignment(.center)
                                 .fixedSize(horizontal: false, vertical: true)
                                 .frame(maxWidth: geometry.size.width - 48)
-                                .padding(.top, 4)
+                                .padding(.top, AppTheme.spacing4)
                         }
-                        .padding(.horizontal, 24)
+                        .padding(.horizontal, AppTheme.spacing24)
                     
                         Button(action: {
                             dontAskAgain.toggle()
@@ -1049,7 +1049,7 @@ struct RecipeDeleteConfirmationSheet: View {
                                 Spacer()
                             }
                             .frame(maxWidth: geometry.size.width - 48)
-                            .padding(.horizontal, 24)
+                            .padding(.horizontal, AppTheme.spacing24)
                         }
                         .buttonStyle(PlainButtonStyle())
                         
@@ -1062,7 +1062,7 @@ struct RecipeDeleteConfirmationSheet: View {
                                     .font(.headline)
                                     .adaptiveForegroundColor()
                                     .frame(maxWidth: geometry.size.width - 48)
-                                    .padding(.vertical, 16)
+                                    .padding(.vertical, AppTheme.spacing16)
                                     .background(Color.orange)
                                     .cornerRadius(AppTheme.cornerRadius12)
                             }
@@ -1076,16 +1076,16 @@ struct RecipeDeleteConfirmationSheet: View {
                                     .font(.headline)
                                     .adaptiveForegroundColor()
                                     .frame(maxWidth: geometry.size.width - 48)
-                                    .padding(.vertical, 16)
-                                    .background(Color.white.opacity(0.15))
+                                    .padding(.vertical, AppTheme.spacing16)
+                                    .background(Color.white.opacity(AppTheme.cardDarkOpacity))
                                     .cornerRadius(AppTheme.cornerRadius12)
                             }
                             .buttonStyle(PlainButtonStyle())
                         }
-                        .padding(.horizontal, 24)
-                        .padding(.top, 8)
+                        .padding(.horizontal, AppTheme.spacing24)
+                        .padding(.top, AppTheme.spacing8)
                     }
-                    .padding(.bottom, 40)
+                    .padding(.bottom, AppTheme.spacing40)
                 }
             }
         }

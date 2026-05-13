@@ -18,7 +18,7 @@ struct DietaryTagsDisplayView: View {
                             .font(.subheadline)
                         Spacer()
                     }
-                    .adaptiveForegroundColor(opacity: 0.9)
+                    .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
                 }
 
                 if !tags.isEmpty {

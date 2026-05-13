@@ -219,16 +219,16 @@ struct ErrorToast: View {
                 }
                 .padding()
                 .background(
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                         .fill(Color(.systemBackground))
-                        .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
+                        .shadow(color: .black.opacity(AppTheme.shadowLightOpacity), radius: 10, x: 0, y: 5)
                 )
                 .padding(.horizontal)
-                .padding(.bottom, 20)
+                .padding(.bottom, AppTheme.spacing20)
                 .transition(.move(edge: .bottom).combined(with: .opacity))
                 .animation(.spring(response: 0.3), value: isShowing)
                 .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayXXLong) {
                         isShowing = false
                     }
                 }

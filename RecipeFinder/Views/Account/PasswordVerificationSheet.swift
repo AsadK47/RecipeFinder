@@ -50,7 +50,7 @@ struct PasswordVerificationSheet: View {
                         
                         Text("Enter your password to update account details")
                             .font(.subheadline)
-                            .adaptiveForegroundColor(opacity: 0.85)
+                            .adaptiveForegroundColor(opacity: AppTheme.nearSolidOpacity)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, AppTheme.spacing32)
                     }
@@ -58,10 +58,10 @@ struct PasswordVerificationSheet: View {
                     HStack(spacing: AppTheme.spacing8) {
                         Image(systemName: "envelope.fill")
                             .font(.caption)
-                            .adaptiveForegroundColor(opacity: 0.7)
+                            .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                         Text(email)
                             .font(.system(size: AppTheme.fontSize15, weight: .medium))
-                            .adaptiveForegroundColor(opacity: 0.9)
+                            .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
                     }
                     .padding(.horizontal, AppTheme.cardHorizontalPadding)
                     .padding(.vertical, AppTheme.spacing12)
@@ -78,7 +78,7 @@ struct PasswordVerificationSheet: View {
                         Text("Password")
                             .font(.subheadline)
                             .fontWeight(.medium)
-                            .adaptiveForegroundColor(opacity: 0.9)
+                            .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
                         
                         SecureField("Enter your password", text: $password)
                             .padding()
@@ -154,7 +154,7 @@ struct PasswordVerificationSheet: View {
             }
             .toolbarBackground(.hidden, for: .navigationBar)
             .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayMedium) {
                     isPasswordFocused = true
                 }
             }

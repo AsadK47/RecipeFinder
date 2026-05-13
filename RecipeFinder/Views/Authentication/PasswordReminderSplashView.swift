@@ -22,7 +22,7 @@ struct PasswordReminderSplashView: View {
                     
                     ZStack {
                         Circle()
-                            .fill(Color.white.opacity(0.1))
+                            .fill(Color.white.opacity(AppTheme.shadowLightOpacity))
                             .frame(width: spacing.imageMedium + spacing.xl, height: spacing.imageMedium + spacing.xl)
                             .scaleEffect(scale)
                         
@@ -59,7 +59,7 @@ struct PasswordReminderSplashView: View {
                                 
                                 Text(email)
                                     .font(.system(size: AppTheme.fontSize15))
-                                    .adaptiveForegroundColor(opacity: 0.8)
+                                    .adaptiveForegroundColor(opacity: AppTheme.highEmphasisOpacity)
                             }
                                 
                                 Spacer()
@@ -67,7 +67,7 @@ struct PasswordReminderSplashView: View {
                             .padding(spacing.lg)
                             .background(
                                 RoundedRectangle(cornerRadius: spacing.md)
-                                    .fill(Color.white.opacity(0.1))
+                                    .fill(Color.white.opacity(AppTheme.shadowLightOpacity))
                             )
                             
                             VStack(alignment: .leading, spacing: spacing.md) {
@@ -83,13 +83,13 @@ struct PasswordReminderSplashView: View {
                                 
                                 Text("Your password is saved in iCloud Keychain and will auto-fill when you sign in.")
                                     .font(.system(size: AppTheme.fontSize14))
-                                    .adaptiveForegroundColor(opacity: 0.8)
+                                    .adaptiveForegroundColor(opacity: AppTheme.highEmphasisOpacity)
                                     .lineSpacing(2)
                             }
                             .padding(spacing.lg)
                             .background(
                                 RoundedRectangle(cornerRadius: spacing.md)
-                                    .fill(Color.blue.opacity(0.2))
+                                    .fill(Color.blue.opacity(AppTheme.overlayLightOpacity))
                                     .overlay(
                                         RoundedRectangle(cornerRadius: spacing.md)
                                             .stroke(Color.blue.opacity(0.3), lineWidth: 1)
@@ -102,12 +102,12 @@ struct PasswordReminderSplashView: View {
                                 
                                 Text("You'll need to sign in each time you log out")
                                     .font(.system(size: AppTheme.fontSize14))
-                                    .adaptiveForegroundColor(opacity: 0.9)
+                                    .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
                             }
                             .padding(spacing.md)
                             .background(
                                 RoundedRectangle(cornerRadius: spacing.sm)
-                                    .fill(Color.orange.opacity(0.15))
+                                    .fill(Color.orange.opacity(AppTheme.cardDarkOpacity))
                             )
                         }
                         .opacity(opacity)
@@ -130,7 +130,7 @@ struct PasswordReminderSplashView: View {
                         .frame(height: spacing.buttonHeight)
                         .background(
                             RoundedRectangle(cornerRadius: spacing.lg)
-                                .fill(Color.white.opacity(0.2))
+                                .fill(Color.white.opacity(AppTheme.overlayLightOpacity))
                                 .overlay(
                                     RoundedRectangle(cornerRadius: spacing.lg)
                                         .stroke(Color.white.opacity(0.4), lineWidth: 1.5)

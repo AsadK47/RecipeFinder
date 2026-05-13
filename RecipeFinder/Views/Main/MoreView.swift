@@ -18,10 +18,10 @@ struct MoreView: View {
                             .font(.system(size: AppTheme.fontSize34, weight: .bold))
                             .adaptiveForegroundColor()
                             .frame(maxWidth: .infinity)
-                            .frame(height: 44)
+                            .frame(height: AppTheme.height44)
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 16)
+                    .padding(.horizontal, AppTheme.spacing20)
+                    .padding(.top, AppTheme.spacing16)
                     
                     ScrollView {
                         VStack(spacing: AppTheme.spacing32) {
@@ -37,7 +37,7 @@ struct MoreView: View {
                                 }
                                 .buttonStyle(PlainButtonStyle())
                             }
-                            .padding(.horizontal, 20)
+                            .padding(.horizontal, AppTheme.spacing20)
                             
                             MoreCard {
                                 NavigationLink(destination: NutritionalTipsView()) {
@@ -50,7 +50,7 @@ struct MoreView: View {
                                 }
                                 .buttonStyle(PlainButtonStyle())
                             }
-                            .padding(.horizontal, 20)
+                            .padding(.horizontal, AppTheme.spacing20)
                             
                             MoreCard {
                                 NavigationLink(destination: CookingTipsView()) {
@@ -63,7 +63,7 @@ struct MoreView: View {
                                 }
                                 .buttonStyle(PlainButtonStyle())
                             }
-                            .padding(.horizontal, 20)
+                            .padding(.horizontal, AppTheme.spacing20)
                             
                             MoreCard {
                                 NavigationLink(destination: CookTimerView()) {
@@ -76,7 +76,7 @@ struct MoreView: View {
                                 }
                                 .buttonStyle(PlainButtonStyle())
                             }
-                            .padding(.horizontal, 20)
+                            .padding(.horizontal, AppTheme.spacing20)
                             
                             MoreCard {
                                 NavigationLink(destination: NotesListView()) {
@@ -89,11 +89,11 @@ struct MoreView: View {
                                 }
                                 .buttonStyle(PlainButtonStyle())
                             }
-                            .padding(.horizontal, 20)
+                            .padding(.horizontal, AppTheme.spacing20)
                             }
                         }
-                        .padding(.top, 16)
-                        .padding(.bottom, 40)
+                        .padding(.top, AppTheme.spacing16)
+                        .padding(.bottom, AppTheme.spacing40)
                     }
                 }
             }
@@ -114,10 +114,10 @@ struct MoreCard<Content: View>: View {
             .frame(maxWidth: .infinity)
             .background {
                 if cardStyle == .solid {
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                         .fill(AppTheme.adaptiveCard(for: colorScheme))
                 } else {
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                         .fill(.ultraThinMaterial)
                 }
             }
@@ -136,7 +136,7 @@ struct MoreRow: View {
             ZStack {
                 Circle()
                     .fill(iconColor)
-                    .frame(width: 40, height: 40)
+                    .frame(width: 40, height: AppTheme.height40)
                 
                 Image(systemName: icon)
                     .font(.system(size: AppTheme.fontSize18, weight: .semibold))
@@ -159,8 +159,8 @@ struct MoreRow: View {
                 .font(.system(size: AppTheme.fontSize13, weight: .semibold))
                 .foregroundColor(AppTheme.adaptiveSecondaryIndicator(for: colorScheme))
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
+        .padding(.horizontal, AppTheme.spacing16)
+        .padding(.vertical, AppTheme.spacing12)
     }
 }
 
