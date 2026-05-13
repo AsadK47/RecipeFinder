@@ -5,10 +5,16 @@ class BadgeManager: ObservableObject {
 
     @Published var unlockedBadges: [String: Badge] = [:]
 
-    private let storage = UserScopedStorage.shared
+    private let storage: UserScopedStorage
     private let badgesKey = "unlockedBadges"
 
     private init() {
+        self.storage = .shared
+        loadBadges()
+    }
+
+    init(storage: UserScopedStorage) {
+        self.storage = storage
         loadBadges()
     }
 

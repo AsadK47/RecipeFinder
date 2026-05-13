@@ -8,9 +8,15 @@ final class MealPlanningManager: ObservableObject {
     @Published private(set) var mealPlans: [MealPlanModel] = []
     
     private let saveKey = "mealPlansStorage"
-    private let storage = UserScopedStorage.shared
-    
+    private let storage: UserScopedStorage
+
     private init() {
+        self.storage = .shared
+        loadMealPlans()
+    }
+
+    init(storage: UserScopedStorage) {
+        self.storage = storage
         loadMealPlans()
     }
 

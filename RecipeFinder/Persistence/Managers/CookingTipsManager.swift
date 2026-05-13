@@ -13,10 +13,17 @@ final class CookingTipsManager: ObservableObject {
     @Published var showFavoritesOnly: Bool = false
     
     private let saveKey = "cookingTipsStorage"
-    private let storage = UserScopedStorage.shared
+    private let storage: UserScopedStorage
     private var cancellables = Set<AnyCancellable>()
-    
+
     private init() {
+        self.storage = .shared
+        loadTips()
+        setupPublishers()
+    }
+
+    init(storage: UserScopedStorage) {
+        self.storage = storage
         loadTips()
         setupPublishers()
     }

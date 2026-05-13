@@ -3,10 +3,16 @@ import Foundation
 final class UserScopedStorage {
     nonisolated(unsafe) static let shared = UserScopedStorage()
     
-    private let userDefaults = UserDefaults.standard
+    private let userDefaults: UserDefaults
     private let currentUserKey = "currentUserId"
-    
-    private init() {}
+
+    private init() {
+        self.userDefaults = .standard
+    }
+
+    init(userDefaults: UserDefaults) {
+        self.userDefaults = userDefaults
+    }
     
     var currentUserId: String? {
         get {

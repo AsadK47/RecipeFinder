@@ -9,16 +9,23 @@ final class KitchenInventoryManager: ObservableObject {
 	private let saveKey = Constants.UserDefaultsKeys.kitchenItems
 	private let inventorySaveKey = "kitchenInventoryItems"
 	private let migrationKey = "kitchenItemsMigrationCompleted_v1"
-    private let storage = UserScopedStorage.shared
-    
+    private let storage: UserScopedStorage
+
     @Published private(set) var items: [KitchenItem] = []
     @Published private(set) var inventoryItems: [KitchenInventoryModel] = []
-    
+
 	private init() {
+        self.storage = .shared
 		migrateOldDataIfNeeded()
         loadItems()
         loadInventoryItems()
 	}
+
+    init(storage: UserScopedStorage) {
+        self.storage = storage
+        loadItems()
+        loadInventoryItems()
+    }
     
     func reloadForCurrentUser() {
         loadItems()

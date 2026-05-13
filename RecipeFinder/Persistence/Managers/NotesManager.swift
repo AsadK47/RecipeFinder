@@ -8,9 +8,15 @@ class NotesManager: ObservableObject {
     @Published var notes: [NoteModel] = []
     
     private let notesKey = "saved_notes"
-    private let storage = UserScopedStorage.shared
-    
+    private let storage: UserScopedStorage
+
     private init() {
+        self.storage = .shared
+        loadNotes()
+    }
+
+    init(storage: UserScopedStorage) {
+        self.storage = storage
         loadNotes()
     }
     

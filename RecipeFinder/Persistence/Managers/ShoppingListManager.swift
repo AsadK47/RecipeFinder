@@ -8,11 +8,17 @@ final class ShoppingListManager: ObservableObject {
     static let shared = ShoppingListManager()
     
     private let saveKey = Constants.UserDefaultsKeys.shoppingListItems
-    private let storage = UserScopedStorage.shared
-    
+    private let storage: UserScopedStorage
+
     @Published private(set) var items: [ShoppingListModel] = []
-    
+
     private init() {
+        self.storage = .shared
+        loadItems()
+    }
+
+    init(storage: UserScopedStorage) {
+        self.storage = storage
         loadItems()
     }
     
