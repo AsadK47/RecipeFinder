@@ -54,6 +54,7 @@ enum AppTheme {
     static let spacing32: CGFloat = 32
     static let spacing40: CGFloat = 40
     static let spacing48: CGFloat = 48
+    static let spacing50: CGFloat = 50
     
     static let goldenRatio: CGFloat = 1.618
     static let goldenRatioInverse: CGFloat = 0.618
@@ -103,6 +104,10 @@ enum AppTheme {
     static let shimmerRotation: Double = 30
     static let shimmerDuration: Double = 1.5
     static let shimmerOpacity: Double = 0.3
+
+    static let animationDelayShort: Double = 0.4
+    static let animationDelayMedium: Double = 0.5
+    static let animationDelayLong: Double = 1.0
     
     static let buttonHeight: CGFloat = 44
     static let buttonHeightCompact: CGFloat = 36
@@ -223,6 +228,7 @@ enum AppTheme {
     static let highEmphasisOpacity: Double = 0.8
     static let mediumEmphasisOpacity: Double = 0.6
     static let lowEmphasisOpacity: Double = 0.4
+    static let veryHighEmphasisOpacity: Double = 0.9
     static let cardHighEmphasisLightOpacity: Double = 0.75
     
     static func cardBackground(for colorScheme: ColorScheme) -> Color {

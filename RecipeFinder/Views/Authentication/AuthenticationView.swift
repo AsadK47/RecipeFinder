@@ -20,10 +20,10 @@ struct AuthenticationView: View {
             AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
-            VStack(spacing: 40) {
+            VStack(spacing: AppTheme.spacing40) {
                 Spacer()
                 
-                VStack(spacing: 16) {
+                VStack(spacing: AppTheme.spacing16) {
                     Image(systemName: "fork.knife.circle.fill")
                         .font(.system(size: AppTheme.fontSize80))
                         .foregroundStyle(
@@ -43,21 +43,21 @@ struct AuthenticationView: View {
                         .adaptiveForegroundColor()
                     
                     Text("Discover, Create, Cook")
-                        .font(.system(size: 18, weight: .medium))
+                        .font(.system(size: AppTheme.fontSize18, weight: .medium))
                         .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.highEmphasisOpacity) : .black.opacity(0.7))
                 }
                 .padding(.bottom, AppTheme.spacing20)
                 
                 Spacer()
                 
-                VStack(spacing: 16) {
+                VStack(spacing: AppTheme.spacing16) {
                     if authManager.biometricsAvailable && biometricsEnabled {
                         Button(action: {
                             Task {
                                 try? await authManager.authenticateWithBiometrics()
                             }
                         }) {
-                            HStack(spacing: 12) {
+                            HStack(spacing: AppTheme.spacing12) {
                                 Image(systemName: authManager.biometricType == "Face ID" ? "faceid" : "touchid")
                                     .font(.system(size: AppTheme.fontSize22))
                                 Text("Sign In with \(authManager.biometricType)")
@@ -117,7 +117,7 @@ struct AuthenticationView: View {
                     .padding(.top, AppTheme.spacing8)
                 }
                 .padding(.horizontal, AppTheme.spacing32)
-                .padding(.bottom, 50)
+                .padding(.bottom, AppTheme.spacing50)
             }
         }
         .sheet(isPresented: $showSignUp) {
@@ -132,7 +132,7 @@ struct AuthenticationView: View {
         .fullScreenCover(isPresented: $showWelcomeSplash) {
             WelcomeSplashView(email: newUserEmail) {
                 showWelcomeSplash = false
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayShort) {
                     showSignIn = true
                 }
             }
@@ -152,7 +152,7 @@ struct AuthenticationView: View {
         .onChange(of: authManager.isAuthenticated) { oldValue, newValue in
             if newValue && !hasBeenPromptedForBiometrics && !biometricsEnabled {
                 if authManager.biometricsAvailable {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayLong) {
                         showBiometricSetup = true
                         hasBeenPromptedForBiometrics = true
                     }
@@ -197,11 +197,11 @@ struct EmailSignInView: View {
                 .ignoresSafeArea()
             
             ScrollView {
-                VStack(spacing: 24) {
-                    VStack(spacing: 8) {
+                VStack(spacing: AppTheme.spacing24) {
+                    VStack(spacing: AppTheme.spacing8) {
                         Image(systemName: "person.crop.circle.fill")
                             .font(.system(size: AppTheme.fontSize60))
-                            .adaptiveForegroundColor(opacity: 0.9)
+                            .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
                             .padding(.top, AppTheme.spacing40)
                         
                         Text("Welcome Back")
@@ -210,16 +210,16 @@ struct EmailSignInView: View {
                         
                         Text("Sign in to continue")
                             .font(.subheadline)
-                            .adaptiveForegroundColor(opacity: 0.8)
+                            .adaptiveForegroundColor(opacity: AppTheme.highEmphasisOpacity)
                     }
                     .padding(.bottom, AppTheme.spacing20)
                     
-                    VStack(spacing: 16) {
-                        VStack(alignment: .leading, spacing: 8) {
+                    VStack(spacing: AppTheme.spacing16) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                             Text("Email")
                                 .font(.subheadline)
                                 .fontWeight(.medium)
-                                .adaptiveForegroundColor(opacity: 0.9)
+                                .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
                             
                             TextField("", text: $email)
                                 .textFieldStyle(AuthTextFieldStyle())
@@ -231,15 +231,15 @@ struct EmailSignInView: View {
                             if !email.isEmpty && !isValidEmail {
                                 Text("Please enter a valid email address")
                                     .font(.caption)
-                                    .foregroundColor(.orange.opacity(0.9))
+                                    .foregroundColor(.orange.opacity(AppTheme.veryHighEmphasisOpacity))
                             }
                         }
                         
-                        VStack(alignment: .leading, spacing: 8) {
+                        VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                             Text("Password")
                                 .font(.subheadline)
                                 .fontWeight(.medium)
-                                .adaptiveForegroundColor(opacity: 0.9)
+                                .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
                             
                             SecureField("", text: $password)
                                 .textFieldStyle(AuthTextFieldStyle())
@@ -306,7 +306,7 @@ struct EmailSignInView: View {
                     dismiss()
                     
                     if authManager.biometricsAvailable && !UserDefaults.standard.bool(forKey: "biometricsEnabled") {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayMedium) {
                             UserDefaults.standard.set(true, forKey: "shouldPromptBiometrics")
                         }
                     }
@@ -369,11 +369,11 @@ struct SignUpView: View {
                     .ignoresSafeArea()
                 
                 ScrollView {
-                    VStack(spacing: 24) {
-                        VStack(spacing: 8) {
+                    VStack(spacing: AppTheme.spacing24) {
+                        VStack(spacing: AppTheme.spacing8) {
                             Image(systemName: "person.crop.circle.badge.plus")
                                 .font(.system(size: AppTheme.fontSize60))
-                                .adaptiveForegroundColor(opacity: 0.9)
+                                .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
                                 .padding(.top, AppTheme.spacing40)
                             
                             Text("Create Account")
@@ -382,16 +382,16 @@ struct SignUpView: View {
                             
                             Text("Join RecipeFinder today")
                                 .font(.subheadline)
-                                .adaptiveForegroundColor(opacity: 0.8)
+                                .adaptiveForegroundColor(opacity: AppTheme.highEmphasisOpacity)
                         }
                         .padding(.bottom, AppTheme.spacing20)
                         
-                        VStack(spacing: 16) {
-                            VStack(alignment: .leading, spacing: 8) {
+                        VStack(spacing: AppTheme.spacing16) {
+                            VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                                 Text("Full Name")
                                     .font(.subheadline)
                                     .fontWeight(.medium)
-                                    .adaptiveForegroundColor(opacity: 0.9)
+                                    .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
                                 
                                 TextField("", text: $fullName)
                                     .textFieldStyle(AuthTextFieldStyle())
@@ -399,11 +399,11 @@ struct SignUpView: View {
                                     .autocorrectionDisabled()
                             }
                             
-                            VStack(alignment: .leading, spacing: 8) {
+                            VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                                 Text("Email")
                                     .font(.subheadline)
                                     .fontWeight(.medium)
-                                    .adaptiveForegroundColor(opacity: 0.9)
+                                    .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
                                 
                                 TextField("", text: $email)
                                     .textFieldStyle(AuthTextFieldStyle())
@@ -415,47 +415,47 @@ struct SignUpView: View {
                                 if !email.isEmpty && !isValidEmail {
                                     Text("Please enter a valid email address")
                                         .font(.caption)
-                                        .foregroundColor(.orange.opacity(0.9))
+                                        .foregroundColor(.orange.opacity(AppTheme.veryHighEmphasisOpacity))
                                 }
                             }
                             
-                            VStack(alignment: .leading, spacing: 8) {
+                            VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                                 Text("Password")
                                     .font(.subheadline)
                                     .fontWeight(.medium)
-                                    .adaptiveForegroundColor(opacity: 0.9)
+                                    .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
                                 
                                 SecureField("", text: $password)
                                     .textFieldStyle(AuthTextFieldStyle())
                                     .textContentType(.newPassword)
                                 
                                 if !password.isEmpty && !isPasswordStrong {
-                                    VStack(alignment: .leading, spacing: 4) {
+                                    VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                                         Text("Password must contain:")
                                             .font(.caption2)
-                                            .adaptiveForegroundColor(opacity: 0.8)
+                                            .adaptiveForegroundColor(opacity: AppTheme.highEmphasisOpacity)
                                         Text("• 8+ characters")
                                             .font(.caption2)
-                                            .foregroundColor(password.count >= 8 ? .green : .red.opacity(0.8))
+                                            .foregroundColor(password.count >= 8 ? .green : .red.opacity(AppTheme.highEmphasisOpacity))
                                         Text("• Uppercase & lowercase letters")
                                             .font(.caption2)
-                                            .foregroundColor((password.rangeOfCharacter(from: .uppercaseLetters) != nil && password.rangeOfCharacter(from: .lowercaseLetters) != nil) ? .green : .red.opacity(0.8))
+                                            .foregroundColor((password.rangeOfCharacter(from: .uppercaseLetters) != nil && password.rangeOfCharacter(from: .lowercaseLetters) != nil) ? .green : .red.opacity(AppTheme.highEmphasisOpacity))
                                         Text("• At least one number")
                                             .font(.caption2)
-                                            .foregroundColor(password.rangeOfCharacter(from: .decimalDigits) != nil ? .green : .red.opacity(0.8))
+                                            .foregroundColor(password.rangeOfCharacter(from: .decimalDigits) != nil ? .green : .red.opacity(AppTheme.highEmphasisOpacity))
                                         Text("• Special character (!@#$%^&* etc.)")
                                             .font(.caption2)
-                                            .foregroundColor(password.rangeOfCharacter(from: CharacterSet(charactersIn: "!@#$%^&*()_+-=[]{}|;:',.<>?/~`")) != nil ? .green : .red.opacity(0.8))
+                                            .foregroundColor(password.rangeOfCharacter(from: CharacterSet(charactersIn: "!@#$%^&*()_+-=[]{}|;:',.<>?/~`")) != nil ? .green : .red.opacity(AppTheme.highEmphasisOpacity))
                                     }
                                     .padding(.top, AppTheme.spacing4)
                                 }
                             }
                             
-                            VStack(alignment: .leading, spacing: 8) {
+                            VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                                 Text("Confirm Password")
                                     .font(.subheadline)
                                     .fontWeight(.medium)
-                                    .adaptiveForegroundColor(opacity: 0.9)
+                                    .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
                                 
                                 SecureField("", text: $confirmPassword)
                                     .textFieldStyle(AuthTextFieldStyle())
@@ -470,7 +470,7 @@ struct SignUpView: View {
                                 if !confirmPassword.isEmpty && password != confirmPassword {
                                     Text("Passwords do not match")
                                         .font(.caption)
-                                        .foregroundColor(.red.opacity(0.8))
+                                        .foregroundColor(.red.opacity(AppTheme.highEmphasisOpacity))
                                 }
                             }
                             
