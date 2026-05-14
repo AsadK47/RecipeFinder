@@ -495,29 +495,38 @@ struct KitchenCategoryCard: View {
         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
             Button(action: onToggleCollapse) {
                 HStack(spacing: AppTheme.spacing12) {
-                    Circle()
-                        .fill(CategoryClassifier.categoryColor(for: category).opacity(AppTheme.overlayLightOpacity))
-                        .frame(width: 40, height: AppTheme.height40)
-                        .overlay(
-                            Image(systemName: CategoryClassifier.categoryIcon(for: category))
-                                .foregroundColor(CategoryClassifier.categoryColor(for: category))
-                        )
+                    Image(systemName: CategoryClassifier.categoryIcon(for: category))
+                        .font(.title3)
+                        .foregroundColor(CategoryClassifier.categoryColor(for: category))
+                        .frame(width: AppTheme.iconSize28)
                     
-                    VStack(alignment: .leading, spacing: AppTheme.spacing2) {
-                        Text(category)
-                            .font(.headline)
-                            .adaptiveForegroundColor()
-                        
-                        Text("\(items.count) items")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                    }
+                    Text(category)
+                        .font(.title3)
+                        .fontWeight(.bold)
+                        .adaptiveForegroundColor()
+                    
+                    Text("(\(items.count))")
+                        .font(.subheadline)
+                        .foregroundColor(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
                     
                     Spacer()
                     
                     Image(systemName: isCollapsed ? "chevron.down" : "chevron.up")
-                        .foregroundColor(.gray)
                         .font(.caption)
+                        .foregroundColor(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
+                        .rotationEffect(.degrees(isCollapsed ? 0 : 180))
+                }
+                .padding(.horizontal, AppTheme.spacing16)
+                .padding(.vertical, AppTheme.spacing12)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background {
+                    if cardStyle == .solid {
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                            .fill(AppTheme.adaptiveCard(for: colorScheme))
+                    } else {
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                            .fill(.ultraThinMaterial)
+                    }
                 }
             }
             .buttonStyle(PlainButtonStyle())
@@ -528,16 +537,7 @@ struct KitchenCategoryCard: View {
                         KitchenItemChip(item: item)
                     }
                 }
-            }
-        }
-        .padding(AppTheme.spacing16)
-        .background {
-            if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                    .fill(AppTheme.adaptiveCard(for: colorScheme))
-            } else {
-                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                    .fill(.ultraThinMaterial)
+                .padding(.horizontal, AppTheme.spacing4)
             }
         }
     }
