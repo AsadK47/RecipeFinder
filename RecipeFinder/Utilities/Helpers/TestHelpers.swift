@@ -1,9 +1,9 @@
 
 import Foundation
 
-private let logger = AppLogger.logger(category: "TestHelpers")
-
 #if DEBUG
+
+private let logger = AppLogger.logger(category: "TestHelpers")
 
 struct AuthTestHelper {
     

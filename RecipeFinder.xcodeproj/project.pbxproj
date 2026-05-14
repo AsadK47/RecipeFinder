@@ -75,6 +75,7 @@
 		9E6C2C482FB477D70083A08B /* DataImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6C2C452FB477D70083A08B /* DataImportView.swift */; };
 		9E6C2C4C2FB477ED0083A08B /* BadgeCardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6C2C492FB477ED0083A08B /* BadgeCardTests.swift */; };
 		9E6C2C4D2FB477ED0083A08B /* CardViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6C2C4A2FB477ED0083A08B /* CardViewTests.swift */; };
+		E1E3999F6BA145A4AE306B63 /* AppLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAEF6AE737314EC1A6FB2B6A /* AppLaunchTests.swift */; };
 		9E6C2C522FB478290083A08B /* DataImportViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6C2C4F2FB478290083A08B /* DataImportViewTests.swift */; };
 		9E6C2C532FB478290083A08B /* AccountSheetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6C2C4E2FB478290083A08B /* AccountSheetTests.swift */; };
 		9E6C2C572FB4A4900083A08B /* NutritionalTipsModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6C2C542FB4A4900083A08B /* NutritionalTipsModelTests.swift */; };
@@ -180,6 +181,7 @@
 
 /* Begin PBXFileReference section */
 		9E09461F2F0415F40072BDFE /* UserScopedStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserScopedStorage.swift; sourceTree = "<group>"; };
+		CAEF6AE737314EC1A6FB2B6A /* AppLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLaunchTests.swift; sourceTree = "<group>"; };
 		9E0C88652EBAEB1E00D707E3 /* FaceIDOnboardingSplash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceIDOnboardingSplash.swift; sourceTree = "<group>"; };
 		9E12E8942EC15AFA0077B1DA /* AppleSignInManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSignInManager.swift; sourceTree = "<group>"; };
 		9E212D6F2EB12315005743F7 /* RecipeModel 9.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 9.xcdatamodel"; sourceTree = "<group>"; };
@@ -1006,9 +1008,18 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		19BC863E22BB4A40B9307393 /* RecipeFinderUITests */ = {
+			isa = PBXGroup;
+			children = (
+				CAEF6AE737314EC1A6FB2B6A /* AppLaunchTests.swift */,
+			);
+			path = RecipeFinderUITests;
+			sourceTree = "<group>";
+		};
 		9EE5AACC2D08FCBE00C1B736 = {
 			isa = PBXGroup;
 			children = (
+				19BC863E22BB4A40B9307393 /* RecipeFinderUITests */,
 				9E90AAFC2FA9022600096D9D /* RecipeFinderTests */,
 				9E9DE5F72ECCA111005CD593 /* legal */,
 				9E9DE5F82ECCA111005CD593 /* LICENSE */,
@@ -1353,6 +1364,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E1E3999F6BA145A4AE306B63 /* AppLaunchTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
