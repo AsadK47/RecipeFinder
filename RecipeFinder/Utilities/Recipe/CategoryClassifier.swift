@@ -136,7 +136,6 @@ enum CategoryClassifier {
             "almond milk", "soy milk", "oat milk", "rice milk",
             "cream", "heavy cream", "whipping cream", "half and half",
             "sour cream", "crème fraîche", "whipped cream",
-            "butter", "unsalted butter", "salted butter",
             "cheese", "ricotta", "cottage cheese", "cream cheese", "mascarpone",
             "mozzarella", "burrata", "paneer", "queso fresco",
             "brie", "camembert", "fontina", "havarti",
@@ -178,6 +177,7 @@ enum CategoryClassifier {
             "vegetable oil", "canola oil", "sunflower oil", "corn oil",
             "peanut oil", "sesame oil", "toasted sesame oil", "walnut oil",
             "coconut oil", "avocado oil", "truffle oil", "chili oil",
+            "butter", "unsalted butter", "salted butter",
             "lard", "duck fat", "chicken fat", "schmaltz", "tallow",
             "shortening", "ghee", "clarified butter", "margarine", "cooking spray"
         ],
@@ -277,116 +277,61 @@ enum CategoryClassifier {
     
     static func categorize(_ itemName: String) -> String {
         let cacheKey = itemName.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
-        if let cached = categoryCache[cacheKey] {
-            return cached
-        }
-        
+        if let cached = categoryCache[cacheKey] { return cached }
+
         let lowercased = cacheKey
-        
-        func matchesCategory(_ keywords: [String]) -> Bool {
+
+        func matches(_ keywords: [String]) -> Bool {
             keywords.contains { keyword in
-                let keywordLower = keyword.lowercased()
-                if lowercased.contains(keywordLower) {
-                    return true
-                }
-                if keywordLower.hasSuffix("s") {
-                    let singular = String(keywordLower.dropLast())
-                    if lowercased.contains(singular) {
-                        return true
-                    }
+                let k = keyword.lowercased()
+                if lowercased.contains(k) { return true }
+                if k.hasSuffix("s") {
+                    if lowercased.contains(String(k.dropLast())) { return true }
                 } else {
-                    if lowercased.contains(keywordLower + "s") || lowercased.contains(keywordLower + "es") {
-                        return true
-                    }
+                    if lowercased.contains(k + "s") || lowercased.contains(k + "es") { return true }
                 }
                 let words = lowercased.components(separatedBy: .whitespacesAndNewlines)
-                return words.contains { word in
-                    word == keywordLower || word == keywordLower + "s" || word == keywordLower + "es"
-                }
+                return words.contains { $0 == k || $0 == k + "s" || $0 == k + "es" }
             }
         }
-        
-        let category: String
-        
-        if lowercased.contains("frozen") || lowercased.contains("ice cream") {
-            category = "Frozen"
-        }
-        else {
-            let bakeryKeywords = ["bread", "baguette", "croissant", "bagel", "muffin", "donut",
-                                 "pastry", "cake", "cookie", "pie", "tart", "scone"]
-            if matchesCategory(bakeryKeywords) {
-                category = "Bakery"
-            }
-            else if let keywords = kitchenIngredientKeywords["Sweeteners"], matchesCategory(keywords) {
-                category = "Sweeteners"
-            }
-            else if let keywords = kitchenIngredientKeywords["Poultry"], matchesCategory(keywords) {
-                category = "Poultry"
-            }
-            else if let keywords = kitchenIngredientKeywords["Seafood"], matchesCategory(keywords) {
-                category = "Seafood"
-            }
-            else if let keywords = kitchenIngredientKeywords["Meat"], matchesCategory(keywords) {
-                category = "Meat"
-            }
-            else if let keywords = kitchenIngredientKeywords["Herbs & Fresh Spices"], matchesCategory(keywords) {
-                category = "Herbs & Fresh Spices"
-            }
-            else if let keywords = kitchenIngredientKeywords["Dried Spices & Seasonings"], matchesCategory(keywords) {
-                category = "Dried Spices & Seasonings"
-            }
-            else if let keywords = kitchenIngredientKeywords["Nuts & Seeds"], matchesCategory(keywords) {
-                category = "Nuts & Seeds"
-            }
-            else if let keywords = kitchenIngredientKeywords["Legumes & Pulses"], matchesCategory(keywords) {
-                category = "Legumes & Pulses"
-            }
-            else if let keywords = kitchenIngredientKeywords["Fruits"], matchesCategory(keywords) {
-                category = "Produce"
-            }
-            else if let keywords = kitchenIngredientKeywords["Vegetables"], matchesCategory(keywords) {
-                category = "Produce"
-            }
-            else if let keywords = kitchenIngredientKeywords["Dairy & Eggs"], matchesCategory(keywords) {
-                category = "Dairy & Eggs"
-            }
-            else if let keywords = kitchenIngredientKeywords["Oils & Fats"], matchesCategory(keywords) {
-                category = "Oils & Fats"
-            }
-            else if let keywords = kitchenIngredientKeywords["Sauces & Condiments"], matchesCategory(keywords) {
-                category = "Sauces & Condiments"
-            }
-            else if let keywords = kitchenIngredientKeywords["Grains & Pasta"], matchesCategory(keywords) {
-                category = "Grains & Pasta"
-            }
-            else {
-                let beverageKeywords = ["water", "juice", "soda", "coffee", "tea", "beer", "wine",
-                                       "vodka", "whiskey", "rum", "lemonade", "smoothie"]
-                if matchesCategory(beverageKeywords) {
-                    category = "Beverages"
-                }
-                else if lowercased.contains("canned") || lowercased.contains("jar") {
-                    category = "Canned & Jarred"
-                }
-                else {
-                    let bakingKeywords = ["baking powder", "baking soda", "yeast", "cornstarch",
-                                         "gelatin", "cocoa powder"]
-                    if matchesCategory(bakingKeywords) {
-                        category = "Baking Supplies"
-                    } else {
-                        category = "Other"
-                    }
-                }
-            }
-        }
+
+        // Priority-ordered rules: first match wins.
+        // Inline arrays are used for categories not in kitchenIngredientKeywords,
+        // or where special-case substring logic was previously hard-coded.
+        let rules: [(String, [String])] = [
+            ("Frozen",                    ["frozen", "ice cream"]),
+            ("Bakery",                    ["bread", "baguette", "croissant", "bagel", "muffin", "donut",
+                                           "pastry", "cake", "cookie", "pie", "tart", "scone"]),
+            ("Sweeteners",                kitchenIngredientKeywords["Sweeteners"]               ?? []),
+            ("Poultry",                   kitchenIngredientKeywords["Poultry"]                  ?? []),
+            ("Seafood",                   kitchenIngredientKeywords["Seafood"]                  ?? []),
+            ("Meat",                      kitchenIngredientKeywords["Meat"]                     ?? []),
+            ("Herbs & Fresh Spices",      kitchenIngredientKeywords["Herbs & Fresh Spices"]     ?? []),
+            ("Dried Spices & Seasonings", kitchenIngredientKeywords["Dried Spices & Seasonings"] ?? []),
+            ("Nuts & Seeds",              kitchenIngredientKeywords["Nuts & Seeds"]             ?? []),
+            ("Legumes & Pulses",          kitchenIngredientKeywords["Legumes & Pulses"]         ?? []),
+            ("Canned & Jarred",           ["canned", "jarred"]),
+            ("Beverages",                 ["juice", "water", "soda", "coffee", "tea", "beer", "wine",
+                                           "vodka", "whiskey", "rum", "lemonade", "smoothie"]),
+            ("Produce",                   (kitchenIngredientKeywords["Fruits"]     ?? []) +
+                                          (kitchenIngredientKeywords["Vegetables"] ?? [])),
+            ("Oils & Fats",               kitchenIngredientKeywords["Oils & Fats"]              ?? []),
+            ("Dairy & Eggs",              kitchenIngredientKeywords["Dairy & Eggs"]             ?? []),
+            ("Sauces & Condiments",       kitchenIngredientKeywords["Sauces & Condiments"]      ?? []),
+            ("Grains & Pasta",            kitchenIngredientKeywords["Grains & Pasta"]           ?? []),
+            ("Baking Supplies",           ["baking powder", "baking soda", "yeast", "cornstarch",
+                                           "gelatin", "cocoa powder"]),
+        ]
+
+        let category = rules.first { matches($0.1) }?.0 ?? "Other"
+
         if categoryCache.count < 200 {
             categoryCache[cacheKey] = category
         } else if categoryCache.count > 250 {
-            let keepCount = 100
-            let keysToKeep = Array(categoryCache.keys.prefix(keepCount))
+            let keysToKeep = Array(categoryCache.keys.prefix(100))
             categoryCache = categoryCache.filter { keysToKeep.contains($0.key) }
         }
-        
+
         return category
     }
     

@@ -546,51 +546,34 @@ struct RecipeParser {
         if let cached = entityCache[text] {
             return cached
         }
-        
-        var result = text
-        
-        let entities: [(String, String)] = [
-            ("&nbsp;", " "),
-            ("&amp;", "&"),
-            ("&quot;", "\""),
-            ("&#39;", "'"),
-            ("&apos;", "'"),
-            ("&lt;", "<"),
-            ("&gt;", ">"),
-            ("&frac12;", "½"),
-            ("&frac14;", "¼"),
-            ("&frac34;", "¾"),
-            ("&frac13;", "⅓"),
-            ("&frac23;", "⅔"),
-            ("&ndash;", "–"),
-            ("&mdash;", "—"),
-            ("&hellip;", "…"),
-            ("&deg;", "°"),
-            ("&trade;", "™"),
-            ("&reg;", "®"),
-            ("&copy;", "©"),
-            ("&rsquo;", "\u{2019}"),
-            ("&lsquo;", "\u{2018}"),
-            ("&rdquo;", "\u{201D}"),
-            ("&ldquo;", "\u{201C}")
-        ]
-        
-        for (entity, replacement) in entities {
-            if result.contains(entity) {
-                result = result.replacingOccurrences(of: entity, with: replacement)
-            }
+
+        // Use NSAttributedString to decode all named and numeric HTML entities
+        // (e.g. &eacute; → é, &amp; → &, &#233; → é)
+        let wrapped = "<html><body>\(text)</body></html>"
+        let decoded: String
+        if let data = wrapped.data(using: .utf8),
+           let attributed = try? NSAttributedString(
+               data: data,
+               options: [.documentType: NSAttributedString.DocumentType.html,
+                         .characterEncoding: String.Encoding.utf8.rawValue],
+               documentAttributes: nil) {
+            decoded = attributed.string
+        } else {
+            decoded = text
         }
-        
+
+        var result = decoded
+
         let numericPattern = "&#(\\d+);"
         if result.contains("&#"), let regex = try? NSRegularExpression(pattern: numericPattern, options: []) {
             var replacements: [(NSRange, String)] = []
             let nsString = result as NSString
             let matches = regex.matches(in: result, options: [], range: NSRange(location: 0, length: nsString.length))
-            
+
             for match in matches {
                 let numberRange = match.range(at: 1)
                 let numberStr = nsString.substring(with: numberRange)
-                
+
                 if let charCode = Int(numberStr),
                    charCode > 0,
                    charCode < 0x10FFFF,

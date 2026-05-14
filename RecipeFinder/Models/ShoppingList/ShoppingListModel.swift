@@ -1,6 +1,8 @@
 import Foundation
 
 struct ShoppingListModel: Identifiable, Codable, Hashable {
+    static func == (lhs: ShoppingListModel, rhs: ShoppingListModel) -> Bool { lhs.id == rhs.id }
+    func hash(into hasher: inout Hasher) { hasher.combine(id) }
     var id: UUID = UUID()
     var name: String
     var quantity: Int

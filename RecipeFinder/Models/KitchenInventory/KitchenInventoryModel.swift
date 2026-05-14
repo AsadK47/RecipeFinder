@@ -42,7 +42,9 @@ struct KitchenInventoryModel: Identifiable, Codable, Hashable {
     var daysUntilExpiry: Int? {
         guard let expiryDate = expiryDate else { return nil }
         let calendar = Calendar.current
-        let components = calendar.dateComponents([.day], from: Date(), to: expiryDate)
+        let today = calendar.startOfDay(for: Date())
+        let expiryDay = calendar.startOfDay(for: expiryDate)
+        let components = calendar.dateComponents([.day], from: today, to: expiryDay)
         return components.day
     }
     
