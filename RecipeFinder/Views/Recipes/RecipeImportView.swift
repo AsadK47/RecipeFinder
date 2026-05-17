@@ -83,11 +83,16 @@ struct RecipeImportView: View {
                             .focused($isTextFieldFocused)
                             .disabled(importer.isLoading)
                         
-                        if !urlText.isEmpty {
-                            Button(action: { urlText = "" }, label: {
+                        if urlText.isEmpty {
+                            Button(action: pasteFromClipboard) {
+                                Image(systemName: "doc.on.clipboard")
+                                    .foregroundColor(.secondary)
+                            }
+                        } else {
+                            Button(action: { urlText = "" }) {
                                 Image(systemName: "xmark.circle.fill")
                                     .foregroundColor(.secondary)
-                            })
+                            }
                         }
                     }
                     .padding()
@@ -290,6 +295,14 @@ struct RecipeImportView: View {
         .buttonStyle(PlainButtonStyle())
     }
     
+    private func pasteFromClipboard() {
+        guard let string = UIPasteboard.general.string,
+              let url = URL(string: string.trimmingCharacters(in: .whitespacesAndNewlines)),
+              url.scheme == "https" || url.scheme == "http" else { return }
+        urlText = string.trimmingCharacters(in: .whitespacesAndNewlines)
+        HapticManager.shared.light()
+    }
+
     private func importRecipe() {
         isTextFieldFocused = false
         HapticManager.shared.selection()

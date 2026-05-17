@@ -24,73 +24,69 @@ struct MoreView: View {
                     .padding(.top, AppTheme.spacing16)
                     
                     ScrollView {
-                        VStack(spacing: AppTheme.spacing32) {
+                        VStack(spacing: 0) {
                             MoreCard {
-                                NavigationLink(destination: SettingsTabView()
-                                ) {
-                                    MoreRow(
-                                        icon: "gearshape.circle.fill",
-                                        iconColor: AppTheme.accentColor(for: selectedTheme),
-                                        title: "Settings",
-                                        subtitle: "Customize your experience"
-                                    )
+                                VStack(spacing: 0) {
+                                    NavigationLink(destination: SettingsTabView()) {
+                                        MoreRow(
+                                            icon: "gearshape.circle.fill",
+                                            iconColor: AppTheme.accentColor(for: selectedTheme),
+                                            title: "Settings",
+                                            subtitle: "Customize your experience"
+                                        )
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+
+                                    Divider().padding(.leading, AppTheme.spacing60)
+
+                                    NavigationLink(destination: NutritionalTipsView()) {
+                                        MoreRow(
+                                            icon: "heart.text.square.fill",
+                                            iconColor: .pink,
+                                            title: "Nutritional Science",
+                                            subtitle: "Evidence-based health guidance"
+                                        )
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+
+                                    Divider().padding(.leading, AppTheme.spacing60)
+
+                                    NavigationLink(destination: CookingTipsView()) {
+                                        MoreRow(
+                                            icon: "lightbulb.fill",
+                                            iconColor: .yellow,
+                                            title: "Cooking Tips",
+                                            subtitle: "Expert advice & kitchen hacks"
+                                        )
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+
+                                    Divider().padding(.leading, AppTheme.spacing60)
+
+                                    NavigationLink(destination: CookTimerView()) {
+                                        MoreRow(
+                                            icon: "calendar.circle.fill",
+                                            iconColor: .green,
+                                            title: "Cook Timer",
+                                            subtitle: "Ready, set, cook!"
+                                        )
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+
+                                    Divider().padding(.leading, AppTheme.spacing60)
+
+                                    NavigationLink(destination: NotesListView()) {
+                                        MoreRow(
+                                            icon: "note.text.badge.plus",
+                                            iconColor: .orange,
+                                            title: "Notes",
+                                            subtitle: "Capture your cooking ideas"
+                                        )
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
                                 }
-                                .buttonStyle(PlainButtonStyle())
                             }
                             .padding(.horizontal, AppTheme.spacing20)
-                            
-                            MoreCard {
-                                NavigationLink(destination: NutritionalTipsView()) {
-                                    MoreRow(
-                                        icon: "heart.text.square.fill",
-                                        iconColor: .pink,
-                                        title: "Nutritional Science",
-                                        subtitle: "Evidence-based health guidance"
-                                    )
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                            }
-                            .padding(.horizontal, AppTheme.spacing20)
-                            
-                            MoreCard {
-                                NavigationLink(destination: CookingTipsView()) {
-                                    MoreRow(
-                                        icon: "lightbulb.fill",
-                                        iconColor: .yellow,
-                                        title: "Cooking Tips",
-                                        subtitle: "Expert advice & kitchen hacks"
-                                    )
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                            }
-                            .padding(.horizontal, AppTheme.spacing20)
-                            
-                            MoreCard {
-                                NavigationLink(destination: CookTimerView()) {
-                                    MoreRow(
-                                        icon: "calendar.circle.fill",
-                                        iconColor: .green,
-                                        title: "Cook Timer",
-                                        subtitle: "Ready, set, cook!"
-                                    )
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                            }
-                            .padding(.horizontal, AppTheme.spacing20)
-                            
-                            MoreCard {
-                                NavigationLink(destination: NotesListView()) {
-                                    MoreRow(
-                                        icon: "note.text.badge.plus",
-                                        iconColor: .orange,
-                                        title: "Notes",
-                                        subtitle: "Capture your cooking ideas"
-                                    )
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                            }
-                            .padding(.horizontal, AppTheme.spacing20)
-                            }
                         }
                         .padding(.top, AppTheme.spacing16)
                         .padding(.bottom, AppTheme.spacing40)

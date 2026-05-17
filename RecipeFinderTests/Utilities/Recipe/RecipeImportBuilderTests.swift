@@ -164,6 +164,25 @@ final class RecipeImportBuilderTests: XCTestCase {
         XCTAssertEqual(ingredient.name.lowercased(), "ginger")
     }
 
+    func testParseIngredient_unicodeFractionQuarter() {
+        let ingredient = builder.parseIngredient("¼ cup neutral oil")
+        XCTAssertEqual(ingredient.baseQuantity, 0.25, accuracy: 0.01)
+        XCTAssertEqual(ingredient.unit.lowercased(), "cup")
+        XCTAssertEqual(ingredient.name.lowercased(), "neutral oil")
+    }
+
+    func testParseIngredient_unicodeFractionHalf() {
+        let ingredient = builder.parseIngredient("½ tsp salt")
+        XCTAssertEqual(ingredient.baseQuantity, 0.5, accuracy: 0.01)
+        XCTAssertEqual(ingredient.unit.lowercased(), "tsp")
+    }
+
+    func testParseIngredient_unicodeFractionThreeQuarters() {
+        let ingredient = builder.parseIngredient("¾ cup yogurt")
+        XCTAssertEqual(ingredient.baseQuantity, 0.75, accuracy: 0.01)
+        XCTAssertEqual(ingredient.unit.lowercased(), "cup")
+    }
+
     func testParseIngredient_gUnit() {
         let ingredient = builder.parseIngredient("200g spaghetti")
         XCTAssertEqual(ingredient.name.lowercased(), "spaghetti")

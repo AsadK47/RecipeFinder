@@ -892,8 +892,8 @@ struct RecipeWizardView: View {
     }
     
     private func parseIngredientString(_ fullIngredient: String) -> IngredientItem {
-        let trimmed = fullIngredient.trimmingCharacters(in: .whitespaces)
-        
+        let trimmed = normaliseUnicodeFractions(fullIngredient).trimmingCharacters(in: .whitespaces)
+
         let quantityPattern = #"^([\d\./\-]+)\s+"#
         var quantity = ""
         var remaining = trimmed
@@ -943,6 +943,21 @@ struct RecipeWizardView: View {
         }
         
         return IngredientItem(quantity: quantity, unit: unit, name: name)
+    }
+
+    private func normaliseUnicodeFractions(_ s: String) -> String {
+        let map: [(Character, String)] = [
+            ("¼", "1/4"), ("½", "1/2"), ("¾", "3/4"),
+            ("⅓", "1/3"), ("⅔", "2/3"),
+            ("⅛", "1/8"), ("⅜", "3/8"), ("⅝", "5/8"), ("⅞", "7/8"),
+            ("⅕", "1/5"), ("⅖", "2/5"), ("⅗", "3/5"), ("⅘", "4/5"),
+            ("⅙", "1/6"), ("⅚", "5/6"),
+        ]
+        var result = s
+        for (char, replacement) in map {
+            result = result.replacingOccurrences(of: String(char), with: replacement + " ")
+        }
+        return result
     }
 }
 
