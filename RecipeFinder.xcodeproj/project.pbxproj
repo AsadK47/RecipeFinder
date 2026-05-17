@@ -46,17 +46,7 @@
 		9E5B399A2FACFF9000C96DB3 /* QuickAddSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5B39952FACFF9000C96DB3 /* QuickAddSheetView.swift */; };
 		9E5B399D2FAD024A00C96DB3 /* BadgeModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5B399B2FAD024A00C96DB3 /* BadgeModelTests.swift */; };
 		9E5D201D2FB24B9B00F2896A /* CookingTipModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5D201C2FB24B9B00F2896A /* CookingTipModelTests.swift */; };
-		9E5D203F2FB25E6300F2896A /* DietaryFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5D20352FB25E6300F2896A /* DietaryFilterView.swift */; };
 		9E5D20402FB25E6300F2896A /* QuickSnackSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5D20392FB25E6300F2896A /* QuickSnackSheet.swift */; };
-		9E5D20412FB25E6300F2896A /* DietaryTagsDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5D20362FB25E6300F2896A /* DietaryTagsDisplayView.swift */; };
-		9E5D20422FB25E6300F2896A /* AddButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5D20332FB25E6300F2896A /* AddButtonView.swift */; };
-		9E5D20432FB25E6300F2896A /* QuickSnackLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5D20382FB25E6300F2896A /* QuickSnackLayout.swift */; };
-		9E5D20442FB25E6300F2896A /* EmojiSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5D20372FB25E6300F2896A /* EmojiSelectorView.swift */; };
-		9E5D20452FB25E6300F2896A /* DietaryFilterChip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5D20342FB25E6300F2896A /* DietaryFilterChip.swift */; };
-		9E5D20462FB25E6300F2896A /* SnackNameInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5D203C2FB25E6300F2896A /* SnackNameInputView.swift */; };
-		9E5D20472FB25E6300F2896A /* QuickSnackViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5D203A2FB25E6300F2896A /* QuickSnackViewModel.swift */; };
-		9E5D20482FB25E6300F2896A /* ServingsControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5D203B2FB25E6300F2896A /* ServingsControlView.swift */; };
-		9E5D20492FB25E6300F2896A /* SnackSuggestionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5D203D2FB25E6300F2896A /* SnackSuggestionsView.swift */; };
 		9E5D204F2FB358F000F2896A /* NoteModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5D204D2FB358F000F2896A /* NoteModelTests.swift */; };
 		9E5D20502FB358F000F2896A /* RecipeModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5D204E2FB358F000F2896A /* RecipeModelTests.swift */; };
 		9E5D20512FB358F000F2896A /* MealPlanModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5D204C2FB358F000F2896A /* MealPlanModelTests.swift */; };
@@ -223,17 +213,7 @@
 		9E5B39962FACFF9000C96DB3 /* ShoppingQuickAddSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingQuickAddSheet.swift; sourceTree = "<group>"; };
 		9E5B399B2FAD024A00C96DB3 /* BadgeModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeModelTests.swift; sourceTree = "<group>"; };
 		9E5D201C2FB24B9B00F2896A /* CookingTipModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookingTipModelTests.swift; sourceTree = "<group>"; };
-		9E5D20332FB25E6300F2896A /* AddButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddButtonView.swift; sourceTree = "<group>"; };
-		9E5D20342FB25E6300F2896A /* DietaryFilterChip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DietaryFilterChip.swift; sourceTree = "<group>"; };
-		9E5D20352FB25E6300F2896A /* DietaryFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DietaryFilterView.swift; sourceTree = "<group>"; };
-		9E5D20362FB25E6300F2896A /* DietaryTagsDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DietaryTagsDisplayView.swift; sourceTree = "<group>"; };
-		9E5D20372FB25E6300F2896A /* EmojiSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiSelectorView.swift; sourceTree = "<group>"; };
-		9E5D20382FB25E6300F2896A /* QuickSnackLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickSnackLayout.swift; sourceTree = "<group>"; };
 		9E5D20392FB25E6300F2896A /* QuickSnackSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickSnackSheet.swift; sourceTree = "<group>"; };
-		9E5D203A2FB25E6300F2896A /* QuickSnackViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickSnackViewModel.swift; sourceTree = "<group>"; };
-		9E5D203B2FB25E6300F2896A /* ServingsControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServingsControlView.swift; sourceTree = "<group>"; };
-		9E5D203C2FB25E6300F2896A /* SnackNameInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnackNameInputView.swift; sourceTree = "<group>"; };
-		9E5D203D2FB25E6300F2896A /* SnackSuggestionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnackSuggestionsView.swift; sourceTree = "<group>"; };
 		9E5D204A2FB358F000F2896A /* DietaryInfoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DietaryInfoTests.swift; sourceTree = "<group>"; };
 		9E5D204B2FB358F000F2896A /* KitchenInventoryModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KitchenInventoryModelTests.swift; sourceTree = "<group>"; };
 		9E5D204C2FB358F000F2896A /* MealPlanModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlanModelTests.swift; sourceTree = "<group>"; };
@@ -525,24 +505,6 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
-		9E5D203E2FB25E6300F2896A /* QuickSnack */ = {
-			isa = PBXGroup;
-			children = (
-				9E5D20332FB25E6300F2896A /* AddButtonView.swift */,
-				9E5D20342FB25E6300F2896A /* DietaryFilterChip.swift */,
-				9E5D20352FB25E6300F2896A /* DietaryFilterView.swift */,
-				9E5D20362FB25E6300F2896A /* DietaryTagsDisplayView.swift */,
-				9E5D20372FB25E6300F2896A /* EmojiSelectorView.swift */,
-				9E5D20382FB25E6300F2896A /* QuickSnackLayout.swift */,
-				9E5D20392FB25E6300F2896A /* QuickSnackSheet.swift */,
-				9E5D203A2FB25E6300F2896A /* QuickSnackViewModel.swift */,
-				9E5D203B2FB25E6300F2896A /* ServingsControlView.swift */,
-				9E5D203C2FB25E6300F2896A /* SnackNameInputView.swift */,
-				9E5D203D2FB25E6300F2896A /* SnackSuggestionsView.swift */,
-			);
-			path = QuickSnack;
-			sourceTree = "<group>";
-		};
 		9E6C2C4B2FB477ED0083A08B /* Cards */ = {
 			isa = PBXGroup;
 			children = (
@@ -672,11 +634,11 @@
 		9E6DEA5C2EF5EF47001E7B24 /* Sheets */ = {
 			isa = PBXGroup;
 			children = (
-				9E5D203E2FB25E6300F2896A /* QuickSnack */,
 				9E5B39932FACFF9000C96DB3 /* KitchenQuickAddSheet.swift */,
 				9E5B39942FACFF9000C96DB3 /* QuickAddItems.swift */,
 				9E5B39952FACFF9000C96DB3 /* QuickAddSheetView.swift */,
 				9E5B39962FACFF9000C96DB3 /* ShoppingQuickAddSheet.swift */,
+				9E5D20392FB25E6300F2896A /* QuickSnackSheet.swift */,
 			);
 			path = Sheets;
 			sourceTree = "<group>";
@@ -1310,19 +1272,9 @@
 				9E87BC932EF54E17003F9157 /* NutritionalTips.swift in Sources */,
 				9E87D3292EB6722300FFA1D1 /* BiometricSetupView.swift in Sources */,
 				9EA779272EB5725D0028F064 /* MealPlanModel.swift in Sources */,
-				9E5D203F2FB25E6300F2896A /* DietaryFilterView.swift in Sources */,
 				9E5D20402FB25E6300F2896A /* QuickSnackSheet.swift in Sources */,
-				9E5D20412FB25E6300F2896A /* DietaryTagsDisplayView.swift in Sources */,
-				9E5D20422FB25E6300F2896A /* AddButtonView.swift in Sources */,
-				9E5D20432FB25E6300F2896A /* QuickSnackLayout.swift in Sources */,
-				9E5D20442FB25E6300F2896A /* EmojiSelectorView.swift in Sources */,
 				9E6C2C3D2FB4778E0083A08B /* BadgeCard.swift in Sources */,
 				9E6C2C3E2FB4778E0083A08B /* ChefTypeCard.swift in Sources */,
-				9E5D20452FB25E6300F2896A /* DietaryFilterChip.swift in Sources */,
-				9E5D20462FB25E6300F2896A /* SnackNameInputView.swift in Sources */,
-				9E5D20472FB25E6300F2896A /* QuickSnackViewModel.swift in Sources */,
-				9E5D20482FB25E6300F2896A /* ServingsControlView.swift in Sources */,
-				9E5D20492FB25E6300F2896A /* SnackSuggestionsView.swift in Sources */,
 				9E6060032D09CB6400236896 /* RecipeModel.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
