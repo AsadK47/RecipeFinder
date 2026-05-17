@@ -127,6 +127,7 @@ struct QuickSnackSheet: View {
                                 }
                                 .padding(.horizontal, AppTheme.spacing20)
                                 .padding(.vertical, AppTheme.spacing12)
+                                .contentShape(Rectangle())
                             }
                             .buttonStyle(.plain)
 
