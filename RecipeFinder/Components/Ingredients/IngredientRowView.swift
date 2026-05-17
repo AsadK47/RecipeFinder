@@ -13,8 +13,8 @@ struct IngredientRowView: View {
     private enum Layout {
         static let dividerWidth: CGFloat = 1
         static let dividerOpacity: Double = 0.2
-        static let checkButtonSize: CGFloat = AppTheme.iconSize32
-        static let checkButtonFrameWidth: CGFloat = 48
+        static let checkButtonSize: CGFloat = AppTheme.iconSize20
+        static let checkButtonFrameWidth: CGFloat = 36
         static let uncheckedOpacity: Double = 0.4
         static let quantityPillOpacity: Double = 0.13
     }
@@ -80,7 +80,7 @@ struct IngredientRowView: View {
                 }
             }, label: {
                 Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: AppTheme.fontSize28))
+                    .font(.system(size: AppTheme.fontSize22))
                     .foregroundColor(isChecked ? .green : .gray.opacity(Layout.uncheckedOpacity))
                     .frame(width: Layout.checkButtonSize, height: Layout.checkButtonSize)
                     .contentShape(Rectangle())

@@ -79,14 +79,19 @@ struct IngredientNameFormatter {
     }
     
     static func extractMainName(_ name: String) -> String {
-        let lowercased = name.lowercased()
-        
+        // Strip parenthetical content (handles nested and unclosed parens)
+        var result = name
+        if let parenStart = result.firstIndex(of: "(") {
+            result = String(result[..<parenStart]).trimmingCharacters(in: .whitespaces)
+        }
+
+        let lowercased = result.lowercased()
         if let commaIndex = lowercased.firstIndex(of: ",") {
-            let mainPart = String(name[..<commaIndex]).trimmingCharacters(in: .whitespaces)
+            let mainPart = String(result[..<commaIndex]).trimmingCharacters(in: .whitespaces)
             return removeLeadingPrepWords(mainPart)
         }
-        
-        return removeLeadingPrepWords(name)
+
+        return removeLeadingPrepWords(result)
     }
     
     static func extractPreparationNotes(_ name: String) -> String? {

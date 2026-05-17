@@ -101,14 +101,22 @@ struct RecipeDetailView: View {
     }
     
     private var recipeTitleView: some View {
-        Text(recipe.name)
-            .font(.system(size: AppTheme.fontSize34, weight: .bold))
-            .adaptiveForegroundColor()
-            .multilineTextAlignment(.center)
-            .frame(maxWidth: .infinity, alignment: .center)
-            .padding(.horizontal, AppTheme.spacing20)
-            .padding(.top, AppTheme.spacing8)
-            .padding(.bottom, AppTheme.spacing20)
+        VStack(spacing: AppTheme.spacing12) {
+            if let imageName = recipe.imageName, !imageName.isEmpty {
+                RecipeImageView(imageName: imageName, height: 220)
+                    .padding(.horizontal, AppTheme.spacing20)
+                    .padding(.top, AppTheme.spacing8)
+            }
+
+            Text(recipe.name)
+                .font(.system(size: AppTheme.fontSize34, weight: .bold))
+                .adaptiveForegroundColor()
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.horizontal, AppTheme.spacing20)
+                .padding(.top, recipe.imageName?.isEmpty == false ? 0 : AppTheme.spacing8)
+                .padding(.bottom, AppTheme.spacing20)
+        }
     }
     
     private var recipeInfoCardsView: some View {
@@ -655,7 +663,7 @@ struct RecipeDetailView: View {
                 Spacer()
                 
                 Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: AppTheme.fontSize28))
+                    .font(.system(size: AppTheme.fontSize22))
                     .foregroundColor(isChecked ? .green : .gray.opacity(AppTheme.lowEmphasisOpacity))
             }
             .frame(maxWidth: .infinity, alignment: .leading)

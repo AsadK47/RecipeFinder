@@ -85,6 +85,22 @@ final class RecipeModelTests: XCTestCase {
         XCTAssertEqual(IngredientNameFormatter.extractMainName("Onion, diced"), "Onion")
     }
 
+    func testExtractMainName_stripsParentheticalContent() {
+        XCTAssertEqual(IngredientNameFormatter.extractMainName("Beef Stew Meat (Cut Into 1 To 2 Inch Cubes)"), "Beef Stew Meat")
+    }
+
+    func testExtractMainName_stripsNestedParentheses() {
+        XCTAssertEqual(IngredientNameFormatter.extractMainName("Large Yellow Onion (Chopped Or Sliced (1 Large = 2 Small Onions))"), "Large Yellow Onion")
+    }
+
+    func testExtractMainName_stripsUnclosedParenthesis() {
+        XCTAssertEqual(IngredientNameFormatter.extractMainName("Button Red Chili Peppers (If Using Regular Dried Chilies"), "Button Red Chili Peppers")
+    }
+
+    func testExtractMainName_stripsDoubleParentheses() {
+        XCTAssertEqual(IngredientNameFormatter.extractMainName("Garlic Cloves ((Leave Whole))"), "Garlic Cloves")
+    }
+
     // MARK: - IngredientNameFormatter.extractPreparationNotes
 
     func testExtractPreparationNotes_noNotes_returnsNil() {
