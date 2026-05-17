@@ -572,19 +572,23 @@ struct QuickMatchRecipeCard: View {
     }
     
     private var matchBadge: some View {
-        HStack(spacing: AppTheme.spacing4) {
-            Image(systemName: "checkmark.circle.fill")
-                .font(.caption2)
-                .adaptiveForegroundColor()
-            
-            Text("\(matchCount)/\(totalIngredients)")
-                .font(.caption2)
-                .fontWeight(.bold)
-                .adaptiveForegroundColor()
+        let pct = totalIngredients > 0 ? Double(matchCount) / Double(totalIngredients) : 0
+        let label = "\(matchCount) matched"
+        return VStack(alignment: .trailing, spacing: 3) {
+            Text(label)
+                .font(.caption2.weight(.semibold))
+                .foregroundColor(.white)
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    Capsule().fill(Color.white.opacity(0.3)).frame(height: 3)
+                    Capsule().fill(Color.white).frame(width: geo.size.width * pct, height: 3)
+                }
+            }
+            .frame(width: 60, height: 3)
         }
         .padding(.horizontal, AppTheme.spacing8)
-        .padding(.vertical, AppTheme.spacing4)
-        .background(Capsule().fill(Color.green))
+        .padding(.vertical, AppTheme.spacing6)
+        .background(Capsule().fill(Color.green.opacity(0.85)))
         .shadow(color: Color.black.opacity(AppTheme.overlayLightOpacity), radius: 4, x: 0, y: 2)
         .padding(AppTheme.spacing10)
     }

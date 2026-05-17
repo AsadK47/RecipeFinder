@@ -309,21 +309,47 @@ struct KitchenView: View {
                 .fontWeight(.bold)
                 .adaptiveForegroundColor()
                 .padding(.horizontal, AppTheme.spacing20)
-            
-            if searchResults.isEmpty {
-                Text("No ingredients found")
-                    .font(.body)
-                    .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
-                    .padding(.horizontal, AppTheme.spacing20)
-                    .padding(.vertical, AppTheme.spacing20)
-            } else {
-                LazyVStack(spacing: AppTheme.spacing8) {
-                    ForEach(searchResults, id: \.self) { ingredient in
-                        kitchenIngredientButton(ingredient)
+
+            LazyVStack(spacing: AppTheme.spacing8) {
+                // Always show a free-text "Add" row first
+                let trimmed = searchText.trimmingCharacters(in: .whitespaces)
+                let alreadyInKitchen = KitchenInventoryManager.shared.hasItem(trimmed)
+                Button {
+                    withAnimation(.spring(response: 0.3)) {
+                        KitchenInventoryManager.shared.toggleItem(trimmed)
+                        HapticManager.shared.light()
+                        searchText = ""
+                    }
+                } label: {
+                    HStack(spacing: AppTheme.spacing12) {
+                        Image(systemName: alreadyInKitchen ? "checkmark.circle.fill" : "plus.circle.fill")
+                            .foregroundStyle(alreadyInKitchen ? .green : AppTheme.accentColor(for: selectedTheme))
+                            .font(.title3)
+                        Text(alreadyInKitchen ? "\"\(trimmed)\" is in your kitchen" : "Add \"\(trimmed)\"")
+                            .font(.body)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(AppTheme.textColor(for: colorScheme))
+                        Spacer()
+                    }
+                    .padding(.horizontal, AppTheme.spacing16)
+                    .padding(.vertical, AppTheme.spacing14)
+                    .background {
+                        if cardStyle == .solid {
+                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                                .fill(AppTheme.adaptiveCard(for: colorScheme))
+                        } else {
+                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                                .fill(.ultraThinMaterial)
+                        }
                     }
                 }
-                .padding(.horizontal, AppTheme.spacing20)
+                .buttonStyle(PlainButtonStyle())
+
+                ForEach(searchResults, id: \.self) { ingredient in
+                    kitchenIngredientButton(ingredient)
+                }
             }
+            .padding(.horizontal, AppTheme.spacing20)
         }
     }
     
@@ -335,6 +361,8 @@ struct KitchenView: View {
             withAnimation(.spring(response: 0.3)) {
                 KitchenInventoryManager.shared.toggleItem(ingredient)
                 HapticManager.shared.light()
+                searchText = ""
+                isSearchFocused = false
             }
         } label: {
             HStack(spacing: AppTheme.spacing12) {
@@ -368,48 +396,23 @@ struct KitchenView: View {
     }
     
     private var quickRecipeMatchesView: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacing16) {
-            VStack(alignment: .leading, spacing: AppTheme.spacing8) {
-                HStack(spacing: AppTheme.spacing10) {
-                    Image(systemName: "sparkles")
-                        .font(.system(size: AppTheme.fontSize28))
-                        .foregroundColor(.yellow)
-                    
-                    Text("Quick Recipe Matches")
-                        .font(.system(size: AppTheme.fontSize28, weight: .bold))
-                        .adaptiveForegroundColor()
-                }
-                
+        VStack(alignment: .leading, spacing: AppTheme.spacing12) {
+            HStack(spacing: AppTheme.spacing6) {
+                Image(systemName: "sparkles")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundColor(.yellow)
+                Text("Recipe Ideas")
+                    .font(.title3.bold())
+                    .adaptiveForegroundColor()
+                Spacer()
                 Text(matchCountText)
-                    .font(.body)
-                    .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.cardLightOpacity) : .black.opacity(AppTheme.highEmphasisOpacity))
-                
-                Text("Tap any recipe to view full details and cooking instructions")
                     .font(.caption)
                     .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
             }
             .padding(.horizontal, AppTheme.spacing20)
-            .padding(.vertical, AppTheme.spacing20)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(
-                RoundedRectangle(cornerRadius: AppTheme.cornerRadius20)
-                    .fill(
-                        LinearGradient(
-                            gradient: Gradient(colors: [
-                                Color.purple.opacity(AppTheme.lowEmphasisOpacity),
-                                Color.pink.opacity(AppTheme.shadowDarkOpacity),
-                                Color.orange.opacity(AppTheme.overlayLightOpacity)
-                            ]),
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-                    .shadow(color: Color.purple.opacity(AppTheme.shadowDarkOpacity), radius: 10, x: 0, y: 5)
-            )
-            .padding(.horizontal, AppTheme.spacing20)
-            
+
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: AppTheme.spacing16) {
+                HStack(spacing: AppTheme.spacing12) {
                     ForEach(quickMatchRecipes.prefix(10)) { recipe in
                         NavigationLink(destination: RecipeDetailView(recipe: recipe, onFavoriteToggle: {
                             recipes = PersistenceController.shared.fetchRecipes()
@@ -433,11 +436,7 @@ struct KitchenView: View {
     
     private var matchCountText: String {
         let count = quickMatchRecipes.count
-        if count == 1 {
-            return "You can make this recipe right now!"
-        } else {
-            return "You can make \(count) recipes right now!"
-        }
+        return count == 1 ? "1 match" : "\(count) matches"
     }
     
     private func shareKitchenInventory() {

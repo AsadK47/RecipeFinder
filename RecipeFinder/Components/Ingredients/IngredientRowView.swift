@@ -20,7 +20,7 @@ struct IngredientRowView: View {
 
             // Left: quantity pill (fixed-width anchor so columns line up)
             Button(action: { onTapQuantity?() }) {
-                VStack(spacing: 2) {
+                HStack(spacing: 3) {
                     Text(formatQuantity(convertedIngredient.quantity))
                         .font(.subheadline)
                         .fontWeight(.bold)
