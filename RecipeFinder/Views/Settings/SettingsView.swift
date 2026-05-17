@@ -17,8 +17,7 @@ struct SettingsTabView: View {
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
-        NavigationStack {
-            ZStack {
+        ZStack {
                 AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
                 
@@ -241,7 +240,6 @@ struct SettingsTabView: View {
             }
         }
     }
-}
 
 struct SettingsCard<Content: View>: View {
     @Environment(\.colorScheme) var colorScheme

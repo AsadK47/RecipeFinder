@@ -43,8 +43,7 @@ struct CookTimerView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            ZStack {
+        ZStack {
                 AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
                 
@@ -164,7 +163,6 @@ struct CookTimerView: View {
                 .padding(.top, AppTheme.spacing60)
                 .padding(.horizontal, AppTheme.spacing20)
             }
-        }
         .onAppear {
             if keepScreenAwake {
                 UIApplication.shared.isIdleTimerDisabled = true

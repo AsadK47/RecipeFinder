@@ -95,6 +95,7 @@ struct MoreView: View {
             }
         }
     }
+}
 
 struct MoreCard<Content: View>: View {
     @Environment(\.colorScheme) var colorScheme
@@ -157,6 +158,7 @@ struct MoreRow: View {
         }
         .padding(.horizontal, AppTheme.spacing16)
         .padding(.vertical, AppTheme.spacing12)
+        .contentShape(Rectangle())
     }
 }
 

@@ -34,6 +34,7 @@ enum AppTheme {
     static let fontSize34: CGFloat = 34
     static let fontSize36: CGFloat = 36
     static let fontSize38: CGFloat = 38
+    static let fontSize40: CGFloat = 40
     static let fontSize42: CGFloat = 42
     static let fontSize50: CGFloat = 50
     static let fontSize55: CGFloat = 55

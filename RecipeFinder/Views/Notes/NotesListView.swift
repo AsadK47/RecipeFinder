@@ -57,8 +57,7 @@ struct NotesListView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            ZStack {
+        ZStack {
             AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
@@ -182,7 +181,6 @@ struct NotesListView: View {
                     notesList
                 }
             }
-        }
         .navigationBarHidden(true)
         .sheet(isPresented: $showNewNoteSheet) {
             NoteEditorView(note: nil) { note in
@@ -210,7 +208,7 @@ struct NotesListView: View {
         .onChange(of: notesManager.notes.count) { _, _ in
             updateTagCache()
         }
-        }
+    }
     }
     
     private func updateTagCache() {
