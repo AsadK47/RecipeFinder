@@ -108,7 +108,21 @@ struct AuthenticationView: View {
                                 )
                         )
                     }
-                    
+
+                    // TODO: Uncomment when Apple Developer account is active
+//                    SignInWithAppleButton(.signIn) { request in
+//                        request.requestedScopes = [.fullName, .email]
+//                    } onCompletion: { result in
+//                        if case .failure(let error) = result {
+//                            appleSignInManager.errorMessage = error.localizedDescription
+//                        } else {
+//                            appleSignInManager.signIn()
+//                        }
+//                    }
+//                    .signInWithAppleButtonStyle(colorScheme == .dark ? .white : .black)
+//                    .frame(height: AppTheme.height50)
+//                    .cornerRadius(AppTheme.cornerRadius12)
+
                     Button(action: { showSignUp = true }) {
                         Text("Don't have an account? **Sign Up**")
                             .font(.subheadline)
@@ -173,10 +187,12 @@ struct EmailSignInView: View {
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismiss
-    
+
+    #if DEBUG
     private let testEmail = "test@recipefinder.com"
     private let testPassword = "test123"
-    
+    #endif
+
     private var isValidEmail: Bool {
         let emailRegex = "^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
         let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)

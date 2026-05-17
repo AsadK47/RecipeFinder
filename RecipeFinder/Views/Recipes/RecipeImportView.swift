@@ -254,7 +254,8 @@ struct RecipeImportView: View {
                         difficulty: data.difficulty,
                         notes: generateImportNotes(from: data),
                         category: data.category,
-                        isFavorite: false
+                        isFavorite: false,
+                        imageURL: data.imageURL
                     )
                 ) { newRecipe in
                     onImport(newRecipe)

@@ -26,6 +26,7 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
         let difficulty: String?
         let category: String?
         let cuisine: String?
+        let imageURL: String?
     }
     
     func importRecipe(from url: URL, redirectCount: Int = 0) async {
@@ -124,7 +125,8 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
                 servings: parsed.servings,
                 difficulty: parsed.difficulty,
                 category: parsed.category,
-                cuisine: parsed.cuisine
+                cuisine: parsed.cuisine,
+                imageURL: parsed.imageURL
             )
             
             await MainActor.run {
@@ -531,7 +533,8 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
                 servings: nil,
                 difficulty: nil,
                 category: nil,
-                cuisine: nil
+                cuisine: nil,
+                imageURL: nil
             )
             
             extractedData = extracted

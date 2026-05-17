@@ -14,6 +14,7 @@ struct RecipeParser {
         var difficulty: String?
         var cuisine: String?
         var category: String?
+        var imageURL: String?
         var confidence: Double = 0.0
     }
     
@@ -21,13 +22,21 @@ struct RecipeParser {
         var result = ParsedRecipe()
         var confidenceScore = 0.0
         let maxScore = 8.0
-        
+
         if let jsonLD = extractJSONLD(from: html) {
-            return jsonLD
+            var enriched = jsonLD
+            if enriched.imageURL == nil {
+                enriched.imageURL = extractOGImage(from: html)
+            }
+            return enriched
         }
         
         if let wprm = extractWPRM(from: html) {
-            return wprm
+            var enriched = wprm
+            if enriched.imageURL == nil {
+                enriched.imageURL = extractOGImage(from: html)
+            }
+            return enriched
         }
         
         let text = cleanHTML(html)
@@ -74,7 +83,8 @@ struct RecipeParser {
             result.difficulty = difficulty
             confidenceScore += 0.5
         }
-        
+
+        result.imageURL = extractOGImage(from: html)
         result.confidence = confidenceScore / maxScore
         return result
     }
@@ -213,7 +223,19 @@ struct RecipeParser {
         } else if let cuisineArray = data["recipeCuisine"] as? [String], let first = cuisineArray.first {
             result.cuisine = first
         }
-        
+
+        if let imageString = data["image"] as? String {
+            result.imageURL = imageString
+        } else if let imageDict = data["image"] as? [String: Any], let url = imageDict["url"] as? String {
+            result.imageURL = url
+        } else if let imageArray = data["image"] as? [Any] {
+            if let first = imageArray.first as? String {
+                result.imageURL = first
+            } else if let first = imageArray.first as? [String: Any], let url = first["url"] as? String {
+                result.imageURL = url
+            }
+        }
+
         if result.name != nil && !result.ingredients.isEmpty && !result.instructions.isEmpty {
             return result
         }
@@ -1012,6 +1034,23 @@ struct RecipeParser {
             }
         }
         
+        return nil
+    }
+
+    static func extractOGImage(from html: String) -> String? {
+        let pattern = #"<meta[^>]+property=["\']og:image["\'][^>]+content=["\']([^"\']+)["\']"#
+        if let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive]),
+           let match = regex.firstMatch(in: html, options: [], range: NSRange(html.startIndex..., in: html)),
+           let range = Range(match.range(at: 1), in: html) {
+            return String(html[range])
+        }
+        // Also handle reversed attribute order: content first, property second
+        let patternReversed = #"<meta[^>]+content=["\']([^"\']+)["\'][^>]+property=["\']og:image["\']"#
+        if let regex = try? NSRegularExpression(pattern: patternReversed, options: [.caseInsensitive]),
+           let match = regex.firstMatch(in: html, options: [], range: NSRange(html.startIndex..., in: html)),
+           let range = Range(match.range(at: 1), in: html) {
+            return String(html[range])
+        }
         return nil
     }
 }

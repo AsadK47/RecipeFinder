@@ -22,6 +22,7 @@ struct RecipeWizardView: View {
         let notes: String?
         let category: String?
         let isFavorite: Bool?
+        let imageURL: String?
     }
     
     @State private var currentStep = 0
@@ -881,7 +882,7 @@ struct RecipeWizardView: View {
             prePrepInstructions: filteredPrePrep,
             instructions: filteredInstructions,
             notes: notes,
-            imageName: nil,
+            imageName: prefilledData?.imageURL,
             isFavorite: isFavorite
         )
         

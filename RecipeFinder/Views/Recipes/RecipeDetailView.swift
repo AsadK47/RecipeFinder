@@ -493,7 +493,8 @@ struct RecipeDetailView: View {
                 difficulty: recipe.difficulty,
                 notes: recipe.notes.isEmpty ? nil : recipe.notes,
                 category: recipe.category,
-                isFavorite: recipe.isFavorite
+                isFavorite: recipe.isFavorite,
+                imageURL: recipe.imageName?.hasPrefix("http") == true ? recipe.imageName : nil
             ),
             editingRecipeId: recipe.id,
             onComplete: { updatedRecipe in

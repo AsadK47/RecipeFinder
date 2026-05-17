@@ -94,6 +94,54 @@ final class RecipeParserTests: XCTestCase {
         XCTAssertLessThan(result.confidence, 0.5)
     }
 
+    // MARK: - Image URL extraction
+
+    func testParse_jsonLD_extractsImageURL_fromStringValue() {
+        let html = jsonLDHTML(image: "\"https://example.com/pasta.jpg\"")
+        let result = RecipeParser.parse(html: html)
+        XCTAssertEqual(result.imageURL, "https://example.com/pasta.jpg")
+    }
+
+    func testParse_jsonLD_extractsImageURL_fromObjectWithURL() {
+        let html = jsonLDHTML(image: "{\"@type\":\"ImageObject\",\"url\":\"https://example.com/risotto.jpg\"}")
+        let result = RecipeParser.parse(html: html)
+        XCTAssertEqual(result.imageURL, "https://example.com/risotto.jpg")
+    }
+
+    func testParse_jsonLD_extractsImageURL_fromArray() {
+        let html = jsonLDHTML(image: "[\"https://example.com/first.jpg\",\"https://example.com/second.jpg\"]")
+        let result = RecipeParser.parse(html: html)
+        XCTAssertEqual(result.imageURL, "https://example.com/first.jpg")
+    }
+
+    func testParse_ogImage_extractsImageURL_whenNoJSONLD() {
+        let html = """
+        <html><head>
+        <meta property="og:image" content="https://example.com/og-image.jpg" />
+        </head><body></body></html>
+        """
+        let result = RecipeParser.parse(html: html)
+        XCTAssertEqual(result.imageURL, "https://example.com/og-image.jpg")
+    }
+
+    func testParse_noImage_returnsNilImageURL() {
+        let html = jsonLDHTML()
+        let result = RecipeParser.parse(html: html)
+        XCTAssertNil(result.imageURL)
+    }
+
+    func testParse_jsonLDWinsOverOGImage_whenBothPresent() {
+        let ogHTML = """
+        <html><head>
+        <meta property="og:image" content="https://example.com/og.jpg" />
+        </head><body>
+        \(jsonLDHTML(image: "\"https://example.com/jsonld.jpg\""))
+        </body></html>
+        """
+        let result = RecipeParser.parse(html: ogHTML)
+        XCTAssertEqual(result.imageURL, "https://example.com/jsonld.jpg")
+    }
+
     // MARK: - Idempotency
 
     func testParse_calledTwice_returnsSameResult() {
@@ -113,10 +161,12 @@ final class RecipeParserTests: XCTestCase {
         instructions: [String] = ["Mix everything together and bake for 30 minutes."],
         prepTime: String = "PT10M",
         cookTime: String = "PT20M",
-        recipeYield: String = "4"
+        recipeYield: String = "4",
+        image: String? = nil
     ) -> String {
         let ingredientsJSON = ingredients.map { "\"\($0)\"" }.joined(separator: ", ")
         let instructionsJSON = instructions.map { "{\"@type\":\"HowToStep\",\"text\":\"\($0)\"}" }.joined(separator: ", ")
+        let imageJSON = image.map { ",\n          \"image\": \($0)" } ?? ""
 
         return """
         <html><head>
@@ -129,7 +179,7 @@ final class RecipeParserTests: XCTestCase {
           "recipeInstructions": [\(instructionsJSON)],
           "prepTime": "\(prepTime)",
           "cookTime": "\(cookTime)",
-          "recipeYield": \(recipeYield)
+          "recipeYield": \(recipeYield)\(imageJSON)
         }
         </script>
         </head><body></body></html>

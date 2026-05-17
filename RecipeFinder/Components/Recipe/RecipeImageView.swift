@@ -17,6 +17,16 @@ struct RecipeImageView: View {
         self.height = height
     }
 
+    private var placeholder: some View {
+        ZStack {
+            Color.gray.opacity(Layout.placeholderBackgroundOpacity)
+            Image(systemName: "photo")
+                .font(.system(size: AppTheme.fontSize42))
+                .foregroundColor(.gray.opacity(Layout.placeholderIconOpacity))
+        }
+        .frame(height: height)
+    }
+
     var body: some View {
         Group {
             if let cachedImage = cachedImage {
@@ -25,6 +35,25 @@ struct RecipeImageView: View {
                     .scaledToFill()
                     .frame(height: height)
                     .clipped()
+            } else if let imageName = imageName, imageName.hasPrefix("http"), let url = URL(string: imageName) {
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .scaledToFill()
+                            .frame(height: height)
+                            .clipped()
+                    case .failure:
+                        placeholder
+                    case .empty:
+                        Color.gray.opacity(Layout.placeholderBackgroundOpacity)
+                            .frame(height: height)
+                            .overlay(ProgressView())
+                    @unknown default:
+                        placeholder
+                    }
+                }
             } else if let imageName = imageName, !imageName.isEmpty, let uiImage = UIImage(named: imageName) {
                 Image(uiImage: uiImage)
                     .resizable()
@@ -35,14 +64,7 @@ struct RecipeImageView: View {
                         cachedImage = uiImage
                     }
             } else {
-                ZStack {
-                    Color.gray.opacity(Layout.placeholderBackgroundOpacity)
-
-                    Image(systemName: "photo")
-                        .font(.system(size: AppTheme.fontSize42))
-                        .foregroundColor(.gray.opacity(Layout.placeholderIconOpacity))
-                }
-                .frame(height: height)
+                placeholder
             }
         }
         .frame(height: height)
