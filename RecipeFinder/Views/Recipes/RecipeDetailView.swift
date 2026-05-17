@@ -22,7 +22,6 @@ struct RecipeDetailView: View {
     
     private var hasPrePrep: Bool { !recipe.prePrepInstructions.isEmpty }
     private var hasNotes: Bool { !recipe.notes.isEmpty }
-    private var notesSentences: [Substring] { recipe.notes.split(separator: ".") }
     
     var onFavoriteToggle: (() -> Void)?
     
@@ -447,22 +446,11 @@ struct RecipeDetailView: View {
     
     private var notesSection: some View {
         collapsibleSection(title: "Notes", icon: "note.text") {
-            VStack(alignment: .leading, spacing: AppTheme.spacing8) {
-                ForEach(notesSentences, id: \.self) { sentence in
-                    let trimmed = sentence.trimmingCharacters(in: .whitespaces)
-                    if !trimmed.isEmpty {
-                        HStack(alignment: .top, spacing: AppTheme.spacing8) {
-                            Image(systemName: "circle.fill")
-                                .font(.system(size: AppTheme.fontSize6))
-                                .foregroundColor(.orange)
-                                .padding(.top, AppTheme.spacing6)
-                            Text(trimmed)
-                                .font(.subheadline)
-                                .foregroundColor(.primary)
-                        }
-                    }
-                }
-            }
+            Text(recipe.notes)
+                .font(.subheadline)
+                .foregroundColor(.primary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
     

@@ -9,9 +9,14 @@ struct RecipeImportView: View {
     @StateObject private var importer = RecipeImporter()
     @State private var urlText = ""
     @FocusState private var isTextFieldFocused: Bool
-    @State private var showRecipeWizard = false
     @State private var loadingStage: LoadingStage = .idle
-    
+    @State private var pendingRecipe: RecipeModel?
+    @State private var showDuplicateAlert = false
+    private let builder = RecipeImportBuilder()
+
+    var existingNames: [String] = []
+    var onImport: (RecipeModel) -> Void
+
     enum LoadingStage {
         case idle
         case fetching
@@ -39,8 +44,6 @@ struct RecipeImportView: View {
             }
         }
     }
-    
-    var onImport: (RecipeModel) -> Void
     
     var body: some View {
         NavigationView {
@@ -235,94 +238,25 @@ struct RecipeImportView: View {
                 }
             }
         }
-        .onChange(of: importer.extractedData) { _, newValue in
-            if newValue != nil {
-                showRecipeWizard = true
+        .alert(
+            "Recipe Already Saved",
+            isPresented: $showDuplicateAlert,
+            presenting: pendingRecipe
+        ) { recipe in
+            Button("Import Anyway") {
+                onImport(recipe)
+                pendingRecipe = nil
+                dismiss()
             }
-        }
-        .sheet(isPresented: $showRecipeWizard) {
-            if let data = importer.extractedData {
-                RecipeWizardView(
-                    prefilledData: RecipeWizardView.PrefilledRecipeData(
-                        name: data.name,
-                        description: data.description,
-                        ingredients: data.rawIngredients,
-                        instructions: data.instructions,
-                        prepTime: data.prepTimeMinutes,
-                        cookTime: data.cookTimeMinutes,
-                        servings: data.servings,
-                        difficulty: data.difficulty,
-                        notes: generateImportNotes(from: data),
-                        category: data.category,
-                        isFavorite: false,
-                        imageURL: data.imageURL
-                    )
-                ) { newRecipe in
-                    onImport(newRecipe)
-                    showRecipeWizard = false
-                    dismiss()
-                }
+            Button("Cancel", role: .cancel) {
+                pendingRecipe = nil
             }
+        } message: { recipe in
+            Text("\"\(recipe.name)\" is already in your recipes. Import as a duplicate?")
         }
+
     }
-    
-    private func generateImportNotes(from data: RecipeImporter.ExtractedRecipeData) -> String {
-        var notes: [String] = []
-        
-        if let description = data.description, !description.isEmpty {
-            let cleanDescription = description
-                .trimmingCharacters(in: .whitespacesAndNewlines)
-                .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
-            notes.append(cleanDescription)
-        }
-        
-        if let cuisine = data.cuisine, !cuisine.isEmpty {
-            notes.append("")
-            notes.append("💡 Cuisine: \(cuisine)")
-        }
-        
-        if let category = data.category {
-            let pairingSuggestion = getPairingSuggestion(for: category)
-            if !pairingSuggestion.isEmpty {
-                notes.append("")
-                notes.append(pairingSuggestion)
-            }
-        }
-        
-        notes.append("")
-        let domain = data.sourceURL.host ?? "Unknown"
-        let cleanDomain = domain.replacingOccurrences(of: "www.", with: "")
-        notes.append("---")
-        notes.append("Imported from \(cleanDomain)")
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
-        notes.append("Imported \(dateFormatter.string(from: Date()))")
-        
-        return notes.joined(separator: "\n")
-    }
-    
-    private func getPairingSuggestion(for category: String) -> String {
-        switch category.lowercased() {
-        case "main", "dinner", "entree", "entrée":
-            return "🍽️ Perfect for pairing with rice, naan, or your favorite sides."
-        case "dessert", "sweet":
-            return "🍰 Great with coffee, tea, or as a sweet treat after dinner."
-        case "breakfast":
-            return "☕ Best enjoyed fresh in the morning with coffee or juice."
-        case "appetizer", "starter":
-            return "🥗 Ideal as a starter or party appetizer."
-        case "soup", "stew":
-            return "🍲 Serve hot with crusty bread or crackers."
-        case "salad":
-            return "🥗 Light and refreshing as a side or main course."
-        case "drink", "beverage":
-            return "🥤 Serve chilled or at the recommended temperature."
-        default:
-            return ""
-        }
-    }
-    
+
     private func exampleButton(url: String, title: String, subtitle: String) -> some View {
         Button(
             action: { 
@@ -375,13 +309,27 @@ struct RecipeImportView: View {
             
             await importerRef.importRecipe(from: url)
             
-            if importerRef.extractedData != nil {
+            if let data = importerRef.extractedData {
                 loadingStage = .extracting
                 try? await Task.sleep(nanoseconds: AppTheme.hapticIntervalLong)
-                
+
                 loadingStage = .complete
                 HapticManager.shared.success()
                 try? await Task.sleep(nanoseconds: AppTheme.hapticIntervalBase)
+
+                let recipe = builder.build(from: data)
+                let isDuplicate = existingNames.contains {
+                    $0.trimmingCharacters(in: .whitespaces).lowercased() ==
+                    recipe.name.trimmingCharacters(in: .whitespaces).lowercased()
+                }
+                if isDuplicate {
+                    pendingRecipe = recipe
+                    loadingStage = .idle
+                    showDuplicateAlert = true
+                } else {
+                    onImport(recipe)
+                    dismiss()
+                }
             } else {
                 loadingStage = .idle
                 HapticManager.shared.error()

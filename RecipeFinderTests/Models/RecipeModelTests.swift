@@ -101,6 +101,14 @@ final class RecipeModelTests: XCTestCase {
         XCTAssertEqual(IngredientNameFormatter.extractMainName("Garlic Cloves ((Leave Whole))"), "Garlic Cloves")
     }
 
+    func testExtractMainName_stripsLeadingRangeDash() {
+        XCTAssertEqual(IngredientNameFormatter.extractMainName("- 1 Cup Plain Whole Milk Yogurt"), "Plain Whole Milk Yogurt")
+    }
+
+    func testExtractMainName_stripsLeadingQuantityAndUnit() {
+        XCTAssertEqual(IngredientNameFormatter.extractMainName("1/4 Tsp Kosher Salt"), "Kosher Salt")
+    }
+
     // MARK: - IngredientNameFormatter.extractPreparationNotes
 
     func testExtractPreparationNotes_noNotes_returnsNil() {

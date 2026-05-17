@@ -589,7 +589,7 @@ struct RecipeSearchView: View {
     }
     
     private var recipeImportSheet: some View {
-        RecipeImportView { importedRecipe in
+        RecipeImportView(existingNames: recipes.map { $0.name }) { importedRecipe in
             recipes.append(importedRecipe)
             
             PersistenceController.shared.saveRecipeModel(importedRecipe)

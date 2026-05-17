@@ -79,8 +79,24 @@ struct IngredientNameFormatter {
     }
     
     static func extractMainName(_ name: String) -> String {
-        // Strip parenthetical content (handles nested and unclosed parens)
         var result = name
+
+        // Strip leading range prefix like "- 1 cup " or "– 1 "
+        if let regex = try? NSRegularExpression(pattern: #"^[-–]\s+"#, options: []),
+           let match = regex.firstMatch(in: result, options: [], range: NSRange(result.startIndex..., in: result)),
+           let range = Range(match.range, in: result) {
+            result = String(result[range.upperBound...]).trimmingCharacters(in: .whitespaces)
+        }
+
+        // Strip leading quantity+unit (handles already-saved strings like "1/4 tsp kosher salt", "1 cup oil")
+        let qtyUnitPattern = #"^[\d/\.\-]+\s+(tbsp|tsp|cups?|ml|l|g|kg|oz|lbs?|inch(?:es)?)\s+"#
+        if let regex = try? NSRegularExpression(pattern: qtyUnitPattern, options: [.caseInsensitive]),
+           let match = regex.firstMatch(in: result, options: [], range: NSRange(result.startIndex..., in: result)),
+           let range = Range(match.range, in: result) {
+            result = String(result[range.upperBound...]).trimmingCharacters(in: .whitespaces)
+        }
+
+        // Strip parenthetical content (handles nested and unclosed parens)
         if let parenStart = result.firstIndex(of: "(") {
             result = String(result[..<parenStart]).trimmingCharacters(in: .whitespaces)
         }

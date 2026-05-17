@@ -897,6 +897,16 @@ struct RecipeWizardView: View {
         let quantityPattern = #"^([\d\./\-]+)\s+"#
         var quantity = ""
         var remaining = trimmed
+
+        // Normalise range amounts like "3/4 – 1" or "¾-1" — take the upper bound
+        let rangePattern = #"^[\d/\.]+\s*[-–]\s*([\d/\.]+)\s+"#
+        if let regex = try? NSRegularExpression(pattern: rangePattern, options: []) {
+            let nsRemaining = remaining as NSString
+            if let match = regex.firstMatch(in: remaining, options: [], range: NSRange(location: 0, length: nsRemaining.length)) {
+                quantity = nsRemaining.substring(with: match.range(at: 1))
+                remaining = nsRemaining.substring(from: match.range.location + match.range.length)
+            }
+        }
         
         if let regex = try? NSRegularExpression(pattern: quantityPattern, options: []) {
             let nsString = trimmed as NSString
@@ -907,7 +917,7 @@ struct RecipeWizardView: View {
             }
         }
         
-        let unitPattern = #"^(tbsp|tsp|cup|cups|ml|l|liter|liters|g|kg|oz|lb|lbs|cloves|clove|pieces|piece|pinch|dash)(\s+|$)"#
+        let unitPattern = #"^(tbsp|tsp|cups?|ml|l|liter|liters|g|kg|oz|lbs?|cloves?|pieces?|pinch|dash|inch(?:es)?)(?:\s+|$)"#
         var unit = ""
         
         if let regex = try? NSRegularExpression(pattern: unitPattern, options: .caseInsensitive) {
