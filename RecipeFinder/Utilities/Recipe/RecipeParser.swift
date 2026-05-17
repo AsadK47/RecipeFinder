@@ -120,27 +120,26 @@ struct RecipeParser {
     
     private static func parseRecipeFromJSON(_ json: Any) -> ParsedRecipe? {
         var recipeData: [String: Any]?
-        
+
+        func isRecipeType(_ item: [String: Any]) -> Bool {
+            if let type = item["@type"] as? String {
+                return type == "Recipe"
+            } else if let types = item["@type"] as? [String] {
+                return types.contains("Recipe")
+            }
+            return false
+        }
+
         if let dict = json as? [String: Any] {
-            if let type = dict["@type"] as? String, type == "Recipe" {
+            if isRecipeType(dict) {
                 recipeData = dict
             } else if let graph = dict["@graph"] as? [[String: Any]] {
-                recipeData = graph.first { item in
-                    if let type = item["@type"] as? String {
-                        return type == "Recipe"
-                    }
-                    return false
-                }
+                recipeData = graph.first { isRecipeType($0) }
             }
         } else if let array = json as? [[String: Any]] {
-            recipeData = array.first { item in
-                if let type = item["@type"] as? String {
-                    return type == "Recipe"
-                }
-                return false
-            }
+            recipeData = array.first { isRecipeType($0) }
         }
-        
+
         guard let data = recipeData else {
             return nil
         }
@@ -236,10 +235,11 @@ struct RecipeParser {
             }
         }
 
-        if result.name != nil && !result.ingredients.isEmpty && !result.instructions.isEmpty {
+        // Return if we have at minimum a name + ingredients (instructions are a bonus)
+        if result.name != nil && !result.ingredients.isEmpty {
             return result
         }
-        
+
         return nil
     }
     

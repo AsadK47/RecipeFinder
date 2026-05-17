@@ -80,6 +80,36 @@ final class RecipeParserTests: XCTestCase {
         XCTAssertEqual(result.name, "Risotto")
     }
 
+    // MARK: - @type as array (e.g. Smitten Kitchen / WordPress)
+
+    func testParse_jsonLD_typeArray_extractsName() {
+        let html = jsonLDHTML_typeArray(name: "Braised Leeks")
+        let result = RecipeParser.parse(html: html)
+        XCTAssertEqual(result.name, "Braised Leeks")
+    }
+
+    func testParse_jsonLD_typeArray_extractsIngredients() {
+        let html = jsonLDHTML_typeArray(ingredients: ["1 bundle leeks", "Olive oil"])
+        let result = RecipeParser.parse(html: html)
+        XCTAssertEqual(result.ingredients, ["1 bundle leeks", "Olive oil"])
+    }
+
+    func testParse_jsonLD_graphTypeArray_extractsRecipe() {
+        let html = jsonLDGraphHTML_typeArray(name: "Lentil Soup")
+        let result = RecipeParser.parse(html: html)
+        XCTAssertEqual(result.name, "Lentil Soup")
+    }
+
+    // MARK: - Recipe with no instructions still succeeds
+
+    func testParse_jsonLD_noInstructions_stillReturnsRecipe() {
+        let html = jsonLDHTML_noInstructions(name: "Simple Salad", ingredients: ["Lettuce", "Dressing"])
+        let result = RecipeParser.parse(html: html)
+        XCTAssertEqual(result.name, "Simple Salad")
+        XCTAssertFalse(result.ingredients.isEmpty)
+        // Instructions being empty is acceptable — we don't fail the parse
+    }
+
     // MARK: - Empty / garbage HTML
 
     func testParse_emptyHTML_returnsEmptyResult() {
@@ -201,6 +231,68 @@ final class RecipeParserTests: XCTestCase {
               "recipeInstructions": [{"@type":"HowToStep","text":"Toast the rice in butter for two minutes."}]
             }
           ]
+        }
+        </script>
+        </head><body></body></html>
+        """
+    }
+
+    /// JSON-LD where "@type" is an array — as used by Smitten Kitchen and other WordPress sites.
+    private func jsonLDHTML_typeArray(
+        name: String = "Test Recipe",
+        ingredients: [String] = ["1 cup flour"],
+        instructions: [String] = ["Mix everything together and bake for 30 minutes."]
+    ) -> String {
+        let ingredientsJSON = ingredients.map { "\"\($0)\"" }.joined(separator: ", ")
+        let instructionsJSON = instructions.map { "{\"@type\":\"HowToStep\",\"text\":\"\($0)\"}" }.joined(separator: ", ")
+        return """
+        <html><head>
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": ["Recipe"],
+          "name": "\(name)",
+          "recipeIngredient": [\(ingredientsJSON)],
+          "recipeInstructions": [\(instructionsJSON)]
+        }
+        </script>
+        </head><body></body></html>
+        """
+    }
+
+    /// JSON-LD @graph where the Recipe node has "@type" as an array.
+    private func jsonLDGraphHTML_typeArray(name: String) -> String {
+        """
+        <html><head>
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@graph": [
+            { "@type": ["WebSite"], "name": "Food Blog" },
+            {
+              "@type": ["Recipe"],
+              "name": "\(name)",
+              "recipeIngredient": ["1 cup lentils"],
+              "recipeInstructions": [{"@type":"HowToStep","text":"Simmer lentils until tender."}]
+            }
+          ]
+        }
+        </script>
+        </head><body></body></html>
+        """
+    }
+
+    /// JSON-LD with no recipeInstructions field at all.
+    private func jsonLDHTML_noInstructions(name: String, ingredients: [String]) -> String {
+        let ingredientsJSON = ingredients.map { "\"\($0)\"" }.joined(separator: ", ")
+        return """
+        <html><head>
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "Recipe",
+          "name": "\(name)",
+          "recipeIngredient": [\(ingredientsJSON)]
         }
         </script>
         </head><body></body></html>

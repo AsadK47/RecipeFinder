@@ -103,11 +103,10 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
             guard !parsed.ingredients.isEmpty else {
                 throw ImportError.missingRequiredData("No ingredients found")
             }
-            
-            guard !parsed.instructions.isEmpty else {
-                throw ImportError.missingRequiredData("No instructions found")
-            }
-            
+
+            // Instructions are optional — many sites structure them in ways the parser misses
+            let instructions = parsed.instructions.isEmpty ? ["See original recipe for instructions."] : parsed.instructions
+
             let matchedIngredients = matchIngredientsWithUSDA(parsed.ingredients)
             
             logger.debug("✅ Matched \(matchedIngredients.count)/\(parsed.ingredients.count) ingredients")
@@ -118,7 +117,7 @@ final class RecipeImporter: ObservableObject, @unchecked Sendable {
                 matchedIngredients: matchedIngredients,
                 rawIngredients: parsed.ingredients,
                 rawText: parsed.ingredients.joined(separator: "\n"),
-                instructions: parsed.instructions,
+                instructions: instructions,
                 sourceURL: url,
                 cookTimeMinutes: parsed.cookTime,
                 prepTimeMinutes: parsed.prepTime,
