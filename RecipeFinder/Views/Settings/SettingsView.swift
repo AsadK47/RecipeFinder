@@ -300,6 +300,7 @@ struct SettingsRow: View {
                 .font(.caption)
                 .foregroundColor(.gray)
         }
+        .contentShape(Rectangle())
     }
 }
 
