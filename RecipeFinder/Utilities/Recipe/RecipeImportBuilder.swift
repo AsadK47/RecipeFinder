@@ -183,7 +183,8 @@ struct RecipeImportBuilder {
         if !lines.isEmpty { lines.append("") }
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .medium
-        lines.append("Imported from \(data.sourceURL.absoluteString) · \(dateFormatter.string(from: Date()))")
+        lines.append("Imported · \(dateFormatter.string(from: Date()))")
+        lines.append(data.sourceURL.absoluteString)
 
         return lines.joined(separator: "\n")
     }

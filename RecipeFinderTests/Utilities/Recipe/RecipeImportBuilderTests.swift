@@ -240,7 +240,8 @@ final class RecipeImportBuilderTests: XCTestCase {
 
     func testBuildNotes_includesSourceURL() {
         let notes = builder.buildNotes(from: makeData())
-        XCTAssertTrue(notes.contains("Imported from https://example.com/recipe"))
+        XCTAssertTrue(notes.contains("https://example.com/recipe"))
+        XCTAssertTrue(notes.contains("Imported ·"))
     }
 
     func testBuildNotes_includesFullURLIncludingWWW() {
@@ -253,11 +254,10 @@ final class RecipeImportBuilderTests: XCTestCase {
             servings: nil, difficulty: nil, category: nil, cuisine: nil, imageURL: nil
         )
         let notes = builder.buildNotes(from: data)
-        XCTAssertTrue(notes.contains("Imported from https://www.foodnetwork.com/recipe"))
+        XCTAssertTrue(notes.contains("https://www.foodnetwork.com/recipe"))
     }
 
-    func testBuildNotes_domainAndDateOnSingleLine() {
-        // Regression: previously "teaforturmeric.com" split across two lines
+    func testBuildNotes_urlOnOwnLine() {
         let data = RecipeImporter.ExtractedRecipeData(
             name: "Curry", description: nil,
             matchedIngredients: [], rawIngredients: [], rawText: "",
@@ -268,10 +268,8 @@ final class RecipeImportBuilderTests: XCTestCase {
         )
         let notes = builder.buildNotes(from: data)
         let lines = notes.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
-        // The domain line must appear on a single line and include ".com"
-        XCTAssertTrue(lines.contains { $0.contains("teaforturmeric.com") })
-        // No line should be just "com"
-        XCTAssertFalse(lines.contains { $0.trimmingCharacters(in: .whitespaces) == "com" })
+        // URL must be alone on its own line so it's tappable without surrounding text
+        XCTAssertTrue(lines.contains("https://teaforturmeric.com/beef-curry"))
     }
 
     func testBuildNotes_noPairingSuggestions() {

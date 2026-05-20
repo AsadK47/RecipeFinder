@@ -444,12 +444,28 @@ struct RecipeDetailView: View {
     
     private var notesSection: some View {
         collapsibleSection(title: "Notes", icon: "note.text") {
-            Text(recipe.notes)
+            Text(notesAttributedString)
                 .font(.subheadline)
                 .foregroundColor(.primary)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .fixedSize(horizontal: false, vertical: true)
         }
+    }
+
+    private var notesAttributedString: AttributedString {
+        var attributed = AttributedString(recipe.notes)
+        let detector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
+        let raw = recipe.notes
+        let matches = detector?.matches(in: raw, range: NSRange(raw.startIndex..., in: raw)) ?? []
+        for match in matches {
+            guard let url = match.url,
+                  let range = Range(match.range, in: raw),
+                  let attrRange = Range(range, in: attributed) else { continue }
+            attributed[attrRange].link = url
+            attributed[attrRange].foregroundColor = .accentColor
+            attributed[attrRange].underlineStyle = .single
+        }
+        return attributed
     }
     
     private var toolbarButtons: some View {
