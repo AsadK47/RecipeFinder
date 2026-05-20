@@ -151,6 +151,7 @@
 		9EDBD52E2EE8593F00DC2503 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9EDBD52D2EE8593F00DC2503 /* Assets.xcassets */; };
 		9EE5AAD92D08FCBE00C1B736 /* RecipeFinderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EE5AAD82D08FCBE00C1B736 /* RecipeFinderApp.swift */; };
 		9EE5AADB2D08FCBE00C1B736 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EE5AADA2D08FCBE00C1B736 /* ContentView.swift */; };
+		9EF757632FBDBDD30012B2B7 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 9EF757622FBDBDD30012B2B7 /* Kingfisher */; };
 		E1E3999F6BA145A4AE306B63 /* AppLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAEF6AE737314EC1A6FB2B6A /* AppLaunchTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -339,6 +340,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9EF757632FBDBDD30012B2B7 /* Kingfisher in Frameworks */,
 				9E09461E2EFB8BA20072BDFE /* ConfettiSwiftUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1126,6 +1128,7 @@
 			mainGroup = 9EE5AACC2D08FCBE00C1B736;
 			packageReferences = (
 				9E09461C2EFB8BA20072BDFE /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
+				9EF757612FBDBDD30012B2B7 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 			);
 			productRefGroup = 9EE5AAD62D08FCBE00C1B736 /* Products */;
 			projectDirPath = "";
@@ -1657,6 +1660,14 @@
 				minimumVersion = 2.0.3;
 			};
 		};
+		9EF757612FBDBDD30012B2B7 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.9.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1664,6 +1675,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 9E09461C2EFB8BA20072BDFE /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
 			productName = ConfettiSwiftUI;
+		};
+		9EF757622FBDBDD30012B2B7 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9EF757612FBDBDD30012B2B7 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
 		};
 /* End XCSwiftPackageProductDependency section */
 

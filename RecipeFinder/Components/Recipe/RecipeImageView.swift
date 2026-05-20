@@ -1,10 +1,9 @@
 import SwiftUI
+import Kingfisher
 
 struct RecipeImageView: View {
     let imageName: String?
     let height: CGFloat
-
-    @State private var cachedImage: UIImage?
 
     private enum Layout {
         static let defaultHeight: CGFloat = 200
@@ -29,40 +28,20 @@ struct RecipeImageView: View {
 
     var body: some View {
         Group {
-            if let cachedImage = cachedImage {
-                Image(uiImage: cachedImage)
+            if let imageName = imageName, imageName.hasPrefix("http"), let url = URL(string: imageName) {
+                KFImage(url)
+                    .placeholder { placeholder }
+                    .fade(duration: 0.25)
                     .resizable()
                     .scaledToFill()
                     .frame(height: height)
                     .clipped()
-            } else if let imageName = imageName, imageName.hasPrefix("http"), let url = URL(string: imageName) {
-                AsyncImage(url: url) { phase in
-                    switch phase {
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFill()
-                            .frame(height: height)
-                            .clipped()
-                    case .failure:
-                        placeholder
-                    case .empty:
-                        Color.gray.opacity(Layout.placeholderBackgroundOpacity)
-                            .frame(height: height)
-                            .overlay(ProgressView())
-                    @unknown default:
-                        placeholder
-                    }
-                }
             } else if let imageName = imageName, !imageName.isEmpty, let uiImage = UIImage(named: imageName) {
                 Image(uiImage: uiImage)
                     .resizable()
                     .scaledToFill()
                     .frame(height: height)
                     .clipped()
-                    .onAppear {
-                        cachedImage = uiImage
-                    }
             } else {
                 placeholder
             }
