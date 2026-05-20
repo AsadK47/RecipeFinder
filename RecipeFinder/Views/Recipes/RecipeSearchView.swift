@@ -212,7 +212,7 @@ struct RecipeSearchView: View {
     
     private var recipeContentArea: some View {
         Group {
-            if filteredRecipes.isEmpty {
+            if filteredRecipes.filter({ !$0.isSampleRecipe }).isEmpty {
                 emptyStateView
             } else {
                 recipeListView

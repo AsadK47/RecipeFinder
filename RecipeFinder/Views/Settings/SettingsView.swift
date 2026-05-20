@@ -14,50 +14,12 @@ struct SettingsTabView: View {
     @State private var profileImage: UIImage?
     @State private var refreshID = UUID()
     @State private var showMenu = false
-    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         ZStack {
                 AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
                 
-                VStack(spacing: 0) {
-                    GeometryReader { geometry in
-                        let buttonSize = max(44, geometry.size.width * 0.11)
-                        let horizontalPadding = geometry.size.width * 0.05
-                        let headerSpacing = geometry.size.width * 0.03
-                        
-                        VStack(spacing: headerSpacing) {
-                            HStack(spacing: 0) {
-                                Button(action: {
-                                    dismiss()
-                                }) {
-                                    Image(systemName: "chevron.left")
-                                        .font(.title3)
-                                        .adaptiveForegroundColor()
-                                        .frame(width: buttonSize, height: buttonSize)
-                                }
-                                
-                                Spacer()
-                                
-                                Text("Settings")
-                                    .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                                    .adaptiveForegroundColor()
-                                    .lineLimit(1)
-                                    .minimumScaleFactor(0.7)
-                                
-                                Spacer()
-                                
-                                Color.clear
-                                    .frame(width: buttonSize, height: buttonSize)
-                            }
-                            .frame(height: buttonSize)
-                            .padding(.horizontal, horizontalPadding)
-                            .padding(.top, horizontalPadding * 0.8)
-                        }
-                    }
-                    .frame(height: max(72, UIScreen.main.bounds.width * AppTheme.bannerHeightRatio))
-                    
                     ScrollView {
                         VStack(spacing: AppTheme.spacing20) {
                             SettingsCard {
@@ -87,12 +49,6 @@ struct SettingsTabView: View {
                                             Text(accountManager.fullName.isEmpty ? "Account" : accountManager.fullName)
                                                 .font(.headline)
                                                 .adaptiveForegroundColor()
-                                            
-                                            if let email = authManager.currentUser?.email, !email.isEmpty {
-                                                Text(email)
-                                                    .font(.subheadline)
-                                                    .foregroundColor(.secondary)
-                                            }
                                             
                                             Text("Profile & Settings")
                                                 .font(.caption)
@@ -225,8 +181,9 @@ struct SettingsTabView: View {
                         .padding(.top, AppTheme.spacing20)
                     }
                 }
-            }
-            .toolbar(.hidden, for: .navigationBar)
+            .navigationTitle("Settings")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.hidden, for: .navigationBar)
             .onAppear {
                 profileImage = accountManager.loadProfileImage()
                 refreshID = UUID()
@@ -309,50 +266,12 @@ struct AppearanceAndThemeSettingsView: View {
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
-    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         ZStack {
             AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
-            VStack(spacing: 0) {
-                GeometryReader { geometry in
-                    let buttonSize = max(44, geometry.size.width * 0.11)
-                    let horizontalPadding = geometry.size.width * 0.05
-                    let headerSpacing = geometry.size.width * 0.03
-                    
-                    VStack(spacing: headerSpacing) {
-                        HStack(spacing: 0) {
-                            Button(action: {
-                                dismiss()
-                            }) {
-                                Image(systemName: "chevron.left")
-                                    .font(.title3)
-                                    .adaptiveForegroundColor()
-                                    .frame(width: buttonSize, height: buttonSize)
-                            }
-                            
-                            Spacer()
-                            
-                            Text("Appearance & Theme")
-                                .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                                .adaptiveForegroundColor()
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.7)
-                            
-                            Spacer()
-                            
-                            Color.clear
-                                .frame(width: buttonSize, height: buttonSize)
-                        }
-                        .frame(height: buttonSize)
-                        .padding(.horizontal, horizontalPadding)
-                        .padding(.top, horizontalPadding * 0.8)
-                    }
-                }
-                .frame(height: max(72, UIScreen.main.bounds.width * AppTheme.bannerHeightRatio))
-                
                 ScrollView {
                     VStack(spacing: AppTheme.spacing32) {
                         SettingsCard {
@@ -417,11 +336,12 @@ struct AppearanceAndThemeSettingsView: View {
                     }
                 }
                 .padding(AppTheme.spacing24)
-            }
         }
-        }
-        .toolbar(.hidden, for: .navigationBar)
+        .navigationTitle("Appearance & Theme")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
     }
+}
 }
 
 struct AppearanceSettingsView: View {
@@ -724,7 +644,6 @@ struct NotificationSettingsView: View {
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
-    @Environment(\.dismiss) private var dismiss
     
     var reminderTime: Date {
         let formatter = DateFormatter()
@@ -737,43 +656,6 @@ struct NotificationSettingsView: View {
             AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
-            VStack(spacing: 0) {
-                GeometryReader { geometry in
-                    let buttonSize = max(44, geometry.size.width * 0.11)
-                    let horizontalPadding = geometry.size.width * 0.05
-                    let headerSpacing = geometry.size.width * 0.03
-                    
-                    VStack(spacing: headerSpacing) {
-                        HStack(spacing: 0) {
-                            Button(action: {
-                                dismiss()
-                            }) {
-                                Image(systemName: "chevron.left")
-                                    .font(.title3)
-                                    .adaptiveForegroundColor()
-                                    .frame(width: buttonSize, height: buttonSize)
-                            }
-                            
-                            Spacer()
-                            
-                            Text("Notifications")
-                                .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                                .adaptiveForegroundColor()
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.7)
-                            
-                            Spacer()
-                            
-                            Color.clear
-                                .frame(width: buttonSize, height: buttonSize)
-                        }
-                        .frame(height: buttonSize)
-                        .padding(.horizontal, horizontalPadding)
-                        .padding(.top, horizontalPadding * 0.8)
-                    }
-                }
-                .frame(height: max(72, UIScreen.main.bounds.width * AppTheme.bannerHeightRatio))
-                
                 ScrollView {
                 VStack(spacing: AppTheme.spacing32) {
                     if notificationPermission != .authorized {
@@ -925,10 +807,10 @@ struct NotificationSettingsView: View {
                     }
                 }
                 .padding(AppTheme.spacing24)
-            }
         }
-        }
-        .toolbar(.hidden, for: .navigationBar)
+        .navigationTitle("Notifications")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
         .sheet(isPresented: $showingTimePicker) {
             TimePickerSheet(selectedTime: reminderTime) { newTime in
                 let formatter = DateFormatter()
@@ -939,6 +821,7 @@ struct NotificationSettingsView: View {
         .onAppear {
             checkNotificationPermission()
         }
+    }
     }
     
     private func checkNotificationPermission() {
@@ -992,7 +875,6 @@ struct TimerSettingsView: View {
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
-    @Environment(\.dismiss) private var dismiss
     
     enum TimerSound: String, CaseIterable {
         case `default` = "Default"
@@ -1007,43 +889,6 @@ struct TimerSettingsView: View {
             AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
-            VStack(spacing: 0) {
-                GeometryReader { geometry in
-                    let buttonSize = max(44, geometry.size.width * 0.11)
-                    let horizontalPadding = geometry.size.width * 0.05
-                    let headerSpacing = geometry.size.width * 0.03
-                    
-                    VStack(spacing: headerSpacing) {
-                        HStack(spacing: 0) {
-                            Button(action: {
-                                dismiss()
-                            }) {
-                                Image(systemName: "chevron.left")
-                                    .font(.title3)
-                                    .adaptiveForegroundColor()
-                                    .frame(width: buttonSize, height: buttonSize)
-                            }
-                            
-                            Spacer()
-                            
-                            Text("Timers")
-                                .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                                .adaptiveForegroundColor()
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.7)
-                            
-                            Spacer()
-                            
-                            Color.clear
-                                .frame(width: buttonSize, height: buttonSize)
-                        }
-                        .frame(height: buttonSize)
-                        .padding(.horizontal, horizontalPadding)
-                        .padding(.top, horizontalPadding * 0.8)
-                    }
-                }
-                .frame(height: max(72, UIScreen.main.bounds.width * AppTheme.bannerHeightRatio))
-                
                 ScrollView {
                 VStack(spacing: AppTheme.spacing32) {
                     SettingsCard {
@@ -1178,10 +1023,11 @@ struct TimerSettingsView: View {
                     }
                 }
                 .padding(AppTheme.spacing24)
-            }
         }
-        }
-        .toolbar(.hidden, for: .navigationBar)
+        .navigationTitle("Timers")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
+    }
     }
     
     private func formatDuration(_ seconds: Int) -> String {
@@ -1203,50 +1049,12 @@ struct UnitsSettingsView: View {
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
-    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         ZStack {
             AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
-            VStack(spacing: 0) {
-                GeometryReader { geometry in
-                    let buttonSize = max(44, geometry.size.width * 0.11)
-                    let horizontalPadding = geometry.size.width * 0.05
-                    let headerSpacing = geometry.size.width * 0.03
-                    
-                    VStack(spacing: headerSpacing) {
-                        HStack(spacing: 0) {
-                            Button(action: {
-                                dismiss()
-                            }) {
-                                Image(systemName: "chevron.left")
-                                    .font(.title3)
-                                    .adaptiveForegroundColor()
-                                    .frame(width: buttonSize, height: buttonSize)
-                            }
-                            
-                            Spacer()
-                            
-                            Text("Units & Measurements")
-                                .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                                .adaptiveForegroundColor()
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.7)
-                            
-                            Spacer()
-                            
-                            Color.clear
-                                .frame(width: buttonSize, height: buttonSize)
-                        }
-                        .frame(height: buttonSize)
-                        .padding(.horizontal, horizontalPadding)
-                        .padding(.top, horizontalPadding * 0.8)
-                    }
-                }
-                .frame(height: max(72, UIScreen.main.bounds.width * AppTheme.bannerHeightRatio))
-                
                 ScrollView {
                 VStack(spacing: AppTheme.spacing32) {
                     SettingsCard {
@@ -1292,11 +1100,12 @@ struct UnitsSettingsView: View {
                     }
                 }
                 .padding(AppTheme.spacing24)
-            }
         }
-        }
-        .toolbar(.hidden, for: .navigationBar)
+        .navigationTitle("Units & Measurements")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
     }
+}
 }
 
 struct DisplaySettingsView: View {
@@ -2123,14 +1932,14 @@ struct AboutView: View {
                                 .adaptiveForegroundColor()
                             
                             Button(action: {
-                                if let url = URL(string: "mailto:support@recipefinder.com") {
+                                if let url = URL(string: "mailto:recipefinderlimited@icloud.com") {
                                     UIApplication.shared.open(url)
                                 }
                             }) {
                                 HStack {
                                     Image(systemName: "envelope.fill")
                                         .foregroundColor(AppTheme.accentColor(for: appTheme))
-                                    Text("support@recipefinder.com")
+                                    Text("recipefinderlimited@icloud.com")
                                         .font(.subheadline)
                                         .adaptiveForegroundColor()
                                 }
@@ -2176,7 +1985,6 @@ struct PartyTimeView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
-    @Environment(\.dismiss) private var dismiss
     @State private var isVibrating = false
     @State private var vibrationTimer: Timer?
     
@@ -2185,43 +1993,6 @@ struct PartyTimeView: View {
             AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
-            VStack(spacing: 0) {
-                GeometryReader { geometry in
-                    let buttonSize = max(44, geometry.size.width * 0.11)
-                    let horizontalPadding = geometry.size.width * 0.05
-                    let headerSpacing = geometry.size.width * 0.03
-                    
-                    VStack(spacing: headerSpacing) {
-                        HStack(spacing: 0) {
-                            Button(action: {
-                                dismiss()
-                            }) {
-                                Image(systemName: "chevron.left")
-                                    .font(.title3)
-                                    .adaptiveForegroundColor()
-                                    .frame(width: buttonSize, height: buttonSize)
-                            }
-                            
-                            Spacer()
-                            
-                            Text("Party Time")
-                                .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                                .adaptiveForegroundColor()
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.7)
-                            
-                            Spacer()
-                            
-                            Color.clear
-                                .frame(width: buttonSize, height: buttonSize)
-                        }
-                        .frame(height: buttonSize)
-                        .padding(.horizontal, horizontalPadding)
-                        .padding(.top, horizontalPadding * 0.8)
-                    }
-                }
-                .frame(height: max(72, UIScreen.main.bounds.width * AppTheme.bannerHeightRatio))
-                
                 ScrollView {
                     VStack(spacing: AppTheme.spacing40) {
                         VStack(spacing: AppTheme.spacing12) {
@@ -2319,9 +2090,10 @@ struct PartyTimeView: View {
                     }
                     .padding(.horizontal, AppTheme.spacing20)
                 }
-            }
         }
-        .toolbar(.hidden, for: .navigationBar)
+        .navigationTitle("Party Time")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
         .onDisappear {
             stopVibration()
         }
