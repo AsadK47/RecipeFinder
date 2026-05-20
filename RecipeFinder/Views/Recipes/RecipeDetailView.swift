@@ -177,7 +177,7 @@ struct RecipeDetailView: View {
                 .accessibilityHidden(true)
             Text("Servings")
                 .font(.caption)
-                .foregroundColor(.secondary)
+                .foregroundColor(.primary)
                 .accessibilityHidden(true)
             
             HStack(spacing: AppTheme.spacing4) {

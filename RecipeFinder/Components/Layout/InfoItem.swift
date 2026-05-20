@@ -36,7 +36,7 @@ struct InfoItem: View {
 
             Text(label)
                 .font(.caption)
-                .foregroundColor(.secondary)
+                .foregroundColor(.primary)
 
             Text(value)
                 .font(.subheadline)
