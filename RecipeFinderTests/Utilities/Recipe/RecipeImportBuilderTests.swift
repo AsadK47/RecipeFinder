@@ -238,12 +238,12 @@ final class RecipeImportBuilderTests: XCTestCase {
         XCTAssertTrue(notes.contains("Cuisine: Italian"))
     }
 
-    func testBuildNotes_includesSourceDomain() {
+    func testBuildNotes_includesSourceURL() {
         let notes = builder.buildNotes(from: makeData())
-        XCTAssertTrue(notes.contains("Imported from example.com"))
+        XCTAssertTrue(notes.contains("Imported from https://example.com/recipe"))
     }
 
-    func testBuildNotes_stripsWWWFromDomain() {
+    func testBuildNotes_includesFullURLIncludingWWW() {
         let data = RecipeImporter.ExtractedRecipeData(
             name: "Test", description: nil,
             matchedIngredients: [], rawIngredients: [], rawText: "",
@@ -253,8 +253,7 @@ final class RecipeImportBuilderTests: XCTestCase {
             servings: nil, difficulty: nil, category: nil, cuisine: nil, imageURL: nil
         )
         let notes = builder.buildNotes(from: data)
-        XCTAssertTrue(notes.contains("Imported from foodnetwork.com"))
-        XCTAssertFalse(notes.contains("www.foodnetwork.com"))
+        XCTAssertTrue(notes.contains("Imported from https://www.foodnetwork.com/recipe"))
     }
 
     func testBuildNotes_domainAndDateOnSingleLine() {

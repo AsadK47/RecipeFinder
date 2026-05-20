@@ -181,10 +181,9 @@ struct RecipeImportBuilder {
         }
 
         if !lines.isEmpty { lines.append("") }
-        let domain = data.sourceURL.host?.replacingOccurrences(of: "www.", with: "") ?? "Unknown"
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .medium
-        lines.append("Imported from \(domain) · \(dateFormatter.string(from: Date()))")
+        lines.append("Imported from \(data.sourceURL.absoluteString) · \(dateFormatter.string(from: Date()))")
 
         return lines.joined(separator: "\n")
     }
