@@ -411,7 +411,6 @@ struct RecipeDetailView: View {
             VStack(alignment: .leading, spacing: AppTheme.spacing16) {
                 ForEach(recipe.prePrepInstructions.indices, id: \.self) { index in
                     instructionRow(
-                        number: index + 1,
                         text: recipe.prePrepInstructions[index],
                         isChecked: prePrepState[index],
                         toggle: { 
@@ -430,7 +429,6 @@ struct RecipeDetailView: View {
             VStack(alignment: .leading, spacing: AppTheme.spacing16) {
                 ForEach(recipe.instructions.indices, id: \.self) { index in
                     instructionRow(
-                        number: index + 1,
                         text: recipe.instructions[index],
                         isChecked: instructionsState[index],
                         toggle: { 
@@ -626,20 +624,9 @@ struct RecipeDetailView: View {
         .padding(.horizontal, AppTheme.spacing20)
     }
     
-    private func instructionRow(number: Int, text: String, isChecked: Bool, toggle: @escaping () -> Void) -> some View {
+    private func instructionRow(text: String, isChecked: Bool, toggle: @escaping () -> Void) -> some View {
         Button(action: toggle, label: {
             HStack(alignment: .center, spacing: AppTheme.spacing12) {
-                ZStack {
-                    Circle()
-                        .fill(AppTheme.accentColor)
-                        .frame(width: AppTheme.spacing10, height: AppTheme.spacing10)
-                    
-                    Text("\(number)")
-                        .font(.system(size: AppTheme.fontSize7))
-                        .fontWeight(.bold)
-                        .adaptiveForegroundColor()
-                }
-                
                 Text(text)
                     .font(.body)
                     .foregroundColor(.primary)
