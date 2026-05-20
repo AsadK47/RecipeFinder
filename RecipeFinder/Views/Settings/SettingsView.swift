@@ -58,178 +58,171 @@ struct SettingsTabView: View {
                     }
                     .frame(height: max(72, UIScreen.main.bounds.width * AppTheme.bannerHeightRatio))
                     
-                    GeometryReader { scrollGeometry in
-                        let cardSpacing = scrollGeometry.size.width * 0.05
-                        let contentPadding = scrollGeometry.size.width * 0.05
-                        let profileImageSize = scrollGeometry.size.width * 0.14
-                        let itemSpacing = scrollGeometry.size.width * 0.04
-                        
-                        ScrollView {
-                            VStack(spacing: cardSpacing) {
+                    ScrollView {
+                        VStack(spacing: AppTheme.spacing20) {
                             SettingsCard {
                                 NavigationLink(destination: AccountView()) {
-                                HStack(spacing: itemSpacing) {
-                                    ZStack {
-                                        if let profileImage = profileImage {
-                                            Image(uiImage: profileImage)
-                                                .resizable()
-                                                .scaledToFill()
-                                                .frame(width: profileImageSize, height: profileImageSize)
-                                                .clipShape(Circle())
-                                        } else {
-                                            Circle()
-                                                .fill(AppTheme.accentColor(for: selectedTheme))
-                                                .frame(width: profileImageSize, height: profileImageSize)
-                                                .overlay {
-                                                    Text(accountManager.initials)
-                                                        .font(.system(size: profileImageSize * 0.4, weight: .semibold))
-                                                        .foregroundStyle(colorScheme == .dark ? .white : .black)
-                                                }
+                                    HStack(spacing: AppTheme.spacing16) {
+                                        ZStack {
+                                            if let profileImage = profileImage {
+                                                Image(uiImage: profileImage)
+                                                    .resizable()
+                                                    .scaledToFill()
+                                                    .frame(width: AppTheme.height54, height: AppTheme.height54)
+                                                    .clipShape(Circle())
+                                            } else {
+                                                Circle()
+                                                    .fill(AppTheme.accentColor(for: selectedTheme))
+                                                    .frame(width: AppTheme.height54, height: AppTheme.height54)
+                                                    .overlay {
+                                                        Text(accountManager.initials)
+                                                            .font(.system(size: AppTheme.fontSize22, weight: .semibold))
+                                                            .foregroundStyle(colorScheme == .dark ? .white : .black)
+                                                    }
+                                            }
                                         }
-                                    }
-                                    .id(refreshID)
-                                    
-                                    VStack(alignment: .leading, spacing: scrollGeometry.size.width * 0.01) {
-                                        Text(accountManager.fullName.isEmpty ? "Account" : accountManager.fullName)
-                                            .font(.headline)
-                                            .adaptiveForegroundColor()
+                                        .id(refreshID)
                                         
-                                        if let email = authManager.currentUser?.email, !email.isEmpty {
-                                            Text(email)
-                                                .font(.subheadline)
+                                        VStack(alignment: .leading, spacing: AppTheme.spacing4) {
+                                            Text(accountManager.fullName.isEmpty ? "Account" : accountManager.fullName)
+                                                .font(.headline)
+                                                .adaptiveForegroundColor()
+                                            
+                                            if let email = authManager.currentUser?.email, !email.isEmpty {
+                                                Text(email)
+                                                    .font(.subheadline)
+                                                    .foregroundColor(.secondary)
+                                            }
+                                            
+                                            Text("Profile & Settings")
+                                                .font(.caption)
                                                 .foregroundColor(.secondary)
                                         }
                                         
-                                        Text("Profile & Settings")
+                                        Spacer()
+                                        
+                                        Image(systemName: "chevron.right")
+                                            .foregroundColor(.gray)
                                             .font(.caption)
-                                            .foregroundColor(.secondary)
                                     }
+                                    .padding(AppTheme.spacing20)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                            }
+                            
+                            SettingsCard {
+                                NavigationLink(destination: AppearanceAndThemeSettingsView()) {
+                                    SettingsRow(icon: "paintpalette.fill", iconColor: .pink, title: "Appearance & Theme")
+                                        .padding(AppTheme.spacing20)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                            }
+                            
+                            SettingsCard {
+                                VStack(spacing: 0) {
+                                    NavigationLink(destination: NotificationSettingsView()) {
+                                        SettingsRow(icon: "bell.fill", iconColor: .red, title: "Notifications")
+                                            .padding(AppTheme.spacing20)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
                                     
-                                    Spacer()
+                                    Divider()
+                                        .padding(.leading, AppTheme.spacing60)
                                     
-                                    Image(systemName: "chevron.right")
-                                        .foregroundColor(.gray)
-                                        .font(.caption)
+                                    NavigationLink(destination: TimerSettingsView()) {
+                                        SettingsRow(icon: "timer", iconColor: .orange, title: "Timers")
+                                            .padding(AppTheme.spacing20)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                    
+                                    Divider()
+                                        .padding(.leading, AppTheme.spacing60)
+                                    
+                                    NavigationLink(destination: UnitsSettingsView()) {
+                                        SettingsRow(icon: "ruler.fill", iconColor: .blue, title: "Units & Measurements")
+                                            .padding(AppTheme.spacing20)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                    
+                                    Divider()
+                                        .padding(.leading, AppTheme.spacing60)
+                                    
+                                    NavigationLink(destination: DisplaySettingsView()) {
+                                        SettingsRow(icon: "display", iconColor: .cyan, title: "Display")
+                                            .padding(AppTheme.spacing20)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                    
+                                    Divider()
+                                        .padding(.leading, AppTheme.spacing60)
+                                    
+                                    NavigationLink(destination: PartyTimeView()) {
+                                        SettingsRow(icon: "party.popper.fill", iconColor: .purple, title: "Party Time")
+                                            .padding(AppTheme.spacing20)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
                                 }
-                                .padding(contentPadding)
                             }
-                            .buttonStyle(PlainButtonStyle())
-                        }
-                        
-                        SettingsCard {
-                            NavigationLink(destination: AppearanceAndThemeSettingsView()) {
-                                SettingsRow(icon: "paintpalette.fill", iconColor: .pink, title: "Appearance & Theme")
-                                    .padding(contentPadding)
+                            
+                            SettingsCard {
+                                VStack(spacing: 0) {
+                                    NavigationLink(destination: PrivacySettingsView()) {
+                                        SettingsRow(icon: "hand.raised.fill", iconColor: .blue, title: "Privacy")
+                                            .padding(AppTheme.spacing20)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                    
+                                    Divider()
+                                        .padding(.leading, AppTheme.spacing60)
+                                    
+                                    NavigationLink(destination: DataManagementSettingsView()) {
+                                        SettingsRow(icon: "externaldrive.fill", iconColor: .gray, title: "Data Management")
+                                            .padding(AppTheme.spacing20)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                }
                             }
-                            .buttonStyle(PlainButtonStyle())
-                        }
-                        
-                        SettingsCard {
-                            VStack(spacing: 0) {
-                                NavigationLink(destination: NotificationSettingsView()) {
-                                    SettingsRow(icon: "bell.fill", iconColor: .red, title: "Notifications")
-                                        .padding(contentPadding)
+                            
+                            SettingsCard {
+                                VStack(spacing: 0) {
+                                    NavigationLink(destination: HelpView()) {
+                                        SettingsRow(icon: "questionmark.circle.fill", iconColor: .teal, title: "Help & Support")
+                                            .padding(AppTheme.spacing20)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                    
+                                    Divider()
+                                        .padding(.leading, AppTheme.spacing60)
+                                    
+                                    NavigationLink(destination: AboutView()) {
+                                        SettingsRow(icon: "info.circle.fill", iconColor: .gray, title: "About RecipeFinder")
+                                            .padding(AppTheme.spacing20)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
                                 }
-                                .buttonStyle(PlainButtonStyle())
-                                
-                                Divider()
-                                    .padding(.leading, AppTheme.spacing60)
-                                
-                                NavigationLink(destination: TimerSettingsView()) {
-                                    SettingsRow(icon: "timer", iconColor: .orange, title: "Timers")
-                                        .padding(contentPadding)
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                                
-                                Divider()
-                                    .padding(.leading, AppTheme.spacing60)
-                                
-                                NavigationLink(destination: UnitsSettingsView()) {
-                                    SettingsRow(icon: "ruler.fill", iconColor: .blue, title: "Units & Measurements")
-                                        .padding(contentPadding)
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                                
-                                Divider()
-                                    .padding(.leading, AppTheme.spacing60)
-                                
-                                NavigationLink(destination: DisplaySettingsView()) {
-                                    SettingsRow(icon: "display", iconColor: .cyan, title: "Display")
-                                        .padding(contentPadding)
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                                
-                                Divider()
-                                    .padding(.leading, AppTheme.spacing60)
-                                
-                                NavigationLink(destination: PartyTimeView()) {
-                                    SettingsRow(icon: "party.popper.fill", iconColor: .purple, title: "Party Time")
-                                        .padding(contentPadding)
-                                }
-                                .buttonStyle(PlainButtonStyle())
                             }
-                        }
-                        
-                        SettingsCard {
-                            VStack(spacing: 0) {
-                                NavigationLink(destination: PrivacySettingsView()) {
-                                    SettingsRow(icon: "hand.raised.fill", iconColor: .blue, title: "Privacy")
-                                        .padding(contentPadding)
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                                
-                                Divider()
-                                    .padding(.leading, AppTheme.spacing60)
-                                
-                                NavigationLink(destination: DataManagementSettingsView()) {
-                                    SettingsRow(icon: "externaldrive.fill", iconColor: .gray, title: "Data Management")
-                                        .padding(contentPadding)
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                            }
-                        }
-                        
-                        SettingsCard {
-                            VStack(spacing: 0) {
-                                NavigationLink(destination: HelpView()) {
-                                    SettingsRow(icon: "questionmark.circle.fill", iconColor: .teal, title: "Help & Support")
-                                        .padding(contentPadding)
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                                
-                                Divider()
-                                    .padding(.leading, AppTheme.spacing60)
-                                
-                                NavigationLink(destination: AboutView()) {
-                                    SettingsRow(icon: "info.circle.fill", iconColor: .gray, title: "About RecipeFinder")
-                                        .padding(contentPadding)
+                            
+                            SettingsCard {
+                                NavigationLink(destination: LegalInformationView()) {
+                                    SettingsRow(icon: "building.2.fill", iconColor: .indigo, title: "Legal Information")
+                                        .padding(AppTheme.spacing20)
                                 }
                                 .buttonStyle(PlainButtonStyle())
                             }
-                        }
-                        
-                        SettingsCard {
-                            NavigationLink(destination: LegalInformationView()) {
-                                SettingsRow(icon: "building.2.fill", iconColor: .indigo, title: "Legal Information")
-                                    .padding(contentPadding)
+                            
+                            VStack(spacing: AppTheme.spacing4) {
+                                Text("RecipeFinder")
+                                    .font(.caption)
+                                    .adaptiveForegroundColor(opacity: AppTheme.mediumEmphasisOpacity)
+                                Text("Version 1.0.0 (Build 1)")
+                                    .font(.caption2)
+                                    .adaptiveForegroundColor(opacity: AppTheme.glassLightOpacity)
                             }
-                            .buttonStyle(PlainButtonStyle())
+                            .padding(.top, AppTheme.spacing16)
+                            .padding(.bottom, AppTheme.spacing40)
                         }
-                        
-                        VStack(spacing: scrollGeometry.size.width * 0.01) {
-                            Text("RecipeFinder")
-                                .font(.caption)
-                                .adaptiveForegroundColor(opacity: AppTheme.mediumEmphasisOpacity)
-                            Text("Version 1.0.0 (Build 1)")
-                                .font(.caption2)
-                                .adaptiveForegroundColor(opacity: AppTheme.glassLightOpacity)
-                        }
-                        .padding(.top, contentPadding * 0.8)
-                        .padding(.bottom, contentPadding * 2)
-                    }
-                    .padding(.horizontal, contentPadding)
-                    .padding(.top, contentPadding)
-                        }
+                        .padding(.horizontal, AppTheme.spacing20)
+                        .padding(.top, AppTheme.spacing20)
                     }
                 }
             }
