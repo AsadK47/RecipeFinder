@@ -36,6 +36,19 @@ struct RecipeImportBuilder {
         var quantity = ""
         var remaining = trimmed
 
+        // Normalise glued quantity+unit like "200g" → "200 g" so later patterns can split them
+        let gluedPattern = #"^(\d+(?:\.\d+)?)(tbsp|tsp|cups?|ml|l|g|kg|oz|lbs?|cloves?|pieces?|pinch|dash|inch(?:es)?)(?=\s|$)"#
+        if let regex = try? NSRegularExpression(pattern: gluedPattern, options: .caseInsensitive) {
+            let ns = remaining as NSString
+            if let match = regex.firstMatch(in: remaining, options: [],
+                                            range: NSRange(location: 0, length: ns.length)) {
+                let amt = ns.substring(with: match.range(at: 1))
+                let unt = ns.substring(with: match.range(at: 2))
+                let rest = ns.substring(from: match.range.location + match.range.length)
+                remaining = "\(amt) \(unt)\(rest)"
+            }
+        }
+
         // Normalise range amounts like "3/4 – 1" — take the upper bound
         let rangePattern = #"^[\d/\.]+\s*[-–]\s*([\d/\.]+)\s+"#
         if let regex = try? NSRegularExpression(pattern: rangePattern, options: []) {
@@ -47,13 +60,28 @@ struct RecipeImportBuilder {
             }
         }
 
-        let quantityPattern = #"^([\d\./\-]+)\s+"#
-        if let regex = try? NSRegularExpression(pattern: quantityPattern, options: []) {
-            let ns = remaining as NSString
-            if let match = regex.firstMatch(in: remaining, options: [],
-                                            range: NSRange(location: 0, length: ns.length)) {
-                quantity = ns.substring(with: match.range(at: 1))
-                remaining = ns.substring(from: match.range.location + match.range.length)
+        // Handle mixed numbers like "1 3/4" before the simple quantity pattern
+        if quantity.isEmpty {
+            let mixedPattern = #"^(\d+\s+\d+/\d+)\s+"#
+            if let regex = try? NSRegularExpression(pattern: mixedPattern, options: []) {
+                let ns = remaining as NSString
+                if let match = regex.firstMatch(in: remaining, options: [],
+                                                range: NSRange(location: 0, length: ns.length)) {
+                    quantity = ns.substring(with: match.range(at: 1))
+                    remaining = ns.substring(from: match.range.location + match.range.length)
+                }
+            }
+        }
+
+        if quantity.isEmpty {
+            let quantityPattern = #"^([\d\./\-]+)\s+"#
+            if let regex = try? NSRegularExpression(pattern: quantityPattern, options: []) {
+                let ns = remaining as NSString
+                if let match = regex.firstMatch(in: remaining, options: [],
+                                                range: NSRange(location: 0, length: ns.length)) {
+                    quantity = ns.substring(with: match.range(at: 1))
+                    remaining = ns.substring(from: match.range.location + match.range.length)
+                }
             }
         }
 
@@ -78,7 +106,44 @@ struct RecipeImportBuilder {
             name = trimmed
         }
 
-        return Ingredient(baseQuantity: Double(quantity) ?? 1.0, unit: unit, name: name)
+        return Ingredient(baseQuantity: parseQuantity(quantity), unit: unit, name: name)
+    }
+
+    // MARK: - Quantity parsing
+
+    /// Converts a quantity string to a Double.
+    /// Handles plain integers/decimals ("2", "1.5"), pure fractions ("1/4", "3/4"),
+    /// and mixed-number strings ("1 1/2"). Returns 1.0 as a safe fallback.
+    private func parseQuantity(_ s: String) -> Double {
+        let trimmed = s.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty else { return 1.0 }
+
+        // Plain integer or decimal — "2", "1.5"
+        if let d = Double(trimmed) { return d }
+
+        // Mixed number — "1 1/2": split on whitespace then add
+        let spaceParts = trimmed.split(separator: " ", maxSplits: 1).map(String.init)
+        if spaceParts.count == 2,
+           let whole = Double(spaceParts[0]) {
+            if let frac = parseFraction(spaceParts[1]) {
+                return whole + frac
+            }
+        }
+
+        // Pure fraction — "1/4"
+        if let frac = parseFraction(trimmed) { return frac }
+
+        return 1.0
+    }
+
+    /// Parses a "numerator/denominator" string to Double. Returns nil if not a valid fraction.
+    private func parseFraction(_ s: String) -> Double? {
+        let parts = s.split(separator: "/", maxSplits: 1).map(String.init)
+        guard parts.count == 2,
+              let num = Double(parts[0].trimmingCharacters(in: .whitespaces)),
+              let den = Double(parts[1].trimmingCharacters(in: .whitespaces)),
+              den != 0 else { return nil }
+        return num / den
     }
 
     // MARK: - Unicode fraction normalisation

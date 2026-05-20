@@ -167,23 +167,7 @@ struct RecipeParser {
         }
         
         if let instructionsData = data["recipeInstructions"] as? [Any] {
-            result.instructions = instructionsData.compactMap { instruction in
-                if let str = instruction as? String {
-                    return decodeHTMLEntities(str.trimmingCharacters(in: .whitespacesAndNewlines))
-                } else if let dict = instruction as? [String: Any] {
-                    if let text = dict["text"] as? String {
-                        return decodeHTMLEntities(text.trimmingCharacters(in: .whitespacesAndNewlines))
-                    } else if let itemList = dict["itemListElement"] as? [[String: Any]] {
-                        return decodeHTMLEntities(itemList.compactMap { step in
-                            if let stepText = step["text"] as? String {
-                                return stepText.trimmingCharacters(in: .whitespacesAndNewlines)
-                            }
-                            return nil
-                        }.joined(separator: " "))
-                    }
-                }
-                return nil
-            }.filter { !$0.isEmpty && $0.count >= 10 }
+            result.instructions = flattenInstructionSteps(from: instructionsData)
         } else if let instructionsString = data["recipeInstructions"] as? String {
             let steps = instructionsString.components(separatedBy: .newlines)
                 .map { decodeHTMLEntities($0.trimmingCharacters(in: .whitespacesAndNewlines)) }
@@ -243,6 +227,42 @@ struct RecipeParser {
         return nil
     }
     
+    /// Recursively extracts individual instruction step strings from a `recipeInstructions` array.
+    /// Handles flat `HowToStep` arrays, `HowToSection` containers, and mixed nesting.
+    /// Previously, sections were collapsed with `.joined(separator: " ")`, losing step boundaries.
+    private static func flattenInstructionSteps(from items: [Any]) -> [String] {
+        var steps: [String] = []
+        for item in items {
+            if let str = item as? String {
+                let decoded = decodeHTMLEntities(str.trimmingCharacters(in: .whitespacesAndNewlines))
+                if decoded.count >= 10 { steps.append(decoded) }
+            } else if let dict = item as? [String: Any] {
+                // Resolve @type whether it's a String or [String]
+                let typeStr: String
+                if let t = dict["@type"] as? String {
+                    typeStr = t
+                } else if let ts = dict["@type"] as? [String] {
+                    typeStr = ts.first ?? ""
+                } else {
+                    typeStr = ""
+                }
+
+                if typeStr == "HowToSection", let subItems = dict["itemListElement"] as? [Any] {
+                    // Recurse into section — each section step becomes its own entry
+                    steps.append(contentsOf: flattenInstructionSteps(from: subItems))
+                } else if let text = dict["text"] as? String {
+                    // HowToStep (or any dict with a "text" field)
+                    let decoded = decodeHTMLEntities(text.trimmingCharacters(in: .whitespacesAndNewlines))
+                    if decoded.count >= 10 { steps.append(decoded) }
+                } else if let subItems = dict["itemListElement"] as? [Any] {
+                    // Generic itemListElement fallback (unknown @type)
+                    steps.append(contentsOf: flattenInstructionSteps(from: subItems))
+                }
+            }
+        }
+        return steps
+    }
+
     private static func parseISO8601Duration(_ duration: String) -> Int? {
         let pattern = #"PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?"#
         
@@ -406,11 +426,32 @@ struct RecipeParser {
                 var unit = ""
                 var name = ""
                 var notes = ""
-                
-                let amountPattern = #"class="wprm-recipe-ingredient-amount">([^<]+)<"#
-                if let amountRegex = try? NSRegularExpression(pattern: amountPattern, options: []) {
-                    let amountMatches = amountRegex.matches(in: liContent, options: [], range: NSRange(location: 0, length: (liContent as NSString).length))
-                    if let firstMatch = amountMatches.first, firstMatch.numberOfRanges > 1 {
+
+                // Broad pattern: captures all inner HTML of the amount span up to the closing </span>
+                // that is immediately followed by the unit/name/notes sibling span.
+                // This handles WPRM's nested fraction HTML, e.g.:
+                //   1<span class="wprm-recipe-fraction"><span>1</span>/<span>4</span></span>
+                // where the old ([^<]+) pattern would only capture "1", dropping the "/4".
+                let amountBroadPattern = #"class="wprm-recipe-ingredient-amount"[^>]*>([\s\S]*?)</span>\s*<span[^>]*class="[^"]*wprm-recipe-ingredient-(?:unit|name|notes)"#
+                if let amountRegex = try? NSRegularExpression(pattern: amountBroadPattern, options: []),
+                   let firstMatch = amountRegex.firstMatch(in: liContent, options: [], range: NSRange(location: 0, length: (liContent as NSString).length)),
+                   firstMatch.numberOfRanges > 1 {
+                    let amountRange = firstMatch.range(at: 1)
+                    var rawAmount = (liContent as NSString).substring(with: amountRange)
+                    // Replace tags with a space so mixed numbers like 1<span>1/4</span> become "1 1/4"
+                    rawAmount = rawAmount.replacingOccurrences(of: "<[^>]+>", with: " ", options: .regularExpression)
+                    // Normalise spaces around fraction slashes: "1 / 4" → "1/4"
+                    rawAmount = rawAmount.replacingOccurrences(of: #"\s*/\s*"#, with: "/", options: .regularExpression)
+                    rawAmount = rawAmount.replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+                    amount = rawAmount.trimmingCharacters(in: .whitespaces)
+                }
+
+                // Fallback for plain-text amounts with no sibling span (e.g. a bare <span>2</span></li>)
+                if amount.isEmpty {
+                    let amountSimplePattern = #"class="wprm-recipe-ingredient-amount"[^>]*>([^<\s][^<]*)<"#
+                    if let amountRegex = try? NSRegularExpression(pattern: amountSimplePattern, options: []),
+                       let firstMatch = amountRegex.firstMatch(in: liContent, options: [], range: NSRange(location: 0, length: (liContent as NSString).length)),
+                       firstMatch.numberOfRanges > 1 {
                         let amountRange = firstMatch.range(at: 1)
                         amount = (liContent as NSString).substring(with: amountRange).trimmingCharacters(in: .whitespaces)
                     }

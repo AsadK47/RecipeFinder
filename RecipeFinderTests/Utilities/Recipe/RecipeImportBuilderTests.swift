@@ -111,7 +111,7 @@ final class RecipeImportBuilderTests: XCTestCase {
         let data = makeData(rawIngredients: [])
         let recipe = builder.build(from: data)
         XCTAssertEqual(recipe.ingredients.count, 1)
-        XCTAssertEqual(recipe.ingredients[0].name, "See recipe")
+        XCTAssertEqual(recipe.ingredients[0].name, "See Recipe")
     }
 
     func testBuild_filtersBlankInstructions() {
@@ -138,6 +138,42 @@ final class RecipeImportBuilderTests: XCTestCase {
         let ingredient = builder.parseIngredient("1/4 tsp kosher salt")
         XCTAssertEqual(ingredient.unit.lowercased(), "tsp")
         XCTAssertEqual(ingredient.name.lowercased(), "kosher salt")
+    }
+
+    /// Regression: Double("1/4") == nil in Swift, so the fallback 1.0 was used,
+    /// turning "1/4 cup neutral oil" into Ingredient(baseQuantity: 1.0, unit: "cup", ...) — i.e. "1 cup".
+    func testParseIngredient_fractionQuantity_parsesBaseQuantityCorrectly() {
+        let ingredient = builder.parseIngredient("1/4 cup neutral oil")
+        XCTAssertEqual(ingredient.baseQuantity, 0.25, accuracy: 0.001,
+                       "1/4 cup must give baseQuantity 0.25, not 1.0 (regression: Double(\"1/4\") is nil)")
+        XCTAssertEqual(ingredient.unit.lowercased(), "cup")
+    }
+
+    func testParseIngredient_fractionQuantity_oneHalf() {
+        let ingredient = builder.parseIngredient("1/2 tsp turmeric powder")
+        XCTAssertEqual(ingredient.baseQuantity, 0.5, accuracy: 0.001)
+        XCTAssertEqual(ingredient.unit.lowercased(), "tsp")
+    }
+
+    func testParseIngredient_fractionQuantity_threeQuarters() {
+        let ingredient = builder.parseIngredient("3/4 tsp salt")
+        XCTAssertEqual(ingredient.baseQuantity, 0.75, accuracy: 0.001)
+        XCTAssertEqual(ingredient.unit.lowercased(), "tsp")
+    }
+
+    func testParseIngredient_mixedNumberQuantity() {
+        let ingredient = builder.parseIngredient("1 3/4 tsp kosher salt")
+        XCTAssertEqual(ingredient.baseQuantity, 1.75, accuracy: 0.001)
+    }
+
+    /// Aloo Gosht Regression: real JSON-LD ingredient string from teaforturmeric.com
+    func testParseIngredient_alooGosht_oilRegression() {
+        // The actual JSON-LD value from the live page (parentheses, not comma)
+        let ingredient = builder.parseIngredient("1/4 cup neutral oil (such as grapeseed or avocado oil)")
+        XCTAssertEqual(ingredient.baseQuantity, 0.25, accuracy: 0.001,
+                       "Aloo Gosht regression: '1/4 cup' must parse as 0.25, not 1.0")
+        XCTAssertEqual(ingredient.unit.lowercased(), "cup")
+        XCTAssertFalse(ingredient.name.isEmpty)
     }
 
     func testParseIngredient_rangeQuantityTakesUpperBound() {
