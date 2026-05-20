@@ -408,7 +408,7 @@ struct RecipeDetailView: View {
     
     private var prePrepSection: some View {
         collapsibleSection(title: "Pre-Prep", icon: "list.clipboard") {
-            VStack(alignment: .leading, spacing: AppTheme.spacing16) {
+            VStack(alignment: .leading, spacing: AppTheme.spacing24) {
                 ForEach(recipe.prePrepInstructions.indices, id: \.self) { index in
                     instructionRow(
                         text: recipe.prePrepInstructions[index],
@@ -426,7 +426,7 @@ struct RecipeDetailView: View {
     
     private var instructionsSection: some View {
         collapsibleSection(title: "Instructions", icon: "text.alignleft") {
-            VStack(alignment: .leading, spacing: AppTheme.spacing16) {
+            VStack(alignment: .leading, spacing: AppTheme.spacing24) {
                 ForEach(recipe.instructions.indices, id: \.self) { index in
                     instructionRow(
                         text: recipe.instructions[index],
