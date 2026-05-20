@@ -233,7 +233,7 @@ struct SettingsTabView: View {
                     }
                 }
             }
-            .navigationBarHidden(true)
+            .toolbar(.hidden, for: .navigationBar)
             .onAppear {
                 profileImage = accountManager.loadProfileImage()
                 refreshID = UUID()
@@ -426,7 +426,7 @@ struct AppearanceAndThemeSettingsView: View {
             }
         }
         }
-        .navigationBarHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
     }
 }
 
@@ -934,7 +934,7 @@ struct NotificationSettingsView: View {
             }
         }
         }
-        .navigationBarHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
         .sheet(isPresented: $showingTimePicker) {
             TimePickerSheet(selectedTime: reminderTime) { newTime in
                 let formatter = DateFormatter()
@@ -1187,7 +1187,7 @@ struct TimerSettingsView: View {
             }
         }
         }
-        .navigationBarHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
     }
     
     private func formatDuration(_ seconds: Int) -> String {
@@ -1301,75 +1301,34 @@ struct UnitsSettingsView: View {
             }
         }
         }
-        .navigationBarHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
     }
 }
 
 struct DisplaySettingsView: View {
     @AppStorage("keepScreenAwake") private var keepScreenAwake: Bool = false
-    @AppStorage("brightnessBoost") private var brightnessBoost: Bool = false
-    
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
-    @Environment(\.dismiss) private var dismiss
-    
+
     var body: some View {
         ZStack {
             AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
-            
-            VStack(spacing: 0) {
-                GeometryReader { geometry in
-                    let buttonSize = max(44, geometry.size.width * 0.11)
-                    let horizontalPadding = geometry.size.width * 0.05
-                    let headerSpacing = geometry.size.width * 0.03
-                    
-                    VStack(spacing: headerSpacing) {
-                        HStack(spacing: 0) {
-                            Button(action: {
-                                dismiss()
-                            }) {
-                                Image(systemName: "chevron.left")
-                                    .font(.title3)
-                                    .adaptiveForegroundColor()
-                                    .frame(width: buttonSize, height: buttonSize)
-                            }
-                            
-                            Spacer()
-                            
-                            Text("Display")
-                                .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                                .adaptiveForegroundColor()
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.7)
-                            
-                            Spacer()
-                            
-                            Color.clear
-                                .frame(width: buttonSize, height: buttonSize)
-                        }
-                        .frame(height: buttonSize)
-                        .padding(.horizontal, horizontalPadding)
-                        .padding(.top, horizontalPadding * 0.8)
-                    }
-                }
-                .frame(height: max(72, UIScreen.main.bounds.width * AppTheme.bannerHeightRatio))
-                
-                ScrollView {
+
+            ScrollView {
                 VStack(spacing: AppTheme.spacing32) {
                     SettingsCard {
                         VStack(alignment: .leading, spacing: AppTheme.spacing24) {
                             Text("Screen Settings")
                                 .font(.headline)
                                 .adaptiveForegroundColor()
-                            
+
                             Toggle(isOn: $keepScreenAwake) {
                                 HStack(spacing: AppTheme.spacing12) {
                                     Image(systemName: "light.max")
                                         .adaptiveForegroundColor()
                                         .frame(width: AppTheme.width30)
-                                    
+
                                     VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                                         Text("Keep Screen Awake")
                                             .adaptiveForegroundColor()
@@ -1383,32 +1342,32 @@ struct DisplaySettingsView: View {
                         }
                         .padding(AppTheme.spacing24)
                     }
-                    
+
                     SettingsCard {
                         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                             HStack(spacing: AppTheme.spacing12) {
                                 Image(systemName: "info.circle.fill")
                                     .foregroundColor(.blue)
                                     .font(.title3)
-                                
+
                                 Text("About This Setting")
                                     .font(.headline)
                                     .adaptiveForegroundColor()
                             }
-                            
+
                             Text("When enabled, your screen will stay on while you're viewing recipes or using timers. This is helpful when cooking and you need to reference instructions without constantly touching your device.")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                                 .fixedSize(horizontal: false, vertical: true)
-                            
+
                             Divider()
                                 .padding(.vertical, AppTheme.spacing4)
-                            
+
                             HStack(spacing: AppTheme.spacing8) {
                                 Image(systemName: "battery.100")
                                     .foregroundColor(.green)
                                     .font(.caption)
-                                
+
                                 Text("Note: Keeping the screen on may use more battery")
                                     .font(.caption2)
                                     .foregroundColor(.secondary)
@@ -1420,8 +1379,9 @@ struct DisplaySettingsView: View {
                 .padding(AppTheme.spacing24)
             }
         }
-        }
-        .navigationBarHidden(true)
+        .navigationTitle("Display")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
     }
 }
 
@@ -1430,9 +1390,7 @@ struct PrivacySettingsView: View {
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @StateObject private var authManager = AuthenticationManager.shared
-    @AppStorage("skipRecipeDeleteConfirmation") private var skipDeleteConfirmation: Bool = false
     @AppStorage("biometricsEnabled") private var biometricsEnabled: Bool = false
-    @State private var showResetSuccess = false
     @State private var showPrivacyPolicy = false
     @State private var showBiometricError = false
     @State private var biometricErrorMessage = ""
@@ -1513,121 +1471,6 @@ struct PrivacySettingsView: View {
                         }
                     }
                     
-                    SettingsCard {
-                        VStack(alignment: .leading, spacing: AppTheme.spacing16) {
-                            Text("Confirmation Dialogs")
-                                .font(.headline)
-                                .adaptiveForegroundColor()
-                            
-                            HStack(spacing: AppTheme.spacing16) {
-                                ZStack {
-                                    Circle()
-                                        .fill(.orange)
-                                        .frame(width: 40, height: AppTheme.height40)
-                                    
-                                    Image(systemName: "exclamationmark.triangle.fill")
-                                        .font(.system(size: AppTheme.fontSize18, weight: .semibold))
-                                        .adaptiveForegroundColor()
-                                }
-                                
-                                VStack(alignment: .leading, spacing: AppTheme.spacing4) {
-                                    Text("Delete Confirmations")
-                                        .font(.body)
-                                        .adaptiveForegroundColor()
-                                    
-                                    Text("Currently: \(skipDeleteConfirmation ? "Disabled" : "Enabled")")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                }
-                                
-                                Spacer()
-                            }
-                            
-                            if skipDeleteConfirmation {
-                                VStack(alignment: .leading, spacing: AppTheme.spacing12) {
-                                    Text("⚠️ Delete confirmations are disabled")
-                                        .font(.caption)
-                                        .foregroundColor(.orange)
-                                    
-                                    Text("Recipes will be deleted immediately when you swipe without asking for confirmation.")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                        .fixedSize(horizontal: false, vertical: true)
-                                    
-                                    Button(action: {
-                                        skipDeleteConfirmation = false
-                                        showResetSuccess = true
-                                        HapticManager.shared.success()
-                                        
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayFeedback) {
-                                            showResetSuccess = false
-                                        }
-                                    }) {
-                                        HStack {
-                                            Image(systemName: "arrow.clockwise")
-                                            Text("Re-enable Delete Confirmations")
-                                        }
-                                        .font(.subheadline)
-                                        .fontWeight(.semibold)
-                                        .adaptiveForegroundColor()
-                                        .frame(maxWidth: .infinity)
-                                        .padding(.vertical, AppTheme.spacing12)
-                                        .background(AppTheme.accentColor)
-                                        .cornerRadius(AppTheme.cornerRadius12)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                }
-                                .padding(.top, AppTheme.spacing4)
-                            } else {
-                                Text("You will be asked to confirm before deleting recipes.")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                    .padding(.top, AppTheme.spacing4)
-                            }
-                            
-                            if showResetSuccess {
-                                HStack(spacing: AppTheme.spacing8) {
-                                    Image(systemName: "checkmark.circle.fill")
-                                        .foregroundColor(.green)
-                                    Text("Delete confirmations re-enabled")
-                                        .font(.caption)
-                                        .foregroundColor(.green)
-                                }
-                                .transition(.opacity.combined(with: .move(edge: .top)))
-                            }
-                        }
-                        .padding(AppTheme.spacing24)
-                    }
-                    
-                    SettingsCard {
-                        VStack(alignment: .leading, spacing: AppTheme.spacing16) {
-                            Text("Privacy")
-                                .font(.headline)
-                                .adaptiveForegroundColor()
-                            
-                            Text("For information about how we handle your data, please review our Privacy Policy")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                            
-                            Button(action: {
-                                showPrivacyPolicy = true
-                                HapticManager.shared.light()
-                            }) {
-                                HStack {
-                                    Text("View Privacy Policy")
-                                        .fontWeight(.medium)
-                                    Spacer()
-                                    Image(systemName: "arrow.right.circle.fill")
-                                }
-                                .padding()
-                                .background(AppTheme.accentColor(for: selectedTheme).opacity(0.15))
-                                .adaptiveForegroundColor()
-                                .cornerRadius(AppTheme.cornerRadius12)
-                            }
-                            .buttonStyle(PlainButtonStyle())
-                        }
-                        .padding(AppTheme.spacing24)
-                    }
                 }
                 .padding(AppTheme.spacing24)
             }
@@ -1635,7 +1478,6 @@ struct PrivacySettingsView: View {
         .navigationTitle("Privacy")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
-        .animation(.spring(response: 0.3), value: showResetSuccess)
         .sheet(isPresented: $showPrivacyPolicy) {
             PrivacyPolicyView()
         }
@@ -1704,6 +1546,8 @@ struct PrivacyInfoRow: View {
 struct DataManagementSettingsView: View {
     @State private var showingResetAlert = false
     @State private var dataCleared = false
+    @AppStorage("skipRecipeDeleteConfirmation") private var skipDeleteConfirmation: Bool = false
+    @State private var showResetSuccess = false
     
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
@@ -1763,6 +1607,46 @@ struct DataManagementSettingsView: View {
                         .padding(AppTheme.spacing24)
                     }
                     
+                    SettingsCard {
+                        VStack(alignment: .leading, spacing: AppTheme.spacing16) {
+                            Text("Delete Confirmations")
+                                .font(.headline)
+                                .adaptiveForegroundColor()
+                            
+                            Toggle(isOn: Binding(
+                                get: { !skipDeleteConfirmation },
+                                set: { skipDeleteConfirmation = !$0 }
+                            )) {
+                                HStack(spacing: AppTheme.spacing12) {
+                                    Image(systemName: "trash.circle")
+                                        .adaptiveForegroundColor()
+                                        .frame(width: AppTheme.width30)
+                                    
+                                    VStack(alignment: .leading, spacing: AppTheme.spacing2) {
+                                        Text("Ask before deleting recipes")
+                                            .adaptiveForegroundColor()
+                                        Text(skipDeleteConfirmation ? "Recipes delete immediately on swipe" : "You'll be asked to confirm first")
+                                            .font(.caption)
+                                            .foregroundColor(skipDeleteConfirmation ? .orange : .secondary)
+                                    }
+                                }
+                            }
+                            .tint(AppTheme.accentColor)
+                            
+                            if showResetSuccess {
+                                HStack(spacing: AppTheme.spacing8) {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .foregroundColor(.green)
+                                    Text("Delete confirmations re-enabled")
+                                        .font(.caption)
+                                        .foregroundColor(.green)
+                                }
+                                .transition(.opacity.combined(with: .move(edge: .top)))
+                            }
+                        }
+                        .padding(AppTheme.spacing24)
+                    }
+                    
                     if dataCleared {
                         Text("✓ Data cleared successfully")
                             .foregroundColor(.green)
@@ -1772,6 +1656,7 @@ struct DataManagementSettingsView: View {
                 .padding(AppTheme.spacing24)
             }
         }
+        .animation(.spring(response: 0.3), value: showResetSuccess)
         .navigationTitle("Data Management")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
@@ -1802,8 +1687,8 @@ struct DataManagementSettingsView: View {
             defaults.synchronize()
         }
         
-        defaults.set("teal", forKey: "appTheme")
-        defaults.set("frosted", forKey: "cardStyle")
+        defaults.set("Teal", forKey: "appTheme")
+        defaults.set("Frost Light", forKey: "cardStyle")
         defaults.set("metric", forKey: "measurementSystem")
         defaults.set(300, forKey: "defaultTimerDuration")
         
@@ -2442,7 +2327,7 @@ struct PartyTimeView: View {
                 }
             }
         }
-        .navigationBarHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
         .onDisappear {
             stopVibration()
         }

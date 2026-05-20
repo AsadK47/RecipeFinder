@@ -28,7 +28,7 @@ struct CookTimerView: View {
     @State private var timer: Timer?
     @State private var vibrationTimer: Timer?
     
-    @AppStorage("cardStyle") private var cardStyleString: String = "frosted"
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @AppStorage("keepScreenAwake") private var keepScreenAwake: Bool = false
     @AppStorage("defaultTimerDuration") private var defaultTimerDuration: Int = 300
     @Environment(\.colorScheme) var colorScheme
@@ -37,10 +37,6 @@ struct CookTimerView: View {
     @Environment(\.dismiss) private var dismiss
     
     let maxTimers = 5
-    
-    private var cardStyle: CardStyle {
-        CardStyle(rawValue: cardStyleString) ?? .frosted
-    }
     
     var body: some View {
         ZStack {
@@ -140,7 +136,7 @@ struct CookTimerView: View {
                     }
                 }
             }
-            .navigationBarHidden(true)
+            .toolbar(.hidden, for: .navigationBar)
             .sheet(isPresented: $showCustomInput) {
                 customTimeInputSheet
             }
