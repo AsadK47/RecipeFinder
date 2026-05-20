@@ -219,7 +219,7 @@ struct AccountView: View {
                 Text(selectedChefType.rawValue)
                     .font(.subheadline)
             }
-            .foregroundColor(.secondary)
+            .adaptiveForegroundColor()
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, AppTheme.spacing20)
@@ -268,13 +268,13 @@ struct AccountView: View {
                     HStack(spacing: AppTheme.spacing16) {
                         Image(systemName: "envelope.fill")
                             .font(.title3)
-                            .foregroundColor(.secondary)
+                            .adaptiveForegroundColor()
                             .frame(width: AppTheme.iconSize28)
                         
                         VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                             Text("Email")
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .foregroundColor(.primary)
                             
                             Text(displayEmail)
                                 .font(.body)
@@ -392,16 +392,16 @@ struct AccountView: View {
                             .font(.body)
                             .fontWeight(.semibold)
                     }
-                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                    .adaptiveForegroundColor()
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, AppTheme.spacing16)
                     .background {
                         if cardStyle == .solid {
                             RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                                .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white.opacity(AppTheme.highEmphasisOpacity))
+                                .fill(AppTheme.accentColor(for: selectedTheme).opacity(AppTheme.highEmphasisOpacity))
                         } else {
                             RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                                .fill(.ultraThinMaterial)
+                                .fill(AppTheme.accentColor(for: selectedTheme).opacity(AppTheme.shadowDarkOpacity))
                         }
                     }
                     .overlay(

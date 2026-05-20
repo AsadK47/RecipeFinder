@@ -11,13 +11,13 @@ struct ProfileTextField: View {
         HStack(spacing: AppTheme.spacing16) {
             Image(systemName: icon)
                 .font(.title3)
-                .foregroundColor(.secondary)
+                .adaptiveForegroundColor()
                 .frame(width: AppTheme.iconSize28)
 
             VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                 Text(label)
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.primary)
 
                 TextField(placeholder, text: $text)
                     .adaptiveForegroundColor()
