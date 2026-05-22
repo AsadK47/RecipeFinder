@@ -6,7 +6,6 @@ struct NutritionalTipsView: View {
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @Environment(\.colorScheme) var colorScheme
-    @Environment(\.dismiss) var dismiss
     
     @State private var selectedCategory: NutritionalTipCategory? = nil
     @State private var selectedTip: NutritionalTip? = nil
@@ -18,72 +17,7 @@ struct NutritionalTipsView: View {
             AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
-            VStack(spacing: 0) {
-                VStack(spacing: AppTheme.spacing12) {
-                    GeometryReader { geometry in
-                        HStack(spacing: 0) {
-                            Button(action: {
-                                HapticManager.shared.light()
-                                dismiss()
-                            }) {
-                                Image(systemName: "chevron.left")
-                                    .font(.title3)
-                                    .adaptiveForegroundColor()
-                                    .frame(width: AppTheme.buttonHeight, height: AppTheme.height44)
-                            }
-                            
-                            Spacer()
-                            
-                            Text("Nutrition Tips")
-                                .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                                .adaptiveForegroundColor()
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.7)
-                            
-                            Spacer()
-                            
-                            Menu {
-                                Button(action: {
-                                    selectedCategory = nil
-                                    HapticManager.shared.light()
-                                }) {
-                                    HStack {
-                                        Text("All Tips")
-                                        if selectedCategory == nil {
-                                            Image(systemName: "checkmark")
-                                        }
-                                    }
-                                }
-                                
-                                Divider()
-                                
-                                ForEach(NutritionalTipCategory.allCases, id: \.self) { category in
-                                    Button(action: {
-                                        selectedCategory = category
-                                        HapticManager.shared.light()
-                                    }) {
-                                        HStack {
-                                            Text("\(category.icon) \(category.rawValue)")
-                                            if selectedCategory == category {
-                                                Image(systemName: "checkmark")
-                                            }
-                                        }
-                                    }
-                                }
-                            } label: {
-                                Image(systemName: selectedCategory == nil ? "line.3.horizontal.decrease.circle" : "line.3.horizontal.decrease.circle.fill")
-                                    .adaptiveForegroundColor()
-                                    .font(.title3)
-                                    .frame(width: AppTheme.buttonHeight, height: AppTheme.height44)
-                            }
-                        }
-                    }
-                    .frame(height: AppTheme.height44)
-                }
-                .padding(.horizontal, AppTheme.spacing20)
-                .padding(.top, AppTheme.spacing16)
-                
-                ScrollView {
+            ScrollView {
                     VStack(spacing: AppTheme.spacing24) {
                         tipOfTheDayCard
                         
@@ -93,9 +27,47 @@ struct NutritionalTipsView: View {
                     .padding(.top, AppTheme.spacing16)
                     .padding(.bottom, AppTheme.spacing100)
                 }
+        }
+        .navigationTitle("Nutrition Tips")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Menu {
+                    Button(action: {
+                        selectedCategory = nil
+                        HapticManager.shared.light()
+                    }) {
+                        HStack {
+                            Text("All Tips")
+                            if selectedCategory == nil {
+                                Image(systemName: "checkmark")
+                            }
+                        }
+                    }
+                    
+                    Divider()
+                    
+                    ForEach(NutritionalTipCategory.allCases, id: \.self) { category in
+                        Button(action: {
+                            selectedCategory = category
+                            HapticManager.shared.light()
+                        }) {
+                            HStack {
+                                Text("\(category.icon) \(category.rawValue)")
+                                if selectedCategory == category {
+                                    Image(systemName: "checkmark")
+                                }
+                            }
+                        }
+                    }
+                } label: {
+                    Image(systemName: selectedCategory == nil ? "line.3.horizontal.decrease.circle" : "line.3.horizontal.decrease.circle.fill")
+                        .adaptiveForegroundColor()
+                        .font(.title3)
+                }
             }
         }
-        .navigationBarHidden(true)
         .sheet(isPresented: $showTipDetail) {
             if let tip = selectedTip {
                 TipDetailView(tip: tip)

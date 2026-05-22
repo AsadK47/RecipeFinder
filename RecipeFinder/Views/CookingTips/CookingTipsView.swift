@@ -3,7 +3,6 @@ import SwiftUI
 struct CookingTipsView: View {
     @StateObject private var tipsManager = CookingTipsManager.shared
     @Environment(\.colorScheme) var colorScheme
-    @Environment(\.dismiss) private var dismiss
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
@@ -22,86 +21,7 @@ struct CookingTipsView: View {
             AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
-            VStack(spacing: 0) {
-                VStack(spacing: AppTheme.spacing12) {
-                    GeometryReader { geometry in
-                        HStack(spacing: 0) {
-                            Button(action: {
-                                HapticManager.shared.light()
-                                dismiss()
-                            }) {
-                                Image(systemName: "chevron.left")
-                                    .font(.title3)
-                                    .adaptiveForegroundColor()
-                                    .frame(width: AppTheme.buttonHeight, height: AppTheme.height44)
-                            }
-                            
-                            Spacer()
-                            
-                            Text("Cooking Tips")
-                                .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                                .adaptiveForegroundColor()
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.7)
-                            
-                            Spacer()
-                            
-                            Menu {
-                                Button(action: {
-                                    withAnimation(.spring(response: 0.3)) {
-                                        viewMode = viewMode == .card ? .list : .card
-                                    }
-                                    HapticManager.shared.light()
-                                }) {
-                                    Label(
-                                        viewMode == .card ? "List View" : "Card View",
-                                        systemImage: viewMode == .card ? "list.bullet" : "square.grid.2x2"
-                                    )
-                                }
-                                
-                                Divider()
-                                
-                                Button(action: {
-                                    showFilters = true
-                                    HapticManager.shared.light()
-                                }) {
-                                    Label(
-                                        hasActiveFilters ? "Filters (Active)" : "Filters",
-                                        systemImage: "line.3.horizontal.decrease.circle"
-                                    )
-                                }
-                                
-                                if hasActiveFilters {
-                                    Button(action: {
-                                        tipsManager.clearFilters()
-                                        HapticManager.shared.light()
-                                    }) {
-                                        Label("Clear Filters", systemImage: "xmark.circle")
-                                    }
-                                }
-                            } label: {
-                                ZStack {
-                                    if hasActiveFilters {
-                                        Circle()
-                                            .fill(AppTheme.accentColor(for: selectedTheme))
-                                            .frame(width: 8, height: AppTheme.height8)
-                                            .offset(x: 10, y: -10)
-                                    }
-                                    
-                                    Image(systemName: "line.3.horizontal")
-                                        .adaptiveForegroundColor()
-                                        .font(.title3)
-                                        .frame(width: AppTheme.buttonHeight, height: AppTheme.height44)
-                                }
-                            }
-                        }
-                    }
-                    .frame(height: AppTheme.height44)
-                }
-                .padding(.horizontal, AppTheme.spacing20)
-                .padding(.top, AppTheme.spacing16)
-                
-                GeometryReader { geometry in
+            GeometryReader { geometry in
                     VStack(spacing: 0) {
                         searchBar
                             .padding(.horizontal, AppTheme.spacing20)
@@ -135,8 +55,60 @@ struct CookingTipsView: View {
                 }
             }
         }
+        .navigationTitle("Cooking Tips")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Menu {
+                    Button(action: {
+                        withAnimation(.spring(response: 0.3)) {
+                            viewMode = viewMode == .card ? .list : .card
+                        }
+                        HapticManager.shared.light()
+                    }) {
+                        Label(
+                            viewMode == .card ? "List View" : "Card View",
+                            systemImage: viewMode == .card ? "list.bullet" : "square.grid.2x2"
+                        )
+                    }
+                    
+                    Divider()
+                    
+                    Button(action: {
+                        showFilters = true
+                        HapticManager.shared.light()
+                    }) {
+                        Label(
+                            hasActiveFilters ? "Filters (Active)" : "Filters",
+                            systemImage: "line.3.horizontal.decrease.circle"
+                        )
+                    }
+                    
+                    if hasActiveFilters {
+                        Button(action: {
+                            tipsManager.clearFilters()
+                            HapticManager.shared.light()
+                        }) {
+                            Label("Clear Filters", systemImage: "xmark.circle")
+                        }
+                    }
+                } label: {
+                    ZStack {
+                        if hasActiveFilters {
+                            Circle()
+                                .fill(AppTheme.accentColor(for: selectedTheme))
+                                .frame(width: 8, height: AppTheme.height8)
+                                .offset(x: 10, y: -10)
+                        }
+                        
+                        Image(systemName: "line.3.horizontal")
+                            .adaptiveForegroundColor()
+                            .font(.title3)
+                    }
+                }
+            }
         }
-        .navigationBarHidden(true)
         .sheet(item: $selectedTip) { tip in
             CookingTipDetailView(tip: tip, onToggleFavorite: {
                 tipsManager.toggleFavorite(tip)

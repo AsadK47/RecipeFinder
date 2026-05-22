@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct NotesListView: View {
-    @Environment(\.dismiss) private var dismiss
     @ObservedObject private var notesManager = NotesManager.shared
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @Environment(\.colorScheme) var colorScheme
@@ -63,65 +62,6 @@ struct NotesListView: View {
             
             VStack(spacing: 0) {
                 VStack(spacing: AppTheme.spacing12) {
-                    GeometryReader { geometry in
-                        HStack(spacing: 0) {
-                            HStack(spacing: 0) {
-                                Button(action: {
-                                    HapticManager.shared.light()
-                                    dismiss()
-                                }) {
-                                    Image(systemName: "chevron.left")
-                                        .font(.title3)
-                                        .adaptiveForegroundColor()
-                                        .frame(width: AppTheme.buttonHeight, height: AppTheme.height44)
-                                }
-                                Spacer()
-                            }
-                            .frame(width: AppTheme.width88)
-                            
-                            Spacer()
-                            
-                            Text("Notes")
-                                .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                                .adaptiveForegroundColor()
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.7)
-                            
-                            Spacer()
-                            
-                            HStack(spacing: 0) {
-                                Menu {
-                                    Button(
-                                        action: {
-                                            HapticManager.shared.light()
-                                            showFilterMenu.toggle()
-                                        },
-                                        label: {
-                                            Label(activeFilterCount > 0 ? "Filters (\(activeFilterCount))" : "Filters", systemImage: "line.3.horizontal.decrease.circle")
-                                        }
-                                    )
-                                } label: {
-                                    Image(systemName: "line.3.horizontal")
-                                        .adaptiveForegroundColor()
-                                        .font(.title3)
-                                }
-                                .frame(width: AppTheme.buttonHeight, height: AppTheme.height44)
-                                
-                                Button(action: {
-                                    HapticManager.shared.medium()
-                                    showNewNoteSheet = true
-                                }) {
-                                    Image(systemName: "plus")
-                                        .adaptiveForegroundColor()
-                                        .font(.title3)
-                                }
-                                .frame(width: AppTheme.buttonHeight, height: AppTheme.height44)
-                            }
-                            .frame(width: AppTheme.width88)
-                        }
-                    }
-                    .frame(height: AppTheme.height44)
-                    
                     SearchBar(text: $searchText, placeholder: "Search Notes...")
                 }
                 .padding(.horizontal, AppTheme.spacing20)
@@ -181,7 +121,37 @@ struct NotesListView: View {
                     notesList
                 }
             }
-        .navigationBarHidden(true)
+        .navigationTitle("Notes")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
+        .toolbar {
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                Menu {
+                    Button(
+                        action: {
+                            HapticManager.shared.light()
+                            showFilterMenu.toggle()
+                        },
+                        label: {
+                            Label(activeFilterCount > 0 ? "Filters (\(activeFilterCount))" : "Filters", systemImage: "line.3.horizontal.decrease.circle")
+                        }
+                    )
+                } label: {
+                    Image(systemName: "line.3.horizontal")
+                        .adaptiveForegroundColor()
+                        .font(.title3)
+                }
+                
+                Button(action: {
+                    HapticManager.shared.medium()
+                    showNewNoteSheet = true
+                }) {
+                    Image(systemName: "plus")
+                        .adaptiveForegroundColor()
+                        .font(.title3)
+                }
+            }
+        }
         .sheet(isPresented: $showNewNoteSheet) {
             NoteEditorView(note: nil) { note in
                 notesManager.addNote(note)

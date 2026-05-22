@@ -34,7 +34,6 @@ struct CookTimerView: View {
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @Environment(\.scenePhase) var scenePhase
-    @Environment(\.dismiss) private var dismiss
     
     let maxTimers = 5
     
@@ -44,78 +43,6 @@ struct CookTimerView: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                    VStack(spacing: AppTheme.spacing12) {
-                        GeometryReader { geometry in
-                            HStack(spacing: 0) {
-                                Button(action: {
-                                    HapticManager.shared.light()
-                                    dismiss()
-                                }) {
-                                    Image(systemName: "chevron.left")
-                                        .font(.title3)
-                                        .adaptiveForegroundColor()
-                                        .frame(width: AppTheme.buttonHeight, height: AppTheme.height44)
-                                }
-                                .accessibilityLabel("Back")
-                                .accessibilityHint("Returns to previous screen")
-                                
-                                Spacer()
-                                
-                                Text("Cook Timers")
-                                    .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                                    .adaptiveForegroundColor()
-                                    .lineLimit(1)
-                                    .minimumScaleFactor(0.7)
-                                
-                                Spacer()
-                                
-                                Menu {
-                                    Button(action: {
-                                        HapticManager.shared.light()
-                                        showCustomInput = true
-                                    }) {
-                                        Label("Custom Timer", systemImage: "timer")
-                                    }
-                                    
-                                    if !timers.isEmpty {
-                                        Divider()
-                                        
-                                        Button(action: {
-                                            pauseAllTimers()
-                                            HapticManager.shared.light()
-                                        }) {
-                                            Label("Pause All", systemImage: "pause.circle")
-                                        }
-                                        
-                                        Button(action: {
-                                            resumeAllTimers()
-                                            HapticManager.shared.light()
-                                        }) {
-                                            Label("Resume All", systemImage: "play.circle")
-                                        }
-                                        
-                                        Divider()
-                                        
-                                        Button(role: .destructive, action: {
-                                            timers.removeAll()
-                                            HapticManager.shared.light()
-                                        }) {
-                                            Label("Clear All Timers", systemImage: "trash")
-                                        }
-                                    }
-                                } label: {
-                                    Image(systemName: "line.3.horizontal")
-                                        .adaptiveForegroundColor()
-                                        .font(.title3)
-                                        .frame(width: AppTheme.buttonHeight, height: AppTheme.height44)
-                                }
-                            }
-                        }
-                        .frame(height: AppTheme.height44)
-                    }
-                    .padding(.horizontal, AppTheme.spacing20)
-                    .padding(.top, AppTheme.spacing16)
-                    
                     ScrollView {
                         VStack(spacing: AppTheme.spacing32) {
                             quickPresetsSection
@@ -136,7 +63,52 @@ struct CookTimerView: View {
                     }
                 }
             }
-            .toolbar(.hidden, for: .navigationBar)
+            .navigationTitle("Cook Timers")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.hidden, for: .navigationBar)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Menu {
+                        Button(action: {
+                            HapticManager.shared.light()
+                            showCustomInput = true
+                        }) {
+                            Label("Custom Timer", systemImage: "timer")
+                        }
+                        
+                        if !timers.isEmpty {
+                            Divider()
+                            
+                            Button(action: {
+                                pauseAllTimers()
+                                HapticManager.shared.light()
+                            }) {
+                                Label("Pause All", systemImage: "pause.circle")
+                            }
+                            
+                            Button(action: {
+                                resumeAllTimers()
+                                HapticManager.shared.light()
+                            }) {
+                                Label("Resume All", systemImage: "play.circle")
+                            }
+                            
+                            Divider()
+                            
+                            Button(role: .destructive, action: {
+                                timers.removeAll()
+                                HapticManager.shared.light()
+                            }) {
+                                Label("Clear All Timers", systemImage: "trash")
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "line.3.horizontal")
+                            .adaptiveForegroundColor()
+                            .font(.title3)
+                    }
+                }
+            }
             .sheet(isPresented: $showCustomInput) {
                 customTimeInputSheet
             }
