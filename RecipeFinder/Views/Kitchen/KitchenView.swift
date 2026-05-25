@@ -13,10 +13,6 @@ struct KitchenView: View {
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
 
-    var allIngredients: [String] {
-        FoodsList.getAllFoods()
-    }
-    
     var categorizedIngredients: [(category: String, ingredients: [String])] {
         guard cachedCategorizedIngredients.isEmpty else {
             return cachedCategorizedIngredients

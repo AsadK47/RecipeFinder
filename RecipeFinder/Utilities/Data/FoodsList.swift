@@ -228,13 +228,27 @@ struct FoodsList {
         ]
     ]
     
+    // Computed once at app launch — avoids repeated flatMap+sort on every search
+    static let allFoods: [String] = foodsByCategory.values.flatMap { $0 }.sorted()
+
+    // O(1) reverse lookup built once — avoids linear scan on every ingredient row
+    static let categoryByFood: [String: String] = {
+        var map: [String: String] = [:]
+        for (category, foods) in foodsByCategory {
+            for food in foods {
+                map[food.lowercased()] = category
+            }
+        }
+        return map
+    }()
+
     static func getAllFoods() -> [String] {
-        return foodsByCategory.values.flatMap { $0 }.sorted()
+        return allFoods
     }
     
     static func searchFoods(query: String) -> [String] {
         guard !query.isEmpty else { return [] }
-        return getAllFoods().filter { $0.localizedCaseInsensitiveContains(query) }
+        return allFoods.filter { $0.localizedCaseInsensitiveContains(query) }
     }
     
     static func getFoods(forCategory category: String) -> [String] {
@@ -242,11 +256,6 @@ struct FoodsList {
     }
     
     static func getCategoryForFood(_ food: String) -> String? {
-        for (category, foods) in foodsByCategory {
-            if foods.contains(where: { $0.localizedCaseInsensitiveCompare(food) == .orderedSame }) {
-                return category
-            }
-        }
-        return nil
+        return categoryByFood[food.lowercased()]
     }
 }
