@@ -33,7 +33,7 @@ struct ShoppingListView: View {
     }
     
     private var showingSearchResults: Bool {
-        !searchText.isEmpty && isSearchFocused && !searchResults.isEmpty
+        !searchText.trimmingCharacters(in: .whitespaces).isEmpty && isSearchFocused
     }
     
     private var checkedCount: Int {
@@ -174,21 +174,35 @@ struct ShoppingListView: View {
                     .padding(.horizontal, AppTheme.spacing20)
                     .padding(.top, AppTheme.spacing20)
                 
-                if searchResults.isEmpty {
-                    Text("No ingredients found")
-                        .font(.body)
-                        .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
-                        .padding(.horizontal, AppTheme.spacing20)
-                        .padding(.vertical, AppTheme.spacing20)
-                } else {
-                    LazyVStack(spacing: AppTheme.spacing8) {
-                        ForEach(searchResults, id: \.self) { ingredient in
-                            ingredientButton(ingredient)
+                LazyVStack(spacing: AppTheme.spacing8) {
+                    let trimmed = searchText.trimmingCharacters(in: .whitespaces)
+                    if !searchResults.contains(where: { $0.lowercased() == trimmed.lowercased() }) {
+                        Button(action: { addItemFromSearch(trimmed) }) {
+                            HStack(spacing: AppTheme.spacing12) {
+                                Image(systemName: "plus.circle.fill")
+                                    .font(.title3)
+                                    .foregroundColor(AppTheme.accentColor)
+                                Text("Add \"\(trimmed)\"")
+                                    .font(.body)
+                                    .fontWeight(.medium)
+                                    .adaptiveForegroundColor()
+                                Spacer()
+                            }
+                            .padding(.vertical, AppTheme.spacing12)
+                        }
+                        .buttonStyle(.plain)
+                        
+                        if !searchResults.isEmpty {
+                            Divider()
                         }
                     }
-                    .padding(.horizontal, AppTheme.spacing20)
-                    .padding(.bottom, AppTheme.spacing20)
+                    
+                    ForEach(searchResults, id: \.self) { ingredient in
+                        ingredientButton(ingredient)
+                    }
                 }
+                .padding(.horizontal, AppTheme.spacing20)
+                .padding(.bottom, AppTheme.spacing20)
             }
         }
     }
@@ -574,26 +588,23 @@ struct ShoppingListItemRow: View {
                     })
                     .buttonStyle(PlainButtonStyle())
                     
-                    Text(item.name)
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                        .strikethrough(item.isChecked)
-                        .foregroundColor(item.isChecked ? .gray: (AppTheme.adaptiveEmphasis(for: colorScheme)))
-                    
-                    if let store = item.preferredStore {
-                        Text(store)
-                            .font(.caption2)
-                            .fontWeight(.semibold)
-                            .foregroundColor(colorScheme == .dark ? .black : .white)
-                            .padding(.horizontal, AppTheme.spacing6)
-                            .padding(.vertical, AppTheme.spacing2)
-                            .background(
-                                Capsule()
-                                    .fill(AppTheme.accentColor.opacity(0.8))
-                            )
+                    VStack(alignment: .leading, spacing: AppTheme.spacing2) {
+                        Text(item.name)
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                            .strikethrough(item.isChecked)
+                            .foregroundColor(item.isChecked ? .gray : AppTheme.adaptiveEmphasis(for: colorScheme))
+                            .lineLimit(1)
+                        
+                        if let store = item.preferredStore {
+                            Text(store)
+                                .font(.caption2)
+                                .fontWeight(.semibold)
+                                .foregroundColor(AppTheme.accentColor)
+                                .lineLimit(1)
+                        }
                     }
-                    
-                    Spacer()
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     
                     HStack(spacing: AppTheme.spacing12) {
                         Button(action: {
@@ -647,6 +658,37 @@ struct ShoppingListItemRow: View {
                         .disabled(item.quantity >= 99)
                     }
                     .opacity(item.isChecked ? 0.5 : 1)
+                    
+                    Menu {
+                        Menu("Change Store") {
+                            Button(action: { onStoreChange(nil) }) {
+                                Label("None", systemImage: item.preferredStore == nil ? "checkmark" : "")
+                            }
+                            ForEach(availableStores, id: \.self) { store in
+                                Button(action: { onStoreChange(store) }) {
+                                    Label(store, systemImage: item.preferredStore == store ? "checkmark" : "")
+                                }
+                            }
+                        }
+                        Menu("Change Category") {
+                            ForEach(allCategories, id: \.self) { category in
+                                Button(action: { onCategoryChange(category) }) {
+                                    Label(category, systemImage: categoryIcon(for: category))
+                                }
+                            }
+                        }
+                        Divider()
+                        Button(role: .destructive, action: onDelete) {
+                            Label("Delete", systemImage: "trash")
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .frame(width: 20, height: 44)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
                 }
                 .padding(AppTheme.spacing16)
             }
@@ -660,39 +702,6 @@ struct ShoppingListItemRow: View {
                 Label("Delete", systemImage: "trash")
             }
             .tint(.red)
-        }
-        .contextMenu {
-            Menu("Change Store") {
-                Button(action: {
-                    onStoreChange(nil)
-                }) {
-                    Label("None", systemImage: item.preferredStore == nil ? "checkmark" : "")
-                }
-                
-                ForEach(availableStores, id: \.self) { store in
-                    Button(action: {
-                        onStoreChange(store)
-                    }) {
-                        Label(store, systemImage: item.preferredStore == store ? "checkmark" : "")
-                    }
-                }
-            }
-            
-            Menu("Change Category") {
-                ForEach(allCategories, id: \.self) { category in
-                    Button(action: {
-                        onCategoryChange(category)
-                    }) {
-                        Label(category, systemImage: categoryIcon(for: category))
-                    }
-                }
-            }
-            
-            Divider()
-            
-            Button(role: .destructive, action: onDelete) {
-                Label("Delete", systemImage: "trash")
-            }
         }
     }
     

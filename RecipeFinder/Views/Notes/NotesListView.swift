@@ -190,44 +190,18 @@ struct NotesListView: View {
         ScrollView {
             LazyVStack(spacing: AppTheme.spacing12) {
                 ForEach(filteredNotes) { note in
-                    NoteCardView(note: note)
-                        .onTapGesture {
+                    NoteCardView(
+                        note: note,
+                        onPin: { notesManager.togglePin(note) },
+                        onDelete: {
                             HapticManager.shared.light()
-                            selectedNote = note
+                            withAnimation { notesManager.deleteNote(note) }
                         }
-                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                            Button(role: .destructive) {
-                                HapticManager.shared.light()
-                                withAnimation {
-                                    notesManager.deleteNote(note)
-                                }
-                            } label: {
-                                Label("Delete", systemImage: "trash")
-                            }
-                        }
-                        .swipeActions(edge: .leading, allowsFullSwipe: false) {
-                            Button {
-                                HapticManager.shared.light()
-                                notesManager.togglePin(note)
-                            } label: {
-                                Label(note.isPinned ? "Unpin" : "Pin", systemImage: note.isPinned ? "pin.slash" : "pin")
-                            }
-                            .tint(AppTheme.accentColor(for: selectedTheme))
-                        }
-                        .contextMenu {
-                            Button(action: {
-                                notesManager.togglePin(note)
-                            }) {
-                                Label(note.isPinned ? "Unpin" : "Pin", systemImage: note.isPinned ? "pin.slash" : "pin")
-                            }
-                            
-                            Button(role: .destructive, action: {
-                                HapticManager.shared.light()
-                                notesManager.deleteNote(note)
-                            }) {
-                                Label("Delete", systemImage: "trash")
-                            }
-                        }
+                    )
+                    .onTapGesture {
+                        HapticManager.shared.light()
+                        selectedNote = note
+                    }
                 }
             }
             .padding(.horizontal, AppTheme.spacing20)

@@ -405,22 +405,16 @@ struct MealPlanningView: View {
                         mealTime: mealTime, 
                         recipe: getRecipe(for: selectedDate, mealTime: mealTime),
                         cardStyle: cardStyle, 
-                        colorScheme: colorScheme
-                    )
-                }
-                .buttonStyle(.plain)
-                .contextMenu {
-                    if getRecipe(for: selectedDate, mealTime: mealTime) != nil {
-                        Button(role: .destructive) {
+                        colorScheme: colorScheme,
+                        onRemove: {
                             withAnimation {
                                 removeMealPlan(for: selectedDate, mealTime: mealTime)
                             }
                             HapticManager.shared.success()
-                        } label: {
-                            Label("Remove Recipe", systemImage: "trash")
                         }
-                    }
+                    )
                 }
+                .buttonStyle(.plain)
             }
             
             Button(action: {
@@ -743,6 +737,7 @@ struct MealTimeCard: View {
     let recipe: RecipeModel?
     let cardStyle: CardStyle
     let colorScheme: ColorScheme
+    var onRemove: (() -> Void)? = nil
     
     var body: some View {
         HStack(spacing: AppTheme.spacing16) {
@@ -792,9 +787,19 @@ struct MealTimeCard: View {
             
             Spacer()
             
-            Image(systemName: recipe != nil ? "pencil.circle" : "chevron.right")
-                .font(.system(size: AppTheme.fontSize14, weight: .semibold))
-                .adaptiveForegroundColor(opacity: AppTheme.lowEmphasisOpacity)
+            HStack(spacing: AppTheme.spacing8) {
+                if let onRemove, recipe != nil {
+                    Button(action: onRemove) {
+                        Image(systemName: "trash")
+                            .font(.system(size: AppTheme.fontSize14, weight: .semibold))
+                            .foregroundColor(.red.opacity(0.7))
+                    }
+                    .buttonStyle(.plain)
+                }
+                Image(systemName: recipe != nil ? "pencil.circle" : "chevron.right")
+                    .font(.system(size: AppTheme.fontSize14, weight: .semibold))
+                    .adaptiveForegroundColor(opacity: AppTheme.lowEmphasisOpacity)
+            }
         }
         .padding(AppTheme.spacing16)
         .background {

@@ -5,6 +5,8 @@ struct NoteCardView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
+    var onPin: (() -> Void)? = nil
+    var onDelete: (() -> Void)? = nil
     
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
@@ -35,6 +37,26 @@ struct NoteCardView: View {
                 Text(formatDate(note.modifiedDate))
                     .font(.caption2)
                     .foregroundColor(AppTheme.adaptiveSecondaryIndicator(for: colorScheme))
+                
+                if let onDelete {
+                    Menu {
+                        if let onPin {
+                            Button(action: onPin) {
+                                Label(note.isPinned ? "Unpin" : "Pin", systemImage: note.isPinned ? "pin.slash" : "pin")
+                            }
+                            Divider()
+                        }
+                        Button(role: .destructive, action: onDelete) {
+                            Label("Delete", systemImage: "trash")
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .padding(.leading, AppTheme.spacing8)
+                    }
+                    .buttonStyle(.plain)
+                }
             }
             
             if !note.title.isEmpty {

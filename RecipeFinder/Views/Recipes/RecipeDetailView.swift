@@ -666,7 +666,7 @@ struct RecipeDetailView: View {
     private func addIngredientToShoppingList(_ ingredient: Ingredient) {
         HapticManager.shared.light()
         
-        let normalizedName = IngredientNormalizer.normalize(ingredient.name)
+        let normalizedName = IngredientNormalizer.normalize(ingredient.mainIngredientName)
         
         ShoppingListManager.shared.addItem(name: normalizedName, quantity: 1, category: nil)
         

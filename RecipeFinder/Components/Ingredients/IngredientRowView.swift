@@ -61,6 +61,19 @@ struct IngredientRowView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
+            if let onAddToShopping {
+                Button(action: {
+                    onAddToShopping()
+                    HapticManager.shared.light()
+                }) {
+                    Image(systemName: isInShoppingList ? "cart.fill" : "cart.badge.plus")
+                        .font(.system(size: AppTheme.fontSize16))
+                        .foregroundColor(isInShoppingList ? .green : .secondary)
+                }
+                .buttonStyle(.plain)
+                .disabled(isInShoppingList)
+            }
+
             // Right: checkbox
             Button(action: {
                 HapticManager.shared.light()
@@ -77,20 +90,6 @@ struct IngredientRowView: View {
         .padding(.vertical, AppTheme.spacing8)
         .frame(maxWidth: .infinity)
         .contentShape(Rectangle())
-        .contextMenu {
-            if let onAddToShopping {
-                Button(action: {
-                    onAddToShopping()
-                    HapticManager.shared.light()
-                }) {
-                    Label(
-                        isInShoppingList ? "Already in Shopping List" : "Add to Shopping List",
-                        systemImage: isInShoppingList ? "checkmark.circle.fill" : "cart.badge.plus"
-                    )
-                }
-                .disabled(isInShoppingList)
-            }
-        }
     }
 
     private var convertedIngredient: (quantity: Double, unit: String) {

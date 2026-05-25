@@ -101,6 +101,19 @@ struct IngredientNameFormatter {
             result = String(result[..<parenStart]).trimmingCharacters(in: .whitespaces)
         }
 
+        // Strip trailing orphaned closing paren with no matching open paren
+        if result.hasSuffix(")") && !result.contains("(") {
+            result = String(result.dropLast()).trimmingCharacters(in: .whitespaces)
+        }
+
+        // Strip "such as ..." and "like ..." alternative descriptions common in recipe writing
+        for phrase in [" such as ", " like a ", " like "] {
+            if let range = result.range(of: phrase, options: .caseInsensitive) {
+                result = String(result[..<range.lowerBound]).trimmingCharacters(in: .whitespaces)
+                break
+            }
+        }
+
         let lowercased = result.lowercased()
         if let commaIndex = lowercased.firstIndex(of: ",") {
             let mainPart = String(result[..<commaIndex]).trimmingCharacters(in: .whitespaces)
