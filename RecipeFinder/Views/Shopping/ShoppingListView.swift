@@ -594,7 +594,8 @@ struct ShoppingListItemRow: View {
                             .fontWeight(.medium)
                             .strikethrough(item.isChecked)
                             .foregroundColor(item.isChecked ? .gray : AppTheme.adaptiveEmphasis(for: colorScheme))
-                            .lineLimit(1)
+                            .lineLimit(2)
+                            .fixedSize(horizontal: false, vertical: true)
                         
                         if let store = item.preferredStore {
                             Text(store)

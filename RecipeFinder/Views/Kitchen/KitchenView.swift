@@ -762,8 +762,12 @@ struct AddIngredientSheet: View {
         
         return Button(action: {
             withAnimation(.spring(response: 0.3)) {
+                let adding = !KitchenInventoryManager.shared.hasItem(food)
                 KitchenInventoryManager.shared.toggleItem(food)
                 HapticManager.shared.light()
+                if adding {
+                    dismiss()
+                }
             }
         }) {
             HStack(spacing: AppTheme.spacing12) {
