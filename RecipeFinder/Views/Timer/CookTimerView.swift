@@ -540,7 +540,7 @@ struct CookTimerView: View {
     private func startTimerUpdates() {
         timer?.invalidate()
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-            self.updateTimers()
+            MainActor.assumeIsolated { self.updateTimers() }
         }
     }
     

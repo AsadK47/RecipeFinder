@@ -13,6 +13,8 @@ final class KitchenInventoryManager: ObservableObject {
 
     @Published private(set) var items: [KitchenItem] = []
     @Published private(set) var inventoryItems: [KitchenInventoryModel] = []
+    // O(1) name lookup — kept in sync with items on every save/load
+    private var itemNameSet: Set<String> = []
 
 	private init() {
         self.storage = .shared
@@ -36,8 +38,10 @@ final class KitchenInventoryManager: ObservableObject {
         if let data = storage.data(forKey: saveKey),
            let decoded = try? JSONDecoder().decode([KitchenItem].self, from: data) {
             items = decoded
+            itemNameSet = Set(decoded.map { $0.name.lowercased() })
         } else {
             items = []
+            itemNameSet = []
         }
     }
     
@@ -215,7 +219,7 @@ final class KitchenInventoryManager: ObservableObject {
 	}
     
 	func hasItem(_ name: String) -> Bool {
-		items.contains { $0.name.lowercased() == name.lowercased() }
+		itemNameSet.contains(name.lowercased())
 	}
     
 	func clearAll() {
@@ -224,11 +228,10 @@ final class KitchenInventoryManager: ObservableObject {
 	}
     
 	func groupedItems() -> [(category: String, items: [KitchenItem])] {
-		let categories = Set(items.map { $0.category }).sorted()
-        
-		return categories.compactMap { category in
-			let categoryItems = items.filter { $0.category == category }
-			return categoryItems.isEmpty ? nil : (category, categoryItems)
+		let grouped = Dictionary(grouping: items) { $0.category }
+		return grouped.keys.sorted().compactMap { category in
+			guard let categoryItems = grouped[category], !categoryItems.isEmpty else { return nil }
+			return (category, categoryItems)
 		}
 	}
     
@@ -236,6 +239,7 @@ final class KitchenInventoryManager: ObservableObject {
 		if let encoded = try? JSONEncoder().encode(newItems) {
 			storage.set(encoded, forKey: saveKey)
             items = newItems
+            itemNameSet = Set(newItems.map { $0.name.lowercased() })
 		}
 	}
 	

@@ -274,7 +274,36 @@ enum CategoryClassifier {
     }
     
     nonisolated(unsafe) private static var categoryCache: [String: String] = [:]
-    
+
+    // Pre-built once at app launch — avoids rebuilding on every categorize() call
+    private static let categorizationRules: [(String, [String])] = [
+        ("Frozen",                    ["frozen", "ice cream"]),
+        ("Bakery",                    ["bread", "baguette", "croissant", "bagel", "muffin", "donut",
+                                       "pastry", "cake", "cookie", "pie", "tart", "scone"]),
+        ("Sweeteners",                kitchenIngredientKeywords["Sweeteners"]               ?? []),
+        ("Poultry",                   kitchenIngredientKeywords["Poultry"]                  ?? []),
+        ("Seafood",                   kitchenIngredientKeywords["Seafood"]                  ?? []),
+        ("Meat",                      kitchenIngredientKeywords["Meat"]                     ?? []),
+        ("Herbs & Fresh Spices",      kitchenIngredientKeywords["Herbs & Fresh Spices"]     ?? []),
+        ("Dried Spices & Seasonings", kitchenIngredientKeywords["Dried Spices & Seasonings"] ?? []),
+        ("Nuts & Seeds",              kitchenIngredientKeywords["Nuts & Seeds"]             ?? []),
+        ("Legumes & Pulses",          kitchenIngredientKeywords["Legumes & Pulses"]         ?? []),
+        ("Canned & Jarred",           ["canned", "jarred"]),
+        ("Beverages",                 ["juice", "water", "soda", "coffee", "tea", "beer", "wine",
+                                       "vodka", "whiskey", "rum", "lemonade", "smoothie"]),
+        ("Produce",                   (kitchenIngredientKeywords["Fruits"]     ?? []) +
+                                      (kitchenIngredientKeywords["Vegetables"] ?? [])),
+        ("Oils & Fats",               kitchenIngredientKeywords["Oils & Fats"]              ?? []),
+        ("Dairy & Eggs",              kitchenIngredientKeywords["Dairy & Eggs"]             ?? []),
+        ("Sauces & Condiments",       kitchenIngredientKeywords["Sauces & Condiments"]      ?? []),
+        ("Grains & Pasta",            kitchenIngredientKeywords["Grains & Pasta"]           ?? []),
+        ("Baking Supplies",           ["baking powder", "baking soda", "yeast", "cornstarch",
+                                       "gelatin", "cocoa powder"]),
+    ]
+
+    // Pre-built flat keyword list for isValidIngredient — avoids flatMap on every call
+    private static let allKeywords: [String] = kitchenIngredientKeywords.values.flatMap { $0 }
+
     static func categorize(_ itemName: String) -> String {
         let cacheKey = itemName.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
         if let cached = categoryCache[cacheKey] { return cached }
@@ -295,41 +324,14 @@ enum CategoryClassifier {
             }
         }
 
-        // Priority-ordered rules: first match wins.
-        // Inline arrays are used for categories not in kitchenIngredientKeywords,
-        // or where special-case substring logic was previously hard-coded.
-        let rules: [(String, [String])] = [
-            ("Frozen",                    ["frozen", "ice cream"]),
-            ("Bakery",                    ["bread", "baguette", "croissant", "bagel", "muffin", "donut",
-                                           "pastry", "cake", "cookie", "pie", "tart", "scone"]),
-            ("Sweeteners",                kitchenIngredientKeywords["Sweeteners"]               ?? []),
-            ("Poultry",                   kitchenIngredientKeywords["Poultry"]                  ?? []),
-            ("Seafood",                   kitchenIngredientKeywords["Seafood"]                  ?? []),
-            ("Meat",                      kitchenIngredientKeywords["Meat"]                     ?? []),
-            ("Herbs & Fresh Spices",      kitchenIngredientKeywords["Herbs & Fresh Spices"]     ?? []),
-            ("Dried Spices & Seasonings", kitchenIngredientKeywords["Dried Spices & Seasonings"] ?? []),
-            ("Nuts & Seeds",              kitchenIngredientKeywords["Nuts & Seeds"]             ?? []),
-            ("Legumes & Pulses",          kitchenIngredientKeywords["Legumes & Pulses"]         ?? []),
-            ("Canned & Jarred",           ["canned", "jarred"]),
-            ("Beverages",                 ["juice", "water", "soda", "coffee", "tea", "beer", "wine",
-                                           "vodka", "whiskey", "rum", "lemonade", "smoothie"]),
-            ("Produce",                   (kitchenIngredientKeywords["Fruits"]     ?? []) +
-                                          (kitchenIngredientKeywords["Vegetables"] ?? [])),
-            ("Oils & Fats",               kitchenIngredientKeywords["Oils & Fats"]              ?? []),
-            ("Dairy & Eggs",              kitchenIngredientKeywords["Dairy & Eggs"]             ?? []),
-            ("Sauces & Condiments",       kitchenIngredientKeywords["Sauces & Condiments"]      ?? []),
-            ("Grains & Pasta",            kitchenIngredientKeywords["Grains & Pasta"]           ?? []),
-            ("Baking Supplies",           ["baking powder", "baking soda", "yeast", "cornstarch",
-                                           "gelatin", "cocoa powder"]),
-        ]
+        let category = categorizationRules.first { matches($0.1) }?.0 ?? "Other"
 
-        let category = rules.first { matches($0.1) }?.0 ?? "Other"
-
-        if categoryCache.count < 200 {
+        if categoryCache.count < 500 {
             categoryCache[cacheKey] = category
-        } else if categoryCache.count > 250 {
-            let keysToKeep = Array(categoryCache.keys.prefix(100))
+        } else {
+            let keysToKeep = Set(categoryCache.keys.prefix(250))
             categoryCache = categoryCache.filter { keysToKeep.contains($0.key) }
+            categoryCache[cacheKey] = category
         }
 
         return category
@@ -349,7 +351,7 @@ enum CategoryClassifier {
             return false
         }
         
-        let hasIngredientKeyword = kitchenIngredientKeywords.values.flatMap { $0 }.contains { keyword in
+        let hasIngredientKeyword = allKeywords.contains { keyword in
             cleaned.localizedCaseInsensitiveContains(keyword)
         }
         

@@ -8,6 +8,7 @@ struct KitchenView: View {
     @State private var showQuickAdd = false
     @State private var cachedCategorizedIngredients: [(category: String, ingredients: [String])] = []
     @State private var collapsedCategories: Set<String> = []
+    @State private var quickMatches: [RecipeModel] = []
     @FocusState private var isSearchFocused: Bool
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
@@ -37,7 +38,9 @@ struct KitchenView: View {
         return FoodsList.searchFoods(query: searchText)
     }
     
-    var quickMatchRecipes: [RecipeModel] {
+    var quickMatchRecipes: [RecipeModel] { quickMatches }
+
+    private func computeQuickMatches() -> [RecipeModel] {
         guard !manager.items.isEmpty else { return [] }
         
         let kitchenIngredients = Set(manager.items.map { $0.name.lowercased() })
@@ -102,6 +105,13 @@ struct KitchenView: View {
         }
         .onAppear {
             refreshCategorizedIngredients()
+            quickMatches = computeQuickMatches()
+        }
+        .onChange(of: manager.items) { _, _ in
+            quickMatches = computeQuickMatches()
+        }
+        .onChange(of: recipes) { _, _ in
+            quickMatches = computeQuickMatches()
         }
     }
     
