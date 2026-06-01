@@ -21,7 +21,7 @@ struct CookingTipsView: View {
             AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                 .ignoresSafeArea()
             
-            GeometryReader { geometry in
+            GeometryReader { _ in
                     VStack(spacing: 0) {
                         searchBar
                             .padding(.horizontal, AppTheme.spacing20)
@@ -48,7 +48,7 @@ struct CookingTipsView: View {
                         .padding(.top, AppTheme.spacing16)
                         .padding(.horizontal, AppTheme.spacing20)
                         .padding(.bottom, AppTheme.spacing100)
-                        .frame(width: geometry.size.width - 40)
+                        .frame(maxWidth: .infinity)
                     }
                     .scrollDisabled(false)
                     .scrollBounceBehavior(.basedOnSize, axes: .vertical)

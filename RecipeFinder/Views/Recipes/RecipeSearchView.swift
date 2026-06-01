@@ -987,6 +987,8 @@ struct RecipeDeleteConfirmationSheet: View {
     
     var body: some View {
         GeometryReader { geometry in
+            let contentMaxWidth = max(0, geometry.size.width - 48)
+
             ZStack {
                 AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
@@ -1021,14 +1023,14 @@ struct RecipeDeleteConfirmationSheet: View {
                                 .adaptiveForegroundColor(opacity: AppTheme.nearSolidOpacity)
                                 .multilineTextAlignment(.center)
                                 .fixedSize(horizontal: false, vertical: true)
-                                .frame(maxWidth: geometry.size.width - 48)
+                                .frame(maxWidth: contentMaxWidth)
                             
                             Text("This can't be undone, but you can always import it again! 📖")
                                 .font(.subheadline)
                                 .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                                 .multilineTextAlignment(.center)
                                 .fixedSize(horizontal: false, vertical: true)
-                                .frame(maxWidth: geometry.size.width - 48)
+                                .frame(maxWidth: contentMaxWidth)
                                 .padding(.top, AppTheme.spacing4)
                         }
                         .padding(.horizontal, AppTheme.spacing24)
@@ -1048,7 +1050,7 @@ struct RecipeDeleteConfirmationSheet: View {
                                 
                                 Spacer()
                             }
-                            .frame(maxWidth: geometry.size.width - 48)
+                            .frame(maxWidth: contentMaxWidth)
                             .padding(.horizontal, AppTheme.spacing24)
                         }
                         .buttonStyle(PlainButtonStyle())
@@ -1061,7 +1063,7 @@ struct RecipeDeleteConfirmationSheet: View {
                                 Text("Remove Recipe")
                                     .font(.headline)
                                     .adaptiveForegroundColor()
-                                    .frame(maxWidth: geometry.size.width - 48)
+                                    .frame(maxWidth: contentMaxWidth)
                                     .padding(.vertical, AppTheme.spacing16)
                                     .background(Color.orange)
                                     .cornerRadius(AppTheme.cornerRadius12)
@@ -1075,7 +1077,7 @@ struct RecipeDeleteConfirmationSheet: View {
                                 Text("Keep It")
                                     .font(.headline)
                                     .adaptiveForegroundColor()
-                                    .frame(maxWidth: geometry.size.width - 48)
+                                    .frame(maxWidth: contentMaxWidth)
                                     .padding(.vertical, AppTheme.spacing16)
                                     .background(Color.white.opacity(AppTheme.cardDarkOpacity))
                                     .cornerRadius(AppTheme.cornerRadius12)

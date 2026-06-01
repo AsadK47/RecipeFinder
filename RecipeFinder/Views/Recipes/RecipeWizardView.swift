@@ -250,6 +250,13 @@ struct RecipeWizardView: View {
                         .padding()
                         .background(Color.white.opacity(AppTheme.dividerOpacity))
                         .cornerRadius(AppTheme.cornerRadius12)
+
+                    if let validationMessage = recipeNameValidationMessage {
+                        Text(validationMessage)
+                            .font(.caption)
+                            .foregroundColor(.red)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
                 }
                 .padding()
             }
@@ -691,7 +698,7 @@ struct RecipeWizardView: View {
                 .fontWeight(.medium)
                 .adaptiveForegroundColor(opacity: AppTheme.highEmphasisOpacity)
             
-            HStack(alignment: .firstTextBaseline, spacing: 0) {
+            HStack(alignment: .top, spacing: AppTheme.spacing12) {
                 VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                     Text(title)
                         .font(.title2)
@@ -701,14 +708,14 @@ struct RecipeWizardView: View {
                     Text(subtitle)
                         .font(.subheadline)
                         .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
                 
-                Spacer()
-            }
-            .overlay(alignment: .topTrailing) {
                 Image(systemName: illustration)
                     .font(.system(size: AppTheme.fontSize42, weight: .medium))
                     .adaptiveForegroundColor(opacity: AppTheme.mediumEmphasisOpacity)
+                    .padding(.top, AppTheme.spacing2)
             }
         }
     }
@@ -803,7 +810,12 @@ struct RecipeWizardView: View {
     private var canProceed: Bool {
         switch currentStep {
         case 0:
-            return !recipeName.trimmingCharacters(in: .whitespaces).isEmpty
+            do {
+                try Validator.validateRecipeName(recipeName)
+                return true
+            } catch {
+                return false
+            }
         case 1:
             return servings > 0
         case 2:
@@ -816,6 +828,18 @@ struct RecipeWizardView: View {
             return true
         default:
             return false
+        }
+    }
+
+    private var recipeNameValidationMessage: String? {
+        let trimmed = recipeName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+
+        do {
+            try Validator.validateRecipeName(recipeName)
+            return nil
+        } catch {
+            return error.localizedDescription
         }
     }
     
