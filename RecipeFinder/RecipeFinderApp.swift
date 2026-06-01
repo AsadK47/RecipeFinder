@@ -6,13 +6,15 @@ private let logger = AppLogger.logger(category: "RecipeFinderApp")
 
 @main
 struct RecipeFinderApp: App {
+    private enum ActiveOnboarding {
+        case biometrics
+        case app
+    }
+
     let persistenceController = PersistenceController.shared
     @StateObject private var authManager = AuthenticationManager.shared
     @StateObject private var themeManager = ThemeManager.shared
-    @State private var hasCompletedOnboarding = false
-    @State private var hasSeenBiometricOnboarding = false
-    @State private var showOnboarding = false
-    @State private var showFaceIDOnboarding = false
+    @State private var activeOnboarding: ActiveOnboarding?
     
     init() {
         configureAppearance()
@@ -34,64 +36,72 @@ struct RecipeFinderApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ZStack {
-                rootView
-                    .animation(.easeInOut(duration: AppTheme.animationDelayXShort), value: authManager.isAuthenticated)
-                    .fullScreenCover(isPresented: $showFaceIDOnboarding) {
-                        FaceIDOnboardingSplash {
-                            UserScopedStorage.shared.set(true, forKey: "hasSeenBiometricOnboarding")
-                            hasSeenBiometricOnboarding = true
-                            showFaceIDOnboarding = false
-                            if !hasCompletedOnboarding {
-                                DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayXShort) {
-                                    showOnboarding = true
-                                }
+            Group {
+                if activeOnboarding == .biometrics {
+                    FaceIDOnboardingSplash {
+                        UserScopedStorage.shared.set(true, forKey: "hasSeenBiometricOnboarding")
+
+                        if !UserScopedStorage.shared.bool(forKey: "hasCompletedOnboarding") {
+                            withAnimation(.easeInOut(duration: AppTheme.animationDelayXShort)) {
+                                activeOnboarding = .app
+                            }
+                        } else {
+                            withAnimation(.easeInOut(duration: AppTheme.animationDelayXShort)) {
+                                activeOnboarding = nil
                             }
                         }
                     }
-                    .fullScreenCover(isPresented: $showOnboarding) {
-                        OnboardingView()
-                            .onDisappear {
-                                UserScopedStorage.shared.set(true, forKey: "hasCompletedOnboarding")
-                                hasCompletedOnboarding = true
+                    .ignoresSafeArea()
+                    .transition(.opacity)
+                } else if activeOnboarding == .app {
+                    OnboardingView(onComplete: {
+                        UserScopedStorage.shared.set(true, forKey: "hasCompletedOnboarding")
+                        withAnimation(.easeInOut(duration: AppTheme.animationDelayXShort)) {
+                            activeOnboarding = nil
+                        }
+                    })
+                    .ignoresSafeArea()
+                    .transition(.opacity)
+                } else {
+                    rootView
+                        .animation(.easeInOut(duration: AppTheme.animationDelayXShort), value: authManager.isAuthenticated)
+                        .onAppear {
+                            if authManager.isAuthenticated {
+                                evaluateOnboardingFlow()
                             }
-                    }
-                    .onAppear {
-                        loadUserOnboardingFlags()
-                        if authManager.isAuthenticated {
-                            handleOnboardingFlow()
                         }
-                    }
-                    .onChange(of: authManager.isAuthenticated) { _, isAuthenticated in
-                        if isAuthenticated {
-                            loadUserOnboardingFlags()
-                            handleOnboardingFlow()
+                        .onChange(of: authManager.isAuthenticated) { _, isAuthenticated in
+                            if isAuthenticated {
+                                evaluateOnboardingFlow()
+                            } else {
+                                activeOnboarding = nil
+                            }
                         }
-                    }
-                    .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-                        authManager.checkSessionExpiration()
-                    }
-                
-                if showFaceIDOnboarding || showOnboarding {
-                    Color.black
-                        .ignoresSafeArea()
-                        .allowsHitTesting(false)
+                        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                            authManager.checkSessionExpiration()
+                        }
                 }
             }
+            .animation(.easeInOut(duration: AppTheme.animationDelayXShort), value: activeOnboarding)
         }
     }
-    
-    private func loadUserOnboardingFlags() {
-        hasCompletedOnboarding = UserScopedStorage.shared.bool(forKey: "hasCompletedOnboarding")
-        hasSeenBiometricOnboarding = UserScopedStorage.shared.bool(forKey: "hasSeenBiometricOnboarding")
-    }
-    
-    private func handleOnboardingFlow() {
+
+    private func evaluateOnboardingFlow() {
+        let hasCompletedOnboarding = UserScopedStorage.shared.bool(forKey: "hasCompletedOnboarding")
+        let hasSeenBiometricOnboarding = UserScopedStorage.shared.bool(forKey: "hasSeenBiometricOnboarding")
+
         if authManager.biometricsAvailable && !hasSeenBiometricOnboarding {
-            showFaceIDOnboarding = true
-        }
-        else if !hasCompletedOnboarding {
-            showOnboarding = true
+            withAnimation(.easeInOut(duration: AppTheme.animationDelayXShort)) {
+                activeOnboarding = .biometrics
+            }
+        } else if !hasCompletedOnboarding {
+            withAnimation(.easeInOut(duration: AppTheme.animationDelayXShort)) {
+                activeOnboarding = .app
+            }
+        } else {
+            withAnimation(.easeInOut(duration: AppTheme.animationDelayXShort)) {
+                activeOnboarding = nil
+            }
         }
     }
     

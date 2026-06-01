@@ -12,21 +12,31 @@ struct AuthTestHelper {
     
     static func ensureTestAccountExists() {
         let credentialManager = SecureCredentialManager.shared
-        
-        if credentialManager.getUserInfo(email: testEmail) == nil {
-            let success = credentialManager.saveCredentials(
-                email: testEmail,
-                password: testPassword,
-                fullName: "Test User"
-            )
-            
-            if success {
-                logger.debug("✅ Test account created: \(testEmail) / \(testPassword)")
-            } else {
-                logger.error("❌ Failed to create test account")
-            }
+
+        // Keep debug login deterministic: always ensure known credentials work.
+        let hasAccount = credentialManager.getUserInfo(email: testEmail) != nil
+        let hasExpectedPassword = credentialManager.verifyCredentials(email: testEmail, password: testPassword)
+
+        if hasAccount && hasExpectedPassword {
+            logger.debug("ℹ️ Test account already valid: \(testEmail)")
+            return
+        }
+
+        if hasAccount {
+            _ = credentialManager.deleteCredentials(email: testEmail)
+            logger.debug("♻️ Recreated stale test account credentials for: \(testEmail)")
+        }
+
+        let success = credentialManager.saveCredentials(
+            email: testEmail,
+            password: testPassword,
+            fullName: "Test User"
+        )
+
+        if success {
+            logger.debug("✅ Test account ready: \(testEmail) / \(testPassword)")
         } else {
-            logger.debug("ℹ️ Test account already exists: \(testEmail)")
+            logger.error("❌ Failed to create test account")
         }
     }
     

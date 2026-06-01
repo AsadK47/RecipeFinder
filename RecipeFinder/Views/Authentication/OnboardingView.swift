@@ -3,6 +3,7 @@ import SwiftUI
 
 struct OnboardingView: View {
     @Environment(\.dismiss) private var dismiss
+    var onComplete: (() -> Void)? = nil
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @Environment(\.colorScheme) private var colorScheme
     
@@ -12,39 +13,51 @@ struct OnboardingView: View {
     
     private let slides = [
         OnboardingSlide(
-            icon: "book.fill",
-            title: "Discover & Save\nRecipes",
-            description: "Search thousands of recipes by ingredients you have. Save favorites, add personal notes, and build your digital cookbook. Import recipes from any website instantly.",
-            accentColor: .cyan,
+            icon: "square.and.arrow.down.on.square",
+            title: "Import Your First\nRecipe",
+            description: "From Recipes, open the menu and paste any recipe URL. RecipeFinder parses ingredients and steps for you in seconds.",
+            accentColor: .blue,
             features: [
-                ("magnifyingglass.circle.fill", "Smart Search", "Find by ingredients"),
-                ("heart.circle.fill", "Save Favorites", "Build your collection"),
-                ("note.text", "Personal Notes", "Add cooking tips"),
-                ("arrow.down.doc.fill", "Recipe Import", "From any website")
-            ]
-        ),
-        OnboardingSlide(
-            icon: "cart.fill",
-            title: "Shop & Track\nIngredients",
-            description: "Smart shopping lists that auto-categorize items. Track kitchen inventory to reduce waste. Add ingredients from recipes with one tap.",
-            accentColor: .green,
-            features: [
-                ("list.bullet.circle.fill", "Smart Lists", "Auto-categorized"),
-                ("refrigerator.fill", "Kitchen Tracker", "Know what you have"),
-                ("basket.fill", "Quick Add", "From any recipe"),
-                ("checkmark.circle.fill", "Easy Check-off", "Tap to mark done")
+                ("line.3.horizontal", "Open Recipes Menu", "Tap the top-right menu"),
+                ("link.circle.fill", "Paste Recipe URL", "Import from most sites"),
+                ("sparkles", "Auto Parse", "Ingredients and steps extracted"),
+                ("checkmark.circle.fill", "Save Recipe", "Add it to your cookbook")
             ]
         ),
         OnboardingSlide(
             icon: "calendar.badge.plus",
-            title: "Plan Meals &\nImport Recipes",
-            description: "Visual weekly meal planner for all meals. Import recipes from websites instantly with our recipe parser. Plan balanced meals and never wonder what's for dinner.",
-            accentColor: .purple,
+            title: "Plan One Meal\nThis Week",
+            description: "Go to Planning, pick a day, and assign a recipe to breakfast, lunch, or dinner so your week starts organized.",
+            accentColor: .orange,
             features: [
-                ("calendar.circle.fill", "Weekly Planner", "See your week"),
-                ("fork.knife.circle.fill", "All Meal Times", "Breakfast to dinner"),
-                ("link.circle.fill", "Recipe Import", "Paste any URL"),
-                ("sparkles", "Smart Parser", "Extracts ingredients")
+                ("calendar.circle.fill", "Open Planning", "View your week at a glance"),
+                ("plus.circle.fill", "Tap a Meal Slot", "Pick breakfast, lunch, or dinner"),
+                ("book.fill", "Select Recipe", "Use saved or imported recipes"),
+                ("checkmark.circle.fill", "Save Plan", "Your week updates instantly")
+            ]
+        ),
+        OnboardingSlide(
+            icon: "cart.badge.plus",
+            title: "Build Shopping List\nFrom Recipes",
+            description: "From your recipe or plan, add ingredients to Shopping. Items stay organized and easy to check off in-store.",
+            accentColor: .green,
+            features: [
+                ("basket.fill", "Add Ingredients", "Pull from selected recipes"),
+                ("list.bullet.circle.fill", "Auto Grouping", "Organized by category"),
+                ("checkmark.circle.fill", "Check Off While Shopping", "Tap items as you buy"),
+                ("arrow.clockwise.circle.fill", "Stay Synced", "Always up to date")
+            ]
+        ),
+        OnboardingSlide(
+            icon: "timer",
+            title: "Cook With Timers\nAnd Notes",
+            description: "While cooking, run timers and capture quick notes so your next attempt is even better.",
+            accentColor: .pink,
+            features: [
+                ("timer", "Start a Timer", "Set one or multiple timers"),
+                ("bell.fill", "Get Alerts", "Know exactly when to check food"),
+                ("note.text", "Save Notes", "Record tweaks and tips"),
+                ("heart.fill", "Favorite Winners", "Find your best recipes fast")
             ]
         )
     ]
@@ -54,39 +67,9 @@ struct OnboardingView: View {
             let spacing = AdaptiveSpacing(geometry: geometry)
             
             ZStack {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                    .ignoresSafeArea()
+                onboardingBackdrop
                 
                 VStack(spacing: 0) {
-                    HStack {
-                        Spacer()
-                        if currentPage < slides.count - 1 {
-                            Button(action: { 
-                                HapticManager.shared.light()
-                                withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
-                                    currentPage = slides.count - 1
-                                }
-                            }) {
-                                Text("Skip")
-                                    .font(.system(size: AppTheme.fontSize16, weight: .semibold))
-                                    .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
-                                    .padding(.horizontal, spacing.xl)
-                                    .padding(.vertical, spacing.sm + 2)
-                                    .background(
-                                        Capsule()
-                                            .fill(AppTheme.textColor(for: colorScheme).opacity(0.2))
-                                            .overlay(
-                                                Capsule()
-                                                    .stroke(AppTheme.textColor(for: colorScheme).opacity(0.3), lineWidth: 1)
-                                            )
-                                    )
-                            }
-                            .transition(.scale.combined(with: .opacity))
-                        }
-                    }
-                    .frame(height: spacing.imageSmall)
-                    .padding(.horizontal, spacing.xl)
-                
                     TabView(selection: $currentPage) {
                         ForEach(0..<slides.count, id: \.self) { index in
                             OnboardingSlideView(
@@ -98,7 +81,11 @@ struct OnboardingView: View {
                                         showGetStarted = true
                                     }
                                     DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayXShort) {
-                                        dismiss()
+                                        if let onComplete {
+                                            onComplete()
+                                        } else {
+                                            dismiss()
+                                        }
                                     }
                                 }
                             )
@@ -125,12 +112,82 @@ struct OnboardingView: View {
                             }
                         }
                     }
-                    .padding(.vertical, spacing.xxl + spacing.xs)
+                    .padding(.vertical, spacing.lg)
+                    .padding(.bottom, spacing.xl)
                     .animation(.spring(response: 0.4, dampingFraction: 0.8), value: currentPage)
                 }
+                
+            }
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                HStack {
+                    if currentPage < slides.count - 1 {
+                        Button(action: {
+                            HapticManager.shared.light()
+                            withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                                currentPage = slides.count - 1
+                            }
+                        }) {
+                            Text("Skip")
+                                .font(.system(size: AppTheme.fontSize16, weight: .semibold))
+                                .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
+                                .padding(.horizontal, spacing.lg)
+                                .padding(.vertical, spacing.xs + 1)
+                                .background(
+                                    Capsule()
+                                        .fill(AppTheme.textColor(for: colorScheme).opacity(0.2))
+                                        .overlay(
+                                            Capsule()
+                                                .stroke(AppTheme.textColor(for: colorScheme).opacity(0.3), lineWidth: 1)
+                                        )
+                                )
+                        }
+                        .transition(.scale.combined(with: .opacity))
+                    }
+
+                    Spacer()
+                }
+                .padding(.horizontal, spacing.xl)
+                .padding(.top, spacing.xs)
+                .padding(.bottom, spacing.sm)
+                .frame(height: spacing.heightPercent(0.06, min: 56))
             }
         }
         .interactiveDismissDisabled()
+    }
+
+    private var onboardingBackdrop: some View {
+        ZStack {
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
+                .ignoresSafeArea()
+            
+            Circle()
+                .fill(AppTheme.accentColor(for: selectedTheme).opacity(0.28))
+                .frame(width: 320, height: 320)
+                .blur(radius: 70)
+                .offset(x: -140, y: -220)
+            
+            Circle()
+                .fill(Color.white.opacity(colorScheme == .dark ? 0.10 : 0.18))
+                .frame(width: 240, height: 240)
+                .blur(radius: 60)
+                .offset(x: 150, y: -160)
+            
+            Circle()
+                .fill(AppTheme.accentColor(for: selectedTheme).opacity(0.18))
+                .frame(width: 280, height: 280)
+                .blur(radius: 80)
+                .offset(x: 120, y: 300)
+            
+            LinearGradient(
+                colors: [
+                    Color.black.opacity(colorScheme == .dark ? 0.18 : 0.08),
+                    Color.black.opacity(colorScheme == .dark ? 0.32 : 0.12)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+        }
     }
 }
 
@@ -248,7 +305,7 @@ struct OnboardingSlideView: View {
                         )
                 }
                 .frame(height: spacing.heightPercent(0.32, min: 260))
-                .padding(.top, spacing.xl)
+                .padding(.top, spacing.lg)
                 .scaleEffect(contentScale)
                 .opacity(contentOpacity)
                 
@@ -317,10 +374,10 @@ struct OnboardingSlideView: View {
                         .padding(spacing.lg)
                         .background(
                             RoundedRectangle(cornerRadius: spacing.lg)
-                                .fill(Color.white.opacity(AppTheme.microOpacity))
+                                .fill(colorScheme == .dark ? Color.black.opacity(0.28) : Color.white.opacity(0.22))
                                 .overlay(
                                     RoundedRectangle(cornerRadius: spacing.lg)
-                                        .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                                        .stroke(Color.white.opacity(colorScheme == .dark ? 0.18 : 0.28), lineWidth: 1)
                                 )
                         )
                         .shadow(color: .black.opacity(AppTheme.shadowLightOpacity), radius: 10, x: 0, y: 5)
@@ -362,7 +419,7 @@ struct OnboardingSlideView: View {
                         )
                     }
                     .padding(.horizontal, spacing.screenEdge + spacing.lg)
-                    .padding(.bottom, spacing.xl)
+                    .padding(.bottom, spacing.lg)
                     .scaleEffect(contentScale)
                     .opacity(contentOpacity)
                 } else {
@@ -388,11 +445,11 @@ struct OnboardingSlideView: View {
                             value: isAnimating
                         )
                     }
-                    .padding(.bottom, spacing.xl)
+                    .padding(.bottom, spacing.lg)
                     .opacity(contentOpacity)
                 }
             }
-            .padding(.vertical, spacing.xl)
+            .padding(.vertical, spacing.lg)
         }
         .coordinateSpace(name: "scroll")
         .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in

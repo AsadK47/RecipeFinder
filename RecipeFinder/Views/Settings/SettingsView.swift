@@ -13,7 +13,7 @@ struct SettingsTabView: View {
     @StateObject private var authManager = AuthenticationManager.shared
     @State private var profileImage: UIImage?
     @State private var refreshID = UUID()
-    @State private var showMenu = false
+    @State private var debugResetMessage: String?
     
     var body: some View {
         ZStack {
@@ -22,6 +22,8 @@ struct SettingsTabView: View {
                 
                     ScrollView {
                         VStack(spacing: AppTheme.spacing20) {
+                            SettingsSectionHeader(title: "Account")
+
                             SettingsCard {
                                 NavigationLink(destination: AccountView()) {
                                     HStack(spacing: AppTheme.spacing16) {
@@ -65,7 +67,9 @@ struct SettingsTabView: View {
                                 }
                                 .buttonStyle(PlainButtonStyle())
                             }
-                            
+
+                            SettingsSectionHeader(title: "Appearance")
+
                             SettingsCard {
                                 NavigationLink(destination: AppearanceAndThemeSettingsView()) {
                                     SettingsRow(icon: "paintpalette.fill", iconColor: .pink, title: "Appearance & Theme")
@@ -73,7 +77,9 @@ struct SettingsTabView: View {
                                 }
                                 .buttonStyle(PlainButtonStyle())
                             }
-                            
+
+                            SettingsSectionHeader(title: "Cooking & Preferences")
+
                             SettingsCard {
                                 VStack(spacing: 0) {
                                     NavigationLink(destination: NotificationSettingsView()) {
@@ -119,7 +125,9 @@ struct SettingsTabView: View {
                                     .buttonStyle(PlainButtonStyle())
                                 }
                             }
-                            
+
+                            SettingsSectionHeader(title: "Privacy & Data")
+
                             SettingsCard {
                                 VStack(spacing: 0) {
                                     NavigationLink(destination: PrivacySettingsView()) {
@@ -136,9 +144,20 @@ struct SettingsTabView: View {
                                             .padding(AppTheme.spacing20)
                                     }
                                     .buttonStyle(PlainButtonStyle())
+
+                                    Divider()
+                                        .padding(.leading, AppTheme.spacing60)
+
+                                    NavigationLink(destination: LegalInformationView()) {
+                                        SettingsRow(icon: "building.2.fill", iconColor: .indigo, title: "Legal Information")
+                                            .padding(AppTheme.spacing20)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
                                 }
                             }
-                            
+
+                            SettingsSectionHeader(title: "Support")
+
                             SettingsCard {
                                 VStack(spacing: 0) {
                                     NavigationLink(destination: HelpView()) {
@@ -157,14 +176,52 @@ struct SettingsTabView: View {
                                     .buttonStyle(PlainButtonStyle())
                                 }
                             }
-                            
+
+#if DEBUG
+                            SettingsSectionHeader(title: "Developer (Debug)")
+
                             SettingsCard {
-                                NavigationLink(destination: LegalInformationView()) {
-                                    SettingsRow(icon: "building.2.fill", iconColor: .indigo, title: "Legal Information")
-                                        .padding(AppTheme.spacing20)
+                                VStack(spacing: 0) {
+                                    Button(action: {
+                                        resetOnboardingFlags(resetMainOnboarding: true, resetBiometricOnboarding: false)
+                                    }) {
+                                        SettingsRow(icon: "arrow.counterclockwise.circle.fill", iconColor: .orange, title: "Reset Main Onboarding")
+                                            .padding(AppTheme.spacing20)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+
+                                    Divider()
+                                        .padding(.leading, AppTheme.spacing60)
+
+                                    Button(action: {
+                                        resetOnboardingFlags(resetMainOnboarding: false, resetBiometricOnboarding: true)
+                                    }) {
+                                        SettingsRow(icon: "faceid", iconColor: .blue, title: "Reset Biometric Onboarding")
+                                            .padding(AppTheme.spacing20)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+
+                                    Divider()
+                                        .padding(.leading, AppTheme.spacing60)
+
+                                    Button(action: {
+                                        resetOnboardingFlags(resetMainOnboarding: true, resetBiometricOnboarding: true)
+                                    }) {
+                                        SettingsRow(icon: "arrow.counterclockwise.icloud.fill", iconColor: .purple, title: "Reset All Onboarding")
+                                            .padding(AppTheme.spacing20)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
                                 }
-                                .buttonStyle(PlainButtonStyle())
                             }
+
+                            if let debugResetMessage {
+                                Text(debugResetMessage)
+                                    .font(.caption)
+                                    .adaptiveForegroundColor(opacity: AppTheme.mediumEmphasisOpacity)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.horizontal, AppTheme.spacing6)
+                            }
+#endif
                             
                             VStack(spacing: AppTheme.spacing4) {
                                 Text("RecipeFinder")
@@ -189,6 +246,21 @@ struct SettingsTabView: View {
                 refreshID = UUID()
             }
         }
+
+    private func resetOnboardingFlags(resetMainOnboarding: Bool, resetBiometricOnboarding: Bool) {
+        if resetMainOnboarding {
+            UserScopedStorage.shared.set(false, forKey: "hasCompletedOnboarding")
+            UserDefaults.standard.set(false, forKey: "hasCompletedOnboarding")
+        }
+
+        if resetBiometricOnboarding {
+            UserScopedStorage.shared.set(false, forKey: "hasSeenBiometricOnboarding")
+            UserDefaults.standard.set(false, forKey: "hasSeenBiometricOnboarding")
+        }
+
+        debugResetMessage = "Onboarding flags reset for this account. Sign out and back in, or relaunch the app, to run onboarding again."
+        HapticManager.shared.success()
+    }
     }
 
 struct SettingsCard<Content: View>: View {
