@@ -247,8 +247,7 @@ struct FoodsList {
     }
     
     static func searchFoods(query: String) -> [String] {
-        guard !query.isEmpty else { return [] }
-        return allFoods.filter { $0.localizedCaseInsensitiveContains(query) }
+        return IngredientAutocompleteEngine.rankedNames(for: query, limit: allFoods.count)
     }
     
     static func getFoods(forCategory category: String) -> [String] {

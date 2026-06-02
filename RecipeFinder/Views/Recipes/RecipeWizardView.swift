@@ -38,6 +38,7 @@ struct RecipeWizardView: View {
     @State private var servings = 4
     
     @State private var ingredientItems: [IngredientItem] = [IngredientItem()]
+    @FocusState private var focusedIngredientID: UUID?
     
     @State private var prePrepSteps: [String] = [""]
     
@@ -370,7 +371,7 @@ struct RecipeWizardView: View {
             
             cardContainer {
                 VStack(spacing: AppTheme.spacing12) {
-                    ForEach(Array(ingredientItems.enumerated()), id: \.offset) { index, _ in
+                    ForEach(Array(ingredientItems.enumerated()), id: \.element.id) { index, item in
                         VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                             HStack(spacing: AppTheme.spacing8) {
                                 VStack(alignment: .leading, spacing: AppTheme.spacing2) {
@@ -379,6 +380,7 @@ struct RecipeWizardView: View {
                                         .foregroundColor(.secondary)
                                     TextField("e.g. Chicken breast", text: $ingredientItems[index].name)
                                         .textFieldStyle(.roundedBorder)
+                                        .focused($focusedIngredientID, equals: item.id)
                                 }
 
                                 if ingredientItems.count > 1 {
@@ -391,6 +393,55 @@ struct RecipeWizardView: View {
                                             .font(.system(size: AppTheme.fontSize22))
                                     }
                                     .padding(.top, AppTheme.spacing14)
+                                }
+                            }
+
+                            if focusedIngredientID == item.id {
+                                let suggestions = ingredientAutocompleteSuggestions(for: ingredientItems[index].name, excluding: ingredientItems.map { $0.name })
+
+                                if !suggestions.isEmpty {
+                                    VStack(alignment: .leading, spacing: AppTheme.spacing8) {
+                                        Text("Suggestions")
+                                            .font(.caption2)
+                                            .foregroundColor(.secondary)
+
+                                        VStack(spacing: AppTheme.spacing6) {
+                                            ForEach(suggestions, id: \.id) { suggestion in
+                                                Button(action: {
+                                                    ingredientItems[index].name = suggestion.name
+                                                    HapticManager.shared.light()
+                                                }) {
+                                                    HStack(alignment: .center, spacing: AppTheme.spacing10) {
+                                                        VStack(alignment: .leading, spacing: AppTheme.spacing2) {
+                                                            Text(suggestion.name)
+                                                                .font(.subheadline)
+                                                                .foregroundColor(.primary)
+                                                                .lineLimit(1)
+
+                                                            Text("\(suggestion.category) · \(suggestion.source)")
+                                                                .font(.caption2)
+                                                                .foregroundColor(.secondary)
+                                                                .lineLimit(1)
+                                                        }
+
+                                                        Spacer(minLength: 0)
+
+                                                        Image(systemName: "arrow.up.left.circle.fill")
+                                                            .foregroundColor(AppTheme.accentColor(for: appTheme))
+                                                    }
+                                                    .padding(.vertical, AppTheme.spacing10)
+                                                    .padding(.horizontal, AppTheme.spacing12)
+                                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                                    .background(
+                                                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius10)
+                                                            .fill(Color(.systemGray6))
+                                                    )
+                                                }
+                                                .buttonStyle(.plain)
+                                            }
+                                        }
+                                    }
+                                    .padding(.top, AppTheme.spacing4)
                                 }
                             }
 
@@ -443,7 +494,9 @@ struct RecipeWizardView: View {
 
                     Button(action: {
                         HapticManager.shared.light()
-                        ingredientItems.append(IngredientItem())
+                        let newItem = IngredientItem()
+                        ingredientItems.append(newItem)
+                        focusedIngredientID = newItem.id
                     }) {
                         Label("Add Ingredient", systemImage: "plus.circle.fill")
                             .foregroundColor(AppTheme.accentColor(for: appTheme))
@@ -454,6 +507,14 @@ struct RecipeWizardView: View {
                 .padding()
             }
         }
+    }
+
+    private func ingredientAutocompleteSuggestions(for query: String, excluding existingIngredients: [String]) -> [IngredientAutocompleteSuggestion] {
+        let excludedNames = Set(existingIngredients.map { $0.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() }.filter { !$0.isEmpty })
+
+        return IngredientAutocompleteEngine
+            .suggestions(for: query, limit: 4)
+            .filter { !excludedNames.contains($0.name.lowercased()) }
     }
     
     private var prePrepStep: some View {
