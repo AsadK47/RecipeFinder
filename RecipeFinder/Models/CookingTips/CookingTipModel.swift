@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 struct CookingTipModel: Identifiable, Codable, Hashable {
     var id: UUID
@@ -72,6 +73,22 @@ enum CookingTipCategory: String, Codable, CaseIterable, Identifiable {
         case .timeSaving: return "yellow"
         case .presentation: return "pink"
         case .seasoning: return "mint"
+        }
+    }
+
+    func displayColor(for theme: AppTheme.ThemeType) -> Color {
+        switch color {
+        case "blue": return .blue
+        case "purple": return .purple
+        case "green": return .green
+        case "orange": return .orange
+        case "red": return .red
+        case "cyan": return .cyan
+        case "indigo": return .indigo
+        case "yellow": return .yellow
+        case "pink": return .pink
+        case "mint": return .mint
+        default: return AppTheme.accentColor(for: theme)
         }
     }
 }

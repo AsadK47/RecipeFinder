@@ -436,9 +436,9 @@ struct ShoppingListView: View {
             },
             label: {
                 HStack(spacing: AppTheme.spacing12) {
-                    Image(systemName: categoryIcon(for: category))
+                    Image(systemName: CategoryClassifier.categoryIcon(for: category))
                         .font(.title3)
-                        .foregroundColor(categoryColor(for: category))
+                        .foregroundColor(CategoryClassifier.categoryColor(for: category))
                         .frame(width: AppTheme.iconSize28)
                     
                     Text(category)
@@ -541,14 +541,7 @@ struct ShoppingListView: View {
         .buttonStyle(PlainButtonStyle())
         .disabled(isInList)
     }
-    
-    private func categoryIcon(for category: String) -> String {
-        CategoryClassifier.categoryIcon(for: category)
-    }
-    
-    private func categoryColor(for category: String) -> Color {
-        CategoryClassifier.categoryColor(for: category)
-    }
+
 }
 
 struct ShoppingListItemRow: View {
@@ -674,7 +667,7 @@ struct ShoppingListItemRow: View {
                         Menu("Change Category") {
                             ForEach(allCategories, id: \.self) { category in
                                 Button(action: { onCategoryChange(category) }) {
-                                    Label(category, systemImage: categoryIcon(for: category))
+                                    Label(category, systemImage: CategoryClassifier.categoryIcon(for: category))
                                 }
                             }
                         }
@@ -706,9 +699,6 @@ struct ShoppingListItemRow: View {
         }
     }
     
-    private func categoryIcon(for category: String) -> String {
-        CategoryClassifier.categoryIcon(for: category)
-    }
 }
 
 struct ShoppingFeatureRow: View {

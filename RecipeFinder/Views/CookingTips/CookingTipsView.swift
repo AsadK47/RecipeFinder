@@ -347,19 +347,7 @@ struct CookingTipsView: View {
     }
     
     private func colorForCategory(_ category: CookingTipCategory) -> Color {
-        switch category.color {
-        case "blue": return .blue
-        case "purple": return .purple
-        case "green": return .green
-        case "orange": return .orange
-        case "red": return .red
-        case "cyan": return .cyan
-        case "indigo": return .indigo
-        case "yellow": return .yellow
-        case "pink": return .pink
-        case "mint": return .mint
-        default: return AppTheme.accentColor(for: selectedTheme)
-        }
+        category.displayColor(for: selectedTheme)
     }
 }
 
@@ -432,19 +420,7 @@ struct CompactTipRow: View {
     }
     
     private func colorForCategory(_ category: CookingTipCategory) -> Color {
-        switch category.color {
-        case "blue": return .blue
-        case "purple": return .purple
-        case "green": return .green
-        case "orange": return .orange
-        case "red": return .red
-        case "cyan": return .cyan
-        case "indigo": return .indigo
-        case "yellow": return .yellow
-        case "pink": return .pink
-        case "mint": return .mint
-        default: return AppTheme.accentColor(for: selectedTheme)
-        }
+        category.displayColor(for: selectedTheme)
     }
 }
 
@@ -607,19 +583,7 @@ struct CookingTipCard: View {
     }
     
     private func colorForCategory(_ category: CookingTipCategory) -> Color {
-        switch category.color {
-        case "blue": return .blue
-        case "purple": return .purple
-        case "green": return .green
-        case "orange": return .orange
-        case "red": return .red
-        case "cyan": return .cyan
-        case "indigo": return .indigo
-        case "yellow": return .yellow
-        case "pink": return .pink
-        case "mint": return .mint
-        default: return AppTheme.accentColor(for: selectedTheme)
-        }
+        category.displayColor(for: selectedTheme)
     }
 }
 

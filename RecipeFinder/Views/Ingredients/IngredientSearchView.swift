@@ -173,7 +173,7 @@ struct IngredientSearchView: View {
                                     ForEach(Array(selectedCategories), id: \.self) { category in
                                         FilterChip(
                                             label: category,
-                                            icon: categoryIcon(for: CategoryClassifier.suggestCategory(for: category.lowercased()))
+                                            icon: CategoryClassifier.categoryIcon(for: CategoryClassifier.suggestCategory(for: category.lowercased()))
                                         ) {
                                             selectedCategories.remove(category)
                                         }
@@ -294,8 +294,8 @@ struct IngredientSearchView: View {
                 },
                 label: {
                     HStack(spacing: AppTheme.spacing12) {
-                    Image(systemName: categoryIcon(for: category))
-                        .foregroundColor(categoryColor(for: category))
+                    Image(systemName: CategoryClassifier.categoryIcon(for: category))
+                        .foregroundColor(CategoryClassifier.categoryColor(for: category))
                         .font(.body)
                     
                     Text(ingredient)
@@ -367,38 +367,6 @@ struct IngredientSearchView: View {
         recipes.filter { recipe in
             recipe.ingredients.contains { $0.name.localizedCaseInsensitiveContains(ingredient) }
         }.count
-    }
-    
-    private func categoryIcon(for category: String) -> String {
-        switch category {
-        case "Produce": return "leaf.fill"
-        case "Meat": return "fork.knife.circle.fill"
-        case "Seafood": return "fish.fill"
-        case "Meat & Seafood": return "fish.fill"
-        case "Dairy & Eggs": return "drop.fill"
-        case "Bakery": return "birthday.cake.fill"
-        case "Kitchen": return "cabinet.fill"
-        case "Frozen": return "snowflake"
-        case "Beverages": return "cup.and.saucer.fill"
-        case "Spices & Seasonings": return "sparkles"
-        default: return "basket.fill"
-        }
-    }
-    
-    private func categoryColor(for category: String) -> Color {
-        switch category {
-        case "Produce": return .green
-        case "Meat": return .red
-        case "Seafood": return .blue
-        case "Meat & Seafood": return .red
-        case "Dairy & Eggs": return .blue
-        case "Bakery": return .orange
-        case "Kitchen": return .brown
-        case "Frozen": return .cyan
-        case "Beverages": return .purple
-        case "Spices & Seasonings": return .yellow
-        default: return .gray
-        }
     }
     
     private func clearAllFilters() {
@@ -926,8 +894,8 @@ struct IngredientFilterSheet: View {
                                 ForEach(categories, id: \.self) { category in
                                     FilterButton(
                                         label: category,
-                                        icon: categoryIcon(for: CategoryClassifier.suggestCategory(for: category.lowercased())),
-                                        color: categoryColor(for: CategoryClassifier.suggestCategory(for: category.lowercased())),
+                                        icon: CategoryClassifier.categoryIcon(for: CategoryClassifier.suggestCategory(for: category.lowercased())),
+                                        color: CategoryClassifier.categoryColor(for: CategoryClassifier.suggestCategory(for: category.lowercased())),
                                         isSelected: selectedCategories.contains(category)
                                     ) {
                                         if selectedCategories.contains(category) {
@@ -968,35 +936,4 @@ struct IngredientFilterSheet: View {
         }
     }
     
-    private func categoryIcon(for category: String) -> String {
-        switch category.lowercased() {
-        case "produce": return "leaf.fill"
-        case "meat": return "fork.knife.circle.fill"
-        case "seafood": return "fish.fill"
-        case "meat & seafood": return "fish.fill"
-        case "dairy & eggs": return "drop.fill"
-        case "bakery": return "birthday.cake.fill"
-        case "kitchen": return "shippingbox.fill"
-        case "frozen": return "snowflake"
-        case "beverages": return "cup.and.saucer.fill"
-        case "spices & herbs": return "sparkles"
-        default: return "tag.fill"
-        }
-    }
-    
-    private func categoryColor(for category: String) -> Color {
-        switch category.lowercased() {
-        case "produce": return .green
-        case "meat": return .red
-        case "seafood": return .blue
-        case "meat & seafood": return .red
-        case "dairy & eggs": return .blue
-        case "bakery": return .orange
-        case "kitchen": return .brown
-        case "frozen": return .cyan
-        case "beverages": return .purple
-        case "spices & herbs": return .yellow
-        default: return .gray
-        }
-    }
 }
