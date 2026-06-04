@@ -102,7 +102,6 @@ struct RecipeDetailView: View {
         VStack(spacing: AppTheme.spacing12) {
             if let imageName = recipe.imageName, !imageName.isEmpty {
                 RecipeImageView(imageName: imageName, height: 220)
-                    .padding(.horizontal, AppTheme.spacing20)
                     .padding(.top, AppTheme.spacing8)
             }
 
@@ -111,10 +110,10 @@ struct RecipeDetailView: View {
                 .adaptiveForegroundColor()
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity, alignment: .center)
-                .padding(.horizontal, AppTheme.spacing20)
                 .padding(.top, recipe.imageName?.isEmpty == false ? 0 : AppTheme.spacing8)
                 .padding(.bottom, AppTheme.spacing20)
         }
+        .padding(.horizontal, AppTheme.spacing20)
     }
     
     private var recipeInfoCardsView: some View {

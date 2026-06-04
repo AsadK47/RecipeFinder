@@ -385,43 +385,52 @@ struct ShoppingListView: View {
     private func categorySection(for category: String, items: [ShoppingListModel]) -> some View {
         Section {
             if !collapsedCategories.contains(category) {
-                ForEach(items) { item in
-                    ShoppingListItemRow(
-                        item: item,
-                        onToggle: {
-                            if let index = manager.items.firstIndex(where: { $0.id == item.id }) {
-                                manager.toggleItem(at: index)
-                            }
-                        },
-                        onQuantityChange: { newQuantity in
-                            if let index = manager.items.firstIndex(where: { $0.id == item.id }) {
-                                manager.updateQuantity(at: index, quantity: newQuantity)
-                            }
-                        },
-                        onDelete: {
-                            if let index = manager.items.firstIndex(where: { $0.id == item.id }) {
-                                manager.deleteItem(at: index)
-                            }
-                        },
-                        onCategoryChange: { newCategory in
-                            if let index = manager.items.firstIndex(where: { $0.id == item.id }) {
-                                manager.updateCategory(at: index, category: newCategory)
-                            }
-                        },
-                        onStoreChange: { newStore in
-                            if let index = manager.items.firstIndex(where: { $0.id == item.id }) {
-                                manager.updateStore(at: index, store: newStore)
-                            }
-                        },
-                        allCategories: CategoryClassifier.categoryOrder
-                    )
-                    .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
-                    .listRowSeparator(.hidden)
-                    .listRowBackground(Color.clear)
-                }
+                rowList(items)
+                    .transition(.asymmetric(
+                        insertion: .move(edge: .top).combined(with: .opacity),
+                        removal: .move(edge: .top).combined(with: .opacity)
+                    ))
             }
         } header: {
             categorySectionHeader(category: category, items: items)
+        }
+    }
+
+    @ViewBuilder
+    private func rowList(_ items: [ShoppingListModel]) -> some View {
+        ForEach(items) { item in
+            ShoppingListItemRow(
+                item: item,
+                onToggle: {
+                    if let index = manager.items.firstIndex(where: { $0.id == item.id }) {
+                        manager.toggleItem(at: index)
+                    }
+                },
+                onQuantityChange: { newQuantity in
+                    if let index = manager.items.firstIndex(where: { $0.id == item.id }) {
+                        manager.updateQuantity(at: index, quantity: newQuantity)
+                    }
+                },
+                onDelete: {
+                    if let index = manager.items.firstIndex(where: { $0.id == item.id }) {
+                        manager.deleteItem(at: index)
+                    }
+                },
+                onCategoryChange: { newCategory in
+                    if let index = manager.items.firstIndex(where: { $0.id == item.id }) {
+                        manager.updateCategory(at: index, category: newCategory)
+                    }
+                },
+                onStoreChange: { newStore in
+                    if let index = manager.items.firstIndex(where: { $0.id == item.id }) {
+                        manager.updateStore(at: index, store: newStore)
+                    }
+                },
+                allCategories: CategoryClassifier.categoryOrder
+            )
+            .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
+            .listRowSeparator(.hidden)
+            .listRowBackground(Color.clear)
         }
     }
     
@@ -429,10 +438,12 @@ struct ShoppingListView: View {
     private func categorySectionHeader(category: String, items: [ShoppingListModel]) -> some View {
         Button(
             action: {
-                if collapsedCategories.contains(category) {
-                    collapsedCategories.remove(category)
-                } else {
-                    collapsedCategories.insert(category)
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.85)) {
+                    if collapsedCategories.contains(category) {
+                        collapsedCategories.remove(category)
+                    } else {
+                        collapsedCategories.insert(category)
+                    }
                 }
             },
             label: {
