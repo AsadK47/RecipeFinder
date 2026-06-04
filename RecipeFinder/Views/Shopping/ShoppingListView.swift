@@ -664,11 +664,19 @@ struct ShoppingListItemRow: View {
                     Menu {
                         Menu("Change Store") {
                             Button(action: { onStoreChange(nil) }) {
-                                Label("None", systemImage: item.preferredStore == nil ? "checkmark" : "")
+                                if item.preferredStore == nil {
+                                    Label("None", systemImage: "checkmark")
+                                } else {
+                                    Text("None")
+                                }
                             }
                             ForEach(availableStores, id: \.self) { store in
                                 Button(action: { onStoreChange(store) }) {
-                                    Label(store, systemImage: item.preferredStore == store ? "checkmark" : "")
+                                    if item.preferredStore == store {
+                                        Label(store, systemImage: "checkmark")
+                                    } else {
+                                        Text(store)
+                                    }
                                 }
                             }
                         }
