@@ -564,6 +564,23 @@ struct ShoppingListItemRow: View {
     private var categoryChoices: [String] {
         [defaultCategory] + allCategories.filter { $0 != defaultCategory }
     }
+
+    private var popularCategories: [String] {
+        let baseline = ["Produce", "Dairy & Eggs", "Meat", "Poultry", "Seafood", "Sauces & Condiments"]
+        let available = baseline.filter { allCategories.contains($0) && $0 != defaultCategory }
+
+        // Keep the list compact to reduce menu rendering work and UI jitter.
+        if available.count >= 5 {
+            return available
+        }
+
+        let fallback = allCategories.filter { !available.contains($0) && $0 != defaultCategory }
+        return Array((available + fallback).prefix(5))
+    }
+
+    private var moreCategories: [String] {
+        categoryChoices.dropFirst().filter { !popularCategories.contains($0) }
+    }
     
     var body: some View {
         ZStack {
@@ -687,9 +704,19 @@ struct ShoppingListItemRow: View {
 
                             Divider()
 
-                            ForEach(categoryChoices.dropFirst(), id: \.self) { category in
+                            ForEach(popularCategories, id: \.self) { category in
                                 Button(action: { onCategoryChange(category) }) {
                                     Label(category, systemImage: CategoryClassifier.categoryIcon(for: category))
+                                }
+                            }
+
+                            if !moreCategories.isEmpty {
+                                Menu("More Categories") {
+                                    ForEach(moreCategories, id: \.self) { category in
+                                        Button(action: { onCategoryChange(category) }) {
+                                            Label(category, systemImage: CategoryClassifier.categoryIcon(for: category))
+                                        }
+                                    }
                                 }
                             }
                         }
