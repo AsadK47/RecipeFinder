@@ -15,7 +15,6 @@ struct RecipeDetailView: View {
     @State private var editingIngredientIndex: Int?
     @State private var editingQuantity: String = ""
     @State private var editingUnit: String = ""
-    @AppStorage("hasSeenSwipeHint") private var hasSeenSwipeHint = false
     @AppStorage("measurementSystem") private var measurementSystem: MeasurementSystem = .metric
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
@@ -338,37 +337,6 @@ struct RecipeDetailView: View {
     private var ingredientsList: some View {
         GlassCard {
             VStack(spacing: AppTheme.spacing16) {
-                if !hasSeenSwipeHint {
-                    HStack(spacing: AppTheme.spacing8) {
-                        Image(systemName: "hand.draw")
-                            .font(.system(size: AppTheme.fontSize16))
-                            .foregroundColor(AppTheme.accentColor)
-                        
-                        Text("Swipe left to add to shopping list")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        
-                        Spacer()
-                        
-                        Button(action: {
-                            withAnimation {
-                                hasSeenSwipeHint = true
-                            }
-                        }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .font(.system(size: AppTheme.fontSize16))
-                                .foregroundColor(.secondary.opacity(AppTheme.glassLightOpacity))
-                        }                        .accessibilityLabel("Dismiss hint")
-                        .accessibilityHint("Closes swipe instruction banner")                    }
-                    .padding(.horizontal, AppTheme.spacing12)
-                    .padding(.vertical, AppTheme.spacing8)
-                    .background(
-                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius8)
-                            .fill(AppTheme.accentColor.opacity(0.1))
-                    )
-                    .transition(.move(edge: .top).combined(with: .opacity))
-                }
-                
                 ForEach(recipe.ingredients.indices, id: \.self) { index in
                     IngredientRowView(
                         ingredient: recipe.ingredients[index],
