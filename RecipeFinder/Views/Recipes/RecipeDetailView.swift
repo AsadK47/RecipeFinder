@@ -449,6 +449,19 @@ struct RecipeDetailView: View {
                     .font(.title3)
                     .adaptiveForegroundColor()
             }
+
+            Menu {
+                Button(action: addAllIngredientsToShoppingList) {
+                    Label("Add all ingredients to shopping", systemImage: "cart.badge.plus")
+                }
+                .disabled(recipe.ingredients.isEmpty)
+            } label: {
+                Image(systemName: "ellipsis.circle")
+                    .font(.title3)
+                    .adaptiveForegroundColor()
+            }
+            .accessibilityLabel("More actions")
+            .accessibilityHint("Opens recipe actions menu")
             
             Button(action: toggleFavorite) {
                 Image(systemName: recipe.isFavorite ? "heart.fill" : "heart")
@@ -651,6 +664,40 @@ struct RecipeDetailView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayFeedback) {
             withAnimation {
                 _ = addedIngredients.remove(ingredient.name)
+            }
+        }
+    }
+
+    private func addAllIngredientsToShoppingList() {
+        guard !recipe.ingredients.isEmpty else { return }
+
+        HapticManager.shared.success()
+
+        var addedCount = 0
+        for ingredient in recipe.ingredients {
+            let normalizedName = IngredientNormalizer.normalize(ingredient.mainIngredientName)
+            guard !normalizedName.isEmpty else { continue }
+
+            ShoppingListManager.shared.addItem(name: normalizedName, quantity: 1, category: nil)
+            addedIngredients.insert(ingredient.name)
+            addedCount += 1
+        }
+
+        guard addedCount > 0 else { return }
+
+        showAddedFeedback = addedCount == 1 ? "1 ingredient" : "\(addedCount) ingredients"
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayXLong) {
+            withAnimation(.easeOut(duration: AppTheme.animationDuration08)) {
+                showAddedFeedback = nil
+            }
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayFeedback) {
+            withAnimation {
+                recipe.ingredients.forEach { ingredient in
+                    _ = addedIngredients.remove(ingredient.name)
+                }
             }
         }
     }
