@@ -556,6 +556,14 @@ struct ShoppingListItemRow: View {
     
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
+
+    private var defaultCategory: String {
+        CategoryClassifier.categorize(item.name)
+    }
+
+    private var categoryChoices: [String] {
+        [defaultCategory] + allCategories.filter { $0 != defaultCategory }
+    }
     
     var body: some View {
         ZStack {
@@ -665,7 +673,13 @@ struct ShoppingListItemRow: View {
                             }
                         }
                         Menu("Change Category") {
-                            ForEach(allCategories, id: \.self) { category in
+                            Button(action: { onCategoryChange(defaultCategory) }) {
+                                Label("Default (\(defaultCategory))", systemImage: CategoryClassifier.categoryIcon(for: defaultCategory))
+                            }
+
+                            Divider()
+
+                            ForEach(categoryChoices.dropFirst(), id: \.self) { category in
                                 Button(action: { onCategoryChange(category) }) {
                                     Label(category, systemImage: CategoryClassifier.categoryIcon(for: category))
                                 }

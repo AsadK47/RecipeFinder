@@ -223,7 +223,7 @@ enum CategoryClassifier {
         case "Herbs & Fresh Spices": return "leaf.fill"
         case "Dried Spices & Seasonings": return "sparkles"
         case "Oils & Fats": return "drop.circle.fill"
-        case "Sauces & Condiments": return "bottle.fill"
+        case "Sauces & Condiments", "Condiments & Sauces": return "drop.fill"
         case "Canned & Jarred": return "cylinder.fill"
         case "Frozen": return "snowflake"
         case "Beverages": return "cup.and.saucer.fill"
@@ -255,7 +255,7 @@ enum CategoryClassifier {
         case "Herbs & Fresh Spices": return .green
         case "Dried Spices & Seasonings": return .orange
         case "Oils & Fats": return .yellow
-        case "Sauces & Condiments": return .purple
+        case "Sauces & Condiments", "Condiments & Sauces": return .purple
         case "Canned & Jarred": return .gray
         case "Frozen": return .cyan
         case "Beverages": return .blue
