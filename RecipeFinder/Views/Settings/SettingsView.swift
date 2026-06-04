@@ -91,15 +91,6 @@ struct SettingsTabView: View {
                                     Divider()
                                         .padding(.leading, AppTheme.spacing60)
                                     
-                                    NavigationLink(destination: TimerSettingsView()) {
-                                        SettingsRow(icon: "timer", iconColor: .orange, title: "Timers")
-                                            .padding(AppTheme.spacing20)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                    
-                                    Divider()
-                                        .padding(.leading, AppTheme.spacing60)
-                                    
                                     NavigationLink(destination: UnitsSettingsView()) {
                                         SettingsRow(icon: "ruler.fill", iconColor: .blue, title: "Units & Measurements")
                                             .padding(AppTheme.spacing20)
@@ -1565,7 +1556,6 @@ struct DataManagementSettingsView: View {
         defaults.set("Teal", forKey: "appTheme")
         defaults.set("Frost Light", forKey: "cardStyle")
         defaults.set("metric", forKey: "measurementSystem")
-        defaults.set(300, forKey: "defaultTimerDuration")
         
         PersistenceController.shared.populateDatabase()
         
@@ -1666,7 +1656,7 @@ struct HelpView: View {
                             HelpItem(
                                 icon: "timer",
                                 title: "Cooking Timers",
-                                description: "Set multiple timers while cooking. Use preset buttons or create custom timers with names."
+                                description: "Start a recipe timer from the toolbar and control it with pause, resume, or stop."
                             )
                             
                             HelpItem(

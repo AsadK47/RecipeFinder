@@ -15,6 +15,7 @@ struct RecipeDetailView: View {
     @State private var editingIngredientIndex: Int?
     @State private var editingQuantity: String = ""
     @State private var editingUnit: String = ""
+    @StateObject private var recipeTimer = RecipeTimerManager.shared
     @AppStorage("measurementSystem") private var measurementSystem: MeasurementSystem = .metric
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
@@ -437,11 +438,41 @@ struct RecipeDetailView: View {
     
     private var toolbarButtons: some View {
         HStack(spacing: AppTheme.spacing16) {
-            Button(action: { showTimerSheet = true }) {
-                Image(systemName: "timer")
-                    .font(.title3)
-                    .adaptiveForegroundColor()
+            Menu {
+                Button(action: { showTimerSheet = true }) {
+                    Label("Set Recipe Timer", systemImage: "clock")
+                }
+
+                if recipeTimer.isActive {
+                    Divider()
+
+                    Button(action: { recipeTimer.togglePause() }) {
+                        Label(recipeTimer.isPaused ? "Resume" : "Pause", systemImage: recipeTimer.isPaused ? "play.fill" : "pause.fill")
+                    }
+
+                    Button(role: .destructive, action: { recipeTimer.stop() }) {
+                        Label("Stop", systemImage: "stop.fill")
+                    }
+                }
+            } label: {
+                if recipeTimer.isActive {
+                    Text(recipeTimer.displayTime)
+                        .font(.system(.subheadline, design: .monospaced).weight(.semibold))
+                        .adaptiveForegroundColor()
+                        .padding(.horizontal, AppTheme.spacing10)
+                        .padding(.vertical, AppTheme.spacing4)
+                        .background(
+                            Capsule()
+                                .fill(colorScheme == .dark ? Color.white.opacity(AppTheme.overlayLightOpacity) : Color.black.opacity(AppTheme.dividerOpacity))
+                        )
+                } else {
+                    Image(systemName: "timer")
+                        .font(.title3)
+                        .adaptiveForegroundColor()
+                }
             }
+            .accessibilityLabel("Recipe timer")
+            .accessibilityHint("Open timer actions")
             
             Button(action: { showEditSheet = true }) {
                 Image(systemName: "pencil")
