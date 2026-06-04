@@ -40,16 +40,49 @@ struct KitchenView: View {
     
     var quickMatchRecipes: [RecipeModel] { quickMatches }
 
+    private func normalizedIngredientTerm(_ raw: String) -> String {
+        let main = IngredientNameFormatter.extractMainName(raw)
+            .lowercased()
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        return main
+            .components(separatedBy: .whitespacesAndNewlines)
+            .filter { !$0.isEmpty }
+            .joined(separator: " ")
+    }
+
+    private func ingredientMatches(_ recipeIngredient: String, _ kitchenIngredient: String) -> Bool {
+        if recipeIngredient == kitchenIngredient {
+            return true
+        }
+
+        // Avoid broad wildcard behavior for tiny terms like "b".
+        guard recipeIngredient.count >= 3, kitchenIngredient.count >= 3 else {
+            return false
+        }
+
+        return recipeIngredient.contains(kitchenIngredient) || kitchenIngredient.contains(recipeIngredient)
+    }
+
     private func computeQuickMatches() -> [RecipeModel] {
         guard !manager.items.isEmpty else { return [] }
-        
-        let kitchenIngredients = Set(manager.items.map { $0.name.lowercased() })
+
+        let kitchenIngredients = Set(
+            manager.items
+                .map { normalizedIngredientTerm($0.name) }
+                .filter { !$0.isEmpty }
+        )
+
+        guard !kitchenIngredients.isEmpty else { return [] }
         
         return recipes.filter { recipe in
-            let recipeIngredients = recipe.ingredients.map { $0.name.lowercased() }
+            let recipeIngredients = recipe.ingredients
+                .map { normalizedIngredientTerm($0.name) }
+                .filter { !$0.isEmpty }
+
             return recipeIngredients.contains { recipeIng in
                 kitchenIngredients.contains { kitchenIng in
-                    recipeIng.contains(kitchenIng) || kitchenIng.contains(recipeIng)
+                    ingredientMatches(recipeIng, kitchenIng)
                 }
             }
         }.sorted { recipe1, recipe2 in
@@ -59,10 +92,13 @@ struct KitchenView: View {
     }
     
     private func matchCount(recipe: RecipeModel, kitchenIngredients: Set<String>) -> Int {
-        let recipeIngredients = recipe.ingredients.map { $0.name.lowercased() }
+        let recipeIngredients = recipe.ingredients
+            .map { normalizedIngredientTerm($0.name) }
+            .filter { !$0.isEmpty }
+
         return recipeIngredients.filter { recipeIng in
             kitchenIngredients.contains { kitchenIng in
-                recipeIng.contains(kitchenIng) || kitchenIng.contains(recipeIng)
+                ingredientMatches(recipeIng, kitchenIng)
             }
         }.count
     }
