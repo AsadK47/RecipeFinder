@@ -449,18 +449,14 @@ struct RecipeDetailView: View {
                     .adaptiveForegroundColor()
             }
 
-            Menu {
-                Button(action: addAllIngredientsToShoppingList) {
-                    Label("Add all ingredients to shopping", systemImage: "cart.badge.plus")
-                }
-                .disabled(recipe.ingredients.isEmpty)
-            } label: {
-                Image(systemName: "ellipsis.circle")
+            Button(action: addAllIngredientsToShoppingList) {
+                Image(systemName: "cart.badge.plus")
                     .font(.title3)
                     .adaptiveForegroundColor()
             }
-            .accessibilityLabel("More actions")
-            .accessibilityHint("Opens recipe actions menu")
+            .disabled(recipe.ingredients.isEmpty)
+            .accessibilityLabel("Add all ingredients to shopping list")
+            .accessibilityHint("Adds every ingredient from this recipe in one tap")
             
             Button(action: toggleFavorite) {
                 Image(systemName: recipe.isFavorite ? "heart.fill" : "heart")
