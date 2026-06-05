@@ -1,4 +1,5 @@
 import SwiftUI
+import PhotosUI
 
 struct RecipeWizardView: View {
     @Environment(\.dismiss) private var dismiss
@@ -48,6 +49,9 @@ struct RecipeWizardView: View {
     
     @State private var showError = false
     @State private var errorMessage = ""
+    @State private var selectedPhotoItem: PhotosPickerItem?
+    @State private var selectedRecipeImage: UIImage?
+    @State private var existingImageReference: String?
     
     init(prefilledData: PrefilledRecipeData? = nil, editingRecipeId: UUID? = nil, onComplete: @escaping (RecipeModel) -> Void) {
         self.prefilledData = prefilledData
@@ -143,6 +147,23 @@ struct RecipeWizardView: View {
         } message: {
             Text(errorMessage)
         }
+        .onChange(of: selectedPhotoItem) { _, newItem in
+            guard let newItem else { return }
+            Task {
+                if let data = try? await newItem.loadTransferable(type: Data.self),
+                   let image = UIImage(data: data) {
+                    await MainActor.run {
+                        selectedRecipeImage = image
+                        existingImageReference = nil
+                        HapticManager.shared.light()
+                    }
+                }
+
+                await MainActor.run {
+                    selectedPhotoItem = nil
+                }
+            }
+        }
     }
     
     private func applyPrefilledData() {
@@ -196,6 +217,10 @@ struct RecipeWizardView: View {
         
         if let notes = data.notes, !notes.isEmpty {
             self.notes = notes
+        }
+
+        if let imageReference = data.imageURL, !imageReference.isEmpty {
+            existingImageReference = imageReference
         }
     }
     
@@ -251,6 +276,72 @@ struct RecipeWizardView: View {
                         .padding()
                         .background(Color.white.opacity(AppTheme.dividerOpacity))
                         .cornerRadius(AppTheme.cornerRadius12)
+
+                    VStack(alignment: .leading, spacing: AppTheme.spacing10) {
+                        Text("Recipe Photo")
+                            .font(.headline)
+                            .foregroundColor(.primary)
+
+                        PhotosPicker(selection: $selectedPhotoItem, matching: .images, photoLibrary: .shared()) {
+                            Group {
+                                if let selectedRecipeImage {
+                                    Image(uiImage: selectedRecipeImage)
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(height: 180)
+                                        .frame(maxWidth: .infinity)
+                                        .clipped()
+                                        .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
+                                } else if let existingImageReference, !existingImageReference.isEmpty {
+                                    RecipeImageView(imageName: existingImageReference, height: 180)
+                                        .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
+                                } else {
+                                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                                        .fill(Color.white.opacity(AppTheme.dividerOpacity))
+                                        .frame(height: 180)
+                                        .overlay {
+                                            VStack(spacing: AppTheme.spacing8) {
+                                                Image(systemName: "photo.badge.plus")
+                                                    .font(.system(size: AppTheme.fontSize28))
+                                                    .foregroundColor(.secondary)
+                                                Text("Add photo")
+                                                    .font(.subheadline)
+                                                    .foregroundColor(.secondary)
+                                            }
+                                        }
+                                }
+                            }
+                            .overlay(alignment: .bottomTrailing) {
+                                if selectedRecipeImage != nil || existingImageReference != nil {
+                                    Label("Tap to change", systemImage: "photo.on.rectangle")
+                                        .font(.caption2.weight(.semibold))
+                                        .foregroundColor(.white)
+                                        .padding(.horizontal, AppTheme.spacing8)
+                                        .padding(.vertical, AppTheme.spacing4)
+                                        .background(.black.opacity(0.45), in: Capsule())
+                                        .padding(AppTheme.spacing10)
+                                }
+                            }
+                            .overlay(alignment: .topTrailing) {
+                                if selectedRecipeImage != nil || existingImageReference != nil {
+                                    Button(action: {
+                                        HapticManager.shared.light()
+                                        selectedRecipeImage = nil
+                                        existingImageReference = nil
+                                    }) {
+                                        Image(systemName: "xmark")
+                                            .font(.caption.weight(.bold))
+                                            .foregroundColor(.white)
+                                            .frame(width: 24, height: 24)
+                                            .background(.black.opacity(0.55), in: Circle())
+                                    }
+                                    .buttonStyle(.plain)
+                                    .padding(AppTheme.spacing8)
+                                }
+                            }
+                        }
+                        .buttonStyle(.plain)
+                    }
 
                     if let validationMessage = recipeNameValidationMessage {
                         Text(validationMessage)
@@ -953,6 +1044,8 @@ struct RecipeWizardView: View {
         
         let recipeId = editingRecipeId ?? UUID()
         let isFavorite = prefilledData?.isFavorite ?? false
+        let previousImageReference = prefilledData?.imageURL
+        let imageReference = resolveImageReference(for: recipeId, previousReference: previousImageReference)
         
         let recipe = RecipeModel(
             id: recipeId,
@@ -967,13 +1060,56 @@ struct RecipeWizardView: View {
             prePrepInstructions: filteredPrePrep,
             instructions: filteredInstructions,
             notes: notes,
-            imageName: prefilledData?.imageURL,
+            imageName: imageReference,
             isFavorite: isFavorite
         )
         
         HapticManager.shared.success()
         onComplete(recipe)
         dismiss()
+    }
+
+    private func resolveImageReference(for recipeId: UUID, previousReference: String?) -> String? {
+        if let selectedRecipeImage {
+            return persistRecipeImage(selectedRecipeImage, recipeId: recipeId) ?? previousReference
+        }
+
+        if existingImageReference?.isEmpty == false {
+            return existingImageReference
+        }
+
+        if let previousReference, isLocalImageReference(previousReference) {
+            try? FileManager.default.removeItem(atPath: previousReference)
+        }
+
+        return nil
+    }
+
+    private func persistRecipeImage(_ image: UIImage, recipeId: UUID) -> String? {
+        guard let imageData = image.jpegData(compressionQuality: AppTheme.jpegCompressionQuality) else {
+            return nil
+        }
+
+        let fileManager = FileManager.default
+        guard let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            return nil
+        }
+
+        let imageDirectory = documentsURL.appendingPathComponent("RecipeImages", isDirectory: true)
+        let imageURL = imageDirectory.appendingPathComponent("\(recipeId.uuidString).jpg")
+
+        do {
+            try fileManager.createDirectory(at: imageDirectory, withIntermediateDirectories: true)
+            try imageData.write(to: imageURL, options: .atomic)
+            return imageURL.path
+        } catch {
+            return nil
+        }
+    }
+
+    private func isLocalImageReference(_ reference: String) -> Bool {
+        guard !reference.isEmpty, !reference.hasPrefix("http") else { return false }
+        return FileManager.default.fileExists(atPath: reference)
     }
     
     private func parseIngredientString(_ fullIngredient: String) -> IngredientItem {

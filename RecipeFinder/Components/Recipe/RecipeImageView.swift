@@ -34,6 +34,13 @@ struct RecipeImageView: View {
                 .fade(duration: 0.25)
                 .resizable()
                 .scaledToFill()
+        } else if let imageName = imageName,
+                  !imageName.isEmpty,
+                  FileManager.default.fileExists(atPath: imageName),
+                  let uiImage = UIImage(contentsOfFile: imageName) {
+            Image(uiImage: uiImage)
+                .resizable()
+                .scaledToFill()
         } else if let imageName = imageName, !imageName.isEmpty, let uiImage = UIImage(named: imageName) {
             Image(uiImage: uiImage)
                 .resizable()
