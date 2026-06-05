@@ -1,5 +1,4 @@
 import SwiftUI
-import PhotosUI
 
 struct RecipeWizardView: View {
     @Environment(\.dismiss) private var dismiss
@@ -37,6 +36,7 @@ struct RecipeWizardView: View {
     @State private var category = "Main"
     
     @State private var servings = 4
+    @FocusState private var isRecipeNameFocused: Bool
     
     @State private var ingredientItems: [IngredientItem] = [IngredientItem()]
     @FocusState private var focusedIngredientID: UUID?
@@ -49,7 +49,7 @@ struct RecipeWizardView: View {
     
     @State private var showError = false
     @State private var errorMessage = ""
-    @State private var selectedPhotoItem: PhotosPickerItem?
+    @State private var showPhotoPicker = false
     @State private var selectedRecipeImage: UIImage?
     @State private var existingImageReference: String?
     
@@ -147,21 +147,21 @@ struct RecipeWizardView: View {
         } message: {
             Text(errorMessage)
         }
-        .onChange(of: selectedPhotoItem) { _, newItem in
-            guard let newItem else { return }
-            Task {
-                if let data = try? await newItem.loadTransferable(type: Data.self),
-                   let image = UIImage(data: data) {
-                    await MainActor.run {
-                        selectedRecipeImage = image
-                        existingImageReference = nil
-                        HapticManager.shared.light()
-                    }
+        .sheet(isPresented: $showPhotoPicker, onDismiss: {
+            // Re-arming focus on dismiss avoids occasional first-responder glitches after PHPicker.
+            if currentStep == 0 {
+                DispatchQueue.main.async {
+                    isRecipeNameFocused = true
                 }
-
-                await MainActor.run {
-                    selectedPhotoItem = nil
-                }
+            }
+        }) {
+            ImagePicker(image: $selectedRecipeImage) {
+                HapticManager.shared.light()
+            }
+        }
+        .onChange(of: selectedRecipeImage) { _, newImage in
+            if newImage != nil {
+                existingImageReference = nil
             }
         }
     }
@@ -273,6 +273,7 @@ struct RecipeWizardView: View {
                 VStack(spacing: AppTheme.spacing16) {
                     TextField("Recipe Name", text: $recipeName)
                         .font(.title2)
+                        .focused($isRecipeNameFocused)
                         .padding()
                         .background(Color.white.opacity(AppTheme.dividerOpacity))
                         .cornerRadius(AppTheme.cornerRadius12)
@@ -282,65 +283,69 @@ struct RecipeWizardView: View {
                             .font(.headline)
                             .foregroundColor(.primary)
 
-                        PhotosPicker(selection: $selectedPhotoItem, matching: .images, photoLibrary: .shared()) {
-                            Group {
-                                if let selectedRecipeImage {
-                                    Image(uiImage: selectedRecipeImage)
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(height: 180)
-                                        .frame(maxWidth: .infinity)
-                                        .clipped()
-                                        .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
-                                } else if let existingImageReference, !existingImageReference.isEmpty {
-                                    RecipeImageView(imageName: existingImageReference, height: 180)
-                                        .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
-                                } else {
-                                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                                        .fill(Color.white.opacity(AppTheme.dividerOpacity))
-                                        .frame(height: 180)
-                                        .overlay {
-                                            VStack(spacing: AppTheme.spacing8) {
-                                                Image(systemName: "photo.badge.plus")
-                                                    .font(.system(size: AppTheme.fontSize28))
-                                                    .foregroundColor(.secondary)
-                                                Text("Add photo")
-                                                    .font(.subheadline)
-                                                    .foregroundColor(.secondary)
+                        ZStack(alignment: .topTrailing) {
+                            Button(action: {
+                                HapticManager.shared.light()
+                                showPhotoPicker = true
+                            }) {
+                                Group {
+                                    if let selectedRecipeImage {
+                                        Image(uiImage: selectedRecipeImage)
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(height: 180)
+                                            .frame(maxWidth: .infinity)
+                                            .clipped()
+                                            .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
+                                    } else if let existingImageReference, !existingImageReference.isEmpty {
+                                        RecipeImageView(imageName: existingImageReference, height: 180)
+                                            .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
+                                    } else {
+                                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                                            .fill(Color.white.opacity(AppTheme.dividerOpacity))
+                                            .frame(height: 180)
+                                            .overlay {
+                                                VStack(spacing: AppTheme.spacing8) {
+                                                    Image(systemName: "photo.badge.plus")
+                                                        .font(.system(size: AppTheme.fontSize28))
+                                                        .foregroundColor(.secondary)
+                                                    Text("Add photo")
+                                                        .font(.subheadline)
+                                                        .foregroundColor(.secondary)
+                                                }
                                             }
-                                        }
-                                }
-                            }
-                            .overlay(alignment: .bottomTrailing) {
-                                if selectedRecipeImage != nil || existingImageReference != nil {
-                                    Label("Tap to change", systemImage: "photo.on.rectangle")
-                                        .font(.caption2.weight(.semibold))
-                                        .foregroundColor(.white)
-                                        .padding(.horizontal, AppTheme.spacing8)
-                                        .padding(.vertical, AppTheme.spacing4)
-                                        .background(.black.opacity(0.45), in: Capsule())
-                                        .padding(AppTheme.spacing10)
-                                }
-                            }
-                            .overlay(alignment: .topTrailing) {
-                                if selectedRecipeImage != nil || existingImageReference != nil {
-                                    Button(action: {
-                                        HapticManager.shared.light()
-                                        selectedRecipeImage = nil
-                                        existingImageReference = nil
-                                    }) {
-                                        Image(systemName: "xmark")
-                                            .font(.caption.weight(.bold))
-                                            .foregroundColor(.white)
-                                            .frame(width: 24, height: 24)
-                                            .background(.black.opacity(0.55), in: Circle())
                                     }
-                                    .buttonStyle(.plain)
-                                    .padding(AppTheme.spacing8)
                                 }
+                                .overlay(alignment: .bottomTrailing) {
+                                    if selectedRecipeImage != nil || existingImageReference != nil {
+                                        Label("Tap to change", systemImage: "photo.on.rectangle")
+                                            .font(.caption2.weight(.semibold))
+                                            .foregroundColor(.white)
+                                            .padding(.horizontal, AppTheme.spacing8)
+                                            .padding(.vertical, AppTheme.spacing4)
+                                            .background(.black.opacity(0.45), in: Capsule())
+                                            .padding(AppTheme.spacing10)
+                                    }
+                                }
+                            }
+                            .buttonStyle(.plain)
+
+                            if selectedRecipeImage != nil || existingImageReference != nil {
+                                Button(action: {
+                                    HapticManager.shared.light()
+                                    selectedRecipeImage = nil
+                                    existingImageReference = nil
+                                }) {
+                                    Image(systemName: "xmark")
+                                        .font(.caption.weight(.bold))
+                                        .foregroundColor(.white)
+                                        .frame(width: 24, height: 24)
+                                        .background(.black.opacity(0.55), in: Circle())
+                                }
+                                .buttonStyle(.plain)
+                                .padding(AppTheme.spacing8)
                             }
                         }
-                        .buttonStyle(.plain)
                     }
 
                     if let validationMessage = recipeNameValidationMessage {

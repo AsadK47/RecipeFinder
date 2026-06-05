@@ -1,8 +1,10 @@
 import SwiftUI
 import PhotosUI
+import UniformTypeIdentifiers
 
 struct ImagePicker: UIViewControllerRepresentable {
     @Binding var image: UIImage?
+    var onComplete: (() -> Void)? = nil
     @Environment(\.dismiss) private var dismiss
     
     func makeUIViewController(context: Context) -> PHPickerViewController {
@@ -29,13 +31,22 @@ struct ImagePicker: UIViewControllerRepresentable {
         }
         
         func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-            picker.dismiss(animated: true)
-            
-            results.first?.itemProvider.loadObject(ofClass: UIImage.self) { object, _ in
-                if let image = object as? UIImage {
-                    Task { @MainActor in
+            guard let result = results.first else {
+                Task { @MainActor in
+                    self.parent.onComplete?()
+                    self.parent.dismiss()
+                }
+                return
+            }
+
+            result.itemProvider.loadDataRepresentation(forTypeIdentifier: UTType.image.identifier) { data, _ in
+                Task { @MainActor in
+                    if let data,
+                       let image = UIImage(data: data) {
                         self.parent.image = image
                     }
+                    self.parent.onComplete?()
+                    self.parent.dismiss()
                 }
             }
         }
