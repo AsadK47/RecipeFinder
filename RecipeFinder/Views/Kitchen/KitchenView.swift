@@ -623,30 +623,13 @@ struct KitchenItemRow: View {
     
     var body: some View {
         HStack(spacing: AppTheme.spacing12) {
-            VStack(alignment: .leading, spacing: AppTheme.spacing4) {
-                HStack(spacing: AppTheme.spacing8) {
-                    Image(systemName: categoryInfo.icon)
-                        .font(.caption)
-                        .foregroundColor(categoryInfo.color)
-                        .frame(width: 20, height: AppTheme.height20)
-                        .background(
-                            Circle()
-                                .fill(categoryInfo.color.opacity(AppTheme.cardDarkOpacity))
-                        )
+            Text(item.name)
+                .font(.subheadline)
+                .fontWeight(.semibold)
+                .adaptiveForegroundColor()
+                .lineLimit(1)
 
-                    Text(item.name)
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .adaptiveForegroundColor()
-                        .lineLimit(1)
-
-                    Spacer(minLength: 0)
-                }
-
-                Text("\(quantityText) \(item.unit)")
-                    .font(.caption)
-                    .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
-            }
+            Spacer(minLength: 0)
 
             HStack(spacing: AppTheme.spacing8) {
                 Button(
