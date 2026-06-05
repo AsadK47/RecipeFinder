@@ -36,7 +36,6 @@ struct RecipeWizardView: View {
     @State private var category = "Main"
     
     @State private var servings = 4
-    @FocusState private var isRecipeNameFocused: Bool
     
     @State private var ingredientItems: [IngredientItem] = [IngredientItem()]
     @FocusState private var focusedIngredientID: UUID?
@@ -147,14 +146,7 @@ struct RecipeWizardView: View {
         } message: {
             Text(errorMessage)
         }
-        .sheet(isPresented: $showPhotoPicker, onDismiss: {
-            // Re-arming focus on dismiss avoids occasional first-responder glitches after PHPicker.
-            if currentStep == 0 {
-                DispatchQueue.main.async {
-                    isRecipeNameFocused = true
-                }
-            }
-        }) {
+        .sheet(isPresented: $showPhotoPicker) {
             ImagePicker(image: $selectedRecipeImage) {
                 HapticManager.shared.light()
             }
@@ -273,7 +265,6 @@ struct RecipeWizardView: View {
                 VStack(spacing: AppTheme.spacing16) {
                     TextField("Recipe Name", text: $recipeName)
                         .font(.title2)
-                        .focused($isRecipeNameFocused)
                         .padding()
                         .background(Color.white.opacity(AppTheme.dividerOpacity))
                         .cornerRadius(AppTheme.cornerRadius12)
