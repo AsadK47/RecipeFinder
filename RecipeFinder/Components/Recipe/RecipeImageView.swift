@@ -26,29 +26,29 @@ struct RecipeImageView: View {
         .frame(height: height)
     }
 
-    var body: some View {
-        Group {
-            if let imageName = imageName, imageName.hasPrefix("http"), let url = URL(string: imageName) {
-                KFImage(url)
-                    .placeholder { placeholder }
-                    .fade(duration: 0.25)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(height: height)
-                    .clipped()
-            } else if let imageName = imageName, !imageName.isEmpty, let uiImage = UIImage(named: imageName) {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(height: height)
-                    .clipped()
-            } else {
-                placeholder
-            }
+    @ViewBuilder
+    private var imageContent: some View {
+        if let imageName = imageName, imageName.hasPrefix("http"), let url = URL(string: imageName) {
+            KFImage(url)
+                .placeholder { placeholder }
+                .fade(duration: 0.25)
+                .resizable()
+                .scaledToFill()
+        } else if let imageName = imageName, !imageName.isEmpty, let uiImage = UIImage(named: imageName) {
+            Image(uiImage: uiImage)
+                .resizable()
+                .scaledToFill()
+        } else {
+            placeholder
         }
-        .frame(height: height)
-        .frame(maxWidth: .infinity)
-        .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius16))
-        .drawingGroup()
+    }
+
+    var body: some View {
+        Color.clear
+            .frame(height: height)
+            .frame(maxWidth: .infinity)
+            .overlay { imageContent }
+            .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius16))
+            .drawingGroup()
     }
 }
