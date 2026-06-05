@@ -438,12 +438,12 @@ struct RecipeDetailView: View {
     
     private var toolbarButtons: some View {
         HStack(spacing: AppTheme.spacing16) {
-            Menu {
-                Button(action: { showTimerSheet = true }) {
-                    Label("Set Recipe Timer", systemImage: "clock")
-                }
+            if recipeTimer.isActive {
+                Menu {
+                    Button(action: { showTimerSheet = true }) {
+                        Label("Set New Timer", systemImage: "clock")
+                    }
 
-                if recipeTimer.isActive {
                     Divider()
 
                     Button(action: { recipeTimer.togglePause() }) {
@@ -453,9 +453,7 @@ struct RecipeDetailView: View {
                     Button(role: .destructive, action: { recipeTimer.stop() }) {
                         Label("Stop", systemImage: "stop.fill")
                     }
-                }
-            } label: {
-                if recipeTimer.isActive {
+                } label: {
                     Text(recipeTimer.displayTime)
                         .font(.system(.subheadline, design: .monospaced).weight(.semibold))
                         .adaptiveForegroundColor()
@@ -465,14 +463,17 @@ struct RecipeDetailView: View {
                             Capsule()
                                 .fill(colorScheme == .dark ? Color.white.opacity(AppTheme.overlayLightOpacity) : Color.black.opacity(AppTheme.dividerOpacity))
                         )
-                } else {
+                }
+                .accessibilityLabel("Recipe timer")
+                .accessibilityHint("Open timer actions")
+            } else {
+                Button(action: { showTimerSheet = true }) {
                     Image(systemName: "timer")
                         .font(.title3)
                         .adaptiveForegroundColor()
                 }
+                .accessibilityLabel("Set recipe timer")
             }
-            .accessibilityLabel("Recipe timer")
-            .accessibilityHint("Open timer actions")
             
             Button(action: { showEditSheet = true }) {
                 Image(systemName: "pencil")
