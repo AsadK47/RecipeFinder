@@ -174,12 +174,18 @@ final class KitchenInventoryManager: ObservableObject {
 		UserDefaults.standard.set(true, forKey: migrationKey)
 	}
     
-	func addItem(name: String, category: String? = nil) {
+	func addItem(name: String, category: String? = nil, quantity: Double = 1, unit: String = "item") {
 		let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
 		guard !trimmedName.isEmpty else { return }
+		guard quantity > 0 else { return }
 		
 		let detectedCategory = category ?? CategoryClassifier.categorize(trimmedName)
-		let newItem = KitchenItem(name: trimmedName, category: detectedCategory)
+		let newItem = KitchenItem(
+			name: trimmedName,
+			category: detectedCategory,
+			quantity: quantity,
+			unit: unit
+		)
         
 		guard !items.contains(where: { $0.name.lowercased() == trimmedName.lowercased() }) else {
 			HapticManager.shared.warning()
@@ -217,6 +223,27 @@ final class KitchenInventoryManager: ObservableObject {
 			addItem(name: name, category: category)
 		}
 	}
+
+	func updateQuantity(for item: KitchenItem, delta: Double) {
+		guard let index = items.firstIndex(where: { $0.id == item.id }) else { return }
+		let newQuantity = max(1, min(99, items[index].quantity + delta))
+		guard newQuantity != items[index].quantity else { return }
+
+		var updatedItems = items
+		updatedItems[index].quantity = newQuantity
+		HapticManager.shared.light()
+		saveItems(updatedItems)
+	}
+
+	func updateCategory(for item: KitchenItem, category: String) {
+		guard let index = items.firstIndex(where: { $0.id == item.id }) else { return }
+		guard !category.isEmpty, items[index].category != category else { return }
+
+		var updatedItems = items
+		updatedItems[index].category = category
+		HapticManager.shared.light()
+		saveItems(updatedItems)
+	}
     
 	func hasItem(_ name: String) -> Bool {
 		itemNameSet.contains(name.lowercased())
@@ -231,7 +258,7 @@ final class KitchenInventoryManager: ObservableObject {
 		let grouped = Dictionary(grouping: items) { $0.category }
 		return grouped.keys.sorted().compactMap { category in
 			guard let categoryItems = grouped[category], !categoryItems.isEmpty else { return nil }
-			return (category, categoryItems)
+			return (category, categoryItems.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending })
 		}
 	}
     
@@ -255,12 +282,30 @@ struct KitchenItem: Identifiable, Codable, Equatable, Hashable {
 	let id: UUID
 	var name: String
 	var category: String
+	var quantity: Double
+	var unit: String
 	var dateAdded: Date
-    
-	init(id: UUID = UUID(), name: String, category: String, dateAdded: Date = Date()) {
+
+	enum CodingKeys: String, CodingKey {
+		case id, name, category, quantity, unit, dateAdded
+	}
+
+	init(id: UUID = UUID(), name: String, category: String, quantity: Double = 1, unit: String = "item", dateAdded: Date = Date()) {
 		self.id = id
 		self.name = name
 		self.category = category
+		self.quantity = quantity
+		self.unit = unit
 		self.dateAdded = dateAdded
+	}
+
+	init(from decoder: Decoder) throws {
+		let container = try decoder.container(keyedBy: CodingKeys.self)
+		id = try container.decode(UUID.self, forKey: .id)
+		name = try container.decode(String.self, forKey: .name)
+		category = try container.decode(String.self, forKey: .category)
+		quantity = try container.decodeIfPresent(Double.self, forKey: .quantity) ?? 1
+		unit = try container.decodeIfPresent(String.self, forKey: .unit) ?? "item"
+		dateAdded = try container.decodeIfPresent(Date.self, forKey: .dateAdded) ?? Date()
 	}
 }

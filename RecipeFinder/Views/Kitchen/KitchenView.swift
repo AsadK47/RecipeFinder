@@ -491,7 +491,10 @@ struct KitchenView: View {
             text += String(repeating: "─", count: 40) + "\n"
             
             for item in group.items {
-                text += "  • \(item.name)\n"
+                let quantityText = item.quantity == item.quantity.rounded()
+                    ? String(Int(item.quantity))
+                    : String(format: "%.1f", item.quantity)
+                text += "  • \(quantityText) \(item.unit) \(item.name)\n"
             }
             text += "\n"
         }
@@ -573,21 +576,42 @@ struct KitchenCategoryCard: View {
             .buttonStyle(PlainButtonStyle())
             
             if !isCollapsed {
-                FlowLayout(spacing: AppTheme.spacing8) {
+                VStack(spacing: AppTheme.spacing8) {
                     ForEach(items) { item in
-                        KitchenItemChip(item: item)
+                        KitchenItemRow(item: item)
                     }
                 }
-                .padding(.horizontal, AppTheme.spacing4)
             }
         }
     }
 }
 
-struct KitchenItemChip: View {
+struct KitchenItemRow: View {
     let item: KitchenItem
     @Environment(\.colorScheme) var colorScheme
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
+
+    private var allCategoryChoices: [String] {
+        let merged = Array(Set(CategoryClassifier.categoryOrder + FoodsList.categories + [item.category]))
+        return merged.sorted { lhs, rhs in
+            let lhsIndex = CategoryClassifier.categoryOrder.firstIndex(of: lhs)
+            let rhsIndex = CategoryClassifier.categoryOrder.firstIndex(of: rhs)
+            switch (lhsIndex, rhsIndex) {
+            case let (l?, r?): return l < r
+            case (_?, nil): return true
+            case (nil, _?): return false
+            case (nil, nil): return lhs.localizedCaseInsensitiveCompare(rhs) == .orderedAscending
+            }
+        }
+    }
+
+    private var quantityText: String {
+        let value = item.quantity
+        if value.rounded() == value {
+            return String(Int(value))
+        }
+        return String(format: "%.1f", value)
+    }
     
     private var categoryInfo: (icon: String, color: Color) {
         let category = CategoryClassifier.suggestCategory(for: item.name)
@@ -598,56 +622,124 @@ struct KitchenItemChip: View {
     }
     
     var body: some View {
-        HStack(spacing: AppTheme.spacing8) {
-            Image(systemName: categoryInfo.icon)
-                .font(.caption)
-                .foregroundColor(categoryInfo.color)
-                .frame(width: 20, height: AppTheme.height20)
-                .background(
-                    Circle()
-                        .fill(categoryInfo.color.opacity(AppTheme.cardDarkOpacity))
-                )
-            
-            Text(item.name)
-                .font(.subheadline)
-                .fontWeight(.medium)
-                .adaptiveForegroundColor()
-            
-            Button(
-                action: {
-                    withAnimation(.spring(response: 0.3)) {
-                        KitchenInventoryManager.shared.removeItem(item)
-                        HapticManager.shared.light()
-                    }
-                },
-                label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: AppTheme.fontSize16))
-                        .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.lowEmphasisOpacity) : .black.opacity(0.3))
+        HStack(spacing: AppTheme.spacing12) {
+            VStack(alignment: .leading, spacing: AppTheme.spacing4) {
+                HStack(spacing: AppTheme.spacing8) {
+                    Image(systemName: categoryInfo.icon)
+                        .font(.caption)
+                        .foregroundColor(categoryInfo.color)
+                        .frame(width: 20, height: AppTheme.height20)
+                        .background(
+                            Circle()
+                                .fill(categoryInfo.color.opacity(AppTheme.cardDarkOpacity))
+                        )
+
+                    Text(item.name)
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .adaptiveForegroundColor()
+                        .lineLimit(1)
+
+                    Spacer(minLength: 0)
                 }
-            )
+
+                Text("\(quantityText) \(item.unit)")
+                    .font(.caption)
+                    .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
+            }
+
+            HStack(spacing: AppTheme.spacing8) {
+                Button(
+                    action: {
+                        withAnimation(.spring(response: 0.25, dampingFraction: 0.85)) {
+                            KitchenInventoryManager.shared.updateQuantity(for: item, delta: -1)
+                        }
+                    },
+                    label: {
+                        Image(systemName: "minus")
+                            .font(.system(size: AppTheme.fontSize12, weight: .bold))
+                            .adaptiveForegroundColor()
+                            .frame(width: 30, height: 30)
+                            .background(Circle().fill(.ultraThinMaterial))
+                    }
+                )
+                .buttonStyle(.plain)
+                .disabled(item.quantity <= 1)
+
+                Text(quantityText)
+                    .font(.subheadline.monospacedDigit())
+                    .fontWeight(.semibold)
+                    .adaptiveForegroundColor()
+                    .frame(minWidth: 24)
+
+                Button(
+                    action: {
+                        withAnimation(.spring(response: 0.25, dampingFraction: 0.85)) {
+                            KitchenInventoryManager.shared.updateQuantity(for: item, delta: 1)
+                        }
+                    },
+                    label: {
+                        Image(systemName: "plus")
+                            .font(.system(size: AppTheme.fontSize12, weight: .bold))
+                            .adaptiveForegroundColor()
+                            .frame(width: 30, height: 30)
+                            .background(Circle().fill(.ultraThinMaterial))
+                    }
+                )
+                .buttonStyle(.plain)
+                .disabled(item.quantity >= 99)
+            }
+
+            Menu {
+                Menu("Change Category") {
+                    ForEach(allCategoryChoices, id: \.self) { category in
+                        Button(action: {
+                            withAnimation(.spring(response: 0.25, dampingFraction: 0.85)) {
+                                KitchenInventoryManager.shared.updateCategory(for: item, category: category)
+                            }
+                        }) {
+                            if category == item.category {
+                                Label(category, systemImage: "checkmark")
+                            } else {
+                                Label(category, systemImage: CategoryClassifier.categoryIcon(for: category))
+                            }
+                        }
+                    }
+                }
+
+                Divider()
+
+                Button(role: .destructive, action: {
+                    withAnimation(.spring(response: 0.25, dampingFraction: 0.85)) {
+                        KitchenInventoryManager.shared.removeItem(item)
+                    }
+                }) {
+                    Label("Remove", systemImage: "trash")
+                }
+            } label: {
+                Image(systemName: "ellipsis")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .frame(width: 18, height: 36)
+                    .contentShape(Rectangle())
+            }
             .buttonStyle(.plain)
         }
         .padding(.horizontal, AppTheme.spacing12)
         .padding(.vertical, AppTheme.spacing10)
-        .background(
-            Capsule()
-                .fill(
-                    LinearGradient(
-                        colors: [
-                            categoryInfo.color.opacity(AppTheme.softOverlayOpacity),
-                            categoryInfo.color.opacity(AppTheme.cardDarkOpacity)
-                        ],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .overlay(
-                    Capsule()
-                        .stroke(categoryInfo.color.opacity(0.3), lineWidth: 1)
-                )
-        )
-        .shadow(color: categoryInfo.color.opacity(AppTheme.overlayLightOpacity), radius: 4, x: 0, y: 2)
+        .background {
+            if cardStyle == .solid {
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                    .fill(AppTheme.adaptiveCard(for: colorScheme))
+            } else {
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                    .fill(.ultraThinMaterial)
+            }
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                .stroke(categoryInfo.color.opacity(0.25), lineWidth: 1)
+        }
     }
 }
 
