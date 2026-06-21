@@ -1,6 +1,8 @@
 import SwiftData
 import SwiftUI
 
+private let logger = AppLogger.logger(category: "ContentView")
+
 struct ContentView: View {
     @State private var recipes: [RecipeModel] = []
     @State private var selectedTab: Int = 0
@@ -80,6 +82,10 @@ struct ContentView: View {
                 recipes = []
             }
         }
+        .onReceive(NotificationCenter.default.publisher(for: .userScopeDidChange)) { _ in
+            guard authManager.isAuthenticated else { return }
+            loadRecipes()
+        }
     }
 
     private func configureTabBarAppearance() {
@@ -142,6 +148,11 @@ struct ContentView: View {
     }
 
     private func loadRecipes() {
+        guard PersistenceController.shared.hasCurrentUserScope() else {
+            logger.debug("⚠️ Skipping recipe reload because user scope is not available")
+            return
+        }
+
         recipes = PersistenceController.shared.fetchRecipes()
     }
 }

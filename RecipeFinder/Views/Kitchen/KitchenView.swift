@@ -1,5 +1,7 @@
 import SwiftUI
 
+private let logger = AppLogger.logger(category: "KitchenView")
+
 struct KitchenView: View {
     @Binding var recipes: [RecipeModel]
     @StateObject private var manager = KitchenInventoryManager.shared
@@ -523,6 +525,10 @@ struct KitchenView: View {
                 HStack(spacing: AppTheme.spacing12) {
                     ForEach(quickMatchRecipes.prefix(10)) { recipe in
                         NavigationLink(destination: RecipeDetailView(recipe: recipe, onFavoriteToggle: {
+                            guard PersistenceController.shared.hasCurrentUserScope() else {
+                                logger.debug("⚠️ Skipping recipe refresh from Kitchen quick matches because user scope is unavailable")
+                                return
+                            }
                             recipes = PersistenceController.shared.fetchRecipes()
                         })) {
                             QuickMatchRecipeCard(

@@ -281,6 +281,10 @@ final class PersistenceController {
             saveRecipe(parameters: parameters)
         }
     }
+
+    func hasCurrentUserScope() -> Bool {
+        UserScopedStorage.shared.currentUserId != nil
+    }
     
     func fetchRecipes() -> [RecipeModel] {
         guard ensureStoreIsReady() else { return [] }

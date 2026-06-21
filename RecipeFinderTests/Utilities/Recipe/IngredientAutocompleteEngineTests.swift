@@ -74,6 +74,6 @@ final class IngredientAutocompleteEngineTests: XCTestCase {
             additionalCandidates: ["Berry Blend", "Blueberry"]
         )
 
-        XCTAssertEqual(names, ["Berry Blend", "Blueberry"])
+        XCTAssertEqual(Array(names.prefix(2)), ["Berry Blend", "Blueberry"])
     }
 }

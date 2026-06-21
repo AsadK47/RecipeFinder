@@ -1,5 +1,7 @@
 import SwiftUI
 
+private let logger = AppLogger.logger(category: "RecipeSearchView")
+
 struct RecipeSearchView: View {
     @Binding var recipes: [RecipeModel]
     @State private var searchText = ""
@@ -707,6 +709,11 @@ struct RecipeSearchView: View {
     }
     
     private func refreshRecipes() {
+        guard PersistenceController.shared.hasCurrentUserScope() else {
+            logger.debug("⚠️ Skipping recipe refresh because user scope is unavailable")
+            return
+        }
+
         recipes = PersistenceController.shared.fetchRecipes()
     }
 }

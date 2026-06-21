@@ -1,5 +1,9 @@
 import Foundation
 
+extension Notification.Name {
+    static let userScopeDidChange = Notification.Name("UserScopeDidChange")
+}
+
 final class UserScopedStorage {
     nonisolated(unsafe) static let shared = UserScopedStorage()
     
@@ -19,10 +23,20 @@ final class UserScopedStorage {
             userDefaults.string(forKey: currentUserKey)
         }
         set {
+            let oldValue = userDefaults.string(forKey: currentUserKey)
+
             if let newValue = newValue {
                 userDefaults.set(newValue, forKey: currentUserKey)
             } else {
                 userDefaults.removeObject(forKey: currentUserKey)
+            }
+
+            if oldValue != newValue {
+                NotificationCenter.default.post(
+                    name: .userScopeDidChange,
+                    object: nil,
+                    userInfo: ["oldUserId": oldValue as Any, "newUserId": newValue as Any]
+                )
             }
         }
     }
