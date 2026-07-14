@@ -125,7 +125,21 @@ final class SecureCredentialManager: Sendable {
             return false
         }
         
-        return hashedPassword == storedHash
+        return constantTimeEquals(hashedPassword, storedHash)
+    }
+    
+    /// Compares two strings in constant time to avoid leaking match position via timing
+    private func constantTimeEquals(_ lhs: String, _ rhs: String) -> Bool {
+        let lhsBytes = Array(lhs.utf8)
+        let rhsBytes = Array(rhs.utf8)
+        
+        guard lhsBytes.count == rhsBytes.count else { return false }
+        
+        var difference: UInt8 = 0
+        for (lhsByte, rhsByte) in zip(lhsBytes, rhsBytes) {
+            difference |= lhsByte ^ rhsByte
+        }
+        return difference == 0
     }
     
     private func retrieveCredentials(hashedEmail: String) -> [String: Any]? {
@@ -179,7 +193,7 @@ final class SecureCredentialManager: Sendable {
         ]
         
         let status = SecItemDelete(query as CFDictionary)
-        return status == errSecSuccess
+        return status == errSecSuccess || status == errSecItemNotFound
     }
     
     @discardableResult

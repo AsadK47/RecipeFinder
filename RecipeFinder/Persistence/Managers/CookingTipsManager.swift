@@ -1,4 +1,3 @@
-import Combine
 import Foundation
 
 @MainActor
@@ -6,7 +5,9 @@ final class CookingTipsManager: ObservableObject {
     static let shared = CookingTipsManager()
     private let logger = AppLogger.logger(category: "CookingTips")
     
-    @Published private(set) var tips: [CookingTipModel] = []
+    @Published private(set) var tips: [CookingTipModel] = [] {
+        didSet { scheduleAutosave() }
+    }
     @Published var searchText: String = ""
     @Published var selectedCategory: CookingTipCategory?
     @Published var selectedDifficulty: TipDifficulty?
@@ -14,28 +15,28 @@ final class CookingTipsManager: ObservableObject {
     
     private let saveKey = "cookingTipsStorage"
     private let storage: UserScopedStorage
-    private var cancellables = Set<AnyCancellable>()
+    private var autosaveTask: Task<Void, Never>?
+    private var suppressAutosave = false
 
     private init() {
         self.storage = .shared
         loadTips()
-        setupPublishers()
     }
 
     init(storage: UserScopedStorage) {
         self.storage = storage
         loadTips()
-        setupPublishers()
     }
     
-    private func setupPublishers() {
-        $tips
-            .dropFirst()
-            .debounce(for: .seconds(AppTheme.animationDelayMedium), scheduler: RunLoop.main)
-            .sink { [weak self] _ in
-                self?.saveTips()
-            }
-            .store(in: &cancellables)
+    /// Debounced autosave: coalesces rapid mutations into a single write
+    private func scheduleAutosave() {
+        guard !suppressAutosave else { return }
+        autosaveTask?.cancel()
+        autosaveTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(AppTheme.animationDelayMedium))
+            guard !Task.isCancelled else { return }
+            self?.saveTips()
+        }
     }
     
     var filteredTips: [CookingTipModel] {
@@ -114,6 +115,10 @@ final class CookingTipsManager: ObservableObject {
     }
 
     private func loadTips() {
+        // Loading isn't a user mutation; don't trigger the debounced autosave
+        suppressAutosave = true
+        defer { suppressAutosave = false }
+        
         guard storage.currentUserId != nil else {
             self.tips = []
             return

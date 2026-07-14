@@ -480,6 +480,14 @@ struct RecipeDetailView: View {
                     .font(.title3)
                     .adaptiveForegroundColor()
             }
+            
+            ShareLink(item: recipe.shareText, subject: Text(recipe.name)) {
+                Image(systemName: "square.and.arrow.up")
+                    .font(.title3)
+                    .adaptiveForegroundColor()
+            }
+            .accessibilityLabel("Share recipe")
+            .accessibilityHint("Share this recipe as text")
 
             Button(action: addAllIngredientsToShoppingList) {
                 Image(systemName: "cart.badge.plus")

@@ -235,6 +235,80 @@ final class RecipeModelTests: XCTestCase {
         XCTAssertEqual(missing.first?.name, "Onion")
     }
 
+    // MARK: - RecipeModel.shareText
+
+    func testShareText_containsRecipeName() {
+        XCTAssertTrue(makeRecipe().shareText.contains("Test Recipe"))
+    }
+
+    func testShareText_containsCategoryAndDifficulty() {
+        let text = makeRecipe().shareText
+        XCTAssertTrue(text.contains("Test • Easy"))
+    }
+
+    func testShareText_containsTimingsAndServings() {
+        let text = makeRecipe().shareText
+        XCTAssertTrue(text.contains("Prep: 10 min"))
+        XCTAssertTrue(text.contains("Cook: 20 min"))
+        XCTAssertTrue(text.contains("Serves: 4"))
+    }
+
+    func testShareText_listsIngredientsWithQuantities() {
+        let recipe = makeRecipe(ingredients: [makeIngredient(baseQuantity: 2.0, unit: "cups", name: "Flour")])
+        XCTAssertTrue(recipe.shareText.contains("• 2 cups Flour"))
+    }
+
+    func testShareText_formatsFractionalQuantities() {
+        let recipe = makeRecipe(ingredients: [makeIngredient(baseQuantity: 0.5, unit: "tsp", name: "Salt")])
+        XCTAssertTrue(recipe.shareText.contains("• ½ tsp Salt"))
+    }
+
+    func testShareText_omitsUnitlessIngredientDoubleSpace() {
+        let recipe = makeRecipe(ingredients: [makeIngredient(baseQuantity: 2.0, unit: "", name: "Eggs")])
+        XCTAssertTrue(recipe.shareText.contains("• 2 Eggs"))
+    }
+
+    func testShareText_numbersInstructions() {
+        let recipe = RecipeModel(
+            name: "Numbered",
+            category: "Test",
+            difficulty: "Easy",
+            prepTime: "5 min",
+            cookingTime: "10 min",
+            baseServings: 2,
+            ingredients: [],
+            prePrepInstructions: ["Soak the rice"],
+            instructions: ["Boil water", "Add rice"],
+            notes: ""
+        )
+        let text = recipe.shareText
+        XCTAssertTrue(text.contains("Preparation:\n1. Soak the rice"))
+        XCTAssertTrue(text.contains("Instructions:\n1. Boil water\n2. Add rice"))
+    }
+
+    func testShareText_emptyRecipe_omitsEmptySections() {
+        let text = makeRecipe().shareText
+        XCTAssertFalse(text.contains("Ingredients:"))
+        XCTAssertFalse(text.contains("Instructions:"))
+        XCTAssertFalse(text.contains("Notes:"))
+    }
+
+    func testShareText_includesNotesWhenPresent() {
+        let recipe = RecipeModel(
+            name: "Noted",
+            category: "Test",
+            difficulty: "Easy",
+            prepTime: "5 min",
+            cookingTime: "10 min",
+            baseServings: 2,
+            ingredients: [],
+            prePrepInstructions: [],
+            instructions: [],
+            notes: "Best served warm"
+        )
+        XCTAssertTrue(recipe.shareText.contains("Notes: Best served warm"))
+    }
+
     // MARK: - Helpers
 
     private func makeIngredient(

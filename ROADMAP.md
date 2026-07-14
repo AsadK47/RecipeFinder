@@ -9,7 +9,8 @@
 
 ## Phase 1: Visual & Media Foundations
 
-### 🟡 Recipe Images via Unsplash API
+### 🔴 Recipe Images via Unsplash API
+*(Status corrected July 2026: no Unsplash code exists yet. Note: URL import already extracts recipe images from JSON-LD / Open Graph tags, so imported recipes get images for free — Unsplash is only needed for manually created recipes.)*
 - Integrate Unsplash search-by-recipe-name to auto-assign images
 - Cache images locally (NSCache + disk) so API is called once per recipe
 - Add `imageURL` field to Core Data model
@@ -17,10 +18,11 @@
 - Store API key securely via `.xcconfig` (excluded from git)
 - **Scaling concern:** Free tier = 50 req/hr. For multi-user growth, consider a server-side proxy that caches URLs centrally so the same "Chicken Curry" image URL is reused across users without redundant API calls
 
-### 🔴 User Photo for Recipes
-- Allow users to take or pick a photo from their library
-- Store as compressed JPEG in app sandbox (not Core Data blob)
-- User photo takes priority over Unsplash image when both exist
+### 🟢 User Photo for Recipes *(completed July 2026)*
+- ~~Allow users to pick a photo from their library~~ — PhotosPicker in RecipeWizardView
+- ~~Store as compressed JPEG in app sandbox (not Core Data blob)~~ — saved to Documents with cleanup of replaced images
+- ~~User photo takes priority over remote image when both exist~~ — RecipeImageView supports local references
+- Remaining: "take a photo" via camera (requires re-adding NSCameraUsageDescription build setting)
 
 ---
 
@@ -60,9 +62,9 @@
 
 ## Phase 4: Meal Planning Enhancements
 
-### 🔴 Expanded Meal Planner
+### 🟡 Expanded Meal Planner
 - Drag-and-drop to rearrange meals between days
-- Meal type slots: Breakfast, Lunch, Dinner, Snack
+- ~~Meal type slots: Breakfast, Lunch, Dinner, Snack~~ 🟢 — `MealTime` enum with icons/ordering in MealPlanModel
 - Weekly overview with nutritional summary (ties into Phase 3)
 - "Suggest a meal" — recommend recipes from saved collection based on: unused ingredients, variety, dietary preferences
 - Recurring meals (e.g., "Meal Prep Sunday")
@@ -87,9 +89,9 @@
 
 ## Phase 6: Quality of Life & Engagement
 
-### 🔴 Smart Search & Filtering
-- Search by ingredient ("what can I make with chicken and rice?")
-- Filter by dietary restriction, cook time, difficulty
+### 🟡 Smart Search & Filtering
+- ~~Search by ingredient ("what can I make with chicken and rice?")~~ 🟢 — "available ingredients only" toggle with ≥80% match scoring in RecipeSearchView
+- Filter by dietary restriction, cook time, difficulty (partially present — verify coverage)
 - Recently viewed / frequently cooked
 
 ### 🔴 Cooking Mode
@@ -115,6 +117,14 @@
 ---
 
 ## Completed
+
+### 🟢 Health Check & Release Prep (July 2026)
+- Fixed `signUp()` overwriting existing accounts' credentials (account-takeover bug)
+- Aligned `signUpWithoutLogin()` password validation with the real policy (Validator)
+- Fixed PBKDF2 failure producing an empty-string hash instead of nil
+- `UIRequiredDeviceCapabilities` armv7 → arm64; removed unused camera/photo permission strings
+- Consolidated Info.plist keys into `INFOPLIST_KEY_*` build settings; resolved duplicate Face ID usage strings
+- Removed dead `SwiftData` imports; readme accuracy pass (iOS 17.5+, real dependencies, PBKDF2)
 
 ### 🟢 Bug Fixes (March 2026)
 - Fixed `clearAllData()` using global `UserDefaults` instead of `UserScopedStorage`

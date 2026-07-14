@@ -399,6 +399,64 @@ enum TimeExtractor {
     }
 }
 
+extension RecipeModel {
+    /// Plain-text representation of the recipe for sharing via the system share sheet
+    var shareText: String {
+        var lines: [String] = []
+        
+        lines.append("🍳 \(name)")
+        
+        var metadata: [String] = []
+        if !category.isEmpty { metadata.append(category) }
+        if !difficulty.isEmpty { metadata.append(difficulty) }
+        if !metadata.isEmpty {
+            lines.append(metadata.joined(separator: " • "))
+        }
+        
+        var timings: [String] = []
+        if !prepTime.isEmpty { timings.append("Prep: \(prepTime)") }
+        if !cookingTime.isEmpty { timings.append("Cook: \(cookingTime)") }
+        timings.append("Serves: \(baseServings)")
+        lines.append("⏱ " + timings.joined(separator: " • "))
+        
+        if !ingredients.isEmpty {
+            lines.append("")
+            lines.append("Ingredients:")
+            for ingredient in ingredients {
+                let quantity = FractionFormatter.format(ingredient.baseQuantity)
+                let unit = ingredient.unit.isEmpty ? "" : " \(ingredient.unit)"
+                lines.append("• \(quantity)\(unit) \(ingredient.name)")
+            }
+        }
+        
+        if !prePrepInstructions.isEmpty {
+            lines.append("")
+            lines.append("Preparation:")
+            for (index, step) in prePrepInstructions.enumerated() {
+                lines.append("\(index + 1). \(step)")
+            }
+        }
+        
+        if !instructions.isEmpty {
+            lines.append("")
+            lines.append("Instructions:")
+            for (index, step) in instructions.enumerated() {
+                lines.append("\(index + 1). \(step)")
+            }
+        }
+        
+        if !notes.isEmpty {
+            lines.append("")
+            lines.append("Notes: \(notes)")
+        }
+        
+        lines.append("")
+        lines.append("Shared from RecipeFinder 🧡")
+        
+        return lines.joined(separator: "\n")
+    }
+}
+
 func formattedImageName(for recipeName: String) -> String {
     return recipeName
         .lowercased()
