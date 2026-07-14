@@ -5,7 +5,7 @@
 **Sophisticated recipe management with stunning design**  
 *All your culinary treasures, beautifully organized. Completely private.*
 
-[![Platform](https://img.shields.io/badge/platform-iOS%2015.0%2B-blue.svg)](https://www.apple.com/ios/)
+[![Platform](https://img.shields.io/badge/platform-iOS%2017.5%2B-blue.svg)](https://www.apple.com/ios/)
 [![Swift](https://img.shields.io/badge/Swift-6.0-orange.svg)](https://swift.org/)
 [![Xcode](https://img.shields.io/badge/Xcode-16.0%2B-blue.svg)](https://developer.apple.com/xcode/)
 [![License](https://img.shields.io/badge/license-Proprietary-red.svg)](LICENSE)
@@ -47,7 +47,7 @@ cd RecipeFinder
 open RecipeFinder.xcodeproj  # Press ⌘+R to run
 ```
 
-**Requirements**: iOS 15.0+ • Xcode 16.0+ • Swift 6.0 • macOS 15.0+
+**Requirements**: iOS 17.5+ • Xcode 16.0+ • Swift 6.0 • macOS 15.0+
 
 ## 📱 Features
 
@@ -59,9 +59,9 @@ open RecipeFinder.xcodeproj  # Press ⌘+R to run
 - **⏲ Multi-Timers** - Run multiple named timers with background alerts and haptic feedback
 
 ### Security & Privacy
-- **🔐 Local Authentication** - Face ID/Touch ID support with SHA-256 password hashing
+- **🔐 Local Authentication** - Face ID/Touch ID support with PBKDF2 password hashing (100,000 rounds)
 - **🔒 Secure Storage** - iOS Keychain integration with Secure Enclave
-- **� Privacy-Focused** - Designed with data protection and privacy in mind
+- **🛡️ Privacy-Focused** - Designed with data protection and privacy in mind
 
 ### Design & Accessibility
 - **🎨 Six Color Themes** - Beautiful palettes that work in light and dark modes
@@ -70,10 +70,10 @@ open RecipeFinder.xcodeproj  # Press ⌘+R to run
 
 ## 🏗 Technical Stack
 
-**Architecture**: SwiftUI with MVVM pattern • Core Data persistence • Combine for reactive programming  
-**Dependencies**: Zero external dependencies - 100% native Swift and Apple frameworks  
+**Architecture**: SwiftUI with MVVM pattern • Core Data persistence • Swift async/await concurrency  
+**Dependencies**: [Kingfisher](https://github.com/onevcat/Kingfisher) (image loading & caching) • [ConfettiSwiftUI](https://github.com/simibac/ConfettiSwiftUI) (celebration effects)  
 **Performance**: Hardware-accelerated rendering • Async image loading • Optimized Core Data fetches  
-**Security**: Local-first storage • SHA-256 password hashing • iOS Keychain • Secure Enclave biometrics  
+**Security**: Local-first storage • PBKDF2 password hashing (HMAC-SHA256, 100k rounds) • iOS Keychain • Secure Enclave biometrics  
 **Privacy**: Privacy-focused design • See Privacy Policy for details  
 **Accessibility**: VoiceOver support • Dynamic Type • WCAG 2.1 AA contrast • 44pt tap targets
 
@@ -83,14 +83,12 @@ open RecipeFinder.xcodeproj  # Press ⌘+R to run
 
 ```bash
 # Run tests
-./scripts/test.sh
-
-# Lint code  
-./scripts/lint.sh
+xcodebuild test -scheme RecipeFinder \
+  -destination 'platform=iOS Simulator,name=iPhone 17'
 
 # Build for simulator
 xcodebuild -scheme RecipeFinder \
-  -destination 'platform=iOS Simulator,name=iPhone 15 Pro' \
+  -destination 'platform=iOS Simulator,name=iPhone 17' \
   clean build
 
 # Build for device  
@@ -119,15 +117,6 @@ RecipeFinder/
 - `PersistenceController.swift` - Core Data stack
 - `RecipeImporter.swift` - Web recipe parsing
 
-##  Documentation
-
-- **[Design Language](docs/DESIGN_AESTHETIC.md)** - Visual design principles
-- **[Theme Colors](docs/THEME_COLORS.md)** - Complete color palette
-- **[PDF Export Guide](docs/PDF_DESIGN_GUIDE.md)** - Beautiful recipe PDFs
-- **[Notifications Guide](docs/NOTIFICATIONS_GUIDE.md)** - How notifications work
-- **[SF Symbols Guide](docs/SF_SYMBOLS_GUIDE.md)** - Icon usage
-- **[Commands](docs/COMMANDS.md)** - Development commands
-
 ## 💬 Support & Contact
 
 - 🐛 **Report Bugs**: [GitHub Issues](https://github.com/AsadK47/RecipeFinder/issues)
@@ -139,7 +128,7 @@ RecipeFinder/
 
 ## ⚖️ License & Legal
 
-**Copyright © 2024-2025 RECIPEFINDER LIMITED. All Rights Reserved.**
+**Copyright © 2024-2026 RECIPEFINDER LIMITED. All Rights Reserved.**
 
 This software is proprietary. Company No. 16833243 (England and Wales).
 
@@ -154,7 +143,7 @@ For licensing inquiries: recipefinderlimited@icloud.com
 
 ---
 
-**© 2024-2025 RECIPEFINDER LIMITED • All Rights Reserved**
+**© 2024-2026 RECIPEFINDER LIMITED • All Rights Reserved**
 
 Made with ❤️ in the UK • [recipefinder.uk](https://recipefinder.uk)
 
