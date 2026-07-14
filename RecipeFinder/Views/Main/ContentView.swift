@@ -1,4 +1,3 @@
-import SwiftData
 import SwiftUI
 
 private let logger = AppLogger.logger(category: "ContentView")

@@ -255,6 +255,11 @@ final class AuthenticationManager: NSObject, ObservableObject {
             throw AppError.emptyField(field: "Full name")
         }
         
+        // Prevent overwriting an existing account's credentials (and inheriting its data)
+        guard credentialManager.getUserInfo(email: email) == nil else {
+            throw AuthError.accountAlreadyExists
+        }
+        
         let saved = credentialManager.saveCredentials(
             email: email,
             password: password,
@@ -315,9 +320,11 @@ final class AuthenticationManager: NSObject, ObservableObject {
     }
     
     func signUpWithoutLogin(email: String, password: String, fullName: String) async throws {
-        guard !email.isEmpty, !password.isEmpty, password.count >= 6 else {
-            throw AuthError.invalidCredentials
+        // Enforce the same policy as the UI so no caller can bypass it
+        guard Validator.isValidEmail(email) else {
+            throw AppError.invalidEmail
         }
+        try Validator.validatePassword(password)
         
         guard credentialManager.getUserInfo(email: email) == nil else {
             throw AuthError.accountAlreadyExists

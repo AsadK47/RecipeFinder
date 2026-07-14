@@ -28,6 +28,11 @@ final class SecureCredentialManager: Sendable {
                                 keyByteCount: 32,
                                 rounds: 100_000)
         
+        // A failed derivation returns empty data; never treat that as a valid hash
+        guard !derivedKey.isEmpty else {
+            return nil
+        }
+        
         return derivedKey.map { String(format: "%02x", $0) }.joined()
     }
     
