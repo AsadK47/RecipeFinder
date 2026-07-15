@@ -6,14 +6,18 @@ struct SettingsTabView: View {
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("appearanceMode") private var appearanceMode: AppearanceMode = .system
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
-    @State private var notificationsEnabled: Bool = false
-    @State private var cookModeEnabled: Bool = true
+    @AppStorage("measurementSystem") private var measurementSystem: MeasurementSystem = .metric
     @StateObject private var accountManager = AccountManager.shared
     @StateObject private var authManager = AuthenticationManager.shared
     @State private var profileImage: UIImage?
-    @State private var refreshID = UUID()
     @State private var debugResetMessage: String?
+    
+    /// Real version string from the bundle — can never drift from the build settings
+    private var versionLabel: String {
+        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—"
+        let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "—"
+        return "Version \(version) (Build \(build))"
+    }
     
     var body: some View {
         ZStack {
@@ -27,25 +31,7 @@ struct SettingsTabView: View {
                             SettingsCard {
                                 NavigationLink(destination: AccountView()) {
                                     HStack(spacing: AppTheme.spacing16) {
-                                        ZStack {
-                                            if let profileImage = profileImage {
-                                                Image(uiImage: profileImage)
-                                                    .resizable()
-                                                    .scaledToFill()
-                                                    .frame(width: AppTheme.height54, height: AppTheme.height54)
-                                                    .clipShape(Circle())
-                                            } else {
-                                                Circle()
-                                                    .fill(AppTheme.accentColor(for: selectedTheme))
-                                                    .frame(width: AppTheme.height54, height: AppTheme.height54)
-                                                    .overlay {
-                                                        Text(accountManager.initials)
-                                                            .font(.system(size: AppTheme.fontSize22, weight: .semibold))
-                                                            .foregroundStyle(colorScheme == .dark ? .white : .black)
-                                                    }
-                                            }
-                                        }
-                                        .id(refreshID)
+                                        profileAvatar
                                         
                                         VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                                             Text(accountManager.fullName.isEmpty ? "Account" : accountManager.fullName)
@@ -68,105 +54,50 @@ struct SettingsTabView: View {
                                 .buttonStyle(PlainButtonStyle())
                             }
 
-                            SettingsSectionHeader(title: "Appearance")
+                            SettingsSection(title: "Preferences", items: [
+                                .init(
+                                    row: SettingsRow(icon: "paintpalette.fill", iconColor: .pink, title: "Appearance & Theme", value: selectedTheme.rawValue),
+                                    destination: AppearanceAndThemeSettingsView()
+                                ),
+                                .init(
+                                    row: SettingsRow(icon: "bell.fill", iconColor: .red, title: "Notifications"),
+                                    destination: NotificationSettingsView()
+                                ),
+                                .init(
+                                    row: SettingsRow(icon: "ruler.fill", iconColor: .blue, title: "Units & Measurements", value: measurementSystem.rawValue),
+                                    destination: UnitsSettingsView()
+                                ),
+                                .init(
+                                    row: SettingsRow(icon: "display", iconColor: .cyan, title: "Display"),
+                                    destination: DisplaySettingsView()
+                                )
+                            ])
 
-                            SettingsCard {
-                                NavigationLink(destination: AppearanceAndThemeSettingsView()) {
-                                    SettingsRow(icon: "paintpalette.fill", iconColor: .pink, title: "Appearance & Theme")
-                                        .padding(AppTheme.spacing20)
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                            }
+                            SettingsSection(title: "Privacy & Data", items: [
+                                .init(
+                                    row: SettingsRow(icon: "hand.raised.fill", iconColor: .blue, title: "Privacy"),
+                                    destination: PrivacySettingsView()
+                                ),
+                                .init(
+                                    row: SettingsRow(icon: "externaldrive.fill", iconColor: .gray, title: "Data Management"),
+                                    destination: DataManagementSettingsView()
+                                ),
+                                .init(
+                                    row: SettingsRow(icon: "building.2.fill", iconColor: .indigo, title: "Legal Information"),
+                                    destination: LegalInformationView()
+                                )
+                            ])
 
-                            SettingsSectionHeader(title: "Cooking & Preferences")
-
-                            SettingsCard {
-                                VStack(spacing: 0) {
-                                    NavigationLink(destination: NotificationSettingsView()) {
-                                        SettingsRow(icon: "bell.fill", iconColor: .red, title: "Notifications")
-                                            .padding(AppTheme.spacing20)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                    
-                                    Divider()
-                                        .padding(.leading, AppTheme.spacing60)
-                                    
-                                    NavigationLink(destination: UnitsSettingsView()) {
-                                        SettingsRow(icon: "ruler.fill", iconColor: .blue, title: "Units & Measurements")
-                                            .padding(AppTheme.spacing20)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                    
-                                    Divider()
-                                        .padding(.leading, AppTheme.spacing60)
-                                    
-                                    NavigationLink(destination: DisplaySettingsView()) {
-                                        SettingsRow(icon: "display", iconColor: .cyan, title: "Display")
-                                            .padding(AppTheme.spacing20)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                    
-                                    Divider()
-                                        .padding(.leading, AppTheme.spacing60)
-                                    
-                                    NavigationLink(destination: PartyTimeView()) {
-                                        SettingsRow(icon: "party.popper.fill", iconColor: .purple, title: "Party Time")
-                                            .padding(AppTheme.spacing20)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                }
-                            }
-
-                            SettingsSectionHeader(title: "Privacy & Data")
-
-                            SettingsCard {
-                                VStack(spacing: 0) {
-                                    NavigationLink(destination: PrivacySettingsView()) {
-                                        SettingsRow(icon: "hand.raised.fill", iconColor: .blue, title: "Privacy")
-                                            .padding(AppTheme.spacing20)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                    
-                                    Divider()
-                                        .padding(.leading, AppTheme.spacing60)
-                                    
-                                    NavigationLink(destination: DataManagementSettingsView()) {
-                                        SettingsRow(icon: "externaldrive.fill", iconColor: .gray, title: "Data Management")
-                                            .padding(AppTheme.spacing20)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-
-                                    Divider()
-                                        .padding(.leading, AppTheme.spacing60)
-
-                                    NavigationLink(destination: LegalInformationView()) {
-                                        SettingsRow(icon: "building.2.fill", iconColor: .indigo, title: "Legal Information")
-                                            .padding(AppTheme.spacing20)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                }
-                            }
-
-                            SettingsSectionHeader(title: "Support")
-
-                            SettingsCard {
-                                VStack(spacing: 0) {
-                                    NavigationLink(destination: HelpView()) {
-                                        SettingsRow(icon: "questionmark.circle.fill", iconColor: .teal, title: "Help & Support")
-                                            .padding(AppTheme.spacing20)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                    
-                                    Divider()
-                                        .padding(.leading, AppTheme.spacing60)
-                                    
-                                    NavigationLink(destination: AboutView()) {
-                                        SettingsRow(icon: "info.circle.fill", iconColor: .gray, title: "About RecipeFinder")
-                                            .padding(AppTheme.spacing20)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                }
-                            }
+                            SettingsSection(title: "Support", items: [
+                                .init(
+                                    row: SettingsRow(icon: "questionmark.circle.fill", iconColor: .teal, title: "Help & Support"),
+                                    destination: HelpView()
+                                ),
+                                .init(
+                                    row: SettingsRow(icon: "info.circle.fill", iconColor: .gray, title: "About RecipeFinder"),
+                                    destination: AboutView()
+                                )
+                            ])
 
 #if DEBUG
                             SettingsSectionHeader(title: "Developer (Debug)")
@@ -218,7 +149,7 @@ struct SettingsTabView: View {
                                 Text("RecipeFinder")
                                     .font(.caption)
                                     .adaptiveForegroundColor(opacity: AppTheme.mediumEmphasisOpacity)
-                                Text("Version 1.0.0 (Build 1)")
+                                Text(versionLabel)
                                     .font(.caption2)
                                     .adaptiveForegroundColor(opacity: AppTheme.glassLightOpacity)
                             }
@@ -234,9 +165,28 @@ struct SettingsTabView: View {
             .toolbarBackground(.hidden, for: .navigationBar)
             .onAppear {
                 profileImage = accountManager.loadProfileImage()
-                refreshID = UUID()
             }
         }
+
+    @ViewBuilder
+    private var profileAvatar: some View {
+        if let profileImage {
+            Image(uiImage: profileImage)
+                .resizable()
+                .scaledToFill()
+                .frame(width: AppTheme.height54, height: AppTheme.height54)
+                .clipShape(Circle())
+        } else {
+            Circle()
+                .fill(AppTheme.accentColor(for: selectedTheme))
+                .frame(width: AppTheme.height54, height: AppTheme.height54)
+                .overlay {
+                    Text(accountManager.initials)
+                        .font(.system(size: AppTheme.fontSize22, weight: .semibold))
+                        .foregroundStyle(colorScheme == .dark ? .white : .black)
+                }
+        }
+    }
 
     private func resetOnboardingFlags(resetMainOnboarding: Bool, resetBiometricOnboarding: Bool) {
         if resetMainOnboarding {
@@ -253,76 +203,6 @@ struct SettingsTabView: View {
         HapticManager.shared.success()
     }
     }
-
-struct SettingsCard<Content: View>: View {
-    @Environment(\.colorScheme) var colorScheme
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
-    let content: Content
-    
-    init(@ViewBuilder content: () -> Content) {
-        self.content = content()
-    }
-    
-    var body: some View {
-        content
-            .frame(maxWidth: .infinity)
-            .background {
-                if cardStyle == .solid {
-                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
-                        .fill(AppTheme.adaptiveCard(for: colorScheme))
-                } else {
-                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
-                        .fill(.ultraThinMaterial)
-                }
-            }
-    }
-}
-
-struct SettingsSectionHeader: View {
-    let title: String
-    
-    var body: some View {
-        Text(title)
-            .font(.headline)
-            .fontWeight(.semibold)
-            .adaptiveForegroundColor(opacity: AppTheme.highEmphasisOpacity)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, AppTheme.spacing4)
-            .padding(.top, 0)
-    }
-}
-
-struct SettingsRow: View {
-    let icon: String
-    let iconColor: Color
-    let title: String
-    @Environment(\.colorScheme) var colorScheme
-    
-    var body: some View {
-        HStack(spacing: AppTheme.spacing12) {
-            ZStack {
-                RoundedRectangle(cornerRadius: AppTheme.cornerRadius6, style: .continuous)
-                    .fill(iconColor)
-                    .frame(width: AppTheme.width29, height: AppTheme.width29)
-                
-                Image(systemName: icon)
-                    .font(.system(size: AppTheme.fontSize15, weight: .semibold))
-                    .adaptiveForegroundColor()
-            }
-            
-            Text(title)
-                .font(.body)
-                .adaptiveForegroundColor()
-            
-            Spacer()
-            
-            Image(systemName: "chevron.right")
-                .font(.caption)
-                .foregroundColor(.gray)
-        }
-        .contentShape(Rectangle())
-    }
-}
 
 struct AppearanceAndThemeSettingsView: View {
     @AppStorage("appearanceMode") private var appearanceMode: AppearanceMode = .system
@@ -396,6 +276,14 @@ struct AppearanceAndThemeSettingsView: View {
                             }
                         }
                         .padding(AppTheme.spacing24)
+                    }
+                    
+                    SettingsCard {
+                        NavigationLink(destination: PartyTimeView()) {
+                            SettingsRow(icon: "party.popper.fill", iconColor: .purple, title: "Party Time")
+                                .padding(AppTheme.spacing20)
+                        }
+                        .buttonStyle(PlainButtonStyle())
                     }
                 }
                 .padding(AppTheme.spacing24)

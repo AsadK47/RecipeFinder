@@ -16,6 +16,7 @@
 		9E2E34212E9D9F8500E2E49F /* KitchenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E2E34202E9D9F8500E2E49F /* KitchenView.swift */; };
 		9E40CAEF2EB9882700ED9594 /* KitchenInventoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E40CAEE2EB9882700ED9594 /* KitchenInventoryModel.swift */; };
 		9E40CAF12EB9891700ED9594 /* ShoppingListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E40CAF02EB9891700ED9594 /* ShoppingListModel.swift */; };
+		9E4796113006BD1A00A14D3F /* SettingsComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E4796103006BD1A00A14D3F /* SettingsComponents.swift */; };
 		9E48AD9E2F0FDDC300CF840F /* AppLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E48AD9D2F0FDDC200CF840F /* AppLogger.swift */; };
 		9E48ADA22F22484E00CF840F /* BackupReminderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E48ADA12F22484E00CF840F /* BackupReminderManager.swift */; };
 		9E4DC7382E9BF19700E17DDF /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E4DC7372E9BF19700E17DDF /* AppTheme.swift */; };
@@ -188,6 +189,7 @@
 		9E40CAEE2EB9882700ED9594 /* KitchenInventoryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KitchenInventoryModel.swift; sourceTree = "<group>"; };
 		9E40CAF02EB9891700ED9594 /* ShoppingListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListModel.swift; sourceTree = "<group>"; };
 		9E45FAE32DC690E300F46909 /* RecipeModel 8.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 8.xcdatamodel"; sourceTree = "<group>"; };
+		9E4796103006BD1A00A14D3F /* SettingsComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsComponents.swift; sourceTree = "<group>"; };
 		9E48AD9D2F0FDDC200CF840F /* AppLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLogger.swift; sourceTree = "<group>"; };
 		9E48ADA12F22484E00CF840F /* BackupReminderManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupReminderManager.swift; sourceTree = "<group>"; };
 		9E4DC7372E9BF19700E17DDF /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
@@ -391,6 +393,14 @@
 			path = Kitchen;
 			sourceTree = "<group>";
 		};
+		9E47960F3006BD1A00A14D3F /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				9E4796103006BD1A00A14D3F /* SettingsComponents.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
 		9E4DC7322E9BF10900E17DDF /* Components */ = {
 			isa = PBXGroup;
 			children = (
@@ -401,6 +411,7 @@
 				9E6DEA542EF5EF47001E7B24 /* Layout */,
 				9E6DEA592EF5EF47001E7B24 /* Recipe */,
 				9E6DEA5C2EF5EF47001E7B24 /* Sheets */,
+				9E47960F3006BD1A00A14D3F /* Settings */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -1218,6 +1229,7 @@
 				9EE5AADB2D08FCBE00C1B736 /* ContentView.swift in Sources */,
 				9E51C39A2EB3E9C20064B917 /* AccountView.swift in Sources */,
 				9E87D3362EB6C0E900FFA1D1 /* PasswordVerificationSheet.swift in Sources */,
+				9E4796113006BD1A00A14D3F /* SettingsComponents.swift in Sources */,
 				9E7B9A862E9BED16007E1786 /* RecipeSearchView.swift in Sources */,
 				9E87D3302EB696A400FFA1D1 /* ThemeManager.swift in Sources */,
 				9EA779012EB4C36A0028F064 /* EmailConfirmationSplashView.swift in Sources */,
