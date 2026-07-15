@@ -35,12 +35,14 @@ struct SettingsIconTile: View {
 struct SettingsRow: View {
     enum Accessory {
         case chevron
+        case externalLink
         case none
     }
     
     let icon: String
     let iconColor: Color
     let title: String
+    var subtitle: String?
     var value: String?
     var accessory: Accessory = .chevron
     
@@ -48,9 +50,17 @@ struct SettingsRow: View {
         HStack(spacing: AppTheme.spacing12) {
             SettingsIconTile(systemName: icon, color: iconColor)
             
-            Text(title)
-                .font(.body)
-                .adaptiveForegroundColor()
+            VStack(alignment: .leading, spacing: AppTheme.spacing2) {
+                Text(title)
+                    .font(.body)
+                    .adaptiveForegroundColor()
+                
+                if let subtitle {
+                    Text(subtitle)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
             
             Spacer(minLength: AppTheme.spacing8)
             
@@ -61,15 +71,154 @@ struct SettingsRow: View {
                     .lineLimit(1)
             }
             
-            if accessory == .chevron {
+            switch accessory {
+            case .chevron:
                 Image(systemName: "chevron.right")
                     .font(.caption)
                     .foregroundColor(.gray)
+            case .externalLink:
+                Image(systemName: "arrow.up.right")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            case .none:
+                EmptyView()
             }
         }
         .contentShape(Rectangle())
         .accessibilityElement(children: .combine)
         .accessibilityValue(value ?? "")
+    }
+}
+
+// MARK: - Toggle Row
+
+/// Settings row with a trailing switch, sharing the standard row anatomy.
+struct SettingsToggleRow: View {
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
+    
+    let icon: String
+    let iconColor: Color
+    let title: String
+    var subtitle: String?
+    @Binding var isOn: Bool
+    
+    var body: some View {
+        Toggle(isOn: $isOn) {
+            HStack(spacing: AppTheme.spacing12) {
+                SettingsIconTile(systemName: icon, color: iconColor)
+                
+                VStack(alignment: .leading, spacing: AppTheme.spacing2) {
+                    Text(title)
+                        .font(.body)
+                        .adaptiveForegroundColor()
+                    
+                    if let subtitle {
+                        Text(subtitle)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
+        }
+        .tint(AppTheme.accentColor(for: selectedTheme))
+        .padding(AppTheme.spacing20)
+    }
+}
+
+// MARK: - Choice Row
+
+/// Settings row for one option in a mutually exclusive group; shows a
+/// checkmark when selected and fires a selection haptic on tap.
+struct SettingsChoiceRow: View {
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
+    
+    let icon: String
+    let iconColor: Color
+    let title: String
+    var subtitle: String?
+    let isSelected: Bool
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: {
+            action()
+            HapticManager.shared.selection()
+        }) {
+            HStack(spacing: AppTheme.spacing12) {
+                SettingsIconTile(systemName: icon, color: iconColor)
+                
+                VStack(alignment: .leading, spacing: AppTheme.spacing2) {
+                    Text(title)
+                        .font(.body)
+                        .adaptiveForegroundColor()
+                    
+                    if let subtitle {
+                        Text(subtitle)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                
+                Spacer(minLength: AppTheme.spacing8)
+                
+                if isSelected {
+                    Image(systemName: "checkmark")
+                        .font(.body.weight(.semibold))
+                        .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                }
+            }
+            .contentShape(Rectangle())
+            .padding(AppTheme.spacing20)
+        }
+        .buttonStyle(PlainButtonStyle())
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+}
+
+// MARK: - Row Divider
+
+/// Divider inset to align with row text when stacking rows inside one card.
+struct SettingsRowDivider: View {
+    var body: some View {
+        Divider()
+            .padding(.leading, AppTheme.spacing60)
+    }
+}
+
+// MARK: - Screen Scaffold
+
+/// Standard settings screen chrome: themed gradient background, scroll view,
+/// and inline navigation title. Every settings sub-screen wraps its sections
+/// in this so backgrounds and margins stay identical by construction.
+struct SettingsScreen<Content: View>: View {
+    @Environment(\.colorScheme) var colorScheme
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
+    
+    let title: String
+    let content: Content
+    
+    init(_ title: String, @ViewBuilder content: () -> Content) {
+        self.title = title
+        self.content = content()
+    }
+    
+    var body: some View {
+        ZStack {
+            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
+                .ignoresSafeArea()
+            
+            ScrollView {
+                VStack(spacing: AppTheme.spacing20) {
+                    content
+                }
+                .padding(.horizontal, AppTheme.spacing20)
+                .padding(.top, AppTheme.spacing20)
+                .padding(.bottom, AppTheme.spacing40)
+            }
+        }
+        .navigationTitle(title)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
     }
 }
 

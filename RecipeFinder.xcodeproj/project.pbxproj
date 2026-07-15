@@ -136,6 +136,18 @@
 		9E90AAFE2FA9029E00096D9D /* UnitConversionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E90AAFB2FA9022600096D9D /* UnitConversionTests.swift */; };
 		9E90AB022FA9247B00096D9D /* AnimatedHeartButtonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E90AAFF2FA9247B00096D9D /* AnimatedHeartButtonTests.swift */; };
 		9E90AB032FA9040100096D9D /* RecipeViewMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E90AB022FA9040000096D9D /* RecipeViewMode.swift */; };
+		9E97EE963007958B00D35FAB /* AppearanceAndThemeSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EE953007958B00D35FAB /* AppearanceAndThemeSettingsView.swift */; };
+		9E97EE983007959600D35FAB /* AppearanceSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EE973007959600D35FAB /* AppearanceSettingsView.swift */; };
+		9E97EE9A300795A400D35FAB /* ThemeSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EE99300795A400D35FAB /* ThemeSettingsView.swift */; };
+		9E97EE9C300795BA00D35FAB /* NotificationSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EE9B300795BA00D35FAB /* NotificationSettingsView.swift */; };
+		9E97EE9E300795CA00D35FAB /* TimerSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EE9D300795CA00D35FAB /* TimerSettingsView.swift */; };
+		9E97EEA0300795D300D35FAB /* UnitsSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EE9F300795D300D35FAB /* UnitsSettingsView.swift */; };
+		9E97EEA2300795DF00D35FAB /* DisplaySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EEA1300795DF00D35FAB /* DisplaySettingsView.swift */; };
+		9E97EEA4300795F100D35FAB /* PrivacySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EEA3300795F100D35FAB /* PrivacySettingsView.swift */; };
+		9E97EEA63007960600D35FAB /* DataManagementSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EEA53007960600D35FAB /* DataManagementSettingsView.swift */; };
+		9E97EEA83007962900D35FAB /* HelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EEA73007962900D35FAB /* HelpView.swift */; };
+		9E97EEAA3007963C00D35FAB /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EEA93007963C00D35FAB /* AboutView.swift */; };
+		9E97EEAC3007965300D35FAB /* PartyTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EEAB3007965300D35FAB /* PartyTimeView.swift */; };
 		9E9DE5FD2ECCA111005CD593 /* create_account.png in Resources */ = {isa = PBXBuildFile; fileRef = 9E9DE5F92ECCA111005CD593 /* create_account.png */; };
 		9E9DE5FE2ECCA111005CD593 /* PRIVACY_POLICY.md in Resources */ = {isa = PBXBuildFile; fileRef = 9E9DE5F52ECCA111005CD593 /* PRIVACY_POLICY.md */; };
 		9E9DE5FF2ECCA111005CD593 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 9E9DE5F82ECCA111005CD593 /* LICENSE */; };
@@ -309,6 +321,18 @@
 		9E90AAFB2FA9022600096D9D /* UnitConversionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitConversionTests.swift; sourceTree = "<group>"; };
 		9E90AAFF2FA9247B00096D9D /* AnimatedHeartButtonTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedHeartButtonTests.swift; sourceTree = "<group>"; };
 		9E90AB022FA9040000096D9D /* RecipeViewMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeViewMode.swift; sourceTree = "<group>"; };
+		9E97EE953007958B00D35FAB /* AppearanceAndThemeSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearanceAndThemeSettingsView.swift; sourceTree = "<group>"; };
+		9E97EE973007959600D35FAB /* AppearanceSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearanceSettingsView.swift; sourceTree = "<group>"; };
+		9E97EE99300795A400D35FAB /* ThemeSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSettingsView.swift; sourceTree = "<group>"; };
+		9E97EE9B300795BA00D35FAB /* NotificationSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSettingsView.swift; sourceTree = "<group>"; };
+		9E97EE9D300795CA00D35FAB /* TimerSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerSettingsView.swift; sourceTree = "<group>"; };
+		9E97EE9F300795D300D35FAB /* UnitsSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitsSettingsView.swift; sourceTree = "<group>"; };
+		9E97EEA1300795DF00D35FAB /* DisplaySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsView.swift; sourceTree = "<group>"; };
+		9E97EEA3300795F100D35FAB /* PrivacySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacySettingsView.swift; sourceTree = "<group>"; };
+		9E97EEA53007960600D35FAB /* DataManagementSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManagementSettingsView.swift; sourceTree = "<group>"; };
+		9E97EEA73007962900D35FAB /* HelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpView.swift; sourceTree = "<group>"; };
+		9E97EEA93007963C00D35FAB /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
+		9E97EEAB3007965300D35FAB /* PartyTimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartyTimeView.swift; sourceTree = "<group>"; };
 		9E9DE5F52ECCA111005CD593 /* PRIVACY_POLICY.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = PRIVACY_POLICY.md; sourceTree = "<group>"; };
 		9E9DE5F62ECCA111005CD593 /* TERMS_OF_SERVICE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = TERMS_OF_SERVICE.md; sourceTree = "<group>"; };
 		9E9DE5F82ECCA111005CD593 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
@@ -838,6 +862,7 @@
 				9E87BC942EF54F26003F9157 /* NutritionalTipsView.swift */,
 				9E4EF5D02EBB6A0600C3C0E7 /* LegalInformationView.swift */,
 				9E77ABF32EB4483100666BB0 /* SettingsView.swift */,
+				9E97EE943007958B00D35FAB /* Screens */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -927,6 +952,25 @@
 				9E90AB002FA9247B00096D9D /* Buttons */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		9E97EE943007958B00D35FAB /* Screens */ = {
+			isa = PBXGroup;
+			children = (
+				9E97EE953007958B00D35FAB /* AppearanceAndThemeSettingsView.swift */,
+				9E97EE973007959600D35FAB /* AppearanceSettingsView.swift */,
+				9E97EE99300795A400D35FAB /* ThemeSettingsView.swift */,
+				9E97EE9B300795BA00D35FAB /* NotificationSettingsView.swift */,
+				9E97EE9D300795CA00D35FAB /* TimerSettingsView.swift */,
+				9E97EE9F300795D300D35FAB /* UnitsSettingsView.swift */,
+				9E97EEA1300795DF00D35FAB /* DisplaySettingsView.swift */,
+				9E97EEA3300795F100D35FAB /* PrivacySettingsView.swift */,
+				9E97EEA53007960600D35FAB /* DataManagementSettingsView.swift */,
+				9E97EEA73007962900D35FAB /* HelpView.swift */,
+				9E97EEA93007963C00D35FAB /* AboutView.swift */,
+				9E97EEAB3007965300D35FAB /* PartyTimeView.swift */,
+			);
+			path = Screens;
 			sourceTree = "<group>";
 		};
 		9E9DE5F72ECCA111005CD593 /* legal */ = {
@@ -1219,14 +1263,17 @@
 				9E6DEAA22EF5F053001E7B24 /* CookingTipsManager.swift in Sources */,
 				9E6DEAA32EF5F053001E7B24 /* AccountManager.swift in Sources */,
 				9E6DEAA42EF5F053001E7B24 /* MealPlanningManager.swift in Sources */,
+				9E97EEA2300795DF00D35FAB /* DisplaySettingsView.swift in Sources */,
 				9E6DEAA52EF5F053001E7B24 /* NotesManager.swift in Sources */,
 				9E6DEAA62EF5F053001E7B24 /* KitchenInventoryManager.swift in Sources */,
 				9E6DEAA72EF5F053001E7B24 /* ShoppingListManager.swift in Sources */,
 				9E6DEAA82EF5F053001E7B24 /* AuthenticationManager.swift in Sources */,
 				9E6DEAA92EF5F053001E7B24 /* SampleRecipeData.swift in Sources */,
 				9E6DEAAA2EF5F053001E7B24 /* PersistenceController.swift in Sources */,
+				9E97EEA0300795D300D35FAB /* UnitsSettingsView.swift in Sources */,
 				9E77ABF42EB4483100666BB0 /* SettingsView.swift in Sources */,
 				9EE5AADB2D08FCBE00C1B736 /* ContentView.swift in Sources */,
+				9E97EEAA3007963C00D35FAB /* AboutView.swift in Sources */,
 				9E51C39A2EB3E9C20064B917 /* AccountView.swift in Sources */,
 				9E87D3362EB6C0E900FFA1D1 /* PasswordVerificationSheet.swift in Sources */,
 				9E4796113006BD1A00A14D3F /* SettingsComponents.swift in Sources */,
@@ -1246,10 +1293,12 @@
 				9E6DEA882EF5EFE8001E7B24 /* UnitConversion.swift in Sources */,
 				9E6DEA892EF5EFE8001E7B24 /* HapticManager.swift in Sources */,
 				9E6DEA8A2EF5EFE8001E7B24 /* CategoryClassifier.swift in Sources */,
+				9E97EE9A300795A400D35FAB /* ThemeSettingsView.swift in Sources */,
 				9E6DEA8B2EF5EFE8001E7B24 /* NotificationManager.swift in Sources */,
 				9E6DEA8C2EF5EFE8001E7B24 /* Extensions.swift in Sources */,
 				9E6DEA8D2EF5EFE8001E7B24 /* TestHelpers.swift in Sources */,
 				9E6DEA8E2EF5EFE8001E7B24 /* NetworkMonitor.swift in Sources */,
+				9E97EEA63007960600D35FAB /* DataManagementSettingsView.swift in Sources */,
 				9E6C2C402FB4779F0083A08B /* ProfileTextField.swift in Sources */,
 				9E6C2C462FB477D70083A08B /* AccountShareSheet.swift in Sources */,
 				9E6C2C472FB477D70083A08B /* BadgeDetailView.swift in Sources */,
@@ -1261,6 +1310,8 @@
 				9E6DEA932EF5EFE8001E7B24 /* RecipeImporter.swift in Sources */,
 				9E6DEA942EF5EFE8001E7B24 /* Constants.swift in Sources */,
 				9E1E26142FBA09F80002A220 /* RecipeImportBuilder.swift in Sources */,
+				9E97EEA83007962900D35FAB /* HelpView.swift in Sources */,
+				9E97EE983007959600D35FAB /* AppearanceSettingsView.swift in Sources */,
 				9E6DEA952EF5EFE8001E7B24 /* AdaptiveSpacing.swift in Sources */,
 				9E6DEA962EF5EFE8001E7B24 /* IngredientNormalizer.swift in Sources */,
 				9E834DF12ECA6508008F8A11 /* CookingTipModel.swift in Sources */,
@@ -1271,6 +1322,7 @@
 				9E51C3A12EB406AD0064B917 /* CookTimerView.swift in Sources */,
 				9E6DEA602EF5EF47001E7B24 /* DifficultyBarsView.swift in Sources */,
 				9E5B39822FABC2C700C96DB3 /* CircleButton.swift in Sources */,
+				9E97EE9C300795BA00D35FAB /* NotificationSettingsView.swift in Sources */,
 				9E5B39842FABC30700C96DB3 /* SearchBar.swift in Sources */,
 				9E6DEA632EF5EF47001E7B24 /* CardView.swift in Sources */,
 				9E6DEA642EF5EF47001E7B24 /* FlowLayout.swift in Sources */,
@@ -1281,15 +1333,18 @@
 				9E6DEA672EF5EF47001E7B24 /* IngredientRowView.swift in Sources */,
 				9E6DEA682EF5EF47001E7B24 /* InfoPairView.swift in Sources */,
 				9E6DEA6B2EF5EF47001E7B24 /* RecipeCard.swift in Sources */,
+				9E97EE9E300795CA00D35FAB /* TimerSettingsView.swift in Sources */,
 				9E6DEA6C2EF5EF47001E7B24 /* AnimatedHeartButton.swift in Sources */,
 				9E6DEA6E2EF5EF47001E7B24 /* RecipeImageView.swift in Sources */,
 				9E6DEA702EF5EF47001E7B24 /* CompactRecipeCard.swift in Sources */,
 				9EE5AAD92D08FCBE00C1B736 /* RecipeFinderApp.swift in Sources */,
 				9E2E34212E9D9F8500E2E49F /* KitchenView.swift in Sources */,
+				9E97EEA4300795F100D35FAB /* PrivacySettingsView.swift in Sources */,
 				9E51C3922EB3DE580064B917 /* RecipeWizardView.swift in Sources */,
 				9EA778FD2EB4A4B00028F064 /* OnboardingView.swift in Sources */,
 				9E834DF52ECA651C008F8A11 /* CookingTipsView.swift in Sources */,
 				9E834DF62ECA651C008F8A11 /* CookingTipDetailView.swift in Sources */,
+				9E97EEAC3007965300D35FAB /* PartyTimeView.swift in Sources */,
 				9E87D3342EB6C05700FFA1D1 /* WelcomeSplashView.swift in Sources */,
 				9E77ABEE2EB412C600666BB0 /* SecureCredentialManager.swift in Sources */,
 				9E87BC952EF54F26003F9157 /* NutritionalTipsView.swift in Sources */,
@@ -1302,6 +1357,7 @@
 				9E6C2C3D2FB4778E0083A08B /* BadgeCard.swift in Sources */,
 				9E6C2C3E2FB4778E0083A08B /* ChefTypeCard.swift in Sources */,
 				9E6060032D09CB6400236896 /* RecipeModel.xcdatamodeld in Sources */,
+				9E97EE963007958B00D35FAB /* AppearanceAndThemeSettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
