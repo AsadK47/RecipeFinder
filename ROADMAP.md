@@ -5,118 +5,140 @@
 - 🟡 In Progress
 - 🟢 Done
 
----
+## Strategy (July 2026)
 
-## Phase 1: Visual & Media Foundations
+Competitive analysis vs ReciMe / Crouton / Mela / Paprika: RecipeFinder's position is
+**"ReciMe, but private, unlimited, and better at the actual cooking."**
 
-### 🔴 Recipe Images via Unsplash API
-*(Status corrected July 2026: no Unsplash code exists yet. Note: URL import already extracts recipe images from JSON-LD / Open Graph tags, so imported recipes get images for free — Unsplash is only needed for manually created recipes.)*
-- Integrate Unsplash search-by-recipe-name to auto-assign images
-- Cache images locally (NSCache + disk) so API is called once per recipe
-- Add `imageURL` field to Core Data model
-- Update `RecipeImageView` to support remote URLs with placeholder fallback
-- Store API key securely via `.xcconfig` (excluded from git)
-- **Scaling concern:** Free tier = 50 req/hr. For multi-user growth, consider a server-side proxy that caches URLs centrally so the same "Chicken Curry" image URL is reused across users without redundant API calls
+- ReciMe won 10M+ users on one loop: see recipe on social → share into app → AI recipe card → grocery list. Their import is server-side AI, paywalled at 5 imports/week.
+- Our edge: on-device parsing (FoundationModels) costs nothing per import → **unlimited imports can be free**. Freemium must be genuine added value, never locked basics.
+- ReciMe's known weaknesses we already beat or can beat: grocery list doesn't merge duplicates (we normalize + merge), meal plan and shopping list unlinked (ours now linked), weak cooking mode (Crouton sets the bar).
+- Already at parity, no work needed: aisle-grouped shopping list, serving scaling, metric/imperial conversion, cookbook-style organization, offline-first.
 
-### 🟢 User Photo for Recipes *(completed July 2026)*
-- ~~Allow users to pick a photo from their library~~ — PhotosPicker in RecipeWizardView
-- ~~Store as compressed JPEG in app sandbox (not Core Data blob)~~ — saved to Documents with cleanup of replaced images
-- ~~User photo takes priority over remote image when both exist~~ — RecipeImageView supports local references
-- Remaining: "take a photo" via camera (requires re-adding NSCameraUsageDescription build setting)
+Priorities are ordered below. Phases 1–3 are the release-defining work.
 
 ---
 
-## Phase 2: Smart Recipe Import
+## Phase 1: Capture — the ReciMe loop *(highest priority)*
+
+### 🔴 Share Sheet Extension
+*The delivery vehicle for everything else in this phase. Works with the existing URL importer on day one (share from Safari/blogs). Requires creating an extension target in Xcode UI first — agent tooling can't create targets.*
+- Share Extension target accepting URLs and plain text
+- Hand off to main app via App Group + URL scheme; land in the existing import review screen
+- Accept shared text (captions) as well as URLs, ready for the parser below
 
 ### 🔴 Instagram & TikTok Recipe Import
-- Paste a URL → extract recipe content
-- Options to explore:
-  - **Server-side scraping** (most reliable) — extract structured data from page HTML / Open Graph tags
-  - **On-device LLM** (iOS 18+ Foundation Models) — paste caption text → parse into structured recipe
-  - **Share Sheet extension** — user shares directly from Instagram/TikTok into RecipeFinder
+- Paste a URL or share caption text → extract recipe content
+- **Preferred approach: on-device FoundationModels** (iOS 26+, availability-gated) — parse caption/text into structured recipe via @Generable; private, free to run, offline
+- Fallback for older OS: existing JSON-LD / Open Graph extraction where pages provide it
 - Parse into: name, ingredients, instructions, prep/cook time, servings
-- Let user review/edit before saving
+- Let user review/edit before saving (reuse RecipeImportBuilder flow)
+- **Marketing angle: unlimited free imports vs ReciMe's 5/week**
 
 ### 🔴 Photo-to-Recipe Conversion
-- Point camera at a cookbook page, handwritten recipe, or screenshot
-- Use Vision framework (OCR) to extract text
-- Parse extracted text into structured recipe fields using on-device NLP or LLM
+- Cookbook page, handwritten recipe, or screenshot → Vision OCR → same on-device parser as above
 - User reviews and confirms before saving
 
 ---
 
-## Phase 3: Nutrition
+## Phase 2: Sync & Trust
 
-### 🔴 Nutritional Information
-- Display calories, protein, carbs, fat, fibre per serving
-- **Data source options:**
-  - Open Food Facts API (free, open-source)
-  - USDA FoodData Central API (free, US government)
-  - Edamam Nutrition API (free tier available)
-- **UX approach:** Toggle per recipe (not a global setting) — some users care about nutrition for weeknight meals but not for baking
-- Show as a collapsible section on recipe detail view
-- Consider a "Nutrition Summary" on the meal plan weekly view
-- Recalculate when servings are adjusted
+### 🔴 iCloud Sync *(new — competitive gap: every rival syncs; "lost my recipes on phone upgrade" is the category's review-killer)*
+- `NSPersistentCloudKitContainer` over the existing Core Data stack
+- User's own iCloud — no server, keeps the privacy-first story intact
+- Reconcile with UserScopedStorage per-account scoping (design needed: local accounts vs iCloud identity)
+- JSON-backed stores (meal plans, shopping list, inventory) need a sync strategy too (move to Core Data or CloudKit key-value/records)
+- Existing backup/export (DataImportView) remains the manual fallback
+
+---
+
+## Phase 3: Cooking Experience
+
+### 🔴 Cooking Mode *(Crouton sets the bar)*
+- Step-by-step instruction view with large text, one step at a time
+- Tap an ingredient mentioned in a step to see its quantity
+- Auto-detect times in step text → tap to start a timer (integrates existing timer feature)
+- Keep-screen-awake already exists (Display settings); apply automatically in cooking mode
+- Voice control ("next step", "repeat") — stretch goal
+
+### 🔴 Timer Live Activity + Widgets *(requires a Widget Extension target — create in Xcode UI)*
+- Running timer as a Live Activity on Lock Screen / Dynamic Island (RecipeTimerManager exists)
+- Today's meal plan widget
+- Shopping list quick-view widget
+- Random recipe suggestion widget
 
 ---
 
 ## Phase 4: Meal Planning Enhancements
 
 ### 🟡 Expanded Meal Planner
-- Drag-and-drop to rearrange meals between days
 - ~~Meal type slots: Breakfast, Lunch, Dinner, Snack~~ 🟢 — `MealTime` enum with icons/ordering in MealPlanModel
-- Weekly overview with nutritional summary (ties into Phase 3)
+- ~~Auto-generate shopping list from the week's meal plan~~ 🟢 *(July 2026)* — "Add Week to Shopping List" in weekly view; merges duplicates via IngredientNormalizer, skips completed meals, falls back to name-matching when a recipe was re-imported (`weekShoppingSummary` in MealPlanningManager). ReciMe's most-cited missing feature.
+- Drag-and-drop to rearrange meals between days
+- Weekly overview with nutritional summary (ties into Phase 5)
 - "Suggest a meal" — recommend recipes from saved collection based on: unused ingredients, variety, dietary preferences
 - Recurring meals (e.g., "Meal Prep Sunday")
-- Auto-generate shopping list from the week's meal plan
 
 ---
 
-## Phase 5: Shopping Integration
+## Phase 5: Nutrition
+
+### 🔴 Nutritional Information
+- Display calories, protein, carbs, fat, fibre per serving
+- **Data source options:** Open Food Facts API (free, open-source), USDA FoodData Central (free), Edamam (free tier)
+- **UX approach:** Toggle per recipe (not a global setting) — some users care for weeknight meals but not for baking
+- Show as a collapsible section on recipe detail view
+- Nutrition summary on the meal plan weekly view
+- Recalculate when servings are adjusted
+
+---
+
+## Phase 6: Shopping Integration
 
 ### 🔴 Supermarket Connection
 - Link shopping list to supermarket suppliers (Tesco, Sainsbury's, Ocado, etc.)
 - Match ingredient names to supermarket product catalogue
 - Auto-build a basket on the retailer's site/app
-- **Implementation options:**
-  - Deep link into retailer apps (if supported)
-  - Retailer affiliate APIs (Tesco API, Ocado partner programme)
-  - Web scraping (fragile, last resort)
+- **Implementation options:** deep links into retailer apps, retailer affiliate APIs, web scraping (last resort)
 - Price comparison across retailers
-- Smart substitution suggestions (e.g., "Tesco doesn't have X — here's a similar product")
+- Smart substitution suggestions
 
 ---
 
-## Phase 6: Quality of Life & Engagement
+## Phase 7: Quality of Life & Engagement
 
 ### 🟡 Smart Search & Filtering
 - ~~Search by ingredient ("what can I make with chicken and rice?")~~ 🟢 — "available ingredients only" toggle with ≥80% match scoring in RecipeSearchView
 - Filter by dietary restriction, cook time, difficulty (partially present — verify coverage)
 - Recently viewed / frequently cooked
 
-### 🔴 Cooking Mode
-- Step-by-step instruction view with large text
-- Voice control ("next step", "repeat")
-- Built-in timers per step (existing timer feature could integrate here)
-
-### 🔴 Recipe Sharing
-- Share recipes as rich links or formatted cards
-- Import shared recipes from other RecipeFinder users
-- Export as PDF for printing
-
 ### 🔴 Collections & Tags
 - User-created collections beyond favourites ("Weeknight Dinners", "Party Food")
 - Custom tags with colour coding
 - Smart collections (auto-populated based on rules)
 
-### 🔴 Widget Support
-- Today's meal plan on home screen
-- Random recipe suggestion widget
-- Shopping list quick-view widget
+### 🔴 Recipe Sharing
+- Share recipes as rich links or formatted cards
+- Import shared recipes from other RecipeFinder users
+- Export as PDF for printing *(basic text/PDF share exists)*
+
+### 🔴 Recipe Images via Unsplash API *(demoted from Phase 1: URL import already extracts images from JSON-LD/OG, and user photos are done — this only benefits manually created recipes)*
+- Integrate Unsplash search-by-recipe-name to auto-assign images
+- Cache images locally (NSCache + disk); `imageURL` field in Core Data; API key via `.xcconfig`
+- **Scaling concern:** free tier = 50 req/hr; consider server-side URL cache if multi-user growth
+
+### 🟢 User Photo for Recipes *(completed July 2026)*
+- PhotosPicker in RecipeWizardView; compressed JPEG in app sandbox; user photo takes priority over remote image
+- Remaining: "take a photo" via camera (requires re-adding NSCameraUsageDescription build setting)
 
 ---
 
 ## Completed
+
+### 🟢 Settings Revamp (July 2026)
+- Phase A: design system in Components/Settings/SettingsComponents.swift (icon tiles, rows, sections, cards)
+- Phase B: 12 sub-screens split into Views/Settings/Screens/, restyled; SettingsScreen scaffold, toggle/choice rows; visual walkthrough signed off
+- Dead code pending delete decision: AppearanceSettingsView, ThemeSettingsView, TimerSettingsView, PrivacyInfoRow, AboutFeatureRow
 
 ### 🟢 Health Check & Release Prep (July 2026)
 - Fixed `signUp()` overwriting existing accounts' credentials (account-takeover bug)
@@ -144,3 +166,4 @@
 - **API Keys:** All API keys stored in `.xcconfig` files excluded from version control
 - **Privacy First:** Minimal data collection, all user data scoped per account
 - **Offline First:** Core features work without internet; network features degrade gracefully
+- **Freemium principle:** free tier must be genuinely useful; monetize added value (e.g., supermarket integration, advanced planning), never basics or things that cost us nothing (imports)

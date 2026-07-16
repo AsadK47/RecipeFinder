@@ -12,6 +12,7 @@ struct MealPlanningView: View {
     @State private var viewMode: ViewMode = .calendar
     @State private var showNutritionTips = false
     @State private var showMonthYearPicker = false
+    @State private var weekShoppingFeedback: String?
     
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
@@ -274,6 +275,34 @@ struct MealPlanningView: View {
                             HapticManager.shared.light()
                         }
                     )
+                }
+            }
+
+            if weekHasPlannedMeals {
+                Button(action: addWeekToShoppingList) {
+                    HStack(spacing: AppTheme.spacing8) {
+                        Image(systemName: "cart.badge.plus")
+                        Text("Add Week to Shopping List")
+                            .fontWeight(.semibold)
+                    }
+                    .font(.subheadline)
+                    .adaptiveForegroundColor()
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, AppTheme.spacing12)
+                    .background(AppTheme.accentColor(for: selectedTheme))
+                    .cornerRadius(AppTheme.cornerRadius12)
+                }
+                .buttonStyle(PlainButtonStyle())
+
+                if let weekShoppingFeedback {
+                    HStack(spacing: AppTheme.spacing8) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundColor(.green)
+                        Text(weekShoppingFeedback)
+                            .font(.caption)
+                            .adaptiveForegroundColor(opacity: AppTheme.highEmphasisOpacity)
+                    }
+                    .transition(.opacity.combined(with: .move(edge: .top)))
                 }
             }
         }
@@ -585,6 +614,53 @@ struct MealPlanningView: View {
         return "\(startString) - \(endString)"
     }
     
+    private var currentWeekStart: Date? {
+        Calendar.current.dateInterval(of: .weekOfYear, for: selectedDate)?.start
+    }
+
+    private var weekHasPlannedMeals: Bool {
+        guard let start = currentWeekStart else { return false }
+        return mealPlanningManager.mealPlansForWeek(starting: start).meals.contains { !$0.isCompleted }
+    }
+
+    private func addWeekToShoppingList() {
+        guard let start = currentWeekStart else { return }
+
+        let summary = mealPlanningManager.weekShoppingSummary(forWeekStarting: start, recipes: recipes)
+
+        for item in summary.items {
+            ShoppingListManager.shared.addItem(name: item.name, quantity: item.quantity, category: nil)
+        }
+
+        guard !summary.isEmpty else { return }
+
+        if summary.items.isEmpty {
+            HapticManager.shared.error()
+            showWeekShoppingFeedback("Couldn't find this week's recipes in your collection")
+            return
+        }
+
+        HapticManager.shared.success()
+
+        var message = "Added \(summary.items.count) item\(summary.items.count == 1 ? "" : "s") from \(summary.mealsCovered) meal\(summary.mealsCovered == 1 ? "" : "s")"
+        if !summary.missingRecipeNames.isEmpty {
+            message += " · \(summary.missingRecipeNames.count) recipe\(summary.missingRecipeNames.count == 1 ? "" : "s") not found"
+        }
+        showWeekShoppingFeedback(message)
+    }
+
+    private func showWeekShoppingFeedback(_ message: String) {
+        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+            weekShoppingFeedback = message
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayFeedback) {
+            withAnimation(.easeOut(duration: AppTheme.animationDuration08)) {
+                weekShoppingFeedback = nil
+            }
+        }
+    }
+
     private var daysInCurrentWeek: [Date] {
         guard let weekInterval = Calendar.current.dateInterval(of: .weekOfYear, for: selectedDate) else {
             return []

@@ -109,6 +109,48 @@ final class MealPlanningManager: ObservableObject {
         return WeeklyMealPlan(startDate: start, meals: weekMeals)
     }
     
+    /// Aggregates the ingredients needed for every incomplete meal planned in
+    /// the week, resolving recipes from the caller's collection and merging
+    /// duplicates by normalized ingredient name.
+    ///
+    /// Recipes are matched by id first, then by name as a fallback so meals
+    /// survive a recipe being deleted and re-imported with a new id.
+    func weekShoppingSummary(forWeekStarting startDate: Date, recipes: [RecipeModel]) -> WeekShoppingSummary {
+        let plannedMeals = mealPlansForWeek(starting: startDate).meals.filter { !$0.isCompleted }
+
+        var quantities: [String: Int] = [:]
+        var itemOrder: [String] = []
+        var mealsCovered = 0
+        var missingRecipeNames: [String] = []
+
+        for meal in plannedMeals {
+            let recipe = recipes.first { $0.id == meal.recipeId }
+                ?? recipes.first { $0.name.caseInsensitiveCompare(meal.recipeName) == .orderedSame }
+
+            guard let recipe else {
+                if !missingRecipeNames.contains(meal.recipeName) {
+                    missingRecipeNames.append(meal.recipeName)
+                }
+                continue
+            }
+
+            mealsCovered += 1
+
+            for ingredient in recipe.ingredients {
+                let name = IngredientNormalizer.normalize(ingredient.mainIngredientName)
+                guard !name.isEmpty else { continue }
+
+                if quantities[name] == nil {
+                    itemOrder.append(name)
+                }
+                quantities[name, default: 0] += 1
+            }
+        }
+
+        let items = itemOrder.map { WeekShoppingSummary.Item(name: $0, quantity: quantities[$0] ?? 0) }
+        return WeekShoppingSummary(items: items, mealsCovered: mealsCovered, missingRecipeNames: missingRecipeNames)
+    }
+
     var todaysMealPlans: [MealPlanModel] {
         mealPlans(for: Date())
     }

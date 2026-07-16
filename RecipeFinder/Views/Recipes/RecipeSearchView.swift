@@ -15,6 +15,7 @@ struct RecipeSearchView: View {
     @State private var availableIngredientsOnly = false
     @State private var showFavoritesOnly = false
     @State private var showImportSheet = false
+    @State private var sharedImportURL: String?
     @State private var showRecipeWizard: Bool = false
     @State private var recipeToDelete: RecipeModel?
     @State private var showDeleteAlert: Bool = false
@@ -180,6 +181,23 @@ struct RecipeSearchView: View {
                     updateAction: updateFilterCache
                 ))
         }
+        .onAppear(perform: checkSharedImportInbox)
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+            checkSharedImportInbox()
+        }
+        .onChange(of: showImportSheet) { _, isPresented in
+            if !isPresented {
+                sharedImportURL = nil
+            }
+        }
+    }
+
+    /// Presents the import sheet when the share extension left a URL in the
+    /// App Group inbox.
+    private func checkSharedImportInbox() {
+        guard let pendingURL = SharedImportInbox.consumePendingURL() else { return }
+        sharedImportURL = pendingURL
+        showImportSheet = true
     }
     
     private var mainContentView: some View {
@@ -591,7 +609,7 @@ struct RecipeSearchView: View {
     }
     
     private var recipeImportSheet: some View {
-        RecipeImportView(existingNames: recipes.map { $0.name }) { importedRecipe in
+        RecipeImportView(initialURL: sharedImportURL, existingNames: recipes.map { $0.name }) { importedRecipe in
             recipes.append(importedRecipe)
             
             PersistenceController.shared.saveRecipeModel(importedRecipe)

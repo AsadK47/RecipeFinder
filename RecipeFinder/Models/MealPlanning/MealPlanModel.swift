@@ -111,6 +111,28 @@ struct WeeklyMealPlan: Identifiable {
     }
 }
 
+/// Aggregated shopping needs for one week of planned meals.
+///
+/// Ingredient names are normalized and merged, so "2 cups chopped onions" in
+/// one recipe and "1 onion, diced" in another become a single line item whose
+/// quantity is the number of planned meals that use it.
+struct WeekShoppingSummary: Equatable {
+    struct Item: Equatable {
+        let name: String
+        let quantity: Int
+    }
+
+    let items: [Item]
+    /// Planned meals whose recipe was found and contributed ingredients.
+    let mealsCovered: Int
+    /// Recipe names planned this week that no longer exist in the collection.
+    let missingRecipeNames: [String]
+
+    var isEmpty: Bool {
+        items.isEmpty && missingRecipeNames.isEmpty
+    }
+}
+
 extension MealPlanModel {
     static let samples: [MealPlanModel] = [
         MealPlanModel(

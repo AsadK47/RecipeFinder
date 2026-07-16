@@ -93,7 +93,7 @@ struct TimerSettingsView: View {
         }
     }
 
-    private func formatDuration(_ seconds: Int) -> String {
+    func formatDuration(_ seconds: Int) -> String {
         if seconds < 60 {
             return "\(seconds) seconds"
         } else if seconds < 3600 {

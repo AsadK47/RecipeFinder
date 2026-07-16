@@ -14,6 +14,9 @@ struct RecipeImportView: View {
     @State private var showDuplicateAlert = false
     private let builder = RecipeImportBuilder()
 
+    /// When set (e.g. arriving from the share extension), the URL field is
+    /// prefilled and the import starts automatically.
+    var initialURL: String? = nil
     var existingNames: [String] = []
     var onImport: (RecipeModel) -> Void
 
@@ -258,6 +261,12 @@ struct RecipeImportView: View {
             }
         } message: { recipe in
             Text("\"\(recipe.name)\" is already in your recipes. Import as a duplicate?")
+        }
+        .onAppear {
+            if let initialURL, urlText.isEmpty {
+                urlText = initialURL
+                importRecipe()
+            }
         }
 
     }
