@@ -15,6 +15,7 @@ struct RecipeWizardView: View {
         let description: String?
         let ingredients: [String]?
         let instructions: [String]?
+        var prePrepInstructions: [String]? = nil
         let prepTime: Int?
         let cookTime: Int?
         let servings: Int?
@@ -40,9 +41,9 @@ struct RecipeWizardView: View {
     @State private var ingredientItems: [IngredientItem] = [IngredientItem()]
     @FocusState private var focusedIngredientID: UUID?
     
-    @State private var prePrepSteps: [String] = [""]
+    @State private var prePrepSteps: [EditableStep] = [EditableStep()]
     
-    @State private var mainInstructions: [String] = [""]
+    @State private var mainInstructions: [EditableStep] = [EditableStep()]
     
     @State private var notes = ""
     
@@ -158,6 +159,10 @@ struct RecipeWizardView: View {
         }
     }
     
+    private func stepNumber(of step: EditableStep, in steps: [EditableStep]) -> Int {
+        (steps.firstIndex(where: { $0.id == step.id }) ?? 0) + 1
+    }
+
     private func applyPrefilledData() {
         guard let data = prefilledData else { return }
         
@@ -201,10 +206,12 @@ struct RecipeWizardView: View {
         }
         
         if let instructions = data.instructions, !instructions.isEmpty {
-            mainInstructions = instructions.isEmpty ? [""] : instructions
-            if !instructions.isEmpty {
-                mainInstructions.append("")
-            }
+            mainInstructions = .steps(from: instructions)
+            mainInstructions.append(EditableStep())
+        }
+
+        if let prePrep = data.prePrepInstructions, !prePrep.isEmpty {
+            prePrepSteps = .steps(from: prePrep)
         }
         
         if let notes = data.notes, !notes.isEmpty {
@@ -615,10 +622,10 @@ struct RecipeWizardView: View {
             
             cardContainer {
                 VStack(spacing: AppTheme.spacing12) {
-                    ForEach(Array(prePrepSteps.enumerated()), id: \.offset) { index, _ in
+                    ForEach($prePrepSteps) { $step in
                         VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                             HStack {
-                                Text("Step \(index + 1)")
+                                Text("Step \(stepNumber(of: step, in: prePrepSteps))")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                                 
@@ -627,7 +634,7 @@ struct RecipeWizardView: View {
                                 if prePrepSteps.count > 1 {
                                     Button(action: {
                                         HapticManager.shared.light()
-                                        prePrepSteps.remove(at: index)
+                                        prePrepSteps.removeAll { $0.id == step.id }
                                     }) {
                                         Image(systemName: "minus.circle.fill")
                                             .foregroundColor(.red)
@@ -635,19 +642,19 @@ struct RecipeWizardView: View {
                                 }
                             }
                             
-                            TextField("Describe the pre-prep step", text: $prePrepSteps[index], axis: .vertical)
+                            TextField("Describe the pre-prep step", text: $step.text, axis: .vertical)
                                 .textFieldStyle(.roundedBorder)
                                 .lineLimit(2...5)
                         }
                         
-                        if index < prePrepSteps.count - 1 {
+                        if step.id != prePrepSteps.last?.id {
                             Divider()
                         }
                     }
                     
                     Button(action: {
                         HapticManager.shared.light()
-                        prePrepSteps.append("")
+                        prePrepSteps.append(EditableStep())
                     }) {
                         Label("Add Pre-prep Step", systemImage: "plus.circle.fill")
                             .foregroundColor(AppTheme.accentColor(for: appTheme))
@@ -671,10 +678,10 @@ struct RecipeWizardView: View {
             
             cardContainer {
                 VStack(spacing: AppTheme.spacing12) {
-                    ForEach(Array(mainInstructions.enumerated()), id: \.offset) { index, _ in
+                    ForEach($mainInstructions) { $step in
                         VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                             HStack {
-                                Text("Step \(index + 1)")
+                                Text("Step \(stepNumber(of: step, in: mainInstructions))")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                                 
@@ -683,7 +690,7 @@ struct RecipeWizardView: View {
                                 if mainInstructions.count > 1 {
                                     Button(action: {
                                         HapticManager.shared.light()
-                                        mainInstructions.remove(at: index)
+                                        mainInstructions.removeAll { $0.id == step.id }
                                     }) {
                                         Image(systemName: "minus.circle.fill")
                                             .foregroundColor(.red)
@@ -691,19 +698,19 @@ struct RecipeWizardView: View {
                                 }
                             }
                             
-                            TextField("Describe this cooking step", text: $mainInstructions[index], axis: .vertical)
+                            TextField("Describe this cooking step", text: $step.text, axis: .vertical)
                                 .textFieldStyle(.roundedBorder)
                                 .lineLimit(2...5)
                         }
                         
-                        if index < mainInstructions.count - 1 {
+                        if step.id != mainInstructions.last?.id {
                             Divider()
                         }
                     }
                     
                     Button(action: {
                         HapticManager.shared.light()
-                        mainInstructions.append("")
+                        mainInstructions.append(EditableStep())
                     }) {
                         Label("Add Cooking Step", systemImage: "plus.circle.fill")
                             .foregroundColor(AppTheme.accentColor(for: appTheme))
@@ -809,8 +816,8 @@ struct RecipeWizardView: View {
                         summaryRow(icon: "clock", label: "Prep Time", value: "\(prepTime) min")
                         summaryRow(icon: "flame", label: "Cook Time", value: "\(cookTime) min")
                         summaryRow(icon: "list.bullet", label: "Ingredients", value: "\(ingredientItems.filter { !$0.name.isEmpty }.count)")
-                        summaryRow(icon: "list.number", label: "Pre-prep Steps", value: "\(prePrepSteps.filter { !$0.isEmpty }.count)")
-                        summaryRow(icon: "list.number", label: "Cooking Steps", value: "\(mainInstructions.filter { !$0.isEmpty }.count)")
+                        summaryRow(icon: "list.number", label: "Pre-prep Steps", value: "\(prePrepSteps.nonEmptyTexts.count)")
+                        summaryRow(icon: "list.number", label: "Cooking Steps", value: "\(mainInstructions.nonEmptyTexts.count)")
                     }
                 .padding()
             }
@@ -971,7 +978,7 @@ struct RecipeWizardView: View {
         case 3:
             return true
         case 4:
-            return mainInstructions.contains { !$0.isEmpty }
+            return mainInstructions.contains { !$0.text.isEmpty }
         case 5:
             return true
         default:
@@ -1028,8 +1035,8 @@ struct RecipeWizardView: View {
             return
         }
         
-        let filteredPrePrep = prePrepSteps.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
-        let filteredInstructions = mainInstructions.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+        let filteredPrePrep = prePrepSteps.nonEmptyTexts
+        let filteredInstructions = mainInstructions.nonEmptyTexts
         
         guard !filteredInstructions.isEmpty else {
             errorMessage = "Please add at least one cooking instruction"

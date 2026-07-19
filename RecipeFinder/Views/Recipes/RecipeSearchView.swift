@@ -16,6 +16,8 @@ struct RecipeSearchView: View {
     @State private var showFavoritesOnly = false
     @State private var showImportSheet = false
     @State private var sharedImportURL: String?
+    @State private var sharedWizardPrefill: RecipeWizardView.PrefilledRecipeData?
+    @State private var importToastMessage: String?
     @State private var showRecipeWizard: Bool = false
     @State private var recipeToDelete: RecipeModel?
     @State private var showDeleteAlert: Bool = false
@@ -190,21 +192,95 @@ struct RecipeSearchView: View {
                 sharedImportURL = nil
             }
         }
+        .onChange(of: showRecipeWizard) { _, isPresented in
+            if !isPresented {
+                sharedWizardPrefill = nil
+            }
+        }
     }
 
-    /// Presents the import sheet when the share extension left a URL in the
-    /// App Group inbox.
+    /// Handles whatever the share extension left in the App Group inbox: a
+    /// finished recipe is saved silently with a toast, a URL opens the
+    /// interactive import sheet, and plain text is parsed into a prefilled
+    /// wizard for review.
     private func checkSharedImportInbox() {
-        guard let pendingURL = SharedImportInbox.consumePendingURL() else { return }
-        sharedImportURL = pendingURL
-        showImportSheet = true
+        switch SharedImportInbox.consumePayload() {
+        case .recipe(let recipe):
+            ingest(sharedRecipe: recipe)
+        case .url(let urlString):
+            sharedImportURL = urlString
+            showImportSheet = true
+        case .text(let text):
+            if let prefill = TextRecipeParser.parse(text) {
+                sharedWizardPrefill = prefill
+                showRecipeWizard = true
+            } else {
+                showImportToast("Couldn't find a recipe in the shared text")
+            }
+        case nil:
+            break
+        }
+    }
+
+    private func ingest(sharedRecipe recipe: RecipeModel) {
+        let normalizedName = recipe.name.trimmingCharacters(in: .whitespaces).lowercased()
+        let isDuplicate = recipes.contains {
+            $0.name.trimmingCharacters(in: .whitespaces).lowercased() == normalizedName
+        }
+
+        guard !isDuplicate else {
+            showImportToast("\"\(recipe.name)\" is already in your recipes")
+            return
+        }
+
+        recipes.append(recipe)
+        PersistenceController.shared.saveRecipeModel(recipe)
+        HapticManager.shared.success()
+        showImportToast("Imported \"\(recipe.name)\"")
+    }
+
+    private func showImportToast(_ message: String) {
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+            importToastMessage = message
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
+            withAnimation(.easeOut(duration: AppTheme.animationDuration08)) {
+                importToastMessage = nil
+            }
+        }
     }
     
     private var mainContentView: some View {
-        ZStack {
+        ZStack(alignment: .top) {
             backgroundView
             contentStack
+
+            if let importToastMessage {
+                importToast(message: importToastMessage)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                    .zIndex(1)
+            }
         }
+    }
+
+    private func importToast(message: String) -> some View {
+        HStack(spacing: AppTheme.spacing8) {
+            Image(systemName: "checkmark.circle.fill")
+                .foregroundColor(.green)
+
+            Text(message)
+                .font(.subheadline)
+                .adaptiveForegroundColor()
+                .lineLimit(2)
+        }
+        .padding(.horizontal, AppTheme.spacing16)
+        .padding(.vertical, AppTheme.spacing12)
+        .background(.ultraThinMaterial, in: Capsule())
+        .shadow(color: .black.opacity(0.15), radius: 8, y: 2)
+        .padding(.top, AppTheme.spacing8)
+        .padding(.horizontal, AppTheme.spacing20)
+        .accessibilityElement(children: .combine)
     }
     
     private var contentStack: some View {
@@ -619,7 +695,7 @@ struct RecipeSearchView: View {
     }
     
     private var recipeWizardSheet: some View {
-        RecipeWizardView(prefilledData: nil) { newRecipe in
+        RecipeWizardView(prefilledData: sharedWizardPrefill) { newRecipe in
             recipes.append(newRecipe)
             
             PersistenceController.shared.saveRecipeModel(newRecipe)

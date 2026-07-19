@@ -513,6 +513,7 @@ struct RecipeDetailView: View {
                 description: nil,
                 ingredients: recipe.ingredients.map { "\(String(format: "%g", $0.baseQuantity)) \($0.unit) \($0.name)" },
                 instructions: recipe.instructions,
+                prePrepInstructions: recipe.prePrepInstructions,
                 prepTime: TimeExtractor.extractMinutes(from: recipe.prepTime),
                 cookTime: TimeExtractor.extractMinutes(from: recipe.cookingTime),
                 servings: recipe.baseServings,

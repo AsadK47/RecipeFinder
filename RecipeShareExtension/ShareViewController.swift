@@ -1,12 +1,14 @@
 import UIKit
 import UniformTypeIdentifiers
 
-/// Receives a URL (or text containing one) from the share sheet, stashes it
-/// in the shared App Group, and dismisses. The main app consumes the payload
-/// on next foreground and routes it into the recipe import flow.
+/// Receives a URL (or text) from the share sheet, stashes it in the shared
+/// App Group, and dismisses. The main app consumes the payload on next
+/// foreground and routes it into the recipe import flow.
 ///
-/// Deliberately dumb: no parsing, no networking, no app singletons — those
-/// all assume the main app's process and storage.
+/// NOTE: An in-extension full import (fetch + parse, so the recipe is simply
+/// there next time the app opens) is planned, but requires adding the recipe
+/// pipeline files to this target's membership in Xcode first — see ROADMAP.
+/// Keys below must stay in sync with SharedImportInbox in the app target.
 final class ShareViewController: UIViewController {
 
     private enum Inbox {

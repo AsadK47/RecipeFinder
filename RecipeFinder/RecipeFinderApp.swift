@@ -5,16 +5,7 @@ private let logger = AppLogger.logger(category: "RecipeFinderApp")
 
 @main
 struct RecipeFinderApp: App {
-    private enum ActiveOnboarding {
-        case biometrics
-        case app
-    }
 
-    let persistenceController = PersistenceController.shared
-    @StateObject private var authManager = AuthenticationManager.shared
-    @StateObject private var themeManager = ThemeManager.shared
-    @State private var activeOnboarding: ActiveOnboarding?
-    
     init() {
         configureAppearance()
         initializeDatabase()
@@ -25,99 +16,23 @@ struct RecipeFinderApp: App {
         #endif
     }
     
+    var body: some Scene {
+        // The scene content closure can be evaluated by SwiftUI's async
+        // renderer off the main thread. It must stay trivial: all MainActor
+        // state (auth, onboarding, theme) lives inside AppRootView, whose
+        // body is guaranteed main-actor by the View protocol. Reading that
+        // state directly here crashes with dispatch_assert_queue_fail
+        // (EXC_BREAKPOINT in RecipeFinderApp.body closure #1).
+        WindowGroup {
+            AppRootView()
+        }
+    }
+    
     private func requestNotificationPermissions() {
         Task {
             NotificationManager.shared.requestPermission { granted in
                 logger.info("\(granted ? "✅" : "⚠️") User \(granted ? "granted" : "denied") notification permissions")
             }
-        }
-    }
-    
-    var body: some Scene {
-        WindowGroup {
-            Group {
-                if activeOnboarding == .biometrics {
-                    FaceIDOnboardingSplash {
-                        UserScopedStorage.shared.set(true, forKey: "hasSeenBiometricOnboarding")
-
-                        if !UserScopedStorage.shared.bool(forKey: "hasCompletedOnboarding") {
-                            withAnimation(.easeInOut(duration: AppTheme.animationDelayXShort)) {
-                                activeOnboarding = .app
-                            }
-                        } else {
-                            withAnimation(.easeInOut(duration: AppTheme.animationDelayXShort)) {
-                                activeOnboarding = nil
-                            }
-                        }
-                    }
-                    .ignoresSafeArea()
-                    .transition(.opacity)
-                } else if activeOnboarding == .app {
-                    OnboardingView(onComplete: {
-                        UserScopedStorage.shared.set(true, forKey: "hasCompletedOnboarding")
-                        withAnimation(.easeInOut(duration: AppTheme.animationDelayXShort)) {
-                            activeOnboarding = nil
-                        }
-                    })
-                    .ignoresSafeArea()
-                    .transition(.opacity)
-                } else {
-                    rootView
-                        .animation(.easeInOut(duration: AppTheme.animationDelayXShort), value: authManager.isAuthenticated)
-                        .onAppear {
-                            if authManager.isAuthenticated {
-                                evaluateOnboardingFlow()
-                            }
-                        }
-                        .onChange(of: authManager.isAuthenticated) { _, isAuthenticated in
-                            if isAuthenticated {
-                                evaluateOnboardingFlow()
-                            } else {
-                                activeOnboarding = nil
-                            }
-                        }
-                        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-                            authManager.checkSessionExpiration()
-                        }
-                }
-            }
-            .animation(.easeInOut(duration: AppTheme.animationDelayXShort), value: activeOnboarding)
-        }
-    }
-
-    private func evaluateOnboardingFlow() {
-        let hasCompletedOnboarding = UserScopedStorage.shared.bool(forKey: "hasCompletedOnboarding")
-        let hasSeenBiometricOnboarding = UserScopedStorage.shared.bool(forKey: "hasSeenBiometricOnboarding")
-
-        if authManager.biometricsAvailable && !hasSeenBiometricOnboarding {
-            withAnimation(.easeInOut(duration: AppTheme.animationDelayXShort)) {
-                activeOnboarding = .biometrics
-            }
-        } else if !hasCompletedOnboarding {
-            withAnimation(.easeInOut(duration: AppTheme.animationDelayXShort)) {
-                activeOnboarding = .app
-            }
-        } else {
-            withAnimation(.easeInOut(duration: AppTheme.animationDelayXShort)) {
-                activeOnboarding = nil
-            }
-        }
-    }
-    
-    @ViewBuilder
-    private var rootView: some View {
-        if authManager.isAuthenticated {
-            ContentView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
-                .environmentObject(themeManager)
-                .onAppear { authManager.updateLastActiveTimestamp() }
-                .transition(.opacity.combined(with: .scale(scale: AppTheme.transitionScaleDown)))
-        } else {
-            NavigationStack {
-                AuthenticationView()
-            }
-            .environmentObject(themeManager)
-            .transition(.opacity.combined(with: .scale(scale: AppTheme.transitionScaleUp)))
         }
     }
     
@@ -179,5 +94,105 @@ struct RecipeFinderApp: App {
             string: "",
             attributes: [.foregroundColor: UIColor.label.withAlphaComponent(0.6)]
         )
+    }
+}
+
+/// Root view owning the app's top-level MainActor state. Kept out of the
+/// WindowGroup closure on purpose — see the note in RecipeFinderApp.body.
+struct AppRootView: View {
+    private enum ActiveOnboarding {
+        case biometrics
+        case app
+    }
+
+    let persistenceController = PersistenceController.shared
+    @StateObject private var authManager = AuthenticationManager.shared
+    @StateObject private var themeManager = ThemeManager.shared
+    @State private var activeOnboarding: ActiveOnboarding?
+
+    var body: some View {
+        Group {
+            if activeOnboarding == .biometrics {
+                FaceIDOnboardingSplash {
+                    UserScopedStorage.shared.set(true, forKey: "hasSeenBiometricOnboarding")
+
+                    if !UserScopedStorage.shared.bool(forKey: "hasCompletedOnboarding") {
+                        withAnimation(.easeInOut(duration: AppTheme.animationDelayXShort)) {
+                            activeOnboarding = .app
+                        }
+                    } else {
+                        withAnimation(.easeInOut(duration: AppTheme.animationDelayXShort)) {
+                            activeOnboarding = nil
+                        }
+                    }
+                }
+                .ignoresSafeArea()
+                .transition(.opacity)
+            } else if activeOnboarding == .app {
+                OnboardingView(onComplete: {
+                    UserScopedStorage.shared.set(true, forKey: "hasCompletedOnboarding")
+                    withAnimation(.easeInOut(duration: AppTheme.animationDelayXShort)) {
+                        activeOnboarding = nil
+                    }
+                })
+                .ignoresSafeArea()
+                .transition(.opacity)
+            } else {
+                rootView
+                    .animation(.easeInOut(duration: AppTheme.animationDelayXShort), value: authManager.isAuthenticated)
+                    .onAppear {
+                        if authManager.isAuthenticated {
+                            evaluateOnboardingFlow()
+                        }
+                    }
+                    .onChange(of: authManager.isAuthenticated) { _, isAuthenticated in
+                        if isAuthenticated {
+                            evaluateOnboardingFlow()
+                        } else {
+                            activeOnboarding = nil
+                        }
+                    }
+                    .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                        authManager.checkSessionExpiration()
+                    }
+            }
+        }
+        .animation(.easeInOut(duration: AppTheme.animationDelayXShort), value: activeOnboarding)
+    }
+
+    private func evaluateOnboardingFlow() {
+        let hasCompletedOnboarding = UserScopedStorage.shared.bool(forKey: "hasCompletedOnboarding")
+        let hasSeenBiometricOnboarding = UserScopedStorage.shared.bool(forKey: "hasSeenBiometricOnboarding")
+
+        if authManager.biometricsAvailable && !hasSeenBiometricOnboarding {
+            withAnimation(.easeInOut(duration: AppTheme.animationDelayXShort)) {
+                activeOnboarding = .biometrics
+            }
+        } else if !hasCompletedOnboarding {
+            withAnimation(.easeInOut(duration: AppTheme.animationDelayXShort)) {
+                activeOnboarding = .app
+            }
+        } else {
+            withAnimation(.easeInOut(duration: AppTheme.animationDelayXShort)) {
+                activeOnboarding = nil
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var rootView: some View {
+        if authManager.isAuthenticated {
+            ContentView()
+                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .environmentObject(themeManager)
+                .onAppear { authManager.updateLastActiveTimestamp() }
+                .transition(.opacity.combined(with: .scale(scale: AppTheme.transitionScaleDown)))
+        } else {
+            NavigationStack {
+                AuthenticationView()
+            }
+            .environmentObject(themeManager)
+            .transition(.opacity.combined(with: .scale(scale: AppTheme.transitionScaleUp)))
+        }
     }
 }
