@@ -309,6 +309,38 @@ final class RecipeModelTests: XCTestCase {
         XCTAssertTrue(recipe.shareText.contains("Notes: Best served warm"))
     }
 
+    // MARK: - Scale factor safety (regression: zero base servings)
+
+    func testScaleFactorWithZeroBaseServingsFallsBackToOne() {
+        let recipe = makeRecipe(baseServings: 0, currentServings: 4)
+        XCTAssertEqual(recipe.scaleFactor, 1.0)
+    }
+
+    func testScaledQuantityWithZeroBaseServingsDoesNotTrap() {
+        let recipe = makeRecipe(
+            baseServings: 0,
+            currentServings: 4,
+            ingredients: [makeIngredient(baseQuantity: 2.5)]
+        )
+        // Rendering the detail view formats every ingredient quantity; with an
+        // unguarded scale factor this trapped in FractionFormatter (Int(inf)).
+        let formatted = FractionFormatter.format(recipe.ingredients[0].scaledQuantity(for: recipe.scaleFactor))
+        XCTAssertFalse(formatted.isEmpty)
+    }
+
+    // MARK: - FractionFormatter non-finite input
+
+    func testFormatOfNonFiniteValuesDoesNotTrap() {
+        XCTAssertEqual(FractionFormatter.format(.infinity), "0")
+        XCTAssertEqual(FractionFormatter.format(-.infinity), "0")
+        XCTAssertEqual(FractionFormatter.format(.nan), "0")
+    }
+
+    func testToFractionOfNonFiniteValueReturnsNil() {
+        XCTAssertNil(FractionFormatter.toFraction(.infinity))
+        XCTAssertNil(FractionFormatter.toFraction(.nan))
+    }
+
     // MARK: - Helpers
 
     private func makeIngredient(

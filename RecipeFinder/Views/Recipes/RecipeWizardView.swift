@@ -465,14 +465,14 @@ struct RecipeWizardView: View {
             
             cardContainer {
                 VStack(spacing: AppTheme.spacing12) {
-                    ForEach(Array(ingredientItems.enumerated()), id: \.element.id) { index, item in
+                    ForEach($ingredientItems) { $item in
                         VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                             HStack(spacing: AppTheme.spacing8) {
                                 VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                                     Text("Ingredient")
                                         .font(.caption2)
                                         .foregroundColor(.secondary)
-                                    TextField("e.g. Chicken breast", text: $ingredientItems[index].name)
+                                    TextField("e.g. Chicken breast", text: $item.name)
                                         .textFieldStyle(.roundedBorder)
                                         .focused($focusedIngredientID, equals: item.id)
                                 }
@@ -480,7 +480,7 @@ struct RecipeWizardView: View {
                                 if ingredientItems.count > 1 {
                                     Button(action: {
                                         HapticManager.shared.light()
-                                        ingredientItems.remove(at: index)
+                                        ingredientItems.removeAll { $0.id == item.id }
                                     }) {
                                         Image(systemName: "minus.circle.fill")
                                             .foregroundColor(.red)
@@ -491,7 +491,7 @@ struct RecipeWizardView: View {
                             }
 
                             if focusedIngredientID == item.id {
-                                let suggestions = ingredientAutocompleteSuggestions(for: ingredientItems[index].name, excluding: ingredientItems.map { $0.name })
+                                let suggestions = ingredientAutocompleteSuggestions(for: item.name, excluding: ingredientItems.map { $0.name })
 
                                 if !suggestions.isEmpty {
                                     VStack(alignment: .leading, spacing: AppTheme.spacing8) {
@@ -502,7 +502,7 @@ struct RecipeWizardView: View {
                                         VStack(spacing: AppTheme.spacing6) {
                                             ForEach(suggestions, id: \.id) { suggestion in
                                                 Button(action: {
-                                                    ingredientItems[index].name = suggestion.name
+                                                    $item.wrappedValue.name = suggestion.name
                                                     HapticManager.shared.light()
                                                 }) {
                                                     HStack(alignment: .center, spacing: AppTheme.spacing10) {
@@ -544,7 +544,7 @@ struct RecipeWizardView: View {
                                     Text("Amount")
                                         .font(.caption2)
                                         .foregroundColor(.secondary)
-                                    TextField("0", text: $ingredientItems[index].quantity)
+                                    TextField("0", text: $item.quantity)
                                         .keyboardType(.decimalPad)
                                         .textFieldStyle(.roundedBorder)
                                         .frame(width: AppTheme.width70)
@@ -554,7 +554,7 @@ struct RecipeWizardView: View {
                                     Text("Unit")
                                         .font(.caption2)
                                         .foregroundColor(.secondary)
-                                    Picker("", selection: $ingredientItems[index].unit) {
+                                    Picker("", selection: $item.unit) {
                                         Text("none").tag("")
                                         ForEach(cookingUnitGroups, id: \.group) { group in
                                             Section(group.group) {
@@ -581,7 +581,7 @@ struct RecipeWizardView: View {
                         }
                         .padding(.vertical, AppTheme.spacing4)
 
-                        if index < ingredientItems.count - 1 {
+                        if item.id != ingredientItems.last?.id {
                             Divider()
                         }
                     }

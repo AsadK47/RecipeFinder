@@ -146,9 +146,24 @@ struct ContentView: View {
         }
     }
 
-    private func loadRecipes() {
+    private func loadRecipes(retryAttempt: Int = 0) {
         guard PersistenceController.shared.hasCurrentUserScope() else {
             logger.debug("⚠️ Skipping recipe reload because user scope is not available")
+            return
+        }
+
+        // The store loads synchronously at launch, but corrupted-store
+        // recovery reloads it late. Without a retry, one empty fetch here
+        // used to strand the user with a blank recipe list for the session.
+        guard PersistenceController.shared.isStoreLoaded else {
+            guard retryAttempt < 5 else {
+                logger.error("❌ Store never became ready; giving up on recipe reload")
+                return
+            }
+            logger.debug("⚠️ Store not ready; retrying recipe load (attempt \(retryAttempt + 1))")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                loadRecipes(retryAttempt: retryAttempt + 1)
+            }
             return
         }
 

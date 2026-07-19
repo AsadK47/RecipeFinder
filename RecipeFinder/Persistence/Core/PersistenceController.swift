@@ -50,8 +50,15 @@ final class PersistenceController {
     }
     
     private func loadStore() {
+        // The store loads synchronously (shouldAddStoreAsynchronously is
+        // false by default), so this completion runs on the main thread
+        // before loadPersistentStores returns. isStoreLoaded must be set
+        // right here, not via a deferred Task: deferring it left the flag
+        // false for the first runloop turn, so the launch-time fetchRecipes()
+        // returned [] with no retry and the recipe list stayed empty for the
+        // whole session — intermittently, depending on scheduling.
         container.loadPersistentStores { [weak self] storeDescription, error in
-            Task { @MainActor [weak self] in
+            MainActor.assumeIsolated {
                 guard let self else { return }
                 let storeURL = storeDescription.url?.absoluteString ?? "unknown location"
 
@@ -84,7 +91,7 @@ final class PersistenceController {
             logger.debug("✅ Removed corrupted store file")
             
             container.loadPersistentStores { [weak self] _, error in
-                Task { @MainActor [weak self] in
+                MainActor.assumeIsolated {
                     guard let self else { return }
 
                     if let error {

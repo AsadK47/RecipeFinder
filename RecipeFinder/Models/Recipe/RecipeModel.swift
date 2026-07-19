@@ -277,7 +277,10 @@ struct RecipeModel: Identifiable, Codable, Hashable {
     }
     
     var scaleFactor: Double {
-        Double(currentServings) / Double(baseServings)
+        // A zero base (possible via imports or old data) would make this
+        // infinite, and Int(infinity) traps downstream in FractionFormatter.
+        guard baseServings > 0 else { return 1.0 }
+        return Double(currentServings) / Double(baseServings)
     }
     
     mutating func updateServings(to servings: Int) {
@@ -352,6 +355,7 @@ struct RecipeModel: Identifiable, Codable, Hashable {
 
 enum FractionFormatter {
     static func toFraction(_ value: Double) -> String? {
+        guard value.isFinite else { return nil }
         let tolerance = 0.001
         let whole = Int(value)
         let decimal = value - Double(whole)
@@ -375,6 +379,7 @@ enum FractionFormatter {
     }
 
     static func format(_ value: Double) -> String {
+        guard value.isFinite else { return "0" }
         if value.truncatingRemainder(dividingBy: 1) == 0 {
             return String(format: "%.0f", value)
         }

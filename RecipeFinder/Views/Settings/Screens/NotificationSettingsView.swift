@@ -11,10 +11,18 @@ struct NotificationSettingsView: View {
     @State private var showingTimePicker = false
     @State private var notificationPermission: UNAuthorizationStatus = .notDetermined
 
-    var reminderTime: Date {
+    /// Fixed-format times must use en_US_POSIX: with the device's 12/24-hour
+    /// override, a bare "HH:mm" formatter can emit "1:30 PM"-style strings
+    /// that then fail to parse, silently discarding the user's chosen time.
+    static let reminderTimeFormatter: DateFormatter = {
         let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.dateFormat = "HH:mm"
-        return formatter.date(from: reminderTimeString) ?? Date()
+        return formatter
+    }()
+
+    var reminderTime: Date {
+        Self.reminderTimeFormatter.date(from: reminderTimeString) ?? Date()
     }
 
     var body: some View {
@@ -70,9 +78,7 @@ struct NotificationSettingsView: View {
         }
         .sheet(isPresented: $showingTimePicker) {
             TimePickerSheet(selectedTime: reminderTime) { newTime in
-                let formatter = DateFormatter()
-                formatter.dateFormat = "HH:mm"
-                reminderTimeString = formatter.string(from: newTime)
+                reminderTimeString = Self.reminderTimeFormatter.string(from: newTime)
             }
         }
         .onAppear {
