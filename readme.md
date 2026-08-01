@@ -3,7 +3,7 @@
 # RecipeFinder™ 🍳
 
 **Sophisticated recipe management with stunning design**  
-*All your culinary treasures, beautifully organized. Completely private.*
+*All your culinary treasures, beautifully organised. Completely private.*
 
 [![Platform](https://img.shields.io/badge/platform-iOS%2017.5%2B-blue.svg)](https://www.apple.com/ios/)
 [![Swift](https://img.shields.io/badge/Swift-6.0-orange.svg)](https://swift.org/)
