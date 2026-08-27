@@ -178,6 +178,7 @@
 		9EF757632FBDBDD30012B2B7 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 9EF757622FBDBDD30012B2B7 /* Kingfisher */; };
 		9EF757652FCF3D900012B2B7 /* IngredientAutocompleteEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EF757642FCF3D8F0012B2B7 /* IngredientAutocompleteEngine.swift */; };
 		E1E3999F6BA145A4AE306B63 /* AppLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAEF6AE737314EC1A6FB2B6A /* AppLaunchTests.swift */; };
+		F3F941D630405E230067C6C8 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = F3F941D530405E230067C6C8 /* CLAUDE.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -404,6 +405,7 @@
 		9EEDD0812D09F955003C7296 /* RecipeModel 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 4.xcdatamodel"; sourceTree = "<group>"; };
 		9EF757642FCF3D8F0012B2B7 /* IngredientAutocompleteEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientAutocompleteEngine.swift; sourceTree = "<group>"; };
 		CAEF6AE737314EC1A6FB2B6A /* AppLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLaunchTests.swift; sourceTree = "<group>"; };
+		F3F941D530405E230067C6C8 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -1145,6 +1147,7 @@
 		9EE5AACC2D08FCBE00C1B736 = {
 			isa = PBXGroup;
 			children = (
+				F3F941D530405E230067C6C8 /* CLAUDE.md */,
 				19BC863E22BB4A40B9307393 /* RecipeFinderUITests */,
 				9E90AAFC2FA9022600096D9D /* RecipeFinderTests */,
 				9E9DE5F72ECCA111005CD593 /* legal */,
@@ -1345,6 +1348,7 @@
 				9E9DE6002ECCA111005CD593 /* TERMS_OF_SERVICE.md in Resources */,
 				9EDBD52E2EE8593F00DC2503 /* Assets.xcassets in Resources */,
 				9E9DE6012ECCA111005CD593 /* home_page.png in Resources */,
+				F3F941D630405E230067C6C8 /* CLAUDE.md in Resources */,
 				9E9DE6022ECCA111005CD593 /* splash_1.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
