@@ -1,118 +1,99 @@
-import XCTest
+import Testing
 @testable import RecipeFinder
 
-final class IngredientNormalizerTests: XCTestCase {
+@Suite("IngredientNormalizer")
+struct IngredientNormalizerTests {
+
+    // MARK: - Known normalization map
+
+    /// Each case is an ingredient string and the canonical name it should
+    /// normalize to. Adding a row here adds a test case — no new function needed.
+    @Test("Maps known variants to their canonical name", arguments: [
+        (input: "minced beef",                    expected: "Ground Beef"),
+        (input: "beef mince",                     expected: "Ground Beef"),
+        (input: "ground beef meat",               expected: "Ground Beef"),
+        (input: "sliced chicken breast",          expected: "Chicken Breast"),
+        (input: "salmon fillet",                  expected: "Salmon"),
+        (input: "salmon filet",                   expected: "Salmon"),
+        (input: "peeled and deveined shrimp",     expected: "Shrimp"),
+        (input: "cherry tomatoes halved",         expected: "Cherry Tomatoes"),
+        (input: "red pepper flakes",              expected: "Red Pepper Flakes"),
+        (input: "crushed red pepper",             expected: "Red Pepper Flakes"),
+        (input: "canned diced tomatoes",          expected: "Diced Tomatoes"),
+    ])
+    func mapsKnownVariants(_ testCase: (input: String, expected: String)) {
+        #expect(IngredientNormalizer.normalize(testCase.input) == testCase.expected)
+    }
 
     // MARK: - Whitespace and case
 
-    func testNormalize_trimmingWhitespace() {
+    @Test("Trims surrounding whitespace")
+    func trimsWhitespace() {
         let result = IngredientNormalizer.normalize("  chicken breast  ")
-        XCTAssertFalse(result.hasPrefix(" "))
-        XCTAssertFalse(result.hasSuffix(" "))
+        #expect(!result.hasPrefix(" "))
+        #expect(!result.hasSuffix(" "))
     }
 
-    func testNormalize_uppercaseInput_returnsCapitalized() {
-        let result = IngredientNormalizer.normalize("SALMON")
-        XCTAssertEqual(result, "Salmon")
-    }
-
-    // MARK: - Known normalization map entries
-
-    func testNormalize_mincedBeef_returnsGroundBeef() {
-        XCTAssertEqual(IngredientNormalizer.normalize("minced beef"), "Ground Beef")
-    }
-
-    func testNormalize_beefMince_returnsGroundBeef() {
-        XCTAssertEqual(IngredientNormalizer.normalize("beef mince"), "Ground Beef")
-    }
-
-    func testNormalize_groundBeefMeat_returnsGroundBeef() {
-        XCTAssertEqual(IngredientNormalizer.normalize("ground beef meat"), "Ground Beef")
-    }
-
-    func testNormalize_slicedChickenBreast_returnsChickenBreast() {
-        XCTAssertEqual(IngredientNormalizer.normalize("sliced chicken breast"), "Chicken Breast")
-    }
-
-    func testNormalize_salmonFillet_returnsSalmon() {
-        XCTAssertEqual(IngredientNormalizer.normalize("salmon fillet"), "Salmon")
-    }
-
-    func testNormalize_salmonFilet_returnsSalmon() {
-        XCTAssertEqual(IngredientNormalizer.normalize("salmon filet"), "Salmon")
-    }
-
-    func testNormalize_peeledAndDeveinedShrimp_returnsShrimp() {
-        XCTAssertEqual(IngredientNormalizer.normalize("peeled and deveined shrimp"), "Shrimp")
-    }
-
-    func testNormalize_cherryTomatoesHalved_returnsCherryTomatoes() {
-        XCTAssertEqual(IngredientNormalizer.normalize("cherry tomatoes halved"), "Cherry Tomatoes")
-    }
-
-    func testNormalize_redPepperFlakes_returnsRedPepperFlakes() {
-        XCTAssertEqual(IngredientNormalizer.normalize("red pepper flakes"), "Red Pepper Flakes")
-    }
-
-    func testNormalize_crushedRedPepper_returnsRedPepperFlakes() {
-        XCTAssertEqual(IngredientNormalizer.normalize("crushed red pepper"), "Red Pepper Flakes")
-    }
-
-    func testNormalize_cannedDicedTomatoes_returnsDicedTomatoes() {
-        XCTAssertEqual(IngredientNormalizer.normalize("canned diced tomatoes"), "Diced Tomatoes")
+    @Test("Capitalizes uppercase input")
+    func capitalizesUppercase() {
+        #expect(IngredientNormalizer.normalize("SALMON") == "Salmon")
     }
 
     // MARK: - Measurement word stripping
 
-    func testNormalize_stripsMeasurementWords() {
-        // "2 cups chicken breast" → "chicken breast" → capitalized
+    @Test("Strips measurement words and quantities")
+    func stripsMeasurementWords() {
         let result = IngredientNormalizer.normalize("2 cups chicken breast")
-        XCTAssertFalse(result.lowercased().contains("cup"))
-        XCTAssertFalse(result.contains("2"))
+        #expect(!result.lowercased().contains("cup"))
+        #expect(!result.contains("2"))
     }
 
-    func testNormalize_stripsLeadingNumbers() {
+    @Test("Strips leading numbers and units")
+    func stripsLeadingNumbers() {
         let result = IngredientNormalizer.normalize("1/2 tsp salt")
-        XCTAssertFalse(result.contains("1/2"))
-        XCTAssertFalse(result.lowercased().contains("tsp"))
+        #expect(!result.contains("1/2"))
+        #expect(!result.lowercased().contains("tsp"))
     }
 
-    func testNormalize_stripsParentheticals() {
-        let result = IngredientNormalizer.normalize("chicken breast (boneless)")
-        XCTAssertFalse(result.contains("(boneless)"))
+    @Test("Strips parenthetical notes")
+    func stripsParentheticals() {
+        #expect(!IngredientNormalizer.normalize("chicken breast (boneless)").contains("(boneless)"))
     }
 
-    // MARK: - Idempotency
+    // MARK: - Determinism
 
-    func testNormalize_calledTwice_returnsSameResult() {
+    @Test("Returns the same result when called twice")
+    func deterministic() {
         let first = IngredientNormalizer.normalize("minced beef")
         let second = IngredientNormalizer.normalize("minced beef")
-        XCTAssertEqual(first, second)
+        #expect(first == second)
     }
 
     // MARK: - Batch normalize
 
-    func testNormalizeBatch_returnsCorrectCount() {
-        let inputs = ["minced beef", "salmon fillet", "red pepper flakes"]
-        let results = IngredientNormalizer.normalize(inputs)
-        XCTAssertEqual(results.count, 3)
+    @Test("Batch normalize preserves count")
+    func batchPreservesCount() {
+        let results = IngredientNormalizer.normalize(["minced beef", "salmon fillet", "red pepper flakes"])
+        #expect(results.count == 3)
     }
 
-    func testNormalizeBatch_appliesSameRulesAsScalar() {
+    @Test("Batch normalize applies the same rules as the scalar form")
+    func batchMatchesScalar() {
         let inputs = ["minced beef", "salmon fillet"]
         let batch = IngredientNormalizer.normalize(inputs)
-        XCTAssertEqual(batch[0], IngredientNormalizer.normalize("minced beef"))
-        XCTAssertEqual(batch[1], IngredientNormalizer.normalize("salmon fillet"))
+        #expect(batch[0] == IngredientNormalizer.normalize("minced beef"))
+        #expect(batch[1] == IngredientNormalizer.normalize("salmon fillet"))
     }
 
-    func testNormalizeBatch_emptyArray_returnsEmptyArray() {
-        XCTAssertTrue(IngredientNormalizer.normalize([]).isEmpty)
+    @Test("Batch normalize of empty array is empty")
+    func batchEmpty() {
+        #expect(IngredientNormalizer.normalize([]).isEmpty)
     }
 
     // MARK: - Unknown ingredient
 
-    func testNormalize_unknownIngredient_returnsCapitalizedInput() {
-        let result = IngredientNormalizer.normalize("xyzzy spice")
-        XCTAssertEqual(result, "Xyzzy Spice")
+    @Test("Unknown ingredient is returned capitalized")
+    func unknownIngredient() {
+        #expect(IngredientNormalizer.normalize("xyzzy spice") == "Xyzzy Spice")
     }
 }

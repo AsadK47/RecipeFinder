@@ -1,5 +1,8 @@
 # RecipeFinder — Project Notes
 
+Privacy-first, offline-first iOS recipe manager (SwiftUI, iOS 17.5+, Swift 6).
+Proprietary software owned by RecipeFinder Limited.
+
 ## Repo
 - GitHub: https://github.com/RecipeFinderLimited/RecipeFinder
 
@@ -13,14 +16,88 @@
   - Company name, address, and registration number used in the application must match Companies House exactly.
   - Lookup is usually instant if a D-U-N-S already exists; a fresh application can take up to ~5 business days (sometimes longer for UK applicants if details don't match Companies House).
 
-## Coding standards
-- **Architecture:** Follow Clean Architecture principles — clear separation between layers (e.g. Presentation / Domain / Data), with dependencies pointing inward. Avoid tangling UI, business logic, and networking/persistence together.
-- **Code quality:** Favor clear, readable, idiomatic Swift/SwiftUI over clever or terse code. Keep types and functions focused on a single responsibility.
-- **Helper functions:** Only introduce helper functions/utilities when there's real duplication or a genuine complexity win — avoid speculative abstractions or helpers used in just one place.
-- **Testing:** All new code should be accompanied by tests. Aim for high coverage, including both:
-  - Unit tests (business logic, view models, use cases, data mappers)
-  - Integration tests (interactions across layers, e.g. repository + network/persistence)
-- When implementing a feature, write/update tests alongside the implementation rather than as an afterthought.
+## Architecture
+
+Follow **Clean Architecture** — dependencies point inward, outer layers depend on
+inner, never the reverse. Reference: https://refactoring.guru/design-patterns and
+the SOLID/refactoring catalog on that site.
+
+- **Presentation** (`Views/`, `Components/`, `Theme/`) — SwiftUI views and view
+  models. Knows about the Domain; never talks to Core Data / Keychain / URLSession
+  directly.
+- **Domain** (models, use cases, protocols) — plain Swift business logic and the
+  *protocols* that outer layers implement (e.g. `RecipeRepository`,
+  `CredentialStore`). No framework imports beyond Foundation. Pure and testable.
+- **Data** (`Persistence/`, `Services/`, networking) — Core Data, Keychain,
+  URLSession, UserDefaults. Implements the Domain protocols.
+
+**Rules:**
+- Views depend on abstractions (protocols / injected view models), not on `.shared`
+  singletons reached for globally. See Dependency Injection below.
+- Keep files focused and small. A file growing past ~300 lines is a smell — extract
+  the view model, subviews, or a use case. Long files are a signal to refactor, not
+  a style choice.
+- One type, one responsibility. Split "god" views and managers along their seams.
+
+> Current state: the codebase is mid-migration toward this. Several large views mix
+> UI + filtering + persistence, and most collaborators are `.shared` singletons.
+> When you touch an area, move it toward the target architecture — don't add to the
+> debt.
+
+## Swift & SwiftUI conventions
+- **Naming:** PascalCase types, camelCase members. Clear over clever.
+- **State:** `@State private` for local view state; `let` for constants; prefer value
+  types (`struct`/`enum`) over classes unless reference semantics are needed.
+- **Concurrency:** use `async`/`await`, not Combine. Annotate UI-facing types
+  `@MainActor`. Respect Swift 6 strict concurrency — no data races, mark shared types
+  `Sendable` where required.
+- **Safety:** no force-unwrap (`!`) or force-`try` in shipping code; use `guard let`,
+  `if let`, and typed errors.
+- **Helpers:** introduce a helper only when there's real duplication or a genuine
+  complexity win — never a speculative abstraction used in one place.
+- **New/unfamiliar APIs:** this app targets modern OS versions (Liquid Glass,
+  FoundationModels, latest SwiftUI). Verify current API via Apple's docs
+  (`DocumentationSearch`) rather than assuming — don't guess at framework surface.
+- **Comments:** explain *why*, not *what*. Match the surrounding density.
+
+## Dependency Injection
+- Depend on **protocols**, inject concrete types. This is what makes code testable
+  and is the lever for the clean-architecture migration.
+- Define a protocol for each external dependency (store, network, credentials),
+  inject it through the initializer, and pass a fake in tests.
+- Singletons may remain as a *composition-root default* (e.g.
+  `init(storage: UserScopedStorage = .shared)`), but code under test must be
+  constructible with injected fakes. `ShoppingListManager(storage:)` is the pattern
+  to follow.
+
+## Testing
+
+**Framework: Swift Testing** (`import Testing`, `@Test`, `#expect`, `#require`,
+`@Suite`) for all new and migrated tests. Do **not** write new `XCTest` code.
+XCTest and Swift Testing coexist in the same target, so migrate the existing XCTest
+files **opportunistically** — when you touch a file's area, rewrite it — rather than
+in one big-bang pass. UI tests continue to use XCUITest (XCTest-based) until Apple
+ships a replacement.
+
+**Conventions:**
+- **Parameterize** data-driven tests: collapse many near-identical
+  `input → expected` cases into one `@Test(arguments: [...])`. Failures still report
+  the offending input. Ideal for parsers, normalizers, converters, classifiers.
+- **Inject fakes** rather than hitting real Keychain / Core Data / network. Use a
+  fresh `UserDefaults(suiteName: UUID().uuidString)` for storage-backed tests.
+- **Arrange–Act–Assert**, one behavior per test. Name the behavior, not the method.
+- Keep the **test pyramid**: many fast unit tests (logic, models, use cases, mappers),
+  targeted integration tests (repository + store, importer + parser), and a *small*
+  set of UI tests for critical flows only (launch, sign-in, import a recipe). Don't
+  chase a coverage percentage or add per-screen UI tests.
+- Write tests **alongside** the implementation, not afterward. All new code ships with
+  tests.
+
+## Build & CI
+- Build with the `BuildProject` MCP tool; use `XcodeRefreshCodeIssuesInFile` for fast
+  per-file diagnostics before a full build.
+- CI (`.github/workflows/build.yml`) builds on every push to `main` and **runs the
+  test suite by default** — a red test suite fails the build.
 
 ## Git / auth setup
 - SSH key (ed25519) has been generated and added to GitHub as both an Authentication Key and a Signing Key.

@@ -147,14 +147,7 @@ struct IngredientNormalizer {
         "canned coconut milk": "Coconut Milk"
     ]
     
-    nonisolated(unsafe) private static var normalizationCache: [String: String] = [:]
-    private static let maxCacheSize = 200
-    
     static func normalize(_ ingredient: String) -> String {
-        if let cached = normalizationCache[ingredient] {
-            return cached
-        }
-        
         let cleaned = ingredient
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .lowercased()
@@ -189,17 +182,7 @@ struct IngredientNormalizer {
             }
         }
         
-        let result = normalized.capitalized
-        
-        if normalizationCache.count < maxCacheSize {
-            normalizationCache[ingredient] = result
-        } else if normalizationCache.count > maxCacheSize + 50 {
-            let keepCount = maxCacheSize / 2
-            let keysToKeep = Array(normalizationCache.keys.prefix(keepCount))
-            normalizationCache = normalizationCache.filter { keysToKeep.contains($0.key) }
-        }
-        
-        return result
+        return normalized.capitalized
     }
     
     static func normalize(_ ingredients: [String]) -> [String] {

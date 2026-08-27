@@ -194,12 +194,6 @@ enum AppTheme {
     static let hapticIntervalLong: UInt64 = 300_000_000
     static let hapticIntervalXLong: UInt64 = 500_000_000
     
-    nonisolated(unsafe) private static var gradientCache: [String: LinearGradient] = [:]
-    
-    private static func cacheKey(theme: ThemeType, colorScheme: ColorScheme) -> String {
-        return "\(theme.rawValue)-\(colorScheme == .dark ? "dark" : "light")"
-    }
-    
     enum ThemeType: String, CaseIterable, Identifiable {
         case teal = "Teal"
         case purple = "Purple"
@@ -409,11 +403,6 @@ enum AppTheme {
     }
     
     static func backgroundGradient(for theme: ThemeType, colorScheme: ColorScheme) -> LinearGradient {
-        let key = cacheKey(theme: theme, colorScheme: colorScheme)
-        if let cached = gradientCache[key] {
-            return cached
-        }
-        
         let useDarkColors = (colorScheme == .dark)
         
         let gradient: LinearGradient
@@ -533,7 +522,6 @@ enum AppTheme {
             )
         }
         
-        gradientCache[key] = gradient
         return gradient
     }
 }

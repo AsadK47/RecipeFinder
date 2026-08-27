@@ -273,8 +273,6 @@ enum CategoryClassifier {
         }
     }
     
-    nonisolated(unsafe) private static var categoryCache: [String: String] = [:]
-
     // Pre-built once at app launch — avoids rebuilding on every categorize() call
     private static let categorizationRules: [(String, [String])] = [
         ("Frozen",                    ["frozen", "ice cream"]),
@@ -305,10 +303,7 @@ enum CategoryClassifier {
     private static let allKeywords: [String] = kitchenIngredientKeywords.values.flatMap { $0 }
 
     static func categorize(_ itemName: String) -> String {
-        let cacheKey = itemName.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
-        if let cached = categoryCache[cacheKey] { return cached }
-
-        let lowercased = cacheKey
+        let lowercased = itemName.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
 
         func matches(_ keywords: [String]) -> Bool {
             keywords.contains { keyword in
@@ -324,17 +319,7 @@ enum CategoryClassifier {
             }
         }
 
-        let category = categorizationRules.first { matches($0.1) }?.0 ?? "Other"
-
-        if categoryCache.count < 500 {
-            categoryCache[cacheKey] = category
-        } else {
-            let keysToKeep = Set(categoryCache.keys.prefix(250))
-            categoryCache = categoryCache.filter { keysToKeep.contains($0.key) }
-            categoryCache[cacheKey] = category
-        }
-
-        return category
+        return categorizationRules.first { matches($0.1) }?.0 ?? "Other"
     }
     
     static func suggestCategory(for partialInput: String) -> String {

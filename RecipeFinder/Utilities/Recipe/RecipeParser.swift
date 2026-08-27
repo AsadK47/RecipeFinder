@@ -603,13 +603,7 @@ struct RecipeParser {
         return text.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
-    nonisolated(unsafe) private static var entityCache: [String: String] = [:]
-    
     private static func decodeHTMLEntities(_ text: String) -> String {
-        if let cached = entityCache[text] {
-            return cached
-        }
-
         // Use NSAttributedString to decode all named and numeric HTML entities
         // (e.g. &eacute; → é, &amp; → &, &#233; → é)
         let wrapped = "<html><body>\(text)</body></html>"
@@ -651,14 +645,6 @@ struct RecipeParser {
                 let end = result.index(start, offsetBy: range.length)
                 result.replaceSubrange(start..<end, with: replacement)
             }
-        }
-        
-        if entityCache.count < 100 {
-            entityCache[text] = result
-        } else if entityCache.count > 150 {
-            let keepCount = 75
-            let keysToKeep = Array(entityCache.keys.prefix(keepCount))
-            entityCache = entityCache.filter { keysToKeep.contains($0.key) }
         }
         
         return result
