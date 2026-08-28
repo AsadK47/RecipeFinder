@@ -1,13 +1,18 @@
-name: Build iOS App
+name: Build & Test iOS App
 
 on:
   push:
     branches: [ main ]
     paths:
       - 'RecipeFinder/**'
+      - 'RecipeFinderTests/**'
+      - 'RecipeFinderUITests/**'
+      - 'RecipeShareExtension/**'
       - '*.xcodeproj/**'
       - 'Package.swift'
       - '.github/workflows/build.yml'
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:
 
 concurrency:
@@ -16,98 +21,53 @@ concurrency:
 
 env:
   SCHEME: RecipeFinder
-  CONFIGURATION: Debug
-  XCODE_VERSION: '16.1'
-  SWIFT_VERSION: '6.0'
 
 jobs:
-  build:
-    name: Build
+  build-and-test:
+    name: Build & Test
     runs-on: macos-15
-    timeout-minutes: 15  # Reduced from 30
-    outputs:
-      destination: ${{ steps.simulator.outputs.DESTINATION }}
-    
+    timeout-minutes: 30
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Select Xcode version
         run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
-      
-      - name: Detect Available Simulator
+
+      - name: Detect available simulator
         id: simulator
         run: |
           LATEST_IOS=$(xcrun simctl list devices available iPhone | grep -oE '\([0-9]+\.[0-9]+' | sed 's/(//' | sort -V | tail -1)
           DEVICE=$(xcrun simctl list devices available iPhone | grep "($LATEST_IOS)" | head -1)
           DEVICE_NAME=$(echo "$DEVICE" | sed -E 's/^[[:space:]]+([^(]+) .*/\1/' | xargs)
-          echo "DESTINATION=platform=iOS Simulator,name=$DEVICE_NAME" >> $GITHUB_OUTPUT
-      
+          echo "DESTINATION=platform=iOS Simulator,name=$DEVICE_NAME" >> "$GITHUB_OUTPUT"
+          echo "Using destination: $DEVICE_NAME (iOS $LATEST_IOS)"
+
       - name: Cache Swift Package Manager
         uses: actions/cache@v4
         with:
           path: ~/Library/Developer/Xcode/DerivedData/**/SourcePackages
           key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
-      
-      - name: Resolve Dependencies
-        run: xcodebuild -resolvePackageDependencies -scheme ${{ env.SCHEME }}
-      
-      - name: Build project
-        run: |
-          xcodebuild build \
-            -scheme ${{ env.SCHEME }} \
-            -destination '${{ steps.simulator.outputs.DESTINATION }}' \
-            CODE_SIGNING_ALLOWED=NO | tee build.log
-      
-      - name: Upload build logs
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-logs
-          path: build.log
+          restore-keys: ${{ runner.os }}-spm-
 
-  test:
-    name: Test
-    runs-on: macos-15
-    timeout-minutes: 15  # Reduced from 30
-    needs: [build]
-    if: github.event_name == 'workflow_dispatch'  # Only run manually
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      
-      - name: Select Xcode version
-        run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
-      
-      - name: Run tests
+      - name: Resolve dependencies
+        run: xcodebuild -resolvePackageDependencies -scheme "$SCHEME"
+
+      - name: Build & test
         run: |
+          set -o pipefail
           xcodebuild test \
-            -scheme ${{ env.SCHEME }} \
-            -destination '${{ needs.build.outputs.destination }}' \
-            CODE_SIGNING_ALLOWED=NO | tee test.log
-        continue-on-error: true
-      
-      - name: Upload test results
+            -scheme "$SCHEME" \
+            -destination '${{ steps.simulator.outputs.DESTINATION }}' \
+            -resultBundlePath TestResults.xcresult \
+            CODE_SIGNING_ALLOWED=NO | tee xcodebuild.log
+
+      - name: Upload logs and results
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: test-results
-          path: test.log
-
-  summary:
-    name: Summary
-    runs-on: ubuntu-latest  # Changed from macos-15 (FREE!)
-    timeout-minutes: 5
-    needs: [build, test]
-    if: always()
-    
-    steps:
-      - name: Generate summary
-        run: |
-          echo "## Build Results" >> $GITHUB_STEP_SUMMARY
-          echo "- Swift ${{ env.SWIFT_VERSION }}" >> $GITHUB_STEP_SUMMARY
-          echo "- iOS: latest" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Build: ${{ needs.build.result }}" >> $GITHUB_STEP_SUMMARY
-          echo "Test: ${{ needs.test.result }}" >> $GITHUB_STEP_SUMMARY
+          path: |
+            xcodebuild.log
+            TestResults.xcresult
