@@ -178,6 +178,8 @@
 		9EF757632FBDBDD30012B2B7 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 9EF757622FBDBDD30012B2B7 /* Kingfisher */; };
 		9EF757652FCF3D900012B2B7 /* IngredientAutocompleteEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EF757642FCF3D8F0012B2B7 /* IngredientAutocompleteEngine.swift */; };
 		E1E3999F6BA145A4AE306B63 /* AppLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAEF6AE737314EC1A6FB2B6A /* AppLaunchTests.swift */; };
+		F36AED533040A5D700935A3C /* HTMLFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = F36AED523040A5D700935A3C /* HTMLFetcher.swift */; };
+		F36AED553040A5F200935A3C /* RecipeImporterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F36AED543040A5F200935A3C /* RecipeImporterTests.swift */; };
 		F3F941D630405E230067C6C8 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = F3F941D530405E230067C6C8 /* CLAUDE.md */; };
 /* End PBXBuildFile section */
 
@@ -405,6 +407,8 @@
 		9EEDD0812D09F955003C7296 /* RecipeModel 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 4.xcdatamodel"; sourceTree = "<group>"; };
 		9EF757642FCF3D8F0012B2B7 /* IngredientAutocompleteEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientAutocompleteEngine.swift; sourceTree = "<group>"; };
 		CAEF6AE737314EC1A6FB2B6A /* AppLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLaunchTests.swift; sourceTree = "<group>"; };
+		F36AED523040A5D700935A3C /* HTMLFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLFetcher.swift; sourceTree = "<group>"; };
+		F36AED543040A5F200935A3C /* RecipeImporterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeImporterTests.swift; sourceTree = "<group>"; };
 		F3F941D530405E230067C6C8 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -846,6 +850,7 @@
 			children = (
 				9E12E8942EC15AFA0077B1DA /* AppleSignInManager.swift */,
 				9E77ABEC2EB412C600666BB0 /* SecureCredentialManager.swift */,
+				F36AED523040A5D700935A3C /* HTMLFetcher.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -1007,6 +1012,7 @@
 				9E6C2C172FB394090083A08B /* RecipeParserTests.swift */,
 				9E90AAFB2FA9022600096D9D /* UnitConversionTests.swift */,
 				9E97EED0300D0F3200D35FAB /* TextRecipeParserTests.swift */,
+				F36AED543040A5F200935A3C /* RecipeImporterTests.swift */,
 			);
 			path = Recipe;
 			sourceTree = "<group>";
@@ -1381,6 +1387,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F36AED533040A5D700935A3C /* HTMLFetcher.swift in Sources */,
 				9E51C3A82EB40DC90064B917 /* AuthenticationView.swift in Sources */,
 				9E51C3972EB3E6540064B917 /* MealPlanningView.swift in Sources */,
 				9E6C2C3A2FB477730083A08B /* AccountRowButton.swift in Sources */,
@@ -1513,6 +1520,7 @@
 				9E5B398B2FABC70C00C96DB3 /* FlowLayoutTests.swift in Sources */,
 				9E5D204F2FB358F000F2896A /* NoteModelTests.swift in Sources */,
 				9E6C2C1E2FB394090083A08B /* IngredientAutocompleteEngineTests.swift in Sources */,
+				F36AED553040A5F200935A3C /* RecipeImporterTests.swift in Sources */,
 				9E6C2C182FB394090083A08B /* IngredientNormalizerTests.swift in Sources */,
 				9E6C2C4C2FB477ED0083A08B /* BadgeCardTests.swift in Sources */,
 				9E6C2C522FB478290083A08B /* DataImportViewTests.swift in Sources */,
