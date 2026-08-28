@@ -5,6 +5,7 @@
 **Sophisticated recipe management with stunning design**  
 *All your culinary treasures, beautifully organised. Completely private.*
 
+[![Build & Test](https://github.com/RecipeFinderLimited/RecipeFinder/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/RecipeFinderLimited/RecipeFinder/actions/workflows/build.yml)
 [![Platform](https://img.shields.io/badge/platform-iOS%2017.5%2B-blue.svg)](https://www.apple.com/ios/)
 [![Swift](https://img.shields.io/badge/Swift-6.0-orange.svg)](https://swift.org/)
 [![Xcode](https://img.shields.io/badge/Xcode-16.0%2B-blue.svg)](https://developer.apple.com/xcode/)
@@ -42,7 +43,7 @@
 ### For Developers
 
 ```bash
-git clone https://github.com/AsadK47/RecipeFinder.git
+git clone https://github.com/RecipeFinderLimited/RecipeFinder.git
 cd RecipeFinder
 open RecipeFinder.xcodeproj  # Press ⌘+R to run
 ```
@@ -82,16 +83,20 @@ open RecipeFinder.xcodeproj  # Press ⌘+R to run
 ### Build Commands
 
 ```bash
+# Pick any available iOS simulator (avoids hardcoding a device name)
+SIMULATOR_ID=$(xcrun simctl list devices available --json \
+  | jq -r 'first(.devices | to_entries[] | select(.key | test("iOS")) | .value[] | select(.isAvailable and (.name | test("iPhone"))) | .udid)')
+
 # Run tests
 xcodebuild test -scheme RecipeFinder \
-  -destination 'platform=iOS Simulator,name=iPhone 17'
+  -destination "platform=iOS Simulator,id=$SIMULATOR_ID"
 
 # Build for simulator
 xcodebuild -scheme RecipeFinder \
-  -destination 'platform=iOS Simulator,name=iPhone 17' \
+  -destination "platform=iOS Simulator,id=$SIMULATOR_ID" \
   clean build
 
-# Build for device  
+# Build for device
 xcodebuild -scheme RecipeFinder \
   -destination 'generic/platform=iOS' \
   -configuration Release \
@@ -119,8 +124,8 @@ RecipeFinder/
 
 ## 💬 Support & Contact
 
-- 🐛 **Report Bugs**: [GitHub Issues](https://github.com/AsadK47/RecipeFinder/issues)
-- 💡 **Feature Requests**: [GitHub Discussions](https://github.com/AsadK47/RecipeFinder/discussions)
+- 🐛 **Report Bugs**: [GitHub Issues](https://github.com/RecipeFinderLimited/RecipeFinder/issues)
+- 💡 **Feature Requests**: [GitHub Discussions](https://github.com/RecipeFinderLimited/RecipeFinder/discussions)
 - 📧 **Email**: recipefinderlimited@icloud.com
 - 🌐 **Website**: [recipefinder.uk](https://recipefinder.uk)
 
