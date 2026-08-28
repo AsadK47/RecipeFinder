@@ -5,6 +5,11 @@
 - 🟡 In Progress
 - 🟢 Done
 
+> **Maintaining this doc:** it captures product *direction and priorities*, not a
+> changelog — implementation history lives in git. Update a phase's status marker
+> in place as work lands; avoid appending dated "done in month X" entries, which
+> rot. Phases are intentionally coarse so they stay valid as details shift.
+
 ## Strategy (July 2026)
 
 Competitive analysis vs ReciMe / Crouton / Mela / Paprika: RecipeFinder's position is
@@ -21,11 +26,11 @@ Priorities are ordered below. Phases 1–3 are the release-defining work.
 
 ## Phase 1: Capture — the ReciMe loop *(highest priority)*
 
-### 🔴 Share Sheet Extension
-*The delivery vehicle for everything else in this phase. Works with the existing URL importer on day one (share from Safari/blogs). Requires creating an extension target in Xcode UI first — agent tooling can't create targets.*
-- Share Extension target accepting URLs and plain text
-- Hand off to main app via App Group + URL scheme; land in the existing import review screen
-- Accept shared text (captions) as well as URLs, ready for the parser below
+### 🟡 Share Sheet Extension
+*The delivery vehicle for everything else in this phase.*
+- ~~Share Extension target accepting URLs and plain text~~ 🟢 — `RecipeShareExtension` (`ShareViewController`) captures shared URLs and text
+- ~~Hand off to main app via App Group~~ 🟢 — `SharedImportInbox` over App Group defaults; consumed on foreground in `RecipeSearchView` and routed into the import sheet (URL) or a prefilled wizard (text)
+- 🔴 In-extension full import (fetch + parse in the extension so the recipe is simply there next open) — needs the import-pipeline files added to the extension target's membership
 
 ### 🔴 Instagram & TikTok Recipe Import
 - Paste a URL or share caption text → extract recipe content
@@ -48,7 +53,7 @@ Priorities are ordered below. Phases 1–3 are the release-defining work.
 - User's own iCloud — no server, keeps the privacy-first story intact
 - Reconcile with UserScopedStorage per-account scoping (design needed: local accounts vs iCloud identity)
 - JSON-backed stores (meal plans, shopping list, inventory) need a sync strategy too (move to Core Data or CloudKit key-value/records)
-- Existing backup/export (DataImportView) remains the manual fallback
+- Build a real backup/export + import as the manual fallback. (The old `DataImportView` was removed: it had no matching exporter, never imported recipes, and corrupted Notes on restore. Reintroduce here as a proper round-trip — recipes included, correct model shapes, per-user scope.)
 
 ---
 
@@ -132,6 +137,15 @@ Priorities are ordered below. Phases 1–3 are the release-defining work.
 - Remaining: "take a photo" via camera (requires re-adding NSCameraUsageDescription build setting)
 
 ---
+
+## Engineering foundation
+
+Durable health of the codebase (specifics live in git history):
+- **CI gates on tests** — `xcodebuild test` runs on every push to `main` via GitHub Actions on `macos-26` / Xcode 26 (matching the Swift 6.3 dev toolchain); failing tests block. Status badge in the README.
+- **Testing** — Swift Testing for new and migrated tests (XCTest migrated opportunistically when an area is touched); parameterize data-driven cases; inject fakes rather than reaching for singletons.
+- **Dependency injection** — external dependencies sit behind protocols (e.g. `HTMLFetching` for the importer) so logic is testable offline.
+- **Concurrency** — Swift 6 strict concurrency; no unsynchronized shared mutable state (watch especially for `nonisolated(unsafe)` static caches).
+- **Clean Architecture** — Presentation / Domain / Data separation with dependencies pointing inward; keep files focused — a large view file is a refactor signal.
 
 ## Completed
 

@@ -1,5 +1,4 @@
 import SwiftUI
-import CoreData
 
 /// Factory reset and destructive-action confirmation preferences.
 struct DataManagementSettingsView: View {
@@ -95,27 +94,30 @@ struct DataManagementSettingsView: View {
     }
 
     private func resetToDefault() {
-        let context = PersistenceController.shared.container.viewContext
+        // Scope the wipe to the signed-in user — a batch delete with no predicate
+        // (the previous implementation) also erased other accounts' recipes, and
+        // wiping the whole UserDefaults domain desynced the in-memory auth/scope
+        // state and left populateDatabase() unable to repopulate.
+        PersistenceController.shared.clearAllRecipes()
+        UserScopedStorage.shared.clearCurrentUserData()
 
-        let recipeFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "Recipe")
-        let recipeBatchDelete = NSBatchDeleteRequest(fetchRequest: recipeFetch)
-        _ = try? context.execute(recipeBatchDelete)
-        _ = try? context.save()
-
-        KitchenInventoryManager.shared.clearAll()
-        ShoppingListManager.shared.clearAllItems()
-
+        // Appearance settings are app-wide (global @AppStorage) — restore defaults.
         let defaults = UserDefaults.standard
-        if let domain = Bundle.main.bundleIdentifier {
-            defaults.removePersistentDomain(forName: domain)
-            defaults.synchronize()
-        }
-
         defaults.set("Teal", forKey: "appTheme")
         defaults.set("Frost Light", forKey: "cardStyle")
         defaults.set("metric", forKey: "measurementSystem")
 
+        // currentUserId is still set, so this repopulates the sample recipes.
         PersistenceController.shared.populateDatabase()
+        UserScopedStorage.shared.set(true, forKey: Constants.UserDefaultsKeys.hasPopulatedDatabase)
+
+        // Refresh in-memory managers so the UI reflects the reset immediately.
+        ShoppingListManager.shared.reloadForCurrentUser()
+        KitchenInventoryManager.shared.reloadForCurrentUser()
+        MealPlanningManager.shared.reloadForCurrentUser()
+        NotesManager.shared.reloadForCurrentUser()
+        AccountManager.shared.loadProfile()
+        AccountManager.shared.updateStats()
 
         dataCleared = true
         HapticManager.shared.success()

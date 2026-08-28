@@ -67,10 +67,8 @@
 		9E6C2C422FB477A80083A08B /* StatBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6C2C412FB477A80083A08B /* StatBadge.swift */; };
 		9E6C2C462FB477D70083A08B /* AccountShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6C2C432FB477D70083A08B /* AccountShareSheet.swift */; };
 		9E6C2C472FB477D70083A08B /* BadgeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6C2C442FB477D70083A08B /* BadgeDetailView.swift */; };
-		9E6C2C482FB477D70083A08B /* DataImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6C2C452FB477D70083A08B /* DataImportView.swift */; };
 		9E6C2C4C2FB477ED0083A08B /* BadgeCardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6C2C492FB477ED0083A08B /* BadgeCardTests.swift */; };
 		9E6C2C4D2FB477ED0083A08B /* CardViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6C2C4A2FB477ED0083A08B /* CardViewTests.swift */; };
-		9E6C2C522FB478290083A08B /* DataImportViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6C2C4F2FB478290083A08B /* DataImportViewTests.swift */; };
 		9E6C2C532FB478290083A08B /* AccountSheetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6C2C4E2FB478290083A08B /* AccountSheetTests.swift */; };
 		9E6C2C572FB4A4900083A08B /* NutritionalTipsModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6C2C542FB4A4900083A08B /* NutritionalTipsModelTests.swift */; };
 		9E6C2C582FB4A4900083A08B /* ShoppingListModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6C2C562FB4A4900083A08B /* ShoppingListModelTests.swift */; };
@@ -285,11 +283,9 @@
 		9E6C2C412FB477A80083A08B /* StatBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatBadge.swift; sourceTree = "<group>"; };
 		9E6C2C432FB477D70083A08B /* AccountShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountShareSheet.swift; sourceTree = "<group>"; };
 		9E6C2C442FB477D70083A08B /* BadgeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeDetailView.swift; sourceTree = "<group>"; };
-		9E6C2C452FB477D70083A08B /* DataImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataImportView.swift; sourceTree = "<group>"; };
 		9E6C2C492FB477ED0083A08B /* BadgeCardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeCardTests.swift; sourceTree = "<group>"; };
 		9E6C2C4A2FB477ED0083A08B /* CardViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardViewTests.swift; sourceTree = "<group>"; };
 		9E6C2C4E2FB478290083A08B /* AccountSheetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSheetTests.swift; sourceTree = "<group>"; };
-		9E6C2C4F2FB478290083A08B /* DataImportViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataImportViewTests.swift; sourceTree = "<group>"; };
 		9E6C2C542FB4A4900083A08B /* NutritionalTipsModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionalTipsModelTests.swift; sourceTree = "<group>"; };
 		9E6C2C552FB4A4900083A08B /* RecipeViewModeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeViewModeTests.swift; sourceTree = "<group>"; };
 		9E6C2C562FB4A4900083A08B /* ShoppingListModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListModelTests.swift; sourceTree = "<group>"; };
@@ -550,7 +546,6 @@
 			children = (
 				9E6C2C432FB477D70083A08B /* AccountShareSheet.swift */,
 				9E6C2C442FB477D70083A08B /* BadgeDetailView.swift */,
-				9E6C2C452FB477D70083A08B /* DataImportView.swift */,
 				9E87D3352EB6C0E900FFA1D1 /* PasswordVerificationSheet.swift */,
 				9E87D32A2EB67CEA00FFA1D1 /* ImagePicker.swift */,
 				9E51C3982EB3E9C20064B917 /* AccountView.swift */,
@@ -628,7 +623,6 @@
 			isa = PBXGroup;
 			children = (
 				9E6C2C4E2FB478290083A08B /* AccountSheetTests.swift */,
-				9E6C2C4F2FB478290083A08B /* DataImportViewTests.swift */,
 			);
 			path = Account;
 			sourceTree = "<group>";
@@ -1452,7 +1446,6 @@
 				9E6C2C402FB4779F0083A08B /* ProfileTextField.swift in Sources */,
 				9E6C2C462FB477D70083A08B /* AccountShareSheet.swift in Sources */,
 				9E6C2C472FB477D70083A08B /* BadgeDetailView.swift in Sources */,
-				9E6C2C482FB477D70083A08B /* DataImportView.swift in Sources */,
 				9E6DEA902EF5EFE8001E7B24 /* RecipeParser.swift in Sources */,
 				9E6DEA912EF5EFE8001E7B24 /* FoodsList.swift in Sources */,
 				9E6DEA922EF5EFE8001E7B24 /* AppErrors.swift in Sources */,
@@ -1523,7 +1516,6 @@
 				F36AED553040A5F200935A3C /* RecipeImporterTests.swift in Sources */,
 				9E6C2C182FB394090083A08B /* IngredientNormalizerTests.swift in Sources */,
 				9E6C2C4C2FB477ED0083A08B /* BadgeCardTests.swift in Sources */,
-				9E6C2C522FB478290083A08B /* DataImportViewTests.swift in Sources */,
 				9E6C2C532FB478290083A08B /* AccountSheetTests.swift in Sources */,
 				9E6C2C4D2FB477ED0083A08B /* CardViewTests.swift in Sources */,
 				9E6C2C192FB394090083A08B /* CategoryClassifierTests.swift in Sources */,

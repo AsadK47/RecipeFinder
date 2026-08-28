@@ -15,7 +15,7 @@ final class RecipeImporter: ObservableObject {
 
     init(
         fetcher: HTMLFetching = URLSessionHTMLFetcher(),
-        isNetworkAvailable: @escaping () async -> Bool = { await NetworkMonitor.shared.isConnected }
+        isNetworkAvailable: @escaping () async -> Bool = { NetworkMonitor.shared.isConnected }
     ) {
         self.fetcher = fetcher
         self.isNetworkAvailable = isNetworkAvailable
