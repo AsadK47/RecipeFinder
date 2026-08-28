@@ -25,15 +25,19 @@ env:
 jobs:
   build-and-test:
     name: Build & Test
-    runs-on: macos-15
+    # macOS 26 image ships Xcode 26 (Swift 6.3), matching the local dev
+    # toolchain. Older images (Swift 6.0) miscompile @MainActor XCTestCase
+    # async lifecycle with a "sending non-Sendable XCTestCase" error that was
+    # fixed in Swift 6.2+.
+    runs-on: macos-26
     timeout-minutes: 30
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Select Xcode version
-        run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+      - name: Show Xcode version
+        run: xcodebuild -version
 
       - name: Detect available simulator
         id: simulator
