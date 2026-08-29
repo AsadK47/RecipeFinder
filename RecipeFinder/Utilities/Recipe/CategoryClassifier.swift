@@ -1,14 +1,12 @@
 import Foundation
 import SwiftUI
-import os
 
 enum CategoryClassifier {
 
     // Memoize categorization: each call scans the categorization rules with per-word
     // keyword matching, and it runs per-item while grouping shopping-list rows during
-    // rendering. Lock-guarded so it's safe under Swift 6 strict concurrency.
-    private static let categoryCache = OSAllocatedUnfairLock(initialState: [String: String]())
-    private static let maxCategoryCacheSize = 500
+    // rendering. MemoCache is Swift 6 concurrency-safe.
+    private static let categoryCache = MemoCache<String, String>(maxSize: 500)
 
     static let categoryOrder = [
         "Produce", "Meat", "Poultry", "Seafood", "Dairy & Eggs",
@@ -312,34 +310,23 @@ enum CategoryClassifier {
     static func categorize(_ itemName: String) -> String {
         let lowercased = itemName.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
 
-        if let cached = categoryCache.withLock({ $0[lowercased] }) {
-            return cached
-        }
-
-        func matches(_ keywords: [String]) -> Bool {
-            keywords.contains { keyword in
-                let k = keyword.lowercased()
-                if lowercased.contains(k) { return true }
-                if k.hasSuffix("s") {
-                    if lowercased.contains(String(k.dropLast())) { return true }
-                } else {
-                    if lowercased.contains(k + "s") || lowercased.contains(k + "es") { return true }
+        return categoryCache.value(for: lowercased) { normalized in
+            func matches(_ keywords: [String]) -> Bool {
+                keywords.contains { keyword in
+                    let k = keyword.lowercased()
+                    if normalized.contains(k) { return true }
+                    if k.hasSuffix("s") {
+                        if normalized.contains(String(k.dropLast())) { return true }
+                    } else {
+                        if normalized.contains(k + "s") || normalized.contains(k + "es") { return true }
+                    }
+                    let words = normalized.components(separatedBy: .whitespacesAndNewlines)
+                    return words.contains { $0 == k || $0 == k + "s" || $0 == k + "es" }
                 }
-                let words = lowercased.components(separatedBy: .whitespacesAndNewlines)
-                return words.contains { $0 == k || $0 == k + "s" || $0 == k + "es" }
             }
+
+            return categorizationRules.first { matches($0.1) }?.0 ?? "Other"
         }
-
-        let category = categorizationRules.first { matches($0.1) }?.0 ?? "Other"
-
-        categoryCache.withLock { storage in
-            if storage.count >= maxCategoryCacheSize {
-                storage.removeAll(keepingCapacity: true)
-            }
-            storage[lowercased] = category
-        }
-
-        return category
     }
 
     static func suggestCategory(for partialInput: String) -> String {

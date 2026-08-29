@@ -1,16 +1,13 @@
 
 import Foundation
-import os
 
 struct IngredientNormalizer {
 
     // Memoize results: `normalize` runs several regex passes plus a scan over the
     // ~140-entry normalization map, and it's called per-ingredient across recipe
-    // filtering and meal planning. An unfair lock keeps this safe under Swift 6
-    // strict concurrency without the data race the old `nonisolated(unsafe)`
-    // static dictionary carried.
-    private static let cache = OSAllocatedUnfairLock(initialState: [String: String]())
-    private static let maxCacheSize = 200
+    // filtering and meal planning. Dropping this cache once caused a serious
+    // rendering-path slowdown, so keep it (MemoCache is Swift 6 concurrency-safe).
+    private static let cache = MemoCache<String, String>(maxSize: 200)
 
     private static let normalizationMap: [String: String] = [
         "beef slices": "Beef Steak",
@@ -157,20 +154,7 @@ struct IngredientNormalizer {
     ]
     
     static func normalize(_ ingredient: String) -> String {
-        if let cached = cache.withLock({ $0[ingredient] }) {
-            return cached
-        }
-
-        let result = computeNormalized(ingredient)
-
-        cache.withLock { storage in
-            if storage.count >= maxCacheSize {
-                storage.removeAll(keepingCapacity: true)
-            }
-            storage[ingredient] = result
-        }
-
-        return result
+        cache.value(for: ingredient) { computeNormalized($0) }
     }
 
     private static func computeNormalized(_ ingredient: String) -> String {

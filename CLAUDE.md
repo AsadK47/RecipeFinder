@@ -60,6 +60,21 @@ the SOLID/refactoring catalog on that site.
   (`DocumentationSearch`) rather than assuming — don't guess at framework surface.
 - **Comments:** explain *why*, not *what*. Match the surrounding density.
 
+## Performance (rendering hot path)
+- **No non-trivial work in a SwiftUI `body` or the computed properties it reads.**
+  `body` runs on every state change, tab switch, and scroll tick. Filtering,
+  sorting, grouping, normalization, and image decoding must be computed once when
+  the data changes and stored in `@State` — not recomputed inline. Expensive work
+  in `body` is invisible to correctness tests and is how tab switching once ground
+  to a halt.
+- **Memoize pure hot functions with `MemoCache`, never `nonisolated(unsafe) static var`.**
+  A mutable static dictionary is a data race under Swift 6; deleting one to "fix"
+  the race silently reintroduces the per-call cost. `MemoCache` is the safe,
+  lock-guarded replacement — reach for it instead.
+- **Guard regressions with a loose perf-budget test** (see `PerformanceBudgetTests`).
+  Budgets target order-of-magnitude regressions, not run-to-run noise; if one
+  fails, look for a removed cache before touching the number.
+
 ## Dependency Injection
 - Depend on **protocols**, inject concrete types. This is what makes code testable
   and is the lever for the clean-architecture migration.
