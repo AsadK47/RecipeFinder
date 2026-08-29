@@ -17,6 +17,9 @@ struct MealPlanningView: View {
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @Environment(\.colorScheme) var colorScheme
+
+    /// Pure date math for the calendar and weekly views; see `MealPlanCalendar`.
+    private let mealCalendar = MealPlanCalendar()
     
     enum ViewMode {
         case calendar
@@ -598,24 +601,21 @@ struct MealPlanningView: View {
     }
     
     private var weekRangeString: String {
-        guard let weekInterval = Calendar.current.dateInterval(of: .weekOfYear, for: selectedDate) else {
+        guard let range = mealCalendar.weekRange(containing: selectedDate) else {
             return ""
         }
-        
+
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM d"
-        
-        let startString = formatter.string(from: weekInterval.start)
-        guard let endDate = Calendar.current.date(byAdding: .day, value: -1, to: weekInterval.end) else {
-            return startString
-        }
-        let endString = formatter.string(from: endDate)
-        
+
+        let startString = formatter.string(from: range.start)
+        let endString = formatter.string(from: range.end)
+
         return "\(startString) - \(endString)"
     }
-    
+
     private var currentWeekStart: Date? {
-        Calendar.current.dateInterval(of: .weekOfYear, for: selectedDate)?.start
+        mealCalendar.weekRange(containing: selectedDate)?.start
     }
 
     private var weekHasPlannedMeals: Bool {
@@ -662,84 +662,13 @@ struct MealPlanningView: View {
     }
 
     private var daysInCurrentWeek: [Date] {
-        guard let weekInterval = Calendar.current.dateInterval(of: .weekOfYear, for: selectedDate) else {
-            return []
-        }
-        
-        var days: [Date] = []
-        var currentDate = weekInterval.start
-        
-        for _ in 0..<7 {
-            days.append(currentDate)
-            guard let nextDate = Calendar.current.date(byAdding: .day, value: 1, to: currentDate) else {
-                break
-            }
-            currentDate = nextDate
-        }
-        
-        return days
+        mealCalendar.daysInWeek(containing: selectedDate)
     }
-    
+
     private var compactDaysInMonth: [Date?] {
-        guard let monthInterval = Calendar.current.dateInterval(of: .month, for: selectedDate),
-              let monthFirstWeek = Calendar.current.dateInterval(of: .weekOfMonth, for: monthInterval.start) else {
-            return []
-        }
-        
-        var days: [Date?] = []
-        var currentDate = monthFirstWeek.start
-        let monthEnd = monthInterval.end
-        
-        while currentDate < monthEnd {
-            if Calendar.current.isDate(currentDate, equalTo: selectedDate, toGranularity: .month) {
-                days.append(currentDate)
-            } else if !days.isEmpty && days.count % 7 != 0 {
-                days.append(nil)
-            } else if days.isEmpty {
-                days.append(nil)
-            }
-            
-            guard let nextDate = Calendar.current.date(byAdding: .day, value: 1, to: currentDate) else {
-                break
-            }
-            currentDate = nextDate
-            
-            if currentDate > monthEnd && days.count % 7 == 0 {
-                break
-            }
-        }
-        
-        while days.count % 7 != 0 {
-            days.append(nil)
-        }
-        
-        return days
+        mealCalendar.monthGrid(containing: selectedDate)
     }
-    
-    private var daysInMonth: [Date?] {
-        guard let monthInterval = Calendar.current.dateInterval(of: .month, for: selectedDate),
-              let monthFirstWeek = Calendar.current.dateInterval(of: .weekOfMonth, for: monthInterval.start) else {
-            return []
-        }
-        
-        var days: [Date?] = []
-        var currentDate = monthFirstWeek.start
-        
-        while days.count < 42 {
-            if Calendar.current.isDate(currentDate, equalTo: selectedDate, toGranularity: .month) {
-                days.append(currentDate)
-            } else {
-                days.append(nil)
-            }
-            guard let nextDate = Calendar.current.date(byAdding: .day, value: 1, to: currentDate) else {
-                break
-            }
-            currentDate = nextDate
-        }
-        
-        return days
-    }
-    
+
     private func previousMonth() {
         selectedDate = Calendar.current.date(byAdding: .month, value: -1, to: selectedDate) ?? selectedDate
         HapticManager.shared.light()
