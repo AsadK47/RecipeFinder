@@ -43,73 +43,24 @@ struct RecipeSearchView: View {
             return cachedFilteredRecipes
         }
         
-        var results = recipes
-        
-        if showFavoritesOnly {
-            results = results.filter { $0.isFavorite }
-        }
-        
-        if !searchText.isEmpty {
-            results = results.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
-        }
-        
-        if !ingredientSearchText.isEmpty {
-            results = results.filter { $0.containsIngredient(ingredientSearchText) }
-        }
-        
-        if availableIngredientsOnly && !availableIngredients.isEmpty {
-            results = results.filter { recipe in
-                recipe.ingredientMatchPercentage(availableIngredients: availableIngredients) >= 0.8
-            }
-        }
-        
-        if !selectedCategories.isEmpty {
-            results = results.filter { selectedCategories.contains($0.category) }
-        }
-        
-        if !selectedDifficulties.isEmpty {
-            results = results.filter { selectedDifficulties.contains($0.difficulty) }
-        }
-        
-        if !selectedCookTimes.isEmpty {
-            results = results.filter { recipe in
-                let time = TimeExtractor.extractMinutes(from: recipe.cookingTime)
-                return selectedCookTimes.contains { time <= $0 }
-            }
-        }
-        
-        if !selectedDietaryFilters.isEmpty {
-            results = results.filter { recipe in
-                selectedDietaryFilters.allSatisfy { dietaryTag in
-                    switch dietaryTag {
-                    case "Vegetarian": return recipe.dietaryInfo.isVegetarian
-                    case "Vegan": return recipe.dietaryInfo.isVegan
-                    case "Gluten-Free": return recipe.dietaryInfo.isGlutenFree
-                    case "Dairy-Free": return recipe.dietaryInfo.isDairyFree
-                    case "Nut-Free": return recipe.dietaryInfo.isNutFree
-                    case "Low-Carb": return recipe.dietaryInfo.isLowCarb
-                    case "Keto": return recipe.dietaryInfo.isKeto
-                    default: return true
-                    }
-                }
-            }
-        }
-        
-        if !selectedTags.isEmpty {
-            results = results.filter { recipe in
-                !Set(recipe.tags).isDisjoint(with: selectedTags)
-            }
-        }
-        
-        if availableIngredientsOnly && !availableIngredients.isEmpty {
-            results.sort { recipe1, recipe2 in
-                let match1 = recipe1.ingredientMatchPercentage(availableIngredients: availableIngredients)
-                let match2 = recipe2.ingredientMatchPercentage(availableIngredients: availableIngredients)
-                return match1 > match2
-            }
-        }
-        
-        return results
+        return filterCriteria.apply(to: recipes)
+    }
+
+    /// The current filters as a plain value; all filtering/sorting lives in
+    /// `RecipeFilterCriteria` so it stays out of `body` and is unit tested.
+    private var filterCriteria: RecipeFilterCriteria {
+        RecipeFilterCriteria(
+            searchText: searchText,
+            ingredientSearchText: ingredientSearchText,
+            availableIngredientsOnly: availableIngredientsOnly,
+            showFavoritesOnly: showFavoritesOnly,
+            selectedCategories: selectedCategories,
+            selectedDifficulties: selectedDifficulties,
+            selectedCookTimes: selectedCookTimes,
+            selectedDietaryFilters: selectedDietaryFilters,
+            selectedTags: selectedTags,
+            availableIngredients: availableIngredients
+        )
     }
     
     private func computeFilterHash() -> Int {
@@ -128,14 +79,7 @@ struct RecipeSearchView: View {
     }
     
     var activeFilterCount: Int {
-        return selectedCategories.count + 
-               selectedDifficulties.count + 
-               selectedCookTimes.count + 
-               selectedDietaryFilters.count +
-               selectedTags.count +
-               (showFavoritesOnly ? 1 : 0) +
-               (availableIngredientsOnly ? 1 : 0) +
-               (!ingredientSearchText.isEmpty ? 1 : 0)
+        filterCriteria.activeCount
     }
     
     var availableTags: [String] {

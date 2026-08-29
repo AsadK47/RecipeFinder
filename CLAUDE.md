@@ -94,6 +94,15 @@ files **opportunistically** — when you touch a file's area, rewrite it — rat
 in one big-bang pass. UI tests continue to use XCUITest (XCTest-based) until Apple
 ships a replacement.
 
+**Workflow: test-driven (red → green → refactor).** Write the failing test
+*first*, watch it fail for the right reason, then write the minimum code to pass,
+then refactor with the test as a safety net. This is the default for new logic
+(use cases, parsers, models, filters) and for **extractions during refactors**:
+when pulling logic out of a large view, write the tests against the new type first
+so the extraction is provably behavior-preserving. Pure value types (e.g.
+`RecipeFilterCriteria`) are the ideal TDD target — extract, test, then delegate the
+view to them. TDD is not required for pure UI layout or thin glue with no logic.
+
 **Conventions:**
 - **Parameterize** data-driven tests: collapse many near-identical
   `input → expected` cases into one `@Test(arguments: [...])`. Failures still report
@@ -105,8 +114,8 @@ ships a replacement.
   targeted integration tests (repository + store, importer + parser), and a *small*
   set of UI tests for critical flows only (launch, sign-in, import a recipe). Don't
   chase a coverage percentage or add per-screen UI tests.
-- Write tests **alongside** the implementation, not afterward. All new code ships with
-  tests.
+- Tests come **first**, not afterward (see workflow above). All new code ships with
+  tests, and no logic-bearing change is considered done until it has them.
 
 ## Build & CI
 - Build with the `BuildProject` MCP tool; use `XcodeRefreshCodeIssuesInFile` for fast
