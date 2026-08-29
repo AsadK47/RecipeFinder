@@ -207,6 +207,12 @@
 		F3E9D11C30434E20008BF231 /* MealPlannerHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D11B30434E20008BF231 /* MealPlannerHeader.swift */; };
 		F3E9D11E30435126008BF231 /* WizardIngredientParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D11D30435126008BF231 /* WizardIngredientParser.swift */; };
 		F3E9D12030439DD1008BF231 /* WizardIngredientParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D11F30439DD1008BF231 /* WizardIngredientParserTests.swift */; };
+		F3E9D12330439F08008BF231 /* WizardComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D12230439F08008BF231 /* WizardComponents.swift */; };
+		F3E9D12530439F1D008BF231 /* RecipeNameStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D12430439F1D008BF231 /* RecipeNameStepView.swift */; };
+		F3E9D12730439F2C008BF231 /* BasicInfoStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D12630439F2C008BF231 /* BasicInfoStepView.swift */; };
+		F3E9D12930439F49008BF231 /* IngredientsStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D12830439F49008BF231 /* IngredientsStepView.swift */; };
+		F3E9D12B30439F56008BF231 /* EditableStepsStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D12A30439F56008BF231 /* EditableStepsStepView.swift */; };
+		F3E9D12D30439F88008BF231 /* NotesStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D12C30439F88008BF231 /* NotesStepView.swift */; };
 		F3F941D630405E230067C6C8 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = F3F941D530405E230067C6C8 /* CLAUDE.md */; };
 /* End PBXBuildFile section */
 
@@ -463,6 +469,12 @@
 		F3E9D11B30434E20008BF231 /* MealPlannerHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlannerHeader.swift; sourceTree = "<group>"; };
 		F3E9D11D30435126008BF231 /* WizardIngredientParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WizardIngredientParser.swift; sourceTree = "<group>"; };
 		F3E9D11F30439DD1008BF231 /* WizardIngredientParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WizardIngredientParserTests.swift; sourceTree = "<group>"; };
+		F3E9D12230439F08008BF231 /* WizardComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WizardComponents.swift; sourceTree = "<group>"; };
+		F3E9D12430439F1D008BF231 /* RecipeNameStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeNameStepView.swift; sourceTree = "<group>"; };
+		F3E9D12630439F2C008BF231 /* BasicInfoStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicInfoStepView.swift; sourceTree = "<group>"; };
+		F3E9D12830439F49008BF231 /* IngredientsStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientsStepView.swift; sourceTree = "<group>"; };
+		F3E9D12A30439F56008BF231 /* EditableStepsStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableStepsStepView.swift; sourceTree = "<group>"; };
+		F3E9D12C30439F88008BF231 /* NotesStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesStepView.swift; sourceTree = "<group>"; };
 		F3F941D530405E230067C6C8 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -985,6 +997,7 @@
 				F36AED76304342AD00935A3C /* ActiveFiltersBar.swift */,
 				F36AED78304342D200935A3C /* RecipeEmptyStateView.swift */,
 				F36AED7A3043431C00935A3C /* RecipeSearchHeader.swift */,
+				F3E9D12130439F08008BF231 /* Wizard */,
 			);
 			path = Recipes;
 			sourceTree = "<group>";
@@ -1286,6 +1299,19 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		F3E9D12130439F08008BF231 /* Wizard */ = {
+			isa = PBXGroup;
+			children = (
+				F3E9D12230439F08008BF231 /* WizardComponents.swift */,
+				F3E9D12430439F1D008BF231 /* RecipeNameStepView.swift */,
+				F3E9D12630439F2C008BF231 /* BasicInfoStepView.swift */,
+				F3E9D12830439F49008BF231 /* IngredientsStepView.swift */,
+				F3E9D12A30439F56008BF231 /* EditableStepsStepView.swift */,
+				F3E9D12C30439F88008BF231 /* NotesStepView.swift */,
+			);
+			path = Wizard;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1471,6 +1497,7 @@
 				F36AED533040A5D700935A3C /* HTMLFetcher.swift in Sources */,
 				9E51C3A82EB40DC90064B917 /* AuthenticationView.swift in Sources */,
 				9E51C3972EB3E6540064B917 /* MealPlanningView.swift in Sources */,
+				F3E9D12530439F1D008BF231 /* RecipeNameStepView.swift in Sources */,
 				9E6C2C3A2FB477730083A08B /* AccountRowButton.swift in Sources */,
 				F3E9D10830434D43008BF231 /* MealTimeCard.swift in Sources */,
 				9E97EECF300D0EEC00D35FAB /* TextRecipeParser.swift in Sources */,
@@ -1521,6 +1548,8 @@
 				9E6C2C1C2FB394290083A08B /* BadgeManager.swift in Sources */,
 				9E5B39972FACFF9000C96DB3 /* KitchenQuickAddSheet.swift in Sources */,
 				9E5B39982FACFF9000C96DB3 /* ShoppingQuickAddSheet.swift in Sources */,
+				F3E9D12D30439F88008BF231 /* NotesStepView.swift in Sources */,
+				F3E9D12730439F2C008BF231 /* BasicInfoStepView.swift in Sources */,
 				9E5B39992FACFF9000C96DB3 /* QuickAddItems.swift in Sources */,
 				9E5B399A2FACFF9000C96DB3 /* QuickAddSheetView.swift in Sources */,
 				9E87D32B2EB67CEA00FFA1D1 /* ImagePicker.swift in Sources */,
@@ -1555,6 +1584,7 @@
 				9E834DF12ECA6508008F8A11 /* CookingTipModel.swift in Sources */,
 				9E7691702EF46CD400277ADF /* BadgeModel.swift in Sources */,
 				9EF757652FCF3D900012B2B7 /* IngredientAutocompleteEngine.swift in Sources */,
+				F3E9D12330439F08008BF231 /* WizardComponents.swift in Sources */,
 				9E48AD9E2F0FDDC300CF840F /* AppLogger.swift in Sources */,
 				9E5B398D2FABC91800C96DB3 /* InfoItem.swift in Sources */,
 				9E51C3A12EB406AD0064B917 /* CookTimerView.swift in Sources */,
@@ -1571,7 +1601,9 @@
 				F3E9D11630434DF1008BF231 /* WeeklyPlanView.swift in Sources */,
 				9E6DEA642EF5EF47001E7B24 /* FlowLayout.swift in Sources */,
 				9E5B39872FABC4B700C96DB3 /* FilterButton.swift in Sources */,
+				F3E9D12B30439F56008BF231 /* EditableStepsStepView.swift in Sources */,
 				9E5B39882FABC4B700C96DB3 /* FilterChip.swift in Sources */,
+				F3E9D12930439F49008BF231 /* IngredientsStepView.swift in Sources */,
 				9E0946202F0415F40072BDFE /* UserScopedStorage.swift in Sources */,
 				9E5542CA2FD20F1700856DC5 /* RecipeTimerManager.swift in Sources */,
 				F3E9D11830434E01008BF231 /* PlannedMealsSection.swift in Sources */,

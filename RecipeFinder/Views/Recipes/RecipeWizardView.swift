@@ -159,10 +159,6 @@ struct RecipeWizardView: View {
         }
     }
     
-    private func stepNumber(of step: EditableStep, in steps: [EditableStep]) -> Int {
-        (steps.firstIndex(where: { $0.id == step.id }) ?? 0) + 1
-    }
-
     private func applyPrefilledData() {
         guard let data = prefilledData else { return }
         
@@ -243,671 +239,96 @@ struct RecipeWizardView: View {
     private var stepContent: some View {
         switch currentStep {
         case 0:
-            recipeNameStep
+            RecipeNameStepView(
+                recipeName: $recipeName,
+                selectedRecipeImage: $selectedRecipeImage,
+                existingImageReference: $existingImageReference,
+                cardStyle: cardStyle,
+                colorScheme: colorScheme,
+                totalSteps: totalSteps,
+                onPickPhoto: {
+                    HapticManager.shared.light()
+                    showPhotoPicker = true
+                }
+            )
         case 1:
-            basicInfoStep
+            BasicInfoStepView(
+                prepTime: $prepTime,
+                cookTime: $cookTime,
+                difficulty: $difficulty,
+                category: $category,
+                servings: $servings,
+                difficulties: difficulties,
+                categories: categories,
+                appTheme: appTheme,
+                cardStyle: cardStyle,
+                colorScheme: colorScheme,
+                totalSteps: totalSteps
+            )
         case 2:
-            ingredientsStep
+            IngredientsStepView(
+                ingredientItems: $ingredientItems,
+                focusedIngredientID: $focusedIngredientID,
+                cookingUnitGroups: cookingUnitGroups,
+                appTheme: appTheme,
+                cardStyle: cardStyle,
+                colorScheme: colorScheme,
+                totalSteps: totalSteps
+            )
         case 3:
-            prePrepStep
+            EditableStepsStepView(
+                steps: $prePrepSteps,
+                title: "Pre-prep Instructions",
+                subtitle: "Any prep work before cooking? (Optional)",
+                stepNumber: 4,
+                illustration: "list.bullet.clipboard.fill",
+                fieldPlaceholder: "Describe the pre-prep step",
+                addButtonTitle: "Add Pre-prep Step",
+                appTheme: appTheme,
+                cardStyle: cardStyle,
+                colorScheme: colorScheme,
+                totalSteps: totalSteps
+            )
         case 4:
-            instructionsStep
+            EditableStepsStepView(
+                steps: $mainInstructions,
+                title: "Cooking Instructions",
+                subtitle: "Walk us through the cooking process",
+                stepNumber: 5,
+                illustration: "flame.fill",
+                fieldPlaceholder: "Describe this cooking step",
+                addButtonTitle: "Add Cooking Step",
+                appTheme: appTheme,
+                cardStyle: cardStyle,
+                colorScheme: colorScheme,
+                totalSteps: totalSteps
+            )
         case 5:
-            notesStep
+            NotesStepView(
+                notes: $notes,
+                hasPrefilledNotes: prefilledData?.notes != nil,
+                summary: recipeSummary,
+                cardStyle: cardStyle,
+                colorScheme: colorScheme,
+                totalSteps: totalSteps
+            )
         default:
             EmptyView()
         }
     }
-    
-    private var recipeNameStep: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacing24) {
-            stepHeader(
-                title: "Let's start with a name",
-                subtitle: "What would you like to call this recipe?",
-                stepNumber: 1,
-                illustration: "doc.text.fill"
-            )
-            
-            cardContainer {
-                VStack(spacing: AppTheme.spacing16) {
-                    TextField("Recipe Name", text: $recipeName)
-                        .font(.title2)
-                        .padding()
-                        .background(Color.white.opacity(AppTheme.dividerOpacity))
-                        .cornerRadius(AppTheme.cornerRadius12)
 
-                    VStack(alignment: .leading, spacing: AppTheme.spacing10) {
-                        Text("Recipe Photo")
-                            .font(.headline)
-                            .foregroundColor(.primary)
-
-                        ZStack(alignment: .topTrailing) {
-                            Button(action: {
-                                HapticManager.shared.light()
-                                showPhotoPicker = true
-                            }) {
-                                Group {
-                                    if let selectedRecipeImage {
-                                        Image(uiImage: selectedRecipeImage)
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(height: 180)
-                                            .frame(maxWidth: .infinity)
-                                            .clipped()
-                                            .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
-                                    } else if let existingImageReference, !existingImageReference.isEmpty {
-                                        RecipeImageView(imageName: existingImageReference, height: 180)
-                                            .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
-                                    } else {
-                                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                                            .fill(Color.white.opacity(AppTheme.dividerOpacity))
-                                            .frame(height: 180)
-                                            .overlay {
-                                                VStack(spacing: AppTheme.spacing8) {
-                                                    Image(systemName: "photo.badge.plus")
-                                                        .font(.system(size: AppTheme.fontSize28))
-                                                        .foregroundColor(.secondary)
-                                                    Text("Add photo")
-                                                        .font(.subheadline)
-                                                        .foregroundColor(.secondary)
-                                                }
-                                            }
-                                    }
-                                }
-                                .overlay(alignment: .bottomTrailing) {
-                                    if selectedRecipeImage != nil || existingImageReference != nil {
-                                        Label("Tap to change", systemImage: "photo.on.rectangle")
-                                            .font(.caption2.weight(.semibold))
-                                            .foregroundColor(.white)
-                                            .padding(.horizontal, AppTheme.spacing8)
-                                            .padding(.vertical, AppTheme.spacing4)
-                                            .background(.black.opacity(0.45), in: Capsule())
-                                            .padding(AppTheme.spacing10)
-                                    }
-                                }
-                            }
-                            .buttonStyle(.plain)
-
-                            if selectedRecipeImage != nil || existingImageReference != nil {
-                                Button(action: {
-                                    HapticManager.shared.light()
-                                    selectedRecipeImage = nil
-                                    existingImageReference = nil
-                                }) {
-                                    Image(systemName: "xmark")
-                                        .font(.caption.weight(.bold))
-                                        .foregroundColor(.white)
-                                        .frame(width: 24, height: 24)
-                                        .background(.black.opacity(0.55), in: Circle())
-                                }
-                                .buttonStyle(.plain)
-                                .padding(AppTheme.spacing8)
-                            }
-                        }
-                    }
-
-                    if let validationMessage = recipeNameValidationMessage {
-                        Text(validationMessage)
-                            .font(.caption)
-                            .foregroundColor(.red)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                }
-                .padding()
-            }
-        }
-    }
-    
-    private var basicInfoStep: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacing24) {
-            stepHeader(
-                title: "Tell us more",
-                subtitle: "Add some details about your recipe",
-                stepNumber: 2,
-                illustration: "slider.horizontal.3"
-            )
-            
-            cardContainer {
-                VStack(spacing: AppTheme.spacing24) {
-                    VStack(alignment: .leading, spacing: AppTheme.spacing8) {
-                        Text("Prep Time")
-                            .font(.headline)
-                            .foregroundColor(.primary)
-                        
-                        HStack {
-                            Stepper("\(prepTime) minutes", value: $prepTime, in: 0...300, step: 5)
-                                .font(.body)
-                        }
-                    }
-                    
-                    Divider()
-                    
-                    VStack(alignment: .leading, spacing: AppTheme.spacing8) {
-                        Text("Cook Time")
-                            .font(.headline)
-                            .foregroundColor(.primary)
-                        
-                        HStack {
-                            Stepper("\(cookTime) minutes", value: $cookTime, in: 0...480, step: 5)
-                                .font(.body)
-                        }
-                    }
-                    
-                    Divider()
-                    
-                    VStack(alignment: .leading, spacing: AppTheme.spacing8) {
-                        Text("Difficulty")
-                            .font(.headline)
-                            .foregroundColor(.primary)
-                        
-                        Picker("Difficulty", selection: $difficulty) {
-                            ForEach(difficulties, id: \.self) { diff in
-                                Text(diff).tag(diff)
-                            }
-                        }
-                        .pickerStyle(.segmented)
-                    }
-                    
-                    Divider()
-                    
-                    VStack(alignment: .leading, spacing: AppTheme.spacing8) {
-                        Text("Category")
-                            .font(.headline)
-                            .foregroundColor(.primary)
-                        
-                        Picker("Category", selection: $category) {
-                            ForEach(categories, id: \.self) { cat in
-                                Text(cat).tag(cat)
-                            }
-                        }
-                        .pickerStyle(.menu)
-                    }
-
-                    Divider()
-
-                    VStack(alignment: .leading, spacing: AppTheme.spacing8) {
-                        Text("Servings")
-                            .font(.headline)
-                            .foregroundColor(.primary)
-
-                        HStack {
-                            Stepper(
-                                value: $servings, in: 1...20,
-                                label: {
-                                    HStack(spacing: AppTheme.spacing8) {
-                                        Text("\(servings)")
-                                            .font(.title2)
-                                            .fontWeight(.bold)
-                                            .foregroundColor(AppTheme.accentColor(for: appTheme))
-                                            .frame(minWidth: AppTheme.iconSize32)
-                                        Text(servings == 1 ? "serving" : "servings")
-                                            .font(.body)
-                                            .foregroundColor(.secondary)
-                                    }
-                                }
-                            )
-                        }
-                    }
-                }
-                .padding()
-            }
-        }
-    }
-    
-    private var ingredientsStep: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacing24) {
-            stepHeader(
-                title: "Ingredients",
-                subtitle: "Add your ingredients with quantities",
-                stepNumber: 3,
-                illustration: "cart.fill"
-            )
-            
-            cardContainer {
-                VStack(spacing: AppTheme.spacing12) {
-                    ForEach($ingredientItems) { $item in
-                        VStack(alignment: .leading, spacing: AppTheme.spacing8) {
-                            HStack(spacing: AppTheme.spacing8) {
-                                VStack(alignment: .leading, spacing: AppTheme.spacing2) {
-                                    Text("Ingredient")
-                                        .font(.caption2)
-                                        .foregroundColor(.secondary)
-                                    TextField("e.g. Chicken breast", text: $item.name)
-                                        .textFieldStyle(.roundedBorder)
-                                        .focused($focusedIngredientID, equals: item.id)
-                                }
-
-                                if ingredientItems.count > 1 {
-                                    Button(action: {
-                                        HapticManager.shared.light()
-                                        ingredientItems.removeAll { $0.id == item.id }
-                                    }) {
-                                        Image(systemName: "minus.circle.fill")
-                                            .foregroundColor(.red)
-                                            .font(.system(size: AppTheme.fontSize22))
-                                    }
-                                    .padding(.top, AppTheme.spacing14)
-                                }
-                            }
-
-                            if focusedIngredientID == item.id {
-                                let suggestions = ingredientAutocompleteSuggestions(for: item.name, excluding: ingredientItems.map { $0.name })
-
-                                if !suggestions.isEmpty {
-                                    VStack(alignment: .leading, spacing: AppTheme.spacing8) {
-                                        Text("Suggestions")
-                                            .font(.caption2)
-                                            .foregroundColor(.secondary)
-
-                                        VStack(spacing: AppTheme.spacing6) {
-                                            ForEach(suggestions, id: \.id) { suggestion in
-                                                Button(action: {
-                                                    $item.wrappedValue.name = suggestion.name
-                                                    HapticManager.shared.light()
-                                                }) {
-                                                    HStack(alignment: .center, spacing: AppTheme.spacing10) {
-                                                        VStack(alignment: .leading, spacing: AppTheme.spacing2) {
-                                                            Text(suggestion.name)
-                                                                .font(.subheadline)
-                                                                .foregroundColor(.primary)
-                                                                .lineLimit(1)
-
-                                                            Text("\(suggestion.category) · \(suggestion.source)")
-                                                                .font(.caption2)
-                                                                .foregroundColor(.secondary)
-                                                                .lineLimit(1)
-                                                        }
-
-                                                        Spacer(minLength: 0)
-
-                                                        Image(systemName: "arrow.up.left.circle.fill")
-                                                            .foregroundColor(AppTheme.accentColor(for: appTheme))
-                                                    }
-                                                    .padding(.vertical, AppTheme.spacing10)
-                                                    .padding(.horizontal, AppTheme.spacing12)
-                                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                                    .background(
-                                                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius10)
-                                                            .fill(Color(.systemGray6))
-                                                    )
-                                                }
-                                                .buttonStyle(.plain)
-                                            }
-                                        }
-                                    }
-                                    .padding(.top, AppTheme.spacing4)
-                                }
-                            }
-
-                            HStack(alignment: .top, spacing: AppTheme.spacing8) {
-                                VStack(alignment: .leading, spacing: AppTheme.spacing2) {
-                                    Text("Amount")
-                                        .font(.caption2)
-                                        .foregroundColor(.secondary)
-                                    TextField("0", text: $item.quantity)
-                                        .keyboardType(.decimalPad)
-                                        .textFieldStyle(.roundedBorder)
-                                        .frame(width: AppTheme.width70)
-                                }
-
-                                VStack(alignment: .leading, spacing: AppTheme.spacing2) {
-                                    Text("Unit")
-                                        .font(.caption2)
-                                        .foregroundColor(.secondary)
-                                    Picker("", selection: $item.unit) {
-                                        Text("none").tag("")
-                                        ForEach(cookingUnitGroups, id: \.group) { group in
-                                            Section(group.group) {
-                                                ForEach(group.units, id: \.self) { unit in
-                                                    Text(unit).tag(unit)
-                                                }
-                                            }
-                                        }
-                                    }
-                                    .pickerStyle(.menu)
-                                    .labelsHidden()
-                                    .frame(maxWidth: .infinity, minHeight: AppTheme.height34, alignment: .leading)
-                                    .padding(.horizontal, AppTheme.spacing6)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius6)
-                                            .fill(Color(.systemGray6))
-                                    )
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius6)
-                                            .stroke(Color(.systemGray4), lineWidth: 0.5)
-                                    )
-                                }
-                            }
-                        }
-                        .padding(.vertical, AppTheme.spacing4)
-
-                        if item.id != ingredientItems.last?.id {
-                            Divider()
-                        }
-                    }
-
-                    Button(action: {
-                        HapticManager.shared.light()
-                        let newItem = IngredientItem()
-                        ingredientItems.append(newItem)
-                        focusedIngredientID = newItem.id
-                    }) {
-                        Label("Add Ingredient", systemImage: "plus.circle.fill")
-                            .foregroundColor(AppTheme.accentColor(for: appTheme))
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                    }
-                }
-                .padding()
-            }
-        }
-    }
-
-    private func ingredientAutocompleteSuggestions(for query: String, excluding existingIngredients: [String]) -> [IngredientAutocompleteSuggestion] {
-        let excludedNames = Set(existingIngredients.map { $0.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() }.filter { !$0.isEmpty })
-
-        return IngredientAutocompleteEngine
-            .suggestions(for: query, limit: 4)
-            .filter { !excludedNames.contains($0.name.lowercased()) }
-    }
-    
-    private var prePrepStep: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacing24) {
-            stepHeader(
-                title: "Pre-prep Instructions",
-                subtitle: "Any prep work before cooking? (Optional)",
-                stepNumber: 4,
-                illustration: "list.bullet.clipboard.fill"
-            )
-            
-            cardContainer {
-                VStack(spacing: AppTheme.spacing12) {
-                    ForEach($prePrepSteps) { $step in
-                        VStack(alignment: .leading, spacing: AppTheme.spacing4) {
-                            HStack {
-                                Text("Step \(stepNumber(of: step, in: prePrepSteps))")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                
-                                Spacer()
-                                
-                                if prePrepSteps.count > 1 {
-                                    Button(action: {
-                                        HapticManager.shared.light()
-                                        prePrepSteps.removeAll { $0.id == step.id }
-                                    }) {
-                                        Image(systemName: "minus.circle.fill")
-                                            .foregroundColor(.red)
-                                    }
-                                }
-                            }
-                            
-                            TextField("Describe the pre-prep step", text: $step.text, axis: .vertical)
-                                .textFieldStyle(.roundedBorder)
-                                .lineLimit(2...5)
-                        }
-                        
-                        if step.id != prePrepSteps.last?.id {
-                            Divider()
-                        }
-                    }
-                    
-                    Button(action: {
-                        HapticManager.shared.light()
-                        prePrepSteps.append(EditableStep())
-                    }) {
-                        Label("Add Pre-prep Step", systemImage: "plus.circle.fill")
-                            .foregroundColor(AppTheme.accentColor(for: appTheme))
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                    }
-                }
-                .padding()
-            }
-        }
-    }
-    
-    private var instructionsStep: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacing24) {
-            stepHeader(
-                title: "Cooking Instructions",
-                subtitle: "Walk us through the cooking process",
-                stepNumber: 5,
-                illustration: "flame.fill"
-            )
-            
-            cardContainer {
-                VStack(spacing: AppTheme.spacing12) {
-                    ForEach($mainInstructions) { $step in
-                        VStack(alignment: .leading, spacing: AppTheme.spacing4) {
-                            HStack {
-                                Text("Step \(stepNumber(of: step, in: mainInstructions))")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                
-                                Spacer()
-                                
-                                if mainInstructions.count > 1 {
-                                    Button(action: {
-                                        HapticManager.shared.light()
-                                        mainInstructions.removeAll { $0.id == step.id }
-                                    }) {
-                                        Image(systemName: "minus.circle.fill")
-                                            .foregroundColor(.red)
-                                    }
-                                }
-                            }
-                            
-                            TextField("Describe this cooking step", text: $step.text, axis: .vertical)
-                                .textFieldStyle(.roundedBorder)
-                                .lineLimit(2...5)
-                        }
-                        
-                        if step.id != mainInstructions.last?.id {
-                            Divider()
-                        }
-                    }
-                    
-                    Button(action: {
-                        HapticManager.shared.light()
-                        mainInstructions.append(EditableStep())
-                    }) {
-                        Label("Add Cooking Step", systemImage: "plus.circle.fill")
-                            .foregroundColor(AppTheme.accentColor(for: appTheme))
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                    }
-                }
-                .padding()
-            }
-        }
-    }
-    
-    private var notesStep: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacing24) {
-            stepHeader(
-                title: "Final Notes",
-                subtitle: prefilledData?.notes != nil && !notes.isEmpty ? "Review notes or add your own" : "Any tips, variations, or additional notes? (Optional)",
-                stepNumber: 6,
-                illustration: "note.text"
-            )
-            
-            cardContainer {
-                VStack(spacing: AppTheme.spacing24) {
-                    if prefilledData?.notes != nil && !notes.isEmpty {
-                        HStack {
-                            Image(systemName: "info.circle.fill")
-                                .foregroundColor(.blue)
-                            Text("Pre-filled notes from recipe")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                            Spacer()
-                        }
-                        .padding(.bottom, AppTheme.spacing8)
-                    }
-                    
-                    ZStack(alignment: .topLeading) {
-                        if notes.isEmpty {
-                            VStack(alignment: .leading, spacing: AppTheme.spacing4) {
-                                Text("Add your notes here...")
-                                    .foregroundColor(.secondary.opacity(AppTheme.glassLightOpacity))
-                                    .padding(.horizontal, AppTheme.spacing4)
-                                    .padding(.vertical, AppTheme.spacing8)
-                                
-                                Text("Try adding:")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary.opacity(AppTheme.lowEmphasisOpacity))
-                                    .padding(.horizontal, AppTheme.spacing4)
-                                
-                                Text("• Substitution ideas")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary.opacity(AppTheme.lowEmphasisOpacity))
-                                    .padding(.horizontal, AppTheme.spacing4)
-                                Text("• Storage tips")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary.opacity(AppTheme.lowEmphasisOpacity))
-                                    .padding(.horizontal, AppTheme.spacing4)
-                                Text("• Serving suggestions")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary.opacity(AppTheme.lowEmphasisOpacity))
-                                    .padding(.horizontal, AppTheme.spacing4)
-                            }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .allowsHitTesting(false)
-                        }
-                        
-                        TextField("", text: $notes, axis: .vertical)
-                            .textFieldStyle(.plain)
-                            .lineLimit(8...15)
-                            .padding(AppTheme.spacing4)
-                    }
-                    .padding(AppTheme.spacing8)
-                    .background(Color(.systemGray6))
-                    .cornerRadius(AppTheme.cornerRadius8)
-                    
-                    VStack(alignment: .leading, spacing: AppTheme.spacing8) {
-                        Text("Quick Add:")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: AppTheme.spacing8) {
-                                quickNoteButton(icon: "leaf.fill", text: "Make it healthier", template: "💚 Healthier Option:\n• ")
-                                quickNoteButton(icon: "carrot.fill", text: "Make it vegan", template: "🌱 Vegan Version:\n• ")
-                                quickNoteButton(icon: "clock.fill", text: "Save time", template: "⏰ Time-Saving Tip:\n• ")
-                                quickNoteButton(icon: "arrow.triangle.swap", text: "Substitutions", template: "🔄 Substitutions:\n• ")
-                                quickNoteButton(icon: "snowflake", text: "Storage", template: "❄️ Storage:\n• ")
-                                quickNoteButton(icon: "star.fill", text: "Pro tip", template: "✨ Pro Tip:\n• ")
-                            }
-                        }
-                    }
-                }
-                
-                Divider()
-                    
-                    VStack(alignment: .leading, spacing: AppTheme.spacing12) {
-                        Text("Recipe Summary")
-                            .font(.headline)
-                        
-                        summaryRow(icon: "fork.knife", label: "Name", value: recipeName.isEmpty ? "—" : recipeName)
-                        summaryRow(icon: "tag", label: "Category", value: category)
-                        summaryRow(icon: "chart.bar", label: "Difficulty", value: difficulty)
-                        summaryRow(icon: "person.2", label: "Servings", value: "\(servings)")
-                        summaryRow(icon: "clock", label: "Prep Time", value: "\(prepTime) min")
-                        summaryRow(icon: "flame", label: "Cook Time", value: "\(cookTime) min")
-                        summaryRow(icon: "list.bullet", label: "Ingredients", value: "\(ingredientItems.filter { !$0.name.isEmpty }.count)")
-                        summaryRow(icon: "list.number", label: "Pre-prep Steps", value: "\(prePrepSteps.nonEmptyTexts.count)")
-                        summaryRow(icon: "list.number", label: "Cooking Steps", value: "\(mainInstructions.nonEmptyTexts.count)")
-                    }
-                .padding()
-            }
-        }
-    }
-    
-    private func quickNoteButton(icon: String, text: String, template: String) -> some View {
-        Button(action: {
-            HapticManager.shared.light()
-            if !notes.isEmpty {
-                notes += "\n\n"
-            }
-            notes += template
-        }) {
-            HStack(spacing: AppTheme.spacing4) {
-                Image(systemName: icon)
-                    .font(.caption)
-                Text(text)
-                    .font(.caption)
-            }
-            .padding(.horizontal, AppTheme.spacing12)
-            .padding(.vertical, AppTheme.spacing6)
-            .background(Color(.systemGray5))
-            .cornerRadius(AppTheme.cornerRadius16)
-        }
-        .buttonStyle(PlainButtonStyle())
-    }
-    
-    private func stepHeader(title: String, subtitle: String, stepNumber: Int, illustration: String) -> some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacing12) {
-            Text("Step \(stepNumber) of \(totalSteps)")
-                .font(.caption)
-                .fontWeight(.medium)
-                .adaptiveForegroundColor(opacity: AppTheme.highEmphasisOpacity)
-            
-            HStack(alignment: .top, spacing: AppTheme.spacing12) {
-                VStack(alignment: .leading, spacing: AppTheme.spacing8) {
-                    Text(title)
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .adaptiveForegroundColor()
-                    
-                    Text(subtitle)
-                        .font(.subheadline)
-                        .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                
-                Image(systemName: illustration)
-                    .font(.system(size: AppTheme.fontSize42, weight: .medium))
-                    .adaptiveForegroundColor(opacity: AppTheme.mediumEmphasisOpacity)
-                    .padding(.top, AppTheme.spacing2)
-            }
-        }
-    }
-    
-    private func summaryRow(icon: String, label: String, value: String) -> some View {
-        HStack(spacing: AppTheme.spacing12) {
-            Image(systemName: icon)
-                .adaptiveForegroundColor()
-                .frame(width: AppTheme.iconSize20)
-            
-            Text(label)
-                .foregroundColor(.secondary)
-            
-            Spacer()
-            
-            Text(value)
-                .fontWeight(.medium)
-        }
-        .font(.subheadline)
-    }
-    
-    private func cardContainer<Content: View>(@ViewBuilder content: () -> Content) -> some View {
-        Group {
-            if cardStyle == .solid {
-                content()
-                    .background(
-                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
-                            .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : .white)
-                    )
-            } else {
-                content()
-                    .background(
-                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
-                            .fill(.ultraThinMaterial)
-                    )
-            }
-        }
+    private var recipeSummary: WizardRecipeSummary {
+        WizardRecipeSummary(
+            name: recipeName,
+            category: category,
+            difficulty: difficulty,
+            servings: servings,
+            prepTime: prepTime,
+            cookTime: cookTime,
+            ingredientCount: ingredientItems.filter { !$0.name.isEmpty }.count,
+            prePrepStepCount: prePrepSteps.nonEmptyTexts.count,
+            cookingStepCount: mainInstructions.nonEmptyTexts.count
+        )
     }
     
     private var navigationButtons: some View {
@@ -986,18 +407,6 @@ struct RecipeWizardView: View {
         }
     }
 
-    private var recipeNameValidationMessage: String? {
-        let trimmed = recipeName.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return nil }
-
-        do {
-            try Validator.validateRecipeName(recipeName)
-            return nil
-        } catch {
-            return error.localizedDescription
-        }
-    }
-    
     private func createRecipe() {
         do {
             try Validator.validateRecipeName(recipeName)
