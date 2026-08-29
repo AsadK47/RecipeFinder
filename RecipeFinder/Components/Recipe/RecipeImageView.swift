@@ -26,19 +26,38 @@ struct RecipeImageView: View {
         .frame(height: height)
     }
 
+    /// Kingfisher source for remote URLs and locally-saved photos. Both are loaded
+    /// and decoded off the main thread and cached, so evaluating a card's `body`
+    /// never blocks on disk I/O or image decoding. Asset-catalog names (e.g. the
+    /// bundled sample images) fall through to `UIImage(named:)`, which UIKit caches.
+    private var kfSource: Source? {
+        guard let imageName = imageName, !imageName.isEmpty else { return nil }
+        if imageName.hasPrefix("http"), let url = URL(string: imageName) {
+            return .network(url)
+        }
+        // Imported / captured recipe photos are stored as absolute file paths.
+        if imageName.hasPrefix("/") {
+            return .provider(LocalFileImageDataProvider(fileURL: URL(fileURLWithPath: imageName)))
+        }
+        return nil
+    }
+
+    /// Downsample to the display size in pixels so a full-resolution photo isn't
+    /// decoded at native size into a small thumbnail.
+    private var targetPixelSize: CGSize {
+        let side = height * UIScreen.main.scale
+        return CGSize(width: side, height: side)
+    }
+
     @ViewBuilder
     private var imageContent: some View {
-        if let imageName = imageName, imageName.hasPrefix("http"), let url = URL(string: imageName) {
-            KFImage(url)
+        if let source = kfSource {
+            KFImage(source: source)
                 .placeholder { placeholder }
+                .setProcessor(DownsamplingImageProcessor(size: targetPixelSize))
+                .scaleFactor(UIScreen.main.scale)
+                .cacheOriginalImage()
                 .fade(duration: 0.25)
-                .resizable()
-                .scaledToFill()
-        } else if let imageName = imageName,
-                  !imageName.isEmpty,
-                  FileManager.default.fileExists(atPath: imageName),
-                  let uiImage = UIImage(contentsOfFile: imageName) {
-            Image(uiImage: uiImage)
                 .resizable()
                 .scaledToFill()
         } else if let imageName = imageName, !imageName.isEmpty, let uiImage = UIImage(named: imageName) {
@@ -56,6 +75,5 @@ struct RecipeImageView: View {
             .frame(maxWidth: .infinity)
             .overlay { imageContent }
             .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius16))
-            .drawingGroup()
     }
 }

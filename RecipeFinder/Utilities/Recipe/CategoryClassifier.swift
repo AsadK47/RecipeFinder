@@ -1,8 +1,15 @@
 import Foundation
 import SwiftUI
+import os
 
 enum CategoryClassifier {
-    
+
+    // Memoize categorization: each call scans the categorization rules with per-word
+    // keyword matching, and it runs per-item while grouping shopping-list rows during
+    // rendering. Lock-guarded so it's safe under Swift 6 strict concurrency.
+    private static let categoryCache = OSAllocatedUnfairLock(initialState: [String: String]())
+    private static let maxCategoryCacheSize = 500
+
     static let categoryOrder = [
         "Produce", "Meat", "Poultry", "Seafood", "Dairy & Eggs",
         "Bakery", "Grains & Pasta", "Legumes & Pulses", "Nuts & Seeds",
@@ -305,6 +312,10 @@ enum CategoryClassifier {
     static func categorize(_ itemName: String) -> String {
         let lowercased = itemName.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
 
+        if let cached = categoryCache.withLock({ $0[lowercased] }) {
+            return cached
+        }
+
         func matches(_ keywords: [String]) -> Bool {
             keywords.contains { keyword in
                 let k = keyword.lowercased()
@@ -319,9 +330,18 @@ enum CategoryClassifier {
             }
         }
 
-        return categorizationRules.first { matches($0.1) }?.0 ?? "Other"
+        let category = categorizationRules.first { matches($0.1) }?.0 ?? "Other"
+
+        categoryCache.withLock { storage in
+            if storage.count >= maxCategoryCacheSize {
+                storage.removeAll(keepingCapacity: true)
+            }
+            storage[lowercased] = category
+        }
+
+        return category
     }
-    
+
     static func suggestCategory(for partialInput: String) -> String {
         if partialInput.count < 3 {
             return "Other"

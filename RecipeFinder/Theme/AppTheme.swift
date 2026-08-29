@@ -1,4 +1,5 @@
  import SwiftUI
+import os
 
 private struct ThemeEnvironmentKey: EnvironmentKey {
     static let defaultValue: AppTheme.ThemeType = .teal
@@ -402,7 +403,23 @@ enum AppTheme {
         return tealBrightLight
     }
     
+    // Cache built gradients: `backgroundGradient` is called from every screen's
+    // `body`, so it re-runs on each render and tab switch. Lock-guarded for Swift 6
+    // strict concurrency (the previous `nonisolated(unsafe)` static was a data race).
+    private static let gradientCache = OSAllocatedUnfairLock(initialState: [String: LinearGradient]())
+
     static func backgroundGradient(for theme: ThemeType, colorScheme: ColorScheme) -> LinearGradient {
+        let cacheKey = "\(theme.rawValue)-\(colorScheme == .dark ? "dark" : "light")"
+        if let cached = gradientCache.withLock({ $0[cacheKey] }) {
+            return cached
+        }
+
+        let gradient = buildBackgroundGradient(for: theme, colorScheme: colorScheme)
+        gradientCache.withLock { $0[cacheKey] = gradient }
+        return gradient
+    }
+
+    private static func buildBackgroundGradient(for theme: ThemeType, colorScheme: ColorScheme) -> LinearGradient {
         let useDarkColors = (colorScheme == .dark)
         
         let gradient: LinearGradient
