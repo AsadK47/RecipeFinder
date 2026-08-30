@@ -224,6 +224,11 @@
 		F3E9D13F3043A8F9008BF231 /* IngredientCatalogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D13E3043A8F9008BF231 /* IngredientCatalogTests.swift */; };
 		F3E9D1413043A90E008BF231 /* IngredientRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1403043A90E008BF231 /* IngredientRow.swift */; };
 		F3E9D1433043A920008BF231 /* IngredientRecipeResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1423043A920008BF231 /* IngredientRecipeResultsView.swift */; };
+		F3E9D1463043AA7F008BF231 /* LegalComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1453043AA7F008BF231 /* LegalComponents.swift */; };
+		F3E9D1483043AA96008BF231 /* PrivacyPolicyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1473043AA96008BF231 /* PrivacyPolicyView.swift */; };
+		F3E9D14A3043AAB0008BF231 /* TermsOfServiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1493043AAB0008BF231 /* TermsOfServiceView.swift */; };
+		F3E9D14C3043AAC2008BF231 /* CompanyComplianceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D14B3043AAC2008BF231 /* CompanyComplianceView.swift */; };
+		F3E9D14E3043AAD4008BF231 /* LegalContactCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D14D3043AAD4008BF231 /* LegalContactCard.swift */; };
 		F3F941D630405E230067C6C8 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = F3F941D530405E230067C6C8 /* CLAUDE.md */; };
 /* End PBXBuildFile section */
 
@@ -497,6 +502,11 @@
 		F3E9D13E3043A8F9008BF231 /* IngredientCatalogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientCatalogTests.swift; sourceTree = "<group>"; };
 		F3E9D1403043A90E008BF231 /* IngredientRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientRow.swift; sourceTree = "<group>"; };
 		F3E9D1423043A920008BF231 /* IngredientRecipeResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientRecipeResultsView.swift; sourceTree = "<group>"; };
+		F3E9D1453043AA7F008BF231 /* LegalComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegalComponents.swift; sourceTree = "<group>"; };
+		F3E9D1473043AA96008BF231 /* PrivacyPolicyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyPolicyView.swift; sourceTree = "<group>"; };
+		F3E9D1493043AAB0008BF231 /* TermsOfServiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsOfServiceView.swift; sourceTree = "<group>"; };
+		F3E9D14B3043AAC2008BF231 /* CompanyComplianceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyComplianceView.swift; sourceTree = "<group>"; };
+		F3E9D14D3043AAD4008BF231 /* LegalContactCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegalContactCard.swift; sourceTree = "<group>"; };
 		F3F941D530405E230067C6C8 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1057,6 +1067,7 @@
 				9E4EF5D02EBB6A0600C3C0E7 /* LegalInformationView.swift */,
 				9E77ABF32EB4483100666BB0 /* SettingsView.swift */,
 				9E97EE943007958B00D35FAB /* Screens */,
+				F3E9D1443043AA7F008BF231 /* Legal */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -1345,6 +1356,18 @@
 			path = Wizard;
 			sourceTree = "<group>";
 		};
+		F3E9D1443043AA7F008BF231 /* Legal */ = {
+			isa = PBXGroup;
+			children = (
+				F3E9D1453043AA7F008BF231 /* LegalComponents.swift */,
+				F3E9D1473043AA96008BF231 /* PrivacyPolicyView.swift */,
+				F3E9D1493043AAB0008BF231 /* TermsOfServiceView.swift */,
+				F3E9D14B3043AAC2008BF231 /* CompanyComplianceView.swift */,
+				F3E9D14D3043AAD4008BF231 /* LegalContactCard.swift */,
+			);
+			path = Legal;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1530,6 +1553,7 @@
 				F36AED533040A5D700935A3C /* HTMLFetcher.swift in Sources */,
 				9E51C3A82EB40DC90064B917 /* AuthenticationView.swift in Sources */,
 				9E51C3972EB3E6540064B917 /* MealPlanningView.swift in Sources */,
+				F3E9D1483043AA96008BF231 /* PrivacyPolicyView.swift in Sources */,
 				F3E9D12530439F1D008BF231 /* RecipeNameStepView.swift in Sources */,
 				9E6C2C3A2FB477730083A08B /* AccountRowButton.swift in Sources */,
 				F3E9D10830434D43008BF231 /* MealTimeCard.swift in Sources */,
@@ -1541,6 +1565,7 @@
 				9E40CAF12EB9891700ED9594 /* ShoppingListModel.swift in Sources */,
 				F3E9D13D3043A8CB008BF231 /* IngredientCatalog.swift in Sources */,
 				9E48ADA22F22484E00CF840F /* BackupReminderManager.swift in Sources */,
+				F3E9D1463043AA7F008BF231 /* LegalComponents.swift in Sources */,
 				9E6C2C422FB477A80083A08B /* StatBadge.swift in Sources */,
 				9E40CAEF2EB9882700ED9594 /* KitchenInventoryModel.swift in Sources */,
 				9E0C88662EBAEB1E00D707E3 /* FaceIDOnboardingSplash.swift in Sources */,
@@ -1584,6 +1609,7 @@
 				F3E9D1413043A90E008BF231 /* IngredientRow.swift in Sources */,
 				9E6C2C1C2FB394290083A08B /* BadgeManager.swift in Sources */,
 				9E5B39972FACFF9000C96DB3 /* KitchenQuickAddSheet.swift in Sources */,
+				F3E9D14E3043AAD4008BF231 /* LegalContactCard.swift in Sources */,
 				9E5B39982FACFF9000C96DB3 /* ShoppingQuickAddSheet.swift in Sources */,
 				F3E9D12D30439F88008BF231 /* NotesStepView.swift in Sources */,
 				F3E9D12730439F2C008BF231 /* BasicInfoStepView.swift in Sources */,
@@ -1616,6 +1642,7 @@
 				9E6DEA942EF5EFE8001E7B24 /* Constants.swift in Sources */,
 				9E1E26142FBA09F80002A220 /* RecipeImportBuilder.swift in Sources */,
 				9E97EEA83007962900D35FAB /* HelpView.swift in Sources */,
+				F3E9D14C3043AAC2008BF231 /* CompanyComplianceView.swift in Sources */,
 				F3E9D12F3043A5BE008BF231 /* RecipeParser+StructuredData.swift in Sources */,
 				9E97EE983007959600D35FAB /* AppearanceSettingsView.swift in Sources */,
 				9E6DEA952EF5EFE8001E7B24 /* AdaptiveSpacing.swift in Sources */,
@@ -1644,6 +1671,7 @@
 				F3E9D12B30439F56008BF231 /* EditableStepsStepView.swift in Sources */,
 				9E5B39882FABC4B700C96DB3 /* FilterChip.swift in Sources */,
 				F3E9D12930439F49008BF231 /* IngredientsStepView.swift in Sources */,
+				F3E9D14A3043AAB0008BF231 /* TermsOfServiceView.swift in Sources */,
 				9E0946202F0415F40072BDFE /* UserScopedStorage.swift in Sources */,
 				9E5542CA2FD20F1700856DC5 /* RecipeTimerManager.swift in Sources */,
 				F3E9D11830434E01008BF231 /* PlannedMealsSection.swift in Sources */,
