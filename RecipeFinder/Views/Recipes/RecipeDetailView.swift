@@ -19,38 +19,38 @@ struct RecipeDetailView: View {
     @AppStorage("measurementSystem") private var measurementSystem: MeasurementSystem = .metric
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
-    
+
     private var hasPrePrep: Bool { !recipe.prePrepInstructions.isEmpty }
     private var hasNotes: Bool { !recipe.notes.isEmpty }
-    
+
     var onFavoriteToggle: (() -> Void)?
-    
+
     init(recipe: RecipeModel, onFavoriteToggle: (() -> Void)? = nil) {
         _recipe = State(initialValue: recipe)
         self.onFavoriteToggle = onFavoriteToggle
-        
+
         _ingredientsState = State(initialValue: Array(repeating: false, count: recipe.ingredients.count))
         _instructionsState = State(initialValue: Array(repeating: false, count: recipe.instructions.count))
         _prePrepState = State(initialValue: Array(repeating: false, count: recipe.prePrepInstructions.count))
     }
-    
+
     var body: some View {
         GeometryReader { geometry in
             ZStack {
                 backgroundView
-                
+
                 ScrollView([.vertical], showsIndicators: true) {
                     VStack(spacing: 0) {
                         recipeTitleView
                         recipeInfoCardsView
                         ingredientsSection
-                        
+
                         if hasPrePrep {
                             prePrepSection
                         }
-                        
+
                         instructionsSection
-                        
+
                         if hasNotes {
                             notesSection
                         }
@@ -64,7 +64,15 @@ struct RecipeDetailView: View {
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                toolbarButtons
+                RecipeDetailToolbar(
+                    recipe: recipe,
+                    recipeTimer: recipeTimer,
+                    colorScheme: colorScheme,
+                    onSetTimer: { showTimerSheet = true },
+                    onEdit: { showEditSheet = true },
+                    onAddAllToShopping: addAllIngredientsToShoppingList,
+                    onToggleFavorite: toggleFavorite
+                )
             }
         }
         .sheet(isPresented: $showEditSheet) {
@@ -93,12 +101,12 @@ struct RecipeDetailView: View {
             }
         }
     }
-    
+
     private var backgroundView: some View {
         AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
             .ignoresSafeArea()
     }
-    
+
     private var recipeTitleView: some View {
         VStack(spacing: AppTheme.spacing12) {
             if let imageName = recipe.imageName, !imageName.isEmpty {
@@ -116,16 +124,16 @@ struct RecipeDetailView: View {
         }
         .padding(.horizontal, AppTheme.spacing20)
     }
-    
+
     private var recipeInfoCardsView: some View {
         VStack(spacing: AppTheme.spacing16) {
             timeInfoCard
             detailsInfoCard
-            servingsCard
+            RecipeServingsCard(recipe: $recipe)
         }
         .padding(.horizontal, AppTheme.spacing20)
     }
-    
+
     private var timeInfoCard: some View {
         GlassCard {
             InfoPairView(
@@ -135,7 +143,7 @@ struct RecipeDetailView: View {
             .padding()
         }
     }
-    
+
     private var detailsInfoCard: some View {
         GlassCard {
             InfoPairView(
@@ -145,243 +153,60 @@ struct RecipeDetailView: View {
             .padding()
         }
     }
-    
-    private var servingsCard: some View {
-        GlassCard {
-            VStack(spacing: AppTheme.spacing16) {
-                HStack {
-                    servingsDisplay
-                    
-                    Divider()
-                        .frame(height: AppTheme.height60)
-                        .padding(.horizontal)
-                    
-                    servingsControls
-                }
-                
-                Divider()
-                    .background(Color.white.opacity(AppTheme.shadowDarkOpacity))
-                
-                quickScaleButtons
-            }
-            .padding()
-        }
-    }
-    
-    private var servingsDisplay: some View {
-        VStack(spacing: AppTheme.spacing8) {
-            Image(systemName: "person.2.fill")
-                .font(.title2)
-                .foregroundColor(.cyan)
-                .accessibilityHidden(true)
-            Text("Servings")
-                .font(.caption)
-                .foregroundColor(.primary)
-                .accessibilityHidden(true)
-            
-            HStack(spacing: AppTheme.spacing4) {
-                Text("\(recipe.currentServings)")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundColor(.primary)
-                
-                if recipe.currentServings != recipe.baseServings {
-                    Text("(\(String(format: "%.1fx", recipe.scaleFactor)))")
-                        .font(.caption)
-                        .foregroundColor(AppTheme.accentColor)
-                }
-            }
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel("Current servings: \(recipe.currentServings)")
-            .accessibilityValue(recipe.currentServings != recipe.baseServings ? "Scaled \(String(format: "%.1f", recipe.scaleFactor)) times from base" : "Base servings")
-        }
-        .frame(maxWidth: .infinity)
-    }
-    
-    private var servingsControls: some View {
-        HStack(spacing: AppTheme.spacing12) {
-            servingsButton(icon: "minus", action: decreaseServings, isEnabled: recipe.currentServings > 1)
-            servingsButton(icon: "plus", action: increaseServings, isEnabled: true)
-        }
-        .frame(maxWidth: .infinity)
-    }
-    
-    private var quickScaleButtons: some View {
-        HStack(spacing: AppTheme.spacing8) {
-            quickScaleButton(label: "½x", multiplier: 0.5)
-            quickScaleButton(label: "1x", multiplier: 1.0)
-            quickScaleButton(label: "2x", multiplier: 2.0)
-            quickScaleButton(label: "3x", multiplier: 3.0)
-        }
-        .frame(maxWidth: .infinity)
-    }
-    
-    private func quickScaleButton(label: String, multiplier: Double) -> some View {
-        let targetServings = Int(Double(recipe.baseServings) * multiplier)
-        let isActive = recipe.currentServings == targetServings
-        
-        return Button(action: {
-            HapticManager.shared.light()
-            withAnimation(.spring(response: 0.3)) {
-                recipe.updateServings(to: targetServings)
-            }
-        }) {
-            Text(label)
-                .font(.subheadline)
-                .fontWeight(isActive ? .bold : .medium)
-                .foregroundColor(isActive ? .white : .primary)
-                .frame(maxWidth: .infinity)
-                .frame(height: AppTheme.height36)
-                .background(
-                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius8)
-                        .fill(isActive ? AppTheme.accentColor : Color.white.opacity(0.15))
-                )
-        }
-        .accessibilityLabel("Scale to \(label)")
-        .accessibilityValue(isActive ? "Active" : "Inactive")
-        .accessibilityHint("Sets servings to \(targetServings)")
-        .accessibilityAddTraits(.isButton)
-    }
-    
-    private func servingsButton(icon: String, action: @escaping () -> Void, isEnabled: Bool) -> some View {
-        Button(action: action) {
-            Image(systemName: icon)
-                .font(.system(size: AppTheme.fontSize18, weight: .semibold))
-                .adaptiveForegroundColor()
-                .frame(width: AppTheme.buttonHeight, height: AppTheme.height44)
-                .background(Circle().fill(isEnabled ? AppTheme.accentColor : Color.gray))
-        }
-        .disabled(!isEnabled)
-        .accessibilityLabel(icon == "minus" ? "Decrease servings" : "Increase servings")
-        .accessibilityHint(icon == "minus" ? "Reduces serving size by one" : "Increases serving size by one")
-        .accessibilityAddTraits(.isButton)
-    }
-    
+
     private var ingredientsSection: some View {
-        VStack(alignment: .leading, spacing: AppTheme.spacing12) {
-            ingredientsSectionHeader
-            
-            if expandedSections.contains("Ingredients") {
-                ingredientsList
-                    .transition(.asymmetric(
-                        insertion: .scale(scale: AppTheme.transitionScaleDown).combined(with: .opacity),
-                        removal: .scale(scale: AppTheme.transitionScaleDown).combined(with: .opacity)
-                    ))
-            }
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.horizontal, AppTheme.spacing20)
-    }
-    
-    private var ingredientsSectionHeader: some View {
-        HStack(spacing: AppTheme.spacing8) {
-            Button(action: { toggleSection("Ingredients") }) {
-                HStack(spacing: AppTheme.spacing8) {
-                    Image(systemName: "leaf.fill")
-                        .adaptiveForegroundColor()
-                        .font(.title3)
-                    Text("Ingredients")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .adaptiveForegroundColor()
-                }
-            }
-            .buttonStyle(PlainButtonStyle())
-            
-            Spacer()
-            
-            measurementToggle
-            chevronButton(for: "Ingredients")
-        }
-        .padding(.top, AppTheme.spacing24)
-    }
-    
-    private var measurementToggle: some View {
-        Button(action: toggleMeasurementSystem) {
-            HStack(spacing: AppTheme.spacing6) {
-                Image(systemName: measurementSystem.icon)
-                    .font(.caption)
-                Text(measurementSystem.rawValue)
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-            }
-            .adaptiveForegroundColor()
-            .padding(.horizontal, AppTheme.spacing12)
-            .padding(.vertical, AppTheme.spacing6)
-            .background(
-                RoundedRectangle(cornerRadius: AppTheme.cornerRadius8)
-                    .fill(colorScheme == .dark ? Color.white.opacity(AppTheme.overlayLightOpacity) : Color.black.opacity(AppTheme.dividerOpacity))
-            )
-        }
-        .buttonStyle(PlainButtonStyle())
-        .accessibilityLabel("Measurement system")
-        .accessibilityValue(measurementSystem.rawValue)
-        .accessibilityHint("Double tap to switch between metric and imperial units")
-    }
-    
-    private func chevronButton(for section: String) -> some View {
-        Button(action: { toggleSection(section) }) {
-            Image(systemName: "chevron.down")
-                .font(.title3)
-                .fontWeight(.semibold)
-                .foregroundColor(AppTheme.adaptiveHighEmphasis(for: colorScheme))
-                .rotationEffect(.degrees(expandedSections.contains(section) ? 0 : -90))
-                .animation(.spring(response: 0.3), value: expandedSections.contains(section))
-        }
-        .buttonStyle(PlainButtonStyle())
-        .accessibilityLabel(expandedSections.contains(section) ? "Collapse \(section)" : "Expand \(section)")
-        .accessibilityHint("Double tap to \(expandedSections.contains(section) ? "collapse" : "expand") \(section) section")
-        .accessibilityAddTraits(.isButton)
-    }
-    
-    private var ingredientsList: some View {
-        GlassCard {
-            VStack(spacing: AppTheme.spacing16) {
-                ForEach(recipe.ingredients.indices, id: \.self) { index in
-                    IngredientRowView(
-                        ingredient: recipe.ingredients[index],
-                        isChecked: ingredientsState[index],
-                        toggle: { 
-                            HapticManager.shared.light()
-                            ingredientsState[index].toggle()
-                            checkForCompletion()
-                        },
-                        scaleFactor: recipe.scaleFactor,
-                        measurementSystem: measurementSystem,
-                        onAddToShopping: {
-                            addIngredientToShoppingList(recipe.ingredients[index])
-                        },
-                        isInShoppingList: isIngredientInShoppingList(recipe.ingredients[index]),
-                        onTapQuantity: {
-                            startEditingIngredient(at: index)
-                        }
-                    )
-                }
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(AppTheme.spacing24)
-        }
+        RecipeIngredientsSection(
+            recipe: recipe,
+            ingredientsState: ingredientsState,
+            measurementSystem: measurementSystem,
+            isExpanded: expandedSections.contains("Ingredients"),
+            colorScheme: colorScheme,
+            onToggleSection: { toggleSection("Ingredients") },
+            onToggleMeasurement: toggleMeasurementSystem,
+            onToggleIngredient: { index in
+                HapticManager.shared.light()
+                ingredientsState[index].toggle()
+                checkForCompletion()
+            },
+            onAddToShopping: { index in
+                addIngredientToShoppingList(recipe.ingredients[index])
+            },
+            isInShoppingList: { isIngredientInShoppingList($0) },
+            onEditIngredient: { index in startEditingIngredient(at: index) }
+        )
         .sheet(item: Binding(
             get: { editingIngredientIndex.map { EditingIngredient(index: $0) } },
             set: { editingIngredientIndex = $0?.index }
         )) { editingItem in
-            ingredientEditSheet(for: editingItem.index)
+            IngredientEditSheet(
+                ingredientName: recipe.ingredients[editingItem.index].name,
+                editingQuantity: $editingQuantity,
+                editingUnit: $editingUnit,
+                onCancel: { editingIngredientIndex = nil },
+                onSave: { saveIngredientEdit(at: editingItem.index) }
+            )
         }
     }
-    
+
     private struct EditingIngredient: Identifiable {
         let index: Int
         var id: Int { index }
     }
-    
+
     private var prePrepSection: some View {
-        collapsibleSection(title: "Pre-Prep", icon: "list.clipboard") {
+        RecipeChecklistSection(
+            title: "Pre-Prep",
+            icon: "list.clipboard",
+            isExpanded: expandedSections.contains("Pre-Prep"),
+            colorScheme: colorScheme,
+            onToggle: { toggleSection("Pre-Prep") }
+        ) {
             VStack(alignment: .leading, spacing: AppTheme.spacing24) {
                 ForEach(recipe.prePrepInstructions.indices, id: \.self) { index in
-                    instructionRow(
+                    RecipeInstructionRow(
                         text: recipe.prePrepInstructions[index],
                         isChecked: prePrepState[index],
-                        toggle: { 
+                        toggle: {
                             HapticManager.shared.light()
                             prePrepState[index].toggle()
                             checkForCompletion()
@@ -391,15 +216,21 @@ struct RecipeDetailView: View {
             }
         }
     }
-    
+
     private var instructionsSection: some View {
-        collapsibleSection(title: "Instructions", icon: "text.alignleft") {
+        RecipeChecklistSection(
+            title: "Instructions",
+            icon: "text.alignleft",
+            isExpanded: expandedSections.contains("Instructions"),
+            colorScheme: colorScheme,
+            onToggle: { toggleSection("Instructions") }
+        ) {
             VStack(alignment: .leading, spacing: AppTheme.spacing24) {
                 ForEach(recipe.instructions.indices, id: \.self) { index in
-                    instructionRow(
+                    RecipeInstructionRow(
                         text: recipe.instructions[index],
                         isChecked: instructionsState[index],
-                        toggle: { 
+                        toggle: {
                             HapticManager.shared.light()
                             instructionsState[index].toggle()
                             checkForCompletion()
@@ -409,10 +240,16 @@ struct RecipeDetailView: View {
             }
         }
     }
-    
+
     private var notesSection: some View {
-        collapsibleSection(title: "Notes", icon: "note.text") {
-            Text(notesAttributedString)
+        RecipeChecklistSection(
+            title: "Notes",
+            icon: "note.text",
+            isExpanded: expandedSections.contains("Notes"),
+            colorScheme: colorScheme,
+            onToggle: { toggleSection("Notes") }
+        ) {
+            Text(RecipeNotesFormatter.attributedString(from: recipe.notes))
                 .font(.subheadline)
                 .foregroundColor(.primary)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -420,92 +257,6 @@ struct RecipeDetailView: View {
         }
     }
 
-    private var notesAttributedString: AttributedString {
-        var attributed = AttributedString(recipe.notes)
-        let detector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
-        let raw = recipe.notes
-        let matches = detector?.matches(in: raw, range: NSRange(raw.startIndex..., in: raw)) ?? []
-        for match in matches {
-            guard let url = match.url,
-                  let range = Range(match.range, in: raw),
-                  let attrRange = Range(range, in: attributed) else { continue }
-            attributed[attrRange].link = url
-            attributed[attrRange].foregroundColor = .accentColor
-            attributed[attrRange].underlineStyle = .single
-        }
-        return attributed
-    }
-    
-    private var toolbarButtons: some View {
-        HStack(spacing: AppTheme.spacing16) {
-            if recipeTimer.isActive {
-                Menu {
-                    Button(action: { showTimerSheet = true }) {
-                        Label("Set New Timer", systemImage: "clock")
-                    }
-
-                    Divider()
-
-                    Button(action: { recipeTimer.togglePause() }) {
-                        Label(recipeTimer.isPaused ? "Resume" : "Pause", systemImage: recipeTimer.isPaused ? "play.fill" : "pause.fill")
-                    }
-
-                    Button(role: .destructive, action: { recipeTimer.stop() }) {
-                        Label("Stop", systemImage: "stop.fill")
-                    }
-                } label: {
-                    Text(recipeTimer.displayTime)
-                        .font(.system(.subheadline, design: .monospaced).weight(.semibold))
-                        .adaptiveForegroundColor()
-                        .padding(.horizontal, AppTheme.spacing10)
-                        .padding(.vertical, AppTheme.spacing4)
-                        .background(
-                            Capsule()
-                                .fill(colorScheme == .dark ? Color.white.opacity(AppTheme.overlayLightOpacity) : Color.black.opacity(AppTheme.dividerOpacity))
-                        )
-                }
-                .accessibilityLabel("Recipe timer")
-                .accessibilityHint("Open timer actions")
-            } else {
-                Button(action: { showTimerSheet = true }) {
-                    Image(systemName: "timer")
-                        .font(.title3)
-                        .adaptiveForegroundColor()
-                }
-                .accessibilityLabel("Set recipe timer")
-            }
-            
-            Button(action: { showEditSheet = true }) {
-                Image(systemName: "pencil")
-                    .font(.title3)
-                    .adaptiveForegroundColor()
-            }
-            
-            ShareLink(item: recipe.shareText, subject: Text(recipe.name)) {
-                Image(systemName: "square.and.arrow.up")
-                    .font(.title3)
-                    .adaptiveForegroundColor()
-            }
-            .accessibilityLabel("Share recipe")
-            .accessibilityHint("Share this recipe as text")
-
-            Button(action: addAllIngredientsToShoppingList) {
-                Image(systemName: "cart.badge.plus")
-                    .font(.title3)
-                    .adaptiveForegroundColor()
-            }
-            .disabled(recipe.ingredients.isEmpty)
-            .accessibilityLabel("Add all ingredients to shopping list")
-            .accessibilityHint("Adds every ingredient from this recipe in one tap")
-            
-            Button(action: toggleFavorite) {
-                Image(systemName: recipe.isFavorite ? "heart.fill" : "heart")
-                    .font(.title3)
-                    .foregroundColor(recipe.isFavorite ? .red : .white)
-            }
-        }
-    }
-    
     private var editRecipeSheet: some View {
         RecipeWizardView(
             prefilledData: RecipeWizardView.PrefilledRecipeData(
@@ -531,7 +282,7 @@ struct RecipeDetailView: View {
             }
         )
     }
-    
+
     @ViewBuilder
     private var feedbackOverlay: some View {
         if let feedback = showAddedFeedback {
@@ -554,7 +305,7 @@ struct RecipeDetailView: View {
             .opacity(showAddedFeedback != nil ? 1 : 0)
         }
     }
-    
+
     private func toggleSection(_ section: String) {
         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
             if expandedSections.contains(section) {
@@ -564,139 +315,46 @@ struct RecipeDetailView: View {
             }
         }
     }
-    
+
     private func toggleMeasurementSystem() {
         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
             measurementSystem = measurementSystem == .metric ? .imperial : .metric
             HapticManager.shared.selection()
         }
     }
-    
-    private func decreaseServings() {
-        if recipe.currentServings > 1 {
-            HapticManager.shared.light()
-            withAnimation(.spring(response: 0.3)) {
-                recipe.currentServings -= 1
-            }
-        }
-    }
-    
-    private func increaseServings() {
-        HapticManager.shared.light()
-        withAnimation(.spring(response: 0.3)) {
-            recipe.currentServings += 1
-        }
-    }
-    
+
     private func checkForCompletion(_ instructionsState: [Bool]) {
         let allIngredientsChecked = ingredientsState.allSatisfy({ $0 })
         let allPrePrepChecked = hasPrePrep ? prePrepState.allSatisfy({ $0 }) : true
         let allInstructionsChecked = instructionsState.allSatisfy({ $0 })
-        
+
         if allIngredientsChecked && allPrePrepChecked && allInstructionsChecked {
             HapticManager.shared.success()
             confettiCounter += 1
         }
     }
-    
+
     private func checkForCompletion() {
         checkForCompletion(instructionsState)
     }
-    
-    private func collapsibleSection<Content: View>(title: String, icon: String, @ViewBuilder content: () -> Content) -> some View {
-        let isExpanded = expandedSections.contains(title)
-        
-        return VStack(alignment: .leading, spacing: AppTheme.spacing12) {
-            Button(
-                action: {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        if isExpanded {
-                            expandedSections.remove(title)
-                        } else {
-                            expandedSections.insert(title)
-                        }
-                    }
-                },
-                label: {
-                    HStack(spacing: AppTheme.spacing8) {
-                        Image(systemName: icon)
-                            .adaptiveForegroundColor()
-                            .font(.title3)
-                        Text(title)
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .adaptiveForegroundColor()
-                        
-                        Spacer()
-                        
-                        Image(systemName: "chevron.down")
-                            .font(.title3)
-                            .fontWeight(.semibold)
-                            .foregroundColor(AppTheme.adaptiveHighEmphasis(for: colorScheme))
-                            .rotationEffect(.degrees(isExpanded ? 0 : -90))
-                            .animation(.spring(response: 0.3), value: isExpanded)
-                    }
-                    .padding(.top, AppTheme.spacing24)
-                }
-            )
-            .buttonStyle(PlainButtonStyle())
-            
-            if isExpanded {
-                GlassCard {
-                    content()
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(AppTheme.spacing24)
-                }
-                .transition(.asymmetric(
-                    insertion: .scale(scale: AppTheme.transitionScaleDown).combined(with: .opacity),
-                    removal: .scale(scale: AppTheme.transitionScaleDown).combined(with: .opacity)
-                ))
-            }
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.horizontal, AppTheme.spacing20)
-    }
-    
-    private func instructionRow(text: String, isChecked: Bool, toggle: @escaping () -> Void) -> some View {
-        Button(action: toggle, label: {
-            HStack(alignment: .center, spacing: AppTheme.spacing12) {
-                Text(text)
-                    .font(.body)
-                    .foregroundColor(.primary)
-                    .strikethrough(isChecked, color: .primary)
-                    .opacity(isChecked ? 0.5 : 1.0)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .multilineTextAlignment(.leading)
-                
-                Spacer()
-                
-                Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: AppTheme.fontSize22))
-                    .foregroundColor(isChecked ? .green : .gray.opacity(AppTheme.lowEmphasisOpacity))
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .contentShape(Rectangle())
-        })
-        .buttonStyle(.plain)
-    }
-    
+
     private func addIngredientToShoppingList(_ ingredient: Ingredient) {
         HapticManager.shared.light()
-        
+
         let normalizedName = IngredientNormalizer.normalize(ingredient.mainIngredientName)
-        
+
         ShoppingListManager.shared.addItem(name: normalizedName, quantity: 1, category: nil)
-        
+
         addedIngredients.insert(ingredient.name)
-        
+
         showAddedFeedback = normalizedName
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayXLong) {
             withAnimation(.easeOut(duration: AppTheme.animationDuration08)) {
                 showAddedFeedback = nil
             }
         }
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayFeedback) {
             withAnimation {
                 _ = addedIngredients.remove(ingredient.name)
@@ -737,14 +395,14 @@ struct RecipeDetailView: View {
             }
         }
     }
-    
+
     private func isIngredientInShoppingList(_ ingredient: Ingredient) -> Bool {
         if addedIngredients.contains(ingredient.name) {
             return true
         }
         return false
     }
-    
+
     private func startEditingIngredient(at index: Int) {
         HapticManager.shared.light()
         let ingredient = recipe.ingredients[index]
@@ -752,13 +410,13 @@ struct RecipeDetailView: View {
         editingUnit = ingredient.unit
         editingIngredientIndex = index
     }
-    
+
     private func saveIngredientEdit(at index: Int) {
         guard let quantity = Double(editingQuantity), quantity > 0 else {
             editingIngredientIndex = nil
             return
         }
-        
+
         let updatedIngredient = recipe.ingredients[index]
         let newIngredient = Ingredient(
             id: updatedIngredient.id,
@@ -766,97 +424,21 @@ struct RecipeDetailView: View {
             unit: editingUnit,
             name: updatedIngredient.name
         )
-        
+
         recipe.ingredients[index] = newIngredient
-        
+
         PersistenceController.shared.updateRecipe(recipe)
-        
+
         editingIngredientIndex = nil
         HapticManager.shared.success()
     }
-    
-    private let cookingUnits: [(group: String, units: [String])] = [
-        ("Volume – Metric",   ["ml", "cl", "dl", "l"]),
-        ("Volume – Imperial", ["tsp", "tbsp", "fl oz", "cup", "pt", "qt", "gal"]),
-        ("Weight – Metric",   ["g", "kg"]),
-        ("Weight – Imperial", ["oz", "lb"]),
-        ("Count & Other",     ["piece", "whole", "slice", "clove", "can", "jar",
-                               "package", "bunch", "sprig", "leaf", "sheet",
-                               "pinch", "dash", "drop", "handful"]),
-    ]
 
-    private var allUnits: [String] {
-        cookingUnits.flatMap { $0.units }
-    }
-
-    private func groupLabel(for unit: String) -> String {
-        cookingUnits.first { $0.units.contains(unit) }?.group ?? "Other"
-    }
-
-    private func ingredientEditSheet(for index: Int) -> some View {
-        NavigationStack {
-            Form {
-                Section {
-                    Text(recipe.ingredients[index].name)
-                        .font(.headline)
-                } header: {
-                    Text("Ingredient")
-                }
-
-                Section {
-                    HStack {
-                        Text("Amount")
-                        Spacer()
-                        TextField("0", text: $editingQuantity)
-                            .keyboardType(.decimalPad)
-                            .multilineTextAlignment(.trailing)
-                            .frame(width: AppTheme.width80)
-                    }
-
-                    Picker("Unit", selection: $editingUnit) {
-                        Text("none").tag("")
-                        ForEach(cookingUnits, id: \.group) { group in
-                            Section(group.group) {
-                                ForEach(group.units, id: \.self) { unit in
-                                    Text(unit).tag(unit)
-                                }
-                            }
-                        }
-                    }
-                } header: {
-                    Text("Quantity")
-                } footer: {
-                    if !editingUnit.isEmpty {
-                        Text("Group: \(groupLabel(for: editingUnit))")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            }
-            .navigationTitle("Edit Ingredient")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
-                        editingIngredientIndex = nil
-                    }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        saveIngredientEdit(at: index)
-                    }
-                    .fontWeight(.semibold)
-                }
-            }
-        }
-    }
-    
     private func toggleFavorite() {
         HapticManager.shared.light()
         recipe.isFavorite.toggle()
-        
+
         PersistenceController.shared.toggleFavorite(withId: recipe.id)
-        
+
         onFavoriteToggle?()
     }
 }
