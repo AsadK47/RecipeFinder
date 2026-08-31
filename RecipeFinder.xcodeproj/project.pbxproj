@@ -255,6 +255,12 @@
 		F3E9D186304454EE008BF231 /* FilterPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D185304454EE008BF231 /* FilterPill.swift */; };
 		F3E9D18830445503008BF231 /* FiltersSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D18730445503008BF231 /* FiltersSheet.swift */; };
 		F3E9D18A30445512008BF231 /* CookingTipCategoryGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D18930445512008BF231 /* CookingTipCategoryGrid.swift */; };
+		F3E9D18C304515E5008BF231 /* AuthenticationManager+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D18B304515E5008BF231 /* AuthenticationManager+Models.swift */; };
+		F3E9D18E304515FA008BF231 /* AuthenticationManager+Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D18D304515FA008BF231 /* AuthenticationManager+Session.swift */; };
+		F3E9D1903045161A008BF231 /* AuthenticationManager+EmailAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D18F3045161A008BF231 /* AuthenticationManager+EmailAuth.swift */; };
+		F3E9D19230451626008BF231 /* AuthenticationManager+Biometrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D19130451626008BF231 /* AuthenticationManager+Biometrics.swift */; };
+		F3E9D1943045163A008BF231 /* AuthenticationManager+UserStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1933045163A008BF231 /* AuthenticationManager+UserStore.swift */; };
+		F3E9D1963045164E008BF231 /* AuthenticationManager+AppleSignIn.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1953045164E008BF231 /* AuthenticationManager+AppleSignIn.swift */; };
 		F3F941D630405E230067C6C8 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = F3F941D530405E230067C6C8 /* CLAUDE.md */; };
 /* End PBXBuildFile section */
 
@@ -559,6 +565,12 @@
 		F3E9D185304454EE008BF231 /* FilterPill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterPill.swift; sourceTree = "<group>"; };
 		F3E9D18730445503008BF231 /* FiltersSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiltersSheet.swift; sourceTree = "<group>"; };
 		F3E9D18930445512008BF231 /* CookingTipCategoryGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookingTipCategoryGrid.swift; sourceTree = "<group>"; };
+		F3E9D18B304515E5008BF231 /* AuthenticationManager+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AuthenticationManager+Models.swift"; sourceTree = "<group>"; };
+		F3E9D18D304515FA008BF231 /* AuthenticationManager+Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AuthenticationManager+Session.swift"; sourceTree = "<group>"; };
+		F3E9D18F3045161A008BF231 /* AuthenticationManager+EmailAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AuthenticationManager+EmailAuth.swift"; sourceTree = "<group>"; };
+		F3E9D19130451626008BF231 /* AuthenticationManager+Biometrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AuthenticationManager+Biometrics.swift"; sourceTree = "<group>"; };
+		F3E9D1933045163A008BF231 /* AuthenticationManager+UserStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AuthenticationManager+UserStore.swift"; sourceTree = "<group>"; };
+		F3E9D1953045164E008BF231 /* AuthenticationManager+AppleSignIn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AuthenticationManager+AppleSignIn.swift"; sourceTree = "<group>"; };
 		F3F941D530405E230067C6C8 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1005,6 +1017,12 @@
 				9E6DEA9E2EF5F053001E7B24 /* MealPlanningManager.swift */,
 				9E6DEA9F2EF5F053001E7B24 /* NotesManager.swift */,
 				9E6DEAA02EF5F053001E7B24 /* ShoppingListManager.swift */,
+				F3E9D18B304515E5008BF231 /* AuthenticationManager+Models.swift */,
+				F3E9D18D304515FA008BF231 /* AuthenticationManager+Session.swift */,
+				F3E9D18F3045161A008BF231 /* AuthenticationManager+EmailAuth.swift */,
+				F3E9D19130451626008BF231 /* AuthenticationManager+Biometrics.swift */,
+				F3E9D1933045163A008BF231 /* AuthenticationManager+UserStore.swift */,
+				F3E9D1953045164E008BF231 /* AuthenticationManager+AppleSignIn.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -1630,6 +1648,7 @@
 				F3E9D10830434D43008BF231 /* MealTimeCard.swift in Sources */,
 				9E97EECF300D0EEC00D35FAB /* TextRecipeParser.swift in Sources */,
 				9EB04E5B2EB4704F0033C093 /* MoreView.swift in Sources */,
+				F3E9D18E304515FA008BF231 /* AuthenticationManager+Session.swift in Sources */,
 				9E12E8952EC15AFA0077B1DA /* AppleSignInManager.swift in Sources */,
 				9EA779132EB56BA00028F064 /* NoteEditorView.swift in Sources */,
 				9EA779142EB56BA00028F064 /* NotesListView.swift in Sources */,
@@ -1693,6 +1712,7 @@
 				9E5B39992FACFF9000C96DB3 /* QuickAddItems.swift in Sources */,
 				9E5B399A2FACFF9000C96DB3 /* QuickAddSheetView.swift in Sources */,
 				9E87D32B2EB67CEA00FFA1D1 /* ImagePicker.swift in Sources */,
+				F3E9D1903045161A008BF231 /* AuthenticationManager+EmailAuth.swift in Sources */,
 				9EA779032EB4C6C90028F064 /* PasswordReminderSplashView.swift in Sources */,
 				9E6DEA872EF5EFE8001E7B24 /* AppErrorHandler.swift in Sources */,
 				F3E9D15C3043EBF2008BF231 /* KitchenQuickMatchesView.swift in Sources */,
@@ -1704,6 +1724,7 @@
 				9E97EE9A300795A400D35FAB /* ThemeSettingsView.swift in Sources */,
 				F36AED6F3043392200935A3C /* RecipeFilterButton.swift in Sources */,
 				F36AED77304342AD00935A3C /* ActiveFiltersBar.swift in Sources */,
+				F3E9D1963045164E008BF231 /* AuthenticationManager+AppleSignIn.swift in Sources */,
 				9E6DEA8B2EF5EFE8001E7B24 /* NotificationManager.swift in Sources */,
 				9E6DEA8C2EF5EFE8001E7B24 /* Extensions.swift in Sources */,
 				9E6DEA8D2EF5EFE8001E7B24 /* TestHelpers.swift in Sources */,
@@ -1724,6 +1745,7 @@
 				9E6DEA942EF5EFE8001E7B24 /* Constants.swift in Sources */,
 				9E1E26142FBA09F80002A220 /* RecipeImportBuilder.swift in Sources */,
 				9E97EEA83007962900D35FAB /* HelpView.swift in Sources */,
+				F3E9D18C304515E5008BF231 /* AuthenticationManager+Models.swift in Sources */,
 				F3E9D14C3043AAC2008BF231 /* CompanyComplianceView.swift in Sources */,
 				F3E9D15E30444D41008BF231 /* ShoppingListGrouping.swift in Sources */,
 				F3E9D12F3043A5BE008BF231 /* RecipeParser+StructuredData.swift in Sources */,
@@ -1737,6 +1759,7 @@
 				F3E9D12330439F08008BF231 /* WizardComponents.swift in Sources */,
 				9E48AD9E2F0FDDC300CF840F /* AppLogger.swift in Sources */,
 				9E5B398D2FABC91800C96DB3 /* InfoItem.swift in Sources */,
+				F3E9D19230451626008BF231 /* AuthenticationManager+Biometrics.swift in Sources */,
 				9E51C3A12EB406AD0064B917 /* CookTimerView.swift in Sources */,
 				9E6DEA602EF5EF47001E7B24 /* DifficultyBarsView.swift in Sources */,
 				F3E9D13B3043A8BC008BF231 /* IngredientFilterSheet.swift in Sources */,
@@ -1787,6 +1810,7 @@
 				9EA778FD2EB4A4B00028F064 /* OnboardingView.swift in Sources */,
 				F36AED6D3043391A00935A3C /* RecipeSearchModifiers.swift in Sources */,
 				9E834DF52ECA651C008F8A11 /* CookingTipsView.swift in Sources */,
+				F3E9D1943045163A008BF231 /* AuthenticationManager+UserStore.swift in Sources */,
 				9E834DF62ECA651C008F8A11 /* CookingTipDetailView.swift in Sources */,
 				F3E9D11A30434E14008BF231 /* MealPlanEmptyStates.swift in Sources */,
 				9E97EEAC3007965300D35FAB /* PartyTimeView.swift in Sources */,
