@@ -37,10 +37,17 @@ extension RecipeParser {
         var recipeData: [String: Any]?
 
         func isRecipeType(_ item: [String: Any]) -> Bool {
+            // Match "Recipe" regardless of whether the site emits the bare token or a
+            // fully-qualified schema.org URL (e.g. "https://schema.org/Recipe"), and
+            // regardless of case. Real sites use all of these forms.
+            func matchesRecipe(_ type: String) -> Bool {
+                let token = type.split(separator: "/").last.map(String.init) ?? type
+                return token.caseInsensitiveCompare("Recipe") == .orderedSame
+            }
             if let type = item["@type"] as? String {
-                return type == "Recipe"
+                return matchesRecipe(type)
             } else if let types = item["@type"] as? [String] {
-                return types.contains("Recipe")
+                return types.contains(where: matchesRecipe)
             }
             return false
         }
