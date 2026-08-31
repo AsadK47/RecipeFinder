@@ -296,6 +296,8 @@
 		F3E9D1DC3045DE82008BF231 /* NutritionalTipsDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1DB3045DE82008BF231 /* NutritionalTipsDatabase.swift */; };
 		F3E9D1DE30461BF8008BF231 /* NutritionalTipsDatabase+Queries.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1DD30461BF8008BF231 /* NutritionalTipsDatabase+Queries.swift */; };
 		F3E9D1E030461C1D008BF231 /* NutritionalTipsDatabaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1DF30461C1D008BF231 /* NutritionalTipsDatabaseTests.swift */; };
+		F3E9D1E230461D3F008BF231 /* FaceIDOnboardingSplash+Content.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1E130461D3F008BF231 /* FaceIDOnboardingSplash+Content.swift */; };
+		F3E9D1E430461D47008BF231 /* BiometricBenefitRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1E330461D47008BF231 /* BiometricBenefitRow.swift */; };
 		F3F941D630405E230067C6C8 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = F3F941D530405E230067C6C8 /* CLAUDE.md */; };
 /* End PBXBuildFile section */
 
@@ -641,6 +643,8 @@
 		F3E9D1DB3045DE82008BF231 /* NutritionalTipsDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionalTipsDatabase.swift; sourceTree = "<group>"; };
 		F3E9D1DD30461BF8008BF231 /* NutritionalTipsDatabase+Queries.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NutritionalTipsDatabase+Queries.swift"; sourceTree = "<group>"; };
 		F3E9D1DF30461C1D008BF231 /* NutritionalTipsDatabaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionalTipsDatabaseTests.swift; sourceTree = "<group>"; };
+		F3E9D1E130461D3F008BF231 /* FaceIDOnboardingSplash+Content.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FaceIDOnboardingSplash+Content.swift"; sourceTree = "<group>"; };
+		F3E9D1E330461D47008BF231 /* BiometricBenefitRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricBenefitRow.swift; sourceTree = "<group>"; };
 		F3F941D530405E230067C6C8 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -833,6 +837,8 @@
 				F3E9D1B330457BC0008BF231 /* OnboardingSlide.swift */,
 				F3E9D1B530457BEA008BF231 /* OnboardingSlideView.swift */,
 				F3E9D1BD30457E9B008BF231 /* BiometricSetupComponents.swift */,
+				F3E9D1E130461D3F008BF231 /* FaceIDOnboardingSplash+Content.swift */,
+				F3E9D1E330461D47008BF231 /* BiometricBenefitRow.swift */,
 			);
 			path = Authentication;
 			sourceTree = "<group>";
@@ -1750,6 +1756,7 @@
 				F36AED533040A5D700935A3C /* HTMLFetcher.swift in Sources */,
 				9E51C3A82EB40DC90064B917 /* AuthenticationView.swift in Sources */,
 				9E51C3972EB3E6540064B917 /* MealPlanningView.swift in Sources */,
+				F3E9D1E230461D3F008BF231 /* FaceIDOnboardingSplash+Content.swift in Sources */,
 				F3E9D1483043AA96008BF231 /* PrivacyPolicyView.swift in Sources */,
 				F3E9D12530439F1D008BF231 /* RecipeNameStepView.swift in Sources */,
 				F3E9D1AC3045198F008BF231 /* AppTheme+Constants.swift in Sources */,
@@ -1932,6 +1939,7 @@
 				9E6DEA6E2EF5EF47001E7B24 /* RecipeImageView.swift in Sources */,
 				F3E9D10A30434D58008BF231 /* MealTimeSelectorSheet.swift in Sources */,
 				F3E9D10E30434D70008BF231 /* WeekDayRow.swift in Sources */,
+				F3E9D1E430461D47008BF231 /* BiometricBenefitRow.swift in Sources */,
 				9E6DEA702EF5EF47001E7B24 /* CompactRecipeCard.swift in Sources */,
 				9EE5AAD92D08FCBE00C1B736 /* RecipeFinderApp.swift in Sources */,
 				F3E9D1333043A60A008BF231 /* RecipeParser+TextMetadata.swift in Sources */,
