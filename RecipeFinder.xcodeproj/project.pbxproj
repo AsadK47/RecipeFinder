@@ -280,6 +280,8 @@
 		F3E9D1BA30457DDB008BF231 /* PersistenceController+RecipeFetch.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1B930457DDB008BF231 /* PersistenceController+RecipeFetch.swift */; };
 		F3E9D1BC30457DE4008BF231 /* PersistenceController+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1BB30457DE4008BF231 /* PersistenceController+Database.swift */; };
 		F3E9D1BE30457E9B008BF231 /* BiometricSetupComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1BD30457E9B008BF231 /* BiometricSetupComponents.swift */; };
+		F3E9D1C030457FBE008BF231 /* NutritionalTipCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1BF30457FBE008BF231 /* NutritionalTipCard.swift */; };
+		F3E9D1C230457FDE008BF231 /* TipDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1C130457FDE008BF231 /* TipDetailView.swift */; };
 		F3F941D630405E230067C6C8 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = F3F941D530405E230067C6C8 /* CLAUDE.md */; };
 /* End PBXBuildFile section */
 
@@ -609,6 +611,8 @@
 		F3E9D1B930457DDB008BF231 /* PersistenceController+RecipeFetch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PersistenceController+RecipeFetch.swift"; sourceTree = "<group>"; };
 		F3E9D1BB30457DE4008BF231 /* PersistenceController+Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PersistenceController+Database.swift"; sourceTree = "<group>"; };
 		F3E9D1BD30457E9B008BF231 /* BiometricSetupComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricSetupComponents.swift; sourceTree = "<group>"; };
+		F3E9D1BF30457FBE008BF231 /* NutritionalTipCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionalTipCard.swift; sourceTree = "<group>"; };
+		F3E9D1C130457FDE008BF231 /* TipDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipDetailView.swift; sourceTree = "<group>"; };
 		F3F941D530405E230067C6C8 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1205,6 +1209,8 @@
 				9E77ABF32EB4483100666BB0 /* SettingsView.swift */,
 				9E97EE943007958B00D35FAB /* Screens */,
 				F3E9D1443043AA7F008BF231 /* Legal */,
+				F3E9D1BF30457FBE008BF231 /* NutritionalTipCard.swift */,
+				F3E9D1C130457FDE008BF231 /* TipDetailView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -1813,6 +1819,7 @@
 				F3E9D1313043A5EF008BF231 /* RecipeParser+WPRM.swift in Sources */,
 				9E6DEA932EF5EFE8001E7B24 /* RecipeImporter.swift in Sources */,
 				9E6DEA942EF5EFE8001E7B24 /* Constants.swift in Sources */,
+				F3E9D1C030457FBE008BF231 /* NutritionalTipCard.swift in Sources */,
 				9E1E26142FBA09F80002A220 /* RecipeImportBuilder.swift in Sources */,
 				9E97EEA83007962900D35FAB /* HelpView.swift in Sources */,
 				F3E9D18C304515E5008BF231 /* AuthenticationManager+Models.swift in Sources */,
@@ -1831,6 +1838,7 @@
 				9E5B398D2FABC91800C96DB3 /* InfoItem.swift in Sources */,
 				F3E9D19230451626008BF231 /* AuthenticationManager+Biometrics.swift in Sources */,
 				9E51C3A12EB406AD0064B917 /* CookTimerView.swift in Sources */,
+				F3E9D1C230457FDE008BF231 /* TipDetailView.swift in Sources */,
 				F3E9D19E3045180D008BF231 /* AccountSheet.swift in Sources */,
 				9E6DEA602EF5EF47001E7B24 /* DifficultyBarsView.swift in Sources */,
 				F3E9D13B3043A8BC008BF231 /* IngredientFilterSheet.swift in Sources */,
