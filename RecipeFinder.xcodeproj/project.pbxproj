@@ -196,7 +196,6 @@
 		F3E9D10A30434D58008BF231 /* MealTimeSelectorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10930434D58008BF231 /* MealTimeSelectorSheet.swift */; };
 		F3E9D10C30434D65008BF231 /* RecipeSelectionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10B30434D65008BF231 /* RecipeSelectionSheet.swift */; };
 		F3E9D10E30434D70008BF231 /* WeekDayRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10D30434D70008BF231 /* WeekDayRow.swift */; };
-		F3E9D11030434D88008BF231 /* NutritionTipsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10F30434D88008BF231 /* NutritionTipsSheet.swift */; };
 		F3E9D11230434D91008BF231 /* MonthYearPickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D11130434D91008BF231 /* MonthYearPickerSheet.swift */; };
 		F3E9D11430434DE2008BF231 /* MonthCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D11330434DE2008BF231 /* MonthCalendarView.swift */; };
 		F3E9D11630434DF1008BF231 /* WeeklyPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D11530434DF1008BF231 /* WeeklyPlanView.swift */; };
@@ -545,7 +544,6 @@
 		F3E9D10930434D58008BF231 /* MealTimeSelectorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealTimeSelectorSheet.swift; sourceTree = "<group>"; };
 		F3E9D10B30434D65008BF231 /* RecipeSelectionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeSelectionSheet.swift; sourceTree = "<group>"; };
 		F3E9D10D30434D70008BF231 /* WeekDayRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekDayRow.swift; sourceTree = "<group>"; };
-		F3E9D10F30434D88008BF231 /* NutritionTipsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionTipsSheet.swift; sourceTree = "<group>"; };
 		F3E9D11130434D91008BF231 /* MonthYearPickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthYearPickerSheet.swift; sourceTree = "<group>"; };
 		F3E9D11330434DE2008BF231 /* MonthCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthCalendarView.swift; sourceTree = "<group>"; };
 		F3E9D11530434DF1008BF231 /* WeeklyPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyPlanView.swift; sourceTree = "<group>"; };
@@ -789,7 +787,6 @@
 				F3E9D10930434D58008BF231 /* MealTimeSelectorSheet.swift */,
 				F3E9D10B30434D65008BF231 /* RecipeSelectionSheet.swift */,
 				F3E9D10D30434D70008BF231 /* WeekDayRow.swift */,
-				F3E9D10F30434D88008BF231 /* NutritionTipsSheet.swift */,
 				F3E9D11130434D91008BF231 /* MonthYearPickerSheet.swift */,
 				F3E9D11330434DE2008BF231 /* MonthCalendarView.swift */,
 				F3E9D11530434DF1008BF231 /* WeeklyPlanView.swift */,
@@ -1841,7 +1838,6 @@
 				F3E9D1393043A8AF008BF231 /* CategoryCard.swift in Sources */,
 				9E4796113006BD1A00A14D3F /* SettingsComponents.swift in Sources */,
 				F3E9D1A630451849008BF231 /* AccountActionsSection.swift in Sources */,
-				F3E9D11030434D88008BF231 /* NutritionTipsSheet.swift in Sources */,
 				9E7B9A862E9BED16007E1786 /* RecipeSearchView.swift in Sources */,
 				F3E9D16830444DA5008BF231 /* ShoppingCategoryHeader.swift in Sources */,
 				9E87D3302EB696A400FFA1D1 /* ThemeManager.swift in Sources */,
