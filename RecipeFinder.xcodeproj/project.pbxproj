@@ -298,6 +298,7 @@
 		F3E9D1E030461C1D008BF231 /* NutritionalTipsDatabaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1DF30461C1D008BF231 /* NutritionalTipsDatabaseTests.swift */; };
 		F3E9D1E230461D3F008BF231 /* FaceIDOnboardingSplash+Content.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1E130461D3F008BF231 /* FaceIDOnboardingSplash+Content.swift */; };
 		F3E9D1E430461D47008BF231 /* BiometricBenefitRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1E330461D47008BF231 /* BiometricBenefitRow.swift */; };
+		F3E9D1E630461DFC008BF231 /* FilterMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1E530461DFC008BF231 /* FilterMenuView.swift */; };
 		F3F941D630405E230067C6C8 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = F3F941D530405E230067C6C8 /* CLAUDE.md */; };
 /* End PBXBuildFile section */
 
@@ -645,6 +646,7 @@
 		F3E9D1DF30461C1D008BF231 /* NutritionalTipsDatabaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionalTipsDatabaseTests.swift; sourceTree = "<group>"; };
 		F3E9D1E130461D3F008BF231 /* FaceIDOnboardingSplash+Content.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FaceIDOnboardingSplash+Content.swift"; sourceTree = "<group>"; };
 		F3E9D1E330461D47008BF231 /* BiometricBenefitRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricBenefitRow.swift; sourceTree = "<group>"; };
+		F3E9D1E530461DFC008BF231 /* FilterMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterMenuView.swift; sourceTree = "<group>"; };
 		F3F941D530405E230067C6C8 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1435,6 +1437,7 @@
 				9EA7790F2EB56BA00028F064 /* NoteCardView.swift */,
 				9EA779102EB56BA00028F064 /* NoteEditorView.swift */,
 				9EA779112EB56BA00028F064 /* NotesListView.swift */,
+				F3E9D1E530461DFC008BF231 /* FilterMenuView.swift */,
 			);
 			path = Notes;
 			sourceTree = "<group>";
@@ -1940,6 +1943,7 @@
 				F3E9D10A30434D58008BF231 /* MealTimeSelectorSheet.swift in Sources */,
 				F3E9D10E30434D70008BF231 /* WeekDayRow.swift in Sources */,
 				F3E9D1E430461D47008BF231 /* BiometricBenefitRow.swift in Sources */,
+				F3E9D1E630461DFC008BF231 /* FilterMenuView.swift in Sources */,
 				9E6DEA702EF5EF47001E7B24 /* CompactRecipeCard.swift in Sources */,
 				9EE5AAD92D08FCBE00C1B736 /* RecipeFinderApp.swift in Sources */,
 				F3E9D1333043A60A008BF231 /* RecipeParser+TextMetadata.swift in Sources */,
