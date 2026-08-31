@@ -269,6 +269,11 @@
 		F3E9D1A430451832008BF231 /* AccountBadgesSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1A330451832008BF231 /* AccountBadgesSection.swift */; };
 		F3E9D1A630451849008BF231 /* AccountActionsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1A530451849008BF231 /* AccountActionsSection.swift */; };
 		F3E9D1A830451864008BF231 /* AccountChefTypeSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1A730451864008BF231 /* AccountChefTypeSection.swift */; };
+		F3E9D1AA3045197F008BF231 /* AppTheme+Metrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1A93045197F008BF231 /* AppTheme+Metrics.swift */; };
+		F3E9D1AC3045198F008BF231 /* AppTheme+Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1AB3045198F008BF231 /* AppTheme+Constants.swift */; };
+		F3E9D1AE30457AD8008BF231 /* AppTheme+Palette.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1AD30457AD8008BF231 /* AppTheme+Palette.swift */; };
+		F3E9D1B030457AEA008BF231 /* AppTheme+Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1AF30457AEA008BF231 /* AppTheme+Colors.swift */; };
+		F3E9D1B230457B00008BF231 /* AppTheme+Gradients.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1B130457B00008BF231 /* AppTheme+Gradients.swift */; };
 		F3F941D630405E230067C6C8 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = F3F941D530405E230067C6C8 /* CLAUDE.md */; };
 /* End PBXBuildFile section */
 
@@ -587,6 +592,11 @@
 		F3E9D1A330451832008BF231 /* AccountBadgesSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountBadgesSection.swift; sourceTree = "<group>"; };
 		F3E9D1A530451849008BF231 /* AccountActionsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountActionsSection.swift; sourceTree = "<group>"; };
 		F3E9D1A730451864008BF231 /* AccountChefTypeSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountChefTypeSection.swift; sourceTree = "<group>"; };
+		F3E9D1A93045197F008BF231 /* AppTheme+Metrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppTheme+Metrics.swift"; sourceTree = "<group>"; };
+		F3E9D1AB3045198F008BF231 /* AppTheme+Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppTheme+Constants.swift"; sourceTree = "<group>"; };
+		F3E9D1AD30457AD8008BF231 /* AppTheme+Palette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppTheme+Palette.swift"; sourceTree = "<group>"; };
+		F3E9D1AF30457AEA008BF231 /* AppTheme+Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppTheme+Colors.swift"; sourceTree = "<group>"; };
+		F3E9D1B130457B00008BF231 /* AppTheme+Gradients.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppTheme+Gradients.swift"; sourceTree = "<group>"; };
 		F3F941D530405E230067C6C8 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -687,6 +697,11 @@
 				9E5B397E2FABB7D300C96DB3 /* HeartPalette.swift */,
 				9E87D32F2EB696A400FFA1D1 /* ThemeManager.swift */,
 				9E4DC7372E9BF19700E17DDF /* AppTheme.swift */,
+				F3E9D1A93045197F008BF231 /* AppTheme+Metrics.swift */,
+				F3E9D1AB3045198F008BF231 /* AppTheme+Constants.swift */,
+				F3E9D1AD30457AD8008BF231 /* AppTheme+Palette.swift */,
+				F3E9D1AF30457AEA008BF231 /* AppTheme+Colors.swift */,
+				F3E9D1B130457B00008BF231 /* AppTheme+Gradients.swift */,
 			);
 			path = Theme;
 			sourceTree = "<group>";
@@ -1669,6 +1684,7 @@
 				9E51C3972EB3E6540064B917 /* MealPlanningView.swift in Sources */,
 				F3E9D1483043AA96008BF231 /* PrivacyPolicyView.swift in Sources */,
 				F3E9D12530439F1D008BF231 /* RecipeNameStepView.swift in Sources */,
+				F3E9D1AC3045198F008BF231 /* AppTheme+Constants.swift in Sources */,
 				9E6C2C3A2FB477730083A08B /* AccountRowButton.swift in Sources */,
 				F3E9D10830434D43008BF231 /* MealTimeCard.swift in Sources */,
 				9E97EECF300D0EEC00D35FAB /* TextRecipeParser.swift in Sources */,
@@ -1736,8 +1752,10 @@
 				F3E9D14E3043AAD4008BF231 /* LegalContactCard.swift in Sources */,
 				9E5B39982FACFF9000C96DB3 /* ShoppingQuickAddSheet.swift in Sources */,
 				F3E9D12D30439F88008BF231 /* NotesStepView.swift in Sources */,
+				F3E9D1AE30457AD8008BF231 /* AppTheme+Palette.swift in Sources */,
 				F3E9D12730439F2C008BF231 /* BasicInfoStepView.swift in Sources */,
 				9E5B39992FACFF9000C96DB3 /* QuickAddItems.swift in Sources */,
+				F3E9D1B030457AEA008BF231 /* AppTheme+Colors.swift in Sources */,
 				9E5B399A2FACFF9000C96DB3 /* QuickAddSheetView.swift in Sources */,
 				9E87D32B2EB67CEA00FFA1D1 /* ImagePicker.swift in Sources */,
 				F3E9D1903045161A008BF231 /* AuthenticationManager+EmailAuth.swift in Sources */,
@@ -1761,6 +1779,7 @@
 				9E97EEA63007960600D35FAB /* DataManagementSettingsView.swift in Sources */,
 				9E6C2C402FB4779F0083A08B /* ProfileTextField.swift in Sources */,
 				9E6C2C462FB477D70083A08B /* AccountShareSheet.swift in Sources */,
+				F3E9D1AA3045197F008BF231 /* AppTheme+Metrics.swift in Sources */,
 				F3E9D182304454CE008BF231 /* CompactTipRow.swift in Sources */,
 				9E6C2C472FB477D70083A08B /* BadgeDetailView.swift in Sources */,
 				F3E9D18830445503008BF231 /* FiltersSheet.swift in Sources */,
@@ -1805,6 +1824,7 @@
 				F3E9D17830444F74008BF231 /* RecipeServingsCard.swift in Sources */,
 				F36AED79304342D200935A3C /* RecipeEmptyStateView.swift in Sources */,
 				F3E9D11630434DF1008BF231 /* WeeklyPlanView.swift in Sources */,
+				F3E9D1B230457B00008BF231 /* AppTheme+Gradients.swift in Sources */,
 				9E6DEA642EF5EF47001E7B24 /* FlowLayout.swift in Sources */,
 				9E5B39872FABC4B700C96DB3 /* FilterButton.swift in Sources */,
 				F3E9D12B30439F56008BF231 /* EditableStepsStepView.swift in Sources */,
