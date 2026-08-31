@@ -25,34 +25,23 @@ struct NotesListView: View {
         return cachedTags
     }
     
-    var filteredNotes: [NoteModel] {
-        var filtered = notesManager.notes
-        
-        if !searchText.isEmpty {
-            filtered = filtered.filter { $0.matches(searchText: searchText) }
-        }
-        
-        if let category = selectedCategory {
-            filtered = filtered.filter { $0.category == category }
-        }
-        
-        if let tag = selectedTag {
-            filtered = filtered.filter { $0.tags.contains(tag) }
-        }
-        
-        if showPinnedOnly {
-            filtered = filtered.filter { $0.isPinned }
-        }
-        
-        return filtered
+    /// The current filters as a plain value; all filtering lives in
+    /// `NoteFilterCriteria` so it stays out of `body` and is unit tested.
+    private var filterCriteria: NoteFilterCriteria {
+        NoteFilterCriteria(
+            searchText: searchText,
+            selectedCategory: selectedCategory,
+            selectedTag: selectedTag,
+            showPinnedOnly: showPinnedOnly
+        )
     }
-    
+
+    var filteredNotes: [NoteModel] {
+        filterCriteria.apply(to: notesManager.notes)
+    }
+
     var activeFilterCount: Int {
-        var count = 0
-        if selectedCategory != nil { count += 1 }
-        if selectedTag != nil { count += 1 }
-        if showPinnedOnly { count += 1 }
-        return count
+        filterCriteria.activeCount
     }
     
     var body: some View {

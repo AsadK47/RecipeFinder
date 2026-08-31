@@ -299,6 +299,8 @@
 		F3E9D1E230461D3F008BF231 /* FaceIDOnboardingSplash+Content.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1E130461D3F008BF231 /* FaceIDOnboardingSplash+Content.swift */; };
 		F3E9D1E430461D47008BF231 /* BiometricBenefitRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1E330461D47008BF231 /* BiometricBenefitRow.swift */; };
 		F3E9D1E630461DFC008BF231 /* FilterMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1E530461DFC008BF231 /* FilterMenuView.swift */; };
+		F3E9D1E9304620E4008BF231 /* NoteFilterCriteriaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1E8304620E4008BF231 /* NoteFilterCriteriaTests.swift */; };
+		F3E9D1EC304620EC008BF231 /* NoteFilterCriteria.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1EB304620EC008BF231 /* NoteFilterCriteria.swift */; };
 		F3F941D630405E230067C6C8 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = F3F941D530405E230067C6C8 /* CLAUDE.md */; };
 /* End PBXBuildFile section */
 
@@ -647,6 +649,8 @@
 		F3E9D1E130461D3F008BF231 /* FaceIDOnboardingSplash+Content.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FaceIDOnboardingSplash+Content.swift"; sourceTree = "<group>"; };
 		F3E9D1E330461D47008BF231 /* BiometricBenefitRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricBenefitRow.swift; sourceTree = "<group>"; };
 		F3E9D1E530461DFC008BF231 /* FilterMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterMenuView.swift; sourceTree = "<group>"; };
+		F3E9D1E8304620E4008BF231 /* NoteFilterCriteriaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteFilterCriteriaTests.swift; sourceTree = "<group>"; };
+		F3E9D1EB304620EC008BF231 /* NoteFilterCriteria.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteFilterCriteria.swift; sourceTree = "<group>"; };
 		F3F941D530405E230067C6C8 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -773,6 +777,7 @@
 				9E6DEA7B2EF5EFE8001E7B24 /* Helpers */,
 				9E6DEA7F2EF5EFE8001E7B24 /* Managers */,
 				9E6DEA862EF5EFE8001E7B24 /* Recipe */,
+				F3E9D1EA304620EC008BF231 /* Notes */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -1313,6 +1318,7 @@
 				9E6C2C5C2FB4A4BE0083A08B /* Errors */,
 				9E6C2C5F2FB4A4BE0083A08B /* Helpers */,
 				9E90AB012FA9030100096D9D /* Recipe */,
+				F3E9D1E7304620E4008BF231 /* Notes */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -1570,6 +1576,22 @@
 			path = Legal;
 			sourceTree = "<group>";
 		};
+		F3E9D1E7304620E4008BF231 /* Notes */ = {
+			isa = PBXGroup;
+			children = (
+				F3E9D1E8304620E4008BF231 /* NoteFilterCriteriaTests.swift */,
+			);
+			path = Notes;
+			sourceTree = "<group>";
+		};
+		F3E9D1EA304620EC008BF231 /* Notes */ = {
+			isa = PBXGroup;
+			children = (
+				F3E9D1EB304620EC008BF231 /* NoteFilterCriteria.swift */,
+			);
+			path = Notes;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1790,6 +1812,7 @@
 				9E4DC7602E9C1B6A00E17DDF /* RecipeModel.swift in Sources */,
 				9E90AB032FA9040100096D9D /* RecipeViewMode.swift in Sources */,
 				9E4DC7542E9C12B200E17DDF /* ShoppingListView.swift in Sources */,
+				F3E9D1EC304620EC008BF231 /* NoteFilterCriteria.swift in Sources */,
 				9E6DEAA22EF5F053001E7B24 /* CookingTipsManager.swift in Sources */,
 				F3E9D1D43045DA6E008BF231 /* RecipeWizardView+Chrome.swift in Sources */,
 				9E6DEAA32EF5F053001E7B24 /* AccountManager.swift in Sources */,
@@ -2032,6 +2055,7 @@
 				9E6C2C722FB4C8450083A08B /* CookingTipsManagerTests.swift in Sources */,
 				9E6C2C732FB4C8450083A08B /* ShoppingListManagerTests.swift in Sources */,
 				9E6C2C742FB4C8450083A08B /* KitchenInventoryManagerTests.swift in Sources */,
+				F3E9D1E9304620E4008BF231 /* NoteFilterCriteriaTests.swift in Sources */,
 				9E6C2C752FB4C8450083A08B /* MealPlanningManagerTests.swift in Sources */,
 				9E97EEAF30084C6800D35FAB /* SettingsComponentsTests.swift in Sources */,
 				9E6C2C762FB4C8450083A08B /* NotesManagerTests.swift in Sources */,
