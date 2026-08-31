@@ -250,6 +250,11 @@
 		F3E9D17C30444F93008BF231 /* IngredientEditSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D17B30444F93008BF231 /* IngredientEditSheet.swift */; };
 		F3E9D17E30444FA5008BF231 /* RecipeChecklistSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D17D30444FA5008BF231 /* RecipeChecklistSection.swift */; };
 		F3E9D18030444FC0008BF231 /* RecipeIngredientsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D17F30444FC0008BF231 /* RecipeIngredientsSection.swift */; };
+		F3E9D182304454CE008BF231 /* CompactTipRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D181304454CE008BF231 /* CompactTipRow.swift */; };
+		F3E9D184304454E8008BF231 /* CookingTipCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D183304454E8008BF231 /* CookingTipCard.swift */; };
+		F3E9D186304454EE008BF231 /* FilterPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D185304454EE008BF231 /* FilterPill.swift */; };
+		F3E9D18830445503008BF231 /* FiltersSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D18730445503008BF231 /* FiltersSheet.swift */; };
+		F3E9D18A30445512008BF231 /* CookingTipCategoryGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D18930445512008BF231 /* CookingTipCategoryGrid.swift */; };
 		F3F941D630405E230067C6C8 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = F3F941D530405E230067C6C8 /* CLAUDE.md */; };
 /* End PBXBuildFile section */
 
@@ -549,6 +554,11 @@
 		F3E9D17B30444F93008BF231 /* IngredientEditSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientEditSheet.swift; sourceTree = "<group>"; };
 		F3E9D17D30444FA5008BF231 /* RecipeChecklistSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeChecklistSection.swift; sourceTree = "<group>"; };
 		F3E9D17F30444FC0008BF231 /* RecipeIngredientsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeIngredientsSection.swift; sourceTree = "<group>"; };
+		F3E9D181304454CE008BF231 /* CompactTipRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompactTipRow.swift; sourceTree = "<group>"; };
+		F3E9D183304454E8008BF231 /* CookingTipCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookingTipCard.swift; sourceTree = "<group>"; };
+		F3E9D185304454EE008BF231 /* FilterPill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterPill.swift; sourceTree = "<group>"; };
+		F3E9D18730445503008BF231 /* FiltersSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiltersSheet.swift; sourceTree = "<group>"; };
+		F3E9D18930445512008BF231 /* CookingTipCategoryGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookingTipCategoryGrid.swift; sourceTree = "<group>"; };
 		F3F941D530405E230067C6C8 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1137,6 +1147,11 @@
 			children = (
 				9E834DF22ECA651C008F8A11 /* CookingTipDetailView.swift */,
 				9E834DF32ECA651C008F8A11 /* CookingTipsView.swift */,
+				F3E9D181304454CE008BF231 /* CompactTipRow.swift */,
+				F3E9D183304454E8008BF231 /* CookingTipCard.swift */,
+				F3E9D185304454EE008BF231 /* FilterPill.swift */,
+				F3E9D18730445503008BF231 /* FiltersSheet.swift */,
+				F3E9D18930445512008BF231 /* CookingTipCategoryGrid.swift */,
 			);
 			path = CookingTips;
 			sourceTree = "<group>";
@@ -1683,6 +1698,7 @@
 				F3E9D15C3043EBF2008BF231 /* KitchenQuickMatchesView.swift in Sources */,
 				F3E9D1543043EB98008BF231 /* KitchenItemRow.swift in Sources */,
 				9E6DEA882EF5EFE8001E7B24 /* UnitConversion.swift in Sources */,
+				F3E9D18A30445512008BF231 /* CookingTipCategoryGrid.swift in Sources */,
 				9E6DEA892EF5EFE8001E7B24 /* HapticManager.swift in Sources */,
 				9E6DEA8A2EF5EFE8001E7B24 /* CategoryClassifier.swift in Sources */,
 				9E97EE9A300795A400D35FAB /* ThemeSettingsView.swift in Sources */,
@@ -1695,7 +1711,9 @@
 				9E97EEA63007960600D35FAB /* DataManagementSettingsView.swift in Sources */,
 				9E6C2C402FB4779F0083A08B /* ProfileTextField.swift in Sources */,
 				9E6C2C462FB477D70083A08B /* AccountShareSheet.swift in Sources */,
+				F3E9D182304454CE008BF231 /* CompactTipRow.swift in Sources */,
 				9E6C2C472FB477D70083A08B /* BadgeDetailView.swift in Sources */,
+				F3E9D18830445503008BF231 /* FiltersSheet.swift in Sources */,
 				9E6DEA902EF5EFE8001E7B24 /* RecipeParser.swift in Sources */,
 				9E6DEA912EF5EFE8001E7B24 /* FoodsList.swift in Sources */,
 				9E6DEA922EF5EFE8001E7B24 /* AppErrors.swift in Sources */,
@@ -1714,6 +1732,7 @@
 				9E6DEA962EF5EFE8001E7B24 /* IngredientNormalizer.swift in Sources */,
 				9E834DF12ECA6508008F8A11 /* CookingTipModel.swift in Sources */,
 				9E7691702EF46CD400277ADF /* BadgeModel.swift in Sources */,
+				F3E9D184304454E8008BF231 /* CookingTipCard.swift in Sources */,
 				9EF757652FCF3D900012B2B7 /* IngredientAutocompleteEngine.swift in Sources */,
 				F3E9D12330439F08008BF231 /* WizardComponents.swift in Sources */,
 				9E48AD9E2F0FDDC300CF840F /* AppLogger.swift in Sources */,
@@ -1759,6 +1778,7 @@
 				9E6DEA702EF5EF47001E7B24 /* CompactRecipeCard.swift in Sources */,
 				9EE5AAD92D08FCBE00C1B736 /* RecipeFinderApp.swift in Sources */,
 				F3E9D1333043A60A008BF231 /* RecipeParser+TextMetadata.swift in Sources */,
+				F3E9D186304454EE008BF231 /* FilterPill.swift in Sources */,
 				F36AED7B3043431C00935A3C /* RecipeSearchHeader.swift in Sources */,
 				F3E9D1353043A62B008BF231 /* RecipeParser+TextContent.swift in Sources */,
 				9E2E34212E9D9F8500E2E49F /* KitchenView.swift in Sources */,
