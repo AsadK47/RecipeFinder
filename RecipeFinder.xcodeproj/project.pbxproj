@@ -92,7 +92,6 @@
 		9E6DEA6C2EF5EF47001E7B24 /* AnimatedHeartButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA432EF5EF47001E7B24 /* AnimatedHeartButton.swift */; };
 		9E6DEA6E2EF5EF47001E7B24 /* RecipeImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA582EF5EF47001E7B24 /* RecipeImageView.swift */; };
 		9E6DEA702EF5EF47001E7B24 /* CompactRecipeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA472EF5EF47001E7B24 /* CompactRecipeCard.swift */; };
-		9E6DEA872EF5EFE8001E7B24 /* AppErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA752EF5EFE8001E7B24 /* AppErrorHandler.swift */; };
 		9E6DEA882EF5EFE8001E7B24 /* UnitConversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA852EF5EFE8001E7B24 /* UnitConversion.swift */; };
 		9E6DEA892EF5EFE8001E7B24 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA7C2EF5EFE8001E7B24 /* HapticManager.swift */; };
 		9E6DEA8A2EF5EFE8001E7B24 /* CategoryClassifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6DEA802EF5EFE8001E7B24 /* CategoryClassifier.swift */; };
@@ -433,7 +432,6 @@
 		9E6DEA582EF5EF47001E7B24 /* RecipeImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeImageView.swift; sourceTree = "<group>"; };
 		9E6DEA722EF5EFE8001E7B24 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		9E6DEA732EF5EFE8001E7B24 /* FoodsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodsList.swift; sourceTree = "<group>"; };
-		9E6DEA752EF5EFE8001E7B24 /* AppErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppErrorHandler.swift; sourceTree = "<group>"; };
 		9E6DEA762EF5EFE8001E7B24 /* AppErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppErrors.swift; sourceTree = "<group>"; };
 		9E6DEA782EF5EFE8001E7B24 /* AdaptiveSpacing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdaptiveSpacing.swift; sourceTree = "<group>"; };
 		9E6DEA792EF5EFE8001E7B24 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -1040,7 +1038,6 @@
 		9E6DEA772EF5EFE8001E7B24 /* Errors */ = {
 			isa = PBXGroup;
 			children = (
-				9E6DEA752EF5EFE8001E7B24 /* AppErrorHandler.swift */,
 				9E6DEA762EF5EFE8001E7B24 /* AppErrors.swift */,
 			);
 			path = Errors;
@@ -1867,7 +1864,6 @@
 				9E87D32B2EB67CEA00FFA1D1 /* ImagePicker.swift in Sources */,
 				F3E9D1903045161A008BF231 /* AuthenticationManager+EmailAuth.swift in Sources */,
 				9EA779032EB4C6C90028F064 /* PasswordReminderSplashView.swift in Sources */,
-				9E6DEA872EF5EFE8001E7B24 /* AppErrorHandler.swift in Sources */,
 				F3E9D15C3043EBF2008BF231 /* KitchenQuickMatchesView.swift in Sources */,
 				F3E9D1D23045DA5E008BF231 /* RecipeWizardModels.swift in Sources */,
 				F3E9D1543043EB98008BF231 /* KitchenItemRow.swift in Sources */,
