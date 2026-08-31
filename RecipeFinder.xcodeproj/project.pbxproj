@@ -282,6 +282,10 @@
 		F3E9D1BE30457E9B008BF231 /* BiometricSetupComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1BD30457E9B008BF231 /* BiometricSetupComponents.swift */; };
 		F3E9D1C030457FBE008BF231 /* NutritionalTipCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1BF30457FBE008BF231 /* NutritionalTipCard.swift */; };
 		F3E9D1C230457FDE008BF231 /* TipDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1C130457FDE008BF231 /* TipDetailView.swift */; };
+		F3E9D1C43045D76D008BF231 /* Ingredient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1C33045D76D008BF231 /* Ingredient.swift */; };
+		F3E9D1C63045D77D008BF231 /* IngredientNameFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1C53045D77D008BF231 /* IngredientNameFormatter.swift */; };
+		F3E9D1CA3045D78D008BF231 /* RecipeFormatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1C93045D78D008BF231 /* RecipeFormatters.swift */; };
+		F3E9D1CC3045D7CB008BF231 /* RecipeDietaryInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1CB3045D7CB008BF231 /* RecipeDietaryInfo.swift */; };
 		F3F941D630405E230067C6C8 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = F3F941D530405E230067C6C8 /* CLAUDE.md */; };
 /* End PBXBuildFile section */
 
@@ -613,6 +617,10 @@
 		F3E9D1BD30457E9B008BF231 /* BiometricSetupComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricSetupComponents.swift; sourceTree = "<group>"; };
 		F3E9D1BF30457FBE008BF231 /* NutritionalTipCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionalTipCard.swift; sourceTree = "<group>"; };
 		F3E9D1C130457FDE008BF231 /* TipDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipDetailView.swift; sourceTree = "<group>"; };
+		F3E9D1C33045D76D008BF231 /* Ingredient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ingredient.swift; sourceTree = "<group>"; };
+		F3E9D1C53045D77D008BF231 /* IngredientNameFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientNameFormatter.swift; sourceTree = "<group>"; };
+		F3E9D1C93045D78D008BF231 /* RecipeFormatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeFormatters.swift; sourceTree = "<group>"; };
+		F3E9D1CB3045D7CB008BF231 /* RecipeDietaryInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeDietaryInfo.swift; sourceTree = "<group>"; };
 		F3F941D530405E230067C6C8 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1411,6 +1419,10 @@
 				9E4DC75F2E9C1B6700E17DDF /* RecipeModel.swift */,
 				9E90AB022FA9040000096D9D /* RecipeViewMode.swift */,
 				9E97EECA300D0DA400D35FAB /* EditableStep.swift */,
+				F3E9D1C33045D76D008BF231 /* Ingredient.swift */,
+				F3E9D1C53045D77D008BF231 /* IngredientNameFormatter.swift */,
+				F3E9D1C93045D78D008BF231 /* RecipeFormatters.swift */,
+				F3E9D1CB3045D7CB008BF231 /* RecipeDietaryInfo.swift */,
 			);
 			path = Recipe;
 			sourceTree = "<group>";
@@ -1745,6 +1757,7 @@
 				9E6DEAA52EF5F053001E7B24 /* NotesManager.swift in Sources */,
 				9E6DEAA62EF5F053001E7B24 /* KitchenInventoryManager.swift in Sources */,
 				F3E9D1B830457DC8008BF231 /* PersistenceController+RecipeWrites.swift in Sources */,
+				F3E9D1CA3045D78D008BF231 /* RecipeFormatters.swift in Sources */,
 				9E6DEAA72EF5F053001E7B24 /* ShoppingListManager.swift in Sources */,
 				9E6DEAA82EF5F053001E7B24 /* AuthenticationManager.swift in Sources */,
 				9E6DEAA92EF5F053001E7B24 /* SampleRecipeData.swift in Sources */,
@@ -1803,11 +1816,13 @@
 				9E6DEA8D2EF5EFE8001E7B24 /* TestHelpers.swift in Sources */,
 				F3E9D19C3045172B008BF231 /* SignUpView.swift in Sources */,
 				9E6DEA8E2EF5EFE8001E7B24 /* NetworkMonitor.swift in Sources */,
+				F3E9D1C63045D77D008BF231 /* IngredientNameFormatter.swift in Sources */,
 				9E97EEA63007960600D35FAB /* DataManagementSettingsView.swift in Sources */,
 				9E6C2C402FB4779F0083A08B /* ProfileTextField.swift in Sources */,
 				9E6C2C462FB477D70083A08B /* AccountShareSheet.swift in Sources */,
 				F3E9D1AA3045197F008BF231 /* AppTheme+Metrics.swift in Sources */,
 				F3E9D182304454CE008BF231 /* CompactTipRow.swift in Sources */,
+				F3E9D1C43045D76D008BF231 /* Ingredient.swift in Sources */,
 				9E6C2C472FB477D70083A08B /* BadgeDetailView.swift in Sources */,
 				F3E9D18830445503008BF231 /* FiltersSheet.swift in Sources */,
 				9E6DEA902EF5EFE8001E7B24 /* RecipeParser.swift in Sources */,
@@ -1826,6 +1841,7 @@
 				F3E9D14C3043AAC2008BF231 /* CompanyComplianceView.swift in Sources */,
 				F3E9D15E30444D41008BF231 /* ShoppingListGrouping.swift in Sources */,
 				F3E9D12F3043A5BE008BF231 /* RecipeParser+StructuredData.swift in Sources */,
+				F3E9D1CC3045D7CB008BF231 /* RecipeDietaryInfo.swift in Sources */,
 				9E97EE983007959600D35FAB /* AppearanceSettingsView.swift in Sources */,
 				9E6DEA952EF5EFE8001E7B24 /* AdaptiveSpacing.swift in Sources */,
 				9E6DEA962EF5EFE8001E7B24 /* IngredientNormalizer.swift in Sources */,
