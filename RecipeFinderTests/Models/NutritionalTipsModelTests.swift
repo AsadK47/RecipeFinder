@@ -1,112 +1,115 @@
-import XCTest
+import Testing
 @testable import RecipeFinder
 
-final class NutritionalTipsModelTests: XCTestCase {
+@Suite struct NutritionalTipsModelTests {
 
     // MARK: - NutritionalTipCategory.id
 
-    func testCategoryId_equalsRawValue() {
+    @Test func categoryId_equalsRawValue() {
         for category in NutritionalTipCategory.allCases {
-            XCTAssertEqual(category.id, category.rawValue)
+            #expect(category.id == category.rawValue)
         }
     }
 
     // MARK: - NutritionalTipCategory.icon
 
-    func testCategoryIcon_nonEmptyForAllCases() {
+    @Test func categoryIcon_nonEmptyForAllCases() {
         for category in NutritionalTipCategory.allCases {
-            XCTAssertFalse(category.icon.isEmpty, "\(category) has no icon")
+            #expect(!category.icon.isEmpty, "\(category) has no icon")
         }
     }
 
-    func testCategoryIcon_exactValues() {
-        XCTAssertEqual(NutritionalTipCategory.plateComposition.icon, "🍽️")
-        XCTAssertEqual(NutritionalTipCategory.wholeGrains.icon, "🌾")
-        XCTAssertEqual(NutritionalTipCategory.proteins.icon, "🥩")
-        XCTAssertEqual(NutritionalTipCategory.vegetables.icon, "🥗")
-        XCTAssertEqual(NutritionalTipCategory.healthyFats.icon, "🥑")
-        XCTAssertEqual(NutritionalTipCategory.hydration.icon, "💧")
-        XCTAssertEqual(NutritionalTipCategory.portionControl.icon, "⚖️")
-        XCTAssertEqual(NutritionalTipCategory.mealTiming.icon, "⏰")
-        XCTAssertEqual(NutritionalTipCategory.foodQuality.icon, "✨")
-        XCTAssertEqual(NutritionalTipCategory.sustainability.icon, "🌍")
+    @Test(arguments: [
+        (NutritionalTipCategory.plateComposition, "🍽️"),
+        (.wholeGrains, "🌾"),
+        (.proteins, "🥩"),
+        (.vegetables, "🥗"),
+        (.healthyFats, "🥑"),
+        (.hydration, "💧"),
+        (.portionControl, "⚖️"),
+        (.mealTiming, "⏰"),
+        (.foodQuality, "✨"),
+        (.sustainability, "🌍")
+    ])
+    func categoryIcon_exactValues(_ category: NutritionalTipCategory, _ icon: String) {
+        #expect(category.icon == icon)
     }
 
-    func testCategoryAllCases_countIsTen() {
-        XCTAssertEqual(NutritionalTipCategory.allCases.count, 10)
+    @Test func categoryAllCases_countIsTen() {
+        #expect(NutritionalTipCategory.allCases.count == 10)
     }
 
-    func testCategoryIcons_allDistinct() {
+    @Test func categoryIcons_allDistinct() {
         let icons = NutritionalTipCategory.allCases.map(\.icon)
-        XCTAssertEqual(icons.count, Set(icons).count, "Duplicate icons found across categories")
+        #expect(icons.count == Set(icons).count, "Duplicate icons found across categories")
     }
 
     // MARK: - EvidenceLevel.rawValue
 
-    func testEvidenceLevel_rawValues() {
-        XCTAssertEqual(EvidenceLevel.strong.rawValue, "Strong Evidence")
-        XCTAssertEqual(EvidenceLevel.moderate.rawValue, "Moderate Evidence")
-        XCTAssertEqual(EvidenceLevel.emerging.rawValue, "Emerging Evidence")
+    @Test(arguments: [
+        (EvidenceLevel.strong, "Strong Evidence"),
+        (.moderate, "Moderate Evidence"),
+        (.emerging, "Emerging Evidence")
+    ])
+    func evidenceLevel_rawValues(_ level: EvidenceLevel, _ raw: String) {
+        #expect(level.rawValue == raw)
     }
 
     // MARK: - EvidenceLevel.color
 
-    func testEvidenceLevel_color_strong_isGreen() {
-        XCTAssertEqual(EvidenceLevel.strong.color, "green")
+    @Test(arguments: [
+        (EvidenceLevel.strong, "green"),
+        (.moderate, "orange"),
+        (.emerging, "blue")
+    ])
+    func evidenceLevel_color(_ level: EvidenceLevel, _ color: String) {
+        #expect(level.color == color)
     }
 
-    func testEvidenceLevel_color_moderate_isOrange() {
-        XCTAssertEqual(EvidenceLevel.moderate.color, "orange")
-    }
-
-    func testEvidenceLevel_color_emerging_isBlue() {
-        XCTAssertEqual(EvidenceLevel.emerging.color, "blue")
-    }
-
-    func testEvidenceLevel_colorsAreDistinct() {
+    @Test func evidenceLevel_colorsAreDistinct() {
         let colors = [EvidenceLevel.strong.color, EvidenceLevel.moderate.color, EvidenceLevel.emerging.color]
-        XCTAssertEqual(colors.count, Set(colors).count)
+        #expect(colors.count == Set(colors).count)
     }
 
     // MARK: - EvidenceLevel.description
 
-    func testEvidenceLevel_description_nonEmptyForAllCases() {
-        XCTAssertFalse(EvidenceLevel.strong.description.isEmpty)
-        XCTAssertFalse(EvidenceLevel.moderate.description.isEmpty)
-        XCTAssertFalse(EvidenceLevel.emerging.description.isEmpty)
+    @Test func evidenceLevel_description_nonEmptyForAllCases() {
+        #expect(!EvidenceLevel.strong.description.isEmpty)
+        #expect(!EvidenceLevel.moderate.description.isEmpty)
+        #expect(!EvidenceLevel.emerging.description.isEmpty)
     }
 
-    func testEvidenceLevel_descriptions_areDistinct() {
+    @Test func evidenceLevel_descriptions_areDistinct() {
         let descs = [EvidenceLevel.strong.description, EvidenceLevel.moderate.description, EvidenceLevel.emerging.description]
-        XCTAssertEqual(descs.count, Set(descs).count)
+        #expect(descs.count == Set(descs).count)
     }
 
     // MARK: - ScientificSource.displayText
 
-    func testDisplayText_institutionOnly() {
+    @Test func displayText_institutionOnly() {
         let source = ScientificSource(institution: "WHO")
-        XCTAssertEqual(source.displayText, "WHO")
+        #expect(source.displayText == "WHO")
     }
 
-    func testDisplayText_withPublication() {
+    @Test func displayText_withPublication() {
         let source = ScientificSource(institution: "Harvard", publication: "NEJM")
-        XCTAssertEqual(source.displayText, "Harvard - NEJM")
+        #expect(source.displayText == "Harvard - NEJM")
     }
 
-    func testDisplayText_withYear() {
+    @Test func displayText_withYear() {
         let source = ScientificSource(institution: "CDC", year: 2022)
-        XCTAssertEqual(source.displayText, "CDC (2022)")
+        #expect(source.displayText == "CDC (2022)")
     }
 
-    func testDisplayText_withPublicationAndYear() {
+    @Test func displayText_withPublicationAndYear() {
         let source = ScientificSource(institution: "NIH", publication: "Lancet", year: 2021)
-        XCTAssertEqual(source.displayText, "NIH - Lancet (2021)")
+        #expect(source.displayText == "NIH - Lancet (2021)")
     }
 
-    func testDisplayText_nilOptionals_noExtraCharacters() {
+    @Test func displayText_nilOptionals_noExtraCharacters() {
         let source = ScientificSource(institution: "FAO", publication: nil, year: nil)
-        XCTAssertEqual(source.displayText, "FAO")
-        XCTAssertFalse(source.displayText.contains("-"))
-        XCTAssertFalse(source.displayText.contains("("))
+        #expect(source.displayText == "FAO")
+        #expect(!source.displayText.contains("-"))
+        #expect(!source.displayText.contains("("))
     }
 }

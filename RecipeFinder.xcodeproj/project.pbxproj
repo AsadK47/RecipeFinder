@@ -293,6 +293,9 @@
 		F3E9D1D63045DAC1008BF231 /* RecipeWizardBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1D53045DAC1008BF231 /* RecipeWizardBuilderTests.swift */; };
 		F3E9D1D83045DAD3008BF231 /* RecipeImageStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1D73045DAD3008BF231 /* RecipeImageStoreTests.swift */; };
 		F3E9D1DA3045DCE8008BF231 /* RecipeDetailView+Content.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1D93045DCE8008BF231 /* RecipeDetailView+Content.swift */; };
+		F3E9D1DC3045DE82008BF231 /* NutritionalTipsDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1DB3045DE82008BF231 /* NutritionalTipsDatabase.swift */; };
+		F3E9D1DE30461BF8008BF231 /* NutritionalTipsDatabase+Queries.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1DD30461BF8008BF231 /* NutritionalTipsDatabase+Queries.swift */; };
+		F3E9D1E030461C1D008BF231 /* NutritionalTipsDatabaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1DF30461C1D008BF231 /* NutritionalTipsDatabaseTests.swift */; };
 		F3F941D630405E230067C6C8 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = F3F941D530405E230067C6C8 /* CLAUDE.md */; };
 /* End PBXBuildFile section */
 
@@ -635,6 +638,9 @@
 		F3E9D1D53045DAC1008BF231 /* RecipeWizardBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeWizardBuilderTests.swift; sourceTree = "<group>"; };
 		F3E9D1D73045DAD3008BF231 /* RecipeImageStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeImageStoreTests.swift; sourceTree = "<group>"; };
 		F3E9D1D93045DCE8008BF231 /* RecipeDetailView+Content.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RecipeDetailView+Content.swift"; sourceTree = "<group>"; };
+		F3E9D1DB3045DE82008BF231 /* NutritionalTipsDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionalTipsDatabase.swift; sourceTree = "<group>"; };
+		F3E9D1DD30461BF8008BF231 /* NutritionalTipsDatabase+Queries.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NutritionalTipsDatabase+Queries.swift"; sourceTree = "<group>"; };
+		F3E9D1DF30461C1D008BF231 /* NutritionalTipsDatabaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionalTipsDatabaseTests.swift; sourceTree = "<group>"; };
 		F3F941D530405E230067C6C8 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -863,6 +869,7 @@
 				9E5B399B2FAD024A00C96DB3 /* BadgeModelTests.swift */,
 				9E97EECC300D0E0600D35FAB /* EditableStepTests.swift */,
 				F36AED7E304346DF00935A3C /* MealPlanCalendarTests.swift */,
+				F3E9D1DF30461C1D008BF231 /* NutritionalTipsDatabaseTests.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1274,6 +1281,8 @@
 			isa = PBXGroup;
 			children = (
 				9E87BC902EF54E17003F9157 /* NutritionalTips.swift */,
+				F3E9D1DB3045DE82008BF231 /* NutritionalTipsDatabase.swift */,
+				F3E9D1DD30461BF8008BF231 /* NutritionalTipsDatabase+Queries.swift */,
 			);
 			path = NutritionalTips;
 			sourceTree = "<group>";
@@ -1796,6 +1805,7 @@
 				9EE5AADB2D08FCBE00C1B736 /* ContentView.swift in Sources */,
 				9E97EEAA3007963C00D35FAB /* AboutView.swift in Sources */,
 				9E51C39A2EB3E9C20064B917 /* AccountView.swift in Sources */,
+				F3E9D1DC3045DE82008BF231 /* NutritionalTipsDatabase.swift in Sources */,
 				F3E9D1BE30457E9B008BF231 /* BiometricSetupComponents.swift in Sources */,
 				9E87D3362EB6C0E900FFA1D1 /* PasswordVerificationSheet.swift in Sources */,
 				F3E9D1393043A8AF008BF231 /* CategoryCard.swift in Sources */,
@@ -1840,6 +1850,7 @@
 				9E6DEA8C2EF5EFE8001E7B24 /* Extensions.swift in Sources */,
 				9E6DEA8D2EF5EFE8001E7B24 /* TestHelpers.swift in Sources */,
 				F3E9D19C3045172B008BF231 /* SignUpView.swift in Sources */,
+				F3E9D1DE30461BF8008BF231 /* NutritionalTipsDatabase+Queries.swift in Sources */,
 				9E6DEA8E2EF5EFE8001E7B24 /* NetworkMonitor.swift in Sources */,
 				F3E9D1C63045D77D008BF231 /* IngredientNameFormatter.swift in Sources */,
 				9E97EEA63007960600D35FAB /* DataManagementSettingsView.swift in Sources */,
@@ -1992,6 +2003,7 @@
 				9E5D20532FB358F000F2896A /* KitchenInventoryModelTests.swift in Sources */,
 				9E90AAFE2FA9029E00096D9D /* UnitConversionTests.swift in Sources */,
 				9E90AB022FA9247B00096D9D /* AnimatedHeartButtonTests.swift in Sources */,
+				F3E9D1E030461C1D008BF231 /* NutritionalTipsDatabaseTests.swift in Sources */,
 				9E6C2C602FB4A4BE0083A08B /* ExtensionsTests.swift in Sources */,
 				9E97EED4300D894700D35FAB /* PersistenceControllerTests.swift in Sources */,
 				F36AED6B304336BE00935A3C /* RecipeFilterCriteriaTests.swift in Sources */,
