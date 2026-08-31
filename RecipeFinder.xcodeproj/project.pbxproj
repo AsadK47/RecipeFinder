@@ -291,6 +291,7 @@
 		F3E9D1EC304620EC008BF231 /* NoteFilterCriteria.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1EB304620EC008BF231 /* NoteFilterCriteria.swift */; };
 		F3E9D20730462633008BF231 /* RecipeHTMLFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D20630462633008BF231 /* RecipeHTMLFixtures.swift */; };
 		F3E9D2093046263D008BF231 /* RecipeImportFixtureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D2083046263D008BF231 /* RecipeImportFixtureTests.swift */; };
+		F3E9D20B30462807008BF231 /* RecipeParser+Microdata.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D20A30462807008BF231 /* RecipeParser+Microdata.swift */; };
 		F3F941D630405E230067C6C8 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = F3F941D530405E230067C6C8 /* CLAUDE.md */; };
 /* End PBXBuildFile section */
 
@@ -631,6 +632,7 @@
 		F3E9D1EB304620EC008BF231 /* NoteFilterCriteria.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteFilterCriteria.swift; sourceTree = "<group>"; };
 		F3E9D20630462633008BF231 /* RecipeHTMLFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeHTMLFixtures.swift; sourceTree = "<group>"; };
 		F3E9D2083046263D008BF231 /* RecipeImportFixtureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeImportFixtureTests.swift; sourceTree = "<group>"; };
+		F3E9D20A30462807008BF231 /* RecipeParser+Microdata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RecipeParser+Microdata.swift"; sourceTree = "<group>"; };
 		F3F941D530405E230067C6C8 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1067,6 +1069,7 @@
 				F3E9D17330444F55008BF231 /* RecipeNotesFormatter.swift */,
 				F3E9D1CD3045DA4F008BF231 /* RecipeWizardBuilder.swift */,
 				F3E9D1CF3045DA58008BF231 /* RecipeImageStore.swift */,
+				F3E9D20A30462807008BF231 /* RecipeParser+Microdata.swift */,
 			);
 			path = Recipe;
 			sourceTree = "<group>";
@@ -1830,6 +1833,7 @@
 				9E6C2C1C2FB394290083A08B /* BadgeManager.swift in Sources */,
 				9E5B39972FACFF9000C96DB3 /* KitchenQuickAddSheet.swift in Sources */,
 				F3E9D14E3043AAD4008BF231 /* LegalContactCard.swift in Sources */,
+				F3E9D20B30462807008BF231 /* RecipeParser+Microdata.swift in Sources */,
 				9E5B39982FACFF9000C96DB3 /* ShoppingQuickAddSheet.swift in Sources */,
 				F3E9D12D30439F88008BF231 /* NotesStepView.swift in Sources */,
 				F3E9D1AE30457AD8008BF231 /* AppTheme+Palette.swift in Sources */,

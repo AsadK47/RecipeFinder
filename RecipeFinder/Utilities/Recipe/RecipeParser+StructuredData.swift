@@ -185,7 +185,7 @@ extension RecipeParser {
         return steps
     }
 
-    private static func parseISO8601Duration(_ duration: String) -> Int? {
+    static func parseISO8601Duration(_ duration: String) -> Int? {
         let pattern = #"PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?"#
 
         guard let regex = try? NSRegularExpression(pattern: pattern, options: []) else {
@@ -222,7 +222,7 @@ extension RecipeParser {
         return totalMinutes > 0 ? totalMinutes : nil
     }
 
-    private static func extractServingsFromYield(_ yieldString: String) -> Int? {
+    static func extractServingsFromYield(_ yieldString: String) -> Int? {
         let pattern = #"(\d+)"#
         if let range = yieldString.range(of: pattern, options: .regularExpression),
            let servings = Int(yieldString[range]) {

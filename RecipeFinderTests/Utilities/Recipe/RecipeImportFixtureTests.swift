@@ -35,4 +35,20 @@ import Testing
         #expect(r.servings == 6)
         #expect(r.confidence > 0.9) // JSON-LD path, not the free-text fallback
     }
+
+    // MARK: - Microdata-only page (itemprop, no JSON-LD)
+
+    @Test func microdataOnly_extractsCoreFields() {
+        let r = RecipeParser.parse(html: RecipeHTMLFixtures.microdataOnly)
+
+        #expect(r.name == "Hearty Beef Stew")
+        #expect(r.ingredients.count == 5)
+        #expect(r.ingredients.first == "2 lbs beef chuck, cubed")
+        #expect(r.instructions.count == 3)
+        #expect(r.prepTime == 20)
+        #expect(r.cookTime == 120)
+        #expect(r.servings == 6)
+        #expect(r.imageURL == "https://cdn.example.com/beef-stew.jpg")
+        #expect(r.confidence > 0.8) // structured microdata, not free-text guessing
+    }
 }

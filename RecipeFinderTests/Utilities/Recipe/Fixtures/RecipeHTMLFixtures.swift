@@ -44,6 +44,46 @@ enum RecipeHTMLFixtures {
     </html>
     """#
 
+    /// Schema.org **microdata** (`itemscope`/`itemprop`) with NO JSON-LD — an older
+    /// recipe-site style still common in the wild. Ingredients and steps are flat
+    /// `<li itemprop="...">` lists; times use `<time datetime="PT...">`.
+    static let microdataOnly = #"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <meta charset="utf-8">
+    <title>Hearty Beef Stew | Grandma's Kitchen</title>
+    </head>
+    <body>
+    <header><a href="/">Grandma's Kitchen</a></header>
+    <article itemscope itemtype="http://schema.org/Recipe">
+      <h1 itemprop="name">Hearty Beef Stew</h1>
+      <img itemprop="image" src="https://cdn.example.com/beef-stew.jpg" alt="Beef stew"/>
+      <p itemprop="description">A rich, slow-simmered beef stew.</p>
+      <ul class="meta">
+        <li>Prep: <time itemprop="prepTime" datetime="PT20M">20 minutes</time></li>
+        <li>Cook: <time itemprop="cookTime" datetime="PT2H">2 hours</time></li>
+        <li>Serves: <span itemprop="recipeYield">6 servings</span></li>
+      </ul>
+      <h2>Ingredients</h2>
+      <ul>
+        <li itemprop="recipeIngredient">2 lbs beef chuck, cubed</li>
+        <li itemprop="recipeIngredient">3 carrots, sliced</li>
+        <li itemprop="recipeIngredient">2 potatoes, diced</li>
+        <li itemprop="recipeIngredient">1 onion, chopped</li>
+        <li itemprop="recipeIngredient">4 cups beef broth</li>
+      </ul>
+      <h2>Instructions</h2>
+      <ol>
+        <li itemprop="recipeInstructions">Brown the beef cubes in a hot pot with a little oil.</li>
+        <li itemprop="recipeInstructions">Add the onion and cook until softened.</li>
+        <li itemprop="recipeInstructions">Pour in the broth, add the vegetables, and simmer for two hours.</li>
+      </ol>
+    </article>
+    </body>
+    </html>
+    """#
+
     /// Same shape, but `@type` is the fully-qualified schema.org URL
     /// (`https://schema.org/Recipe`) rather than the bare `"Recipe"`. Plenty of
     /// real sites emit this form, and it must still be recognized as a recipe.

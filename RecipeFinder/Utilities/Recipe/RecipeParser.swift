@@ -46,6 +46,14 @@ struct RecipeParser {
             return enriched
         }
 
+        if let microdata = extractMicrodata(from: html) {
+            var enriched = microdata
+            if enriched.imageURL == nil {
+                enriched.imageURL = extractOGImage(from: html)
+            }
+            return enriched
+        }
+
         let text = cleanHTML(html)
         let lines = text.components(separatedBy: .newlines).filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
 
