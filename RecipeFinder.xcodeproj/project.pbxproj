@@ -279,6 +279,7 @@
 		F3E9D1B830457DC8008BF231 /* PersistenceController+RecipeWrites.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1B730457DC8008BF231 /* PersistenceController+RecipeWrites.swift */; };
 		F3E9D1BA30457DDB008BF231 /* PersistenceController+RecipeFetch.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1B930457DDB008BF231 /* PersistenceController+RecipeFetch.swift */; };
 		F3E9D1BC30457DE4008BF231 /* PersistenceController+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1BB30457DE4008BF231 /* PersistenceController+Database.swift */; };
+		F3E9D1BE30457E9B008BF231 /* BiometricSetupComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1BD30457E9B008BF231 /* BiometricSetupComponents.swift */; };
 		F3F941D630405E230067C6C8 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = F3F941D530405E230067C6C8 /* CLAUDE.md */; };
 /* End PBXBuildFile section */
 
@@ -607,6 +608,7 @@
 		F3E9D1B730457DC8008BF231 /* PersistenceController+RecipeWrites.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PersistenceController+RecipeWrites.swift"; sourceTree = "<group>"; };
 		F3E9D1B930457DDB008BF231 /* PersistenceController+RecipeFetch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PersistenceController+RecipeFetch.swift"; sourceTree = "<group>"; };
 		F3E9D1BB30457DE4008BF231 /* PersistenceController+Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PersistenceController+Database.swift"; sourceTree = "<group>"; };
+		F3E9D1BD30457E9B008BF231 /* BiometricSetupComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricSetupComponents.swift; sourceTree = "<group>"; };
 		F3F941D530405E230067C6C8 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -798,6 +800,7 @@
 				F3E9D19B3045172B008BF231 /* SignUpView.swift */,
 				F3E9D1B330457BC0008BF231 /* OnboardingSlide.swift */,
 				F3E9D1B530457BEA008BF231 /* OnboardingSlideView.swift */,
+				F3E9D1BD30457E9B008BF231 /* BiometricSetupComponents.swift */,
 			);
 			path = Authentication;
 			sourceTree = "<group>";
@@ -1750,6 +1753,7 @@
 				9EE5AADB2D08FCBE00C1B736 /* ContentView.swift in Sources */,
 				9E97EEAA3007963C00D35FAB /* AboutView.swift in Sources */,
 				9E51C39A2EB3E9C20064B917 /* AccountView.swift in Sources */,
+				F3E9D1BE30457E9B008BF231 /* BiometricSetupComponents.swift in Sources */,
 				9E87D3362EB6C0E900FFA1D1 /* PasswordVerificationSheet.swift in Sources */,
 				F3E9D1393043A8AF008BF231 /* CategoryCard.swift in Sources */,
 				9E4796113006BD1A00A14D3F /* SettingsComponents.swift in Sources */,
