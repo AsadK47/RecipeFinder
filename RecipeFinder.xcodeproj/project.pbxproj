@@ -261,6 +261,9 @@
 		F3E9D19230451626008BF231 /* AuthenticationManager+Biometrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D19130451626008BF231 /* AuthenticationManager+Biometrics.swift */; };
 		F3E9D1943045163A008BF231 /* AuthenticationManager+UserStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1933045163A008BF231 /* AuthenticationManager+UserStore.swift */; };
 		F3E9D1963045164E008BF231 /* AuthenticationManager+AppleSignIn.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1953045164E008BF231 /* AuthenticationManager+AppleSignIn.swift */; };
+		F3E9D198304516F3008BF231 /* AuthTextFieldStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D197304516F3008BF231 /* AuthTextFieldStyle.swift */; };
+		F3E9D19A30451709008BF231 /* EmailSignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D19930451709008BF231 /* EmailSignInView.swift */; };
+		F3E9D19C3045172B008BF231 /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D19B3045172B008BF231 /* SignUpView.swift */; };
 		F3F941D630405E230067C6C8 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = F3F941D530405E230067C6C8 /* CLAUDE.md */; };
 /* End PBXBuildFile section */
 
@@ -571,6 +574,9 @@
 		F3E9D19130451626008BF231 /* AuthenticationManager+Biometrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AuthenticationManager+Biometrics.swift"; sourceTree = "<group>"; };
 		F3E9D1933045163A008BF231 /* AuthenticationManager+UserStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AuthenticationManager+UserStore.swift"; sourceTree = "<group>"; };
 		F3E9D1953045164E008BF231 /* AuthenticationManager+AppleSignIn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AuthenticationManager+AppleSignIn.swift"; sourceTree = "<group>"; };
+		F3E9D197304516F3008BF231 /* AuthTextFieldStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthTextFieldStyle.swift; sourceTree = "<group>"; };
+		F3E9D19930451709008BF231 /* EmailSignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailSignInView.swift; sourceTree = "<group>"; };
+		F3E9D19B3045172B008BF231 /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
 		F3F941D530405E230067C6C8 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -747,6 +753,9 @@
 				9EA778FE2EB4C36A0028F064 /* EmailConfirmationSplashView.swift */,
 				9EA778FC2EB4A4B00028F064 /* OnboardingView.swift */,
 				9E51C3A62EB40DC90064B917 /* AuthenticationView.swift */,
+				F3E9D197304516F3008BF231 /* AuthTextFieldStyle.swift */,
+				F3E9D19930451709008BF231 /* EmailSignInView.swift */,
+				F3E9D19B3045172B008BF231 /* SignUpView.swift */,
 			);
 			path = Authentication;
 			sourceTree = "<group>";
@@ -1656,6 +1665,7 @@
 				F3E9D13D3043A8CB008BF231 /* IngredientCatalog.swift in Sources */,
 				9E48ADA22F22484E00CF840F /* BackupReminderManager.swift in Sources */,
 				F3E9D1463043AA7F008BF231 /* LegalComponents.swift in Sources */,
+				F3E9D198304516F3008BF231 /* AuthTextFieldStyle.swift in Sources */,
 				9E6C2C422FB477A80083A08B /* StatBadge.swift in Sources */,
 				F3E9D1583043EBD4008BF231 /* KitchenHeader.swift in Sources */,
 				9E40CAEF2EB9882700ED9594 /* KitchenInventoryModel.swift in Sources */,
@@ -1728,6 +1738,7 @@
 				9E6DEA8B2EF5EFE8001E7B24 /* NotificationManager.swift in Sources */,
 				9E6DEA8C2EF5EFE8001E7B24 /* Extensions.swift in Sources */,
 				9E6DEA8D2EF5EFE8001E7B24 /* TestHelpers.swift in Sources */,
+				F3E9D19C3045172B008BF231 /* SignUpView.swift in Sources */,
 				9E6DEA8E2EF5EFE8001E7B24 /* NetworkMonitor.swift in Sources */,
 				9E97EEA63007960600D35FAB /* DataManagementSettingsView.swift in Sources */,
 				9E6C2C402FB4779F0083A08B /* ProfileTextField.swift in Sources */,
@@ -1812,6 +1823,7 @@
 				9E834DF52ECA651C008F8A11 /* CookingTipsView.swift in Sources */,
 				F3E9D1943045163A008BF231 /* AuthenticationManager+UserStore.swift in Sources */,
 				9E834DF62ECA651C008F8A11 /* CookingTipDetailView.swift in Sources */,
+				F3E9D19A30451709008BF231 /* EmailSignInView.swift in Sources */,
 				F3E9D11A30434E14008BF231 /* MealPlanEmptyStates.swift in Sources */,
 				9E97EEAC3007965300D35FAB /* PartyTimeView.swift in Sources */,
 				9E87D3342EB6C05700FFA1D1 /* WelcomeSplashView.swift in Sources */,
