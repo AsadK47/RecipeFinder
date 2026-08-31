@@ -134,10 +134,7 @@
 		9E90AB022FA9247B00096D9D /* AnimatedHeartButtonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E90AAFF2FA9247B00096D9D /* AnimatedHeartButtonTests.swift */; };
 		9E90AB032FA9040100096D9D /* RecipeViewMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E90AB022FA9040000096D9D /* RecipeViewMode.swift */; };
 		9E97EE963007958B00D35FAB /* AppearanceAndThemeSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EE953007958B00D35FAB /* AppearanceAndThemeSettingsView.swift */; };
-		9E97EE983007959600D35FAB /* AppearanceSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EE973007959600D35FAB /* AppearanceSettingsView.swift */; };
-		9E97EE9A300795A400D35FAB /* ThemeSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EE99300795A400D35FAB /* ThemeSettingsView.swift */; };
 		9E97EE9C300795BA00D35FAB /* NotificationSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EE9B300795BA00D35FAB /* NotificationSettingsView.swift */; };
-		9E97EE9E300795CA00D35FAB /* TimerSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EE9D300795CA00D35FAB /* TimerSettingsView.swift */; };
 		9E97EEA0300795D300D35FAB /* UnitsSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EE9F300795D300D35FAB /* UnitsSettingsView.swift */; };
 		9E97EEA2300795DF00D35FAB /* DisplaySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EEA1300795DF00D35FAB /* DisplaySettingsView.swift */; };
 		9E97EEA4300795F100D35FAB /* PrivacySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EEA3300795F100D35FAB /* PrivacySettingsView.swift */; };
@@ -146,7 +143,6 @@
 		9E97EEAA3007963C00D35FAB /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EEA93007963C00D35FAB /* AboutView.swift */; };
 		9E97EEAC3007965300D35FAB /* PartyTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EEAB3007965300D35FAB /* PartyTimeView.swift */; };
 		9E97EEAF30084C6800D35FAB /* SettingsComponentsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EEAE30084C6800D35FAB /* SettingsComponentsTests.swift */; };
-		9E97EEB230084C7400D35FAB /* TimerSettingsViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EEB130084C7400D35FAB /* TimerSettingsViewTests.swift */; };
 		9E97EEC130093B4100D35FAB /* RecipeShareExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 9E97EEB730093B4000D35FAB /* RecipeShareExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		9E97EEC93009401100D35FAB /* SharedImportInbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EEC83009401100D35FAB /* SharedImportInbox.swift */; };
 		9E97EECB300D0DA400D35FAB /* EditableStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EECA300D0DA400D35FAB /* EditableStep.swift */; };
@@ -471,10 +467,7 @@
 		9E90AAFF2FA9247B00096D9D /* AnimatedHeartButtonTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedHeartButtonTests.swift; sourceTree = "<group>"; };
 		9E90AB022FA9040000096D9D /* RecipeViewMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeViewMode.swift; sourceTree = "<group>"; };
 		9E97EE953007958B00D35FAB /* AppearanceAndThemeSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearanceAndThemeSettingsView.swift; sourceTree = "<group>"; };
-		9E97EE973007959600D35FAB /* AppearanceSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearanceSettingsView.swift; sourceTree = "<group>"; };
-		9E97EE99300795A400D35FAB /* ThemeSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSettingsView.swift; sourceTree = "<group>"; };
 		9E97EE9B300795BA00D35FAB /* NotificationSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSettingsView.swift; sourceTree = "<group>"; };
-		9E97EE9D300795CA00D35FAB /* TimerSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerSettingsView.swift; sourceTree = "<group>"; };
 		9E97EE9F300795D300D35FAB /* UnitsSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitsSettingsView.swift; sourceTree = "<group>"; };
 		9E97EEA1300795DF00D35FAB /* DisplaySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsView.swift; sourceTree = "<group>"; };
 		9E97EEA3300795F100D35FAB /* PrivacySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacySettingsView.swift; sourceTree = "<group>"; };
@@ -483,7 +476,6 @@
 		9E97EEA93007963C00D35FAB /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		9E97EEAB3007965300D35FAB /* PartyTimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartyTimeView.swift; sourceTree = "<group>"; };
 		9E97EEAE30084C6800D35FAB /* SettingsComponentsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsComponentsTests.swift; sourceTree = "<group>"; };
-		9E97EEB130084C7400D35FAB /* TimerSettingsViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerSettingsViewTests.swift; sourceTree = "<group>"; };
 		9E97EEB730093B4000D35FAB /* RecipeShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = RecipeShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		9E97EEC83009401100D35FAB /* SharedImportInbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedImportInbox.swift; sourceTree = "<group>"; };
 		9E97EECA300D0DA400D35FAB /* EditableStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableStep.swift; sourceTree = "<group>"; };
@@ -1365,10 +1357,7 @@
 			isa = PBXGroup;
 			children = (
 				9E97EE953007958B00D35FAB /* AppearanceAndThemeSettingsView.swift */,
-				9E97EE973007959600D35FAB /* AppearanceSettingsView.swift */,
-				9E97EE99300795A400D35FAB /* ThemeSettingsView.swift */,
 				9E97EE9B300795BA00D35FAB /* NotificationSettingsView.swift */,
-				9E97EE9D300795CA00D35FAB /* TimerSettingsView.swift */,
 				9E97EE9F300795D300D35FAB /* UnitsSettingsView.swift */,
 				9E97EEA1300795DF00D35FAB /* DisplaySettingsView.swift */,
 				9E97EEA3300795F100D35FAB /* PrivacySettingsView.swift */,
@@ -1391,7 +1380,6 @@
 		9E97EEB030084C7400D35FAB /* Settings */ = {
 			isa = PBXGroup;
 			children = (
-				9E97EEB130084C7400D35FAB /* TimerSettingsViewTests.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -1867,7 +1855,6 @@
 				F3E9D18A30445512008BF231 /* CookingTipCategoryGrid.swift in Sources */,
 				9E6DEA892EF5EFE8001E7B24 /* HapticManager.swift in Sources */,
 				9E6DEA8A2EF5EFE8001E7B24 /* CategoryClassifier.swift in Sources */,
-				9E97EE9A300795A400D35FAB /* ThemeSettingsView.swift in Sources */,
 				F36AED6F3043392200935A3C /* RecipeFilterButton.swift in Sources */,
 				F36AED77304342AD00935A3C /* ActiveFiltersBar.swift in Sources */,
 				F3E9D1963045164E008BF231 /* AuthenticationManager+AppleSignIn.swift in Sources */,
@@ -1903,7 +1890,6 @@
 				F3E9D15E30444D41008BF231 /* ShoppingListGrouping.swift in Sources */,
 				F3E9D12F3043A5BE008BF231 /* RecipeParser+StructuredData.swift in Sources */,
 				F3E9D1CC3045D7CB008BF231 /* RecipeDietaryInfo.swift in Sources */,
-				9E97EE983007959600D35FAB /* AppearanceSettingsView.swift in Sources */,
 				9E6DEA952EF5EFE8001E7B24 /* AdaptiveSpacing.swift in Sources */,
 				9E6DEA962EF5EFE8001E7B24 /* IngredientNormalizer.swift in Sources */,
 				9E834DF12ECA6508008F8A11 /* CookingTipModel.swift in Sources */,
@@ -1951,7 +1937,6 @@
 				F3E9D11230434D91008BF231 /* MonthYearPickerSheet.swift in Sources */,
 				9E6DEA6B2EF5EF47001E7B24 /* RecipeCard.swift in Sources */,
 				F3E9D16430444D8B008BF231 /* ShoppingListHeader.swift in Sources */,
-				9E97EE9E300795CA00D35FAB /* TimerSettingsView.swift in Sources */,
 				F3E9D1433043A920008BF231 /* IngredientRecipeResultsView.swift in Sources */,
 				9E6DEA6C2EF5EF47001E7B24 /* AnimatedHeartButton.swift in Sources */,
 				9E6DEA6E2EF5EF47001E7B24 /* RecipeImageView.swift in Sources */,
@@ -2037,7 +2022,6 @@
 				9E6C2C612FB4A4BE0083A08B /* AppErrorTests.swift in Sources */,
 				F36AED7F304346DF00935A3C /* MealPlanCalendarTests.swift in Sources */,
 				9E6C2C622FB4A4BE0083A08B /* ValidatorTests.swift in Sources */,
-				9E97EEB230084C7400D35FAB /* TimerSettingsViewTests.swift in Sources */,
 				9E6C2C712FB4C8450083A08B /* BadgeManagerTests.swift in Sources */,
 				F3E9D13F3043A8F9008BF231 /* IngredientCatalogTests.swift in Sources */,
 				9E1E26122FBA077A0002A220 /* RecipeImportBuilderTests.swift in Sources */,
