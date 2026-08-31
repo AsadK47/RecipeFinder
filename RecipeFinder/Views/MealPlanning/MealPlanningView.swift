@@ -10,7 +10,6 @@ struct MealPlanningView: View {
     @State private var showQuickSnackSheet = false
     @State private var currentMealTime: MealTime?
     @State private var viewMode: ViewMode = .calendar
-    @State private var showNutritionTips = false
     @State private var showMonthYearPicker = false
     @State private var weekShoppingFeedback: String?
 
@@ -36,10 +35,6 @@ struct MealPlanningView: View {
                     onAddMeal: {
                         HapticManager.shared.light()
                         showMealTimeSelector = true
-                    },
-                    onNutritionTips: {
-                        HapticManager.shared.light()
-                        showNutritionTips = true
                     },
                     onClearOldPlans: {
                         selectedMealTimes.removeAll()

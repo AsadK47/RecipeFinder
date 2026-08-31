@@ -4,7 +4,6 @@ import SwiftUI
 /// `MealPlanningView`; menu actions are delegated through closures.
 struct MealPlannerHeader: View {
     let onAddMeal: () -> Void
-    let onNutritionTips: () -> Void
     let onClearOldPlans: () -> Void
 
     var body: some View {
@@ -29,11 +28,7 @@ struct MealPlannerHeader: View {
                     Button(action: onAddMeal) {
                         Label("Add Meal", systemImage: "plus.circle")
                     }
-                    
-                    Button(action: onNutritionTips) {
-                        Label("Nutrition Tips", systemImage: "heart.text.square")
-                    }
-                    
+
                     Divider()
                     
                     Button(role: .destructive, action: onClearOldPlans) {
