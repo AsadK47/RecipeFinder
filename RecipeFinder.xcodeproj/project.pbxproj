@@ -274,6 +274,8 @@
 		F3E9D1AE30457AD8008BF231 /* AppTheme+Palette.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1AD30457AD8008BF231 /* AppTheme+Palette.swift */; };
 		F3E9D1B030457AEA008BF231 /* AppTheme+Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1AF30457AEA008BF231 /* AppTheme+Colors.swift */; };
 		F3E9D1B230457B00008BF231 /* AppTheme+Gradients.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1B130457B00008BF231 /* AppTheme+Gradients.swift */; };
+		F3E9D1B430457BC0008BF231 /* OnboardingSlide.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1B330457BC0008BF231 /* OnboardingSlide.swift */; };
+		F3E9D1B630457BEA008BF231 /* OnboardingSlideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1B530457BEA008BF231 /* OnboardingSlideView.swift */; };
 		F3F941D630405E230067C6C8 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = F3F941D530405E230067C6C8 /* CLAUDE.md */; };
 /* End PBXBuildFile section */
 
@@ -597,6 +599,8 @@
 		F3E9D1AD30457AD8008BF231 /* AppTheme+Palette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppTheme+Palette.swift"; sourceTree = "<group>"; };
 		F3E9D1AF30457AEA008BF231 /* AppTheme+Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppTheme+Colors.swift"; sourceTree = "<group>"; };
 		F3E9D1B130457B00008BF231 /* AppTheme+Gradients.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppTheme+Gradients.swift"; sourceTree = "<group>"; };
+		F3E9D1B330457BC0008BF231 /* OnboardingSlide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingSlide.swift; sourceTree = "<group>"; };
+		F3E9D1B530457BEA008BF231 /* OnboardingSlideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingSlideView.swift; sourceTree = "<group>"; };
 		F3F941D530405E230067C6C8 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -786,6 +790,8 @@
 				F3E9D197304516F3008BF231 /* AuthTextFieldStyle.swift */,
 				F3E9D19930451709008BF231 /* EmailSignInView.swift */,
 				F3E9D19B3045172B008BF231 /* SignUpView.swift */,
+				F3E9D1B330457BC0008BF231 /* OnboardingSlide.swift */,
+				F3E9D1B530457BEA008BF231 /* OnboardingSlideView.swift */,
 			);
 			path = Authentication;
 			sourceTree = "<group>";
@@ -1786,6 +1792,7 @@
 				9E6DEA902EF5EFE8001E7B24 /* RecipeParser.swift in Sources */,
 				9E6DEA912EF5EFE8001E7B24 /* FoodsList.swift in Sources */,
 				9E6DEA922EF5EFE8001E7B24 /* AppErrors.swift in Sources */,
+				F3E9D1B430457BC0008BF231 /* OnboardingSlide.swift in Sources */,
 				F36AED693043360700935A3C /* RecipeFilterCriteria.swift in Sources */,
 				9E5B39802FABB7D300C96DB3 /* HeartPalette.swift in Sources */,
 				F3E9D1313043A5EF008BF231 /* RecipeParser+WPRM.swift in Sources */,
@@ -1869,6 +1876,7 @@
 				9E87D3342EB6C05700FFA1D1 /* WelcomeSplashView.swift in Sources */,
 				F3E9D1503043EB63008BF231 /* KitchenRecipeMatcher.swift in Sources */,
 				9E77ABEE2EB412C600666BB0 /* SecureCredentialManager.swift in Sources */,
+				F3E9D1B630457BEA008BF231 /* OnboardingSlideView.swift in Sources */,
 				9E87BC952EF54F26003F9157 /* NutritionalTipsView.swift in Sources */,
 				9E5447BA2EB0409700AD6D0A /* RecipeImportView.swift in Sources */,
 				9E87BC922EF54E17003F9157 /* DietaryInfo.swift in Sources */,
