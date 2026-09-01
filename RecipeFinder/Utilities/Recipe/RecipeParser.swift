@@ -114,12 +114,24 @@ struct RecipeParser {
 
         text = text.replacingOccurrences(of: "<br\\s*/?>", with: "\n", options: .regularExpression)
         text = text.replacingOccurrences(of: "</p>", with: "\n\n", options: .regularExpression)
-        text = text.replacingOccurrences(of: "</div>", with: "\n", options: .regularExpression)
-        text = text.replacingOccurrences(of: "</li>", with: "\n", options: .regularExpression)
+        // Turn every block-level close into a line break so headings and list items
+        // stay on their own lines — including on minified pages with no source
+        // newlines between tags, which the line-based heuristics otherwise miss.
+        text = text.replacingOccurrences(
+            of: "</(div|li|h[1-6]|ul|ol|tr|section|article|header|table|blockquote)>",
+            with: "\n",
+            options: [.regularExpression, .caseInsensitive]
+        )
 
         text = text.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
 
+        // Preserve line structure across entity decoding. `decodeHTMLEntities` uses
+        // the NSAttributedString HTML importer, which collapses insignificant
+        // whitespace — including newlines — and would otherwise flatten the whole
+        // page to a single line, defeating the line-based free-text heuristics.
+        text = text.replacingOccurrences(of: "\n", with: " \u{2424} ")
         text = decodeHTMLEntities(text)
+        text = text.replacingOccurrences(of: "\\s*\u{2424}\\s*", with: "\n", options: .regularExpression)
 
         text = text.replacingOccurrences(of: "[ \\t]+", with: " ", options: .regularExpression)
         text = text.replacingOccurrences(of: "\\n\\s*\\n\\s*\\n+", with: "\n\n", options: .regularExpression)

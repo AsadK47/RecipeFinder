@@ -51,4 +51,15 @@ import Testing
         #expect(r.imageURL == "https://cdn.example.com/beef-stew.jpg")
         #expect(r.confidence > 0.8) // structured microdata, not free-text guessing
     }
+
+    // MARK: - Plain blog, no structured data (free-text fallback)
+
+    @Test func plainBlogNoStructuredData_extractsNameAndFullLists() {
+        let r = RecipeParser.parse(html: RecipeHTMLFixtures.plainBlogNoStructuredData)
+
+        #expect(r.name == "Fluffy Pancakes")      // site-name suffix stripped
+        #expect(r.ingredients.count == 7)          // heading not merged with first item
+        #expect(r.ingredients.first == "2 cups all-purpose flour")
+        #expect(r.instructions.count == 4)
+    }
 }

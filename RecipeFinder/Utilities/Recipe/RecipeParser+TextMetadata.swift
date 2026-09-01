@@ -19,6 +19,19 @@ extension RecipeParser {
                 }
             }
 
+            // Page titles are almost always "Recipe Name <separator> Site Name".
+            // Keep the first segment so the site name doesn't end up in the recipe
+            // title. Checked longest/most-specific separators first.
+            for separator in [" | ", " – ", " — ", " • ", " - "] {
+                if let range = title.range(of: separator) {
+                    let candidate = title[..<range.lowerBound].trimmingCharacters(in: .whitespaces)
+                    if candidate.count >= 3 {
+                        title = candidate
+                        break
+                    }
+                }
+            }
+
             if !title.isEmpty && title.count < 100 {
                 return title
             }

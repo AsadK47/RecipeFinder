@@ -84,6 +84,45 @@ enum RecipeHTMLFixtures {
     </html>
     """#
 
+    /// A plain blog post with **no structured data at all** (no JSON-LD, WPRM, or
+    /// microdata) — just a headed `<h1>`, intro prose, an "Ingredients" `<ul>` and
+    /// an "Instructions" `<ol>`. Exercises the free-text fallback, the hardest and
+    /// most common messy case. The `<title>` carries a site-name suffix and the
+    /// section headings sit directly against their lists.
+    static let plainBlogNoStructuredData = #"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <meta charset="utf-8">
+    <meta property="og:image" content="https://cdn.example.com/pancakes.jpg" />
+    <title>Fluffy Pancakes - The Simple Cook</title>
+    </head>
+    <body>
+    <article>
+    <h1>Fluffy Pancakes</h1>
+    <p>These are the fluffiest pancakes you'll ever make, and they come together in a single bowl.</p>
+    <h2>Ingredients</h2>
+    <ul>
+    <li>2 cups all-purpose flour</li>
+    <li>2 tablespoons sugar</li>
+    <li>1 tablespoon baking powder</li>
+    <li>1/2 teaspoon salt</li>
+    <li>2 large eggs</li>
+    <li>1 1/2 cups milk</li>
+    <li>3 tablespoons melted butter</li>
+    </ul>
+    <h2>Instructions</h2>
+    <ol>
+    <li>Whisk the flour, sugar, baking powder, and salt together in a large bowl.</li>
+    <li>In a separate bowl, beat the eggs with the milk and melted butter.</li>
+    <li>Pour the wet ingredients into the dry and stir until just combined.</li>
+    <li>Cook on a greased griddle over medium heat until golden on both sides.</li>
+    </ol>
+    </article>
+    </body>
+    </html>
+    """#
+
     /// Same shape, but `@type` is the fully-qualified schema.org URL
     /// (`https://schema.org/Recipe`) rather than the bare `"Recipe"`. Plenty of
     /// real sites emit this form, and it must still be recognized as a recipe.
