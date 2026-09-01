@@ -149,4 +149,50 @@ enum RecipeHTMLFixtures {
     <body><h1>Classic Lemonade</h1></body>
     </html>
     """#
+
+    /// JSON-LD where the singular-friendly fields use single values instead of
+    /// arrays: `recipeIngredient` as one String and `recipeInstructions` as one
+    /// `HowToStep` object. Both are schema.org-valid and appear in the wild.
+    static let jsonLDSingleValues = #"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <meta charset="utf-8">
+    <title>One-Ingredient Wonder</title>
+    <script type="application/ld+json">
+    {"@context":"https://schema.org",
+     "@type":"Recipe",
+     "name":"One-Ingredient Wonder",
+     "recipeIngredient":"1 cup magic",
+     "recipeInstructions":{"@type":"HowToStep","text":"Stir the magic until it shimmers, then serve."}}
+    </script>
+    </head>
+    <body><h1>One-Ingredient Wonder</h1></body>
+    </html>
+    """#
+
+    /// Microdata where `recipeInstructions` is a single container element wrapping
+    /// `<p>` steps (rather than one itemprop per step). The steps must be pulled
+    /// from inside that container.
+    static let microdataContainerInstructions = #"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head><meta charset="utf-8"><title>Simple Omelette</title></head>
+    <body>
+    <article itemscope itemtype="https://schema.org/Recipe">
+      <h1 itemprop="name">Simple Omelette</h1>
+      <ul>
+        <li itemprop="recipeIngredient">3 eggs</li>
+        <li itemprop="recipeIngredient">1 tbsp butter</li>
+        <li itemprop="recipeIngredient">Salt to taste</li>
+      </ul>
+      <div itemprop="recipeInstructions">
+        <p>Beat the eggs with a pinch of salt.</p>
+        <p>Melt the butter in a nonstick pan over medium heat.</p>
+        <p>Pour in the eggs and cook until just set, then fold and serve.</p>
+      </div>
+    </article>
+    </body>
+    </html>
+    """#
 }

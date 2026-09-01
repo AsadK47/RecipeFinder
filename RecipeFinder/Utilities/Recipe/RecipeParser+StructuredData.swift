@@ -86,10 +86,15 @@ extension RecipeParser {
                 }
                 return nil
             }.filter { !$0.isEmpty }
+        } else if let single = data["recipeIngredient"] as? String {
+            let decoded = decodeHTMLEntities(single.trimmingCharacters(in: .whitespacesAndNewlines))
+            if !decoded.isEmpty { result.ingredients = [decoded] }
         }
 
         if let instructionsData = data["recipeInstructions"] as? [Any] {
             result.instructions = flattenInstructionSteps(from: instructionsData)
+        } else if let instructionsObject = data["recipeInstructions"] as? [String: Any] {
+            result.instructions = flattenInstructionSteps(from: [instructionsObject])
         } else if let instructionsString = data["recipeInstructions"] as? String {
             let steps = instructionsString.components(separatedBy: .newlines)
                 .map { decodeHTMLEntities($0.trimmingCharacters(in: .whitespacesAndNewlines)) }

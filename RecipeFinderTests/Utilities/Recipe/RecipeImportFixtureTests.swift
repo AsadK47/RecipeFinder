@@ -62,4 +62,26 @@ import Testing
         #expect(r.ingredients.first == "2 cups all-purpose flour")
         #expect(r.instructions.count == 4)
     }
+
+    // MARK: - JSON-LD single-value fields (not arrays)
+
+    @Test func jsonLDSingleValues_handlesStringIngredientAndObjectInstruction() {
+        let r = RecipeParser.parse(html: RecipeHTMLFixtures.jsonLDSingleValues)
+
+        #expect(r.name == "One-Ingredient Wonder")
+        #expect(r.ingredients == ["1 cup magic"])
+        #expect(r.instructions == ["Stir the magic until it shimmers, then serve."])
+        #expect(r.confidence > 0.9) // still the JSON-LD path
+    }
+
+    // MARK: - Microdata container instructions
+
+    @Test func microdataContainerInstructions_pullsStepsFromContainer() {
+        let r = RecipeParser.parse(html: RecipeHTMLFixtures.microdataContainerInstructions)
+
+        #expect(r.name == "Simple Omelette")
+        #expect(r.ingredients.count == 3)
+        #expect(r.instructions.count == 3)
+        #expect(r.instructions.first == "Beat the eggs with a pinch of salt.")
+    }
 }

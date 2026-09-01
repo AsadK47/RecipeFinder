@@ -35,6 +35,11 @@ extension RecipeParser {
 
         result.instructions = innerTexts(itemprop: "recipeInstructions", in: scoped)
             .filter { $0.count >= 10 }
+        if result.instructions.isEmpty {
+            // A single container element (e.g. <div itemprop="recipeInstructions">
+            // wrapping <p> steps) rather than one itemprop per step.
+            result.instructions = containerInstructions(in: scoped)
+        }
 
         result.prepTime = minutes(forItemprop: "prepTime", in: scoped)
         result.cookTime = minutes(forItemprop: "cookTime", in: scoped)
@@ -99,5 +104,50 @@ extension RecipeParser {
 
     private static func firstCapture(_ pattern: String, in text: String) -> String? {
         allCaptures(pattern, in: text).first
+    }
+
+    /// Steps pulled from a single `recipeInstructions` **container** element, by
+    /// isolating that element's inner HTML (balanced-tag scan) and splitting its
+    /// cleaned text — used when there isn't one itemprop per step.
+    private static func containerInstructions(in html: String) -> [String] {
+        guard let inner = innerHTML(itemprop: "recipeInstructions", in: html) else { return [] }
+        return cleanHTML(inner)
+            .components(separatedBy: .newlines)
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { $0.count >= 10 }
+    }
+
+    /// Inner HTML of the first element carrying `itemprop`, found by matching its
+    /// opening tag then scanning for the matching close with depth counting so
+    /// nested same-name tags don't end the element early.
+    private static func innerHTML(itemprop: String, in html: String) -> String? {
+        let openPattern = #"<([a-zA-Z0-9]+)\b[^>]*\bitemprop=["']\#(itemprop)["'][^>]*>"#
+        guard let openRegex = try? NSRegularExpression(pattern: openPattern, options: [.caseInsensitive]) else {
+            return nil
+        }
+        let ns = html as NSString
+        guard let open = openRegex.firstMatch(in: html, range: NSRange(location: 0, length: ns.length)) else {
+            return nil
+        }
+        let tag = ns.substring(with: open.range(at: 1)).lowercased()
+        let contentStart = open.range.location + open.range.length
+        let rest = ns.substring(from: contentStart) as NSString
+
+        guard let tokenRegex = try? NSRegularExpression(pattern: #"</?\#(tag)\b[^>]*>"#, options: [.caseInsensitive]) else {
+            return nil
+        }
+        var depth = 1
+        for token in tokenRegex.matches(in: rest as String, range: NSRange(location: 0, length: rest.length)) {
+            let text = rest.substring(with: token.range)
+            if text.hasPrefix("</") {
+                depth -= 1
+                if depth == 0 {
+                    return rest.substring(to: token.range.location)
+                }
+            } else if !text.hasSuffix("/>") {
+                depth += 1
+            }
+        }
+        return nil
     }
 }
