@@ -296,6 +296,10 @@
 		F3E9D2113046D45B008BF231 /* BackupArchiveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D2103046D45B008BF231 /* BackupArchiveTests.swift */; };
 		F3E9D21B30470E39008BF231 /* BackupMerge.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D21A30470E39008BF231 /* BackupMerge.swift */; };
 		F3E9D21D30470E4B008BF231 /* BackupMergeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D21C30470E4B008BF231 /* BackupMergeTests.swift */; };
+		F3E9D21F3047105C008BF231 /* ManagerMergeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D21E3047105C008BF231 /* ManagerMergeTests.swift */; };
+		F3E9D221304762BF008BF231 /* BackupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D220304762BF008BF231 /* BackupService.swift */; };
+		F3E9D223304762EE008BF231 /* BackupServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D222304762EE008BF231 /* BackupServiceTests.swift */; };
+		F3E9D22530476397008BF231 /* BackupDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D22430476396008BF231 /* BackupDocument.swift */; };
 		F3F941D630405E230067C6C8 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = F3F941D530405E230067C6C8 /* CLAUDE.md */; };
 /* End PBXBuildFile section */
 
@@ -641,6 +645,10 @@
 		F3E9D2103046D45B008BF231 /* BackupArchiveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupArchiveTests.swift; sourceTree = "<group>"; };
 		F3E9D21A30470E39008BF231 /* BackupMerge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupMerge.swift; sourceTree = "<group>"; };
 		F3E9D21C30470E4B008BF231 /* BackupMergeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupMergeTests.swift; sourceTree = "<group>"; };
+		F3E9D21E3047105C008BF231 /* ManagerMergeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagerMergeTests.swift; sourceTree = "<group>"; };
+		F3E9D220304762BF008BF231 /* BackupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupService.swift; sourceTree = "<group>"; };
+		F3E9D222304762EE008BF231 /* BackupServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupServiceTests.swift; sourceTree = "<group>"; };
+		F3E9D22430476396008BF231 /* BackupDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupDocument.swift; sourceTree = "<group>"; };
 		F3F941D530405E230067C6C8 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1588,6 +1596,8 @@
 			children = (
 				F3E9D20D3046D448008BF231 /* BackupArchive.swift */,
 				F3E9D21A30470E39008BF231 /* BackupMerge.swift */,
+				F3E9D220304762BF008BF231 /* BackupService.swift */,
+				F3E9D22430476396008BF231 /* BackupDocument.swift */,
 			);
 			path = Backup;
 			sourceTree = "<group>";
@@ -1597,6 +1607,8 @@
 			children = (
 				F3E9D2103046D45B008BF231 /* BackupArchiveTests.swift */,
 				F3E9D21C30470E4B008BF231 /* BackupMergeTests.swift */,
+				F3E9D21E3047105C008BF231 /* ManagerMergeTests.swift */,
+				F3E9D222304762EE008BF231 /* BackupServiceTests.swift */,
 			);
 			path = Backup;
 			sourceTree = "<group>";
@@ -1804,6 +1816,7 @@
 				F3E9D1DA3045DCE8008BF231 /* RecipeDetailView+Content.swift in Sources */,
 				9EA779142EB56BA00028F064 /* NotesListView.swift in Sources */,
 				9E40CAF12EB9891700ED9594 /* ShoppingListModel.swift in Sources */,
+				F3E9D221304762BF008BF231 /* BackupService.swift in Sources */,
 				F3E9D13D3043A8CB008BF231 /* IngredientCatalog.swift in Sources */,
 				F3E9D1463043AA7F008BF231 /* LegalComponents.swift in Sources */,
 				F3E9D198304516F3008BF231 /* AuthTextFieldStyle.swift in Sources */,
@@ -1989,6 +2002,7 @@
 				F3E9D1503043EB63008BF231 /* KitchenRecipeMatcher.swift in Sources */,
 				9E77ABEE2EB412C600666BB0 /* SecureCredentialManager.swift in Sources */,
 				F3E9D1B630457BEA008BF231 /* OnboardingSlideView.swift in Sources */,
+				F3E9D22530476397008BF231 /* BackupDocument.swift in Sources */,
 				9E87BC952EF54F26003F9157 /* NutritionalTipsView.swift in Sources */,
 				9E5447BA2EB0409700AD6D0A /* RecipeImportView.swift in Sources */,
 				9E87BC922EF54E17003F9157 /* DietaryInfo.swift in Sources */,
@@ -2023,6 +2037,7 @@
 				F36AED553040A5F200935A3C /* RecipeImporterTests.swift in Sources */,
 				9E6C2C182FB394090083A08B /* IngredientNormalizerTests.swift in Sources */,
 				9E6C2C4C2FB477ED0083A08B /* BadgeCardTests.swift in Sources */,
+				F3E9D21F3047105C008BF231 /* ManagerMergeTests.swift in Sources */,
 				9E6C2C532FB478290083A08B /* AccountSheetTests.swift in Sources */,
 				9E6C2C4D2FB477ED0083A08B /* CardViewTests.swift in Sources */,
 				9E6C2C192FB394090083A08B /* CategoryClassifierTests.swift in Sources */,
@@ -2067,6 +2082,7 @@
 				9E5B398F2FABC95300C96DB3 /* InfoItemTests.swift in Sources */,
 				F3E9D20730462633008BF231 /* RecipeHTMLFixtures.swift in Sources */,
 				9E5D201D2FB24B9B00F2896A /* CookingTipModelTests.swift in Sources */,
+				F3E9D223304762EE008BF231 /* BackupServiceTests.swift in Sources */,
 				F36AED673043343300935A3C /* MemoCacheTests.swift in Sources */,
 				9E5B399D2FAD024A00C96DB3 /* BadgeModelTests.swift in Sources */,
 			);

@@ -22,6 +22,14 @@ class BadgeManager: ObservableObject {
         loadBadges()
     }
 
+    /// Faithful, non-destructive restore: unions incoming badges by id. On a key
+    /// collision the currently-held badge wins, so this device's `dateEarned` is
+    /// preserved rather than overwritten by the backup's.
+    func merge(_ incoming: [String: Badge]) {
+        unlockedBadges = BackupMerge.mergedBadges(existing: unlockedBadges, incoming: incoming)
+        saveBadges()
+    }
+
     func checkAndUnlockBadges(recipeCount: Int) {
         for badgeType in BadgeType.allCases {
             if recipeCount >= badgeType.requiredCount && !isBadgeUnlocked(badgeType.rawValue) {

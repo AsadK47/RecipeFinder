@@ -73,6 +73,17 @@ final class CookingTipsManager: ObservableObject {
         tips.filter { $0.isFavorite }
     }
     
+    /// Faithful, non-destructive restore: unions incoming tips by id and persists
+    /// immediately. Autosave is suppressed around the assignment so the write is
+    /// synchronous (not left to the debounced task) while still avoiding a
+    /// duplicate save.
+    func merge(_ incoming: [CookingTipModel]) {
+        suppressAutosave = true
+        tips = BackupMerge.merged(existing: tips, incoming: incoming)
+        suppressAutosave = false
+        saveTips()
+    }
+
     func addTip(_ tip: CookingTipModel) {
         tips.append(tip)
         HapticManager.shared.success()

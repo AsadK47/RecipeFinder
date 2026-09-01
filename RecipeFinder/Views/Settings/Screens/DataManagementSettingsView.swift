@@ -6,8 +6,17 @@ struct DataManagementSettingsView: View {
     @State private var dataCleared = false
     @AppStorage("skipRecipeDeleteConfirmation") private var skipDeleteConfirmation: Bool = false
 
+    // Backup & Restore
+    @State private var isExporting = false
+    @State private var isImporting = false
+    @State private var exportDocument: BackupDocument?
+    @State private var backupMessage: String?
+    @State private var backupMessageIsError = false
+
     var body: some View {
         SettingsScreen("Data Management") {
+            backupSection
+
             VStack(spacing: AppTheme.spacing8) {
                 SettingsSectionHeader(title: "Reset")
 
@@ -81,8 +90,44 @@ struct DataManagementSettingsView: View {
                 }
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
+
+            if let backupMessage {
+                HStack(spacing: AppTheme.spacing8) {
+                    Image(systemName: backupMessageIsError ? "exclamationmark.triangle.fill" : "checkmark.circle.fill")
+                        .foregroundColor(backupMessageIsError ? .orange : .green)
+                    Text(backupMessage)
+                        .font(.caption)
+                        .foregroundColor(backupMessageIsError ? .orange : .green)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .transition(.opacity.combined(with: .move(edge: .top)))
+            }
         }
         .animation(.spring(response: 0.3), value: dataCleared)
+        .animation(.spring(response: 0.3), value: backupMessage)
+        .fileExporter(
+            isPresented: $isExporting,
+            document: exportDocument,
+            contentType: BackupDocument.backupType,
+            defaultFilename: Self.defaultBackupFilename()
+        ) { result in
+            if case .failure = result {
+                showBackupMessage("Couldn't save the backup.", isError: true)
+            } else {
+                showBackupMessage("Backup saved.", isError: false)
+            }
+        }
+        .fileImporter(
+            isPresented: $isImporting,
+            allowedContentTypes: [BackupDocument.backupType, .json]
+        ) { result in
+            switch result {
+            case let .success(url):
+                importBackup(from: url)
+            case .failure:
+                showBackupMessage("Couldn't open that file.", isError: true)
+            }
+        }
         .alert("Reset to Default", isPresented: $showingResetAlert) {
             Button("Cancel", role: .cancel) { }
             Button("Reset", role: .destructive) {
@@ -90,6 +135,108 @@ struct DataManagementSettingsView: View {
             }
         } message: {
             Text("This will reset the app to factory defaults, clearing all your data and restoring sample recipes. Use this if you encounter any issues. This action cannot be undone!")
+        }
+    }
+
+    private var backupSection: some View {
+        VStack(spacing: AppTheme.spacing8) {
+            SettingsSectionHeader(title: "Backup & Restore")
+
+            SettingsCard {
+                VStack(alignment: .leading, spacing: AppTheme.spacing16) {
+                    HStack(spacing: AppTheme.spacing12) {
+                        SettingsIconTile(systemName: "externaldrive.fill", color: .blue)
+
+                        VStack(alignment: .leading, spacing: AppTheme.spacing2) {
+                            Text("Backup Your Library")
+                                .font(.body)
+                                .adaptiveForegroundColor()
+
+                            Text("Save everything to a file, or restore from one")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+
+                    Text("Exports your recipes, notes, shopping list, kitchen, meal plans, badges and tips to a single file. Importing merges a backup into your current library without overwriting anything.")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    Button(action: exportBackup) {
+                        actionLabel(icon: "square.and.arrow.up", title: "Export Backup", color: .blue)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+
+                    Button(action: { isImporting = true }) {
+                        actionLabel(icon: "square.and.arrow.down", title: "Import Backup", color: .green)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+                .padding(AppTheme.spacing20)
+            }
+        }
+    }
+
+    private func actionLabel(icon: String, title: String, color: Color) -> some View {
+        HStack {
+            Image(systemName: icon)
+                .font(.body)
+            Text(title)
+                .font(.body)
+                .fontWeight(.semibold)
+        }
+        .adaptiveForegroundColor()
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, AppTheme.spacing12)
+        .background(color)
+        .cornerRadius(AppTheme.cornerRadius12)
+    }
+
+    private static func defaultBackupFilename() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return "RecipeFinder-Backup-\(formatter.string(from: Date()))"
+    }
+
+    private func exportBackup() {
+        do {
+            exportDocument = BackupDocument(data: try BackupService().exportData())
+            isExporting = true
+        } catch {
+            showBackupMessage("Couldn't create the backup.", isError: true)
+        }
+    }
+
+    private func importBackup(from url: URL) {
+        let didAccess = url.startAccessingSecurityScopedResource()
+        defer { if didAccess { url.stopAccessingSecurityScopedResource() } }
+
+        do {
+            let data = try Data(contentsOf: url)
+            try BackupService().importData(data)
+
+            // The managers' @Published state refreshes live via the merge seam;
+            // the Core Data-backed recipe list only reloads on a scope-change
+            // signal, so nudge it to re-fetch the newly merged recipes.
+            NotificationCenter.default.post(name: .userScopeDidChange, object: nil)
+
+            showBackupMessage("Backup restored.", isError: false)
+            HapticManager.shared.success()
+        } catch let error as BackupError {
+            showBackupMessage(error.errorDescription ?? "That backup couldn't be restored.", isError: true)
+            HapticManager.shared.error()
+        } catch {
+            showBackupMessage("Couldn't read that backup.", isError: true)
+            HapticManager.shared.error()
+        }
+    }
+
+    private func showBackupMessage(_ message: String, isError: Bool) {
+        backupMessage = message
+        backupMessageIsError = isError
+        DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayFeedback) {
+            backupMessage = nil
         }
     }
 

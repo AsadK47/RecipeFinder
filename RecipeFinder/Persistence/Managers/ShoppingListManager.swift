@@ -46,6 +46,13 @@ final class ShoppingListManager: ObservableObject {
         }
     }
     
+    /// Faithful, non-destructive restore: unions incoming items by id and persists.
+    /// Unlike `addItem`, it doesn't merge by name or re-classify — restored items
+    /// keep exactly the identity and fields they had when backed up.
+    func merge(_ incoming: [ShoppingListModel]) {
+        saveItems(BackupMerge.merged(existing: items, incoming: incoming))
+    }
+
     func addItem(name: String, quantity: Int = 1, category: String? = nil) {
         var items = getItems()
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)

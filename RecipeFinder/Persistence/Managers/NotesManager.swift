@@ -51,6 +51,16 @@ class NotesManager: ObservableObject {
         saveNotes()
     }
     
+    /// Faithful, non-destructive restore of notes from a backup: unions by id and
+    /// persists without re-stamping `createdDate`/`modifiedDate` the way `addNote`
+    /// does (that re-stamping was what mangled restored notes in the old export).
+    /// Re-sorts so in-memory order matches a fresh load.
+    func merge(_ incoming: [NoteModel]) {
+        notes = BackupMerge.merged(existing: notes, incoming: incoming)
+        sortNotes()
+        saveNotes()
+    }
+
     func togglePin(_ note: NoteModel) {
         if let index = notes.firstIndex(where: { $0.id == note.id }) {
             notes[index].isPinned.toggle()

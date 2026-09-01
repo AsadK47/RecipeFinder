@@ -24,6 +24,14 @@ final class MealPlanningManager: ObservableObject {
         loadMealPlans()
     }
     
+    /// Faithful, non-destructive restore: unions incoming plans by id and persists.
+    /// Unlike `addMealPlan`, it doesn't collapse same-day/same-slot entries —
+    /// restored plans keep the identity and fields they had when backed up.
+    func merge(_ incoming: [MealPlanModel]) {
+        mealPlans = BackupMerge.merged(existing: mealPlans, incoming: incoming)
+        saveMealPlans()
+    }
+
     func addMealPlan(_ mealPlan: MealPlanModel) {
         if let existingIndex = mealPlans.firstIndex(where: {
             Calendar.current.isDate($0.date, inSameDayAs: mealPlan.date) &&

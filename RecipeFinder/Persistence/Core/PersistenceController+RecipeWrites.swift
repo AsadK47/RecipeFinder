@@ -139,6 +139,19 @@ extension PersistenceController {
         }
     }
     
+    /// Faithful, non-destructive restore of recipes from a backup. Existing recipes
+    /// are left untouched; only genuinely new ones (per `BackupMerge.mergedRecipes`,
+    /// which dedupes by id AND normalized name so re-imports with fresh UUIDs don't
+    /// duplicate) are saved into the current user's scope.
+    func mergeRecipes(_ incoming: [RecipeModel]) {
+        let existing = fetchRecipes()
+        let existingIDs = Set(existing.map(\.id))
+        let merged = BackupMerge.mergedRecipes(existing: existing, incoming: incoming)
+        for recipe in merged where !existingIDs.contains(recipe.id) {
+            saveRecipeModel(recipe)
+        }
+    }
+
     func deleteRecipe(withId id: UUID) {
         guard ensureStoreIsReady() else { return }
         

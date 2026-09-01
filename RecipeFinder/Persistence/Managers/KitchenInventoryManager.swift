@@ -174,6 +174,15 @@ final class KitchenInventoryManager: ObservableObject {
 		UserDefaults.standard.set(true, forKey: migrationKey)
 	}
     
+	/// Faithful, non-destructive restore of both kitchen stores: unions the quick
+	/// `items` list and the detailed `inventory` list by id and persists each.
+	/// Unlike `addItem`/`addInventoryItem`, it doesn't dedupe by name or validate
+	/// expiry/quantity — restored entries keep exactly what they had when backed up.
+	func merge(items incomingItems: [KitchenItem], inventory incomingInventory: [KitchenInventoryModel]) {
+		saveItems(BackupMerge.merged(existing: items, incoming: incomingItems))
+		saveInventoryItems(BackupMerge.merged(existing: inventoryItems, incoming: incomingInventory))
+	}
+
 	func addItem(name: String, category: String? = nil, quantity: Double = 1, unit: String = "item") {
 		let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
 		guard !trimmedName.isEmpty else { return }
