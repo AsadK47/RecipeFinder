@@ -294,6 +294,8 @@
 		F3E9D20B30462807008BF231 /* RecipeParser+Microdata.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D20A30462807008BF231 /* RecipeParser+Microdata.swift */; };
 		F3E9D20E3046D448008BF231 /* BackupArchive.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D20D3046D448008BF231 /* BackupArchive.swift */; };
 		F3E9D2113046D45B008BF231 /* BackupArchiveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D2103046D45B008BF231 /* BackupArchiveTests.swift */; };
+		F3E9D21B30470E39008BF231 /* BackupMerge.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D21A30470E39008BF231 /* BackupMerge.swift */; };
+		F3E9D21D30470E4B008BF231 /* BackupMergeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D21C30470E4B008BF231 /* BackupMergeTests.swift */; };
 		F3F941D630405E230067C6C8 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = F3F941D530405E230067C6C8 /* CLAUDE.md */; };
 /* End PBXBuildFile section */
 
@@ -637,6 +639,8 @@
 		F3E9D20A30462807008BF231 /* RecipeParser+Microdata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RecipeParser+Microdata.swift"; sourceTree = "<group>"; };
 		F3E9D20D3046D448008BF231 /* BackupArchive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupArchive.swift; sourceTree = "<group>"; };
 		F3E9D2103046D45B008BF231 /* BackupArchiveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupArchiveTests.swift; sourceTree = "<group>"; };
+		F3E9D21A30470E39008BF231 /* BackupMerge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupMerge.swift; sourceTree = "<group>"; };
+		F3E9D21C30470E4B008BF231 /* BackupMergeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupMergeTests.swift; sourceTree = "<group>"; };
 		F3F941D530405E230067C6C8 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1583,6 +1587,7 @@
 			isa = PBXGroup;
 			children = (
 				F3E9D20D3046D448008BF231 /* BackupArchive.swift */,
+				F3E9D21A30470E39008BF231 /* BackupMerge.swift */,
 			);
 			path = Backup;
 			sourceTree = "<group>";
@@ -1591,6 +1596,7 @@
 			isa = PBXGroup;
 			children = (
 				F3E9D2103046D45B008BF231 /* BackupArchiveTests.swift */,
+				F3E9D21C30470E4B008BF231 /* BackupMergeTests.swift */,
 			);
 			path = Backup;
 			sourceTree = "<group>";
@@ -1969,6 +1975,7 @@
 				F3E9D1353043A62B008BF231 /* RecipeParser+TextContent.swift in Sources */,
 				9E2E34212E9D9F8500E2E49F /* KitchenView.swift in Sources */,
 				9E97EEA4300795F100D35FAB /* PrivacySettingsView.swift in Sources */,
+				F3E9D21B30470E39008BF231 /* BackupMerge.swift in Sources */,
 				9E51C3922EB3DE580064B917 /* RecipeWizardView.swift in Sources */,
 				9EA778FD2EB4A4B00028F064 /* OnboardingView.swift in Sources */,
 				F36AED6D3043391A00935A3C /* RecipeSearchModifiers.swift in Sources */,
@@ -2056,6 +2063,7 @@
 				9E6C2C762FB4C8450083A08B /* NotesManagerTests.swift in Sources */,
 				9E6C2C632FB4A4BE0083A08B /* AdaptiveSpacingTests.swift in Sources */,
 				9E97EED1300D0F3200D35FAB /* TextRecipeParserTests.swift in Sources */,
+				F3E9D21D30470E4B008BF231 /* BackupMergeTests.swift in Sources */,
 				9E5B398F2FABC95300C96DB3 /* InfoItemTests.swift in Sources */,
 				F3E9D20730462633008BF231 /* RecipeHTMLFixtures.swift in Sources */,
 				9E5D201D2FB24B9B00F2896A /* CookingTipModelTests.swift in Sources */,
