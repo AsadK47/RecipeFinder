@@ -73,3 +73,5 @@ config/secrets.*
 **/filled_*
 **/signed_*
 **/confidential_*
+# Xcode project backups (created by tooling; never commit)
+*.pbxproj.backup

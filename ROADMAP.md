@@ -152,7 +152,6 @@ Durable health of the codebase (specifics live in git history):
 ### 🟢 Settings Revamp (July 2026)
 - Phase A: design system in Components/Settings/SettingsComponents.swift (icon tiles, rows, sections, cards)
 - Phase B: 12 sub-screens split into Views/Settings/Screens/, restyled; SettingsScreen scaffold, toggle/choice rows; visual walkthrough signed off
-- Dead code pending delete decision: AppearanceSettingsView, ThemeSettingsView, TimerSettingsView, PrivacyInfoRow, AboutFeatureRow
 
 ### 🟢 Health Check & Release Prep (July 2026)
 - Fixed `signUp()` overwriting existing accounts' credentials (account-takeover bug)
