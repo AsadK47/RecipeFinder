@@ -5,9 +5,11 @@ import Foundation
 ///
 /// Two strategies, tried in order:
 /// 1. Section headers ("Ingredients", "Instructions"/"Method"/"Directions"/
-///    "Steps") split the text explicitly.
-/// 2. Without headers, each line is classified: quantity- or bullet-led lines
-///    are ingredients, numbered or sentence-like lines are instructions.
+///    "Steps") split the text explicitly. Headers are matched loosely so
+///    caption styling like "INGREDIENTS 👇" or "what you need" still counts.
+/// 2. Without headers, each line is classified: quantity-, bullet-, or
+///    emoji-led lines are ingredients; numbered or imperative ("Melt the
+///    butter…") lines are instructions.
 enum TextRecipeParser {
 
     static func parse(_ text: String) -> RecipeWizardView.PrefilledRecipeData? {
@@ -59,12 +61,13 @@ enum TextRecipeParser {
         guard let first = lines.first(where: { !isSectionHeader($0) && !isMetadataLine($0) }) else {
             return nil
         }
-        // Titles are short; a long first line is prose, not a name.
-        guard first.count <= 80, !looksLikeIngredient(first) else { return nil }
-
-        let cleaned = first
+        // Strip decorative emoji/symbols around the name before judging it.
+        var cleaned = stripTrailingBullets(stripLeadingBullets(first))
             .replacingOccurrences(of: #"^(recipe\s*:?\s*)"#, with: "", options: [.regularExpression, .caseInsensitive])
             .trimmingCharacters(in: .whitespaces)
+        // Titles are short; a long first line is prose, and quantity lines are ingredients.
+        guard cleaned.count <= 80, !looksLikeIngredient(cleaned) else { return nil }
+        cleaned = cleaned.trimmingCharacters(in: .whitespaces)
         return cleaned.isEmpty ? nil : cleaned
     }
 
@@ -76,11 +79,11 @@ enum TextRecipeParser {
         var current: Section?
 
         for line in lines {
-            if matchesHeader(line, keywords: ["ingredients", "you will need", "you'll need"]) {
+            if matchesHeader(line, keywords: ingredientHeaderKeywords) {
                 current = .ingredients
                 continue
             }
-            if matchesHeader(line, keywords: ["instructions", "method", "directions", "steps", "preparation"]) {
+            if matchesHeader(line, keywords: instructionHeaderKeywords) {
                 current = .instructions
                 continue
             }
@@ -101,18 +104,35 @@ enum TextRecipeParser {
         case instructions
     }
 
+    private static let ingredientHeaderKeywords = [
+        "ingredients", "you will need", "you'll need", "what you need", "what you'll need"
+    ]
+    private static let instructionHeaderKeywords = [
+        "instructions", "method", "directions", "steps", "preparation"
+    ]
+
     private static func isSectionHeader(_ line: String) -> Bool {
-        matchesHeader(line, keywords: [
-            "ingredients", "you will need", "you'll need",
-            "instructions", "method", "directions", "steps", "preparation"
-        ])
+        matchesHeader(line, keywords: ingredientHeaderKeywords + instructionHeaderKeywords)
     }
 
+    /// Loose header match: reduce the line to just its letters/spaces (dropping
+    /// emoji, colons, `#`, bullets) and compare to the keyword, so "INGREDIENTS
+    /// 👇" and "Method:" both match while "Ingredients you'll need for the base"
+    /// (a longer phrase) does not.
     private static func matchesHeader(_ line: String, keywords: [String]) -> Bool {
-        let normalized = line
+        let normalized = normalizedHeader(line)
+        guard !normalized.isEmpty else { return false }
+        return keywords.map(normalizedHeader).contains(normalized)
+    }
+
+    private static func normalizedHeader(_ line: String) -> String {
+        let lettersAndSpaces = String(String.UnicodeScalarView(
+            line.unicodeScalars.map { CharacterSet.letters.contains($0) ? $0 : " " }
+        ))
+        return lettersAndSpaces
             .lowercased()
-            .trimmingCharacters(in: CharacterSet(charactersIn: " :#*-–—"))
-        return keywords.contains(normalized)
+            .replacingOccurrences(of: #"\s+"#, with: " ", options: .regularExpression)
+            .trimmingCharacters(in: .whitespaces)
     }
 
     // MARK: - Line-classification strategy
@@ -122,14 +142,15 @@ enum TextRecipeParser {
         var instructions: [String] = []
 
         // Skip the title line when classifying.
-        let bodyLines = lines.dropFirst()
+        for line in lines.dropFirst() where !isMetadataLine(line) {
+            let stripped = stripListMarker(line)
+            guard !stripped.isEmpty else { continue }
 
-        for line in bodyLines where !isMetadataLine(line) {
-            if looksLikeInstruction(line) {
+            if looksLikeNumberedStep(line) || startsWithCookingVerb(stripped) {
                 instructions.append(line)
             } else if looksLikeIngredient(line) {
                 ingredients.append(line)
-            } else if line.count > 60 {
+            } else if stripped.count > 60 {
                 // Long prose lines read as instructions.
                 instructions.append(line)
             }
@@ -139,23 +160,73 @@ enum TextRecipeParser {
     }
 
     private static func looksLikeIngredient(_ line: String) -> Bool {
-        // Quantity-led ("2 cups flour", "½ tsp salt") or bulleted ("- flour").
+        // Quantity-led ("2 cups flour", "½ tsp salt"), bulleted ("- flour"),
+        // or emoji-led ("🧄 garlic, minced").
         line.range(of: #"^[-•*]?\s*(\d|[¼½¾⅓⅔⅛⅜⅝⅞⅕⅖⅗⅘⅙⅚])"#, options: .regularExpression) != nil
             || line.range(of: #"^[-•*]\s+\S"#, options: .regularExpression) != nil
+            || startsWithBullet(line)
     }
 
-    private static func looksLikeInstruction(_ line: String) -> Bool {
-        // Numbered steps: "1. Preheat…", "2) Mix…", "Step 3: …"
+    private static func looksLikeNumberedStep(_ line: String) -> Bool {
+        // "1. Preheat…", "2) Mix…", "Step 3: …"
         line.range(of: #"^(step\s+\d+|\d+[\.\)])\s*"#, options: [.regularExpression, .caseInsensitive]) != nil
     }
+
+    /// Unnumbered imperative step, e.g. "Melt the butter", "Toss everything".
+    private static func startsWithCookingVerb(_ line: String) -> Bool {
+        let firstWord = line.lowercased()
+            .split(whereSeparator: { $0 == " " || $0 == "," })
+            .first
+            .map(String.init) ?? ""
+        return cookingVerbs.contains(firstWord)
+    }
+
+    private static let cookingVerbs: Set<String> = [
+        "add", "bake", "beat", "blend", "boil", "bring", "brown", "chill", "chop",
+        "combine", "cook", "cover", "crack", "cut", "dice", "drain", "drizzle",
+        "fold", "fry", "garnish", "grate", "grill", "heat", "knead", "layer", "let",
+        "marinate", "mash", "melt", "mix", "peel", "place", "pour", "preheat",
+        "reduce", "refrigerate", "remove", "rest", "roast", "sauté", "saute",
+        "season", "serve", "simmer", "slice", "spread", "sprinkle", "stir", "toss",
+        "top", "transfer", "warm", "whisk"
+    ]
 
     // MARK: - Cleanup
 
     private static func stripListMarker(_ line: String) -> String {
-        line
-            .replacingOccurrences(of: #"^(step\s+\d+\s*[:\.\)]?|\d+[\.\)])\s*"#, with: "", options: [.regularExpression, .caseInsensitive])
-            .replacingOccurrences(of: #"^[-•*]\s*"#, with: "", options: .regularExpression)
-            .trimmingCharacters(in: .whitespaces)
+        let withoutNumber = line.replacingOccurrences(
+            of: #"^(step\s+\d+\s*[:\.\)]?|\d+[\.\)])\s*"#,
+            with: "", options: [.regularExpression, .caseInsensitive]
+        )
+        return stripLeadingBullets(withoutNumber).trimmingCharacters(in: .whitespaces)
+    }
+
+    private static func stripLeadingBullets(_ s: String) -> String {
+        let chars = Array(s)
+        var i = 0
+        while i < chars.count, chars[i].isWhitespace || isBulletCharacter(chars[i]) { i += 1 }
+        return String(chars[i...])
+    }
+
+    private static func stripTrailingBullets(_ s: String) -> String {
+        let chars = Array(s)
+        var j = chars.count
+        while j > 0, chars[j - 1].isWhitespace || isBulletCharacter(chars[j - 1]) { j -= 1 }
+        return String(chars[0..<j])
+    }
+
+    private static func startsWithBullet(_ line: String) -> Bool {
+        guard let first = line.drop(while: { $0.isWhitespace }).first else { return false }
+        return isBulletCharacter(first)
+    }
+
+    /// A leading decoration — dash/star bullet or an emoji — never a letter,
+    /// digit, or fraction (those are recipe content we must keep).
+    private static func isBulletCharacter(_ c: Character) -> Bool {
+        if c.isLetter || c.isNumber { return false }
+        if "-•*▪◦‣·▫●○▶►➤➥➢".contains(c) { return true }
+        // Emoji, but not low-codepoint symbols like fractions or punctuation.
+        return c.unicodeScalars.contains { $0.properties.isEmoji && ($0.value > 0x238C || $0.properties.isEmojiPresentation) }
     }
 
     private static func isMetadataLine(_ line: String) -> Bool {
