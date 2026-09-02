@@ -32,12 +32,11 @@ Priorities are ordered below. Phases 1–3 are the release-defining work.
 - ~~Hand off to main app via App Group~~ 🟢 — `SharedImportInbox` over App Group defaults; consumed on foreground in `RecipeSearchView`
 - ~~In-extension full import (fetch + parse in the extension so the recipe is simply there next open)~~ 🟢 — `RecipeImportPipeline` (Foundation-only, shared with the app) runs headless in the extension; success stores parsed `ExtractedRecipeData` which the app materialises silently on next launch, failure falls back to the raw URL/text for interactive import
 
-### 🔴 Instagram & TikTok Recipe Import
-- Paste a URL or share caption text → extract recipe content
-- **Preferred approach: on-device FoundationModels** (iOS 26+, availability-gated) — parse caption/text into structured recipe via @Generable; private, free to run, offline
-- Fallback for older OS: existing JSON-LD / Open Graph extraction where pages provide it
-- Parse into: name, ingredients, instructions, prep/cook time, servings
-- Let user review/edit before saving (reuse RecipeImportBuilder flow)
+### 🟡 Instagram & TikTok Recipe Import
+- ~~Share caption text → extract recipe content~~ 🟢 — shared plain text runs through `SharedTextImporter`
+- ~~On-device FoundationModels (iOS 26+, availability-gated) — parse caption/text into structured recipe via @Generable~~ 🟢 — `FoundationModelsRecipeInterpreter` (`RecipeTextInterpreting` seam); private, free, offline. Falls back to `TextRecipeParser`/manual wizard when unavailable or low-confidence
+- 🔴 Dedicated "paste a URL or text" import entry point (currently only the share-sheet text path is wired)
+- 🔴 Explicit review/edit step for AI results before save (today a confident parse saves silently via the dedupe `ingest`)
 - **Marketing angle: unlimited free imports vs ReciMe's 5/week**
 
 ### 🔴 Photo-to-Recipe Conversion

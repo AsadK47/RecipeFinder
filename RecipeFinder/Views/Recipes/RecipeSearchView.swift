@@ -155,14 +155,36 @@ struct RecipeSearchView: View {
             sharedImportURL = urlString
             showImportSheet = true
         case .text(let text):
+            Task { await importSharedText(text) }
+        case nil:
+            break
+        }
+    }
+
+    /// Tries the on-device model for a one-tap import of shared free text, and
+    /// falls back to the manual wizard when it isn't available or can't parse it.
+    private func importSharedText(_ text: String) async {
+        let interpreter: RecipeTextInterpreting
+        #if canImport(FoundationModels)
+        if #available(iOS 26.0, *) {
+            interpreter = FoundationModelsRecipeInterpreter()
+        } else {
+            interpreter = UnavailableRecipeTextInterpreter()
+        }
+        #else
+        interpreter = UnavailableRecipeTextInterpreter()
+        #endif
+
+        switch await SharedTextImporter(interpreter: interpreter).handle(text) {
+        case .imported(let recipe):
+            ingest(sharedRecipe: recipe)
+        case .needsManualEntry(let text):
             if let prefill = TextRecipeParser.parse(text) {
                 sharedWizardPrefill = prefill
                 showRecipeWizard = true
             } else {
                 showImportToast("Couldn't find a recipe in the shared text")
             }
-        case nil:
-            break
         }
     }
 

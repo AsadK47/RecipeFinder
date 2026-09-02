@@ -29,6 +29,44 @@ struct RecipeImportBuilder {
         )
     }
 
+    /// Builds a `RecipeModel` from free-text interpretation (e.g. on-device AI).
+    /// Reuses `parseIngredient` for ingredient lines; category/difficulty default
+    /// since free text rarely states them reliably.
+    func build(from recipe: InterpretedRecipe) -> RecipeModel {
+        let ingredients = recipe.ingredients
+            .filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+            .map { parseIngredient($0) }
+
+        return RecipeModel(
+            name: recipe.name,
+            category: "Main",
+            difficulty: "Medium",
+            prepTime: recipe.prepMinutes.map { "\($0) minutes" } ?? "0 minutes",
+            cookingTime: recipe.cookMinutes.map { "\($0) minutes" } ?? "0 minutes",
+            baseServings: recipe.servings ?? 4,
+            ingredients: ingredients.isEmpty
+                ? [Ingredient(baseQuantity: 1, unit: "", name: "See recipe")]
+                : ingredients,
+            prePrepInstructions: [],
+            instructions: recipe.steps.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty },
+            notes: interpretedNotes(from: recipe),
+            imageName: nil,
+            isFavorite: false
+        )
+    }
+
+    private func interpretedNotes(from recipe: InterpretedRecipe) -> String {
+        var lines: [String] = []
+        if let summary = recipe.summary?.trimmingCharacters(in: .whitespacesAndNewlines), !summary.isEmpty {
+            lines.append(summary)
+            lines.append("")
+        }
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        lines.append("Imported · \(formatter.string(from: Date()))")
+        return lines.joined(separator: "\n")
+    }
+
     // MARK: - Ingredient parsing
 
     func parseIngredient(_ fullIngredient: String) -> Ingredient {
