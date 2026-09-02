@@ -149,8 +149,8 @@ struct RecipeSearchView: View {
     /// wizard for review.
     private func checkSharedImportInbox() {
         switch SharedImportInbox.consumePayload() {
-        case .recipe(let recipe):
-            ingest(sharedRecipe: recipe)
+        case .extracted(let data):
+            ingest(sharedRecipe: RecipeImportBuilder().build(from: data))
         case .url(let urlString):
             sharedImportURL = urlString
             showImportSheet = true

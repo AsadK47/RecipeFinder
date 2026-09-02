@@ -3,12 +3,14 @@ import Foundation
 /// Hand-off point between the share extension and the app, backed by the
 /// App Group's defaults.
 ///
-/// The extension tries to complete the whole import itself and store a
-/// finished recipe (`storeRecipe`). When that isn't possible — no network,
-/// unparseable page, plain-text share — it stores the raw URL/text instead
-/// and the app falls back to the interactive import sheet.
+/// The extension tries to complete the fetch + parse itself and store the
+/// resulting `ExtractedRecipeData` (`storeExtractedRecipe`). The app turns that
+/// into a `RecipeModel` and saves it silently on next launch. When the extension
+/// can't finish — no network, unparseable page, plain-text share — it stores the
+/// raw URL/text instead and the app falls back to the interactive import flow.
 ///
-/// This file is compiled into both the app and RecipeShareExtension.
+/// This file is compiled into both the app and RecipeShareExtension, so it must
+/// stay Foundation-only (no app singletons / UI).
 enum SharedImportInbox {
     static let appGroupID = "group.com.asadkhan.recipefinder"
     private static let recipeKey = "pendingSharedImportRecipeJSON"
@@ -21,14 +23,14 @@ enum SharedImportInbox {
 
     // MARK: - Extension side (producers)
 
-    /// Stores a fully imported recipe. Returns false when encoding or the
+    /// Stores fetched+parsed recipe data. Returns false when encoding or the
     /// App Group is unavailable so the caller can fall back to `storeURL`.
     @discardableResult
-    static func storeRecipe(_ recipe: RecipeModel) -> Bool {
-        guard let defaults, let data = try? JSONEncoder().encode(recipe) else {
+    static func storeExtractedRecipe(_ data: ExtractedRecipeData) -> Bool {
+        guard let defaults, let encoded = try? JSONEncoder().encode(data) else {
             return false
         }
-        defaults.set(data, forKey: recipeKey)
+        defaults.set(encoded, forKey: recipeKey)
         return true
     }
 
@@ -42,44 +44,52 @@ enum SharedImportInbox {
 
     // MARK: - App side (consumer)
 
-    enum Payload {
-        /// The extension finished the import; save silently.
-        case recipe(RecipeModel)
+    enum Payload: Equatable {
+        /// The extension finished fetch + parse; build and save silently.
+        case extracted(ExtractedRecipeData)
         /// A link to import interactively.
         case url(String)
         /// Plain text with no link — try parsing it as a recipe.
         case text(String)
     }
 
-    /// Returns whatever the extension left behind — a finished recipe, a
-    /// link, or plain text — and clears the inbox. Text containing a link is
-    /// treated as a link share.
+    /// Returns whatever the extension left behind — extracted recipe data, a
+    /// link, or plain text — and clears the inbox.
     static func consumePayload() -> Payload? {
         guard let defaults else { return nil }
 
-        if let data = defaults.data(forKey: recipeKey) {
-            defaults.removeObject(forKey: recipeKey)
-            if let recipe = try? JSONDecoder().decode(RecipeModel.self, from: data) {
-                return .recipe(recipe)
-            }
-        }
-
+        let recipeData = defaults.data(forKey: recipeKey)
         let urlString = defaults.string(forKey: urlKey)
         let text = defaults.string(forKey: textKey)
-        guard urlString != nil || text != nil else { return nil }
 
+        defaults.removeObject(forKey: recipeKey)
         defaults.removeObject(forKey: urlKey)
         defaults.removeObject(forKey: textKey)
+
+        return resolvePayload(recipeData: recipeData, urlString: urlString, text: text)
+    }
+
+    /// Pure resolution of the three raw slots into a single payload, in priority
+    /// order: a decodable extracted recipe wins; then a link; then plain text
+    /// (with a link embedded in text promoted to `.url`). Kept separate from
+    /// `UserDefaults` so the precedence rules are unit-testable.
+    static func resolvePayload(recipeData: Data?, urlString: String?, text: String?) -> Payload? {
+        if let recipeData,
+           let data = try? JSONDecoder().decode(ExtractedRecipeData.self, from: recipeData) {
+            return .extracted(data)
+        }
 
         if let urlString, !urlString.isEmpty {
             return .url(urlString)
         }
+
         if let text, !text.isEmpty {
             if let link = firstURL(in: text) {
                 return .url(link)
             }
             return .text(text)
         }
+
         return nil
     }
 
