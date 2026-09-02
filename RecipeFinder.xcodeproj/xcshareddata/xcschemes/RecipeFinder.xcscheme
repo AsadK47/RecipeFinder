@@ -41,17 +41,6 @@
                ReferencedContainer = "container:RecipeFinder.xcodeproj">
             </BuildableReference>
          </TestableReference>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "9EE5AAF02D08FCBF00C1B736"
-               BuildableName = "RecipeFinderUITests.xctest"
-               BlueprintName = "RecipeFinderUITests"
-               ReferencedContainer = "container:RecipeFinder.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
