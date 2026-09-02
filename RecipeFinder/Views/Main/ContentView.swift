@@ -42,11 +42,13 @@ struct ContentView: View {
                     }
                     .tag(3)
                 
-                MoreView(recipes: $recipes)
-                    .tabItem {
-                        Label("More", systemImage: "ellipsis.circle")
-                    }
-                    .tag(4)
+                NavigationStack {
+                    SettingsTabView()
+                }
+                .tabItem {
+                    Label("Settings", systemImage: "gearshape.fill")
+                }
+                .tag(4)
             }
             .environment(\.appTheme, themeBinding)
             .tint(AppTheme.textColor(for: colorScheme))
