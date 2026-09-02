@@ -26,11 +26,11 @@ Priorities are ordered below. Phases 1–3 are the release-defining work.
 
 ## Phase 1: Capture — the ReciMe loop *(highest priority)*
 
-### 🟡 Share Sheet Extension
+### 🟢 Share Sheet Extension
 *The delivery vehicle for everything else in this phase.*
 - ~~Share Extension target accepting URLs and plain text~~ 🟢 — `RecipeShareExtension` (`ShareViewController`) captures shared URLs and text
-- ~~Hand off to main app via App Group~~ 🟢 — `SharedImportInbox` over App Group defaults; consumed on foreground in `RecipeSearchView` and routed into the import sheet (URL) or a prefilled wizard (text)
-- 🔴 In-extension full import (fetch + parse in the extension so the recipe is simply there next open) — needs the import-pipeline files added to the extension target's membership
+- ~~Hand off to main app via App Group~~ 🟢 — `SharedImportInbox` over App Group defaults; consumed on foreground in `RecipeSearchView`
+- ~~In-extension full import (fetch + parse in the extension so the recipe is simply there next open)~~ 🟢 — `RecipeImportPipeline` (Foundation-only, shared with the app) runs headless in the extension; success stores parsed `ExtractedRecipeData` which the app materialises silently on next launch, failure falls back to the raw URL/text for interactive import
 
 ### 🔴 Instagram & TikTok Recipe Import
 - Paste a URL or share caption text → extract recipe content
@@ -53,7 +53,7 @@ Priorities are ordered below. Phases 1–3 are the release-defining work.
 - User's own iCloud — no server, keeps the privacy-first story intact
 - Reconcile with UserScopedStorage per-account scoping (design needed: local accounts vs iCloud identity)
 - JSON-backed stores (meal plans, shopping list, inventory) need a sync strategy too (move to Core Data or CloudKit key-value/records)
-- Build a real backup/export + import as the manual fallback. (The old `DataImportView` was removed: it had no matching exporter, never imported recipes, and corrupted Notes on restore. Reintroduce here as a proper round-trip — recipes included, correct model shapes, per-user scope.)
+- ~~Build a real backup/export + import as the manual fallback.~~ 🟢 — `BackupService` + `BackupArchive`/`BackupCodec` (`.recipefinderbackup`) with a non-destructive, date-faithful `merge(_:)` seam on every store; Export/Import UI in `DataManagementSettingsView`. Full round-trip incl. recipes, correct model shapes, per-user scope.
 
 ---
 

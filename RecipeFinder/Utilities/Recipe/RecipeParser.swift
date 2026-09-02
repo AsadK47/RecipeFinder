@@ -1,5 +1,8 @@
 
 import Foundation
+#if canImport(UIKit)
+import UIKit
+#endif
 
 /// Parses recipe data out of a page's HTML. Tries structured data first
 /// (JSON-LD, then WP Recipe Maker markup) and falls back to free-text heuristics.

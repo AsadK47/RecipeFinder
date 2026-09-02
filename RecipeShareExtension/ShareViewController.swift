@@ -1,30 +1,24 @@
 import UIKit
 import UniformTypeIdentifiers
 
-/// Receives a URL (or text) from the share sheet, stashes it in the shared
-/// App Group, and dismisses. The main app consumes the payload on next
-/// foreground and routes it into the recipe import flow.
-///
-/// NOTE: An in-extension full import (fetch + parse, so the recipe is simply
-/// there next time the app opens) is planned, but requires adding the recipe
-/// pipeline files to this target's membership in Xcode first — see ROADMAP.
-/// Keys below must stay in sync with SharedImportInbox in the app target.
+/// Receives a URL (or text) from the share sheet and tries to complete the
+/// import right here — fetching and parsing the page so the recipe is simply
+/// there next time the app opens. On success it stashes the parsed
+/// `ExtractedRecipeData` in the shared App Group via `SharedImportInbox`; when
+/// the import can't finish (no network, unparseable page, plain-text share) it
+/// falls back to storing the raw URL/text for the app to handle interactively.
 final class ShareViewController: UIViewController {
-
-    private enum Inbox {
-        static let appGroupID = "group.com.asadkhan.recipefinder"
-        static let urlKey = "pendingSharedImportURL"
-        static let textKey = "pendingSharedImportText"
-    }
 
     private let card = UIView()
     private let label = UILabel()
+    private let spinner = UIActivityIndicatorView(style: .medium)
+    private let checkmark = UIImageView(image: UIImage(systemName: "checkmark.circle.fill"))
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.black.withAlphaComponent(0.35)
         configureCard()
-        extractAndStoreSharedContent()
+        handleSharedContent()
     }
 
     private func configureCard() {
@@ -35,13 +29,17 @@ final class ShareViewController: UIViewController {
         card.alpha = 0
         view.addSubview(card)
 
-        let checkmark = UIImageView(image: UIImage(systemName: "checkmark.circle.fill"))
         checkmark.tintColor = .systemGreen
         checkmark.contentMode = .scaleAspectFit
+        checkmark.isHidden = true
         checkmark.translatesAutoresizingMaskIntoConstraints = false
         card.addSubview(checkmark)
 
-        label.text = "Saved — open RecipeFinder to import"
+        spinner.startAnimating()
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        card.addSubview(spinner)
+
+        label.text = "Importing…"
         label.font = .preferredFont(forTextStyle: .subheadline)
         label.adjustsFontForContentSizeCategory = true
         label.textColor = .label
@@ -61,26 +59,29 @@ final class ShareViewController: UIViewController {
             checkmark.widthAnchor.constraint(equalToConstant: 44),
             checkmark.heightAnchor.constraint(equalToConstant: 44),
 
+            spinner.centerXAnchor.constraint(equalTo: checkmark.centerXAnchor),
+            spinner.centerYAnchor.constraint(equalTo: checkmark.centerYAnchor),
+
             label.topAnchor.constraint(equalTo: checkmark.bottomAnchor, constant: 12),
             label.leadingAnchor.constraint(equalTo: card.leadingAnchor, constant: 20),
             label.trailingAnchor.constraint(equalTo: card.trailingAnchor, constant: -20),
             label.bottomAnchor.constraint(equalTo: card.bottomAnchor, constant: -24)
         ])
+
+        UIView.animate(withDuration: 0.2) { self.card.alpha = 1 }
     }
 
-    private func extractAndStoreSharedContent() {
+    private func handleSharedContent() {
         guard let item = extensionContext?.inputItems.first as? NSExtensionItem,
               let attachments = item.attachments, !attachments.isEmpty else {
-            finish(succeeded: false)
+            finish(message: "Couldn't read the shared content")
             return
         }
 
         if let urlProvider = attachments.first(where: { $0.hasItemConformingToTypeIdentifier(UTType.url.identifier) }) {
             urlProvider.loadItem(forTypeIdentifier: UTType.url.identifier, options: nil) { [weak self] loaded, _ in
                 let url = loaded as? URL
-                DispatchQueue.main.async {
-                    self?.store(urlString: url?.absoluteString, text: nil)
-                }
+                DispatchQueue.main.async { self?.handle(url: url) }
             }
             return
         }
@@ -88,36 +89,71 @@ final class ShareViewController: UIViewController {
         if let textProvider = attachments.first(where: { $0.hasItemConformingToTypeIdentifier(UTType.plainText.identifier) }) {
             textProvider.loadItem(forTypeIdentifier: UTType.plainText.identifier, options: nil) { [weak self] loaded, _ in
                 let text = loaded as? String
-                DispatchQueue.main.async {
-                    self?.store(urlString: nil, text: text)
-                }
+                DispatchQueue.main.async { self?.handle(text: text) }
             }
             return
         }
 
-        finish(succeeded: false)
+        finish(message: "Couldn't read the shared content")
     }
 
-    private func store(urlString: String?, text: String?) {
-        guard urlString != nil || text != nil,
-              let defaults = UserDefaults(suiteName: Inbox.appGroupID) else {
-            finish(succeeded: false)
+    private func handle(url: URL?) {
+        guard let url else {
+            finish(message: "Couldn't read the shared content")
+            return
+        }
+        importInExtension(from: url, rawURLFallback: url.absoluteString)
+    }
+
+    private func handle(text: String?) {
+        guard let text, !text.isEmpty else {
+            finish(message: "Couldn't read the shared content")
             return
         }
 
-        defaults.set(urlString, forKey: Inbox.urlKey)
-        defaults.set(text, forKey: Inbox.textKey)
-        finish(succeeded: true)
+        // A caption with an embedded recipe link can still be fetched here;
+        // otherwise hand the raw text to the app's text parser.
+        if let link = firstURL(in: text), let url = URL(string: link) {
+            importInExtension(from: url, rawURLFallback: link)
+        } else {
+            SharedImportInbox.storeText(text)
+            finish(message: "Saved — open RecipeFinder to import")
+        }
     }
 
-    private func finish(succeeded: Bool) {
-        if !succeeded {
-            label.text = "Couldn't read the shared content"
+    /// Fetches + parses the page off the main actor. On success stores the parsed
+    /// recipe; on any failure stores the raw URL so the app can import it
+    /// interactively — the share never fails outright.
+    private func importInExtension(from url: URL, rawURLFallback: String) {
+        Task { @MainActor in
+            do {
+                let outcome = try await RecipeImportPipeline().fetchAndParse(from: url)
+                if SharedImportInbox.storeExtractedRecipe(outcome.data) {
+                    finish(message: "Recipe saved to RecipeFinder")
+                } else {
+                    SharedImportInbox.storeURL(rawURLFallback)
+                    finish(message: "Saved — open RecipeFinder to import")
+                }
+            } catch {
+                SharedImportInbox.storeURL(rawURLFallback)
+                finish(message: "Saved — open RecipeFinder to import")
+            }
         }
+    }
 
-        UIView.animate(withDuration: 0.25) {
-            self.card.alpha = 1
+    private func firstURL(in text: String) -> String? {
+        guard let detector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue) else {
+            return nil
         }
+        let range = NSRange(text.startIndex..., in: text)
+        return detector.firstMatch(in: text, options: [], range: range)?.url?.absoluteString
+    }
+
+    private func finish(message: String) {
+        spinner.stopAnimating()
+        spinner.isHidden = true
+        checkmark.isHidden = false
+        label.text = message
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.1) {
             self.extensionContext?.completeRequest(returningItems: nil)

@@ -20,7 +20,7 @@ struct URLSessionHTMLFetcher: HTMLFetching {
     func fetch(_ request: URLRequest) async throws -> (data: Data, response: HTTPURLResponse) {
         let (data, response) = try await session.data(for: request)
         guard let http = response as? HTTPURLResponse else {
-            throw RecipeImporter.ImportError.invalidResponse
+            throw RecipeImportError.invalidResponse
         }
         return (data, http)
     }
