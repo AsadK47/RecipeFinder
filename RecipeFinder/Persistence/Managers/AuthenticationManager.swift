@@ -55,10 +55,8 @@ final class AuthenticationManager: NSObject, ObservableObject {
 
     func reloadAllManagers() {
         ShoppingListManager.shared.reloadForCurrentUser()
-        NotesManager.shared.reloadForCurrentUser()
         KitchenInventoryManager.shared.reloadForCurrentUser()
         MealPlanningManager.shared.reloadForCurrentUser()
-        CookingTipsManager.shared.reloadForCurrentUser()
         BadgeManager.shared.reloadForCurrentUser()
         AccountManager.shared.loadProfile()
     }

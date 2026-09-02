@@ -39,7 +39,6 @@ final class AppleSignInManager: NSObject, ObservableObject {
                     self.loadUserData()
                     
                     ShoppingListManager.shared.reloadForCurrentUser()
-                    NotesManager.shared.reloadForCurrentUser()
                     BadgeManager.shared.reloadForCurrentUser()
                 case .revoked, .notFound:
                     self.signOut()
@@ -75,7 +74,6 @@ final class AppleSignInManager: NSObject, ObservableObject {
         
         Task { @MainActor in
             ShoppingListManager.shared.reloadForCurrentUser()
-            NotesManager.shared.reloadForCurrentUser()
             BadgeManager.shared.reloadForCurrentUser()
         }
         
@@ -110,7 +108,6 @@ final class AppleSignInManager: NSObject, ObservableObject {
         
         Task { @MainActor in
             ShoppingListManager.shared.reloadForCurrentUser()
-            NotesManager.shared.reloadForCurrentUser()
             BadgeManager.shared.reloadForCurrentUser()
             
             if isNewUser {

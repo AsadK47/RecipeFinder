@@ -16,36 +16,30 @@ struct BackupArchive: Codable {
     var exportedAt: Date
 
     var recipes: [RecipeModel]
-    var notes: [NoteModel]
     var shoppingList: [ShoppingListModel]
     var kitchenItems: [KitchenItem]
     var kitchenInventory: [KitchenInventoryModel]
     var mealPlans: [MealPlanModel]
     var badges: [String: Badge]
-    var cookingTips: [CookingTipModel]
 
     init(
         schemaVersion: Int = BackupArchive.currentSchemaVersion,
         exportedAt: Date = Date(),
         recipes: [RecipeModel] = [],
-        notes: [NoteModel] = [],
         shoppingList: [ShoppingListModel] = [],
         kitchenItems: [KitchenItem] = [],
         kitchenInventory: [KitchenInventoryModel] = [],
         mealPlans: [MealPlanModel] = [],
-        badges: [String: Badge] = [:],
-        cookingTips: [CookingTipModel] = []
+        badges: [String: Badge] = [:]
     ) {
         self.schemaVersion = schemaVersion
         self.exportedAt = exportedAt
         self.recipes = recipes
-        self.notes = notes
         self.shoppingList = shoppingList
         self.kitchenItems = kitchenItems
         self.kitchenInventory = kitchenInventory
         self.mealPlans = mealPlans
         self.badges = badges
-        self.cookingTips = cookingTips
     }
 }
 

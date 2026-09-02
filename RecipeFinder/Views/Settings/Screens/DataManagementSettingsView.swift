@@ -299,7 +299,6 @@ struct DataManagementSettingsView: View {
         ShoppingListManager.shared.reloadForCurrentUser()
         KitchenInventoryManager.shared.reloadForCurrentUser()
         MealPlanningManager.shared.reloadForCurrentUser()
-        NotesManager.shared.reloadForCurrentUser()
         AccountManager.shared.loadProfile()
         AccountManager.shared.updateStats()
 

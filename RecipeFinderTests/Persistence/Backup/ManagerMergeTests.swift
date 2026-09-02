@@ -7,56 +7,19 @@ import Foundation
 /// The seam must be:
 /// - **non-destructive** — everything already present is kept;
 /// - **deduping by identity** — re-importing the same item doesn't duplicate it;
-/// - **date-faithful** — unlike the normal `addNote`/`addItem` mutators, restore
-///   must NOT re-stamp `createdDate`/`modifiedDate` (that was the root cause of the
-///   old "corrupted notes on restore" bug — see the data-durability notes);
+/// - **date-faithful** — unlike the normal mutators, restore must NOT re-stamp
+///   `createdDate` (that class of bug was the root cause of the old "corrupted on
+///   restore" export — see the data-durability notes);
 /// - **persisting** — a fresh manager on the same storage sees the merged result.
 @MainActor
 @Suite struct ManagerMergeTests {
 
-    /// Fresh, isolated per-user storage. A scope is required because
-    /// `CookingTipsManager` refuses to load without a signed-in user.
+    /// Fresh, isolated per-user storage under a signed-in scope.
     private static func makeStorage() -> UserScopedStorage {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
         let storage = UserScopedStorage(userDefaults: defaults)
         storage.currentUserId = "merge-test-user"
         return storage
-    }
-
-    // MARK: - NotesManager
-
-    @Test func notes_mergeIsNonDestructiveAndPersists() {
-        let storage = Self.makeStorage()
-        let sut = NotesManager(storage: storage)
-        sut.addNote(NoteModel(title: "Existing"))
-
-        sut.merge([NoteModel(title: "Imported")])
-
-        #expect(sut.notes.contains { $0.title == "Existing" })
-        #expect(sut.notes.contains { $0.title == "Imported" })
-
-        let reloaded = NotesManager(storage: storage)
-        #expect(reloaded.notes.count == 2)
-    }
-
-    @Test func notes_mergePreservesIncomingDates() {
-        let sut = NotesManager(storage: Self.makeStorage())
-        let created = Date(timeIntervalSince1970: 1_000)
-        let modified = Date(timeIntervalSince1970: 2_000)
-
-        sut.merge([NoteModel(title: "Backup", createdDate: created, modifiedDate: modified)])
-
-        let restored = sut.notes.first { $0.title == "Backup" }
-        #expect(restored?.createdDate == created)
-        #expect(restored?.modifiedDate == modified)
-    }
-
-    @Test func notes_mergeDedupesById() {
-        let sut = NotesManager(storage: Self.makeStorage())
-        let id = UUID()
-        sut.merge([NoteModel(id: id, title: "One")])
-        sut.merge([NoteModel(id: id, title: "One-dupe")])
-        #expect(sut.notes.filter { $0.id == id }.count == 1)
     }
 
     // MARK: - ShoppingListManager
@@ -164,30 +127,5 @@ import Foundation
 
         let reloaded = BadgeManager(storage: storage)
         #expect(Set(reloaded.unlockedBadges.keys) == ["first", "second"])
-    }
-
-    // MARK: - CookingTipsManager
-
-    @Test func cookingTips_mergeAddsNewTipAndPersists() {
-        let storage = Self.makeStorage()
-        let sut = CookingTipsManager(storage: storage)
-        let before = sut.tips.count
-
-        let imported = CookingTipModel(title: "Backup Tip", content: "Restored", category: .basics)
-        sut.merge([imported])
-
-        #expect(sut.tips.count == before + 1)
-        #expect(sut.tips.contains { $0.title == "Backup Tip" })
-
-        let reloaded = CookingTipsManager(storage: storage)
-        #expect(reloaded.tips.contains { $0.title == "Backup Tip" })
-    }
-
-    @Test func cookingTips_mergeDedupesById() {
-        let sut = CookingTipsManager(storage: Self.makeStorage())
-        let id = UUID()
-        sut.merge([CookingTipModel(id: id, title: "Dedupe", content: "", category: .basics)])
-        sut.merge([CookingTipModel(id: id, title: "Dedupe-dupe", content: "", category: .basics)])
-        #expect(sut.tips.filter { $0.id == id }.count == 1)
     }
 }

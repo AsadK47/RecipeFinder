@@ -4,8 +4,15 @@ import Foundation
 
 @Suite struct BackupMergeTests {
 
-    private static func note(_ title: String, id: UUID = UUID()) -> NoteModel {
-        NoteModel(id: id, title: title, content: "", category: .general)
+    /// A minimal `Identifiable` sample for exercising the generic union merge,
+    /// independent of any specific store model.
+    private struct Sample: Identifiable, Equatable {
+        let id: UUID
+        let title: String
+    }
+
+    private static func sample(_ title: String, id: UUID = UUID()) -> Sample {
+        Sample(id: id, title: title)
     }
 
     private static func recipe(_ name: String, id: UUID = UUID()) -> RecipeModel {
@@ -21,10 +28,10 @@ import Foundation
     // MARK: - merged(existing:incoming:) by identity
 
     @Test func merged_appendsOnlyNewIDs_preservingOrder() {
-        let keep = Self.note("A")
+        let keep = Self.sample("A")
         let dupeID = UUID()
-        let existing = [keep, Self.note("B", id: dupeID)]
-        let incoming = [Self.note("B-again", id: dupeID), Self.note("C")]
+        let existing = [keep, Self.sample("B", id: dupeID)]
+        let incoming = [Self.sample("B-again", id: dupeID), Self.sample("C")]
 
         let result = BackupMerge.merged(existing: existing, incoming: incoming)
 
@@ -32,12 +39,12 @@ import Foundation
     }
 
     @Test func merged_intoEmpty_returnsIncoming() {
-        let incoming = [Self.note("A"), Self.note("B")]
-        #expect(BackupMerge.merged(existing: [NoteModel](), incoming: incoming).map(\.title) == ["A", "B"])
+        let incoming = [Self.sample("A"), Self.sample("B")]
+        #expect(BackupMerge.merged(existing: [Sample](), incoming: incoming).map(\.title) == ["A", "B"])
     }
 
     @Test func merged_noIncoming_returnsExistingUnchanged() {
-        let existing = [Self.note("A")]
+        let existing = [Self.sample("A")]
         #expect(BackupMerge.merged(existing: existing, incoming: []).map(\.id) == existing.map(\.id))
     }
 

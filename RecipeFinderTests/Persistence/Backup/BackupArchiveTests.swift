@@ -22,8 +22,7 @@ import Foundation
     private static func makeArchive() -> BackupArchive {
         BackupArchive(
             exportedAt: Date(timeIntervalSince1970: 1_700_000_000), // integer secs → exact ISO-8601 round-trip
-            recipes: [sampleRecipe(name: "Soup"), sampleRecipe(name: "Stew")],
-            notes: [NoteModel(title: "Idea", content: "Try more garlic", category: .recipe, tags: ["dinner"])]
+            recipes: [sampleRecipe(name: "Soup"), sampleRecipe(name: "Stew")]
         )
     }
 
@@ -39,8 +38,6 @@ import Foundation
         #expect(restored.exportedAt == original.exportedAt)
         #expect(restored.recipes.map(\.id) == original.recipes.map(\.id))
         #expect(restored.recipes.map(\.name) == ["Soup", "Stew"])
-        #expect(restored.notes.map(\.id) == original.notes.map(\.id))
-        #expect(restored.notes.first?.content == "Try more garlic")
     }
 
     @Test func emptyStores_roundTripAsEmpty_notNil() throws {
@@ -51,7 +48,6 @@ import Foundation
         #expect(restored.kitchenInventory.isEmpty)
         #expect(restored.mealPlans.isEmpty)
         #expect(restored.badges.isEmpty)
-        #expect(restored.cookingTips.isEmpty)
     }
 
     // MARK: - Schema guard

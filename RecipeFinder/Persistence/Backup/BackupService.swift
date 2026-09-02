@@ -21,54 +21,44 @@ extension PersistenceController: RecipeBackupStore {}
 @MainActor
 struct BackupService {
     private let recipeStore: RecipeBackupStore
-    private let notes: NotesManager
     private let shopping: ShoppingListManager
     private let kitchen: KitchenInventoryManager
     private let mealPlans: MealPlanningManager
     private let badges: BadgeManager
-    private let cookingTips: CookingTipsManager
 
     init(
         recipeStore: RecipeBackupStore = PersistenceController.shared,
-        notes: NotesManager = .shared,
         shopping: ShoppingListManager = .shared,
         kitchen: KitchenInventoryManager = .shared,
         mealPlans: MealPlanningManager = .shared,
-        badges: BadgeManager = .shared,
-        cookingTips: CookingTipsManager = .shared
+        badges: BadgeManager = .shared
     ) {
         self.recipeStore = recipeStore
-        self.notes = notes
         self.shopping = shopping
         self.kitchen = kitchen
         self.mealPlans = mealPlans
         self.badges = badges
-        self.cookingTips = cookingTips
     }
 
     /// A complete snapshot of the current user's library.
     func makeArchive() -> BackupArchive {
         BackupArchive(
             recipes: recipeStore.fetchRecipes(),
-            notes: notes.notes,
             shoppingList: shopping.items,
             kitchenItems: kitchen.items,
             kitchenInventory: kitchen.inventoryItems,
             mealPlans: mealPlans.mealPlans,
-            badges: badges.unlockedBadges,
-            cookingTips: cookingTips.tips
+            badges: badges.unlockedBadges
         )
     }
 
     /// Merge an archive into the current library, non-destructively.
     func restore(_ archive: BackupArchive) {
         recipeStore.mergeRecipes(archive.recipes)
-        notes.merge(archive.notes)
         shopping.merge(archive.shoppingList)
         kitchen.merge(items: archive.kitchenItems, inventory: archive.kitchenInventory)
         mealPlans.merge(archive.mealPlans)
         badges.merge(archive.badges)
-        cookingTips.merge(archive.cookingTips)
     }
 
     // MARK: - File-facing convenience
