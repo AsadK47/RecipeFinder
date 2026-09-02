@@ -13,9 +13,14 @@ struct DataManagementSettingsView: View {
     @State private var backupMessage: String?
     @State private var backupMessageIsError = false
 
+    // On-device import availability (read on appear)
+    @State private var importStatus: OnDeviceRecipeImportStatus = .unknown
+
     var body: some View {
         SettingsScreen("Data Management") {
             backupSection
+
+            onDeviceImportSection
 
             VStack(spacing: AppTheme.spacing8) {
                 SettingsSectionHeader(title: "Reset")
@@ -105,6 +110,7 @@ struct DataManagementSettingsView: View {
         }
         .animation(.spring(response: 0.3), value: dataCleared)
         .animation(.spring(response: 0.3), value: backupMessage)
+        .onAppear { importStatus = OnDeviceRecipeImport.currentStatus() }
         .fileExporter(
             isPresented: $isExporting,
             document: exportDocument,
@@ -135,6 +141,37 @@ struct DataManagementSettingsView: View {
             }
         } message: {
             Text("This will reset the app to factory defaults, clearing all your data and restoring sample recipes. Use this if you encounter any issues. This action cannot be undone!")
+        }
+    }
+
+    private var onDeviceImportSection: some View {
+        VStack(spacing: AppTheme.spacing8) {
+            SettingsSectionHeader(title: "On-Device Import")
+
+            SettingsCard {
+                HStack(alignment: .top, spacing: AppTheme.spacing12) {
+                    SettingsIconTile(systemName: "sparkles", color: importStatus.isAvailable ? .purple : .gray)
+
+                    VStack(alignment: .leading, spacing: AppTheme.spacing2) {
+                        Text("AI Recipe Import")
+                            .font(.body)
+                            .adaptiveForegroundColor()
+
+                        Text(importStatus.title)
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                            .foregroundColor(importStatus.isAvailable ? .green : .secondary)
+
+                        Text(importStatus.detail)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+
+                    Spacer(minLength: 0)
+                }
+                .padding(AppTheme.spacing20)
+            }
         }
     }
 
