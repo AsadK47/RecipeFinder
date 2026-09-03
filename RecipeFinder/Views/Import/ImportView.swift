@@ -65,17 +65,21 @@ struct ImportView: View {
     }
 
     private var header: some View {
-        VStack(spacing: AppTheme.spacing4) {
+        VStack(spacing: AppTheme.spacing8) {
+            Image(systemName: "tray.and.arrow.down.fill")
+                .font(.system(size: 40, weight: .semibold))
+                .foregroundStyle(.orange)
+
             Text("Import a Recipe")
                 .font(.system(size: AppTheme.fontSize34, weight: .bold))
                 .adaptiveForegroundColor()
-                .frame(maxWidth: .infinity, alignment: .leading)
 
             Text("Bring recipes in from anywhere — free and unlimited.")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .multilineTextAlignment(.center)
         }
+        .frame(maxWidth: .infinity)
     }
 
     private func actionCard(icon: String, color: Color, title: String, subtitle: String, action: @escaping () -> Void) -> some View {
