@@ -4,6 +4,7 @@ import SwiftUI
 /// and a menu for store/category changes and deletion.
 struct ShoppingListItemRow: View {
     let item: ShoppingListModel
+    let isInKitchen: Bool
     let onToggle: () -> Void
     let onQuantityChange: (Int) -> Void
     let onDelete: () -> Void
@@ -65,13 +66,26 @@ struct ShoppingListItemRow: View {
                     .buttonStyle(PlainButtonStyle())
                     
                     VStack(alignment: .leading, spacing: AppTheme.spacing2) {
-                        Text(item.name)
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-                            .strikethrough(item.isChecked)
-                            .foregroundColor(item.isChecked ? .gray : AppTheme.adaptiveEmphasis(for: colorScheme))
-                            .lineLimit(2)
-                            .fixedSize(horizontal: false, vertical: true)
+                        HStack(alignment: .firstTextBaseline, spacing: AppTheme.spacing8) {
+                            Text(item.name)
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+                                .strikethrough(item.isChecked)
+                                .foregroundColor(item.isChecked ? .gray : AppTheme.adaptiveEmphasis(for: colorScheme))
+                                .lineLimit(2)
+                                .fixedSize(horizontal: false, vertical: true)
+
+                            if isInKitchen {
+                                Text("In kitchen")
+                                    .font(.caption2)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.blue)
+                                    .padding(.horizontal, AppTheme.spacing6)
+                                    .padding(.vertical, AppTheme.spacing2)
+                                    .background(Color.blue.opacity(0.12), in: Capsule())
+                                    .fixedSize()
+                            }
+                        }
                         
                         if let store = item.preferredStore {
                             Text(store)

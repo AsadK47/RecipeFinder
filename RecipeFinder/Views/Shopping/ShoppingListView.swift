@@ -10,7 +10,7 @@ struct ShoppingListView: View {
     @State private var showQuickAdd = false
     @State private var collapsedCategories: Set<String> = []
     @State private var confettiTrigger = 0
-    @State private var kitchenNudge: String?
+    @StateObject private var kitchen = KitchenInventoryManager.shared
     @FocusState private var isSearchFocused: Bool
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
@@ -133,7 +133,6 @@ struct ShoppingListView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)
-            .overlay(alignment: .top) { kitchenNudgeBanner }
             .confettiCannon(
                 trigger: $confettiTrigger,
                 num: AppTheme.confettiCount,
@@ -242,6 +241,7 @@ struct ShoppingListView: View {
         ForEach(items) { item in
             ShoppingListItemRow(
                 item: item,
+                isInKitchen: kitchenNameSet.contains(item.name.lowercased()),
                 onToggle: {
                     if let index = manager.items.firstIndex(where: { $0.id == item.id }) {
                         manager.toggleItem(at: index)
@@ -276,14 +276,12 @@ struct ShoppingListView: View {
     }
 
     private func addItem() {
-        let name = searchText.trimmingCharacters(in: .whitespaces)
-        guard !name.isEmpty else {
+        guard !searchText.trimmingCharacters(in: .whitespaces).isEmpty else {
             logger.error("❌ ShoppingListView: Empty search text")
             return
         }
-        logger.debug("🔍 ShoppingListView: Adding item '\(name)'")
+        logger.debug("🔍 ShoppingListView: Adding item '\(searchText)'")
         manager.addItem(name: searchText)
-        nudgeIfInKitchen(name)
         searchText = ""
         isSearchFocused = false
         HapticManager.shared.success()
@@ -293,46 +291,17 @@ struct ShoppingListView: View {
     private func addItemFromSearch(_ ingredient: String) {
         logger.debug("🔍 ShoppingListView: Adding item from search '\(ingredient)'")
         manager.addItem(name: ingredient)
-        nudgeIfInKitchen(ingredient)
         searchText = ""
         isSearchFocused = true
         HapticManager.shared.success()
         logger.debug("📊 ShoppingListView: Manager now has \(manager.items.count) items")
     }
 
-    /// Cohesion touch: if the item just added is already in the kitchen, gently
-    /// let the person know so they don't double-buy.
-    private func nudgeIfInKitchen(_ name: String) {
-        let kitchen = KitchenInventoryManager.shared
-        let trimmed = name.trimmingCharacters(in: .whitespaces)
-        guard kitchen.hasItem(trimmed) || kitchen.hasInventoryItem(trimmed) else { return }
-
-        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
-            kitchenNudge = "You already have \(trimmed) in your kitchen"
-        }
-        HapticManager.shared.warning()
-        DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayFeedback) {
-            withAnimation(.easeOut(duration: AppTheme.animationDuration08)) {
-                kitchenNudge = nil
-            }
-        }
-    }
-
-    @ViewBuilder private var kitchenNudgeBanner: some View {
-        if let kitchenNudge {
-            HStack(spacing: AppTheme.spacing8) {
-                Image(systemName: "refrigerator.fill")
-                    .foregroundColor(.blue)
-                Text(kitchenNudge)
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .adaptiveForegroundColor()
-            }
-            .padding(.horizontal, AppTheme.spacing16)
-            .padding(.vertical, AppTheme.spacing12)
-            .background(.ultraThinMaterial, in: Capsule())
-            .padding(.top, AppTheme.spacing8)
-            .transition(.move(edge: .top).combined(with: .opacity))
-        }
+    /// Names the user already has in their kitchen (quick items + inventory),
+    /// lowercased, so each shopping row can persistently flag "you already have
+    /// this" — clearer and more durable than a transient toast.
+    private var kitchenNameSet: Set<String> {
+        Set(kitchen.items.map { $0.name.lowercased() })
+            .union(kitchen.inventoryItems.map { $0.name.lowercased() })
     }
 }

@@ -60,21 +60,17 @@ struct QuickMatchRecipeCard: View {
         }
     }
     
+    /// How many of the recipe's ingredients you already have — a plain "N of M"
+    /// count. (Deliberately not a progress bar: a low ratio like 1/8 read as
+    /// misleading "progress" rather than a useful ingredient count.)
     private var matchBadge: some View {
-        let pct = totalIngredients > 0 ? Double(matchCount) / Double(totalIngredients) : 0
-        let label = "\(matchCount) matched"
-        return VStack(alignment: .trailing, spacing: 3) {
-            Text(label)
+        HStack(spacing: AppTheme.spacing4) {
+            Image(systemName: "checkmark.circle.fill")
+                .font(.caption2)
+            Text("\(matchCount) of \(totalIngredients)")
                 .font(.caption2.weight(.semibold))
-                .foregroundColor(.white)
-            GeometryReader { geo in
-                ZStack(alignment: .leading) {
-                    Capsule().fill(Color.white.opacity(0.3)).frame(height: 3)
-                    Capsule().fill(Color.white).frame(width: geo.size.width * pct, height: 3)
-                }
-            }
-            .frame(width: 60, height: 3)
         }
+        .foregroundColor(.white)
         .padding(.horizontal, AppTheme.spacing8)
         .padding(.vertical, AppTheme.spacing6)
         .background(Capsule().fill(Color.green.opacity(0.85)))
