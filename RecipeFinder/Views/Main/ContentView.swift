@@ -24,15 +24,15 @@ struct ContentView: View {
                     }
                     .tag(0)
 
-                ShoppingListView()
+                KitchenShoppingView(recipes: $recipes)
                     .tabItem {
-                        Label("Shopping", systemImage: "cart.fill")
+                        Label("Groceries", systemImage: "cart.fill")
                     }
                     .tag(1)
 
-                KitchenView(recipes: $recipes)
+                ImportView(recipes: $recipes)
                     .tabItem {
-                        Label("Kitchen", systemImage: "refrigerator.fill")
+                        Label("Import", systemImage: "plus.circle.fill")
                     }
                     .tag(2)
                 

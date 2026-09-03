@@ -43,7 +43,9 @@ struct KitchenView: View {
     var quickMatchRecipes: [RecipeModel] { quickMatches }
 
     var body: some View {
-        NavigationStack {
+        // Hosted inside `KitchenShoppingView`'s NavigationStack; use a passthrough
+        // Group so there's a single navigation container for the merged tab.
+        Group {
             ZStack {
                 AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()

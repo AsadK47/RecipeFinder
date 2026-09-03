@@ -288,6 +288,8 @@
 		F3E9D24B30487BD8008BF231 /* TextRecipeParserCaptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D24A30487BD8008BF231 /* TextRecipeParserCaptionTests.swift */; };
 		F3E9D24D30487E06008BF231 /* OnDeviceRecipeImportStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D24C30487E06008BF231 /* OnDeviceRecipeImportStatus.swift */; };
 		F3E9D24F30487E0A008BF231 /* OnDeviceRecipeImportStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D24E30487E0A008BF231 /* OnDeviceRecipeImportStatusTests.swift */; };
+		F3E9D25F30497270008BF231 /* KitchenShoppingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D25E30497270008BF231 /* KitchenShoppingView.swift */; };
+		F3E9D262304972FF008BF231 /* ImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D261304972FF008BF231 /* ImportView.swift */; };
 		F3F941D630405E230067C6C8 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = F3F941D530405E230067C6C8 /* CLAUDE.md */; };
 /* End PBXBuildFile section */
 
@@ -616,6 +618,8 @@
 		F3E9D24A30487BD8008BF231 /* TextRecipeParserCaptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextRecipeParserCaptionTests.swift; sourceTree = "<group>"; };
 		F3E9D24C30487E06008BF231 /* OnDeviceRecipeImportStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnDeviceRecipeImportStatus.swift; sourceTree = "<group>"; };
 		F3E9D24E30487E0A008BF231 /* OnDeviceRecipeImportStatusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnDeviceRecipeImportStatusTests.swift; sourceTree = "<group>"; };
+		F3E9D25E30497270008BF231 /* KitchenShoppingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KitchenShoppingView.swift; sourceTree = "<group>"; };
+		F3E9D261304972FF008BF231 /* ImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportView.swift; sourceTree = "<group>"; };
 		F3F941D530405E230067C6C8 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -683,6 +687,7 @@
 				F3E9D1573043EBD4008BF231 /* KitchenHeader.swift */,
 				F3E9D1593043EBE6008BF231 /* KitchenSearchResultsView.swift */,
 				F3E9D15B3043EBF2008BF231 /* KitchenQuickMatchesView.swift */,
+				F3E9D25E30497270008BF231 /* KitchenShoppingView.swift */,
 			);
 			path = Kitchen;
 			sourceTree = "<group>";
@@ -1133,6 +1138,7 @@
 				9E7B9A822E9BECEF007E1786 /* Ingredients */,
 				9E7B9A812E9BECE5007E1786 /* Recipes */,
 				9E7B9A802E9BEC95007E1786 /* Main */,
+				F3E9D260304972FF008BF231 /* Import */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1511,6 +1517,14 @@
 			path = Backup;
 			sourceTree = "<group>";
 		};
+		F3E9D260304972FF008BF231 /* Import */ = {
+			isa = PBXGroup;
+			children = (
+				F3E9D261304972FF008BF231 /* ImportView.swift */,
+			);
+			path = Import;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1813,6 +1827,7 @@
 				F36AED693043360700935A3C /* RecipeFilterCriteria.swift in Sources */,
 				9E5B39802FABB7D300C96DB3 /* HeartPalette.swift in Sources */,
 				F3E9D1313043A5EF008BF231 /* RecipeParser+WPRM.swift in Sources */,
+				F3E9D262304972FF008BF231 /* ImportView.swift in Sources */,
 				9E6DEA932EF5EFE8001E7B24 /* RecipeImporter.swift in Sources */,
 				9E6DEA942EF5EFE8001E7B24 /* Constants.swift in Sources */,
 				9E1E26142FBA09F80002A220 /* RecipeImportBuilder.swift in Sources */,
@@ -1891,6 +1906,7 @@
 				9E97EEAC3007965300D35FAB /* PartyTimeView.swift in Sources */,
 				9E87D3342EB6C05700FFA1D1 /* WelcomeSplashView.swift in Sources */,
 				F3E9D1503043EB63008BF231 /* KitchenRecipeMatcher.swift in Sources */,
+				F3E9D25F30497270008BF231 /* KitchenShoppingView.swift in Sources */,
 				9E77ABEE2EB412C600666BB0 /* SecureCredentialManager.swift in Sources */,
 				F3E9D1B630457BEA008BF231 /* OnboardingSlideView.swift in Sources */,
 				F3E9D22530476397008BF231 /* BackupDocument.swift in Sources */,
