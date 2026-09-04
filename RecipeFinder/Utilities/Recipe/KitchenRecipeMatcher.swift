@@ -19,18 +19,26 @@ enum KitchenRecipeMatcher {
     }
 
     /// Whether two normalised ingredient terms match. Exact matches always count;
-    /// otherwise a substring match is allowed but only for terms of length ≥ 3 to
-    /// avoid tiny terms like "b" matching everything.
+    /// otherwise they match only when they share a whole word (≥ 3 chars) — so a
+    /// multi-word ingredient like "chicken breast" matches "chicken", but a short
+    /// term is never matched as a mere substring of a longer word (e.g. "gin" must
+    /// not match "ginger", "ice" must not match "rice").
     static func ingredientMatches(_ recipeIngredient: String, _ kitchenIngredient: String) -> Bool {
         if recipeIngredient == kitchenIngredient {
             return true
         }
 
-        guard recipeIngredient.count >= 3, kitchenIngredient.count >= 3 else {
-            return false
-        }
+        return !words(recipeIngredient).isDisjoint(with: words(kitchenIngredient))
+    }
 
-        return recipeIngredient.contains(kitchenIngredient) || kitchenIngredient.contains(recipeIngredient)
+    /// The set of whole words in a term worth matching on (≥ 3 chars, so filler like
+    /// "of" can't create spurious matches).
+    private static func words(_ term: String) -> Set<String> {
+        Set(
+            term.split(separator: " ")
+                .map(String.init)
+                .filter { $0.count >= 3 }
+        )
     }
 
     /// How many of `recipe`'s ingredients match any of `kitchenIngredients`.

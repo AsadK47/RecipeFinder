@@ -48,10 +48,17 @@ struct KitchenRecipeMatcherTests {
         #expect(KitchenRecipeMatcher.ingredientMatches("garlic", "garlic"))
     }
 
-    @Test("A longer term matches when it contains the other (both ≥ 3 chars)")
-    func substringMatch() {
+    @Test("A shared whole word matches (multi-word ingredient vs its main term)")
+    func sharedWholeWordMatches() {
         #expect(KitchenRecipeMatcher.ingredientMatches("chicken breast", "chicken"))
-        #expect(KitchenRecipeMatcher.ingredientMatches("rice", "ice"))
+        #expect(KitchenRecipeMatcher.ingredientMatches("olive oil", "oil"))
+    }
+
+    @Test("A short term is not matched as a substring of a longer word")
+    func substringOfLongerWordDoesNotMatch() {
+        // The reported bug: adding "gin" should not match "ginger" recipes.
+        #expect(!KitchenRecipeMatcher.ingredientMatches("ginger", "gin"))
+        #expect(!KitchenRecipeMatcher.ingredientMatches("rice", "ice"))
     }
 
     @Test("Terms shorter than 3 characters only match exactly")
