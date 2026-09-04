@@ -44,6 +44,7 @@ struct MealPlanningView: View {
                 )
 
                 viewModePicker
+                    .padding(.top, AppTheme.spacing16)
 
                 ScrollView {
                     VStack(spacing: AppTheme.spacing32) {

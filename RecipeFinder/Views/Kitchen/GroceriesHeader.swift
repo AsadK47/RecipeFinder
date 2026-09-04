@@ -1,0 +1,96 @@
+import SwiftUI
+
+/// The single shared header for the merged Groceries tab: the "Groceries" title with
+/// an overflow menu (supplied by the parent so it can combine shopping + kitchen
+/// actions) and one search field. Mirrors `RecipeSearchHeader` so the tab reads like
+/// the rest of the app.
+struct GroceriesHeader<MenuContent: View>: View {
+    @Binding var searchText: String
+    var isSearchFocused: FocusState<Bool>.Binding
+    let onSubmit: () -> Void
+    @ViewBuilder let menuContent: () -> MenuContent
+
+    @Environment(\.colorScheme) private var colorScheme
+    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
+
+    var body: some View {
+        VStack(spacing: AppTheme.spacing12) {
+            ScreenTitleHeader("Groceries") {
+                Menu {
+                    menuContent()
+                } label: {
+                    CircleButton(icon: "line.3.horizontal") {}
+                        .allowsHitTesting(false)
+                }
+            }
+
+            searchBar
+        }
+    }
+
+    private var searchBar: some View {
+        HStack(spacing: AppTheme.spacing12) {
+            HStack(spacing: AppTheme.spacing12) {
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(AppTheme.adaptiveHighEmphasis(for: colorScheme))
+                    .font(.system(size: AppTheme.fontSize18, weight: .medium))
+
+                ZStack(alignment: .leading) {
+                    if searchText.isEmpty {
+                        Text("Add or search groceries…")
+                            .font(.system(size: AppTheme.fontSize16))
+                            .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.disabledEmphasisOpacity) : .black.opacity(AppTheme.disabledEmphasisOpacity))
+                    }
+                    TextField("", text: $searchText)
+                        .focused(isSearchFocused)
+                        .autocorrectionDisabled()
+                        .submitLabel(.done)
+                        .onSubmit(onSubmit)
+                        .font(.system(size: AppTheme.fontSize16))
+                        .adaptiveForegroundColor()
+                        .tint(AppTheme.textColor(for: colorScheme))
+                }
+
+                if !searchText.isEmpty {
+                    Button(
+                        action: { searchText = "" },
+                        label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.system(size: AppTheme.fontSize18))
+                                .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
+                        }
+                    )
+                }
+            }
+            .padding(.horizontal, AppTheme.spacing16)
+            .padding(.vertical, AppTheme.spacing14)
+            .background {
+                if cardStyle == .solid {
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                        .fill(AppTheme.adaptiveCard(for: colorScheme))
+                } else {
+                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                        .fill(.ultraThinMaterial)
+                }
+            }
+
+            if isSearchFocused.wrappedValue {
+                Button(
+                    action: {
+                        searchText = ""
+                        isSearchFocused.wrappedValue = false
+                    },
+                    label: {
+                        Text("Cancel")
+                            .font(.system(size: AppTheme.fontSize16, weight: .semibold))
+                            .adaptiveForegroundColor()
+                    }
+                )
+                .transition(.move(edge: .trailing).combined(with: .opacity))
+            }
+        }
+        .padding(.horizontal, AppTheme.spacing20)
+        .padding(.bottom, AppTheme.spacing12)
+        .animation(.spring(response: 0.3), value: isSearchFocused.wrappedValue)
+    }
+}
