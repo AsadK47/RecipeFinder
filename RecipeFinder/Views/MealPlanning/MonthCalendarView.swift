@@ -30,15 +30,10 @@ struct MonthCalendarView: View {
                 Spacer()
                 
                 Button(action: onShowMonthPicker) {
-                    HStack(spacing: AppTheme.spacing6) {
-                        Text(monthYearString)
-                            .font(.system(size: AppTheme.fontSize22, weight: .bold))
-                            .adaptiveForegroundColor()
-                        
-                        Image(systemName: "calendar.circle")
-                            .font(.system(size: AppTheme.fontSize16, weight: .semibold))
-                            .foregroundColor(AppTheme.accentColor(for: selectedTheme))
-                    }
+                    Text(monthYearString)
+                        .font(.system(size: AppTheme.fontSize22, weight: .bold))
+                        .adaptiveForegroundColor()
+                        .lineLimit(1)
                 }
                 .buttonStyle(PlainButtonStyle())
                 

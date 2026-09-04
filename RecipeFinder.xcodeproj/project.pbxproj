@@ -290,6 +290,7 @@
 		F3E9D24F30487E0A008BF231 /* OnDeviceRecipeImportStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D24E30487E0A008BF231 /* OnDeviceRecipeImportStatusTests.swift */; };
 		F3E9D25F30497270008BF231 /* KitchenShoppingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D25E30497270008BF231 /* KitchenShoppingView.swift */; };
 		F3E9D262304972FF008BF231 /* ImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D261304972FF008BF231 /* ImportView.swift */; };
+		F3E9D264304A1DFB008BF231 /* ScreenTitleHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D263304A1DFB008BF231 /* ScreenTitleHeader.swift */; };
 		F3F941D630405E230067C6C8 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = F3F941D530405E230067C6C8 /* CLAUDE.md */; };
 /* End PBXBuildFile section */
 
@@ -620,6 +621,7 @@
 		F3E9D24E30487E0A008BF231 /* OnDeviceRecipeImportStatusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnDeviceRecipeImportStatusTests.swift; sourceTree = "<group>"; };
 		F3E9D25E30497270008BF231 /* KitchenShoppingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KitchenShoppingView.swift; sourceTree = "<group>"; };
 		F3E9D261304972FF008BF231 /* ImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportView.swift; sourceTree = "<group>"; };
+		F3E9D263304A1DFB008BF231 /* ScreenTitleHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenTitleHeader.swift; sourceTree = "<group>"; };
 		F3F941D530405E230067C6C8 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -962,6 +964,7 @@
 				9E5B39862FABC4B700C96DB3 /* FilterChip.swift */,
 				9E6DEA512EF5EF47001E7B24 /* FlowLayout.swift */,
 				9E6DEA522EF5EF47001E7B24 /* InfoPairView.swift */,
+				F3E9D263304A1DFB008BF231 /* ScreenTitleHeader.swift */,
 			);
 			path = Layout;
 			sourceTree = "<group>";
@@ -1795,6 +1798,7 @@
 				F3E9D1AE30457AD8008BF231 /* AppTheme+Palette.swift in Sources */,
 				F3E9D12730439F2C008BF231 /* BasicInfoStepView.swift in Sources */,
 				9E5B39992FACFF9000C96DB3 /* QuickAddItems.swift in Sources */,
+				F3E9D264304A1DFB008BF231 /* ScreenTitleHeader.swift in Sources */,
 				F3E9D1B030457AEA008BF231 /* AppTheme+Colors.swift in Sources */,
 				9E5B399A2FACFF9000C96DB3 /* QuickAddSheetView.swift in Sources */,
 				F3E9D2433048354F008BF231 /* RecipeTextInterpreting.swift in Sources */,

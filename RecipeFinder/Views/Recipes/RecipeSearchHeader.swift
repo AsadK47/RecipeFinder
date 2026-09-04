@@ -22,33 +22,14 @@ struct RecipeSearchHeader: View {
     }
 
     private var headerSection: some View {
-        GeometryReader { geometry in
-            HStack(spacing: 0) {
-                Color.clear
-                    .frame(width: max(44, geometry.size.width * 0.15))
-                
-                Spacer(minLength: 8)
-                
-                Text("RecipeFinder")
-                    .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                    .adaptiveForegroundColor()
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.7)
-                
-                Spacer(minLength: 8)
-                
-                Menu {
-                    menuContent
-                } label: {
-                    CircleButton(icon: "line.3.horizontal") {}
-                        .allowsHitTesting(false)
-                }
-                .frame(width: max(44, geometry.size.width * 0.15))
+        ScreenTitleHeader("RecipeFinder") {
+            Menu {
+                menuContent
+            } label: {
+                CircleButton(icon: "line.3.horizontal") {}
+                    .allowsHitTesting(false)
             }
         }
-        .frame(height: AppTheme.height44)
-        .padding(.horizontal, AppTheme.spacing20)
-        .padding(.top, AppTheme.spacing16)
     }
 
     private var searchBarSection: some View {

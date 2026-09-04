@@ -17,14 +17,25 @@ capture → organise → cook → shop. Import is a primary function → give it
 - [x] **A3. Import screen** — `ImportView` centre tab: "Paste a link" →
       `RecipeImportView` sheet; "Create manually" → `RecipeWizardView`; share hint.
       (Reuses existing flows for consistency. Paste-text→AI + recents deferred.)
-- [x] **A4. "Already in your kitchen" nudge** — `ShoppingListView.nudgeIfInKitchen`
-      via `KitchenInventoryManager.hasItem/hasInventoryItem`; banner on add.
+- [x] **A4. "Already in your kitchen"** — now a persistent inline **"In kitchen"**
+      pill on each matching shopping row (replaced the transient banner), via
+      `KitchenInventoryManager.hasItem/hasInventoryItem`.
 - [x] **A5. Build + full suite green.**
 
-### Phase A follow-ups noted while building
-- Confirm tab label ("Groceries" vs "Kitchen & Shopping"); revisit Import icon.
-- Import tab: add paste-text→AI (SharedTextImporter) + recent imports later.
-- Broader header/theme consistency pass still worthwhile (see cohesion principles).
+### Phase A polish — DONE
+- [x] Kitchen "Recipe Ideas" card: replaced the misleading match progress bar with
+      a plain "N of M" count (`QuickMatchRecipeCard`).
+- [x] "In kitchen" pill moved inline beside the item name (compact, no icon).
+- [x] Import header centred with a lead tray-download icon.
+- [x] Tests run on a single simulator (scheme `parallelizable = NO`).
+
+### Next up (Phase A follow-ups)
+1. [ ] **Cohesion pass** — one shared header/background treatment across the main
+       screens (the Yoti-clean north star). Biggest consistency win.
+2. [ ] **Import tab depth** — paste *text* → AI (`SharedTextImporter`) and a
+       recent-imports list (currently link + manual only).
+3. [ ] Confirm tab label ("Groceries" vs "Kitchen & Shopping") and whether the
+       Import *tab* icon changes (header icon already added).
 
 ## Phase B — later (only if it earns it): unified item model
 - One food-item model with state `toBuy` / `haveIt`. Checking off a bought item
