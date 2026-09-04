@@ -47,10 +47,7 @@ struct KitchenView: View {
         // Group so there's a single navigation container for the merged tab.
         Group {
             ZStack {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                    .ignoresSafeArea()
-
-                    VStack(spacing: 0) {
+                VStack(spacing: 0) {
                     KitchenHeader(
                         searchText: $searchText,
                         isSearchFocused: $isSearchFocused,
