@@ -289,6 +289,10 @@
 		F3E9D262304972FF008BF231 /* ImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D261304972FF008BF231 /* ImportView.swift */; };
 		F3E9D264304A1DFB008BF231 /* ScreenTitleHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D263304A1DFB008BF231 /* ScreenTitleHeader.swift */; };
 		F3E9D266304B71CA008BF231 /* GroceriesHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D265304B71CA008BF231 /* GroceriesHeader.swift */; };
+		F3E9D268304CA252008BF231 /* IngredientWordMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D267304CA252008BF231 /* IngredientWordMatcher.swift */; };
+		F3E9D26A304CA25C008BF231 /* IngredientWordMatcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D269304CA25C008BF231 /* IngredientWordMatcherTests.swift */; };
+		F3E9D26C304CA265008BF231 /* CategoryClassifierWordBoundaryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D26B304CA265008BF231 /* CategoryClassifierWordBoundaryTests.swift */; };
+		F3E9D26E304CA269008BF231 /* UnitConversionSolidsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D26D304CA269008BF231 /* UnitConversionSolidsTests.swift */; };
 		F3F941D630405E230067C6C8 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = F3F941D530405E230067C6C8 /* CLAUDE.md */; };
 /* End PBXBuildFile section */
 
@@ -618,6 +622,10 @@
 		F3E9D261304972FF008BF231 /* ImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportView.swift; sourceTree = "<group>"; };
 		F3E9D263304A1DFB008BF231 /* ScreenTitleHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenTitleHeader.swift; sourceTree = "<group>"; };
 		F3E9D265304B71CA008BF231 /* GroceriesHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroceriesHeader.swift; sourceTree = "<group>"; };
+		F3E9D267304CA252008BF231 /* IngredientWordMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientWordMatcher.swift; sourceTree = "<group>"; };
+		F3E9D269304CA25C008BF231 /* IngredientWordMatcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientWordMatcherTests.swift; sourceTree = "<group>"; };
+		F3E9D26B304CA265008BF231 /* CategoryClassifierWordBoundaryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryClassifierWordBoundaryTests.swift; sourceTree = "<group>"; };
+		F3E9D26D304CA269008BF231 /* UnitConversionSolidsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitConversionSolidsTests.swift; sourceTree = "<group>"; };
 		F3F941D530405E230067C6C8 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1056,6 +1064,7 @@
 				F3E9D24430483555008BF231 /* SharedTextImporter.swift */,
 				F3E9D24630483575008BF231 /* FoundationModelsRecipeInterpreter.swift */,
 				F3E9D24C30487E06008BF231 /* OnDeviceRecipeImportStatus.swift */,
+				F3E9D267304CA252008BF231 /* IngredientWordMatcher.swift */,
 			);
 			path = Recipe;
 			sourceTree = "<group>";
@@ -1274,6 +1283,9 @@
 				F3E9D248304835AA008BF231 /* SharedTextImporterTests.swift */,
 				F3E9D24A30487BD8008BF231 /* TextRecipeParserCaptionTests.swift */,
 				F3E9D24E30487E0A008BF231 /* OnDeviceRecipeImportStatusTests.swift */,
+				F3E9D269304CA25C008BF231 /* IngredientWordMatcherTests.swift */,
+				F3E9D26B304CA265008BF231 /* CategoryClassifierWordBoundaryTests.swift */,
+				F3E9D26D304CA269008BF231 /* UnitConversionSolidsTests.swift */,
 			);
 			path = Recipe;
 			sourceTree = "<group>";
@@ -1770,6 +1782,7 @@
 				9E97EEAA3007963C00D35FAB /* AboutView.swift in Sources */,
 				9E51C39A2EB3E9C20064B917 /* AccountView.swift in Sources */,
 				F3E9D1BE30457E9B008BF231 /* BiometricSetupComponents.swift in Sources */,
+				F3E9D268304CA252008BF231 /* IngredientWordMatcher.swift in Sources */,
 				9E87D3362EB6C0E900FFA1D1 /* PasswordVerificationSheet.swift in Sources */,
 				F3E9D1393043A8AF008BF231 /* CategoryCard.swift in Sources */,
 				9E4796113006BD1A00A14D3F /* SettingsComponents.swift in Sources */,
@@ -1945,6 +1958,7 @@
 				F3E9D12030439DD1008BF231 /* WizardIngredientParserTests.swift in Sources */,
 				F3E9D22930477DBC008BF231 /* SharedImportInboxTests.swift in Sources */,
 				9E6C2C1A2FB394090083A08B /* RecipeParserTests.swift in Sources */,
+				F3E9D26C304CA265008BF231 /* CategoryClassifierWordBoundaryTests.swift in Sources */,
 				9E5D20502FB358F000F2896A /* RecipeModelTests.swift in Sources */,
 				9E5D20512FB358F000F2896A /* MealPlanModelTests.swift in Sources */,
 				F3E9D1D83045DAD3008BF231 /* RecipeImageStoreTests.swift in Sources */,
@@ -1958,6 +1972,8 @@
 				9E90AB022FA9247B00096D9D /* AnimatedHeartButtonTests.swift in Sources */,
 				F3E9D24B30487BD8008BF231 /* TextRecipeParserCaptionTests.swift in Sources */,
 				9E6C2C602FB4A4BE0083A08B /* ExtensionsTests.swift in Sources */,
+				F3E9D26E304CA269008BF231 /* UnitConversionSolidsTests.swift in Sources */,
+				F3E9D26A304CA25C008BF231 /* IngredientWordMatcherTests.swift in Sources */,
 				9E97EED4300D894700D35FAB /* PersistenceControllerTests.swift in Sources */,
 				F36AED6B304336BE00935A3C /* RecipeFilterCriteriaTests.swift in Sources */,
 				9E6C2C612FB4A4BE0083A08B /* AppErrorTests.swift in Sources */,

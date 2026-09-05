@@ -311,18 +311,12 @@ enum CategoryClassifier {
         let lowercased = itemName.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
 
         return categoryCache.value(for: lowercased) { normalized in
+            // Tokenise the item name once, then test each rule's keywords against it
+            // with whole-word matching (so "graham" isn't Meat via "ham", etc.).
+            let itemWords = IngredientWordMatcher.words(in: normalized)
+
             func matches(_ keywords: [String]) -> Bool {
-                keywords.contains { keyword in
-                    let k = keyword.lowercased()
-                    if normalized.contains(k) { return true }
-                    if k.hasSuffix("s") {
-                        if normalized.contains(String(k.dropLast())) { return true }
-                    } else {
-                        if normalized.contains(k + "s") || normalized.contains(k + "es") { return true }
-                    }
-                    let words = normalized.components(separatedBy: .whitespacesAndNewlines)
-                    return words.contains { $0 == k || $0 == k + "s" || $0 == k + "es" }
-                }
+                keywords.contains { IngredientWordMatcher.matches(textWords: itemWords, keyword: $0) }
             }
 
             return categorizationRules.first { matches($0.1) }?.0 ?? "Other"

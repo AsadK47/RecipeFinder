@@ -179,42 +179,42 @@ struct UnitConversion {
     }
     
     private static func isSolidIngredient(_ ingredientName: String) -> Bool {
-        let name = ingredientName.lowercased()
-        
+        let nameWords = IngredientWordMatcher.words(in: ingredientName)
+
         let liquids = ["oil", "water", "milk", "cream", "stock", "broth", "juice",
                       "sauce", "vinegar", "wine", "soy sauce", "coconut milk", "honey",
                       "syrup", "extract", "liquid", "melted"]
-        
-        for liquid in liquids where name.contains(liquid) {
+
+        for liquid in liquids where IngredientWordMatcher.matches(textWords: nameWords, keyword: liquid) {
             return false
         }
-        
-        let spices = ["cumin", "coriander", "turmeric", "paprika", "chili", "chilli", 
+
+        let spices = ["cumin", "coriander", "turmeric", "paprika", "chili", "chilli",
                      "cinnamon", "nutmeg", "clove", "cardamom", "pepper", "ginger",
                      "garlic", "onion", "fennel", "mustard", "fenugreek", "bay leaf",
                      "oregano", "basil", "thyme", "rosemary", "parsley", "mint",
                      "sage", "tarragon", "dill", "cilantro", "cayenne", "allspice",
                      "saffron", "sumac", "za'atar", "curry", "masala", "garam",
                      "star anise", "peppercorn", "sesame", "poppy", "caraway"]
-        
+
         let dryIngredients = ["flour", "sugar", "salt", "rice", "pasta", "oats",
-                             "breadcrumb", "cornstarch", "cornflour", "baking powder", 
+                             "breadcrumb", "cornstarch", "cornflour", "baking powder",
                              "baking soda", "yeast", "cocoa", "coffee", "tea", "seed",
                              "nut", "almond", "walnut", "cashew", "peanut", "pecan",
                              "lentil", "bean", "chickpea", "grain", "quinoa", "couscous",
                              "dried", "powder", "ground", "crushed", "flake", "granule"]
-        
-        for keyword in spices + dryIngredients where name.contains(keyword) {
+
+        for keyword in spices + dryIngredients where IngredientWordMatcher.matches(textWords: nameWords, keyword: keyword) {
             return true
         }
-        
+
         return false
     }
-    
+
     private static func getDensityConversion(ingredientName: String, unit: String) -> Double? {
-        let name = ingredientName.lowercased()
+        let nameWords = IngredientWordMatcher.words(in: ingredientName)
         let normalized = unit.lowercased().trimmingCharacters(in: .whitespaces)
-        
+
         let densityMap: [String: (tsp: Double, tbsp: Double, cup: Double)] = [
             "salt": (tsp: 6, tbsp: 18, cup: 288),
             "sugar": (tsp: 4, tbsp: 12.5, cup: 200),
@@ -241,7 +241,17 @@ struct UnitConversion {
             "poppy seed": (tsp: 3.3, tbsp: 10, cup: 160)
         ]
         
-        for (ingredient, densities) in densityMap where name.contains(ingredient) {
+        // Whole-word match, most-specific (longest) keyword first, so a multi-word
+        // name resolves deterministically instead of depending on Dictionary order
+        // (e.g. "garlic powder" wins over a bare "garlic" were both present).
+        let orderedDensities = densityMap.sorted { lhs, rhs in
+            let lWords = lhs.key.split(separator: " ").count
+            let rWords = rhs.key.split(separator: " ").count
+            return lWords != rWords ? lWords > rWords : lhs.key < rhs.key
+        }
+
+        for (ingredient, densities) in orderedDensities
+        where IngredientWordMatcher.matches(textWords: nameWords, keyword: ingredient) {
             switch normalized {
             case "tsp", "teaspoon", "teaspoons":
                 return densities.tsp
@@ -253,7 +263,7 @@ struct UnitConversion {
                 return nil
             }
         }
-        
+
         return nil
     }
     
