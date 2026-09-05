@@ -152,7 +152,21 @@ struct IngredientNormalizer {
         "tomato paste canned": "Tomato Paste",
         "canned coconut milk": "Coconut Milk"
     ]
-    
+
+    // Fallback order for the substring/whole-word scan: most-specific (longest)
+    // key first, then alphabetical. A `Dictionary` has no defined iteration order,
+    // so the previous `for (key, value) in normalizationMap` could return a
+    // different match between launches when an input contained two keys. Sorting
+    // once here makes the winner deterministic.
+    private static let sortedNormalizationEntries: [(key: String, value: String)] =
+        normalizationMap
+            .map { (key: $0.key, value: $0.value) }
+            .sorted { lhs, rhs in
+                let lWords = lhs.key.split(separator: " ").count
+                let rWords = rhs.key.split(separator: " ").count
+                return lWords != rWords ? lWords > rWords : lhs.key < rhs.key
+            }
+
     static func normalize(_ ingredient: String) -> String {
         cache.value(for: ingredient) { computeNormalized($0) }
     }
@@ -185,13 +199,15 @@ struct IngredientNormalizer {
         if let standardName = normalizationMap[normalized] {
             return standardName
         }
-        
-        for (key, value) in normalizationMap {
-            if normalized.contains(key) {
-                return value
-            }
+
+        // Whole-word fallback (deterministic order): matches a map key that appears
+        // as a run of whole words, so "hot saucepan" isn't conflated with "hot sauce".
+        let normalizedWords = IngredientWordMatcher.words(in: normalized)
+        for entry in sortedNormalizationEntries
+        where IngredientWordMatcher.matches(textWords: normalizedWords, keyword: entry.key) {
+            return entry.value
         }
-        
+
         return normalized.capitalized
     }
     

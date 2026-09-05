@@ -15,6 +15,9 @@ struct RecipeImporterTests {
             var status: Int = 200
             var headers: [String: String] = [:]
             var body: String = ""
+            /// Raw bytes to return verbatim; when set, overrides `body` so tests can
+            /// script non-UTF-8 payloads (e.g. ISO-8859-1 recipe blogs).
+            var bodyData: Data? = nil
         }
 
         let stubs: [String: Stub]
@@ -30,7 +33,7 @@ struct RecipeImporterTests {
                 httpVersion: nil,
                 headerFields: stub.headers
             )!
-            return (Data(stub.body.utf8), response)
+            return (stub.bodyData ?? Data(stub.body.utf8), response)
         }
     }
 
@@ -43,6 +46,17 @@ struct RecipeImporterTests {
      "recipeIngredient":["1 cup flour","2 eggs"],
      "recipeInstructions":[{"@type":"HowToStep","text":"Mix the ingredients"},
                            {"@type":"HowToStep","text":"Cook on a griddle"}]}
+    </script></head><body></body></html>
+    """
+
+    /// An accented recipe that can be encoded as ISO-8859-1 (no chars outside
+    /// Latin-1, so `data(using: .isoLatin1)` succeeds).
+    private static let latin1RecipeHTML = """
+    <html><head>
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"Recipe","name":"Crème Brûlée",
+     "recipeIngredient":["200 ml crème fraîche","1 pincée de sel"],
+     "recipeInstructions":[{"@type":"HowToStep","text":"Mélanger"}]}
     </script></head><body></body></html>
     """
 
@@ -109,6 +123,24 @@ struct RecipeImporterTests {
 
         #expect(outcome.data.name == "Test Pancakes")
         #expect(outcome.confidence > 0)
+    }
+
+    @Test("fetchAndParse decodes a non-UTF-8 (ISO-8859-1) page instead of failing")
+    func fetchAndParseDecodesLatin1() async throws {
+        let url = URL(string: "https://example.com/creme")!
+        let data = Self.latin1RecipeHTML.data(using: .isoLatin1)!
+        // Sanity: these bytes are not valid UTF-8, so the old strict decode failed here.
+        #expect(String(data: data, encoding: .utf8) == nil)
+
+        let importer = makeImporter(stubs: [url.absoluteString: .init(
+            headers: ["Content-Type": "text/html; charset=iso-8859-1"],
+            bodyData: data
+        )])
+
+        let outcome = try await importer.fetchAndParse(from: url)
+
+        #expect(outcome.data.name == "Crème Brûlée")
+        #expect(outcome.data.rawIngredients.contains { $0.contains("crème fraîche") })
     }
 
     @Test("fetchAndParse follows a redirect to the final page")

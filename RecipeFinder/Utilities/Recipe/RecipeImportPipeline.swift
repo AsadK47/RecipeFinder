@@ -85,9 +85,7 @@ struct RecipeImportPipeline: Sendable {
             throw RecipeImportError.invalidResponse
         }
 
-        guard let html = String(data: data, encoding: .utf8) else {
-            throw RecipeImportError.invalidEncoding
-        }
+        let html = Self.decodeHTML(data, response: httpResponse)
 
         let parsed = RecipeParser.parse(html: html)
 
@@ -120,5 +118,32 @@ struct RecipeImportPipeline: Sendable {
         )
 
         return RecipeImportOutcome(data: extracted, confidence: parsed.confidence)
+    }
+
+    /// Decodes fetched bytes into HTML text. Recipe blogs are frequently served as
+    /// ISO-8859-1 / Windows-1252, for which a strict UTF-8 decode returns nil and
+    /// used to kill the import (`.invalidEncoding`). Honour the response's declared
+    /// charset first, then try UTF-8 and the common legacy encodings, and finally
+    /// fall back to a lossy UTF-8 decode so a single stray byte can never sink the
+    /// whole import.
+    static func decodeHTML(_ data: Data, response: HTTPURLResponse) -> String {
+        if let charset = response.textEncodingName {
+            let cfEncoding = CFStringConvertIANACharSetNameToEncoding(charset as CFString)
+            if cfEncoding != kCFStringEncodingInvalidId {
+                let encoding = String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(cfEncoding))
+                if let decoded = String(data: data, encoding: encoding) {
+                    return decoded
+                }
+            }
+        }
+
+        for encoding in [String.Encoding.utf8, .windowsCP1252, .isoLatin1] {
+            if let decoded = String(data: data, encoding: encoding) {
+                return decoded
+            }
+        }
+
+        // Lossy UTF-8 never fails; last resort so import degrades instead of dying.
+        return String(decoding: data, as: UTF8.self)
     }
 }

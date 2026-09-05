@@ -18,12 +18,11 @@ so results can differ between launches.
 ## Confirmed defects
 
 ### Import & parsing
-- **[P2] Non-UTF-8 pages fail import entirely.** `RecipeImportPipeline.swift:88` —
-  `String(data:encoding:.utf8)` returns nil for ISO-8859-1 / Windows-1252 pages (common on
-  recipe blogs) → throws `.invalidEncoding`, import dies. **Fix:** decode using
-  `httpResponse.textEncodingName` when present, then fall back through `.isoLatin1` /
-  `.windowsCP1252`, finally UTF-8 *lossy* (never nil). **Test:** feed the fake fetcher
-  Latin-1 bytes with é/£ and assert the recipe parses.
+- **[P2] ✅ FIXED — Non-UTF-8 pages failed import entirely.** `RecipeImportPipeline` now
+  decodes via `decodeHTML(_:response:)`: honours `httpResponse.textEncodingName`, then tries
+  UTF-8 / Windows-1252 / ISO-8859-1, and finally a lossy UTF-8 decode that never returns nil.
+  Test feeds the fake fetcher ISO-8859-1 bytes ("Crème Brûlée") declared via Content-Type and
+  asserts the recipe parses. `.invalidEncoding` is now unreachable (kept as a declared case).
 - **[P3] Redirect handler only covers 301/302.** `RecipeImportPipeline.swift:77` — misses
   303/307/308. Moot in production (`URLSession.shared` auto-follows all of them), so this
   only affects the injected-fetcher/test path. **Fix:** comment why, or handle the other
@@ -32,12 +31,12 @@ so results can differ between launches.
 ### Ingredient / unit logic
 - **[P1] ✅ FIXED this session — `KitchenRecipeMatcher` substring match** (gin matched
   ginger). Now whole-word; 10/10 tests green.
-- **[P2] `IngredientNormalizer` substring fallback is order-undefined.**
-  `IngredientNormalizer.swift:189` — `for (key,value) in normalizationMap { if normalized.contains(key) … }`
-  iterates a `Dictionary`, so when a name contains ≥2 keys the winner varies between
-  launches; also plain substring conflation. **Fix:** iterate keys sorted longest-first
-  (deterministic) and/or require word-boundary. **Test:** an input matching two keys returns
-  the more specific one, stably across repeated calls.
+- **[P2] ✅ FIXED — `IngredientNormalizer` substring fallback was order-undefined.**
+  The fallback now iterates a precomputed `sortedNormalizationEntries` (longest-key-first,
+  then alphabetical) and matches whole words via `IngredientWordMatcher`. Fixes both the
+  `Dictionary`-order nondeterminism (two-key inputs resolve stably) and substring conflation
+  (**"hot saucepan" → "Hot Saucepan"**, no longer "Hot Sauce"). Descriptor-prefixed variants
+  like "fresh minced garlic" → Garlic still match.
 - **[P2] ✅ FIXED — `UnitConversion` solid/density detection used substring match.**
   `isSolidIngredient` and `getDensityConversion` now use `IngredientWordMatcher` (whole-word),
   and the density map is iterated longest-keyword-first for deterministic results. Fixes
@@ -88,5 +87,7 @@ so results can differ between launches.
 > tokeniser reused by the matcher, normalizer, unit converter, and classifier — kills the
 > whole substring-conflation bug class in one place instead of four.
 > ✅ DONE — extracted as `IngredientWordMatcher` (whole-word, multi-word, plural-aware) and
-> adopted by `UnitConversion` + `CategoryClassifier`. Still to migrate: `IngredientNormalizer`
-> (the remaining P2 above) and optionally fold `KitchenRecipeMatcher`'s own word logic into it.
+> adopted by `UnitConversion`, `CategoryClassifier`, and `IngredientNormalizer`. All four
+> ingredient-logic P2s in this class are now closed. Optional follow-up: fold
+> `KitchenRecipeMatcher`'s own word logic into it (its ≥3-char rule differs, so behaviour-
+> preserving only — low priority, already correct and tested).

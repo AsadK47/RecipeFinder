@@ -96,4 +96,25 @@ struct IngredientNormalizerTests {
     func unknownIngredient() {
         #expect(IngredientNormalizer.normalize("xyzzy spice") == "Xyzzy Spice")
     }
+
+    // MARK: - Fallback matching (whole-word + deterministic)
+
+    @Test("A map key hidden inside a longer word does not match")
+    func fallbackRequiresWholeWord() {
+        // "hot saucepan" contains the substring "hot sauce" but is not hot sauce.
+        #expect(IngredientNormalizer.normalize("hot saucepan") == "Hot Saucepan")
+    }
+
+    @Test("The multi-word fallback still matches a descriptor-prefixed variant")
+    func fallbackMatchesMultiWordPhrase() {
+        // Not an exact key ("fresh" isn't stripped), so this exercises the fallback.
+        #expect(IngredientNormalizer.normalize("fresh minced garlic") == "Garlic")
+    }
+
+    @Test("An input matching two independent keys resolves deterministically")
+    func fallbackIsDeterministic() {
+        // Both "fish sauce" and "hot sauce" are keys; the winner must be stable
+        // (longest-first, then alphabetical) rather than Dictionary-order-dependent.
+        #expect(IngredientNormalizer.normalize("hot sauce and fish sauce") == "Fish Sauce")
+    }
 }
