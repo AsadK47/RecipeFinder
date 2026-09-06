@@ -10,7 +10,7 @@ extension PersistenceController {
         let context = container.viewContext
         let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: Entity.recipe)
         
-        if let userId = UserScopedStorage.shared.currentUserId {
+        if let userId = userID() {
             fetchRequest.predicate = NSPredicate(format: "userId == %@", userId)
         } else {
             persistenceLogger.debug("⚠️ No user logged in, skipping database clear to protect other users' data")

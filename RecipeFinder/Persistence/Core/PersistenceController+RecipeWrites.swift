@@ -103,7 +103,7 @@ extension PersistenceController {
         recipe.setValue(parameters.imageName, forKey: RecipeKey.imageName)
         recipe.setValue(parameters.isFavorite, forKey: RecipeKey.isFavorite)
         
-        if let userId = UserScopedStorage.shared.currentUserId {
+        if let userId = userID() {
             recipe.setValue(userId, forKey: "userId")
         }
         

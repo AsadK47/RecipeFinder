@@ -17,6 +17,11 @@ final class PersistenceController {
     private(set) var loadError: Error?
     private(set) var isStoreLoaded = false
 
+    /// Current account scope. Recipes are stamped with and filtered by this id.
+    /// Defaults to the shared per-user store; injected in tests so scoping can be
+    /// exercised against an in-memory store without touching global state.
+    let userID: () -> String?
+
     enum Entity {
         static let recipe = "Recipe"
     }
@@ -39,8 +44,19 @@ final class PersistenceController {
         static let userId = "userId"
     }
 
-    private init() {
+    /// - Parameters:
+    ///   - inMemory: back the store with `/dev/null` (isolated, non-persisted)
+    ///     for tests. Kept as SQLite so batch operations still work.
+    ///   - userID: account-scope provider (see `userID`).
+    init(
+        inMemory: Bool = false,
+        userID: @escaping () -> String? = { UserScopedStorage.shared.currentUserId }
+    ) {
+        self.userID = userID
         container = NSPersistentContainer(name: "RecipeModel")
+        if inMemory {
+            container.persistentStoreDescriptions.first?.url = URL(fileURLWithPath: "/dev/null")
+        }
         configureStore()
         loadStore()
     }

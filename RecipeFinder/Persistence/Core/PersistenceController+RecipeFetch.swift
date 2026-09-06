@@ -5,7 +5,7 @@ import Foundation
 extension PersistenceController {
 
     func hasCurrentUserScope() -> Bool {
-        UserScopedStorage.shared.currentUserId != nil
+        userID() != nil
     }
     
     func fetchRecipes() -> [RecipeModel] {
@@ -22,7 +22,7 @@ extension PersistenceController {
             )
         ]
         
-        if let userId = UserScopedStorage.shared.currentUserId {
+        if let userId = userID() {
             fetchRequest.predicate = NSPredicate(format: "userId == %@", userId)
         } else {
             return []
@@ -44,7 +44,7 @@ extension PersistenceController {
         let context = container.viewContext
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
         
-        if let userId = UserScopedStorage.shared.currentUserId {
+        if let userId = userID() {
             fetchRequest.predicate = NSPredicate(format: "userId == %@", userId)
         } else {
             return 0
