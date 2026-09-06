@@ -74,7 +74,10 @@ struct RecipeImportPipeline: Sendable {
 
         let (data, httpResponse) = try await fetcher.fetch(request)
 
-        if httpResponse.statusCode == 301 || httpResponse.statusCode == 302 {
+        // Follow every redirect status (301/302/303/307/308). In production
+        // `URLSession` already follows them, so this only fires for an injected
+        // fetcher that surfaces the 3xx itself (tests, headless extension paths).
+        if [301, 302, 303, 307, 308].contains(httpResponse.statusCode) {
             if let location = httpResponse.value(forHTTPHeaderField: "Location"),
                let redirectURL = URL(string: location, relativeTo: url) {
                 return try await fetchAndParse(from: redirectURL, redirectCount: redirectCount + 1)

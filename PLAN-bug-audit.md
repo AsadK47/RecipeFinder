@@ -23,10 +23,9 @@ so results can differ between launches.
   UTF-8 / Windows-1252 / ISO-8859-1, and finally a lossy UTF-8 decode that never returns nil.
   Test feeds the fake fetcher ISO-8859-1 bytes ("Crème Brûlée") declared via Content-Type and
   asserts the recipe parses. `.invalidEncoding` is now unreachable (kept as a declared case).
-- **[P3] Redirect handler only covers 301/302.** `RecipeImportPipeline.swift:77` — misses
-  303/307/308. Moot in production (`URLSession.shared` auto-follows all of them), so this
-  only affects the injected-fetcher/test path. **Fix:** comment why, or handle the other
-  3xx codes for symmetry.
+- **[P3] ✅ FIXED — Redirect handler only covered 301/302.** Now follows 301/302/303/307/308
+  (with a comment noting `URLSession` already follows them in production, so this only affects
+  the injected-fetcher/extension path). Test: a 308 redirect is followed to the final page.
 
 ### Ingredient / unit logic
 - **[P1] ✅ FIXED this session — `KitchenRecipeMatcher` substring match** (gin matched
@@ -48,13 +47,13 @@ so results can differ between launches.
   **"graham" → Meat** (via "ham"), **"popcorn" → Produce** (via "corn"). Now tokenises the
   item name once and matches whole words via `IngredientWordMatcher`. graham → not Meat,
   popcorn → not Produce; all pre-existing categorisations still green.
-- **[P3] `CategoryClassifier.groupSimilarIngredients` precedence bug.**
-  `:357-359` — `…components(",").first ?? ingredient.trimmingCharacters(…)` binds so the trim
-  only applies to the (never-taken) fallback; `cleaned` is never trimmed. Mostly benign because
-  `split(separator:" ")` drops empties. **Fix:** parenthesise, or delete if the method is
-  unused (verify callers first).
-- **[P3] `CategoryClassifier.isValidIngredient` accepts anything > 15 chars.** `:350` —
-  arbitrary; long non-ingredient strings pass. Low impact.
+- **[P3] ✅ FIXED — `CategoryClassifier.groupSimilarIngredients` precedence bug.**
+  Parenthesised so the trim applies to the comma-split result, not the fallback. Behaviour-
+  preserving (`split` already dropped empties), but the method was untested and is used by
+  `IngredientCatalog`, so added a characterization suite (`CategoryClassifierGroupingTests`).
+- **[P3] ✅ FIXED (deleted) — `CategoryClassifier.isValidIngredient`.** Had zero callers
+  (dead code); removed it and the `allKeywords` list that existed only to feed it, rather than
+  fix its arbitrary `> 15 chars` rule.
 
 ### Groceries screen (this session — needs runtime check, not just build)
 - **[P2 verify] One-`List`, two-section rendering.** The merged screen hosts

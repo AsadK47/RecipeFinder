@@ -157,6 +157,20 @@ struct RecipeImporterTests {
         #expect(outcome.data.name == "Test Pancakes")
     }
 
+    @Test("fetchAndParse follows a 308 (permanent) redirect")
+    func fetchAndParseFollows308() async throws {
+        let start = URL(string: "https://example.com/moved")!
+        let destination = URL(string: "https://example.com/final")!
+        let importer = makeImporter(stubs: [
+            start.absoluteString: .init(status: 308, headers: ["Location": destination.absoluteString]),
+            destination.absoluteString: .init(body: Self.validRecipeHTML),
+        ])
+
+        let outcome = try await importer.fetchAndParse(from: start)
+
+        #expect(outcome.data.name == "Test Pancakes")
+    }
+
     @Test("fetchAndParse gives up after too many redirects")
     func fetchAndParseTooManyRedirects() async {
         let loop = URL(string: "https://example.com/loop")!

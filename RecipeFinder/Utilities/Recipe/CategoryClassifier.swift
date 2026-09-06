@@ -304,9 +304,6 @@ enum CategoryClassifier {
                                        "gelatin", "cocoa powder"]),
     ]
 
-    // Pre-built flat keyword list for isValidIngredient — avoids flatMap on every call
-    private static let allKeywords: [String] = kitchenIngredientKeywords.values.flatMap { $0 }
-
     static func categorize(_ itemName: String) -> String {
         let lowercased = itemName.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
 
@@ -330,28 +327,16 @@ enum CategoryClassifier {
         return categorize(partialInput)
     }
     
-    static func isValidIngredient(_ name: String) -> Bool {
-        let cleaned = name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        
-        if descriptorWords.contains(cleaned) {
-            return false
-        }
-        
-        let hasIngredientKeyword = allKeywords.contains { keyword in
-            cleaned.localizedCaseInsensitiveContains(keyword)
-        }
-        
-        return hasIngredientKeyword || cleaned.count > 15
-    }
-    
     static func groupSimilarIngredients(_ ingredients: [String]) -> [String] {
         var mainIngredients = Set<String>()
-        
+
         for ingredient in ingredients {
-            let cleaned = ingredient
-                .components(separatedBy: ",").first ?? ingredient
+            // Take the part before the first comma, then trim. The parentheses matter:
+            // without them `.trimmingCharacters` bound to the `?? ingredient` fallback,
+            // leaving `cleaned` untrimmed.
+            let cleaned = (ingredient.components(separatedBy: ",").first ?? ingredient)
                 .trimmingCharacters(in: .whitespacesAndNewlines)
-            
+
             let words = cleaned.split(separator: " ").map { String($0) }
             
             let filteredWords = words.filter { word in
