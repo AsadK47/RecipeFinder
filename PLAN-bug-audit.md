@@ -68,7 +68,13 @@ so results can differ between launches.
 1. **Parsers** — `RecipeParser` + `+StructuredData/+WPRM/+Microdata/+TextMetadata/+TextContent`,
    `TextRecipeParser`, `WizardIngredientParser`, `RecipeImportBuilder` (rest), `RecipeImporter`,
    `SharedTextImporter`. Densest heuristics; expect more substring/normalisation issues and
-   time/servings parsing edge cases.
+   time/servings parsing edge cases. *(Review in progress.)*
+   - **[P2] ✅ FIXED — `parseISO8601Duration` dropped date-bearing durations.** The old
+     `PT…`-only pattern didn't match forms with a day/week field (e.g. `P0DT0H30M`, which
+     Google/AllRecipes emit), so cook/prep time silently vanished. Now parses the full
+     `P[nW][nD]T[nH][nM][nS]` grammar (anchored), summing weeks/days/hours/minutes. Covered by
+     `ISO8601DurationTests`. No force-unwraps found in the parser files. Time/servings free-text
+     heuristics (`extractTime`/`extractServings`) reviewed — heuristic but not defective.
 2. **Persistence & backup** — `PersistenceController`, the four managers, `Backup*`. Low logic
    risk but highest consequence (data loss / merge correctness). Focus on merge & migration.
 3. **Views** — mostly layout; scan for work-in-`body`, force-unwraps, `onChange` gaps.

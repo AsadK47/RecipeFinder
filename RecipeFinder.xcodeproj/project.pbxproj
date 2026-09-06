@@ -294,6 +294,7 @@
 		F3E9D26C304CA265008BF231 /* CategoryClassifierWordBoundaryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D26B304CA265008BF231 /* CategoryClassifierWordBoundaryTests.swift */; };
 		F3E9D26E304CA269008BF231 /* UnitConversionSolidsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D26D304CA269008BF231 /* UnitConversionSolidsTests.swift */; };
 		F3E9D270304D4D24008BF231 /* CategoryClassifierGroupingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D26F304D4D24008BF231 /* CategoryClassifierGroupingTests.swift */; };
+		F3E9D272304D75B9008BF231 /* ISO8601DurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D271304D75B9008BF231 /* ISO8601DurationTests.swift */; };
 		F3F941D630405E230067C6C8 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = F3F941D530405E230067C6C8 /* CLAUDE.md */; };
 /* End PBXBuildFile section */
 
@@ -628,6 +629,7 @@
 		F3E9D26B304CA265008BF231 /* CategoryClassifierWordBoundaryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryClassifierWordBoundaryTests.swift; sourceTree = "<group>"; };
 		F3E9D26D304CA269008BF231 /* UnitConversionSolidsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitConversionSolidsTests.swift; sourceTree = "<group>"; };
 		F3E9D26F304D4D24008BF231 /* CategoryClassifierGroupingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryClassifierGroupingTests.swift; sourceTree = "<group>"; };
+		F3E9D271304D75B9008BF231 /* ISO8601DurationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ISO8601DurationTests.swift; sourceTree = "<group>"; };
 		F3F941D530405E230067C6C8 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1289,6 +1291,7 @@
 				F3E9D26B304CA265008BF231 /* CategoryClassifierWordBoundaryTests.swift */,
 				F3E9D26D304CA269008BF231 /* UnitConversionSolidsTests.swift */,
 				F3E9D26F304D4D24008BF231 /* CategoryClassifierGroupingTests.swift */,
+				F3E9D271304D75B9008BF231 /* ISO8601DurationTests.swift */,
 			);
 			path = Recipe;
 			sourceTree = "<group>";
@@ -1980,6 +1983,7 @@
 				F3E9D26A304CA25C008BF231 /* IngredientWordMatcherTests.swift in Sources */,
 				9E97EED4300D894700D35FAB /* PersistenceControllerTests.swift in Sources */,
 				F36AED6B304336BE00935A3C /* RecipeFilterCriteriaTests.swift in Sources */,
+				F3E9D272304D75B9008BF231 /* ISO8601DurationTests.swift in Sources */,
 				9E6C2C612FB4A4BE0083A08B /* AppErrorTests.swift in Sources */,
 				F36AED7F304346DF00935A3C /* MealPlanCalendarTests.swift in Sources */,
 				9E6C2C622FB4A4BE0083A08B /* ValidatorTests.swift in Sources */,

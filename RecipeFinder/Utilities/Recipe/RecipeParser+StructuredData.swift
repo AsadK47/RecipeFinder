@@ -191,39 +191,36 @@ extension RecipeParser {
     }
 
     static func parseISO8601Duration(_ duration: String) -> Int? {
-        let pattern = #"PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?"#
+        // Full ISO-8601 duration: an optional date part (weeks/days) and an optional
+        // time part after "T" (hours/minutes/seconds). The date part matters because
+        // sites emit forms like "P0DT0H30M" — the old "PT"-only pattern skipped those
+        // entirely and lost the time. Seconds are recognised but don't count toward
+        // whole minutes.
+        let pattern = #"^P(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$"#
 
+        let trimmed = duration.trimmingCharacters(in: .whitespacesAndNewlines)
         guard let regex = try? NSRegularExpression(pattern: pattern, options: []) else {
             return nil
         }
 
-        let nsString = duration as NSString
-        guard let match = regex.firstMatch(in: duration, options: [], range: NSRange(location: 0, length: nsString.length)) else {
+        let nsString = trimmed as NSString
+        guard let match = regex.firstMatch(in: trimmed, options: [], range: NSRange(location: 0, length: nsString.length)) else {
             return nil
         }
 
-        var totalMinutes = 0
-
-        if match.numberOfRanges > 1 {
-            let hoursRange = match.range(at: 1)
-            if hoursRange.location != NSNotFound {
-                let hoursStr = nsString.substring(with: hoursRange)
-                if let hours = Int(hoursStr) {
-                    totalMinutes += hours * 60
-                }
-            }
+        func value(at index: Int) -> Int {
+            guard index < match.numberOfRanges else { return 0 }
+            let range = match.range(at: index)
+            guard range.location != NSNotFound else { return 0 }
+            return Int(nsString.substring(with: range)) ?? 0
         }
 
-        if match.numberOfRanges > 2 {
-            let minutesRange = match.range(at: 2)
-            if minutesRange.location != NSNotFound {
-                let minutesStr = nsString.substring(with: minutesRange)
-                if let minutes = Int(minutesStr) {
-                    totalMinutes += minutes
-                }
-            }
-        }
+        let weeks = value(at: 1)
+        let days = value(at: 2)
+        let hours = value(at: 3)
+        let minutes = value(at: 4)
 
+        let totalMinutes = ((weeks * 7 + days) * 24 + hours) * 60 + minutes
         return totalMinutes > 0 ? totalMinutes : nil
     }
 
