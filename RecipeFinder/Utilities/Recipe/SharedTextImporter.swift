@@ -1,23 +1,22 @@
 import Foundation
 
 /// Decides how a free-text share becomes a recipe: try the on-device
-/// interpreter for a one-tap import, otherwise hand the text back for manual
-/// review. Pure and injectable so the decision + mapping are unit-tested without
-/// the model.
+/// interpreter, otherwise hand the raw text back for the heuristic parser. Either
+/// way the result is reviewed and edited in the wizard before it is saved — the
+/// importer no longer builds or persists a recipe itself. Pure and injectable so
+/// the decision is unit-tested without the on-device model.
 struct SharedTextImporter {
     enum Outcome: Equatable {
-        /// The interpreter produced a usable recipe — save it directly.
-        case imported(RecipeModel)
+        /// The interpreter produced a usable recipe — review it in the wizard.
+        case interpreted(InterpretedRecipe)
         /// Couldn't interpret it — route to the manual/wizard flow with the text.
         case needsManualEntry(String)
     }
 
     private let interpreter: RecipeTextInterpreting
-    private let builder: RecipeImportBuilder
 
-    init(interpreter: RecipeTextInterpreting, builder: RecipeImportBuilder = RecipeImportBuilder()) {
+    init(interpreter: RecipeTextInterpreting) {
         self.interpreter = interpreter
-        self.builder = builder
     }
 
     func handle(_ text: String) async -> Outcome {
@@ -28,7 +27,7 @@ struct SharedTextImporter {
             if let interpreted = try await interpreter.interpret(trimmed),
                !interpreted.name.trimmingCharacters(in: .whitespaces).isEmpty,
                interpreted.ingredients.contains(where: { !$0.trimmingCharacters(in: .whitespaces).isEmpty }) {
-                return .imported(builder.build(from: interpreted))
+                return .interpreted(interpreted)
             }
         } catch {
             // Any model error (unavailable, guardrail, context limit) → manual.

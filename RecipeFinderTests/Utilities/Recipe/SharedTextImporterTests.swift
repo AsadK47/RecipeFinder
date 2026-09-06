@@ -2,8 +2,9 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// Tests the free-text import decision + mapping without the on-device model,
-/// by injecting a stub interpreter.
+/// Tests the free-text import decision without the on-device model, by injecting
+/// a stub interpreter. The importer now hands back reviewable data (no build /
+/// persist), so the wizard is the save gate.
 @Suite struct SharedTextImporterTests {
 
     struct DummyError: Error {}
@@ -29,16 +30,9 @@ import Foundation
         prepMinutes: 10, cookMinutes: 20, servings: 4, summary: "Cosy soup"
     )
 
-    // MARK: - Use case
-
-    @Test func importsWhenInterpreterSucceeds() async {
+    @Test func interpretedWhenInterpreterSucceeds() async {
         let sut = SharedTextImporter(interpreter: StubInterpreter(recipe: Self.sample))
-        guard case let .imported(recipe) = await sut.handle("some caption") else {
-            Issue.record("expected .imported"); return
-        }
-        #expect(recipe.name == "Tomato Soup")
-        #expect(recipe.ingredients.count == 2)
-        #expect(recipe.baseServings == 4)
+        #expect(await sut.handle("some caption") == .interpreted(Self.sample))
     }
 
     @Test func manualWhenInterpreterDeclines() async {
@@ -61,24 +55,5 @@ import Foundation
     @Test func manualWhenTextBlank() async {
         let sut = SharedTextImporter(interpreter: StubInterpreter(recipe: Self.sample))
         #expect(await sut.handle("   ") == .needsManualEntry("   "))
-    }
-
-    // MARK: - Builder mapping
-
-    @Test func builderMapsInterpretedFields() {
-        let recipe = RecipeImportBuilder().build(from: Self.sample)
-        #expect(recipe.name == "Tomato Soup")
-        #expect(recipe.baseServings == 4)
-        #expect(recipe.prepTime == "10 minutes")
-        #expect(recipe.cookingTime == "20 minutes")
-        #expect(recipe.instructions == ["Simmer", "Blend"])
-        #expect(recipe.ingredients.contains { $0.name.localizedCaseInsensitiveContains("onion") })
-        #expect(recipe.notes.contains("Cosy soup"))
-    }
-
-    @Test func builderDefaultsServingsWhenMissing() {
-        let noServings = InterpretedRecipe(name: "Bread", ingredients: ["flour"], steps: [],
-                                           prepMinutes: nil, cookMinutes: nil, servings: nil, summary: nil)
-        #expect(RecipeImportBuilder().build(from: noServings).baseServings == 4)
     }
 }

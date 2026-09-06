@@ -11,6 +11,8 @@ struct ImportView: View {
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
 
     @State private var showLinkImport = false
+    @State private var showPasteImport = false
+    @State private var showPhotoImport = false
     @State private var showWizard = false
 
     var body: some View {
@@ -32,6 +34,22 @@ struct ImportView: View {
                         )
 
                         actionCard(
+                            icon: "doc.on.clipboard",
+                            color: .green,
+                            title: "Paste text",
+                            subtitle: "Paste a caption, note, or message — we pull out the recipe to review.",
+                            action: { showPasteImport = true }
+                        )
+
+                        actionCard(
+                            icon: "text.viewfinder",
+                            color: .purple,
+                            title: "Scan a photo",
+                            subtitle: "A cookbook page, screenshot, or handwritten recipe — read on device.",
+                            action: { showPhotoImport = true }
+                        )
+
+                        actionCard(
                             icon: "square.and.pencil",
                             color: .blue,
                             title: "Create manually",
@@ -49,19 +67,25 @@ struct ImportView: View {
             .toolbar(.hidden, for: .navigationBar)
         }
         .sheet(isPresented: $showLinkImport) {
-            RecipeImportView(initialURL: nil, existingNames: recipes.map(\.name)) { imported in
-                recipes.append(imported)
-                PersistenceController.shared.saveRecipeModel(imported)
-                HapticManager.shared.success()
-            }
+            RecipeImportView(initialURL: nil, existingNames: recipes.map(\.name)) { store($0) }
+        }
+        .sheet(isPresented: $showPasteImport) {
+            PasteTextImportSheet { store($0) }
+        }
+        .sheet(isPresented: $showPhotoImport) {
+            PhotoImportSheet { store($0) }
         }
         .sheet(isPresented: $showWizard) {
-            RecipeWizardView(prefilledData: nil) { newRecipe in
-                recipes.append(newRecipe)
-                PersistenceController.shared.saveRecipeModel(newRecipe)
-                HapticManager.shared.success()
-            }
+            RecipeWizardView(prefilledData: nil) { store($0) }
         }
+    }
+
+    /// Appends a finished recipe to the list and persists it. Shared by every
+    /// import route so they save identically.
+    private func store(_ recipe: RecipeModel) {
+        recipes.append(recipe)
+        PersistenceController.shared.saveRecipeModel(recipe)
+        HapticManager.shared.success()
     }
 
     private var header: some View {

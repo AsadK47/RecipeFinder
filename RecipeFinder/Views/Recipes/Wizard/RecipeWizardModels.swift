@@ -28,3 +28,27 @@ extension RecipeWizardView {
         var name: String = ""
     }
 }
+
+extension RecipeWizardView.PrefilledRecipeData {
+    /// Seeds the wizard from an on-device-interpreted recipe so the user reviews
+    /// and edits the AI's output before saving. Category/difficulty are left nil
+    /// (free text rarely states them reliably) and the one-line summary becomes
+    /// the notes seed.
+    init(interpreted recipe: InterpretedRecipe) {
+        let summary = recipe.summary?.trimmingCharacters(in: .whitespacesAndNewlines)
+        self.init(
+            name: recipe.name,
+            description: nil,
+            ingredients: recipe.ingredients.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty },
+            instructions: recipe.steps.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty },
+            prepTime: recipe.prepMinutes,
+            cookTime: recipe.cookMinutes,
+            servings: recipe.servings,
+            difficulty: nil,
+            notes: (summary?.isEmpty == false) ? summary : nil,
+            category: nil,
+            isFavorite: nil,
+            imageURL: nil
+        )
+    }
+}

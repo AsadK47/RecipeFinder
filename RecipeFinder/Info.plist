@@ -9,5 +9,7 @@
 	</dict>
 	<key>UILaunchScreen</key>
 	<dict/>
+	<key>NSCameraUsageDescription</key>
+	<string>RecipeFinder uses the camera so you can snap a cookbook page or handwritten recipe and import it.</string>
 </dict>
 </plist>

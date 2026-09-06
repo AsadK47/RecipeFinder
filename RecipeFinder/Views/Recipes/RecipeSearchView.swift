@@ -161,30 +161,14 @@ struct RecipeSearchView: View {
         }
     }
 
-    /// Tries the on-device model for a one-tap import of shared free text, and
-    /// falls back to the manual wizard when it isn't available or can't parse it.
+    /// Routes shared free text into the wizard for review — AI results are never
+    /// saved silently. Shows a toast when no recipe can be found.
     private func importSharedText(_ text: String) async {
-        let interpreter: RecipeTextInterpreting
-        #if canImport(FoundationModels)
-        if #available(iOS 26.0, *) {
-            interpreter = FoundationModelsRecipeInterpreter()
+        if let prefill = await RecipeTextImportRouter().prefill(for: text) {
+            sharedWizardPrefill = prefill
+            showRecipeWizard = true
         } else {
-            interpreter = UnavailableRecipeTextInterpreter()
-        }
-        #else
-        interpreter = UnavailableRecipeTextInterpreter()
-        #endif
-
-        switch await SharedTextImporter(interpreter: interpreter).handle(text) {
-        case .imported(let recipe):
-            ingest(sharedRecipe: recipe)
-        case .needsManualEntry(let text):
-            if let prefill = TextRecipeParser.parse(text) {
-                sharedWizardPrefill = prefill
-                showRecipeWizard = true
-            } else {
-                showImportToast("Couldn't find a recipe in the shared text")
-            }
+            showImportToast("Couldn't find a recipe in the shared text")
         }
     }
 

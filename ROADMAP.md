@@ -32,16 +32,16 @@ Priorities are ordered below. Phases 1–3 are the release-defining work.
 - ~~Hand off to main app via App Group~~ 🟢 — `SharedImportInbox` over App Group defaults; consumed on foreground in `RecipeSearchView`
 - ~~In-extension full import (fetch + parse in the extension so the recipe is simply there next open)~~ 🟢 — `RecipeImportPipeline` (Foundation-only, shared with the app) runs headless in the extension; success stores parsed `ExtractedRecipeData` which the app materialises silently on next launch, failure falls back to the raw URL/text for interactive import
 
-### 🟡 Instagram & TikTok Recipe Import
+### 🟢 Instagram & TikTok Recipe Import
 - ~~Share caption text → extract recipe content~~ 🟢 — shared plain text runs through `SharedTextImporter`
 - ~~On-device FoundationModels (iOS 26+, availability-gated) — parse caption/text into structured recipe via @Generable~~ 🟢 — `FoundationModelsRecipeInterpreter` (`RecipeTextInterpreting` seam); private, free, offline. Falls back to `TextRecipeParser`/manual wizard when unavailable or low-confidence
-- 🔴 Dedicated "paste a URL or text" import entry point (currently only the share-sheet text path is wired)
-- 🔴 Explicit review/edit step for AI results before save (today a confident parse saves silently via the dedupe `ingest`)
+- ~~Dedicated "paste a URL or text" import entry point~~ 🟢 — Import tab now has "Paste a link" (URL), "Paste text" (`PasteTextImportSheet`), and "Scan a photo" alongside manual create
+- ~~Explicit review/edit step for AI results before save~~ 🟢 — AI/text/photo imports route through `RecipeTextImportRouter` into the wizard (`RecipeWizardView(prefilledData:)`) for review before saving; nothing saves silently. URL website imports keep their one-tap save + duplicate alert
 - **Marketing angle: unlimited free imports vs ReciMe's 5/week**
 
-### 🔴 Photo-to-Recipe Conversion
-- Cookbook page, handwritten recipe, or screenshot → Vision OCR → same on-device parser as above
-- User reviews and confirms before saving
+### 🟢 Photo-to-Recipe Conversion
+- ~~Cookbook page, handwritten recipe, or screenshot → Vision OCR → same on-device parser~~ 🟢 — "Scan a photo" (`PhotoImportSheet`): photo library (`PhotosPicker`) or camera (`CameraPicker`) → on-device Vision OCR (`VisionRecipeImageTextRecognizer`) → `RecipeTextImportRouter`
+- ~~User reviews and confirms before saving~~ 🟢 — lands in the wizard for review, same as the text path
 
 ---
 
