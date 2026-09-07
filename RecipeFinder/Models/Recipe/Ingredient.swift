@@ -46,6 +46,10 @@ struct Ingredient: Identifiable, Codable, Hashable {
     
     func formattedWithUnit(for scaleFactor: Double, system: MeasurementSystem) -> String {
         let converted = converted(to: system, scaleFactor: scaleFactor)
+        // A zero/unspecified amount shows no fabricated "1" — just the unit, if any.
+        guard converted.quantity > 0 else {
+            return converted.unit
+        }
         let formattedValue = FractionFormatter.format(converted.quantity)
         return converted.unit.isEmpty ? formattedValue : "\(formattedValue) \(converted.unit)"
     }

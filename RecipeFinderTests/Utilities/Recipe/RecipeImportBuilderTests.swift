@@ -130,7 +130,7 @@ final class RecipeImportBuilderTests: XCTestCase {
     func testParseIngredient_simpleQuantityUnitName() {
         let ingredient = builder.parseIngredient("2 cups flour")
         XCTAssertEqual(ingredient.baseQuantity, 2.0)
-        XCTAssertEqual(ingredient.unit.lowercased(), "cups")
+        XCTAssertEqual(ingredient.unit.lowercased(), "cup") // canonicalised (cups → cup)
         XCTAssertEqual(ingredient.name.lowercased(), "flour")
     }
 
@@ -188,10 +188,12 @@ final class RecipeImportBuilderTests: XCTestCase {
         XCTAssertEqual(ingredient.name.lowercased(), "salt and pepper to taste")
     }
 
-    func testParseIngredient_stripsCommaAndRemainder() {
+    func testParseIngredient_retainsCommaPrepNotesInName() {
+        // The parser now keeps the full name; IngredientNameFormatter splits the
+        // main name from the prep note ("extra virgin") at display time.
         let ingredient = builder.parseIngredient("2 tbsp olive oil, extra virgin")
         XCTAssertEqual(ingredient.unit.lowercased(), "tbsp")
-        XCTAssertEqual(ingredient.name.lowercased(), "olive oil")
+        XCTAssertEqual(ingredient.name.lowercased(), "olive oil, extra virgin")
     }
 
     func testParseIngredient_inchUnit() {

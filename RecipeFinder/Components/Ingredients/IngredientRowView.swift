@@ -18,30 +18,36 @@ struct IngredientRowView: View {
     var body: some View {
         HStack(alignment: .center, spacing: AppTheme.spacing12) {
 
-            // Left: quantity pill (fixed-width anchor so columns line up)
-            Button(action: { onTapQuantity?() }) {
-                HStack(spacing: 3) {
-                    Text(formatQuantity(convertedIngredient.quantity))
-                        .font(.subheadline)
-                        .fontWeight(.bold)
-                        .foregroundStyle(isChecked ? .secondary : .primary)
+            // Left: quantity pill (fixed-width anchor so columns line up).
+            // Hidden entirely for unspecified amounts ("salt to taste") so there's
+            // no empty pill or fabricated "1".
+            if convertedIngredient.quantity > 0 || !convertedIngredient.unit.isEmpty {
+                Button(action: { onTapQuantity?() }) {
+                    HStack(spacing: 3) {
+                        if convertedIngredient.quantity > 0 {
+                            Text(formatQuantity(convertedIngredient.quantity))
+                                .font(.subheadline)
+                                .fontWeight(.bold)
+                                .foregroundStyle(isChecked ? .secondary : .primary)
+                        }
 
-                    if !convertedIngredient.unit.isEmpty {
-                        Text(convertedIngredient.unit.lowercased())
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
+                        if !convertedIngredient.unit.isEmpty {
+                            Text(convertedIngredient.unit.lowercased())
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                        }
                     }
+                    .frame(minWidth: 52)
+                    .padding(.horizontal, AppTheme.spacing10)
+                    .padding(.vertical, AppTheme.spacing8)
+                    .background(
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius8)
+                            .fill(AppTheme.accentColor.opacity(0.13))
+                    )
                 }
-                .frame(minWidth: 52)
-                .padding(.horizontal, AppTheme.spacing10)
-                .padding(.vertical, AppTheme.spacing8)
-                .background(
-                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius8)
-                        .fill(AppTheme.accentColor.opacity(0.13))
-                )
+                .buttonStyle(.plain)
+                .disabled(onTapQuantity == nil)
             }
-            .buttonStyle(.plain)
-            .disabled(onTapQuantity == nil)
 
             // Middle: name + optional prep notes
             VStack(alignment: .leading, spacing: AppTheme.spacing2) {

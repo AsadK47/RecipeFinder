@@ -26,7 +26,10 @@ struct PhotoImportSheet: View {
     }
 
     var body: some View {
-        NavigationStack {
+        // Capture the actor-isolated theme as a Sendable value so the picker/button
+        // label closures (inferred @Sendable under Swift 6) don't touch @MainActor state.
+        let theme = selectedTheme
+        return NavigationStack {
             VStack(spacing: AppTheme.spacing16) {
                 Text("Point at a cookbook page, screenshot, or handwritten recipe. We read the text on your device — nothing leaves your phone.")
                     .font(.subheadline)
@@ -34,13 +37,13 @@ struct PhotoImportSheet: View {
                     .multilineTextAlignment(.center)
 
                 PhotosPicker(selection: $selectedItem, matching: .images) {
-                    photoSourceLabel(icon: "photo.on.rectangle", title: "Choose from Library", theme: selectedTheme)
+                    photoSourceLabel(icon: "photo.on.rectangle", title: "Choose from Library", theme: theme)
                 }
                 .disabled(isProcessing)
 
                 if cameraAvailable {
                     Button { showCamera = true } label: {
-                        photoSourceLabel(icon: "camera", title: "Take a Photo", theme: selectedTheme)
+                        photoSourceLabel(icon: "camera", title: "Take a Photo", theme: theme)
                     }
                     .disabled(isProcessing)
                 }
