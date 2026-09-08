@@ -311,6 +311,8 @@
 		F3E9D28E304E1703008BF231 /* PhotoRecipe.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = F3E9D28B304E1703008BF231 /* PhotoRecipe.jpeg */; };
 		F3E9D290304E196E008BF231 /* IngredientLineParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D28F304E196E008BF231 /* IngredientLineParser.swift */; };
 		F3E9D292304EADA3008BF231 /* IngredientLineParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D291304EADA3008BF231 /* IngredientLineParserTests.swift */; };
+		F3E9D294304FF7D7008BF231 /* TextRecipeFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D293304FF7D7008BF231 /* TextRecipeFixtures.swift */; };
+		F3E9D296304FF803008BF231 /* TextRecipeFixtureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D295304FF803008BF231 /* TextRecipeFixtureTests.swift */; };
 		F3F941D630405E230067C6C8 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = F3F941D530405E230067C6C8 /* CLAUDE.md */; };
 /* End PBXBuildFile section */
 
@@ -660,6 +662,8 @@
 		F3E9D28B304E1703008BF231 /* PhotoRecipe.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = PhotoRecipe.jpeg; sourceTree = "<group>"; };
 		F3E9D28F304E196E008BF231 /* IngredientLineParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientLineParser.swift; sourceTree = "<group>"; };
 		F3E9D291304EADA3008BF231 /* IngredientLineParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientLineParserTests.swift; sourceTree = "<group>"; };
+		F3E9D293304FF7D7008BF231 /* TextRecipeFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextRecipeFixtures.swift; sourceTree = "<group>"; };
+		F3E9D295304FF803008BF231 /* TextRecipeFixtureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextRecipeFixtureTests.swift; sourceTree = "<group>"; };
 		F3F941D530405E230067C6C8 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1329,6 +1333,7 @@
 				F3E9D277304D7D0D008BF231 /* PrefilledRecipeDataMappingTests.swift */,
 				F3E9D279304D7D16008BF231 /* RecipeTextImportRouterTests.swift */,
 				F3E9D291304EADA3008BF231 /* IngredientLineParserTests.swift */,
+				F3E9D295304FF803008BF231 /* TextRecipeFixtureTests.swift */,
 			);
 			path = Recipe;
 			sourceTree = "<group>";
@@ -1538,6 +1543,7 @@
 			isa = PBXGroup;
 			children = (
 				F3E9D20630462633008BF231 /* RecipeHTMLFixtures.swift */,
+				F3E9D293304FF7D7008BF231 /* TextRecipeFixtures.swift */,
 			);
 			path = Fixtures;
 			sourceTree = "<group>";
@@ -2062,6 +2068,7 @@
 				F36AED653043342300935A3C /* PerformanceBudgetTests.swift in Sources */,
 				9E6C2C732FB4C8450083A08B /* ShoppingListManagerTests.swift in Sources */,
 				9E6C2C742FB4C8450083A08B /* KitchenInventoryManagerTests.swift in Sources */,
+				F3E9D294304FF7D7008BF231 /* TextRecipeFixtures.swift in Sources */,
 				9E6C2C752FB4C8450083A08B /* MealPlanningManagerTests.swift in Sources */,
 				9E97EEAF30084C6800D35FAB /* SettingsComponentsTests.swift in Sources */,
 				9E6C2C632FB4A4BE0083A08B /* AdaptiveSpacingTests.swift in Sources */,
@@ -2069,6 +2076,7 @@
 				F3E9D21D30470E4B008BF231 /* BackupMergeTests.swift in Sources */,
 				9E5B398F2FABC95300C96DB3 /* InfoItemTests.swift in Sources */,
 				F3E9D20730462633008BF231 /* RecipeHTMLFixtures.swift in Sources */,
+				F3E9D296304FF803008BF231 /* TextRecipeFixtureTests.swift in Sources */,
 				F3E9D223304762EE008BF231 /* BackupServiceTests.swift in Sources */,
 				F3E9D249304835AA008BF231 /* SharedTextImporterTests.swift in Sources */,
 				F3E9D292304EADA3008BF231 /* IngredientLineParserTests.swift in Sources */,
