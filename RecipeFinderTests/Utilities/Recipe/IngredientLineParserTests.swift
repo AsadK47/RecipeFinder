@@ -57,6 +57,42 @@ import Foundation
         #expect(IngredientLineParser.parse(input).unit == expectedUnit)
     }
 
+    /// Broad real-world corpus (many recipes/formats/cuisines) so coverage is
+    /// proven against more than one example and regressions can't creep back.
+    @Test(
+        "Real-world ingredient-line corpus",
+        arguments: [
+            // (input, quantity, unit, name)
+            ("3 large eggs", 3.0, "", "large eggs"),
+            ("1/2 teaspoon baking soda", 0.5, "tsp", "baking soda"),
+            ("2 1/2 cups all-purpose flour", 2.5, "cup", "all-purpose flour"),
+            ("1 (400g) can chopped tomatoes", 1.0, "can", "chopped tomatoes"),
+            ("400 g spaghetti", 400.0, "g", "spaghetti"),
+            ("2 tbsp extra-virgin olive oil", 2.0, "tbsp", "extra-virgin olive oil"),
+            ("Salt and freshly ground black pepper", 0.0, "", "Salt and freshly ground black pepper"),
+            ("1 kg beef, cubed", 1.0, "kg", "beef, cubed"),
+            ("¼ cup (60 ml) milk", 0.25, "cup", "milk"),
+            ("2 cloves of garlic, crushed", 2.0, "clove", "garlic, crushed"),
+            ("1 handful fresh basil", 1.0, "handful", "fresh basil"),
+            ("3-4 tablespoons water", 4.0, "tbsp", "water"),
+            ("8 fl oz heavy cream", 8.0, "fl oz", "heavy cream"),
+            ("500ml chicken stock", 500.0, "ml", "chicken stock"),
+            ("2 sticks butter", 2.0, "stick", "butter"),
+            ("1½ lb potatoes", 1.5, "lbs", "potatoes"),
+            ("2 medium onions, diced", 2.0, "", "medium onions, diced"),
+            ("1/3 cup sugar", 1.0 / 3.0, "cup", "sugar"),
+            ("100 grams dark chocolate", 100.0, "g", "dark chocolate"),
+            ("1 x 400g tin coconut milk", 400.0, "g", "tin coconut milk"),      // UK multipack
+            ("2 to 3 cups broth", 3.0, "cup", "broth")                          // "to" range
+        ]
+    )
+    func corpus(input: String, quantity: Double, unit: String, name: String) {
+        let p = IngredientLineParser.parse(input)
+        #expect(abs(p.quantity - quantity) < 0.0001, "quantity for \(input)")
+        #expect(p.unit == unit, "unit for \(input)")
+        #expect(p.name == name, "name for \(input)")
+    }
+
     @Test("A bare name with no quantity or unit is preserved")
     func bareName() {
         let p = IngredientLineParser.parse("freshly ground pepper")

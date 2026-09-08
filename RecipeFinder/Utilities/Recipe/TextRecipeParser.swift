@@ -21,8 +21,10 @@ enum TextRecipeParser {
         guard lines.count >= 3 else { return nil }
 
         let servings = firstIntMatch(#"(?:serves|servings?|yield)\s*:?\s*(\d+)"#, in: text)
-        let prepTime = firstIntMatch(#"prep(?:aration)?\s*time\s*:?\s*(\d+)"#, in: text)
-        let cookTime = firstIntMatch(#"cook(?:ing)?\s*time\s*:?\s*(\d+)"#, in: text)
+        // "time" is optional so a sidebar "Prep 20 minutes" / "Cook 30 mins" still
+        // resolves (many printed recipes omit the word "time").
+        let prepTime = firstIntMatch(#"prep(?:aration)?(?:\s*time)?\s*:?\s*(\d+)"#, in: text)
+        let cookTime = firstIntMatch(#"cook(?:ing)?(?:\s*time)?\s*:?\s*(\d+)"#, in: text)
 
         var ingredients: [String]
         var instructions: [String]
@@ -105,7 +107,8 @@ enum TextRecipeParser {
     }
 
     private static let ingredientHeaderKeywords = [
-        "ingredients", "you will need", "you'll need", "what you need", "what you'll need"
+        "ingredients", "you will need", "you'll need", "what you need", "what you'll need",
+        "garnish", "for the garnish", "to serve", "to garnish"
     ]
     private static let instructionHeaderKeywords = [
         "instructions", "method", "directions", "steps", "preparation"
@@ -229,11 +232,20 @@ enum TextRecipeParser {
         return c.unicodeScalars.contains { $0.properties.isEmoji && ($0.value > 0x238C || $0.properties.isEmojiPresentation) }
     }
 
+    /// True for non-ingredient sidebar/metadata lines that OCR and captions mix in
+    /// with the ingredient list — servings, times, and lone labels/numbers — so
+    /// they never become "ingredients".
     private static func isMetadataLine(_ line: String) -> Bool {
-        line.range(
-            of: #"^(serves|servings?|yield|prep(?:aration)?\s*time|cook(?:ing)?\s*time|total\s*time)\b"#,
-            options: [.regularExpression, .caseInsensitive]
-        ) != nil
+        let trimmed = line.trimmingCharacters(in: .whitespaces)
+        let patterns = [
+            #"^\d+$"#,                                                   // lone number ("2" under SERVES)
+            #"^(time|serves|servings?)$"#,                               // lone label
+            #"^(serves|servings?|yield)\b"#,                             // "Serves 2", "Yield: 4"
+            #"^(prep(?:aration)?|cook(?:ing)?|total)\b.*\b(min|mins|minute|minutes|hour|hours|hr|hrs)\b"#  // "Prep 20 minutes"
+        ]
+        return patterns.contains {
+            trimmed.range(of: $0, options: [.regularExpression, .caseInsensitive]) != nil
+        }
     }
 
     private static func firstIntMatch(_ pattern: String, in text: String) -> Int? {

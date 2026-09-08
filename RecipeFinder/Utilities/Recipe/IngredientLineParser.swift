@@ -37,6 +37,10 @@ enum IngredientLineParser {
         // 4. European decimal comma at the start: "1,5 dl" → "1.5 dl".
         working = working.replacingOccurrences(of: #"^(\d+),(\d+)"#, with: "$1.$2", options: .regularExpression)
 
+        // 4b. UK multipack "1 x 400g tin ..." — drop the leading "N x" so the pack
+        //     size (400 g) parses rather than the count.
+        working = working.replacingOccurrences(of: #"^\d+\s*[x×]\s+(?=\d)"#, with: "", options: .regularExpression)
+
         // 5. Split a leading number glued to letters: "200g" → "200 g".
         working = working.replacingOccurrences(of: #"^([0-9][0-9/.]*)([a-zA-Z])"#, with: "$1 $2", options: .regularExpression)
 
@@ -71,8 +75,9 @@ enum IngredientLineParser {
     // MARK: - Quantity
 
     private static func extractQuantity(from text: String) -> (quantity: String, remaining: String) {
-        // Range like "3/4 - 1" or "3/4 – 1": take the upper bound.
-        if let m = firstMatch(#"^[\d./]+\s*[-–]\s*([\d./]+)(?:\s+|$)"#, in: text) {
+        // Range like "3/4 - 1", "3/4 – 1", or "2 to 3": take the upper bound.
+        // (The trailing digit requirement keeps "2 tomatoes" from matching "to".)
+        if let m = firstMatch(#"^[\d./]+\s*(?:[-–—]|to)\s*([\d./]+)(?:\s+|$)"#, in: text) {
             return (m.group(1), m.remainder)
         }
         // Mixed number "1 1/2".

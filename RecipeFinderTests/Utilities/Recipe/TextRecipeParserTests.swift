@@ -28,6 +28,44 @@ final class TextRecipeParserTests: XCTestCase {
         XCTAssertEqual(result?.instructions?.first, "Dice the onion and fry until soft.")
     }
 
+    /// Regression (scanned printed page): OCR interleaves a sidebar (SERVES / TIME
+    /// / Prep / Cook) and a GARNISH header with the ingredient list. Those lines
+    /// must not become ingredients; garnish items must remain; servings/times are
+    /// extracted. Mirrors RecipeFinder/Images/PhotoRecipe.jpeg.
+    func testFencesSidebarMetadataAndGarnishHeader() {
+        let text = """
+        Sweet & Sour Prawns
+
+        Ingredients
+        2 tablespoons cornflour
+        220g tin of pineapple chunks in juice
+        GARNISH
+        1 spring onion, julienned
+        SERVES
+        2
+        TIME
+        Prep 20 minutes
+        Cook 20 minutes
+
+        Method
+        Mix the cornflour and water.
+        Stir-fry everything together.
+        """
+
+        let result = TextRecipeParser.parse(text)
+        let ingredients = result?.ingredients ?? []
+
+        XCTAssertTrue(ingredients.contains("2 tablespoons cornflour"))
+        XCTAssertTrue(ingredients.contains("1 spring onion, julienned"))   // garnish item kept
+        XCTAssertFalse(ingredients.contains("2"))                          // stray servings number dropped
+        XCTAssertFalse(ingredients.contains { line in
+            line.range(of: #"(?i)^(garnish|serves|time|prep|cook)\b"#, options: .regularExpression) != nil
+        }, "sidebar/metadata lines must not appear as ingredients")
+        XCTAssertEqual(result?.servings, 2)
+        XCTAssertEqual(result?.prepTime, 20)
+        XCTAssertEqual(result?.cookTime, 20)
+    }
+
     func testStripsBulletsAndStepNumbers() {
         let text = """
         Pasta
