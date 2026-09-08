@@ -36,8 +36,10 @@ enum TextRecipeParser {
             (ingredients, instructions) = classifyLines(lines)
         }
 
-        ingredients = ingredients.map(stripListMarker).filter { !$0.isEmpty && !isMetadataLine($0) }
-        instructions = instructions.map(stripListMarker).filter { !$0.isEmpty && !isMetadataLine($0) }
+        // Drop footnotes/notes on the raw line first (before list markers are
+        // stripped) so a leading "*" footnote is still recognisable.
+        ingredients = ingredients.filter { !isAsideLine($0) }.map(stripListMarker).filter { !$0.isEmpty && !isMetadataLine($0) }
+        instructions = instructions.filter { !isAsideLine($0) }.map(stripListMarker).filter { !$0.isEmpty && !isMetadataLine($0) }
 
         guard !ingredients.isEmpty, !instructions.isEmpty else { return nil }
 
@@ -230,6 +232,16 @@ enum TextRecipeParser {
         if "-•*▪◦‣·▫●○▶►➤➥➢".contains(c) { return true }
         // Emoji, but not low-codepoint symbols like fractions or punctuation.
         return c.unicodeScalars.contains { $0.properties.isEmoji && ($0.value > 0x238C || $0.properties.isEmojiPresentation) }
+    }
+
+    /// True for footnotes / asides that shouldn't be an ingredient or a step:
+    /// a "Note:"/"Tip:" line, or a "*"-glued footnote ("*on the rocks: ...").
+    /// A spaced "* " bullet ("* 2 eggs") is a real ingredient and is NOT matched —
+    /// footnotes glue the asterisk to their text, bullets don't.
+    private static func isAsideLine(_ line: String) -> Bool {
+        let trimmed = line.trimmingCharacters(in: .whitespaces)
+        return trimmed.range(of: #"^(note|notes|tip|tips)\b\s*[:.\-]"#, options: [.regularExpression, .caseInsensitive]) != nil
+            || trimmed.range(of: #"^\*[^\s*]"#, options: .regularExpression) != nil
     }
 
     /// True for non-ingredient sidebar/metadata lines that OCR and captions mix in

@@ -17,11 +17,11 @@ import Foundation
             ("Chicken Curry", TextRecipeFixtures.chickenCurry, 14, 8, "Heat oil in a deep pan"),
             ("Pancakes", TextRecipeFixtures.pancakes, 10, 8, "In a large mixing bowl, whisk together"),
             ("Spaghetti Bolognese", TextRecipeFixtures.spaghettiBolognese, 12, 5, "In a large skillet, cook the ground beef"),
-            ("Apple Pie", TextRecipeFixtures.applePie, 10, 10, "Preheat your oven to 425"),           // instr incl. trailing Note:
+            ("Apple Pie", TextRecipeFixtures.applePie, 10, 9, "Preheat your oven to 425"),            // trailing "Note:" dropped
             ("Oatmeal Cookies", TextRecipeFixtures.oatmealCookies, 11, 10, "Preheat the oven to 350 degrees F (175 degrees C)."),
-            ("Lentil Soup", TextRecipeFixtures.lentilSoup, 14, 8, "Rinse the lentils under cold water"), // instr incl. trailing Note:
+            ("Lentil Soup", TextRecipeFixtures.lentilSoup, 14, 7, "Rinse the lentils under cold water"), // trailing "Note:" dropped
             ("Barbecue Sauce", TextRecipeFixtures.barbecueSauce, 11, 7, "In a medium saucepan, combine all the ingredients."),
-            ("Margaritas", TextRecipeFixtures.margaritas, 6, 1, "Blend all ingredients throughly in blender."), // ing incl. "*" footnote
+            ("Margaritas", TextRecipeFixtures.margaritas, 5, 1, "Blend all ingredients throughly in blender."), // "*" footnote dropped
             ("Instant Pot Tikka Masala", TextRecipeFixtures.tikkaMasala, 16, 7, "Set the Instant Pot to sauté mode")
         ]
     )

@@ -66,6 +66,28 @@ final class TextRecipeParserTests: XCTestCase {
         XCTAssertEqual(result?.cookTime, 20)
     }
 
+    /// Footnotes/asides ("Note:", a "*"-glued footnote) must not become an
+    /// ingredient or a step — but a spaced "* " bullet is a real ingredient.
+    func testDropsNotesAndFootnotesButKeepsAsteriskBullets() {
+        let text = """
+        Test Dish
+        Ingredients:
+        * 2 eggs
+        - 1 cup flour
+        *chef's secret: use room-temp eggs
+        Instructions:
+        1. Mix and cook.
+        Note: Best served fresh.
+        """
+
+        let result = TextRecipeParser.parse(text)
+        let ingredients = result?.ingredients ?? []
+        let instructions = result?.instructions ?? []
+
+        XCTAssertEqual(ingredients, ["2 eggs", "1 cup flour"])  // spaced "* " bullet kept; glued "*" footnote dropped
+        XCTAssertEqual(instructions, ["Mix and cook."])         // "Note:" aside dropped
+    }
+
     func testStripsBulletsAndStepNumbers() {
         let text = """
         Pasta
