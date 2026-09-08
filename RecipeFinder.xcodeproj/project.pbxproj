@@ -313,6 +313,8 @@
 		F3E9D292304EADA3008BF231 /* IngredientLineParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D291304EADA3008BF231 /* IngredientLineParserTests.swift */; };
 		F3E9D294304FF7D7008BF231 /* TextRecipeFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D293304FF7D7008BF231 /* TextRecipeFixtures.swift */; };
 		F3E9D296304FF803008BF231 /* TextRecipeFixtureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D295304FF803008BF231 /* TextRecipeFixtureTests.swift */; };
+		F3E9D298304FFED6008BF231 /* CoreDataMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D297304FFED6008BF231 /* CoreDataMigrationTests.swift */; };
+		F3E9D29A30500069008BF231 /* PersistenceRecoveryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D29930500069008BF231 /* PersistenceRecoveryTests.swift */; };
 		F3F941D630405E230067C6C8 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = F3F941D530405E230067C6C8 /* CLAUDE.md */; };
 /* End PBXBuildFile section */
 
@@ -664,6 +666,8 @@
 		F3E9D291304EADA3008BF231 /* IngredientLineParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientLineParserTests.swift; sourceTree = "<group>"; };
 		F3E9D293304FF7D7008BF231 /* TextRecipeFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextRecipeFixtures.swift; sourceTree = "<group>"; };
 		F3E9D295304FF803008BF231 /* TextRecipeFixtureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextRecipeFixtureTests.swift; sourceTree = "<group>"; };
+		F3E9D297304FFED6008BF231 /* CoreDataMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataMigrationTests.swift; sourceTree = "<group>"; };
+		F3E9D29930500069008BF231 /* PersistenceRecoveryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceRecoveryTests.swift; sourceTree = "<group>"; };
 		F3F941D530405E230067C6C8 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1379,6 +1383,8 @@
 			children = (
 				9E97EED3300D894700D35FAB /* PersistenceControllerTests.swift */,
 				F3E9D288304E056A008BF231 /* CoreDataStorePersistenceTests.swift */,
+				F3E9D297304FFED6008BF231 /* CoreDataMigrationTests.swift */,
+				F3E9D29930500069008BF231 /* PersistenceRecoveryTests.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -2023,6 +2029,7 @@
 				F36AED553040A5F200935A3C /* RecipeImporterTests.swift in Sources */,
 				9E6C2C182FB394090083A08B /* IngredientNormalizerTests.swift in Sources */,
 				F3E9D285304E049C008BF231 /* RecipeImportPersistenceTests.swift in Sources */,
+				F3E9D298304FFED6008BF231 /* CoreDataMigrationTests.swift in Sources */,
 				9E6C2C4C2FB477ED0083A08B /* BadgeCardTests.swift in Sources */,
 				F3E9D270304D4D24008BF231 /* CategoryClassifierGroupingTests.swift in Sources */,
 				F3E9D21F3047105C008BF231 /* ManagerMergeTests.swift in Sources */,
@@ -2057,6 +2064,7 @@
 				F3E9D27D304D7D21008BF231 /* RecipeImageTextRecognizerTests.swift in Sources */,
 				F3E9D272304D75B9008BF231 /* ISO8601DurationTests.swift in Sources */,
 				9E6C2C612FB4A4BE0083A08B /* AppErrorTests.swift in Sources */,
+				F3E9D29A30500069008BF231 /* PersistenceRecoveryTests.swift in Sources */,
 				F36AED7F304346DF00935A3C /* MealPlanCalendarTests.swift in Sources */,
 				9E6C2C622FB4A4BE0083A08B /* ValidatorTests.swift in Sources */,
 				9E6C2C712FB4C8450083A08B /* BadgeManagerTests.swift in Sources */,

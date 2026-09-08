@@ -50,12 +50,15 @@ final class PersistenceController {
     ///   - userID: account-scope provider (see `userID`).
     init(
         inMemory: Bool = false,
+        storeURL: URL? = nil,
         userID: @escaping () -> String? = { UserScopedStorage.shared.currentUserId }
     ) {
         self.userID = userID
         container = NSPersistentContainer(name: "RecipeModel")
         if inMemory {
             container.persistentStoreDescriptions.first?.url = URL(fileURLWithPath: "/dev/null")
+        } else if let storeURL {
+            container.persistentStoreDescriptions.first?.url = storeURL
         }
         configureStore()
         loadStore()
@@ -64,6 +67,11 @@ final class PersistenceController {
     private func configureStore() {
         guard let description = container.persistentStoreDescriptions.first else { return }
 
+        // Automatic lightweight migration. Supported baseline is model v6+ (the
+        // all-Binary `ingredients` era); pre-v6 versions used a Transformable
+        // `ingredients` that can't lightweight-migrate to the current model — see
+        // CoreDataMigrationTests. The app is unreleased, so no shipped store is
+        // affected, and attemptStoreRecovery() preserves any store it can't open.
         description.setOption(true as NSNumber, forKey: NSMigratePersistentStoresAutomaticallyOption)
         description.setOption(true as NSNumber, forKey: NSInferMappingModelAutomaticallyOption)
 
@@ -108,29 +116,49 @@ final class PersistenceController {
             return
         }
 
-        do {
-            try FileManager.default.removeItem(at: storeURL)
-            persistenceLogger.debug("✅ Removed corrupted store file")
+        // Never destroy the user's data. Move the unreadable store aside (with its
+        // -wal/-shm sidecars) instead of deleting it, so a failed migration or a
+        // corrupt file is recoverable rather than silent total loss. Only after the
+        // originals are safely preserved do we let a fresh store take their place.
+        let backupSuffix = ".corrupt-\(Int(Date().timeIntervalSince1970))"
+        var preservedMainStore = false
+        for sidecar in ["", "-wal", "-shm"] {
+            let source = URL(fileURLWithPath: storeURL.path + sidecar)
+            guard FileManager.default.fileExists(atPath: source.path) else { continue }
+            let destination = URL(fileURLWithPath: storeURL.path + backupSuffix + sidecar)
+            do {
+                try FileManager.default.moveItem(at: source, to: destination)
+                if sidecar.isEmpty { preservedMainStore = true }
+            } catch {
+                persistenceLogger.error("❌ Failed to preserve store file \(source.lastPathComponent): \(error.localizedDescription)")
+            }
+        }
 
-            container.loadPersistentStores { [weak self] _, error in
-                MainActor.assumeIsolated {
-                    guard let self else { return }
+        // If we couldn't move the main store aside, do NOT recreate over it —
+        // reloading will just re-fail, leaving the data intact for a later attempt.
+        guard preservedMainStore else {
+            persistenceLogger.error("❌ Could not preserve the unreadable store; leaving it in place to avoid data loss")
+            self.isStoreLoaded = false
+            return
+        }
 
-                    if let error {
-                        persistenceLogger.error("❌ Recovery failed: \(error.localizedDescription)")
-                        self.loadError = error
-                        self.isStoreLoaded = false
-                    } else {
-                        persistenceLogger.debug("✅ Store recovered successfully")
-                        self.isStoreLoaded = true
-                        self.loadError = nil
-                        self.populateDatabase()
-                    }
+        persistenceLogger.error("⚠️ Unreadable store preserved as \(storeURL.lastPathComponent)\(backupSuffix); starting a fresh store")
+
+        container.loadPersistentStores { [weak self] _, error in
+            MainActor.assumeIsolated {
+                guard let self else { return }
+
+                if let error {
+                    persistenceLogger.error("❌ Recovery failed: \(error.localizedDescription)")
+                    self.loadError = error
+                    self.isStoreLoaded = false
+                } else {
+                    persistenceLogger.debug("✅ Store recovered successfully")
+                    self.isStoreLoaded = true
+                    self.loadError = nil
+                    self.populateDatabase()
                 }
             }
-        } catch {
-            persistenceLogger.error("❌ Failed to remove corrupted store: \(error.localizedDescription)")
-            self.loadError = error
         }
     }
 
