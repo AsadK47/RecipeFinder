@@ -13,6 +13,7 @@ struct RecipeIngredientsSection: View {
     let onToggleMeasurement: () -> Void
     let onToggleIngredient: (Int) -> Void
     let onAddToShopping: (Int) -> Void
+    let onAddAllToShopping: () -> Void
     let isInShoppingList: (Ingredient) -> Bool
     let onEditIngredient: (Int) -> Void
 
@@ -49,10 +50,23 @@ struct RecipeIngredientsSection: View {
 
             Spacer()
 
+            addAllButton
             measurementToggle
             chevronButton
         }
         .padding(.top, AppTheme.spacing24)
+    }
+
+    private var addAllButton: some View {
+        Button(action: onAddAllToShopping) {
+            Image(systemName: "cart.badge.plus")
+                .font(.title3)
+                .adaptiveForegroundColor()
+        }
+        .buttonStyle(PlainButtonStyle())
+        .disabled(recipe.ingredients.isEmpty)
+        .accessibilityLabel("Add all ingredients to shopping list")
+        .accessibilityHint("Adds every ingredient from this recipe in one tap")
     }
 
     private var measurementToggle: some View {

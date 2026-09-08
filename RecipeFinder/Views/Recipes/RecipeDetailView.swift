@@ -13,11 +13,13 @@ struct RecipeDetailView: View {
     @State var showAddedFeedback: String?
     @State private var confettiCounter = 0
     @State private var showEditSheet = false
-    @State private var showTimerSheet = false
+    // Internal (not private) so the timer control in RecipeDetailView+Content can drive it.
+    @State var showTimerSheet = false
     @State var editingIngredientIndex: Int?
     @State var editingQuantity: String = ""
     @State var editingUnit: String = ""
-    @StateObject private var recipeTimer = RecipeTimerManager.shared
+    // Internal so the relocated timer control (RecipeDetailView+Content) can read it.
+    @StateObject var recipeTimer = RecipeTimerManager.shared
     @AppStorage("measurementSystem") var measurementSystem: MeasurementSystem = .metric
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
@@ -68,11 +70,7 @@ struct RecipeDetailView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 RecipeDetailToolbar(
                     recipe: recipe,
-                    recipeTimer: recipeTimer,
-                    colorScheme: colorScheme,
-                    onSetTimer: { showTimerSheet = true },
                     onEdit: { showEditSheet = true },
-                    onAddAllToShopping: addAllIngredientsToShoppingList,
                     onToggleFavorite: toggleFavorite
                 )
             }
@@ -160,7 +158,7 @@ struct RecipeDetailView: View {
         }
     }
 
-    private func addAllIngredientsToShoppingList() {
+    func addAllIngredientsToShoppingList() {
         guard !recipe.ingredients.isEmpty else { return }
 
         HapticManager.shared.success()

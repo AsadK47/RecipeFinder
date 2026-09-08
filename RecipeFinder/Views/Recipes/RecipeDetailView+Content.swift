@@ -74,6 +74,7 @@ extension RecipeDetailView {
             onAddToShopping: { index in
                 addIngredientToShoppingList(recipe.ingredients[index])
             },
+            onAddAllToShopping: addAllIngredientsToShoppingList,
             isInShoppingList: { isIngredientInShoppingList($0) },
             onEditIngredient: { index in startEditingIngredient(at: index) }
         )
@@ -129,6 +130,8 @@ extension RecipeDetailView {
             onToggle: { toggleSection("Instructions") }
         ) {
             VStack(alignment: .leading, spacing: AppTheme.spacing24) {
+                timerControl
+
                 ForEach(recipe.instructions.indices, id: \.self) { index in
                     RecipeInstructionRow(
                         text: recipe.instructions[index],
@@ -142,6 +145,59 @@ extension RecipeDetailView {
                 }
             }
         }
+    }
+
+    /// Cooking timer, co-located with the steps it's used alongside. Shows a
+    /// "Start a timer" button when idle, and a live, controllable pill when active.
+    @ViewBuilder
+    var timerControl: some View {
+        if recipeTimer.isActive {
+            Menu {
+                Button(action: { showTimerSheet = true }) {
+                    Label("Set New Timer", systemImage: "clock")
+                }
+                Divider()
+                Button(action: { recipeTimer.togglePause() }) {
+                    Label(recipeTimer.isPaused ? "Resume" : "Pause",
+                          systemImage: recipeTimer.isPaused ? "play.fill" : "pause.fill")
+                }
+                Button(role: .destructive, action: { recipeTimer.stop() }) {
+                    Label("Stop", systemImage: "stop.fill")
+                }
+            } label: {
+                timerRowLabel(
+                    icon: recipeTimer.isPaused ? "play.fill" : "pause.fill",
+                    text: recipeTimer.displayTime,
+                    monospaced: true
+                )
+            }
+            .accessibilityLabel("Recipe timer, \(recipeTimer.displayTime)")
+            .accessibilityHint("Open timer actions")
+        } else {
+            Button(action: { showTimerSheet = true }) {
+                timerRowLabel(icon: "timer", text: "Start a timer", monospaced: false)
+            }
+            .buttonStyle(.plain)
+            .accessibilityHint("Start a cooking timer")
+        }
+    }
+
+    private func timerRowLabel(icon: String, text: String, monospaced: Bool) -> some View {
+        HStack(spacing: AppTheme.spacing8) {
+            Image(systemName: icon)
+                .font(.subheadline)
+            Text(text)
+                .font(monospaced ? .system(.subheadline, design: .monospaced).weight(.semibold) : .subheadline.weight(.medium))
+            Spacer(minLength: 0)
+        }
+        .adaptiveForegroundColor()
+        .padding(.horizontal, AppTheme.spacing12)
+        .padding(.vertical, AppTheme.spacing10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: AppTheme.cornerRadius8)
+                .fill(colorScheme == .dark ? Color.white.opacity(AppTheme.overlayLightOpacity) : Color.black.opacity(AppTheme.dividerOpacity))
+        )
     }
 
     var notesSection: some View {
