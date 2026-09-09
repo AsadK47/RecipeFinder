@@ -42,12 +42,32 @@ enum FractionFormatter {
 }
 
 enum TimeExtractor {
+    /// Total minutes in a free-form duration string. Understands hours and
+    /// minutes and sums them ("1 hr 30 min" → 90, "1.5 hours" → 90); a bare
+    /// leading number is treated as minutes ("30" → 30). Anything unparseable
+    /// is 0.
+    ///
+    /// Previously this read only the leading integer, so "1 hour" collapsed to
+    /// 1 minute and hour-based times slipped through the cook-time filter.
     static func extractMinutes(from timeString: String) -> Int {
-        let components = timeString.components(separatedBy: " ")
-        if let minutes = components.first, let value = Int(minutes) {
-            return value
+        let scanner = Scanner(string: timeString.lowercased())
+        scanner.charactersToBeSkipped = .whitespaces
+
+        var totalMinutes = 0.0
+        var foundNumber = false
+
+        while !scanner.isAtEnd {
+            guard let number = scanner.scanDouble() else {
+                _ = scanner.scanCharacter()
+                continue
+            }
+            foundNumber = true
+            let unit = scanner.scanCharacters(from: .letters) ?? ""
+            // Hours scale up; minutes and bare/unknown units count as minutes.
+            totalMinutes += unit.hasPrefix("h") ? number * 60 : number
         }
-        return 0
+
+        return foundNumber ? Int(totalMinutes.rounded()) : 0
     }
 }
 

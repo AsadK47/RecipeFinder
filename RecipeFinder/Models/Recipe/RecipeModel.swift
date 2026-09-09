@@ -97,26 +97,31 @@ struct RecipeModel: Identifiable, Codable, Hashable {
     
     func ingredientMatchPercentage(availableIngredients: Set<String>) -> Double {
         guard !ingredients.isEmpty else { return 0 }
-        
-        let matchCount = ingredients.filter { ingredient in
-            let mainName = ingredient.mainIngredientName.lowercased()
-            return availableIngredients.contains { available in
-                mainName.contains(available.lowercased()) ||
-                available.lowercased().contains(mainName)
-            }
-        }.count
-        
+
+        let pantry = Self.normalizedPantry(availableIngredients)
+        let matchCount = ingredients.filter { Self.isSatisfied($0, by: pantry) }.count
         return Double(matchCount) / Double(ingredients.count)
     }
-    
+
     func missingIngredients(from availableIngredients: Set<String>) -> [Ingredient] {
-        ingredients.filter { ingredient in
-            let mainName = ingredient.mainIngredientName.lowercased()
-            return !availableIngredients.contains { available in
-                mainName.contains(available.lowercased()) ||
-                available.lowercased().contains(mainName)
-            }
-        }
+        let pantry = Self.normalizedPantry(availableIngredients)
+        return ingredients.filter { !Self.isSatisfied($0, by: pantry) }
+    }
+
+    /// Normalises pantry terms once for reuse across a batch of ingredient checks.
+    private static func normalizedPantry(_ availableIngredients: Set<String>) -> Set<String> {
+        Set(availableIngredients
+            .map { KitchenRecipeMatcher.normalizedTerm($0) }
+            .filter { !$0.isEmpty })
+    }
+
+    /// Whether `ingredient` is covered by the (already normalised) pantry, using
+    /// the shared word-boundary matcher so short terms don't match inside longer
+    /// words (e.g. "ice" must not satisfy "rice").
+    private static func isSatisfied(_ ingredient: Ingredient, by pantry: Set<String>) -> Bool {
+        let term = KitchenRecipeMatcher.normalizedTerm(ingredient.name)
+        guard !term.isEmpty else { return false }
+        return pantry.contains { KitchenRecipeMatcher.ingredientMatches(term, $0) }
     }
     
     init(

@@ -318,6 +318,8 @@
 		F3E9D29C30515744008BF231 /* PasswordHasher.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D29B30515744008BF231 /* PasswordHasher.swift */; };
 		F3E9D29E3051574E008BF231 /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D29D3051574E008BF231 /* KeychainStore.swift */; };
 		F3E9D2A0305157D3008BF231 /* SecureCredentialManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D29F305157D3008BF231 /* SecureCredentialManagerTests.swift */; };
+		F3E9D2A230515C08008BF231 /* TimeExtractorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D2A130515C08008BF231 /* TimeExtractorTests.swift */; };
+		F3E9D2A430515C14008BF231 /* RecipeIngredientMatchingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D2A330515C14008BF231 /* RecipeIngredientMatchingTests.swift */; };
 		F3F941D630405E230067C6C8 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = F3F941D530405E230067C6C8 /* CLAUDE.md */; };
 /* End PBXBuildFile section */
 
@@ -674,6 +676,8 @@
 		F3E9D29B30515744008BF231 /* PasswordHasher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordHasher.swift; sourceTree = "<group>"; };
 		F3E9D29D3051574E008BF231 /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStore.swift; sourceTree = "<group>"; };
 		F3E9D29F305157D3008BF231 /* SecureCredentialManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureCredentialManagerTests.swift; sourceTree = "<group>"; };
+		F3E9D2A130515C08008BF231 /* TimeExtractorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeExtractorTests.swift; sourceTree = "<group>"; };
+		F3E9D2A330515C14008BF231 /* RecipeIngredientMatchingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeIngredientMatchingTests.swift; sourceTree = "<group>"; };
 		F3F941D530405E230067C6C8 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -898,6 +902,8 @@
 				9E5B399B2FAD024A00C96DB3 /* BadgeModelTests.swift */,
 				9E97EECC300D0E0600D35FAB /* EditableStepTests.swift */,
 				F36AED7E304346DF00935A3C /* MealPlanCalendarTests.swift */,
+				F3E9D2A130515C08008BF231 /* TimeExtractorTests.swift */,
+				F3E9D2A330515C14008BF231 /* RecipeIngredientMatchingTests.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -2040,6 +2046,7 @@
 				F36AED553040A5F200935A3C /* RecipeImporterTests.swift in Sources */,
 				9E6C2C182FB394090083A08B /* IngredientNormalizerTests.swift in Sources */,
 				F3E9D285304E049C008BF231 /* RecipeImportPersistenceTests.swift in Sources */,
+				F3E9D2A230515C08008BF231 /* TimeExtractorTests.swift in Sources */,
 				F3E9D298304FFED6008BF231 /* CoreDataMigrationTests.swift in Sources */,
 				9E6C2C4C2FB477ED0083A08B /* BadgeCardTests.swift in Sources */,
 				F3E9D270304D4D24008BF231 /* CategoryClassifierGroupingTests.swift in Sources */,
@@ -2059,6 +2066,7 @@
 				F3E9D1D83045DAD3008BF231 /* RecipeImageStoreTests.swift in Sources */,
 				9E6C2C582FB4A4900083A08B /* ShoppingListModelTests.swift in Sources */,
 				9E6C2C592FB4A4900083A08B /* RecipeViewModeTests.swift in Sources */,
+				F3E9D2A430515C14008BF231 /* RecipeIngredientMatchingTests.swift in Sources */,
 				F3E9D1D63045DAC1008BF231 /* RecipeWizardBuilderTests.swift in Sources */,
 				9E5D20522FB358F000F2896A /* DietaryInfoTests.swift in Sources */,
 				9E5D20532FB358F000F2896A /* KitchenInventoryModelTests.swift in Sources */,

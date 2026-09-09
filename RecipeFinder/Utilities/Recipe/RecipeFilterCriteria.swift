@@ -51,12 +51,6 @@ struct RecipeFilterCriteria: Hashable {
             results = results.filter { $0.containsIngredient(ingredientSearchText) }
         }
 
-        if availableIngredientsOnly && !availableIngredients.isEmpty {
-            results = results.filter { recipe in
-                recipe.ingredientMatchPercentage(availableIngredients: availableIngredients) >= 0.8
-            }
-        }
-
         if !selectedCategories.isEmpty {
             results = results.filter { selectedCategories.contains($0.category) }
         }
@@ -95,12 +89,15 @@ struct RecipeFilterCriteria: Hashable {
             }
         }
 
+        // "Can make now": keep recipes you can mostly make and rank by how much.
+        // The match percentage is computed once per recipe here — not inside the
+        // sort comparator, which would recompute it O(n log n) times.
         if availableIngredientsOnly && !availableIngredients.isEmpty {
-            results.sort { recipe1, recipe2 in
-                let match1 = recipe1.ingredientMatchPercentage(availableIngredients: availableIngredients)
-                let match2 = recipe2.ingredientMatchPercentage(availableIngredients: availableIngredients)
-                return match1 > match2
-            }
+            results = results
+                .map { ($0, $0.ingredientMatchPercentage(availableIngredients: availableIngredients)) }
+                .filter { $0.1 >= 0.8 }
+                .sorted { $0.1 > $1.1 }
+                .map { $0.0 }
         }
 
         return results

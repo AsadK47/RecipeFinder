@@ -75,6 +75,9 @@ struct RecipeSearchView: View {
         hasher.combine(selectedDietaryFilters)
         hasher.combine(selectedTags)
         hasher.combine(recipes.count)
+        // The pantry feeds "can make now" filtering and ranking, so a pantry
+        // edit must invalidate the cache — otherwise the list goes stale.
+        hasher.combine(availableIngredients)
         return hasher.finalize()
     }
     
@@ -124,6 +127,7 @@ struct RecipeSearchView: View {
                     selectedTags: selectedTags,
                     showFavoritesOnly: showFavoritesOnly,
                     recipes: recipes,
+                    availableIngredients: availableIngredients,
                     updateAction: updateFilterCache
                 ))
         }

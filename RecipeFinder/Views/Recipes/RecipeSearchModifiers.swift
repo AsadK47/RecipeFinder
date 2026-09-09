@@ -57,8 +57,9 @@ struct FilterCacheUpdateModifier: ViewModifier {
     let selectedTags: Set<String>
     let showFavoritesOnly: Bool
     let recipes: [RecipeModel]
+    let availableIngredients: Set<String>
     let updateAction: () -> Void
-    
+
     func body(content: Content) -> some View {
         content
             .onChange(of: searchText) { _, _ in updateAction() }
@@ -71,5 +72,6 @@ struct FilterCacheUpdateModifier: ViewModifier {
             .onChange(of: selectedTags) { _, _ in updateAction() }
             .onChange(of: showFavoritesOnly) { _, _ in updateAction() }
             .onChange(of: recipes) { _, _ in updateAction() }
+            .onChange(of: availableIngredients) { _, _ in updateAction() }
     }
 }
