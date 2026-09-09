@@ -58,13 +58,6 @@ Priorities are ordered below. Phases 1–3 are the release-defining work.
 
 ## Phase 3: Cooking Experience
 
-### 🔴 Cooking Mode *(Crouton sets the bar)*
-- Step-by-step instruction view with large text, one step at a time
-- Tap an ingredient mentioned in a step to see its quantity
-- Auto-detect times in step text → tap to start a timer (integrates existing timer feature)
-- Keep-screen-awake already exists (Display settings); apply automatically in cooking mode
-- Voice control ("next step", "repeat") — stretch goal
-
 ### 🔴 Timer Live Activity + Widgets *(requires a Widget Extension target — create in Xcode UI)*
 - Running timer as a Live Activity on Lock Screen / Dynamic Island (RecipeTimerManager exists)
 - Today's meal plan widget
