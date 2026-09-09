@@ -32,13 +32,34 @@ enum KitchenRecipeMatcher {
     }
 
     /// The set of whole words in a term worth matching on (≥ 3 chars, so filler like
-    /// "of" can't create spurious matches).
+    /// "of" can't create spurious matches). Words are singularised so a pantry
+    /// "egg" matches a recipe's "eggs" (and "tomato" ↔ "tomatoes").
     private static func words(_ term: String) -> Set<String> {
         Set(
             term.split(separator: " ")
                 .map(String.init)
                 .filter { $0.count >= 3 }
+                .map(singularized)
         )
+    }
+
+    /// Conservative English singularisation for plural matching. Only reshapes
+    /// clear plural endings; anything else is returned unchanged so it can't
+    /// collide distinct ingredients (e.g. "ice"/"rice" stay put).
+    private static func singularized(_ word: String) -> String {
+        if word.count > 4, word.hasSuffix("ies") {
+            return String(word.dropLast(3)) + "y"            // berries → berry
+        }
+        if word.count > 4,
+           word.hasSuffix("ches") || word.hasSuffix("shes")
+            || word.hasSuffix("oes") || word.hasSuffix("ses")
+            || word.hasSuffix("xes") || word.hasSuffix("zes") {
+            return String(word.dropLast(2))                  // tomatoes → tomato, boxes → box
+        }
+        if word.count > 3, word.hasSuffix("s"), !word.hasSuffix("ss") {
+            return String(word.dropLast())                   // eggs → egg, carrots → carrot
+        }
+        return word
     }
 
     /// How many of `recipe`'s ingredients match any of `kitchenIngredients`.

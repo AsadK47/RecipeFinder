@@ -63,21 +63,14 @@ struct RecipeSearchView: View {
         )
     }
     
+    /// Cache key derived from the whole `RecipeFilterCriteria` value (which is
+    /// `Hashable` and holds every filter, including the pantry) plus the recipe
+    /// count. Hashing the value directly means a newly added filter can't be
+    /// forgotten here the way a hand-maintained field list would.
     private func computeFilterHash() -> Int {
         var hasher = Hasher()
-        hasher.combine(searchText)
-        hasher.combine(ingredientSearchText)
-        hasher.combine(availableIngredientsOnly)
-        hasher.combine(showFavoritesOnly)
-        hasher.combine(selectedCategories)
-        hasher.combine(selectedDifficulties)
-        hasher.combine(selectedCookTimes)
-        hasher.combine(selectedDietaryFilters)
-        hasher.combine(selectedTags)
+        hasher.combine(filterCriteria)
         hasher.combine(recipes.count)
-        // The pantry feeds "can make now" filtering and ranking, so a pantry
-        // edit must invalidate the cache — otherwise the list goes stale.
-        hasher.combine(availableIngredients)
         return hasher.finalize()
     }
     
@@ -117,17 +110,8 @@ struct RecipeSearchView: View {
                     deleteSheet: deleteConfirmationSheet
                 ))
                 .modifier(FilterCacheUpdateModifier(
-                    searchText: searchText,
-                    ingredientSearchText: ingredientSearchText,
-                    availableIngredientsOnly: availableIngredientsOnly,
-                    selectedCategories: selectedCategories,
-                    selectedDifficulties: selectedDifficulties,
-                    selectedCookTimes: selectedCookTimes,
-                    selectedDietaryFilters: selectedDietaryFilters,
-                    selectedTags: selectedTags,
-                    showFavoritesOnly: showFavoritesOnly,
+                    filterCriteria: filterCriteria,
                     recipes: recipes,
-                    availableIngredients: availableIngredients,
                     updateAction: updateFilterCache
                 ))
         }

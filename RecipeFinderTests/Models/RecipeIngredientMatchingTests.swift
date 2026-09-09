@@ -30,7 +30,12 @@ struct RecipeIngredientMatchingTests {
         (["Garlic"], ["garlic"], 1.0),
         (["Garlic", "Onion"], ["garlic"], 0.5),
         (["Garlic", "Onion"], ["garlic", "onion"], 1.0),
-        (["Chicken Breast"], ["chicken"], 1.0)
+        (["Chicken Breast"], ["chicken"], 1.0),
+        // Singular/plural should match either direction.
+        (["Eggs"], ["egg"], 1.0),
+        (["Egg"], ["eggs"], 1.0),
+        (["Tomatoes"], ["tomato"], 1.0),
+        (["Carrots", "Onions"], ["carrot", "onion"], 1.0)
     ])
     func matchesLegitimateIngredients(recipeIngredients: [String], pantry: [String], expected: Double) {
         let pct = recipe(recipeIngredients).ingredientMatchPercentage(availableIngredients: Set(pantry))

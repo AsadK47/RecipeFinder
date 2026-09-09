@@ -50,7 +50,13 @@ enum TimeExtractor {
     /// Previously this read only the leading integer, so "1 hour" collapsed to
     /// 1 minute and hour-based times slipped through the cook-time filter.
     static func extractMinutes(from timeString: String) -> Int {
-        let scanner = Scanner(string: timeString.lowercased())
+        // Collapse a numeric range to its upper bound ("20-30 min" → "30 min")
+        // first, so the hyphen isn't scanned as a negative sign (which produced
+        // negative times) and additive parsing below stays correct.
+        let normalized = timeString.lowercased()
+            .replacing(/([0-9.]+)\s*[-–—]\s*([0-9.]+)/) { String($0.output.2) }
+
+        let scanner = Scanner(string: normalized)
         scanner.charactersToBeSkipped = .whitespaces
 
         var totalMinutes = 0.0
@@ -67,7 +73,7 @@ enum TimeExtractor {
             totalMinutes += unit.hasPrefix("h") ? number * 60 : number
         }
 
-        return foundNumber ? Int(totalMinutes.rounded()) : 0
+        return foundNumber ? max(0, Int(totalMinutes.rounded())) : 0
     }
 }
 

@@ -47,31 +47,15 @@ struct SheetPresentationModifier: ViewModifier {
 }
 
 struct FilterCacheUpdateModifier: ViewModifier {
-    let searchText: String
-    let ingredientSearchText: String
-    let availableIngredientsOnly: Bool
-    let selectedCategories: Set<String>
-    let selectedDifficulties: Set<String>
-    let selectedCookTimes: Set<Int>
-    let selectedDietaryFilters: Set<String>
-    let selectedTags: Set<String>
-    let showFavoritesOnly: Bool
+    let filterCriteria: RecipeFilterCriteria
     let recipes: [RecipeModel]
-    let availableIngredients: Set<String>
     let updateAction: () -> Void
 
     func body(content: Content) -> some View {
+        // One observation of the whole criteria value (plus the recipe list)
+        // replaces a per-field list that had to be kept in sync by hand.
         content
-            .onChange(of: searchText) { _, _ in updateAction() }
-            .onChange(of: ingredientSearchText) { _, _ in updateAction() }
-            .onChange(of: availableIngredientsOnly) { _, _ in updateAction() }
-            .onChange(of: selectedCategories) { _, _ in updateAction() }
-            .onChange(of: selectedDifficulties) { _, _ in updateAction() }
-            .onChange(of: selectedCookTimes) { _, _ in updateAction() }
-            .onChange(of: selectedDietaryFilters) { _, _ in updateAction() }
-            .onChange(of: selectedTags) { _, _ in updateAction() }
-            .onChange(of: showFavoritesOnly) { _, _ in updateAction() }
+            .onChange(of: filterCriteria) { _, _ in updateAction() }
             .onChange(of: recipes) { _, _ in updateAction() }
-            .onChange(of: availableIngredients) { _, _ in updateAction() }
     }
 }
