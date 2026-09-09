@@ -2,69 +2,21 @@
 import Foundation
 import Security
 import CryptoKit
-import CommonCrypto
 
 private let logger = AppLogger.logger(category: "SecureCredential")
 
 final class SecureCredentialManager: Sendable {
     static let shared = SecureCredentialManager()
-    
-    private init() {}
-    
-    private func generateSalt() -> String {
-        var bytes = [UInt8](repeating: 0, count: 32)
-        _ = SecRandomCopyBytes(kSecRandomDefault, bytes.count, &bytes)
-        return bytes.map { String(format: "%02x", $0) }.joined()
+
+    private let keychain: KeychainStore
+    private let hasher: PasswordHasher
+
+    init(keychain: KeychainStore = SystemKeychainStore(),
+         hasher: PasswordHasher = PasswordHasher()) {
+        self.keychain = keychain
+        self.hasher = hasher
     }
-    
-    private func hashPasswordWithSalt(_ password: String, salt: String) -> String? {
-        guard let passwordData = password.data(using: .utf8),
-              let saltData = Data(hexString: salt) else {
-            return nil
-        }
-        
-        let derivedKey = pbkdf2(password: passwordData,
-                                salt: saltData,
-                                keyByteCount: 32,
-                                rounds: 100_000)
-        
-        // A failed derivation returns empty data; never treat that as a valid hash
-        guard !derivedKey.isEmpty else {
-            return nil
-        }
-        
-        return derivedKey.map { String(format: "%02x", $0) }.joined()
-    }
-    
-    private func pbkdf2(password: Data,
-                        salt: Data,
-                        keyByteCount: Int,
-                        rounds: Int) -> Data {
-        var derivedKeyData = Data(count: keyByteCount)
-        let derivationStatus = derivedKeyData.withUnsafeMutableBytes { derivedKeyBytes in
-            let derivedKeyRawBytes = derivedKeyBytes.bindMemory(to: UInt8.self).baseAddress
-            return salt.withUnsafeBytes { saltBytes in
-                let saltRawBytes = saltBytes.bindMemory(to: UInt8.self).baseAddress
-                return password.withUnsafeBytes { passwordBytes in
-                    let passwordRawBytes = passwordBytes.bindMemory(to: Int8.self).baseAddress
-                    return CCKeyDerivationPBKDF(
-                        CCPBKDFAlgorithm(kCCPBKDF2),
-                        passwordRawBytes,
-                        password.count,
-                        saltRawBytes,
-                        salt.count,
-                        CCPseudoRandomAlgorithm(kCCPRFHmacAlgSHA256),
-                        UInt32(rounds),
-                        derivedKeyRawBytes,
-                        keyByteCount
-                    )
-                }
-            }
-        }
-        
-        return derivationStatus == kCCSuccess ? derivedKeyData : Data()
-    }
-    
+
     func hashEmail(_ email: String) -> String {
         let data = Data(email.lowercased().utf8)
         let hashed = SHA256.hash(data: data)
@@ -73,9 +25,9 @@ final class SecureCredentialManager: Sendable {
     
     @discardableResult
     func saveCredentials(email: String, password: String, fullName: String) -> Bool {
-        let salt = generateSalt()
-        
-        guard let hashedPassword = hashPasswordWithSalt(password, salt: salt) else {
+        let salt = hasher.generateSalt()
+
+        guard let hashedPassword = hasher.hash(password: password, salt: salt) else {
             logger.error("❌ Failed to hash password")
             return false
         }
@@ -106,22 +58,22 @@ final class SecureCredentialManager: Sendable {
             kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlockedThisDeviceOnly
         ]
         
-        SecItemDelete(query as CFDictionary)
-        
-        let status = SecItemAdd(query as CFDictionary, nil)
+        _ = keychain.delete(query)
+
+        let status = keychain.add(query)
         return status == errSecSuccess
     }
-    
+
     func verifyCredentials(email: String, password: String) -> Bool {
         let hashedEmail = hashEmail(email)
-        
+
         guard let stored = retrieveCredentials(hashedEmail: hashedEmail),
               let storedHash = stored["hashedPassword"] as? String,
               let salt = stored["salt"] as? String else {
             return false
         }
-        
-        guard let hashedPassword = hashPasswordWithSalt(password, salt: salt) else {
+
+        guard let hashedPassword = hasher.hash(password: password, salt: salt) else {
             return false
         }
         
@@ -150,16 +102,15 @@ final class SecureCredentialManager: Sendable {
             kSecReturnData as String: true,
             kSecMatchLimit as String: kSecMatchLimitOne
         ]
-        
-        var result: AnyObject?
-        let status = SecItemCopyMatching(query as CFDictionary, &result)
-        
+
+        let (status, data) = keychain.copyMatching(query)
+
         guard status == errSecSuccess,
-              let data = result as? Data,
+              let data,
               let credentials = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
             return nil
         }
-        
+
         return credentials
     }
     
@@ -191,19 +142,19 @@ final class SecureCredentialManager: Sendable {
             kSecAttrAccount as String: hashedEmail,
             kSecAttrService as String: "com.recipefinder.credentials"
         ]
-        
-        let status = SecItemDelete(query as CFDictionary)
+
+        let status = keychain.delete(query)
         return status == errSecSuccess || status == errSecItemNotFound
     }
-    
+
     @discardableResult
     func deleteAllCredentials() -> Bool {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: "com.recipefinder.credentials"
         ]
-        
-        let status = SecItemDelete(query as CFDictionary)
+
+        let status = keychain.delete(query)
         return status == errSecSuccess || status == errSecItemNotFound
     }
     
@@ -223,16 +174,16 @@ final class SecureCredentialManager: Sendable {
             kSecValueData as String: data,
             kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlockedThisDeviceOnly
         ]
-        
-        SecItemDelete(query as CFDictionary)
-        
-        let status = SecItemAdd(query as CFDictionary, nil)
+
+        _ = keychain.delete(query)
+
+        let status = keychain.add(query)
         return status == errSecSuccess
     }
-    
+
     func getSessionToken(for email: String) -> String? {
         let hashedEmail = hashEmail(email)
-        
+
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: "\(hashedEmail).token",
@@ -240,49 +191,30 @@ final class SecureCredentialManager: Sendable {
             kSecReturnData as String: true,
             kSecMatchLimit as String: kSecMatchLimitOne
         ]
-        
-        var result: AnyObject?
-        let status = SecItemCopyMatching(query as CFDictionary, &result)
-        
+
+        let (status, data) = keychain.copyMatching(query)
+
         guard status == errSecSuccess,
-              let data = result as? Data,
+              let data,
               let token = String(data: data, encoding: .utf8) else {
             return nil
         }
-        
+
         return token
     }
-    
+
     @discardableResult
     func deleteSessionToken(for email: String) -> Bool {
         let hashedEmail = hashEmail(email)
-        
+
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: "\(hashedEmail).token",
             kSecAttrService as String: "com.recipefinder.session"
         ]
-        
-        let status = SecItemDelete(query as CFDictionary)
-        return status == errSecSuccess || status == errSecItemNotFound
-    }
-}
 
-extension Data {
-    init?(hexString: String) {
-        let len = hexString.count / 2
-        var data = Data(capacity: len)
-        for i in 0..<len {
-            let j = hexString.index(hexString.startIndex, offsetBy: i*2)
-            let k = hexString.index(j, offsetBy: 2)
-            let bytes = hexString[j..<k]
-            if var num = UInt8(bytes, radix: 16) {
-                data.append(&num, count: 1)
-            } else {
-                return nil
-            }
-        }
-        self = data
+        let status = keychain.delete(query)
+        return status == errSecSuccess || status == errSecItemNotFound
     }
 }
 

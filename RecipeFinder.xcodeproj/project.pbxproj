@@ -315,6 +315,9 @@
 		F3E9D296304FF803008BF231 /* TextRecipeFixtureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D295304FF803008BF231 /* TextRecipeFixtureTests.swift */; };
 		F3E9D298304FFED6008BF231 /* CoreDataMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D297304FFED6008BF231 /* CoreDataMigrationTests.swift */; };
 		F3E9D29A30500069008BF231 /* PersistenceRecoveryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D29930500069008BF231 /* PersistenceRecoveryTests.swift */; };
+		F3E9D29C30515744008BF231 /* PasswordHasher.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D29B30515744008BF231 /* PasswordHasher.swift */; };
+		F3E9D29E3051574E008BF231 /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D29D3051574E008BF231 /* KeychainStore.swift */; };
+		F3E9D2A0305157D3008BF231 /* SecureCredentialManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D29F305157D3008BF231 /* SecureCredentialManagerTests.swift */; };
 		F3F941D630405E230067C6C8 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = F3F941D530405E230067C6C8 /* CLAUDE.md */; };
 /* End PBXBuildFile section */
 
@@ -668,6 +671,9 @@
 		F3E9D295304FF803008BF231 /* TextRecipeFixtureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextRecipeFixtureTests.swift; sourceTree = "<group>"; };
 		F3E9D297304FFED6008BF231 /* CoreDataMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataMigrationTests.swift; sourceTree = "<group>"; };
 		F3E9D29930500069008BF231 /* PersistenceRecoveryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceRecoveryTests.swift; sourceTree = "<group>"; };
+		F3E9D29B30515744008BF231 /* PasswordHasher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordHasher.swift; sourceTree = "<group>"; };
+		F3E9D29D3051574E008BF231 /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStore.swift; sourceTree = "<group>"; };
+		F3E9D29F305157D3008BF231 /* SecureCredentialManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureCredentialManagerTests.swift; sourceTree = "<group>"; };
 		F3F941D530405E230067C6C8 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1159,6 +1165,8 @@
 				9E77ABEC2EB412C600666BB0 /* SecureCredentialManager.swift */,
 				F36AED523040A5D700935A3C /* HTMLFetcher.swift */,
 				F3E9D275304D7CC5008BF231 /* RecipeImageTextRecognizer.swift */,
+				F3E9D29B30515744008BF231 /* PasswordHasher.swift */,
+				F3E9D29D3051574E008BF231 /* KeychainStore.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -1592,6 +1600,7 @@
 			isa = PBXGroup;
 			children = (
 				F3E9D27C304D7D21008BF231 /* RecipeImageTextRecognizerTests.swift */,
+				F3E9D29F305157D3008BF231 /* SecureCredentialManagerTests.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -1865,6 +1874,7 @@
 				F3E9D16830444DA5008BF231 /* ShoppingCategoryHeader.swift in Sources */,
 				F3E9D22730477D84008BF231 /* RecipeImportPipeline.swift in Sources */,
 				9E87D3302EB696A400FFA1D1 /* ThemeManager.swift in Sources */,
+				F3E9D29E3051574E008BF231 /* KeychainStore.swift in Sources */,
 				9E4DC7522E9C12A900E17DDF /* IngredientSearchView.swift in Sources */,
 				F3E9D1413043A90E008BF231 /* IngredientRow.swift in Sources */,
 				F3E9D17430444F55008BF231 /* RecipeNotesFormatter.swift in Sources */,
@@ -1963,6 +1973,7 @@
 				F3E9D11830434E01008BF231 /* PlannedMealsSection.swift in Sources */,
 				F36AED713043393300935A3C /* RecipeDeleteConfirmationSheet.swift in Sources */,
 				9E6DEA672EF5EF47001E7B24 /* IngredientRowView.swift in Sources */,
+				F3E9D29C30515744008BF231 /* PasswordHasher.swift in Sources */,
 				F3E9D18030444FC0008BF231 /* RecipeIngredientsSection.swift in Sources */,
 				9E6DEA682EF5EF47001E7B24 /* InfoPairView.swift in Sources */,
 				F3E9D11230434D91008BF231 /* MonthYearPickerSheet.swift in Sources */,
@@ -2053,6 +2064,7 @@
 				9E5D20532FB358F000F2896A /* KitchenInventoryModelTests.swift in Sources */,
 				F3E9D2093046263D008BF231 /* RecipeImportFixtureTests.swift in Sources */,
 				9E90AAFE2FA9029E00096D9D /* UnitConversionTests.swift in Sources */,
+				F3E9D2A0305157D3008BF231 /* SecureCredentialManagerTests.swift in Sources */,
 				9E90AB022FA9247B00096D9D /* AnimatedHeartButtonTests.swift in Sources */,
 				F3E9D24B30487BD8008BF231 /* TextRecipeParserCaptionTests.swift in Sources */,
 				9E6C2C602FB4A4BE0083A08B /* ExtensionsTests.swift in Sources */,
