@@ -24,7 +24,7 @@ struct PasswordHasher: Sendable {
     func generateSalt() -> String {
         var bytes = [UInt8](repeating: 0, count: 32)
         _ = SecRandomCopyBytes(kSecRandomDefault, bytes.count, &bytes)
-        return bytes.map { String(format: "%02x", $0) }.joined()
+        return bytes.hexEncodedString
     }
 
     /// Derives a hex-encoded hash for `password` using the hex-encoded `salt`.
@@ -37,16 +37,16 @@ struct PasswordHasher: Sendable {
             return nil
         }
 
-        let derivedKey = pbkdf2(password: passwordData, salt: saltData)
-
-        guard !derivedKey.isEmpty else {
+        guard let derivedKey = pbkdf2(password: passwordData, salt: saltData) else {
             return nil
         }
 
-        return derivedKey.map { String(format: "%02x", $0) }.joined()
+        return derivedKey.hexEncodedString
     }
 
-    private func pbkdf2(password: Data, salt: Data) -> Data {
+    /// Returns `nil` (never partial/empty `Data`) when derivation fails, so a
+    /// failed hash cannot be mistaken for a valid value.
+    private func pbkdf2(password: Data, salt: Data) -> Data? {
         var derivedKeyData = Data(count: keyByteCount)
         let derivationStatus = derivedKeyData.withUnsafeMutableBytes { derivedKeyBytes in
             let derivedKeyRawBytes = derivedKeyBytes.bindMemory(to: UInt8.self).baseAddress
@@ -69,7 +69,14 @@ struct PasswordHasher: Sendable {
             }
         }
 
-        return derivationStatus == kCCSuccess ? derivedKeyData : Data()
+        return derivationStatus == kCCSuccess ? derivedKeyData : nil
+    }
+}
+
+extension Sequence where Element == UInt8 {
+    /// Lowercase hex encoding of the byte sequence.
+    var hexEncodedString: String {
+        map { String(format: "%02x", $0) }.joined()
     }
 }
 

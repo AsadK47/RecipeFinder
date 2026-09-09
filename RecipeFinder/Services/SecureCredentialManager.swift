@@ -20,7 +20,7 @@ final class SecureCredentialManager: Sendable {
     func hashEmail(_ email: String) -> String {
         let data = Data(email.lowercased().utf8)
         let hashed = SHA256.hash(data: data)
-        return hashed.compactMap { String(format: "%02x", $0) }.joined()
+        return hashed.hexEncodedString
     }
     
     @discardableResult
