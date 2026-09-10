@@ -235,8 +235,13 @@ extension RecipeDetailView {
             ),
             editingRecipeId: recipe.id,
             onComplete: { updatedRecipe in
+                let previous = recipe
                 recipe = updatedRecipe
-                PersistenceController.shared.saveRecipeModel(updatedRecipe)
+                guard PersistenceController.shared.saveRecipeModel(updatedRecipe) else {
+                    recipe = previous
+                    showSaveError = true
+                    return
+                }
                 HapticManager.shared.success()
             }
         )

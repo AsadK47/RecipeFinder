@@ -84,11 +84,12 @@ struct ImportView: View {
             isPresented: Binding(
                 get: { saveErrorRecipeName != nil },
                 set: { if !$0 { saveErrorRecipeName = nil } }
-            )
-        ) {
+            ),
+            presenting: saveErrorRecipeName
+        ) { _ in
             Button("OK", role: .cancel) {}
-        } message: {
-            Text("\"\(saveErrorRecipeName ?? "")\" couldn't be saved. Please try again.")
+        } message: { name in
+            Text("\"\(name)\" couldn't be saved. Please try again.")
         }
     }
 

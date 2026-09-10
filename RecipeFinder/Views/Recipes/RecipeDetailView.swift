@@ -13,6 +13,9 @@ struct RecipeDetailView: View {
     @State var showAddedFeedback: String?
     @State private var confettiCounter = 0
     @State private var showEditSheet = false
+    // Internal (not private) so the edit-completion handler in
+    // RecipeDetailView+Content can set it on a failed save.
+    @State var showSaveError = false
     // Internal (not private) so the timer control in RecipeDetailView+Content can drive it.
     @State var showTimerSheet = false
     @State var editingIngredientIndex: Int?
@@ -65,6 +68,11 @@ struct RecipeDetailView: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+        .alert("Couldn't Save Changes", isPresented: $showSaveError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Your changes couldn't be saved. Please try again.")
+        }
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -213,19 +221,25 @@ struct RecipeDetailView: View {
             return
         }
 
-        let updatedIngredient = recipe.ingredients[index]
+        let originalIngredient = recipe.ingredients[index]
         let newIngredient = Ingredient(
-            id: updatedIngredient.id,
+            id: originalIngredient.id,
             baseQuantity: quantity,
             unit: editingUnit,
-            name: updatedIngredient.name
+            name: originalIngredient.name
         )
 
         recipe.ingredients[index] = newIngredient
-
-        PersistenceController.shared.updateRecipe(recipe)
-
         editingIngredientIndex = nil
+
+        guard PersistenceController.shared.updateRecipe(recipe) else {
+            // Persist failed — undo the in-memory edit and tell the user rather
+            // than showing a change that won't survive relaunch.
+            recipe.ingredients[index] = originalIngredient
+            showSaveError = true
+            return
+        }
+
         HapticManager.shared.success()
     }
 
