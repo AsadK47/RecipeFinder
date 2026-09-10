@@ -171,10 +171,23 @@ struct RecipeSearchView: View {
             return
         }
 
+        addRecipe(recipe, successMessage: "Imported \"\(recipe.name)\"")
+    }
+
+    /// Adds a newly created/imported recipe: optimistically shows it, then
+    /// persists. If the save fails, the optimistic insertion is rolled back and
+    /// the user is told — rather than the recipe silently vanishing on relaunch.
+    private func addRecipe(_ recipe: RecipeModel, successMessage: String) {
         recipes.append(recipe)
-        PersistenceController.shared.saveRecipeModel(recipe)
+
+        guard PersistenceController.shared.saveRecipeModel(recipe) else {
+            recipes.removeAll { $0.id == recipe.id }
+            showImportToast("Couldn't save \"\(recipe.name)\". Please try again.")
+            return
+        }
+
         HapticManager.shared.success()
-        showImportToast("Imported \"\(recipe.name)\"")
+        showImportToast(successMessage)
     }
 
     private func showImportToast(_ message: String) {
@@ -329,21 +342,13 @@ struct RecipeSearchView: View {
     
     private var recipeImportSheet: some View {
         RecipeImportView(initialURL: sharedImportURL, existingNames: recipes.map { $0.name }) { importedRecipe in
-            recipes.append(importedRecipe)
-            
-            PersistenceController.shared.saveRecipeModel(importedRecipe)
-            
-            HapticManager.shared.success()
+            addRecipe(importedRecipe, successMessage: "Imported \"\(importedRecipe.name)\"")
         }
     }
-    
+
     private var recipeWizardSheet: some View {
         RecipeWizardView(prefilledData: sharedWizardPrefill) { newRecipe in
-            recipes.append(newRecipe)
-            
-            PersistenceController.shared.saveRecipeModel(newRecipe)
-            
-            HapticManager.shared.success()
+            addRecipe(newRecipe, successMessage: "Added \"\(newRecipe.name)\"")
         }
     }
     

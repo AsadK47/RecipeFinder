@@ -70,23 +70,24 @@ extension PersistenceController {
         }
     }
     
-    func saveRecipe(parameters: RecipeSaveParameters) {
-        guard ensureStoreIsReady() else { return }
-        
+    @discardableResult
+    func saveRecipe(parameters: RecipeSaveParameters) -> Bool {
+        guard ensureStoreIsReady() else { return false }
+
         let context = container.viewContext
-        
+
         guard let entity = NSEntityDescription.entity(forEntityName: Entity.recipe, in: context) else {
             persistenceLogger.error("❌ Failed to find Recipe entity")
-            return
+            return false
         }
         
         let recipe = NSManagedObject(entity: entity, insertInto: context)
         
         guard let ingredientData = try? JSONEncoder().encode(parameters.ingredients) else {
             persistenceLogger.error("❌ Failed to encode ingredients for recipe: \(parameters.name)")
-            return
+            return false
         }
-        
+
         let recipeId = parameters.id ?? UUID()
         recipe.setValue(recipeId, forKey: RecipeKey.id)
         recipe.setValue(parameters.name, forKey: RecipeKey.name)
@@ -110,32 +111,33 @@ extension PersistenceController {
         do {
             try context.save()
             persistenceLogger.debug("✅ Recipe '\(parameters.name)' saved successfully")
-            
+
             let recipeCount = getRecipeCount()
             BadgeManager.shared.checkAndUnlockBadges(recipeCount: recipeCount)
+            return true
         } catch {
             persistenceLogger.error("❌ Failed to save recipe '\(parameters.name)': \(error.localizedDescription)")
+            return false
         }
     }
-    
-    func saveRecipeModel(_ recipe: RecipeModel) {
+
+    @discardableResult
+    func saveRecipeModel(_ recipe: RecipeModel) -> Bool {
         let context = container.viewContext
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
         fetchRequest.predicate = NSPredicate(format: "\(RecipeKey.id) == %@", recipe.id as CVarArg)
         fetchRequest.fetchLimit = 1
-        
+
         do {
             let existingRecipes = try context.fetch(fetchRequest)
             if !existingRecipes.isEmpty {
-                updateRecipe(recipe)
+                return updateRecipe(recipe)
             } else {
-                let parameters = RecipeSaveParameters(from: recipe)
-                saveRecipe(parameters: parameters)
+                return saveRecipe(parameters: RecipeSaveParameters(from: recipe))
             }
         } catch {
             persistenceLogger.debug("⚠️ Failed to check if recipe exists, creating new: \(error.localizedDescription)")
-            let parameters = RecipeSaveParameters(from: recipe)
-            saveRecipe(parameters: parameters)
+            return saveRecipe(parameters: RecipeSaveParameters(from: recipe))
         }
     }
     
@@ -174,25 +176,26 @@ extension PersistenceController {
         }
     }
     
-    func updateRecipe(_ recipe: RecipeModel) {
-        guard ensureStoreIsReady() else { return }
-        
+    @discardableResult
+    func updateRecipe(_ recipe: RecipeModel) -> Bool {
+        guard ensureStoreIsReady() else { return false }
+
         let context = container.viewContext
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
         fetchRequest.predicate = NSPredicate(format: "\(RecipeKey.id) == %@", recipe.id as CVarArg)
         fetchRequest.fetchLimit = 1
-        
+
         do {
             guard let managedRecipe = try context.fetch(fetchRequest).first else {
                 persistenceLogger.debug("⚠️ Recipe with id \(recipe.id) not found")
-                return
+                return false
             }
-            
+
             guard let ingredientData = try? JSONEncoder().encode(recipe.ingredients) else {
                 persistenceLogger.error("❌ Failed to encode ingredients for recipe: \(recipe.name)")
-                return
+                return false
             }
-            
+
             managedRecipe.setValue(recipe.name, forKey: RecipeKey.name)
             managedRecipe.setValue(recipe.category, forKey: RecipeKey.category)
             managedRecipe.setValue(recipe.difficulty, forKey: RecipeKey.difficulty)
@@ -209,8 +212,10 @@ extension PersistenceController {
             
             try context.save()
             persistenceLogger.debug("✅ Recipe '\(recipe.name)' updated successfully")
+            return true
         } catch {
             persistenceLogger.error("❌ Failed to update recipe: \(error.localizedDescription)")
+            return false
         }
     }
     

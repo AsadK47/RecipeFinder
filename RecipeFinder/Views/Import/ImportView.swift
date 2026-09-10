@@ -14,6 +14,7 @@ struct ImportView: View {
     @State private var showPasteImport = false
     @State private var showPhotoImport = false
     @State private var showWizard = false
+    @State private var saveErrorRecipeName: String?
 
     var body: some View {
         NavigationStack {
@@ -78,13 +79,32 @@ struct ImportView: View {
         .sheet(isPresented: $showWizard) {
             RecipeWizardView(prefilledData: nil) { store($0) }
         }
+        .alert(
+            "Couldn't Save Recipe",
+            isPresented: Binding(
+                get: { saveErrorRecipeName != nil },
+                set: { if !$0 { saveErrorRecipeName = nil } }
+            )
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("\"\(saveErrorRecipeName ?? "")\" couldn't be saved. Please try again.")
+        }
     }
 
     /// Appends a finished recipe to the list and persists it. Shared by every
-    /// import route so they save identically.
+    /// import route so they save identically. If the save fails, the optimistic
+    /// insertion is rolled back and the user is alerted rather than the recipe
+    /// silently disappearing on relaunch.
     private func store(_ recipe: RecipeModel) {
         recipes.append(recipe)
-        PersistenceController.shared.saveRecipeModel(recipe)
+
+        guard PersistenceController.shared.saveRecipeModel(recipe) else {
+            recipes.removeAll { $0.id == recipe.id }
+            saveErrorRecipeName = recipe.name
+            return
+        }
+
         HapticManager.shared.success()
     }
 

@@ -320,6 +320,7 @@
 		F3E9D2A0305157D3008BF231 /* SecureCredentialManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D29F305157D3008BF231 /* SecureCredentialManagerTests.swift */; };
 		F3E9D2A230515C08008BF231 /* TimeExtractorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D2A130515C08008BF231 /* TimeExtractorTests.swift */; };
 		F3E9D2A430515C14008BF231 /* RecipeIngredientMatchingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D2A330515C14008BF231 /* RecipeIngredientMatchingTests.swift */; };
+		F3E9D2A63052A02E008BF231 /* RecipeSaveResultTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D2A53052A02E008BF231 /* RecipeSaveResultTests.swift */; };
 		F3F941D630405E230067C6C8 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = F3F941D530405E230067C6C8 /* CLAUDE.md */; };
 /* End PBXBuildFile section */
 
@@ -678,6 +679,7 @@
 		F3E9D29F305157D3008BF231 /* SecureCredentialManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureCredentialManagerTests.swift; sourceTree = "<group>"; };
 		F3E9D2A130515C08008BF231 /* TimeExtractorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeExtractorTests.swift; sourceTree = "<group>"; };
 		F3E9D2A330515C14008BF231 /* RecipeIngredientMatchingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeIngredientMatchingTests.swift; sourceTree = "<group>"; };
+		F3E9D2A53052A02E008BF231 /* RecipeSaveResultTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeSaveResultTests.swift; sourceTree = "<group>"; };
 		F3F941D530405E230067C6C8 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1399,6 +1401,7 @@
 				F3E9D288304E056A008BF231 /* CoreDataStorePersistenceTests.swift */,
 				F3E9D297304FFED6008BF231 /* CoreDataMigrationTests.swift */,
 				F3E9D29930500069008BF231 /* PersistenceRecoveryTests.swift */,
+				F3E9D2A53052A02E008BF231 /* RecipeSaveResultTests.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -2050,6 +2053,7 @@
 				F3E9D298304FFED6008BF231 /* CoreDataMigrationTests.swift in Sources */,
 				9E6C2C4C2FB477ED0083A08B /* BadgeCardTests.swift in Sources */,
 				F3E9D270304D4D24008BF231 /* CategoryClassifierGroupingTests.swift in Sources */,
+				F3E9D2A63052A02E008BF231 /* RecipeSaveResultTests.swift in Sources */,
 				F3E9D21F3047105C008BF231 /* ManagerMergeTests.swift in Sources */,
 				F3E9D289304E056A008BF231 /* CoreDataStorePersistenceTests.swift in Sources */,
 				9E6C2C532FB478290083A08B /* AccountSheetTests.swift in Sources */,
