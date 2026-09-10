@@ -33,36 +33,47 @@ extension RecipeParser {
         return nil
     }
 
-    private static func parseRecipeFromJSON(_ json: Any) -> ParsedRecipe? {
-        var recipeData: [String: Any]?
-
-        func isRecipeType(_ item: [String: Any]) -> Bool {
-            // Match "Recipe" regardless of whether the site emits the bare token or a
-            // fully-qualified schema.org URL (e.g. "https://schema.org/Recipe"), and
-            // regardless of case. Real sites use all of these forms.
-            func matchesRecipe(_ type: String) -> Bool {
-                let token = type.split(separator: "/").last.map(String.init) ?? type
-                return token.caseInsensitiveCompare("Recipe") == .orderedSame
-            }
-            if let type = item["@type"] as? String {
-                return matchesRecipe(type)
-            } else if let types = item["@type"] as? [String] {
-                return types.contains(where: matchesRecipe)
-            }
-            return false
+    /// Match "Recipe" regardless of whether the site emits the bare token or a
+    /// fully-qualified schema.org URL (e.g. "https://schema.org/Recipe"), and
+    /// regardless of case. Real sites use all of these forms.
+    private static func isRecipeType(_ item: [String: Any]) -> Bool {
+        func matchesRecipe(_ type: String) -> Bool {
+            let token = type.split(separator: "/").last.map(String.init) ?? type
+            return token.caseInsensitiveCompare("Recipe") == .orderedSame
         }
+        if let type = item["@type"] as? String {
+            return matchesRecipe(type)
+        } else if let types = item["@type"] as? [String] {
+            return types.contains(where: matchesRecipe)
+        }
+        return false
+    }
 
+    /// Locate the Recipe node anywhere JSON-LD commonly hides it: a top-level
+    /// Recipe, an entry in a `@graph`, a plain array of nodes, or nested under a
+    /// wrapper's `mainEntity` (the shape Yoast/WordPress emit). Recurses so deep
+    /// graphs and `mainEntity`-inside-`@graph` combinations resolve too.
+    private static func findRecipeDict(in json: Any) -> [String: Any]? {
         if let dict = json as? [String: Any] {
-            if isRecipeType(dict) {
-                recipeData = dict
-            } else if let graph = dict["@graph"] as? [[String: Any]] {
-                recipeData = graph.first { isRecipeType($0) }
+            if isRecipeType(dict) { return dict }
+            if let mainEntity = dict["mainEntity"], let found = findRecipeDict(in: mainEntity) {
+                return found
             }
-        } else if let array = json as? [[String: Any]] {
-            recipeData = array.first { isRecipeType($0) }
+            if let graph = dict["@graph"], let found = findRecipeDict(in: graph) {
+                return found
+            }
+            return nil
         }
+        if let array = json as? [Any] {
+            for element in array {
+                if let found = findRecipeDict(in: element) { return found }
+            }
+        }
+        return nil
+    }
 
-        guard let data = recipeData else {
+    private static func parseRecipeFromJSON(_ json: Any) -> ParsedRecipe? {
+        guard let data = findRecipeDict(in: json) else {
             return nil
         }
 

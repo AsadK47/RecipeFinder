@@ -195,4 +195,58 @@ enum RecipeHTMLFixtures {
     </body>
     </html>
     """#
+
+    /// JSON-LD where the Recipe is nested under a `WebPage`'s `mainEntity` rather
+    /// than being a top-level node or a `@graph` entry — the shape Yoast/WordPress
+    /// emit on many sites. The visible body carries no ingredient/step lists, so if
+    /// this isn't pulled from the structured data it falls through to a near-empty
+    /// free-text result.
+    static let jsonLDMainEntity = #"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <meta charset="utf-8">
+    <meta property="og:image" content="https://cdn.example.com/overnight-oats.jpg" />
+    <title>Overnight Oats | Healthy Mornings</title>
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"WebPage","name":"Overnight Oats",
+     "mainEntity":{"@type":"Recipe","name":"Overnight Oats",
+      "description":"Creamy make-ahead oats.",
+      "prepTime":"PT5M","recipeYield":"2 servings",
+      "image":"https://cdn.example.com/overnight-oats.jpg",
+      "recipeIngredient":["1 cup rolled oats","1 cup milk","1 tbsp chia seeds","1 tbsp maple syrup"],
+      "recipeInstructions":[
+        {"@type":"HowToStep","text":"Combine the oats, milk, and chia seeds in a jar."},
+        {"@type":"HowToStep","text":"Stir in the maple syrup, cover, and refrigerate overnight."}]}}
+    </script>
+    </head>
+    <body><article><h1>Overnight Oats</h1><p>The easiest breakfast.</p></article></body>
+    </html>
+    """#
+
+    /// Otherwise-valid Recipe JSON-LD marred by trailing commas before closing
+    /// brackets/braces — a common hand-authored / templating defect. `JSONSerialization`
+    /// happens to tolerate these, so this is a regression guard proving the JSON-LD
+    /// path still wins here rather than dropping to the weaker free-text fallback.
+    static let jsonLDTrailingCommas = #"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <meta charset="utf-8">
+    <title>No-Knead Bread — Slow Kitchen</title>
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"Recipe",
+     "name":"No-Knead Bread",
+     "prepTime":"PT15M","cookTime":"PT45M","recipeYield":"1 loaf",
+     "recipeIngredient":["3 cups flour","1/4 tsp yeast","1.5 tsp salt","1.5 cups water",],
+     "recipeInstructions":[
+       {"@type":"HowToStep","text":"Mix the flour, yeast, and salt, then stir in the water to form a shaggy dough."},
+       {"@type":"HowToStep","text":"Cover and let rest for 12 to 18 hours, then bake in a preheated Dutch oven."},
+     ],
+    }
+    </script>
+    </head>
+    <body><article><h1>No-Knead Bread</h1></article></body>
+    </html>
+    """#
 }

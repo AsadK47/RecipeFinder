@@ -84,4 +84,32 @@ import Testing
         #expect(r.instructions.count == 3)
         #expect(r.instructions.first == "Beat the eggs with a pinch of salt.")
     }
+
+    // MARK: - Recipe nested under WebPage.mainEntity
+
+    @Test func jsonLDMainEntity_extractsRecipeFromMainEntity() {
+        let r = RecipeParser.parse(html: RecipeHTMLFixtures.jsonLDMainEntity)
+
+        #expect(r.name == "Overnight Oats")
+        #expect(r.ingredients.count == 4)
+        #expect(r.instructions.count == 2)
+        #expect(r.prepTime == 5)
+        #expect(r.servings == 2)
+        #expect(r.imageURL == "https://cdn.example.com/overnight-oats.jpg")
+        #expect(r.confidence > 0.9) // JSON-LD path, not the free-text fallback
+    }
+
+    // MARK: - Trailing-comma JSON-LD (regression guard)
+
+    @Test func jsonLDTrailingCommas_stillParsesViaJSONLD() {
+        let r = RecipeParser.parse(html: RecipeHTMLFixtures.jsonLDTrailingCommas)
+
+        #expect(r.name == "No-Knead Bread")
+        #expect(r.ingredients.count == 4)
+        #expect(r.instructions.count == 2)
+        #expect(r.prepTime == 15)
+        #expect(r.cookTime == 45)
+        #expect(r.servings == 1)
+        #expect(r.confidence > 0.9) // recovered onto the JSON-LD path
+    }
 }
