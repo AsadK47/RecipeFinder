@@ -50,13 +50,6 @@ final class AccountManager: ObservableObject {
         updateStats()
         
         unlockWelcomeBadge()
-        
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(updateStats),
-            name: NSNotification.Name("DataDidChange"),
-            object: nil
-        )
     }
     
     private func unlockWelcomeBadge() {
@@ -134,7 +127,7 @@ final class AccountManager: ObservableObject {
         UserScopedStorage.shared.removeObject(forKey: profileImageKey)
     }
     
-    @objc func updateStats() {
+    func updateStats() {
         self.recipeCount = PersistenceController.shared.fetchRecipeCount()
         self.kitchenItemCount = KitchenInventoryManager.shared.items.count
         self.shoppingListCount = ShoppingListManager.shared.items.count
@@ -156,8 +149,8 @@ final class AccountManager: ObservableObject {
         clearProfileData()
         
         logger.debug("🗑️ All user data cleared")
-        
-        NotificationCenter.default.post(name: NSNotification.Name("DataDidChange"), object: nil)
+
+        updateStats()
     }
     
     func clearProfileData() {

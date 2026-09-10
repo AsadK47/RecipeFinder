@@ -1,9 +1,6 @@
 import Foundation
 import UserNotifications
 
-import Foundation
-import UserNotifications
-
 private let logger = AppLogger.logger(category: "Notification")
 
 final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sendable {

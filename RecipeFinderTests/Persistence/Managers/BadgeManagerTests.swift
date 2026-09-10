@@ -1,22 +1,21 @@
 import XCTest
 @testable import RecipeFinder
 
+@MainActor
 final class BadgeManagerTests: XCTestCase {
 
     private var storage: UserScopedStorage!
     private var sut: BadgeManager!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
         storage = UserScopedStorage(userDefaults: defaults)
         sut = BadgeManager(storage: storage)
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
         sut = nil
         storage = nil
-        super.tearDown()
     }
 
     // MARK: - Initial state

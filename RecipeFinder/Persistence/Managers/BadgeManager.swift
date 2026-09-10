@@ -1,7 +1,8 @@
 import Foundation
 
-class BadgeManager: ObservableObject {
-    nonisolated(unsafe) static let shared = BadgeManager()
+@MainActor
+final class BadgeManager: ObservableObject {
+    static let shared = BadgeManager()
 
     @Published var unlockedBadges: [String: Badge] = [:]
 

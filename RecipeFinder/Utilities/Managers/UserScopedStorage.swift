@@ -4,8 +4,12 @@ extension Notification.Name {
     static let userScopeDidChange = Notification.Name("UserScopeDidChange")
 }
 
-final class UserScopedStorage {
-    nonisolated(unsafe) static let shared = UserScopedStorage()
+/// Thread-safe by construction: both stored properties are immutable `let`s and
+/// every read/write is delegated to `UserDefaults`, which Apple documents as
+/// thread-safe. `@unchecked` is required only because `UserDefaults` isn't itself
+/// annotated `Sendable` in the SDK — there is no unsynchronised mutable state here.
+final class UserScopedStorage: @unchecked Sendable {
+    static let shared = UserScopedStorage()
     
     private let userDefaults: UserDefaults
     private let currentUserKey = "currentUserId"
