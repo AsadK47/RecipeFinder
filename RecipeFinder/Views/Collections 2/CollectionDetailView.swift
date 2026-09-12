@@ -8,6 +8,7 @@ struct CollectionDetailView: View {
     @ObservedObject private var manager = CollectionManager.shared
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
+    @State private var showAddRecipes = false
 
     private var collectionRecipes: [RecipeModel] {
         let ids = Set(currentCollection.recipeIDs)
@@ -30,8 +31,23 @@ struct CollectionDetailView: View {
             }
         }
         .navigationTitle(currentCollection.name)
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    HapticManager.shared.light()
+                    showAddRecipes = true
+                } label: {
+                    Image(systemName: "plus")
+                        .adaptiveForegroundColor()
+                }
+                .accessibilityLabel("Add Recipes")
+            }
+        }
+        .sheet(isPresented: $showAddRecipes) {
+            RecipePickerForCollectionSheet(collection: currentCollection, recipes: recipes)
+        }
     }
 
     private var recipeList: some View {
@@ -108,11 +124,24 @@ struct CollectionDetailView: View {
                 .font(.title3.weight(.semibold))
                 .adaptiveForegroundColor()
 
-            Text("Add recipes to \u{201c}\(currentCollection.name)\u{201d} from any recipe\u{2019}s detail view.")
+            Text("Add your recipes to \u{201c}\(currentCollection.name)\u{201d} to keep them together.")
                 .font(.subheadline)
                 .adaptiveSecondaryForeground()
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, AppTheme.spacing32)
+
+            Button {
+                HapticManager.shared.light()
+                showAddRecipes = true
+            } label: {
+                Label("Add Recipes", systemImage: "plus")
+                    .font(.headline)
+                    .padding(.horizontal, AppTheme.spacing24)
+                    .padding(.vertical, AppTheme.spacing12)
+                    .background(.ultraThinMaterial, in: Capsule())
+            }
+            .adaptiveForegroundColor()
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }

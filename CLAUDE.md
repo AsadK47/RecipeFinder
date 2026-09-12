@@ -117,6 +117,29 @@ view to them. TDD is not required for pure UI layout or thin glue with no logic.
 - Tests come **first**, not afterward (see workflow above). All new code ships with
   tests, and no logic-bearing change is considered done until it has them.
 
+## UX Checklist (apply to every view touched)
+
+When creating or modifying any view, run through this before finishing:
+
+- **Empty states are always actionable.** Never just describe how to add content —
+  always include a button that does it. "No recipes yet. Add from a recipe's detail
+  view." is dead-end copy; "Add Recipes" button is the fix.
+- **Primary actions are visible.** If a user might want it on every visit, it must not
+  require an overflow menu. The `...` (ellipsis) menu is for rare/secondary actions
+  only. Discoverability is ruined the moment something lands in the overflow.
+- **Toolbar background.** Every view that uses `AppTheme.backgroundGradient` must also
+  apply `.toolbarBackground(.hidden, for: .navigationBar)`. The gradient must bleed
+  through, not be interrupted by a solid bar.
+- **Sheet backgrounds.** Every sheet must wrap its content in
+  `ZStack { gradient.ignoresSafeArea(); content }`. `Form`-based sheets also need
+  `.scrollContentBackground(.hidden)`. The system sheet background must never show.
+- **Navigation title display mode.** Use `.inline` consistently. `.large` left-aligns
+  the title which breaks the visual rhythm — every other title in the app is centered.
+- **`NavigationView` is banned.** It breaks sheet backgrounds on iOS 16+. Use
+  `NavigationStack` everywhere.
+- **Every new file through `XcodeWrite`** (not `Write`) so it is registered in the
+  Xcode project and avoids "cannot find in scope" build errors.
+
 ## Build & CI
 - Build with the `BuildProject` MCP tool; use `XcodeRefreshCodeIssuesInFile` for fast
   per-file diagnostics before a full build.

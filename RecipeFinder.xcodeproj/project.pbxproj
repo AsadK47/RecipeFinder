@@ -197,6 +197,7 @@
 		F3D40540305608DE0076834D /* RecipeFinderAccessibilityAuditTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D4053F305608DE0076834D /* RecipeFinderAccessibilityAuditTests.swift */; };
 		F3D4054330560A2D0076834D /* OnboardingContentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D4054230560A2D0076834D /* OnboardingContentTests.swift */; };
 		F3D4054530560A330076834D /* OnboardingContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D4054430560A330076834D /* OnboardingContent.swift */; };
+		F3D40547305615580076834D /* RecipePickerForCollectionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D40546305615580076834D /* RecipePickerForCollectionSheet.swift */; };
 		F3E9D10630434D33008BF231 /* CalendarDayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10530434D33008BF231 /* CalendarDayView.swift */; };
 		F3E9D10830434D43008BF231 /* MealTimeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10730434D43008BF231 /* MealTimeCard.swift */; };
 		F3E9D10A30434D58008BF231 /* MealTimeSelectorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10930434D58008BF231 /* MealTimeSelectorSheet.swift */; };
@@ -581,6 +582,7 @@
 		F3D4053F305608DE0076834D /* RecipeFinderAccessibilityAuditTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeFinderAccessibilityAuditTests.swift; sourceTree = "<group>"; };
 		F3D4054230560A2D0076834D /* OnboardingContentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingContentTests.swift; sourceTree = "<group>"; };
 		F3D4054430560A330076834D /* OnboardingContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingContent.swift; sourceTree = "<group>"; };
+		F3D40546305615580076834D /* RecipePickerForCollectionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipePickerForCollectionSheet.swift; sourceTree = "<group>"; };
 		F3E9D10530434D33008BF231 /* CalendarDayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDayView.swift; sourceTree = "<group>"; };
 		F3E9D10730434D43008BF231 /* MealTimeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealTimeCard.swift; sourceTree = "<group>"; };
 		F3E9D10930434D58008BF231 /* MealTimeSelectorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealTimeSelectorSheet.swift; sourceTree = "<group>"; };
@@ -1615,6 +1617,7 @@
 				F3B837D83055F14D0003AEF8 /* CollectionsInlineView.swift */,
 				F3B837DA3055F15B0003AEF8 /* CollectionDetailView.swift */,
 				F3B837DC3055F1650003AEF8 /* AddToCollectionSheet.swift */,
+				F3D40546305615580076834D /* RecipePickerForCollectionSheet.swift */,
 			);
 			path = "Collections 2";
 			sourceTree = "<group>";
@@ -1957,6 +1960,7 @@
 				F3E9D198304516F3008BF231 /* AuthTextFieldStyle.swift in Sources */,
 				9E40CAEF2EB9882700ED9594 /* KitchenInventoryModel.swift in Sources */,
 				9E0C88662EBAEB1E00D707E3 /* FaceIDOnboardingSplash.swift in Sources */,
+				F3D40547305615580076834D /* RecipePickerForCollectionSheet.swift in Sources */,
 				9E97EEC93009401100D35FAB /* SharedImportInbox.swift in Sources */,
 				9E4EF5D32EBB6A0600C3C0E7 /* LegalInformationView.swift in Sources */,
 				9E4DC7382E9BF19700E17DDF /* AppTheme.swift in Sources */,

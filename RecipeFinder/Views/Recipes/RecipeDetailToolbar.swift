@@ -15,16 +15,20 @@ struct RecipeDetailToolbar: View {
             Button(action: onToggleFavorite) {
                 Image(systemName: recipe.isFavorite ? "heart.fill" : "heart")
                     .font(.title3)
-                    .foregroundColor(recipe.isFavorite ? .red : .white)
+                    .foregroundColor(recipe.isFavorite ? .red : .primary)
             }
             .accessibilityLabel(recipe.isFavorite ? "Remove from favourites" : "Add to favourites")
+
+            Button(action: onAddToCollection) {
+                Image(systemName: "rectangle.stack.badge.plus")
+                    .font(.title3)
+                    .adaptiveForegroundColor()
+            }
+            .accessibilityLabel("Add to Collection")
 
             Menu {
                 Button(action: onEdit) {
                     Label("Edit Recipe", systemImage: "pencil")
-                }
-                Button(action: onAddToCollection) {
-                    Label("Add to Collection", systemImage: "rectangle.stack.badge.plus")
                 }
                 ShareLink(item: recipe.shareText, subject: Text(recipe.name)) {
                     Label("Share", systemImage: "square.and.arrow.up")
@@ -35,7 +39,7 @@ struct RecipeDetailToolbar: View {
                     .adaptiveForegroundColor()
             }
             .accessibilityLabel("More actions")
-            .accessibilityHint("Edit, add to collection, or share this recipe")
+            .accessibilityHint("Edit or share this recipe")
         }
     }
 }
