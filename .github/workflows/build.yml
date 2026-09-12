@@ -62,12 +62,24 @@ jobs:
         run: xcodebuild -resolvePackageDependencies -scheme "$SCHEME"
 
       - name: Build & test
+        env:
+          # Push to main runs unit tests only to conserve macOS minutes (billed
+          # at 10x); the slow simulator UI tests run on PRs and manual dispatch.
+          EVENT_NAME: ${{ github.event_name }}
         run: |
           set -o pipefail
+          SKIP_ARGS=""
+          if [ "$EVENT_NAME" = "push" ]; then
+            echo "Push event: running unit tests only (skipping UI tests)."
+            SKIP_ARGS="-skip-testing:RecipeFinderUITests"
+          else
+            echo "Running full suite including UI tests."
+          fi
           xcodebuild test \
             -scheme "$SCHEME" \
             -destination '${{ steps.simulator.outputs.DESTINATION }}' \
             -resultBundlePath TestResults.xcresult \
+            $SKIP_ARGS \
             CODE_SIGNING_ALLOWED=NO | tee xcodebuild.log
 
       - name: Upload logs and results
