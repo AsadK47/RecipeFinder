@@ -1,0 +1,37 @@
+{
+  "configurations" : [
+    {
+      "id" : "A1B2C3D4-1111-2222-3333-444455556666",
+      "name" : "Default",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "areLocalizationScreenshotsEnabled" : true,
+    "distributor" : "com.apple.TestFlight",
+    "locationScenario" : {
+      "identifier" : "London, England",
+      "referenceType" : "built-in"
+    },
+    "preferredScreenCaptureFormat" : "screenshot",
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:RecipeFinder.xcodeproj",
+      "identifier" : "9EE5AAD42D08FCBE00C1B736",
+      "name" : "RecipeFinder"
+    },
+    "testTimeoutsEnabled" : true,
+    "threadSanitizerEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:RecipeFinder.xcodeproj",
+        "identifier" : "9EE5AAE62D08FCBF00C1B736",
+        "name" : "RecipeFinderTests"
+      }
+    }
+  ],
+  "version" : 1
+}

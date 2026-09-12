@@ -198,6 +198,16 @@ Meal-type slots and "add the week to the shopping list" ship (ReciMe's
 most-cited gap). Remaining: drag-and-drop to rearrange meals, recurring meals
 ("Meal Prep Sunday"), and a weekly overview that ties into nutrition (Part III).
 
+### 🔴 Pantry expiry & restock — surface what's already tracked
+*Problem:* `KitchenInventoryModel` already tracks `expiryDate` / `isExpired` /
+`isExpiringSoon` / `needsRestock`, and the manager exposes `expiredItems()` /
+`expiringSoonItems()` / `lowStockItems()` — but none of it is surfaced, so it may
+as well not exist.
+*What to do:* an "expiring soon / expired / low stock" view over the existing
+data, plus **expiry & restock notifications** (new `NotificationManager` category
+alongside timers/meals). Ties into the core loop: "use it before it goes off" is a
+natural "what do I cook tonight?" prompt.
+
 ---
 
 ## Part III — New Features
@@ -241,6 +251,25 @@ user's own iCloud so the privacy story holds. Design work to reconcile
 for the JSON-backed stores (meal plans, shopping list, inventory). Deferred until
 the Developer Program is enrolled; until then the model stays CloudKit-compatible
 so enabling it is a switch, not a rewrite.
+
+**Storage-architecture decision — CloudKit private DB, *not* our own backend.**
+The question "should we store to S3 or equivalent?" resolves to *no* for personal
+libraries. CloudKit's **private database is the S3 equivalent**, hosted in the
+*user's own* iCloud: we never see the data, it costs us nothing per user, and
+recipe images ride along as `CKAsset`s. Running our own S3/backend would make us
+the data controller (GDPR liability for a UK Ltd), add per-user cost for zero
+revenue, and contradict the privacy wedge. A real backend earns its place **only
+if** we later build *public/social* sharing (see Recipe Sharing) — and even then
+CloudKit's **public** database or CloudKit Sharing likely covers it server-lessly.
+Revisit S3 only for that public layer, never for private libraries.
+
+**Sync visibility.** There's no separate "cloud browser" to build — synced
+recipes simply appear on every device, and that transparency *is* the feature
+(iOS already shows usage in Settings → Apple ID → iCloud → Manage Storage). What
+we should add is a small **Sync status view in Settings**: on/off toggle,
+last-synced time, and a syncing/error indicator, so people trust it's working.
+(The CloudKit Dashboard is a *developer* tool for schema and the public DB only —
+it can never expose users' private data, by design.)
 
 ### 🔴 Nutrition
 Calories/protein/carbs/fat/fibre per serving, recalculated on serving changes.
