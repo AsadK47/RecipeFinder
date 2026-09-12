@@ -1,0 +1,32 @@
+{
+  "configurations" : [
+    {
+      "id" : "5C333F8B-C097-4949-907A-67E7D90ADD6D",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "performanceAntipatternCheckerEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:RecipeFinder.xcodeproj",
+        "identifier" : "9EE5AAE62D08FCBF00C1B736",
+        "name" : "RecipeFinderTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:RecipeFinder.xcodeproj",
+        "identifier" : "9EE5AAF02D08FCBF00C1B736",
+        "name" : "RecipeFinderUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

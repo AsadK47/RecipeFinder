@@ -7,10 +7,28 @@ private let logger = AppLogger.logger(category: "RecipeFinderApp")
 struct RecipeFinderApp: App {
 
     init() {
+        #if DEBUG
+        // UI-test launch hooks, consumed only under XCUITest and gated to DEBUG
+        // so no reset path can ever ship in a release build. App.init runs on
+        // the main thread, so assuming main-actor isolation here is safe.
+        MainActor.assumeIsolated {
+            let arguments = ProcessInfo.processInfo.arguments
+            if arguments.contains("-ui-testing") {
+                // Deterministic, flicker-free UI so element queries don't race animations.
+                UIView.setAnimationsEnabled(false)
+                if arguments.contains("-resetState") {
+                    AuthTestHelper.clearAllAuthData()
+                }
+            }
+        }
+        #endif
+
         configureAppearance()
         initializeDatabase()
         requestNotificationPermissions()
-        
+
+        // Runs after any -resetState wipe above so the known debug account is
+        // always available to sign in with.
         #if DEBUG
         AuthTestHelper.ensureTestAccountExists()
         #endif

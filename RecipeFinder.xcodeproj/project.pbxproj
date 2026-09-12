@@ -681,6 +681,8 @@
 		F3E9D2A330515C14008BF231 /* RecipeIngredientMatchingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeIngredientMatchingTests.swift; sourceTree = "<group>"; };
 		F3E9D2A53052A02E008BF231 /* RecipeSaveResultTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeSaveResultTests.swift; sourceTree = "<group>"; };
 		F3E9D2A73055452E008BF231 /* RecipeFinder.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = RecipeFinder.xctestplan; sourceTree = "<group>"; };
+		F3E9D2A83055494C008BF231 /* RecipeFinderLaunchUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeFinderLaunchUITests.swift; sourceTree = "<group>"; };
+		F3E9D2A930554A0D008BF231 /* RecipeFinderTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = file; path = RecipeFinderTests.xctestplan; sourceTree = "<group>"; };
 		F3F941D530405E230067C6C8 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -735,6 +737,7 @@
 		19BC863E22BB4A40B9307393 /* RecipeFinderUITests */ = {
 			isa = PBXGroup;
 			children = (
+				F3E9D2A83055494C008BF231 /* RecipeFinderLaunchUITests.swift */,
 			);
 			path = RecipeFinderUITests;
 			sourceTree = "<group>";
@@ -1475,6 +1478,7 @@
 		9EE5AACC2D08FCBE00C1B736 = {
 			isa = PBXGroup;
 			children = (
+				F3E9D2A930554A0D008BF231 /* RecipeFinderTests.xctestplan */,
 				F3E9D2A73055452E008BF231 /* RecipeFinder.xctestplan */,
 				F3F941D530405E230067C6C8 /* CLAUDE.md */,
 				19BC863E22BB4A40B9307393 /* RecipeFinderUITests */,
