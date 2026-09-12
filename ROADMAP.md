@@ -1,174 +1,278 @@
 # RecipeFinder Roadmap
 
-## Legend
-- 🔴 Not Started
-- 🟡 In Progress
-- 🟢 Done
+This is the product's story and its direction — *why* things are the way they are
+and where they're going — not a changelog. Implementation history lives in git.
 
-> **Maintaining this doc:** it captures product *direction and priorities*, not a
-> changelog — implementation history lives in git. Update a phase's status marker
-> in place as work lands; avoid appending dated "done in month X" entries, which
-> rot. Phases are intentionally coarse so they stay valid as details shift.
+**How to read it.** Three parts, in the order the app earns its keep:
+**Part I — Hardening** (make what exists trustworthy), **Part II — Improvements**
+(sharpen the existing product), **Part III — New Features** (net-new bets). Each
+item is framed as *problem → what we did / will do → why it matters*.
 
-## Strategy (July 2026)
+**How to maintain it.** Update a status marker in place as work lands. Keep the
+prose current, but resist turning it into a dated "done in month X" log — that
+rots, and git already has it. Phases are intentionally coarse so they stay valid
+as details shift.
 
-Competitive analysis vs ReciMe / Crouton / Mela / Paprika: RecipeFinder's position is
-**"ReciMe, but private, unlimited, and better at the actual cooking."**
-
-- ReciMe won 10M+ users on one loop: see recipe on social → share into app → AI recipe card → grocery list. Their import is server-side AI, paywalled at 5 imports/week.
-- Our edge: on-device parsing (FoundationModels) costs nothing per import → **unlimited imports can be free**. Freemium must be genuine added value, never locked basics.
-- ReciMe's known weaknesses we already beat or can beat: grocery list doesn't merge duplicates (we normalize + merge), meal plan and shopping list unlinked (ours now linked), weak cooking mode (Crouton sets the bar).
-- Already at parity, no work needed: aisle-grouped shopping list, serving scaling, metric/imperial conversion, cookbook-style organization, offline-first.
-
-Priorities are ordered below. Phases 1–3 are the release-defining work.
+- 🔴 Not started 🟡 In progress 🟢 Done
 
 ---
 
-## Phase 1: Capture — the ReciMe loop *(highest priority)*
+## Where we stand *(September 2026)*
 
-### 🟢 Share Sheet Extension
-*The delivery vehicle for everything else in this phase.*
-- ~~Share Extension target accepting URLs and plain text~~ 🟢 — `RecipeShareExtension` (`ShareViewController`) captures shared URLs and text
-- ~~Hand off to main app via App Group~~ 🟢 — `SharedImportInbox` over App Group defaults; consumed on foreground in `RecipeSearchView`
-- ~~In-extension full import (fetch + parse in the extension so the recipe is simply there next open)~~ 🟢 — `RecipeImportPipeline` (Foundation-only, shared with the app) runs headless in the extension; success stores parsed `ExtractedRecipeData` which the app materialises silently on next launch, failure falls back to the raw URL/text for interactive import
+RecipeFinder is a privacy-first, offline-first recipe manager. The one-line pitch:
 
-### 🟢 Instagram & TikTok Recipe Import
-- ~~Share caption text → extract recipe content~~ 🟢 — shared plain text runs through `SharedTextImporter`
-- ~~On-device FoundationModels (iOS 26+, availability-gated) — parse caption/text into structured recipe via @Generable~~ 🟢 — `FoundationModelsRecipeInterpreter` (`RecipeTextInterpreting` seam); private, free, offline. Falls back to `TextRecipeParser`/manual wizard when unavailable or low-confidence
-- ~~Dedicated "paste a URL or text" import entry point~~ 🟢 — Import tab now has "Paste a link" (URL), "Paste text" (`PasteTextImportSheet`), and "Scan a photo" alongside manual create
-- ~~Explicit review/edit step for AI results before save~~ 🟢 — AI/text/photo imports route through `RecipeTextImportRouter` into the wizard (`RecipeWizardView(prefilledData:)`) for review before saving; nothing saves silently. URL website imports keep their one-tap save + duplicate alert
-- **Marketing angle: unlimited free imports vs ReciMe's 5/week**
+> **"ReciMe, but private, unlimited, great at the actual cooking — and your
+> library is safe."**
 
-### 🟢 Photo-to-Recipe Conversion
-- ~~Cookbook page, handwritten recipe, or screenshot → Vision OCR → same on-device parser~~ 🟢 — "Scan a photo" (`PhotoImportSheet`): photo library (`PhotosPicker`) or camera (`CameraPicker`) → on-device Vision OCR (`VisionRecipeImageTextRecognizer`) → `RecipeTextImportRouter`
-- ~~User reviews and confirms before saving~~ 🟢 — lands in the wizard for review, same as the text path
+That last clause is deliberate and was a correction to an earlier framing. "No
+account, purely local" is *not* a virtue — it's a data-loss liability: Core Data
+lives in the app sandbox, so deleting the app wipes the library and device
+backups are opt-in and stale. "Lost my recipes on a phone upgrade" is the
+category's #1 review-killer. So **durability — accounts, iCloud sync, real
+backup/export — is a first-class pillar, not something to strip.** "Private"
+means the user's *own* iCloud and Apple ID, not the absence of an account:
+private and synced are compatible.
 
----
+**The competitive read.** ReciMe won 10M+ users on a single loop: see a recipe
+on social → share into the app → AI turns it into a clean card → grocery list.
+Their import is server-side AI, paywalled at 5/week.
 
-## Phase 2: Sync & Trust
+- **Our structural edge:** import is **on-device** (FoundationModels + Vision
+  OCR), which costs us nothing per import — so **unlimited imports are free**,
+  and that's a marketing line ReciMe can't match. Freemium must therefore be
+  genuine *added* value (supermarket integration, advanced planning), never
+  locked basics and never things that cost us nothing.
+- **Where we already beat them:** we merge duplicate ingredients in the grocery
+  list (they don't); our meal plan and shopping list are linked (theirs aren't).
+- **At parity, no work needed:** aisle-grouped shopping list, serving scaling,
+  metric/imperial conversion, cookbook-style organisation, offline-first.
 
-### 🔴 iCloud Sync *(new — competitive gap: every rival syncs; "lost my recipes on phone upgrade" is the category's review-killer)*
-- `NSPersistentCloudKitContainer` over the existing Core Data stack
-- User's own iCloud — no server, keeps the privacy-first story intact
-- Reconcile with UserScopedStorage per-account scoping (design needed: local accounts vs iCloud identity)
-- JSON-backed stores (meal plans, shopping list, inventory) need a sync strategy too (move to Core Data or CloudKit key-value/records)
-- ~~Build a real backup/export + import as the manual fallback.~~ 🟢 — `BackupService` + `BackupArchive`/`BackupCodec` (`.recipefinderbackup`) with a non-destructive, date-faithful `merge(_:)` seam on every store; Export/Import UI in `DataManagementSettingsView`. Full round-trip incl. recipes, correct model shapes, per-user scope.
+**The core loop everything serves:** *get a recipe in → find it → cook from it
+well → decide what to cook next.* Anything not serving that loop is secondary.
 
----
-
-## Phase 3: Cooking Experience
-
-### 🔴 Timer Live Activity + Widgets *(requires a Widget Extension target — create in Xcode UI)*
-- Running timer as a Live Activity on Lock Screen / Dynamic Island (RecipeTimerManager exists)
-- Today's meal plan widget
-- Shopping list quick-view widget
-- Random recipe suggestion widget
-
----
-
-## Phase 4: Meal Planning Enhancements
-
-### 🟡 Expanded Meal Planner
-- ~~Meal type slots: Breakfast, Lunch, Dinner, Snack~~ 🟢 — `MealTime` enum with icons/ordering in MealPlanModel
-- ~~Auto-generate shopping list from the week's meal plan~~ 🟢 *(July 2026)* — "Add Week to Shopping List" in weekly view; merges duplicates via IngredientNormalizer, skips completed meals, falls back to name-matching when a recipe was re-imported (`weekShoppingSummary` in MealPlanningManager). ReciMe's most-cited missing feature.
-- Drag-and-drop to rearrange meals between days
-- Weekly overview with nutritional summary (ties into Phase 5)
-- "Suggest a meal" — recommend recipes from saved collection based on: unused ingredients, variety, dietary preferences
-- Recurring meals (e.g., "Meal Prep Sunday")
+**One hard constraint.** iCloud sync is **blocked until paid Apple Developer
+Program enrollment** — CloudKit needs the iCloud capability and a container,
+unavailable on a free personal team (dev stays on the free team until
+TestFlight/App Store; enrolling RecipeFinder Limited still needs a D-U-N-S).
+Durability therefore splits: the **backup/export round-trip is pure local file
+I/O and is done**; **iCloud sync is deferred**, but the Core Data model is kept
+CloudKit-ready (no unique constraints, optional relationships, defaults) so
+turning it on later isn't a rewrite.
 
 ---
 
-## Phase 5: Nutrition
+## Part I — Hardening
 
-### 🔴 Nutritional Information
-- Display calories, protein, carbs, fat, fibre per serving
-- **Data source options:** Open Food Facts API (free, open-source), USDA FoodData Central (free), Edamam (free tier)
-- **UX approach:** Toggle per recipe (not a global setting) — some users care for weeknight meals but not for baking
-- Show as a collapsible section on recipe detail view
-- Nutrition summary on the meal plan weekly view
-- Recalculate when servings are adjusted
+Before adding surface area, we spent a campaign making the existing app
+trustworthy. Each item below was its own commit + review checkpoint. This is the
+foundation the rest of the roadmap stands on.
 
----
+### 🟢 Auth & credentials
+*Problem:* the highest-stakes code had zero tests, and a real account-takeover
+bug once let `signUp()` overwrite an existing account's credentials.
+*What we did:* put a `KeychainStore` protocol seam in front of the system
+Keychain (real vs in-memory fake), extracted a pure PBKDF2 `PasswordHasher`, and
+covered the credential/session lifecycle — including the historical empty-hash
+bug and stable-user-id-on-resave — with Swift Testing cases.
+*Why:* credentials are where a privacy-first app cannot afford to be wrong.
 
-## Phase 6: Shopping Integration
+### 🟢 Search & filter robustness
+*Problem:* "what can I make?" quietly returned wrong results — ingredient
+matching hit substrings (ice ↔ rice), time parsing mishandled hours and ranges
+("20-30 min" → −10), and filtering recomputed on every keystroke.
+*What we did:* unified matching on a word-boundary `KitchenRecipeMatcher` (with
+conservative singularisation so egg↔eggs matches without reviving ice↔rice),
+taught `TimeExtractor` to parse hours and range→upper-bound, and made
+`RecipeFilterCriteria` a single `Hashable` value that computes match % once and
+keys the filter cache — so a new filter field can't silently be forgotten.
+*Why:* the headline "find something to cook" feature has to be correct *and* fast.
 
-### 🔴 Supermarket Connection
-- Link shopping list to supermarket suppliers (Tesco, Sainsbury's, Ocado, etc.)
-- Match ingredient names to supermarket product catalogue
-- Auto-build a basket on the retailer's site/app
-- **Implementation options:** deep links into retailer apps, retailer affiliate APIs, web scraping (last resort)
-- Price comparison across retailers
-- Smart substitution suggestions
+### 🟢 Failure-state surfacing
+*Problem:* recipe writes swallowed every failure into a log and returned — a
+failed save still showed "Imported" and then vanished on relaunch (silent data
+loss).
+*What we did:* writes now return a result the UI acts on; create/import/edit
+sites roll back the optimistic change and tell the user (toast/alert) instead of
+lying. *Deferred, tied to clean-arch:* a typed error (disk-full vs encode vs
+not-ready) and a single add-and-persist use case to end the duplicated
+optimistic-insert logic across the two import hubs.
+*Why:* losing a user's recipe silently is the worst thing this app can do.
 
----
+### 🟢 Concurrency (Swift 6 strict)
+*Problem:* the shared singleton managers leaned on `nonisolated(unsafe)` escape
+hatches, and one (`BadgeManager`) held genuinely unsynchronised mutable state.
+*What we did:* audited all eleven managers; made `BadgeManager` `@MainActor`,
+expressed `UserScopedStorage`'s real thread-safety as a documented
+`Sendable` conformance, and removed a fragile `@objc` NotificationCenter observer
+that was a latent hop-crash. No `nonisolated(unsafe)` left in the managers.
+*Why:* data races are invisible until they corrupt a user's library.
 
-## Phase 7: Quality of Life & Engagement
+### 🟢 Import robustness (the corpus)
+*Problem:* real recipe pages are messier than clean synthetic markup — minified
+HTML, microdata, fully-qualified schema URLs, `HowToSection` nesting, Recipes
+buried under `mainEntity`, OCR quirks from photographed pages.
+*What we did:* built a durable fixture bed of real-world full-page HTML and
+plain-text recipes, then hardened the parser against each: JSON-LD
+`@graph`/`mainEntity`/array nesting, microdata, block-level line reconstruction,
+a single canonical `IngredientLineParser` (spelled-out units, glued fractions,
+ranges, no fabricated quantities), and note/footnote fencing in the text parser.
+*Why:* no import → empty library → dead app. Import must feel like it *always*
+works.
 
-### 🟡 Smart Search & Filtering
-- ~~Search by ingredient ("what can I make with chicken and rice?")~~ 🟢 — "available ingredients only" toggle with ≥80% match scoring in RecipeSearchView
-- Filter by dietary restriction, cook time, difficulty (partially present — verify coverage)
-- Recently viewed / frequently cooked
+### 🟢 Data durability — backup/export
+*Problem:* local-only storage is wiped on app delete, and the old importer was
+removed as broken.
+*What we did:* a real `.recipefinderbackup` round-trip (`BackupService` +
+`BackupArchive`/`BackupCodec`) with a non-destructive, date-faithful `merge(_:)`
+seam on every store, wired into Data Management settings — covering recipes,
+meal plans, shopping list, inventory, and badges, per-user scoped.
+*Why:* until iCloud is unblocked, this is the user's safety net against losing
+everything. (iCloud sync itself lives in Part III.)
 
-### 🔴 Collections & Tags
-- User-created collections beyond favourites ("Weeknight Dinners", "Party Food")
-- Custom tags with colour coding
-- Smart collections (auto-populated based on rules)
-
-### 🔴 Recipe Sharing
-- Share recipes as rich links or formatted cards
-- Import shared recipes from other RecipeFinder users
-- Export as PDF for printing *(basic text/PDF share exists)*
-
-### 🔴 Recipe Images via Unsplash API *(demoted from Phase 1: URL import already extracts images from JSON-LD/OG, and user photos are done — this only benefits manually created recipes)*
-- Integrate Unsplash search-by-recipe-name to auto-assign images
-- Cache images locally (NSCache + disk); `imageURL` field in Core Data; API key via `.xcconfig`
-- **Scaling concern:** free tier = 50 req/hr; consider server-side URL cache if multi-user growth
-
-### 🟢 User Photo for Recipes *(completed July 2026)*
-- PhotosPicker in RecipeWizardView; compressed JPEG in app sandbox; user photo takes priority over remote image
-- Remaining: "take a photo" via camera (requires re-adding NSCameraUsageDescription build setting)
-
----
-
-## Engineering foundation
-
-Durable health of the codebase (specifics live in git history):
-- **CI gates on tests** — `xcodebuild test` runs on every push to `main` via GitHub Actions on `macos-26` / Xcode 26 (matching the Swift 6.3 dev toolchain); failing tests block. Status badge in the README.
-- **Testing** — Swift Testing for new and migrated tests (XCTest migrated opportunistically when an area is touched); parameterize data-driven cases; inject fakes rather than reaching for singletons.
-- **Dependency injection** — external dependencies sit behind protocols (e.g. `HTMLFetching` for the importer) so logic is testable offline.
-- **Concurrency** — Swift 6 strict concurrency; no unsynchronized shared mutable state (watch especially for `nonisolated(unsafe)` static caches).
-- **Clean Architecture** — Presentation / Domain / Data separation with dependencies pointing inward; keep files focused — a large view file is a refactor signal.
-
-## Completed
-
-### 🟢 Settings Revamp (July 2026)
-- Phase A: design system in Components/Settings/SettingsComponents.swift (icon tiles, rows, sections, cards)
-- Phase B: 12 sub-screens split into Views/Settings/Screens/, restyled; SettingsScreen scaffold, toggle/choice rows; visual walkthrough signed off
-
-### 🟢 Health Check & Release Prep (July 2026)
-- Fixed `signUp()` overwriting existing accounts' credentials (account-takeover bug)
-- Aligned `signUpWithoutLogin()` password validation with the real policy (Validator)
-- Fixed PBKDF2 failure producing an empty-string hash instead of nil
-- `UIRequiredDeviceCapabilities` armv7 → arm64; removed unused camera/photo permission strings
-- Consolidated Info.plist keys into `INFOPLIST_KEY_*` build settings; resolved duplicate Face ID usage strings
-- Removed dead `SwiftData` imports; readme accuracy pass (iOS 17.5+, real dependencies, PBKDF2)
-
-### 🟢 Bug Fixes (March 2026)
-- Fixed `clearAllData()` using global `UserDefaults` instead of `UserScopedStorage`
-- Fixed `unlockWelcomeBadge()` storing `accountCreationDate` globally
-- Fixed `hasPopulatedDatabase` flag not scoped per user
-- Moved User PII from plain `UserDefaults` to Keychain storage
-- Fixed `deleteAccount()` not cleaning up all persisted keys
-- Fixed `signUpWithoutLogin()` leaking PII to unscoped storage
-- Preserved `createdAt` across sign-in cycles
-- Removed redundant `updateStats()` call
-- Converted nested if/else chains to guard clauses
+### Engineering foundation
+The durable rules that keep the above from regressing:
+- **CI gates on tests** — `xcodebuild test` runs on every push to `main`
+  (GitHub Actions, `macos-26`/Xcode 26); a red suite blocks. Badge in the README.
+- **Testing** — Swift Testing for new/migrated tests (XCTest migrated
+  opportunistically when an area is touched); parameterize data-driven cases;
+  inject fakes rather than reaching for singletons.
+- **Dependency injection** — external dependencies behind protocols (e.g.
+  `HTMLFetching`, `KeychainStore`) so logic is testable offline.
+- **Clean Architecture** — Presentation / Domain / Data with dependencies
+  pointing inward; a large view file is a refactor signal, not a style choice.
+- **Performance** — no non-trivial work in a SwiftUI `body`; memoize hot pure
+  functions with the lock-guarded `MemoCache`; a loose perf-budget test guards
+  against order-of-magnitude regressions.
 
 ---
 
-## Notes
+## Part II — Improvements
 
-- **API Keys:** All API keys stored in `.xcconfig` files excluded from version control
-- **Privacy First:** Minimal data collection, all user data scoped per account
-- **Offline First:** Core features work without internet; network features degrade gracefully
-- **Freemium principle:** free tier must be genuinely useful; monetize added value (e.g., supermarket integration, advanced planning), never basics or things that cost us nothing (imports)
+Sharpening the product we already have. These aren't new pillars — they remove
+friction and make existing features pull their weight.
+
+### 🔴 The sign-up moment — fix the timing, not the account
+*Problem:* a brand-new user hits four gates before any value — notification
+prompt at launch → sign-in wall → Face ID splash → onboarding → an *empty* app.
+*What to do:* let people try the core loop first (browse seeds, run the
+importer/wizard), then ask for the account at a **value moment**, framed as
+protection: "keep these recipes safe and on all your devices." The account
+should *protect* the work, not gate access to nothing. Minimise
+time-to-first-saved-recipe; the activation metric is ≥1 recipe the user cares
+about *and* has cooked from once.
+
+### 🔴 Move the notification prompt off launch
+Use provisional authorization, or ask in-context the first time a timer or meal
+reminder is actually set. Apple's HIG backs this; a cold launch prompt is pure
+friction.
+
+### 🔴 Kill the empty state — seed recipes
+*Problem:* an empty library is a dead app, and it collides with delayed sign-up.
+*What to do:* ship a stocked starter library (the user has a Google Drive of
+recipes to convert into bundled seeds) so a first-run user browses and cooks
+before ever creating an account.
+
+### 🔴 Engagement surfaces (currently unused APIs)
+- **Badges** exist (`BadgeManager`/`BadgeCard`) but are buried in
+  Settings → Account and drive nothing. Resurface them at real moments (first
+  import/cook → confetti, we already ship `ConfettiSwiftUI`) and tie them to the
+  core loop rather than a hidden trophy shelf.
+- **TipKit** for contextual, event-gated feature discovery ("what can I make",
+  cooking mode, import).
+- **StoreKit `RequestReviewAction`** only after a success moment (e.g. finishing
+  a cook), never at launch or right after a user action.
+
+### 🔴 Recipe image placeholders
+Missing images currently read as broken. Build a reusable `RecipePlaceholderView`
+(themed gradient + centred dish glyph, optionally name-seeded) used as the
+Kingfisher placeholder *and* failure image, with a shimmer→cross-fade and a fixed
+aspect ratio. Low effort, high perceived quality.
+
+### 🟡 Smart search & filtering coverage
+"Available ingredients only" matching ships. Remaining: confirm dietary / cook
+-time / difficulty filters are complete, and add "recently viewed / frequently
+cooked."
+
+### 🟡 Meal planner enhancements
+Meal-type slots and "add the week to the shopping list" ship (ReciMe's
+most-cited gap). Remaining: drag-and-drop to rearrange meals, recurring meals
+("Meal Prep Sunday"), and a weekly overview that ties into nutrition (Part III).
+
+---
+
+## Part III — New Features
+
+Net-new bets, ordered by priority.
+
+### 🟢 Capture — the ReciMe loop *(shipped; this is the wedge)*
+The loop that defines the release is live end-to-end:
+- **Share extension** captures URLs and text and, when it can, does the full
+  fetch+parse *in the extension* (`RecipeImportPipeline`) so the recipe is simply
+  *there* on next open; otherwise it hands the raw URL/text to the app.
+- **Social & text import** runs captions through on-device FoundationModels
+  (`RecipeTextInterpreting` seam, availability-gated), falling back to
+  `TextRecipeParser`/manual wizard — private, free, offline.
+- **Photo-to-recipe** turns a cookbook page or screenshot into a recipe via
+  Vision OCR, same on-device parser.
+- Every AI/text/photo import lands in a **review/edit step** before saving;
+  nothing is saved silently. *Marketing: unlimited free imports vs ReciMe's 5/week.*
+
+### 🔴 Collections & Tags *(next up)*
+*Problem:* favourites is the only organisation; a growing library needs more.
+*What to do:* user-created collections beyond favourites ("Weeknight Dinners",
+"Party Food"), custom tags with colour coding, and smart collections
+auto-populated by rules. **Collections first, tags second.** Local-only — no dev
+account required — so it's buildable now.
+
+### 🔴 Cooking Experience
+The moment that drives repeat use.
+- **Interactive Cooking Mode** — big text, screen stays awake, greasy-hands tap
+  targets, tap a step/ingredient to start its timer inline (wire in
+  `RecipeTimerManager`). Crouton sets the bar here.
+- **Timer Live Activity + Widgets** *(needs a Widget Extension target)* —
+  running timer on Lock Screen / Dynamic Island; today's-meal-plan, shopping
+  -list quick-view, and random-recipe widgets. Consider AlarmKit for cook timers
+  with custom UI.
+
+### 🔴 iCloud Sync *(blocked on paid enrollment — keep the model ready)*
+`NSPersistentCloudKitContainer` over the existing Core Data stack, using the
+user's own iCloud so the privacy story holds. Design work to reconcile
+`UserScopedStorage` per-account scoping with iCloud identity, and a sync strategy
+for the JSON-backed stores (meal plans, shopping list, inventory). Deferred until
+the Developer Program is enrolled; until then the model stays CloudKit-compatible
+so enabling it is a switch, not a rewrite.
+
+### 🔴 Nutrition
+Calories/protein/carbs/fat/fibre per serving, recalculated on serving changes.
+Free data sources: Open Food Facts, USDA FoodData Central, Edamam (free tier).
+UX: a per-recipe toggle (not global — people care on weeknights, not for baking),
+shown as a collapsible section on detail and summarised on the weekly plan.
+
+### 🔴 Supermarket integration *(a genuine premium candidate)*
+Match shopping-list items to a retailer's catalogue (Tesco, Sainsbury's, Ocado)
+and auto-build a basket via deep links or affiliate APIs (scraping last resort),
+with price comparison and smart substitutions. This is added value we can
+legitimately charge for.
+
+### 🔴 Recipe sharing
+Share recipes as rich links or formatted cards; import shared recipes from other
+RecipeFinder users; export as PDF (basic text/PDF share already exists).
+
+### 🔴 Auto recipe images (Unsplash) *(low priority)*
+Auto-assign images by recipe name for *manually created* recipes only — URL
+import already extracts JSON-LD/OG images and user photos are done. Cache locally;
+API key in `.xcconfig`. Free tier is 50 req/hr, so revisit for multi-user growth.
+
+---
+
+## Operating principles
+
+- **Privacy first** — minimal data collection; all user data scoped per account.
+- **Offline first** — core features work without internet; network features
+  degrade gracefully.
+- **Freemium** — the free tier must be genuinely useful; monetise added value
+  (supermarket integration, advanced planning), never basics or things that cost
+  us nothing (imports).
+- **API keys** live in `.xcconfig` files excluded from version control.
+- **Clean as we go** — delete stale docs, dead code, and cruft alongside feature
+  work, not just app code.
