@@ -25,6 +25,7 @@ import Foundation
         let kitchen: KitchenInventoryManager
         let mealPlans: MealPlanningManager
         let badges: BadgeManager
+        let collections: CollectionManager
     }
 
     private static func makeHarness(recipes: [RecipeModel] = []) -> Harness {
@@ -37,13 +38,16 @@ import Foundation
         let kitchen = KitchenInventoryManager(storage: storage)
         let mealPlans = MealPlanningManager(storage: storage)
         let badges = BadgeManager(storage: storage)
+        let collections = CollectionManager(storage: storage)
 
         let service = BackupService(
             recipeStore: recipeStore, shopping: shopping,
-            kitchen: kitchen, mealPlans: mealPlans, badges: badges
+            kitchen: kitchen, mealPlans: mealPlans, badges: badges,
+            collections: collections
         )
         return Harness(service: service, recipeStore: recipeStore,
-                       shopping: shopping, kitchen: kitchen, mealPlans: mealPlans, badges: badges)
+                       shopping: shopping, kitchen: kitchen, mealPlans: mealPlans,
+                       badges: badges, collections: collections)
     }
 
     private static func recipe(_ name: String) -> RecipeModel {
@@ -65,6 +69,7 @@ import Foundation
         h.kitchen.addInventoryItem(KitchenInventoryModel(name: "Rice", category: .grains, quantity: 1, unit: "kg"))
         h.mealPlans.addMealPlan(MealPlanModel(recipeId: UUID(), recipeName: "Soup", date: Date(), mealTime: .dinner))
         h.badges.merge(["explorer": badge("explorer")])
+        h.collections.createCollection(name: "Weeknight Dinners", color: .teal)
     }
 
     // MARK: - makeArchive
@@ -81,6 +86,7 @@ import Foundation
         #expect(archive.kitchenInventory.contains { $0.name == "Rice" })
         #expect(archive.mealPlans.contains { $0.recipeName == "Soup" })
         #expect(archive.badges["explorer"] != nil)
+        #expect(archive.collections.contains { $0.name == "Weeknight Dinners" })
         #expect(archive.schemaVersion == BackupArchive.currentSchemaVersion)
     }
 
@@ -100,6 +106,35 @@ import Foundation
         #expect(dest.kitchen.inventoryItems.contains { $0.name == "Rice" })
         #expect(dest.mealPlans.mealPlans.contains { $0.recipeName == "Soup" })
         #expect(dest.badges.unlockedBadges["explorer"] != nil)
+        #expect(dest.collections.collections.contains { $0.name == "Weeknight Dinners" })
+    }
+
+    @Test func restore_collections_nonDestructive_keepsExistingAndAddsNew() {
+        let source = Self.makeHarness()
+        source.collections.createCollection(name: "From Backup")
+        let archive = source.service.makeArchive()
+
+        let dest = Self.makeHarness()
+        dest.collections.createCollection(name: "Local Collection")
+        dest.service.restore(archive)
+
+        #expect(dest.collections.collections.contains { $0.name == "Local Collection" })
+        #expect(dest.collections.collections.contains { $0.name == "From Backup" })
+    }
+
+    @Test func restore_collections_preservesRecipeMembership() {
+        let recipeID = UUID()
+        let source = Self.makeHarness()
+        source.collections.createCollection(name: "Pasta Night")
+        source.collections.add(recipeID: recipeID, to: source.collections.collections[0])
+        let archive = source.service.makeArchive()
+
+        let dest = Self.makeHarness()
+        dest.service.restore(archive)
+
+        let restored = dest.collections.collections.first { $0.name == "Pasta Night" }
+        #expect(restored != nil)
+        #expect(restored?.contains(recipeID) == true)
     }
 
     @Test func restore_isNonDestructive_keepsExistingWork() {
@@ -128,6 +163,7 @@ import Foundation
         #expect(dest.recipeStore.recipes.contains { $0.name == "Soup" })
         #expect(dest.shopping.items.contains { $0.name == "Milk" })
         #expect(dest.mealPlans.mealPlans.contains { $0.recipeName == "Soup" })
+        #expect(dest.collections.collections.contains { $0.name == "Weeknight Dinners" })
     }
 
     @Test func importData_rejectsGarbage() {

@@ -48,6 +48,42 @@ import Foundation
         #expect(restored.kitchenInventory.isEmpty)
         #expect(restored.mealPlans.isEmpty)
         #expect(restored.badges.isEmpty)
+        #expect(restored.collections.isEmpty)
+    }
+
+    @Test func collections_roundTripPreservesNameColorAndMembership() throws {
+        let recipeID = UUID()
+        var archive = BackupArchive()
+        let collection = RecipeCollection(name: "Party Food", colorName: .pink, recipeIDs: [recipeID])
+        archive.collections = [collection]
+
+        let restored = try BackupCodec.decode(try BackupCodec.encode(archive))
+
+        let c = try #require(restored.collections.first)
+        #expect(c.id == collection.id)
+        #expect(c.name == "Party Food")
+        #expect(c.colorName == .pink)
+        #expect(c.contains(recipeID))
+    }
+
+    /// Old backups (before collections were added) must decode without error,
+    /// arriving with an empty collections array rather than throwing `.corruptedData`.
+    @Test func decode_oldArchiveWithoutCollectionsKey_decodesAsEmpty() throws {
+        let json = """
+        {
+          "schemaVersion": \(BackupArchive.currentSchemaVersion),
+          "exportedAt": "2024-01-01T00:00:00Z",
+          "recipes": [],
+          "shoppingList": [],
+          "kitchenItems": [],
+          "kitchenInventory": [],
+          "mealPlans": [],
+          "badges": {}
+        }
+        """
+        let data = Data(json.utf8)
+        let restored = try BackupCodec.decode(data)
+        #expect(restored.collections.isEmpty)
     }
 
     // MARK: - Schema guard

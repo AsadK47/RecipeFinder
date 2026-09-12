@@ -132,6 +132,15 @@ struct AppRootView: View {
     @StateObject private var authManager = AuthenticationManager.shared
     @StateObject private var themeManager = ThemeManager.shared
     @State private var activeOnboarding: ActiveOnboarding?
+    @AppStorage("preferredColorScheme") private var colorSchemePreference: Int = 0
+
+    private var preferredColorScheme: ColorScheme? {
+        switch colorSchemePreference {
+        case 1: return .light
+        case 2: return .dark
+        default: return nil
+        }
+    }
 
     var body: some View {
         Group {
@@ -181,6 +190,7 @@ struct AppRootView: View {
             }
         }
         .animation(.easeInOut(duration: AppTheme.animationDelayXShort), value: activeOnboarding)
+        .preferredColorScheme(preferredColorScheme)
     }
 
     private func evaluateOnboardingFlow() {

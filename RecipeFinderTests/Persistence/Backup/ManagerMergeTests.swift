@@ -128,4 +128,53 @@ import Foundation
         let reloaded = BadgeManager(storage: storage)
         #expect(Set(reloaded.unlockedBadges.keys) == ["first", "second"])
     }
+
+    // MARK: - CollectionManager
+
+    @Test func collections_mergeIsNonDestructiveAndPersists() {
+        let storage = Self.makeStorage()
+        let sut = CollectionManager(storage: storage)
+        sut.createCollection(name: "Local")
+
+        sut.merge([RecipeCollection(name: "Backup Collection")])
+
+        #expect(sut.collections.contains { $0.name == "Local" })
+        #expect(sut.collections.contains { $0.name == "Backup Collection" })
+
+        let reloaded = CollectionManager(storage: storage)
+        #expect(reloaded.collections.count == 2)
+    }
+
+    @Test func collections_mergeDedupesById() {
+        let sut = CollectionManager(storage: Self.makeStorage())
+        let existing = RecipeCollection(name: "Pasta Night")
+        sut.merge([existing])
+        sut.merge([existing])
+        #expect(sut.collections.filter { $0.id == existing.id }.count == 1)
+    }
+
+    @Test func collections_mergePreservesRecipeMembership() {
+        let storage = Self.makeStorage()
+        let sut = CollectionManager(storage: storage)
+        let recipeID = UUID()
+        let collection = RecipeCollection(name: "Soups", recipeIDs: [recipeID])
+        sut.merge([collection])
+
+        let reloaded = CollectionManager(storage: storage)
+        #expect(reloaded.collections.first?.contains(recipeID) == true)
+    }
+
+    @Test func collections_purgeRemovesRecipeFromAllCollections() {
+        let sut = CollectionManager(storage: Self.makeStorage())
+        sut.createCollection(name: "A")
+        sut.createCollection(name: "B")
+        let id = UUID()
+        sut.add(recipeID: id, to: sut.collections[0])
+        sut.add(recipeID: id, to: sut.collections[1])
+
+        sut.purge(recipeID: id)
+
+        #expect(!sut.collections[0].contains(id))
+        #expect(!sut.collections[1].contains(id))
+    }
 }

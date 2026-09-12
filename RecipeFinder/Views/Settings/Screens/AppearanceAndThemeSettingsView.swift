@@ -1,11 +1,37 @@
 import SwiftUI
 
-/// Accent color picker plus appearance extras.
+/// Accent color picker, appearance mode override, and extras.
 struct AppearanceAndThemeSettingsView: View {
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
+    @AppStorage("preferredColorScheme") private var colorSchemePreference: Int = 0
+
+    private let appearanceModes = ["System", "Light", "Dark"]
 
     var body: some View {
         SettingsScreen("Appearance & Theme") {
+            VStack(spacing: AppTheme.spacing8) {
+                SettingsSectionHeader(title: "Appearance")
+
+                SettingsCard {
+                    VStack(alignment: .leading, spacing: AppTheme.spacing12) {
+                        Text("Override the system dark/light mode setting.")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+
+                        Picker("Appearance", selection: $colorSchemePreference) {
+                            ForEach(Array(appearanceModes.enumerated()), id: \.offset) { index, label in
+                                Text(label).tag(index)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                        .onChange(of: colorSchemePreference) { _, _ in
+                            HapticManager.shared.selection()
+                        }
+                    }
+                    .padding(AppTheme.spacing16)
+                }
+            }
+
             VStack(spacing: AppTheme.spacing8) {
                 SettingsSectionHeader(title: "Color Theme")
 
