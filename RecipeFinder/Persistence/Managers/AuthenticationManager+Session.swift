@@ -8,13 +8,12 @@ extension AuthenticationManager {
         setAuthState(isAuthenticated: authed, user: currentUser)
         guard authed else { return }
         
-        if let lastActive = UserDefaults.standard.object(forKey: lastActiveTimestampKey) as? Date {
+        if let lastActive = UserDefaults.standard.object(forKey: lastActiveTimestampKey) as? Date,
+           SessionExpiryPolicy.isExpired(lastActive: lastActive, timeout: sessionTimeoutSeconds) {
             let timeAway = Date().timeIntervalSince(lastActive)
-            guard timeAway <= sessionTimeoutSeconds else {
-                logger.debug("⏱️ Session expired after \(Int(timeAway))s away")
-                signOut()
-                return
-            }
+            logger.debug("⏱️ Session expired after \(Int(timeAway))s away")
+            signOut()
+            return
         }
         
         loadUser()
@@ -29,12 +28,9 @@ extension AuthenticationManager {
         guard isAuthenticated else { return }
         guard let lastActive = UserDefaults.standard.object(forKey: lastActiveTimestampKey) as? Date else { return }
         
-        let timeAway = Date().timeIntervalSince(lastActive)
-        guard timeAway <= sessionTimeoutSeconds else {
-            logger.debug("⏱️ Session expired - signing out")
-            signOut()
-            return
-        }
+        guard SessionExpiryPolicy.isExpired(lastActive: lastActive, timeout: sessionTimeoutSeconds) else { return }
+        logger.debug("⏱️ Session expired - signing out")
+        signOut()
     }
 
     func signOut() {
