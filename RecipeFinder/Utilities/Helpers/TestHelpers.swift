@@ -62,6 +62,20 @@ struct AuthTestHelper {
         SecureCredentialManager.shared.deleteCredentials(email: email)
         logger.debug("🗑️ Deleted user: \(email)")
     }
+
+    /// Silently signs in with the test account. Called when the `-skip-auth`
+    /// launch argument is present so the dev always lands on the main content
+    /// without touching the sign-in screen.
+    static func autoSignIn() {
+        Task { @MainActor in
+            do {
+                try await AuthenticationManager.shared.signIn(email: testEmail, password: testPassword)
+                logger.debug("✅ Debug auto-sign-in complete for: \(testEmail)")
+            } catch {
+                logger.error("❌ Debug auto-sign-in failed: \(error)")
+            }
+        }
+    }
 }
 
 #endif

@@ -31,6 +31,11 @@ struct RecipeFinderApp: App {
         // always available to sign in with.
         #if DEBUG
         AuthTestHelper.ensureTestAccountExists()
+        if ProcessInfo.processInfo.arguments.contains("-skip-auth") {
+            UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
+            UserDefaults.standard.set(true, forKey: "hasSeenBiometricOnboarding")
+            AuthTestHelper.autoSignIn()
+        }
         #endif
     }
     

@@ -5,8 +5,8 @@ import SwiftUI
 /// links push onto the parent stack.
 struct CollectionsInlineView: View {
     @Binding var recipes: [RecipeModel]
+    @Binding var showNewCollection: Bool
     @ObservedObject private var manager = CollectionManager.shared
-    @State private var showNewCollection = false
     @State private var collectionToEdit: RecipeCollection?
     @State private var collectionToDelete: RecipeCollection?
 
@@ -21,18 +21,6 @@ struct CollectionsInlineView: View {
                 emptyState
             } else {
                 collectionGrid
-            }
-        }
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    HapticManager.shared.light()
-                    showNewCollection = true
-                } label: {
-                    Image(systemName: "plus")
-                        .adaptiveForegroundColor()
-                }
-                .accessibilityLabel("New Collection")
             }
         }
         .sheet(isPresented: $showNewCollection) {

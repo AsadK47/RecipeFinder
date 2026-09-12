@@ -28,6 +28,7 @@ struct RecipeSearchView: View {
     @State private var recipeToDelete: RecipeModel?
     @State private var showDeleteAlert: Bool = false
     @State private var dontAskAgainDelete: Bool = false
+    @State private var showNewCollection = false
     @State private var cachedFilteredRecipes: [RecipeModel] = []
     @State private var lastFilterHash: Int = 0
     @State private var hideSampleRecipes = false
@@ -104,7 +105,7 @@ struct RecipeSearchView: View {
             mainContentView
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbarBackground(.hidden, for: .navigationBar)
-                .toolbar { keyboardToolbar }
+                .toolbar { keyboardToolbar; collectionsToolbar }
                 .modifier(SheetPresentationModifier(
                     showFilters: $showFilters,
                     showImportSheet: $showImportSheet,
@@ -274,7 +275,7 @@ struct RecipeSearchView: View {
     }
 
     private var collectionsContent: some View {
-        CollectionsInlineView(recipes: $recipes)
+        CollectionsInlineView(recipes: $recipes, showNewCollection: $showNewCollection)
     }
     
     private var searchHeaderGroup: some View {
@@ -337,6 +338,22 @@ struct RecipeSearchView: View {
         }
     }
     
+    @ToolbarContentBuilder
+    private var collectionsToolbar: some ToolbarContent {
+        if viewMode == .collections {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    HapticManager.shared.light()
+                    showNewCollection = true
+                } label: {
+                    Image(systemName: "plus")
+                        .adaptiveForegroundColor()
+                }
+                .accessibilityLabel("New Collection")
+            }
+        }
+    }
+
     @ToolbarContentBuilder
     private var keyboardToolbar: some ToolbarContent {
         ToolbarItemGroup(placement: .keyboard) {
