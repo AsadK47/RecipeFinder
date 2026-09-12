@@ -128,6 +128,7 @@ struct AuthenticationView: View {
                             .adaptiveForegroundColor()
                     }
                     .padding(.top, AppTheme.spacing8)
+                    .accessibilityIdentifier("auth.showSignUp")
                 }
                 .padding(.horizontal, AppTheme.spacing32)
                 .padding(.bottom, AppTheme.spacing50)

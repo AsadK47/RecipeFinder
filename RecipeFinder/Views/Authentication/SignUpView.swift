@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct SignUpView: View {
     @StateObject private var authManager = AuthenticationManager.shared
@@ -39,6 +40,17 @@ struct SignUpView: View {
         return password.count >= 8 && hasUppercase && hasLowercase && hasNumber && hasSpecialChar
     }
     
+    private var isUITesting: Bool {
+        ProcessInfo.processInfo.arguments.contains("-ui-testing")
+    }
+
+    /// Under UI testing, suppress the strong-password AutoFill overlay so typed
+    /// credentials aren't intercepted or replaced (see RecipeFinderApp's
+    /// `-ui-testing` hooks). Harmless in release — the argument is never present.
+    private var passwordContentType: UITextContentType? {
+        isUITesting ? nil : .newPassword
+    }
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -74,6 +86,7 @@ struct SignUpView: View {
                                     .textFieldStyle(AuthTextFieldStyle())
                                     .textContentType(.name)
                                     .autocorrectionDisabled()
+                                    .accessibilityIdentifier("signup.fullName")
                             }
                             
                             VStack(alignment: .leading, spacing: AppTheme.spacing8) {
@@ -88,6 +101,7 @@ struct SignUpView: View {
                                     .textContentType(.emailAddress)
                                     .autocapitalization(.none)
                                     .autocorrectionDisabled()
+                                    .accessibilityIdentifier("signup.email")
                                 
                                 if !email.isEmpty && !isValidEmail {
                                     Text("Please enter a valid email address")
@@ -102,11 +116,19 @@ struct SignUpView: View {
                                     .fontWeight(.medium)
                                     .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
                                 
-                                SecureField("", text: $password)
-                                    .textFieldStyle(AuthTextFieldStyle())
-                                    .textContentType(.newPassword)
+                                Group {
+                                    if isUITesting {
+                                        TextField("", text: $password)
+                                    } else {
+                                        SecureField("", text: $password)
+                                    }
+                                }
+                                .textFieldStyle(AuthTextFieldStyle())
+                                .textContentType(passwordContentType)
+                                .autocorrectionDisabled()
+                                .accessibilityIdentifier("signup.password")
                                 
-                                if !password.isEmpty && !isPasswordStrong {
+                                if !password.isEmpty && !isPasswordStrong && !isUITesting {
                                     VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                                         Text("Password must contain:")
                                             .font(.caption2)
@@ -134,15 +156,23 @@ struct SignUpView: View {
                                     .fontWeight(.medium)
                                     .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
                                 
-                                SecureField("", text: $confirmPassword)
-                                    .textFieldStyle(AuthTextFieldStyle())
-                                    .textContentType(.newPassword)
-                                    .submitLabel(.go)
-                                    .onSubmit {
-                                        if isFormValid {
-                                            signUp()
-                                        }
+                                Group {
+                                    if isUITesting {
+                                        TextField("", text: $confirmPassword)
+                                    } else {
+                                        SecureField("", text: $confirmPassword)
                                     }
+                                }
+                                .textFieldStyle(AuthTextFieldStyle())
+                                .textContentType(passwordContentType)
+                                .autocorrectionDisabled()
+                                .submitLabel(.go)
+                                .onSubmit {
+                                    if isFormValid {
+                                        signUp()
+                                    }
+                                }
+                                .accessibilityIdentifier("signup.confirmPassword")
                                 
                                 if !confirmPassword.isEmpty && password != confirmPassword {
                                     Text("Passwords do not match")
@@ -172,6 +202,7 @@ struct SignUpView: View {
                             .disabled(!isFormValid || isLoading)
                             .opacity((!isFormValid || isLoading) ? 0.6 : 1.0)
                             .padding(.top, AppTheme.spacing8)
+                            .accessibilityIdentifier("signup.submit")
                         }
                         .padding(.horizontal, AppTheme.spacing32)
                         

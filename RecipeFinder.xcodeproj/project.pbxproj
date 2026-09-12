@@ -179,6 +179,8 @@
 		F3B837C5305562980003AEF8 /* AuthenticationUserModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837C4305562980003AEF8 /* AuthenticationUserModelTests.swift */; };
 		F3B837C73055CD440003AEF8 /* AccountNameFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837C63055CD440003AEF8 /* AccountNameFormatter.swift */; };
 		F3B837C93055CD5A0003AEF8 /* AccountNameFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837C83055CD5A0003AEF8 /* AccountNameFormatterTests.swift */; };
+		F3B837CB3055E8600003AEF8 /* RecipeFinderLaunchUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D2A83055494C008BF231 /* RecipeFinderLaunchUITests.swift */; };
+		F3B837CC3055E8600003AEF8 /* RecipeFinderSignUpUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837CA3055D2FB0003AEF8 /* RecipeFinderSignUpUITests.swift */; };
 		F3E9D10630434D33008BF231 /* CalendarDayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10530434D33008BF231 /* CalendarDayView.swift */; };
 		F3E9D10830434D43008BF231 /* MealTimeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10730434D43008BF231 /* MealTimeCard.swift */; };
 		F3E9D10A30434D58008BF231 /* MealTimeSelectorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10930434D58008BF231 /* MealTimeSelectorSheet.swift */; };
@@ -546,6 +548,7 @@
 		F3B837C4305562980003AEF8 /* AuthenticationUserModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationUserModelTests.swift; sourceTree = "<group>"; };
 		F3B837C63055CD440003AEF8 /* AccountNameFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountNameFormatter.swift; sourceTree = "<group>"; };
 		F3B837C83055CD5A0003AEF8 /* AccountNameFormatterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountNameFormatterTests.swift; sourceTree = "<group>"; };
+		F3B837CA3055D2FB0003AEF8 /* RecipeFinderSignUpUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeFinderSignUpUITests.swift; sourceTree = "<group>"; };
 		F3E9D10530434D33008BF231 /* CalendarDayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDayView.swift; sourceTree = "<group>"; };
 		F3E9D10730434D43008BF231 /* MealTimeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealTimeCard.swift; sourceTree = "<group>"; };
 		F3E9D10930434D58008BF231 /* MealTimeSelectorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealTimeSelectorSheet.swift; sourceTree = "<group>"; };
@@ -750,6 +753,7 @@
 			isa = PBXGroup;
 			children = (
 				F3E9D2A83055494C008BF231 /* RecipeFinderLaunchUITests.swift */,
+				F3B837CA3055D2FB0003AEF8 /* RecipeFinderSignUpUITests.swift */,
 			);
 			path = RecipeFinderUITests;
 			sourceTree = "<group>";
@@ -2152,6 +2156,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F3B837CB3055E8600003AEF8 /* RecipeFinderLaunchUITests.swift in Sources */,
+				F3B837CC3055E8600003AEF8 /* RecipeFinderSignUpUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
