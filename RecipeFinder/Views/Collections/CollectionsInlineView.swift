@@ -23,18 +23,6 @@ struct CollectionsInlineView: View {
                 collectionGrid
             }
         }
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    HapticManager.shared.light()
-                    showNewCollection = true
-                } label: {
-                    Image(systemName: "plus")
-                        .adaptiveForegroundColor()
-                }
-                .accessibilityLabel("New Collection")
-            }
-        }
         .sheet(isPresented: $showNewCollection) {
             NewCollectionSheet(manager: manager)
         }
@@ -51,7 +39,7 @@ struct CollectionsInlineView: View {
             }
             Button("Cancel", role: .cancel) { collectionToDelete = nil }
         } message: {
-            Text(""\(collectionToDelete?.name ?? "")" will be deleted. Your recipes won't be affected.")
+            Text("\u{201c}\(collectionToDelete?.name ?? "")\u{201d} will be deleted. Your recipes won't be affected.")
         }
     }
 
@@ -81,6 +69,23 @@ struct CollectionsInlineView: View {
                     }
                     .buttonStyle(.plain)
                 }
+
+                Button {
+                    HapticManager.shared.light()
+                    showNewCollection = true
+                } label: {
+                    VStack(spacing: AppTheme.spacing8) {
+                        Image(systemName: "plus")
+                            .font(.title2.weight(.semibold))
+                        Text("New Collection")
+                            .font(.caption.weight(.medium))
+                    }
+                    .frame(maxWidth: .infinity, minHeight: 80)
+                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
+                }
+                .foregroundStyle(.primary.opacity(0.5))
+                .buttonStyle(.plain)
+                .accessibilityLabel("New Collection")
             }
             .padding(.horizontal, AppTheme.spacing16)
             .padding(.top, AppTheme.spacing8)
@@ -100,7 +105,7 @@ struct CollectionsInlineView: View {
                 .font(.title3.weight(.semibold))
                 .adaptiveForegroundColor()
 
-            Text("Create collections to organise your recipes — "Weeknight Dinners", "Party Food", whatever works for you.")
+            Text("Create collections to organise your recipes \u{2014} \u{201c}Weeknight Dinners\u{201d}, \u{201c}Party Food\u{201d}, whatever works for you.")
                 .font(.subheadline)
                 .adaptiveSecondaryForeground()
                 .multilineTextAlignment(.center)

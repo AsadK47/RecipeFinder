@@ -8,6 +8,8 @@ struct CollectionDetailView: View {
     @ObservedObject private var manager = CollectionManager.shared
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
+    @State private var showAddRecipes = false
+    @State private var shoppingListFeedback: String?
 
     private var collectionRecipes: [RecipeModel] {
         let ids = Set(currentCollection.recipeIDs)
@@ -30,8 +32,51 @@ struct CollectionDetailView: View {
             }
         }
         .navigationTitle(currentCollection.name)
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                HStack(spacing: AppTheme.spacing4) {
+                    if !collectionRecipes.isEmpty {
+                        Button {
+                            addAllToShoppingList()
+                        } label: {
+                            Image(systemName: "basket.badge.plus")
+                                .adaptiveForegroundColor()
+                        }
+                        .accessibilityLabel("Add all ingredients to shopping list")
+                    }
+                    Button {
+                        HapticManager.shared.light()
+                        showAddRecipes = true
+                    } label: {
+                        Image(systemName: "plus")
+                            .adaptiveForegroundColor()
+                    }
+                    .accessibilityLabel("Add Recipes")
+                }
+            }
+        }
+        .sheet(isPresented: $showAddRecipes) {
+            RecipePickerForCollectionSheet(collection: currentCollection, recipes: recipes)
+        }
+        .overlay(alignment: .bottom) {
+            if let feedback = shoppingListFeedback {
+                HStack(spacing: AppTheme.spacing12) {
+                    Image(systemName: "basket.fill")
+                        .adaptiveForegroundColor()
+                    Text(feedback)
+                        .font(.subheadline)
+                        .adaptiveForegroundColor()
+                }
+                .padding(.horizontal, AppTheme.spacing20)
+                .padding(.vertical, AppTheme.spacing12)
+                .background(Capsule().fill(AppTheme.accentColor).shadow(color: .black.opacity(0.15), radius: 8, y: 4))
+                .padding(.bottom, AppTheme.spacing20)
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+        }
+        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: shoppingListFeedback)
     }
 
     private var recipeList: some View {
@@ -75,7 +120,7 @@ struct CollectionDetailView: View {
 
                 HStack(spacing: AppTheme.spacing6) {
                     Text(recipe.category)
-                    Text("•")
+                    Text("\u{2022}")
                     Text(recipe.difficulty)
                 }
                 .font(.caption)
@@ -98,6 +143,24 @@ struct CollectionDetailView: View {
         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
     }
 
+    private func addAllToShoppingList() {
+        let ingredients = collectionRecipes.flatMap { $0.ingredients }
+        var added = 0
+        for ingredient in ingredients {
+            let name = IngredientNormalizer.normalize(ingredient.mainIngredientName)
+            guard !name.isEmpty else { continue }
+            ShoppingListManager.shared.addItem(name: name, quantity: 1, category: nil)
+            added += 1
+        }
+        guard added > 0 else { return }
+        HapticManager.shared.success()
+        let recipeCount = collectionRecipes.count
+        shoppingListFeedback = "\(added) ingredient\(added == 1 ? "" : "s") from \(recipeCount) recipe\(recipeCount == 1 ? "" : "s") added"
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
+            withAnimation { shoppingListFeedback = nil }
+        }
+    }
+
     private var emptyState: some View {
         VStack(spacing: AppTheme.spacing16) {
             Image(systemName: "tray")
@@ -108,11 +171,24 @@ struct CollectionDetailView: View {
                 .font(.title3.weight(.semibold))
                 .adaptiveForegroundColor()
 
-            Text("Add recipes to "\(currentCollection.name)" from any recipe's detail view.")
+            Text("Add your recipes to \u{201c}\(currentCollection.name)\u{201d} to keep them together.")
                 .font(.subheadline)
                 .adaptiveSecondaryForeground()
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, AppTheme.spacing32)
+
+            Button {
+                HapticManager.shared.light()
+                showAddRecipes = true
+            } label: {
+                Label("Add Recipes", systemImage: "plus")
+                    .font(.headline)
+                    .padding(.horizontal, AppTheme.spacing24)
+                    .padding(.vertical, AppTheme.spacing12)
+                    .background(.ultraThinMaterial, in: Capsule())
+            }
+            .adaptiveForegroundColor()
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }

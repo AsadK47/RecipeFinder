@@ -29,7 +29,8 @@ struct CollectionsView: View {
                 }
             }
             .navigationTitle("Collections")
-            .navigationBarTitleDisplayMode(.large)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.hidden, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
@@ -58,7 +59,7 @@ struct CollectionsView: View {
                 }
                 Button("Cancel", role: .cancel) { collectionToDelete = nil }
             } message: {
-                Text(""\(collectionToDelete?.name ?? "")" will be deleted. Your recipes won't be affected.")
+                Text("\u{201c}\(collectionToDelete?.name ?? "")\u{201d} will be deleted. Your recipes won't be affected.")
             }
         }
     }
@@ -105,7 +106,7 @@ struct CollectionsView: View {
                 .font(.title3.weight(.semibold))
                 .adaptiveForegroundColor()
 
-            Text("Create collections to organise your recipes — "Weeknight Dinners", "Party Food", whatever works for you.")
+            Text("Create collections to organise your recipes \u{2014} \u{201c}Weeknight Dinners\u{201d}, \u{201c}Party Food\u{201d}, whatever works for you.")
                 .font(.subheadline)
                 .adaptiveSecondaryForeground()
                 .multilineTextAlignment(.center)
@@ -174,20 +175,28 @@ struct CollectionCard: View {
 struct NewCollectionSheet: View {
     let manager: CollectionManager
     @Environment(\.dismiss) var dismiss
+    @Environment(\.colorScheme) private var colorScheme
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @State private var name = ""
     @State private var selectedColor: CollectionColor = .blue
     @FocusState private var nameFocused: Bool
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section("Name") {
-                    TextField("e.g. Weeknight Dinners", text: $name)
-                        .focused($nameFocused)
+            ZStack {
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
+                    .ignoresSafeArea()
+
+                Form {
+                    Section("Name") {
+                        TextField("e.g. Weeknight Dinners", text: $name)
+                            .focused($nameFocused)
+                    }
+                    Section("Colour") {
+                        colorPicker
+                    }
                 }
-                Section("Colour") {
-                    colorPicker
-                }
+                .scrollContentBackground(.hidden)
             }
             .navigationTitle("New Collection")
             .navigationBarTitleDisplayMode(.inline)
@@ -239,6 +248,8 @@ struct EditCollectionSheet: View {
     let collection: RecipeCollection
     let manager: CollectionManager
     @Environment(\.dismiss) var dismiss
+    @Environment(\.colorScheme) private var colorScheme
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @State private var name: String
     @State private var selectedColor: CollectionColor
     @FocusState private var nameFocused: Bool
@@ -252,14 +263,20 @@ struct EditCollectionSheet: View {
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section("Name") {
-                    TextField("Collection name", text: $name)
-                        .focused($nameFocused)
+            ZStack {
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
+                    .ignoresSafeArea()
+
+                Form {
+                    Section("Name") {
+                        TextField("Collection name", text: $name)
+                            .focused($nameFocused)
+                    }
+                    Section("Colour") {
+                        colorPicker
+                    }
                 }
-                Section("Colour") {
-                    colorPicker
-                }
+                .scrollContentBackground(.hidden)
             }
             .navigationTitle("Edit Collection")
             .navigationBarTitleDisplayMode(.inline)
@@ -305,7 +322,7 @@ struct EditCollectionSheet: View {
     }
 }
 
-// MARK: - CollectionColor → SwiftUI
+// MARK: - CollectionColor + SwiftUI
 
 extension CollectionColor {
     var swiftUIColor: Color {

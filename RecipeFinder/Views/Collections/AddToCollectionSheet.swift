@@ -6,19 +6,27 @@ struct AddToCollectionSheet: View {
     let recipe: RecipeModel
     @ObservedObject private var manager = CollectionManager.shared
     @Environment(\.dismiss) var dismiss
+    @Environment(\.colorScheme) private var colorScheme
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @State private var showNewCollection = false
 
     var body: some View {
         NavigationStack {
-            Group {
-                if manager.collections.isEmpty {
-                    emptyState
-                } else {
-                    collectionList
+            ZStack {
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
+                    .ignoresSafeArea()
+
+                Group {
+                    if manager.collections.isEmpty {
+                        emptyState
+                    } else {
+                        collectionList
+                    }
                 }
             }
             .navigationTitle("Add to Collection")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.hidden, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Done") { dismiss() }
@@ -76,6 +84,7 @@ struct AddToCollectionSheet: View {
             .buttonStyle(.plain)
         }
         .listStyle(.plain)
+        .scrollContentBackground(.hidden)
     }
 
     private var emptyState: some View {
