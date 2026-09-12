@@ -33,8 +33,24 @@ extension RecipeDetailView {
             timeInfoCard
             detailsInfoCard
             RecipeServingsCard(recipe: $recipe)
+            if !recipe.tags.isEmpty {
+                tagsCard
+            }
         }
         .padding(.horizontal, AppTheme.spacing20)
+    }
+
+    var tagsCard: some View {
+        GlassCard {
+            VStack(alignment: .leading, spacing: AppTheme.spacing8) {
+                Label("Tags", systemImage: "tag")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                TagRowView(tags: recipe.tags, font: .subheadline)
+            }
+            .padding()
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
     }
 
     var timeInfoCard: some View {

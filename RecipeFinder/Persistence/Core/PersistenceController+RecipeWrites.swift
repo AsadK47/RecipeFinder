@@ -19,7 +19,8 @@ extension PersistenceController {
         let notes: String
         let imageName: String
         let isFavorite: Bool
-        
+        let tags: [String]
+
         init(
             id: UUID? = nil,
             name: String,
@@ -34,7 +35,8 @@ extension PersistenceController {
             instructions: [String],
             notes: String,
             imageName: String,
-            isFavorite: Bool
+            isFavorite: Bool,
+            tags: [String] = []
         ) {
             self.id = id
             self.name = name
@@ -50,8 +52,9 @@ extension PersistenceController {
             self.notes = notes
             self.imageName = imageName
             self.isFavorite = isFavorite
+            self.tags = tags
         }
-        
+
         init(from recipe: RecipeModel) {
             self.id = recipe.id
             self.name = recipe.name
@@ -67,6 +70,7 @@ extension PersistenceController {
             self.notes = recipe.notes
             self.imageName = recipe.imageName ?? ""
             self.isFavorite = recipe.isFavorite
+            self.tags = recipe.tags
         }
     }
     
@@ -103,7 +107,8 @@ extension PersistenceController {
         recipe.setValue(parameters.notes, forKey: RecipeKey.notes)
         recipe.setValue(parameters.imageName, forKey: RecipeKey.imageName)
         recipe.setValue(parameters.isFavorite, forKey: RecipeKey.isFavorite)
-        
+        recipe.setValue(parameters.tags as NSArray, forKey: RecipeKey.tags)
+
         if let userId = userID() {
             recipe.setValue(userId, forKey: "userId")
         }
@@ -209,7 +214,8 @@ extension PersistenceController {
             managedRecipe.setValue(recipe.notes, forKey: RecipeKey.notes)
             managedRecipe.setValue(recipe.imageName, forKey: RecipeKey.imageName)
             managedRecipe.setValue(recipe.isFavorite, forKey: RecipeKey.isFavorite)
-            
+            managedRecipe.setValue(recipe.tags as NSArray, forKey: RecipeKey.tags)
+
             try context.save()
             persistenceLogger.debug("✅ Recipe '\(recipe.name)' updated successfully")
             return true

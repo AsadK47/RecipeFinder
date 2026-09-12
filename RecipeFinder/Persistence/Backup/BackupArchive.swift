@@ -21,6 +21,7 @@ struct BackupArchive: Codable {
     var kitchenInventory: [KitchenInventoryModel]
     var mealPlans: [MealPlanModel]
     var badges: [String: Badge]
+    var collections: [RecipeCollection]
 
     init(
         schemaVersion: Int = BackupArchive.currentSchemaVersion,
@@ -30,7 +31,8 @@ struct BackupArchive: Codable {
         kitchenItems: [KitchenItem] = [],
         kitchenInventory: [KitchenInventoryModel] = [],
         mealPlans: [MealPlanModel] = [],
-        badges: [String: Badge] = [:]
+        badges: [String: Badge] = [:],
+        collections: [RecipeCollection] = []
     ) {
         self.schemaVersion = schemaVersion
         self.exportedAt = exportedAt
@@ -40,6 +42,23 @@ struct BackupArchive: Codable {
         self.kitchenInventory = kitchenInventory
         self.mealPlans = mealPlans
         self.badges = badges
+        self.collections = collections
+    }
+
+    // `collections` was added after v1 archives were written, so old backups
+    // won't have the key. Decode it optionally so restoring a pre-collections
+    // backup still works rather than throwing `.corruptedData`.
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        schemaVersion = try c.decode(Int.self, forKey: .schemaVersion)
+        exportedAt = try c.decode(Date.self, forKey: .exportedAt)
+        recipes = try c.decode([RecipeModel].self, forKey: .recipes)
+        shoppingList = try c.decode([ShoppingListModel].self, forKey: .shoppingList)
+        kitchenItems = try c.decode([KitchenItem].self, forKey: .kitchenItems)
+        kitchenInventory = try c.decode([KitchenInventoryModel].self, forKey: .kitchenInventory)
+        mealPlans = try c.decode([MealPlanModel].self, forKey: .mealPlans)
+        badges = try c.decode([String: Badge].self, forKey: .badges)
+        collections = (try? c.decodeIfPresent([RecipeCollection].self, forKey: .collections)) ?? []
     }
 }
 

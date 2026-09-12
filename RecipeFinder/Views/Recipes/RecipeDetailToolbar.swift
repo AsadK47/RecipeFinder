@@ -8,6 +8,7 @@ struct RecipeDetailToolbar: View {
     let recipe: RecipeModel
     let onEdit: () -> Void
     let onToggleFavorite: () -> Void
+    let onAddToCollection: () -> Void
 
     var body: some View {
         HStack(spacing: AppTheme.spacing16) {
@@ -22,6 +23,9 @@ struct RecipeDetailToolbar: View {
                 Button(action: onEdit) {
                     Label("Edit Recipe", systemImage: "pencil")
                 }
+                Button(action: onAddToCollection) {
+                    Label("Add to Collection", systemImage: "rectangle.stack.badge.plus")
+                }
                 ShareLink(item: recipe.shareText, subject: Text(recipe.name)) {
                     Label("Share", systemImage: "square.and.arrow.up")
                 }
@@ -31,7 +35,7 @@ struct RecipeDetailToolbar: View {
                     .adaptiveForegroundColor()
             }
             .accessibilityLabel("More actions")
-            .accessibilityHint("Edit or share this recipe")
+            .accessibilityHint("Edit, add to collection, or share this recipe")
         }
     }
 }

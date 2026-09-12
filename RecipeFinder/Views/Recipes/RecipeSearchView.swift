@@ -3,7 +3,13 @@ import SwiftUI
 private let logger = AppLogger.logger(category: "RecipeSearchView")
 
 struct RecipeSearchView: View {
+    enum ViewMode: String, CaseIterable {
+        case all = "Recipes"
+        case collections = "Collections"
+    }
+
     @Binding var recipes: [RecipeModel]
+    @State private var viewMode: ViewMode = .all
     @State private var searchText = ""
     @State private var showFilters = false
     @State private var selectedCategories: Set<String> = []
@@ -205,7 +211,20 @@ struct RecipeSearchView: View {
     private var mainContentView: some View {
         ZStack(alignment: .top) {
             backgroundView
-            contentStack
+
+            VStack(spacing: 0) {
+                viewModeToggle
+
+                switch viewMode {
+                case .all:
+                    allRecipesContent
+                        .transition(.opacity)
+                case .collections:
+                    collectionsContent
+                        .transition(.opacity)
+                }
+            }
+            .animation(.easeInOut(duration: 0.2), value: viewMode)
 
             if let importToastMessage {
                 importToast(message: importToastMessage)
@@ -234,12 +253,28 @@ struct RecipeSearchView: View {
         .accessibilityElement(children: .combine)
     }
     
-    private var contentStack: some View {
+    private var viewModeToggle: some View {
+        Picker("View", selection: $viewMode) {
+            ForEach(ViewMode.allCases, id: \.self) { mode in
+                Text(mode.rawValue).tag(mode)
+            }
+        }
+        .pickerStyle(.segmented)
+        .padding(.horizontal, AppTheme.spacing16)
+        .padding(.top, AppTheme.spacing12)
+        .padding(.bottom, AppTheme.spacing4)
+    }
+
+    private var allRecipesContent: some View {
         VStack(spacing: 0) {
             searchHeaderGroup
             activeFiltersSection
             recipeContentArea
         }
+    }
+
+    private var collectionsContent: some View {
+        CollectionsInlineView(recipes: $recipes)
     }
     
     private var searchHeaderGroup: some View {

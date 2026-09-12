@@ -13,6 +13,7 @@ struct RecipeDetailView: View {
     @State var showAddedFeedback: String?
     @State private var confettiCounter = 0
     @State private var showEditSheet = false
+    @State private var showAddToCollection = false
     // Internal (not private) so the edit-completion handler in
     // RecipeDetailView+Content can set it on a failed save.
     @State var showSaveError = false
@@ -79,12 +80,16 @@ struct RecipeDetailView: View {
                 RecipeDetailToolbar(
                     recipe: recipe,
                     onEdit: { showEditSheet = true },
-                    onToggleFavorite: toggleFavorite
+                    onToggleFavorite: toggleFavorite,
+                    onAddToCollection: { showAddToCollection = true }
                 )
             }
         }
         .sheet(isPresented: $showEditSheet) {
             editRecipeSheet
+        }
+        .sheet(isPresented: $showAddToCollection) {
+            AddToCollectionSheet(recipe: recipe)
         }
         .sheet(isPresented: $showTimerSheet) {
             CookTimerView()

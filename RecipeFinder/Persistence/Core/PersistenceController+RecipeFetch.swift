@@ -88,7 +88,8 @@ extension PersistenceController {
         let notes = object.value(forKey: RecipeKey.notes) as? String ?? ""
         let imageName = object.value(forKey: RecipeKey.imageName) as? String
         let isFavorite = object.value(forKey: RecipeKey.isFavorite) as? Bool ?? false
-        
+        let tags = (object.value(forKey: RecipeKey.tags) as? [String]) ?? []
+
         return RecipeModel(
             id: id,
             name: name,
@@ -103,7 +104,8 @@ extension PersistenceController {
             instructions: instructions,
             notes: notes,
             imageName: imageName,
-            isFavorite: isFavorite
+            isFavorite: isFavorite,
+            tags: tags
         )
     }
 }

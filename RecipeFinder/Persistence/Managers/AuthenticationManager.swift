@@ -58,6 +58,7 @@ final class AuthenticationManager: NSObject, ObservableObject {
         KitchenInventoryManager.shared.reloadForCurrentUser()
         MealPlanningManager.shared.reloadForCurrentUser()
         BadgeManager.shared.reloadForCurrentUser()
+        CollectionManager.shared.reloadForCurrentUser()
         AccountManager.shared.loadProfile()
     }
 }

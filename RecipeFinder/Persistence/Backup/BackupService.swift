@@ -25,19 +25,22 @@ struct BackupService {
     private let kitchen: KitchenInventoryManager
     private let mealPlans: MealPlanningManager
     private let badges: BadgeManager
+    private let collections: CollectionManager
 
     init(
         recipeStore: RecipeBackupStore = PersistenceController.shared,
         shopping: ShoppingListManager = .shared,
         kitchen: KitchenInventoryManager = .shared,
         mealPlans: MealPlanningManager = .shared,
-        badges: BadgeManager = .shared
+        badges: BadgeManager = .shared,
+        collections: CollectionManager = .shared
     ) {
         self.recipeStore = recipeStore
         self.shopping = shopping
         self.kitchen = kitchen
         self.mealPlans = mealPlans
         self.badges = badges
+        self.collections = collections
     }
 
     /// A complete snapshot of the current user's library.
@@ -48,7 +51,8 @@ struct BackupService {
             kitchenItems: kitchen.items,
             kitchenInventory: kitchen.inventoryItems,
             mealPlans: mealPlans.mealPlans,
-            badges: badges.unlockedBadges
+            badges: badges.unlockedBadges,
+            collections: collections.collections
         )
     }
 
@@ -59,6 +63,7 @@ struct BackupService {
         kitchen.merge(items: archive.kitchenItems, inventory: archive.kitchenInventory)
         mealPlans.merge(archive.mealPlans)
         badges.merge(archive.badges)
+        collections.merge(archive.collections)
     }
 
     // MARK: - File-facing convenience

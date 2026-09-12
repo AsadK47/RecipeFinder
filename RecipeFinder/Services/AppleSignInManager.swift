@@ -40,6 +40,7 @@ final class AppleSignInManager: NSObject, ObservableObject {
                     
                     ShoppingListManager.shared.reloadForCurrentUser()
                     BadgeManager.shared.reloadForCurrentUser()
+                    CollectionManager.shared.reloadForCurrentUser()
                 case .revoked, .notFound:
                     self.signOut()
                 default:
@@ -75,8 +76,9 @@ final class AppleSignInManager: NSObject, ObservableObject {
         Task { @MainActor in
             ShoppingListManager.shared.reloadForCurrentUser()
             BadgeManager.shared.reloadForCurrentUser()
+            CollectionManager.shared.reloadForCurrentUser()
         }
-        
+
         HapticManager.shared.success()
     }
     
@@ -109,7 +111,8 @@ final class AppleSignInManager: NSObject, ObservableObject {
         Task { @MainActor in
             ShoppingListManager.shared.reloadForCurrentUser()
             BadgeManager.shared.reloadForCurrentUser()
-            
+            CollectionManager.shared.reloadForCurrentUser()
+
             if isNewUser {
                 logger.debug("🆕 New user detected - populating sample recipes")
                 PersistenceController.shared.populateDatabase()
