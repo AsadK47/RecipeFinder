@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Lets the user add or remove recipes from a collection in one place.
-/// Shows all recipes; those already in the collection are checked.
+/// Same grid layout as `RecipeSelectionSheet`; selected recipes show a checkmark overlay.
 struct RecipePickerForCollectionSheet: View {
     let collection: RecipeCollection
     let recipes: [RecipeModel]
@@ -26,10 +26,9 @@ struct RecipePickerForCollectionSheet: View {
                 AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
 
-                VStack(spacing: 0) {
+                VStack(spacing: AppTheme.spacing12) {
                     SearchBar(text: $searchText, placeholder: "Search Recipes...")
-                        .padding(.horizontal, AppTheme.spacing16)
-                        .padding(.vertical, AppTheme.spacing12)
+                        .padding(.horizontal)
 
                     if filteredRecipes.isEmpty {
                         Spacer()
@@ -43,34 +42,42 @@ struct RecipePickerForCollectionSheet: View {
                         }
                         Spacer()
                     } else {
-                        List(filteredRecipes) { recipe in
-                            let isMember = currentCollection.contains(recipe.id)
-                            Button {
-                                manager.toggle(recipeID: recipe.id, in: currentCollection)
-                                HapticManager.shared.selection()
-                            } label: {
-                                HStack(spacing: AppTheme.spacing12) {
-                                    VStack(alignment: .leading, spacing: AppTheme.spacing2) {
-                                        Text(recipe.name)
-                                            .font(.body)
-                                            .foregroundColor(.primary)
-                                        Text(recipe.category)
-                                            .font(.caption)
-                                            .adaptiveSecondaryForeground()
+                        ScrollView {
+                            LazyVGrid(columns: [
+                                GridItem(.flexible()),
+                                GridItem(.flexible())
+                            ], spacing: AppTheme.spacing16) {
+                                ForEach(filteredRecipes) { recipe in
+                                    let isMember = currentCollection.contains(recipe.id)
+                                    Button {
+                                        manager.toggle(recipeID: recipe.id, in: currentCollection)
+                                        HapticManager.shared.selection()
+                                    } label: {
+                                        CompactRecipeCard(recipe: recipe)
+                                            .overlay(alignment: .topTrailing) {
+                                                if isMember {
+                                                    Image(systemName: "checkmark.circle.fill")
+                                                        .font(.title3)
+                                                        .foregroundStyle(.white, collection.colorName.swiftUIColor)
+                                                        .padding(AppTheme.spacing6)
+                                                }
+                                            }
+                                            .overlay {
+                                                if isMember {
+                                                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                                                        .strokeBorder(collection.colorName.swiftUIColor, lineWidth: 2)
+                                                }
+                                            }
                                     }
-                                    Spacer()
-                                    Image(systemName: isMember ? "checkmark.circle.fill" : "circle")
-                                        .foregroundColor(isMember ? AppTheme.accentColor(for: selectedTheme) : .secondary.opacity(0.4))
-                                        .font(.title3)
+                                    .buttonStyle(.plain)
                                 }
-                                .contentShape(Rectangle())
                             }
-                            .buttonStyle(.plain)
+                            .padding(.horizontal)
+                            .padding(.bottom, AppTheme.spacing100)
                         }
-                        .listStyle(.plain)
-                        .scrollContentBackground(.hidden)
                     }
                 }
+                .padding(.top, AppTheme.spacing8)
             }
             .navigationTitle("Add Recipes")
             .navigationBarTitleDisplayMode(.inline)

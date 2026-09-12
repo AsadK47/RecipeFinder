@@ -1,15 +1,12 @@
 import SwiftUI
 
-/// The screen title with its overflow menu (filters / import / wizard) plus the
-/// search field. Extracted from `RecipeSearchView`; the parent owns the focus
-/// state and the sheet toggles, which arrive here as a focus binding and closures.
+/// The screen title with a filter button plus the search field.
+/// Import and manual creation live on the dedicated Import tab — not here.
 struct RecipeSearchHeader: View {
     @Binding var searchText: String
     var isSearchFocused: FocusState<Bool>.Binding
     let activeFilterCount: Int
     let onToggleFilters: () -> Void
-    let onImport: () -> Void
-    let onWizard: () -> Void
 
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
@@ -23,12 +20,25 @@ struct RecipeSearchHeader: View {
 
     private var headerSection: some View {
         ScreenTitleHeader("RecipeFinder") {
-            Menu {
-                menuContent
+            Button {
+                HapticManager.shared.light()
+                onToggleFilters()
             } label: {
-                CircleButton(icon: "line.3.horizontal") {}
+                CircleButton(icon: "line.3.horizontal.decrease") {}
                     .allowsHitTesting(false)
+                    .overlay(alignment: .topTrailing) {
+                        if activeFilterCount > 0 {
+                            Text("\(activeFilterCount)")
+                                .font(.system(size: 10, weight: .bold))
+                                .foregroundStyle(.white)
+                                .padding(3)
+                                .background(.orange, in: Circle())
+                                .offset(x: 4, y: -4)
+                        }
+                    }
             }
+            .buttonStyle(.plain)
+            .accessibilityLabel(activeFilterCount > 0 ? "Filters, \(activeFilterCount) active" : "Filters")
         }
     }
 
@@ -98,39 +108,4 @@ struct RecipeSearchHeader: View {
         .animation(.spring(response: 0.3), value: isSearchFocused.wrappedValue)
     }
 
-    private var menuContent: some View {
-        Group {
-            Button(
-                action: {
-                    HapticManager.shared.light()
-                    onToggleFilters()
-                },
-                label: {
-                    Label(activeFilterCount > 0 ? "Filters (\(activeFilterCount))" : "Filters", systemImage: "line.3.horizontal.decrease.circle")
-                }
-            )
-            
-            Divider()
-            
-            Button(
-                action: {
-                    HapticManager.shared.selection()
-                    onImport()
-                },
-                label: {
-                    Label("Import Recipe", systemImage: "plus.circle")
-                }
-            )
-            
-            Button(
-                action: {
-                    HapticManager.shared.selection()
-                    onWizard()
-                },
-                label: {
-                    Label("Recipe Wizard", systemImage: "wand.and.stars")
-                }
-            )
-        }
-    }
 }

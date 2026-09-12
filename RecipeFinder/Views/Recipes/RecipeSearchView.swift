@@ -282,9 +282,7 @@ struct RecipeSearchView: View {
             searchText: $searchText,
             isSearchFocused: $isSearchFocused,
             activeFilterCount: activeFilterCount,
-            onToggleFilters: { showFilters.toggle() },
-            onImport: { showImportSheet = true },
-            onWizard: { showRecipeWizard = true }
+            onToggleFilters: { showFilters.toggle() }
         )
     }
     
