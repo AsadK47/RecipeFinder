@@ -10,6 +10,7 @@ import Foundation
 /// Each test uses a throwaway `UserDefaults(suiteName:)` so cases stay isolated,
 /// and every account id is UUID-unique so the shared `NotificationCenter` (which
 /// the production code posts to) can't cross-talk with parallel tests.
+@MainActor
 @Suite struct UserScopedStorageTests {
 
     private func freshDefaults() -> UserDefaults {
