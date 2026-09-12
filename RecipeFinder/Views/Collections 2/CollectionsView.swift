@@ -174,20 +174,28 @@ struct CollectionCard: View {
 struct NewCollectionSheet: View {
     let manager: CollectionManager
     @Environment(\.dismiss) var dismiss
+    @Environment(\.colorScheme) private var colorScheme
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @State private var name = ""
     @State private var selectedColor: CollectionColor = .blue
     @FocusState private var nameFocused: Bool
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section("Name") {
-                    TextField("e.g. Weeknight Dinners", text: $name)
-                        .focused($nameFocused)
+            ZStack {
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
+                    .ignoresSafeArea()
+
+                Form {
+                    Section("Name") {
+                        TextField("e.g. Weeknight Dinners", text: $name)
+                            .focused($nameFocused)
+                    }
+                    Section("Colour") {
+                        colorPicker
+                    }
                 }
-                Section("Colour") {
-                    colorPicker
-                }
+                .scrollContentBackground(.hidden)
             }
             .navigationTitle("New Collection")
             .navigationBarTitleDisplayMode(.inline)
@@ -239,6 +247,8 @@ struct EditCollectionSheet: View {
     let collection: RecipeCollection
     let manager: CollectionManager
     @Environment(\.dismiss) var dismiss
+    @Environment(\.colorScheme) private var colorScheme
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @State private var name: String
     @State private var selectedColor: CollectionColor
     @FocusState private var nameFocused: Bool
@@ -252,14 +262,20 @@ struct EditCollectionSheet: View {
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section("Name") {
-                    TextField("Collection name", text: $name)
-                        .focused($nameFocused)
+            ZStack {
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
+                    .ignoresSafeArea()
+
+                Form {
+                    Section("Name") {
+                        TextField("Collection name", text: $name)
+                            .focused($nameFocused)
+                    }
+                    Section("Colour") {
+                        colorPicker
+                    }
                 }
-                Section("Colour") {
-                    colorPicker
-                }
+                .scrollContentBackground(.hidden)
             }
             .navigationTitle("Edit Collection")
             .navigationBarTitleDisplayMode(.inline)

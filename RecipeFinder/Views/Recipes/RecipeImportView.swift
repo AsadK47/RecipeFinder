@@ -49,8 +49,11 @@ struct RecipeImportView: View {
     }
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack(alignment: .top) {
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
+                    .ignoresSafeArea()
+
                 VStack(spacing: AppTheme.spacing32) {
                     VStack(spacing: AppTheme.spacing12) {
                         Image(systemName: "arrow.down.doc.fill")
@@ -238,6 +241,7 @@ struct RecipeImportView: View {
             
             }
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.hidden, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") {
@@ -282,7 +286,7 @@ struct RecipeImportView: View {
                     Text(title)
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                        .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                        .adaptiveForegroundColor()
                     
                     Text(subtitle)
                         .font(.caption2)

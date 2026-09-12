@@ -7,6 +7,7 @@ import PhotosUI
 /// wizard to review and edit before saving.
 struct PhotoImportSheet: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
 
     @State private var selectedItem: PhotosPickerItem?
@@ -29,45 +30,52 @@ struct PhotoImportSheet: View {
         // Capture the actor-isolated theme as a Sendable value so the picker/button
         // label closures (inferred @Sendable under Swift 6) don't touch @MainActor state.
         let theme = selectedTheme
+        let scheme = colorScheme
         return NavigationStack {
-            VStack(spacing: AppTheme.spacing16) {
-                Text("Point at a cookbook page, screenshot, or handwritten recipe. We read the text on your device — nothing leaves your phone.")
-                    .font(.subheadline)
-                    .adaptiveSecondaryForeground()
-                    .multilineTextAlignment(.center)
+            ZStack {
+                AppTheme.backgroundGradient(for: theme, colorScheme: scheme)
+                    .ignoresSafeArea()
 
-                PhotosPicker(selection: $selectedItem, matching: .images) {
-                    photoSourceLabel(icon: "photo.on.rectangle", title: "Choose from Library", theme: theme)
-                }
-                .disabled(isProcessing)
+                VStack(spacing: AppTheme.spacing16) {
+                    Text("Point at a cookbook page, screenshot, or handwritten recipe. We read the text on your device — nothing leaves your phone.")
+                        .font(.subheadline)
+                        .adaptiveSecondaryForeground()
+                        .multilineTextAlignment(.center)
 
-                if cameraAvailable {
-                    Button { showCamera = true } label: {
-                        photoSourceLabel(icon: "camera", title: "Take a Photo", theme: theme)
+                    PhotosPicker(selection: $selectedItem, matching: .images) {
+                        photoSourceLabel(icon: "photo.on.rectangle", title: "Choose from Library", theme: theme)
                     }
                     .disabled(isProcessing)
-                }
 
-                if isProcessing {
-                    ProgressView("Reading recipe…")
-                        .padding(.top, AppTheme.spacing8)
-                }
+                    if cameraAvailable {
+                        Button { showCamera = true } label: {
+                            photoSourceLabel(icon: "camera", title: "Take a Photo", theme: theme)
+                        }
+                        .disabled(isProcessing)
+                    }
 
-                if let errorMessage {
-                    Text(errorMessage)
-                        .font(.footnote)
-                        .foregroundColor(.orange)
-                        .multilineTextAlignment(.center)
-                }
+                    if isProcessing {
+                        ProgressView("Reading recipe…")
+                            .padding(.top, AppTheme.spacing8)
+                    }
 
-                Spacer()
-            }
-            .padding(AppTheme.spacing20)
-            .navigationTitle("Scan a Photo")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    if let errorMessage {
+                        Text(errorMessage)
+                            .font(.footnote)
+                            .foregroundColor(.orange)
+                            .multilineTextAlignment(.center)
+                    }
+
+                    Spacer()
+                }
+                .padding(AppTheme.spacing20)
+                .navigationTitle("Scan a Photo")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbarBackground(.hidden, for: .navigationBar)
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel") { dismiss() }
+                    }
                 }
             }
         }

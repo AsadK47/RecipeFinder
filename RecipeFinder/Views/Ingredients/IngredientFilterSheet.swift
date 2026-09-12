@@ -9,7 +9,7 @@ struct IngredientFilterSheet: View {
     @Environment(\.appTheme) var appTheme
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
                 AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()

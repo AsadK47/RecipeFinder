@@ -5,6 +5,7 @@ import SwiftUI
 /// heuristic parser, and present the wizard to review and edit before saving.
 struct PasteTextImportSheet: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
 
     @State private var text = ""
@@ -21,50 +22,56 @@ struct PasteTextImportSheet: View {
 
     var body: some View {
         NavigationStack {
-            VStack(alignment: .leading, spacing: AppTheme.spacing16) {
-                Text("Paste a recipe from anywhere — a caption, notes, or a message. We'll pull out the ingredients and steps for you to review.")
-                    .font(.subheadline)
-                    .adaptiveSecondaryForeground()
+            ZStack {
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
+                    .ignoresSafeArea()
 
-                TextEditor(text: $text)
-                    .focused($focused)
-                    .frame(minHeight: 220)
-                    .padding(AppTheme.spacing8)
-                    .background(Color(.systemGray6), in: RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
-                    .overlay(alignment: .topLeading) {
-                        if text.isEmpty {
-                            Text("Paste recipe text here…")
-                                .adaptiveSecondaryForeground()
-                                .padding(AppTheme.spacing16)
-                                .allowsHitTesting(false)
+                VStack(alignment: .leading, spacing: AppTheme.spacing16) {
+                    Text("Paste a recipe from anywhere — a caption, notes, or a message. We'll pull out the ingredients and steps for you to review.")
+                        .font(.subheadline)
+                        .adaptiveSecondaryForeground()
+
+                    TextEditor(text: $text)
+                        .focused($focused)
+                        .frame(minHeight: 220)
+                        .padding(AppTheme.spacing8)
+                        .background(Color(.systemGray6), in: RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
+                        .overlay(alignment: .topLeading) {
+                            if text.isEmpty {
+                                Text("Paste recipe text here…")
+                                    .adaptiveSecondaryForeground()
+                                    .padding(AppTheme.spacing16)
+                                    .allowsHitTesting(false)
+                            }
+                        }
+
+                    if let errorMessage {
+                        Text(errorMessage)
+                            .font(.footnote)
+                            .foregroundColor(.orange)
+                    }
+
+                    Spacer()
+                }
+                .padding(AppTheme.spacing20)
+                .navigationTitle("Paste Text")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbarBackground(.hidden, for: .navigationBar)
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel") { dismiss() }
+                    }
+                    ToolbarItem(placement: .confirmationAction) {
+                        if isProcessing {
+                            ProgressView()
+                        } else {
+                            Button("Import") { run() }
+                                .disabled(trimmed.isEmpty)
                         }
                     }
-
-                if let errorMessage {
-                    Text(errorMessage)
-                        .font(.footnote)
-                        .foregroundColor(.orange)
                 }
-
-                Spacer()
+                .onAppear { focused = true }
             }
-            .padding(AppTheme.spacing20)
-            .navigationTitle("Paste Text")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    if isProcessing {
-                        ProgressView()
-                    } else {
-                        Button("Import") { run() }
-                            .disabled(trimmed.isEmpty)
-                    }
-                }
-            }
-            .onAppear { focused = true }
         }
         .sheet(isPresented: $showReview) {
             if let prefill {
