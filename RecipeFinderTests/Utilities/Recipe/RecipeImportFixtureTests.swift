@@ -110,6 +110,6 @@ import Testing
         #expect(r.prepTime == 15)
         #expect(r.cookTime == 45)
         #expect(r.servings == 1)
-        #expect(r.confidence > 0.9) // recovered onto the JSON-LD path
+        #expect(r.confidence > 0.9) // JSON-LD path wins (JSONSerialization tolerates trailing commas)
     }
 }
