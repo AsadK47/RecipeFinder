@@ -33,7 +33,7 @@ struct EditableStepsStepView: View {
                             HStack {
                                 Text("Step \(number(of: step))")
                                     .font(.caption)
-                                    .foregroundColor(.secondary)
+                                    .adaptiveSecondaryForeground()
 
                                 Spacer()
 

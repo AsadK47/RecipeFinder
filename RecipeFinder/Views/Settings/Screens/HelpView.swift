@@ -197,7 +197,7 @@ struct HelpItem: View {
 
                 Text(description)
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .adaptiveSecondaryForeground()
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
@@ -238,7 +238,7 @@ struct FAQItem: View {
             if isExpanded {
                 Text(answer)
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .adaptiveSecondaryForeground()
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.leading, AppTheme.spacing42)
                     .transition(.opacity.combined(with: .move(edge: .top)))

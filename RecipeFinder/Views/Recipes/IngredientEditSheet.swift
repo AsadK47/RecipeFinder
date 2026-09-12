@@ -59,7 +59,7 @@ struct IngredientEditSheet: View {
                     if !editingUnit.isEmpty {
                         Text("Group: \(groupLabel(for: editingUnit))")
                             .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .adaptiveSecondaryForeground()
                     }
                 }
             }

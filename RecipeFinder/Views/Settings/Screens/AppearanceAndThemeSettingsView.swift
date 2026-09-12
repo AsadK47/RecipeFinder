@@ -16,7 +16,7 @@ struct AppearanceAndThemeSettingsView: View {
                     VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                         Text("Override the system dark/light mode setting.")
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .adaptiveSecondaryForeground()
 
                         Picker("Appearance", selection: $colorSchemePreference) {
                             ForEach(Array(appearanceModes.enumerated()), id: \.offset) { index, label in
@@ -39,7 +39,7 @@ struct AppearanceAndThemeSettingsView: View {
                     VStack(alignment: .leading, spacing: AppTheme.spacing16) {
                         Text("Choose your favorite accent color for the app.")
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .adaptiveSecondaryForeground()
                             .fixedSize(horizontal: false, vertical: true)
 
                         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: AppTheme.spacing12) {

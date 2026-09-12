@@ -34,7 +34,7 @@ struct DisplaySettingsView: View {
 
                     Text("When enabled, your screen will stay on while you're viewing recipes or using timers. This is helpful when cooking and you need to reference instructions without constantly touching your device.")
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .adaptiveSecondaryForeground()
                         .fixedSize(horizontal: false, vertical: true)
 
                     Divider()
@@ -47,7 +47,7 @@ struct DisplaySettingsView: View {
 
                         Text("Note: Keeping the screen on may use more battery")
                             .font(.caption2)
-                            .foregroundColor(.secondary)
+                            .adaptiveSecondaryForeground()
                     }
                 }
                 .padding(AppTheme.spacing20)

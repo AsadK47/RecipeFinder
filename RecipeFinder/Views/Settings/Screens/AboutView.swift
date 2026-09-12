@@ -36,7 +36,7 @@ struct AboutView: View {
                 VStack(spacing: AppTheme.spacing16) {
                     HStack {
                         Text("Version")
-                            .foregroundColor(.secondary)
+                            .adaptiveSecondaryForeground()
                         Spacer()
                         Text(appVersion)
                             .fontWeight(.medium)
@@ -47,7 +47,7 @@ struct AboutView: View {
 
                     HStack {
                         Text("Build")
-                            .foregroundColor(.secondary)
+                            .adaptiveSecondaryForeground()
                         Spacer()
                         Text(buildNumber)
                             .fontWeight(.medium)
@@ -65,18 +65,18 @@ struct AboutView: View {
                         VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                             Text("© 2025 RecipeFinder")
                                 .font(.subheadline)
-                                .foregroundColor(.secondary)
+                                .adaptiveSecondaryForeground()
 
                             Text("All rights reserved")
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .adaptiveSecondaryForeground()
                         }
 
                         Divider()
 
                         Text("For Terms of Service and Privacy Policy, please visit the Legal Information section in Settings.")
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .adaptiveSecondaryForeground()
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     .padding(AppTheme.spacing20)

@@ -28,7 +28,6 @@ struct RecipeSearchView: View {
     @State private var recipeToDelete: RecipeModel?
     @State private var showDeleteAlert: Bool = false
     @State private var dontAskAgainDelete: Bool = false
-    @State private var showNewCollection = false
     @State private var cachedFilteredRecipes: [RecipeModel] = []
     @State private var lastFilterHash: Int = 0
     @State private var hideSampleRecipes = false
@@ -105,7 +104,7 @@ struct RecipeSearchView: View {
             mainContentView
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbarBackground(.hidden, for: .navigationBar)
-                .toolbar { keyboardToolbar; collectionsToolbar }
+                .toolbar { keyboardToolbar }
                 .modifier(SheetPresentationModifier(
                     showFilters: $showFilters,
                     showImportSheet: $showImportSheet,
@@ -275,7 +274,7 @@ struct RecipeSearchView: View {
     }
 
     private var collectionsContent: some View {
-        CollectionsInlineView(recipes: $recipes, showNewCollection: $showNewCollection)
+        CollectionsInlineView(recipes: $recipes)
     }
     
     private var searchHeaderGroup: some View {
@@ -339,25 +338,6 @@ struct RecipeSearchView: View {
     }
     
     @ToolbarContentBuilder
-    private var collectionsToolbar: some ToolbarContent {
-        // Always occupy the trailing slot so the toolbar layout never changes
-        // between Recipes and Collections mode — that change was causing a
-        // navbar height reflow / visible jump on every mode switch.
-        ToolbarItem(placement: .navigationBarTrailing) {
-            Button {
-                HapticManager.shared.light()
-                showNewCollection = true
-            } label: {
-                Image(systemName: "plus")
-                    .adaptiveForegroundColor()
-                    .opacity(viewMode == .collections ? 1 : 0)
-            }
-            .disabled(viewMode != .collections)
-            .accessibilityLabel("New Collection")
-        }
-    }
-
-    @ToolbarContentBuilder
     private var keyboardToolbar: some ToolbarContent {
         ToolbarItemGroup(placement: .keyboard) {
             Spacer()
@@ -365,7 +345,7 @@ struct RecipeSearchView: View {
                 isSearchFocused = false
             } label: {
                 Image(systemName: "keyboard.chevron.compact.down")
-                    .foregroundColor(.gray)
+                    .adaptiveSecondaryForeground()
             }
         }
     }

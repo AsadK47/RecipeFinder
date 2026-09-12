@@ -103,7 +103,7 @@ struct PrivacyInfoRow: View {
 
                 Text(description)
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .adaptiveSecondaryForeground()
                     .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: .infinity, alignment: .leading)

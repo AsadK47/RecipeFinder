@@ -107,7 +107,7 @@ struct CollectionsView: View {
 
             Text("Create collections to organise your recipes \u{2014} \u{201c}Weeknight Dinners\u{201d}, \u{201c}Party Food\u{201d}, whatever works for you.")
                 .font(.subheadline)
-                .foregroundColor(.secondary)
+                .adaptiveSecondaryForeground()
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, AppTheme.spacing32)
 
@@ -157,7 +157,7 @@ struct CollectionCard: View {
 
             Text(recipeCount == 1 ? "1 recipe" : "\(recipeCount) recipes")
                 .font(.caption)
-                .foregroundColor(.secondary)
+                .adaptiveSecondaryForeground()
         }
         .padding(AppTheme.spacing16)
         .frame(maxWidth: .infinity, minHeight: 120, alignment: .leading)

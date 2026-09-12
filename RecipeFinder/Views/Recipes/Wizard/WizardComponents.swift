@@ -79,7 +79,7 @@ struct WizardSummaryRow: View {
                 .frame(width: AppTheme.iconSize20)
 
             Text(label)
-                .foregroundColor(.secondary)
+                .adaptiveSecondaryForeground()
 
             Spacer()
 

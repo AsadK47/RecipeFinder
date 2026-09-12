@@ -20,7 +20,7 @@ struct CompanyComplianceView: View {
                             
                             Text("Companies Act 2006")
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .adaptiveSecondaryForeground()
                             
                             Divider()
                             

@@ -72,6 +72,14 @@ extension AppTheme {
             : Color.black.opacity(cardHighEmphasisLightOpacity)
     }
     
+    /// Secondary text: pure black in light mode for legibility, system
+    /// secondaryLabel in dark mode where contrast is already adequate.
+    /// Use `.adaptiveSecondaryForeground()` on a view rather than setting this
+    /// colour directly on a modifier.
+    static let adaptiveSecondary = Color(UIColor { traits in
+        traits.userInterfaceStyle == .dark ? .secondaryLabel : .label
+    })
+
     static func accentColor(for theme: ThemeType) -> Color {
         switch theme {
         case .teal:     return tealBrightLight

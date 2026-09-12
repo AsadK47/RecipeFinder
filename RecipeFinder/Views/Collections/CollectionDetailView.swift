@@ -79,7 +79,7 @@ struct CollectionDetailView: View {
                     Text(recipe.difficulty)
                 }
                 .font(.caption)
-                .foregroundColor(.secondary)
+                .adaptiveSecondaryForeground()
 
                 if !recipe.tags.isEmpty {
                     TagRowView(tags: recipe.tags)
@@ -110,7 +110,7 @@ struct CollectionDetailView: View {
 
             Text("Add recipes to "\(currentCollection.name)" from any recipe's detail view.")
                 .font(.subheadline)
-                .foregroundColor(.secondary)
+                .adaptiveSecondaryForeground()
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, AppTheme.spacing32)
         }

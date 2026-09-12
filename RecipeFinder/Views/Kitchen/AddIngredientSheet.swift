@@ -126,13 +126,13 @@ struct AddIngredientSheet: View {
                     
                     Text("\(FoodsList.getFoods(forCategory: category).count) items")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .adaptiveSecondaryForeground()
                 }
                 
                 Spacer()
                 
                 Image(systemName: "chevron.right")
-                    .foregroundColor(.gray)
+                    .adaptiveSecondaryForeground()
                     .font(.caption)
             }
             .padding(AppTheme.spacing16)

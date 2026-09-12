@@ -55,10 +55,10 @@ struct RecipeNameStepView: View {
                                                 VStack(spacing: AppTheme.spacing8) {
                                                     Image(systemName: "photo.badge.plus")
                                                         .font(.system(size: AppTheme.fontSize28))
-                                                        .foregroundColor(.secondary)
+                                                        .adaptiveSecondaryForeground()
                                                     Text("Add photo")
                                                         .font(.subheadline)
-                                                        .foregroundColor(.secondary)
+                                                        .adaptiveSecondaryForeground()
                                                 }
                                             }
                                     }

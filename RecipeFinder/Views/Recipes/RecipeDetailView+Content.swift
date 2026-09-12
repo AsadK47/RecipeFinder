@@ -45,7 +45,7 @@ extension RecipeDetailView {
             VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                 Label("Tags", systemImage: "tag")
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .adaptiveSecondaryForeground()
                 TagRowView(tags: recipe.tags, font: .subheadline)
             }
             .padding()

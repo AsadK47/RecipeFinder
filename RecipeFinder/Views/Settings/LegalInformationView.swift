@@ -162,11 +162,11 @@ struct LegalInformationView: View {
 
                                 Label("Director", systemImage: "briefcase.fill")
                                     .font(.caption)
-                                    .foregroundColor(.secondary)
+                                    .adaptiveSecondaryForeground()
 
                                 Label("Appointed: 5 November 2025", systemImage: "calendar")
                                     .font(.caption)
-                                    .foregroundColor(.secondary)
+                                    .adaptiveSecondaryForeground()
                             }
                             .padding(AppTheme.spacing12)
                             .frame(maxWidth: .infinity, alignment: .leading)

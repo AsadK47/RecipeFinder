@@ -33,10 +33,10 @@ struct RecipeSelectionSheet: View {
                         VStack(spacing: AppTheme.spacing12) {
                             Image(systemName: "book.closed")
                                 .font(.system(size: AppTheme.fontSize40))
-                                .foregroundColor(.secondary)
+                                .adaptiveSecondaryForeground()
                             Text("No recipes found")
                                 .font(.headline)
-                                .foregroundColor(.secondary)
+                                .adaptiveSecondaryForeground()
                         }
                         Spacer()
                     } else {

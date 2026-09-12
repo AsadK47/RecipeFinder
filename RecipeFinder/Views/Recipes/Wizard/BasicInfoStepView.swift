@@ -99,7 +99,7 @@ struct BasicInfoStepView: View {
                                             .frame(minWidth: AppTheme.iconSize32)
                                         Text(servings == 1 ? "serving" : "servings")
                                             .font(.body)
-                                            .foregroundColor(.secondary)
+                                            .adaptiveSecondaryForeground()
                                     }
                                 }
                             )

@@ -58,7 +58,7 @@ struct SettingsRow: View {
                 if let subtitle {
                     Text(subtitle)
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .adaptiveSecondaryForeground()
                 }
             }
             
@@ -67,7 +67,7 @@ struct SettingsRow: View {
             if let value {
                 Text(value)
                     .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .adaptiveSecondaryForeground()
                     .lineLimit(1)
             }
             
@@ -75,11 +75,11 @@ struct SettingsRow: View {
             case .chevron:
                 Image(systemName: "chevron.right")
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .adaptiveSecondaryForeground()
             case .externalLink:
                 Image(systemName: "arrow.up.right")
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .adaptiveSecondaryForeground()
             case .none:
                 EmptyView()
             }
@@ -115,7 +115,7 @@ struct SettingsToggleRow: View {
                     if let subtitle {
                         Text(subtitle)
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .adaptiveSecondaryForeground()
                     }
                 }
             }
@@ -155,7 +155,7 @@ struct SettingsChoiceRow: View {
                     if let subtitle {
                         Text(subtitle)
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .adaptiveSecondaryForeground()
                     }
                 }
                 

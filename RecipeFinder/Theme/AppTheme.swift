@@ -41,6 +41,10 @@ extension View {
     nonisolated func adaptiveForegroundColor(opacity: Double = 1.0) -> some View {
         modifier(AdaptiveForegroundColorModifier(opacity: opacity))
     }
+
+    nonisolated func adaptiveSecondaryForeground() -> some View {
+        foregroundStyle(AppTheme.adaptiveSecondary)
+    }
 }
 
 private struct AdaptiveForegroundColorModifier: ViewModifier {

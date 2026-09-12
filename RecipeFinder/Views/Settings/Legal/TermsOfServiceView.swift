@@ -26,7 +26,7 @@ struct TermsOfServiceView: View {
                             
                             Text("Last Updated: \(currentDateFormatted)")
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .adaptiveSecondaryForeground()
                             
                             Divider()
                             

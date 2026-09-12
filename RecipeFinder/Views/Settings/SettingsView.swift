@@ -39,13 +39,13 @@ struct SettingsTabView: View {
                                     
                                     Text("Profile & Settings")
                                         .font(.caption)
-                                        .foregroundColor(.secondary)
+                                        .adaptiveSecondaryForeground()
                                 }
                                 
                                 Spacer()
                                 
                                 Image(systemName: "chevron.right")
-                                    .foregroundColor(.gray)
+                                    .adaptiveSecondaryForeground()
                                     .font(.caption)
                             }
                             .padding(AppTheme.spacing20)

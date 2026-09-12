@@ -102,7 +102,7 @@ struct CollectionsInlineView: View {
 
             Text("Create collections to organise your recipes — "Weeknight Dinners", "Party Food", whatever works for you.")
                 .font(.subheadline)
-                .foregroundColor(.secondary)
+                .adaptiveSecondaryForeground()
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, AppTheme.spacing32)
 

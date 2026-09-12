@@ -62,7 +62,7 @@ struct AddToCollectionSheet: View {
                         let count = collection.recipeIDs.count
                         Text(count == 1 ? "1 recipe" : "\(count) recipes")
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .adaptiveSecondaryForeground()
                     }
 
                     Spacer()

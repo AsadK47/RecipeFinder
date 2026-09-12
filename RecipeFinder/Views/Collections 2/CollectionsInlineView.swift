@@ -5,8 +5,8 @@ import SwiftUI
 /// links push onto the parent stack.
 struct CollectionsInlineView: View {
     @Binding var recipes: [RecipeModel]
-    @Binding var showNewCollection: Bool
     @ObservedObject private var manager = CollectionManager.shared
+    @State private var showNewCollection = false
     @State private var collectionToEdit: RecipeCollection?
     @State private var collectionToDelete: RecipeCollection?
 
@@ -69,6 +69,23 @@ struct CollectionsInlineView: View {
                     }
                     .buttonStyle(.plain)
                 }
+
+                Button {
+                    HapticManager.shared.light()
+                    showNewCollection = true
+                } label: {
+                    VStack(spacing: AppTheme.spacing8) {
+                        Image(systemName: "plus")
+                            .font(.title2.weight(.semibold))
+                        Text("New Collection")
+                            .font(.caption.weight(.medium))
+                    }
+                    .frame(maxWidth: .infinity, minHeight: 80)
+                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
+                }
+                .foregroundStyle(.primary.opacity(0.5))
+                .buttonStyle(.plain)
+                .accessibilityLabel("New Collection")
             }
             .padding(.horizontal, AppTheme.spacing16)
             .padding(.top, AppTheme.spacing8)
@@ -90,7 +107,7 @@ struct CollectionsInlineView: View {
 
             Text("Create collections to organise your recipes \u{2014} \u{201c}Weeknight Dinners\u{201d}, \u{201c}Party Food\u{201d}, whatever works for you.")
                 .font(.subheadline)
-                .foregroundColor(.secondary)
+                .adaptiveSecondaryForeground()
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, AppTheme.spacing32)
 

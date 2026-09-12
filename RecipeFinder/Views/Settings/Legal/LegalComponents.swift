@@ -47,7 +47,7 @@ struct LegalBulletPoint: View {
     var body: some View {
         HStack(alignment: .top, spacing: AppTheme.spacing8) {
             Text("•")
-                .foregroundColor(.secondary)
+                .adaptiveSecondaryForeground()
             Text(text)
                 .font(.body)
                 .foregroundColor(colorScheme == .dark ? AppTheme.textColor(for: colorScheme, opacity: AppTheme.cardLightOpacity) : .black.opacity(AppTheme.highEmphasisOpacity))
@@ -66,7 +66,7 @@ struct CompanyDetailRow: View {
         HStack {
             Text(label + ":")
                 .font(.subheadline)
-                .foregroundColor(.secondary)
+                .adaptiveSecondaryForeground()
             Spacer()
             Text(value)
                 .font(.subheadline)
@@ -88,7 +88,7 @@ struct CompanyInfoRow: View {
         HStack(alignment: .top) {
             Text(label)
                 .font(.subheadline)
-                .foregroundColor(.secondary)
+                .adaptiveSecondaryForeground()
                 .frame(width: AppTheme.width140, alignment: .leading)
             
             Text(value)
@@ -122,14 +122,14 @@ struct LegalDocRow: View {
                     .adaptiveForegroundColor()
                 Text(subtitle)
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .adaptiveSecondaryForeground()
             }
             
             Spacer()
             
             Image(systemName: "chevron.right")
                 .font(.caption)
-                .foregroundColor(.gray)
+                .adaptiveSecondaryForeground()
         }
         .padding(AppTheme.spacing24)
     }
@@ -163,7 +163,7 @@ struct ComplianceBadge: View {
                 
                 Text(description)
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .adaptiveSecondaryForeground()
                     .fixedSize(horizontal: false, vertical: true)
             }
         }

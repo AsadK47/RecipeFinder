@@ -12,7 +12,7 @@ struct TagRowView: View {
                 ForEach(tags.prefix(maxVisible), id: \.self) { tag in
                     Text(tag)
                         .font(font)
-                        .foregroundColor(.secondary)
+                        .adaptiveSecondaryForeground()
                         .padding(.horizontal, AppTheme.spacing8)
                         .padding(.vertical, AppTheme.spacing2)
                         .background(Color(.systemGray5), in: Capsule())
@@ -20,7 +20,7 @@ struct TagRowView: View {
                 if tags.count > maxVisible {
                     Text("+\(tags.count - maxVisible)")
                         .font(font)
-                        .foregroundColor(.secondary)
+                        .adaptiveSecondaryForeground()
                 }
             }
         }

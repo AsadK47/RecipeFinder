@@ -28,11 +28,11 @@ struct BadgeCard: View {
             if badge.isUnlocked, let date = badge.dateEarned {
                 Text(date.formatted(date: .abbreviated, time: .omitted))
                     .font(.system(size: AppTheme.fontSize11))
-                    .foregroundColor(.secondary)
+                    .adaptiveSecondaryForeground()
             } else {
                 Text("Locked")
                     .font(.system(size: AppTheme.fontSize11))
-                    .foregroundColor(.gray)
+                    .adaptiveSecondaryForeground()
             }
         }
         .frame(maxWidth: .infinity)

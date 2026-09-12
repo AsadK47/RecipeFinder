@@ -29,7 +29,7 @@ struct IngredientsStepView: View {
                                 VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                                     Text("Ingredient")
                                         .font(.caption2)
-                                        .foregroundColor(.secondary)
+                                        .adaptiveSecondaryForeground()
                                     TextField("e.g. Chicken breast", text: $item.name)
                                         .textFieldStyle(.roundedBorder)
                                         .focused($focusedIngredientID, equals: item.id)
@@ -55,7 +55,7 @@ struct IngredientsStepView: View {
                                     VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                                         Text("Suggestions")
                                             .font(.caption2)
-                                            .foregroundColor(.secondary)
+                                            .adaptiveSecondaryForeground()
 
                                         VStack(spacing: AppTheme.spacing6) {
                                             ForEach(suggestions, id: \.id) { suggestion in
@@ -72,7 +72,7 @@ struct IngredientsStepView: View {
 
                                                             Text("\(suggestion.category) · \(suggestion.source)")
                                                                 .font(.caption2)
-                                                                .foregroundColor(.secondary)
+                                                                .adaptiveSecondaryForeground()
                                                                 .lineLimit(1)
                                                         }
 
@@ -101,7 +101,7 @@ struct IngredientsStepView: View {
                                 VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                                     Text("Amount")
                                         .font(.caption2)
-                                        .foregroundColor(.secondary)
+                                        .adaptiveSecondaryForeground()
                                     TextField("0", text: $item.quantity)
                                         .keyboardType(.decimalPad)
                                         .textFieldStyle(.roundedBorder)
@@ -111,7 +111,7 @@ struct IngredientsStepView: View {
                                 VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                                     Text("Unit")
                                         .font(.caption2)
-                                        .foregroundColor(.secondary)
+                                        .adaptiveSecondaryForeground()
                                     Picker("", selection: $item.unit) {
                                         Text("none").tag("")
                                         ForEach(cookingUnitGroups, id: \.group) { group in

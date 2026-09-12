@@ -63,7 +63,7 @@ struct RecipeImportView: View {
                     
                     Text("Paste a recipe URL and let AI parse it automatically")
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .adaptiveSecondaryForeground()
                         .multilineTextAlignment(.center)
                         .padding(.horizontal)
                 }
@@ -73,11 +73,11 @@ struct RecipeImportView: View {
                 VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                     Text("Recipe URL")
                         .font(.headline)
-                        .foregroundColor(.secondary)
+                        .adaptiveSecondaryForeground()
                     
                     HStack {
                         Image(systemName: "link")
-                            .foregroundColor(.secondary)
+                            .adaptiveSecondaryForeground()
                         
                         TextField("https://example.com/recipe...", text: $urlText)
                             .textFieldStyle(.plain)
@@ -89,12 +89,12 @@ struct RecipeImportView: View {
                         if urlText.isEmpty {
                             Button(action: pasteFromClipboard) {
                                 Image(systemName: "doc.on.clipboard")
-                                    .foregroundColor(.secondary)
+                                    .adaptiveSecondaryForeground()
                             }
                         } else {
                             Button(action: { urlText = "" }) {
                                 Image(systemName: "xmark.circle.fill")
-                                    .foregroundColor(.secondary)
+                                    .adaptiveSecondaryForeground()
                             }
                         }
                     }
@@ -133,7 +133,7 @@ struct RecipeImportView: View {
                             
                             Text("\(Int(loadingStage.progress * 100))% complete")
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .adaptiveSecondaryForeground()
                         }
                         .animation(.easeInOut, value: loadingStage)
                     }
@@ -170,7 +170,7 @@ struct RecipeImportView: View {
                         
                         Text(error)
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .adaptiveSecondaryForeground()
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
@@ -232,7 +232,7 @@ struct RecipeImportView: View {
                             .font(.caption)
                     }
                 }
-                .foregroundColor(.secondary)
+                .adaptiveSecondaryForeground()
                 .padding(.bottom, AppTheme.spacing40)
             }
             
@@ -286,7 +286,7 @@ struct RecipeImportView: View {
                     
                     Text(subtitle)
                         .font(.caption2)
-                        .foregroundColor(.secondary)
+                        .adaptiveSecondaryForeground()
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, AppTheme.spacing16)

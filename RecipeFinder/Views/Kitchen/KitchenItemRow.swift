@@ -109,7 +109,7 @@ struct KitchenItemRow: View {
                 } label: {
                     Image(systemName: "ellipsis")
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .adaptiveSecondaryForeground()
                         .frame(width: 18, height: 36)
                         .contentShape(Rectangle())
                 }

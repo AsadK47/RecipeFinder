@@ -25,7 +25,7 @@ struct AccountBadgesSection: View {
                         .adaptiveForegroundColor()
                     Spacer()
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                        .foregroundColor(.secondary)
+                        .adaptiveSecondaryForeground()
                         .font(.caption)
                 }
                 .padding(.horizontal, AppTheme.cardHorizontalPadding)

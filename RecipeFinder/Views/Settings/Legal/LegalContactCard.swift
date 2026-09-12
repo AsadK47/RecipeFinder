@@ -35,7 +35,7 @@ struct LegalContactCard: View {
                         VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                             Text("Company Email")
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .adaptiveSecondaryForeground()
                             Text("recipefinderlimited@icloud.com")
                                 .font(.subheadline)
                                 .adaptiveForegroundColor()
@@ -44,7 +44,7 @@ struct LegalContactCard: View {
                         Spacer()
                         
                         Image(systemName: "arrow.up.right.square")
-                            .foregroundColor(.secondary)
+                            .adaptiveSecondaryForeground()
                             .font(.caption)
                     }
                     .padding(AppTheme.spacing12)
@@ -66,7 +66,7 @@ struct LegalContactCard: View {
                         VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                             Text("Website")
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .adaptiveSecondaryForeground()
                             Text("recipefinder.uk")
                                 .font(.subheadline)
                                 .adaptiveForegroundColor()
@@ -75,7 +75,7 @@ struct LegalContactCard: View {
                         Spacer()
                         
                         Image(systemName: "arrow.up.right.square")
-                            .foregroundColor(.secondary)
+                            .adaptiveSecondaryForeground()
                             .font(.caption)
                     }
                     .padding(AppTheme.spacing12)

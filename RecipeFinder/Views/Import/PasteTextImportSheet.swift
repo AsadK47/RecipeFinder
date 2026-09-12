@@ -24,7 +24,7 @@ struct PasteTextImportSheet: View {
             VStack(alignment: .leading, spacing: AppTheme.spacing16) {
                 Text("Paste a recipe from anywhere — a caption, notes, or a message. We'll pull out the ingredients and steps for you to review.")
                     .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .adaptiveSecondaryForeground()
 
                 TextEditor(text: $text)
                     .focused($focused)
@@ -34,7 +34,7 @@ struct PasteTextImportSheet: View {
                     .overlay(alignment: .topLeading) {
                         if text.isEmpty {
                             Text("Paste recipe text here…")
-                                .foregroundColor(.secondary)
+                                .adaptiveSecondaryForeground()
                                 .padding(AppTheme.spacing16)
                                 .allowsHitTesting(false)
                         }

@@ -40,7 +40,7 @@ struct NotesStepView: View {
                                 .foregroundColor(.blue)
                             Text("Pre-filled notes from recipe")
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .adaptiveSecondaryForeground()
                             Spacer()
                         }
                         .padding(.bottom, AppTheme.spacing8)
@@ -88,7 +88,7 @@ struct NotesStepView: View {
                     VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                         Text("Quick Add:")
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .adaptiveSecondaryForeground()
 
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: AppTheme.spacing8) {

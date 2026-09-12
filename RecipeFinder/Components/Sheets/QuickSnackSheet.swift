@@ -75,7 +75,7 @@ struct QuickSnackSheet: View {
                             selectedEmoji = "🍿"
                         }) {
                             Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(.secondary)
+                                .adaptiveSecondaryForeground()
                         }
                     }
                 }
@@ -113,7 +113,7 @@ struct QuickSnackSheet: View {
                                         if let cal = snack.calories {
                                             Text("\(cal) cal")
                                                 .font(.caption)
-                                                .foregroundColor(.secondary)
+                                                .adaptiveSecondaryForeground()
                                         }
                                     }
 
@@ -149,7 +149,7 @@ struct QuickSnackSheet: View {
                                 Spacer()
                                 Text("Custom")
                                     .font(.caption)
-                                    .foregroundColor(.secondary)
+                                    .adaptiveSecondaryForeground()
                             }
                             .padding(.horizontal, AppTheme.spacing20)
                             .padding(.vertical, AppTheme.spacing12)

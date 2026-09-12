@@ -34,7 +34,7 @@ struct IngredientRowView: View {
                         if !convertedIngredient.unit.isEmpty {
                             Text(convertedIngredient.unit.lowercased())
                                 .font(.caption2)
-                                .foregroundStyle(.secondary)
+                                .adaptiveSecondaryForeground()
                         }
                     }
                     .frame(minWidth: 52)
@@ -61,7 +61,7 @@ struct IngredientRowView: View {
                 if let prep = ingredient.preparationNotes {
                     Text(prep)
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .adaptiveSecondaryForeground()
                         .fixedSize(horizontal: false, vertical: true)
                 }
             }

@@ -66,7 +66,7 @@ struct KitchenShoppingView: View {
                         Spacer()
                         Button { isSearchFocused = false } label: {
                             Image(systemName: "keyboard.chevron.compact.down")
-                                .foregroundColor(.gray)
+                                .adaptiveSecondaryForeground()
                         }
                     }
                 }

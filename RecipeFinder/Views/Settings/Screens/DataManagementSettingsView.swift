@@ -37,13 +37,13 @@ struct DataManagementSettingsView: View {
 
                                 Text("Use this option if something goes wrong")
                                     .font(.caption)
-                                    .foregroundColor(.secondary)
+                                    .adaptiveSecondaryForeground()
                             }
                         }
 
                         Text("This will reset the app to its initial state, clearing all your data and restoring default settings with sample recipes. Use this if you encounter issues or want a fresh start.")
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .adaptiveSecondaryForeground()
                             .fixedSize(horizontal: false, vertical: true)
 
                         Button(action: {
@@ -164,7 +164,7 @@ struct DataManagementSettingsView: View {
 
                         Text(importStatus.detail)
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .adaptiveSecondaryForeground()
                             .fixedSize(horizontal: false, vertical: true)
                     }
 
@@ -191,13 +191,13 @@ struct DataManagementSettingsView: View {
 
                             Text("Save everything to a file, or restore from one")
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .adaptiveSecondaryForeground()
                         }
                     }
 
                     Text("Exports your recipes, notes, shopping list, kitchen, meal plans, badges and tips to a single file. Importing merges a backup into your current library without overwriting anything.")
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .adaptiveSecondaryForeground()
                         .fixedSize(horizontal: false, vertical: true)
 
                     Button(action: exportBackup) {

@@ -72,8 +72,8 @@ struct BadgeDetailView: View {
                 } else {
                     VStack(spacing: AppTheme.spacing8) {
                         HStack(spacing: AppTheme.spacing8) {
-                            Image(systemName: "lock.fill").foregroundColor(.gray)
-                            Text("Locked").fontWeight(.semibold).foregroundColor(.gray)
+                            Image(systemName: "lock.fill").adaptiveSecondaryForeground()
+                            Text("Locked").fontWeight(.semibold).adaptiveSecondaryForeground()
                         }
                         .font(.headline)
 

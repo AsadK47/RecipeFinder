@@ -8,32 +8,7 @@ struct OnboardingView: View {
 
     @State private var currentPage = 0
 
-    private let slides = [
-        OnboardingSlide(
-            icon: "square.and.arrow.down.on.square",
-            title: "Import Any Recipe",
-            description: "Paste a URL from any cooking site and RecipeFinder pulls the ingredients and steps automatically.",
-            accentColor: .blue
-        ),
-        OnboardingSlide(
-            icon: "calendar.badge.plus",
-            title: "Plan Your Week",
-            description: "Assign recipes to breakfast, lunch, or dinner slots so you always know what's cooking.",
-            accentColor: .orange
-        ),
-        OnboardingSlide(
-            icon: "cart.badge.plus",
-            title: "Shop Smarter",
-            description: "Add ingredients straight from your recipes to a shopping list — grouped and ready to check off.",
-            accentColor: .green
-        ),
-        OnboardingSlide(
-            icon: "rectangle.stack",
-            title: "Stay Organised",
-            description: "Tag recipes and group them into collections like \"Weeknight Dinners\" or \"Party Food\".",
-            accentColor: .purple
-        )
-    ]
+    private let slides = OnboardingContent.slides
 
     var body: some View {
         ZStack {

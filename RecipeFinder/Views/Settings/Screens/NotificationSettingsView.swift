@@ -102,7 +102,7 @@ struct NotificationSettingsView: View {
 
                     Text("Enable notifications in Settings to receive reminders and alerts for timers, meal plans, and shopping lists.")
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .adaptiveSecondaryForeground()
                         .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
                 }
