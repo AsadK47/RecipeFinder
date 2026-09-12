@@ -25,7 +25,6 @@ struct RecipeFinderApp: App {
 
         configureAppearance()
         initializeDatabase()
-        requestNotificationPermissions()
 
         // Runs after any -resetState wipe above so the known debug account is
         // always available to sign in with.
@@ -48,14 +47,6 @@ struct RecipeFinderApp: App {
         // (EXC_BREAKPOINT in RecipeFinderApp.body closure #1).
         WindowGroup {
             AppRootView()
-        }
-    }
-    
-    private func requestNotificationPermissions() {
-        Task {
-            NotificationManager.shared.requestPermission { granted in
-                logger.info("\(granted ? "✅" : "⚠️") User \(granted ? "granted" : "denied") notification permissions")
-            }
         }
     }
     

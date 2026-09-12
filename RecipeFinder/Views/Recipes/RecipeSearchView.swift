@@ -340,17 +340,20 @@ struct RecipeSearchView: View {
     
     @ToolbarContentBuilder
     private var collectionsToolbar: some ToolbarContent {
-        if viewMode == .collections {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    HapticManager.shared.light()
-                    showNewCollection = true
-                } label: {
-                    Image(systemName: "plus")
-                        .adaptiveForegroundColor()
-                }
-                .accessibilityLabel("New Collection")
+        // Always occupy the trailing slot so the toolbar layout never changes
+        // between Recipes and Collections mode — that change was causing a
+        // navbar height reflow / visible jump on every mode switch.
+        ToolbarItem(placement: .navigationBarTrailing) {
+            Button {
+                HapticManager.shared.light()
+                showNewCollection = true
+            } label: {
+                Image(systemName: "plus")
+                    .adaptiveForegroundColor()
+                    .opacity(viewMode == .collections ? 1 : 0)
             }
+            .disabled(viewMode != .collections)
+            .accessibilityLabel("New Collection")
         }
     }
 

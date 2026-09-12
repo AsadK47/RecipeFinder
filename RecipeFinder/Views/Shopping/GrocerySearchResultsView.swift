@@ -54,7 +54,7 @@ struct GrocerySearchResultsView: View {
             Spacer()
         }
         .font(.caption)
-        .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
+        .foregroundStyle(.primary.opacity(0.75))
         .padding(.horizontal, AppTheme.spacing20)
     }
 
@@ -125,14 +125,21 @@ struct GrocerySearchResultsView: View {
     }
 
     private func destinationButton(system: String, isAdded: Bool, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
+        let tint: Color = isAdded ? .green : AppTheme.accentColor(for: selectedTheme)
+        let label = system.contains("cart") ? "Add to shopping list" : "Add to kitchen"
+        return Button(action: action) {
             Image(systemName: isAdded ? "checkmark.circle.fill" : system)
-                .font(.title3)
-                .foregroundStyle(isAdded ? .green : AppTheme.accentColor(for: selectedTheme))
-                .frame(width: AppTheme.buttonHeight, height: 36)
+                .font(.body.weight(.semibold))
+                .foregroundStyle(tint)
+                .padding(8)
+                .background(
+                    RoundedRectangle(cornerRadius: 9)
+                        .fill(tint.opacity(0.15))
+                )
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .disabled(isAdded)
+        .accessibilityLabel(isAdded ? "Already added" : label)
     }
 }

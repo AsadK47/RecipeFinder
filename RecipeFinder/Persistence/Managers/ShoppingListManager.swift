@@ -53,6 +53,15 @@ final class ShoppingListManager: ObservableObject {
         saveItems(BackupMerge.merged(existing: items, incoming: incoming))
     }
 
+    /// Adds all ingredients from a recipe to the list, merging duplicates by name.
+    /// Fractional quantities are rounded to the nearest whole number (minimum 1).
+    func addIngredients(from recipe: RecipeModel) {
+        for ingredient in recipe.ingredients {
+            let qty = max(1, Int(round(ingredient.baseQuantity)))
+            addItem(name: ingredient.name, quantity: qty, category: nil)
+        }
+    }
+
     func addItem(name: String, quantity: Int = 1, category: String? = nil) {
         var items = getItems()
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)

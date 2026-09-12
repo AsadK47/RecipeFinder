@@ -11,6 +11,7 @@ final class RecipeTimerManager: ObservableObject {
 
     private var endDate: Date?
     private var ticker: Timer?
+    private let defaults: UserDefaults
 
     private enum Keys {
         static let duration = "recipeTimer.duration"
@@ -20,7 +21,14 @@ final class RecipeTimerManager: ObservableObject {
         static let endDate = "recipeTimer.endDate"
     }
 
-    private init() {
+    /// Production entry point — uses `UserDefaults.standard`.
+    private convenience init() {
+        self.init(defaults: .standard)
+    }
+
+    /// Designated init; injectable `defaults` lets tests run against isolated storage.
+    init(defaults: UserDefaults) {
+        self.defaults = defaults
         restoreState()
         startTickerIfNeeded()
     }
@@ -36,6 +44,14 @@ final class RecipeTimerManager: ObservableObject {
     func start(hours: Int, minutes: Int, seconds: Int) {
         let total = max(0, (hours * 3600) + (minutes * 60) + seconds)
         guard total > 0 else { return }
+
+        // Request permission here — the user has just started a timer so the
+        // purpose is obvious. The system only shows the dialog once; subsequent
+        // calls are no-ops once the user has responded.
+        let notificationsEnabled = (defaults.object(forKey: "timerNotifications") as? Bool) ?? true
+        if notificationsEnabled {
+            NotificationManager.shared.requestPermission { _ in }
+        }
 
         durationSeconds = total
         remainingSeconds = total
@@ -115,11 +131,15 @@ final class RecipeTimerManager: ObservableObject {
 
         persistState()
         HapticManager.shared.celebrate()
-        NotificationManager.shared.sendImmediateNotification(
-            title: "⏰ Timer Complete!",
-            body: "Your recipe timer has finished.",
-            identifier: "recipe-timer-complete"
-        )
+        // Respect the user's notification preference before firing.
+        let notificationsEnabled = (defaults.object(forKey: "timerNotifications") as? Bool) ?? true
+        if notificationsEnabled {
+            NotificationManager.shared.sendImmediateNotification(
+                title: "⏰ Timer Complete!",
+                body: "Your recipe timer has finished.",
+                identifier: "recipe-timer-complete"
+            )
+        }
     }
 
     private func startTickerIfNeeded() {
@@ -137,7 +157,6 @@ final class RecipeTimerManager: ObservableObject {
     }
 
     private func persistState() {
-        let defaults = UserDefaults.standard
         defaults.set(durationSeconds, forKey: Keys.duration)
         defaults.set(remainingSeconds, forKey: Keys.remaining)
         defaults.set(isRunning, forKey: Keys.isRunning)
@@ -146,8 +165,6 @@ final class RecipeTimerManager: ObservableObject {
     }
 
     private func restoreState() {
-        let defaults = UserDefaults.standard
-
         durationSeconds = defaults.integer(forKey: Keys.duration)
         remainingSeconds = defaults.integer(forKey: Keys.remaining)
         isRunning = defaults.bool(forKey: Keys.isRunning)
