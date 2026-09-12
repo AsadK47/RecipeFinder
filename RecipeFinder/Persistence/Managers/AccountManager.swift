@@ -24,25 +24,11 @@ final class AccountManager: ObservableObject {
     private let profileImageKey = "accountProfileImage"
     
     var fullName: String {
-        if firstName.isEmpty && lastName.isEmpty {
-            return "Recipe Chef"
-        }
-        var name = firstName
-        if !lastName.isEmpty {
-            name += " \(lastName)"
-        }
-        return name.trimmingCharacters(in: .whitespaces)
+        AccountNameFormatter.displayName(firstName: firstName, lastName: lastName)
     }
-    
+
     var initials: String {
-        var initialsString = ""
-        if let first = firstName.first {
-            initialsString += String(first)
-        }
-        if let last = lastName.first {
-            initialsString += String(last)
-        }
-        return initialsString.isEmpty ? "RC" : initialsString.uppercased()
+        AccountNameFormatter.initials(firstName: firstName, lastName: lastName)
     }
     
     private init() {

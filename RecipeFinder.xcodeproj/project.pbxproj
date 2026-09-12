@@ -177,6 +177,8 @@
 		F3B837C1305562790003AEF8 /* SessionExpiryPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837C0305562790003AEF8 /* SessionExpiryPolicy.swift */; };
 		F3B837C33055628E0003AEF8 /* SessionExpiryPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837C23055628E0003AEF8 /* SessionExpiryPolicyTests.swift */; };
 		F3B837C5305562980003AEF8 /* AuthenticationUserModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837C4305562980003AEF8 /* AuthenticationUserModelTests.swift */; };
+		F3B837C73055CD440003AEF8 /* AccountNameFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837C63055CD440003AEF8 /* AccountNameFormatter.swift */; };
+		F3B837C93055CD5A0003AEF8 /* AccountNameFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837C83055CD5A0003AEF8 /* AccountNameFormatterTests.swift */; };
 		F3E9D10630434D33008BF231 /* CalendarDayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10530434D33008BF231 /* CalendarDayView.swift */; };
 		F3E9D10830434D43008BF231 /* MealTimeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10730434D43008BF231 /* MealTimeCard.swift */; };
 		F3E9D10A30434D58008BF231 /* MealTimeSelectorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10930434D58008BF231 /* MealTimeSelectorSheet.swift */; };
@@ -542,6 +544,8 @@
 		F3B837C0305562790003AEF8 /* SessionExpiryPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionExpiryPolicy.swift; sourceTree = "<group>"; };
 		F3B837C23055628E0003AEF8 /* SessionExpiryPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionExpiryPolicyTests.swift; sourceTree = "<group>"; };
 		F3B837C4305562980003AEF8 /* AuthenticationUserModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationUserModelTests.swift; sourceTree = "<group>"; };
+		F3B837C63055CD440003AEF8 /* AccountNameFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountNameFormatter.swift; sourceTree = "<group>"; };
+		F3B837C83055CD5A0003AEF8 /* AccountNameFormatterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountNameFormatterTests.swift; sourceTree = "<group>"; };
 		F3E9D10530434D33008BF231 /* CalendarDayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDayView.swift; sourceTree = "<group>"; };
 		F3E9D10730434D43008BF231 /* MealTimeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealTimeCard.swift; sourceTree = "<group>"; };
 		F3E9D10930434D58008BF231 /* MealTimeSelectorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealTimeSelectorSheet.swift; sourceTree = "<group>"; };
@@ -977,6 +981,7 @@
 				F3B837BE305554C80003AEF8 /* UserScopedStorageTests.swift */,
 				F3B837C23055628E0003AEF8 /* SessionExpiryPolicyTests.swift */,
 				F3B837C4305562980003AEF8 /* AuthenticationUserModelTests.swift */,
+				F3B837C83055CD5A0003AEF8 /* AccountNameFormatterTests.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -1170,6 +1175,7 @@
 				F3E9D1933045163A008BF231 /* AuthenticationManager+UserStore.swift */,
 				F3E9D1953045164E008BF231 /* AuthenticationManager+AppleSignIn.swift */,
 				F3B837C0305562790003AEF8 /* SessionExpiryPolicy.swift */,
+				F3B837C63055CD440003AEF8 /* AccountNameFormatter.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -1901,6 +1907,7 @@
 				F3E9D16830444DA5008BF231 /* ShoppingCategoryHeader.swift in Sources */,
 				F3E9D22730477D84008BF231 /* RecipeImportPipeline.swift in Sources */,
 				9E87D3302EB696A400FFA1D1 /* ThemeManager.swift in Sources */,
+				F3B837C73055CD440003AEF8 /* AccountNameFormatter.swift in Sources */,
 				F3E9D29E3051574E008BF231 /* KeychainStore.swift in Sources */,
 				9E4DC7522E9C12A900E17DDF /* IngredientSearchView.swift in Sources */,
 				F3E9D1413043A90E008BF231 /* IngredientRow.swift in Sources */,
@@ -2074,6 +2081,7 @@
 				F3E9D270304D4D24008BF231 /* CategoryClassifierGroupingTests.swift in Sources */,
 				F3E9D2A63052A02E008BF231 /* RecipeSaveResultTests.swift in Sources */,
 				F3E9D21F3047105C008BF231 /* ManagerMergeTests.swift in Sources */,
+				F3B837C93055CD5A0003AEF8 /* AccountNameFormatterTests.swift in Sources */,
 				F3E9D289304E056A008BF231 /* CoreDataStorePersistenceTests.swift in Sources */,
 				9E6C2C532FB478290083A08B /* AccountSheetTests.swift in Sources */,
 				9E6C2C4D2FB477ED0083A08B /* CardViewTests.swift in Sources */,
