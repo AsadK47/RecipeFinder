@@ -64,7 +64,7 @@ struct GrocerySearchResultsView: View {
                 HStack(spacing: AppTheme.spacing12) {
                     Image(systemName: "sparkle.magnifyingglass")
                         .font(.title3)
-                        .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                        .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
                     Text("Add \"\(trimmed)\"")
                         .font(.body).fontWeight(.medium)
                         .adaptiveForegroundColor()
@@ -83,7 +83,7 @@ struct GrocerySearchResultsView: View {
             leading: {
                 HStack(spacing: AppTheme.spacing12) {
                     Image(systemName: CategoryClassifier.categoryIcon(for: category))
-                        .foregroundStyle(CategoryClassifier.categoryColor(for: category))
+                        .foregroundStyle(AppTheme.adaptiveSubtitle(for: colorScheme))
                         .font(.body)
                     Text(ingredient)
                         .font(.body)
