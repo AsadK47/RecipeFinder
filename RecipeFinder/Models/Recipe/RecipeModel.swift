@@ -83,6 +83,10 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         return Double(currentServings) / Double(baseServings)
     }
     
+    var nutritionInfo: NutritionInfo? {
+        NutritionCalculator.calculate(ingredients: ingredients, servings: currentServings)
+    }
+
     mutating func updateServings(to servings: Int) {
         currentServings = servings
     }
