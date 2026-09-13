@@ -125,7 +125,9 @@ struct GrocerySearchResultsView: View {
     }
 
     private func destinationButton(system: String, isAdded: Bool, action: @escaping () -> Void) -> some View {
-        let tint: Color = isAdded ? .green : AppTheme.accentColor(for: selectedTheme)
+        // Use adaptive neutral for idle so the icon is readable on any theme background.
+        // The theme accent is the same hue as the background gradient and disappears.
+        let tint: Color = isAdded ? .green : AppTheme.adaptiveSubtitle(for: colorScheme)
         let label = system.contains("cart") ? "Add to shopping list" : "Add to kitchen"
         return Button(action: action) {
             Image(systemName: isAdded ? "checkmark.circle.fill" : system)
@@ -134,7 +136,7 @@ struct GrocerySearchResultsView: View {
                 .padding(8)
                 .background(
                     RoundedRectangle(cornerRadius: 9)
-                        .fill(tint.opacity(0.15))
+                        .fill(tint.opacity(0.12))
                 )
                 .contentShape(Rectangle())
         }
