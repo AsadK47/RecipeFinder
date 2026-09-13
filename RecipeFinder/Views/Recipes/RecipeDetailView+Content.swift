@@ -33,7 +33,6 @@ extension RecipeDetailView {
             timeInfoCard
             detailsInfoCard
             RecipeServingsCard(recipe: $recipe)
-            nutritionSection
             if !recipe.tags.isEmpty {
                 tagsCard
             }
@@ -41,66 +40,94 @@ extension RecipeDetailView {
         .padding(.horizontal, AppTheme.spacing20)
     }
 
-    @ViewBuilder
     var nutritionSection: some View {
-        if let nutrition = recipe.nutritionInfo {
-            GlassCard {
+        RecipeChecklistSection(
+            title: "Nutrition",
+            icon: "chart.pie",
+            isExpanded: expandedSections.contains("Nutrition"),
+            colorScheme: colorScheme,
+            onToggle: { toggleSection("Nutrition") }
+        ) {
+            if let n = recipe.nutritionInfo {
                 VStack(alignment: .leading, spacing: AppTheme.spacing12) {
-                    Label("Nutrition per serving", systemImage: "chart.pie")
+                    Text("Per serving")
                         .font(.caption)
                         .adaptiveSecondaryForeground()
 
-                    HStack(spacing: 0) {
-                        nutritionCell(label: "Calories", value: "\(nutrition.calories)", unit: "kcal")
-                        Divider()
-                        nutritionCell(label: "Protein", value: formatMacro(nutrition.protein), unit: "g")
-                        Divider()
-                        nutritionCell(label: "Carbs", value: formatMacro(nutrition.carbs), unit: "g")
-                        Divider()
-                        nutritionCell(label: "Fat", value: formatMacro(nutrition.fat), unit: "g")
-                    }
-                    .frame(height: 60)
+                    nutritionLabelRow(label: "Calories", value: "\(n.calories)", unit: "kcal", hero: true)
 
-                    if nutrition.fibre > 0 {
-                        HStack(spacing: AppTheme.spacing4) {
-                            Image(systemName: "leaf")
-                                .font(.caption2)
-                                .adaptiveSecondaryForeground()
-                            Text("Fibre: \(formatMacro(nutrition.fibre))g per serving")
-                                .font(.caption2)
-                                .adaptiveSecondaryForeground()
-                        }
-                    }
+                    Divider()
 
-                    if nutrition.coverage < 0.8 {
-                        Text("Estimated — \(Int(nutrition.coverage * 100))% of ingredients matched")
+                    nutritionLabelRow(label: "Fat", value: formatMacro(n.fat), unit: "g")
+                    nutritionLabelSubrow(label: "of which saturates", value: formatMacro(n.saturates), unit: "g")
+
+                    Divider()
+
+                    nutritionLabelRow(label: "Carbohydrate", value: formatMacro(n.carbs), unit: "g")
+                    nutritionLabelSubrow(label: "of which sugars", value: formatMacro(n.sugars), unit: "g")
+
+                    Divider()
+
+                    nutritionLabelRow(label: "Fibre", value: formatMacro(n.fibre), unit: "g")
+
+                    Divider()
+
+                    nutritionLabelRow(label: "Protein", value: formatMacro(n.protein), unit: "g")
+
+                    Divider()
+
+                    nutritionLabelRow(label: "Salt", value: formatSalt(n.salt), unit: "g")
+
+                    if n.coverage < 0.8 {
+                        Text("Estimated — \(Int(n.coverage * 100))% of ingredients matched")
                             .font(.caption2)
                             .adaptiveSecondaryForeground()
+                            .padding(.top, AppTheme.spacing4)
                     }
                 }
-                .padding()
-                .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
     }
 
-    private func nutritionCell(label: String, value: String, unit: String) -> some View {
-        VStack(spacing: AppTheme.spacing4) {
+    private func nutritionLabelRow(label: String, value: String, unit: String, hero: Bool = false) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: AppTheme.spacing4) {
+            Text(label)
+                .font(hero ? .headline : .subheadline)
+                .adaptiveForegroundColor()
+            Spacer()
             Text(value)
-                .font(.title3.weight(.semibold))
+                .font(hero ? .headline.weight(.bold) : .subheadline.weight(.semibold))
                 .adaptiveForegroundColor()
             Text(unit)
-                .font(.caption2)
+                .font(hero ? .subheadline : .caption)
                 .adaptiveSecondaryForeground()
-            Text(label)
-                .font(.caption2)
-                .adaptiveSecondaryForeground()
+                .frame(minWidth: 28, alignment: .leading)
         }
-        .frame(maxWidth: .infinity)
+    }
+
+    private func nutritionLabelSubrow(label: String, value: String, unit: String) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: AppTheme.spacing4) {
+            Text(label)
+                .font(.caption)
+                .adaptiveSecondaryForeground()
+                .padding(.leading, AppTheme.spacing16)
+            Spacer()
+            Text(value)
+                .font(.caption.weight(.medium))
+                .adaptiveSecondaryForeground()
+            Text(unit)
+                .font(.caption)
+                .adaptiveSecondaryForeground()
+                .frame(minWidth: 28, alignment: .leading)
+        }
     }
 
     private func formatMacro(_ value: Double) -> String {
         value >= 10 ? "\(Int(value.rounded()))" : String(format: "%.1f", value)
+    }
+
+    private func formatSalt(_ value: Double) -> String {
+        value >= 1.0 ? String(format: "%.1f", value) : String(format: "%.2f", value)
     }
 
     var tagsCard: some View {

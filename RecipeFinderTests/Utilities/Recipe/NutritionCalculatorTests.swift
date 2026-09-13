@@ -119,6 +119,29 @@ import Foundation
         #expect(result.coverage == 1.0)
     }
 
+    // MARK: - New fields: saturates, sugars, salt
+
+    @Test func soySourceSaltIsHigh() throws {
+        // 1 tbsp soy sauce ≈ 15 ml × 1.1 g/ml = 16.5 g; salt ~14.6 g/100 g → ~2.4 g salt
+        let i = [Ingredient(baseQuantity: 1, unit: "tbsp", name: "soy sauce")]
+        let result = try #require(NutritionCalculator.calculate(ingredients: i, servings: 1))
+        #expect(result.salt > 1.5 && result.salt < 3.5)
+    }
+
+    @Test func orangeSugarsArePresent() throws {
+        // 1 orange (piece ≈ 131 g) × 8.5 g sugars/100 g ≈ 11 g sugars
+        let i = [Ingredient(baseQuantity: 1, unit: "", name: "orange")]
+        let result = try #require(NutritionCalculator.calculate(ingredients: i, servings: 1))
+        #expect(result.sugars > 7 && result.sugars < 16)
+    }
+
+    @Test func butterHasHighSaturates() throws {
+        // 100 g butter, saturates ≈ 51 g/100 g
+        let i = [Ingredient(baseQuantity: 100, unit: "g", name: "butter")]
+        let result = try #require(NutritionCalculator.calculate(ingredients: i, servings: 1))
+        #expect(result.saturates > 40 && result.saturates < 60)
+    }
+
     // MARK: - Fuzzy name matching
 
     @Test(

@@ -62,6 +62,10 @@ struct RecipeDetailView: View {
                         if hasNotes {
                             notesSection
                         }
+
+                        if recipe.nutritionInfo != nil {
+                            nutritionSection
+                        }
                     }
                     .padding(.bottom, AppTheme.spacing100)
                     .frame(width: geometry.size.width)

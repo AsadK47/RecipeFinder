@@ -7,26 +7,32 @@ enum NutritionCalculator {
     static func calculate(ingredients: [Ingredient], servings: Int) -> NutritionInfo? {
         guard servings > 0, !ingredients.isEmpty else { return nil }
 
-        var totalKcal    = 0.0
-        var totalProtein = 0.0
-        var totalCarbs   = 0.0
-        var totalFat     = 0.0
-        var totalFibre   = 0.0
-        var matchedCount = 0
+        var totalKcal     = 0.0
+        var totalFat      = 0.0
+        var totalSat      = 0.0
+        var totalCarbs    = 0.0
+        var totalSugars   = 0.0
+        var totalFibre    = 0.0
+        var totalProtein  = 0.0
+        var totalSalt     = 0.0
+        var matchedCount  = 0
 
         for ingredient in ingredients {
             guard let entry = NutritionDatabase.lookup(ingredient.mainIngredientName) else { continue }
-            // Count the ingredient as matched even if we can't quantify it (e.g. a pinch with no
-            // unit mapping), so the coverage score reflects name recognition, not unit coverage.
+            // Count as matched even if we can't quantify it (e.g. a pinch with no unit mapping),
+            // so coverage reflects name recognition rather than unit coverage.
             matchedCount += 1
             let grams = gramWeight(quantity: ingredient.baseQuantity, unit: ingredient.unit, entry: entry)
             guard grams > 0 else { continue }
-            let factor    = grams / 100.0
-            totalKcal    += entry.kcalPer100g    * factor
-            totalProtein += entry.proteinPer100g * factor
-            totalCarbs   += entry.carbsPer100g   * factor
-            totalFat     += entry.fatPer100g     * factor
-            totalFibre   += entry.fibrePer100g   * factor
+            let f        = grams / 100.0
+            totalKcal   += entry.kcalPer100g    * f
+            totalFat    += entry.fatPer100g      * f
+            totalSat    += entry.satPer100g      * f
+            totalCarbs  += entry.carbsPer100g    * f
+            totalSugars += entry.sugarsPer100g   * f
+            totalFibre  += entry.fibrePer100g    * f
+            totalProtein += entry.proteinPer100g * f
+            totalSalt   += entry.saltPer100g     * f
         }
 
         let coverage = Double(matchedCount) / Double(ingredients.count)
@@ -34,12 +40,15 @@ enum NutritionCalculator {
 
         let s = Double(servings)
         return NutritionInfo(
-            calories: Int((totalKcal    / s).rounded()),
-            protein:  round1dp(totalProtein / s),
-            carbs:    round1dp(totalCarbs   / s),
-            fat:      round1dp(totalFat     / s),
-            fibre:    round1dp(totalFibre   / s),
-            coverage: coverage
+            calories:  Int((totalKcal    / s).rounded()),
+            fat:       round1dp(totalFat     / s),
+            saturates: round1dp(totalSat     / s),
+            carbs:     round1dp(totalCarbs   / s),
+            sugars:    round1dp(totalSugars  / s),
+            fibre:     round1dp(totalFibre   / s),
+            protein:   round1dp(totalProtein / s),
+            salt:      round2dp(totalSalt    / s),
+            coverage:  coverage
         )
     }
 
@@ -76,5 +85,9 @@ enum NutritionCalculator {
 
     private static func round1dp(_ value: Double) -> Double {
         (value * 10).rounded() / 10
+    }
+
+    private static func round2dp(_ value: Double) -> Double {
+        (value * 100).rounded() / 100
     }
 }
