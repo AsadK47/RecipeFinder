@@ -14,6 +14,7 @@ struct RecipeDetailView: View {
     @State private var confettiCounter = 0
     @State private var showEditSheet = false
     @State private var showAddToCollection = false
+    @State private var showCookingMode = false
     // Internal (not private) so the edit-completion handler in
     // RecipeDetailView+Content can set it on a failed save.
     @State var showSaveError = false
@@ -85,7 +86,8 @@ struct RecipeDetailView: View {
                     recipe: recipe,
                     onEdit: { showEditSheet = true },
                     onToggleFavorite: toggleFavorite,
-                    onAddToCollection: { showAddToCollection = true }
+                    onAddToCollection: { showAddToCollection = true },
+                    onStartCooking: { showCookingMode = true }
                 )
             }
         }
@@ -97,6 +99,9 @@ struct RecipeDetailView: View {
         }
         .sheet(isPresented: $showTimerSheet) {
             CookTimerView()
+        }
+        .fullScreenCover(isPresented: $showCookingMode) {
+            CookingModeView(recipe: recipe)
         }
         .overlay(alignment: .bottom) {
             feedbackOverlay

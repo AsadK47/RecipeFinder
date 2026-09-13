@@ -107,7 +107,7 @@ struct CollectionDetailView: View {
 
     private func recipeRow(_ recipe: RecipeModel) -> some View {
         HStack(spacing: AppTheme.spacing12) {
-            RecipeImageView(imageName: recipe.imageName, height: Constants.Sizes.recipeImageSize)
+            RecipeImageView(imageName: recipe.imageName, height: Constants.Sizes.recipeImageSize, recipeName: recipe.name)
                 .frame(width: Constants.Sizes.recipeImageSize, height: Constants.Sizes.recipeImageSize)
                 .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius8))
 

@@ -149,6 +149,14 @@ struct ContentView: View {
     }
 
     private func loadRecipes(retryAttempt: Int = 0) {
+        // Guest mode: show seed recipes so the app isn't empty before sign-up.
+        guard authManager.isAuthenticated else {
+            if recipes.isEmpty {
+                recipes = SeedRecipeProvider.recipes
+            }
+            return
+        }
+
         guard PersistenceController.shared.hasCurrentUserScope() else {
             logger.debug("⚠️ Skipping recipe reload because user scope is not available")
             return
@@ -169,7 +177,14 @@ struct ContentView: View {
             return
         }
 
-        recipes = PersistenceController.shared.fetchRecipes()
+        var fetched = PersistenceController.shared.fetchRecipes()
+        // Seed starter recipes for brand-new users — one-time per user account.
+        if fetched.isEmpty, !UserScopedStorage.shared.bool(forKey: "seedRecipesLoaded") {
+            SeedRecipeProvider.recipes.forEach { PersistenceController.shared.saveRecipeModel($0) }
+            UserScopedStorage.shared.set(true, forKey: "seedRecipesLoaded")
+            fetched = PersistenceController.shared.fetchRecipes()
+        }
+        recipes = fetched
     }
 }
 

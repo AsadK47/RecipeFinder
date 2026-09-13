@@ -12,6 +12,7 @@ struct AuthenticationView: View {
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("hasBeenPromptedForBiometrics") private var hasBeenPromptedForBiometrics = false
     @AppStorage("biometricsEnabled") private var biometricsEnabled: Bool = false
+    @AppStorage("guestModeEnabled") private var guestModeEnabled = false
     @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
@@ -129,6 +130,14 @@ struct AuthenticationView: View {
                     }
                     .padding(.top, AppTheme.spacing8)
                     .accessibilityIdentifier("auth.showSignUp")
+
+                    Button(action: { guestModeEnabled = true }) {
+                        Text("Browse first")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary.opacity(0.65))
+                    }
+                    .padding(.top, AppTheme.spacing4)
+                    .accessibilityLabel("Browse recipes without an account")
                 }
                 .padding(.horizontal, AppTheme.spacing32)
                 .padding(.bottom, AppTheme.spacing50)

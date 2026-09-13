@@ -16,6 +16,8 @@ struct KitchenSectionsView: View {
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
 
     var body: some View {
+        PantryAlertsSectionContent(manager: manager)
+
         if !quickMatches.isEmpty {
             Section {
                 KitchenQuickMatchesView(

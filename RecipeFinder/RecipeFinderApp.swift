@@ -124,6 +124,7 @@ struct AppRootView: View {
     @StateObject private var themeManager = ThemeManager.shared
     @State private var activeOnboarding: ActiveOnboarding?
     @AppStorage("preferredColorScheme") private var colorSchemePreference: Int = 0
+    @AppStorage("guestModeEnabled") private var guestModeEnabled = false
 
     private var preferredColorScheme: ColorScheme? {
         switch colorSchemePreference {
@@ -170,6 +171,7 @@ struct AppRootView: View {
                     }
                     .onChange(of: authManager.isAuthenticated) { _, isAuthenticated in
                         if isAuthenticated {
+                            guestModeEnabled = false  // Sign-in supersedes guest mode
                             evaluateOnboardingFlow()
                         } else {
                             activeOnboarding = nil
@@ -205,11 +207,11 @@ struct AppRootView: View {
 
     @ViewBuilder
     private var rootView: some View {
-        if authManager.isAuthenticated {
+        if authManager.isAuthenticated || guestModeEnabled {
             ContentView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .environmentObject(themeManager)
-                .onAppear { authManager.updateLastActiveTimestamp() }
+                .onAppear { if authManager.isAuthenticated { authManager.updateLastActiveTimestamp() } }
                 .transition(.opacity.combined(with: .scale(scale: AppTheme.transitionScaleDown)))
         } else {
             NavigationStack {

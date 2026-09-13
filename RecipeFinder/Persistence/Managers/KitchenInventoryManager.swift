@@ -88,6 +88,7 @@ final class KitchenInventoryManager: ObservableObject {
 		updatedItems.append(item)
 		HapticManager.shared.medium()
 		saveInventoryItems(updatedItems)
+		NotificationManager.shared.scheduleExpiryNotification(for: item)
 		logger.debug("✅ Added inventory item: '\(item.name)'")
 	}
 	
@@ -112,6 +113,8 @@ final class KitchenInventoryManager: ObservableObject {
 			updatedItems[index] = item
 			HapticManager.shared.light()
 			saveInventoryItems(updatedItems)
+			NotificationManager.shared.cancelExpiryNotification(for: item.id)
+			NotificationManager.shared.scheduleExpiryNotification(for: item)
 			logger.debug("✅ Updated inventory item: '\(item.name)'")
 		}
 	}
@@ -121,6 +124,7 @@ final class KitchenInventoryManager: ObservableObject {
 		updatedItems.removeAll { $0.id == item.id }
 		HapticManager.shared.light()
 		saveInventoryItems(updatedItems)
+		NotificationManager.shared.cancelExpiryNotification(for: item.id)
 	}
 	
 	func hasInventoryItem(_ name: String) -> Bool {

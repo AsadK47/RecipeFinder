@@ -4,32 +4,20 @@ import Kingfisher
 struct RecipeImageView: View {
     let imageName: String?
     let height: CGFloat
+    var recipeName: String? = nil
+
+    @State private var loadFailed = false
 
     private enum Layout {
         static let defaultHeight: CGFloat = 200
-        static let placeholderBackgroundOpacity: Double = 0.2
-        static let placeholderIconOpacity: Double = 0.5
     }
 
-    init(imageName: String?, height: CGFloat = Layout.defaultHeight) {
+    init(imageName: String?, height: CGFloat = Layout.defaultHeight, recipeName: String? = nil) {
         self.imageName = imageName
         self.height = height
+        self.recipeName = recipeName
     }
 
-    private var placeholder: some View {
-        ZStack {
-            Color.gray.opacity(Layout.placeholderBackgroundOpacity)
-            Image(systemName: "photo")
-                .font(.system(size: AppTheme.fontSize42))
-                .foregroundColor(.gray.opacity(Layout.placeholderIconOpacity))
-        }
-        .frame(height: height)
-    }
-
-    /// Kingfisher source for remote URLs and locally-saved photos. Both are loaded
-    /// and decoded off the main thread and cached, so evaluating a card's `body`
-    /// never blocks on disk I/O or image decoding. Asset-catalog names (e.g. the
-    /// bundled sample images) fall through to `UIImage(named:)`, which UIKit caches.
     private var kfSource: Source? {
         guard let imageName = imageName, !imageName.isEmpty else { return nil }
         if imageName.hasPrefix("http"), let url = URL(string: imageName) {
@@ -51,9 +39,10 @@ struct RecipeImageView: View {
 
     @ViewBuilder
     private var imageContent: some View {
-        if let source = kfSource {
+        if let source = kfSource, !loadFailed {
             KFImage(source: source)
-                .placeholder { placeholder }
+                .placeholder { RecipePlaceholderView(recipeName: recipeName, showShimmer: true) }
+                .onFailure { _ in loadFailed = true }
                 .setProcessor(DownsamplingImageProcessor(size: targetPixelSize))
                 .scaleFactor(UIScreen.main.scale)
                 .cacheOriginalImage()
@@ -65,7 +54,7 @@ struct RecipeImageView: View {
                 .resizable()
                 .scaledToFill()
         } else {
-            placeholder
+            RecipePlaceholderView(recipeName: recipeName)
         }
     }
 

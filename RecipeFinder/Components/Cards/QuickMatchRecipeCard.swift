@@ -52,7 +52,7 @@ struct QuickMatchRecipeCard: View {
     
     private var imageSection: some View {
         ZStack(alignment: .topTrailing) {
-            RecipeImageView(imageName: recipe.imageName, height: AppTheme.height160)
+            RecipeImageView(imageName: recipe.imageName, height: AppTheme.height160, recipeName: recipe.name)
                 .frame(width: AppTheme.width220, height: AppTheme.height160)
                 .clipped()
             

@@ -218,6 +218,43 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         }
     }
     
+    // MARK: - Pantry expiry notifications
+
+    @discardableResult
+    func scheduleExpiryNotification(for item: KitchenInventoryModel) -> String? {
+        guard let expiryDate = item.expiryDate else { return nil }
+        // Notify the evening before expiry so the user can plan dinner.
+        guard let notifyDate = Calendar.current.date(byAdding: .day, value: -1, to: expiryDate),
+              notifyDate > Date() else { return nil }
+
+        let identifier = "expiry-\(item.id.uuidString)"
+        let content = UNMutableNotificationContent()
+        content.title = "Expiring Tomorrow"
+        content.body = "\(item.name) expires tomorrow — use it up tonight."
+        content.sound = .default
+        content.userInfo = ["type": "expiry", "itemId": item.id.uuidString]
+
+        var components = Calendar.current.dateComponents([.year, .month, .day], from: notifyDate)
+        components.hour = 18  // 6 PM
+        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                logger.error("❌ Failed to schedule expiry notification: \(error.localizedDescription)")
+            } else {
+                logger.debug("✅ Expiry notification scheduled for \(item.name)")
+            }
+        }
+        return identifier
+    }
+
+    func cancelExpiryNotification(for itemId: UUID) {
+        UNUserNotificationCenter.current().removePendingNotificationRequests(
+            withIdentifiers: ["expiry-\(itemId.uuidString)"]
+        )
+    }
+
     func cancelAllNotifications() {
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         logger.debug("🗑️ Canceled all notifications")

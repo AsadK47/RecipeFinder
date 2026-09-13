@@ -9,9 +9,17 @@ struct RecipeDetailToolbar: View {
     let onEdit: () -> Void
     let onToggleFavorite: () -> Void
     let onAddToCollection: () -> Void
+    let onStartCooking: () -> Void
 
     var body: some View {
         HStack(spacing: AppTheme.spacing16) {
+            Button(action: onStartCooking) {
+                Image(systemName: "frying.pan.fill")
+                    .font(.title3)
+                    .adaptiveForegroundColor()
+            }
+            .accessibilityLabel("Start Cooking Mode")
+
             Button(action: onToggleFavorite) {
                 Image(systemName: recipe.isFavorite ? "heart.fill" : "heart")
                     .font(.title3)
