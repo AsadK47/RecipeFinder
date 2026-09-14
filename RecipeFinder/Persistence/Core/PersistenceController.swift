@@ -41,6 +41,8 @@ final class PersistenceController {
         static let notes = "notes"
         static let imageName = "imageName"
         static let isFavorite = "isFavorite"
+        static let isSampleRecipe = "isSampleRecipe"
+        static let dietaryInfo = "dietaryInfo"
         static let tags = "tags"
         static let userId = "userId"
     }

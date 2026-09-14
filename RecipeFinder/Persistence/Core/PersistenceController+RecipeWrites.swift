@@ -19,6 +19,8 @@ extension PersistenceController {
         let notes: String
         let imageName: String
         let isFavorite: Bool
+        let isSampleRecipe: Bool
+        let dietaryInfo: DietaryInfo
         let tags: [String]
 
         init(
@@ -36,6 +38,8 @@ extension PersistenceController {
             notes: String,
             imageName: String,
             isFavorite: Bool,
+            isSampleRecipe: Bool = false,
+            dietaryInfo: DietaryInfo = DietaryInfo(),
             tags: [String] = []
         ) {
             self.id = id
@@ -52,6 +56,8 @@ extension PersistenceController {
             self.notes = notes
             self.imageName = imageName
             self.isFavorite = isFavorite
+            self.isSampleRecipe = isSampleRecipe
+            self.dietaryInfo = dietaryInfo
             self.tags = tags
         }
 
@@ -70,6 +76,8 @@ extension PersistenceController {
             self.notes = recipe.notes
             self.imageName = recipe.imageName ?? ""
             self.isFavorite = recipe.isFavorite
+            self.isSampleRecipe = recipe.isSampleRecipe
+            self.dietaryInfo = recipe.dietaryInfo
             self.tags = recipe.tags
         }
     }
@@ -107,7 +115,11 @@ extension PersistenceController {
         recipe.setValue(parameters.notes, forKey: RecipeKey.notes)
         recipe.setValue(parameters.imageName, forKey: RecipeKey.imageName)
         recipe.setValue(parameters.isFavorite, forKey: RecipeKey.isFavorite)
+        recipe.setValue(parameters.isSampleRecipe, forKey: RecipeKey.isSampleRecipe)
         recipe.setValue(parameters.tags as NSArray, forKey: RecipeKey.tags)
+        if let dietaryData = try? JSONEncoder().encode(parameters.dietaryInfo) {
+            recipe.setValue(dietaryData, forKey: RecipeKey.dietaryInfo)
+        }
 
         if let userId = userID() {
             recipe.setValue(userId, forKey: "userId")
@@ -214,7 +226,11 @@ extension PersistenceController {
             managedRecipe.setValue(recipe.notes, forKey: RecipeKey.notes)
             managedRecipe.setValue(recipe.imageName, forKey: RecipeKey.imageName)
             managedRecipe.setValue(recipe.isFavorite, forKey: RecipeKey.isFavorite)
+            managedRecipe.setValue(recipe.isSampleRecipe, forKey: RecipeKey.isSampleRecipe)
             managedRecipe.setValue(recipe.tags as NSArray, forKey: RecipeKey.tags)
+            if let dietaryData = try? JSONEncoder().encode(recipe.dietaryInfo) {
+                managedRecipe.setValue(dietaryData, forKey: RecipeKey.dietaryInfo)
+            }
 
             try context.save()
             persistenceLogger.debug("✅ Recipe '\(recipe.name)' updated successfully")

@@ -208,6 +208,7 @@
 		F3D40558305637890076834D /* CookingModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D40557305637890076834D /* CookingModeView.swift */; };
 		F3D4055A3056439C0076834D /* SeedRecipeProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D405593056439C0076834D /* SeedRecipeProviderTests.swift */; };
 		F3D4055C305643B40076834D /* PantryAlertsCategorisationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D4055B305643B40076834D /* PantryAlertsCategorisationTests.swift */; };
+		F3D4055E30564A200076834D /* RecipeDietaryInfoPersistenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D4055D30564A200076834D /* RecipeDietaryInfoPersistenceTests.swift */; };
 		F3E9D10630434D33008BF231 /* CalendarDayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10530434D33008BF231 /* CalendarDayView.swift */; };
 		F3E9D10830434D43008BF231 /* MealTimeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10730434D43008BF231 /* MealTimeCard.swift */; };
 		F3E9D10A30434D58008BF231 /* MealTimeSelectorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10930434D58008BF231 /* MealTimeSelectorSheet.swift */; };
@@ -603,6 +604,7 @@
 		F3D40557305637890076834D /* CookingModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookingModeView.swift; sourceTree = "<group>"; };
 		F3D405593056439C0076834D /* SeedRecipeProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedRecipeProviderTests.swift; sourceTree = "<group>"; };
 		F3D4055B305643B40076834D /* PantryAlertsCategorisationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryAlertsCategorisationTests.swift; sourceTree = "<group>"; };
+		F3D4055D30564A200076834D /* RecipeDietaryInfoPersistenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeDietaryInfoPersistenceTests.swift; sourceTree = "<group>"; };
 		F3E9D10530434D33008BF231 /* CalendarDayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDayView.swift; sourceTree = "<group>"; };
 		F3E9D10730434D43008BF231 /* MealTimeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealTimeCard.swift; sourceTree = "<group>"; };
 		F3E9D10930434D58008BF231 /* MealTimeSelectorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealTimeSelectorSheet.swift; sourceTree = "<group>"; };
@@ -1059,6 +1061,7 @@
 				F3E9D284304E049C008BF231 /* RecipeImportPersistenceTests.swift */,
 				F3B837E03055F9EE0003AEF8 /* RecipeWizardPersistenceTests.swift */,
 				F3B837EB3055FD740003AEF8 /* ShoppingListFromRecipeTests.swift */,
+				F3D4055D30564A200076834D /* RecipeDietaryInfoPersistenceTests.swift */,
 			);
 			path = Persistence;
 			sourceTree = "<group>";
@@ -2269,6 +2272,7 @@
 				F36AED6B304336BE00935A3C /* RecipeFilterCriteriaTests.swift in Sources */,
 				F3E9D27D304D7D21008BF231 /* RecipeImageTextRecognizerTests.swift in Sources */,
 				F3E9D272304D75B9008BF231 /* ISO8601DurationTests.swift in Sources */,
+				F3D4055E30564A200076834D /* RecipeDietaryInfoPersistenceTests.swift in Sources */,
 				F3B837DF3055F17C0003AEF8 /* CollectionManagerTests.swift in Sources */,
 				9E6C2C612FB4A4BE0083A08B /* AppErrorTests.swift in Sources */,
 				F3E9D29A30500069008BF231 /* PersistenceRecoveryTests.swift in Sources */,

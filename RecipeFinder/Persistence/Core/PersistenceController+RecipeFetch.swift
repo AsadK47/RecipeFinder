@@ -88,7 +88,14 @@ extension PersistenceController {
         let notes = object.value(forKey: RecipeKey.notes) as? String ?? ""
         let imageName = object.value(forKey: RecipeKey.imageName) as? String
         let isFavorite = object.value(forKey: RecipeKey.isFavorite) as? Bool ?? false
+        let isSampleRecipe = object.value(forKey: RecipeKey.isSampleRecipe) as? Bool ?? false
         let tags = (object.value(forKey: RecipeKey.tags) as? [String]) ?? []
+        let dietaryInfo: DietaryInfo = {
+            guard let data = object.value(forKey: RecipeKey.dietaryInfo) as? Data,
+                  let decoded = try? JSONDecoder().decode(DietaryInfo.self, from: data)
+            else { return DietaryInfo() }
+            return decoded
+        }()
 
         return RecipeModel(
             id: id,
@@ -105,7 +112,9 @@ extension PersistenceController {
             notes: notes,
             imageName: imageName,
             isFavorite: isFavorite,
-            tags: tags
+            tags: tags,
+            dietaryInfo: dietaryInfo,
+            isSampleRecipe: isSampleRecipe
         )
     }
 }
