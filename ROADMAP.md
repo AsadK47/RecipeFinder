@@ -182,6 +182,16 @@ before ever creating an account.
 - **StoreKit `RequestReviewAction`** only after a success moment (e.g. finishing
   a cook), never at launch or right after a user action.
 
+### 🔴 iPad-optimized layout
+*Problem:* RecipeFinder runs on iPad via iPhone scaling — it works, but wastes the
+screen. Every serious recipe app (Paprika, Mela, Crouton) uses `NavigationSplitView`
+on iPad: recipe list in the sidebar, detail in the main column. Cooking on a
+counter-propped iPad is a primary use case and the current layout feels broken there.
+*What to do:* adopt `NavigationSplitView` with a sidebar (recipe list / meal plan /
+shopping) and detail column. No new features needed — it's a layout change to
+`ContentView` and the major list views. `AdaptiveSpacing` already has
+`horizontalSizeClass` awareness, so spacing is partly ready.
+
 ### 🔴 Recipe image placeholders
 Missing images currently read as broken. Build a reusable `RecipePlaceholderView`
 (themed gradient + centred dish glyph, optionally name-seeded) used as the
@@ -220,6 +230,9 @@ alongside timers/meals). Ties into the core loop: "use it before it goes off" is
 natural "what do I cook tonight?" prompt. Add **barcode scanning** via Vision
 (`VNDetectBarcodesRequest`) so users can scan a packet directly into inventory
 rather than typing — standard expectation in pantry-tracking apps (Whisk, Grocy).
+Add a **quick "I have this" toggle** per ingredient in recipe detail (Paprika's
+pattern): tapping an ingredient marks it in-pantry without navigating to the
+inventory screen — lowers the friction of keeping pantry data accurate.
 
 ### 🔴 Cook history & recipe rating
 *Problem:* the two most useful signals for "should I cook this again?" — when did
@@ -309,6 +322,10 @@ to keep the screen awake during cooking, and bigger greasy-hands tap targets.
   cooking step and active timer on wrist. Crouton's strongest card; greasy hands
   never need to touch the phone. Step navigation + timer display is the whole
   scope — no need to replicate the full recipe library on watch.
+- **Voice/hands-free step navigation** — "Hey Siri, next step" via an
+  `AppIntent` exposed cooking-mode action. Zero new UI; just an intent that
+  calls the same step-advance logic. Crouton markets this; it's a natural
+  follow-on once App Intents land.
 
 ### 🔴 Shopping list sharing
 *Problem:* households cook together; there's no way to share the shopping list
@@ -382,7 +399,10 @@ legitimately charge for.
 
 ### 🔴 Recipe sharing
 Share recipes as rich links or formatted cards; import shared recipes from other
-RecipeFinder users; export as PDF (basic text/PDF share already exists).
+RecipeFinder users; export as PDF (basic text/PDF share already exists). Add a
+**print action** via `UIPrintInteractionController` with a recipe-formatted layout
+(title, meta, ingredients two-column, steps) — Paprika and Mela both have this;
+it's expected by users who cook from printed cards.
 
 ### 🔴 Auto recipe images (Unsplash) *(low priority)*
 Auto-assign images by recipe name for *manually created* recipes only — URL
