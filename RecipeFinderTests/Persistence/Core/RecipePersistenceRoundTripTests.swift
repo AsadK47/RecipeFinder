@@ -170,4 +170,85 @@ struct RecipePersistenceRoundTripTests {
         let fetched = store.fetchRecipes().first { $0.id == recipe.id }
         #expect(fetched?.tags.isEmpty == true)
     }
+
+    // MARK: - Servings
+
+    @Test("baseServings round-trips through the store")
+    func saveRecipeModel_persistsBaseServings() {
+        let store = makeStore()
+        let recipe = makeRecipe()   // baseServings: 2 in helper
+        #expect(store.saveRecipeModel(recipe) == true)
+
+        let fetched = store.fetchRecipes().first { $0.id == recipe.id }
+        #expect(fetched?.baseServings == 2)
+    }
+
+    @Test("currentServings persists when it differs from baseServings")
+    func saveRecipeModel_persistsCurrentServings_whenDifferentFromBase() {
+        let store = makeStore()
+        let recipe = RecipeModel(
+            id: UUID(),
+            name: "Serving Test",
+            category: "Main",
+            difficulty: "Basic",
+            prepTime: "5 minutes",
+            cookingTime: "10 minutes",
+            baseServings: 4,
+            currentServings: 8,
+            ingredients: [],
+            prePrepInstructions: [],
+            instructions: ["Cook"],
+            notes: "",
+            isFavorite: false
+        )
+        #expect(store.saveRecipeModel(recipe) == true)
+
+        let fetched = store.fetchRecipes().first { $0.id == recipe.id }
+        #expect(fetched?.baseServings == 4)
+        #expect(fetched?.currentServings == 8)
+        #expect(fetched?.scaleFactor == 2.0)
+    }
+
+    @Test("updateRecipe overwrites baseServings and currentServings")
+    func updateRecipe_updatesServings() {
+        let store = makeStore()
+        let id = UUID()
+        let original = RecipeModel(
+            id: id,
+            name: "Servings Update Test",
+            category: "Main",
+            difficulty: "Basic",
+            prepTime: "5 minutes",
+            cookingTime: "10 minutes",
+            baseServings: 2,
+            currentServings: 2,
+            ingredients: [Ingredient(baseQuantity: 1, unit: "cup", name: "rice")],
+            prePrepInstructions: [],
+            instructions: ["Cook"],
+            notes: "",
+            isFavorite: false
+        )
+        #expect(store.saveRecipeModel(original) == true)
+
+        let updated = RecipeModel(
+            id: id,
+            name: "Servings Update Test",
+            category: "Main",
+            difficulty: "Basic",
+            prepTime: "5 minutes",
+            cookingTime: "10 minutes",
+            baseServings: 6,
+            currentServings: 3,
+            ingredients: [Ingredient(baseQuantity: 1, unit: "cup", name: "rice")],
+            prePrepInstructions: [],
+            instructions: ["Cook"],
+            notes: "",
+            isFavorite: false
+        )
+        #expect(store.updateRecipe(updated) == true)
+
+        let fetched = store.fetchRecipes().first { $0.id == id }
+        #expect(fetched?.baseServings == 6)
+        #expect(fetched?.currentServings == 3)
+    }
 }
