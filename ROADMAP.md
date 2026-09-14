@@ -217,7 +217,45 @@ as well not exist.
 *What to do:* an "expiring soon / expired / low stock" view over the existing
 data, plus **expiry & restock notifications** (new `NotificationManager` category
 alongside timers/meals). Ties into the core loop: "use it before it goes off" is a
-natural "what do I cook tonight?" prompt.
+natural "what do I cook tonight?" prompt. Add **barcode scanning** via Vision
+(`VNDetectBarcodesRequest`) so users can scan a packet directly into inventory
+rather than typing — standard expectation in pantry-tracking apps (Whisk, Grocy).
+
+### 🔴 Cook history & recipe rating
+*Problem:* the two most useful signals for "should I cook this again?" — when did
+I last make it, and did we like it? — are not tracked at all. Paprika, Mela, and
+Whisk all surface this. Without it, favourites is the only signal and it's binary.
+*What to do:* add `lastCookedAt: Date?`, `cookCount: Int`, and `rating: Int?`
+(1–5, stored as Int16) to the recipe Core Data entity (lightweight migration). The
+cooking mode finish screen increments count, stamps the date, and prompts a quick
+star rating. Rating feeds into a "top rated" sort tier (see Recipe library sort
+order). Both fields visible in recipe detail.
+
+### 🔴 Multiple photos per recipe
+*Problem:* a single hero image can't capture step shots, plating variants, or
+"my result" photos that help the next cook. Paprika lets you add several.
+*What to do:* extend `RecipeImageStore` to a gallery of up to 5 images per recipe
+(local file references, same scheme as today); hero is first. No cloud cost — all
+images live in the app's Documents directory alongside the existing single-image
+store.
+
+### 🔴 Recipe source link & re-fetch
+*Problem:* the source URL is stored on import (in `RecipeImportBuilder`) but never
+surfaced in the UI. Users can't get back to the original page, and if the source
+recipe is corrected, there's no way to pick up the fix without re-importing and
+losing edits.
+*What to do:* show a "View Original" link on recipe detail for URL-imported
+recipes. Add a "Refresh from source" action that re-fetches and presents a diff
+preview — user picks what to take. Edits (personal notes, servings, tags) are
+always preserved.
+
+### 🔴 Recurring / staple shopping items
+*Problem:* eggs, milk, bread — the same items go on every shop. Manually
+re-adding them after each clear is friction that every mature shopping-list app
+(AnyList, OurGroceries) solves.
+*What to do:* add an `isRecurring` flag to `ShoppingListItem`; recurring items
+are auto-restored when the list is cleared, or surfaced in a "Staples" quick-add
+section at the top of the list.
 
 ---
 
@@ -265,6 +303,24 @@ CloudKit Sharing once iCloud lands, or a simple "copy to clipboard" formatted
 list as a low-cost interim). The interim (copy formatted list) can ship before
 iCloud.
 
+### 🔴 App Intents & Siri shortcuts
+*Problem:* RecipeFinder is invisible to the OS. Competitors that register
+`AppIntent`s surface in Spotlight, Shortcuts, the Siri suggestion row, and the
+Action Button — we appear in none of them.
+*What to do:* declare intents for the core loop: "Add [ingredient] to shopping
+list", "What's for dinner tonight?" (reads today's meal plan), "Open recipe
+[name]", "Start cooking [name]". These are fully on-device, zero-server, and a
+meaningful iOS-native advantage over ReciMe. Intents also unlock Shortcuts
+automations ("every Sunday, add meal plan to shopping list").
+
+### 🔴 Ingredient substitutions
+*Problem:* mid-cook "I don't have X, what can I use?" is one of the most
+searched cooking queries. Currently users have to leave the app.
+*What to do:* a "Substitute?" button on each ingredient in recipe detail, backed
+first by a curated lookup table (buttermilk → plain yoghurt + lemon, etc.) for
+zero-latency coverage of the 80% case, then falling through to on-device
+FoundationModels for the long tail. Private, free, offline.
+
 ### 🔴 iCloud Sync *(blocked on paid enrollment — keep the model ready)*
 `NSPersistentCloudKitContainer` over the existing Core Data stack, using the
 user's own iCloud so the privacy story holds. Design work to reconcile
@@ -299,6 +355,9 @@ recipe detail view showing calories/protein/carbs/fat/fibre per serving,
 recalculating on serving changes (the `scaleFactor` already updates quantities
 — nutrition just needs to follow). Weekly plan summary is a natural follow-on.
 No external API needed for phase 1 — the on-device calculator covers it.
+**HealthKit follow-on:** once the UI ships, write per-meal nutrition to Apple
+Health via `HKHealthStore` as an opt-in toggle in Settings — expected by
+health-conscious users and straightforward to add once the data surface exists.
 
 ### 🔴 Supermarket integration *(a genuine premium candidate)*
 Match shopping-list items to a retailer's catalogue (Tesco, Sainsbury's, Ocado)
