@@ -9,14 +9,17 @@ final class MealPlanningManager: ObservableObject {
     
     private let saveKey = "mealPlansStorage"
     private let storage: UserScopedStorage
+    private let badgeManager: BadgeManager
 
     private init() {
         self.storage = .shared
+        self.badgeManager = .shared
         loadMealPlans()
     }
 
-    init(storage: UserScopedStorage) {
+    init(storage: UserScopedStorage, badgeManager: BadgeManager = .shared) {
         self.storage = storage
+        self.badgeManager = badgeManager
         loadMealPlans()
     }
 
@@ -41,9 +44,10 @@ final class MealPlanningManager: ObservableObject {
         } else {
             mealPlans.append(mealPlan)
         }
-        
+
         HapticManager.shared.medium()
         saveMealPlans()
+        badgeManager.unlockBadge(.mealPlanner)
     }
     
     func updateMealPlan(_ mealPlan: MealPlanModel) {

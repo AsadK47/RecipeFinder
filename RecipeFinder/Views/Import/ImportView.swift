@@ -16,6 +16,8 @@ struct ImportView: View {
     @State private var showWizard = false
     @State private var saveErrorRecipeName: String?
 
+    private enum ImportSource { case link, photo, paste, wizard }
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -68,16 +70,16 @@ struct ImportView: View {
             .toolbar(.hidden, for: .navigationBar)
         }
         .sheet(isPresented: $showLinkImport) {
-            RecipeImportView(initialURL: nil, existingNames: recipes.map(\.name)) { store($0) }
+            RecipeImportView(initialURL: nil, existingNames: recipes.map(\.name)) { store($0, source: .link) }
         }
         .sheet(isPresented: $showPasteImport) {
-            PasteTextImportSheet { store($0) }
+            PasteTextImportSheet { store($0, source: .paste) }
         }
         .sheet(isPresented: $showPhotoImport) {
-            PhotoImportSheet { store($0) }
+            PhotoImportSheet { store($0, source: .photo) }
         }
         .sheet(isPresented: $showWizard) {
-            RecipeWizardView(prefilledData: nil) { store($0) }
+            RecipeWizardView(prefilledData: nil) { store($0, source: .wizard) }
         }
         .alert(
             "Couldn't Save Recipe",
@@ -97,7 +99,7 @@ struct ImportView: View {
     /// import route so they save identically. If the save fails, the optimistic
     /// insertion is rolled back and the user is alerted rather than the recipe
     /// silently disappearing on relaunch.
-    private func store(_ recipe: RecipeModel) {
+    private func store(_ recipe: RecipeModel, source: ImportSource = .wizard) {
         recipes.append(recipe)
 
         guard PersistenceController.shared.saveRecipeModel(recipe) else {
@@ -107,6 +109,15 @@ struct ImportView: View {
         }
 
         HapticManager.shared.success()
+
+        switch source {
+        case .link, .paste:
+            BadgeManager.shared.unlockBadge(.firstImport)
+        case .photo:
+            BadgeManager.shared.unlockBadge(.firstPhotoImport)
+        case .wizard:
+            break
+        }
     }
 
     private var header: some View {

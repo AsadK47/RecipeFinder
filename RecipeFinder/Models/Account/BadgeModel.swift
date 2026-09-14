@@ -47,6 +47,9 @@ enum BadgeType: String, CaseIterable {
     case hundredRecipes = "hundred_recipes"
     case mealPlanner = "meal_planner"
     case shoppingExpert = "shopping_expert"
+    case firstImport = "first_import"
+    case firstPhotoImport = "first_photo_import"
+    case headChef = "head_chef"
     
     var badge: Badge {
         switch self {
@@ -131,6 +134,33 @@ enum BadgeType: String, CaseIterable {
                 color: "indigo",
                 howToEarn: "Add items to your shopping list and check them off as you shop."
             )
+        case .firstImport:
+            return Badge(
+                id: rawValue,
+                title: "Link Master",
+                description: "Imported your first recipe from the web",
+                icon: "link.circle.fill",
+                color: "blue",
+                howToEarn: "Import a recipe by pasting a URL in the Import tab."
+            )
+        case .firstPhotoImport:
+            return Badge(
+                id: rawValue,
+                title: "Snap Chef",
+                description: "Imported a recipe from a photo",
+                icon: "camera.circle.fill",
+                color: "purple",
+                howToEarn: "Take a photo of a recipe and let the app extract it for you."
+            )
+        case .headChef:
+            return Badge(
+                id: rawValue,
+                title: "Head Chef",
+                description: "Cooked a recipe in cooking mode",
+                icon: "frying.pan.fill",
+                color: "orange",
+                howToEarn: "Open a recipe and tap Cook to use step-by-step cooking mode."
+            )
         }
     }
     
@@ -145,6 +175,9 @@ enum BadgeType: String, CaseIterable {
         case .hundredRecipes: return 100
         case .mealPlanner: return 0
         case .shoppingExpert: return 0
+        case .firstImport: return 0
+        case .firstPhotoImport: return 0
+        case .headChef: return 0
         }
     }
 }

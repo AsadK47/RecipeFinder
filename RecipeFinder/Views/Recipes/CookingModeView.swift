@@ -274,6 +274,7 @@ struct CookingModeView: View {
 
             Button {
                 if isLast {
+                    BadgeManager.shared.unlockBadge(.headChef)
                     dismiss()
                 } else {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) { currentIndex += 1 }

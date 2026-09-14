@@ -9,6 +9,8 @@ struct ContentView: View {
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @Environment(\.colorScheme) var colorScheme
     @StateObject private var authManager = AuthenticationManager.shared
+    @StateObject private var badgeManager = BadgeManager.shared
+    @State private var showBadgeSheet = false
     
     private var themeBinding: AppTheme.ThemeType { selectedTheme }
     
@@ -86,6 +88,20 @@ struct ContentView: View {
         .onReceive(NotificationCenter.default.publisher(for: .userScopeDidChange)) { _ in
             guard authManager.isAuthenticated else { return }
             loadRecipes()
+        }
+        .onChange(of: badgeManager.pendingCelebration) { _, newValue in
+            if newValue != nil { showBadgeSheet = true }
+        }
+        .sheet(isPresented: $showBadgeSheet, onDismiss: {
+            badgeManager.dismissCelebration()
+        }) {
+            if let badge = badgeManager.pendingCelebration {
+                BadgeEarnedSheet(badge: badge) {
+                    showBadgeSheet = false
+                }
+                .presentationDetents([.height(380)])
+                .presentationDragIndicator(.visible)
+            }
         }
     }
 

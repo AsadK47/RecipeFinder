@@ -9,16 +9,19 @@ final class ShoppingListManager: ObservableObject {
     
     private let saveKey = Constants.UserDefaultsKeys.shoppingListItems
     private let storage: UserScopedStorage
+    private let badgeManager: BadgeManager
 
     @Published private(set) var items: [ShoppingListModel] = []
 
     private init() {
         self.storage = .shared
+        self.badgeManager = .shared
         loadItems()
     }
 
-    init(storage: UserScopedStorage) {
+    init(storage: UserScopedStorage, badgeManager: BadgeManager = .shared) {
         self.storage = storage
+        self.badgeManager = badgeManager
         loadItems()
     }
     
@@ -97,6 +100,7 @@ final class ShoppingListManager: ObservableObject {
         logger.debug("✅ ShoppingListManager: Added '\(trimmedName)' in category '\(detectedCategory)'. Total items: \(items.count)")
         saveItems(items)
         HapticManager.shared.medium()
+        badgeManager.unlockBadge(.shoppingExpert)
     }
     
     func updateCategory(at index: Int, category: String) {

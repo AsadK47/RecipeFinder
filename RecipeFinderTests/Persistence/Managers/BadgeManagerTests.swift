@@ -1,119 +1,236 @@
-import XCTest
+import Testing
+import Foundation
 @testable import RecipeFinder
 
 @MainActor
-final class BadgeManagerTests: XCTestCase {
+@Suite("BadgeManager")
+struct BadgeManagerTests {
 
-    private var storage: UserScopedStorage!
-    private var sut: BadgeManager!
-
-    override func setUp() async throws {
+    private func makeSUT() -> BadgeManager {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
-        storage = UserScopedStorage(userDefaults: defaults)
-        sut = BadgeManager(storage: storage)
-    }
-
-    override func tearDown() async throws {
-        sut = nil
-        storage = nil
+        return BadgeManager(storage: UserScopedStorage(userDefaults: defaults))
     }
 
     // MARK: - Initial state
 
-    func testInitialState_noBadgesUnlocked() {
-        XCTAssertTrue(sut.unlockedBadges.isEmpty)
+    @Test func initialState_noBadgesUnlocked() {
+        let sut = makeSUT()
+        #expect(sut.unlockedBadges.isEmpty)
+    }
+
+    @Test func initialState_noPendingCelebration() {
+        let sut = makeSUT()
+        #expect(sut.pendingCelebration == nil)
     }
 
     // MARK: - isBadgeUnlocked
 
-    func testIsBadgeUnlocked_falseWhenNotUnlocked() {
-        XCTAssertFalse(sut.isBadgeUnlocked(BadgeType.firstRecipe.rawValue))
+    @Test func isBadgeUnlocked_falseWhenNotUnlocked() {
+        let sut = makeSUT()
+        #expect(!sut.isBadgeUnlocked(BadgeType.firstRecipe.rawValue))
     }
 
-    func testIsBadgeUnlocked_trueAfterUnlock() {
+    @Test func isBadgeUnlocked_trueAfterUnlock() {
+        let sut = makeSUT()
         sut.unlockBadge(.firstRecipe)
-        XCTAssertTrue(sut.isBadgeUnlocked(BadgeType.firstRecipe.rawValue))
+        #expect(sut.isBadgeUnlocked(BadgeType.firstRecipe.rawValue))
     }
 
     // MARK: - unlockBadge
 
-    func testUnlockBadge_addsBadgeToUnlockedBadges() {
+    @Test func unlockBadge_addsBadgeToUnlockedBadges() {
+        let sut = makeSUT()
         sut.unlockBadge(.tenRecipes)
-        XCTAssertNotNil(sut.unlockedBadges[BadgeType.tenRecipes.rawValue])
+        #expect(sut.unlockedBadges[BadgeType.tenRecipes.rawValue] != nil)
     }
 
-    func testUnlockBadge_setsIsUnlockedTrue() {
+    @Test func unlockBadge_setsIsUnlockedTrue() {
+        let sut = makeSUT()
         sut.unlockBadge(.fiveRecipes)
-        XCTAssertTrue(sut.unlockedBadges[BadgeType.fiveRecipes.rawValue]!.isUnlocked)
+        #expect(sut.unlockedBadges[BadgeType.fiveRecipes.rawValue]?.isUnlocked == true)
     }
 
-    func testUnlockBadge_usesCustomDate() {
+    @Test func unlockBadge_usesCustomDate() {
+        let sut = makeSUT()
         let customDate = Date(timeIntervalSince1970: 1_000_000)
         sut.unlockBadge(.firstRecipe, customDate: customDate)
-        XCTAssertEqual(sut.unlockedBadges[BadgeType.firstRecipe.rawValue]?.dateEarned, customDate)
+        #expect(sut.unlockedBadges[BadgeType.firstRecipe.rawValue]?.dateEarned == customDate)
+    }
+
+    @Test func unlockBadge_isIdempotent_datePreservedOnSecondCall() {
+        let sut = makeSUT()
+        let customDate = Date(timeIntervalSince1970: 1_000_000)
+        sut.unlockBadge(.firstRecipe, customDate: customDate)
+        sut.unlockBadge(.firstRecipe)  // second call ignored
+        #expect(sut.unlockedBadges[BadgeType.firstRecipe.rawValue]?.dateEarned == customDate)
+    }
+
+    // MARK: - Celebration queue
+
+    @Test func unlockBadge_setsPendingCelebration() {
+        let sut = makeSUT()
+        sut.unlockBadge(.firstRecipe)
+        #expect(sut.pendingCelebration == .firstRecipe)
+    }
+
+    @Test func unlockBadge_silent_doesNotSetPendingCelebration() {
+        let sut = makeSUT()
+        sut.unlockBadge(.firstRecipe, silent: true)
+        #expect(sut.pendingCelebration == nil)
+        #expect(sut.isBadgeUnlocked(BadgeType.firstRecipe.rawValue))
+    }
+
+    @Test func dismissCelebration_clearsCurrentCelebration() {
+        let sut = makeSUT()
+        sut.unlockBadge(.firstRecipe)
+        sut.dismissCelebration()
+        #expect(sut.pendingCelebration == nil)
+    }
+
+    @Test func queuedBadges_appearInOrder() {
+        let sut = makeSUT()
+        sut.unlockBadge(.firstRecipe)
+        sut.unlockBadge(.fiveRecipes)  // queued while firstRecipe is showing
+        #expect(sut.pendingCelebration == .firstRecipe)
+        sut.dismissCelebration()
+        #expect(sut.pendingCelebration == .fiveRecipes)
+        sut.dismissCelebration()
+        #expect(sut.pendingCelebration == nil)
+    }
+
+    @Test func alreadyUnlockedBadge_doesNotQueueCelebrationAgain() {
+        let sut = makeSUT()
+        sut.unlockBadge(.firstRecipe)
+        sut.dismissCelebration()
+        // Second unlock call for already-held badge does nothing.
+        sut.unlockBadge(.firstRecipe)
+        #expect(sut.pendingCelebration == nil)
+    }
+
+    @Test func shownCelebrationIds_persistAcrossReload() {
+        let defaults = UserDefaults(suiteName: UUID().uuidString)!
+        let storage = UserScopedStorage(userDefaults: defaults)
+        let sut1 = BadgeManager(storage: storage)
+        sut1.unlockBadge(.firstRecipe)
+        sut1.dismissCelebration()
+
+        // Fresh instance same storage — celebration must NOT re-queue.
+        let sut2 = BadgeManager(storage: storage)
+        sut2.unlockBadge(.firstRecipe)
+        #expect(sut2.pendingCelebration == nil)
     }
 
     // MARK: - checkAndUnlockBadges
 
-    func testCheckAndUnlock_unlocksFirstRecipeBadgeAtCount1() {
+    @Test func checkAndUnlock_unlocksFirstRecipeBadgeAtCount1() {
+        let sut = makeSUT()
         sut.checkAndUnlockBadges(recipeCount: 1)
-        XCTAssertTrue(sut.isBadgeUnlocked(BadgeType.firstRecipe.rawValue))
+        #expect(sut.isBadgeUnlocked(BadgeType.firstRecipe.rawValue))
     }
 
-    func testCheckAndUnlock_doesNotUnlockHigherBadgesAtLowCount() {
+    @Test func checkAndUnlock_doesNotUnlockHigherBadgesAtLowCount() {
+        let sut = makeSUT()
         sut.checkAndUnlockBadges(recipeCount: 1)
-        XCTAssertFalse(sut.isBadgeUnlocked(BadgeType.tenRecipes.rawValue))
+        #expect(!sut.isBadgeUnlocked(BadgeType.tenRecipes.rawValue))
     }
 
-    func testCheckAndUnlock_unlocksMultipleBadgesAtOnce() {
+    @Test func checkAndUnlock_unlocksMultipleBadgesAtOnce() {
+        let sut = makeSUT()
         sut.checkAndUnlockBadges(recipeCount: 10)
-        XCTAssertTrue(sut.isBadgeUnlocked(BadgeType.firstRecipe.rawValue))
-        XCTAssertTrue(sut.isBadgeUnlocked(BadgeType.fiveRecipes.rawValue))
-        XCTAssertTrue(sut.isBadgeUnlocked(BadgeType.tenRecipes.rawValue))
-        XCTAssertFalse(sut.isBadgeUnlocked(BadgeType.twentyFiveRecipes.rawValue))
+        #expect(sut.isBadgeUnlocked(BadgeType.firstRecipe.rawValue))
+        #expect(sut.isBadgeUnlocked(BadgeType.fiveRecipes.rawValue))
+        #expect(sut.isBadgeUnlocked(BadgeType.tenRecipes.rawValue))
+        #expect(!sut.isBadgeUnlocked(BadgeType.twentyFiveRecipes.rawValue))
     }
 
-    func testCheckAndUnlock_doesNotDuplicateAlreadyUnlockedBadge() {
+    @Test func checkAndUnlock_doesNotDuplicateAlreadyUnlockedBadge() {
+        let sut = makeSUT()
         sut.checkAndUnlockBadges(recipeCount: 5)
-        let firstUnlockDate = sut.unlockedBadges[BadgeType.fiveRecipes.rawValue]!.dateEarned
-
-        Thread.sleep(forTimeInterval: 0.05)
+        let firstDate = sut.unlockedBadges[BadgeType.fiveRecipes.rawValue]?.dateEarned
         sut.checkAndUnlockBadges(recipeCount: 5)
-        let secondUnlockDate = sut.unlockedBadges[BadgeType.fiveRecipes.rawValue]!.dateEarned
-
-        XCTAssertEqual(firstUnlockDate, secondUnlockDate)
+        let secondDate = sut.unlockedBadges[BadgeType.fiveRecipes.rawValue]?.dateEarned
+        #expect(firstDate == secondDate)
     }
 
-    func testCheckAndUnlock_zeroCount_unlocksWelcomeAboard() {
+    @Test func checkAndUnlock_welcomeAboardIsSilent() {
+        let sut = makeSUT()
         sut.checkAndUnlockBadges(recipeCount: 0)
-        XCTAssertTrue(sut.isBadgeUnlocked(BadgeType.welcomeAboard.rawValue))
+        #expect(sut.isBadgeUnlocked(BadgeType.welcomeAboard.rawValue))
+        // welcomeAboard must never show a celebration sheet (confusing mid-session).
+        #expect(sut.pendingCelebration != .welcomeAboard)
     }
 
     // MARK: - getAllBadges
 
-    func testGetAllBadges_returnsAllBadgeTypes() {
-        let badges = sut.getAllBadges(recipeCount: 0)
-        XCTAssertEqual(badges.count, BadgeType.allCases.count)
+    @Test func getAllBadges_returnsAllBadgeTypes() {
+        let sut = makeSUT()
+        #expect(sut.getAllBadges(recipeCount: 0).count == BadgeType.allCases.count)
     }
 
-    func testGetAllBadges_unlockedBadgesHaveIsUnlockedTrue() {
+    @Test func getAllBadges_unlockedBadgesHaveIsUnlockedTrue() {
+        let sut = makeSUT()
         sut.unlockBadge(.firstRecipe)
-        let badges = sut.getAllBadges(recipeCount: 1)
-        let firstRecipeBadge = badges.first { $0.id == BadgeType.firstRecipe.rawValue }
-        XCTAssertTrue(firstRecipeBadge!.isUnlocked)
+        let badge = sut.getAllBadges(recipeCount: 1).first { $0.id == BadgeType.firstRecipe.rawValue }
+        #expect(badge?.isUnlocked == true)
     }
 
-    func testGetAllBadges_lockedBadgesHaveIsUnlockedFalse() {
-        let badges = sut.getAllBadges(recipeCount: 0)
-        let hundredRecipesBadge = badges.first { $0.id == BadgeType.hundredRecipes.rawValue }
-        XCTAssertFalse(hundredRecipesBadge!.isUnlocked)
+    @Test func getAllBadges_lockedBadgesHaveIsUnlockedFalse() {
+        let sut = makeSUT()
+        let badge = sut.getAllBadges(recipeCount: 0).first { $0.id == BadgeType.hundredRecipes.rawValue }
+        #expect(badge?.isUnlocked == false)
     }
 
-    // MARK: - Persistence
+    // MARK: - Persistence (badges)
 
-    func testPersistence_acrossReload() {
-        sut.unlockBadge(.firstRecipe)
+    @Test func persistence_badgesAcrossReload() {
+        let defaults = UserDefaults(suiteName: UUID().uuidString)!
+        let storage = UserScopedStorage(userDefaults: defaults)
+        let sut1 = BadgeManager(storage: storage)
+        sut1.unlockBadge(.firstRecipe)
         let sut2 = BadgeManager(storage: storage)
-        XCTAssertTrue(sut2.isBadgeUnlocked(BadgeType.firstRecipe.rawValue))
+        #expect(sut2.isBadgeUnlocked(BadgeType.firstRecipe.rawValue))
+    }
+
+    // MARK: - merge
+
+    @Test func merge_addsMissingBadges() {
+        let sut = makeSUT()
+        let incoming: [String: Badge] = [BadgeType.tenRecipes.rawValue: BadgeType.tenRecipes.badge]
+        sut.merge(incoming)
+        #expect(sut.isBadgeUnlocked(BadgeType.tenRecipes.rawValue))
+    }
+
+    @Test func merge_doesNotQueueCelebrationForRestoredBadges() {
+        let sut = makeSUT()
+        let incoming: [String: Badge] = [BadgeType.tenRecipes.rawValue: BadgeType.tenRecipes.badge]
+        sut.merge(incoming)
+        // Restored badges are silent — no celebration sheet for already-earned badges.
+        #expect(sut.pendingCelebration == nil)
+    }
+
+    @Test func merge_existingBadgeDateIsPreserved() {
+        let sut = makeSUT()
+        let originalDate = Date(timeIntervalSince1970: 999)
+        sut.unlockBadge(.firstRecipe, customDate: originalDate)
+
+        var incomingBadge = BadgeType.firstRecipe.badge
+        incomingBadge = Badge(
+            id: incomingBadge.id, title: incomingBadge.title,
+            description: incomingBadge.description, icon: incomingBadge.icon,
+            color: incomingBadge.color, dateEarned: Date(), isUnlocked: true,
+            howToEarn: incomingBadge.howToEarn
+        )
+        sut.merge([BadgeType.firstRecipe.rawValue: incomingBadge])
+        #expect(sut.unlockedBadges[BadgeType.firstRecipe.rawValue]?.dateEarned == originalDate)
+    }
+
+    // MARK: - New badge types
+
+    @Test(arguments: [BadgeType.firstImport, .firstPhotoImport, .headChef])
+    func newBadgeTypes_unlockAndCelebrate(badgeType: BadgeType) {
+        let sut = makeSUT()
+        sut.unlockBadge(badgeType)
+        #expect(sut.isBadgeUnlocked(badgeType.rawValue))
+        #expect(sut.pendingCelebration == badgeType)
     }
 }
