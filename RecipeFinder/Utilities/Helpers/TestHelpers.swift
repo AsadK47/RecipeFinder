@@ -50,7 +50,8 @@ struct AuthTestHelper {
         UserDefaults.standard.removeObject(forKey: "hasCompletedOnboarding")
         UserDefaults.standard.removeObject(forKey: "hasSeenBiometricOnboarding")
         UserDefaults.standard.removeObject(forKey: "appleUserCache")
-        
+        UserDefaults.standard.removeObject(forKey: "guestModeEnabled")
+
         SecureCredentialManager.shared.deleteAllCredentials()
         
         AuthenticationManager.shared.signOut()

@@ -33,6 +33,9 @@ struct RecipeFinderApp: App {
         if ProcessInfo.processInfo.arguments.contains("-skip-auth") {
             UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
             UserDefaults.standard.set(true, forKey: "hasSeenBiometricOnboarding")
+            // Set guest mode synchronously so AppRootView renders ContentView on the
+            // first frame — autoSignIn fires an async Task that arrives too late.
+            UserDefaults.standard.set(true, forKey: "guestModeEnabled")
             AuthTestHelper.autoSignIn()
         }
         #endif

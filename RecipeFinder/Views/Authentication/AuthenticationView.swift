@@ -127,7 +127,9 @@ struct AuthenticationView: View {
                         Text("Don't have an account? **Sign Up**")
                             .font(.subheadline)
                             .adaptiveForegroundColor()
+                            .frame(maxWidth: .infinity, minHeight: 44)
                     }
+                    .contentShape(Rectangle())
                     .padding(.top, AppTheme.spacing8)
                     .accessibilityIdentifier("auth.showSignUp")
 
@@ -135,7 +137,9 @@ struct AuthenticationView: View {
                         Text("Browse first")
                             .font(.footnote)
                             .foregroundStyle(.secondary.opacity(0.65))
+                            .frame(maxWidth: .infinity, minHeight: 44)
                     }
+                    .contentShape(Rectangle())
                     .padding(.top, AppTheme.spacing4)
                     .accessibilityLabel("Browse recipes without an account")
                 }
