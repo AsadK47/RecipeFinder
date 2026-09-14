@@ -285,6 +285,17 @@ recipe detail. Filter criteria supports both tag and collection filtering.
 *Remaining:* smart/auto-populated collections by rules; a dedicated Collections
 tab if the library grows large enough to warrant one.
 
+### 🔴 Cuisine tagging
+*Problem:* category (e.g. "Main", "Dessert") describes meal position, not
+origin. Filtering "show me Italian weeknight mains" requires a separate cuisine
+dimension — Italian, Mexican, Asian, Middle Eastern, etc. — that Category
+doesn't cover. Most recipe imports include cuisine in JSON-LD (`recipeCuisine`),
+which we currently discard.
+*What to do:* add a `cuisine: String?` field to the recipe model; parse
+`recipeCuisine` from JSON-LD imports; add cuisine as a first-class filter in
+`RecipeFilterCriteria` alongside category and tags; surface as a chip picker in
+`FilterSheet`. No new infrastructure — follows the same pattern as tags.
+
 ### 🟡 Cooking Experience
 `CookingModeView` ships (step navigation, mark complete). Remaining to reach
 Crouton-parity: wire `RecipeTimerManager` per step so tapping an ingredient or
@@ -294,6 +305,10 @@ to keep the screen awake during cooking, and bigger greasy-hands tap targets.
   running timer on Lock Screen / Dynamic Island; today's-meal-plan, shopping
   -list quick-view, and random-recipe widgets. Consider AlarmKit for cook timers
   with custom UI.
+- **Apple Watch companion** *(needs a WatchKit Extension target)* — current
+  cooking step and active timer on wrist. Crouton's strongest card; greasy hands
+  never need to touch the phone. Step navigation + timer display is the whole
+  scope — no need to replicate the full recipe library on watch.
 
 ### 🔴 Shopping list sharing
 *Problem:* households cook together; there's no way to share the shopping list
