@@ -17,7 +17,7 @@ as details shift.
 
 ---
 
-## Where we stand *(September 2026)*
+## Where we stand *(September 2026, updated)*
 
 RecipeFinder is a privacy-first, offline-first recipe manager. The one-line pitch:
 
@@ -188,15 +188,26 @@ Missing images currently read as broken. Build a reusable `RecipePlaceholderView
 Kingfisher placeholder *and* failure image, with a shimmer→cross-fade and a fixed
 aspect ratio. Low effort, high perceived quality.
 
-### 🟡 Smart search & filtering coverage
-"Available ingredients only" matching ships. Remaining: confirm dietary / cook
--time / difficulty filters are complete, and add "recently viewed / frequently
-cooked."
+### 🟢 Smart search & filtering coverage
+All filters ship: text search, category, difficulty, cook time, dietary flags,
+tags, collection membership, "available ingredients only" with pantry-ranked
+results. Filter criteria is a single pure `Hashable` value fully covered by
+integration tests.
 
 ### 🟡 Meal planner enhancements
-Meal-type slots and "add the week to the shopping list" ship (ReciMe's
-most-cited gap). Remaining: drag-and-drop to rearrange meals, recurring meals
-("Meal Prep Sunday"), and a weekly overview that ties into nutrition (Part III).
+Meal-type slots (breakfast/lunch/dinner/snack), "add the week to the shopping
+list," and weekly/calendar views all ship. Remaining: drag-and-drop to
+rearrange meals within a day, recurring meals ("Meal Prep Sunday"), pantry-
+aware meal suggestions ("cook this before the tomatoes go off"), and a weekly
+nutrition summary (tied to the Nutrition item in Part III).
+
+### 🔴 Recipe library sort order
+*Problem:* the recipe list has no sort control — recipes appear in insertion
+order. Every comparable app lets users sort by name, date added, cook time, or
+favourites count.
+*What to do:* add a `SortCriteria` field to `RecipeFilterCriteria` (name A–Z,
+newest first, cook time, favourites) and a sort picker on `RecipeSearchView`.
+No backend work, no new models — purely a filter-layer addition.
 
 ### 🔴 Pantry expiry & restock — surface what's already tracked
 *Problem:* `KitchenInventoryModel` already tracks `expiryDate` / `isExpired` /
@@ -227,22 +238,32 @@ The loop that defines the release is live end-to-end:
 - Every AI/text/photo import lands in a **review/edit step** before saving;
   nothing is saved silently. *Marketing: unlimited free imports vs ReciMe's 5/week.*
 
-### 🔴 Collections & Tags *(next up)*
-*Problem:* favourites is the only organisation; a growing library needs more.
-*What to do:* user-created collections beyond favourites ("Weeknight Dinners",
-"Party Food"), custom tags with colour coding, and smart collections
-auto-populated by rules. **Collections first, tags second.** Local-only — no dev
-account required — so it's buildable now.
+### 🟢 Collections & Tags
+User-created collections (create / rename / recolour / delete, add/remove
+recipes, batch-add to shopping list) and custom tags on recipes (add in wizard
+and edit flow, filter by tag, tags survive the full wizard→persistence round-
+trip) all ship. Collections are accessible inline from the Recipes tab and from
+recipe detail. Filter criteria supports both tag and collection filtering.
+*Remaining:* smart/auto-populated collections by rules; a dedicated Collections
+tab if the library grows large enough to warrant one.
 
-### 🔴 Cooking Experience
-The moment that drives repeat use.
-- **Interactive Cooking Mode** — big text, screen stays awake, greasy-hands tap
-  targets, tap a step/ingredient to start its timer inline (wire in
-  `RecipeTimerManager`). Crouton sets the bar here.
+### 🟡 Cooking Experience
+`CookingModeView` ships (step navigation, mark complete). Remaining to reach
+Crouton-parity: wire `RecipeTimerManager` per step so tapping an ingredient or
+instruction starts its timer inline, `UIApplication.shared.isIdleTimerDisabled`
+to keep the screen awake during cooking, and bigger greasy-hands tap targets.
 - **Timer Live Activity + Widgets** *(needs a Widget Extension target)* —
   running timer on Lock Screen / Dynamic Island; today's-meal-plan, shopping
   -list quick-view, and random-recipe widgets. Consider AlarmKit for cook timers
   with custom UI.
+
+### 🔴 Shopping list sharing
+*Problem:* households cook together; there's no way to share the shopping list
+with a partner. AnyList's entire product is built on this.
+*What to do:* share the list as plain text or a live shared link (via
+CloudKit Sharing once iCloud lands, or a simple "copy to clipboard" formatted
+list as a low-cost interim). The interim (copy formatted list) can ship before
+iCloud.
 
 ### 🔴 iCloud Sync *(blocked on paid enrollment — keep the model ready)*
 `NSPersistentCloudKitContainer` over the existing Core Data stack, using the
@@ -271,11 +292,13 @@ last-synced time, and a syncing/error indicator, so people trust it's working.
 (The CloudKit Dashboard is a *developer* tool for schema and the public DB only —
 it can never expose users' private data, by design.)
 
-### 🔴 Nutrition
-Calories/protein/carbs/fat/fibre per serving, recalculated on serving changes.
-Free data sources: Open Food Facts, USDA FoodData Central, Edamam (free tier).
-UX: a per-recipe toggle (not global — people care on weeknights, not for baking),
-shown as a collapsible section on detail and summarised on the weekly plan.
+### 🔴 Nutrition UI surface
+*The calculator already exists* (`NutritionCalculator`, tested) and the model
+stores nutrition data. What's missing is the UI: a collapsible section on the
+recipe detail view showing calories/protein/carbs/fat/fibre per serving,
+recalculating on serving changes (the `scaleFactor` already updates quantities
+— nutrition just needs to follow). Weekly plan summary is a natural follow-on.
+No external API needed for phase 1 — the on-device calculator covers it.
 
 ### 🔴 Supermarket integration *(a genuine premium candidate)*
 Match shopping-list items to a retailer's catalogue (Tesco, Sainsbury's, Ocado)
