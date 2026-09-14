@@ -233,6 +233,98 @@ import Foundation
         #expect(controller.fetchRecipes().first?.isFavorite == false)
     }
 
+    // MARK: - Tags through wizard builder
+
+    @Test func wizardAssemble_persistsTags() throws {
+        let controller = makeController()
+
+        controller.saveRecipeModel(RecipeWizardBuilder.assemble(
+            recipeId: UUID(),
+            name: "Tagged Recipe",
+            category: "Main",
+            difficulty: "Basic",
+            prepTime: 5,
+            cookTime: 10,
+            servings: 2,
+            ingredientItems: [ingredient("1", "cup", "rice")],
+            prePrepSteps: [],
+            mainInstructions: [step("Cook")],
+            notes: "",
+            imageReference: nil,
+            isFavorite: false,
+            tags: ["quick", "weeknight", "healthy"]
+        ))
+
+        let saved = try #require(controller.fetchRecipes().first)
+        #expect(Set(saved.tags) == ["quick", "weeknight", "healthy"])
+    }
+
+    @Test func wizardAssemble_emptyTags_roundTripsToEmpty() throws {
+        let controller = makeController()
+
+        controller.saveRecipeModel(RecipeWizardBuilder.assemble(
+            recipeId: UUID(),
+            name: "No Tags",
+            category: "Main",
+            difficulty: "Basic",
+            prepTime: 5,
+            cookTime: 10,
+            servings: 2,
+            ingredientItems: [ingredient("1", "cup", "flour")],
+            prePrepSteps: [],
+            mainInstructions: [step("Mix")],
+            notes: "",
+            imageReference: nil,
+            isFavorite: false,
+            tags: []
+        ))
+
+        let saved = try #require(controller.fetchRecipes().first)
+        #expect(saved.tags.isEmpty)
+    }
+
+    @Test func editRecipe_updatesTags() throws {
+        let controller = makeController()
+        let id = UUID()
+
+        controller.saveRecipeModel(RecipeWizardBuilder.assemble(
+            recipeId: id,
+            name: "Tag Update Test",
+            category: "Main",
+            difficulty: "Basic",
+            prepTime: 5,
+            cookTime: 10,
+            servings: 2,
+            ingredientItems: [ingredient("1", "cup", "rice")],
+            prePrepSteps: [],
+            mainInstructions: [step("Cook")],
+            notes: "",
+            imageReference: nil,
+            isFavorite: false,
+            tags: ["old-tag"]
+        ))
+
+        controller.saveRecipeModel(RecipeWizardBuilder.assemble(
+            recipeId: id,
+            name: "Tag Update Test",
+            category: "Main",
+            difficulty: "Basic",
+            prepTime: 5,
+            cookTime: 10,
+            servings: 2,
+            ingredientItems: [ingredient("1", "cup", "rice")],
+            prePrepSteps: [],
+            mainInstructions: [step("Cook")],
+            notes: "",
+            imageReference: nil,
+            isFavorite: false,
+            tags: ["new-tag", "quick"]
+        ))
+
+        let saved = try #require(controller.fetchRecipes().first)
+        #expect(Set(saved.tags) == ["new-tag", "quick"])
+    }
+
     // MARK: - Ingredient quantities
 
     @Test func ingredientQuantity_survivesRoundTrip() throws {
