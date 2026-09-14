@@ -211,6 +211,8 @@
 		F3D40560305852870076834D /* BadgeEarnedSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D4055F305852870076834D /* BadgeEarnedSheet.swift */; };
 		F3D40562305855180076834D /* BadgeTriggerIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D40561305855180076834D /* BadgeTriggerIntegrationTests.swift */; };
 		F3D4056430585ED10076834D /* RecipePersistenceRoundTripTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D4056330585ED10076834D /* RecipePersistenceRoundTripTests.swift */; };
+		F3D405663058609C0076834D /* CollectionFormSheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D405653058609C0076834D /* CollectionFormSheets.swift */; };
+		F3D40568305860C20076834D /* CollectionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D40567305860C20076834D /* CollectionCard.swift */; };
 		F3E9D10630434D33008BF231 /* CalendarDayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10530434D33008BF231 /* CalendarDayView.swift */; };
 		F3E9D10830434D43008BF231 /* MealTimeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10730434D43008BF231 /* MealTimeCard.swift */; };
 		F3E9D10A30434D58008BF231 /* MealTimeSelectorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10930434D58008BF231 /* MealTimeSelectorSheet.swift */; };
@@ -609,6 +611,8 @@
 		F3D4055F305852870076834D /* BadgeEarnedSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeEarnedSheet.swift; sourceTree = "<group>"; };
 		F3D40561305855180076834D /* BadgeTriggerIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeTriggerIntegrationTests.swift; sourceTree = "<group>"; };
 		F3D4056330585ED10076834D /* RecipePersistenceRoundTripTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipePersistenceRoundTripTests.swift; sourceTree = "<group>"; };
+		F3D405653058609C0076834D /* CollectionFormSheets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionFormSheets.swift; sourceTree = "<group>"; };
+		F3D40567305860C20076834D /* CollectionCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionCard.swift; sourceTree = "<group>"; };
 		F3E9D10530434D33008BF231 /* CalendarDayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDayView.swift; sourceTree = "<group>"; };
 		F3E9D10730434D43008BF231 /* MealTimeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealTimeCard.swift; sourceTree = "<group>"; };
 		F3E9D10930434D58008BF231 /* MealTimeSelectorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealTimeSelectorSheet.swift; sourceTree = "<group>"; };
@@ -1656,6 +1660,8 @@
 				F3B837DA3055F15B0003AEF8 /* CollectionDetailView.swift */,
 				F3B837DC3055F1650003AEF8 /* AddToCollectionSheet.swift */,
 				F3D40546305615580076834D /* RecipePickerForCollectionSheet.swift */,
+				F3D405653058609C0076834D /* CollectionFormSheets.swift */,
+				F3D40567305860C20076834D /* CollectionCard.swift */,
 			);
 			path = Collections;
 			sourceTree = "<group>";
@@ -1979,6 +1985,7 @@
 				F3E9D16630444D9A008BF231 /* GrocerySearchResultsView.swift in Sources */,
 				F3E9D1BC30457DE4008BF231 /* PersistenceController+Database.swift in Sources */,
 				F36AED533040A5D700935A3C /* HTMLFetcher.swift in Sources */,
+				F3D405663058609C0076834D /* CollectionFormSheets.swift in Sources */,
 				9E51C3A82EB40DC90064B917 /* AuthenticationView.swift in Sources */,
 				9E51C3972EB3E6540064B917 /* MealPlanningView.swift in Sources */,
 				F3E9D1E230461D3F008BF231 /* FaceIDOnboardingSplash+Content.swift in Sources */,
@@ -2160,6 +2167,7 @@
 				F3E9D11230434D91008BF231 /* MonthYearPickerSheet.swift in Sources */,
 				9E6DEA6B2EF5EF47001E7B24 /* RecipeCard.swift in Sources */,
 				F3E9D1433043A920008BF231 /* IngredientRecipeResultsView.swift in Sources */,
+				F3D40568305860C20076834D /* CollectionCard.swift in Sources */,
 				9E6DEA6C2EF5EF47001E7B24 /* AnimatedHeartButton.swift in Sources */,
 				9E6DEA6E2EF5EF47001E7B24 /* RecipeImageView.swift in Sources */,
 				F3E9D10A30434D58008BF231 /* MealTimeSelectorSheet.swift in Sources */,

@@ -47,3 +47,20 @@ enum CollectionColor: String, Codable, CaseIterable, Identifiable {
 
     var displayName: String { rawValue.capitalized }
 }
+
+import SwiftUI
+
+extension CollectionColor {
+    var swiftUIColor: Color {
+        switch self {
+        case .blue:   return .blue
+        case .green:  return .green
+        case .orange: return .orange
+        case .pink:   return .pink
+        case .purple: return .purple
+        case .red:    return .red
+        case .teal:   return .teal
+        case .yellow: return .yellow
+        }
+    }
+}
