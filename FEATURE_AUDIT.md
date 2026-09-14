@@ -1,6 +1,6 @@
 # Feature Audit — Test Coverage
 
-Last updated: 2026-09-14.  
+Last updated: 2026-09-14 (updated after integration test pass).  
 Legend: ✅ integration tested · ⚠️ unit/model only · ❌ no test
 
 ---
@@ -13,12 +13,12 @@ Legend: ✅ integration tested · ⚠️ unit/model only · ❌ no test
 | Edit recipe (save + rollback) | ✅ | RecipeSaveResultTests, RecipePersistenceRoundTripTests | — |
 | Delete recipe | ✅ | RecipePersistenceRoundTripTests | — |
 | Favorites toggle + persistence | ✅ | RecipePersistenceRoundTripTests | — |
-| Tags — add to recipe | ✅ | RecipeWizardBuilderTests | Tags step in wizard, edit round-trip, filter already wired |
+| Tags — add to recipe | ✅ | RecipeWizardBuilderTests, RecipeWizardPersistenceTests | — |
 | Dietary info (veg/vegan/GF) | ✅ | RecipeDietaryInfoPersistenceTests | — |
 | Nutrition auto-calc per serving | ✅ | NutritionCalculatorTests | — |
 | Recipe notes | ✅ | RecipeNotesFormatterTests, RecipePersistenceRoundTripTests | — |
 | Seed/sample recipes | ✅ | SeedRecipeProviderTests | — |
-| Servings scaling | ⚠️ | RecipeModelTests | No persistence round-trip |
+| Servings scaling | ✅ | RecipeModelTests, RecipePersistenceRoundTripTests | — |
 
 ---
 
@@ -28,10 +28,10 @@ Legend: ✅ integration tested · ⚠️ unit/model only · ❌ no test
 |---|---|---|---|
 | URL / link import | ✅ | RecipeImporterTests, RecipeImportFixtureTests, RecipeImportPersistenceTests | — |
 | Paste text import | ✅ | TextRecipeParserTests, SharedTextImporterTests, TextRecipeFixtureTests | — |
-| Photo OCR import | ✅ | RecipeImageTextRecognizerTests | Service layer only; full save flow untested |
+| Photo OCR import | ✅ | RecipeImageTextRecognizerTests, PhotoOCRImportPersistenceTests | — |
 | Share extension inbox | ✅ | SharedImportInboxTests | — |
-| AI free-text import (FoundationModels) | ⚠️ | OnDeviceRecipeImportStatusTests | Adapter only; no round-trip |
-| Import duplicate detection | ⚠️ | BackupMergeTests | Covered indirectly |
+| AI free-text import (FoundationModels) | ✅ | OnDeviceRecipeImportStatusTests, AIImportPersistenceTests | — |
+| Import duplicate detection | ✅ | BackupMergeTests, RecipeImportPersistenceTests | — |
 
 ---
 
@@ -39,7 +39,7 @@ Legend: ✅ integration tested · ⚠️ unit/model only · ❌ no test
 
 | Feature | Status | Test file(s) | Gap |
 |---|---|---|---|
-| Text search | ❌ | — | No test for search predicate |
+| Text search | ✅ | RecipeFilterIntegrationTests | — |
 | Filter by category | ✅ | RecipeFilterCriteriaTests, RecipeFilterIntegrationTests | — |
 | Filter by difficulty | ✅ | RecipeFilterCriteriaTests | — |
 | Filter by dietary info | ✅ | RecipeFilterCriteriaTests | — |
@@ -103,7 +103,7 @@ Legend: ✅ integration tested · ⚠️ unit/model only · ❌ no test
 |---|---|---|---|
 | Unlock + celebration queue | ✅ | BadgeManagerTests | — |
 | shoppingExpert / mealPlanner triggers | ✅ | BadgeTriggerIntegrationTests | — |
-| firstImport / firstPhotoImport / headChef | ⚠️ | BadgeManagerTests (unlock only) | View-level triggers untested |
+| firstImport / firstPhotoImport / headChef | ⚠️ | BadgeManagerTests | Unlock + celebration tested; call sites are in views, no extractable logic |
 | Shown-celebration persistence | ✅ | BadgeManagerTests | — |
 | Backup merge (no re-celebration) | ✅ | BadgeManagerTests | — |
 
@@ -155,8 +155,9 @@ Legend: ✅ integration tested · ⚠️ unit/model only · ❌ no test
 
 ---
 
-## Priority gaps (start here)
+## Priority gaps
 
-1. **Collection filter UI** — wire `selectedCollectionRecipeIDs` into `FilterSheet` so users can filter by collection (criteria logic + tests already done)
-2. **Sort order** — no sort feature implemented yet (no sort field in criteria, no sort UI)
-3. **Auth flows** — blocked on DI seam; tracked in hardening backlog
+1. **Collection filter UI** — wire `selectedCollectionRecipeIDs` into `FilterSheet` so users can filter by collection (criteria logic + tests already done; UI wiring pending)
+2. **Sort order** — no sort feature implemented yet; nothing to test until built
+3. **Auth flows** — sign-in / sign-up / Apple Sign In / biometric / guest all blocked on `AuthenticationManager` DI seam; tracked in hardening backlog
+4. **headChef / firstImport / firstPhotoImport call sites** — badge unlock is tested; triggers live in views with no extractable logic to unit-test
