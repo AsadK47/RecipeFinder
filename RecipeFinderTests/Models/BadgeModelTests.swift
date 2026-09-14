@@ -1,79 +1,112 @@
-import XCTest
+import Testing
+import SwiftUI
 @testable import RecipeFinder
 
-final class BadgeModelTests: XCTestCase {
+@Suite("BadgeModel")
+struct BadgeModelTests {
 
     // MARK: - BadgeType.requiredCount
 
-    func testRequiredCount_countBasedBadges() {
-        XCTAssertEqual(BadgeType.firstRecipe.requiredCount, 1)
-        XCTAssertEqual(BadgeType.fiveRecipes.requiredCount, 5)
-        XCTAssertEqual(BadgeType.tenRecipes.requiredCount, 10)
-        XCTAssertEqual(BadgeType.twentyFiveRecipes.requiredCount, 25)
-        XCTAssertEqual(BadgeType.fiftyRecipes.requiredCount, 50)
-        XCTAssertEqual(BadgeType.hundredRecipes.requiredCount, 100)
+    @Test(arguments: [
+        (BadgeType.firstRecipe,        1),
+        (BadgeType.fiveRecipes,        5),
+        (BadgeType.tenRecipes,         10),
+        (BadgeType.twentyFiveRecipes,  25),
+        (BadgeType.fiftyRecipes,       50),
+        (BadgeType.hundredRecipes,     100),
+    ])
+    func requiredCount_countBased(type: BadgeType, expected: Int) {
+        #expect(type.requiredCount == expected)
     }
 
-    func testRequiredCount_nonCountBadgesAreZero() {
-        XCTAssertEqual(BadgeType.welcomeAboard.requiredCount, 0)
-        XCTAssertEqual(BadgeType.mealPlanner.requiredCount, 0)
-        XCTAssertEqual(BadgeType.shoppingExpert.requiredCount, 0)
+    @Test(arguments: [
+        BadgeType.welcomeAboard,
+        BadgeType.mealPlanner,
+        BadgeType.shoppingExpert,
+        BadgeType.firstImport,
+        BadgeType.firstPhotoImport,
+        BadgeType.headChef,
+    ])
+    func requiredCount_triggerBasedBadgesAreZero(type: BadgeType) {
+        #expect(type.requiredCount == 0)
     }
 
-    func testRequiredCount_thresholdsAreStrictlyIncreasing() {
-        let countBased: [BadgeType] = [.firstRecipe, .fiveRecipes, .tenRecipes, .twentyFiveRecipes, .fiftyRecipes, .hundredRecipes]
+    @Test func requiredCount_thresholdsAreStrictlyIncreasing() {
+        let countBased: [BadgeType] = [
+            .firstRecipe, .fiveRecipes, .tenRecipes,
+            .twentyFiveRecipes, .fiftyRecipes, .hundredRecipes,
+        ]
         let counts = countBased.map(\.requiredCount)
         for i in 1..<counts.count {
-            XCTAssertGreaterThan(counts[i], counts[i - 1])
+            #expect(counts[i] > counts[i - 1])
         }
     }
 
-    // MARK: - BadgeType.badge invariants
+    // MARK: - BadgeType.badge invariants (all cases)
 
-    func testBadge_idMatchesRawValue() {
-        for type in BadgeType.allCases {
-            XCTAssertEqual(type.badge.id, type.rawValue)
-        }
+    @Test(arguments: BadgeType.allCases)
+    func badge_idMatchesRawValue(type: BadgeType) {
+        #expect(type.badge.id == type.rawValue)
     }
 
-    func testBadge_defaultsAreLockedAndUnearned() {
-        for type in BadgeType.allCases {
-            let badge = type.badge
-            XCTAssertFalse(badge.isUnlocked)
-            XCTAssertNil(badge.dateEarned)
-        }
+    @Test(arguments: BadgeType.allCases)
+    func badge_defaultIsLockedAndUnearned(type: BadgeType) {
+        let badge = type.badge
+        #expect(!badge.isUnlocked)
+        #expect(badge.dateEarned == nil)
     }
 
-    func testBadge_allTypesHaveNonEmptyFields() {
-        for type in BadgeType.allCases {
-            let badge = type.badge
-            XCTAssertFalse(badge.title.isEmpty, "\(type) has empty title")
-            XCTAssertFalse(badge.icon.isEmpty, "\(type) has empty icon")
-            XCTAssertFalse(badge.color.isEmpty, "\(type) has empty color")
-            XCTAssertFalse(badge.howToEarn.isEmpty, "\(type) has empty howToEarn")
-        }
+    @Test(arguments: BadgeType.allCases)
+    func badge_allFieldsNonEmpty(type: BadgeType) {
+        let badge = type.badge
+        #expect(!badge.title.isEmpty)
+        #expect(!badge.icon.isEmpty)
+        #expect(!badge.color.isEmpty)
+        #expect(!badge.howToEarn.isEmpty)
+    }
+
+    // MARK: - New trigger-based badge types
+
+    @Test func firstImport_hasExpectedProperties() {
+        let badge = BadgeType.firstImport.badge
+        #expect(badge.id == "first_import")
+        #expect(badge.icon == "link.circle.fill")
+        #expect(badge.color == "blue")
+    }
+
+    @Test func firstPhotoImport_hasExpectedProperties() {
+        let badge = BadgeType.firstPhotoImport.badge
+        #expect(badge.id == "first_photo_import")
+        #expect(badge.icon == "camera.circle.fill")
+        #expect(badge.color == "purple")
+    }
+
+    @Test func headChef_hasExpectedProperties() {
+        let badge = BadgeType.headChef.badge
+        #expect(badge.id == "head_chef")
+        #expect(badge.icon == "frying.pan.fill")
+        #expect(badge.color == "orange")
     }
 
     // MARK: - Badge.color(for:)
 
-    func testColorFor_namedColors() {
-        XCTAssertEqual(Badge.color(for: "purple"), .purple)
-        XCTAssertEqual(Badge.color(for: "green"),  .green)
-        XCTAssertEqual(Badge.color(for: "mint"),   .mint)
-        XCTAssertEqual(Badge.color(for: "blue"),   .blue)
-        XCTAssertEqual(Badge.color(for: "orange"), .orange)
-        XCTAssertEqual(Badge.color(for: "yellow"), .yellow)
-        XCTAssertEqual(Badge.color(for: "teal"),   .teal)
-        XCTAssertEqual(Badge.color(for: "indigo"), .indigo)
+    @Test(arguments: [
+        ("purple", Color.purple),
+        ("green",  Color.green),
+        ("mint",   Color.mint),
+        ("blue",   Color.blue),
+        ("orange", Color.orange),
+        ("yellow", Color.yellow),
+        ("gold",   Color.yellow),
+        ("teal",   Color.teal),
+        ("indigo", Color.indigo),
+    ])
+    func colorFor_namedColors(name: String, expected: Color) {
+        #expect(Badge.color(for: name) == expected)
     }
 
-    func testColorFor_goldMapsToYellow() {
-        XCTAssertEqual(Badge.color(for: "gold"), .yellow)
-    }
-
-    func testColorFor_unknownFallsBackToGray() {
-        XCTAssertEqual(Badge.color(for: ""),        .gray)
-        XCTAssertEqual(Badge.color(for: "crimson"), .gray)
-        XCTAssertEqual(Badge.color(for: "PURPLE"),  .gray) // case-sensitive
+    @Test(arguments: ["", "crimson", "PURPLE"])
+    func colorFor_unknownFallsBackToGray(name: String) {
+        #expect(Badge.color(for: name) == .gray)
     }
 }
