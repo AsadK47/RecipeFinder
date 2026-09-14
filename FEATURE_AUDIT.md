@@ -13,7 +13,7 @@ Legend: ✅ integration tested · ⚠️ unit/model only · ❌ no test
 | Edit recipe (save + rollback) | ⚠️ | RecipeSaveResultTests | Edit-path rollback not tested |
 | Delete recipe | ⚠️ | PersistenceControllerTests | No explicit round-trip |
 | Favorites toggle + persistence | ❌ | — | No round-trip test |
-| Tags — add to recipe | ❌ | — | No UI, no filter, model field exists but half-shipped |
+| Tags — add to recipe | ✅ | RecipeWizardBuilderTests | Tags step in wizard, edit round-trip, filter already wired |
 | Dietary info (veg/vegan/GF) | ✅ | RecipeDietaryInfoPersistenceTests | — |
 | Nutrition auto-calc per serving | ✅ | NutritionCalculatorTests | — |
 | Recipe notes | ⚠️ | RecipeNotesFormatterTests | Formatter only, no persistence test |
@@ -44,7 +44,7 @@ Legend: ✅ integration tested · ⚠️ unit/model only · ❌ no test
 | Filter by difficulty | ✅ | RecipeFilterCriteriaTests | — |
 | Filter by dietary info | ✅ | RecipeFilterCriteriaTests | — |
 | Filter by available ingredients | ✅ | KitchenRecipeMatcherTests | — |
-| **Filter by tag** | ❌ | — | Tags not in RecipeFilterCriteria |
+| **Filter by tag** | ✅ | RecipeFilterCriteriaTests, RecipeFilterIntegrationTests | — |
 | **Filter by collection** | ❌ | — | Collections not in RecipeFilterCriteria |
 | Sort order | ❌ | — | No test |
 
@@ -157,8 +157,7 @@ Legend: ✅ integration tested · ⚠️ unit/model only · ❌ no test
 
 ## Priority gaps (start here)
 
-1. **Tags** — add tags to recipe in wizard/edit, filter by tag in `RecipeFilterCriteria` + UI chip
-2. **Filter by collection** — add `collectionID: UUID?` to `RecipeFilterCriteria`, wire into filter UI
+1. **Filter by collection** — add `collectionID: UUID?` to `RecipeFilterCriteria`, wire into filter UI
 3. **Favorites persistence** — quick round-trip test
 4. **Text search test** — cover the search predicate logic
 5. **Auth flows** — blocked on DI seam; tracked in hardening backlog

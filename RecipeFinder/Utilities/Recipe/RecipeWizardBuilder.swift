@@ -79,7 +79,8 @@ enum RecipeWizardBuilder {
         mainInstructions: [EditableStep],
         notes: String,
         imageReference: String?,
-        isFavorite: Bool
+        isFavorite: Bool,
+        tags: [String] = []
     ) -> RecipeModel {
         RecipeModel(
             id: recipeId,
@@ -95,7 +96,8 @@ enum RecipeWizardBuilder {
             instructions: mainInstructions.nonEmptyTexts,
             notes: notes,
             imageName: imageReference,
-            isFavorite: isFavorite
+            isFavorite: isFavorite,
+            tags: tags
         )
     }
 }

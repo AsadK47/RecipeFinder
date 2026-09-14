@@ -13,24 +13,40 @@ struct WizardRecipeSummary {
     let cookingStepCount: Int
 }
 
-/// Step 6 of the Recipe Wizard: free-form notes plus the recipe summary.
+private let tagSuggestions = [
+    "Quick", "Comfort Food", "Spicy", "Budget Friendly", "Family Friendly",
+    "Date Night", "Batch Cook", "Healthy", "Sunday Roast", "Meal Prep",
+    "Vegetarian", "Vegan", "Gluten Free", "Freezer Friendly"
+]
+
+/// Step 6 of the Recipe Wizard: tags, free-form notes, and the recipe summary.
 struct NotesStepView: View {
     @Binding var notes: String
+    @Binding var tags: [String]
     let hasPrefilledNotes: Bool
     let summary: WizardRecipeSummary
     let cardStyle: CardStyle
     let colorScheme: ColorScheme
     let totalSteps: Int
 
+    @State private var tagInput: String = ""
+
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing24) {
             WizardStepHeader(
-                title: "Final Notes",
-                subtitle: hasPrefilledNotes && !notes.isEmpty ? "Review notes or add your own" : "Any tips, variations, or additional notes? (Optional)",
+                title: "Final Touches",
+                subtitle: "Add tags or notes to help you find this recipe later",
                 stepNumber: 6,
                 totalSteps: totalSteps,
                 illustration: "note.text"
             )
+
+            WizardCard(cardStyle: cardStyle, colorScheme: colorScheme) {
+                VStack(alignment: .leading, spacing: AppTheme.spacing24) {
+                    tagsSection
+                    Divider()
+                }
+            }
 
             WizardCard(cardStyle: cardStyle, colorScheme: colorScheme) {
                 VStack(spacing: AppTheme.spacing24) {
@@ -144,5 +160,89 @@ struct NotesStepView: View {
             .cornerRadius(AppTheme.cornerRadius16)
         }
         .buttonStyle(PlainButtonStyle())
+    }
+
+    @ViewBuilder
+    private var tagsSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.spacing12) {
+            Text("Tags")
+                .font(.headline)
+
+            Text("Add searchable tags to organise and filter this recipe. (Optional)")
+                .font(.caption)
+                .adaptiveSecondaryForeground()
+
+            if !tags.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: AppTheme.spacing8) {
+                        ForEach(tags, id: \.self) { tag in
+                            HStack(spacing: AppTheme.spacing4) {
+                                Text(tag)
+                                    .font(.caption)
+                                    .fontWeight(.medium)
+                                Button(action: {
+                                    HapticManager.shared.light()
+                                    tags.removeAll { $0 == tag }
+                                }) {
+                                    Image(systemName: "xmark")
+                                        .font(.system(size: 10, weight: .bold))
+                                }
+                                .accessibilityLabel("Remove \(tag) tag")
+                            }
+                            .padding(.horizontal, AppTheme.spacing10)
+                            .padding(.vertical, AppTheme.spacing6)
+                            .background(Color.accentColor.opacity(0.15))
+                            .cornerRadius(AppTheme.cornerRadius16)
+                        }
+                    }
+                }
+            }
+
+            HStack(spacing: AppTheme.spacing8) {
+                TextField("Add a tag…", text: $tagInput)
+                    .textFieldStyle(.plain)
+                    .padding(.horizontal, AppTheme.spacing12)
+                    .padding(.vertical, AppTheme.spacing8)
+                    .background(Color(.systemGray6))
+                    .cornerRadius(AppTheme.cornerRadius8)
+                    .onSubmit { addTag() }
+
+                Button("Add", action: addTag)
+                    .disabled(tagInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            }
+
+            VStack(alignment: .leading, spacing: AppTheme.spacing8) {
+                Text("Suggestions:")
+                    .font(.caption)
+                    .adaptiveSecondaryForeground()
+
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: AppTheme.spacing8) {
+                        ForEach(tagSuggestions.filter { !tags.contains($0) }, id: \.self) { suggestion in
+                            Button(action: {
+                                HapticManager.shared.light()
+                                tags.append(suggestion)
+                            }) {
+                                Text(suggestion)
+                                    .font(.caption)
+                                    .padding(.horizontal, AppTheme.spacing12)
+                                    .padding(.vertical, AppTheme.spacing6)
+                                    .background(Color(.systemGray5))
+                                    .cornerRadius(AppTheme.cornerRadius16)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private func addTag() {
+        let trimmed = tagInput.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, !tags.contains(trimmed) else { return }
+        HapticManager.shared.light()
+        tags.append(trimmed)
+        tagInput = ""
     }
 }

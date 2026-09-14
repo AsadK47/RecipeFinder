@@ -337,7 +337,8 @@ extension RecipeDetailView {
                 notes: recipe.notes.isEmpty ? nil : recipe.notes,
                 category: recipe.category,
                 isFavorite: recipe.isFavorite,
-                imageURL: recipe.imageName
+                imageURL: recipe.imageName,
+                tags: recipe.tags.isEmpty ? nil : recipe.tags
             ),
             editingRecipeId: recipe.id,
             onComplete: { updatedRecipe in

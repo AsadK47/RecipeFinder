@@ -142,5 +142,31 @@ struct RecipeWizardBuilderTests {
         #expect(recipe.notes == "Serve warm")
         #expect(recipe.imageName == "/tmp/img.jpg")
         #expect(recipe.isFavorite == true)
+        #expect(recipe.tags.isEmpty)
+    }
+
+    @Test("Tags are carried through to the assembled recipe", arguments: [
+        (["spicy", "quick"], ["spicy", "quick"]),
+        ([], []),
+        (["Comfort Food"], ["Comfort Food"])
+    ] as [([String], [String])])
+    func assemblesWithTags(tags: [String], expected: [String]) {
+        let recipe = RecipeWizardBuilder.assemble(
+            recipeId: UUID(),
+            name: "Pasta",
+            category: "Main",
+            difficulty: "Basic",
+            prepTime: 5,
+            cookTime: 15,
+            servings: 2,
+            ingredientItems: [RecipeWizardView.IngredientItem(quantity: "200", unit: "g", name: "pasta")],
+            prePrepSteps: [],
+            mainInstructions: [EditableStep(text: "Boil and serve")],
+            notes: "",
+            imageReference: nil,
+            isFavorite: false,
+            tags: tags
+        )
+        #expect(recipe.tags == expected)
     }
 }

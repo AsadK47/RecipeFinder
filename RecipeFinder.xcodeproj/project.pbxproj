@@ -184,7 +184,6 @@
 		F3B837D13055F0E80003AEF8 /* CollectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837D03055F0E80003AEF8 /* CollectionManager.swift */; };
 		F3B837D33055F1130003AEF8 /* RecipeCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837D23055F1130003AEF8 /* RecipeCollection.swift */; };
 		F3B837D53055F1170003AEF8 /* TagRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837D43055F1170003AEF8 /* TagRowView.swift */; };
-		F3B837D73055F1380003AEF8 /* CollectionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837D63055F1380003AEF8 /* CollectionsView.swift */; };
 		F3B837D93055F14D0003AEF8 /* CollectionsInlineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837D83055F14D0003AEF8 /* CollectionsInlineView.swift */; };
 		F3B837DB3055F15B0003AEF8 /* CollectionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837DA3055F15B0003AEF8 /* CollectionDetailView.swift */; };
 		F3B837DD3055F1650003AEF8 /* AddToCollectionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837DC3055F1650003AEF8 /* AddToCollectionSheet.swift */; };
@@ -582,7 +581,6 @@
 		F3B837D03055F0E80003AEF8 /* CollectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionManager.swift; sourceTree = "<group>"; };
 		F3B837D23055F1130003AEF8 /* RecipeCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeCollection.swift; sourceTree = "<group>"; };
 		F3B837D43055F1170003AEF8 /* TagRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagRowView.swift; sourceTree = "<group>"; };
-		F3B837D63055F1380003AEF8 /* CollectionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionsView.swift; sourceTree = "<group>"; };
 		F3B837D83055F14D0003AEF8 /* CollectionsInlineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionsInlineView.swift; sourceTree = "<group>"; };
 		F3B837DA3055F15B0003AEF8 /* CollectionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionDetailView.swift; sourceTree = "<group>"; };
 		F3B837DC3055F1650003AEF8 /* AddToCollectionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddToCollectionSheet.swift; sourceTree = "<group>"; };
@@ -1651,7 +1649,6 @@
 		F3B837CE3055F0CA0003AEF8 /* Collections */ = {
 			isa = PBXGroup;
 			children = (
-				F3B837D63055F1380003AEF8 /* CollectionsView.swift */,
 				F3B837D83055F14D0003AEF8 /* CollectionsInlineView.swift */,
 				F3B837DA3055F15B0003AEF8 /* CollectionDetailView.swift */,
 				F3B837DC3055F1650003AEF8 /* AddToCollectionSheet.swift */,
@@ -1983,7 +1980,6 @@
 				9E51C3972EB3E6540064B917 /* MealPlanningView.swift in Sources */,
 				F3E9D1E230461D3F008BF231 /* FaceIDOnboardingSplash+Content.swift in Sources */,
 				F3E9D1483043AA96008BF231 /* PrivacyPolicyView.swift in Sources */,
-				F3B837D73055F1380003AEF8 /* CollectionsView.swift in Sources */,
 				F3E9D12530439F1D008BF231 /* RecipeNameStepView.swift in Sources */,
 				F3E9D1AC3045198F008BF231 /* AppTheme+Constants.swift in Sources */,
 				F3E9D10830434D43008BF231 /* MealTimeCard.swift in Sources */,

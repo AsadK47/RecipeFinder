@@ -32,6 +32,7 @@ struct RecipeWizardView: View {
     @State var mainInstructions: [EditableStep] = [EditableStep()]
 
     @State private var notes = ""
+    @State private var recipeTags: [String] = []
 
     @State private var showError = false
     @State private var errorMessage = ""
@@ -155,6 +156,10 @@ struct RecipeWizardView: View {
             self.notes = notes
         }
 
+        if let tags = data.tags, !tags.isEmpty {
+            self.recipeTags = tags
+        }
+
         if let imageReference = data.imageURL, !imageReference.isEmpty {
             existingImageReference = imageReference
         }
@@ -231,6 +236,7 @@ struct RecipeWizardView: View {
         case 5:
             NotesStepView(
                 notes: $notes,
+                tags: $recipeTags,
                 hasPrefilledNotes: prefilledData?.notes != nil,
                 summary: recipeSummary,
                 cardStyle: cardStyle,
@@ -292,7 +298,8 @@ struct RecipeWizardView: View {
             mainInstructions: mainInstructions,
             notes: notes,
             imageReference: imageReference,
-            isFavorite: prefilledData?.isFavorite ?? false
+            isFavorite: prefilledData?.isFavorite ?? false,
+            tags: recipeTags
         )
 
         HapticManager.shared.success()
