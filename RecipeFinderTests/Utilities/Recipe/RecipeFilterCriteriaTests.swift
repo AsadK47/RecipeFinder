@@ -201,4 +201,55 @@ struct RecipeFilterCriteriaTests {
     func activeCountEmpty() {
         #expect(RecipeFilterCriteria().activeCount == 0)
     }
+
+    // MARK: - Collection filter
+
+    @Test("Collection filter keeps only recipes whose id is in the set")
+    func collectionFilter_keepsMembersOnly() {
+        let inCollection = makeRecipe(name: "In Collection")
+        let outside = makeRecipe(name: "Outside")
+        var criteria = RecipeFilterCriteria()
+        criteria.selectedCollectionRecipeIDs = [inCollection.id]
+
+        #expect(criteria.apply(to: [inCollection, outside]).map(\.name) == ["In Collection"])
+    }
+
+    @Test("Collection filter nil means no constraint — all recipes pass")
+    func collectionFilter_nil_returnsAll() {
+        let recipes = [makeRecipe(name: "A"), makeRecipe(name: "B")]
+        var criteria = RecipeFilterCriteria()
+        criteria.selectedCollectionRecipeIDs = nil
+
+        #expect(criteria.apply(to: recipes).count == 2)
+    }
+
+    @Test("Collection filter with an empty set returns no recipes")
+    func collectionFilter_emptySet_returnsNone() {
+        let recipes = [makeRecipe(name: "A"), makeRecipe(name: "B")]
+        var criteria = RecipeFilterCriteria()
+        criteria.selectedCollectionRecipeIDs = []
+
+        #expect(criteria.apply(to: recipes).isEmpty)
+    }
+
+    @Test("Collection filter combines with tag filter using AND semantics")
+    func collectionFilter_combinesWithTagFilter() {
+        let spicyIn = makeRecipe(name: "SpicyIn", tags: ["spicy"])
+        let mildIn = makeRecipe(name: "MildIn", tags: [])
+        let spicyOut = makeRecipe(name: "SpicyOut", tags: ["spicy"])
+        var criteria = RecipeFilterCriteria()
+        criteria.selectedCollectionRecipeIDs = [spicyIn.id, mildIn.id]
+        criteria.selectedTags = ["spicy"]
+
+        #expect(criteria.apply(to: [spicyIn, mildIn, spicyOut]).map(\.name) == ["SpicyIn"])
+    }
+
+    @Test("activeCount increments by 1 when a collection filter is set")
+    func collectionFilter_incrementsActiveCount() {
+        var criteria = RecipeFilterCriteria()
+        #expect(criteria.activeCount == 0)
+
+        criteria.selectedCollectionRecipeIDs = [UUID()]
+        #expect(criteria.activeCount == 1)
+    }
 }

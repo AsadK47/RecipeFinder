@@ -159,6 +159,53 @@ import Foundation
         #expect(names.isSuperset(of: ["Carrot", "Celery", "Lettuce", "Tomato"]))
     }
 
+    // MARK: - Collection batch (addIngredients(from: [RecipeModel]))
+
+    @Test("Batch add: all ingredients from every recipe appear in the list")
+    func batchAdd_allIngredientsPresent() {
+        let manager = makeManager()
+        let r1 = recipe(name: "Soup",  ingredients: [ing("Carrot"), ing("Onion")])
+        let r2 = recipe(name: "Salad", ingredients: [ing("Lettuce"), ing("Tomato")])
+
+        manager.addIngredients(from: [r1, r2])
+
+        let names = Set(manager.items.map(\.name))
+        #expect(names == ["Carrot", "Onion", "Lettuce", "Tomato"])
+    }
+
+    @Test("Batch add: shared ingredient across recipes accumulates quantity")
+    func batchAdd_sharedIngredient_accumulatesQuantity() throws {
+        let manager = makeManager()
+        let r1 = recipe(name: "Soup",  ingredients: [ing("Garlic", qty: 2)])
+        let r2 = recipe(name: "Stew",  ingredients: [ing("Garlic", qty: 3)])
+
+        manager.addIngredients(from: [r1, r2])
+
+        #expect(manager.items.count == 1)
+        let item = try #require(manager.items.first)
+        #expect(item.quantity == 5)
+    }
+
+    @Test("Batch add: empty recipe list is a no-op")
+    func batchAdd_emptyList_noOp() {
+        let manager = makeManager()
+        manager.addIngredients(from: [])
+        #expect(manager.items.isEmpty)
+    }
+
+    @Test("Batch add: single recipe behaves identically to the per-recipe overload")
+    func batchAdd_singleRecipe_matchesPerRecipeOverload() {
+        let managerA = makeManager()
+        let managerB = makeManager()
+        let r = recipe(ingredients: [ing("Flour", qty: 2), ing("Sugar", qty: 1)])
+
+        managerA.addIngredients(from: r)
+        managerB.addIngredients(from: [r])
+
+        #expect(managerA.items.map(\.name).sorted() == managerB.items.map(\.name).sorted())
+        #expect(managerA.items.map(\.quantity).sorted() == managerB.items.map(\.quantity).sorted())
+    }
+
     // MARK: - Persistence
 
     @Test func addIngredients_persistsAcrossManagerRestart() {

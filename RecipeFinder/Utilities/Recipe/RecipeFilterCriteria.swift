@@ -16,6 +16,11 @@ struct RecipeFilterCriteria: Hashable {
     var selectedDietaryFilters: Set<String> = []
     var selectedTags: Set<String> = []
 
+    /// When non-nil, only recipes whose `id` is in this set pass the filter.
+    /// The caller resolves which IDs belong to the chosen collection; the
+    /// criteria stays pure and independent of `CollectionManager`.
+    var selectedCollectionRecipeIDs: Set<UUID>? = nil
+
     /// Kitchen inventory, lowercased. Only consulted when `availableIngredientsOnly`
     /// is set; used both to filter and to rank by how much of a recipe you can make.
     var availableIngredients: Set<String> = []
@@ -30,7 +35,8 @@ struct RecipeFilterCriteria: Hashable {
         selectedTags.count +
         (showFavoritesOnly ? 1 : 0) +
         (availableIngredientsOnly ? 1 : 0) +
-        (!ingredientSearchText.isEmpty ? 1 : 0)
+        (!ingredientSearchText.isEmpty ? 1 : 0) +
+        (selectedCollectionRecipeIDs != nil ? 1 : 0)
     }
 
     /// Applies every active filter, then ranks by ingredient match when
@@ -87,6 +93,10 @@ struct RecipeFilterCriteria: Hashable {
             results = results.filter { recipe in
                 !Set(recipe.tags).isDisjoint(with: selectedTags)
             }
+        }
+
+        if let collectionIDs = selectedCollectionRecipeIDs {
+            results = results.filter { collectionIDs.contains($0.id) }
         }
 
         // "Can make now": keep recipes you can mostly make and rank by how much.

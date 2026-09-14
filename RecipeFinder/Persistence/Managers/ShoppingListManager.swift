@@ -65,6 +65,15 @@ final class ShoppingListManager: ObservableObject {
         }
     }
 
+    /// Adds ingredients from every recipe in the collection, merging duplicates
+    /// by name across all recipes (same ingredient appearing in two recipes
+    /// accumulates quantity rather than creating a duplicate row).
+    func addIngredients(from recipes: [RecipeModel]) {
+        for recipe in recipes {
+            addIngredients(from: recipe)
+        }
+    }
+
     func addItem(name: String, quantity: Int = 1, category: String? = nil) {
         var items = getItems()
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)

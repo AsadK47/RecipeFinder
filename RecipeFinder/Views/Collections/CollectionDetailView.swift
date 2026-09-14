@@ -144,18 +144,12 @@ struct CollectionDetailView: View {
     }
 
     private func addAllToShoppingList() {
-        let ingredients = collectionRecipes.flatMap { $0.ingredients }
-        var added = 0
-        for ingredient in ingredients {
-            let name = IngredientNormalizer.normalize(ingredient.mainIngredientName)
-            guard !name.isEmpty else { continue }
-            ShoppingListManager.shared.addItem(name: name, quantity: 1, category: nil)
-            added += 1
-        }
-        guard added > 0 else { return }
+        let ingredientCount = collectionRecipes.flatMap { $0.ingredients }.count
+        guard ingredientCount > 0 else { return }
+        ShoppingListManager.shared.addIngredients(from: collectionRecipes)
         HapticManager.shared.success()
         let recipeCount = collectionRecipes.count
-        shoppingListFeedback = "\(added) ingredient\(added == 1 ? "" : "s") from \(recipeCount) recipe\(recipeCount == 1 ? "" : "s") added"
+        shoppingListFeedback = "\(ingredientCount) ingredient\(ingredientCount == 1 ? "" : "s") from \(recipeCount) recipe\(recipeCount == 1 ? "" : "s") added"
         DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
             withAnimation { shoppingListFeedback = nil }
         }

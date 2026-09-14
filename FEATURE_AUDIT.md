@@ -10,13 +10,13 @@ Legend: ✅ integration tested · ⚠️ unit/model only · ❌ no test
 | Feature | Status | Test file(s) | Gap |
 |---|---|---|---|
 | Create recipe (wizard) | ✅ | RecipeWizardPersistenceTests | — |
-| Edit recipe (save + rollback) | ⚠️ | RecipeSaveResultTests | Edit-path rollback not tested |
-| Delete recipe | ⚠️ | PersistenceControllerTests | No explicit round-trip |
-| Favorites toggle + persistence | ❌ | — | No round-trip test |
+| Edit recipe (save + rollback) | ✅ | RecipeSaveResultTests, RecipePersistenceRoundTripTests | — |
+| Delete recipe | ✅ | RecipePersistenceRoundTripTests | — |
+| Favorites toggle + persistence | ✅ | RecipePersistenceRoundTripTests | — |
 | Tags — add to recipe | ✅ | RecipeWizardBuilderTests | Tags step in wizard, edit round-trip, filter already wired |
 | Dietary info (veg/vegan/GF) | ✅ | RecipeDietaryInfoPersistenceTests | — |
 | Nutrition auto-calc per serving | ✅ | NutritionCalculatorTests | — |
-| Recipe notes | ⚠️ | RecipeNotesFormatterTests | Formatter only, no persistence test |
+| Recipe notes | ✅ | RecipeNotesFormatterTests, RecipePersistenceRoundTripTests | — |
 | Seed/sample recipes | ✅ | SeedRecipeProviderTests | — |
 | Servings scaling | ⚠️ | RecipeModelTests | No persistence round-trip |
 
@@ -45,7 +45,7 @@ Legend: ✅ integration tested · ⚠️ unit/model only · ❌ no test
 | Filter by dietary info | ✅ | RecipeFilterCriteriaTests | — |
 | Filter by available ingredients | ✅ | KitchenRecipeMatcherTests | — |
 | **Filter by tag** | ✅ | RecipeFilterCriteriaTests, RecipeFilterIntegrationTests | — |
-| **Filter by collection** | ❌ | — | Collections not in RecipeFilterCriteria |
+| **Filter by collection** | ✅ | RecipeFilterCriteriaTests | selectedCollectionRecipeIDs added to criteria; UI wiring pending |
 | Sort order | ❌ | — | No test |
 
 ---
@@ -59,8 +59,8 @@ Legend: ✅ integration tested · ⚠️ unit/model only · ❌ no test
 | Toggle membership | ✅ | CollectionManagerTests | — |
 | Purge recipe from all collections | ✅ | CollectionManagerTests | — |
 | Backup merge | ✅ | ManagerMergeTests | — |
-| **Add all collection ingredients to shopping list** | ❌ | — | View-level, no test |
-| **Filter recipes by collection** | ❌ | — | Not wired into RecipeFilterCriteria |
+| **Add all collection ingredients to shopping list** | ✅ | ShoppingListFromRecipeTests (batch add) | — |
+| **Filter recipes by collection** | ✅ | RecipeFilterCriteriaTests | criteria logic tested; FilterSheet UI wiring pending |
 
 ---
 
@@ -157,7 +157,6 @@ Legend: ✅ integration tested · ⚠️ unit/model only · ❌ no test
 
 ## Priority gaps (start here)
 
-1. **Filter by collection** — add `collectionID: UUID?` to `RecipeFilterCriteria`, wire into filter UI
-3. **Favorites persistence** — quick round-trip test
-4. **Text search test** — cover the search predicate logic
-5. **Auth flows** — blocked on DI seam; tracked in hardening backlog
+1. **Collection filter UI** — wire `selectedCollectionRecipeIDs` into `FilterSheet` so users can filter by collection (criteria logic + tests already done)
+2. **Sort order** — no sort feature implemented yet (no sort field in criteria, no sort UI)
+3. **Auth flows** — blocked on DI seam; tracked in hardening backlog
