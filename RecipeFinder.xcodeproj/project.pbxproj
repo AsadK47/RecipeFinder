@@ -1293,7 +1293,6 @@
 				9EA7791E2EB570D50028F064 /* KitchenInventory */,
 				9E6060002D09CB6400236896 /* RecipeModel.xcdatamodeld */,
 				F3B837CD3055F0CA0003AEF8 /* Collection */,
-				F3B837CF3055F0DC0003AEF8 /* Collection 3 */,
 				F3D4054A305620510076834D /* Nutrition */,
 			);
 			path = Models;
@@ -1659,13 +1658,6 @@
 				F3D40546305615580076834D /* RecipePickerForCollectionSheet.swift */,
 			);
 			path = Collections;
-			sourceTree = "<group>";
-		};
-		F3B837CF3055F0DC0003AEF8 /* Collection 3 */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = "Collection 3";
 			sourceTree = "<group>";
 		};
 		F3B837E23055FC5C0003AEF8 /* Managers */ = {
