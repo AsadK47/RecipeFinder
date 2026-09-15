@@ -19,6 +19,7 @@ extension RecipeWizardView {
         let isFavorite: Bool?
         let imageURL: String?
         var tags: [String]? = nil
+        var cuisine: String? = nil
     }
 
     /// A single editable ingredient row in the wizard's ingredients step.

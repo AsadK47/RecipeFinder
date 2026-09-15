@@ -19,10 +19,16 @@ private let tagSuggestions = [
     "Vegetarian", "Vegan", "Gluten Free", "Freezer Friendly"
 ]
 
+private let cuisineSuggestions = [
+    "Italian", "Mexican", "Indian", "Chinese", "Japanese", "Thai",
+    "French", "Greek", "American", "British", "Middle Eastern", "Mediterranean"
+]
+
 /// Step 6 of the Recipe Wizard: tags, free-form notes, and the recipe summary.
 struct NotesStepView: View {
     @Binding var notes: String
     @Binding var tags: [String]
+    @Binding var cuisine: String
     let hasPrefilledNotes: Bool
     let summary: WizardRecipeSummary
     let cardStyle: CardStyle
@@ -43,6 +49,8 @@ struct NotesStepView: View {
 
             WizardCard(cardStyle: cardStyle, colorScheme: colorScheme) {
                 VStack(alignment: .leading, spacing: AppTheme.spacing24) {
+                    cuisineSection
+                    Divider()
                     tagsSection
                     Divider()
                 }
@@ -160,6 +168,44 @@ struct NotesStepView: View {
             .cornerRadius(AppTheme.cornerRadius16)
         }
         .buttonStyle(PlainButtonStyle())
+    }
+
+    @ViewBuilder
+    private var cuisineSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.spacing12) {
+            Text("Cuisine")
+                .font(.headline)
+
+            Text("Helps filter recipes by origin. (Optional)")
+                .font(.caption)
+                .adaptiveSecondaryForeground()
+
+            TextField("e.g. Italian, Mexican, Indian…", text: $cuisine)
+                .textFieldStyle(.plain)
+                .padding(.horizontal, AppTheme.spacing12)
+                .padding(.vertical, AppTheme.spacing8)
+                .background(Color(.systemGray6))
+                .cornerRadius(AppTheme.cornerRadius8)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: AppTheme.spacing8) {
+                    ForEach(cuisineSuggestions.filter { $0 != cuisine }, id: \.self) { suggestion in
+                        Button(action: {
+                            HapticManager.shared.light()
+                            cuisine = suggestion
+                        }) {
+                            Text(suggestion)
+                                .font(.caption)
+                                .padding(.horizontal, AppTheme.spacing12)
+                                .padding(.vertical, AppTheme.spacing6)
+                                .background(Color(.systemGray5))
+                                .cornerRadius(AppTheme.cornerRadius16)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
+                }
+            }
+        }
     }
 
     @ViewBuilder

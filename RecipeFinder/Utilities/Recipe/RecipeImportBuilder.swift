@@ -25,7 +25,8 @@ struct RecipeImportBuilder {
             instructions: data.instructions.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty },
             notes: buildNotes(from: data),
             imageName: data.imageURL,
-            isFavorite: false
+            isFavorite: false,
+            cuisine: data.cuisine
         )
     }
 
@@ -48,11 +49,6 @@ struct RecipeImportBuilder {
                 .trimmingCharacters(in: .whitespacesAndNewlines)
                 .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
             lines.append(clean)
-        }
-
-        if let cuisine = data.cuisine, !cuisine.isEmpty {
-            if !lines.isEmpty { lines.append("") }
-            lines.append("Cuisine: \(cuisine)")
         }
 
         if !lines.isEmpty { lines.append("") }

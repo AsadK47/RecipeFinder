@@ -234,10 +234,21 @@ final class RecipeImportBuilderTests: XCTestCase {
         XCTAssertTrue(notes.contains("A classic Italian dish."))
     }
 
-    func testBuildNotes_includesCuisine() {
+    func testBuildNotes_doesNotIncludeCuisine() {
         let data = makeData(cuisine: "Italian")
         let notes = builder.buildNotes(from: data)
-        XCTAssertTrue(notes.contains("Cuisine: Italian"))
+        XCTAssertFalse(notes.contains("Cuisine: Italian"), "cuisine belongs in the structured field, not freetext notes")
+    }
+
+    func testBuild_setsCuisine() {
+        let data = makeData(cuisine: "Italian")
+        let recipe = builder.build(from: data)
+        XCTAssertEqual(recipe.cuisine, "Italian")
+    }
+
+    func testBuild_cuisineIsNilWhenAbsent() {
+        let recipe = builder.build(from: makeData(cuisine: nil))
+        XCTAssertNil(recipe.cuisine)
     }
 
     func testBuildNotes_includesSourceURL() {

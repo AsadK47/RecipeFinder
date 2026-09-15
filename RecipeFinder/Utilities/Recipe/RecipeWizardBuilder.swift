@@ -80,7 +80,8 @@ enum RecipeWizardBuilder {
         notes: String,
         imageReference: String?,
         isFavorite: Bool,
-        tags: [String] = []
+        tags: [String] = [],
+        cuisine: String? = nil
     ) -> RecipeModel {
         RecipeModel(
             id: recipeId,
@@ -97,7 +98,8 @@ enum RecipeWizardBuilder {
             notes: notes,
             imageName: imageReference,
             isFavorite: isFavorite,
-            tags: tags
+            tags: tags,
+            cuisine: cuisine
         )
     }
 }
