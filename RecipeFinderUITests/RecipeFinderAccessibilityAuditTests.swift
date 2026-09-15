@@ -57,7 +57,7 @@ final class RecipeFinderAccessibilityAuditTests: XCTestCase {
 
         app.tabBars.buttons["Groceries"].tap()
 
-        let search = app.searchFields.firstMatch
+        let search = app.textFields.firstMatch
         XCTAssertTrue(search.waitForExistence(timeout: 5), "Groceries search field should exist.")
         search.tap()
         search.typeText("Apple")

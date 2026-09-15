@@ -19,6 +19,19 @@ struct RecipeModel: Identifiable, Codable, Hashable {
     var tags: [String]
     var dietaryInfo: DietaryInfo
     var isSampleRecipe: Bool
+    var cookCount: Int
+    var lastCookedAt: Date?
+    var rating: Int         // 0 = unrated, 1–5
+    var cuisine: String?
+    var photoNames: [String]
+
+    enum CodingKeys: String, CodingKey {
+        case id, name, category, difficulty, prepTime, cookingTime
+        case baseServings, currentServings, ingredients
+        case prePrepInstructions, instructions, notes
+        case imageName, isFavorite, tags, dietaryInfo, isSampleRecipe
+        case cookCount, lastCookedAt, rating, cuisine, photoNames
+    }
 
     init(
         id: UUID = UUID(),
@@ -37,7 +50,12 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         isFavorite: Bool = false,
         tags: [String] = [],
         dietaryInfo: DietaryInfo = DietaryInfo(),
-        isSampleRecipe: Bool = false
+        isSampleRecipe: Bool = false,
+        cookCount: Int = 0,
+        lastCookedAt: Date? = nil,
+        rating: Int = 0,
+        cuisine: String? = nil,
+        photoNames: [String] = []
     ) {
         self.id = id
         self.name = name
@@ -56,6 +74,39 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         self.tags = tags
         self.dietaryInfo = dietaryInfo
         self.isSampleRecipe = isSampleRecipe
+        self.cookCount = cookCount
+        self.lastCookedAt = lastCookedAt
+        self.rating = rating
+        self.cuisine = cuisine
+        self.photoNames = photoNames
+    }
+
+    // Custom decoder so old backups (pre-v13) that lack the new keys still
+    // decode cleanly with safe defaults rather than throwing .keyNotFound.
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id                  = try c.decode(UUID.self,          forKey: .id)
+        name                = try c.decode(String.self,        forKey: .name)
+        category            = try c.decode(String.self,        forKey: .category)
+        difficulty          = try c.decode(String.self,        forKey: .difficulty)
+        prepTime            = try c.decode(String.self,        forKey: .prepTime)
+        cookingTime         = try c.decode(String.self,        forKey: .cookingTime)
+        baseServings        = try c.decode(Int.self,           forKey: .baseServings)
+        currentServings     = try c.decode(Int.self,           forKey: .currentServings)
+        ingredients         = try c.decode([Ingredient].self,  forKey: .ingredients)
+        prePrepInstructions = try c.decode([String].self,      forKey: .prePrepInstructions)
+        instructions        = try c.decode([String].self,      forKey: .instructions)
+        notes               = try c.decode(String.self,        forKey: .notes)
+        imageName           = try c.decodeIfPresent(String.self,   forKey: .imageName)
+        isFavorite          = try c.decode(Bool.self,              forKey: .isFavorite)
+        tags                = (try? c.decodeIfPresent([String].self,   forKey: .tags))       ?? []
+        dietaryInfo         = (try? c.decodeIfPresent(DietaryInfo.self, forKey: .dietaryInfo)) ?? DietaryInfo()
+        isSampleRecipe      = (try? c.decodeIfPresent(Bool.self,       forKey: .isSampleRecipe)) ?? false
+        cookCount           = (try? c.decodeIfPresent(Int.self,        forKey: .cookCount))   ?? 0
+        lastCookedAt        =  try? c.decodeIfPresent(Date.self,       forKey: .lastCookedAt)
+        rating              = (try? c.decodeIfPresent(Int.self,        forKey: .rating))      ?? 0
+        cuisine             =  try? c.decodeIfPresent(String.self,     forKey: .cuisine)
+        photoNames          = (try? c.decodeIfPresent([String].self,   forKey: .photoNames))  ?? []
     }
     
     func hash(into hasher: inout Hasher) {
@@ -66,7 +117,11 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         lhs.id == rhs.id &&
         lhs.currentServings == rhs.currentServings &&
         lhs.ingredients == rhs.ingredients &&
-        lhs.isFavorite == rhs.isFavorite
+        lhs.isFavorite == rhs.isFavorite &&
+        lhs.cookCount == rhs.cookCount &&
+        lhs.rating == rhs.rating &&
+        lhs.cuisine == rhs.cuisine &&
+        lhs.photoNames == rhs.photoNames
     }
     
     var totalTime: String {
@@ -159,6 +214,11 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         self.tags = []
         self.dietaryInfo = DietaryInfo()
         self.isSampleRecipe = false
+        self.cookCount = 0
+        self.lastCookedAt = nil
+        self.rating = 0
+        self.cuisine = nil
+        self.photoNames = []
     }
 }
 

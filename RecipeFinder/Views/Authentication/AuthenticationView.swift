@@ -44,7 +44,7 @@ struct AuthenticationView: View {
 
                     Text("Discover, Create, Cook")
                         .font(.system(size: AppTheme.fontSize18, weight: .medium))
-                        .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.highEmphasisOpacity) : .black.opacity(0.7))
+                        .adaptiveForegroundColor()
                 }
                 .padding(.bottom, AppTheme.spacing20)
 
@@ -136,7 +136,7 @@ struct AuthenticationView: View {
                     Button(action: { guestModeEnabled = true }) {
                         Text("Browse first")
                             .font(.footnote)
-                            .foregroundStyle(.secondary.opacity(0.65))
+                            .foregroundStyle(.secondary)
                             .frame(maxWidth: .infinity, minHeight: 44)
                     }
                     .contentShape(Rectangle())

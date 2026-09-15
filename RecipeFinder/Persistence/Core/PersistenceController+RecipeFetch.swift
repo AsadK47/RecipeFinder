@@ -96,6 +96,11 @@ extension PersistenceController {
             else { return DietaryInfo() }
             return decoded
         }()
+        let cookCount    = object.value(forKey: RecipeKey.cookCount)    as? Int ?? 0
+        let lastCookedAt = object.value(forKey: RecipeKey.lastCookedAt) as? Date
+        let rating       = object.value(forKey: RecipeKey.rating)       as? Int ?? 0
+        let cuisine      = object.value(forKey: RecipeKey.cuisine)      as? String
+        let photoNames   = (object.value(forKey: RecipeKey.photoNames)  as? [String]) ?? []
 
         return RecipeModel(
             id: id,
@@ -114,7 +119,12 @@ extension PersistenceController {
             isFavorite: isFavorite,
             tags: tags,
             dietaryInfo: dietaryInfo,
-            isSampleRecipe: isSampleRecipe
+            isSampleRecipe: isSampleRecipe,
+            cookCount: cookCount,
+            lastCookedAt: lastCookedAt,
+            rating: rating,
+            cuisine: cuisine,
+            photoNames: photoNames
         )
     }
 }

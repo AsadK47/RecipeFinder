@@ -22,6 +22,11 @@ extension PersistenceController {
         let isSampleRecipe: Bool
         let dietaryInfo: DietaryInfo
         let tags: [String]
+        let cookCount: Int
+        let lastCookedAt: Date?
+        let rating: Int
+        let cuisine: String?
+        let photoNames: [String]
 
         init(
             id: UUID? = nil,
@@ -40,7 +45,12 @@ extension PersistenceController {
             isFavorite: Bool,
             isSampleRecipe: Bool = false,
             dietaryInfo: DietaryInfo = DietaryInfo(),
-            tags: [String] = []
+            tags: [String] = [],
+            cookCount: Int = 0,
+            lastCookedAt: Date? = nil,
+            rating: Int = 0,
+            cuisine: String? = nil,
+            photoNames: [String] = []
         ) {
             self.id = id
             self.name = name
@@ -59,6 +69,11 @@ extension PersistenceController {
             self.isSampleRecipe = isSampleRecipe
             self.dietaryInfo = dietaryInfo
             self.tags = tags
+            self.cookCount = cookCount
+            self.lastCookedAt = lastCookedAt
+            self.rating = rating
+            self.cuisine = cuisine
+            self.photoNames = photoNames
         }
 
         init(from recipe: RecipeModel) {
@@ -79,6 +94,11 @@ extension PersistenceController {
             self.isSampleRecipe = recipe.isSampleRecipe
             self.dietaryInfo = recipe.dietaryInfo
             self.tags = recipe.tags
+            self.cookCount = recipe.cookCount
+            self.lastCookedAt = recipe.lastCookedAt
+            self.rating = recipe.rating
+            self.cuisine = recipe.cuisine
+            self.photoNames = recipe.photoNames
         }
     }
     
@@ -117,6 +137,11 @@ extension PersistenceController {
         recipe.setValue(parameters.isFavorite, forKey: RecipeKey.isFavorite)
         recipe.setValue(parameters.isSampleRecipe, forKey: RecipeKey.isSampleRecipe)
         recipe.setValue(parameters.tags as NSArray, forKey: RecipeKey.tags)
+        recipe.setValue(parameters.cookCount, forKey: RecipeKey.cookCount)
+        recipe.setValue(parameters.lastCookedAt, forKey: RecipeKey.lastCookedAt)
+        recipe.setValue(parameters.rating, forKey: RecipeKey.rating)
+        recipe.setValue(parameters.cuisine, forKey: RecipeKey.cuisine)
+        recipe.setValue(parameters.photoNames as NSArray, forKey: RecipeKey.photoNames)
         if let dietaryData = try? JSONEncoder().encode(parameters.dietaryInfo) {
             recipe.setValue(dietaryData, forKey: RecipeKey.dietaryInfo)
         }
@@ -228,9 +253,15 @@ extension PersistenceController {
             managedRecipe.setValue(recipe.isFavorite, forKey: RecipeKey.isFavorite)
             managedRecipe.setValue(recipe.isSampleRecipe, forKey: RecipeKey.isSampleRecipe)
             managedRecipe.setValue(recipe.tags as NSArray, forKey: RecipeKey.tags)
+            managedRecipe.setValue(recipe.rating, forKey: RecipeKey.rating)
+            managedRecipe.setValue(recipe.cuisine, forKey: RecipeKey.cuisine)
+            managedRecipe.setValue(recipe.photoNames as NSArray, forKey: RecipeKey.photoNames)
             if let dietaryData = try? JSONEncoder().encode(recipe.dietaryInfo) {
                 managedRecipe.setValue(dietaryData, forKey: RecipeKey.dietaryInfo)
             }
+            // cookCount and lastCookedAt are intentionally not updated here —
+            // they are managed solely by recordCook(_:) to preserve cook history
+            // across content edits.
 
             try context.save()
             persistenceLogger.debug("✅ Recipe '\(recipe.name)' updated successfully")

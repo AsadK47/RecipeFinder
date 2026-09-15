@@ -45,6 +45,11 @@ final class PersistenceController {
         static let dietaryInfo = "dietaryInfo"
         static let tags = "tags"
         static let userId = "userId"
+        static let cookCount = "cookCount"
+        static let lastCookedAt = "lastCookedAt"
+        static let rating = "rating"
+        static let cuisine = "cuisine"
+        static let photoNames = "photoNames"
     }
 
     /// - Parameters:

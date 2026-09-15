@@ -18,7 +18,12 @@ struct RecipePersistenceRoundTripTests {
         name: String = "Test Recipe",
         notes: String = "",
         isFavorite: Bool = false,
-        tags: [String] = []
+        tags: [String] = [],
+        cookCount: Int = 0,
+        lastCookedAt: Date? = nil,
+        rating: Int = 0,
+        cuisine: String? = nil,
+        photoNames: [String] = []
     ) -> RecipeModel {
         RecipeModel(
             id: id,
@@ -33,7 +38,12 @@ struct RecipePersistenceRoundTripTests {
             instructions: ["Cook it"],
             notes: notes,
             isFavorite: isFavorite,
-            tags: tags
+            tags: tags,
+            cookCount: cookCount,
+            lastCookedAt: lastCookedAt,
+            rating: rating,
+            cuisine: cuisine,
+            photoNames: photoNames
         )
     }
 
@@ -250,5 +260,84 @@ struct RecipePersistenceRoundTripTests {
         let fetched = store.fetchRecipes().first { $0.id == id }
         #expect(fetched?.baseServings == 6)
         #expect(fetched?.currentServings == 3)
+    }
+
+    // MARK: - Cook history, rating, cuisine, photos
+
+    @Test("cookCount round-trips through the store")
+    func saveRecipeModel_persistsCookCount() {
+        let store = makeStore()
+        let recipe = makeRecipe(cookCount: 5)
+        #expect(store.saveRecipeModel(recipe) == true)
+
+        let fetched = store.fetchRecipes().first { $0.id == recipe.id }
+        #expect(fetched?.cookCount == 5)
+    }
+
+    @Test("lastCookedAt round-trips through the store")
+    func saveRecipeModel_persistsLastCookedAt() {
+        let store = makeStore()
+        let cookedAt = Date(timeIntervalSinceNow: -3600)
+        let recipe = makeRecipe(lastCookedAt: cookedAt)
+        #expect(store.saveRecipeModel(recipe) == true)
+
+        let fetched = store.fetchRecipes().first { $0.id == recipe.id }
+        let diff = abs((fetched?.lastCookedAt ?? .distantPast).timeIntervalSince(cookedAt))
+        #expect(diff < 1.0)
+    }
+
+    @Test("rating round-trips through the store")
+    func saveRecipeModel_persistsRating() {
+        let store = makeStore()
+        let recipe = makeRecipe(rating: 4)
+        #expect(store.saveRecipeModel(recipe) == true)
+
+        let fetched = store.fetchRecipes().first { $0.id == recipe.id }
+        #expect(fetched?.rating == 4)
+    }
+
+    @Test("cuisine round-trips through the store")
+    func saveRecipeModel_persistsCuisine() {
+        let store = makeStore()
+        let recipe = makeRecipe(cuisine: "Italian")
+        #expect(store.saveRecipeModel(recipe) == true)
+
+        let fetched = store.fetchRecipes().first { $0.id == recipe.id }
+        #expect(fetched?.cuisine == "Italian")
+    }
+
+    @Test("photoNames round-trips through the store")
+    func saveRecipeModel_persistsPhotoNames() {
+        let store = makeStore()
+        let recipe = makeRecipe(photoNames: ["photo1.jpg", "photo2.jpg", "photo3.jpg"])
+        #expect(store.saveRecipeModel(recipe) == true)
+
+        let fetched = store.fetchRecipes().first { $0.id == recipe.id }
+        #expect(fetched?.photoNames == ["photo1.jpg", "photo2.jpg", "photo3.jpg"])
+    }
+
+    @Test("updateRecipe does not reset cook history")
+    func updateRecipe_preservesCookHistory() {
+        let store = makeStore()
+        let id = UUID()
+        #expect(store.saveRecipeModel(makeRecipe(id: id, cookCount: 3)) == true)
+
+        #expect(store.updateRecipe(makeRecipe(id: id, name: "Updated Name")) == true)
+
+        let fetched = store.fetchRecipes().first { $0.id == id }
+        #expect(fetched?.cookCount == 3)
+    }
+
+    @Test("updateRecipe overwrites cuisine and rating")
+    func updateRecipe_updatesCuisineAndRating() {
+        let store = makeStore()
+        let id = UUID()
+        #expect(store.saveRecipeModel(makeRecipe(id: id, rating: 3, cuisine: "French")) == true)
+
+        #expect(store.updateRecipe(makeRecipe(id: id, rating: 5, cuisine: "Italian")) == true)
+
+        let fetched = store.fetchRecipes().first { $0.id == id }
+        #expect(fetched?.cuisine == "Italian")
+        #expect(fetched?.rating == 5)
     }
 }

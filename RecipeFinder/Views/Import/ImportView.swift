@@ -132,7 +132,7 @@ struct ImportView: View {
 
             Text("Bring recipes in from anywhere — free and unlimited.")
                 .font(.subheadline)
-                .foregroundStyle(.primary.opacity(0.75))
+                .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
@@ -157,7 +157,7 @@ struct ImportView: View {
                         .adaptiveForegroundColor()
                     Text(subtitle)
                         .font(.caption)
-                        .foregroundStyle(.primary.opacity(0.75))
+                        .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
 
@@ -165,7 +165,8 @@ struct ImportView: View {
 
                 Image(systemName: "chevron.right")
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(.primary.opacity(0.5))
+                    .foregroundStyle(.secondary)
+                    .accessibilityHidden(true)
             }
             .padding(AppTheme.spacing20)
             .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: AppTheme.cornerRadius16))
@@ -177,10 +178,10 @@ struct ImportView: View {
         HStack(spacing: AppTheme.spacing12) {
             Image(systemName: "square.and.arrow.up")
                 .font(.body)
-                .foregroundStyle(.primary.opacity(0.75))
+                .foregroundStyle(.secondary)
             Text("Or share a page from Safari, Instagram or TikTok to **RecipeFinder** — it imports on device, privately.")
                 .font(.caption)
-                .foregroundStyle(.primary.opacity(0.75))
+                .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
             Spacer(minLength: 0)
         }
