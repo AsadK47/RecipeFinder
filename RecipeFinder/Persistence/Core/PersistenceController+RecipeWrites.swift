@@ -272,6 +272,55 @@ extension PersistenceController {
         }
     }
     
+    /// Atomically increments `cookCount` and stamps `lastCookedAt` to now.
+    /// Does NOT go through `updateRecipe` — cook history is separate from content edits.
+    func recordCook(withId id: UUID) {
+        guard ensureStoreIsReady() else { return }
+
+        let context = container.viewContext
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
+        fetchRequest.predicate = NSPredicate(format: "\(RecipeKey.id) == %@", id as CVarArg)
+        fetchRequest.fetchLimit = 1
+
+        do {
+            guard let recipe = try context.fetch(fetchRequest).first else {
+                persistenceLogger.debug("⚠️ Recipe with id \(id) not found")
+                return
+            }
+
+            let current = recipe.value(forKey: RecipeKey.cookCount) as? Int ?? 0
+            recipe.setValue(current + 1, forKey: RecipeKey.cookCount)
+            recipe.setValue(Date(), forKey: RecipeKey.lastCookedAt)
+
+            try context.save()
+            persistenceLogger.debug("✅ Cook recorded for recipe \(id), count now \(current + 1)")
+        } catch {
+            persistenceLogger.error("❌ Failed to record cook: \(error.localizedDescription)")
+        }
+    }
+
+    func updateRating(withId id: UUID, rating: Int) {
+        guard ensureStoreIsReady() else { return }
+
+        let context = container.viewContext
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
+        fetchRequest.predicate = NSPredicate(format: "\(RecipeKey.id) == %@", id as CVarArg)
+        fetchRequest.fetchLimit = 1
+
+        do {
+            guard let recipe = try context.fetch(fetchRequest).first else {
+                persistenceLogger.debug("⚠️ Recipe with id \(id) not found")
+                return
+            }
+
+            recipe.setValue(rating, forKey: RecipeKey.rating)
+            try context.save()
+            persistenceLogger.debug("✅ Rating updated to \(rating) for recipe \(id)")
+        } catch {
+            persistenceLogger.error("❌ Failed to update rating: \(error.localizedDescription)")
+        }
+    }
+
     func toggleFavorite(withId id: UUID) {
         guard ensureStoreIsReady() else { return }
         

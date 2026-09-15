@@ -340,4 +340,100 @@ struct RecipePersistenceRoundTripTests {
         #expect(fetched?.cuisine == "Italian")
         #expect(fetched?.rating == 5)
     }
+
+    // MARK: - recordCook
+
+    @Test("recordCook increments cookCount by one")
+    func recordCook_incrementsCookCount() {
+        let store = makeStore()
+        let recipe = makeRecipe(cookCount: 2)
+        #expect(store.saveRecipeModel(recipe) == true)
+
+        store.recordCook(withId: recipe.id)
+
+        let fetched = store.fetchRecipes().first { $0.id == recipe.id }
+        #expect(fetched?.cookCount == 3)
+    }
+
+    @Test("recordCook updates lastCookedAt to approximately now")
+    func recordCook_updatesLastCookedAt() {
+        let store = makeStore()
+        let before = Date()
+        let recipe = makeRecipe()
+        #expect(store.saveRecipeModel(recipe) == true)
+
+        store.recordCook(withId: recipe.id)
+
+        let after = Date()
+        let fetched = store.fetchRecipes().first { $0.id == recipe.id }
+        if let cookedAt = fetched?.lastCookedAt {
+            #expect(cookedAt >= before)
+            #expect(cookedAt <= after)
+        } else {
+            Issue.record("lastCookedAt should not be nil after recordCook")
+        }
+    }
+
+    @Test("recordCook with an unknown id is a no-op")
+    func recordCook_unknownId_isNoOp() {
+        let store = makeStore()
+        let recipe = makeRecipe(cookCount: 0)
+        #expect(store.saveRecipeModel(recipe) == true)
+
+        store.recordCook(withId: UUID())
+
+        let fetched = store.fetchRecipes().first { $0.id == recipe.id }
+        #expect(fetched?.cookCount == 0)
+    }
+
+    @Test("recordCook called twice increments cookCount by two")
+    func recordCook_calledTwice_incrementsByTwo() {
+        let store = makeStore()
+        let recipe = makeRecipe(cookCount: 0)
+        #expect(store.saveRecipeModel(recipe) == true)
+
+        store.recordCook(withId: recipe.id)
+        store.recordCook(withId: recipe.id)
+
+        let fetched = store.fetchRecipes().first { $0.id == recipe.id }
+        #expect(fetched?.cookCount == 2)
+    }
+
+    // MARK: - updateRating
+
+    @Test("updateRating persists the new rating")
+    func updateRating_persistsNewRating() {
+        let store = makeStore()
+        let recipe = makeRecipe(rating: 0)
+        #expect(store.saveRecipeModel(recipe) == true)
+
+        store.updateRating(withId: recipe.id, rating: 4)
+
+        let fetched = store.fetchRecipes().first { $0.id == recipe.id }
+        #expect(fetched?.rating == 4)
+    }
+
+    @Test("updateRating with an unknown id is a no-op")
+    func updateRating_unknownId_isNoOp() {
+        let store = makeStore()
+        let recipe = makeRecipe(rating: 3)
+        #expect(store.saveRecipeModel(recipe) == true)
+
+        store.updateRating(withId: UUID(), rating: 5)
+
+        let fetched = store.fetchRecipes().first { $0.id == recipe.id }
+        #expect(fetched?.rating == 3)
+    }
+
+    @Test("updateRating to zero clears the rating")
+    func updateRating_toZero_clearsRating() {
+        let store = makeStore()
+        let recipe = makeRecipe(rating: 5)
+        #expect(store.saveRecipeModel(recipe) == true)
+
+        store.updateRating(withId: recipe.id, rating: 0)
+
+        let fetched = store.fetchRecipes().first { $0.id == recipe.id }
+        #expect(fetched?.rating == 0)
+    }
 }

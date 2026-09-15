@@ -265,4 +265,17 @@ struct RecipeDetailView: View {
 
         onFavoriteToggle?()
     }
+
+    func recordCook() {
+        HapticManager.shared.success()
+        recipe.cookCount += 1
+        recipe.lastCookedAt = Date()
+        PersistenceController.shared.recordCook(withId: recipe.id)
+    }
+
+    func updateRating(_ newRating: Int) {
+        HapticManager.shared.selection()
+        recipe.rating = newRating
+        PersistenceController.shared.updateRating(withId: recipe.id, rating: newRating)
+    }
 }

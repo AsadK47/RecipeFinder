@@ -1,5 +1,29 @@
 import SwiftUI
 
+/// 1–5 star rating control. Tap the active star to clear back to 0 (unrated).
+private struct StarRatingView: View {
+    let rating: Int
+    let onTap: (Int) -> Void
+
+    var body: some View {
+        HStack(spacing: AppTheme.spacing4) {
+            ForEach(1...5, id: \.self) { star in
+                Button {
+                    onTap(star == rating ? 0 : star)
+                } label: {
+                    Image(systemName: star <= rating ? "star.fill" : "star")
+                        .foregroundStyle(star <= rating ? Color.yellow : Color.secondary)
+                        .font(.system(size: AppTheme.fontSize18))
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(rating == 0 ? "Unrated" : "\(rating) of 5 stars")
+        .accessibilityHint("Tap a star to set your rating; tap again to clear")
+    }
+}
+
 /// View-building content for `RecipeDetailView`, split out to keep the main file
 /// focused on state, `body`, and actions. These are moved verbatim from the
 /// orchestrator; `RecipeDetailView`'s state and helpers are `internal` so this
@@ -36,6 +60,7 @@ extension RecipeDetailView {
             if !recipe.tags.isEmpty {
                 tagsCard
             }
+            cookHistoryCard
         }
         .padding(.horizontal, AppTheme.spacing20)
     }
@@ -352,6 +377,56 @@ extension RecipeDetailView {
                 HapticManager.shared.success()
             }
         )
+    }
+
+    var cookHistoryCard: some View {
+        GlassCard {
+            VStack(alignment: .leading, spacing: AppTheme.spacing12) {
+                HStack {
+                    Label("Rating", systemImage: "star")
+                        .font(.caption)
+                        .adaptiveSecondaryForeground()
+                    Spacer()
+                    StarRatingView(rating: recipe.rating, onTap: updateRating)
+                }
+
+                Divider()
+
+                HStack(alignment: .firstTextBaseline) {
+                    Label(
+                        recipe.cookCount == 0
+                            ? "Not cooked yet"
+                            : "Cooked \(recipe.cookCount) \(recipe.cookCount == 1 ? "time" : "times")",
+                        systemImage: "frying.pan"
+                    )
+                    .font(.caption)
+                    .adaptiveSecondaryForeground()
+
+                    if let lastCooked = recipe.lastCookedAt {
+                        Spacer()
+                        Text(lastCooked, style: .relative)
+                            .font(.caption)
+                            .adaptiveSecondaryForeground()
+                    }
+                }
+
+                Button(action: recordCook) {
+                    Label("Mark as Cooked", systemImage: "checkmark.circle.fill")
+                        .font(.subheadline.weight(.semibold))
+                        .adaptiveForegroundColor()
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, AppTheme.spacing10)
+                        .background(
+                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius8)
+                                .fill(AppTheme.accentColor.opacity(0.15))
+                        )
+                }
+                .buttonStyle(.plain)
+                .accessibilityHint("Increments the cook count and records today")
+            }
+            .padding()
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
     }
 
     @ViewBuilder
