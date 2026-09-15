@@ -1,5 +1,12 @@
 import Foundation
 
+enum SortOrder: String, CaseIterable, Hashable {
+    case nameAZ = "Name (A–Z)"
+    case nameZA = "Name (Z–A)"
+    case ratingHighLow = "Highest Rated"
+    case mostCooked = "Most Cooked"
+}
+
 /// The full set of recipe-search filters as a plain value.
 ///
 /// Extracted from `RecipeSearchView` so the filtering/sorting is pure and unit
@@ -15,6 +22,11 @@ struct RecipeFilterCriteria: Hashable {
     var selectedCookTimes: Set<Int> = []
     var selectedDietaryFilters: Set<String> = []
     var selectedTags: Set<String> = []
+    var selectedCuisines: Set<String> = []
+
+    /// Sort order applied after filtering. Ignored when ingredient-match ranking
+    /// is active, since percentage rank is more useful than alphabetical in that mode.
+    var sortOrder: SortOrder = .nameAZ
 
     /// When non-nil, only recipes whose `id` is in this set pass the filter.
     /// The caller resolves which IDs belong to the chosen collection; the
@@ -26,13 +38,14 @@ struct RecipeFilterCriteria: Hashable {
     var availableIngredients: Set<String> = []
 
     /// Number of *chips* the UI shows as active. Deliberately excludes free-text
-    /// `searchText` (which has its own field) to match the existing badge count.
+    /// `searchText` and `sortOrder` (which has its own control and no chip).
     var activeCount: Int {
         selectedCategories.count +
         selectedDifficulties.count +
         selectedCookTimes.count +
         selectedDietaryFilters.count +
         selectedTags.count +
+        selectedCuisines.count +
         (showFavoritesOnly ? 1 : 0) +
         (availableIngredientsOnly ? 1 : 0) +
         (!ingredientSearchText.isEmpty ? 1 : 0) +
@@ -99,15 +112,43 @@ struct RecipeFilterCriteria: Hashable {
             results = results.filter { collectionIDs.contains($0.id) }
         }
 
-        // "Can make now": keep recipes you can mostly make and rank by how much.
-        // The match percentage is computed once per recipe here — not inside the
-        // sort comparator, which would recompute it O(n log n) times.
+        if !selectedCuisines.isEmpty {
+            results = results.filter { recipe in
+                guard let cuisine = recipe.cuisine else { return false }
+                return selectedCuisines.contains(cuisine)
+            }
+        }
+
+        // "Can make now": keep recipes you can mostly make and rank by match percentage.
+        // When active, percentage ranking takes precedence over sortOrder.
+        // Match percentage is computed once here — not inside the comparator (O(n log n) recomputes).
         if availableIngredientsOnly && !availableIngredients.isEmpty {
-            results = results
+            return results
                 .map { ($0, $0.ingredientMatchPercentage(availableIngredients: availableIngredients)) }
                 .filter { $0.1 >= 0.8 }
                 .sorted { $0.1 > $1.1 }
                 .map { $0.0 }
+        }
+
+        switch sortOrder {
+        case .nameAZ:
+            results = results.sorted {
+                $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending
+            }
+        case .nameZA:
+            results = results.sorted {
+                $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedDescending
+            }
+        case .ratingHighLow:
+            results = results.sorted {
+                if $0.rating != $1.rating { return $0.rating > $1.rating }
+                return $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending
+            }
+        case .mostCooked:
+            results = results.sorted {
+                if $0.cookCount != $1.cookCount { return $0.cookCount > $1.cookCount }
+                return $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending
+            }
         }
 
         return results

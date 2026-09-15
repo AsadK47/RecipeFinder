@@ -9,12 +9,15 @@ struct FilterSheet: View {
     let categories: [String]
     let difficulties: [String]
     let availableTags: [String]
+    let availableCuisines: [String]
     let availableIngredients: Set<String>
     @Binding var selectedCategories: Set<String>
     @Binding var selectedDifficulties: Set<String>
     @Binding var selectedCookTimes: Set<Int>
     @Binding var selectedDietaryFilters: Set<String>
     @Binding var selectedTags: Set<String>
+    @Binding var selectedCuisines: Set<String>
+    @Binding var sortOrder: SortOrder
     @Binding var ingredientSearchText: String
     @Binding var availableIngredientsOnly: Bool
     @Binding var showFavoritesOnly: Bool
@@ -34,6 +37,23 @@ struct FilterSheet: View {
                 
                 ScrollView {
                     VStack(alignment: .leading, spacing: AppTheme.spacing32) {
+                        HStack {
+                            Text("Sort")
+                                .font(.headline)
+                                .adaptiveForegroundColor()
+                            Spacer()
+                            Picker("Sort", selection: $sortOrder) {
+                                ForEach(SortOrder.allCases, id: \.self) { order in
+                                    Text(order.rawValue).tag(order)
+                                }
+                            }
+                            .pickerStyle(.menu)
+                            .adaptiveForegroundColor()
+                        }
+
+                        Divider()
+                            .background(Color.white.opacity(AppTheme.shadowDarkOpacity))
+
                         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                             HStack {
                                 Text("Show Favorites Only")
@@ -121,7 +141,7 @@ struct FilterSheet: View {
                                 Text("Tags")
                                     .font(.headline)
                                     .adaptiveForegroundColor()
-                                
+
                                 LazyVGrid(columns: columns, spacing: AppTheme.spacing8) {
                                     ForEach(availableTags, id: \.self) { tag in
                                         RecipeFilterButton(
@@ -133,11 +153,33 @@ struct FilterSheet: View {
                                     }
                                 }
                             }
-                            
+
                             Divider()
                                 .background(Color.white.opacity(AppTheme.shadowDarkOpacity))
                         }
-                        
+
+                        if !availableCuisines.isEmpty {
+                            VStack(alignment: .leading, spacing: AppTheme.spacing12) {
+                                Text("Cuisine")
+                                    .font(.headline)
+                                    .adaptiveForegroundColor()
+
+                                LazyVGrid(columns: columns, spacing: AppTheme.spacing8) {
+                                    ForEach(availableCuisines, id: \.self) { cuisine in
+                                        RecipeFilterButton(
+                                            label: cuisine,
+                                            isSelected: selectedCuisines.contains(cuisine)
+                                        ) {
+                                            toggleSelection(cuisine, in: $selectedCuisines)
+                                        }
+                                    }
+                                }
+                            }
+
+                            Divider()
+                                .background(Color.white.opacity(AppTheme.shadowDarkOpacity))
+                        }
+
                         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                             Text("Course / Category")
                                 .font(.headline)
@@ -209,9 +251,11 @@ struct FilterSheet: View {
                         selectedCookTimes.removeAll()
                         selectedDietaryFilters.removeAll()
                         selectedTags.removeAll()
+                        selectedCuisines.removeAll()
                         ingredientSearchText = ""
                         availableIngredientsOnly = false
                         showFavoritesOnly = false
+                        sortOrder = .nameAZ
                     }
                     .adaptiveForegroundColor()
                 }

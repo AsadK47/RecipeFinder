@@ -17,6 +17,8 @@ struct RecipeSearchView: View {
     @State private var selectedCookTimes: Set<Int> = []
     @State private var selectedDietaryFilters: Set<String> = []
     @State private var selectedTags: Set<String> = []
+    @State private var selectedCuisines: Set<String> = []
+    @State private var sortOrder: SortOrder = .nameAZ
     @State private var ingredientSearchText = ""
     @State private var availableIngredientsOnly = false
     @State private var showFavoritesOnly = false
@@ -55,18 +57,20 @@ struct RecipeSearchView: View {
     /// The current filters as a plain value; all filtering/sorting lives in
     /// `RecipeFilterCriteria` so it stays out of `body` and is unit tested.
     private var filterCriteria: RecipeFilterCriteria {
-        RecipeFilterCriteria(
-            searchText: searchText,
-            ingredientSearchText: ingredientSearchText,
-            availableIngredientsOnly: availableIngredientsOnly,
-            showFavoritesOnly: showFavoritesOnly,
-            selectedCategories: selectedCategories,
-            selectedDifficulties: selectedDifficulties,
-            selectedCookTimes: selectedCookTimes,
-            selectedDietaryFilters: selectedDietaryFilters,
-            selectedTags: selectedTags,
-            availableIngredients: availableIngredients
-        )
+        var c = RecipeFilterCriteria()
+        c.searchText = searchText
+        c.ingredientSearchText = ingredientSearchText
+        c.availableIngredientsOnly = availableIngredientsOnly
+        c.showFavoritesOnly = showFavoritesOnly
+        c.selectedCategories = selectedCategories
+        c.selectedDifficulties = selectedDifficulties
+        c.selectedCookTimes = selectedCookTimes
+        c.selectedDietaryFilters = selectedDietaryFilters
+        c.selectedTags = selectedTags
+        c.selectedCuisines = selectedCuisines
+        c.sortOrder = sortOrder
+        c.availableIngredients = availableIngredients
+        return c
     }
     
     /// Cache key derived from the whole `RecipeFilterCriteria` value (which is
@@ -87,7 +91,11 @@ struct RecipeSearchView: View {
     var availableTags: [String] {
         Array(Set(recipes.flatMap { $0.tags })).sorted()
     }
-    
+
+    var availableCuisines: [String] {
+        Array(Set(recipes.compactMap { $0.cuisine })).sorted()
+    }
+
     var categories: [String] {
         let validCategories = ["Breakfast", "Dessert", "Drink", "Main", "Side", "Soup", "Starter"]
         return Array(Set(recipes.map { $0.category }))
@@ -298,6 +306,7 @@ struct RecipeSearchView: View {
                     selectedCookTimes: $selectedCookTimes,
                     selectedDietaryFilters: $selectedDietaryFilters,
                     selectedTags: $selectedTags,
+                    selectedCuisines: $selectedCuisines,
                     onClearAll: clearAllFilters
                 )
             }
@@ -361,12 +370,15 @@ struct RecipeSearchView: View {
             categories: categories,
             difficulties: difficulties,
             availableTags: availableTags,
+            availableCuisines: availableCuisines,
             availableIngredients: availableIngredients,
             selectedCategories: $selectedCategories,
             selectedDifficulties: $selectedDifficulties,
             selectedCookTimes: $selectedCookTimes,
             selectedDietaryFilters: $selectedDietaryFilters,
             selectedTags: $selectedTags,
+            selectedCuisines: $selectedCuisines,
+            sortOrder: $sortOrder,
             ingredientSearchText: $ingredientSearchText,
             availableIngredientsOnly: $availableIngredientsOnly,
             showFavoritesOnly: $showFavoritesOnly
@@ -433,9 +445,11 @@ struct RecipeSearchView: View {
             selectedCookTimes.removeAll()
             selectedDietaryFilters.removeAll()
             selectedTags.removeAll()
+            selectedCuisines.removeAll()
             ingredientSearchText = ""
             availableIngredientsOnly = false
             showFavoritesOnly = false
+            sortOrder = .nameAZ
         }
     }
     

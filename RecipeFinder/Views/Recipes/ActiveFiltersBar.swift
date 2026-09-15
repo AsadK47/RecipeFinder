@@ -11,6 +11,7 @@ struct ActiveFiltersBar: View {
     @Binding var selectedCookTimes: Set<Int>
     @Binding var selectedDietaryFilters: Set<String>
     @Binding var selectedTags: Set<String>
+    @Binding var selectedCuisines: Set<String>
     let onClearAll: () -> Void
 
     var body: some View {
@@ -71,7 +72,14 @@ struct ActiveFiltersBar: View {
                         selectedTags.remove(tag)
                     }
                 }
-                
+
+                ForEach(Array(selectedCuisines), id: \.self) { cuisine in
+                    FilterChip(label: cuisine, icon: "globe") {
+                        HapticManager.shared.light()
+                        selectedCuisines.remove(cuisine)
+                    }
+                }
+
                 Button(action: onClearAll, label: {
                     Text("Clear All")
                         .font(.caption)

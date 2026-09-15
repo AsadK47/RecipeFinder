@@ -15,7 +15,10 @@ struct RecipeFilterCriteriaTests {
         isFavorite: Bool = false,
         tags: [String] = [],
         dietaryInfo: DietaryInfo = DietaryInfo(),
-        ingredientNames: [String] = []
+        ingredientNames: [String] = [],
+        cuisine: String? = nil,
+        rating: Int = 0,
+        cookCount: Int = 0
     ) -> RecipeModel {
         RecipeModel(
             name: name,
@@ -30,7 +33,10 @@ struct RecipeFilterCriteriaTests {
             notes: "",
             isFavorite: isFavorite,
             tags: tags,
-            dietaryInfo: dietaryInfo
+            dietaryInfo: dietaryInfo,
+            cookCount: cookCount,
+            rating: rating,
+            cuisine: cuisine
         )
     }
 
@@ -251,5 +257,114 @@ struct RecipeFilterCriteriaTests {
 
         criteria.selectedCollectionRecipeIDs = [UUID()]
         #expect(criteria.activeCount == 1)
+    }
+
+    // MARK: - Cuisine filter
+
+    @Test("Cuisine filter keeps only recipes with a matching cuisine")
+    func cuisineFilter_keepsCuisineMatch() {
+        let italian = makeRecipe(name: "Pizza", cuisine: "Italian")
+        let mexican = makeRecipe(name: "Tacos", cuisine: "Mexican")
+        var criteria = RecipeFilterCriteria()
+        criteria.selectedCuisines = ["Italian"]
+        #expect(criteria.apply(to: [italian, mexican]).map(\.name) == ["Pizza"])
+    }
+
+    @Test("Cuisine filter with empty set is a no-op")
+    func cuisineFilter_emptySet_isNoOp() {
+        let recipes = [makeRecipe(name: "A", cuisine: "Italian"), makeRecipe(name: "B")]
+        var criteria = RecipeFilterCriteria()
+        criteria.selectedCuisines = []
+        #expect(criteria.apply(to: recipes).count == 2)
+    }
+
+    @Test("Cuisine filter excludes recipes with a nil cuisine value")
+    func cuisineFilter_nilCuisine_isExcluded() {
+        let italian = makeRecipe(name: "Pizza", cuisine: "Italian")
+        let unknown = makeRecipe(name: "Mystery")
+        var criteria = RecipeFilterCriteria()
+        criteria.selectedCuisines = ["Italian"]
+        #expect(criteria.apply(to: [italian, unknown]).map(\.name) == ["Pizza"])
+    }
+
+    @Test("Cuisine filter increments activeCount once per selected cuisine")
+    func cuisineFilter_incrementsActiveCount() {
+        var criteria = RecipeFilterCriteria()
+        #expect(criteria.activeCount == 0)
+        criteria.selectedCuisines = ["Italian", "Mexican"]
+        #expect(criteria.activeCount == 2)
+    }
+
+    @Test("Cuisine filter combines with category filter using AND semantics")
+    func cuisineFilter_combinesWithCategoryFilter() {
+        let italianMain    = makeRecipe(name: "Pasta",    category: "Main",    cuisine: "Italian")
+        let italianDessert = makeRecipe(name: "Tiramisu", category: "Dessert", cuisine: "Italian")
+        let mexicanMain    = makeRecipe(name: "Tacos",    category: "Main",    cuisine: "Mexican")
+        var criteria = RecipeFilterCriteria()
+        criteria.selectedCuisines = ["Italian"]
+        criteria.selectedCategories = ["Main"]
+        #expect(criteria.apply(to: [italianMain, italianDessert, mexicanMain]).map(\.name) == ["Pasta"])
+    }
+
+    // MARK: - Sort order
+
+    @Test("Sort nameAZ orders recipes alphabetically ascending")
+    func sort_nameAZ_ascending() {
+        let recipes = [makeRecipe(name: "Zebra"), makeRecipe(name: "Apple"), makeRecipe(name: "Mango")]
+        var criteria = RecipeFilterCriteria()
+        criteria.sortOrder = .nameAZ
+        #expect(criteria.apply(to: recipes).map(\.name) == ["Apple", "Mango", "Zebra"])
+    }
+
+    @Test("Sort nameZA orders recipes alphabetically descending")
+    func sort_nameZA_descending() {
+        let recipes = [makeRecipe(name: "Apple"), makeRecipe(name: "Zebra"), makeRecipe(name: "Mango")]
+        var criteria = RecipeFilterCriteria()
+        criteria.sortOrder = .nameZA
+        #expect(criteria.apply(to: recipes).map(\.name) == ["Zebra", "Mango", "Apple"])
+    }
+
+    @Test("Sort ratingHighLow orders by rating desc, name asc as tiebreak")
+    func sort_ratingHighLow_ordersCorrectly() {
+        let recipes = [
+            makeRecipe(name: "C-recipe", rating: 3),
+            makeRecipe(name: "A-recipe", rating: 5),
+            makeRecipe(name: "B-recipe", rating: 5)
+        ]
+        var criteria = RecipeFilterCriteria()
+        criteria.sortOrder = .ratingHighLow
+        #expect(criteria.apply(to: recipes).map(\.name) == ["A-recipe", "B-recipe", "C-recipe"])
+    }
+
+    @Test("Sort mostCooked orders by cookCount desc, name asc as tiebreak")
+    func sort_mostCooked_ordersCorrectly() {
+        let recipes = [
+            makeRecipe(name: "C-recipe", cookCount: 1),
+            makeRecipe(name: "A-recipe", cookCount: 10),
+            makeRecipe(name: "B-recipe", cookCount: 10)
+        ]
+        var criteria = RecipeFilterCriteria()
+        criteria.sortOrder = .mostCooked
+        #expect(criteria.apply(to: recipes).map(\.name) == ["A-recipe", "B-recipe", "C-recipe"])
+    }
+
+    @Test("Sort order does not increment activeCount")
+    func sort_doesNotIncrementActiveCount() {
+        var criteria = RecipeFilterCriteria()
+        criteria.sortOrder = .nameZA
+        #expect(criteria.activeCount == 0)
+    }
+
+    @Test("ingredientMatch ranking takes precedence over sortOrder")
+    func sort_ingredientMatchTakesPrecedence() {
+        // nameZA would put "Zzz" last alphabetically, but ingredient-match ranks it 100% → first
+        let fullMatch    = makeRecipe(name: "Zzz", ingredientNames: ["chicken"])
+        let noMatch      = makeRecipe(name: "Aaa", ingredientNames: ["tofu", "seitan", "rice", "miso"])
+        var criteria = RecipeFilterCriteria()
+        criteria.sortOrder = .nameZA
+        criteria.availableIngredientsOnly = true
+        criteria.availableIngredients = ["chicken"]
+        // noMatch is 0 of 4 (0%) — filtered; fullMatch is 1 of 1 (100%) — passes
+        #expect(criteria.apply(to: [noMatch, fullMatch]).map(\.name) == ["Zzz"])
     }
 }
