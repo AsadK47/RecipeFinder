@@ -241,13 +241,16 @@ on recipe detail shows a `StarRatingView` (tap-to-rate, tap-again to clear) and
 a "Mark as Cooked" button with optimistic update + persist. Rating feeds into the
 "highest rated" and "most cooked" sort tiers added to `SortOrder`.
 
-### 🔴 Multiple photos per recipe
+### ✅ Multiple photos per recipe
 *Problem:* a single hero image can't capture step shots, plating variants, or
 "my result" photos that help the next cook. Paprika lets you add several.
-*What to do:* extend `RecipeImageStore` to a gallery of up to 5 images per recipe
-(local file references, same scheme as today); hero is first. No cloud cost — all
-images live in the app's Documents directory alongside the existing single-image
-store.
+*What was done:* `RecipeImageStore.persistGallery` persists up to 4 additional
+images (named `<UUID>_g0.jpg` etc.) alongside the hero. The wizard's name step
+now shows an "Additional Photos" gallery strip (horizontal thumbnails, remove and
+add buttons). The detail view renders a horizontal scroll of gallery thumbnails
+below the hero. Edit flow round-trips `photoNames` through `PrefilledRecipeData`.
+Data layer was already complete — `RecipeModel.photoNames` and Core Data v13 both
+existed; the gap was purely UI and image-store plumbing.
 
 ### 🟡 Recipe source link & re-fetch
 *Problem:* the source URL is stored on import (in `RecipeImportBuilder`) but never

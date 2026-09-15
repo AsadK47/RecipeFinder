@@ -41,6 +41,18 @@ extension RecipeDetailView {
                     .padding(.top, AppTheme.spacing8)
             }
 
+            if !recipe.photoNames.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: AppTheme.spacing8) {
+                        ForEach(Array(recipe.photoNames.enumerated()), id: \.offset) { _, name in
+                            RecipeImageView(imageName: name, height: 90)
+                                .frame(width: 90, height: 90)
+                        }
+                    }
+                    .padding(.horizontal, AppTheme.spacing20)
+                }
+            }
+
             Text(recipe.name)
                 .font(.system(size: AppTheme.fontSize34, weight: .bold))
                 .adaptiveForegroundColor()
@@ -401,7 +413,8 @@ extension RecipeDetailView {
                 isFavorite: recipe.isFavorite,
                 imageURL: recipe.imageName,
                 tags: recipe.tags.isEmpty ? nil : recipe.tags,
-                cuisine: recipe.cuisine
+                cuisine: recipe.cuisine,
+                galleryImageURLs: recipe.photoNames.isEmpty ? nil : recipe.photoNames
             ),
             editingRecipeId: recipe.id,
             onComplete: { updatedRecipe in

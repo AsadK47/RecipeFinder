@@ -5,10 +5,17 @@ struct RecipeNameStepView: View {
     @Binding var recipeName: String
     @Binding var selectedRecipeImage: UIImage?
     @Binding var existingImageReference: String?
+    @Binding var selectedGalleryImages: [UIImage]
+    @Binding var existingGalleryReferences: [String]
     let cardStyle: CardStyle
     let colorScheme: ColorScheme
     let totalSteps: Int
     let onPickPhoto: () -> Void
+    let onAddGalleryPhoto: () -> Void
+
+    private var totalGalleryCount: Int {
+        existingGalleryReferences.count + selectedGalleryImages.count
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing24) {
@@ -91,6 +98,83 @@ struct RecipeNameStepView: View {
                                 }
                                 .buttonStyle(.plain)
                                 .padding(AppTheme.spacing8)
+                            }
+                        }
+                    }
+
+                    Divider()
+                        .padding(.vertical, AppTheme.spacing4)
+
+                    VStack(alignment: .leading, spacing: AppTheme.spacing8) {
+                        HStack {
+                            Text("Additional Photos")
+                                .font(.headline)
+                                .foregroundColor(.primary)
+                            Spacer()
+                            Text("Up to 4")
+                                .font(.caption)
+                                .adaptiveSecondaryForeground()
+                        }
+
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: AppTheme.spacing8) {
+                                ForEach(Array(existingGalleryReferences.enumerated()), id: \.offset) { idx, ref in
+                                    ZStack(alignment: .topTrailing) {
+                                        RecipeImageView(imageName: ref, height: 80)
+                                            .frame(width: 80, height: 80)
+                                        Button {
+                                            existingGalleryReferences.remove(at: idx)
+                                        } label: {
+                                            Image(systemName: "xmark")
+                                                .font(.caption.weight(.bold))
+                                                .foregroundColor(.white)
+                                                .frame(width: 20, height: 20)
+                                                .background(.black.opacity(0.55), in: Circle())
+                                        }
+                                        .buttonStyle(.plain)
+                                        .padding(4)
+                                    }
+                                }
+
+                                ForEach(Array(selectedGalleryImages.enumerated()), id: \.offset) { idx, img in
+                                    ZStack(alignment: .topTrailing) {
+                                        Image(uiImage: img)
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: 80, height: 80)
+                                            .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius8))
+                                        Button {
+                                            selectedGalleryImages.remove(at: idx)
+                                        } label: {
+                                            Image(systemName: "xmark")
+                                                .font(.caption.weight(.bold))
+                                                .foregroundColor(.white)
+                                                .frame(width: 20, height: 20)
+                                                .background(.black.opacity(0.55), in: Circle())
+                                        }
+                                        .buttonStyle(.plain)
+                                        .padding(4)
+                                    }
+                                }
+
+                                if totalGalleryCount < 4 {
+                                    Button(action: onAddGalleryPhoto) {
+                                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius8)
+                                            .fill(Color.white.opacity(AppTheme.dividerOpacity))
+                                            .frame(width: 80, height: 80)
+                                            .overlay {
+                                                VStack(spacing: AppTheme.spacing4) {
+                                                    Image(systemName: "plus")
+                                                        .font(.system(size: AppTheme.fontSize20))
+                                                        .adaptiveSecondaryForeground()
+                                                    Text("Add")
+                                                        .font(.caption2)
+                                                        .adaptiveSecondaryForeground()
+                                                }
+                                            }
+                                    }
+                                    .buttonStyle(.plain)
+                                }
                             }
                         }
                     }

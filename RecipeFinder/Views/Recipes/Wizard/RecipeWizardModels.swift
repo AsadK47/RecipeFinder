@@ -20,6 +20,7 @@ extension RecipeWizardView {
         let imageURL: String?
         var tags: [String]? = nil
         var cuisine: String? = nil
+        var galleryImageURLs: [String]? = nil
     }
 
     /// A single editable ingredient row in the wizard's ingredients step.

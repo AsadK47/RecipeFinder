@@ -62,6 +62,25 @@ struct RecipeImageStore {
         }
     }
 
+    /// Persists additional (non-hero) gallery images, naming them `<id>_g<n>.jpg`.
+    /// `startingIndex` lets callers offset the index when combining with already-
+    /// saved references so existing gallery files are never overwritten.
+    func persistGallery(_ images: [UIImage], recipeId: UUID, startingIndex: Int = 0) -> [String] {
+        var paths: [String] = []
+        for (idx, img) in images.enumerated() {
+            guard let imageData = img.jpegData(compressionQuality: AppTheme.jpegCompressionQuality),
+                  let documentsDirectory else { continue }
+            let imageDirectory = documentsDirectory.appendingPathComponent("RecipeImages", isDirectory: true)
+            let imageURL = imageDirectory.appendingPathComponent("\(recipeId.uuidString)_g\(startingIndex + idx).jpg")
+            do {
+                try fileManager.createDirectory(at: imageDirectory, withIntermediateDirectories: true)
+                try imageData.write(to: imageURL, options: .atomic)
+                paths.append(imageURL.path)
+            } catch { continue }
+        }
+        return paths
+    }
+
     /// Whether `reference` points at an on-disk file we own (not a remote URL).
     func isLocalReference(_ reference: String) -> Bool {
         guard !reference.isEmpty, !reference.hasPrefix("http") else { return false }

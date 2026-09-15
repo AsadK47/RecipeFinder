@@ -40,6 +40,10 @@ struct RecipeWizardView: View {
     @State private var showPhotoPicker = false
     @State private var selectedRecipeImage: UIImage?
     @State private var existingImageReference: String?
+    @State private var selectedGalleryImages: [UIImage] = []
+    @State private var existingGalleryReferences: [String] = []
+    @State private var showGalleryPhotoPicker = false
+    @State private var pendingGalleryImage: UIImage?
 
     private let imageStore = RecipeImageStore()
 
@@ -102,9 +106,20 @@ struct RecipeWizardView: View {
                 HapticManager.shared.light()
             }
         }
+        .sheet(isPresented: $showGalleryPhotoPicker) {
+            ImagePicker(image: $pendingGalleryImage) {
+                HapticManager.shared.light()
+            }
+        }
         .onChange(of: selectedRecipeImage) { _, newImage in
             if newImage != nil {
                 existingImageReference = nil
+            }
+        }
+        .onChange(of: pendingGalleryImage) { _, newImage in
+            if let newImage {
+                selectedGalleryImages.append(newImage)
+                pendingGalleryImage = nil
             }
         }
     }
@@ -168,6 +183,10 @@ struct RecipeWizardView: View {
         if let imageReference = data.imageURL, !imageReference.isEmpty {
             existingImageReference = imageReference
         }
+
+        if let galleryURLs = data.galleryImageURLs, !galleryURLs.isEmpty {
+            existingGalleryReferences = galleryURLs
+        }
     }
 
     @ViewBuilder
@@ -178,12 +197,18 @@ struct RecipeWizardView: View {
                 recipeName: $recipeName,
                 selectedRecipeImage: $selectedRecipeImage,
                 existingImageReference: $existingImageReference,
+                selectedGalleryImages: $selectedGalleryImages,
+                existingGalleryReferences: $existingGalleryReferences,
                 cardStyle: cardStyle,
                 colorScheme: colorScheme,
                 totalSteps: totalSteps,
                 onPickPhoto: {
                     HapticManager.shared.light()
                     showPhotoPicker = true
+                },
+                onAddGalleryPhoto: {
+                    HapticManager.shared.light()
+                    showGalleryPhotoPicker = true
                 }
             )
         case 1:
@@ -291,6 +316,13 @@ struct RecipeWizardView: View {
             previousReference: prefilledData?.imageURL
         )
 
+        let newGalleryPaths = imageStore.persistGallery(
+            selectedGalleryImages,
+            recipeId: recipeId,
+            startingIndex: existingGalleryReferences.count
+        )
+        let allPhotoNames = existingGalleryReferences + newGalleryPaths
+
         let cuisineValue = recipeCuisine.trimmingCharacters(in: .whitespacesAndNewlines)
         let recipe = RecipeWizardBuilder.assemble(
             recipeId: recipeId,
@@ -307,7 +339,8 @@ struct RecipeWizardView: View {
             imageReference: imageReference,
             isFavorite: prefilledData?.isFavorite ?? false,
             tags: recipeTags,
-            cuisine: cuisineValue.isEmpty ? nil : cuisineValue
+            cuisine: cuisineValue.isEmpty ? nil : cuisineValue,
+            photoNames: allPhotoNames
         )
 
         HapticManager.shared.success()
