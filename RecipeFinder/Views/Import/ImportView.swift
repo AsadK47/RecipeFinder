@@ -9,14 +9,19 @@ struct ImportView: View {
 
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
+    @AppStorage("guestModeEnabled") private var guestModeEnabled = false
+    @StateObject private var authManager = AuthenticationManager.shared
 
     @State private var showLinkImport = false
     @State private var showPasteImport = false
     @State private var showPhotoImport = false
     @State private var showWizard = false
     @State private var saveErrorRecipeName: String?
+    @State private var showSignUpForGuest = false
 
     private enum ImportSource { case link, photo, paste, wizard }
+
+    private var isGuest: Bool { guestModeEnabled && !authManager.isAuthenticated }
 
     var body: some View {
         NavigationStack {
@@ -33,7 +38,7 @@ struct ImportView: View {
                             color: .orange,
                             title: "Paste a link",
                             subtitle: "Import from a recipe website — we fetch and parse it for you.",
-                            action: { showLinkImport = true }
+                            action: isGuest ? { showSignUpForGuest = true } : { showLinkImport = true }
                         )
 
                         actionCard(
@@ -41,7 +46,7 @@ struct ImportView: View {
                             color: .green,
                             title: "Paste text",
                             subtitle: "Paste a caption, note, or message — we pull out the recipe to review.",
-                            action: { showPasteImport = true }
+                            action: isGuest ? { showSignUpForGuest = true } : { showPasteImport = true }
                         )
 
                         actionCard(
@@ -49,7 +54,7 @@ struct ImportView: View {
                             color: .purple,
                             title: "Scan a photo",
                             subtitle: "A cookbook page, screenshot, or handwritten recipe — read on device.",
-                            action: { showPhotoImport = true }
+                            action: isGuest ? { showSignUpForGuest = true } : { showPhotoImport = true }
                         )
 
                         actionCard(
@@ -57,7 +62,7 @@ struct ImportView: View {
                             color: .blue,
                             title: "Create manually",
                             subtitle: "Add a recipe yourself, step by step.",
-                            action: { showWizard = true }
+                            action: isGuest ? { showSignUpForGuest = true } : { showWizard = true }
                         )
 
                         shareHint
@@ -80,6 +85,9 @@ struct ImportView: View {
         }
         .sheet(isPresented: $showWizard) {
             RecipeWizardView(prefilledData: nil) { store($0, source: .wizard) }
+        }
+        .sheet(isPresented: $showSignUpForGuest) {
+            NavigationStack { AuthenticationView() }
         }
         .alert(
             "Couldn't Save Recipe",

@@ -151,15 +151,17 @@ The durable rules that keep the above from regressing:
 Sharpening the product we already have. These aren't new pillars — they remove
 friction and make existing features pull their weight.
 
-### 🔴 The sign-up moment — fix the timing, not the account
+### ✅ The sign-up moment — fix the timing, not the account
 *Problem:* a brand-new user hits four gates before any value — notification
 prompt at launch → sign-in wall → Face ID splash → onboarding → an *empty* app.
-*What to do:* let people try the core loop first (browse seeds, run the
-importer/wizard), then ask for the account at a **value moment**, framed as
-protection: "keep these recipes safe and on all your devices." The account
-should *protect* the work, not gate access to nothing. Minimise
-time-to-first-saved-recipe; the activation metric is ≥1 recipe the user cares
-about *and* has cooked from once.
+*What we did:* brand-new users (no prior sign-in history) now land straight in
+`ContentView` in guest mode — the auth wall is gone on first launch. Returning
+signed-out users still see the auth screen. A soft nudge banner sits above the
+tab bar ("Sign in to save your own recipes") and opens the sign-up sheet. The
+Import tab is gated for guests: any import action redirects to sign-up instead
+of the importer, so the value moment is "I want to save this recipe" rather
+than "I want to use the app." `hasEverAuthenticated` (`@AppStorage`) persists
+the distinction between a new user and a signed-out one across launches.
 
 ### 🟢 Move the notification prompt off launch
 `requestPermission` is called only from `RecipeTimerManager` the first time a

@@ -130,6 +130,8 @@ struct AppRootView: View {
     @State private var activeOnboarding: ActiveOnboarding?
     @AppStorage("preferredColorScheme") private var colorSchemePreference: Int = 0
     @AppStorage("guestModeEnabled") private var guestModeEnabled = false
+    @AppStorage("hasEverAuthenticated") private var hasEverAuthenticated = false
+    @State private var showGuestSignUpSheet = false
 
     private var preferredColorScheme: ColorScheme? {
         switch colorSchemePreference {
@@ -170,13 +172,20 @@ struct AppRootView: View {
                 rootView
                     .animation(.easeInOut(duration: AppTheme.animationDelayXShort), value: authManager.isAuthenticated)
                     .onAppear {
+                        // First-time user: skip the auth wall, let them see the app immediately.
+                        // Returning users who signed out keep their auth wall (hasEverAuthenticated = true).
+                        if !authManager.isAuthenticated && !guestModeEnabled && !hasEverAuthenticated {
+                            guestModeEnabled = true
+                        }
                         if authManager.isAuthenticated {
                             evaluateOnboardingFlow()
                         }
                     }
                     .onChange(of: authManager.isAuthenticated) { _, isAuthenticated in
                         if isAuthenticated {
-                            guestModeEnabled = false  // Sign-in supersedes guest mode
+                            hasEverAuthenticated = true
+                            showGuestSignUpSheet = false
+                            guestModeEnabled = false
                             evaluateOnboardingFlow()
                         } else {
                             activeOnboarding = nil
@@ -217,6 +226,15 @@ struct AppRootView: View {
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .environmentObject(themeManager)
                 .onAppear { if authManager.isAuthenticated { authManager.updateLastActiveTimestamp() } }
+                .overlay(alignment: .bottom) {
+                    if guestModeEnabled && !authManager.isAuthenticated {
+                        guestSignUpNudge
+                    }
+                }
+                .sheet(isPresented: $showGuestSignUpSheet) {
+                    NavigationStack { AuthenticationView() }
+                        .environmentObject(themeManager)
+                }
                 .transition(.opacity.combined(with: .scale(scale: AppTheme.transitionScaleDown)))
         } else {
             NavigationStack {
@@ -225,5 +243,33 @@ struct AppRootView: View {
             .environmentObject(themeManager)
             .transition(.opacity.combined(with: .scale(scale: AppTheme.transitionScaleUp)))
         }
+    }
+
+    private var guestSignUpNudge: some View {
+        Button {
+            HapticManager.shared.light()
+            showGuestSignUpSheet = true
+        } label: {
+            HStack(spacing: AppTheme.spacing8) {
+                Image(systemName: "lock.shield.fill")
+                    .font(.system(size: AppTheme.fontSize14, weight: .semibold))
+                Text("Sign in to save your own recipes")
+                    .font(.system(size: AppTheme.fontSize13, weight: .semibold))
+                Spacer()
+                Text("Sign In")
+                    .font(.system(size: AppTheme.fontSize13, weight: .bold))
+                    .padding(.horizontal, AppTheme.spacing10)
+                    .padding(.vertical, AppTheme.spacing4)
+                    .background(.white.opacity(0.2), in: Capsule())
+            }
+            .foregroundStyle(.white)
+            .padding(.horizontal, AppTheme.spacing16)
+            .padding(.vertical, AppTheme.spacing10)
+            .background(.ultraThinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
+            .padding(.horizontal, AppTheme.spacing16)
+            .padding(.bottom, 88)
+        }
+        .buttonStyle(.plain)
     }
 }
