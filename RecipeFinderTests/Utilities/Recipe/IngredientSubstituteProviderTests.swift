@@ -1,0 +1,65 @@
+import Testing
+@testable import RecipeFinder
+
+@Suite struct IngredientSubstituteProviderTests {
+
+    // MARK: - Known ingredients
+
+    @Test("Known ingredient returns at least one substitute", arguments: [
+        "buttermilk", "butter", "egg", "eggs", "milk",
+        "plain flour", "baking powder", "bicarbonate of soda",
+        "sugar", "honey", "vanilla extract", "soy sauce",
+        "cream", "cocoa powder", "cornflour",
+    ])
+    func knownIngredient_returnsSubstitutes(ingredient: String) {
+        #expect(!IngredientSubstituteProvider.substitutes(for: ingredient).isEmpty)
+    }
+
+    // MARK: - Unknown ingredient
+
+    @Test func unknownIngredient_returnsEmpty() {
+        #expect(IngredientSubstituteProvider.substitutes(for: "unobtanium crystal").isEmpty)
+    }
+
+    // MARK: - Normalisation
+
+    @Test func lookup_isCaseInsensitive() {
+        let lower = IngredientSubstituteProvider.substitutes(for: "buttermilk")
+        let upper = IngredientSubstituteProvider.substitutes(for: "BUTTERMILK")
+        let mixed = IngredientSubstituteProvider.substitutes(for: "Buttermilk")
+        #expect(!lower.isEmpty)
+        #expect(lower == upper)
+        #expect(lower == mixed)
+    }
+
+    @Test func lookup_trimsWhitespace() {
+        let trimmed = IngredientSubstituteProvider.substitutes(for: "buttermilk")
+        let padded  = IngredientSubstituteProvider.substitutes(for: "  buttermilk  ")
+        #expect(trimmed == padded)
+    }
+
+    // MARK: - Partial / fuzzy matching
+
+    @Test func partialMatch_longIngredientName_resolves() {
+        // "large eggs" should resolve via partial match on "eggs"
+        let subs = IngredientSubstituteProvider.substitutes(for: "large eggs")
+        #expect(!subs.isEmpty)
+    }
+
+    // MARK: - Spot checks on content
+
+    @Test func buttermilk_includesVinegarOption() {
+        let subs = IngredientSubstituteProvider.substitutes(for: "buttermilk")
+        #expect(subs.contains { $0.contains("vinegar") })
+    }
+
+    @Test func egg_includesAquafaba() {
+        let subs = IngredientSubstituteProvider.substitutes(for: "egg")
+        #expect(subs.contains { $0.contains("aquafaba") })
+    }
+
+    @Test func bakingPowder_includesBicarb() {
+        let subs = IngredientSubstituteProvider.substitutes(for: "baking powder")
+        #expect(subs.contains { $0.lowercased().contains("bicarbonate") || $0.lowercased().contains("bicarb") })
+    }
+}

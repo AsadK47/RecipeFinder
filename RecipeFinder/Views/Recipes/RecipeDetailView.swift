@@ -24,6 +24,7 @@ struct RecipeDetailView: View {
     @State var editingIngredientIndex: Int?
     @State var editingQuantity: String = ""
     @State var editingUnit: String = ""
+    @State var substitutingIngredientIndex: Int?
     // Internal so the relocated timer control (RecipeDetailView+Content) can read it.
     @StateObject var recipeTimer = RecipeTimerManager.shared
     @AppStorage("measurementSystem") var measurementSystem: MeasurementSystem = .metric

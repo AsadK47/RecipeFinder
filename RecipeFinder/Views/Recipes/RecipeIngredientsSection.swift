@@ -16,6 +16,7 @@ struct RecipeIngredientsSection: View {
     let onAddAllToShopping: () -> Void
     let isInShoppingList: (Ingredient) -> Bool
     let onEditIngredient: (Int) -> Void
+    let onSubstitute: ((Int) -> Void)?
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
@@ -111,15 +112,18 @@ struct RecipeIngredientsSection: View {
         GlassCard {
             VStack(spacing: AppTheme.spacing16) {
                 ForEach(recipe.ingredients.indices, id: \.self) { index in
+                    let ingredient = recipe.ingredients[index]
+                    let hasSubstitutes = !IngredientSubstituteProvider.substitutes(for: ingredient.name).isEmpty
                     IngredientRowView(
-                        ingredient: recipe.ingredients[index],
+                        ingredient: ingredient,
                         isChecked: ingredientsState[index],
                         toggle: { onToggleIngredient(index) },
                         scaleFactor: recipe.scaleFactor,
                         measurementSystem: measurementSystem,
                         onAddToShopping: { onAddToShopping(index) },
-                        isInShoppingList: isInShoppingList(recipe.ingredients[index]),
-                        onTapQuantity: { onEditIngredient(index) }
+                        isInShoppingList: isInShoppingList(ingredient),
+                        onTapQuantity: { onEditIngredient(index) },
+                        onSubstitute: (hasSubstitutes && onSubstitute != nil) ? { onSubstitute?(index) } : nil
                     )
                 }
             }

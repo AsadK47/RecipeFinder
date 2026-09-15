@@ -376,7 +376,7 @@ last-synced time, and a syncing/error indicator, so people trust it's working.
 (The CloudKit Dashboard is a *developer* tool for schema and the public DB only —
 it can never expose users' private data, by design.)
 
-### 🔴 Nutrition UI surface
+### 🟢 Nutrition UI surface
 *The calculator already exists* (`NutritionCalculator`, tested) and the model
 stores nutrition data. What's missing is the UI: a collapsible section on the
 recipe detail view showing calories/protein/carbs/fat/fibre per serving,

@@ -207,7 +207,8 @@ extension RecipeDetailView {
             },
             onAddAllToShopping: addAllIngredientsToShoppingList,
             isInShoppingList: { isIngredientInShoppingList($0) },
-            onEditIngredient: { index in startEditingIngredient(at: index) }
+            onEditIngredient: { index in startEditingIngredient(at: index) },
+            onSubstitute: { index in substitutingIngredientIndex = index }
         )
         .sheet(item: Binding(
             get: { editingIngredientIndex.map { EditingIngredient(index: $0) } },
@@ -219,6 +220,16 @@ extension RecipeDetailView {
                 editingUnit: $editingUnit,
                 onCancel: { editingIngredientIndex = nil },
                 onSave: { saveIngredientEdit(at: editingItem.index) }
+            )
+        }
+        .sheet(item: Binding(
+            get: { substitutingIngredientIndex.map { EditingIngredient(index: $0) } },
+            set: { substitutingIngredientIndex = $0?.index }
+        )) { subItem in
+            let ingredient = recipe.ingredients[subItem.index]
+            SubstituteSheetView(
+                ingredientName: ingredient.mainIngredientName,
+                substitutes: IngredientSubstituteProvider.substitutes(for: ingredient.name)
             )
         }
     }

@@ -9,6 +9,7 @@ struct IngredientRowView: View {
     var onAddToShopping: (() -> Void)?
     var isInShoppingList: Bool = false
     var onTapQuantity: (() -> Void)?
+    var onSubstitute: (() -> Void)?
 
     private enum Timing {
         static let springResponse: Double = 0.3
@@ -66,6 +67,16 @@ struct IngredientRowView: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+
+            if let onSubstitute {
+                Button(action: onSubstitute) {
+                    Image(systemName: "arrow.2.squarepath")
+                        .font(.system(size: AppTheme.fontSize16))
+                        .foregroundColor(.secondary)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Find substitute for \(ingredient.mainIngredientName)")
+            }
 
             if let onAddToShopping {
                 Button(action: {
