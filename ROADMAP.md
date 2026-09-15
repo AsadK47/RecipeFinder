@@ -176,8 +176,9 @@ once into their store.
   `pendingCelebration`; confetti + sheet on unlock.
 - **StoreKit `RequestReviewAction`** ✅ triggered after 3rd cook of any recipe
   (`RecipeDetailView.recordCook`); Apple's SDK throttles to respect the yearly cap.
-- **TipKit** 🔴 for contextual feature discovery ("what can I make", cooking mode,
-  import) — not yet added.
+- **TipKit** ✅ `CanMakeNowTip` on the filter button (pantry filter discovery) and
+  `CookingModeTip` on the frying-pan toolbar button; configured at app launch with
+  `.displayFrequency(.daily)`.
 
 ### 🔴 iPad-optimized layout
 *Problem:* RecipeFinder runs on iPad via iPhone scaling — it works, but wastes the
@@ -227,8 +228,7 @@ as well not exist.
 low-stock items at the top of the kitchen list with colour-coded icons and
 swipe-to-remove; wired into `KitchenSectionsView`.
 *Remaining:* expiry & restock notifications; barcode scanning via Vision
-(`VNDetectBarcodesRequest`); quick "I have this" toggle per ingredient in recipe
-detail (Paprika's pattern).
+(`VNDetectBarcodesRequest`).
 
 ### 🟢 Cook history & recipe rating
 *Problem:* the two most useful signals for "should I cook this again?" — when did
@@ -333,15 +333,16 @@ to keep the screen awake during cooking, and bigger greasy-hands tap targets.
 plain text via `ShoppingListGrouping.shareText` and hands it to
 `UIActivityViewController`. Live share (CloudKit Sharing) deferred to iCloud.
 
-### 🔴 App Intents & Siri shortcuts
+### 🟡 App Intents & Siri shortcuts
 *Problem:* RecipeFinder is invisible to the OS. Competitors that register
 `AppIntent`s surface in Spotlight, Shortcuts, the Siri suggestion row, and the
 Action Button — we appear in none of them.
-*What to do:* declare intents for the core loop: "Add [ingredient] to shopping
-list", "What's for dinner tonight?" (reads today's meal plan), "Open recipe
-[name]", "Start cooking [name]". These are fully on-device, zero-server, and a
-meaningful iOS-native advantage over ReciMe. Intents also unlock Shortcuts
-automations ("every Sunday, add meal plan to shopping list").
+*What we did:* `AddToShoppingListIntent` ("Add item to my RecipeFinder list" →
+Siri asks what to add) and `WhatsForDinnerIntent` ("What's for dinner in
+RecipeFinder" → reads today's dinner plan) wired via `RecipeShortcutsProvider`.
+Both are fully on-device. `RecipeIntents.swift` lives in `Intents/`.
+*Remaining:* "Open recipe [name]" and "Start cooking [name]" require deep-link
+navigation (URL scheme or `NavigationLink` via `UISceneAppIntent`) — deferred.
 
 ### 🟢 Ingredient substitutions
 *Problem:* mid-cook "I don't have X, what can I use?" is one of the most

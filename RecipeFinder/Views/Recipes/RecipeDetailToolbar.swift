@@ -1,4 +1,5 @@
 import SwiftUI
+import TipKit
 
 /// The trailing toolbar controls on the recipe detail screen. Deliberately minimal:
 /// a single expressive Favorite toggle plus an overflow menu for the less-frequent
@@ -11,6 +12,8 @@ struct RecipeDetailToolbar: View {
     let onAddToCollection: () -> Void
     let onStartCooking: () -> Void
 
+    private let cookingModeTip = CookingModeTip()
+
     var body: some View {
         HStack(spacing: AppTheme.spacing16) {
             Button(action: onStartCooking) {
@@ -19,6 +22,7 @@ struct RecipeDetailToolbar: View {
                     .adaptiveForegroundColor()
             }
             .accessibilityLabel("Start Cooking Mode")
+            .popoverTip(cookingModeTip, arrowEdge: .top)
 
             Button(action: onToggleFavorite) {
                 Image(systemName: recipe.isFavorite ? "heart.fill" : "heart")

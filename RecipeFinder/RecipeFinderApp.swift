@@ -1,4 +1,5 @@
 import SwiftUI
+import TipKit
 import UIKit
 
 private let logger = AppLogger.logger(category: "RecipeFinderApp")
@@ -23,6 +24,7 @@ struct RecipeFinderApp: App {
         }
         #endif
 
+        try? Tips.configure([.displayFrequency(.daily)])
         configureAppearance()
         initializeDatabase()
 

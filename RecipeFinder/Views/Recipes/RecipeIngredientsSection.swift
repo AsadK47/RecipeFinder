@@ -17,6 +17,8 @@ struct RecipeIngredientsSection: View {
     let isInShoppingList: (Ingredient) -> Bool
     let onEditIngredient: (Int) -> Void
     let onSubstitute: ((Int) -> Void)?
+    var isInPantry: ((Ingredient) -> Bool)?
+    var onTogglePantry: ((Int) -> Void)?
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
@@ -123,7 +125,9 @@ struct RecipeIngredientsSection: View {
                         onAddToShopping: { onAddToShopping(index) },
                         isInShoppingList: isInShoppingList(ingredient),
                         onTapQuantity: { onEditIngredient(index) },
-                        onSubstitute: (hasSubstitutes && onSubstitute != nil) ? { onSubstitute?(index) } : nil
+                        onSubstitute: (hasSubstitutes && onSubstitute != nil) ? { onSubstitute?(index) } : nil,
+                        onTogglePantry: onTogglePantry != nil ? { onTogglePantry?(index) } : nil,
+                        isInPantry: isInPantry?(ingredient) ?? false
                     )
                 }
             }

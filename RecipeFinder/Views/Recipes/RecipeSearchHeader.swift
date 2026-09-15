@@ -1,4 +1,5 @@
 import SwiftUI
+import TipKit
 
 /// The screen title with a filter button plus the search field.
 /// Import and manual creation live on the dedicated Import tab — not here.
@@ -10,6 +11,8 @@ struct RecipeSearchHeader: View {
 
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
+
+    private let canMakeNowTip = CanMakeNowTip()
 
     var body: some View {
         VStack(spacing: AppTheme.spacing12) {
@@ -39,6 +42,7 @@ struct RecipeSearchHeader: View {
             }
             .buttonStyle(.plain)
             .accessibilityLabel(activeFilterCount > 0 ? "Filters, \(activeFilterCount) active" : "Filters")
+            .popoverTip(canMakeNowTip, arrowEdge: .top)
         }
     }
 
