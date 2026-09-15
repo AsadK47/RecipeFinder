@@ -142,6 +142,29 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         NutritionCalculator.calculate(ingredients: ingredients, servings: currentServings)
     }
 
+    /// URL this recipe was imported from, derived from the last line of notes.
+    /// Returns nil for manually created recipes or notes with no trailing URL.
+    var importedFromURL: URL? {
+        guard let lastLine = notes.components(separatedBy: "\n")
+            .last(where: { !$0.trimmingCharacters(in: .whitespaces).isEmpty }),
+              let url = URL(string: lastLine),
+              url.scheme == "https" || url.scheme == "http" else { return nil }
+        return url
+    }
+
+    /// Notes with the auto-generated import footer ("Imported · date\nURL") stripped.
+    var notesForDisplay: String {
+        guard importedFromURL != nil else { return notes }
+        var lines = notes.components(separatedBy: "\n")
+        if let idx = lines.lastIndex(where: { $0.hasPrefix("Imported ·") }) {
+            lines = Array(lines[..<idx])
+        }
+        while lines.last?.trimmingCharacters(in: .whitespaces).isEmpty == true {
+            lines.removeLast()
+        }
+        return lines.joined(separator: "\n")
+    }
+
     mutating func updateServings(to servings: Int) {
         currentServings = servings
     }

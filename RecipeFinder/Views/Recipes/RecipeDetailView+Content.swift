@@ -339,11 +339,23 @@ extension RecipeDetailView {
             colorScheme: colorScheme,
             onToggle: { toggleSection("Notes") }
         ) {
-            Text(RecipeNotesFormatter.attributedString(from: recipe.notes))
-                .font(.subheadline)
-                .foregroundColor(.primary)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .fixedSize(horizontal: false, vertical: true)
+            VStack(alignment: .leading, spacing: AppTheme.spacing12) {
+                if !recipe.notesForDisplay.isEmpty {
+                    Text(RecipeNotesFormatter.attributedString(from: recipe.notesForDisplay))
+                        .font(.subheadline)
+                        .foregroundColor(.primary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                if let url = recipe.importedFromURL {
+                    Link(destination: url) {
+                        Label("View Original", systemImage: "link")
+                            .font(.subheadline)
+                            .foregroundColor(AppTheme.accentColor)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
         }
     }
 

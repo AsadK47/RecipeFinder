@@ -351,12 +351,57 @@ final class RecipeModelTests: XCTestCase {
         Ingredient(baseQuantity: baseQuantity, unit: unit, name: name)
     }
 
+    // MARK: - importedFromURL
+
+    func testImportedFromURL_httpsURL_parsesCorrectly() {
+        let recipe = makeRecipe(notes: "Imported · 14 Sep 2026\nhttps://example.com/recipe")
+        XCTAssertEqual(recipe.importedFromURL, URL(string: "https://example.com/recipe"))
+    }
+
+    func testImportedFromURL_withDescription_parsesLastLineURL() {
+        let recipe = makeRecipe(notes: "Great flavour.\n\nImported · 14 Sep 2026\nhttps://food.com/pasta")
+        XCTAssertEqual(recipe.importedFromURL, URL(string: "https://food.com/pasta"))
+    }
+
+    func testImportedFromURL_noURL_returnsNil() {
+        let recipe = makeRecipe(notes: "Just a personal note")
+        XCTAssertNil(recipe.importedFromURL)
+    }
+
+    func testImportedFromURL_emptyNotes_returnsNil() {
+        let recipe = makeRecipe(notes: "")
+        XCTAssertNil(recipe.importedFromURL)
+    }
+
+    // MARK: - notesForDisplay
+
+    func testNotesForDisplay_stripsImportFooter() {
+        let recipe = makeRecipe(notes: "Great flavour.\n\nImported · 14 Sep 2026\nhttps://example.com/recipe")
+        XCTAssertEqual(recipe.notesForDisplay, "Great flavour.")
+    }
+
+    func testNotesForDisplay_onlyImportFooter_returnsEmpty() {
+        let recipe = makeRecipe(notes: "Imported · 14 Sep 2026\nhttps://example.com/recipe")
+        XCTAssertEqual(recipe.notesForDisplay, "")
+    }
+
+    func testNotesForDisplay_noURL_returnsFullNotes() {
+        let recipe = makeRecipe(notes: "Just a personal note")
+        XCTAssertEqual(recipe.notesForDisplay, "Just a personal note")
+    }
+
+    func testNotesForDisplay_emptyNotes_returnsEmpty() {
+        let recipe = makeRecipe(notes: "")
+        XCTAssertEqual(recipe.notesForDisplay, "")
+    }
+
     private func makeRecipe(
         baseServings: Int = 4,
         currentServings: Int = 4,
         prepTime: String = "10 min",
         cookingTime: String = "20 min",
-        ingredients: [Ingredient] = []
+        ingredients: [Ingredient] = [],
+        notes: String = ""
     ) -> RecipeModel {
         RecipeModel(
             name: "Test Recipe",
@@ -369,7 +414,7 @@ final class RecipeModelTests: XCTestCase {
             ingredients: ingredients,
             prePrepInstructions: [],
             instructions: [],
-            notes: ""
+            notes: notes
         )
     }
 }

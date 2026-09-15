@@ -32,7 +32,7 @@ struct RecipeDetailView: View {
     @Environment(\.requestReview) private var requestReview
 
     var hasPrePrep: Bool { !recipe.prePrepInstructions.isEmpty }
-    var hasNotes: Bool { !recipe.notes.isEmpty }
+    var hasNotes: Bool { !recipe.notesForDisplay.isEmpty || recipe.importedFromURL != nil }
 
     var onFavoriteToggle: (() -> Void)?
 

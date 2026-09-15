@@ -259,7 +259,7 @@ recipes. Add a "Refresh from source" action that re-fetches and presents a diff
 preview — user picks what to take. Edits (personal notes, servings, tags) are
 always preserved.
 
-### 🔴 Recurring / staple shopping items
+### 🟢 Recurring / staple shopping items
 *Problem:* eggs, milk, bread — the same items go on every shop. Manually
 re-adding them after each clear is friction that every mature shopping-list app
 (AnyList, OurGroceries) solves.
