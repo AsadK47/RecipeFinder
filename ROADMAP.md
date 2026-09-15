@@ -161,26 +161,23 @@ should *protect* the work, not gate access to nothing. Minimise
 time-to-first-saved-recipe; the activation metric is ≥1 recipe the user cares
 about *and* has cooked from once.
 
-### 🔴 Move the notification prompt off launch
-Use provisional authorization, or ask in-context the first time a timer or meal
-reminder is actually set. Apple's HIG backs this; a cold launch prompt is pure
-friction.
+### 🟢 Move the notification prompt off launch
+`requestPermission` is called only from `RecipeTimerManager` the first time a
+timer fires — never at app launch. Already in-context.
 
-### 🔴 Kill the empty state — seed recipes
-*Problem:* an empty library is a dead app, and it collides with delayed sign-up.
-*What to do:* ship a stocked starter library (the user has a Google Drive of
-recipes to convert into bundled seeds) so a first-run user browses and cooks
-before ever creating an account.
+### 🟢 Kill the empty state — seed recipes
+`SeedRecipeProvider` ships 6 bundled starter recipes (spaghetti bolognese,
+chicken tikka masala, avocado toast, etc.) with stable fixed UUIDs (idempotent).
+Guest users see them before sign-up; newly signed-in users get them seeded
+once into their store.
 
-### 🔴 Engagement surfaces (currently unused APIs)
-- **Badges** exist (`BadgeManager`/`BadgeCard`) but are buried in
-  Settings → Account and drive nothing. Resurface them at real moments (first
-  import/cook → confetti, we already ship `ConfettiSwiftUI`) and tie them to the
-  core loop rather than a hidden trophy shelf.
-- **TipKit** for contextual, event-gated feature discovery ("what can I make",
-  cooking mode, import).
-- **StoreKit `RequestReviewAction`** only after a success moment (e.g. finishing
-  a cook), never at launch or right after a user action.
+### 🟡 Engagement surfaces (currently unused APIs)
+- **Badges** ✅ `BadgeEarnedSheet` is wired in `ContentView` — fires on any
+  `pendingCelebration`; confetti + sheet on unlock.
+- **StoreKit `RequestReviewAction`** ✅ triggered after 3rd cook of any recipe
+  (`RecipeDetailView.recordCook`); Apple's SDK throttles to respect the yearly cap.
+- **TipKit** 🔴 for contextual feature discovery ("what can I make", cooking mode,
+  import) — not yet added.
 
 ### 🔴 iPad-optimized layout
 *Problem:* RecipeFinder runs on iPad via iPhone scaling — it works, but wastes the
@@ -192,11 +189,12 @@ shopping) and detail column. No new features needed — it's a layout change to
 `ContentView` and the major list views. `AdaptiveSpacing` already has
 `horizontalSizeClass` awareness, so spacing is partly ready.
 
-### 🔴 Recipe image placeholders
-Missing images currently read as broken. Build a reusable `RecipePlaceholderView`
-(themed gradient + centred dish glyph, optionally name-seeded) used as the
-Kingfisher placeholder *and* failure image, with a shimmer→cross-fade and a fixed
-aspect ratio. Low effort, high perceived quality.
+### 🟢 Recipe image placeholders
+`RecipePlaceholderView` ships: name-seeded gradient palette (stable Unicode-scalar
+hash), fork-knife glyph, shimmer overlay during Kingfisher load, cross-fade on
+success. Used as Kingfisher's loading placeholder *and* the permanent failure
+fallback in `RecipeImageView`. All recipe cards pass `recipeName` for varied
+palettes.
 
 ### 🟢 Smart search & filtering coverage
 All filters ship: text search, category, difficulty, cook time, dietary flags,
@@ -211,38 +209,37 @@ rearrange meals within a day, recurring meals ("Meal Prep Sunday"), pantry-
 aware meal suggestions ("cook this before the tomatoes go off"), and a weekly
 nutrition summary (tied to the Nutrition item in Part III).
 
-### 🔴 Recipe library sort order
+### 🟢 Recipe library sort order
 *Problem:* the recipe list has no sort control — recipes appear in insertion
 order. Every comparable app lets users sort by name, date added, cook time, or
 favourites count.
-*What to do:* add a `SortCriteria` field to `RecipeFilterCriteria` (name A–Z,
-newest first, cook time, favourites) and a sort picker on `RecipeSearchView`.
-No backend work, no new models — purely a filter-layer addition.
+*What we did:* added `SortOrder` enum (name A–Z/Z–A, highest rated, most cooked)
+to `RecipeFilterCriteria`; wired through `FilterSheet` sort picker and
+`RecipeSearchView`. Ingredient-match ranking takes precedence when "Can Make Now"
+is active. Fully unit-tested in `RecipeFilterCriteriaTests`.
 
-### 🔴 Pantry expiry & restock — surface what's already tracked
+### 🟡 Pantry expiry & restock — surface what's already tracked
 *Problem:* `KitchenInventoryModel` already tracks `expiryDate` / `isExpired` /
 `isExpiringSoon` / `needsRestock`, and the manager exposes `expiredItems()` /
 `expiringSoonItems()` / `lowStockItems()` — but none of it is surfaced, so it may
 as well not exist.
-*What to do:* an "expiring soon / expired / low stock" view over the existing
-data, plus **expiry & restock notifications** (new `NotificationManager` category
-alongside timers/meals). Ties into the core loop: "use it before it goes off" is a
-natural "what do I cook tonight?" prompt. Add **barcode scanning** via Vision
-(`VNDetectBarcodesRequest`) so users can scan a packet directly into inventory
-rather than typing — standard expectation in pantry-tracking apps (Whisk, Grocy).
-Add a **quick "I have this" toggle** per ingredient in recipe detail (Paprika's
-pattern): tapping an ingredient marks it in-pantry without navigating to the
-inventory screen — lowers the friction of keeping pantry data accurate.
+*What we did:* `PantryAlertsSectionContent` surfaces expired / expiring-soon /
+low-stock items at the top of the kitchen list with colour-coded icons and
+swipe-to-remove; wired into `KitchenSectionsView`.
+*Remaining:* expiry & restock notifications; barcode scanning via Vision
+(`VNDetectBarcodesRequest`); quick "I have this" toggle per ingredient in recipe
+detail (Paprika's pattern).
 
-### 🔴 Cook history & recipe rating
+### 🟢 Cook history & recipe rating
 *Problem:* the two most useful signals for "should I cook this again?" — when did
 I last make it, and did we like it? — are not tracked at all. Paprika, Mela, and
 Whisk all surface this. Without it, favourites is the only signal and it's binary.
-*What to do:* add `lastCookedAt: Date?`, `cookCount: Int`, and `rating: Int?`
-(1–5, stored as Int16) to the recipe Core Data entity (lightweight migration). The
-cooking mode finish screen increments count, stamps the date, and prompts a quick
-star rating. Rating feeds into a "top rated" sort tier (see Recipe library sort
-order). Both fields visible in recipe detail.
+*What we did:* added `lastCookedAt`, `cookCount`, and `rating` to the Core Data
+entity (v12→v13 lightweight migration); `recordCook`/`updateRating` write atomically
+(separate from content edits so history survives recipe edits); `cookHistoryCard`
+on recipe detail shows a `StarRatingView` (tap-to-rate, tap-again to clear) and
+a "Mark as Cooked" button with optimistic update + persist. Rating feeds into the
+"highest rated" and "most cooked" sort tiers added to `SortOrder`.
 
 ### 🔴 Multiple photos per recipe
 *Problem:* a single hero image can't capture step shots, plating variants, or
@@ -298,16 +295,18 @@ recipe detail. Filter criteria supports both tag and collection filtering.
 *Remaining:* smart/auto-populated collections by rules; a dedicated Collections
 tab if the library grows large enough to warrant one.
 
-### 🔴 Cuisine tagging
+### 🟢 Cuisine tagging
 *Problem:* category (e.g. "Main", "Dessert") describes meal position, not
 origin. Filtering "show me Italian weeknight mains" requires a separate cuisine
 dimension — Italian, Mexican, Asian, Middle Eastern, etc. — that Category
 doesn't cover. Most recipe imports include cuisine in JSON-LD (`recipeCuisine`),
 which we currently discard.
-*What to do:* add a `cuisine: String?` field to the recipe model; parse
-`recipeCuisine` from JSON-LD imports; add cuisine as a first-class filter in
-`RecipeFilterCriteria` alongside category and tags; surface as a chip picker in
-`FilterSheet`. No new infrastructure — follows the same pattern as tags.
+*What we did:* added `cuisine: String?` to the Core Data entity and `RecipeModel`;
+`RecipeImportBuilder` now populates the structured field from `recipeCuisine`
+instead of embedding it as freetext in notes; cuisine is a first-class filter in
+`RecipeFilterCriteria` (chip multi-select in `FilterSheet`, `ActiveFiltersBar`);
+wizard step 6 has a cuisine text field with 12 tap-to-select suggestion chips;
+edit sheet pre-populates cuisine. Full round-trip tested.
 
 ### 🟡 Cooking Experience
 `CookingModeView` ships (step navigation, mark complete). Remaining to reach
@@ -327,13 +326,10 @@ to keep the screen awake during cooking, and bigger greasy-hands tap targets.
   calls the same step-advance logic. Crouton markets this; it's a natural
   follow-on once App Intents land.
 
-### 🔴 Shopping list sharing
-*Problem:* households cook together; there's no way to share the shopping list
-with a partner. AnyList's entire product is built on this.
-*What to do:* share the list as plain text or a live shared link (via
-CloudKit Sharing once iCloud lands, or a simple "copy to clipboard" formatted
-list as a low-cost interim). The interim (copy formatted list) can ship before
-iCloud.
+### 🟢 Shopping list sharing
+`KitchenShoppingView` overflow menu → "Share List" formats the grouped list as
+plain text via `ShoppingListGrouping.shareText` and hands it to
+`UIActivityViewController`. Live share (CloudKit Sharing) deferred to iCloud.
 
 ### 🔴 App Intents & Siri shortcuts
 *Problem:* RecipeFinder is invisible to the OS. Competitors that register

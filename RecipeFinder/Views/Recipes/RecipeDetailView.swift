@@ -1,4 +1,5 @@
 import ConfettiSwiftUI
+import StoreKit
 import SwiftUI
 
 struct RecipeDetailView: View {
@@ -28,6 +29,7 @@ struct RecipeDetailView: View {
     @AppStorage("measurementSystem") var measurementSystem: MeasurementSystem = .metric
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
+    @Environment(\.requestReview) private var requestReview
 
     var hasPrePrep: Bool { !recipe.prePrepInstructions.isEmpty }
     var hasNotes: Bool { !recipe.notes.isEmpty }
@@ -271,6 +273,8 @@ struct RecipeDetailView: View {
         recipe.cookCount += 1
         recipe.lastCookedAt = Date()
         PersistenceController.shared.recordCook(withId: recipe.id)
+        // Third cook of any recipe = genuine fan; ask for a review exactly once.
+        if recipe.cookCount == 3 { requestReview() }
     }
 
     func updateRating(_ newRating: Int) {
