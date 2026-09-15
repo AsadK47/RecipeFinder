@@ -10,6 +10,7 @@ struct ShoppingListItemRow: View {
     let onDelete: () -> Void
     let onCategoryChange: (String) -> Void
     let onStoreChange: (String?) -> Void
+    let onToggleRecurring: () -> Void
     let allCategories: [String]
     let availableStores: [String] = ["ASDA", "Tesco", "Sainsbury's", "Lidl", "Aldi", "Morrisons", "Waitrose"]
     
@@ -74,6 +75,13 @@ struct ShoppingListItemRow: View {
                                 .foregroundColor(item.isChecked ? .gray : AppTheme.adaptiveEmphasis(for: colorScheme))
                                 .lineLimit(2)
                                 .fixedSize(horizontal: false, vertical: true)
+
+                            if item.isRecurring {
+                                Image(systemName: "pin.fill")
+                                    .font(.system(size: 9, weight: .semibold))
+                                    .foregroundColor(.orange)
+                                    .rotationEffect(.degrees(45))
+                            }
 
                             if isInKitchen {
                                 Text("In kitchen")
@@ -209,6 +217,15 @@ struct ShoppingListItemRow: View {
                 .padding(.vertical, AppTheme.spacing10)
             }
             .opacity(item.isChecked ? 0.6 : 1)
+        }
+        .swipeActions(edge: .leading, allowsFullSwipe: true) {
+            Button(action: onToggleRecurring) {
+                Label(
+                    item.isRecurring ? "Unpin" : "Pin",
+                    systemImage: item.isRecurring ? "pin.slash.fill" : "pin.fill"
+                )
+            }
+            .tint(.orange)
         }
         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
             Button(

@@ -194,6 +194,65 @@ final class ShoppingListManagerTests: XCTestCase {
         XCTAssertEqual(sut.checkedCount(), 1)
     }
 
+    // MARK: - Recurring / staple items
+
+    func testToggleRecurring_flipsFlag() {
+        sut.addItem(name: "Eggs")
+        XCTAssertFalse(sut.items[0].isRecurring)
+        sut.toggleRecurring(at: 0)
+        XCTAssertTrue(sut.items[0].isRecurring)
+        sut.toggleRecurring(at: 0)
+        XCTAssertFalse(sut.items[0].isRecurring)
+    }
+
+    func testToggleRecurring_outOfBounds_doesNotCrash() {
+        sut.addItem(name: "A")
+        sut.toggleRecurring(at: 5)
+        XCTAssertEqual(sut.items.count, 1)
+    }
+
+    func testClearChecked_recurringCheckedItem_isUncheckedNotRemoved() {
+        sut.addItem(name: "Eggs")
+        sut.toggleRecurring(at: 0)
+        sut.toggleItem(at: 0)
+        sut.clearCheckedItems()
+        XCTAssertEqual(sut.items.count, 1)
+        XCTAssertFalse(sut.items[0].isChecked)
+        XCTAssertTrue(sut.items[0].isRecurring)
+    }
+
+    func testClearChecked_nonRecurringCheckedItem_isRemoved() {
+        sut.addItem(name: "Butter")
+        sut.toggleItem(at: 0)
+        sut.clearCheckedItems()
+        XCTAssertTrue(sut.items.isEmpty)
+    }
+
+    func testClearAll_recurringItem_survivesAsUnchecked() {
+        sut.addItem(name: "Eggs")
+        sut.toggleRecurring(at: 0)
+        sut.toggleItem(at: 0)
+        sut.clearAllItems()
+        XCTAssertEqual(sut.items.count, 1)
+        XCTAssertFalse(sut.items[0].isChecked)
+        XCTAssertTrue(sut.items[0].isRecurring)
+    }
+
+    func testClearAll_nonRecurringItem_isRemoved() {
+        sut.addItem(name: "Butter")
+        sut.clearAllItems()
+        XCTAssertTrue(sut.items.isEmpty)
+    }
+
+    func testClearAll_mixedItems_onlyRecurringSurvive() {
+        sut.addItem(name: "Eggs")      // recurring
+        sut.addItem(name: "Butter")   // one-time
+        sut.toggleRecurring(at: 0)
+        sut.clearAllItems()
+        XCTAssertEqual(sut.items.count, 1)
+        XCTAssertEqual(sut.items[0].name, "Eggs")
+    }
+
     // MARK: - Persistence
 
     func testPersistence_acrossReload() {

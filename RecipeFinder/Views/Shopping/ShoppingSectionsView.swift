@@ -90,6 +90,11 @@ struct ShoppingSectionsView: View {
                         manager.updateStore(at: index, store: newStore)
                     }
                 },
+                onToggleRecurring: {
+                    if let index = manager.items.firstIndex(where: { $0.id == item.id }) {
+                        manager.toggleRecurring(at: index)
+                    }
+                },
                 allCategories: CategoryClassifier.categoryOrder
             )
             .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))

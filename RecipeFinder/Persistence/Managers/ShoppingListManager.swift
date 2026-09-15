@@ -171,16 +171,31 @@ final class ShoppingListManager: ObservableObject {
     }
     
     func clearCheckedItems() {
-        var items = getItems()
-        items.removeAll { $0.isChecked }
+        let items = getItems().compactMap { item -> ShoppingListModel? in
+            guard item.isChecked else { return item }
+            // Staples are unchecked and kept; one-time items are removed.
+            if item.isRecurring { var u = item; u.isChecked = false; return u }
+            return nil
+        }
         HapticManager.shared.celebrate()
         saveItems(items)
     }
-    
+
     func clearAllItems() {
-        var items = getItems()
-        items.removeAll()
+        // Staples survive a full clear, reset to unchecked.
+        let items = getItems().compactMap { item -> ShoppingListModel? in
+            guard item.isRecurring else { return nil }
+            var u = item; u.isChecked = false; return u
+        }
         HapticManager.shared.rigid()
+        saveItems(items)
+    }
+
+    func toggleRecurring(at index: Int) {
+        var items = getItems()
+        guard index < items.count else { return }
+        items[index].isRecurring.toggle()
+        HapticManager.shared.selection()
         saveItems(items)
     }
     

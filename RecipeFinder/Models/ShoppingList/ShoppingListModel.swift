@@ -12,8 +12,9 @@ struct ShoppingListModel: Identifiable, Codable, Hashable {
     var category: String
     var dateAdded: Date
     var preferredStore: String? = nil
-    
-    init(id: UUID = UUID(), name: String, isChecked: Bool = false, quantity: Int = 1, unit: String = "", category: String = "Other", dateAdded: Date = Date(), preferredStore: String? = nil) {
+    var isRecurring: Bool = false
+
+    init(id: UUID = UUID(), name: String, isChecked: Bool = false, quantity: Int = 1, unit: String = "", category: String = "Other", dateAdded: Date = Date(), preferredStore: String? = nil, isRecurring: Bool = false) {
         self.id = id
         self.name = name
         self.isChecked = isChecked
@@ -23,5 +24,6 @@ struct ShoppingListModel: Identifiable, Codable, Hashable {
         self.category = category
         self.dateAdded = dateAdded
         self.preferredStore = preferredStore
+        self.isRecurring = isRecurring
     }
 }

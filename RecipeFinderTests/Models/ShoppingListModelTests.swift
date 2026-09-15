@@ -81,4 +81,30 @@ final class ShoppingListModelTests: XCTestCase {
         let b = ShoppingListModel(name: "Bread")
         XCTAssertNotEqual(a, b)
     }
+
+    // MARK: - isRecurring
+
+    func testInit_defaultIsRecurring_isFalse() {
+        XCTAssertFalse(ShoppingListModel(name: "Eggs").isRecurring)
+    }
+
+    func testInit_isRecurringTrue_persists() {
+        XCTAssertTrue(ShoppingListModel(name: "Eggs", isRecurring: true).isRecurring)
+    }
+
+    func testCodable_roundTrips_isRecurring() throws {
+        let item = ShoppingListModel(name: "Eggs", isRecurring: true)
+        let data = try JSONEncoder().encode(item)
+        let decoded = try JSONDecoder().decode(ShoppingListModel.self, from: data)
+        XCTAssertTrue(decoded.isRecurring)
+    }
+
+    func testCodable_missingIsRecurring_decodesAsFalse() throws {
+        // Simulate JSON written before isRecurring was added.
+        let legacy = """
+        {"id":"\(UUID())","name":"Milk","quantity":1,"unit":"","isChecked":false,"isCompleted":false,"category":"Dairy","dateAdded":0}
+        """
+        let decoded = try JSONDecoder().decode(ShoppingListModel.self, from: Data(legacy.utf8))
+        XCTAssertFalse(decoded.isRecurring)
+    }
 }
