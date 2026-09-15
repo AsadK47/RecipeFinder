@@ -19,6 +19,9 @@ struct RecipeFinderApp: App {
                 UIView.setAnimationsEnabled(false)
                 if arguments.contains("-resetState") {
                     AuthTestHelper.clearAllAuthData()
+                    // A reset simulates a returning signed-out user, not a fresh install.
+                    // Set hasEverAuthenticated so the auth screen appears (not auto-guest).
+                    UserDefaults.standard.set(true, forKey: "hasEverAuthenticated")
                 }
             }
         }
