@@ -4,6 +4,7 @@ import SwiftUI
 /// targets, step-by-step navigation with optional per-step timers.
 struct CookingModeView: View {
     let recipe: RecipeModel
+    var onFinish: (() -> Void)?
 
     // MARK: - State
 
@@ -275,6 +276,7 @@ struct CookingModeView: View {
             Button {
                 if isLast {
                     BadgeManager.shared.unlockBadge(.headChef)
+                    onFinish?()
                     dismiss()
                 } else {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) { currentIndex += 1 }

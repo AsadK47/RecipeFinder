@@ -180,10 +180,19 @@ extension RecipeDetailView {
 
     var detailsInfoCard: some View {
         GlassCard {
-            InfoPairView(
-                label1: "Difficulty", value1: recipe.difficulty, icon1: "chart.bar",
-                label2: "Category", value2: recipe.category, icon2: "fork.knife"
-            )
+            VStack(spacing: 0) {
+                InfoPairView(
+                    label1: "Difficulty", value1: recipe.difficulty, icon1: "chart.bar",
+                    label2: "Category", value2: recipe.category, icon2: "fork.knife"
+                )
+                if let cuisine = recipe.cuisine, !cuisine.isEmpty {
+                    Divider()
+                        .padding(.horizontal, AppTheme.spacing24)
+                        .padding(.top, AppTheme.spacing12)
+                    InfoItem(icon: "globe", label: "Cuisine", value: cuisine)
+                        .padding(.top, AppTheme.spacing12)
+                }
+            }
             .padding()
         }
     }

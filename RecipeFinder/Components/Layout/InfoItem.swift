@@ -16,6 +16,7 @@ struct InfoItem: View {
         case "flame":      return .red
         case "chart.bar":  return .blue
         case "fork.knife": return .green
+        case "globe":      return .purple
         default:           return .white
         }
     }

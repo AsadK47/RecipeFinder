@@ -249,15 +249,17 @@ a "Mark as Cooked" button with optimistic update + persist. Rating feeds into th
 images live in the app's Documents directory alongside the existing single-image
 store.
 
-### 🔴 Recipe source link & re-fetch
+### 🟡 Recipe source link & re-fetch
 *Problem:* the source URL is stored on import (in `RecipeImportBuilder`) but never
 surfaced in the UI. Users can't get back to the original page, and if the source
 recipe is corrected, there's no way to pick up the fix without re-importing and
 losing edits.
-*What to do:* show a "View Original" link on recipe detail for URL-imported
-recipes. Add a "Refresh from source" action that re-fetches and presents a diff
-preview — user picks what to take. Edits (personal notes, servings, tags) are
-always preserved.
+*What we did:* "View Original" link surfaces on recipe detail for any URL-imported
+recipe (`importedFromURL` parsed from the notes footer; import metadata stripped
+from displayed notes via `notesForDisplay`).
+*Remaining:* "Refresh from source" — re-fetch and present a diff preview so users
+can selectively take upstream changes while preserving personal edits (notes,
+servings, tags).
 
 ### 🟢 Recurring / staple shopping items
 *Problem:* eggs, milk, bread — the same items go on every shop. Manually
@@ -341,13 +343,14 @@ list", "What's for dinner tonight?" (reads today's meal plan), "Open recipe
 meaningful iOS-native advantage over ReciMe. Intents also unlock Shortcuts
 automations ("every Sunday, add meal plan to shopping list").
 
-### 🔴 Ingredient substitutions
+### 🟢 Ingredient substitutions
 *Problem:* mid-cook "I don't have X, what can I use?" is one of the most
 searched cooking queries. Currently users have to leave the app.
-*What to do:* a "Substitute?" button on each ingredient in recipe detail, backed
-first by a curated lookup table (buttermilk → plain yoghurt + lemon, etc.) for
-zero-latency coverage of the 80% case, then falling through to on-device
-FoundationModels for the long tail. Private, free, offline.
+*What we did:* `IngredientSubstituteProvider` ships a curated 30+ entry lookup table
+covering dairy, eggs, flour, leavening, sweeteners, oils, stocks, and chocolate.
+A swap icon appears per ingredient row (only when substitutes exist); tapping opens
+`SubstituteSheetView`. Lookup is case/whitespace insensitive with partial-name
+fuzzy matching. FoundationModels long-tail fallback deferred to Phase 2.
 
 ### 🔴 iCloud Sync *(blocked on paid enrollment — keep the model ready)*
 `NSPersistentCloudKitContainer` over the existing Core Data stack, using the

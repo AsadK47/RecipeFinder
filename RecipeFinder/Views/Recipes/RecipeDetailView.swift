@@ -9,7 +9,7 @@ struct RecipeDetailView: View {
     @State var ingredientsState: [Bool]
     @State var instructionsState: [Bool]
     @State var prePrepState: [Bool]
-    @State var expandedSections: Set<String> = ["Ingredients", "Pre-Prep", "Instructions", "Notes"]
+    @State var expandedSections: Set<String> = ["Ingredients", "Pre-Prep", "Instructions", "Notes", "Nutrition"]
     @State private var addedIngredients: Set<String> = []
     @State var showAddedFeedback: String?
     @State private var confettiCounter = 0
@@ -104,7 +104,7 @@ struct RecipeDetailView: View {
             CookTimerView()
         }
         .fullScreenCover(isPresented: $showCookingMode) {
-            CookingModeView(recipe: recipe)
+            CookingModeView(recipe: recipe, onFinish: recordCook)
         }
         .overlay(alignment: .bottom) {
             feedbackOverlay
