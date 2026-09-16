@@ -146,6 +146,18 @@ When creating or modifying any view, run through this before finishing:
 - CI (`.github/workflows/build.yml`) builds on every push to `main` and **runs the
   test suite by default** — a red test suite fails the build.
 
+## Commit messages
+End **every** response that made code changes with a single conventional-commit line — no body, no bullet points, no `Co-Authored-By`, no preamble. The user copies it directly; surrounding text breaks the flow.
+
+WRONG:
+```
+Ready-to-paste commit: fix(import): fix grey text
+```
+RIGHT:
+```
+fix(import): fix grey text in ImportView header
+```
+
 ## Git / auth setup
 - SSH key (ed25519) has been generated and added to GitHub as both an Authentication Key and a Signing Key.
 - Commit signing is configured via:

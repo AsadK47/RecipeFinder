@@ -1,6 +1,6 @@
 # Feature Audit — Test Coverage
 
-Last updated: 2026-09-14 (updated after integration test pass).  
+Last updated: 2026-09-16 (Slice 4 HTMLFetcher + UI test expansion).  
 Legend: ✅ integration tested · ⚠️ unit/model only · ❌ no test
 
 ---
@@ -159,5 +159,5 @@ Legend: ✅ integration tested · ⚠️ unit/model only · ❌ no test
 
 1. **Collection filter UI** — wire `selectedCollectionRecipeIDs` into `FilterSheet` so users can filter by collection (criteria logic + tests already done; UI wiring pending)
 2. **Sort order** — no sort feature implemented yet; nothing to test until built
-3. **Auth flows** — sign-in / sign-up / Apple Sign In / biometric / guest all blocked on `AuthenticationManager` DI seam; tracked in hardening backlog
+3. **Auth flows** — email sign-in now has a UI test; Apple Sign In / biometric / guest still blocked on `AuthenticationManager` DI seam
 4. **headChef / firstImport / firstPhotoImport call sites** — badge unlock is tested; triggers live in views with no extractable logic to unit-test

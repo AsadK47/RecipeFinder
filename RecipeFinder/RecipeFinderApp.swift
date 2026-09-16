@@ -22,6 +22,10 @@ struct RecipeFinderApp: App {
                     // A reset simulates a returning signed-out user, not a fresh install.
                     // Set hasEverAuthenticated so the auth screen appears (not auto-guest).
                     UserDefaults.standard.set(true, forKey: "hasEverAuthenticated")
+                    // A returning user has already seen onboarding — skip it so sign-in
+                    // tests land directly on the main app rather than an onboarding screen.
+                    UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
+                    UserDefaults.standard.set(true, forKey: "hasSeenBiometricOnboarding")
                 }
             }
         }

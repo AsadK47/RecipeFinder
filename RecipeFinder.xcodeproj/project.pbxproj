@@ -221,6 +221,9 @@
 		F3D4057430599D390076834D /* RecipeTips.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D4057330599D390076834D /* RecipeTips.swift */; };
 		F3D4057730599DC80076834D /* RecipeIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D4057630599DC80076834D /* RecipeIntents.swift */; };
 		F3D40579305A9C2A0076834D /* WeekStripView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D40578305A9C2A0076834D /* WeekStripView.swift */; };
+		F3D4057B305AFEA30076834D /* HTMLFetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D4057A305AFEA30076834D /* HTMLFetcherTests.swift */; };
+		F3D4057D305AFEB10076834D /* RecipeFinderSignInUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D4057C305AFEB10076834D /* RecipeFinderSignInUITests.swift */; };
+		F3D4057F305AFEBC0076834D /* RecipeFinderImportUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D4057E305AFEBC0076834D /* RecipeFinderImportUITests.swift */; };
 		F3E9D10830434D43008BF231 /* MealTimeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10730434D43008BF231 /* MealTimeCard.swift */; };
 		F3E9D10A30434D58008BF231 /* MealTimeSelectorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10930434D58008BF231 /* MealTimeSelectorSheet.swift */; };
 		F3E9D10C30434D65008BF231 /* RecipeSelectionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10B30434D65008BF231 /* RecipeSelectionSheet.swift */; };
@@ -624,6 +627,9 @@
 		F3D4057330599D390076834D /* RecipeTips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeTips.swift; sourceTree = "<group>"; };
 		F3D4057630599DC80076834D /* RecipeIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeIntents.swift; sourceTree = "<group>"; };
 		F3D40578305A9C2A0076834D /* WeekStripView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekStripView.swift; sourceTree = "<group>"; };
+		F3D4057A305AFEA30076834D /* HTMLFetcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLFetcherTests.swift; sourceTree = "<group>"; };
+		F3D4057C305AFEB10076834D /* RecipeFinderSignInUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeFinderSignInUITests.swift; sourceTree = "<group>"; };
+		F3D4057E305AFEBC0076834D /* RecipeFinderImportUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeFinderImportUITests.swift; sourceTree = "<group>"; };
 		F3E9D10730434D43008BF231 /* MealTimeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealTimeCard.swift; sourceTree = "<group>"; };
 		F3E9D10930434D58008BF231 /* MealTimeSelectorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealTimeSelectorSheet.swift; sourceTree = "<group>"; };
 		F3E9D10B30434D65008BF231 /* RecipeSelectionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeSelectionSheet.swift; sourceTree = "<group>"; };
@@ -825,6 +831,8 @@
 				F3E9D2A83055494C008BF231 /* RecipeFinderLaunchUITests.swift */,
 				F3B837CA3055D2FB0003AEF8 /* RecipeFinderSignUpUITests.swift */,
 				F3D4053F305608DE0076834D /* RecipeFinderAccessibilityAuditTests.swift */,
+				F3D4057C305AFEB10076834D /* RecipeFinderSignInUITests.swift */,
+				F3D4057E305AFEBC0076834D /* RecipeFinderImportUITests.swift */,
 			);
 			path = RecipeFinderUITests;
 			sourceTree = "<group>";
@@ -1791,6 +1799,7 @@
 			children = (
 				F3E9D27C304D7D21008BF231 /* RecipeImageTextRecognizerTests.swift */,
 				F3E9D29F305157D3008BF231 /* SecureCredentialManagerTests.swift */,
+				F3D4057A305AFEA30076834D /* HTMLFetcherTests.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -2331,6 +2340,7 @@
 				F3E9D223304762EE008BF231 /* BackupServiceTests.swift in Sources */,
 				F3E9D249304835AA008BF231 /* SharedTextImporterTests.swift in Sources */,
 				F3E9D292304EADA3008BF231 /* IngredientLineParserTests.swift in Sources */,
+				F3D4057B305AFEA30076834D /* HTMLFetcherTests.swift in Sources */,
 				F36AED673043343300935A3C /* MemoCacheTests.swift in Sources */,
 				F3E9D27A304D7D16008BF231 /* RecipeTextImportRouterTests.swift in Sources */,
 				F3B837E13055F9EE0003AEF8 /* RecipeWizardPersistenceTests.swift in Sources */,
@@ -2346,6 +2356,8 @@
 				F3B837CB3055E8600003AEF8 /* RecipeFinderLaunchUITests.swift in Sources */,
 				F3D40540305608DE0076834D /* RecipeFinderAccessibilityAuditTests.swift in Sources */,
 				F3B837CC3055E8600003AEF8 /* RecipeFinderSignUpUITests.swift in Sources */,
+				F3D4057D305AFEB10076834D /* RecipeFinderSignInUITests.swift in Sources */,
+				F3D4057F305AFEBC0076834D /* RecipeFinderImportUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -17,6 +17,10 @@ struct EmailSignInView: View {
     private let testPassword = "test123"
     #endif
 
+    private var isUITesting: Bool {
+        ProcessInfo.processInfo.arguments.contains("-ui-testing")
+    }
+
     private var isValidEmail: Bool {
         let emailRegex = "^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
         let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
@@ -67,6 +71,7 @@ struct EmailSignInView: View {
                                 .textContentType(.username)
                                 .autocapitalization(.none)
                                 .autocorrectionDisabled()
+                                .accessibilityIdentifier("signin.email")
                             
                             if !email.isEmpty && !isValidEmail {
                                 Text("Please enter a valid email address")
@@ -81,15 +86,22 @@ struct EmailSignInView: View {
                                 .fontWeight(.medium)
                                 .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
                             
-                            SecureField("", text: $password)
-                                .textFieldStyle(AuthTextFieldStyle())
-                                .textContentType(.password)
-                                .submitLabel(.go)
-                                .onSubmit {
-                                    if canSignIn {
-                                        signIn()
-                                    }
+                            Group {
+                                if isUITesting {
+                                    TextField("", text: $password)
+                                } else {
+                                    SecureField("", text: $password)
                                 }
+                            }
+                            .textFieldStyle(AuthTextFieldStyle())
+                            .textContentType(.password)
+                            .submitLabel(.go)
+                            .onSubmit {
+                                if canSignIn {
+                                    signIn()
+                                }
+                            }
+                            .accessibilityIdentifier("signin.password")
                         }
                         
                         Button(action: signIn) {
@@ -113,6 +125,7 @@ struct EmailSignInView: View {
                         .disabled(!canSignIn || isLoading)
                         .opacity((!canSignIn || isLoading) ? 0.6 : 1.0)
                         .padding(.top, AppTheme.spacing8)
+                        .accessibilityIdentifier("signin.submit")
                     }
                     .padding(.horizontal, AppTheme.spacing32)
                     

@@ -46,6 +46,7 @@ struct ImportView: View {
                                 subtitle: "Import from a recipe website — we fetch and parse it for you.",
                                 action: isGuest ? { showSignUpForGuest = true } : { showLinkImport = true }
                             )
+                            .accessibilityIdentifier("import.link")
 
                             actionCard(
                                 icon: "doc.on.clipboard",
@@ -54,6 +55,7 @@ struct ImportView: View {
                                 subtitle: "Paste a caption, note, or message — we pull out the recipe to review.",
                                 action: isGuest ? { showSignUpForGuest = true } : { showPasteImport = true }
                             )
+                            .accessibilityIdentifier("import.paste")
 
                             actionCard(
                                 icon: "text.viewfinder",
@@ -62,6 +64,7 @@ struct ImportView: View {
                                 subtitle: "A cookbook page, screenshot, or handwritten recipe — read on device.",
                                 action: isGuest ? { showSignUpForGuest = true } : { showPhotoImport = true }
                             )
+                            .accessibilityIdentifier("import.photo")
 
                             actionCard(
                                 icon: "square.and.pencil",
@@ -70,6 +73,7 @@ struct ImportView: View {
                                 subtitle: "Add a recipe yourself, step by step.",
                                 action: isGuest ? { showSignUpForGuest = true } : { showWizard = true }
                             )
+                            .accessibilityIdentifier("import.wizard")
 
                             shareHint
                         }

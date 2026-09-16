@@ -108,6 +108,7 @@ struct AuthenticationView: View {
                                 )
                         )
                     }
+                    .accessibilityIdentifier("auth.showSignIn")
 
                     // TODO: Uncomment when Apple Developer account is active
 //                    SignInWithAppleButton(.signIn) { request in
