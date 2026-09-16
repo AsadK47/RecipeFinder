@@ -60,6 +60,34 @@ the SOLID/refactoring catalog on that site.
   (`DocumentationSearch`) rather than assuming — don't guess at framework surface.
 - **Comments:** explain *why*, not *what*. Match the surrounding density.
 
+## Code principles (YAGNI · DRY · KISS)
+- **YAGNI** — build what is needed now. No speculative generics, no plugin systems, no "we might need this" abstractions. If there is only one call site, no abstraction is needed.
+- **DRY** — every piece of logic has one home. Two copies of the same logic is one too many; the third is a bug farm. Extract when duplication is real, not when it looks superficially similar.
+- **KISS** — the simplest solution that correctly handles the actual cases is the right one. Complexity is a liability, not a feature. If you need a comment to explain a design choice, consider whether a simpler design would speak for itself.
+
+## Security
+- **Keychain only** for credentials, tokens, and secrets. Never write sensitive data to `UserDefaults`, Core Data, or the filesystem unencrypted.
+- **No hardcoded secrets in shipping code.** Debug-only constants (`AuthTestHelper.testPassword`, etc.) must live inside `#if DEBUG` blocks — they are stripped from release builds.
+- **Validate at trust boundaries only** — user input, URL imports, share-extension payloads, OCR output. Don't validate internal function arguments that callers you control already guarantee.
+- **Privacy by design.** The app is offline-first with no analytics or tracking. Don't introduce network calls that send user recipe data, device identifiers, or behaviour metrics anywhere without explicit user consent and a privacy policy update.
+- **Dependency hygiene.** Any new Swift Package dependency is a supply-chain risk. Prefer Apple frameworks over third-party libraries. If a package is added, pin it to a specific version (not a range).
+
+## Error handling
+- Failures must be **visible to the user**. Silent `catch { }`, bare `try?`, and `return` on error are banned in logic paths the user can trigger. Show a toast, alert, or inline message.
+- **Typed errors** (`enum` conforming to `LocalizedError`) over stringly-typed messages. The error type is the API contract; `errorDescription` is the display string.
+- **Optimistic UI with rollback.** Append to lists before the async write; on failure, remove the item and alert. Don't wait for the write to update the UI — but don't leave dangling state if it fails.
+- Error propagation: `throws` for synchronous failures, `async throws` for async ones. Avoid mixing throwing and non-throwing paths for the same operation.
+
+## Observability
+- Use `AppLogger.logger(category:)` with a semantic category per subsystem (`"Import"`, `"Auth"`, `"Persistence"`, etc.). Never `print()` in shipping code.
+- `logger.debug` for developer noise (happy-path confirmations, internal state). `logger.info` for user-visible events. `logger.error` for failures a developer must investigate.
+- Log at the failure site, not at every layer the error passes through. One `logger.error` per failure is enough.
+
+## Technical debt (Boy Scout Rule)
+- **Leave every file you touch in better shape than you found it.** Fix an obvious smell while you're there — rename a confusing variable, extract a 50-line block into a named function, add the missing test for a branch you brushed past.
+- The codebase is mid-migration toward Clean Architecture (see *Current state* note above). When you touch a manager or view, move it one step closer — add the protocol seam, extract the pure function, break the `.shared` dependency — even if the full migration isn't the task. Don't add to the debt.
+- **Refactors are not freebies.** A refactor without a test proving behaviour-preservation is a liability. Write the test first, then move the code.
+
 ## Performance (rendering hot path)
 - **No non-trivial work in a SwiftUI `body` or the computed properties it reads.**
   `body` runs on every state change, tab switch, and scroll tick. Filtering,
