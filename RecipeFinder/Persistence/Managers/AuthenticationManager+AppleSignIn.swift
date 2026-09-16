@@ -79,6 +79,17 @@ extension AuthenticationManager: ASAuthorizationControllerDelegate {
                     UserDefaults.standard.set(true, forKey: userKey)
                     BadgeManager.shared.unlockBadge(.welcomeAboard)
                 }
+
+                let personalSeedKey = "user_\(user.id)_personal_seeded"
+                if !UserDefaults.standard.bool(forKey: personalSeedKey) {
+                    UserDefaults.standard.set(true, forKey: personalSeedKey)
+                    Task {
+                        let result = await PersonalRecipeSeedService().seed()
+                        if result.imported > 0 {
+                            NotificationCenter.default.post(name: .userScopeDidChange, object: nil)
+                        }
+                    }
+                }
                 
                 let existingChefType = AccountManager.shared.chefType
                 AccountManager.shared.updateProfile(

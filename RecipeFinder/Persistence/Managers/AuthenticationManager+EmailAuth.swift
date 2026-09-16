@@ -90,10 +90,21 @@ extension AuthenticationManager {
             logger.debug("🆕 New user detected - populating sample recipes")
             PersistenceController.shared.populateDatabase()
             UserDefaults.standard.set(true, forKey: userKey)
-            
             BadgeManager.shared.unlockBadge(.welcomeAboard)
         }
-        
+
+        let personalSeedKey = "user_\(user.id)_personal_seeded"
+        if !UserDefaults.standard.bool(forKey: personalSeedKey) {
+            UserDefaults.standard.set(true, forKey: personalSeedKey)
+            Task {
+                let result = await PersonalRecipeSeedService().seed()
+                if result.imported > 0 {
+                    NotificationCenter.default.post(name: .userScopeDidChange, object: nil)
+                    logger.info("Seeded \(result.imported) personal recipes")
+                }
+            }
+        }
+
         let accountManager = AccountManager.shared
         if accountManager.firstName.isEmpty {
             let fullName = user.fullName ?? ""
@@ -171,6 +182,18 @@ extension AuthenticationManager {
             PersistenceController.shared.populateDatabase()
             UserDefaults.standard.set(true, forKey: userKey)
             BadgeManager.shared.unlockBadge(.welcomeAboard)
+        }
+
+        let personalSeedKey = "user_\(user.id)_personal_seeded"
+        if !UserDefaults.standard.bool(forKey: personalSeedKey) {
+            UserDefaults.standard.set(true, forKey: personalSeedKey)
+            Task {
+                let result = await PersonalRecipeSeedService().seed()
+                if result.imported > 0 {
+                    NotificationCenter.default.post(name: .userScopeDidChange, object: nil)
+                    logger.info("Seeded \(result.imported) personal recipes on sign-up")
+                }
+            }
         }
         
         if let givenName = givenName {

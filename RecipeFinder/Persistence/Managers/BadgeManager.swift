@@ -15,6 +15,10 @@ final class BadgeManager: ObservableObject {
     private let badgesKey = "unlockedBadges"
     private let shownCelebrationsKey = "shownBadgeCelebrations"
 
+    /// When true, badge unlocks are persisted but no celebration sheets fire.
+    /// Set by bulk-import operations to avoid a parade of sheets.
+    var isBulkImporting = false
+
     // FIFO queue: badges earned faster than the user can dismiss pile up here.
     private var celebrationQueue: [BadgeType] = []
     // Persisted set so the celebration never fires twice for the same badge,
@@ -54,14 +58,14 @@ final class BadgeManager: ObservableObject {
         saveBadges()
     }
 
-    func checkAndUnlockBadges(recipeCount: Int) {
+    func checkAndUnlockBadges(recipeCount: Int, silent: Bool = false) {
         for badgeType in BadgeType.allCases {
             guard recipeCount >= badgeType.requiredCount,
                   !isBadgeUnlocked(badgeType.rawValue) else { continue }
             // welcomeAboard fires silently — a "you joined" pop mid-session
             // would be contextually confusing; the others are recipe-count wins.
-            let silent = badgeType == .welcomeAboard
-            unlockBadge(badgeType, silent: silent)
+            let shouldBeSilent = silent || badgeType == .welcomeAboard
+            unlockBadge(badgeType, silent: shouldBeSilent)
         }
     }
 
@@ -84,7 +88,7 @@ final class BadgeManager: ObservableObject {
         unlockedBadges[badge.id] = unlockedBadge
         saveBadges()
 
-        guard !silent, !shownCelebrationIds.contains(badge.id) else { return }
+        guard !isBulkImporting, !silent, !shownCelebrationIds.contains(badge.id) else { return }
         celebrationQueue.append(badgeType)
         drainQueueIfIdle()
     }

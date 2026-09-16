@@ -13,6 +13,7 @@ struct ContentView: View {
     @StateObject private var authManager = AuthenticationManager.shared
     @StateObject private var badgeManager = BadgeManager.shared
     @State private var showBadgeSheet = false
+    @State private var showAccountFromBadge = false
     
     private var themeBinding: AppTheme.ThemeType { selectedTheme }
 
@@ -75,12 +76,15 @@ struct ContentView: View {
                     showBadgeSheet = false
                 }, onViewAllBadges: {
                     showBadgeSheet = false
-                    // Navigate to Settings → Account where the badges grid lives.
-                    selectedTab = 4
-                    sidebarSelection = .settings
+                    showAccountFromBadge = true
                 })
                 .presentationDetents([.height(380)])
                 .presentationDragIndicator(.visible)
+            }
+        }
+        .sheet(isPresented: $showAccountFromBadge) {
+            NavigationStack {
+                AccountView()
             }
         }
     }

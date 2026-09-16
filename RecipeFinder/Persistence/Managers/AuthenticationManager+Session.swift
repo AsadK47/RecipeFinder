@@ -22,6 +22,17 @@ extension AuthenticationManager {
         UserScopedStorage.shared.currentUserId = user.id
         reloadAllManagers()
         updateLastActiveTimestamp()
+
+        let personalSeedKey = "user_\(user.id)_personal_seeded"
+        if !UserDefaults.standard.bool(forKey: personalSeedKey) {
+            UserDefaults.standard.set(true, forKey: personalSeedKey)
+            Task {
+                let result = await PersonalRecipeSeedService().seed()
+                if result.imported > 0 {
+                    NotificationCenter.default.post(name: .userScopeDidChange, object: nil)
+                }
+            }
+        }
     }
 
     func checkSessionExpiration() {

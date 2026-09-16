@@ -227,6 +227,12 @@
 		F3D40581305B04D60076834D /* DynamitePrawns.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = F3D40580305B04D60076834D /* DynamitePrawns.jpeg */; };
 		F3D40582305B04D60076834D /* DynamitePrawns.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = F3D40580305B04D60076834D /* DynamitePrawns.jpeg */; };
 		F3D40583305B04D60076834D /* DynamitePrawns.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = F3D40580305B04D60076834D /* DynamitePrawns.jpeg */; };
+		F3D40586305B0DA70076834D /* Meal prep.xlsx in Resources */ = {isa = PBXBuildFile; fileRef = F3D40585305B0DA70076834D /* Meal prep.xlsx */; };
+		F3D40587305B0DA70076834D /* Meal prep.xlsx in Resources */ = {isa = PBXBuildFile; fileRef = F3D40585305B0DA70076834D /* Meal prep.xlsx */; };
+		F3D40588305B0DA70076834D /* Meal prep.xlsx in Resources */ = {isa = PBXBuildFile; fileRef = F3D40585305B0DA70076834D /* Meal prep.xlsx */; };
+		F3D4058E305B44A20076834D /* recipes_seed.json in Resources */ = {isa = PBXBuildFile; fileRef = F3D4058D305B44A20076834D /* recipes_seed.json */; };
+		F3D40590305B45550076834D /* PersonalRecipeSeedService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D4058F305B45550076834D /* PersonalRecipeSeedService.swift */; };
+		F3D40592305B458F0076834D /* PersonalRecipeSeedServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D40591305B458F0076834D /* PersonalRecipeSeedServiceTests.swift */; };
 		F3E9D10830434D43008BF231 /* MealTimeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10730434D43008BF231 /* MealTimeCard.swift */; };
 		F3E9D10A30434D58008BF231 /* MealTimeSelectorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10930434D58008BF231 /* MealTimeSelectorSheet.swift */; };
 		F3E9D10C30434D65008BF231 /* RecipeSelectionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10B30434D65008BF231 /* RecipeSelectionSheet.swift */; };
@@ -634,6 +640,10 @@
 		F3D4057C305AFEB10076834D /* RecipeFinderSignInUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeFinderSignInUITests.swift; sourceTree = "<group>"; };
 		F3D4057E305AFEBC0076834D /* RecipeFinderImportUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeFinderImportUITests.swift; sourceTree = "<group>"; };
 		F3D40580305B04D60076834D /* DynamitePrawns.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = DynamitePrawns.jpeg; sourceTree = "<group>"; };
+		F3D40585305B0DA70076834D /* Meal prep.xlsx */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Meal prep.xlsx"; sourceTree = "<group>"; };
+		F3D4058D305B44A20076834D /* recipes_seed.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = recipes_seed.json; sourceTree = "<group>"; };
+		F3D4058F305B45550076834D /* PersonalRecipeSeedService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalRecipeSeedService.swift; sourceTree = "<group>"; };
+		F3D40591305B458F0076834D /* PersonalRecipeSeedServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalRecipeSeedServiceTests.swift; sourceTree = "<group>"; };
 		F3E9D10730434D43008BF231 /* MealTimeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealTimeCard.swift; sourceTree = "<group>"; };
 		F3E9D10930434D58008BF231 /* MealTimeSelectorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealTimeSelectorSheet.swift; sourceTree = "<group>"; };
 		F3E9D10B30434D65008BF231 /* RecipeSelectionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeSelectionSheet.swift; sourceTree = "<group>"; };
@@ -1245,6 +1255,7 @@
 				F3D4054F305620EE0076834D /* NutritionCalculator.swift */,
 				F3D40555305636B40076834D /* SeedRecipeProvider.swift */,
 				F3D4056D305994EF0076834D /* IngredientSubstituteProvider.swift */,
+				F3D4058F305B45550076834D /* PersonalRecipeSeedService.swift */,
 			);
 			path = Recipe;
 			sourceTree = "<group>";
@@ -1489,6 +1500,7 @@
 				F3D405483056204B0076834D /* NutritionCalculatorTests.swift */,
 				F3D405593056439C0076834D /* SeedRecipeProviderTests.swift */,
 				F3D4056F305994FC0076834D /* IngredientSubstituteProviderTests.swift */,
+				F3D40591305B458F0076834D /* PersonalRecipeSeedServiceTests.swift */,
 			);
 			path = Recipe;
 			sourceTree = "<group>";
@@ -1640,6 +1652,7 @@
 		9EE5AAD72D08FCBE00C1B736 /* RecipeFinder */ = {
 			isa = PBXGroup;
 			children = (
+				F3D40584305B0D610076834D /* RecipeSeed */,
 				F3E9D28A304E16F1008BF231 /* Images */,
 				9EDBD52D2EE8593F00DC2503 /* Assets.xcassets */,
 				9EC7284E2EBC263000299DAD /* Info.plist */,
@@ -1718,6 +1731,15 @@
 				F3D4057630599DC80076834D /* RecipeIntents.swift */,
 			);
 			path = Intents;
+			sourceTree = "<group>";
+		};
+		F3D40584305B0D610076834D /* RecipeSeed */ = {
+			isa = PBXGroup;
+			children = (
+				F3D4058D305B44A20076834D /* recipes_seed.json */,
+				F3D40585305B0DA70076834D /* Meal prep.xlsx */,
+			);
+			path = RecipeSeed;
 			sourceTree = "<group>";
 		};
 		F3E9D12130439F08008BF231 /* Wizard */ = {
@@ -1960,6 +1982,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F3D4058E305B44A20076834D /* recipes_seed.json in Resources */,
 				9E9DE5FD2ECCA111005CD593 /* create_account.png in Resources */,
 				9E9DE5FE2ECCA111005CD593 /* PRIVACY_POLICY.md in Resources */,
 				9E9DE5FF2ECCA111005CD593 /* LICENSE in Resources */,
@@ -1968,6 +1991,7 @@
 				9E9DE6012ECCA111005CD593 /* home_page.png in Resources */,
 				F3E9D28D304E1703008BF231 /* PhotoRecipe.jpeg in Resources */,
 				F3D40582305B04D60076834D /* DynamitePrawns.jpeg in Resources */,
+				F3D40588305B0DA70076834D /* Meal prep.xlsx in Resources */,
 				F3F941D630405E230067C6C8 /* CLAUDE.md in Resources */,
 				9E9DE6022ECCA111005CD593 /* splash_1.png in Resources */,
 			);
@@ -1978,6 +2002,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F3E9D28E304E1703008BF231 /* PhotoRecipe.jpeg in Resources */,
+				F3D40586305B0DA70076834D /* Meal prep.xlsx in Resources */,
 				F3D40583305B04D60076834D /* DynamitePrawns.jpeg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1987,6 +2012,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F3E9D28C304E1703008BF231 /* PhotoRecipe.jpeg in Resources */,
+				F3D40587305B0DA70076834D /* Meal prep.xlsx in Resources */,
 				F3D40581305B04D60076834D /* DynamitePrawns.jpeg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2084,6 +2110,7 @@
 				9E7B9A862E9BED16007E1786 /* RecipeSearchView.swift in Sources */,
 				F3E9D16830444DA5008BF231 /* ShoppingCategoryHeader.swift in Sources */,
 				F3E9D22730477D84008BF231 /* RecipeImportPipeline.swift in Sources */,
+				F3D40590305B45550076834D /* PersonalRecipeSeedService.swift in Sources */,
 				9E87D3302EB696A400FFA1D1 /* ThemeManager.swift in Sources */,
 				F3B837C73055CD440003AEF8 /* AccountNameFormatter.swift in Sources */,
 				F3E9D29E3051574E008BF231 /* KeychainStore.swift in Sources */,
@@ -2287,6 +2314,7 @@
 				F3E9D26C304CA265008BF231 /* CategoryClassifierWordBoundaryTests.swift in Sources */,
 				F3B837E63055FD270003AEF8 /* RecipeTimerManagerTests.swift in Sources */,
 				9E5D20502FB358F000F2896A /* RecipeModelTests.swift in Sources */,
+				F3D40592305B458F0076834D /* PersonalRecipeSeedServiceTests.swift in Sources */,
 				F3E9D278304D7D0D008BF231 /* PrefilledRecipeDataMappingTests.swift in Sources */,
 				9E5D20512FB358F000F2896A /* MealPlanModelTests.swift in Sources */,
 				F3E9D1D83045DAD3008BF231 /* RecipeImageStoreTests.swift in Sources */,

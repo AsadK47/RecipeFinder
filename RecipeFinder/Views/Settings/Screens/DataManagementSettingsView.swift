@@ -16,9 +16,16 @@ struct DataManagementSettingsView: View {
     // On-device import availability (read on appear)
     @State private var importStatus: OnDeviceRecipeImportStatus = .unknown
 
+    // Personal recipe collection seed
+    @State private var isSeeding = false
+    @State private var seedMessage: String?
+    @State private var seedMessageIsError = false
+
     var body: some View {
         SettingsScreen("Data Management") {
             backupSection
+
+            personalCollectionSection
 
             onDeviceImportSection
 
@@ -107,9 +114,22 @@ struct DataManagementSettingsView: View {
                 }
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
+
+            if let seedMessage {
+                HStack(spacing: AppTheme.spacing8) {
+                    Image(systemName: seedMessageIsError ? "exclamationmark.triangle.fill" : "checkmark.circle.fill")
+                        .foregroundColor(seedMessageIsError ? .orange : .green)
+                    Text(seedMessage)
+                        .font(.caption)
+                        .foregroundColor(seedMessageIsError ? .orange : .green)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .transition(.opacity.combined(with: .move(edge: .top)))
+            }
         }
         .animation(.spring(response: 0.3), value: dataCleared)
         .animation(.spring(response: 0.3), value: backupMessage)
+        .animation(.spring(response: 0.3), value: seedMessage)
         .onAppear { importStatus = OnDeviceRecipeImport.currentStatus() }
         .fileExporter(
             isPresented: $isExporting,
@@ -171,6 +191,68 @@ struct DataManagementSettingsView: View {
                     Spacer(minLength: 0)
                 }
                 .padding(AppTheme.spacing20)
+            }
+        }
+    }
+
+    private var personalCollectionSection: some View {
+        VStack(spacing: AppTheme.spacing8) {
+            SettingsSectionHeader(title: "My Recipe Collection")
+
+            SettingsCard {
+                VStack(alignment: .leading, spacing: AppTheme.spacing16) {
+                    HStack(spacing: AppTheme.spacing12) {
+                        SettingsIconTile(systemName: "books.vertical.fill", color: .indigo)
+
+                        VStack(alignment: .leading, spacing: AppTheme.spacing2) {
+                            Text("Import Personal Recipes")
+                                .font(.body)
+                                .adaptiveForegroundColor()
+
+                            Text("Import all recipes from your bundled collection")
+                                .font(.caption)
+                                .adaptiveSecondaryForeground()
+                        }
+                    }
+
+                    Text("Imports your personal recipe library into the app. Recipes already in your library are skipped automatically — safe to run more than once.")
+                        .font(.subheadline)
+                        .adaptiveSecondaryForeground()
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    if isSeeding {
+                        HStack(spacing: AppTheme.spacing12) {
+                            ProgressView()
+                            Text("Importing recipes…")
+                                .font(.subheadline)
+                                .adaptiveSecondaryForeground()
+                        }
+                    } else {
+                        Button(action: runSeed) {
+                            actionLabel(icon: "square.and.arrow.down", title: "Import My Recipes", color: .indigo)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        .disabled(isSeeding)
+                    }
+                }
+                .padding(AppTheme.spacing20)
+            }
+        }
+    }
+
+    private func runSeed() {
+        isSeeding = true
+        Task {
+            let result = await PersonalRecipeSeedService().seed()
+            isSeeding = false
+            seedMessage = result.summary
+            seedMessageIsError = result.isError
+            if result.imported > 0 {
+                NotificationCenter.default.post(name: .userScopeDidChange, object: nil)
+                HapticManager.shared.success()
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayFeedback) {
+                seedMessage = nil
             }
         }
     }
