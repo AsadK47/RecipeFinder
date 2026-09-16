@@ -140,7 +140,7 @@ struct ImportView: View {
 
             Text("Bring recipes in from anywhere — free and unlimited.")
                 .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .adaptiveForegroundColor()
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
@@ -165,7 +165,7 @@ struct ImportView: View {
                         .adaptiveForegroundColor()
                     Text(subtitle)
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .adaptiveForegroundColor()
                         .fixedSize(horizontal: false, vertical: true)
                 }
 
