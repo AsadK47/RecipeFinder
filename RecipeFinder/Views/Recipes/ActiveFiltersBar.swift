@@ -12,6 +12,8 @@ struct ActiveFiltersBar: View {
     @Binding var selectedDietaryFilters: Set<String>
     @Binding var selectedTags: Set<String>
     @Binding var selectedCuisines: Set<String>
+    @Binding var selectedCollectionID: UUID?
+    let availableCollections: [RecipeCollection]
     let onClearAll: () -> Void
 
     var body: some View {
@@ -77,6 +79,14 @@ struct ActiveFiltersBar: View {
                     FilterChip(label: cuisine, icon: "globe") {
                         HapticManager.shared.light()
                         selectedCuisines.remove(cuisine)
+                    }
+                }
+
+                if let id = selectedCollectionID,
+                   let collection = availableCollections.first(where: { $0.id == id }) {
+                    FilterChip(label: collection.name, icon: "folder.fill") {
+                        HapticManager.shared.light()
+                        selectedCollectionID = nil
                     }
                 }
 

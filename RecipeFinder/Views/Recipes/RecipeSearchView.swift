@@ -34,6 +34,8 @@ struct RecipeSearchView: View {
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @AppStorage("skipRecipeDeleteConfirmation") private var skipDeleteConfirmation: Bool = false
     @ObservedObject private var kitchenManager = KitchenInventoryManager.shared
+    @ObservedObject private var collectionManager = CollectionManager.shared
+    @State private var selectedCollectionID: UUID? = nil
 
     private var availableIngredients: Set<String> {
         Set(kitchenManager.items.map { $0.name.lowercased() })
@@ -65,6 +67,9 @@ struct RecipeSearchView: View {
         c.selectedCuisines = selectedCuisines
         c.sortOrder = sortOrder
         c.availableIngredients = availableIngredients
+        c.selectedCollectionRecipeIDs = selectedCollectionID.flatMap { id in
+            collectionManager.collections.first(where: { $0.id == id })
+        }.map { Set($0.recipeIDs) }
         return c
     }
     
@@ -288,6 +293,8 @@ struct RecipeSearchView: View {
                     selectedDietaryFilters: $selectedDietaryFilters,
                     selectedTags: $selectedTags,
                     selectedCuisines: $selectedCuisines,
+                    selectedCollectionID: $selectedCollectionID,
+                    availableCollections: collectionManager.collections,
                     onClearAll: clearAllFilters
                 )
             }
@@ -353,6 +360,7 @@ struct RecipeSearchView: View {
             availableTags: availableTags,
             availableCuisines: availableCuisines,
             availableIngredients: availableIngredients,
+            availableCollections: collectionManager.collections,
             selectedCategories: $selectedCategories,
             selectedDifficulties: $selectedDifficulties,
             selectedCookTimes: $selectedCookTimes,
@@ -362,7 +370,8 @@ struct RecipeSearchView: View {
             sortOrder: $sortOrder,
             ingredientSearchText: $ingredientSearchText,
             availableIngredientsOnly: $availableIngredientsOnly,
-            showFavoritesOnly: $showFavoritesOnly
+            showFavoritesOnly: $showFavoritesOnly,
+            selectedCollectionID: $selectedCollectionID
         )
     }
     
@@ -431,6 +440,7 @@ struct RecipeSearchView: View {
             availableIngredientsOnly = false
             showFavoritesOnly = false
             sortOrder = .nameAZ
+            selectedCollectionID = nil
         }
     }
     

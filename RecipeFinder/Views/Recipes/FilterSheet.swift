@@ -11,6 +11,7 @@ struct FilterSheet: View {
     let availableTags: [String]
     let availableCuisines: [String]
     let availableIngredients: Set<String>
+    let availableCollections: [RecipeCollection]
     @Binding var selectedCategories: Set<String>
     @Binding var selectedDifficulties: Set<String>
     @Binding var selectedCookTimes: Set<Int>
@@ -21,6 +22,7 @@ struct FilterSheet: View {
     @Binding var ingredientSearchText: String
     @Binding var availableIngredientsOnly: Bool
     @Binding var showFavoritesOnly: Bool
+    @Binding var selectedCollectionID: UUID?
     
     let cookTimeOptions = [15, 30, 45, 60, 90, 121]
     let dietaryOptions = ["Vegetarian", "Vegan", "Gluten-Free", "Dairy-Free", "Nut-Free", "Low-Carb", "Keto"]
@@ -67,9 +69,31 @@ struct FilterSheet: View {
                             }
                         }
                         
+                        if !availableCollections.isEmpty {
+                            Divider()
+                                .background(Color.white.opacity(AppTheme.shadowDarkOpacity))
+
+                            VStack(alignment: .leading, spacing: AppTheme.spacing12) {
+                                Text("Collection")
+                                    .font(.headline)
+                                    .adaptiveForegroundColor()
+
+                                LazyVGrid(columns: columns, spacing: AppTheme.spacing8) {
+                                    ForEach(availableCollections) { collection in
+                                        RecipeFilterButton(
+                                            label: collection.name,
+                                            isSelected: selectedCollectionID == collection.id
+                                        ) {
+                                            selectedCollectionID = selectedCollectionID == collection.id ? nil : collection.id
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                         Divider()
                             .background(Color.white.opacity(AppTheme.shadowDarkOpacity))
-                        
+
                         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                             HStack {
                                 VStack(alignment: .leading, spacing: AppTheme.spacing4) {
@@ -256,6 +280,7 @@ struct FilterSheet: View {
                         availableIngredientsOnly = false
                         showFavoritesOnly = false
                         sortOrder = .nameAZ
+                        selectedCollectionID = nil
                     }
                     .adaptiveForegroundColor()
                 }

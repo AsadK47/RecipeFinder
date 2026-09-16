@@ -224,6 +224,9 @@
 		F3D4057B305AFEA30076834D /* HTMLFetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D4057A305AFEA30076834D /* HTMLFetcherTests.swift */; };
 		F3D4057D305AFEB10076834D /* RecipeFinderSignInUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D4057C305AFEB10076834D /* RecipeFinderSignInUITests.swift */; };
 		F3D4057F305AFEBC0076834D /* RecipeFinderImportUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D4057E305AFEBC0076834D /* RecipeFinderImportUITests.swift */; };
+		F3D40581305B04D60076834D /* DynamitePrawns.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = F3D40580305B04D60076834D /* DynamitePrawns.jpeg */; };
+		F3D40582305B04D60076834D /* DynamitePrawns.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = F3D40580305B04D60076834D /* DynamitePrawns.jpeg */; };
+		F3D40583305B04D60076834D /* DynamitePrawns.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = F3D40580305B04D60076834D /* DynamitePrawns.jpeg */; };
 		F3E9D10830434D43008BF231 /* MealTimeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10730434D43008BF231 /* MealTimeCard.swift */; };
 		F3E9D10A30434D58008BF231 /* MealTimeSelectorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10930434D58008BF231 /* MealTimeSelectorSheet.swift */; };
 		F3E9D10C30434D65008BF231 /* RecipeSelectionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10B30434D65008BF231 /* RecipeSelectionSheet.swift */; };
@@ -630,6 +633,7 @@
 		F3D4057A305AFEA30076834D /* HTMLFetcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLFetcherTests.swift; sourceTree = "<group>"; };
 		F3D4057C305AFEB10076834D /* RecipeFinderSignInUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeFinderSignInUITests.swift; sourceTree = "<group>"; };
 		F3D4057E305AFEBC0076834D /* RecipeFinderImportUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeFinderImportUITests.swift; sourceTree = "<group>"; };
+		F3D40580305B04D60076834D /* DynamitePrawns.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = DynamitePrawns.jpeg; sourceTree = "<group>"; };
 		F3E9D10730434D43008BF231 /* MealTimeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealTimeCard.swift; sourceTree = "<group>"; };
 		F3E9D10930434D58008BF231 /* MealTimeSelectorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealTimeSelectorSheet.swift; sourceTree = "<group>"; };
 		F3E9D10B30434D65008BF231 /* RecipeSelectionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeSelectionSheet.swift; sourceTree = "<group>"; };
@@ -1808,6 +1812,7 @@
 			isa = PBXGroup;
 			children = (
 				F3E9D28B304E1703008BF231 /* PhotoRecipe.jpeg */,
+				F3D40580305B04D60076834D /* DynamitePrawns.jpeg */,
 			);
 			path = Images;
 			sourceTree = "<group>";
@@ -1962,6 +1967,7 @@
 				9EDBD52E2EE8593F00DC2503 /* Assets.xcassets in Resources */,
 				9E9DE6012ECCA111005CD593 /* home_page.png in Resources */,
 				F3E9D28D304E1703008BF231 /* PhotoRecipe.jpeg in Resources */,
+				F3D40582305B04D60076834D /* DynamitePrawns.jpeg in Resources */,
 				F3F941D630405E230067C6C8 /* CLAUDE.md in Resources */,
 				9E9DE6022ECCA111005CD593 /* splash_1.png in Resources */,
 			);
@@ -1972,6 +1978,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F3E9D28E304E1703008BF231 /* PhotoRecipe.jpeg in Resources */,
+				F3D40583305B04D60076834D /* DynamitePrawns.jpeg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1980,6 +1987,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F3E9D28C304E1703008BF231 /* PhotoRecipe.jpeg in Resources */,
+				F3D40581305B04D60076834D /* DynamitePrawns.jpeg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
