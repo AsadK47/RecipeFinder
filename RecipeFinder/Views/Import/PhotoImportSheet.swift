@@ -39,7 +39,7 @@ struct PhotoImportSheet: View {
                 VStack(spacing: AppTheme.spacing16) {
                     Text("Point at a cookbook page, screenshot, or handwritten recipe. We read the text on your device — nothing leaves your phone.")
                         .font(.subheadline)
-                        .adaptiveSecondaryForeground()
+                        .adaptiveForegroundColor()
                         .multilineTextAlignment(.center)
 
                     PhotosPicker(selection: $selectedItem, matching: .images) {

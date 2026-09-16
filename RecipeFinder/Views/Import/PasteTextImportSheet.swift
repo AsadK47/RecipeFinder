@@ -29,7 +29,7 @@ struct PasteTextImportSheet: View {
                 VStack(alignment: .leading, spacing: AppTheme.spacing16) {
                     Text("Paste a recipe from anywhere — a caption, notes, or a message. We'll pull out the ingredients and steps for you to review.")
                         .font(.subheadline)
-                        .adaptiveSecondaryForeground()
+                        .adaptiveForegroundColor()
 
                     TextEditor(text: $text)
                         .focused($focused)
