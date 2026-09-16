@@ -71,9 +71,14 @@ struct ContentView: View {
             badgeManager.dismissCelebration()
         }) {
             if let badge = badgeManager.pendingCelebration {
-                BadgeEarnedSheet(badge: badge) {
+                BadgeEarnedSheet(badge: badge, onDismiss: {
                     showBadgeSheet = false
-                }
+                }, onViewAllBadges: {
+                    showBadgeSheet = false
+                    // Navigate to Settings → Account where the badges grid lives.
+                    selectedTab = 4
+                    sidebarSelection = .settings
+                })
                 .presentationDetents([.height(380)])
                 .presentationDragIndicator(.visible)
             }

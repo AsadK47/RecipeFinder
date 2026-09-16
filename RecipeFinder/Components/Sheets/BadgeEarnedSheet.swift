@@ -7,6 +7,9 @@ import ConfettiSwiftUI
 struct BadgeEarnedSheet: View {
     let badge: BadgeType
     let onDismiss: () -> Void
+    /// Called when the user explicitly taps "View all badges" — distinct from
+    /// auto-dismiss so the caller can navigate to the badges screen.
+    let onViewAllBadges: () -> Void
 
     @Environment(\.appTheme) private var theme
     @Environment(\.colorScheme) private var colorScheme
@@ -21,13 +24,32 @@ struct BadgeEarnedSheet: View {
                 .ignoresSafeArea()
 
             VStack(spacing: AppTheme.spacing24) {
-                // Badge icon
+                // Badge medallion — concentric rings give it visual weight
                 ZStack {
                     Circle()
-                        .fill(badgeColor.opacity(0.15))
+                        .fill(badgeColor.opacity(0.06))
+                        .frame(width: 168, height: 168)
+                    Circle()
+                        .strokeBorder(
+                            badgeColor.opacity(0.35),
+                            style: StrokeStyle(lineWidth: 1.5, dash: [5, 4])
+                        )
+                        .frame(width: 152, height: 152)
+                    Circle()
+                        .fill(
+                            RadialGradient(
+                                colors: [badgeColor.opacity(0.35), badgeColor.opacity(0.1)],
+                                center: .center,
+                                startRadius: 8,
+                                endRadius: 62
+                            )
+                        )
+                        .frame(width: 120, height: 120)
+                    Circle()
+                        .strokeBorder(badgeColor.opacity(0.65), lineWidth: 2.5)
                         .frame(width: 120, height: 120)
                     Image(systemName: badge.badge.icon)
-                        .font(.system(size: 64))
+                        .font(.system(size: 50, weight: .medium))
                         .foregroundStyle(badgeColor)
                         .symbolEffect(.bounce, value: appeared)
                 }
@@ -57,7 +79,7 @@ struct BadgeEarnedSheet: View {
                 Spacer()
 
                 // CTA
-                Button(action: onDismiss) {
+                Button(action: onViewAllBadges) {
                     Text("View all badges")
                         .font(.subheadline)
                         .fontWeight(.semibold)
@@ -92,5 +114,5 @@ struct BadgeEarnedSheet: View {
 }
 
 #Preview {
-    BadgeEarnedSheet(badge: .firstRecipe, onDismiss: {})
+    BadgeEarnedSheet(badge: .firstRecipe, onDismiss: {}, onViewAllBadges: {})
 }

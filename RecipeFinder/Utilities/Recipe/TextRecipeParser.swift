@@ -31,9 +31,10 @@ enum TextRecipeParser {
 
         if let sections = splitBySectionHeaders(lines) {
             ingredients = sections.ingredients
-            instructions = sections.instructions
+            instructions = mergeInstructionLines(sections.instructions)
         } else {
             (ingredients, instructions) = classifyLines(lines)
+            instructions = mergeInstructionLines(instructions)
         }
 
         // Drop footnotes/notes on the raw line first (before list markers are
@@ -258,6 +259,38 @@ enum TextRecipeParser {
         return patterns.contains {
             trimmed.range(of: $0, options: [.regularExpression, .caseInsensitive]) != nil
         }
+    }
+
+    // MARK: - Instruction line merging
+
+    /// Joins OCR/column-wrapped instruction lines into logical steps.
+    /// Vision OCR on a printed page produces one physical line per observation;
+    /// without merging, a single instruction like "Heat a wok…add the oil,
+    /// garlic…" becomes a dozen fragmented pseudo-steps. The merge rule:
+    /// a new step only begins when the previous line ended with sentence-closing
+    /// punctuation (.!?) AND the current line starts with an uppercase letter, OR
+    /// when the current line looks like an explicit numbered step.
+    private static func mergeInstructionLines(_ lines: [String]) -> [String] {
+        guard !lines.isEmpty else { return [] }
+        var steps: [String] = []
+        var current = lines[0]
+        for line in lines.dropFirst() {
+            if beginsNewStep(line, afterLine: current) {
+                steps.append(current)
+                current = line
+            } else {
+                // Lowercase-start or mid-sentence wrap: rejoin with a space.
+                current = current + " " + line
+            }
+        }
+        steps.append(current)
+        return steps
+    }
+
+    private static func beginsNewStep(_ line: String, afterLine previous: String) -> Bool {
+        if looksLikeNumberedStep(line) { return true }
+        let prevEndsSentence = ".!?".contains(previous.last ?? " ")
+        return prevEndsSentence && (line.first?.isUppercase ?? false)
     }
 
     private static func firstIntMatch(_ pattern: String, in text: String) -> Int? {
