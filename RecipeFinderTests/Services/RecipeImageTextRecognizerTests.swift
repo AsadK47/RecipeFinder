@@ -1,13 +1,13 @@
 import Testing
 import Foundation
 import UIKit
+import ImageIO
 @testable import RecipeFinder
 
-/// OCR seam: a fake recognizer's text flows through the same routing as pasted
-/// captions, and the real Vision recogniser rejects an unreadable image. The
-/// Vision recognition path itself isn't exercised offline.
 @MainActor
-@Suite struct RecipeImageTextRecognizerTests {
+@Suite("RecipeImageTextRecognizer") struct RecipeImageTextRecognizerTests {
+
+    // MARK: - Protocol seam
 
     struct FakeRecognizer: RecipeImageTextRecognizing {
         var text: String
@@ -34,9 +34,59 @@ import UIKit
         #expect(prefill?.name == "Tomato Soup")
     }
 
+    // MARK: - Invalid image guard
+
     @Test func visionRecognizerRejectsUnreadableImage() async {
         await #expect(throws: VisionRecipeImageTextRecognizer.RecognitionError.self) {
             _ = try await VisionRecipeImageTextRecognizer().recognizeText(in: UIImage())
         }
+    }
+
+    // MARK: - Orientation fallbacks
+
+    let recognizer = VisionRecipeImageTextRecognizer()
+
+    // The four cardinal orientations Vision uses for still-image recipes.
+    private let cardinals: [CGImagePropertyOrientation] = [.up, .right, .left, .down]
+
+    @Test(arguments: [CGImagePropertyOrientation.up, .right, .left, .down])
+    func orientationFallbacksExcludesStart(start: CGImagePropertyOrientation) {
+        let fallbacks = recognizer.orientationFallbacks(after: start)
+        #expect(!fallbacks.contains(start))
+    }
+
+    @Test(arguments: [CGImagePropertyOrientation.up, .right, .left, .down])
+    func orientationFallbacksReturnsThreeOrientations(start: CGImagePropertyOrientation) {
+        let fallbacks = recognizer.orientationFallbacks(after: start)
+        #expect(fallbacks.count == 3)
+    }
+
+    @Test(arguments: [CGImagePropertyOrientation.up, .right, .left, .down])
+    func orientationFallbacksCoverAllCardinals(start: CGImagePropertyOrientation) {
+        let fallbacks = recognizer.orientationFallbacks(after: start)
+        let covered = Set([start] + fallbacks)
+        #expect(covered == Set([.up, .right, .left, .down]))
+    }
+
+    @Test(arguments: [CGImagePropertyOrientation.up, .right, .left, .down])
+    func orientationFallbacksHaveNoDuplicates(start: CGImagePropertyOrientation) {
+        let fallbacks = recognizer.orientationFallbacks(after: start)
+        #expect(fallbacks.count == Set(fallbacks).count)
+    }
+
+    // MARK: - Culinary custom words
+
+    @Test func culinaryCustomWordsIsNonEmpty() {
+        #expect(!VisionRecipeImageTextRecognizer.culinaryCustomWords.isEmpty)
+    }
+
+    @Test func culinaryCustomWordsHasNoDuplicates() {
+        let words = VisionRecipeImageTextRecognizer.culinaryCustomWords
+        #expect(words.count == Set(words).count)
+    }
+
+    @Test(arguments: ["Dynamite", "Sriracha", "Tempura", "Teriyaki", "Prawn", "Prawns"])
+    func culinaryCustomWordsContainsFoodTerm(term: String) {
+        #expect(VisionRecipeImageTextRecognizer.culinaryCustomWords.contains(term))
     }
 }
