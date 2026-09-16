@@ -61,9 +61,11 @@ struct MealTimeCard: View {
                     }
                     .buttonStyle(.plain)
                 }
-                Image(systemName: recipe != nil ? "pencil.circle" : "chevron.right")
-                    .font(.system(size: AppTheme.fontSize14, weight: .semibold))
-                    .adaptiveForegroundColor(opacity: AppTheme.lowEmphasisOpacity)
+                if recipe == nil {
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: AppTheme.fontSize14, weight: .semibold))
+                        .adaptiveForegroundColor(opacity: AppTheme.lowEmphasisOpacity)
+                }
             }
         }
         .padding(AppTheme.spacing16)
