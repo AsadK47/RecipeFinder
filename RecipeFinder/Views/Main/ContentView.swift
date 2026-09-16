@@ -5,72 +5,47 @@ private let logger = AppLogger.logger(category: "ContentView")
 struct ContentView: View {
     @State private var recipes: [RecipeModel] = []
     @State private var selectedTab: Int = 0
+    @State private var sidebarSelection: SidebarItem? = .recipes
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @StateObject private var authManager = AuthenticationManager.shared
     @StateObject private var badgeManager = BadgeManager.shared
     @State private var showBadgeSheet = false
     
     private var themeBinding: AppTheme.ThemeType { selectedTheme }
-    
+
+    private enum SidebarItem: Int, Hashable, CaseIterable {
+        case recipes, groceries, importRecipes, planning, settings
+
+        var label: String {
+            switch self {
+            case .recipes: "Recipes"
+            case .groceries: "Groceries"
+            case .importRecipes: "Import"
+            case .planning: "Planning"
+            case .settings: "Settings"
+            }
+        }
+
+        var icon: String {
+            switch self {
+            case .recipes: "book.fill"
+            case .groceries: "cart.fill"
+            case .importRecipes: "plus.circle.fill"
+            case .planning: "calendar"
+            case .settings: "gearshape.fill"
+            }
+        }
+    }
+
     var body: some View {
-        ZStack {
-            AppTheme.backgroundGradient(for: themeBinding, colorScheme: colorScheme)
-                .ignoresSafeArea()
-            
-            TabView(selection: $selectedTab) {
-                RecipeSearchView(recipes: $recipes)
-                    .tabItem {
-                        Label("Recipes", systemImage: "book.fill")
-                    }
-                    .tag(0)
-
-                KitchenShoppingView(recipes: $recipes)
-                    .tabItem {
-                        Label("Groceries", systemImage: "cart.fill")
-                    }
-                    .tag(1)
-
-                ImportView(recipes: $recipes)
-                    .tabItem {
-                        Label("Import", systemImage: "plus.circle.fill")
-                    }
-                    .tag(2)
-                
-                MealPlanningView(recipes: $recipes)
-                    .tabItem {
-                        Label("Planning", systemImage: "calendar")
-                    }
-                    .tag(3)
-                
-                NavigationStack {
-                    SettingsTabView()
-                }
-                .tabItem {
-                    Label("Settings", systemImage: "gearshape.fill")
-                }
-                .tag(4)
-            }
-            .environment(\.appTheme, themeBinding)
-            .tint(AppTheme.textColor(for: colorScheme))
-            .onAppear {
-                configureTabBarAppearance()
-            }
-            .onChange(of: selectedTheme) { _, _ in
-                configureTabBarAppearance()
-            }
-            .onChange(of: cardStyle) { _, _ in
-                configureTabBarAppearance()
-            }
-            .onChange(of: colorScheme) { _, newScheme in
-                configureTabBarAppearance()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                    configureTabBarAppearance()
-                }
-            }
-            .onChange(of: selectedTab) { _, _ in
-                HapticManager.shared.selection()
+        Group {
+            if horizontalSizeClass == .regular {
+                iPadLayout
+            } else {
+                iPhoneLayout
             }
         }
         .onAppear {
@@ -102,6 +77,89 @@ struct ContentView: View {
                 .presentationDetents([.height(380)])
                 .presentationDragIndicator(.visible)
             }
+        }
+    }
+
+    private var iPhoneLayout: some View {
+        ZStack {
+            AppTheme.backgroundGradient(for: themeBinding, colorScheme: colorScheme)
+                .ignoresSafeArea()
+
+            TabView(selection: $selectedTab) {
+                RecipeSearchView(recipes: $recipes)
+                    .tabItem { Label("Recipes", systemImage: "book.fill") }
+                    .tag(0)
+                KitchenShoppingView(recipes: $recipes)
+                    .tabItem { Label("Groceries", systemImage: "cart.fill") }
+                    .tag(1)
+                ImportView(recipes: $recipes)
+                    .tabItem { Label("Import", systemImage: "plus.circle.fill") }
+                    .tag(2)
+                MealPlanningView(recipes: $recipes)
+                    .tabItem { Label("Planning", systemImage: "calendar") }
+                    .tag(3)
+                NavigationStack {
+                    SettingsTabView()
+                }
+                .tabItem { Label("Settings", systemImage: "gearshape.fill") }
+                .tag(4)
+            }
+            .environment(\.appTheme, themeBinding)
+            .tint(AppTheme.textColor(for: colorScheme))
+            .onAppear {
+                configureTabBarAppearance()
+            }
+            .onChange(of: selectedTheme) { _, _ in
+                configureTabBarAppearance()
+            }
+            .onChange(of: cardStyle) { _, _ in
+                configureTabBarAppearance()
+            }
+            .onChange(of: colorScheme) { _, _ in
+                configureTabBarAppearance()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                    configureTabBarAppearance()
+                }
+            }
+            .onChange(of: selectedTab) { _, _ in
+                HapticManager.shared.selection()
+            }
+        }
+    }
+
+    private var iPadLayout: some View {
+        NavigationSplitView {
+            ZStack {
+                AppTheme.backgroundGradient(for: themeBinding, colorScheme: colorScheme)
+                    .ignoresSafeArea()
+
+                List(SidebarItem.allCases, id: \.self, selection: $sidebarSelection) { item in
+                    Label(item.label, systemImage: item.icon)
+                }
+                .scrollContentBackground(.hidden)
+                .navigationTitle("RecipeFinder")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbarBackground(.hidden, for: .navigationBar)
+            }
+        } detail: {
+            sidebarDetailView
+                .environment(\.appTheme, themeBinding)
+        }
+    }
+
+    @ViewBuilder
+    private var sidebarDetailView: some View {
+        switch sidebarSelection ?? .recipes {
+        case .recipes:
+            RecipeSearchView(recipes: $recipes)
+        case .groceries:
+            KitchenShoppingView(recipes: $recipes)
+        case .importRecipes:
+            ImportView(recipes: $recipes)
+        case .planning:
+            MealPlanningView(recipes: $recipes)
+        case .settings:
+            NavigationStack { SettingsTabView() }
         }
     }
 

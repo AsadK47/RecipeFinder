@@ -182,7 +182,7 @@ once into their store.
   `CookingModeTip` on the frying-pan toolbar button; configured at app launch with
   `.displayFrequency(.daily)`.
 
-### 🔴 iPad-optimized layout
+### ✅ iPad-optimized layout
 *Problem:* RecipeFinder runs on iPad via iPhone scaling — it works, but wastes the
 screen. Every serious recipe app (Paprika, Mela, Crouton) uses `NavigationSplitView`
 on iPad: recipe list in the sidebar, detail in the main column. Cooking on a
