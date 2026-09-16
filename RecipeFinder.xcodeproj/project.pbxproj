@@ -220,14 +220,10 @@
 		F3D40572305995060076834D /* SubstituteSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D40571305995060076834D /* SubstituteSheetView.swift */; };
 		F3D4057430599D390076834D /* RecipeTips.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D4057330599D390076834D /* RecipeTips.swift */; };
 		F3D4057730599DC80076834D /* RecipeIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D4057630599DC80076834D /* RecipeIntents.swift */; };
-		F3E9D10630434D33008BF231 /* CalendarDayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10530434D33008BF231 /* CalendarDayView.swift */; };
+		F3D40579305A9C2A0076834D /* WeekStripView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D40578305A9C2A0076834D /* WeekStripView.swift */; };
 		F3E9D10830434D43008BF231 /* MealTimeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10730434D43008BF231 /* MealTimeCard.swift */; };
 		F3E9D10A30434D58008BF231 /* MealTimeSelectorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10930434D58008BF231 /* MealTimeSelectorSheet.swift */; };
 		F3E9D10C30434D65008BF231 /* RecipeSelectionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10B30434D65008BF231 /* RecipeSelectionSheet.swift */; };
-		F3E9D10E30434D70008BF231 /* WeekDayRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D10D30434D70008BF231 /* WeekDayRow.swift */; };
-		F3E9D11230434D91008BF231 /* MonthYearPickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D11130434D91008BF231 /* MonthYearPickerSheet.swift */; };
-		F3E9D11430434DE2008BF231 /* MonthCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D11330434DE2008BF231 /* MonthCalendarView.swift */; };
-		F3E9D11630434DF1008BF231 /* WeeklyPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D11530434DF1008BF231 /* WeeklyPlanView.swift */; };
 		F3E9D11830434E01008BF231 /* PlannedMealsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D11730434E01008BF231 /* PlannedMealsSection.swift */; };
 		F3E9D11A30434E14008BF231 /* MealPlanEmptyStates.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D11930434E14008BF231 /* MealPlanEmptyStates.swift */; };
 		F3E9D11C30434E20008BF231 /* MealPlannerHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D11B30434E20008BF231 /* MealPlannerHeader.swift */; };
@@ -627,14 +623,10 @@
 		F3D40571305995060076834D /* SubstituteSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubstituteSheetView.swift; sourceTree = "<group>"; };
 		F3D4057330599D390076834D /* RecipeTips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeTips.swift; sourceTree = "<group>"; };
 		F3D4057630599DC80076834D /* RecipeIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeIntents.swift; sourceTree = "<group>"; };
-		F3E9D10530434D33008BF231 /* CalendarDayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDayView.swift; sourceTree = "<group>"; };
+		F3D40578305A9C2A0076834D /* WeekStripView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekStripView.swift; sourceTree = "<group>"; };
 		F3E9D10730434D43008BF231 /* MealTimeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealTimeCard.swift; sourceTree = "<group>"; };
 		F3E9D10930434D58008BF231 /* MealTimeSelectorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealTimeSelectorSheet.swift; sourceTree = "<group>"; };
 		F3E9D10B30434D65008BF231 /* RecipeSelectionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeSelectionSheet.swift; sourceTree = "<group>"; };
-		F3E9D10D30434D70008BF231 /* WeekDayRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekDayRow.swift; sourceTree = "<group>"; };
-		F3E9D11130434D91008BF231 /* MonthYearPickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthYearPickerSheet.swift; sourceTree = "<group>"; };
-		F3E9D11330434DE2008BF231 /* MonthCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthCalendarView.swift; sourceTree = "<group>"; };
-		F3E9D11530434DF1008BF231 /* WeeklyPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyPlanView.swift; sourceTree = "<group>"; };
 		F3E9D11730434E01008BF231 /* PlannedMealsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlannedMealsSection.swift; sourceTree = "<group>"; };
 		F3E9D11930434E14008BF231 /* MealPlanEmptyStates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlanEmptyStates.swift; sourceTree = "<group>"; };
 		F3E9D11B30434E20008BF231 /* MealPlannerHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlannerHeader.swift; sourceTree = "<group>"; };
@@ -916,17 +908,13 @@
 			isa = PBXGroup;
 			children = (
 				9E51C3952EB3E6540064B917 /* MealPlanningView.swift */,
-				F3E9D10530434D33008BF231 /* CalendarDayView.swift */,
 				F3E9D10730434D43008BF231 /* MealTimeCard.swift */,
 				F3E9D10930434D58008BF231 /* MealTimeSelectorSheet.swift */,
 				F3E9D10B30434D65008BF231 /* RecipeSelectionSheet.swift */,
-				F3E9D10D30434D70008BF231 /* WeekDayRow.swift */,
-				F3E9D11130434D91008BF231 /* MonthYearPickerSheet.swift */,
-				F3E9D11330434DE2008BF231 /* MonthCalendarView.swift */,
-				F3E9D11530434DF1008BF231 /* WeeklyPlanView.swift */,
 				F3E9D11730434E01008BF231 /* PlannedMealsSection.swift */,
 				F3E9D11930434E14008BF231 /* MealPlanEmptyStates.swift */,
 				F3E9D11B30434E20008BF231 /* MealPlannerHeader.swift */,
+				F3D40578305A9C2A0076834D /* WeekStripView.swift */,
 			);
 			path = MealPlanning;
 			sourceTree = "<group>";
@@ -2062,7 +2050,6 @@
 				9E6DEAAA2EF5F053001E7B24 /* PersistenceController.swift in Sources */,
 				9E97EECB300D0DA400D35FAB /* EditableStep.swift in Sources */,
 				F3E9D11C30434E20008BF231 /* MealPlannerHeader.swift in Sources */,
-				F3E9D11430434DE2008BF231 /* MonthCalendarView.swift in Sources */,
 				9E97EEA0300795D300D35FAB /* UnitsSettingsView.swift in Sources */,
 				F3E9D1373043A88D008BF231 /* QuickMatchRecipeCard.swift in Sources */,
 				9E77ABF42EB4483100666BB0 /* SettingsView.swift in Sources */,
@@ -2165,9 +2152,9 @@
 				F3D40550305620EE0076834D /* NutritionCalculator.swift in Sources */,
 				9E6DEA602EF5EF47001E7B24 /* DifficultyBarsView.swift in Sources */,
 				F3E9D13B3043A8BC008BF231 /* IngredientFilterSheet.swift in Sources */,
-				F3E9D10630434D33008BF231 /* CalendarDayView.swift in Sources */,
 				F36AED63304333DB00935A3C /* MemoCache.swift in Sources */,
 				9E5B39822FABC2C700C96DB3 /* CircleButton.swift in Sources */,
+				F3D40579305A9C2A0076834D /* WeekStripView.swift in Sources */,
 				F3B837D53055F1170003AEF8 /* TagRowView.swift in Sources */,
 				F3E9D11E30435126008BF231 /* WizardIngredientParser.swift in Sources */,
 				9E97EE9C300795BA00D35FAB /* NotificationSettingsView.swift in Sources */,
@@ -2179,7 +2166,6 @@
 				F3B837D33055F1130003AEF8 /* RecipeCollection.swift in Sources */,
 				F3E9D17830444F74008BF231 /* RecipeServingsCard.swift in Sources */,
 				F36AED79304342D200935A3C /* RecipeEmptyStateView.swift in Sources */,
-				F3E9D11630434DF1008BF231 /* WeeklyPlanView.swift in Sources */,
 				F3E9D1CE3045DA4F008BF231 /* RecipeWizardBuilder.swift in Sources */,
 				F3E9D1B230457B00008BF231 /* AppTheme+Gradients.swift in Sources */,
 				9E6DEA642EF5EF47001E7B24 /* FlowLayout.swift in Sources */,
@@ -2197,14 +2183,12 @@
 				F3E9D29C30515744008BF231 /* PasswordHasher.swift in Sources */,
 				F3E9D18030444FC0008BF231 /* RecipeIngredientsSection.swift in Sources */,
 				9E6DEA682EF5EF47001E7B24 /* InfoPairView.swift in Sources */,
-				F3E9D11230434D91008BF231 /* MonthYearPickerSheet.swift in Sources */,
 				9E6DEA6B2EF5EF47001E7B24 /* RecipeCard.swift in Sources */,
 				F3E9D1433043A920008BF231 /* IngredientRecipeResultsView.swift in Sources */,
 				F3D40568305860C20076834D /* CollectionCard.swift in Sources */,
 				9E6DEA6C2EF5EF47001E7B24 /* AnimatedHeartButton.swift in Sources */,
 				9E6DEA6E2EF5EF47001E7B24 /* RecipeImageView.swift in Sources */,
 				F3E9D10A30434D58008BF231 /* MealTimeSelectorSheet.swift in Sources */,
-				F3E9D10E30434D70008BF231 /* WeekDayRow.swift in Sources */,
 				F3E9D1E430461D47008BF231 /* BiometricBenefitRow.swift in Sources */,
 				F3E9D20E3046D448008BF231 /* BackupArchive.swift in Sources */,
 				9E6DEA702EF5EF47001E7B24 /* CompactRecipeCard.swift in Sources */,

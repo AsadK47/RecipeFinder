@@ -9,24 +9,15 @@ struct MealPlanningView: View {
     @State private var showRecipeSelector = false
     @State private var showQuickSnackSheet = false
     @State private var currentMealTime: MealTime?
-    @State private var viewMode: ViewMode = .calendar
-    @State private var showMonthYearPicker = false
     @State private var weekShoppingFeedback: String?
-    /// Display order for the selected day's meal cards. Persists user drag order
-    /// within a day; resets to natural sort when switching to a different day.
+    /// Display order for the selected day's meal cards; persists drag order within a day.
     @State private var orderedMealTimes: [MealTime] = []
 
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @Environment(\.colorScheme) var colorScheme
 
-    /// Pure date math for the calendar and weekly views; see `MealPlanCalendar`.
     private let mealCalendar = MealPlanCalendar()
-
-    enum ViewMode {
-        case calendar
-        case weeklyView
-    }
 
     var body: some View {
         ZStack {
@@ -46,28 +37,25 @@ struct MealPlanningView: View {
                     }
                 )
 
-                viewModePicker
-                    .padding(.top, AppTheme.spacing16)
-
                 ScrollView {
-                    VStack(spacing: AppTheme.spacing32) {
-                        if viewMode == .calendar {
-                            calendarView
-                                .transition(.scale.combined(with: .opacity))
-                        } else {
-                            weeklyPlanView
-                                .transition(.scale.combined(with: .opacity))
-                        }
+                    VStack(spacing: AppTheme.spacing20) {
+                        weekStripView
 
                         if !selectedMealTimes.isEmpty {
                             selectedMealsSection
                                 .transition(.move(edge: .bottom).combined(with: .opacity))
-                        } else if Calendar.current.isDate(selectedDate, inSameDayAs: Date()) || hasMealPlans(for: selectedDate) || selectedDate > Date().addingTimeInterval(-86400) {
+                        } else if Calendar.current.isDate(selectedDate, inSameDayAs: Date())
+                            || hasMealPlans(for: selectedDate)
+                            || selectedDate > Date().addingTimeInterval(-86400) {
                             selectedDayEmptyState
                                 .transition(.opacity)
                         } else {
                             emptyStateView
                                 .transition(.opacity)
+                        }
+
+                        if weekHasPlannedMeals {
+                            weekShoppingSection
                         }
                     }
                     .padding(.top, AppTheme.spacing16)
@@ -79,13 +67,11 @@ struct MealPlanningView: View {
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbarColorScheme(.dark, for: .navigationBar)
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: selectedMealTimes)
-        .animation(.spring(response: 0.3, dampingFraction: 0.8), value: viewMode)
         .onAppear {
             orderedMealTimes = MealPlanningManager.sortedOrderedMealTimes(
                 existing: [], selected: selectedMealTimes)
         }
         .onChange(of: selectedMealTimes) { _, newMealTimes in
-            // Preserve any drag order the user set; append new slots naturally.
             orderedMealTimes = MealPlanningManager.sortedOrderedMealTimes(
                 existing: orderedMealTimes, selected: newMealTimes)
         }
@@ -126,92 +112,30 @@ struct MealPlanningView: View {
                 currentMealTime = nil
             }
         }
-        .sheet(isPresented: $showMonthYearPicker) {
-            MonthYearPickerSheet(selectedDate: $selectedDate)
-        }
     }
 
     // MARK: - Sections
 
-    private var viewModePicker: some View {
-        GeometryReader { geometry in
-            HStack(spacing: AppTheme.spacing12) {
-                ForEach([ViewMode.calendar, ViewMode.weeklyView], id: \.self) { mode in
-                    Button(action: {
-                        viewMode = mode
-                        HapticManager.shared.light()
-                    }) {
-                        HStack(spacing: AppTheme.spacing6) {
-                            Image(systemName: mode == .calendar ? "calendar" : "list.bullet")
-                                .font(.system(size: AppTheme.fontSize14, weight: .semibold))
-                            Text(mode == .calendar ? "Calendar" : "Weekly")
-                                .font(.system(size: AppTheme.fontSize14, weight: .semibold))
-                        }
-                        .foregroundColor(viewMode == mode ? AppTheme.textColor(for: colorScheme) : AppTheme.textColor(for: colorScheme, opacity: 0.6))
-                        .padding(.horizontal, AppTheme.spacing16)
-                        .padding(.vertical, AppTheme.spacing10)
-                        .background {
-                            if viewMode == mode {
-                                Capsule()
-                                    .fill(colorScheme == .dark ? Color.white.opacity(AppTheme.overlayLightOpacity) : Color.black.opacity(0.15))
-                            } else {
-                                Capsule()
-                                    .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.black.opacity(AppTheme.shadowDarkOpacity), lineWidth: 1)
-                            }
-                        }
-                    }
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.horizontal, AppTheme.spacing20)
-            .padding(.bottom, max(20, geometry.size.height * 0.025))
-        }
-        .frame(height: AppTheme.height50)
-    }
-
-    private var calendarView: some View {
-        MonthCalendarView(
+    private var weekStripView: some View {
+        WeekStripView(
+            week: daysInCurrentWeek,
             selectedDate: selectedDate,
-            days: compactDaysInMonth,
             monthYearString: monthYearString,
             cardStyle: cardStyle,
             colorScheme: colorScheme,
             selectedTheme: selectedTheme,
-            hasPlannedMeals: { hasMealPlans(for: $0) },
-            onPreviousMonth: previousMonth,
-            onNextMonth: nextMonth,
-            onShowMonthPicker: {
-                showMonthYearPicker = true
-                HapticManager.shared.light()
+            mealTimesFor: { date in
+                mealPlanningManager.mealPlans(for: date).map { $0.mealTime }
             },
-            onSelectDay: { date in
+            onSelectDate: { date in
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                     selectedDate = date
                     updateSelectedMealTimes(for: date)
-                    showMealTimeSelector = true
                 }
                 HapticManager.shared.light()
-            }
-        )
-    }
-
-    private var weeklyPlanView: some View {
-        WeeklyPlanView(
-            days: daysInCurrentWeek,
-            weekRangeString: weekRangeString,
-            weekHasPlannedMeals: weekHasPlannedMeals,
-            weekShoppingFeedback: weekShoppingFeedback,
-            cardStyle: cardStyle,
-            colorScheme: colorScheme,
-            selectedTheme: selectedTheme,
-            onPreviousWeek: previousWeek,
-            onNextWeek: nextWeek,
-            onAddMeal: { date in
-                selectedDate = date
-                showMealTimeSelector = true
-                HapticManager.shared.light()
             },
-            onAddWeekToShoppingList: addWeekToShoppingList
+            onPreviousWeek: previousWeek,
+            onNextWeek: nextWeek
         )
     }
 
@@ -263,6 +187,36 @@ struct MealPlanningView: View {
         )
     }
 
+    private var weekShoppingSection: some View {
+        VStack(spacing: AppTheme.spacing8) {
+            Button(action: addWeekToShoppingList) {
+                HStack(spacing: AppTheme.spacing8) {
+                    Image(systemName: "cart.badge.plus")
+                    Text("Add Week to Shopping List")
+                        .fontWeight(.semibold)
+                }
+                .font(.subheadline)
+                .adaptiveForegroundColor()
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, AppTheme.spacing12)
+                .background(AppTheme.accentColor(for: selectedTheme))
+                .cornerRadius(AppTheme.cornerRadius12)
+            }
+            .buttonStyle(PlainButtonStyle())
+
+            if let feedback = weekShoppingFeedback {
+                HStack(spacing: AppTheme.spacing8) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(.green)
+                    Text(feedback)
+                        .font(.caption)
+                        .adaptiveForegroundColor(opacity: AppTheme.highEmphasisOpacity)
+                }
+                .transition(.opacity.combined(with: .move(edge: .top)))
+            }
+        }
+    }
+
     // MARK: - Meal plan actions
 
     private func saveMealPlan(recipe: RecipeModel, for date: Date, mealTime: MealTime) {
@@ -274,9 +228,7 @@ struct MealPlanningView: View {
             servings: recipe.currentServings
         )
         mealPlanningManager.addMealPlan(mealPlan)
-
         selectedMealTimes.insert(mealTime)
-
         HapticManager.shared.success()
     }
 
@@ -289,14 +241,13 @@ struct MealPlanningView: View {
 
     private func removeMealPlan(for date: Date, mealTime: MealTime) {
         mealPlanningManager.removeMealPlan(for: date, mealTime: mealTime)
-
         if mealPlanningManager.mealPlan(for: date, mealTime: mealTime) == nil {
             selectedMealTimes.remove(mealTime)
         }
     }
 
     private func hasMealPlans(for date: Date) -> Bool {
-        return mealPlanningManager.hasMealPlans(for: date)
+        mealPlanningManager.hasMealPlans(for: date)
     }
 
     private func updateSelectedMealTimes(for date: Date) {
@@ -334,22 +285,11 @@ struct MealPlanningView: View {
         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
             weekShoppingFeedback = message
         }
-
         DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayFeedback) {
             withAnimation(.easeOut(duration: AppTheme.animationDuration08)) {
                 weekShoppingFeedback = nil
             }
         }
-    }
-
-    private func previousMonth() {
-        selectedDate = Calendar.current.date(byAdding: .month, value: -1, to: selectedDate) ?? selectedDate
-        HapticManager.shared.light()
-    }
-
-    private func nextMonth() {
-        selectedDate = Calendar.current.date(byAdding: .month, value: 1, to: selectedDate) ?? selectedDate
-        HapticManager.shared.light()
     }
 
     private func previousWeek() {
@@ -382,20 +322,6 @@ struct MealPlanningView: View {
         return formatter.string(from: selectedDate)
     }
 
-    private var weekRangeString: String {
-        guard let range = mealCalendar.weekRange(containing: selectedDate) else {
-            return ""
-        }
-
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMM d"
-
-        let startString = formatter.string(from: range.start)
-        let endString = formatter.string(from: range.end)
-
-        return "\(startString) - \(endString)"
-    }
-
     private var currentWeekStart: Date? {
         mealCalendar.weekRange(containing: selectedDate)?.start
     }
@@ -407,10 +333,6 @@ struct MealPlanningView: View {
 
     private var daysInCurrentWeek: [Date] {
         mealCalendar.daysInWeek(containing: selectedDate)
-    }
-
-    private var compactDaysInMonth: [Date?] {
-        mealCalendar.monthGrid(containing: selectedDate)
     }
 }
 
