@@ -126,6 +126,11 @@ final class CollectionManager: ObservableObject {
         collections.filter { $0.contains(recipeID) }
     }
 
+    /// The collection with the given id, or nil if it no longer exists.
+    func collection(withID id: UUID) -> RecipeCollection? {
+        collections.first { $0.id == id }
+    }
+
     // MARK: - Backup
 
     func merge(_ incoming: [RecipeCollection]) {

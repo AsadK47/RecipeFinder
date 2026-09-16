@@ -28,6 +28,9 @@ struct RecipeSearchView: View {
     @State private var cachedFilteredRecipes: [RecipeModel] = []
     @State private var lastFilterHash: Int = 0
     @State private var hideSampleRecipes = false
+    @State private var availableTags: [String] = []
+    @State private var availableCuisines: [String] = []
+    @State private var categories: [String] = []
     @FocusState private var isSearchFocused: Bool
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
@@ -67,9 +70,9 @@ struct RecipeSearchView: View {
         c.selectedCuisines = selectedCuisines
         c.sortOrder = sortOrder
         c.availableIngredients = availableIngredients
-        c.selectedCollectionRecipeIDs = selectedCollectionID.flatMap { id in
-            collectionManager.collections.first(where: { $0.id == id })
-        }.map { Set($0.recipeIDs) }
+        c.selectedCollectionRecipeIDs = selectedCollectionID
+            .flatMap { collectionManager.collection(withID: $0) }
+            .map { Set($0.recipeIDs) }
         return c
     }
     
@@ -86,21 +89,6 @@ struct RecipeSearchView: View {
     
     var activeFilterCount: Int {
         filterCriteria.activeCount
-    }
-    
-    var availableTags: [String] {
-        Array(Set(recipes.flatMap { $0.tags })).sorted()
-    }
-
-    var availableCuisines: [String] {
-        Array(Set(recipes.compactMap { $0.cuisine })).sorted()
-    }
-
-    var categories: [String] {
-        let validCategories = ["Breakfast", "Dessert", "Drink", "Main", "Side", "Soup", "Starter"]
-        return Array(Set(recipes.map { $0.category }))
-            .filter { validCategories.contains($0) }
-            .sorted()
     }
     
     var difficulties: [String] {
@@ -130,7 +118,11 @@ struct RecipeSearchView: View {
                 ))
         }
         .sheet(isPresented: $showCollections) { collectionsSheet }
-        .onAppear(perform: checkSharedImportInbox)
+        .onAppear {
+            checkSharedImportInbox()
+            updateDerivedMetadata()
+        }
+        .onChange(of: recipes) { _, _ in updateDerivedMetadata() }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             checkSharedImportInbox()
         }
@@ -410,6 +402,13 @@ struct RecipeSearchView: View {
         )
     }
     
+    private func updateDerivedMetadata() {
+        let validCategories = Set(["Breakfast", "Dessert", "Drink", "Main", "Side", "Soup", "Starter"])
+        availableTags = Array(Set(recipes.flatMap { $0.tags })).sorted()
+        availableCuisines = Array(Set(recipes.compactMap { $0.cuisine })).sorted()
+        categories = Array(Set(recipes.map { $0.category }).intersection(validCategories)).sorted()
+    }
+
     private func updateFilterCache() {
         let newHash = computeFilterHash()
         if newHash != lastFilterHash {

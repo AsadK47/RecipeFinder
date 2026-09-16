@@ -314,8 +314,9 @@ struct KitchenShoppingView: View {
 
         let activityController = UIActivityViewController(activityItems: [text], applicationActivities: nil)
         if let popover = activityController.popoverPresentationController {
+            let viewBounds = topController.view.bounds
             popover.sourceView = topController.view
-            popover.sourceRect = CGRect(x: topController.view.bounds.midX, y: topController.view.bounds.midY, width: 0, height: 0)
+            popover.sourceRect = CGRect(x: viewBounds.midX, y: viewBounds.midY, width: 0, height: 0)
             popover.permittedArrowDirections = []
         }
         topController.present(activityController, animated: true)

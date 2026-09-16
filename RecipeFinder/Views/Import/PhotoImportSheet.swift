@@ -1,6 +1,8 @@
 import SwiftUI
 import PhotosUI
 
+private let logger = AppLogger.logger(category: "PhotoImport")
+
 /// Photo-to-recipe entry point: pick a cookbook page / screenshot from the
 /// library or capture one with the camera, OCR it on device (Vision), then route
 /// the recognised text through the same interpreter/parser and present the
@@ -101,12 +103,17 @@ struct PhotoImportSheet: View {
 
     private func handlePickedItem(_ item: PhotosPickerItem) async {
         selectedItem = nil
-        guard let data = try? await item.loadTransferable(type: Data.self),
-              let image = UIImage(data: data) else {
+        do {
+            guard let data = try await item.loadTransferable(type: Data.self),
+                  let image = UIImage(data: data) else {
+                errorMessage = "That image couldn't be loaded."
+                return
+            }
+            await process(image)
+        } catch {
+            logger.error("❌ Failed to load picked photo: \(error)")
             errorMessage = "That image couldn't be loaded."
-            return
         }
-        await process(image)
     }
 
     private func process(_ image: UIImage) async {

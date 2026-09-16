@@ -1,6 +1,8 @@
 import SwiftUI
 import AuthenticationServices
 
+private let logger = AppLogger.logger(category: "Auth")
+
 struct AuthenticationView: View {
     @StateObject private var authManager = AuthenticationManager.shared
     @StateObject private var appleSignInManager = AppleSignInManager.shared
@@ -54,7 +56,11 @@ struct AuthenticationView: View {
                     if authManager.biometricsAvailable && biometricsEnabled {
                         Button(action: {
                             Task {
-                                try? await authManager.authenticateWithBiometrics()
+                                do {
+                                    try await authManager.authenticateWithBiometrics()
+                                } catch {
+                                    logger.debug("Biometric auth declined or failed: \(error)")
+                                }
                             }
                         }) {
                             HStack(spacing: AppTheme.spacing12) {
