@@ -72,7 +72,11 @@ extension AuthenticationManager {
     
     func updateCurrentUser(_ user: User) {
         setCurrentUser(user)
-        try? saveUser(user)
+        do {
+            try saveUser(user)
+        } catch {
+            logger.error("❌ Failed to persist user update to Keychain: \(error)")
+        }
         logger.debug("✅ Current user updated: \(user.displayName)")
     }
     

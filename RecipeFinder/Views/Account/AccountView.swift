@@ -14,6 +14,7 @@ struct AccountView: View {
     @State private var activeSheet: AccountSheet?
     @State private var showSignOutAlert = false
     @State private var showDeleteAccountAlert = false
+    @State private var showDeleteError = false
     @State private var profileImage: UIImage?
     @State private var editingName = false
     @State private var tempName = ""
@@ -180,6 +181,11 @@ struct AccountView: View {
         } message: {
             Text("This action cannot be undone. All your data will be permanently deleted.")
         }
+        .alert("Couldn't Delete Account", isPresented: $showDeleteError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Something went wrong while deleting your account. Please try again.")
+        }
         .animation(.spring(response: 0.3), value: editingName)
         .animation(.spring(response: 0.3), value: showSuccessFeedback)
         .onAppear {
@@ -200,7 +206,8 @@ struct AccountView: View {
             logger.debug("🗑️ [AccountView] Delete account requested")
             try await authManager.deleteAccount()
         } catch {
-            logger.debug("Error deleting account: \(error)")
+            logger.error("❌ Account deletion failed: \(error)")
+            showDeleteError = true
         }
     }
 

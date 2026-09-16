@@ -1,5 +1,7 @@
 import UIKit
 
+private let logger = AppLogger.logger(category: "RecipeImageStore")
+
 /// Persists user-picked recipe photos to disk and resolves which image
 /// reference a saved recipe should point at.
 ///
@@ -58,6 +60,7 @@ struct RecipeImageStore {
             try imageData.write(to: imageURL, options: .atomic)
             return imageURL.path
         } catch {
+            logger.error("❌ Failed to persist recipe image for \(recipeId): \(error)")
             return nil
         }
     }
@@ -76,7 +79,10 @@ struct RecipeImageStore {
                 try fileManager.createDirectory(at: imageDirectory, withIntermediateDirectories: true)
                 try imageData.write(to: imageURL, options: .atomic)
                 paths.append(imageURL.path)
-            } catch { continue }
+            } catch {
+                logger.error("❌ Failed to persist gallery image \(idx) for \(recipeId): \(error)")
+                continue
+            }
         }
         return paths
     }

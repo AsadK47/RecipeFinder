@@ -1,5 +1,7 @@
 import Foundation
 
+private let logger = AppLogger.logger(category: "SharedTextImporter")
+
 /// Decides how a free-text share becomes a recipe: try the on-device
 /// interpreter, otherwise hand the raw text back for the heuristic parser. Either
 /// way the result is reviewed and edited in the wizard before it is saved — the
@@ -30,7 +32,8 @@ struct SharedTextImporter {
                 return .interpreted(interpreted)
             }
         } catch {
-            // Any model error (unavailable, guardrail, context limit) → manual.
+            // Any model error (unavailable, guardrail, context limit) → fall back to manual entry.
+            logger.debug("⚠️ AI interpreter error (falling back to manual): \(error)")
         }
         return .needsManualEntry(text)
     }

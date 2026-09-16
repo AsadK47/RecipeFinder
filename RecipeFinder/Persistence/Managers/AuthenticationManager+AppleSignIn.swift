@@ -89,6 +89,7 @@ extension AuthenticationManager: ASAuthorizationControllerDelegate {
                 
                 HapticManager.shared.success()
             } catch {
+                self.logger.error("❌ Apple Sign In failed to persist user: \(error)")
                 self.authError = .signInFailed
             }
         }

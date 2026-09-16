@@ -178,7 +178,7 @@ extension PersistenceController {
                 return saveRecipe(parameters: RecipeSaveParameters(from: recipe))
             }
         } catch {
-            persistenceLogger.debug("⚠️ Failed to check if recipe exists, creating new: \(error.localizedDescription)")
+            persistenceLogger.error("❌ Failed to check if recipe exists, creating new: \(error.localizedDescription)")
             return saveRecipe(parameters: RecipeSaveParameters(from: recipe))
         }
     }

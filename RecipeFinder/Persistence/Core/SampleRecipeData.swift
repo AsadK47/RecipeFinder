@@ -21,7 +21,7 @@ extension PersistenceController {
                 return
             }
         } catch {
-            logger.debug("⚠️ Failed to check existing recipes: \(error.localizedDescription)")
+            logger.error("❌ Failed to check existing recipes: \(error.localizedDescription)")
         }
         
         logger.debug("🔄 Populating database with sample recipes for current user...")
