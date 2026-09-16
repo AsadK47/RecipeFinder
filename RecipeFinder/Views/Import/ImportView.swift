@@ -29,47 +29,54 @@ struct ImportView: View {
                 AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
 
-                ScrollView {
-                    VStack(spacing: AppTheme.spacing16) {
-                        header
-
-                        actionCard(
-                            icon: "link",
-                            color: .orange,
-                            title: "Paste a link",
-                            subtitle: "Import from a recipe website — we fetch and parse it for you.",
-                            action: isGuest ? { showSignUpForGuest = true } : { showLinkImport = true }
-                        )
-
-                        actionCard(
-                            icon: "doc.on.clipboard",
-                            color: .green,
-                            title: "Paste text",
-                            subtitle: "Paste a caption, note, or message — we pull out the recipe to review.",
-                            action: isGuest ? { showSignUpForGuest = true } : { showPasteImport = true }
-                        )
-
-                        actionCard(
-                            icon: "text.viewfinder",
-                            color: .purple,
-                            title: "Scan a photo",
-                            subtitle: "A cookbook page, screenshot, or handwritten recipe — read on device.",
-                            action: isGuest ? { showSignUpForGuest = true } : { showPhotoImport = true }
-                        )
-
-                        actionCard(
-                            icon: "square.and.pencil",
-                            color: .blue,
-                            title: "Create manually",
-                            subtitle: "Add a recipe yourself, step by step.",
-                            action: isGuest ? { showSignUpForGuest = true } : { showWizard = true }
-                        )
-
-                        shareHint
+                VStack(spacing: 0) {
+                    ScreenTitleHeader("Import a Recipe") {
+                        Image(systemName: "tray.and.arrow.down.fill")
+                            .font(.system(size: AppTheme.fontSize20, weight: .semibold))
+                            .foregroundStyle(.orange)
+                            .frame(width: AppTheme.height44, alignment: .trailing)
                     }
-                    .padding(.horizontal, AppTheme.spacing20)
-                    .padding(.top, AppTheme.spacing16)
-                    .padding(.bottom, AppTheme.spacing40)
+
+                    ScrollView {
+                        VStack(spacing: AppTheme.spacing16) {
+                            actionCard(
+                                icon: "link",
+                                color: .orange,
+                                title: "Paste a link",
+                                subtitle: "Import from a recipe website — we fetch and parse it for you.",
+                                action: isGuest ? { showSignUpForGuest = true } : { showLinkImport = true }
+                            )
+
+                            actionCard(
+                                icon: "doc.on.clipboard",
+                                color: .green,
+                                title: "Paste text",
+                                subtitle: "Paste a caption, note, or message — we pull out the recipe to review.",
+                                action: isGuest ? { showSignUpForGuest = true } : { showPasteImport = true }
+                            )
+
+                            actionCard(
+                                icon: "text.viewfinder",
+                                color: .purple,
+                                title: "Scan a photo",
+                                subtitle: "A cookbook page, screenshot, or handwritten recipe — read on device.",
+                                action: isGuest ? { showSignUpForGuest = true } : { showPhotoImport = true }
+                            )
+
+                            actionCard(
+                                icon: "square.and.pencil",
+                                color: .blue,
+                                title: "Create manually",
+                                subtitle: "Add a recipe yourself, step by step.",
+                                action: isGuest ? { showSignUpForGuest = true } : { showWizard = true }
+                            )
+
+                            shareHint
+                        }
+                        .padding(.horizontal, AppTheme.spacing20)
+                        .padding(.top, AppTheme.spacing16)
+                        .padding(.bottom, AppTheme.spacing40)
+                    }
                 }
             }
             .toolbar(.hidden, for: .navigationBar)
@@ -126,24 +133,6 @@ struct ImportView: View {
         case .wizard:
             break
         }
-    }
-
-    private var header: some View {
-        VStack(spacing: AppTheme.spacing8) {
-            Image(systemName: "tray.and.arrow.down.fill")
-                .font(.system(size: 40, weight: .semibold))
-                .foregroundStyle(.orange)
-
-            Text("Import a Recipe")
-                .font(.system(size: AppTheme.fontSize34, weight: .bold))
-                .adaptiveForegroundColor()
-
-            Text("Bring recipes in from anywhere — free and unlimited.")
-                .font(.subheadline)
-                .adaptiveForegroundColor()
-                .multilineTextAlignment(.center)
-        }
-        .frame(maxWidth: .infinity)
     }
 
     private func actionCard(icon: String, color: Color, title: String, subtitle: String, action: @escaping () -> Void) -> some View {
