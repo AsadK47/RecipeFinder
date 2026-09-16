@@ -166,7 +166,7 @@ final class MealPlanningManager: ObservableObject {
     /// Returns a stable display order for `selected`, preserving any custom
     /// sequence in `existing` and appending newly-added slots in their natural
     /// sort position (breakfast → lunch → dinner → snack).
-    static func sortedOrderedMealTimes(
+    nonisolated static func sortedOrderedMealTimes(
         existing: [MealTime],
         selected: Set<MealTime>
     ) -> [MealTime] {
