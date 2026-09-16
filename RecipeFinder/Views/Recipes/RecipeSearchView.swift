@@ -3,13 +3,8 @@ import SwiftUI
 private let logger = AppLogger.logger(category: "RecipeSearchView")
 
 struct RecipeSearchView: View {
-    enum ViewMode: String, CaseIterable {
-        case all = "Recipes"
-        case collections = "Collections"
-    }
-
     @Binding var recipes: [RecipeModel]
-    @State private var viewMode: ViewMode = .all
+    @State private var showCollections = false
     @State private var searchText = ""
     @State private var showFilters = false
     @State private var selectedCategories: Set<String> = []
@@ -129,6 +124,7 @@ struct RecipeSearchView: View {
                     updateAction: updateFilterCache
                 ))
         }
+        .sheet(isPresented: $showCollections) { collectionsSheet }
         .onAppear(perform: checkSharedImportInbox)
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             checkSharedImportInbox()
@@ -219,20 +215,7 @@ struct RecipeSearchView: View {
     private var mainContentView: some View {
         ZStack(alignment: .top) {
             backgroundView
-
-            VStack(spacing: 0) {
-                viewModeToggle
-
-                switch viewMode {
-                case .all:
-                    allRecipesContent
-                        .transition(.opacity)
-                case .collections:
-                    collectionsContent
-                        .transition(.opacity)
-                }
-            }
-            .animation(.easeInOut(duration: 0.2), value: viewMode)
+            allRecipesContent
 
             if let importToastMessage {
                 importToast(message: importToastMessage)
@@ -261,18 +244,6 @@ struct RecipeSearchView: View {
         .accessibilityElement(children: .combine)
     }
     
-    private var viewModeToggle: some View {
-        Picker("View", selection: $viewMode) {
-            ForEach(ViewMode.allCases, id: \.self) { mode in
-                Text(mode.rawValue).tag(mode)
-            }
-        }
-        .pickerStyle(.segmented)
-        .padding(.horizontal, AppTheme.spacing16)
-        .padding(.top, AppTheme.spacing12)
-        .padding(.bottom, AppTheme.spacing4)
-    }
-
     private var allRecipesContent: some View {
         VStack(spacing: 0) {
             searchHeaderGroup
@@ -281,16 +252,26 @@ struct RecipeSearchView: View {
         }
     }
 
-    private var collectionsContent: some View {
-        CollectionsInlineView(recipes: $recipes)
+    private var collectionsSheet: some View {
+        NavigationStack {
+            ZStack {
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
+                    .ignoresSafeArea()
+                CollectionsInlineView(recipes: $recipes)
+            }
+            .navigationTitle("Collections")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.hidden, for: .navigationBar)
+        }
     }
-    
+
     private var searchHeaderGroup: some View {
         RecipeSearchHeader(
             searchText: $searchText,
             isSearchFocused: $isSearchFocused,
             activeFilterCount: activeFilterCount,
-            onToggleFilters: { showFilters.toggle() }
+            onToggleFilters: { showFilters.toggle() },
+            onShowCollections: { showCollections = true }
         )
     }
     

@@ -76,7 +76,7 @@ struct RecipeImportView: View {
                 VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                     Text("Recipe URL")
                         .font(.headline)
-                        .adaptiveSecondaryForeground()
+                        .adaptiveForegroundColor()
                     
                     HStack {
                         Image(systemName: "link")
@@ -219,23 +219,25 @@ struct RecipeImportView: View {
                             .foregroundColor(.purple)
                         Text("AI-powered recipe parsing")
                             .font(.caption)
+                            .adaptiveForegroundColor()
                     }
-                    
+
                     HStack(spacing: AppTheme.spacing8) {
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundColor(.green)
                         Text("Works with most recipe websites")
                             .font(.caption)
+                            .adaptiveForegroundColor()
                     }
-                    
+
                     HStack(spacing: AppTheme.spacing8) {
                         Image(systemName: "lock.fill")
                             .foregroundColor(.blue)
                         Text("Your data stays on your device")
                             .font(.caption)
+                            .adaptiveForegroundColor()
                     }
                 }
-                .adaptiveSecondaryForeground()
                 .padding(.bottom, AppTheme.spacing40)
             }
             

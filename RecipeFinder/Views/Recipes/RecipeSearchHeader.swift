@@ -1,18 +1,15 @@
 import SwiftUI
-import TipKit
 
-/// The screen title with a filter button plus the search field.
-/// Import and manual creation live on the dedicated Import tab — not here.
+/// The screen title with a menu button (Collections + Filters) and search field.
 struct RecipeSearchHeader: View {
     @Binding var searchText: String
     var isSearchFocused: FocusState<Bool>.Binding
     let activeFilterCount: Int
     let onToggleFilters: () -> Void
+    let onShowCollections: () -> Void
 
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
-
-    private let canMakeNowTip = CanMakeNowTip()
 
     var body: some View {
         VStack(spacing: AppTheme.spacing12) {
@@ -23,11 +20,19 @@ struct RecipeSearchHeader: View {
 
     private var headerSection: some View {
         ScreenTitleHeader("RecipeFinder") {
-            Button {
-                HapticManager.shared.light()
-                onToggleFilters()
+            Menu {
+                Button(action: onShowCollections) {
+                    Label("Collections", systemImage: "square.stack")
+                }
+                Divider()
+                Button(action: onToggleFilters) {
+                    Label(
+                        activeFilterCount > 0 ? "Filters (\(activeFilterCount) active)" : "Filter Recipes",
+                        systemImage: "line.3.horizontal.decrease"
+                    )
+                }
             } label: {
-                CircleButton(icon: "line.3.horizontal.decrease") {}
+                CircleButton(icon: "line.3.horizontal") {}
                     .allowsHitTesting(false)
                     .overlay(alignment: .topTrailing) {
                         if activeFilterCount > 0 {
@@ -41,8 +46,7 @@ struct RecipeSearchHeader: View {
                     }
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(activeFilterCount > 0 ? "Filters, \(activeFilterCount) active" : "Filters")
-            .popoverTip(canMakeNowTip, arrowEdge: .top)
+            .accessibilityLabel(activeFilterCount > 0 ? "Menu, \(activeFilterCount) active filters" : "Menu")
         }
     }
 
@@ -52,7 +56,7 @@ struct RecipeSearchHeader: View {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(AppTheme.adaptiveHighEmphasis(for: colorScheme))
                     .font(.system(size: AppTheme.fontSize18, weight: .medium))
-                
+
                 ZStack(alignment: .leading) {
                     if searchText.isEmpty {
                         Text("What would you like to eat...?")
@@ -66,12 +70,10 @@ struct RecipeSearchHeader: View {
                         .adaptiveForegroundColor()
                         .tint(AppTheme.textColor(for: colorScheme))
                 }
-                
+
                 if !searchText.isEmpty {
                     Button(
-                        action: { 
-                            searchText = ""
-                        },
+                        action: { searchText = "" },
                         label: {
                             Image(systemName: "xmark.circle.fill")
                                 .font(.system(size: AppTheme.fontSize18))
@@ -91,7 +93,7 @@ struct RecipeSearchHeader: View {
                         .fill(.ultraThinMaterial)
                 }
             }
-            
+
             if isSearchFocused.wrappedValue {
                 Button(
                     action: {
@@ -111,5 +113,4 @@ struct RecipeSearchHeader: View {
         .padding(.bottom, AppTheme.spacing12)
         .animation(.spring(response: 0.3), value: isSearchFocused.wrappedValue)
     }
-
 }
