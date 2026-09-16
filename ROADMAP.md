@@ -207,10 +207,10 @@ integration tests.
 
 ### 🟡 Meal planner enhancements
 Meal-type slots (breakfast/lunch/dinner/snack), "add the week to the shopping
-list," and weekly/calendar views all ship. Remaining: drag-and-drop to
-rearrange meals within a day, recurring meals ("Meal Prep Sunday"), pantry-
-aware meal suggestions ("cook this before the tomatoes go off"), and a weekly
-nutrition summary (tied to the Nutrition item in Part III).
+list," weekly/calendar views, and drag-to-reorder within a day all ship.
+Remaining: recurring meals ("Meal Prep Sunday"), pantry-aware meal suggestions
+("cook this before the tomatoes go off"), and a weekly nutrition summary (tied
+to the Nutrition item in Part III).
 
 ### 🟢 Recipe library sort order
 *Problem:* the recipe list has no sort control — recipes appear in insertion

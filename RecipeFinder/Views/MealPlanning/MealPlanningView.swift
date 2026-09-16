@@ -12,6 +12,9 @@ struct MealPlanningView: View {
     @State private var viewMode: ViewMode = .calendar
     @State private var showMonthYearPicker = false
     @State private var weekShoppingFeedback: String?
+    /// Display order for the selected day's meal cards. Persists user drag order
+    /// within a day; resets to natural sort when switching to a different day.
+    @State private var orderedMealTimes: [MealTime] = []
 
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
@@ -77,6 +80,15 @@ struct MealPlanningView: View {
         .toolbarColorScheme(.dark, for: .navigationBar)
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: selectedMealTimes)
         .animation(.spring(response: 0.3, dampingFraction: 0.8), value: viewMode)
+        .onAppear {
+            orderedMealTimes = MealPlanningManager.sortedOrderedMealTimes(
+                existing: [], selected: selectedMealTimes)
+        }
+        .onChange(of: selectedMealTimes) { _, newMealTimes in
+            // Preserve any drag order the user set; append new slots naturally.
+            orderedMealTimes = MealPlanningManager.sortedOrderedMealTimes(
+                existing: orderedMealTimes, selected: newMealTimes)
+        }
         .sheet(isPresented: $showMealTimeSelector) {
             MealTimeSelectorSheet(
                 selectedDate: selectedDate,
@@ -205,7 +217,7 @@ struct MealPlanningView: View {
 
     private var selectedMealsSection: some View {
         PlannedMealsSection(
-            mealTimes: Array(selectedMealTimes).sorted(by: { $0.sortOrder < $1.sortOrder }),
+            mealTimes: $orderedMealTimes,
             selectedDateString: selectedDateString,
             cardStyle: cardStyle,
             colorScheme: colorScheme,

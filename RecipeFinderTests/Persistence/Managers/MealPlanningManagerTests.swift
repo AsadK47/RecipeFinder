@@ -1,4 +1,5 @@
 import XCTest
+import Testing
 @testable import RecipeFinder
 
 @MainActor
@@ -266,5 +267,47 @@ final class MealPlanningManagerTests: XCTestCase {
             storage.set(data, forKey: "mealPlansStorage")
         }
         sut.reloadForCurrentUser()
+    }
+}
+
+// MARK: - sortedOrderedMealTimes
+
+@Suite("MealPlanningManager.sortedOrderedMealTimes")
+struct SortedOrderedMealTimesTests {
+
+    @Test("initialises from empty in natural sort order")
+    func initialisesEmpty() {
+        let result = MealPlanningManager.sortedOrderedMealTimes(
+            existing: [],
+            selected: [.lunch, .dinner]
+        )
+        #expect(result == [.lunch, .dinner])
+    }
+
+    @Test("preserves custom order and appends new items at their natural position")
+    func preservesCustomOrderAndAppendsNew() {
+        let result = MealPlanningManager.sortedOrderedMealTimes(
+            existing: [.dinner, .breakfast, .lunch],
+            selected: [.breakfast, .dinner, .lunch, .snack]
+        )
+        #expect(result == [.dinner, .breakfast, .lunch, .snack])
+    }
+
+    @Test("removes items no longer selected")
+    func removesUnselected() {
+        let result = MealPlanningManager.sortedOrderedMealTimes(
+            existing: [.breakfast, .lunch, .dinner],
+            selected: [.breakfast, .dinner]
+        )
+        #expect(result == [.breakfast, .dinner])
+    }
+
+    @Test("returns empty when selection is empty")
+    func returnsEmptyForEmptySelection() {
+        let result = MealPlanningManager.sortedOrderedMealTimes(
+            existing: [.breakfast, .dinner],
+            selected: []
+        )
+        #expect(result.isEmpty)
     }
 }

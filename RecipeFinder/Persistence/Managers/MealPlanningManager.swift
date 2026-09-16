@@ -163,6 +163,22 @@ final class MealPlanningManager: ObservableObject {
         return WeekShoppingSummary(items: items, mealsCovered: mealsCovered, missingRecipeNames: missingRecipeNames)
     }
 
+    /// Returns a stable display order for `selected`, preserving any custom
+    /// sequence in `existing` and appending newly-added slots in their natural
+    /// sort position (breakfast → lunch → dinner → snack).
+    static func sortedOrderedMealTimes(
+        existing: [MealTime],
+        selected: Set<MealTime>
+    ) -> [MealTime] {
+        var result = existing.filter { selected.contains($0) }
+        for mealTime in MealTime.allCases.sorted(by: { $0.sortOrder < $1.sortOrder }) {
+            if selected.contains(mealTime) && !result.contains(mealTime) {
+                result.append(mealTime)
+            }
+        }
+        return result
+    }
+
     var todaysMealPlans: [MealPlanModel] {
         mealPlans(for: Date())
     }
