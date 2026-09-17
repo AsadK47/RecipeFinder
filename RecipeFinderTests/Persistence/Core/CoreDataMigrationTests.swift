@@ -53,6 +53,31 @@ import Foundation
         #expect(rows.first?.value(forKey: "name") as? String == "Legacy Dish")
     }
 
+    /// Validates that every RecipeKey constant maps to a real attribute on the current
+    /// Recipe entity. If .xccurrentversion points at the wrong model version this test
+    /// fails immediately — before any KVC crash occurs at runtime.
+    @Test func currentModelContainsAllRecipeKeys() throws {
+        let momd = try #require(Bundle(for: PersistenceController.self).url(forResource: "RecipeModel", withExtension: "momd"))
+        let model = try #require(NSManagedObjectModel(contentsOf: momd))
+        let entity = try #require(model.entitiesByName["Recipe"])
+        let attributeNames = Set(entity.attributesByName.keys)
+
+        let expectedKeys = [
+            RecipeKey.id, RecipeKey.name, RecipeKey.category, RecipeKey.difficulty,
+            RecipeKey.prepTime, RecipeKey.cookingTime, RecipeKey.baseServings,
+            RecipeKey.currentServings, RecipeKey.ingredients, RecipeKey.prePrepInstructions,
+            RecipeKey.instructions, RecipeKey.notes, RecipeKey.imageName,
+            RecipeKey.isFavorite, RecipeKey.isSampleRecipe, RecipeKey.dietaryInfo,
+            RecipeKey.tags, RecipeKey.userId, RecipeKey.cookCount,
+            RecipeKey.lastCookedAt, RecipeKey.rating, RecipeKey.cuisine,
+            RecipeKey.photoNames,
+        ]
+
+        for key in expectedKeys {
+            #expect(attributeNames.contains(key), "Recipe entity is missing attribute '\(key)'")
+        }
+    }
+
     /// Pins the immediate v12→v13 upgrade path: a store without cook-history fields
     /// must lightweight-migrate cleanly, with new fields defaulting to zero/nil.
     @Test func v12StoreMigratesWithNewFieldDefaults() throws {
