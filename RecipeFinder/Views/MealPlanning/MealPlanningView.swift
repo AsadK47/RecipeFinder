@@ -3,6 +3,7 @@ import SwiftUI
 struct MealPlanningView: View {
     @Binding var recipes: [RecipeModel]
     @ObservedObject private var mealPlanningManager = MealPlanningManager.shared
+    @ObservedObject private var kitchenManager = KitchenInventoryManager.shared
     @State private var selectedDate: Date = Date()
     @State private var showMealTimeSelector = false
     @State private var selectedMealTimes: Set<MealTime> = []
@@ -12,6 +13,9 @@ struct MealPlanningView: View {
     @State private var weekShoppingFeedback: String?
     /// Display order for the selected day's meal cards; persists drag order within a day.
     @State private var orderedMealTimes: [MealTime] = []
+    @State private var pantryExpirySuggestions: [PantryExpirySuggestions.Match] = []
+    /// Non-nil while the user is picking a time slot for a pantry-suggested recipe.
+    @State private var pendingSuggestedRecipe: RecipeModel?
 
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
@@ -41,6 +45,21 @@ struct MealPlanningView: View {
                     VStack(spacing: AppTheme.spacing20) {
                         weekStripView
 
+                        if !pantryExpirySuggestions.isEmpty {
+                            ExpiryRecipeSuggestionsSection(
+                                suggestions: pantryExpirySuggestions,
+                                cardStyle: cardStyle,
+                                colorScheme: colorScheme,
+                                selectedTheme: selectedTheme,
+                                onPlan: { recipe in
+                                    pendingSuggestedRecipe = recipe
+                                    showMealTimeSelector = true
+                                    HapticManager.shared.light()
+                                }
+                            )
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                        }
+
                         if !selectedMealTimes.isEmpty {
                             selectedMealsSection
                                 .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -67,6 +86,7 @@ struct MealPlanningView: View {
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbarColorScheme(.dark, for: .navigationBar)
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: selectedMealTimes)
+        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: pantryExpirySuggestions.count)
         .onAppear {
             if let start = currentWeekStart {
                 mealPlanningManager.propagateRecurring(toWeekStarting: start)
@@ -74,10 +94,17 @@ struct MealPlanningView: View {
             updateSelectedMealTimes(for: selectedDate)
             orderedMealTimes = MealPlanningManager.sortedOrderedMealTimes(
                 existing: [], selected: selectedMealTimes)
+            updatePantryExpirySuggestions()
         }
         .onChange(of: selectedMealTimes) { _, newMealTimes in
             orderedMealTimes = MealPlanningManager.sortedOrderedMealTimes(
                 existing: orderedMealTimes, selected: newMealTimes)
+        }
+        .onChange(of: kitchenManager.inventoryItems) { _, _ in
+            updatePantryExpirySuggestions()
+        }
+        .onChange(of: recipes.count) { _, _ in
+            updatePantryExpirySuggestions()
         }
         .sheet(isPresented: $showMealTimeSelector) {
             MealTimeSelectorSheet(
@@ -86,7 +113,10 @@ struct MealPlanningView: View {
                 onContinue: { mealTime in
                     currentMealTime = mealTime
                     showMealTimeSelector = false
-                    if mealTime == .snack {
+                    if let suggested = pendingSuggestedRecipe {
+                        saveMealPlan(recipe: suggested, for: selectedDate, mealTime: mealTime)
+                        pendingSuggestedRecipe = nil
+                    } else if mealTime == .snack {
                         showQuickSnackSheet = true
                     } else {
                         showRecipeSelector = true
@@ -225,6 +255,15 @@ struct MealPlanningView: View {
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
+    }
+
+    // MARK: - Pantry suggestions
+
+    private func updatePantryExpirySuggestions() {
+        pantryExpirySuggestions = PantryExpirySuggestions.matches(
+            recipes: recipes,
+            inventoryItems: kitchenManager.inventoryItems
+        )
     }
 
     // MARK: - Meal plan actions

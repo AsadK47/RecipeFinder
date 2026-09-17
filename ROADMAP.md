@@ -205,15 +205,19 @@ tags, collection membership, "available ingredients only" with pantry-ranked
 results. Filter criteria is a single pure `Hashable` value fully covered by
 integration tests.
 
-### 🟡 Meal planner enhancements
+### 🟢 Meal planner enhancements
 Meal-type slots (breakfast/lunch/dinner/snack), "add the week to the shopping
 list," weekly/calendar views, drag-to-reorder within a day, and **recurring
 weekly meals** ("Meal Prep Sunday") all ship. Recurring: `isRecurring` flag on
 `MealPlanModel`, `toggleRecurring`/`propagateRecurring` in the manager,
 materialises to the visible week on navigation; long-press card → "Repeat
 Weekly" / "Stop Repeating"; ↻ badge on the recipe name row.
-Remaining: pantry-aware meal suggestions ("cook this before the tomatoes go
-off") and a weekly nutrition summary (tied to the Nutrition item in Part III).
+Pantry-aware meal suggestions now ship: `PantryExpirySuggestions.matches` (pure
+helper) surfaces up to 3 recipes that use expiring inventory items; the
+`ExpiryRecipeSuggestionsSection` appears in the meal planner whenever items are
+expiring within 3 days; tapping "Plan" reuses the meal-time picker and saves
+the recipe directly without going via the recipe selector.
+Remaining: weekly nutrition summary (tied to the Nutrition item in Part III).
 
 ### 🟢 Recipe library sort order
 *Problem:* the recipe list has no sort control — recipes appear in insertion
@@ -494,6 +498,7 @@ Legend: ✅ tested · ⚠️ unit/model only · ❌ no test
 | Add / update / delete plan | ✅ | MealPlanningManagerTests |
 | Same-slot overwrite behaviour | ✅ | MealPlanningManagerTests |
 | Recurring weekly meals | ✅ | MealPlanningManagerTests (RecurringMealPlanTests) |
+| Pantry-aware meal suggestions | ✅ | PantryExpirySuggestionsTests |
 | Calendar model | ✅ | MealPlanCalendarTests |
 | Week shopping summary | ✅ | MealPlanningManagerTests |
 | Backup merge | ✅ | ManagerMergeTests |
