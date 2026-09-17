@@ -25,6 +25,12 @@ struct RecipeDetailView: View {
     @State var editingQuantity: String = ""
     @State var editingUnit: String = ""
     @State var substitutingIngredientIndex: Int?
+    // Internal so RecipeDetailView+Content can trigger and track the source refresh.
+    @State var isRefreshing = false
+    @State var pendingRefreshDiff: RecipeDiff?
+    @State var showRefreshSheet = false
+    @State var refreshErrorMessage: String?
+    @State var showRefreshUpToDate = false
     // Internal so the relocated timer control (RecipeDetailView+Content) can read it.
     @StateObject var recipeTimer = RecipeTimerManager.shared
     @StateObject var pantryManager = KitchenInventoryManager.shared
@@ -103,6 +109,26 @@ struct RecipeDetailView: View {
         }
         .sheet(isPresented: $showTimerSheet) {
             CookTimerView()
+        }
+        .sheet(isPresented: $showRefreshSheet) {
+            if let diff = pendingRefreshDiff, let url = recipe.importedFromURL {
+                RecipeRefreshSheet(diff: diff, sourceURL: url) { updated in
+                    applyRefresh(updated)
+                }
+            }
+        }
+        .alert("Recipe Up to Date", isPresented: $showRefreshUpToDate) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Your saved recipe already matches the source.")
+        }
+        .alert("Couldn't Refresh Recipe", isPresented: Binding(
+            get: { refreshErrorMessage != nil },
+            set: { if !$0 { refreshErrorMessage = nil } }
+        )) {
+            Button("OK", role: .cancel) { refreshErrorMessage = nil }
+        } message: {
+            Text(refreshErrorMessage ?? "")
         }
         .fullScreenCover(isPresented: $showCookingMode) {
             CookingModeView(recipe: recipe, onFinish: recordCook)
@@ -283,5 +309,40 @@ struct RecipeDetailView: View {
         HapticManager.shared.selection()
         recipe.rating = newRating
         PersistenceController.shared.updateRating(withId: recipe.id, rating: newRating)
+    }
+
+    func refreshFromSource() async {
+        guard let url = recipe.importedFromURL else { return }
+        isRefreshing = true
+        refreshErrorMessage = nil
+
+        let importer = RecipeImporter()
+        await importer.importRecipe(from: url)
+
+        isRefreshing = false
+
+        if let data = importer.extractedData {
+            let upstream = RecipeImportBuilder().build(from: data)
+            let diff = RecipeDiff.compute(stored: recipe, upstream: upstream)
+            if diff.hasChanges {
+                pendingRefreshDiff = diff
+                showRefreshSheet = true
+            } else {
+                showRefreshUpToDate = true
+            }
+        } else if let errorMsg = importer.errorMessage {
+            refreshErrorMessage = errorMsg
+        }
+    }
+
+    func applyRefresh(_ updated: RecipeModel) {
+        let previous = recipe
+        recipe = updated
+        guard PersistenceController.shared.saveRecipeModel(updated) else {
+            recipe = previous
+            showSaveError = true
+            return
+        }
+        HapticManager.shared.success()
     }
 }

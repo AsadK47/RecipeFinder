@@ -264,17 +264,21 @@ below the hero. Edit flow round-trips `photoNames` through `PrefilledRecipeData`
 Data layer was already complete — `RecipeModel.photoNames` and Core Data v13 both
 existed; the gap was purely UI and image-store plumbing.
 
-### 🟡 Recipe source link & re-fetch
+### 🟢 Recipe source link & re-fetch
 *Problem:* the source URL is stored on import (in `RecipeImportBuilder`) but never
 surfaced in the UI. Users can't get back to the original page, and if the source
 recipe is corrected, there's no way to pick up the fix without re-importing and
 losing edits.
 *What we did:* "View Original" link surfaces on recipe detail for any URL-imported
 recipe (`importedFromURL` parsed from the notes footer; import metadata stripped
-from displayed notes via `notesForDisplay`).
-*Remaining:* "Refresh from source" — re-fetch and present a diff preview so users
-can selectively take upstream changes while preserving personal edits (notes,
-servings, tags).
+from displayed notes via `notesForDisplay`). "Refresh from Source" button runs the
+existing `RecipeImporter` against the same URL, builds a fresh `RecipeModel`, and
+computes a `RecipeDiff` comparing only content fields (name, ingredients,
+instructions, times, difficulty, category, cuisine, image). If changes exist,
+`RecipeRefreshSheet` lists each changed field with old→new values and per-field
+toggles; the user selects what to accept and taps "Apply". Personal data (notes,
+tags, servings, ratings, cook history, gallery) is always preserved. "Recipe Up to
+Date" alert surfaces when no diff is found. Covered by `RecipeDiffTests` (12 tests).
 
 ### 🟢 Recurring / staple shopping items
 *Problem:* eggs, milk, bread — the same items go on every shop. Manually
@@ -572,3 +576,10 @@ Legend: ✅ tested · ⚠️ unit/model only · ❌ no test
 |---|---|---|
 | OpenRecipeIntent / StartCookingIntent | ⚠️ | Thin glue over Apple APIs; exempt |
 | Navigation deep-link (UUID path) | ⚠️ | View-level wiring; no extractable pure logic |
+
+### Recipe source refresh
+
+| Feature | Status | Test file(s) |
+|---|---|---|
+| RecipeDiff compute + apply | ✅ | RecipeDiffTests |
+| RecipeRefreshSheet UI | ⚠️ | Pure view layout; exempt |

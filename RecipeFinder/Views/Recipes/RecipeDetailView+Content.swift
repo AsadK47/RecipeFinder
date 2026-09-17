@@ -391,6 +391,25 @@ extension RecipeDetailView {
                             .foregroundColor(AppTheme.accentColor)
                     }
                     .buttonStyle(.plain)
+
+                    Button {
+                        Task { await refreshFromSource() }
+                    } label: {
+                        if isRefreshing {
+                            HStack(spacing: AppTheme.spacing8) {
+                                ProgressView().scaleEffect(0.8)
+                                Text("Checking for updates…")
+                                    .font(.subheadline)
+                                    .adaptiveSecondaryForeground()
+                            }
+                        } else {
+                            Label("Refresh from Source", systemImage: "arrow.clockwise")
+                                .font(.subheadline)
+                                .foregroundColor(AppTheme.accentColor)
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(isRefreshing)
                 }
             }
         }
