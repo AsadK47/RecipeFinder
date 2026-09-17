@@ -207,10 +207,13 @@ integration tests.
 
 ### 🟡 Meal planner enhancements
 Meal-type slots (breakfast/lunch/dinner/snack), "add the week to the shopping
-list," weekly/calendar views, and drag-to-reorder within a day all ship.
-Remaining: recurring meals ("Meal Prep Sunday"), pantry-aware meal suggestions
-("cook this before the tomatoes go off"), and a weekly nutrition summary (tied
-to the Nutrition item in Part III).
+list," weekly/calendar views, drag-to-reorder within a day, and **recurring
+weekly meals** ("Meal Prep Sunday") all ship. Recurring: `isRecurring` flag on
+`MealPlanModel`, `toggleRecurring`/`propagateRecurring` in the manager,
+materialises to the visible week on navigation; long-press card → "Repeat
+Weekly" / "Stop Repeating"; ↻ badge on the recipe name row.
+Remaining: pantry-aware meal suggestions ("cook this before the tomatoes go
+off") and a weekly nutrition summary (tied to the Nutrition item in Part III).
 
 ### 🟢 Recipe library sort order
 *Problem:* the recipe list has no sort control — recipes appear in insertion
@@ -427,3 +430,125 @@ API key in `.xcconfig`. Free tier is 50 req/hr, so revisit for multi-user growth
 - **API keys** live in `.xcconfig` files excluded from version control.
 - **Clean as we go** — delete stale docs, dead code, and cruft alongside feature
   work, not just app code.
+
+---
+
+## Test coverage
+
+Legend: ✅ tested · ⚠️ unit/model only · ❌ no test  
+*Update this table when a feature ships or a test gap is closed.*
+
+### Recipe management
+
+| Feature | Status | Test file(s) |
+|---|---|---|
+| Create recipe (wizard) | ✅ | RecipeWizardPersistenceTests |
+| Edit recipe (save + rollback) | ✅ | RecipeSaveResultTests, RecipePersistenceRoundTripTests |
+| Delete recipe | ✅ | RecipePersistenceRoundTripTests |
+| Favorites toggle + persistence | ✅ | RecipePersistenceRoundTripTests |
+| Tags — add to recipe | ✅ | RecipeWizardBuilderTests, RecipeWizardPersistenceTests |
+| Dietary info (veg/vegan/GF) | ✅ | RecipeDietaryInfoPersistenceTests |
+| Nutrition auto-calc per serving | ✅ | NutritionCalculatorTests |
+| Recipe notes | ✅ | RecipeNotesFormatterTests, RecipePersistenceRoundTripTests |
+| Seed/sample recipes | ✅ | SeedRecipeProviderTests |
+| Servings scaling | ✅ | RecipeModelTests, RecipePersistenceRoundTripTests |
+| Cook history & rating | ✅ | RecipeModelTests, RecipePersistenceRoundTripTests |
+| Multiple photos | ✅ | RecipeImageStoreTests |
+| Ingredient substitutions | ✅ | IngredientSubstituteProviderTests |
+
+### Import
+
+| Feature | Status | Test file(s) |
+|---|---|---|
+| URL / link import | ✅ | RecipeImporterTests, RecipeImportFixtureTests, RecipeImportPersistenceTests |
+| Paste text import | ✅ | TextRecipeParserTests, SharedTextImporterTests, TextRecipeFixtureTests |
+| Photo OCR import | ✅ | PhotoOCRImportPersistenceTests |
+| Share extension inbox | ✅ | SharedImportInboxTests |
+| AI free-text import (FoundationModels) | ✅ | OnDeviceRecipeImportStatusTests, AIImportPersistenceTests |
+| Import duplicate detection | ✅ | BackupMergeTests, RecipeImportPersistenceTests |
+
+### Search & filtering
+
+| Feature | Status | Test file(s) |
+|---|---|---|
+| Text search | ✅ | RecipeFilterIntegrationTests |
+| Filter by category / difficulty / dietary | ✅ | RecipeFilterCriteriaTests, RecipeFilterIntegrationTests |
+| Filter by available ingredients | ✅ | KitchenRecipeMatcherTests |
+| Filter by tag | ✅ | RecipeFilterCriteriaTests, RecipeFilterIntegrationTests |
+| Filter by collection | ✅ | RecipeFilterCriteriaTests |
+| Sort order (name/rated/most cooked) | ✅ | RecipeFilterCriteriaTests |
+
+### Collections
+
+| Feature | Status | Test file(s) |
+|---|---|---|
+| Create / rename / recolour / delete | ✅ | CollectionManagerTests |
+| Add / remove / toggle recipe membership | ✅ | CollectionManagerTests |
+| Batch add ingredients to shopping list | ✅ | ShoppingListFromRecipeTests |
+| Backup merge | ✅ | ManagerMergeTests |
+
+### Meal planning
+
+| Feature | Status | Test file(s) |
+|---|---|---|
+| Add / update / delete plan | ✅ | MealPlanningManagerTests |
+| Same-slot overwrite behaviour | ✅ | MealPlanningManagerTests |
+| Recurring weekly meals | ✅ | MealPlanningManagerTests (RecurringMealPlanTests) |
+| Calendar model | ✅ | MealPlanCalendarTests |
+| Week shopping summary | ✅ | MealPlanningManagerTests |
+| Backup merge | ✅ | ManagerMergeTests |
+
+### Shopping list
+
+| Feature | Status | Test file(s) |
+|---|---|---|
+| Add / remove / check off items | ✅ | ShoppingListManagerTests |
+| Add from recipe | ✅ | ShoppingListFromRecipeTests |
+| Category classification | ✅ | CategoryClassifierTests |
+| Grouping & sharing | ✅ | ShoppingListGroupingTests |
+| Backup merge | ✅ | ManagerMergeTests |
+
+### Kitchen / Pantry
+
+| Feature | Status | Test file(s) |
+|---|---|---|
+| Inventory CRUD | ✅ | KitchenInventoryManagerTests |
+| Pantry alerts (low stock / expiring) | ✅ | PantryAlertsCategorisationTests |
+| Match recipes to pantry | ✅ | KitchenRecipeMatcherTests |
+
+### Badges
+
+| Feature | Status | Test file(s) |
+|---|---|---|
+| Unlock + celebration queue | ✅ | BadgeManagerTests |
+| shoppingExpert / mealPlanner triggers | ✅ | BadgeTriggerIntegrationTests |
+| firstImport / firstPhotoImport / headChef | ⚠️ | BadgeManagerTests — unlock tested; call sites in views, no extractable logic |
+| Backup merge (no re-celebration) | ✅ | BadgeManagerTests |
+
+### Auth & account
+
+| Feature | Status | Test file(s) |
+|---|---|---|
+| Credential store CRUD | ✅ | SecureCredentialManagerTests |
+| Session expiry policy | ✅ | SessionExpiryPolicyTests |
+| User model / display name | ✅ | AuthenticationUserModelTests |
+| Email sign-in / sign-up flows | ❌ | AuthenticationManager still singleton-bound; UI test covers happy path only |
+| Apple Sign In / biometric / guest mode | ❌ | No unit test — blocked on DI seam |
+| Account name formatting | ✅ | AccountNameFormatterTests |
+
+### Backup / restore
+
+| Feature | Status | Test file(s) |
+|---|---|---|
+| Export archive | ✅ | BackupArchiveTests |
+| Import / restore | ✅ | BackupArchiveTests, BackupMergeTests |
+| Manager merge (all stores) | ✅ | ManagerMergeTests |
+| Full BackupService round-trip | ✅ | BackupServiceTests |
+| Per-user scope isolation | ✅ | ManagerScopePersistenceTests |
+
+### Cooking mode
+
+| Feature | Status | Test file(s) |
+|---|---|---|
+| Timer (start / pause / reset) | ✅ | RecipeTimerManagerTests |
+| Step navigation / finish | ❌ | Pure view; headChef badge trigger untested end-to-end |
