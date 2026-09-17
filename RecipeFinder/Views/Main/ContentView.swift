@@ -14,7 +14,8 @@ struct ContentView: View {
     @StateObject private var badgeManager = BadgeManager.shared
     @State private var showBadgeSheet = false
     @State private var showAccountFromBadge = false
-    
+    @State private var pendingFileImport: RecipeModel?
+
     private var themeBinding: AppTheme.ThemeType { selectedTheme }
 
     private enum SidebarItem: Int, Hashable, CaseIterable {
@@ -82,6 +83,15 @@ struct ContentView: View {
             selectedTab = 0
             sidebarSelection = .recipes
         }
+        .onOpenURL { url in
+            guard url.pathExtension == "recipefinderrecipe" else { return }
+            do {
+                let data = try Data(contentsOf: url)
+                pendingFileImport = try RecipeFileExporter.decode(data)
+            } catch {
+                logger.error("Failed to open shared recipe file: \(error.localizedDescription)")
+            }
+        }
         .onChange(of: badgeManager.pendingCelebration) { _, newValue in
             if newValue != nil { showBadgeSheet = true }
         }
@@ -104,6 +114,21 @@ struct ContentView: View {
                 AccountView()
             }
         }
+        .sheet(item: $pendingFileImport) { recipe in
+            RecipeFileImportSheet(recipe: recipe) { confirmed in
+                saveImportedRecipe(confirmed)
+            }
+        }
+    }
+
+    private func saveImportedRecipe(_ recipe: RecipeModel) {
+        guard PersistenceController.shared.saveRecipeModel(recipe) else {
+            logger.error("Failed to save imported recipe '\(recipe.name)'")
+            return
+        }
+        recipes.append(recipe)
+        selectedTab = 0
+        sidebarSelection = .recipes
     }
 
     private var iPhoneLayout: some View {

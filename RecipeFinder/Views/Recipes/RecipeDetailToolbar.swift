@@ -43,7 +43,10 @@ struct RecipeDetailToolbar: View {
                 Button(action: onEdit) {
                     Label("Edit Recipe", systemImage: "pencil")
                 }
-                ShareLink(item: recipe.shareText, subject: Text(recipe.name)) {
+                ShareLink(
+                    item: RecipeTransferItem(recipe: recipe),
+                    preview: SharePreview(recipe.name, image: Image(systemName: "fork.knife"))
+                ) {
                     Label("Share", systemImage: "square.and.arrow.up")
                 }
                 Button(action: onPrint) {

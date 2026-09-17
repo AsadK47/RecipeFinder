@@ -11,5 +11,43 @@
 	<dict/>
 	<key>NSCameraUsageDescription</key>
 	<string>RecipeFinder uses the camera so you can snap a cookbook page or handwritten recipe and import it.</string>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+				<string>public.content</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>RecipeFinder Recipe</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.recipefinder.recipe</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>recipefinderrecipe</string>
+				</array>
+				<key>public.mime-type</key>
+				<string>application/vnd.recipefinder.recipe</string>
+			</dict>
+		</dict>
+	</array>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>RecipeFinder Recipe</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.recipefinder.recipe</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>
