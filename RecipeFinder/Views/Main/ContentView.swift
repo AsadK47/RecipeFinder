@@ -78,6 +78,10 @@ struct ContentView: View {
             selectedTab = 3
             sidebarSelection = .planning
         }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("OpenRecipe"))) { _ in
+            selectedTab = 0
+            sidebarSelection = .recipes
+        }
         .onChange(of: badgeManager.pendingCelebration) { _, newValue in
             if newValue != nil { showBadgeSheet = true }
         }

@@ -351,16 +351,17 @@ keeps the screen awake, and 56 pt minimum-height tap targets for greasy hands.
 plain text via `ShoppingListGrouping.shareText` and hands it to
 `UIActivityViewController`. Live share (CloudKit Sharing) deferred to iCloud.
 
-### 🟡 App Intents & Siri shortcuts
+### 🟢 App Intents & Siri shortcuts
 *Problem:* RecipeFinder is invisible to the OS. Competitors that register
 `AppIntent`s surface in Spotlight, Shortcuts, the Siri suggestion row, and the
 Action Button — we appear in none of them.
-*What we did:* `AddToShoppingListIntent` ("Add item to my RecipeFinder list" →
-Siri asks what to add) and `WhatsForDinnerIntent` ("What's for dinner in
-RecipeFinder" → reads today's dinner plan) wired via `RecipeShortcutsProvider`.
-Both are fully on-device. `RecipeIntents.swift` lives in `Intents/`.
-*Remaining:* "Open recipe [name]" and "Start cooking [name]" require deep-link
-navigation (URL scheme or `NavigationLink` via `UISceneAppIntent`) — deferred.
+*What we did:* `AddToShoppingListIntent`, `WhatsForDinnerIntent`,
+`OpenRecipeIntent` ("Open recipe in RecipeFinder" → Siri asks for name →
+navigates to `RecipeDetailView` via `NavigationPath`), and `StartCookingIntent`
+("Start cooking in RecipeFinder") — all wired via `RecipeShortcutsProvider`,
+all on-device. Deep-link routing uses `NSNotification("OpenRecipe")`: `ContentView`
+switches to the Recipes tab; `RecipeSearchView` (now path-based `NavigationStack`)
+pushes the matching recipe by UUID onto `navigationPath`.
 
 ### 🟢 Ingredient substitutions
 *Problem:* mid-cook "I don't have X, what can I use?" is one of the most
@@ -564,3 +565,10 @@ Legend: ✅ tested · ⚠️ unit/model only · ❌ no test
 |---|---|---|
 | Timer (start / pause / reset) | ✅ | RecipeTimerManagerTests |
 | Step navigation / finish | ❌ | Pure view; headChef badge trigger untested end-to-end |
+
+### App Intents / Siri
+
+| Feature | Status | Test file(s) |
+|---|---|---|
+| OpenRecipeIntent / StartCookingIntent | ⚠️ | Thin glue over Apple APIs; exempt |
+| Navigation deep-link (UUID path) | ⚠️ | View-level wiring; no extractable pure logic |

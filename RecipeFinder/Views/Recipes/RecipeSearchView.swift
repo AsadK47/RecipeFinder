@@ -39,6 +39,7 @@ struct RecipeSearchView: View {
     @ObservedObject private var kitchenManager = KitchenInventoryManager.shared
     @ObservedObject private var collectionManager = CollectionManager.shared
     @State private var selectedCollectionID: UUID? = nil
+    @State private var navigationPath = NavigationPath()
 
     private var availableIngredients: Set<String> {
         Set(kitchenManager.items.map { $0.name.lowercased() })
@@ -96,7 +97,7 @@ struct RecipeSearchView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $navigationPath) {
             mainContentView
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbarBackground(.hidden, for: .navigationBar)
@@ -116,6 +117,11 @@ struct RecipeSearchView: View {
                     recipes: recipes,
                     updateAction: updateFilterCache
                 ))
+                .navigationDestination(for: UUID.self) { recipeId in
+                    if let recipe = recipes.first(where: { $0.id == recipeId }) {
+                        RecipeDetailView(recipe: recipe)
+                    }
+                }
         }
         .sheet(isPresented: $showCollections) { collectionsSheet }
         .onAppear {
@@ -135,6 +141,13 @@ struct RecipeSearchView: View {
             if !isPresented {
                 sharedWizardPrefill = nil
             }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("OpenRecipe"))) { notification in
+            guard let idString = notification.userInfo?["recipeId"] as? String,
+                  let recipeId = UUID(uuidString: idString),
+                  recipes.contains(where: { $0.id == recipeId }) else { return }
+            navigationPath = NavigationPath()
+            navigationPath.append(recipeId)
         }
     }
 

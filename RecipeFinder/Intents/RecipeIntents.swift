@@ -55,6 +55,78 @@ struct WhatsForDinnerIntent: AppIntent {
     }
 }
 
+// MARK: - Open Recipe
+
+struct OpenRecipeIntent: AppIntent {
+    static let title: LocalizedStringResource = "Open a Recipe"
+    static let description = IntentDescription(
+        "Opens a specific recipe by name in RecipeFinder.",
+        categoryName: "Recipes"
+    )
+    static let openAppWhenRun: Bool = true
+
+    @Parameter(title: "Recipe Name", description: "The name of the recipe to open.")
+    var recipeName: String
+
+    func perform() async throws -> some IntentResult & ReturnsValue<String> {
+        let name = recipeName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !name.isEmpty else {
+            throw $recipeName.needsValueError("Which recipe would you like to open?")
+        }
+        let recipes = await MainActor.run { PersistenceController.shared.fetchRecipes() }
+        guard let recipe = recipes.first(where: { $0.name.localizedCaseInsensitiveContains(name) }) else {
+            throw $recipeName.needsValueError("Couldn't find a recipe called \"\(name)\". Try a different name.")
+        }
+        await MainActor.run {
+            NotificationCenter.default.post(
+                name: NSNotification.Name("OpenRecipe"),
+                object: nil,
+                userInfo: ["recipeId": recipe.id.uuidString]
+            )
+        }
+        return .result(
+            value: recipe.name,
+            dialog: IntentDialog(stringLiteral: "Opening \(recipe.name).")
+        )
+    }
+}
+
+// MARK: - Start Cooking
+
+struct StartCookingIntent: AppIntent {
+    static let title: LocalizedStringResource = "Start Cooking a Recipe"
+    static let description = IntentDescription(
+        "Opens a recipe in RecipeFinder so you can start cooking.",
+        categoryName: "Recipes"
+    )
+    static let openAppWhenRun: Bool = true
+
+    @Parameter(title: "Recipe Name", description: "The name of the recipe to cook.")
+    var recipeName: String
+
+    func perform() async throws -> some IntentResult & ReturnsValue<String> {
+        let name = recipeName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !name.isEmpty else {
+            throw $recipeName.needsValueError("What would you like to cook?")
+        }
+        let recipes = await MainActor.run { PersistenceController.shared.fetchRecipes() }
+        guard let recipe = recipes.first(where: { $0.name.localizedCaseInsensitiveContains(name) }) else {
+            throw $recipeName.needsValueError("Couldn't find a recipe called \"\(name)\". Try a different name.")
+        }
+        await MainActor.run {
+            NotificationCenter.default.post(
+                name: NSNotification.Name("OpenRecipe"),
+                object: nil,
+                userInfo: ["recipeId": recipe.id.uuidString]
+            )
+        }
+        return .result(
+            value: recipe.name,
+            dialog: IntentDialog(stringLiteral: "Let's cook \(recipe.name). Opening the recipe now.")
+        )
+    }
+}
+
 // MARK: - Shortcuts provider
 
 struct RecipeShortcutsProvider: AppShortcutsProvider {
@@ -76,6 +148,24 @@ struct RecipeShortcutsProvider: AppShortcutsProvider {
             ],
             shortTitle: "What's for Dinner?",
             systemImageName: "fork.knife"
+        )
+        AppShortcut(
+            intent: OpenRecipeIntent(),
+            phrases: [
+                "Open recipe in \(.applicationName)",
+                "Show me a recipe from \(.applicationName)"
+            ],
+            shortTitle: "Open Recipe",
+            systemImageName: "book.fill"
+        )
+        AppShortcut(
+            intent: StartCookingIntent(),
+            phrases: [
+                "Start cooking in \(.applicationName)",
+                "Help me cook in \(.applicationName)"
+            ],
+            shortTitle: "Start Cooking",
+            systemImageName: "fork.knife.circle.fill"
         )
     }
 }
