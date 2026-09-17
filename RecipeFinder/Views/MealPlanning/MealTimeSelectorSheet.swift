@@ -52,7 +52,6 @@ struct MealTimeSelectorSheet: View {
                     VStack(spacing: AppTheme.spacing12) {
                             ForEach(MealTime.allCases, id: \.self) { mealTime in
                                 Button(action: {
-                                    selectedMealTimes.insert(mealTime)
                                     onContinue(mealTime)
                                     HapticManager.shared.light()
                                 }) {

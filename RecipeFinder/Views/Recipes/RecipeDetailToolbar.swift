@@ -11,6 +11,7 @@ struct RecipeDetailToolbar: View {
     let onToggleFavorite: () -> Void
     let onAddToCollection: () -> Void
     let onStartCooking: () -> Void
+    let onPrint: () -> Void
 
     private let cookingModeTip = CookingModeTip()
 
@@ -45,13 +46,16 @@ struct RecipeDetailToolbar: View {
                 ShareLink(item: recipe.shareText, subject: Text(recipe.name)) {
                     Label("Share", systemImage: "square.and.arrow.up")
                 }
+                Button(action: onPrint) {
+                    Label("Print", systemImage: "printer")
+                }
             } label: {
                 Image(systemName: "ellipsis.circle")
                     .font(.title3)
                     .adaptiveForegroundColor()
             }
             .accessibilityLabel("More actions")
-            .accessibilityHint("Edit or share this recipe")
+            .accessibilityHint("Edit, share, or print this recipe")
         }
     }
 }

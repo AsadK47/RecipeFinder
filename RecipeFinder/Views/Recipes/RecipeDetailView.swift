@@ -25,6 +25,7 @@ struct RecipeDetailView: View {
     @State var editingQuantity: String = ""
     @State var editingUnit: String = ""
     @State var substitutingIngredientIndex: Int?
+    @State private var showPostCookPhotoPrompt = false
     // Internal so RecipeDetailView+Content can trigger and track the source refresh.
     @State var isRefreshing = false
     @State var pendingRefreshDiff: RecipeDiff?
@@ -97,7 +98,8 @@ struct RecipeDetailView: View {
                     onEdit: { showEditSheet = true },
                     onToggleFavorite: toggleFavorite,
                     onAddToCollection: { showAddToCollection = true },
-                    onStartCooking: { showCookingMode = true }
+                    onStartCooking: { showCookingMode = true },
+                    onPrint: { RecipePrintFormatter.present(for: recipe) }
                 )
             }
         }
@@ -109,6 +111,11 @@ struct RecipeDetailView: View {
         }
         .sheet(isPresented: $showTimerSheet) {
             CookTimerView()
+        }
+        .sheet(isPresented: $showPostCookPhotoPrompt) {
+            PostCookPhotoSheet { image in
+                addCookPhoto(image)
+            }
         }
         .sheet(isPresented: $showRefreshSheet) {
             if let diff = pendingRefreshDiff, let url = recipe.importedFromURL {
@@ -303,6 +310,23 @@ struct RecipeDetailView: View {
         PersistenceController.shared.recordCook(withId: recipe.id)
         // Third cook of any recipe = genuine fan; ask for a review exactly once.
         if recipe.cookCount == 3 { requestReview() }
+        // Delay lets any active fullScreenCover (CookingModeView) dismiss before the sheet appears.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+            showPostCookPhotoPrompt = true
+        }
+    }
+
+    private func addCookPhoto(_ image: UIImage) {
+        let store = RecipeImageStore()
+        let newPaths = store.persistGallery([image], recipeId: recipe.id, startingIndex: recipe.photoNames.count)
+        guard !newPaths.isEmpty else { return }
+        recipe.photoNames.append(contentsOf: newPaths)
+        guard PersistenceController.shared.saveRecipeModel(recipe) else {
+            recipe.photoNames.removeLast(newPaths.count)
+            showSaveError = true
+            return
+        }
+        HapticManager.shared.success()
     }
 
     func updateRating(_ newRating: Int) {

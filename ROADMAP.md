@@ -420,12 +420,15 @@ and auto-build a basket via deep links or affiliate APIs (scraping last resort),
 with price comparison and smart substitutions. This is added value we can
 legitimately charge for.
 
-### 🔴 Recipe sharing
+### 🟡 Recipe sharing
 Share recipes as rich links or formatted cards; import shared recipes from other
-RecipeFinder users; export as PDF (basic text/PDF share already exists). Add a
-**print action** via `UIPrintInteractionController` with a recipe-formatted layout
-(title, meta, ingredients two-column, steps) — Paprika and Mela both have this;
-it's expected by users who cook from printed cards.
+RecipeFinder users; export as PDF (basic text/PDF share already exists).
+**Print action** shipped: `RecipePrintFormatter.html(for:)` generates an HTML
+layout (title, meta, two-column ingredients, numbered instructions, notes) and
+`present(for:)` bridges to `UIPrintInteractionController` with iPad popover
+support. "Print" appears in the detail view overflow menu alongside Edit and Share.
+Covered by `RecipePrintFormatterTests` (15 tests — structure, escaping, sections).
+*Remaining:* rich link sharing, import from other RecipeFinder users.
 
 ### 🔴 Auto recipe images (Unsplash) *(low priority)*
 Auto-assign images by recipe name for *manually created* recipes only — URL
