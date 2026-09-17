@@ -87,9 +87,7 @@ extension RecipeDetailView {
         ) {
             if let n = recipe.nutritionInfo {
                 VStack(alignment: .leading, spacing: AppTheme.spacing12) {
-                    Text("Per serving")
-                        .font(.caption)
-                        .adaptiveSecondaryForeground()
+                    NutritionMacroBar(nutrition: n)
 
                     nutritionLabelRow(label: "Calories", value: "\(n.calories)", unit: "kcal", hero: true)
 
@@ -519,6 +517,68 @@ extension RecipeDetailView {
             .padding(.bottom, AppTheme.spacing20)
             .transition(.move(edge: .bottom).combined(with: .opacity))
             .opacity(showAddedFeedback != nil ? 1 : 0)
+        }
+    }
+}
+
+// MARK: - Nutrition macro bar
+
+/// Horizontal proportional bar showing the calorie split between fat, carbs, and protein.
+/// Uses standard 4/4/9 kcal-per-gram coefficients so the segments reflect energy, not mass.
+private struct NutritionMacroBar: View {
+    let nutrition: NutritionInfo
+
+    private var fatKcal:    Double { nutrition.fat     * 9 }
+    private var carbsKcal:  Double { nutrition.carbs   * 4 }
+    private var proteinKcal: Double { nutrition.protein * 4 }
+    private var total: Double { max(fatKcal + carbsKcal + proteinKcal, 1) }
+
+    private var fatFraction:    Double { fatKcal    / total }
+    private var carbsFraction:  Double { carbsKcal  / total }
+    private var proteinFraction: Double { proteinKcal / total }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: AppTheme.spacing8) {
+            Text("Per serving")
+                .font(.caption)
+                .adaptiveSecondaryForeground()
+
+            GeometryReader { geo in
+                HStack(spacing: 2) {
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(Color.orange)
+                        .frame(width: max(geo.size.width * fatFraction - 2, 4))
+
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(Color.teal)
+                        .frame(width: max(geo.size.width * carbsFraction - 2, 4))
+
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(Color.blue)
+                        .frame(maxWidth: .infinity)
+                }
+                .clipShape(Capsule())
+            }
+            .frame(height: 10)
+
+            HStack(spacing: 0) {
+                macroLabel(name: "Fat", value: nutrition.fat, color: .orange)
+                Spacer()
+                macroLabel(name: "Carbs", value: nutrition.carbs, color: .teal)
+                Spacer()
+                macroLabel(name: "Protein", value: nutrition.protein, color: .blue)
+            }
+        }
+    }
+
+    private func macroLabel(name: String, value: Double, color: Color) -> some View {
+        HStack(spacing: AppTheme.spacing4) {
+            Circle()
+                .fill(color)
+                .frame(width: 7, height: 7)
+            Text("\(name) \(Int(value.rounded()))g")
+                .font(.caption2)
+                .adaptiveSecondaryForeground()
         }
     }
 }
