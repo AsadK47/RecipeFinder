@@ -14,28 +14,26 @@ struct ScreenTitleHeader<Trailing: View>: View {
     }
 
     var body: some View {
-        GeometryReader { geometry in
-            let gutter = max(AppTheme.height44, geometry.size.width * 0.15)
-            HStack(spacing: 0) {
-                Color.clear.frame(width: gutter)
+        ZStack {
+            Text(title)
+                .font(.largeTitle.weight(.bold))
+                .adaptiveForegroundColor()
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+                // Reserve space for the trailing button on both sides so the title
+                // stays centred — mirrors the old GeometryReader gutter approach
+                // without a fixed height that can clip Dynamic-Type-scaled text.
+                .padding(.horizontal, AppTheme.height44)
+                .frame(maxWidth: .infinity, alignment: .center)
 
-                Spacer(minLength: AppTheme.spacing8)
-
-                Text(title)
-                    .font(.system(size: min(34, geometry.size.width * 0.085), weight: .bold))
-                    .adaptiveForegroundColor()
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.7)
-
-                Spacer(minLength: AppTheme.spacing8)
-
+            HStack {
+                Spacer()
                 trailing
-                    .frame(width: gutter, alignment: .trailing)
             }
         }
-        .frame(height: AppTheme.height44)
         .padding(.horizontal, AppTheme.spacing20)
         .padding(.top, AppTheme.spacing16)
+        .padding(.bottom, AppTheme.spacing4)
     }
 }
 

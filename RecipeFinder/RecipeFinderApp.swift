@@ -42,10 +42,12 @@ struct RecipeFinderApp: App {
         if ProcessInfo.processInfo.arguments.contains("-skip-auth") {
             UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
             UserDefaults.standard.set(true, forKey: "hasSeenBiometricOnboarding")
-            // Set guest mode synchronously so AppRootView renders ContentView on the
-            // first frame — autoSignIn fires an async Task that arrives too late.
-            UserDefaults.standard.set(true, forKey: "guestModeEnabled")
-            AuthTestHelper.autoSignIn()
+            // Sign in synchronously so isAuthenticated = true on the first frame.
+            // This eliminates the async race that let UI tests land in guest mode
+            // and get redirected to sign-up instead of opening the requested flow.
+            MainActor.assumeIsolated {
+                AuthTestHelper.autoSignInSync()
+            }
         }
         #endif
     }
@@ -89,12 +91,16 @@ struct RecipeFinderApp: App {
         
         appearance.titleTextAttributes = [
             .foregroundColor: UIColor.white,
-            .font: UIFont.systemFont(ofSize: AppTheme.fontSize18, weight: .semibold)
+            .font: UIFontMetrics(forTextStyle: .headline).scaledFont(
+                for: UIFont.systemFont(ofSize: AppTheme.fontSize18, weight: .semibold)
+            )
         ]
-        
+
         appearance.largeTitleTextAttributes = [
             .foregroundColor: UIColor.white,
-            .font: UIFont.systemFont(ofSize: AppTheme.fontSize34, weight: .bold)
+            .font: UIFontMetrics(forTextStyle: .largeTitle).scaledFont(
+                for: UIFont.systemFont(ofSize: AppTheme.fontSize34, weight: .bold)
+            )
         ]
         
         appearance.backButtonAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.white]
@@ -290,5 +296,6 @@ struct AppRootView: View {
             .padding(.bottom, 88)
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier("guest.nudge.cta")
     }
 }

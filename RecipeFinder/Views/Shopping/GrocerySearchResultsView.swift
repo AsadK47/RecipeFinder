@@ -54,7 +54,7 @@ struct GrocerySearchResultsView: View {
             Spacer()
         }
         .font(.caption)
-        .foregroundStyle(.primary.opacity(0.75))
+        .adaptiveForegroundColor()
         .padding(.horizontal, AppTheme.spacing20)
     }
 
@@ -130,17 +130,20 @@ struct GrocerySearchResultsView: View {
         let tint: Color = isAdded ? .green : AppTheme.adaptiveSubtitle(for: colorScheme)
         let label = system.contains("cart") ? "Add to shopping list" : "Add to kitchen"
         return Button(action: action) {
+            // Fixed 44×44 image frame so the button's accessibility frame (derived
+            // from the label's content bounds) meets the minimum 44pt requirement.
             Image(systemName: isAdded ? "checkmark.circle.fill" : system)
                 .font(.body.weight(.semibold))
                 .foregroundStyle(tint)
-                .padding(8)
+                .frame(width: 44, height: 44)
                 .background(
                     RoundedRectangle(cornerRadius: 9)
                         .fill(tint.opacity(0.12))
+                        .padding(4)
                 )
-                .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .contentShape(Rectangle())
         .disabled(isAdded)
         .accessibilityLabel(isAdded ? "Already added" : label)
     }

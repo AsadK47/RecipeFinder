@@ -41,11 +41,11 @@ struct AuthenticationView: View {
                         .shadow(color: colorScheme == .dark ? .black.opacity(AppTheme.overlayLightOpacity) : .clear, radius: 10, x: 0, y: 5)
 
                     Text("RecipeFinder")
-                        .font(.system(size: AppTheme.fontSize42, weight: .bold, design: .rounded))
+                        .font(.system(.largeTitle, design: .rounded).weight(.bold))
                         .adaptiveForegroundColor()
 
                     Text("Discover, Create, Cook")
-                        .font(.system(size: AppTheme.fontSize18, weight: .medium))
+                        .font(.body.weight(.medium))
                         .adaptiveForegroundColor()
                 }
                 .padding(.bottom, AppTheme.spacing20)
@@ -67,12 +67,11 @@ struct AuthenticationView: View {
                                 Image(systemName: authManager.biometricType == "Face ID" ? "faceid" : "touchid")
                                     .font(.system(size: AppTheme.fontSize22))
                                 Text("Sign In with \(authManager.biometricType)")
-                                    .fontWeight(.bold)
-                                    .font(.system(size: AppTheme.fontSize17))
+                                    .font(.body.weight(.bold))
                             }
                             .adaptiveForegroundColor()
                             .frame(maxWidth: .infinity)
-                            .frame(height: AppTheme.height56)
+                            .frame(minHeight: AppTheme.height56)
                             .background(
                                 ZStack {
                                     RoundedRectangle(cornerRadius: AppTheme.cornerRadius14)
@@ -99,12 +98,13 @@ struct AuthenticationView: View {
                         HStack {
                             Image(systemName: "envelope.fill")
                                 .font(.system(size: AppTheme.fontSize20))
+                                .accessibilityHidden(true)
                             Text("Sign In with Email")
-                                .fontWeight(.semibold)
+                                .font(.body.weight(.semibold))
                         }
                         .adaptiveForegroundColor()
                         .frame(maxWidth: .infinity)
-                        .frame(height: AppTheme.height50)
+                        .frame(minHeight: AppTheme.height50)
                         .background(
                             RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
                                 .fill(Color.white.opacity(AppTheme.overlayLightOpacity))
@@ -134,8 +134,9 @@ struct AuthenticationView: View {
                         Text("Don't have an account? **Sign Up**")
                             .font(.subheadline)
                             .adaptiveForegroundColor()
-                            .frame(maxWidth: .infinity, minHeight: 44)
+                            .frame(maxWidth: .infinity)
                     }
+                    .frame(minHeight: 44)
                     .contentShape(Rectangle())
                     .padding(.top, AppTheme.spacing8)
                     .accessibilityIdentifier("auth.showSignUp")
@@ -143,9 +144,10 @@ struct AuthenticationView: View {
                     Button(action: { guestModeEnabled = true }) {
                         Text("Browse first")
                             .font(.footnote)
-                            .foregroundStyle(.secondary)
-                            .frame(maxWidth: .infinity, minHeight: 44)
+                            .adaptiveSecondaryForeground()
+                            .frame(maxWidth: .infinity)
                     }
+                    .frame(minHeight: 44)
                     .contentShape(Rectangle())
                     .padding(.top, AppTheme.spacing4)
                     .accessibilityLabel("Browse recipes without an account")
@@ -154,6 +156,7 @@ struct AuthenticationView: View {
                 .padding(.bottom, AppTheme.spacing50)
             }
         }
+        .toolbar(.hidden, for: .navigationBar)
         .sheet(isPresented: $showSignUp) {
             SignUpView(onSignUpSuccess: { email in
                 newUserEmail = email

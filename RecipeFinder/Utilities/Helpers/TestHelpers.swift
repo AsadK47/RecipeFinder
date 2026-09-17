@@ -65,17 +65,18 @@ struct AuthTestHelper {
         logger.debug("🗑️ Deleted user: \(email)")
     }
 
-    /// Silently signs in with the test account. Called when the `-skip-auth`
-    /// launch argument is present so the dev always lands on the main content
-    /// without touching the sign-in screen.
-    static func autoSignIn() {
-        Task { @MainActor in
-            do {
-                try await AuthenticationManager.shared.signIn(email: testEmail, password: testPassword)
-                logger.debug("✅ Debug auto-sign-in complete for: \(testEmail)")
-            } catch {
-                logger.error("❌ Debug auto-sign-in failed: \(error)")
-            }
+    /// Synchronous sign-in for the app's `-skip-auth` init path: sets
+    /// `isAuthenticated = true` before the first SwiftUI frame renders so UI
+    /// tests never race against the async `autoSignIn` Task.
+    @MainActor
+    static func autoSignInSync() {
+        do {
+            try AuthenticationManager.shared.signInSyncForUITesting(
+                email: testEmail, password: testPassword
+            )
+            logger.debug("✅ Debug sync auto-sign-in complete for: \(testEmail)")
+        } catch {
+            logger.error("❌ Debug sync auto-sign-in failed: \(error)")
         }
     }
 }

@@ -17,6 +17,18 @@ final class RecipeFinderImportUITests: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments += ["-ui-testing", "-skip-auth"]
         app.launch()
+        // autoSignIn() fires asynchronously; wait for it to settle so the app
+        // is fully authenticated (isGuest = false) before tests tap action elements.
+        // The nudge button disappears once authManager.isAuthenticated becomes true.
+        _ = app.tabBars.firstMatch.waitForExistence(timeout: 10)
+        let nudge = app.buttons["guest.nudge.cta"]
+        if nudge.exists {
+            let gone = XCTNSPredicateExpectation(
+                predicate: NSPredicate(format: "exists == false"),
+                object: nudge
+            )
+            wait(for: [gone], timeout: 10)
+        }
         return app
     }
 

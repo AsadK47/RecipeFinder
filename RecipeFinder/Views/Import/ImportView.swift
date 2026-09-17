@@ -35,6 +35,7 @@ struct ImportView: View {
                             .font(.system(size: AppTheme.fontSize20, weight: .semibold))
                             .foregroundStyle(.orange)
                             .frame(width: AppTheme.height44, alignment: .trailing)
+                            .accessibilityHidden(true)
                     }
 
                     ScrollView {
@@ -151,6 +152,7 @@ struct ImportView: View {
                         .font(.system(size: AppTheme.fontSize18, weight: .semibold))
                         .foregroundStyle(.white)
                 }
+                .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                     Text(title)
@@ -179,10 +181,10 @@ struct ImportView: View {
         HStack(spacing: AppTheme.spacing12) {
             Image(systemName: "square.and.arrow.up")
                 .font(.body)
-                .foregroundStyle(.secondary)
+                .adaptiveForegroundColor()
             Text("Or share a page from Safari, Instagram or TikTok to **RecipeFinder** — it imports on device, privately.")
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .adaptiveForegroundColor()
                 .fixedSize(horizontal: false, vertical: true)
             Spacer(minLength: 0)
         }

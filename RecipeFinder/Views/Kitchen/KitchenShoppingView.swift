@@ -67,6 +67,7 @@ struct KitchenShoppingView: View {
                         Button { isSearchFocused = false } label: {
                             Image(systemName: "keyboard.chevron.compact.down")
                                 .adaptiveSecondaryForeground()
+                                .frame(width: 44, height: 44)
                         }
                     }
                 }

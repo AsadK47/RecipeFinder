@@ -120,7 +120,25 @@ extension AuthenticationManager {
         }
         HapticManager.shared.success()
     }
-    
+
+    #if DEBUG
+    /// Synchronous sign-in for UI tests: bypasses the async `completeSignIn` so
+    /// `isAuthenticated` is true before the first SwiftUI frame renders, eliminating
+    /// the race between `autoSignIn()` and the test's first tap.
+    func signInSyncForUITesting(email: String, password: String) throws {
+        try validateSignInInput(email: email, password: password)
+        let userInfo = try verifyAndRetrieveUser(email: email, password: password)
+        let user = createUser(from: userInfo, email: email)
+        try saveUser(user)
+        setAuthState(isAuthenticated: true, user: user)
+        UserDefaults.standard.set(true, forKey: isAuthenticatedKey)
+        UserDefaults.standard.set(email, forKey: currentEmailKey)
+        updateLastActiveTimestamp()
+        UserScopedStorage.shared.currentUserId = user.id
+        reloadAllManagers()
+    }
+    #endif
+
     func signUp(email: String, password: String, fullName: String) async throws {
         guard Validator.isValidEmail(email) else {
             throw AppError.invalidEmail
