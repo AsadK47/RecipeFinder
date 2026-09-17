@@ -373,7 +373,7 @@ struct RecurringMealPlanTests {
         let fourteenDaysAgo = cal.date(byAdding: .day, value: -14, to: today)!
         let sevenDaysAgo    = cal.date(byAdding: .day, value: -7,  to: today)!
 
-        var template = makePlan(recipeName: "Weekly Pasta", date: fourteenDaysAgo, mealTime: .dinner)
+        let template = makePlan(recipeName: "Weekly Pasta", date: fourteenDaysAgo, mealTime: .dinner)
         sut.addMealPlan(template)
         sut.toggleRecurring(template)
 
@@ -392,7 +392,7 @@ struct RecurringMealPlanTests {
         let sevenDaysAgo = cal.date(byAdding: .day, value: -7, to: today)!
 
         // Recurring template from last week
-        var template = makePlan(recipeName: "Template", date: sevenDaysAgo, mealTime: .lunch)
+        let template = makePlan(recipeName: "Template", date: sevenDaysAgo, mealTime: .lunch)
         sut.addMealPlan(template)
         sut.toggleRecurring(template)
 
@@ -412,7 +412,7 @@ struct RecurringMealPlanTests {
         let fourteenDaysAgo = cal.date(byAdding: .day, value: -14, to: today)!
         let sevenDaysAgo    = cal.date(byAdding: .day, value: -7,  to: today)!
 
-        var template = makePlan(recipeName: "Pasta", date: fourteenDaysAgo, mealTime: .dinner)
+        let template = makePlan(recipeName: "Pasta", date: fourteenDaysAgo, mealTime: .dinner)
         sut.addMealPlan(template)
         sut.toggleRecurring(template)
 
@@ -439,7 +439,7 @@ struct RecurringMealPlanTests {
         let sut = makeManager()
 
         let fourteenDaysAgo = cal.date(byAdding: .day, value: -14, to: Date())!
-        var recurring = makePlan(recipeName: "Recurring", date: fourteenDaysAgo, mealTime: .dinner)
+        let recurring = makePlan(recipeName: "Recurring", date: fourteenDaysAgo, mealTime: .dinner)
         sut.addMealPlan(recurring)
         sut.toggleRecurring(recurring)
 

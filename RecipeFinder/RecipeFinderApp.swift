@@ -208,6 +208,18 @@ struct AppRootView: View {
     }
 
     private func evaluateOnboardingFlow() {
+        // UI tests use -ui-testing to bypass auth state; skip onboarding so the
+        // tab bar is immediately reachable. The launch hooks write to bare
+        // UserDefaults keys, but UserScopedStorage reads user-prefixed keys, so
+        // the scoped values are never set during a test run — which would
+        // otherwise trigger onboarding and hide the tab bar.
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-ui-testing") {
+            activeOnboarding = nil
+            return
+        }
+        #endif
+
         let hasCompletedOnboarding = UserScopedStorage.shared.bool(forKey: "hasCompletedOnboarding")
         let hasSeenBiometricOnboarding = UserScopedStorage.shared.bool(forKey: "hasSeenBiometricOnboarding")
 

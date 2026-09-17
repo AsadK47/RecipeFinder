@@ -26,4 +26,20 @@ struct ShoppingListModel: Identifiable, Codable, Hashable {
         self.preferredStore = preferredStore
         self.isRecurring = isRecurring
     }
+
+    // Custom decoder so JSON written before isRecurring / isCompleted existed
+    // still decodes cleanly with safe defaults rather than throwing .keyNotFound.
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id             = try c.decode(UUID.self,   forKey: .id)
+        name           = try c.decode(String.self, forKey: .name)
+        quantity       = try c.decode(Int.self,    forKey: .quantity)
+        unit           = try c.decode(String.self, forKey: .unit)
+        isChecked      = try c.decode(Bool.self,   forKey: .isChecked)
+        isCompleted    = (try? c.decodeIfPresent(Bool.self, forKey: .isCompleted)) ?? isChecked
+        category       = try c.decode(String.self, forKey: .category)
+        dateAdded      = try c.decode(Date.self,   forKey: .dateAdded)
+        preferredStore =  try? c.decodeIfPresent(String.self, forKey: .preferredStore)
+        isRecurring    = (try? c.decodeIfPresent(Bool.self, forKey: .isRecurring)) ?? false
+    }
 }

@@ -133,7 +133,8 @@ import Foundation
     @Test func htmlEscapesSpecialCharsInIngredients() {
         let ingredient = Ingredient(baseQuantity: 1, unit: "", name: "A & B sauce")
         let html = RecipePrintFormatter.html(for: recipe(ingredients: [ingredient]))
-        #expect(html.contains("A &amp; B sauce"))
+        // Ingredient.name returns _name.capitalized, so "A & B sauce" → "A & B Sauce"
+        #expect(html.contains("A &amp; B Sauce"))
     }
 
     @Test func htmlEscapesSpecialCharsInInstructions() {
