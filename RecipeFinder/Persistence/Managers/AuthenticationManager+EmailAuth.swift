@@ -136,6 +136,12 @@ extension AuthenticationManager {
         updateLastActiveTimestamp()
         UserScopedStorage.shared.currentUserId = user.id
         reloadAllManagers()
+
+        let userKey = "user_\(user.id)_initialized"
+        if !UserDefaults.standard.bool(forKey: userKey) {
+            PersistenceController.shared.populateDatabase()
+            UserDefaults.standard.set(true, forKey: userKey)
+        }
     }
     #endif
 
