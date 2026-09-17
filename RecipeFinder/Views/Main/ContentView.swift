@@ -53,6 +53,7 @@ struct ContentView: View {
             if recipes.isEmpty {
                 loadRecipes()
             }
+            NotificationManager.shared.requestPermission { _ in }
         }
         .onChange(of: authManager.isAuthenticated) { _, isAuthenticated in
             if isAuthenticated {
@@ -64,6 +65,18 @@ struct ContentView: View {
         .onReceive(NotificationCenter.default.publisher(for: .userScopeDidChange)) { _ in
             guard authManager.isAuthenticated else { return }
             loadRecipes()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("OpenRecipes"))) { _ in
+            selectedTab = 0
+            sidebarSelection = .recipes
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("OpenGroceries"))) { _ in
+            selectedTab = 1
+            sidebarSelection = .groceries
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("OpenMealPlan"))) { _ in
+            selectedTab = 3
+            sidebarSelection = .planning
         }
         .onChange(of: badgeManager.pendingCelebration) { _, newValue in
             if newValue != nil { showBadgeSheet = true }

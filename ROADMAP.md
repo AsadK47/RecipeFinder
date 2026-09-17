@@ -173,7 +173,7 @@ chicken tikka masala, avocado toast, etc.) with stable fixed UUIDs (idempotent).
 Guest users see them before sign-up; newly signed-in users get them seeded
 once into their store.
 
-### 🟡 Engagement surfaces (currently unused APIs)
+### 🟢 Engagement surfaces
 - **Badges** ✅ `BadgeEarnedSheet` is wired in `ContentView` — fires on any
   `pendingCelebration`; confetti + sheet on unlock.
 - **StoreKit `RequestReviewAction`** ✅ triggered after 3rd cook of any recipe
@@ -228,16 +228,19 @@ to `RecipeFilterCriteria`; wired through `FilterSheet` sort picker and
 `RecipeSearchView`. Ingredient-match ranking takes precedence when "Can Make Now"
 is active. Fully unit-tested in `RecipeFilterCriteriaTests`.
 
-### 🟡 Pantry expiry & restock — surface what's already tracked
+### 🟢 Pantry expiry & restock — surface what's already tracked
 *Problem:* `KitchenInventoryModel` already tracks `expiryDate` / `isExpired` /
 `isExpiringSoon` / `needsRestock`, and the manager exposes `expiredItems()` /
 `expiringSoonItems()` / `lowStockItems()` — but none of it is surfaced, so it may
 as well not exist.
 *What we did:* `PantryAlertsSectionContent` surfaces expired / expiring-soon /
 low-stock items at the top of the kitchen list with colour-coded icons and
-swipe-to-remove; wired into `KitchenSectionsView`.
-*Remaining:* expiry & restock notifications; barcode scanning via Vision
-(`VNDetectBarcodesRequest`).
+swipe-to-remove; wired into `KitchenSectionsView`. `NotificationManager` schedules
+a `UNCalendarNotificationTrigger` at 6 PM the evening before each item's expiry
+(identifier `expiry-<UUID>`); wired into `KitchenInventoryManager` on add/update/
+remove. Permission requested at first app launch via `ContentView.onAppear`; tapping
+the notification deep-links to the Groceries tab via `NSNotificationCenter`.
+*Remaining:* barcode scanning via Vision (`VNDetectBarcodesRequest`).
 
 ### 🟢 Cook history & recipe rating
 *Problem:* the two most useful signals for "should I cook this again?" — when did
@@ -322,11 +325,10 @@ instead of embedding it as freetext in notes; cuisine is a first-class filter in
 wizard step 6 has a cuisine text field with 12 tap-to-select suggestion chips;
 edit sheet pre-populates cuisine. Full round-trip tested.
 
-### 🟡 Cooking Experience
-`CookingModeView` ships (step navigation, mark complete). Remaining to reach
-Crouton-parity: wire `RecipeTimerManager` per step so tapping an ingredient or
-instruction starts its timer inline, `UIApplication.shared.isIdleTimerDisabled`
-to keep the screen awake during cooking, and bigger greasy-hands tap targets.
+### 🟢 Cooking Experience
+`CookingModeView` ships: step navigation, mark complete, `RecipeTimerManager`
+per-step timer (tap ingredient/instruction to start), `isIdleTimerDisabled`
+keeps the screen awake, and 56 pt minimum-height tap targets for greasy hands.
 - **Timer Live Activity + Widgets** *(needs a Widget Extension target)* —
   running timer on Lock Screen / Dynamic Island; today's-meal-plan, shopping
   -list quick-view, and random-recipe widgets. Consider AlarmKit for cook timers
@@ -520,6 +522,7 @@ Legend: ✅ tested · ⚠️ unit/model only · ❌ no test
 | Inventory CRUD | ✅ | KitchenInventoryManagerTests |
 | Pantry alerts (low stock / expiring) | ✅ | PantryAlertsCategorisationTests |
 | Match recipes to pantry | ✅ | KitchenRecipeMatcherTests |
+| Pantry-aware meal suggestions | ✅ | PantryExpirySuggestionsTests |
 
 ### Badges
 

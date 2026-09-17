@@ -307,12 +307,19 @@ extension NotificationManager {
                 userInfo: userInfo
             )
             
+        case "expiry":
+            NotificationCenter.default.post(
+                name: NSNotification.Name("OpenGroceries"),
+                object: nil,
+                userInfo: userInfo
+            )
+
         case "daily-reminder":
             NotificationCenter.default.post(
                 name: NSNotification.Name("OpenRecipes"),
                 object: nil
             )
-            
+
         default:
             break
         }
