@@ -380,6 +380,9 @@
 		F3FF62D6305BE4550008B191 /* PantryExpirySuggestions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FF62D5305BE4550008B191 /* PantryExpirySuggestions.swift */; };
 		F3FF62D8305BE4610008B191 /* ExpiryRecipeSuggestionsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FF62D7305BE4610008B191 /* ExpiryRecipeSuggestionsSection.swift */; };
 		F3FF62DA305BE4760008B191 /* PantryExpirySuggestionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FF62D9305BE4760008B191 /* PantryExpirySuggestionsTests.swift */; };
+		F3FF62DC305BF9D40008B191 /* SmartCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FF62DB305BF9D40008B191 /* SmartCollection.swift */; };
+		F3FF62DE305BF9E00008B191 /* SmartCollectionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FF62DD305BF9E00008B191 /* SmartCollectionDetailView.swift */; };
+		F3FF62E0305BF9F40008B191 /* SmartCollectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FF62DF305BF9F40008B191 /* SmartCollectionTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -795,6 +798,9 @@
 		F3FF62D5305BE4550008B191 /* PantryExpirySuggestions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryExpirySuggestions.swift; sourceTree = "<group>"; };
 		F3FF62D7305BE4610008B191 /* ExpiryRecipeSuggestionsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpiryRecipeSuggestionsSection.swift; sourceTree = "<group>"; };
 		F3FF62D9305BE4760008B191 /* PantryExpirySuggestionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryExpirySuggestionsTests.swift; sourceTree = "<group>"; };
+		F3FF62DB305BF9D40008B191 /* SmartCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartCollection.swift; sourceTree = "<group>"; };
+		F3FF62DD305BF9E00008B191 /* SmartCollectionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartCollectionDetailView.swift; sourceTree = "<group>"; };
+		F3FF62DF305BF9F40008B191 /* SmartCollectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartCollectionTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -1026,6 +1032,7 @@
 				F3E9D2A130515C08008BF231 /* TimeExtractorTests.swift */,
 				F3E9D2A330515C14008BF231 /* RecipeIngredientMatchingTests.swift */,
 				F3D4055B305643B40076834D /* PantryAlertsCategorisationTests.swift */,
+				F3FF62DF305BF9F40008B191 /* SmartCollectionTests.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1692,6 +1699,7 @@
 			isa = PBXGroup;
 			children = (
 				F3B837D23055F1130003AEF8 /* RecipeCollection.swift */,
+				F3FF62DB305BF9D40008B191 /* SmartCollection.swift */,
 			);
 			path = Collection;
 			sourceTree = "<group>";
@@ -1705,6 +1713,7 @@
 				F3D40546305615580076834D /* RecipePickerForCollectionSheet.swift */,
 				F3D405653058609C0076834D /* CollectionFormSheets.swift */,
 				F3D40567305860C20076834D /* CollectionCard.swift */,
+				F3FF62DD305BF9E00008B191 /* SmartCollectionDetailView.swift */,
 			);
 			path = Collections;
 			sourceTree = "<group>";
@@ -2108,6 +2117,7 @@
 				F3E9D17C30444F93008BF231 /* IngredientEditSheet.swift in Sources */,
 				9EE5AADB2D08FCBE00C1B736 /* ContentView.swift in Sources */,
 				9E97EEAA3007963C00D35FAB /* AboutView.swift in Sources */,
+				F3FF62DE305BF9E00008B191 /* SmartCollectionDetailView.swift in Sources */,
 				9E51C39A2EB3E9C20064B917 /* AccountView.swift in Sources */,
 				F3E9D1BE30457E9B008BF231 /* BiometricSetupComponents.swift in Sources */,
 				F3E9D268304CA252008BF231 /* IngredientWordMatcher.swift in Sources */,
@@ -2195,6 +2205,7 @@
 				F3E9D24530483555008BF231 /* SharedTextImporter.swift in Sources */,
 				9EF757652FCF3D900012B2B7 /* IngredientAutocompleteEngine.swift in Sources */,
 				F3E9D12330439F08008BF231 /* WizardComponents.swift in Sources */,
+				F3FF62DC305BF9D40008B191 /* SmartCollection.swift in Sources */,
 				F3D40554305635C00076834D /* PantryAlertsSectionContent.swift in Sources */,
 				9E48AD9E2F0FDDC300CF840F /* AppLogger.swift in Sources */,
 				F3E9D276304D7CC5008BF231 /* RecipeImageTextRecognizer.swift in Sources */,
@@ -2370,6 +2381,7 @@
 				F3E9D24F30487E0A008BF231 /* OnDeviceRecipeImportStatusTests.swift in Sources */,
 				9E97EECD300D0E0600D35FAB /* EditableStepTests.swift in Sources */,
 				F3E9D17630444F5E008BF231 /* RecipeNotesFormatterTests.swift in Sources */,
+				F3FF62E0305BF9F40008B191 /* SmartCollectionTests.swift in Sources */,
 				F36AED653043342300935A3C /* PerformanceBudgetTests.swift in Sources */,
 				9E6C2C732FB4C8450083A08B /* ShoppingListManagerTests.swift in Sources */,
 				9E6C2C742FB4C8450083A08B /* KitchenInventoryManagerTests.swift in Sources */,

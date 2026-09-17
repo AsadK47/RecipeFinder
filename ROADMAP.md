@@ -309,8 +309,12 @@ recipes, batch-add to shopping list) and custom tags on recipes (add in wizard
 and edit flow, filter by tag, tags survive the full wizard→persistence round-
 trip) all ship. Collections are accessible inline from the Recipes tab and from
 recipe detail. Filter criteria supports both tag and collection filtering.
-*Remaining:* smart/auto-populated collections by rules; a dedicated Collections
-tab if the library grows large enough to warrant one.
+Smart collections now ship: `SmartCollection` enum (6 rules — Quick Meals ≤30 min,
+Easy Recipes, Vegetarian, Highly Rated ≥4★, Recently Cooked ≤30 days, 5 Ingredients
+or Less) auto-populates at read time; `CollectionsInlineView` shows them above
+user-created collections with a sparkle badge; tapping opens `SmartCollectionDetailView`
+(read-only, same recipe-row layout). Covered by `SmartCollectionTests` (20 tests).
+*Remaining:* a dedicated Collections tab if the library grows large enough.
 
 ### 🟢 Cuisine tagging
 *Problem:* category (e.g. "Main", "Dessert") describes meal position, not

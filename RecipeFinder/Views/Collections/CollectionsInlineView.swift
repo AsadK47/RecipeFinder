@@ -9,6 +9,8 @@ struct CollectionsInlineView: View {
     @State private var showNewCollection = false
     @State private var collectionToEdit: RecipeCollection?
     @State private var collectionToDelete: RecipeCollection?
+    /// Only smart collections with at least one matching recipe.
+    @State private var visibleSmartCollections: [(SmartCollection, Int)] = []
 
     private let columns = [
         GridItem(.flexible(), spacing: AppTheme.spacing12),
@@ -17,12 +19,14 @@ struct CollectionsInlineView: View {
 
     var body: some View {
         Group {
-            if manager.collections.isEmpty {
+            if visibleSmartCollections.isEmpty && manager.collections.isEmpty {
                 emptyState
             } else {
                 collectionGrid
             }
         }
+        .onAppear { updateSmartCollections() }
+        .onChange(of: recipes.count) { _, _ in updateSmartCollections() }
         .sheet(isPresented: $showNewCollection) {
             NewCollectionSheet(manager: manager)
         }
@@ -46,6 +50,18 @@ struct CollectionsInlineView: View {
     private var collectionGrid: some View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: AppTheme.spacing12) {
+
+                // Smart collections first — auto-populated, read-only
+                ForEach(visibleSmartCollections, id: \.0.id) { (sc, count) in
+                    NavigationLink {
+                        SmartCollectionDetailView(smartCollection: sc, recipes: recipes)
+                    } label: {
+                        SmartCollectionCard(collection: sc, recipeCount: count)
+                    }
+                    .buttonStyle(.plain)
+                }
+
+                // User-created collections
                 ForEach(manager.collections) { collection in
                     NavigationLink {
                         CollectionDetailView(collection: collection, recipes: $recipes)
@@ -126,5 +142,54 @@ struct CollectionsInlineView: View {
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private func updateSmartCollections() {
+        visibleSmartCollections = SmartCollection.allCases.compactMap { sc in
+            let count = sc.recipes(from: recipes).count
+            return count > 0 ? (sc, count) : nil
+        }
+    }
+}
+
+// MARK: - Smart collection card
+
+private struct SmartCollectionCard: View {
+    let collection: SmartCollection
+    let recipeCount: Int
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: AppTheme.spacing8) {
+            HStack {
+                Circle()
+                    .fill(collection.color)
+                    .frame(width: 28, height: 28)
+                    .overlay(
+                        Image(systemName: collection.systemImage)
+                            .font(.caption2)
+                            .foregroundColor(.white)
+                    )
+                Spacer()
+                Image(systemName: "sparkles")
+                    .font(.system(size: AppTheme.fontSize8, weight: .semibold))
+                    .foregroundColor(collection.color.opacity(0.7))
+            }
+
+            Text(collection.name)
+                .font(.subheadline.weight(.semibold))
+                .lineLimit(2)
+                .adaptiveForegroundColor()
+
+            Text(recipeCount == 1 ? "1 recipe" : "\(recipeCount) recipes")
+                .font(.caption)
+                .adaptiveSecondaryForeground()
+        }
+        .padding(AppTheme.spacing12)
+        .frame(maxWidth: .infinity, minHeight: 80, alignment: .topLeading)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
+        .overlay(
+            RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                .strokeBorder(collection.color.opacity(0.3), lineWidth: 1)
+        )
     }
 }
