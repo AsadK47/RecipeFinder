@@ -9,8 +9,17 @@ struct MealPlanModel: Identifiable, Codable, Hashable {
     var servings: Int
     var notes: String?
     var isCompleted: Bool
+    var isRecurring: Bool
     var createdDate: Date
-    
+
+    // Explicit CodingKeys so the synthesised encode(to:) includes isRecurring,
+    // and the hand-written init(from:) can decode it with a default of false
+    // for JSON written before this field existed.
+    private enum CodingKeys: String, CodingKey {
+        case id, recipeId, recipeName, date, mealTime, servings, notes,
+             isCompleted, isRecurring, createdDate
+    }
+
     init(
         id: UUID = UUID(),
         recipeId: UUID,
@@ -20,6 +29,7 @@ struct MealPlanModel: Identifiable, Codable, Hashable {
         servings: Int = 4,
         notes: String? = nil,
         isCompleted: Bool = false,
+        isRecurring: Bool = false,
         createdDate: Date = Date()
     ) {
         self.id = id
@@ -30,7 +40,22 @@ struct MealPlanModel: Identifiable, Codable, Hashable {
         self.servings = servings
         self.notes = notes
         self.isCompleted = isCompleted
+        self.isRecurring = isRecurring
         self.createdDate = createdDate
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id          = try c.decode(UUID.self,     forKey: .id)
+        recipeId    = try c.decode(UUID.self,     forKey: .recipeId)
+        recipeName  = try c.decode(String.self,   forKey: .recipeName)
+        date        = try c.decode(Date.self,     forKey: .date)
+        mealTime    = try c.decode(MealTime.self, forKey: .mealTime)
+        servings    = try c.decode(Int.self,      forKey: .servings)
+        notes       = try c.decodeIfPresent(String.self, forKey: .notes)
+        isCompleted = try c.decode(Bool.self,     forKey: .isCompleted)
+        isRecurring = try c.decodeIfPresent(Bool.self, forKey: .isRecurring) ?? false
+        createdDate = try c.decode(Date.self,     forKey: .createdDate)
     }
     
     var normalizedDate: Date {

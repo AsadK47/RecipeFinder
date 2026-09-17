@@ -4,6 +4,7 @@ import Kingfisher
 struct MealTimeCard: View {
     let mealTime: MealTime
     let recipe: RecipeModel?
+    var isRecurring: Bool = false
     let cardStyle: CardStyle
     let colorScheme: ColorScheme
     var onRemove: (() -> Void)? = nil
@@ -37,6 +38,11 @@ struct MealTimeCard: View {
                         Text(recipe.name)
                             .font(.caption)
                             .lineLimit(1)
+                        if isRecurring {
+                            Image(systemName: "repeat")
+                                .font(.system(size: 9, weight: .semibold))
+                                .foregroundColor(.orange)
+                        }
                     }
                     .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
                 } else {

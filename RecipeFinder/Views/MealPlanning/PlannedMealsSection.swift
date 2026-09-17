@@ -10,8 +10,10 @@ struct PlannedMealsSection: View {
     let colorScheme: ColorScheme
     let selectedTheme: AppTheme.ThemeType
     let recipeFor: (MealTime) -> RecipeModel?
+    let mealPlanFor: (MealTime) -> MealPlanModel?
     let onSelectMealTime: (MealTime) -> Void
     let onRemove: (MealTime) -> Void
+    let onToggleRecurring: (MealTime) -> Void
     let onAddAnother: () -> Void
 
     @State private var dragging: MealTime?
@@ -50,12 +52,24 @@ struct PlannedMealsSection: View {
                 MealTimeCard(
                     mealTime: mealTime,
                     recipe: recipeFor(mealTime),
+                    isRecurring: mealPlanFor(mealTime)?.isRecurring ?? false,
                     cardStyle: cardStyle,
                     colorScheme: colorScheme,
                     onRemove: { onRemove(mealTime) }
                 )
             }
             .buttonStyle(.plain)
+            .contextMenu {
+                if recipeFor(mealTime) != nil {
+                    let recurring = mealPlanFor(mealTime)?.isRecurring ?? false
+                    Button(
+                        recurring ? "Stop Repeating" : "Repeat Weekly",
+                        systemImage: recurring ? "repeat.1" : "repeat"
+                    ) {
+                        onToggleRecurring(mealTime)
+                    }
+                }
+            }
 
             // ≡ grip handle lives outside the card so it never clips against the card boundary.
             // Only this handle initiates the drag — tapping the card still changes the recipe.

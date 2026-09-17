@@ -311,3 +311,165 @@ struct SortedOrderedMealTimesTests {
         #expect(result.isEmpty)
     }
 }
+
+// MARK: - Recurring meal plans
+
+@MainActor
+@Suite("Recurring meal plans")
+struct RecurringMealPlanTests {
+
+    private func makeManager() -> MealPlanningManager {
+        MealPlanningManager(storage: UserScopedStorage(
+            userDefaults: UserDefaults(suiteName: UUID().uuidString)!
+        ))
+    }
+
+    private func makePlan(
+        recipeName: String = "Test",
+        date: Date = Date(),
+        mealTime: MealTime = .dinner,
+        isRecurring: Bool = false
+    ) -> MealPlanModel {
+        MealPlanModel(recipeId: UUID(), recipeName: recipeName, date: date, mealTime: mealTime, isRecurring: isRecurring)
+    }
+
+    private func weekStart(containing date: Date) -> Date {
+        Calendar.current.dateInterval(of: .weekOfYear, for: date)?.start ?? date
+    }
+
+    // MARK: toggleRecurring
+
+    @Test func toggleRecurring_setsFlag() {
+        let sut = makeManager()
+        let plan = makePlan()
+        sut.addMealPlan(plan)
+        sut.toggleRecurring(plan)
+        #expect(sut.mealPlan(for: plan.date, mealTime: plan.mealTime)?.isRecurring == true)
+    }
+
+    @Test func toggleRecurring_clearsFlag() {
+        let sut = makeManager()
+        let plan = makePlan(isRecurring: true)
+        sut.addMealPlan(plan)
+        sut.toggleRecurring(plan)
+        #expect(sut.mealPlan(for: plan.date, mealTime: plan.mealTime)?.isRecurring == false)
+    }
+
+    @Test func toggleRecurring_noopsForUnknownId() {
+        let sut = makeManager()
+        let notAdded = makePlan()
+        sut.toggleRecurring(notAdded)  // should not crash
+        #expect(sut.mealPlans.isEmpty)
+    }
+
+    // MARK: propagateRecurring
+
+    @Test func propagateRecurring_createsEntryForMatchingWeekday() {
+        let cal = Calendar.current
+        let sut = makeManager()
+
+        // 14 days ago and 7 days ago share the same weekday
+        let today = cal.startOfDay(for: Date())
+        let fourteenDaysAgo = cal.date(byAdding: .day, value: -14, to: today)!
+        let sevenDaysAgo    = cal.date(byAdding: .day, value: -7,  to: today)!
+
+        var template = makePlan(recipeName: "Weekly Pasta", date: fourteenDaysAgo, mealTime: .dinner)
+        sut.addMealPlan(template)
+        sut.toggleRecurring(template)
+
+        sut.propagateRecurring(toWeekStarting: weekStart(containing: sevenDaysAgo))
+
+        let projected = sut.mealPlan(for: sevenDaysAgo, mealTime: .dinner)
+        #expect(projected?.recipeName == "Weekly Pasta")
+        #expect(projected?.isRecurring == true)
+    }
+
+    @Test func propagateRecurring_doesNotDuplicateExistingSlot() {
+        let cal = Calendar.current
+        let sut = makeManager()
+
+        let today       = cal.startOfDay(for: Date())
+        let sevenDaysAgo = cal.date(byAdding: .day, value: -7, to: today)!
+
+        // Recurring template from last week
+        var template = makePlan(recipeName: "Template", date: sevenDaysAgo, mealTime: .lunch)
+        sut.addMealPlan(template)
+        sut.toggleRecurring(template)
+
+        // Concrete override already in this week's slot
+        sut.addMealPlan(makePlan(recipeName: "Override", date: today, mealTime: .lunch))
+
+        sut.propagateRecurring(toWeekStarting: weekStart(containing: today))
+
+        #expect(sut.mealPlan(for: today, mealTime: .lunch)?.recipeName == "Override")
+    }
+
+    @Test func propagateRecurring_isIdempotent() {
+        let cal = Calendar.current
+        let sut = makeManager()
+
+        let today        = cal.startOfDay(for: Date())
+        let fourteenDaysAgo = cal.date(byAdding: .day, value: -14, to: today)!
+        let sevenDaysAgo    = cal.date(byAdding: .day, value: -7,  to: today)!
+
+        var template = makePlan(recipeName: "Pasta", date: fourteenDaysAgo, mealTime: .dinner)
+        sut.addMealPlan(template)
+        sut.toggleRecurring(template)
+
+        let start = weekStart(containing: sevenDaysAgo)
+        sut.propagateRecurring(toWeekStarting: start)
+        sut.propagateRecurring(toWeekStarting: start)
+
+        let count = sut.mealPlans.filter {
+            cal.isDate($0.date, inSameDayAs: sevenDaysAgo) && $0.mealTime == .dinner
+        }.count
+        #expect(count == 1)
+    }
+
+    @Test func propagateRecurring_doesNothingWithNoTemplates() {
+        let sut = makeManager()
+        sut.propagateRecurring(toWeekStarting: Date())
+        #expect(sut.mealPlans.isEmpty)
+    }
+
+    // MARK: clearOldMealPlans
+
+    @Test func clearOldMealPlans_preservesRecurringEntries() {
+        let cal = Calendar.current
+        let sut = makeManager()
+
+        let fourteenDaysAgo = cal.date(byAdding: .day, value: -14, to: Date())!
+        var recurring = makePlan(recipeName: "Recurring", date: fourteenDaysAgo, mealTime: .dinner)
+        sut.addMealPlan(recurring)
+        sut.toggleRecurring(recurring)
+
+        sut.addMealPlan(makePlan(recipeName: "Old One-Off", date: fourteenDaysAgo, mealTime: .lunch))
+
+        sut.clearOldMealPlans()
+
+        #expect(sut.mealPlans.contains { $0.recipeName == "Recurring" })
+        #expect(!sut.mealPlans.contains { $0.recipeName == "Old One-Off" })
+    }
+
+    // MARK: Codable round-trip
+
+    @Test func isRecurring_roundTripsJSON() throws {
+        let plan = makePlan(isRecurring: true)
+        let data = try JSONEncoder().encode(plan)
+        let decoded = try JSONDecoder().decode(MealPlanModel.self, from: data)
+        #expect(decoded.isRecurring == true)
+        #expect(decoded.id == plan.id)
+    }
+
+    @Test func isRecurring_defaultsFalseForLegacyJSON() throws {
+        // Simulates JSON written before the isRecurring field was added
+        let legacyJSON = """
+        {"id":"00000000-0000-0000-0000-000000000001",
+         "recipeId":"00000000-0000-0000-0000-000000000002",
+         "recipeName":"Pasta","date":1000000,"mealTime":"Dinner","servings":4,
+         "isCompleted":false,"createdDate":999999}
+        """.data(using: .utf8)!
+        let decoded = try JSONDecoder().decode(MealPlanModel.self, from: legacyJSON)
+        #expect(decoded.isRecurring == false)
+    }
+}

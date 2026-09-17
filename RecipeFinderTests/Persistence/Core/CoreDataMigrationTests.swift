@@ -14,6 +14,7 @@ import Foundation
 /// so no shipped store is affected. This test pins the supported v6→current range.
 @MainActor
 @Suite struct CoreDataMigrationTests {
+    private typealias RecipeKey = PersistenceController.RecipeKey
 
     @Test func modernStoreMigratesToCurrentModelWithoutDataLoss() throws {
         let momd = try #require(Bundle(for: PersistenceController.self).url(forResource: "RecipeModel", withExtension: "momd"))

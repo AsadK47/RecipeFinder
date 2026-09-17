@@ -68,6 +68,10 @@ struct MealPlanningView: View {
         .toolbarColorScheme(.dark, for: .navigationBar)
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: selectedMealTimes)
         .onAppear {
+            if let start = currentWeekStart {
+                mealPlanningManager.propagateRecurring(toWeekStarting: start)
+            }
+            updateSelectedMealTimes(for: selectedDate)
             orderedMealTimes = MealPlanningManager.sortedOrderedMealTimes(
                 existing: [], selected: selectedMealTimes)
         }
@@ -147,6 +151,7 @@ struct MealPlanningView: View {
             colorScheme: colorScheme,
             selectedTheme: selectedTheme,
             recipeFor: { getRecipe(for: selectedDate, mealTime: $0) },
+            mealPlanFor: { mealPlanningManager.mealPlan(for: selectedDate, mealTime: $0) },
             onSelectMealTime: { mealTime in
                 currentMealTime = mealTime
                 showRecipeSelector = true
@@ -157,6 +162,11 @@ struct MealPlanningView: View {
                     removeMealPlan(for: selectedDate, mealTime: mealTime)
                 }
                 HapticManager.shared.success()
+            },
+            onToggleRecurring: { mealTime in
+                if let plan = mealPlanningManager.mealPlan(for: selectedDate, mealTime: mealTime) {
+                    mealPlanningManager.toggleRecurring(plan)
+                }
             },
             onAddAnother: {
                 showMealTimeSelector = true
@@ -294,12 +304,21 @@ struct MealPlanningView: View {
 
     private func previousWeek() {
         selectedDate = Calendar.current.date(byAdding: .weekOfYear, value: -1, to: selectedDate) ?? selectedDate
+        propagateRecurringForCurrentWeek()
+        updateSelectedMealTimes(for: selectedDate)
         HapticManager.shared.light()
     }
 
     private func nextWeek() {
         selectedDate = Calendar.current.date(byAdding: .weekOfYear, value: 1, to: selectedDate) ?? selectedDate
+        propagateRecurringForCurrentWeek()
+        updateSelectedMealTimes(for: selectedDate)
         HapticManager.shared.light()
+    }
+
+    private func propagateRecurringForCurrentWeek() {
+        guard let start = mealCalendar.weekRange(containing: selectedDate)?.start else { return }
+        mealPlanningManager.propagateRecurring(toWeekStarting: start)
     }
 
     // MARK: - Derived date values

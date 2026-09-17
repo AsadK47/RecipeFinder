@@ -80,12 +80,74 @@ final class MealPlanningManager: ObservableObject {
             saveMealPlans()
         }
     }
-    
+
+    func toggleRecurring(_ mealPlan: MealPlanModel) {
+        guard let index = mealPlans.firstIndex(where: { $0.id == mealPlan.id }) else { return }
+        mealPlans[index].isRecurring.toggle()
+        HapticManager.shared.light()
+        saveMealPlans()
+    }
+
+    /// Copies recurring meals from any previous week into the target week.
+    /// For each weekday+mealTime slot in the 7-day window starting at `startDate`
+    /// that has no concrete entry, the most recent recurring template for that
+    /// weekday+mealTime is materialised as a new stored entry (also marked recurring
+    /// so it continues to propagate in future weeks). Idempotent: calling it twice
+    /// for the same week produces no duplicates.
+    func propagateRecurring(toWeekStarting startDate: Date) {
+        let cal = Calendar.current
+        let start = cal.startOfDay(for: startDate)
+        guard let end = cal.date(byAdding: .day, value: 7, to: start) else { return }
+
+        let templates = mealPlans.filter { $0.isRecurring && $0.date < start }
+        guard !templates.isEmpty else { return }
+
+        var newEntries: [MealPlanModel] = []
+
+        for dayOffset in 0..<7 {
+            guard let candidate = cal.date(byAdding: .day, value: dayOffset, to: start),
+                  candidate < end else { continue }
+            let targetWeekday = cal.component(.weekday, from: candidate)
+
+            for mealTime in MealTime.allCases {
+                let slotFilled = mealPlans.contains {
+                    cal.isDate($0.date, inSameDayAs: candidate) && $0.mealTime == mealTime
+                } || newEntries.contains {
+                    cal.isDate($0.date, inSameDayAs: candidate) && $0.mealTime == mealTime
+                }
+                guard !slotFilled else { continue }
+
+                let template = templates
+                    .filter {
+                        $0.mealTime == mealTime &&
+                        cal.component(.weekday, from: $0.date) == targetWeekday
+                    }
+                    .max(by: { $0.date < $1.date })
+                guard let template else { continue }
+
+                newEntries.append(MealPlanModel(
+                    recipeId: template.recipeId,
+                    recipeName: template.recipeName,
+                    date: candidate,
+                    mealTime: mealTime,
+                    servings: template.servings,
+                    notes: template.notes,
+                    isRecurring: true
+                ))
+            }
+        }
+
+        guard !newEntries.isEmpty else { return }
+        mealPlans.append(contentsOf: newEntries)
+        saveMealPlans()
+    }
+
     func clearOldMealPlans() {
         guard let oneWeekAgo = Calendar.current.date(byAdding: .day, value: -7, to: Date()) else {
             return
         }
-        mealPlans.removeAll { $0.date < oneWeekAgo }
+        // Recurring entries are retained as templates; only past one-off meals are purged.
+        mealPlans.removeAll { $0.date < oneWeekAgo && !$0.isRecurring }
         saveMealPlans()
     }
     
