@@ -7,6 +7,8 @@ import Foundation
 /// 1. Section headers ("Ingredients", "Instructions"/"Method"/"Directions"/
 ///    "Steps") split the text explicitly. Headers are matched loosely so
 ///    caption styling like "INGREDIENTS 👇" or "what you need" still counts.
+///    If only one section is found via headers, the other is filled by
+///    strategy 2 (see supplement step).
 /// 2. Without headers, each line is classified: quantity-, bullet-, or
 ///    emoji-led lines are ingredients; numbered or imperative ("Melt the
 ///    butter…") lines are instructions.
@@ -32,6 +34,14 @@ enum TextRecipeParser {
         if let sections = splitBySectionHeaders(lines) {
             ingredients = sections.ingredients
             instructions = mergeInstructionLines(sections.instructions)
+            // Supplement: if only one section was found via headers, fill the
+            // other via line classification (e.g. ingredients listed under a
+            // recognised header but method is unnumbered prose, or vice versa).
+            if ingredients.isEmpty || instructions.isEmpty {
+                let classified = classifyLines(lines)
+                if ingredients.isEmpty { ingredients = classified.ingredients }
+                if instructions.isEmpty { instructions = mergeInstructionLines(classified.instructions) }
+            }
         } else {
             (ingredients, instructions) = classifyLines(lines)
             instructions = mergeInstructionLines(instructions)
@@ -40,7 +50,10 @@ enum TextRecipeParser {
         // Drop footnotes/notes on the raw line first (before list markers are
         // stripped) so a leading "*" footnote is still recognisable.
         ingredients = ingredients.filter { !isAsideLine($0) }.map(stripListMarker).filter { !$0.isEmpty && !isMetadataLine($0) }
-        instructions = instructions.filter { !isAsideLine($0) }.map(stripListMarker).filter { !$0.isEmpty && !isMetadataLine($0) }
+        // isMetadataLine is intentionally NOT applied to instructions: after merging,
+        // a step that starts with "Prep the tin…" and later mentions "10 minutes"
+        // would be incorrectly discarded by the Prep-time pattern.
+        instructions = instructions.filter { !isAsideLine($0) }.map(stripListMarker).filter { !$0.isEmpty }
 
         guard !ingredients.isEmpty, !instructions.isEmpty else { return nil }
 
@@ -111,10 +124,23 @@ enum TextRecipeParser {
 
     private static let ingredientHeaderKeywords = [
         "ingredients", "you will need", "you'll need", "what you need", "what you'll need",
-        "garnish", "for the garnish", "to serve", "to garnish"
+        "garnish", "for the garnish", "to serve", "to garnish",
+        // Alternative terms used on international and content-creator recipe sites
+        "material", "materials",
+        // Common recipe sub-sections (exact-match after normalization is safe here)
+        "marinade", "for the marinade", "sauce", "for the sauce",
+        "filling", "for the filling", "dough", "for the dough",
+        "batter", "for the batter", "topping", "toppings",
+        "frosting", "icing", "glaze", "crust", "base", "coating"
     ]
     private static let instructionHeaderKeywords = [
-        "instructions", "method", "directions", "steps", "preparation"
+        "instructions", "method", "directions", "steps", "preparation",
+        "direction",          // singular — seen in some scraped recipes
+        "before you start",   // bosh.tv recipe format
+        "how to make", "how to", "procedure",
+        "to cook", "to prepare", "to make", "make it",
+        "cooking order",      // used on some Chinese/Korean recipe sites
+        "method of preparation"
     ]
 
     private static func isSectionHeader(_ line: String) -> Bool {
@@ -188,13 +214,16 @@ enum TextRecipeParser {
     }
 
     private static let cookingVerbs: Set<String> = [
-        "add", "bake", "beat", "blend", "boil", "bring", "brown", "chill", "chop",
-        "combine", "cook", "cover", "crack", "cut", "dice", "drain", "drizzle",
-        "fold", "fry", "garnish", "grate", "grill", "heat", "knead", "layer", "let",
-        "marinate", "mash", "melt", "mix", "peel", "place", "pour", "preheat",
-        "reduce", "refrigerate", "remove", "rest", "roast", "sauté", "saute",
-        "season", "serve", "simmer", "slice", "spread", "sprinkle", "stir", "toss",
-        "top", "transfer", "warm", "whisk"
+        "add", "arrange", "assemble", "bake", "beat", "blend", "boil", "bring",
+        "brown", "brush", "chill", "chop", "coat", "combine", "cook", "cover",
+        "crack", "create", "cut", "deglaze", "dice", "divide", "drain", "drizzle",
+        "fill", "flip", "fold", "form", "freeze", "fry", "garnish", "grate",
+        "grease", "grill", "heat", "knead", "layer", "let", "line", "make",
+        "marinate", "mash", "melt", "mix", "oil", "peel", "pipe", "place", "pour",
+        "preheat", "prepare", "press", "reduce", "refrigerate", "remove", "reserve",
+        "rest", "return", "roast", "roll", "sauté", "saute", "season", "serve",
+        "set", "shape", "sift", "simmer", "slice", "soak", "spread", "sprinkle",
+        "stir", "strain", "toast", "top", "toss", "transfer", "warm", "whisk"
     ]
 
     // MARK: - Cleanup
