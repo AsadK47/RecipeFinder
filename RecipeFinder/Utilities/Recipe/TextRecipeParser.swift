@@ -178,12 +178,15 @@ enum TextRecipeParser {
             let stripped = stripListMarker(line)
             guard !stripped.isEmpty else { continue }
 
-            if looksLikeNumberedStep(line) || startsWithCookingVerb(stripped) {
+            // Numbered steps ("1. Preheat…", "Step 2: …") take priority because
+            // they start with a digit and would otherwise match looksLikeIngredient.
+            // Everything else that isn't a structural ingredient defaults to an
+            // instruction — no finite verb whitelist needed.
+            if looksLikeNumberedStep(line) {
                 instructions.append(line)
             } else if looksLikeIngredient(line) {
                 ingredients.append(line)
-            } else if stripped.count > 60 {
-                // Long prose lines read as instructions.
+            } else {
                 instructions.append(line)
             }
         }
@@ -203,28 +206,6 @@ enum TextRecipeParser {
         // "1. Preheat…", "2) Mix…", "Step 3: …"
         line.range(of: #"^(step\s+\d+|\d+[\.\)])\s*"#, options: [.regularExpression, .caseInsensitive]) != nil
     }
-
-    /// Unnumbered imperative step, e.g. "Melt the butter", "Toss everything".
-    private static func startsWithCookingVerb(_ line: String) -> Bool {
-        let firstWord = line.lowercased()
-            .split(whereSeparator: { $0 == " " || $0 == "," })
-            .first
-            .map(String.init) ?? ""
-        return cookingVerbs.contains(firstWord)
-    }
-
-    private static let cookingVerbs: Set<String> = [
-        "add", "arrange", "assemble", "bake", "beat", "blend", "boil", "bring",
-        "brown", "brush", "chill", "chop", "coat", "combine", "cook", "cover",
-        "crack", "create", "cut", "deglaze", "dice", "divide", "drain", "drizzle",
-        "fill", "flip", "fold", "form", "freeze", "fry", "garnish", "grate",
-        "grease", "grill", "heat", "knead", "layer", "let", "line", "make",
-        "marinate", "mash", "melt", "mix", "oil", "peel", "pipe", "place", "pour",
-        "preheat", "prepare", "press", "reduce", "refrigerate", "remove", "reserve",
-        "rest", "return", "roast", "roll", "sauté", "saute", "season", "serve",
-        "set", "shape", "sift", "simmer", "slice", "soak", "spread", "sprinkle",
-        "stir", "strain", "toast", "top", "toss", "transfer", "warm", "whisk"
-    ]
 
     // MARK: - Cleanup
 
