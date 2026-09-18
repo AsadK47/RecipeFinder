@@ -172,57 +172,39 @@ extension RecipeParser {
         return instructions
     }
 
-    private static func isInstructionLine(_ line: String) -> Bool {
+    static func isInstructionLine(_ line: String) -> Bool {
         let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
 
         guard trimmed.count >= 10 && trimmed.count < 500 else { return false }
 
         let lowercased = trimmed.lowercased()
-        let excludeHeaders = ["instructions:", "method:", "directions:", "steps:", "preparation:"]
-        for header in excludeHeaders {
-            if lowercased == header.replacingOccurrences(of: ":", with: "") {
-                return false
-            }
+
+        // Reject bare section header labels that sometimes appear inside the section
+        let headers = ["instructions", "method", "directions", "steps", "preparation"]
+        let stripped = lowercased.replacingOccurrences(of: ":", with: "").trimmingCharacters(in: .whitespaces)
+        if headers.contains(stripped) { return false }
+
+        // Numbered steps are always instructions regardless of content
+        if trimmed.range(of: #"^(step\s*\d+|\d+[.)])\s*"#,
+                         options: [.regularExpression, .caseInsensitive]) != nil {
+            return true
         }
 
-        let actionVerbs = [
-            "add", "mix", "stir", "cook", "bake", "heat", "boil", "simmer",
-            "chop", "dice", "slice", "pour", "place", "remove", "combine",
-            "preheat", "transfer", "serve", "garnish", "season", "prepare",
-            "whisk", "blend", "fold", "sauté", "fry", "roast", "grill",
-            "melt", "cut", "drain", "rinse", "arrange", "sprinkle", "drizzle",
-            "bring", "reduce", "increase", "lower", "raise", "flip", "turn",
-            "cover", "uncover", "let", "allow", "wait", "set aside",
-            "brush", "coat", "dip", "toss", "roll", "spread", "layer"
-        ]
-
-        for verb in actionVerbs {
-            if lowercased.starts(with: verb + " ") || lowercased.starts(with: verb + "s ") {
-                return true
-            }
-        }
-
+        // Structural markers — time, temperature, connective phrases — are a
+        // reliable signal without depending on a finite verb whitelist.
         let cookingPhrases = [
             "until", "for about", "minutes", "hours", "degrees", "°f", "°c",
             "in a", "on a", "into the", "to the", "with the",
             "and cook", "and bake", "and stir", "then add", "then place"
         ]
-
-        for phrase in cookingPhrases {
-            if lowercased.contains(phrase) && trimmed.count > 20 {
-                return true
-            }
+        for phrase in cookingPhrases where trimmed.count > 20 {
+            if lowercased.contains(phrase) { return true }
         }
 
-        if trimmed.contains(".") || trimmed.contains(",") {
-            for verb in actionVerbs {
-                if lowercased.contains(" \(verb) ") || lowercased.contains(" \(verb)s ") {
-                    return true
-                }
-            }
-        }
-
-        return false
+        // Within a confirmed instruction section, any sentence of instruction-like
+        // length is almost certainly a cooking step. Navigation links and labels
+        // are typically very short; a finite verb whitelist is not needed here.
+        return trimmed.count >= 15
     }
 
     private static func cleanInstructionLine(_ line: String) -> String {

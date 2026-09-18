@@ -394,6 +394,7 @@
 		F3FF62F2305C245D0008B191 /* RecipeFileImportSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FF62F1305C245D0008B191 /* RecipeFileImportSheet.swift */; };
 		F3FF62F4305C24CE0008B191 /* RecipeFileExporterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FF62F3305C24CE0008B191 /* RecipeFileExporterTests.swift */; };
 		F3FF62F6305D8C840008B191 /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FF62F5305D8C840008B191 /* SubscriptionManager.swift */; };
+		F3FF62F9305DA5FC0008B191 /* RecipeParserTextContentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FF62F8305DA5FC0008B191 /* RecipeParserTextContentTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -824,6 +825,7 @@
 		F3FF62F3305C24CE0008B191 /* RecipeFileExporterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeFileExporterTests.swift; sourceTree = "<group>"; };
 		F3FF62F5305D8C840008B191 /* SubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionManager.swift; sourceTree = "<group>"; };
 		F3FF62F7305D8C910008B191 /* RecipeFinder.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = RecipeFinder.storekit; sourceTree = "<group>"; };
+		F3FF62F8305DA5FC0008B191 /* RecipeParserTextContentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeParserTextContentTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -1551,6 +1553,7 @@
 				F3FF62E3305C186C0008B191 /* RecipeDiffTests.swift */,
 				F3FF62E9305C19A20008B191 /* RecipePrintFormatterTests.swift */,
 				F3FF62F3305C24CE0008B191 /* RecipeFileExporterTests.swift */,
+				F3FF62F8305DA5FC0008B191 /* RecipeParserTextContentTests.swift */,
 			);
 			path = Recipe;
 			sourceTree = "<group>";
@@ -2446,6 +2449,7 @@
 				F3E9D223304762EE008BF231 /* BackupServiceTests.swift in Sources */,
 				F3E9D249304835AA008BF231 /* SharedTextImporterTests.swift in Sources */,
 				F3E9D292304EADA3008BF231 /* IngredientLineParserTests.swift in Sources */,
+				F3FF62F9305DA5FC0008B191 /* RecipeParserTextContentTests.swift in Sources */,
 				F3D4057B305AFEA30076834D /* HTMLFetcherTests.swift in Sources */,
 				F36AED673043343300935A3C /* MemoCacheTests.swift in Sources */,
 				F3E9D27A304D7D16008BF231 /* RecipeTextImportRouterTests.swift in Sources */,
