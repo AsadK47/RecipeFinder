@@ -393,6 +393,7 @@
 		F3FF62F0305C24460008B191 /* RecipeTransferItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FF62EF305C24460008B191 /* RecipeTransferItem.swift */; };
 		F3FF62F2305C245D0008B191 /* RecipeFileImportSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FF62F1305C245D0008B191 /* RecipeFileImportSheet.swift */; };
 		F3FF62F4305C24CE0008B191 /* RecipeFileExporterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FF62F3305C24CE0008B191 /* RecipeFileExporterTests.swift */; };
+		F3FF62F6305D8C840008B191 /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FF62F5305D8C840008B191 /* SubscriptionManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -821,6 +822,8 @@
 		F3FF62EF305C24460008B191 /* RecipeTransferItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeTransferItem.swift; sourceTree = "<group>"; };
 		F3FF62F1305C245D0008B191 /* RecipeFileImportSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeFileImportSheet.swift; sourceTree = "<group>"; };
 		F3FF62F3305C24CE0008B191 /* RecipeFileExporterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeFileExporterTests.swift; sourceTree = "<group>"; };
+		F3FF62F5305D8C840008B191 /* SubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionManager.swift; sourceTree = "<group>"; };
+		F3FF62F7305D8C910008B191 /* RecipeFinder.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = RecipeFinder.storekit; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -1350,6 +1353,7 @@
 				F3E9D275304D7CC5008BF231 /* RecipeImageTextRecognizer.swift */,
 				F3E9D29B30515744008BF231 /* PasswordHasher.swift */,
 				F3E9D29D3051574E008BF231 /* KeychainStore.swift */,
+				F3FF62F5305D8C840008B191 /* SubscriptionManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -1681,6 +1685,7 @@
 				9E97EEB830093B4100D35FAB /* RecipeShareExtension */,
 				9EB629052EBBA230005FD6FC /* Frameworks */,
 				9EE5AAD62D08FCBE00C1B736 /* Products */,
+				F3FF62F7305D8C910008B191 /* RecipeFinder.storekit */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2164,6 +2169,7 @@
 				F3E9D16830444DA5008BF231 /* ShoppingCategoryHeader.swift in Sources */,
 				F3E9D22730477D84008BF231 /* RecipeImportPipeline.swift in Sources */,
 				F3D40590305B45550076834D /* PersonalRecipeSeedService.swift in Sources */,
+				F3FF62F6305D8C840008B191 /* SubscriptionManager.swift in Sources */,
 				9E87D3302EB696A400FFA1D1 /* ThemeManager.swift in Sources */,
 				F3B837C73055CD440003AEF8 /* AccountNameFormatter.swift in Sources */,
 				F3E9D29E3051574E008BF231 /* KeychainStore.swift in Sources */,

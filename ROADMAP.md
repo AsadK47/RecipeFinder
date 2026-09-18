@@ -40,12 +40,50 @@ Their import is server-side AI, paywalled at 5/week.
 - **Our structural edge:** import is **on-device** (FoundationModels + Vision
   OCR), which costs us nothing per import — so **unlimited imports are free**,
   and that's a marketing line ReciMe can't match. Freemium must therefore be
-  genuine *added* value (supermarket integration, advanced planning), never
+  genuine *added* value (iCloud sync, curated library, advanced planning), never
   locked basics and never things that cost us nothing.
 - **Where we already beat them:** we merge duplicate ingredients in the grocery
   list (they don't); our meal plan and shopping list are linked (theirs aren't).
 - **At parity, no work needed:** aisle-grouped shopping list, serving scaling,
   metric/imperial conversion, cookbook-style organisation, offline-first.
+
+**Subscription model (RecipeFinder+).**
+The business is free-tier-first with a single premium tier gated on genuine
+ongoing value — not crippled free features.
+
+*Free tier (permanent):*
+- 50 hand-curated recipes included from day 1 so the app is never empty
+- Unlimited personal imports (URL, photo, OCR, text, share extension)
+- All organisational features: search, filter, collections, tags, meal planning,
+  shopping list, pantry — local storage only
+
+*RecipeFinder+ (subscription — target £2.99/month or £19.99/year):*
+- **iCloud sync** — library safe forever, available on all devices; the primary
+  value and the honest reason to charge (real infrastructure, real data safety)
+- **Curated library expansion** — 100 more recipes unlocked immediately on
+  subscribe; a further 150 released in drops over the following ~2 months
+  (~50/month cadence). Total 300 curated recipes. The library is finite by
+  design: these are original, tested recipes, not AI-generated content. Once
+  all 300 are released the library is complete — subscribers keep them, the app
+  keeps paying for iCloud sync
+- **Seasonal recipe drops** — new packs added quarterly after the initial 300
+  ship; gives the subscription ongoing value beyond the launch burst
+- **Family sharing** — up to 5 people; shared shopping list via CloudKit Sharing
+  (same infrastructure as sync)
+- **Collaborative shopping list** — real-time edits shared with a partner or
+  household (rides CloudKit Sharing)
+- **Auto meal plan** — "plan my week from my pantry" generates a 7-day plan
+  using kitchen inventory + preferences; infrastructure already exists
+  (`KitchenRecipeMatcher` + `PantryExpirySuggestions`), needs a generation layer
+- **Nutritional goals + HealthKit** — daily targets, per-meal tracking against
+  the plan, opt-in write to Apple Health
+
+*Not gated (ever):* imports, cooking mode, timers, basic meal planning, shopping
+list, pantry, backup/export, App Intents, Siri.
+
+*Implementation order:* StoreKit 2 paywall → iCloud sync (both need paid
+Developer Program enrollment) → curated library image pass (Unsplash) → auto
+meal plan → HealthKit.
 
 **The core loop everything serves:** *get a recipe in → find it → cook from it
 well → decide what to cook next.* Anything not serving that loop is secondary.
@@ -430,10 +468,13 @@ support. "Print" appears in the detail view overflow menu alongside Edit and Sha
 Covered by `RecipePrintFormatterTests` (15 tests — structure, escaping, sections).
 *Remaining:* rich link sharing, import from other RecipeFinder users.
 
-### 🔴 Auto recipe images (Unsplash) *(low priority)*
-Auto-assign images by recipe name for *manually created* recipes only — URL
-import already extracts JSON-LD/OG images and user photos are done. Cache locally;
-API key in `.xcconfig`. Free tier is 50 req/hr, so revisit for multi-user growth.
+### 🔴 Auto recipe images (Unsplash)
+Auto-assign images by recipe name. **High priority for the curated library** —
+the 300 curated recipes ship with no photography and need images before
+RecipeFinder+ launches. URL imports already extract JSON-LD/OG images; user
+photos already work. Unsplash covers the gap for manually created and curated
+recipes only. Cache locally; API key in `.xcconfig`. Free tier 50 req/hr is fine
+for the curated batch; revisit rate limits at multi-user scale.
 
 ---
 

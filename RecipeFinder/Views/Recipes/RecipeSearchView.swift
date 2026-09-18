@@ -27,7 +27,6 @@ struct RecipeSearchView: View {
     @State private var dontAskAgainDelete: Bool = false
     @State private var cachedFilteredRecipes: [RecipeModel] = []
     @State private var lastFilterHash: Int = 0
-    @State private var hideSampleRecipes = false
     @State private var availableTags: [String] = []
     @State private var availableCuisines: [String] = []
     @State private var categories: [String] = []
@@ -308,15 +307,11 @@ struct RecipeSearchView: View {
     
     private var recipeContentArea: some View {
         Group {
-            if filteredRecipes.filter({ !$0.isSampleRecipe }).isEmpty {
+            if filteredRecipes.isEmpty {
                 RecipeEmptyStateView(activeFilterCount: activeFilterCount, onClearFilters: clearAllFilters)
             } else {
                 RecipeResultsList(
                     filteredRecipes: filteredRecipes,
-                    hideSampleRecipes: $hideSampleRecipes,
-                    searchText: searchText,
-                    activeFilterCount: activeFilterCount,
-                    showFavoritesOnly: showFavoritesOnly,
                     onFavoriteToggle: refreshRecipes,
                     onRequestDelete: requestDelete
                 )
