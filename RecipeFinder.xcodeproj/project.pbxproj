@@ -196,6 +196,8 @@
 		F3D04F28305EC6C9005A930D /* UnsplashClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D04F27305EC6C9005A930D /* UnsplashClient.swift */; };
 		F3D04F2A305EC6D5005A930D /* CookingSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D04F29305EC6D5005A930D /* CookingSession.swift */; };
 		F3D04F2C305EC6E5005A930D /* CookingSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D04F2B305EC6E5005A930D /* CookingSessionTests.swift */; };
+		F3D04F2E305F3A72005A930D /* RecipeTipsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D04F2D305F3A72005A930D /* RecipeTipsTests.swift */; };
+		F3D04F30305F3A80005A930D /* KitchenItemToggleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D04F2F305F3A80005A930D /* KitchenItemToggleTests.swift */; };
 		F3D40540305608DE0076834D /* RecipeFinderAccessibilityAuditTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D4053F305608DE0076834D /* RecipeFinderAccessibilityAuditTests.swift */; };
 		F3D4054330560A2D0076834D /* OnboardingContentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D4054230560A2D0076834D /* OnboardingContentTests.swift */; };
 		F3D4054530560A330076834D /* OnboardingContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D4054430560A330076834D /* OnboardingContent.swift */; };
@@ -632,6 +634,8 @@
 		F3D04F27305EC6C9005A930D /* UnsplashClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnsplashClient.swift; sourceTree = "<group>"; };
 		F3D04F29305EC6D5005A930D /* CookingSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookingSession.swift; sourceTree = "<group>"; };
 		F3D04F2B305EC6E5005A930D /* CookingSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookingSessionTests.swift; sourceTree = "<group>"; };
+		F3D04F2D305F3A72005A930D /* RecipeTipsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeTipsTests.swift; sourceTree = "<group>"; };
+		F3D04F2F305F3A80005A930D /* KitchenItemToggleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KitchenItemToggleTests.swift; sourceTree = "<group>"; };
 		F3D4053F305608DE0076834D /* RecipeFinderAccessibilityAuditTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeFinderAccessibilityAuditTests.swift; sourceTree = "<group>"; };
 		F3D4054230560A2D0076834D /* OnboardingContentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingContentTests.swift; sourceTree = "<group>"; };
 		F3D4054430560A330076834D /* OnboardingContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingContent.swift; sourceTree = "<group>"; };
@@ -1127,6 +1131,7 @@
 				F3B837C83055CD5A0003AEF8 /* AccountNameFormatterTests.swift */,
 				F3B837DE3055F17C0003AEF8 /* CollectionManagerTests.swift */,
 				F3D40561305855180076834D /* BadgeTriggerIntegrationTests.swift */,
+				F3D04F2F305F3A80005A930D /* KitchenItemToggleTests.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -1506,6 +1511,7 @@
 				9E90AB012FA9030100096D9D /* Recipe */,
 				F3E9D1E7304620E4008BF231 /* Notes */,
 				F3B837E23055FC5C0003AEF8 /* Managers */,
+				F3D04F2D305F3A72005A930D /* RecipeTipsTests.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -2447,6 +2453,8 @@
 				9E6C2C742FB4C8450083A08B /* KitchenInventoryManagerTests.swift in Sources */,
 				F3E9D294304FF7D7008BF231 /* TextRecipeFixtures.swift in Sources */,
 				F3B837EA3055FD5C0003AEF8 /* RecipeFilterIntegrationTests.swift in Sources */,
+				F3D04F30305F3A80005A930D /* KitchenItemToggleTests.swift in Sources */,
+				F3D04F2E305F3A72005A930D /* RecipeTipsTests.swift in Sources */,
 				9E6C2C752FB4C8450083A08B /* MealPlanningManagerTests.swift in Sources */,
 				9E97EEAF30084C6800D35FAB /* SettingsComponentsTests.swift in Sources */,
 				F3B837C5305562980003AEF8 /* AuthenticationUserModelTests.swift in Sources */,

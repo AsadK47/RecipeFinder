@@ -93,7 +93,7 @@ struct SettingsTabView: View {
                             destination: HelpView()
                         ),
                         .init(
-                            row: SettingsRow(icon: "info.circle.fill", iconColor: .gray, title: "About RecipeFinder"),
+                            row: SettingsRow(icon: "book.circle.fill", iconColor: .gray, title: "About RecipeFinder"),
                             destination: AboutView()
                         )
                     ])

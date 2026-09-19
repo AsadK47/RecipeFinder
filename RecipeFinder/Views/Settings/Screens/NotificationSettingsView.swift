@@ -1,10 +1,9 @@
 import SwiftUI
 import UserNotifications
 
-/// Notification type toggles plus the daily reminder time.
+/// Notification type toggles plus the reminder time.
 struct NotificationSettingsView: View {
     @AppStorage("timerNotifications") private var timerNotifications = true
-    @AppStorage("mealPlanReminders") private var mealPlanReminders = true
     @AppStorage("shoppingListReminders") private var shoppingListReminders = false
     @AppStorage("reminderTime") private var reminderTimeString = "10:00"
 
@@ -47,27 +46,17 @@ struct NotificationSettingsView: View {
                         SettingsRowDivider()
 
                         SettingsToggleRow(
-                            icon: "calendar",
-                            iconColor: .green,
-                            title: "Meal Plan Reminders",
-                            subtitle: "Daily reminders for planned meals",
-                            isOn: $mealPlanReminders
-                        )
-
-                        SettingsRowDivider()
-
-                        SettingsToggleRow(
                             icon: "cart.fill",
                             iconColor: .blue,
                             title: "Shopping List Reminders",
-                            subtitle: "Remind me about shopping list items",
+                            subtitle: "Remind me to pick up shopping list items",
                             isOn: $shoppingListReminders
                         )
                     }
                 }
             }
 
-            if mealPlanReminders || shoppingListReminders {
+            if shoppingListReminders {
                 SettingsSection(title: "Reminder Time", items: [
                     .init(
                         row: SettingsRow(icon: "clock.fill", iconColor: .teal, title: "Daily reminder at", value: reminderTimeString),

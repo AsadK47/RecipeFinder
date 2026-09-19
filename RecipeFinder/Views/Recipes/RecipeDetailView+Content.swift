@@ -230,6 +230,7 @@ extension RecipeDetailView {
             onSubstitute: { index in substitutingIngredientIndex = index },
             isInPantry: { pantryManager.hasItem($0.mainIngredientName) },
             onTogglePantry: { index in
+                guard index < recipe.ingredients.count else { return }
                 let ingredient = recipe.ingredients[index]
                 pantryManager.toggleItem(ingredient.mainIngredientName)
             }

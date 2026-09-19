@@ -16,6 +16,7 @@ struct AuthenticationView: View {
     @AppStorage("biometricsEnabled") private var biometricsEnabled: Bool = false
     @AppStorage("guestModeEnabled") private var guestModeEnabled = false
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         ZStack {
@@ -150,7 +151,7 @@ struct AuthenticationView: View {
                     .padding(.top, AppTheme.spacing8)
                     .accessibilityIdentifier("auth.showSignUp")
 
-                    Button(action: { guestModeEnabled = true }) {
+                    Button(action: { guestModeEnabled = true; dismiss() }) {
                         Text("Browse first")
                             .font(.footnote)
                             .adaptiveSecondaryForeground()

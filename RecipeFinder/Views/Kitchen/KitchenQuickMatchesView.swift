@@ -11,7 +11,7 @@ struct KitchenQuickMatchesView: View {
 
     private var matchCountText: String {
         let count = quickMatches.count
-        return count == 1 ? "1 match" : "\(count) matches"
+        return count == 1 ? "1 recipe" : "\(count) recipes"
     }
 
     private var badgeKitchenIngredients: Set<String> {
