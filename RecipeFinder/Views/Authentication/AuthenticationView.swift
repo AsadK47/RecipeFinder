@@ -27,6 +27,7 @@ struct AuthenticationView: View {
 
                 VStack(spacing: AppTheme.spacing16) {
                     Image(systemName: "fork.knife.circle.fill")
+                        .accessibilityHidden(true)
                         .font(.system(size: AppTheme.fontSize80))
                         .foregroundStyle(
                             LinearGradient(
@@ -47,6 +48,8 @@ struct AuthenticationView: View {
                     Text("Discover, Create, Cook")
                         .font(.body.weight(.medium))
                         .adaptiveForegroundColor()
+                        .lineLimit(nil)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 .padding(.bottom, AppTheme.spacing20)
 
@@ -68,6 +71,8 @@ struct AuthenticationView: View {
                                     .font(.system(size: AppTheme.fontSize22))
                                 Text("Sign In with \(authManager.biometricType)")
                                     .font(.body.weight(.bold))
+                                    .lineLimit(nil)
+                                    .fixedSize(horizontal: false, vertical: true)
                             }
                             .adaptiveForegroundColor()
                             .frame(maxWidth: .infinity)
@@ -101,6 +106,8 @@ struct AuthenticationView: View {
                                 .accessibilityHidden(true)
                             Text("Sign In with Email")
                                 .font(.body.weight(.semibold))
+                                .lineLimit(nil)
+                                .fixedSize(horizontal: false, vertical: true)
                         }
                         .adaptiveForegroundColor()
                         .frame(maxWidth: .infinity)
@@ -134,6 +141,8 @@ struct AuthenticationView: View {
                         Text("Don't have an account? **Sign Up**")
                             .font(.subheadline)
                             .adaptiveForegroundColor()
+                            .lineLimit(nil)
+                            .fixedSize(horizontal: false, vertical: true)
                             .frame(maxWidth: .infinity)
                     }
                     .frame(minHeight: 44)
@@ -145,6 +154,8 @@ struct AuthenticationView: View {
                         Text("Browse first")
                             .font(.footnote)
                             .adaptiveSecondaryForeground()
+                            .lineLimit(nil)
+                            .fixedSize(horizontal: false, vertical: true)
                             .frame(maxWidth: .infinity)
                     }
                     .frame(minHeight: 44)

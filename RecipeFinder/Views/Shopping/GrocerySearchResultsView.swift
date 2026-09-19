@@ -61,13 +61,16 @@ struct GrocerySearchResultsView: View {
     private func freeTextRow(_ trimmed: String) -> some View {
         rowShell(
             leading: {
-                HStack(spacing: AppTheme.spacing12) {
+                HStack(alignment: .top, spacing: AppTheme.spacing12) {
                     Image(systemName: "sparkle.magnifyingglass")
                         .font(.title3)
-                        .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
+                        .foregroundStyle(.secondary)
+                        .accessibilityHidden(true)
                     Text("Add \"\(trimmed)\"")
                         .font(.body).fontWeight(.medium)
-                        .adaptiveForegroundColor()
+                        .foregroundStyle(.primary)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
             },
             inShopping: isInShopping(trimmed),
@@ -81,13 +84,16 @@ struct GrocerySearchResultsView: View {
         let category = CategoryClassifier.suggestCategory(for: ingredient)
         return rowShell(
             leading: {
-                HStack(spacing: AppTheme.spacing12) {
+                HStack(alignment: .top, spacing: AppTheme.spacing12) {
                     Image(systemName: CategoryClassifier.categoryIcon(for: category))
-                        .foregroundStyle(AppTheme.adaptiveSubtitle(for: colorScheme))
+                        .foregroundStyle(.secondary)
                         .font(.body)
+                        .accessibilityHidden(true)
                     Text(ingredient)
                         .font(.body)
-                        .foregroundStyle(AppTheme.textColor(for: colorScheme))
+                        .foregroundStyle(.primary)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
             },
             inShopping: isInShopping(ingredient),
@@ -106,42 +112,40 @@ struct GrocerySearchResultsView: View {
         onKitchen: @escaping () -> Void
     ) -> some View {
         HStack(spacing: AppTheme.spacing12) {
+            // .infinity lets the leading content fill available width so the
+            // a11y audit sees a properly bounded text frame for DT scaling.
             leading()
-            Spacer()
+                .frame(maxWidth: .infinity, alignment: .leading)
             destinationButton(system: "cart.badge.plus", isAdded: inShopping, action: onShopping)
             destinationButton(system: "refrigerator", isAdded: inKitchen, action: onKitchen)
         }
         .padding(.horizontal, AppTheme.spacing16)
         .padding(.vertical, AppTheme.spacing10)
         .background {
-            if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                    .fill(AppTheme.adaptiveCard(for: colorScheme))
-            } else {
-                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                    .fill(.ultraThinMaterial)
-            }
+            RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                .fill(Color(UIColor.secondarySystemGroupedBackground))
         }
     }
 
     private func destinationButton(system: String, isAdded: Bool, action: @escaping () -> Void) -> some View {
         // Use adaptive neutral for idle so the icon is readable on any theme background.
-        // The theme accent is the same hue as the background gradient and disappears.
-        let tint: Color = isAdded ? .green : AppTheme.adaptiveSubtitle(for: colorScheme)
+        // .secondary is a SwiftUI semantic colour — resolved before reporting to the
+        // a11y audit so contrast is measured against the actual background correctly.
+        let tint: Color = isAdded ? .green : Color(.secondaryLabel)
         let label = system.contains("cart") ? "Add to shopping list" : "Add to kitchen"
         return Button(action: action) {
-            // Fixed 44×44 image frame so the button's accessibility frame (derived
-            // from the label's content bounds) meets the minimum 44pt requirement.
             Image(systemName: isAdded ? "checkmark.circle.fill" : system)
                 .font(.body.weight(.semibold))
                 .foregroundStyle(tint)
-                .frame(width: 44, height: 44)
                 .background(
                     RoundedRectangle(cornerRadius: 9)
                         .fill(tint.opacity(0.12))
                         .padding(4)
                 )
         }
+        // Frame on the Button (not the image) so the accessibility element's
+        // frame is guaranteed to meet the 44pt minimum.
+        .frame(width: 44, height: 44)
         .buttonStyle(.plain)
         .contentShape(Rectangle())
         .disabled(isAdded)

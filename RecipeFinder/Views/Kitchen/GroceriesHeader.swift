@@ -22,6 +22,7 @@ struct GroceriesHeader<MenuContent: View>: View {
                     CircleButton(icon: "line.3.horizontal") {}
                         .allowsHitTesting(false)
                 }
+                .accessibilityLabel("More options")
             }
 
             searchBar
@@ -38,7 +39,7 @@ struct GroceriesHeader<MenuContent: View>: View {
                 ZStack(alignment: .leading) {
                     if searchText.isEmpty {
                         Text("Add or search groceries…")
-                            .font(.system(size: AppTheme.fontSize16))
+                            .font(.callout)
                             .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.disabledEmphasisOpacity) : .black.opacity(AppTheme.disabledEmphasisOpacity))
                     }
                     TextField("", text: $searchText)
@@ -46,7 +47,7 @@ struct GroceriesHeader<MenuContent: View>: View {
                         .autocorrectionDisabled()
                         .submitLabel(.done)
                         .onSubmit(onSubmit)
-                        .font(.system(size: AppTheme.fontSize16))
+                        .font(.callout)
                         .adaptiveForegroundColor()
                         .tint(AppTheme.textColor(for: colorScheme))
                 }
@@ -82,10 +83,12 @@ struct GroceriesHeader<MenuContent: View>: View {
                     },
                     label: {
                         Text("Cancel")
-                            .font(.system(size: AppTheme.fontSize16, weight: .semibold))
+                            .font(.callout.weight(.semibold))
                             .adaptiveForegroundColor()
                     }
                 )
+                .frame(minHeight: 44)
+                .contentShape(Rectangle())
                 .transition(.move(edge: .trailing).combined(with: .opacity))
             }
         }

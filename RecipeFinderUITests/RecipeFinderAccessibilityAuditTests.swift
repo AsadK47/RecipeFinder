@@ -67,6 +67,16 @@ final class RecipeFinderAccessibilityAuditTests: XCTestCase {
             "Search suggestions should appear."
         )
 
+        // Dismiss the software keyboard if it is visible so the contrast audit
+        // measures elements against their card backgrounds and not the keyboard
+        // material that sits over them at lower y-positions on the screen.
+        // showingSearchResults no longer requires isSearchFocused, so the results
+        // remain visible after dismissal.
+        let dismissKb = app.buttons["Dismiss keyboard"]
+        if dismissKb.waitForExistence(timeout: 1) {
+            dismissKb.tap()
+        }
+
         try app.performAccessibilityAudit(for: .all, auditHandler)
     }
 
@@ -97,10 +107,14 @@ final class RecipeFinderAccessibilityAuditTests: XCTestCase {
     /// (fail) — suppress nothing unless there is a documented reason.
     private var auditHandler: (XCUIAccessibilityAuditIssue) throws -> Bool {
         { [self] issue in
+            let elem = issue.element
             let detail = """
             Type:    \(issue.auditType)
             Issue:   \(issue.compactDescription)
             Detail:  \(issue.detailedDescription)
+            Label:   \(elem?.label ?? "nil")
+            Frame:   \(elem?.frame ?? .zero)
+            ElemType:\(elem?.elementType.rawValue ?? 0)
             """
             let attachment = XCTAttachment(string: detail)
             attachment.name = "A11y issue — \(issue.compactDescription)"

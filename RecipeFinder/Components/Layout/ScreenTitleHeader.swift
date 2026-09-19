@@ -18,11 +18,10 @@ struct ScreenTitleHeader<Trailing: View>: View {
             Text(title)
                 .font(.largeTitle.weight(.bold))
                 .adaptiveForegroundColor()
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
+                .multilineTextAlignment(.center)
                 // Reserve space for the trailing button on both sides so the title
-                // stays centred — mirrors the old GeometryReader gutter approach
-                // without a fixed height that can clip Dynamic-Type-scaled text.
+                // stays centred. No lineLimit — titles must wrap at large Dynamic
+                // Type sizes rather than clip (accessibility audit requirement).
                 .padding(.horizontal, AppTheme.height44)
                 .frame(maxWidth: .infinity, alignment: .center)
 

@@ -35,7 +35,7 @@ struct KitchenShoppingView: View {
     }
 
     private var showingSearchResults: Bool {
-        !searchText.trimmingCharacters(in: .whitespaces).isEmpty && isSearchFocused
+        !searchText.trimmingCharacters(in: .whitespaces).isEmpty
     }
 
     private var checkedCount: Int { shopping.items.filter { $0.isChecked }.count }
@@ -69,6 +69,7 @@ struct KitchenShoppingView: View {
                                 .adaptiveSecondaryForeground()
                                 .frame(width: 44, height: 44)
                         }
+                        .accessibilityLabel("Dismiss keyboard")
                     }
                 }
             }

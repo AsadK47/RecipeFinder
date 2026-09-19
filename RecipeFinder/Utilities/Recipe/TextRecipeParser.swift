@@ -172,11 +172,16 @@ enum TextRecipeParser {
     private static func classifyLines(_ lines: [String]) -> (ingredients: [String], instructions: [String]) {
         var ingredients: [String] = []
         var instructions: [String] = []
+        // Caption-style text sometimes repeats the recipe title on the second line
+        // (e.g. "Margaritas\nMargaritas\n…"). Skip it so it can't merge into the
+        // first real instruction step.
+        let normalizedTitle = stripListMarker(lines.first ?? "").lowercased()
 
         // Skip the title line when classifying.
         for line in lines.dropFirst() where !isMetadataLine(line) {
             let stripped = stripListMarker(line)
             guard !stripped.isEmpty else { continue }
+            if stripped.lowercased() == normalizedTitle && !looksLikeIngredient(line) { continue }
 
             // Numbered steps ("1. Preheat…", "Step 2: …") take priority because
             // they start with a digit and would otherwise match looksLikeIngredient.

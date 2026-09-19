@@ -157,10 +157,13 @@ struct ImportView: View {
                 VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                     Text(title)
                         .font(.body).fontWeight(.semibold)
-                        .adaptiveForegroundColor()
+                        .foregroundStyle(.primary)
                     Text(subtitle)
                         .font(.caption)
-                        .adaptiveForegroundColor()
+                        // .primary is a semantic system colour that the contrast
+                        // audit correctly resolves against material backgrounds,
+                        // where adaptiveForegroundColor() can return the wrong hue.
+                        .foregroundStyle(.primary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
 
@@ -172,7 +175,10 @@ struct ImportView: View {
                     .accessibilityHidden(true)
             }
             .padding(AppTheme.spacing20)
-            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: AppTheme.cornerRadius16))
+            .background {
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
+                    .fill(Color(UIColor.secondarySystemGroupedBackground))
+            }
         }
         .buttonStyle(.plain)
     }
