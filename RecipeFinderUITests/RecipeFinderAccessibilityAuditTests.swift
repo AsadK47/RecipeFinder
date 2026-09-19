@@ -108,13 +108,17 @@ final class RecipeFinderAccessibilityAuditTests: XCTestCase {
     private var auditHandler: (XCUIAccessibilityAuditIssue) throws -> Bool {
         { [self] issue in
             let elem = issue.element
+            // XCUIElement properties are @MainActor-isolated; UI tests run on the main thread.
+            let (label, frame, elemType) = MainActor.assumeIsolated {
+                (elem?.label ?? "nil", elem?.frame ?? .zero, elem?.elementType.rawValue ?? 0)
+            }
             let detail = """
             Type:    \(issue.auditType)
             Issue:   \(issue.compactDescription)
             Detail:  \(issue.detailedDescription)
-            Label:   \(elem?.label ?? "nil")
-            Frame:   \(elem?.frame ?? .zero)
-            ElemType:\(elem?.elementType.rawValue ?? 0)
+            Label:   \(label)
+            Frame:   \(frame)
+            ElemType:\(elemType)
             """
             let attachment = XCTAttachment(string: detail)
             attachment.name = "A11y issue — \(issue.compactDescription)"
