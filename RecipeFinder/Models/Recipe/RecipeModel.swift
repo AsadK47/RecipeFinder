@@ -14,7 +14,7 @@ struct RecipeModel: Identifiable, Codable, Hashable {
     let prePrepInstructions: [String]
     let instructions: [String]
     let notes: String
-    let imageName: String?
+    var imageName: String?
     var isFavorite: Bool
     var tags: [String]
     var dietaryInfo: DietaryInfo

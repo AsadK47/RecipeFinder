@@ -97,8 +97,36 @@ struct CookingModeView: View {
             .sheet(isPresented: $showTimerSheet) {
                 CookTimerView()
             }
-            .onAppear  { UIApplication.shared.isIdleTimerDisabled = true  }
-            .onDisappear { UIApplication.shared.isIdleTimerDisabled = false }
+            .onAppear {
+                UIApplication.shared.isIdleTimerDisabled = true
+                CookingSession.shared.start(
+                    recipeName: recipe.name,
+                    items: cookingItems.map { item in
+                        switch item {
+                        case .ingredientList:        return "First, gather your ingredients."
+                        case .prePrep(_, let text):  return text
+                        case .step(_, let text):     return text
+                        }
+                    }
+                )
+            }
+            .onDisappear {
+                UIApplication.shared.isIdleTimerDisabled = false
+                CookingSession.shared.end()
+            }
+            .onChange(of: currentIndex) { _, new in
+                CookingSession.shared.setIndex(new)
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .cookingModeNextStep)) { _ in
+                guard !isLast else { return }
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) { currentIndex += 1 }
+                HapticManager.shared.selection()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .cookingModePreviousStep)) { _ in
+                guard !isFirst else { return }
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) { currentIndex -= 1 }
+                HapticManager.shared.selection()
+            }
         }
     }
 

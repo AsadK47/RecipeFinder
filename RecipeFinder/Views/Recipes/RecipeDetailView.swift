@@ -159,6 +159,13 @@ struct RecipeDetailView: View {
                 prePrepState = Array(repeating: false, count: newRecipe.prePrepInstructions.count)
             }
         }
+        .task(id: recipe.id) {
+            guard (recipe.imageName ?? "").isEmpty else { return }
+            if let url = await UnsplashClient().fetchImageURL(for: recipe.name) {
+                recipe.imageName = url.absoluteString
+                PersistenceController.shared.updateRecipe(recipe)
+            }
+        }
     }
 
     func toggleSection(_ section: String) {

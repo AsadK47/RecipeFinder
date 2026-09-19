@@ -34,6 +34,8 @@
 			</dict>
 		</dict>
 	</array>
+	<key>UnsplashAccessKey</key>
+	<string></string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>

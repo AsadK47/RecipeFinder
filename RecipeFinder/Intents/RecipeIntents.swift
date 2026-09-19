@@ -127,6 +127,50 @@ struct StartCookingIntent: AppIntent {
     }
 }
 
+// MARK: - Next Cooking Step
+
+struct NextCookingStepIntent: AppIntent {
+    static let title: LocalizedStringResource = "Next Cooking Step"
+    static let description = IntentDescription(
+        "Advances to the next step in RecipeFinder cooking mode.",
+        categoryName: "Cooking"
+    )
+
+    func perform() async throws -> some IntentResult & ProvidesDialog {
+        let isActive = await MainActor.run { CookingSession.shared.isActive }
+        guard isActive else {
+            return .result(dialog: "No recipe is currently open in RecipeFinder cooking mode.")
+        }
+        let text = await MainActor.run {
+            CookingSession.shared.advance()
+            return CookingSession.shared.currentStepText ?? "You've finished the recipe."
+        }
+        return .result(dialog: IntentDialog(stringLiteral: text))
+    }
+}
+
+// MARK: - Previous Cooking Step
+
+struct PreviousCookingStepIntent: AppIntent {
+    static let title: LocalizedStringResource = "Previous Cooking Step"
+    static let description = IntentDescription(
+        "Goes back to the previous step in RecipeFinder cooking mode.",
+        categoryName: "Cooking"
+    )
+
+    func perform() async throws -> some IntentResult & ProvidesDialog {
+        let isActive = await MainActor.run { CookingSession.shared.isActive }
+        guard isActive else {
+            return .result(dialog: "No recipe is currently open in RecipeFinder cooking mode.")
+        }
+        let text = await MainActor.run {
+            CookingSession.shared.retreat()
+            return CookingSession.shared.currentStepText ?? "You're at the beginning."
+        }
+        return .result(dialog: IntentDialog(stringLiteral: text))
+    }
+}
+
 // MARK: - Shortcuts provider
 
 struct RecipeShortcutsProvider: AppShortcutsProvider {
@@ -166,6 +210,24 @@ struct RecipeShortcutsProvider: AppShortcutsProvider {
             ],
             shortTitle: "Start Cooking",
             systemImageName: "fork.knife.circle.fill"
+        )
+        AppShortcut(
+            intent: NextCookingStepIntent(),
+            phrases: [
+                "Next step in \(.applicationName)",
+                "Next cooking step in \(.applicationName)"
+            ],
+            shortTitle: "Next Cooking Step",
+            systemImageName: "chevron.right.circle.fill"
+        )
+        AppShortcut(
+            intent: PreviousCookingStepIntent(),
+            phrases: [
+                "Previous step in \(.applicationName)",
+                "Go back a step in \(.applicationName)"
+            ],
+            shortTitle: "Previous Step",
+            systemImageName: "chevron.left.circle.fill"
         )
     }
 }
