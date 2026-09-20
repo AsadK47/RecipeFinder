@@ -98,14 +98,14 @@ struct IngredientRowView: View {
                     onTogglePantry()
                     HapticManager.shared.light()
                 }) {
-                    Image(systemName: isInPantry ? "house.fill" : "house")
+                    Image(systemName: isInPantry ? "refrigerator.fill" : "refrigerator")
                         .font(.system(size: AppTheme.fontSize16))
                         .foregroundColor(isInPantry ? .green : .secondary)
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(isInPantry
-                    ? "Remove \(ingredient.mainIngredientName) from pantry"
-                    : "Mark \(ingredient.mainIngredientName) as in pantry")
+                    ? "Remove \(ingredient.mainIngredientName) from kitchen"
+                    : "Add \(ingredient.mainIngredientName) to kitchen")
             }
 
             // Right: checkbox

@@ -110,12 +110,21 @@ struct RecipeIngredientsSection: View {
         .accessibilityAddTraits(.isButton)
     }
 
+    // Pre-computed once per body evaluation so the O(table) substitute scan doesn't
+    // run inside the ForEach body for every row on every re-render.
+    private var ingredientsWithSubstitutes: Set<UUID> {
+        Set(recipe.ingredients.compactMap { ingredient in
+            IngredientSubstituteProvider.substitutes(for: ingredient.name).isEmpty ? nil : ingredient.id
+        })
+    }
+
     private var ingredientsList: some View {
         GlassCard {
             VStack(spacing: AppTheme.spacing16) {
-                ForEach(recipe.ingredients.indices, id: \.self) { index in
-                    let ingredient = recipe.ingredients[index]
-                    let hasSubstitutes = !IngredientSubstituteProvider.substitutes(for: ingredient.name).isEmpty
+                // ingredient.id as ForEach identity lets SwiftUI diff individual rows
+                // instead of rebuilding all N rows on every pantry/shopping-list change.
+                let substituteIDs = ingredientsWithSubstitutes
+                ForEach(Array(recipe.ingredients.enumerated()), id: \.element.id) { index, ingredient in
                     IngredientRowView(
                         ingredient: ingredient,
                         isChecked: ingredientsState[index],
@@ -125,7 +134,7 @@ struct RecipeIngredientsSection: View {
                         onAddToShopping: { onAddToShopping(index) },
                         isInShoppingList: isInShoppingList(ingredient),
                         onTapQuantity: { onEditIngredient(index) },
-                        onSubstitute: (hasSubstitutes && onSubstitute != nil) ? { onSubstitute?(index) } : nil,
+                        onSubstitute: (substituteIDs.contains(ingredient.id) && onSubstitute != nil) ? { onSubstitute?(index) } : nil,
                         onTogglePantry: onTogglePantry != nil ? { onTogglePantry?(index) } : nil,
                         isInPantry: isInPantry?(ingredient) ?? false
                     )

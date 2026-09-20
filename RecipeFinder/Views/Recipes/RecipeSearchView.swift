@@ -35,14 +35,12 @@ struct RecipeSearchView: View {
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @AppStorage("skipRecipeDeleteConfirmation") private var skipDeleteConfirmation: Bool = false
-    @ObservedObject private var kitchenManager = KitchenInventoryManager.shared
     @ObservedObject private var collectionManager = CollectionManager.shared
     @State private var selectedCollectionID: UUID? = nil
     @State private var navigationPath = NavigationPath()
-
-    private var availableIngredients: Set<String> {
-        Set(kitchenManager.items.map { $0.name.lowercased() })
-    }
+    // Refreshed on appear so pantry toggles in RecipeDetailView don't cause
+    // this buried view to re-render and re-run apply(to:) 3 times per toggle.
+    @State private var availableIngredients: Set<String> = []
 
     private var filteredRecipes: [RecipeModel] {
         let currentHash = computeFilterHash()
@@ -124,6 +122,8 @@ struct RecipeSearchView: View {
         }
         .sheet(isPresented: $showCollections) { collectionsSheet }
         .onAppear {
+            availableIngredients = Set(KitchenInventoryManager.shared.items.map { $0.name.lowercased() })
+            updateFilterCache()
             checkSharedImportInbox()
             updateDerivedMetadata()
         }
@@ -306,12 +306,15 @@ struct RecipeSearchView: View {
     }
     
     private var recipeContentArea: some View {
-        Group {
-            if filteredRecipes.isEmpty {
+        // Capture once — filteredRecipes can fall through to apply(to:) on a cache
+        // miss, so calling it twice in one body evaluation doubles the filter cost.
+        let current = filteredRecipes
+        return Group {
+            if current.isEmpty {
                 RecipeEmptyStateView(activeFilterCount: activeFilterCount, onClearFilters: clearAllFilters)
             } else {
                 RecipeResultsList(
-                    filteredRecipes: filteredRecipes,
+                    filteredRecipes: current,
                     onFavoriteToggle: refreshRecipes,
                     onRequestDelete: requestDelete
                 )

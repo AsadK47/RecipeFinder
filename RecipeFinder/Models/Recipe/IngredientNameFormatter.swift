@@ -9,24 +9,31 @@ struct IngredientNameFormatter {
         "fresh", "dried", "frozen", "canned", "cooked",
         "room temperature", "softened", "melted", "beaten"
     ]
-    
+
+    // NSRegularExpression is expensive to construct — cache once at load time instead of
+    // allocating two instances per mainIngredientName call (called for every ingredient row).
+    private static let leadingRangeRegex = try? NSRegularExpression(pattern: #"^[-–]\s+"#, options: [])
+    private static let qtyUnitRegex = try? NSRegularExpression(
+        pattern: #"^[\d/\.\-]+\s+(tbsp|tsp|cups?|ml|l|g|kg|oz|lbs?|inch(?:es)?)\s+"#,
+        options: [.caseInsensitive]
+    )
+
     static func formatForDisplay(_ name: String) -> String {
         return name.capitalized
     }
-    
+
     static func extractMainName(_ name: String) -> String {
         var result = name
 
         // Strip leading range prefix like "- 1 cup " or "– 1 "
-        if let regex = try? NSRegularExpression(pattern: #"^[-–]\s+"#, options: []),
+        if let regex = leadingRangeRegex,
            let match = regex.firstMatch(in: result, options: [], range: NSRange(result.startIndex..., in: result)),
            let range = Range(match.range, in: result) {
             result = String(result[range.upperBound...]).trimmingCharacters(in: .whitespaces)
         }
 
         // Strip leading quantity+unit (handles already-saved strings like "1/4 tsp kosher salt", "1 cup oil")
-        let qtyUnitPattern = #"^[\d/\.\-]+\s+(tbsp|tsp|cups?|ml|l|g|kg|oz|lbs?|inch(?:es)?)\s+"#
-        if let regex = try? NSRegularExpression(pattern: qtyUnitPattern, options: [.caseInsensitive]),
+        if let regex = qtyUnitRegex,
            let match = regex.firstMatch(in: result, options: [], range: NSRange(result.startIndex..., in: result)),
            let range = Range(match.range, in: result) {
             result = String(result[range.upperBound...]).trimmingCharacters(in: .whitespaces)

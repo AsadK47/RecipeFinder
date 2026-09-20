@@ -217,11 +217,13 @@ extension RecipeDetailView {
             onToggleSection: { toggleSection("Ingredients") },
             onToggleMeasurement: toggleMeasurementSystem,
             onToggleIngredient: { index in
+                guard index < ingredientsState.count else { return }
                 HapticManager.shared.light()
                 ingredientsState[index].toggle()
                 checkForCompletion()
             },
             onAddToShopping: { index in
+                guard index < recipe.ingredients.count else { return }
                 addIngredientToShoppingList(recipe.ingredients[index])
             },
             onAddAllToShopping: addAllIngredientsToShoppingList,
