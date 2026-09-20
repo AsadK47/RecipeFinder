@@ -77,9 +77,9 @@ struct KitchenShoppingView: View {
             .toolbarBackground(.hidden, for: .navigationBar)
         }
         .confettiCannon(trigger: $confettiTrigger, num: AppTheme.confettiCount, radius: AppTheme.confettiRadius)
-        .onAppear(perform: recomputeQuickMatches)
-        .onChange(of: kitchen.items) { _, _ in recomputeQuickMatches() }
-        .onChange(of: recipes) { _, _ in recomputeQuickMatches() }
+        .onAppear { scheduleQuickMatches() }
+        .onChange(of: kitchen.items) { _, _ in scheduleQuickMatches() }
+        .onChange(of: recipes) { _, _ in scheduleQuickMatches() }
         .onChange(of: checkedCount) { _, newValue in
             if !shopping.items.isEmpty && newValue == totalCount {
                 HapticManager.shared.success()
@@ -289,11 +289,19 @@ struct KitchenShoppingView: View {
         }
     }
 
-    private func recomputeQuickMatches() {
-        quickMatches = KitchenRecipeMatcher.quickMatches(
-            recipes: recipes,
-            kitchenItemNames: kitchen.items.map { $0.name }
-        )
+    private func scheduleQuickMatches() {
+        // Snapshot inputs on the main actor before crossing to the background thread.
+        let names = kitchen.items.map { $0.name }
+        let currentRecipes = recipes
+        // Run the O(R×I×regex) matching work off the main actor so pantry toggles
+        // aren't blocked waiting for it to finish.
+        Task {
+            let matches = await Task.detached(priority: .userInitiated) {
+                KitchenRecipeMatcher.quickMatches(recipes: currentRecipes, kitchenItemNames: names)
+            }.value
+            // Assignment back on the main actor (outer Task inherits @MainActor isolation).
+            quickMatches = matches
+        }
     }
 
     private func refreshRecipesAfterFavoriteToggle() {

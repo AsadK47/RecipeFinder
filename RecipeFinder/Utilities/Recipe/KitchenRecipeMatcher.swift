@@ -5,17 +5,22 @@ import Foundation
 /// and no longer computed inline in a SwiftUI view.
 enum KitchenRecipeMatcher {
 
+    // Ingredient name normalization is called for every recipe × ingredient × kitchen item
+    // on every pantry toggle. Cache results so repeated toggles are O(1) after the first pass.
+    private static let normCache = MemoCache<String, String>(maxSize: 1000)
+
     /// Normalises an ingredient name to its comparable main term (lowercased,
     /// whitespace-collapsed, brand/qualifier stripped via `IngredientNameFormatter`).
     static func normalizedTerm(_ raw: String) -> String {
-        let main = IngredientNameFormatter.extractMainName(raw)
-            .lowercased()
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-
-        return main
-            .components(separatedBy: .whitespacesAndNewlines)
-            .filter { !$0.isEmpty }
-            .joined(separator: " ")
+        normCache.value(for: raw) { _ in
+            let main = IngredientNameFormatter.extractMainName(raw)
+                .lowercased()
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            return main
+                .components(separatedBy: .whitespacesAndNewlines)
+                .filter { !$0.isEmpty }
+                .joined(separator: " ")
+        }
     }
 
     /// Whether two normalised ingredient terms match. Exact matches always count;
@@ -89,19 +94,29 @@ enum KitchenRecipeMatcher {
 
         guard !kitchenIngredients.isEmpty else { return [] }
 
-        return recipes.filter { recipe in
-            let recipeIngredients = recipe.ingredients
-                .map { normalizedTerm($0.name) }
-                .filter { !$0.isEmpty }
+        // Pre-normalize each recipe's ingredient terms once so both the filter pass and
+        // the sort pass reuse the same strings — previously `matchCount` re-normalized
+        // every recipe's ingredients for every sort comparison (O(R log R × I × regex)).
+        let normalized: [(recipe: RecipeModel, terms: [String])] = recipes.map { recipe in
+            (recipe, recipe.ingredients.map { normalizedTerm($0.name) }.filter { !$0.isEmpty })
+        }
 
-            return recipeIngredients.contains { recipeIng in
-                kitchenIngredients.contains { kitchenIng in
-                    ingredientMatches(recipeIng, kitchenIng)
+        return normalized
+            .filter { entry in
+                entry.terms.contains { recipeIng in
+                    kitchenIngredients.contains { kitchenIng in
+                        ingredientMatches(recipeIng, kitchenIng)
+                    }
                 }
             }
-        }.sorted { recipe1, recipe2 in
-            matchCount(recipe: recipe1, kitchenIngredients: kitchenIngredients) >
-            matchCount(recipe: recipe2, kitchenIngredients: kitchenIngredients)
-        }
+            .sorted { a, b in
+                let countMatches: ([String]) -> Int = { terms in
+                    terms.filter { term in
+                        kitchenIngredients.contains { kitchenIng in ingredientMatches(term, kitchenIng) }
+                    }.count
+                }
+                return countMatches(a.terms) > countMatches(b.terms)
+            }
+            .map(\.recipe)
     }
 }
