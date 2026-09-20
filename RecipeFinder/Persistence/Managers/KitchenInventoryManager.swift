@@ -15,6 +15,8 @@ final class KitchenInventoryManager: ObservableObject {
     @Published private(set) var inventoryItems: [KitchenInventoryModel] = []
     // O(1) name lookup — kept in sync with items on every save/load
     private var itemNameSet: Set<String> = []
+    // Pre-grouped and sorted once per save/load; reading it in body is O(1).
+    private(set) var groupedItemsCache: [(category: String, items: [KitchenItem])] = []
 
 	private init() {
         self.storage = .shared
@@ -39,9 +41,11 @@ final class KitchenInventoryManager: ObservableObject {
            let decoded = try? JSONDecoder().decode([KitchenItem].self, from: data) {
             items = decoded
             itemNameSet = Set(decoded.map { $0.name.lowercased() })
+            groupedItemsCache = computeGroupedItems()
         } else {
             items = []
             itemNameSet = []
+            groupedItemsCache = []
         }
     }
     
@@ -267,7 +271,13 @@ final class KitchenInventoryManager: ObservableObject {
 		saveItems([])
 	}
     
+    // Returns the pre-computed cache — O(1) from any call site.
+    // Previously called inline in body, which made it O(K log K) per re-render.
 	func groupedItems() -> [(category: String, items: [KitchenItem])] {
+        groupedItemsCache
+	}
+
+    private func computeGroupedItems() -> [(category: String, items: [KitchenItem])] {
 		let grouped = Dictionary(grouping: items) { $0.category }
 		return grouped.keys.sorted().compactMap { category in
 			guard let categoryItems = grouped[category], !categoryItems.isEmpty else { return nil }
@@ -275,13 +285,18 @@ final class KitchenInventoryManager: ObservableObject {
 		}
 	}
     
-	private func saveItems(_ newItems: [KitchenItem]) {
-		if let encoded = try? JSONEncoder().encode(newItems) {
-			storage.set(encoded, forKey: saveKey)
-            items = newItems
-            itemNameSet = Set(newItems.map { $0.name.lowercased() })
-		}
-	}
+    private func saveItems(_ newItems: [KitchenItem]) {
+        // Update in-memory state first so the UI reflects the change immediately,
+        // then persist on a background thread (optimistic UI — CLAUDE.md pattern).
+        items = newItems
+        itemNameSet = Set(newItems.map { $0.name.lowercased() })
+        groupedItemsCache = computeGroupedItems()
+        Task.detached(priority: .utility) { [saveKey = self.saveKey, storage = self.storage] in
+            if let encoded = try? JSONEncoder().encode(newItems) {
+                storage.set(encoded, forKey: saveKey)
+            }
+        }
+    }
 	
 	private func saveInventoryItems(_ newInventoryItems: [KitchenInventoryModel]) {
 		if let encoded = try? JSONEncoder().encode(newInventoryItems) {

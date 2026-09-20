@@ -94,10 +94,7 @@ struct IngredientRowView: View {
             }
 
             if let onTogglePantry {
-                Button(action: {
-                    onTogglePantry()
-                    HapticManager.shared.light()
-                }) {
+                Button(action: { onTogglePantry() }) {
                     Image(systemName: isInPantry ? "refrigerator.fill" : "refrigerator")
                         .font(.system(size: AppTheme.fontSize16))
                         .foregroundColor(isInPantry ? .green : .secondary)

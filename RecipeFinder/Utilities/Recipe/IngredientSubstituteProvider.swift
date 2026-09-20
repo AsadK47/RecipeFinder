@@ -4,14 +4,20 @@ import Foundation
 /// Normalized on both sides so lookups are case/whitespace insensitive.
 enum IngredientSubstituteProvider {
 
+    // Called once per ingredient per RecipeIngredientsSection body evaluation;
+    // cache so repeated renders (pantry toggles, etc.) are O(1) lookups.
+    private static let cache = MemoCache<String, [String]>(maxSize: 300)
+
     static func substitutes(for ingredientName: String) -> [String] {
         let key = normalize(ingredientName)
-        if let exact = table[key] { return exact }
-        // Partial match: "large eggs" → "eggs", "full-fat buttermilk" → "buttermilk"
-        for (tableKey, subs) in table where key.contains(tableKey) || tableKey.contains(key) {
-            return subs
+        return cache.value(for: key) { normalized in
+            if let exact = table[normalized] { return exact }
+            // Partial match: "large eggs" → "eggs", "full-fat buttermilk" → "buttermilk"
+            for (tableKey, subs) in table where normalized.contains(tableKey) || tableKey.contains(normalized) {
+                return subs
+            }
+            return []
         }
-        return []
     }
 
     private static func normalize(_ name: String) -> String {
