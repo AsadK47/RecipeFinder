@@ -260,10 +260,14 @@ struct MealPlanningView: View {
     // MARK: - Pantry suggestions
 
     private func updatePantryExpirySuggestions() {
-        pantryExpirySuggestions = PantryExpirySuggestions.matches(
-            recipes: recipes,
-            inventoryItems: kitchenManager.inventoryItems
-        )
+        let currentRecipes = recipes
+        let currentInventory = kitchenManager.inventoryItems
+        Task {
+            let matches = await Task.detached(priority: .userInitiated) {
+                PantryExpirySuggestions.matches(recipes: currentRecipes, inventoryItems: currentInventory)
+            }.value
+            pantryExpirySuggestions = matches
+        }
     }
 
     // MARK: - Meal plan actions
@@ -362,23 +366,21 @@ struct MealPlanningView: View {
 
     // MARK: - Derived date values
 
-    private var monthYearString: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMMM yyyy"
-        return formatter.string(from: selectedDate)
-    }
+    // DateFormatter construction is expensive (Obj-C runtime init). Static lets are
+    // created once and reused; body runs on every @ObservedObject change so this matters.
+    private static let monthYearFormatter: DateFormatter = {
+        let f = DateFormatter(); f.dateFormat = "MMMM yyyy"; return f
+    }()
+    private static let mediumDateFormatter: DateFormatter = {
+        let f = DateFormatter(); f.dateFormat = "MMM d, yyyy"; return f
+    }()
+    private static let shortDateFormatter: DateFormatter = {
+        let f = DateFormatter(); f.dateFormat = "MMM d"; return f
+    }()
 
-    private var selectedDateString: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMM d, yyyy"
-        return formatter.string(from: selectedDate)
-    }
-
-    private var shortDateString: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMM d"
-        return formatter.string(from: selectedDate)
-    }
+    private var monthYearString: String { Self.monthYearFormatter.string(from: selectedDate) }
+    private var selectedDateString: String { Self.mediumDateFormatter.string(from: selectedDate) }
+    private var shortDateString: String { Self.shortDateFormatter.string(from: selectedDate) }
 
     private var currentWeekStart: Date? {
         mealCalendar.weekRange(containing: selectedDate)?.start

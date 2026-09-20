@@ -44,8 +44,10 @@ final class ShoppingListManager: ObservableObject {
     
     private func saveItems(_ newItems: [ShoppingListModel]) {
         items = newItems
-        if let encoded = try? JSONEncoder().encode(newItems) {
-            storage.set(encoded, forKey: saveKey)
+        Task.detached(priority: .utility) { [saveKey = self.saveKey, storage = self.storage] in
+            if let encoded = try? JSONEncoder().encode(newItems) {
+                storage.set(encoded, forKey: saveKey)
+            }
         }
     }
     

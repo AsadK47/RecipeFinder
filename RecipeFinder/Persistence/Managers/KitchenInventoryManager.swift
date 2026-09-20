@@ -15,6 +15,8 @@ final class KitchenInventoryManager: ObservableObject {
     @Published private(set) var inventoryItems: [KitchenInventoryModel] = []
     // O(1) name lookup — kept in sync with items on every save/load
     private var itemNameSet: Set<String> = []
+    // O(1) inventory name lookup — mirrors inventoryItems, same pattern as itemNameSet.
+    private var inventoryNameSet: Set<String> = []
     // Pre-grouped and sorted once per save/load; reading it in body is O(1).
     private(set) var groupedItemsCache: [(category: String, items: [KitchenItem])] = []
 
@@ -53,8 +55,10 @@ final class KitchenInventoryManager: ObservableObject {
         if let data = storage.data(forKey: inventorySaveKey),
            let decoded = try? JSONDecoder().decode([KitchenInventoryModel].self, from: data) {
             inventoryItems = decoded
+            inventoryNameSet = Set(decoded.map { $0.name.lowercased() })
         } else {
             inventoryItems = []
+            inventoryNameSet = []
         }
     }
 	
@@ -132,7 +136,7 @@ final class KitchenInventoryManager: ObservableObject {
 	}
 	
 	func hasInventoryItem(_ name: String) -> Bool {
-		inventoryItems.contains { $0.name.lowercased() == name.lowercased() }
+		inventoryNameSet.contains(name.lowercased())
 	}
 	
 	func expiredItems() -> [KitchenInventoryModel] {
@@ -299,10 +303,13 @@ final class KitchenInventoryManager: ObservableObject {
     }
 	
 	private func saveInventoryItems(_ newInventoryItems: [KitchenInventoryModel]) {
-		if let encoded = try? JSONEncoder().encode(newInventoryItems) {
-			storage.set(encoded, forKey: inventorySaveKey)
-            inventoryItems = newInventoryItems
-		}
+        inventoryItems = newInventoryItems
+        inventoryNameSet = Set(newInventoryItems.map { $0.name.lowercased() })
+        Task.detached(priority: .utility) { [inventorySaveKey = self.inventorySaveKey, storage = self.storage] in
+            if let encoded = try? JSONEncoder().encode(newInventoryItems) {
+                storage.set(encoded, forKey: inventorySaveKey)
+            }
+        }
 	}
 }
 
