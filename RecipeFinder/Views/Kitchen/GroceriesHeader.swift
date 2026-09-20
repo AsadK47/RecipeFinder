@@ -1,13 +1,12 @@
 import SwiftUI
 
-/// The single shared header for the merged Groceries tab: the "Groceries" title with
-/// an overflow menu (supplied by the parent so it can combine shopping + kitchen
-/// actions) and one search field. Mirrors `RecipeSearchHeader` so the tab reads like
-/// the rest of the app.
+/// Header for the Groceries tab: title, a fridge button that opens kitchen inventory,
+/// an overflow menu for shopping actions, and a search field.
 struct GroceriesHeader<MenuContent: View>: View {
     @Binding var searchText: String
     var isSearchFocused: FocusState<Bool>.Binding
     let onSubmit: () -> Void
+    let onKitchenTap: () -> Void
     @ViewBuilder let menuContent: () -> MenuContent
 
     @Environment(\.colorScheme) private var colorScheme
@@ -16,13 +15,21 @@ struct GroceriesHeader<MenuContent: View>: View {
     var body: some View {
         VStack(spacing: AppTheme.spacing12) {
             ScreenTitleHeader("Groceries") {
-                Menu {
-                    menuContent()
-                } label: {
-                    CircleButton(icon: "line.3.horizontal") {}
-                        .allowsHitTesting(false)
+                HStack(spacing: AppTheme.spacing8) {
+                    Button(action: onKitchenTap) {
+                        CircleButton(icon: "refrigerator") {}
+                            .allowsHitTesting(false)
+                    }
+                    .accessibilityLabel("Kitchen inventory")
+
+                    Menu {
+                        menuContent()
+                    } label: {
+                        CircleButton(icon: "line.3.horizontal") {}
+                            .allowsHitTesting(false)
+                    }
+                    .accessibilityLabel("More options")
                 }
-                .accessibilityLabel("More options")
             }
 
             searchBar

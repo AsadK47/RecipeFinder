@@ -2,13 +2,10 @@ import SwiftUI
 
 /// The kitchen inventory rendered as bare `List` `Section`s — no enclosing `List`
 /// and no title bar of its own — so the merged Groceries screen can host it in one
-/// scroll below the shopping sections. Quick recipe matches and per-category rows
-/// are preserved; row/collapse state is driven by the parent.
+/// scroll below the shopping sections. Row/collapse state is driven by the parent.
 struct KitchenSectionsView: View {
     @Binding var collapsedCategories: Set<String>
-    let quickMatches: [RecipeModel]
     let onAddMore: () -> Void
-    let onFavoriteToggle: () -> Void
 
     @ObservedObject private var manager = KitchenInventoryManager.shared
     @Environment(\.colorScheme) private var colorScheme
@@ -17,22 +14,6 @@ struct KitchenSectionsView: View {
 
     var body: some View {
         PantryAlertsSectionContent(manager: manager)
-
-        if !quickMatches.isEmpty {
-            Section {
-                KitchenQuickMatchesView(
-                    quickMatches: quickMatches,
-                    kitchenItemNames: manager.items.map { $0.name },
-                    selectedTheme: selectedTheme,
-                    colorScheme: colorScheme,
-                    onFavoriteToggle: onFavoriteToggle
-                )
-                .padding(.vertical, AppTheme.spacing8)
-            }
-            .listRowInsets(EdgeInsets())
-            .listRowSeparator(.hidden)
-            .listRowBackground(Color.clear)
-        }
 
         Section {
             HStack(spacing: AppTheme.spacing12) {

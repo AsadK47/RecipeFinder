@@ -229,13 +229,7 @@ extension RecipeDetailView {
             onAddAllToShopping: addAllIngredientsToShoppingList,
             isInShoppingList: { isIngredientInShoppingList($0) },
             onEditIngredient: { index in startEditingIngredient(at: index) },
-            onSubstitute: { index in substitutingIngredientIndex = index },
-            isInPantry: { pantryManager.hasItem($0.mainIngredientName) },
-            onTogglePantry: { index in
-                guard index < recipe.ingredients.count else { return }
-                let ingredient = recipe.ingredients[index]
-                pantryManager.toggleItem(ingredient.mainIngredientName)
-            }
+            onSubstitute: { index in substitutingIngredientIndex = index }
         )
         .sheet(item: Binding(
             get: { editingIngredientIndex.map { EditingIngredient(index: $0) } },

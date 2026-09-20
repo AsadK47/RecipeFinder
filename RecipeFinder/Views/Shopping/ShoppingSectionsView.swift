@@ -1,9 +1,8 @@
 import SwiftUI
 
 /// The shopping list rendered as bare `List` `Section`s — no enclosing `List` and no
-/// title bar of its own — so the merged Groceries screen can host it in one scroll
-/// alongside the kitchen sections. Row actions still go straight to
-/// `ShoppingListManager.shared`, matching the previous standalone screen.
+/// title bar of its own — so the Groceries screen can host it in one scroll.
+/// Row actions go straight to `ShoppingListManager.shared`.
 struct ShoppingSectionsView: View {
     @Binding var collapsedCategories: Set<String>
 
@@ -12,28 +11,20 @@ struct ShoppingSectionsView: View {
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
 
-    // Cached so pantry toggles (which re-render this view via @ObservedObject kitchen)
-    // don't recompute the O(S log S) grouping when the shopping list hasn't changed.
-    @State private var cachedGroupedItems: [(key: String, value: [ShoppingListModel])] = []
-
-    /// Names the user already has in their kitchen (quick items + inventory),
-    /// lowercased, so each shopping row can persistently flag "you already have this".
+    /// Names the user already has in their kitchen, lowercased, so each shopping
+    /// row can flag "you already have this".
     private var kitchenNameSet: Set<String> {
         Set(kitchen.items.map { $0.name.lowercased() })
             .union(kitchen.inventoryItems.map { $0.name.lowercased() })
     }
 
+    private var groupedItems: [(key: String, value: [ShoppingListModel])] {
+        ShoppingListGrouping.grouped(manager.items)
+    }
+
     var body: some View {
-        Group {
-            ForEach(cachedGroupedItems, id: \.key) { group in
-                categorySection(for: group.key, items: group.value)
-            }
-        }
-        .onAppear {
-            cachedGroupedItems = ShoppingListGrouping.grouped(manager.items)
-        }
-        .onChange(of: manager.items) { _, newItems in
-            cachedGroupedItems = ShoppingListGrouping.grouped(newItems)
+        ForEach(groupedItems, id: \.key) { group in
+            categorySection(for: group.key, items: group.value)
         }
     }
 

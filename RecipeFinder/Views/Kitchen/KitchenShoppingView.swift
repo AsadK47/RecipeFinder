@@ -1,33 +1,21 @@
 import ConfettiSwiftUI
 import SwiftUI
 
-/// The "Groceries" tab: one screen, one title, one search, one scroll — showing two
-/// sections, **Shopping** and **In your kitchen**. Replaces the old segmented
-/// Shopping/Kitchen switch so the tab reads like every other tab. The two stores
-/// (`ShoppingListManager`, `KitchenInventoryManager`) remain separate — this is a
-/// UI/IA merge, not a data-model merge.
+/// The "Groceries" tab: a focused shopping list. Kitchen inventory is one tap
+/// away via the fridge button in the header — accessible but not competing for
+/// space with the list itself.
 struct KitchenShoppingView: View {
-    @Binding var recipes: [RecipeModel]
-
     @ObservedObject private var shopping = ShoppingListManager.shared
-    @ObservedObject private var kitchen = KitchenInventoryManager.shared
     @State private var searchText = ""
     @FocusState private var isSearchFocused: Bool
     @State private var shoppingCollapsed: Set<String> = []
-    @State private var kitchenCollapsed: Set<String> = []
-    @State private var shoppingSectionCollapsed = false
-    @State private var kitchenSectionCollapsed = false
-    @State private var quickMatches: [RecipeModel] = []
     @State private var confettiTrigger = 0
     @State private var showShoppingQuickAdd = false
-    @State private var showKitchenQuickAdd = false
-    @State private var showAddIngredient = false
     @State private var showClearShopping = false
-    @State private var showClearKitchen = false
+    @State private var showKitchenSheet = false
 
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
 
     private var searchResults: [String] {
         guard !searchText.isEmpty else { return [] }
@@ -40,10 +28,9 @@ struct KitchenShoppingView: View {
 
     private var checkedCount: Int { shopping.items.filter { $0.isChecked }.count }
     private var totalCount: Int { shopping.items.count }
-    private var isAllShoppingCollapsed: Bool {
+    private var isAllCollapsed: Bool {
         shoppingCollapsed.count == CategoryClassifier.categoryOrder.count
     }
-    private var bothEmpty: Bool { shopping.items.isEmpty && kitchen.items.isEmpty }
 
     var body: some View {
         NavigationStack {
@@ -56,6 +43,7 @@ struct KitchenShoppingView: View {
                         searchText: $searchText,
                         isSearchFocused: $isSearchFocused,
                         onSubmit: addShoppingItem,
+                        onKitchenTap: { showKitchenSheet = true },
                         menuContent: { overflowMenu }
                     )
 
@@ -77,9 +65,6 @@ struct KitchenShoppingView: View {
             .toolbarBackground(.hidden, for: .navigationBar)
         }
         .confettiCannon(trigger: $confettiTrigger, num: AppTheme.confettiCount, radius: AppTheme.confettiRadius)
-        .onAppear { scheduleQuickMatches() }
-        .onChange(of: kitchen.items) { _, _ in scheduleQuickMatches() }
-        .onChange(of: recipes) { _, _ in scheduleQuickMatches() }
         .onChange(of: checkedCount) { _, newValue in
             if !shopping.items.isEmpty && newValue == totalCount {
                 HapticManager.shared.success()
@@ -93,13 +78,8 @@ struct KitchenShoppingView: View {
             Button("Clear All Items (\(totalCount))", role: .destructive) { shopping.clearAllItems() }
             Button("Cancel", role: .cancel) {}
         }
-        .confirmationDialog("Clear Kitchen", isPresented: $showClearKitchen, titleVisibility: .visible) {
-            Button("Clear All Ingredients", role: .destructive) { kitchen.clearAll() }
-            Button("Cancel", role: .cancel) {}
-        }
         .sheet(isPresented: $showShoppingQuickAdd) { ShoppingQuickAddSheet() }
-        .sheet(isPresented: $showKitchenQuickAdd) { KitchenQuickAddSheet() }
-        .sheet(isPresented: $showAddIngredient) { AddIngredientSheet() }
+        .sheet(isPresented: $showKitchenSheet) { KitchenInventorySheet() }
     }
 
     @ViewBuilder
@@ -111,62 +91,24 @@ struct KitchenShoppingView: View {
                 isInShopping: { ingredient in
                     shopping.items.contains { $0.name.lowercased() == ingredient.lowercased() }
                 },
-                isInKitchen: { ingredient in
-                    kitchen.items.contains { $0.name.lowercased() == ingredient.lowercased() }
-                },
                 onAddToShopping: addShoppingItemFromSearch,
-                onAddToKitchen: addKitchenItemFromSearch,
                 selectedTheme: selectedTheme,
-                cardStyle: cardStyle,
                 colorScheme: colorScheme
             )
-        } else if bothEmpty {
-            combinedEmptyState
+        } else if shopping.items.isEmpty {
+            emptyState
         } else {
-            groceriesList
+            shoppingList
         }
     }
 
-    private var groceriesList: some View {
+    private var shoppingList: some View {
         List {
-            groupHeader("Shopping", systemImage: "cart.fill", count: totalCount,
-                        isCollapsed: shoppingSectionCollapsed) {
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.85)) {
-                    shoppingSectionCollapsed.toggle()
-                }
-                HapticManager.shared.selection()
-            }
-            if !shoppingSectionCollapsed {
-                if shopping.items.isEmpty {
-                    placeholderRow("Nothing on your list yet")
-                } else {
-                    ShoppingProgressBar(checkedCount: checkedCount, totalCount: totalCount, selectedTheme: selectedTheme)
-                        .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 8, trailing: 16))
-                        .listRowSeparator(.hidden)
-                        .listRowBackground(Color.clear)
-                    ShoppingSectionsView(collapsedCategories: $shoppingCollapsed)
-                }
-            }
-
-            groupHeader("In your kitchen", systemImage: "refrigerator.fill", count: kitchen.items.count,
-                        isCollapsed: kitchenSectionCollapsed) {
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.85)) {
-                    kitchenSectionCollapsed.toggle()
-                }
-                HapticManager.shared.selection()
-            }
-            if !kitchenSectionCollapsed {
-                if kitchen.items.isEmpty {
-                    placeholderRow("No ingredients yet")
-                } else {
-                    KitchenSectionsView(
-                        collapsedCategories: $kitchenCollapsed,
-                        quickMatches: quickMatches,
-                        onAddMore: { showAddIngredient = true },
-                        onFavoriteToggle: refreshRecipesAfterFavoriteToggle
-                    )
-                }
-            }
+            ShoppingProgressBar(checkedCount: checkedCount, totalCount: totalCount, selectedTheme: selectedTheme)
+                .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 8, trailing: 16))
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
+            ShoppingSectionsView(collapsedCategories: $shoppingCollapsed)
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
@@ -175,61 +117,16 @@ struct KitchenShoppingView: View {
         .padding(.top, -6)
     }
 
-    @ViewBuilder
-    private func groupHeader(_ title: String, systemImage: String, count: Int,
-                            isCollapsed: Bool, onToggle: @escaping () -> Void) -> some View {
-        Button(action: onToggle) {
-            HStack(spacing: AppTheme.spacing8) {
-                Image(systemName: systemImage)
-                    .font(.headline)
-                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
-                Text(title)
-                    .font(.title3).fontWeight(.bold)
-                    .adaptiveForegroundColor()
-                if count > 0 {
-                    Text("\(count)")
-                        .font(.subheadline)
-                        .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
-                }
-                Spacer()
-                Image(systemName: "chevron.up")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundColor(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
-                    .rotationEffect(.degrees(isCollapsed ? 180 : 0))
-            }
-            .padding(.horizontal, AppTheme.spacing20)
-            .padding(.top, AppTheme.spacing16)
-            .padding(.bottom, AppTheme.spacing4)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .listRowInsets(EdgeInsets())
-        .listRowSeparator(.hidden)
-        .listRowBackground(Color.clear)
-    }
-
-    private func placeholderRow(_ text: String) -> some View {
-        Text(text)
-            .font(.subheadline)
-            .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, AppTheme.spacing20)
-            .padding(.vertical, AppTheme.spacing8)
-            .listRowInsets(EdgeInsets())
-            .listRowSeparator(.hidden)
-            .listRowBackground(Color.clear)
-    }
-
-    private var combinedEmptyState: some View {
+    private var emptyState: some View {
         ScrollView {
             VStack(spacing: AppTheme.spacing16) {
                 Image(systemName: "cart.circle.fill")
                     .font(.system(size: AppTheme.fontSize60))
                     .adaptiveForegroundColor(opacity: AppTheme.lowEmphasisOpacity)
-                Text("Your groceries are empty")
+                Text("Your shopping list is empty")
                     .font(.title2).fontWeight(.bold)
                     .adaptiveForegroundColor()
-                Text("Search above to add items to your shopping list or kitchen.")
+                Text("Search above to add items to your list.")
                     .font(.subheadline)
                     .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
                     .multilineTextAlignment(.center)
@@ -242,20 +139,13 @@ struct KitchenShoppingView: View {
 
     @ViewBuilder
     private var overflowMenu: some View {
-        Section("Shopping") {
-            Button { showShoppingQuickAdd = true } label: { Label("Quick Add", systemImage: "plus.circle") }
-            Button(action: shareShoppingList) { Label("Share List", systemImage: "square.and.arrow.up") }
-            Button(action: toggleCollapseAllShopping) {
-                Label(isAllShoppingCollapsed ? "Expand All" : "Collapse All",
-                      systemImage: isAllShoppingCollapsed ? "chevron.down" : "chevron.up")
-            }
-            Button(role: .destructive) { showClearShopping = true } label: { Label("Clear List", systemImage: "trash") }
+        Button { showShoppingQuickAdd = true } label: { Label("Quick Add", systemImage: "plus.circle") }
+        Button(action: shareShoppingList) { Label("Share List", systemImage: "square.and.arrow.up") }
+        Button(action: toggleCollapseAll) {
+            Label(isAllCollapsed ? "Expand All" : "Collapse All",
+                  systemImage: isAllCollapsed ? "chevron.down" : "chevron.up")
         }
-        Section("Kitchen") {
-            Button { showAddIngredient = true } label: { Label("Add Ingredient", systemImage: "plus.circle") }
-            Button { showKitchenQuickAdd = true } label: { Label("Quick Add", systemImage: "bolt") }
-            Button(role: .destructive) { showClearKitchen = true } label: { Label("Clear Kitchen", systemImage: "trash") }
-        }
+        Button(role: .destructive) { showClearShopping = true } label: { Label("Clear List", systemImage: "trash") }
     }
 
     private func addShoppingItem() {
@@ -267,46 +157,20 @@ struct KitchenShoppingView: View {
         HapticManager.shared.success()
     }
 
-    /// Adds from the shared search without clearing the query, so the same result can
-    /// also be sent to the other destination and the row can show an "added" check.
     private func addShoppingItemFromSearch(_ ingredient: String) {
         guard !shopping.items.contains(where: { $0.name.lowercased() == ingredient.lowercased() }) else { return }
         shopping.addItem(name: ingredient)
+        searchText = ""
+        isSearchFocused = false
         HapticManager.shared.success()
     }
 
-    private func addKitchenItemFromSearch(_ ingredient: String) {
-        guard !kitchen.items.contains(where: { $0.name.lowercased() == ingredient.lowercased() }) else { return }
-        kitchen.addItem(name: ingredient)
-        HapticManager.shared.success()
-    }
-
-    private func toggleCollapseAllShopping() {
-        if isAllShoppingCollapsed {
+    private func toggleCollapseAll() {
+        if isAllCollapsed {
             shoppingCollapsed.removeAll()
         } else {
             shoppingCollapsed = Set(CategoryClassifier.categoryOrder)
         }
-    }
-
-    private func scheduleQuickMatches() {
-        // Snapshot inputs on the main actor before crossing to the background thread.
-        let names = kitchen.items.map { $0.name }
-        let currentRecipes = recipes
-        // Run the O(R×I×regex) matching work off the main actor so pantry toggles
-        // aren't blocked waiting for it to finish.
-        Task {
-            let matches = await Task.detached(priority: .userInitiated) {
-                KitchenRecipeMatcher.quickMatches(recipes: currentRecipes, kitchenItemNames: names)
-            }.value
-            // Assignment back on the main actor (outer Task inherits @MainActor isolation).
-            quickMatches = matches
-        }
-    }
-
-    private func refreshRecipesAfterFavoriteToggle() {
-        guard PersistenceController.shared.hasCurrentUserScope() else { return }
-        recipes = PersistenceController.shared.fetchRecipes()
     }
 
     private func shareShoppingList() {
@@ -333,7 +197,102 @@ struct KitchenShoppingView: View {
     }
 }
 
+// MARK: - Kitchen sheet
+
+private struct KitchenInventorySheet: View {
+    @ObservedObject private var manager = KitchenInventoryManager.shared
+    @State private var collapsed: Set<String> = []
+    @State private var showAddIngredient = false
+    @State private var showQuickAdd = false
+    @State private var showClear = false
+    @Environment(\.colorScheme) private var colorScheme
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
+                    .ignoresSafeArea()
+
+                if manager.items.isEmpty {
+                    emptyState
+                } else {
+                    List {
+                        KitchenSectionsView(
+                            collapsedCategories: $collapsed,
+                            onAddMore: { showAddIngredient = true }
+                        )
+                    }
+                    .listStyle(.plain)
+                    .scrollContentBackground(.hidden)
+                    .environment(\.defaultMinListHeaderHeight, 0)
+                }
+            }
+            .navigationTitle("Kitchen")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.hidden, for: .navigationBar)
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Menu {
+                        Button { showAddIngredient = true } label: {
+                            Label("Add Ingredient", systemImage: "plus.circle")
+                        }
+                        Button { showQuickAdd = true } label: {
+                            Label("Quick Add", systemImage: "bolt")
+                        }
+                        if !manager.items.isEmpty {
+                            Divider()
+                            Button(role: .destructive) { showClear = true } label: {
+                                Label("Clear All", systemImage: "trash")
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "plus")
+                            .font(.body.weight(.semibold))
+                    }
+                    .accessibilityLabel("Add to kitchen")
+                }
+            }
+        }
+        .sheet(isPresented: $showAddIngredient) { AddIngredientSheet() }
+        .sheet(isPresented: $showQuickAdd) { KitchenQuickAddSheet() }
+        .confirmationDialog("Clear Kitchen", isPresented: $showClear, titleVisibility: .visible) {
+            Button("Clear All Ingredients", role: .destructive) { manager.clearAll() }
+            Button("Cancel", role: .cancel) {}
+        }
+    }
+
+    private var emptyState: some View {
+        ScrollView {
+            VStack(spacing: AppTheme.spacing16) {
+                Image(systemName: "refrigerator")
+                    .font(.system(size: AppTheme.fontSize60))
+                    .adaptiveForegroundColor(opacity: AppTheme.lowEmphasisOpacity)
+                Text("Your kitchen is empty")
+                    .font(.title2).fontWeight(.bold)
+                    .adaptiveForegroundColor()
+                Text("Add ingredients you have at home.")
+                    .font(.subheadline)
+                    .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, AppTheme.spacing32)
+                Button { showAddIngredient = true } label: {
+                    Label("Add Ingredient", systemImage: "plus.circle.fill")
+                        .font(.subheadline.weight(.semibold))
+                        .adaptiveForegroundColor()
+                        .padding(.horizontal, AppTheme.spacing20)
+                        .padding(.vertical, AppTheme.spacing10)
+                        .background(Capsule().fill(AppTheme.accentColor(for: selectedTheme)))
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.top, AppTheme.spacing40)
+            .frame(maxWidth: .infinity)
+        }
+    }
+}
+
 #Preview {
-    KitchenShoppingView(recipes: .constant([]))
+    KitchenShoppingView()
         .environment(\.appTheme, .teal)
 }

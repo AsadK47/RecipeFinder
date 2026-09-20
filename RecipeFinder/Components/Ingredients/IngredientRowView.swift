@@ -10,8 +10,6 @@ struct IngredientRowView: View {
     var isInShoppingList: Bool = false
     var onTapQuantity: (() -> Void)?
     var onSubstitute: (() -> Void)?
-    var onTogglePantry: (() -> Void)?
-    var isInPantry: Bool = false
 
     private enum Timing {
         static let springResponse: Double = 0.3
@@ -91,18 +89,6 @@ struct IngredientRowView: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(isInShoppingList)
-            }
-
-            if let onTogglePantry {
-                Button(action: { onTogglePantry() }) {
-                    Image(systemName: isInPantry ? "refrigerator.fill" : "refrigerator")
-                        .font(.system(size: AppTheme.fontSize16))
-                        .foregroundColor(isInPantry ? .green : .secondary)
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel(isInPantry
-                    ? "Remove \(ingredient.mainIngredientName) from kitchen"
-                    : "Add \(ingredient.mainIngredientName) to kitchen")
             }
 
             // Right: checkbox

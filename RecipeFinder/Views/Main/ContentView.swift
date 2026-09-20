@@ -140,7 +140,7 @@ struct ContentView: View {
                 RecipeSearchView(recipes: $recipes)
                     .tabItem { Label("Recipes", systemImage: "book.fill") }
                     .tag(0)
-                KitchenShoppingView(recipes: $recipes)
+                KitchenShoppingView()
                     .tabItem { Label("Groceries", systemImage: "cart.fill") }
                     .tag(1)
                 ImportView(recipes: $recipes)
@@ -204,7 +204,7 @@ struct ContentView: View {
         case .recipes:
             RecipeSearchView(recipes: $recipes)
         case .groceries:
-            KitchenShoppingView(recipes: $recipes)
+            KitchenShoppingView()
         case .importRecipes:
             ImportView(recipes: $recipes)
         case .planning:
