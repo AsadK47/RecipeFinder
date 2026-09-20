@@ -24,9 +24,11 @@ enum TextRecipeParser {
 
         let servings = firstIntMatch(#"(?:serves|servings?|yield)\s*:?\s*(\d+)"#, in: text)
         // "time" is optional so a sidebar "Prep 20 minutes" / "Cook 30 mins" still
-        // resolves (many printed recipes omit the word "time").
-        let prepTime = firstIntMatch(#"prep(?:aration)?(?:\s*time)?\s*:?\s*(\d+)"#, in: text)
-        let cookTime = firstIntMatch(#"cook(?:ing)?(?:\s*time)?\s*:?\s*(\d+)"#, in: text)
+        // resolves (many printed recipes omit the word "time"). extractMinutes handles
+        // both "45 minutes" and "2 hours" so printed recipes with hour-denominated
+        // times aren't stored as 2 minutes instead of 120.
+        let prepTime = extractMinutes(#"prep(?:aration)?(?:\s*time)?\s*:?\s*(\d+)"#, in: text)
+        let cookTime = extractMinutes(#"cook(?:ing)?(?:\s*time)?\s*:?\s*(\d+)"#, in: text)
 
         var ingredients: [String]
         var instructions: [String]
@@ -76,17 +78,36 @@ enum TextRecipeParser {
     // MARK: - Title
 
     private static func title(from lines: [String]) -> String? {
-        guard let first = lines.first(where: { !isSectionHeader($0) && !isMetadataLine($0) }) else {
-            return nil
-        }
-        // Strip decorative emoji/symbols around the name before judging it.
+        let candidates = lines.filter { !isSectionHeader($0) && !isMetadataLine($0) }
+        guard let first = candidates.first else { return nil }
+
         var cleaned = stripTrailingBullets(stripLeadingBullets(first))
             .replacingOccurrences(of: #"^(recipe\s*:?\s*)"#, with: "", options: [.regularExpression, .caseInsensitive])
             .trimmingCharacters(in: .whitespaces)
-        // Titles are short; a long first line is prose, and quantity lines are ingredients.
         guard cleaned.count <= 80, !looksLikeIngredient(cleaned) else { return nil }
-        cleaned = cleaned.trimmingCharacters(in: .whitespaces)
-        return cleaned.isEmpty ? nil : cleaned
+
+        // Printed recipes often set titles in ALL CAPS. Vision OCR may also split a
+        // wrapped title across two consecutive observations ("CHICKEN TIKKA" / "MASALA").
+        // Merge the second line when both are short, all-caps, and digit-free.
+        if candidates.count >= 2 {
+            let raw2 = candidates[1].trimmingCharacters(in: .whitespaces)
+            let isAllCaps1 = cleaned == cleaned.uppercased() && cleaned.contains(where: { $0.isLetter })
+            let isAllCaps2 = raw2 == raw2.uppercased() && raw2.contains(where: { $0.isLetter })
+            let noDigits2 = !raw2.contains(where: { $0.isNumber })
+            let combined = cleaned + " " + raw2
+            if isAllCaps1 && isAllCaps2 && noDigits2 && raw2.count <= 25 && combined.count <= 70
+                && !looksLikeIngredient(raw2) {
+                cleaned = combined
+            }
+        }
+
+        // Convert ALL CAPS title to title case — printed cookbook headers are frequently
+        // set in capitals and would shout at the user in the wizard.
+        if cleaned == cleaned.uppercased() && cleaned.contains(where: { $0.isLetter }) {
+            cleaned = cleaned.localizedCapitalized
+        }
+
+        return cleaned.trimmingCharacters(in: .whitespaces).isEmpty ? nil : cleaned.trimmingCharacters(in: .whitespaces)
     }
 
     // MARK: - Section-header strategy
@@ -209,7 +230,12 @@ enum TextRecipeParser {
 
     private static func looksLikeNumberedStep(_ line: String) -> Bool {
         // "1. Preheat…", "2) Mix…", "Step 3: …"
-        line.range(of: #"^(step\s+\d+|\d+[\.\)])\s*"#, options: [.regularExpression, .caseInsensitive]) != nil
+        if line.range(of: #"^(step\s+\d+|\d+[\.\)])\s*"#, options: [.regularExpression, .caseInsensitive]) != nil {
+            return true
+        }
+        // OCR sometimes drops the period: "1 Preheat oven…". Case-sensitive so
+        // "2 cups flour" (lowercase 'c') isn't mistaken for a numbered step.
+        return line.range(of: #"^\d+\s+[A-Z][a-z]"#, options: .regularExpression) != nil
     }
 
     // MARK: - Cleanup
@@ -306,6 +332,25 @@ enum TextRecipeParser {
         if looksLikeNumberedStep(line) { return true }
         let prevEndsSentence = ".!?".contains(previous.last ?? " ")
         return prevEndsSentence && (line.first?.isUppercase ?? false)
+    }
+
+    /// Extracts a time value in minutes. Pattern must capture the number in group 1.
+    /// Appends an optional unit group so "2 hours" returns 120 and "45 mins" returns 45.
+    private static func extractMinutes(_ pattern: String, in text: String) -> Int? {
+        let withUnit = pattern + #"\s*(h(?:r|rs|our|ours)?|m(?:in|ins|inute|inutes)?)?\b"#
+        guard let regex = try? NSRegularExpression(pattern: withUnit, options: .caseInsensitive) else { return nil }
+        let nsRange = NSRange(text.startIndex..., in: text)
+        guard let match = regex.firstMatch(in: text, options: [], range: nsRange),
+              match.numberOfRanges > 1,
+              let numRange = Range(match.range(at: 1), in: text),
+              let value = Int(text[numRange]) else { return nil }
+        let isHours: Bool
+        if match.numberOfRanges > 2, let unitRange = Range(match.range(at: 2), in: text) {
+            isHours = String(text[unitRange]).lowercased().hasPrefix("h")
+        } else {
+            isHours = false
+        }
+        return isHours ? value * 60 : value
     }
 
     private static func firstIntMatch(_ pattern: String, in text: String) -> Int? {

@@ -75,8 +75,7 @@ struct FoodsList {
             "Chuck Roast", "Brisket", "Beef Short Ribs", "Beef Tenderloin",
             "Prime Rib", "Top Sirloin Roast", "Bottom Round Roast", "Eye of Round",
             "Beef Shank", "Oxtail", "Beef Ribs", "Back Ribs",
-            "Ground Beef", "Lean Ground Beef", "Ground Chuck", "Ground Sirloin",
-            "Minced Beef", "Beef Mince",
+            "Ground Beef", "Lean Ground Beef",
             "Beef Patties", "Beef Meatballs",
             "Pork Chop", "Bone-In Pork Chop", "Boneless Pork Chop",
             "Pork Tenderloin", "Pork Loin", "Pork Shoulder", "Pork Butt",
@@ -127,7 +126,7 @@ struct FoodsList {
         "Legumes & Beans": [
             "Black Beans", "Pinto Beans", "Kidney Beans", "Navy Beans",
             "Great Northern Beans", "Cannellini Beans", "Lima Beans",
-            "Chickpeas", "Garbanzo Beans", "Lentils", "Red Lentils",
+            "Chickpeas", "Lentils", "Red Lentils",
             "Green Lentils", "Black Lentils", "Yellow Split Peas", "Green Split Peas",
             "Black-Eyed Peas", "Mung Beans", "Adzuki Beans", "Fava Beans",
             "Soybeans", "Edamame", "Tofu", "Firm Tofu", "Silken Tofu",
@@ -242,12 +241,58 @@ struct FoodsList {
         return map
     }()
 
+    /// Maps regional/alternate names to the canonical catalog entry so that
+    /// searching "beef mince" finds "Ground Beef" rather than producing 5 near-identical results.
+    static let synonyms: [String: String] = [
+        // Ground beef — UK/US name variants
+        "beef mince":       "Ground Beef",
+        "minced beef":      "Ground Beef",
+        "ground chuck":     "Ground Beef",
+        "ground sirloin":   "Ground Beef",
+        // Vegetables — UK names
+        "aubergine":        "Eggplant",
+        "courgette":        "Zucchini",
+        "rocket":           "Arugula",
+        "spring onion":     "Green Onion",
+        "spring onions":    "Green Onion",
+        "beetroot":         "Beet",
+        "swede":            "Rutabaga",
+        "mangetout":        "Snow Peas",
+        "mange tout":       "Snow Peas",
+        "sweetcorn":        "Corn",
+        // Legumes
+        "garbanzo beans":   "Chickpeas",
+        "garbanzo":         "Chickpeas",
+        // Dairy — UK names
+        "single cream":     "Light Cream",
+        "double cream":     "Heavy Cream",
+        "soured cream":     "Sour Cream",
+        "natural yogurt":   "Plain Yogurt",
+        "natural yoghurt":  "Plain Yogurt",
+        "soya milk":        "Soy Milk",
+        // Baking — UK names
+        "plain flour":      "All-Purpose Flour",
+        "wholemeal flour":  "Whole Wheat Flour",
+        "caster sugar":     "White Sugar",
+        "castor sugar":     "White Sugar",
+        "icing sugar":      "Powdered Sugar",
+        "bicarbonate of soda": "Baking Soda",
+        "bicarb":           "Baking Soda",
+        // Meat — UK names
+        "streaky bacon":    "Bacon",
+        "back bacon":       "Canadian Bacon",
+        "mince":            "Ground Beef",
+    ]
+
     static func getAllFoods() -> [String] {
         return allFoods
     }
-    
+
     static func searchFoods(query: String) -> [String] {
-        return IngredientAutocompleteEngine.rankedNames(for: query, limit: allFoods.count)
+        let trimmed = query.trimmingCharacters(in: .whitespaces)
+        let resolved = synonyms[trimmed.lowercased()] ?? trimmed
+        // Search with the resolved (canonical) name; cap at 8 to avoid drowning the UI.
+        return IngredientAutocompleteEngine.rankedNames(for: resolved, limit: 8)
     }
     
     static func getFoods(forCategory category: String) -> [String] {

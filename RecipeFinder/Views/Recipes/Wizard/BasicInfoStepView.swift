@@ -14,6 +14,16 @@ struct BasicInfoStepView: View {
     let colorScheme: ColorScheme
     let totalSteps: Int
 
+    private func timeLabel(_ minutes: Int) -> String {
+        guard minutes > 0 else { return "0 min" }
+        let h = minutes / 60, m = minutes % 60
+        switch (h, m) {
+        case (0, _): return "\(m) min"
+        case (_, 0): return "\(h) \(h == 1 ? "hr" : "hrs")"
+        default:     return "\(h) \(h == 1 ? "hr" : "hrs") \(m) min"
+        }
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing24) {
             WizardStepHeader(
@@ -32,7 +42,7 @@ struct BasicInfoStepView: View {
                             .foregroundColor(.primary)
 
                         HStack {
-                            Stepper("\(prepTime) minutes", value: $prepTime, in: 0...300, step: 5)
+                            Stepper(timeLabel(prepTime), value: $prepTime, in: 0...300, step: 5)
                                 .font(.body)
                         }
                     }
@@ -45,7 +55,7 @@ struct BasicInfoStepView: View {
                             .foregroundColor(.primary)
 
                         HStack {
-                            Stepper("\(cookTime) minutes", value: $cookTime, in: 0...480, step: 5)
+                            Stepper(timeLabel(cookTime), value: $cookTime, in: 0...480, step: 5)
                                 .font(.body)
                         }
                     }
