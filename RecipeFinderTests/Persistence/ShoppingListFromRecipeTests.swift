@@ -208,12 +208,14 @@ import Foundation
 
     // MARK: - Persistence
 
-    @Test func addIngredients_persistsAcrossManagerRestart() {
+    @Test func addIngredients_persistsAcrossManagerRestart() async throws {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
         let storage = UserScopedStorage(userDefaults: defaults)
         let first = ShoppingListManager(storage: storage)
         first.addIngredients(from: recipe(ingredients: [ing("Oats", qty: 2.0)]))
 
+        // saveItems uses Task.detached — yield to let it write before reloading
+        try await Task.sleep(for: .milliseconds(100))
         let second = ShoppingListManager(storage: storage)
         #expect(second.items.count == 1)
         #expect(second.items.first?.name == "Oats")

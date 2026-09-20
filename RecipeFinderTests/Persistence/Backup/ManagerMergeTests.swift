@@ -24,7 +24,7 @@ import Foundation
 
     // MARK: - ShoppingListManager
 
-    @Test func shopping_mergeIsNonDestructiveAndPersists() {
+    @Test func shopping_mergeIsNonDestructiveAndPersists() async throws {
         let storage = Self.makeStorage()
         let sut = ShoppingListManager(storage: storage)
         sut.addItem(name: "Milk")
@@ -34,6 +34,8 @@ import Foundation
         #expect(sut.items.contains { $0.name == "Milk" })
         #expect(sut.items.contains { $0.name == "Backup Bread" })
 
+        // saveItems uses Task.detached — yield to let it write before reloading
+        try await Task.sleep(for: .milliseconds(100))
         let reloaded = ShoppingListManager(storage: storage)
         #expect(reloaded.items.count == 2)
     }
@@ -48,7 +50,7 @@ import Foundation
 
     // MARK: - KitchenInventoryManager (two stores)
 
-    @Test func kitchen_mergeUnionsBothStoresAndPersists() {
+    @Test func kitchen_mergeUnionsBothStoresAndPersists() async throws {
         let storage = Self.makeStorage()
         let sut = KitchenInventoryManager(storage: storage)
         sut.addItem(name: "Flour")
@@ -64,6 +66,8 @@ import Foundation
         #expect(sut.inventoryItems.contains { $0.name == "Rice" })
         #expect(sut.inventoryItems.contains { $0.name == "Beans" })
 
+        // saveItems/saveInventoryItems use Task.detached — yield before reloading
+        try await Task.sleep(for: .milliseconds(100))
         let reloaded = KitchenInventoryManager(storage: storage)
         #expect(reloaded.items.count == 2)
         #expect(reloaded.inventoryItems.count == 2)
@@ -83,7 +87,7 @@ import Foundation
 
     // MARK: - MealPlanningManager
 
-    @Test func mealPlans_mergeIsNonDestructiveAndPersists() {
+    @Test func mealPlans_mergeIsNonDestructiveAndPersists() async throws {
         let storage = Self.makeStorage()
         let sut = MealPlanningManager(storage: storage)
         let existing = MealPlanModel(recipeId: UUID(), recipeName: "Existing", date: Date(), mealTime: .breakfast)
@@ -95,6 +99,8 @@ import Foundation
         #expect(sut.mealPlans.contains { $0.recipeName == "Existing" })
         #expect(sut.mealPlans.contains { $0.recipeName == "Imported" })
 
+        // savePlans uses Task.detached — yield to let it write before reloading
+        try await Task.sleep(for: .milliseconds(100))
         let reloaded = MealPlanningManager(storage: storage)
         #expect(reloaded.mealPlans.count == 2)
     }

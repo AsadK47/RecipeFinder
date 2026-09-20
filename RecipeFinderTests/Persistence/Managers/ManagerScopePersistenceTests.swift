@@ -14,27 +14,35 @@ import Foundation
         UserScopedStorage(userDefaults: UserDefaults(suiteName: UUID().uuidString)!)
     }
 
-    @Test func itemsSurviveRestartUnderSameUser() {
+    @Test func itemsSurviveRestartUnderSameUser() async throws {
         let storage = freshStorage()
         storage.currentUserId = "userA"
         ShoppingListManager(storage: storage).addItem(name: "Milk")
+
+        // saveItems uses Task.detached — yield to let it write before reloading
+        try await Task.sleep(for: .milliseconds(100))
 
         // Fresh manager over the same storage = an app relaunch.
         let relaunched = ShoppingListManager(storage: storage)
         #expect(relaunched.items.map(\.name) == ["Milk"])
     }
 
-    @Test func itemsAreIsolatedPerUserAcrossRestart() {
+    @Test func itemsAreIsolatedPerUserAcrossRestart() async throws {
         let storage = freshStorage()
 
         storage.currentUserId = "userA"
         ShoppingListManager(storage: storage).addItem(name: "Milk")
+
+        // saveItems uses Task.detached — yield to let each write land before reloading
+        try await Task.sleep(for: .milliseconds(100))
 
         // Switch account: a fresh manager sees none of A's items.
         storage.currentUserId = "userB"
         let asB = ShoppingListManager(storage: storage)
         #expect(asB.items.isEmpty)
         asB.addItem(name: "Eggs")
+
+        try await Task.sleep(for: .milliseconds(100))
 
         // Back to A: A's items are intact and B's are not visible.
         storage.currentUserId = "userA"
