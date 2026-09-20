@@ -290,25 +290,19 @@ final class KitchenInventoryManager: ObservableObject {
 	}
     
     private func saveItems(_ newItems: [KitchenItem]) {
-        // Update in-memory state first so the UI reflects the change immediately,
-        // then persist on a background thread (optimistic UI — CLAUDE.md pattern).
         items = newItems
         itemNameSet = Set(newItems.map { $0.name.lowercased() })
         groupedItemsCache = computeGroupedItems()
-        Task.detached(priority: .utility) { [saveKey = self.saveKey, storage = self.storage] in
-            if let encoded = try? JSONEncoder().encode(newItems) {
-                storage.set(encoded, forKey: saveKey)
-            }
+        if let encoded = try? JSONEncoder().encode(newItems) {
+            storage.set(encoded, forKey: saveKey)
         }
     }
-	
+
 	private func saveInventoryItems(_ newInventoryItems: [KitchenInventoryModel]) {
         inventoryItems = newInventoryItems
         inventoryNameSet = Set(newInventoryItems.map { $0.name.lowercased() })
-        Task.detached(priority: .utility) { [inventorySaveKey = self.inventorySaveKey, storage = self.storage] in
-            if let encoded = try? JSONEncoder().encode(newInventoryItems) {
-                storage.set(encoded, forKey: inventorySaveKey)
-            }
+        if let encoded = try? JSONEncoder().encode(newInventoryItems) {
+            storage.set(encoded, forKey: inventorySaveKey)
         }
 	}
 }

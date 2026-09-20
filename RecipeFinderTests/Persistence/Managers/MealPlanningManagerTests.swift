@@ -149,10 +149,8 @@ final class MealPlanningManagerTests: XCTestCase {
 
     // MARK: - Persistence
 
-    func testPersistence_acrossReload() async throws {
+    func testPersistence_acrossReload() {
         sut.addMealPlan(makePlan(recipeName: "Pancakes"))
-        // savePlans uses Task.detached — yield to let it write before reloading
-        try await Task.sleep(for: .milliseconds(100))
         let sut2 = MealPlanningManager(storage: storage)
         XCTAssertEqual(sut2.mealPlans.count, 1)
         XCTAssertEqual(sut2.mealPlans[0].recipeName, "Pancakes")

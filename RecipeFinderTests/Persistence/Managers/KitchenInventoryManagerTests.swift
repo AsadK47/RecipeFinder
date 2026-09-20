@@ -165,10 +165,8 @@ final class KitchenInventoryManagerTests: XCTestCase {
 
     // MARK: - Persistence
 
-    func testPersistence_acrossReload() async throws {
+    func testPersistence_acrossReload() {
         sut.addInventoryItem(makeItem(name: "Carrot"))
-        // saveInventoryItems uses Task.detached — yield to let it write before reloading
-        try await Task.sleep(for: .milliseconds(100))
         let sut2 = KitchenInventoryManager(storage: storage)
         XCTAssertEqual(sut2.inventoryItems.count, 1)
         XCTAssertEqual(sut2.inventoryItems[0].name, "Carrot")

@@ -255,10 +255,8 @@ final class ShoppingListManagerTests: XCTestCase {
 
     // MARK: - Persistence
 
-    func testPersistence_acrossReload() async throws {
+    func testPersistence_acrossReload() {
         sut.addItem(name: "Tomatoes", quantity: 3, category: "Produce")
-        // saveItems uses Task.detached — yield to let it write before reloading
-        try await Task.sleep(for: .milliseconds(100))
         let sut2 = ShoppingListManager(storage: storage)
         XCTAssertEqual(sut2.items.count, 1)
         XCTAssertEqual(sut2.items[0].name, "Tomatoes")
