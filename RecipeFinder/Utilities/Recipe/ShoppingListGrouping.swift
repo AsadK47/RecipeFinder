@@ -5,6 +5,11 @@ import Foundation
 /// longer computed inline in a SwiftUI `body`.
 enum ShoppingListGrouping {
 
+    // Pre-built rank map eliminates O(C) firstIndex scans inside the sorted comparator.
+    private static let categoryRank: [String: Int] = Dictionary(
+        uniqueKeysWithValues: CategoryClassifier.categoryOrder.enumerated().map { ($1, $0) }
+    )
+
     /// Groups `items` by category, sorts each group so unchecked items come
     /// before checked ones, and orders the groups by `CategoryClassifier.categoryOrder`
     /// (falling back to alphabetical for categories not in that order).
@@ -12,11 +17,12 @@ enum ShoppingListGrouping {
         Dictionary(grouping: items, by: { $0.category })
             .map { (key: $0.key, value: $0.value.sorted { !$0.isChecked && $1.isChecked }) }
             .sorted { first, second in
-                guard let firstIndex = CategoryClassifier.categoryOrder.firstIndex(of: first.key),
-                      let secondIndex = CategoryClassifier.categoryOrder.firstIndex(of: second.key) else {
-                    return first.key < second.key
+                switch (categoryRank[first.key], categoryRank[second.key]) {
+                case let (f?, s?): return f < s
+                case (_?, nil):   return true
+                case (nil, _?):   return false
+                case (nil, nil):  return first.key < second.key
                 }
-                return firstIndex < secondIndex
             }
     }
 

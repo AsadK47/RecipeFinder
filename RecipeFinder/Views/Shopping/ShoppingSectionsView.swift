@@ -12,9 +12,9 @@ struct ShoppingSectionsView: View {
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
 
-    private var sortedGroupedItems: [(key: String, value: [ShoppingListModel])] {
-        ShoppingListGrouping.grouped(manager.items)
-    }
+    // Cached so pantry toggles (which re-render this view via @ObservedObject kitchen)
+    // don't recompute the O(S log S) grouping when the shopping list hasn't changed.
+    @State private var cachedGroupedItems: [(key: String, value: [ShoppingListModel])] = []
 
     /// Names the user already has in their kitchen (quick items + inventory),
     /// lowercased, so each shopping row can persistently flag "you already have this".
@@ -24,8 +24,16 @@ struct ShoppingSectionsView: View {
     }
 
     var body: some View {
-        ForEach(sortedGroupedItems, id: \.key) { group in
-            categorySection(for: group.key, items: group.value)
+        Group {
+            ForEach(cachedGroupedItems, id: \.key) { group in
+                categorySection(for: group.key, items: group.value)
+            }
+        }
+        .onAppear {
+            cachedGroupedItems = ShoppingListGrouping.grouped(manager.items)
+        }
+        .onChange(of: manager.items) { _, newItems in
+            cachedGroupedItems = ShoppingListGrouping.grouped(newItems)
         }
     }
 

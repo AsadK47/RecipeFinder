@@ -102,7 +102,23 @@ final class MealPlanningManager: ObservableObject {
         let templates = mealPlans.filter { $0.isRecurring && $0.date < start }
         guard !templates.isEmpty else { return }
 
+        // Pre-build an O(1) occupied-slot lookup instead of O(P) contains per slot.
+        struct SlotKey: Hashable { let day: Date; let mealTime: MealTime }
+        let occupiedSlots = Set(mealPlans.map { SlotKey(day: cal.startOfDay(for: $0.date), mealTime: $0.mealTime) })
+
+        // Pre-build template lookup by (weekday, mealTime), keeping the most recent
+        // per slot, so the inner loop is O(1) instead of O(T) filter + max.
+        struct TemplateKey: Hashable { let weekday: Int; let mealTime: MealTime }
+        var templateBySlot: [TemplateKey: MealPlanModel] = [:]
+        for template in templates {
+            let key = TemplateKey(weekday: cal.component(.weekday, from: template.date), mealTime: template.mealTime)
+            if templateBySlot[key].map({ template.date > $0.date }) ?? true {
+                templateBySlot[key] = template
+            }
+        }
+
         var newEntries: [MealPlanModel] = []
+        var newOccupied: Set<SlotKey> = []
 
         for dayOffset in 0..<7 {
             guard let candidate = cal.date(byAdding: .day, value: dayOffset, to: start),
@@ -110,20 +126,10 @@ final class MealPlanningManager: ObservableObject {
             let targetWeekday = cal.component(.weekday, from: candidate)
 
             for mealTime in MealTime.allCases {
-                let slotFilled = mealPlans.contains {
-                    cal.isDate($0.date, inSameDayAs: candidate) && $0.mealTime == mealTime
-                } || newEntries.contains {
-                    cal.isDate($0.date, inSameDayAs: candidate) && $0.mealTime == mealTime
-                }
-                guard !slotFilled else { continue }
+                let slot = SlotKey(day: candidate, mealTime: mealTime)
+                guard !occupiedSlots.contains(slot) && !newOccupied.contains(slot) else { continue }
 
-                let template = templates
-                    .filter {
-                        $0.mealTime == mealTime &&
-                        cal.component(.weekday, from: $0.date) == targetWeekday
-                    }
-                    .max(by: { $0.date < $1.date })
-                guard let template else { continue }
+                guard let template = templateBySlot[TemplateKey(weekday: targetWeekday, mealTime: mealTime)] else { continue }
 
                 newEntries.append(MealPlanModel(
                     recipeId: template.recipeId,
@@ -134,6 +140,7 @@ final class MealPlanningManager: ObservableObject {
                     notes: template.notes,
                     isRecurring: true
                 ))
+                newOccupied.insert(slot)
             }
         }
 
