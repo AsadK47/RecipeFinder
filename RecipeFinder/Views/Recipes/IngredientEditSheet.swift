@@ -9,6 +9,9 @@ struct IngredientEditSheet: View {
     let onCancel: () -> Void
     let onSave: () -> Void
 
+    @Environment(\.colorScheme) private var colorScheme
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
+
     private let cookingUnits: [(group: String, units: [String])] = [
         ("Volume – Metric",   ["ml", "cl", "dl", "l"]),
         ("Volume – Imperial", ["tsp", "tbsp", "fl oz", "cup", "pt", "qt", "gal"]),
@@ -25,46 +28,53 @@ struct IngredientEditSheet: View {
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section {
-                    Text(ingredientName)
-                        .font(.headline)
-                } header: {
-                    Text("Ingredient")
-                }
+            ZStack {
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
+                    .ignoresSafeArea()
 
-                Section {
-                    HStack {
-                        Text("Amount")
-                        Spacer()
-                        TextField("0", text: $editingQuantity)
-                            .keyboardType(.decimalPad)
-                            .multilineTextAlignment(.trailing)
-                            .frame(width: AppTheme.width80)
+                Form {
+                    Section {
+                        Text(ingredientName)
+                            .font(.headline)
+                    } header: {
+                        Text("Ingredient")
                     }
 
-                    Picker("Unit", selection: $editingUnit) {
-                        Text("none").tag("")
-                        ForEach(cookingUnits, id: \.group) { group in
-                            Section(group.group) {
-                                ForEach(group.units, id: \.self) { unit in
-                                    Text(unit).tag(unit)
+                    Section {
+                        HStack {
+                            Text("Amount")
+                            Spacer()
+                            TextField("0", text: $editingQuantity)
+                                .keyboardType(.decimalPad)
+                                .multilineTextAlignment(.trailing)
+                                .frame(width: AppTheme.width80)
+                        }
+
+                        Picker("Unit", selection: $editingUnit) {
+                            Text("none").tag("")
+                            ForEach(cookingUnits, id: \.group) { group in
+                                Section(group.group) {
+                                    ForEach(group.units, id: \.self) { unit in
+                                        Text(unit).tag(unit)
+                                    }
                                 }
                             }
                         }
-                    }
-                } header: {
-                    Text("Quantity")
-                } footer: {
-                    if !editingUnit.isEmpty {
-                        Text("Group: \(groupLabel(for: editingUnit))")
-                            .font(.caption)
-                            .adaptiveSecondaryForeground()
+                    } header: {
+                        Text("Quantity")
+                    } footer: {
+                        if !editingUnit.isEmpty {
+                            Text("Group: \(groupLabel(for: editingUnit))")
+                                .font(.caption)
+                                .adaptiveSecondaryForeground()
+                        }
                     }
                 }
+                .scrollContentBackground(.hidden)
             }
             .navigationTitle("Edit Ingredient")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.hidden, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel", action: onCancel)
