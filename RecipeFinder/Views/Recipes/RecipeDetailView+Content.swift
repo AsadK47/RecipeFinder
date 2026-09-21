@@ -89,17 +89,30 @@ extension RecipeDetailView {
                 VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                     NutritionMacroBar(nutrition: n)
 
-                    nutritionLabelRow(label: "Calories", value: "\(n.calories)", unit: "kcal", hero: true)
+                    HStack {
+                        Spacer()
+                        Text("% RI*")
+                            .font(.caption2)
+                            .adaptiveSecondaryForeground()
+                    }
+                    .padding(.bottom, -AppTheme.spacing4)
+
+                    nutritionLabelRow(label: "Calories", value: "\(n.calories)", unit: "kcal", hero: true,
+                                      percent: drvPercent(Double(n.calories), of: 2000))
 
                     Divider()
 
-                    nutritionLabelRow(label: "Fat", value: formatMacro(n.fat), unit: "g")
-                    nutritionLabelSubrow(label: "of which saturates", value: formatMacro(n.saturates), unit: "g")
+                    nutritionLabelRow(label: "Fat", value: formatMacro(n.fat), unit: "g",
+                                      percent: drvPercent(n.fat, of: 70))
+                    nutritionLabelSubrow(label: "of which saturates", value: formatMacro(n.saturates), unit: "g",
+                                         percent: drvPercent(n.saturates, of: 20))
 
                     Divider()
 
-                    nutritionLabelRow(label: "Carbohydrate", value: formatMacro(n.carbs), unit: "g")
-                    nutritionLabelSubrow(label: "of which sugars", value: formatMacro(n.sugars), unit: "g")
+                    nutritionLabelRow(label: "Carbohydrate", value: formatMacro(n.carbs), unit: "g",
+                                      percent: drvPercent(n.carbs, of: 260))
+                    nutritionLabelSubrow(label: "of which sugars", value: formatMacro(n.sugars), unit: "g",
+                                         percent: drvPercent(n.sugars, of: 90))
 
                     Divider()
 
@@ -107,11 +120,13 @@ extension RecipeDetailView {
 
                     Divider()
 
-                    nutritionLabelRow(label: "Protein", value: formatMacro(n.protein), unit: "g")
+                    nutritionLabelRow(label: "Protein", value: formatMacro(n.protein), unit: "g",
+                                      percent: drvPercent(n.protein, of: 50))
 
                     Divider()
 
-                    nutritionLabelRow(label: "Salt", value: formatSalt(n.salt), unit: "g")
+                    nutritionLabelRow(label: "Salt", value: formatSalt(n.salt), unit: "g",
+                                      percent: drvPercent(n.salt, of: 6))
 
                     if n.coverage < 0.8 {
                         Text("Estimated — \(Int(n.coverage * 100))% of ingredients matched")
@@ -119,12 +134,17 @@ extension RecipeDetailView {
                             .adaptiveSecondaryForeground()
                             .padding(.top, AppTheme.spacing4)
                     }
+
+                    Text("* Reference intakes for an average adult (8400 kJ / 2000 kcal)")
+                        .font(.caption2)
+                        .adaptiveSecondaryForeground()
+                        .padding(.top, AppTheme.spacing4)
                 }
             }
         }
     }
 
-    private func nutritionLabelRow(label: String, value: String, unit: String, hero: Bool = false) -> some View {
+    private func nutritionLabelRow(label: String, value: String, unit: String, hero: Bool = false, percent: String? = nil) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: AppTheme.spacing4) {
             Text(label)
                 .font(hero ? .headline : .subheadline)
@@ -137,10 +157,15 @@ extension RecipeDetailView {
                 .font(hero ? .subheadline : .caption)
                 .adaptiveSecondaryForeground()
                 .frame(minWidth: 28, alignment: .leading)
+            Text(percent ?? "")
+                .font(hero ? .caption : .caption2)
+                .adaptiveSecondaryForeground()
+                .frame(minWidth: 36, alignment: .trailing)
+                .opacity(percent == nil ? 0 : 1)
         }
     }
 
-    private func nutritionLabelSubrow(label: String, value: String, unit: String) -> some View {
+    private func nutritionLabelSubrow(label: String, value: String, unit: String, percent: String? = nil) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: AppTheme.spacing4) {
             Text(label)
                 .font(.caption)
@@ -154,7 +179,17 @@ extension RecipeDetailView {
                 .font(.caption)
                 .adaptiveSecondaryForeground()
                 .frame(minWidth: 28, alignment: .leading)
+            Text(percent ?? "")
+                .font(.caption2)
+                .adaptiveSecondaryForeground()
+                .frame(minWidth: 36, alignment: .trailing)
+                .opacity(percent == nil ? 0 : 1)
         }
+    }
+
+    private func drvPercent(_ value: Double, of reference: Double) -> String {
+        guard reference > 0 else { return "" }
+        return "\(max(1, Int((value / reference * 100).rounded())))%"
     }
 
     private func formatMacro(_ value: Double) -> String {
@@ -380,31 +415,20 @@ extension RecipeDetailView {
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 if let url = recipe.importedFromURL {
-                    Link(destination: url) {
-                        Label("View Original", systemImage: "link")
-                            .font(.subheadline)
-                            .foregroundColor(AppTheme.accentColor)
-                    }
-                    .buttonStyle(.plain)
-
-                    Button {
-                        Task { await refreshFromSource() }
-                    } label: {
-                        if isRefreshing {
-                            HStack(spacing: AppTheme.spacing8) {
-                                ProgressView().scaleEffect(0.8)
-                                Text("Checking for updates…")
-                                    .font(.subheadline)
-                                    .adaptiveSecondaryForeground()
-                            }
-                        } else {
-                            Label("Refresh from Source", systemImage: "arrow.clockwise")
+                    HStack(spacing: AppTheme.spacing8) {
+                        Link(destination: url) {
+                            Label("View Original", systemImage: "link")
                                 .font(.subheadline)
                                 .foregroundColor(AppTheme.accentColor)
                         }
+                        .buttonStyle(.plain)
+
+                        if isRefreshing {
+                            Spacer()
+                            ProgressView().scaleEffect(0.8)
+                                .adaptiveSecondaryForeground()
+                        }
                     }
-                    .buttonStyle(.plain)
-                    .disabled(isRefreshing)
                 }
             }
         }

@@ -165,6 +165,9 @@ struct RecipeDetailView: View {
                 PersistenceController.shared.updateRecipe(recipe)
             }
         }
+        .task {
+            await silentRefreshFromSource()
+        }
     }
 
     func toggleSection(_ section: String) {
@@ -339,6 +342,21 @@ struct RecipeDetailView: View {
         HapticManager.shared.selection()
         recipe.rating = newRating
         PersistenceController.shared.updateRating(withId: recipe.id, rating: newRating)
+    }
+
+    /// Auto-triggered on every open; silently discards network errors so browsing
+    /// isn't interrupted. Only shows the diff sheet when there are actual changes.
+    func silentRefreshFromSource() async {
+        guard let url = recipe.importedFromURL else { return }
+        let importer = RecipeImporter()
+        await importer.importRecipe(from: url)
+        guard let data = importer.extractedData else { return }
+        let upstream = RecipeImportBuilder().build(from: data)
+        let diff = RecipeDiff.compute(stored: recipe, upstream: upstream)
+        if diff.hasChanges {
+            pendingRefreshDiff = diff
+            showRefreshSheet = true
+        }
     }
 
     func refreshFromSource() async {

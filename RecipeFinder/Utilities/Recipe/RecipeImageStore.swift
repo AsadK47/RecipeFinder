@@ -38,27 +38,33 @@ struct RecipeImageStore {
             return existingReference
         }
 
-        if let previousReference, isLocalReference(previousReference) {
-            try? fileManager.removeItem(atPath: previousReference)
+        if let previousReference, isLocalReference(previousReference),
+           let path = absolutePath(for: previousReference) {
+            try? fileManager.removeItem(atPath: path)
         }
 
         return nil
     }
 
-    /// Writes `image` as JPEG under `RecipeImages/<id>.jpg`, returning its path.
+    /// Writes `image` as JPEG under `RecipeImages/<id>.jpg`, returning a relative
+    /// path (`RecipeImages/<id>.jpg`) so stored references survive app container
+    /// changes (simulator rebuilds, OS updates, reinstalls).
     func persist(_ image: UIImage, recipeId: UUID) -> String? {
         guard let imageData = image.jpegData(compressionQuality: AppTheme.jpegCompressionQuality) else {
             return nil
         }
         guard let documentsDirectory else { return nil }
 
-        let imageDirectory = documentsDirectory.appendingPathComponent("RecipeImages", isDirectory: true)
-        let imageURL = imageDirectory.appendingPathComponent("\(recipeId.uuidString).jpg")
+        let relativePath = "RecipeImages/\(recipeId.uuidString).jpg"
+        let imageURL = documentsDirectory.appendingPathComponent(relativePath)
 
         do {
-            try fileManager.createDirectory(at: imageDirectory, withIntermediateDirectories: true)
+            try fileManager.createDirectory(
+                at: imageURL.deletingLastPathComponent(),
+                withIntermediateDirectories: true
+            )
             try imageData.write(to: imageURL, options: .atomic)
-            return imageURL.path
+            return relativePath
         } catch {
             logger.error("❌ Failed to persist recipe image for \(recipeId): \(error)")
             return nil
@@ -66,6 +72,7 @@ struct RecipeImageStore {
     }
 
     /// Persists additional (non-hero) gallery images, naming them `<id>_g<n>.jpg`.
+    /// Returns relative paths for the same container-stability reason as `persist`.
     /// `startingIndex` lets callers offset the index when combining with already-
     /// saved references so existing gallery files are never overwritten.
     func persistGallery(_ images: [UIImage], recipeId: UUID, startingIndex: Int = 0) -> [String] {
@@ -73,12 +80,15 @@ struct RecipeImageStore {
         for (idx, img) in images.enumerated() {
             guard let imageData = img.jpegData(compressionQuality: AppTheme.jpegCompressionQuality),
                   let documentsDirectory else { continue }
-            let imageDirectory = documentsDirectory.appendingPathComponent("RecipeImages", isDirectory: true)
-            let imageURL = imageDirectory.appendingPathComponent("\(recipeId.uuidString)_g\(startingIndex + idx).jpg")
+            let relativePath = "RecipeImages/\(recipeId.uuidString)_g\(startingIndex + idx).jpg"
+            let imageURL = documentsDirectory.appendingPathComponent(relativePath)
             do {
-                try fileManager.createDirectory(at: imageDirectory, withIntermediateDirectories: true)
+                try fileManager.createDirectory(
+                    at: imageURL.deletingLastPathComponent(),
+                    withIntermediateDirectories: true
+                )
                 try imageData.write(to: imageURL, options: .atomic)
-                paths.append(imageURL.path)
+                paths.append(relativePath)
             } catch {
                 logger.error("❌ Failed to persist gallery image \(idx) for \(recipeId): \(error)")
                 continue
@@ -88,8 +98,18 @@ struct RecipeImageStore {
     }
 
     /// Whether `reference` points at an on-disk file we own (not a remote URL).
+    /// Accepts both legacy absolute paths and the current relative-path format.
     func isLocalReference(_ reference: String) -> Bool {
         guard !reference.isEmpty, !reference.hasPrefix("http") else { return false }
-        return fileManager.fileExists(atPath: reference)
+        guard let path = absolutePath(for: reference) else { return false }
+        return fileManager.fileExists(atPath: path)
+    }
+
+    /// Resolves a stored reference (absolute legacy or relative new) to an
+    /// absolute filesystem path. Returns `nil` if the reference is a URL.
+    func absolutePath(for reference: String) -> String? {
+        guard !reference.isEmpty, !reference.hasPrefix("http") else { return nil }
+        if reference.hasPrefix("/") { return reference }
+        return documentsDirectory?.appendingPathComponent(reference).path
     }
 }

@@ -23,9 +23,25 @@ struct RecipeImageView: View {
         if imageName.hasPrefix("http"), let url = URL(string: imageName) {
             return .network(url)
         }
-        // Imported / captured recipe photos are stored as absolute file paths.
+        // Legacy format: absolute path saved before relative-path migration.
+        // The container path changes on reinstall / Simulator rebuilds, so fall
+        // back to looking up the file by name in the expected directory.
         if imageName.hasPrefix("/") {
-            return .provider(LocalFileImageDataProvider(fileURL: URL(fileURLWithPath: imageName)))
+            if FileManager.default.fileExists(atPath: imageName) {
+                return .provider(LocalFileImageDataProvider(fileURL: URL(fileURLWithPath: imageName)))
+            }
+            let filename = URL(fileURLWithPath: imageName).lastPathComponent
+            if let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+                let resolved = docs.appendingPathComponent("RecipeImages").appendingPathComponent(filename)
+                if FileManager.default.fileExists(atPath: resolved.path) {
+                    return .provider(LocalFileImageDataProvider(fileURL: resolved))
+                }
+            }
+            return nil
+        }
+        // Current format: path relative to the documents directory.
+        if let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+            return .provider(LocalFileImageDataProvider(fileURL: docs.appendingPathComponent(imageName)))
         }
         return nil
     }
