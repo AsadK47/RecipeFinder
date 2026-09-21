@@ -2,6 +2,16 @@
 
 Applies to everything under `RecipeFinder/` (Views, Components, Models, Persistence, Services, Utilities).
 
+## Hard constraints
+These are non-negotiable. Violations are bugs, not style choices.
+
+- **MUST NOT** use Combine — use `async`/`await` only.
+- **MUST NOT** force-unwrap (`!`) or force-try (`try!`).
+- **MUST NOT** use `print()` in shipping code — use `AppLogger.logger(category:)`.
+- **MUST NOT** store credentials or secrets in `UserDefaults`, Core Data, or plain files — Keychain only.
+- **MUST** use `NavigationStack` — `NavigationView` is banned.
+- **MUST** use `XcodeWrite` (not `Write`) when creating new Swift files.
+
 ## Swift & SwiftUI
 - PascalCase types, camelCase members.
 - `@State private` for local state; prefer value types; `@MainActor` on UI-facing types.

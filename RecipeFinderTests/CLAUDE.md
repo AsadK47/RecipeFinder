@@ -2,6 +2,12 @@
 
 Applies to everything under `RecipeFinderTests/`.
 
+## Hard constraints
+These are non-negotiable. Violations are bugs, not style choices.
+
+- **MUST** use Swift Testing (`@Suite`, `@Test`, `#expect`) for all new tests — no new XCTest.
+- **MUST NOT** use real Keychain, Core Data, or network in unit tests — inject fakes.
+
 ## Framework
 Swift Testing (`@Suite`, `@Test`, `#expect`) for all new/migrated tests. No new XCTest — migrate XCTest files opportunistically. UI tests stay XCUITest.
 

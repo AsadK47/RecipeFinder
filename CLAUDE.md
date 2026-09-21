@@ -3,6 +3,14 @@
 Privacy-first, offline-first iOS recipe manager (SwiftUI, iOS 17.5+, Swift 6).
 Proprietary — RecipeFinder Limited. GitHub: https://github.com/RecipeFinderLimited/RecipeFinder
 
+## Hard constraints
+These are non-negotiable. Violations are bugs, not style choices.
+
+- **MUST** run `BuildProject` + `RunAllTests` before committing.
+- **MUST NOT** commit partial or unverified work — write `WORK.md` instead.
+- **MUST** use `XcodeWrite` (not `Write`) when creating new Swift files.
+- **MUST NOT** point `.xccurrentversion` at anything older than `RecipeModel 13`.
+
 ## Core Data model version
 Current version: **RecipeModel 13** (`RecipeModel.xcdatamodeld/.xccurrentversion`).
 If the app crashes with `valueForUndefinedKey: isSampleRecipe`, `.xccurrentversion` has been reverted — set it back to `RecipeModel 13.xcdatamodel`. This file is occasionally clobbered by Xcode's model editor or a bad git merge resolution; never commit it pointing at anything older than 13.
