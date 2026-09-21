@@ -110,24 +110,45 @@ Views depend on protocols, not `.shared` singletons. Files > ~300 lines are a sm
 
 ## Build & CI
 Run verification fastest-first; stop and fix at the first failure before proceeding.
-1. `XcodeRefreshCodeIssuesInFile` — after editing any `.swift` file (seconds)
-2. `RunSomeTests` (name the suite) — after adding/changing logic
-3. `BuildProject` — before marking a task done
-4. `RunAllTests` — for refactors or changes touching >1 file
+1. `XcodeRefreshCodeIssuesInFile` — type-check a single file (seconds); run after every edit
+2. `RunSomeTests <SuiteName>` — run the directly affected test suite after adding/changing logic
+3. `BuildProject` — full compile; run before marking any task done
+4. `RunAllTests` — full suite; run for refactors or changes touching >1 file
+
+**Full check (equivalent to `make check`):** `BuildProject` then `RunAllTests` — both must be green before a task is considered done.
 
 CI runs the full test suite on every push to `main` — red tests fail the build.
 
-**Common failure patterns:**
+**When the AI agent produces a wrong result, don't conclude "the LLM isn't capable enough" — attribute the failure to a layer first.** Work through these five in order: (1) task not clearly defined, (2) insufficient context, (3) misconfigured environment, (4) missing verification, (5) loss of state between sessions. Nine times out of ten the problem lives in one of them.
 
-| Failure | Likely cause |
-|---|---|
-| Force-unwrap or `try?` in new code | Task didn't state Swift 6 / no-force rules |
-| New file not found by Xcode | Used `Write` instead of `XcodeWrite` |
-| Test hits real `UserDefaults` or Keychain | DI requirement not stated |
-| SwiftUI view crashes on empty data | Empty-state path not in DoD or test |
-| Core Data crash `valueForUndefinedKey: isSampleRecipe` | `.xccurrentversion` reverted off RecipeModel 13 |
-| Agent re-implements existing utility | Skipped `XcodeGrep` for prior art |
-| Combine creeping back in | Task didn't say `async/await` only |
+| Failure | Layer | Likely cause |
+|---|---|---|
+| Force-unwrap or `try?` in new code | Task definition | Swift 6 / no-force rules not stated |
+| Combine creeping back in | Task definition | `async/await` only rule not stated |
+| Test hits real `UserDefaults` or Keychain | Task definition | DI requirement not stated |
+| Agent re-implements existing utility | Insufficient context | Skipped `XcodeGrep` for prior art |
+| New file not found by Xcode | Misconfigured env | Used `Write` instead of `XcodeWrite` |
+| Core Data crash `valueForUndefinedKey: isSampleRecipe` | Misconfigured env | `.xccurrentversion` reverted off RecipeModel 13 |
+| SwiftUI view crashes on empty data | Missing verification | Empty-state path not covered by a test |
+
+## Session start checklist
+Before writing any code, verify the environment is clean:
+1. `git status` — no unexpected staged or unstaged changes from a prior partial run
+2. Check `.xccurrentversion` points at `RecipeModel 13` if Core Data was recently touched
+
+## Session handoff
+When a task spans multiple sessions or is left incomplete, save a `project` memory using this exact template:
+
+```
+Task: <one-line description>
+Completed: <bullet list of what is done and committed>
+In progress: <file path + function/type + what state it's in>
+Failing test (if any): <suite name + test name + error message>
+Blocked by: <dependency or decision needed>
+Next action: <single concrete next step — specific enough to act on cold>
+```
+
+This is the only mechanism that prevents loss-of-state failures across sessions. Without it, the next session starts cold and either repeats completed work or misses context entirely. At session start, check memory for an in-flight entry matching the current task before doing anything else. If no handoff memory exists, orient via `git log --oneline -10` and `ROADMAP.md` before starting work.
 
 ## Commit messages
 End every code-changing response with one conventional-commit line. No body, no Co-Authored-By, no preamble.
