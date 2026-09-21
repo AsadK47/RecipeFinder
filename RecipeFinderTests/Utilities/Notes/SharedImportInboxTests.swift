@@ -16,13 +16,13 @@ import Foundation
         )
     }
 
-    private static func encoded(_ data: ExtractedRecipeData) -> Data {
-        try! JSONEncoder().encode(data)
+    private static func encoded(_ data: ExtractedRecipeData) throws -> Data {
+        try JSONEncoder().encode(data)
     }
 
-    @Test func extractedRecipe_takesPrecedence() {
+    @Test func extractedRecipe_takesPrecedence() throws {
         let payload = SharedImportInbox.resolvePayload(
-            recipeData: Self.encoded(Self.extracted("Soup")),
+            recipeData: try Self.encoded(Self.extracted("Soup")),
             urlString: "https://example.com",
             text: "some text"
         )
