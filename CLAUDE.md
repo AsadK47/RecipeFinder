@@ -57,6 +57,14 @@ CI runs the full test suite on every push to `main` — red tests fail the build
 3. `git status` — no unexpected staged/unstaged changes from a prior partial run.
 4. Check `.xccurrentversion` points at `RecipeModel 13` if Core Data was recently touched.
 
+## Session end checklist
+1. Update `WORK.md` Decisions — options rejected, tradeoffs accepted, constraints discovered.
+2. Update In Progress with exact file / function / state (specific enough to resume cold).
+3. Set Next action to a single concrete step.
+4. `git status` — commit completed work or leave a clean working tree.
+
+If the task looks like it will exceed ~60% of the context window, run this checklist now — not when context is nearly full.
+
 ## Session handoff
 Write **`WORK.md`** (repo root) **before context pressure builds** — not after. The Decisions section captures *why* key choices were made (options rejected, tradeoffs); compaction preserves code but silently drops this reasoning, and the next session will "fix" deliberate decisions without it. Clear the file once the task is committed and done.
 
