@@ -8,6 +8,7 @@ These are non-negotiable. Violations are bugs, not style choices.
 
 - **MUST** run `BuildProject` + `RunAllTests` before committing.
 - **MUST NOT** commit partial or unverified work — write `WORK.md` instead.
+- **MUST** keep one task active at a time (WIP=1): finish it (`BuildProject` + `RunAllTests` green — "looks fine" is not done) before starting the next, and never "also refactor" B while doing A — record B as the next `WORK.md` action. *(verify before any batch edit; a wrong premise × N files is the expensive failure)*
 - **MUST** use `XcodeWrite` (not `Write`) when creating new Swift files. *(source: Xcode requires explicit project file registration; retire if Claude Code auto-registers)*
 - **MUST NOT** point `.xccurrentversion` at anything older than `RecipeModel 13`. If the app crashes with `valueForUndefinedKey: isSampleRecipe`, this file was clobbered — restore it to `RecipeModel 13.xcdatamodel`. *(update this number whenever the Core Data model version increments)*
 
