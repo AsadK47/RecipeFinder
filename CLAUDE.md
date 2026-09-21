@@ -109,8 +109,25 @@ Views depend on protocols, not `.shared` singletons. Files > ~300 lines are a sm
 - **New files** via `XcodeWrite` (not `Write`) so Xcode registers them.
 
 ## Build & CI
-- `BuildProject` to build; `XcodeRefreshCodeIssuesInFile` for fast per-file diagnostics.
-- CI runs the full test suite on every push to `main` — red tests fail the build.
+Run verification fastest-first; stop and fix at the first failure before proceeding.
+1. `XcodeRefreshCodeIssuesInFile` — after editing any `.swift` file (seconds)
+2. `RunSomeTests` (name the suite) — after adding/changing logic
+3. `BuildProject` — before marking a task done
+4. `RunAllTests` — for refactors or changes touching >1 file
+
+CI runs the full test suite on every push to `main` — red tests fail the build.
+
+**Common failure patterns:**
+
+| Failure | Likely cause |
+|---|---|
+| Force-unwrap or `try?` in new code | Task didn't state Swift 6 / no-force rules |
+| New file not found by Xcode | Used `Write` instead of `XcodeWrite` |
+| Test hits real `UserDefaults` or Keychain | DI requirement not stated |
+| SwiftUI view crashes on empty data | Empty-state path not in DoD or test |
+| Core Data crash `valueForUndefinedKey: isSampleRecipe` | `.xccurrentversion` reverted off RecipeModel 13 |
+| Agent re-implements existing utility | Skipped `XcodeGrep` for prior art |
+| Combine creeping back in | Task didn't say `async/await` only |
 
 ## Commit messages
 End every code-changing response with one conventional-commit line. No body, no Co-Authored-By, no preamble.

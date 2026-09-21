@@ -50,23 +50,33 @@ struct IngredientRowView: View {
                 .disabled(onTapQuantity == nil)
             }
 
-            // Middle: name + optional prep notes
-            VStack(alignment: .leading, spacing: AppTheme.spacing2) {
-                Text(ingredient.mainIngredientName)
-                    .font(.body)
-                    .fontWeight(.semibold)
-                    .strikethrough(isChecked)
-                    .foregroundStyle(isChecked ? .secondary : .primary)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                if let prep = ingredient.preparationNotes {
-                    Text(prep)
-                        .font(.caption)
-                        .adaptiveSecondaryForeground()
+            // Middle: name + optional prep notes — tapping the text area toggles checked state.
+            Button(action: {
+                HapticManager.shared.light()
+                withAnimation(.spring(response: Timing.springResponse, dampingFraction: Timing.springDamping)) {
+                    toggle()
+                }
+            }) {
+                VStack(alignment: .leading, spacing: AppTheme.spacing2) {
+                    Text(ingredient.mainIngredientName)
+                        .font(.body)
+                        .fontWeight(.semibold)
+                        .strikethrough(isChecked)
+                        .foregroundStyle(isChecked ? .secondary : .primary)
                         .fixedSize(horizontal: false, vertical: true)
+
+                    if let prep = ingredient.preparationNotes {
+                        Text(prep)
+                            .font(.caption)
+                            .adaptiveSecondaryForeground()
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
             }
+            .buttonStyle(.plain)
             .frame(maxWidth: .infinity, alignment: .leading)
+            .opacity(isChecked ? 0.5 : 1)
+            .accessibilityValue(isChecked ? "checked" : "unchecked")
 
             if let onSubstitute {
                 Button(action: onSubstitute) {
@@ -90,19 +100,6 @@ struct IngredientRowView: View {
                 .buttonStyle(.plain)
                 .disabled(isInShoppingList)
             }
-
-            // Right: checkbox
-            Button(action: {
-                HapticManager.shared.light()
-                withAnimation(.spring(response: Timing.springResponse, dampingFraction: Timing.springDamping)) {
-                    toggle()
-                }
-            }) {
-                Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: AppTheme.fontSize22))
-                    .foregroundColor(isChecked ? .green : .gray.opacity(0.3))
-            }
-            .buttonStyle(.plain)
         }
         .padding(.vertical, AppTheme.spacing8)
         .frame(maxWidth: .infinity)
