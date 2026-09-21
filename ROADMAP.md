@@ -387,6 +387,7 @@ keeps the screen awake, and 56 pt minimum-height tap targets for greasy hands.
   `AppIntent` exposed cooking-mode action. Zero new UI; just an intent that
   calls the same step-advance logic. Crouton markets this; it's a natural
   follow-on once App Intents land.
+- **Text-to-speech step reading** — read the current step aloud as the user navigates, so the phone never needs to be touched. `AVSpeechSynthesizer` on-device (free, no API). Toggle in cooking mode UI. Pairs naturally with the Watch companion and greasy-hands use case.
 
 ### 🟢 Shopping list sharing
 `KitchenShoppingView` overflow menu → "Share List" formats the grouped list as

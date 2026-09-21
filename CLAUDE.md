@@ -8,15 +8,15 @@ These are non-negotiable. Violations are bugs, not style choices.
 
 - **MUST** run `BuildProject` + `RunAllTests` before committing.
 - **MUST NOT** commit partial or unverified work — write `WORK.md` instead.
-- **MUST** use `XcodeWrite` (not `Write`) when creating new Swift files.
-- **MUST NOT** point `.xccurrentversion` at anything older than `RecipeModel 13`.
+- **MUST** use `XcodeWrite` (not `Write`) when creating new Swift files. *(source: Xcode requires explicit project file registration; retire if Claude Code auto-registers)*
+- **MUST NOT** point `.xccurrentversion` at anything older than `RecipeModel 13`. If the app crashes with `valueForUndefinedKey: isSampleRecipe`, this file was clobbered — restore it to `RecipeModel 13.xcdatamodel`. *(update this number whenever the Core Data model version increments)*
 
-## Core Data model version
-Current version: **RecipeModel 13** (`RecipeModel.xcdatamodeld/.xccurrentversion`).
-If the app crashes with `valueForUndefinedKey: isSampleRecipe`, `.xccurrentversion` has been reverted — set it back to `RecipeModel 13.xcdatamodel`. This file is occasionally clobbered by Xcode's model editor or a bad git merge resolution; never commit it pointing at anything older than 13.
+## Topic docs (loaded automatically by directory)
+- `RecipeFinder/CLAUDE.md` — Swift/SwiftUI rules, design principles, security, DI, UX checklist. Read when editing any app source file.
+- `RecipeFinderTests/CLAUDE.md` — Testing framework, conventions, coverage. Read when editing tests.
 
 ## Apple Developer
-- Develop under personal Apple ID (free team) until ready for TestFlight.
+- Develop under personal Apple ID (free team) until ready for TestFlight. *(free team lacks CloudKit/push entitlements; retire once paid enrollment is active)*
 - Switch signing to RecipeFinder Limited account only at distribution time.
 
 ## Architecture
