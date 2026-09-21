@@ -613,6 +613,9 @@
 		F36AED7A3043431C00935A3C /* RecipeSearchHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeSearchHeader.swift; sourceTree = "<group>"; };
 		F36AED7C304346D400935A3C /* MealPlanCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlanCalendar.swift; sourceTree = "<group>"; };
 		F36AED7E304346DF00935A3C /* MealPlanCalendarTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlanCalendarTests.swift; sourceTree = "<group>"; };
+		F3AD2EBA3061884B00274E33 /* RecipeModel 11.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 11.xcdatamodel"; sourceTree = "<group>"; };
+		F3AD2EBB3061884B00274E33 /* RecipeModel 12.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 12.xcdatamodel"; sourceTree = "<group>"; };
+		F3AD2EBC3061884B00274E33 /* RecipeModel 13.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 13.xcdatamodel"; sourceTree = "<group>"; };
 		F3B837BE305554C80003AEF8 /* UserScopedStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserScopedStorageTests.swift; sourceTree = "<group>"; };
 		F3B837C0305562790003AEF8 /* SessionExpiryPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionExpiryPolicy.swift; sourceTree = "<group>"; };
 		F3B837C23055628E0003AEF8 /* SessionExpiryPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionExpiryPolicyTests.swift; sourceTree = "<group>"; };
@@ -2935,6 +2938,9 @@
 		9E6060002D09CB6400236896 /* RecipeModel.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				F3AD2EBA3061884B00274E33 /* RecipeModel 11.xcdatamodel */,
+				F3AD2EBB3061884B00274E33 /* RecipeModel 12.xcdatamodel */,
+				F3AD2EBC3061884B00274E33 /* RecipeModel 13.xcdatamodel */,
 				9E212D6F2EB12315005743F7 /* RecipeModel 9.xcdatamodel */,
 				9E212D702EB12315005743F7 /* RecipeModel 10.xcdatamodel */,
 				9E45FAE32DC690E300F46909 /* RecipeModel 8.xcdatamodel */,
@@ -2947,7 +2953,7 @@
 				9E6060012D09CB6400236896 /* RecipeModel.xcdatamodel */,
 				9E6060022D09CB6400236896 /* RecipeModel 2.xcdatamodel */,
 			);
-			currentVersion = 9E212D702EB12315005743F7 /* RecipeModel 10.xcdatamodel */;
+			currentVersion = F3AD2EBC3061884B00274E33 /* RecipeModel 13.xcdatamodel */;
 			path = RecipeModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
