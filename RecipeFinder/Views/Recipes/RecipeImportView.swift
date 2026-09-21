@@ -102,8 +102,7 @@ struct RecipeImportView: View {
                         }
                     }
                     .padding()
-                    .background(Color(.systemGray6))
-                    .cornerRadius(AppTheme.cornerRadius12)
+                    .appCard(cornerRadius: AppTheme.cornerRadius12)
                 }
                 .padding(.horizontal)
                 

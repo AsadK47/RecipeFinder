@@ -35,7 +35,7 @@ struct PasteTextImportSheet: View {
                         .focused($focused)
                         .frame(minHeight: 220)
                         .padding(AppTheme.spacing8)
-                        .background(Color(.systemGray6), in: RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
+                        .appCard(cornerRadius: AppTheme.cornerRadius12)
                         .overlay(alignment: .topLeading) {
                             if text.isEmpty {
                                 Text("Paste recipe text here…")
