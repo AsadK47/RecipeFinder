@@ -49,6 +49,7 @@ CI runs the full test suite on every push to `main` — red tests fail the build
 | New file not found by Xcode | Misconfigured env | Used `Write` instead of `XcodeWrite` |
 | Core Data crash `valueForUndefinedKey: isSampleRecipe` | Misconfigured env | `.xccurrentversion` reverted off RecipeModel 13 |
 | SwiftUI view crashes on empty data | Missing verification | Empty-state path not covered by a test |
+| Verification skipped or simpler fix chosen near session end | Context pressure | Agent sensed low context → rushed finish; write WORK.md Decisions before this happens |
 
 ## Session start checklist
 1. Read `WORK.md` — if it has content, resume from "Next action" without repeating completed work.
@@ -57,7 +58,7 @@ CI runs the full test suite on every push to `main` — red tests fail the build
 4. Check `.xccurrentversion` points at `RecipeModel 13` if Core Data was recently touched.
 
 ## Session handoff
-When a task spans multiple sessions or is left incomplete, write the current state into **`WORK.md`** (repo root) using the template in that file. Clear it once the task is committed and done.
+Write **`WORK.md`** (repo root) **before context pressure builds** — not after. The Decisions section captures *why* key choices were made (options rejected, tradeoffs); compaction preserves code but silently drops this reasoning, and the next session will "fix" deliberate decisions without it. Clear the file once the task is committed and done.
 
 ## Harness decay
 When a new failure class appears or a convention changes, update the relevant section in the same commit — stale documentation is worse than none.

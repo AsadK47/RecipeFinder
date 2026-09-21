@@ -14,6 +14,9 @@ _If this file is empty or says "nothing in flight", start from `git log` and `RO
 ## In progress
 <!-- file path + type/function name + what state it's in -->
 
+## Decisions
+<!-- why key choices were made: options rejected, tradeoffs, constraints discovered — compaction drops this, code doesn't record it -->
+
 ## Failing test (if any)
 <!-- TestSuiteName / testMethodName — error message -->
 
