@@ -65,7 +65,7 @@ struct CookTimerView: View {
                         .adaptiveForegroundColor()
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, AppTheme.spacing12)
-                        .background(Color.orange)
+                        .background(AppTheme.warning)
                         .cornerRadius(AppTheme.cornerRadius12)
                 }
                 .buttonStyle(.plain)
@@ -80,7 +80,7 @@ struct CookTimerView: View {
                         .adaptiveForegroundColor()
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, AppTheme.spacing12)
-                        .background(Color.red)
+                        .background(AppTheme.error)
                         .cornerRadius(AppTheme.cornerRadius12)
                 }
                 .buttonStyle(.plain)

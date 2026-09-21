@@ -90,7 +90,7 @@ struct RecipeDeleteConfirmationSheet: View {
                                     .adaptiveForegroundColor()
                                     .frame(maxWidth: contentMaxWidth)
                                     .padding(.vertical, AppTheme.spacing16)
-                                    .background(Color.orange)
+                                    .background(AppTheme.warning)
                                     .cornerRadius(AppTheme.cornerRadius12)
                             }
                             .buttonStyle(PlainButtonStyle())

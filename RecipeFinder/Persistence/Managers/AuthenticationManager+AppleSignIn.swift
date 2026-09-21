@@ -2,6 +2,8 @@ import Foundation
 import AuthenticationServices
 import UIKit
 
+private let logger = AppLogger.logger(category: "AppleSignIn")
+
 /// Sign in with Apple: request kick-off, authorization delegate, and presentation.
 extension AuthenticationManager {
 
@@ -46,8 +48,11 @@ extension AuthenticationManager: ASAuthorizationControllerDelegate {
                 givenName: givenName,
                 familyName: familyName
             )
-            if let encoded = try? JSONEncoder().encode(cache) {
+            do {
+                let encoded = try JSONEncoder().encode(cache)
                 UserDefaults.standard.set(encoded, forKey: appleUserCacheKey)
+            } catch {
+                logger.error("❌ Failed to cache Apple user info: \(error.localizedDescription)")
             }
         }
         

@@ -271,9 +271,7 @@ final class MealPlanningManager: ObservableObject {
     }
     
     private func saveMealPlans() {
-        if let encoded = try? JSONEncoder().encode(mealPlans) {
-            storage.set(encoded, forKey: saveKey)
-        }
+        storage.setEncodable(mealPlans, forKey: saveKey)
     }
     
     private func loadMealPlans() {

@@ -44,9 +44,7 @@ final class ShoppingListManager: ObservableObject {
     
     private func saveItems(_ newItems: [ShoppingListModel]) {
         items = newItems
-        if let encoded = try? JSONEncoder().encode(newItems) {
-            storage.set(encoded, forKey: saveKey)
-        }
+        storage.setEncodable(newItems, forKey: saveKey)
     }
     
     /// Faithful, non-destructive restore: unions incoming items by id and persists.

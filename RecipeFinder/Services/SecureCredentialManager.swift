@@ -47,6 +47,7 @@ final class SecureCredentialManager: Sendable {
         ]
         
         guard let data = try? JSONSerialization.data(withJSONObject: credentials) else {
+            logger.error("❌ Failed to serialize credentials for keychain storage")
             return false
         }
         
@@ -105,9 +106,14 @@ final class SecureCredentialManager: Sendable {
 
         let (status, data) = keychain.copyMatching(query)
 
-        guard status == errSecSuccess,
-              let data,
-              let credentials = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+        // A missing item is a normal "no credentials" outcome, not an error.
+        guard status == errSecSuccess, let data else {
+            return nil
+        }
+
+        // Data present but undecodable means the stored entry is corrupt — surface it.
+        guard let credentials = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            logger.error("❌ Failed to decode stored credentials — keychain entry may be corrupt")
             return nil
         }
 

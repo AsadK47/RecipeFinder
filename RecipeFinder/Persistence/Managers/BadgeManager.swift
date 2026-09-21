@@ -119,9 +119,7 @@ final class BadgeManager: ObservableObject {
     }
 
     private func saveBadges() {
-        if let encoded = try? JSONEncoder().encode(unlockedBadges) {
-            storage.set(encoded, forKey: badgesKey)
-        }
+        storage.setEncodable(unlockedBadges, forKey: badgesKey)
     }
 
     private func loadBadges() {

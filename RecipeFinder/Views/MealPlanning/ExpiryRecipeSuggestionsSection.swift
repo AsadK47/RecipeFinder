@@ -64,7 +64,7 @@ struct ExpiryRecipeSuggestionsSection: View {
             .foregroundColor(.white)
             .padding(.horizontal, AppTheme.spacing12)
             .padding(.vertical, AppTheme.spacing6)
-            .background(Color.orange)
+            .background(AppTheme.warning)
             .cornerRadius(AppTheme.cornerRadius8)
         }
         .padding(AppTheme.spacing12)

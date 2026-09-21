@@ -293,17 +293,13 @@ final class KitchenInventoryManager: ObservableObject {
         items = newItems
         itemNameSet = Set(newItems.map { $0.name.lowercased() })
         groupedItemsCache = computeGroupedItems()
-        if let encoded = try? JSONEncoder().encode(newItems) {
-            storage.set(encoded, forKey: saveKey)
-        }
+        storage.setEncodable(newItems, forKey: saveKey)
     }
 
 	private func saveInventoryItems(_ newInventoryItems: [KitchenInventoryModel]) {
         inventoryItems = newInventoryItems
         inventoryNameSet = Set(newInventoryItems.map { $0.name.lowercased() })
-        if let encoded = try? JSONEncoder().encode(newInventoryItems) {
-            storage.set(encoded, forKey: inventorySaveKey)
-        }
+        storage.setEncodable(newInventoryItems, forKey: inventorySaveKey)
 	}
 }
 

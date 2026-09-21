@@ -36,7 +36,7 @@ struct LegalInformationView: View {
                             CompanyInfoRow(label: "Registered", value: "England and Wales")
                             CompanyInfoRow(label: "Incorporation Date", value: "5 November 2025")
                             CompanyInfoRow(label: "Company Type", value: "Private Limited Company")
-                            CompanyInfoRow(label: "Status", value: "Active", valueColor: colorScheme == .dark ? .green : Color(red: 0.0, green: 0.6, blue: 0.0))
+                            CompanyInfoRow(label: "Status", value: "Active", valueColor: AppTheme.success)
                         }
                         .padding(AppTheme.spacing24)
                     }
@@ -194,7 +194,7 @@ struct LegalInformationView: View {
             }
         }
         .navigationTitle("Legal Information")
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbarColorScheme(.dark, for: .navigationBar)
         .sheet(isPresented: $showPrivacyPolicy) {

@@ -109,7 +109,7 @@ private struct WeekDayCell: View {
     private func dotColor(for mealTime: MealTime) -> Color {
         switch mealTime {
         case .breakfast: return .orange
-        case .lunch:     return Color(red: 0.95, green: 0.77, blue: 0.06)
+        case .lunch:     return AppTheme.yellowGold
         case .dinner:    return .indigo
         case .snack:     return .purple
         }

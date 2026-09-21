@@ -177,7 +177,7 @@ struct RecipeImportView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
-                    .background(Color.orange.opacity(AppTheme.shadowLightOpacity))
+                    .background(AppTheme.warning.opacity(AppTheme.shadowLightOpacity))
                     .cornerRadius(AppTheme.cornerRadius12)
                     .padding(.horizontal)
                 }

@@ -1,5 +1,7 @@
 import Foundation
 
+private let logger = AppLogger.logger(category: "UserScopedStorage")
+
 extension Notification.Name {
     static let userScopeDidChange = Notification.Name("UserScopeDidChange")
 }
@@ -64,6 +66,18 @@ final class UserScopedStorage: @unchecked Sendable {
     
     func data(forKey key: String) -> Data? {
         userDefaults.data(forKey: scopedKey(key))
+    }
+
+    /// Encodes a `Codable` value to JSON and stores it. Unlike a bare `try?`, an
+    /// encoding failure is logged at the failure site instead of silently
+    /// dropping the write, so lost persistence is diagnosable.
+    func setEncodable<T: Encodable>(_ value: T, forKey key: String) {
+        do {
+            let data = try JSONEncoder().encode(value)
+            set(data, forKey: key)
+        } catch {
+            logger.error("❌ Failed to encode \(String(describing: T.self)) for key \(key): \(error.localizedDescription)")
+        }
     }
     
     func set(_ value: Data?, forKey key: String) {

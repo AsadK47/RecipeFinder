@@ -36,9 +36,7 @@ final class CollectionManager: ObservableObject {
 
     private func saveCollections(_ updated: [RecipeCollection]) {
         collections = updated
-        if let encoded = try? JSONEncoder().encode(updated) {
-            storage.set(encoded, forKey: saveKey)
-        }
+        storage.setEncodable(updated, forKey: saveKey)
     }
 
     // MARK: - CRUD

@@ -109,6 +109,24 @@ import Foundation
         #expect(storage.data(forKey: "k") == nil)
     }
 
+    @Test func setEncodable_encodesScopesAndRoundTrips() throws {
+        struct Item: Codable, Equatable { let id: Int; let name: String }
+        let defaults = freshDefaults()
+        let storage = UserScopedStorage(userDefaults: defaults)
+        storage.currentUserId = "userA"
+
+        let items = [Item(id: 1, name: "a"), Item(id: 2, name: "b")]
+        storage.setEncodable(items, forKey: "items")
+
+        // Persisted as JSON under the user-scoped key.
+        #expect(defaults.data(forKey: "userA_items") != nil)
+
+        // Decodes back to the original value.
+        let stored = try #require(storage.data(forKey: "items"))
+        let decoded = try JSONDecoder().decode([Item].self, from: stored)
+        #expect(decoded == items)
+    }
+
     @Test func bool_defaultsFalse_andRoundTrips() {
         let storage = UserScopedStorage(userDefaults: freshDefaults())
         storage.currentUserId = "userA"

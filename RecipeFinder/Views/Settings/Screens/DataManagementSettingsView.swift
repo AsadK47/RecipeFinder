@@ -66,7 +66,7 @@ struct DataManagementSettingsView: View {
                             .adaptiveForegroundColor()
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, AppTheme.spacing12)
-                            .background(Color.orange)
+                            .background(AppTheme.warning)
                             .cornerRadius(AppTheme.cornerRadius12)
                         }
                         .buttonStyle(PlainButtonStyle())
