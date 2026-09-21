@@ -62,6 +62,8 @@ When a task spans multiple sessions or is left incomplete, write the current sta
 ## Harness decay
 When a new failure class appears or a convention changes, update the relevant section in the same commit — stale documentation is worse than none.
 
+**Replace or refine, don't append.** When a failure tempts you to "add a new rule," first ask whether an existing rule should be sharpened instead. Each CLAUDE.md file has a line budget: root ≤100, RecipeFinder/ ≤100, RecipeFinderTests/ ≤50. Exceeding budget is a signal to consolidate, not to keep adding.
+
 ## Commit messages
 Only commit once the full check passes (`BuildProject` + `RunAllTests` green). A partial or unverified state must not be committed — update `WORK.md` instead and resume next session.
 

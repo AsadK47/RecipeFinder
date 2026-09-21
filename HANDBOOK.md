@@ -11,14 +11,10 @@ RecipeFinder is a privacy-first, offline-first iOS recipe manager
 
 ## How the app works
 - [readme.md](readme.md) — public overview: features, screenshots, tech stack, build/run instructions.
-- [CLAUDE.md](CLAUDE.md) — the working contract: Clean Architecture layers, Swift/SwiftUI conventions, performance hot-path rules, dependency injection, and the Swift Testing (TDD) workflow.
+- [CLAUDE.md](CLAUDE.md) — landing page for the AI agent harness: architecture overview, verification commands, session state. Module conventions live next to their code (`RecipeFinder/CLAUDE.md`, `RecipeFinderTests/CLAUDE.md`).
 
 ## Where we're going
-- [ROADMAP.md](ROADMAP.md) — product direction and priorities. Phases 1–3 are release-defining (Capture / Sync & Trust / Cooking). Strategy: *"ReciMe, but private, unlimited, and better at the actual cooking."* Also holds the Completed log.
-
-## Active work *(consumable — delete a plan when it lands)*
-- [PLAN-import-kitchen.md](PLAN-import-kitchen.md) — import-first tab bar + Kitchen/Shopping ("Groceries") merge. Phase A done; follow-ups: cohesion pass, paste-text→AI, tab-label decision.
-- [PLAN-bug-audit.md](PLAN-bug-audit.md) — prioritised correctness-defect catalogue. Recurring root cause: substring matching where whole-word is meant. Open P2s: charset decode, normalizer determinism, unit-conversion & category-classifier word boundaries.
+- [ROADMAP.md](ROADMAP.md) — product direction and priorities. Part I: Hardening (done), Part II: Improvements, Part III: New Features. Strategy: *"ReciMe, but private, unlimited, and better at the actual cooking."*
 
 ## Legal & licensing
 - [LICENSE](LICENSE) — proprietary licence.

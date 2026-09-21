@@ -71,7 +71,7 @@ open RecipeFinder.xcodeproj  # Press ⌘+R to run
 
 ## 🏗 Technical Stack
 
-**Architecture**: SwiftUI with MVVM pattern • Core Data persistence • Swift async/await concurrency  
+**Architecture**: SwiftUI with Clean Architecture (Presentation / Domain / Data) • Core Data persistence • Swift async/await concurrency  
 **Dependencies**: [Kingfisher](https://github.com/onevcat/Kingfisher) (image loading & caching) • [ConfettiSwiftUI](https://github.com/simibac/ConfettiSwiftUI) (celebration effects)  
 **Performance**: Hardware-accelerated rendering • Async image loading • Optimized Core Data fetches  
 **Security**: Local-first storage • PBKDF2 password hashing (HMAC-SHA256, 100k rounds) • iOS Keychain • Secure Enclave biometrics  
