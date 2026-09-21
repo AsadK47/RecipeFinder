@@ -31,8 +31,11 @@ struct RecipeImageStoreTests {
 
         let path = try #require(store.persist(makeImage(), recipeId: id))
 
+        // `persist` returns a container-relative path by design; resolve it to an
+        // absolute path before asserting the file exists on disk.
         #expect(path.hasSuffix("RecipeImages/\(id.uuidString).jpg"))
-        #expect(FileManager.default.fileExists(atPath: path))
+        let absolutePath = try #require(store.absolutePath(for: path))
+        #expect(FileManager.default.fileExists(atPath: absolutePath))
     }
 
     @Test("A freshly selected image is persisted and its path returned")
@@ -48,8 +51,11 @@ struct RecipeImageStoreTests {
             previousReference: nil
         )
 
+        // `resolveReference` returns a container-relative path by design; resolve
+        // it to an absolute path before asserting the file exists on disk.
         let path = try #require(reference)
-        #expect(FileManager.default.fileExists(atPath: path))
+        let absolutePath = try #require(store.absolutePath(for: path))
+        #expect(FileManager.default.fileExists(atPath: absolutePath))
     }
 
     @Test("With no new image, an existing reference is kept")
