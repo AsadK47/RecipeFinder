@@ -1,6 +1,5 @@
 
 import SwiftUI
-import Combine
 
 enum CardStyle: String, CaseIterable {
     case frosted = "Frost Light"
@@ -20,9 +19,6 @@ enum AppearanceMode: String, CaseIterable {
         }
     }
 }
-
-import SwiftUI
-import Combine
 
 final class ThemeManager: ObservableObject, @unchecked Sendable {
     static let shared = ThemeManager()
