@@ -1,0 +1,22 @@
+# Periphery dead-code scan config for RecipeFinder.
+# Install (the Homebrew cask is currently broken on modern Homebrew): download the
+#   periphery-<ver>.zip from github.com/peripheryapp/periphery/releases and put BOTH
+#   `periphery` and `libIndexStore.dylib` on PATH together (e.g. /opt/homebrew/bin).
+# Run:      periphery scan            (reads this file automatically)
+# NOTE: findings need human triage — it under-traces @Environment protocol
+#   existentials (e.g. AppleSignInManager) and EnvironmentKey types, so verify
+#   before deleting anything.
+#
+# Analyses the app + share-extension source that share the parser/import code.
+# The app scheme build also compiles the test targets, so code referenced only
+# by tests is correctly treated as used (not reported as dead).
+project: RecipeFinder.xcodeproj
+schemes:
+  - RecipeFinder
+targets:
+  - RecipeFinder
+  - RecipeShareExtension
+# App (not a library): unused public/internal symbols are genuinely dead.
+retain_public: false
+# SwiftUI previews reference otherwise-unused types; don't report them as dead.
+retain_swift_ui_previews: true
