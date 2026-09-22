@@ -57,6 +57,15 @@ struct RecipeParser {
             return enriched
         }
 
+        // RDFa Lite (vocab/typeof/property) — see RecipeParser+RDFa.
+        if let rdfa = extractRDFa(from: html) {
+            var enriched = rdfa
+            if enriched.imageURL == nil {
+                enriched.imageURL = extractOGImage(from: html)
+            }
+            return enriched
+        }
+
         let text = cleanHTML(html)
         let lines = text.components(separatedBy: .newlines).filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
 

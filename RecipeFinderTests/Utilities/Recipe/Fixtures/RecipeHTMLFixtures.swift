@@ -84,6 +84,47 @@ enum RecipeHTMLFixtures {
     </html>
     """#
 
+    /// A page whose only structured data is **RDFa Lite** (`vocab`/`typeof`/
+    /// `property`) — no JSON-LD, WPRM, or microdata. Older/Drupal-style sites still
+    /// emit this. `typeof` is the bare "Recipe" token paired with a `vocab`; times
+    /// use `<time property="..." datetime="PT...">`; instructions are a flat list.
+    static let rdfaOnly = #"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <meta charset="utf-8">
+    <title>Roasted Tomato Soup :: Old Farmhouse Blog</title>
+    </head>
+    <body>
+    <header><a href="/">Old Farmhouse Blog</a></header>
+    <div vocab="https://schema.org/" typeof="Recipe">
+      <h1 property="name">Roasted Tomato Soup</h1>
+      <img property="image" src="https://cdn.example.com/tomato-soup.jpg" alt="Tomato soup"/>
+      <p property="description">A silky roasted tomato soup with basil.</p>
+      <ul class="meta">
+        <li>Prep: <time property="prepTime" datetime="PT15M">15 minutes</time></li>
+        <li>Cook: <time property="cookTime" datetime="PT40M">40 minutes</time></li>
+        <li>Serves: <span property="recipeYield">4 servings</span></li>
+      </ul>
+      <h2>Ingredients</h2>
+      <ul>
+        <li property="recipeIngredient">2 lbs ripe tomatoes, halved</li>
+        <li property="recipeIngredient">1 onion, quartered</li>
+        <li property="recipeIngredient">4 cloves garlic</li>
+        <li property="recipeIngredient">2 tbsp olive oil</li>
+        <li property="recipeIngredient">1 cup vegetable broth</li>
+      </ul>
+      <h2>Instructions</h2>
+      <ol>
+        <li property="recipeInstructions">Roast the tomatoes, onion, and garlic with the oil until charred.</li>
+        <li property="recipeInstructions">Blend the roasted vegetables with the broth until smooth.</li>
+        <li property="recipeInstructions">Warm through, season, and finish with torn basil.</li>
+      </ol>
+    </div>
+    </body>
+    </html>
+    """#
+
     /// A plain blog post with **no structured data at all** (no JSON-LD, WPRM, or
     /// microdata) — just a headed `<h1>`, intro prose, an "Ingredients" `<ul>` and
     /// an "Instructions" `<ol>`. Exercises the free-text fallback, the hardest and

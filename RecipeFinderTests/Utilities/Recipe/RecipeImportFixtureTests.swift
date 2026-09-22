@@ -52,6 +52,22 @@ import Testing
         #expect(r.confidence > 0.8) // structured microdata, not free-text guessing
     }
 
+    // MARK: - RDFa-only page (vocab/typeof/property, no JSON-LD or microdata)
+
+    @Test func rdfaOnly_extractsCoreFields() {
+        let r = RecipeParser.parse(html: RecipeHTMLFixtures.rdfaOnly)
+
+        #expect(r.name == "Roasted Tomato Soup")
+        #expect(r.ingredients.count == 5)
+        #expect(r.ingredients.first == "2 lbs ripe tomatoes, halved")
+        #expect(r.instructions.count == 3)
+        #expect(r.prepTime == 15)
+        #expect(r.cookTime == 40)
+        #expect(r.servings == 4)
+        #expect(r.imageURL == "https://cdn.example.com/tomato-soup.jpg")
+        #expect(r.confidence > 0.8) // structured RDFa, not the free-text fallback
+    }
+
     // MARK: - Plain blog, no structured data (free-text fallback)
 
     @Test func plainBlogNoStructuredData_extractsNameAndFullLists() {

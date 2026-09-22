@@ -1,56 +1,79 @@
 import Foundation
 
-/// Schema.org **microdata** parsing for `RecipeParser` (`itemscope`/`itemprop`).
-/// Runs after JSON-LD and WP Recipe Maker but before the free-text heuristics, so
-/// microdata-only sites — an older but still-common style — parse structurally
-/// instead of falling back to guesswork.
+/// Schema.org attribute-vocabulary parsing for `RecipeParser`. The shared core
+/// (`extractSchemaAttributes`) is driven by the per-field attribute name, so it
+/// serves both **microdata** (`itemscope`/`itemprop`) and **RDFa Lite**
+/// (`vocab`/`typeof`/`property`) without a second diverging parser. Runs after
+/// JSON-LD and WP Recipe Maker but before the free-text heuristics, so
+/// structured-but-not-JSON-LD sites parse structurally instead of guesswork.
 extension RecipeParser {
 
     static func extractMicrodata(from html: String) -> ParsedRecipe? {
-        // Require an explicit schema.org Recipe scope to avoid false positives, and
-        // narrow all field lookups to the markup from that scope onward so we don't
-        // pick up a site/author "name" from the page header.
-        let scopePattern = #"itemtype=["']https?://schema\.org/Recipe["']"#
+        // Require an explicit schema.org Recipe scope to avoid false positives.
+        extractSchemaAttributes(
+            from: html,
+            propAttr: "itemprop",
+            scopePattern: #"itemtype=["']https?://schema\.org/Recipe["']"#
+        )
+    }
+
+    /// Schema.org **RDFa Lite** (`vocab`/`typeof`/`property`), via the shared core.
+    /// `typeof` may carry a bare "Recipe" (paired with a `vocab="https://schema.org/"`)
+    /// or a fully-qualified "https://schema.org/Recipe" — match the token either way.
+    static func extractRDFa(from html: String) -> ParsedRecipe? {
+        extractSchemaAttributes(
+            from: html,
+            propAttr: "property",
+            scopePattern: #"typeof=["'][^"']*\bRecipe\b[^"']*["']"#
+        )
+    }
+
+    /// Shared schema.org extractor for the microdata / RDFa attribute vocabularies.
+    /// `propAttr` is the per-field attribute name (`itemprop` vs `property`) and
+    /// `scopePattern` locates the opening marker of the Recipe container; all field
+    /// lookups are narrowed to the markup from that scope onward so we don't pick up
+    /// a site/author "name" from the page header.
+    static func extractSchemaAttributes(from html: String, propAttr: String, scopePattern: String) -> ParsedRecipe? {
         guard let scopeRange = html.range(of: scopePattern, options: [.regularExpression, .caseInsensitive]) else {
             return nil
         }
         let scoped = String(html[scopeRange.lowerBound...])
 
         // Ingredients — current property, then the legacy `ingredients` spelling.
-        var ingredients = innerTexts(itemprop: "recipeIngredient", in: scoped)
+        var ingredients = innerTexts(prop: "recipeIngredient", attr: propAttr, in: scoped)
         if ingredients.isEmpty {
-            ingredients = innerTexts(itemprop: "ingredients", in: scoped)
+            ingredients = innerTexts(prop: "ingredients", attr: propAttr, in: scoped)
         }
         guard !ingredients.isEmpty else { return nil }
 
         var result = ParsedRecipe()
         result.ingredients = ingredients
 
-        guard let name = innerTexts(itemprop: "name", in: scoped).first, !name.isEmpty else {
+        guard let name = innerTexts(prop: "name", attr: propAttr, in: scoped).first, !name.isEmpty else {
             return nil
         }
         result.name = name
 
-        result.description = innerTexts(itemprop: "description", in: scoped).first
+        result.description = innerTexts(prop: "description", attr: propAttr, in: scoped).first
 
-        result.instructions = innerTexts(itemprop: "recipeInstructions", in: scoped)
+        result.instructions = innerTexts(prop: "recipeInstructions", attr: propAttr, in: scoped)
             .filter { $0.count >= 10 }
         if result.instructions.isEmpty {
-            // A single container element (e.g. <div itemprop="recipeInstructions">
-            // wrapping <p> steps) rather than one itemprop per step.
-            result.instructions = containerInstructions(in: scoped)
+            // A single container element (e.g. <div property="recipeInstructions">
+            // wrapping <p> steps) rather than one prop per step.
+            result.instructions = containerInstructions(attr: propAttr, in: scoped)
         }
 
-        result.prepTime = minutes(forItemprop: "prepTime", in: scoped)
-        result.cookTime = minutes(forItemprop: "cookTime", in: scoped)
+        result.prepTime = minutes(forProp: "prepTime", attr: propAttr, in: scoped)
+        result.cookTime = minutes(forProp: "cookTime", attr: propAttr, in: scoped)
 
-        if let yield = innerTexts(itemprop: "recipeYield", in: scoped).first
-            ?? firstCapture(#"itemprop=["']recipeYield["'][^>]*\bcontent=["']([^"']+)["']"#, in: scoped) {
+        if let yield = innerTexts(prop: "recipeYield", attr: propAttr, in: scoped).first
+            ?? firstCapture(#"\#(propAttr)=["']recipeYield["'][^>]*\bcontent=["']([^"']+)["']"#, in: scoped) {
             result.servings = extractServingsFromYield(yield)
         }
 
-        result.imageURL = firstCapture(#"itemprop=["']image["'][^>]*\bsrc=["']([^"']+)["']"#, in: scoped)
-            ?? firstCapture(#"itemprop=["']image["'][^>]*\bcontent=["']([^"']+)["']"#, in: scoped)
+        result.imageURL = firstCapture(#"\#(propAttr)=["']image["'][^>]*\bsrc=["']([^"']+)["']"#, in: scoped)
+            ?? firstCapture(#"\#(propAttr)=["']image["'][^>]*\bcontent=["']([^"']+)["']"#, in: scoped)
 
         result.confidence = 0.85
         return result
@@ -58,25 +81,25 @@ extension RecipeParser {
 
     // MARK: - Helpers
 
-    /// All immediate text-node values for elements carrying the given `itemprop`,
+    /// All immediate text-node values for elements carrying the given attribute,
     /// decoded and trimmed. Matches the common flat form
     /// `<li itemprop="recipeIngredient">2 lbs beef</li>`.
-    private static func innerTexts(itemprop: String, in html: String) -> [String] {
-        allCaptures(#"itemprop=["']\#(itemprop)["'][^>]*>\s*([^<]+?)\s*<"#, in: html)
+    private static func innerTexts(prop: String, attr: String, in html: String) -> [String] {
+        allCaptures(#"\#(attr)=["']\#(prop)["'][^>]*>\s*([^<]+?)\s*<"#, in: html)
             .map { decodeHTMLEntities($0).trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { !$0.isEmpty }
     }
 
-    /// Duration for a time-valued itemprop: prefers the ISO-8601 `datetime`
+    /// Duration for a time-valued property: prefers the ISO-8601 `datetime`
     /// attribute (in either attribute order), then falls back to parsing the
     /// human-readable inner text (e.g. "20 minutes", "2 hours").
-    private static func minutes(forItemprop prop: String, in html: String) -> Int? {
-        let iso = firstCapture(#"itemprop=["']\#(prop)["'][^>]*\bdatetime=["']([^"']+)["']"#, in: html)
-            ?? firstCapture(#"\bdatetime=["']([^"']+)["'][^>]*itemprop=["']\#(prop)["']"#, in: html)
+    private static func minutes(forProp prop: String, attr: String, in html: String) -> Int? {
+        let iso = firstCapture(#"\#(attr)=["']\#(prop)["'][^>]*\bdatetime=["']([^"']+)["']"#, in: html)
+            ?? firstCapture(#"\bdatetime=["']([^"']+)["'][^>]*\#(attr)=["']\#(prop)["']"#, in: html)
         if let iso, let mins = parseISO8601Duration(iso) {
             return mins
         }
-        if let text = innerTexts(itemprop: prop, in: html).first {
+        if let text = innerTexts(prop: prop, attr: attr, in: html).first {
             return minutesFromText(text)
         }
         return nil
@@ -108,20 +131,20 @@ extension RecipeParser {
 
     /// Steps pulled from a single `recipeInstructions` **container** element, by
     /// isolating that element's inner HTML (balanced-tag scan) and splitting its
-    /// cleaned text — used when there isn't one itemprop per step.
-    private static func containerInstructions(in html: String) -> [String] {
-        guard let inner = innerHTML(itemprop: "recipeInstructions", in: html) else { return [] }
+    /// cleaned text — used when there isn't one prop per step.
+    private static func containerInstructions(attr: String, in html: String) -> [String] {
+        guard let inner = innerHTML(prop: "recipeInstructions", attr: attr, in: html) else { return [] }
         return cleanHTML(inner)
             .components(separatedBy: .newlines)
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { $0.count >= 10 }
     }
 
-    /// Inner HTML of the first element carrying `itemprop`, found by matching its
+    /// Inner HTML of the first element carrying the attribute, found by matching its
     /// opening tag then scanning for the matching close with depth counting so
     /// nested same-name tags don't end the element early.
-    private static func innerHTML(itemprop: String, in html: String) -> String? {
-        let openPattern = #"<([a-zA-Z0-9]+)\b[^>]*\bitemprop=["']\#(itemprop)["'][^>]*>"#
+    private static func innerHTML(prop: String, attr: String, in html: String) -> String? {
+        let openPattern = #"<([a-zA-Z0-9]+)\b[^>]*\b\#(attr)=["']\#(prop)["'][^>]*>"#
         guard let openRegex = try? NSRegularExpression(pattern: openPattern, options: [.caseInsensitive]) else {
             return nil
         }
