@@ -90,7 +90,7 @@ struct AccountActionsSection: View {
                 Text("Sign Out")
                     .font(.body)
                     .fontWeight(.semibold)
-                    .foregroundColor(.red)
+                    .foregroundColor(AppTheme.error)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, AppTheme.spacing16)
                     .background {
@@ -110,7 +110,7 @@ struct AccountActionsSection: View {
                     Text("Delete Account")
                         .font(.body)
                         .fontWeight(.semibold)
-                        .foregroundColor(.red)
+                        .foregroundColor(AppTheme.error)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, AppTheme.spacing16)
                         .background {

@@ -1,17 +1,53 @@
-import Foundation
+import SwiftUI
+
+/// Behavioural seam for the recipe cook-timer so views depend on this protocol
+/// rather than the `RecipeTimerManager` singleton — and tests can inject a fake.
+@MainActor
+protocol RecipeTiming: AnyObject, Observable {
+    var durationSeconds: Int { get }
+    var remainingSeconds: Int { get }
+    var isRunning: Bool { get }
+    var isPaused: Bool { get }
+    var isActive: Bool { get }
+    var displayTime: String { get }
+    func start(hours: Int, minutes: Int, seconds: Int)
+    func pause()
+    func resume()
+    func togglePause()
+    func stop()
+}
+
+private struct RecipeTimingKey: EnvironmentKey {
+    // SwiftUI reads environment defaults on the main actor during view updates,
+    // so assuming main-actor isolation here is safe; the real app injects the
+    // shared instance at the composition root regardless.
+    static var defaultValue: any RecipeTiming {
+        MainActor.assumeIsolated { RecipeTimerManager.shared }
+    }
+}
+
+extension EnvironmentValues {
+    /// Injected cook-timer. Defaults to the shared singleton; override with
+    /// `.environment(\.recipeTimer, fake)` in tests/previews.
+    var recipeTimer: any RecipeTiming {
+        get { self[RecipeTimingKey.self] }
+        set { self[RecipeTimingKey.self] = newValue }
+    }
+}
 
 @MainActor
-final class RecipeTimerManager: ObservableObject {
+@Observable
+final class RecipeTimerManager: RecipeTiming {
     static let shared = RecipeTimerManager()
 
-    @Published private(set) var durationSeconds: Int = 0
-    @Published private(set) var remainingSeconds: Int = 0
-    @Published private(set) var isRunning: Bool = false
-    @Published private(set) var isPaused: Bool = false
+    private(set) var durationSeconds: Int = 0
+    private(set) var remainingSeconds: Int = 0
+    private(set) var isRunning: Bool = false
+    private(set) var isPaused: Bool = false
 
-    private var endDate: Date?
-    private var ticker: Timer?
-    private let defaults: UserDefaults
+    @ObservationIgnored private var endDate: Date?
+    @ObservationIgnored private var ticker: Timer?
+    @ObservationIgnored private let defaults: UserDefaults
 
     private enum Keys {
         static let duration = "recipeTimer.duration"

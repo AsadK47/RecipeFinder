@@ -43,7 +43,7 @@ struct EditableStepsStepView: View {
                                         steps.removeAll { $0.id == step.id }
                                     }) {
                                         Image(systemName: "minus.circle.fill")
-                                            .foregroundColor(.red)
+                                            .foregroundColor(AppTheme.error)
                                     }
                                 }
                             }

@@ -234,7 +234,7 @@ struct ShoppingListItemRow: View {
             ) {
                 Label("Delete", systemImage: "trash")
             }
-            .tint(.red)
+            .tint(AppTheme.error)
         }
     }
 }

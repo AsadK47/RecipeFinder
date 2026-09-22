@@ -136,6 +136,6 @@ struct PantryAlertsSectionContent: View {
         } label: {
             Label("Remove", systemImage: "trash")
         }
-        .tint(.red)
+        .tint(AppTheme.error)
     }
 }

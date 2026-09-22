@@ -57,7 +57,7 @@ struct KitchenSectionsView: View {
                                 } label: {
                                     Label("Delete", systemImage: "trash")
                                 }
-                                .tint(.red)
+                                .tint(AppTheme.error)
                             }
                     }
                 }

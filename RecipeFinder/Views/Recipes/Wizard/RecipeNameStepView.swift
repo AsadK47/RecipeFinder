@@ -182,7 +182,7 @@ struct RecipeNameStepView: View {
                     if let validationMessage = recipeNameValidationMessage {
                         Text(validationMessage)
                             .font(.caption)
-                            .foregroundColor(.red)
+                            .foregroundColor(AppTheme.error)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }

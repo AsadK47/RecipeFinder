@@ -63,7 +63,7 @@ struct MealTimeCard: View {
                     Button(action: onRemove) {
                         Image(systemName: "trash")
                             .font(.system(size: AppTheme.fontSize14, weight: .semibold))
-                            .foregroundColor(.red.opacity(0.7))
+                            .foregroundColor(AppTheme.error.opacity(0.7))
                     }
                     .buttonStyle(.plain)
                 }

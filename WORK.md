@@ -1,50 +1,90 @@
-# Work in Progress
+# WORK.md — View-level DI refactor (backlog #1)
 
-_Updated at the end of each session. Clear this file when the task is committed and done._
-_If this file is empty or says "nothing in flight", start from `git log` and `ROADMAP.md`._
+## Goal
+Remove `.shared`-singleton binding from the view layer so Views depend on injected
+seams, resolving the root `CLAUDE.md` "Views depend on protocols, not `.shared`
+singletons" rule. Approach chosen by user: **full view-level DI, `@Observable`-first,
+one manager per slice**, each slice `BuildProject` + `RunAllTests` green + independent
+agent verification before the next.
+
+## Why this shape (decisions)
+- **`@Observable`-first is required, not optional.** SwiftUI's `@ObservedObject`/
+  `@StateObject`/`@EnvironmentObject` bind to *concrete* `ObservableObject` types, not
+  protocols, and the managers are `final` (no test-double subclass). So protocol
+  injection is impossible while they stay `ObservableObject`. Migrating each manager to
+  the `@Observable` macro unlocks `@Environment`-based injection with a protocol
+  existential. (This resurrects the `@Observable` migration we earlier deferred as
+  "unnecessary" — it is a prerequisite for full DI specifically.)
+- **Rejected**: forcing protocol injection onto `ObservableObject` (hacky/type-erasure,
+  fights SwiftUI) and docs-only reconcile (user wants the real refactor).
+- **Note for honesty**: the project's *stated* DI philosophy (`RecipeFinder/CLAUDE.md:59`)
+  is *manager-level* injection (`init(storage: .shared)`), which the managers already do —
+  their logic is testable with fakes today. This view-level DI enables view fakes the
+  current test strategy doesn't use. Proceeding anyway per user's explicit choice.
+
+## Per-slice recipe (repeat for each manager)
+1. Manager: `ObservableObject` → `@Observable final class`; drop `@Published` (plain vars).
+   Keep `@MainActor`. Keep `static let shared` as the composition-root default.
+2. Add a protocol seam (e.g. `RecipeTiming`) the manager conforms to.
+3. Add an `EnvironmentValues` key defaulting to `.shared` (existential of the protocol).
+4. Consuming views: `@StateObject/@ObservedObject private var x = X.shared` →
+   `@Environment(\.<key>) private var x`. Owner (app root) injects once via
+   `.environment(\.<key>, .shared)`.
+5. Fix all `#Preview`s that constructed the view (inject the concrete `.shared` or a fake).
+6. `XcodeRefreshCodeIssuesInFile` on each touched file → `BuildProject` → `RunAllTests`
+   → spawn agent to verify. Only then mark the slice task done.
+
+Gotchas: `@Observable` + `@Bindable` for two-way bindings (was `$manager.x`); a shared
+singleton observed in many views is injected once at root and read via `@Environment`
+(NOT re-created per view). `SettingsView` already uses `.environmentObject(ShoppingListManager.shared)`
+— replace that too.
+
+## Slice order (task IDs)
+- [x] #5  slice 1 — RecipeTimerManager (self-contained; RecipeDetailView, CookingModeView, CookTimerView) ✅ DONE — build + 1584/1584 green
+- [ ] #6  slice 2 — AccountManager (AccountView, SettingsView; updateStats reads Shopping/Kitchen/Persistence) ← **NEXT**
+- [ ] #7  slice 3 — BadgeManager (AccountView, ContentView; celebration + BadgeTrigger)
+- [ ] #8  slice 4 — CollectionManager (RecipeSearchView, CollectionDetailView, CollectionsInlineView, AddToCollectionSheet, RecipePickerForCollectionSheet)
+- [ ] #9  slice 5 — KitchenInventoryManager (KitchenSectionsView, MealPlanningView, KitchenShoppingView, ShoppingSectionsView, AddIngredientSheet)
+- [ ] #10 slice 6 — ShoppingListManager (ShoppingSectionsView, KitchenShoppingView, ShoppingQuickAddSheet; SettingsView environmentObject)
+- [ ] #11 slice 7 — MealPlanningManager (MealPlanningView)
+- [ ] #12 slice 8 — AuthenticationManager + AppleSignInManager (largest) + FINAL SWEEP: direct `PersistenceController.shared.fetchRecipes()`/`getRecipeCount()` in ContentView/RecipeSearchView/AccountBadgesSection, remaining ObservableObject (SubscriptionManager/NetworkMonitor/RecipeImporter as needed), reconcile root CLAUDE.md line with RecipeFinder/CLAUDE.md:59.
+
+## In progress
+Slice 1 (#5) COMPLETE in the working tree and verified green. Uncommitted, awaiting the
+user's review/commit. Pattern established: manager → `@Observable` + `@ObservationIgnored`
+on non-observed fields; `RecipeTiming` protocol (`AnyObject, Observable`); private
+`EnvironmentKey` whose `defaultValue` returns `.shared` via `MainActor.assumeIsolated`;
+consumers use `@Environment(\.recipeTimer)`. No explicit root injection needed (default
+covers it); no `$`-bindings existed so no `@Bindable` was required.
+
+## Next action
+Start slice 2 (#6): AccountManager → `@Observable`, add protocol seam + `EnvironmentValues`
+key (default `.shared`), swap `AccountView` and `SettingsView` consumers to `@Environment`.
+Watch: `updateStats` reads ShoppingList/Kitchen/Persistence, and `SettingsView` currently
+does `.environmentObject(...)`. Verify build + tests before marking done.
+
+## Session state (uncommitted — user commits as their review step)
+Working tree GREEN (build + 1584/1584) as of task #2. Completed & awaiting the user's
+commits — do NOT re-do:
+- ThemeManager: dropped redundant Combine import + duplicate mid-file imports
+- Account/ShoppingList/MealPlanning managers: dropped redundant `import Combine`
+- RecipeImageStoreTests: assert against resolved absolute path (test fix)
+- SharedImportInboxTests: `encoded` helper now throwing (last force-try gone)
+- 11 destructive/error `.red` → `AppTheme.error` (9 view files)
+- CookingMode: memory reconciled to "shipped/live" (docs only, outside repo)
+CLOSED no-change: oversized-views task — the 4 big views delegate logic to tested types.
 
 ---
 
-## Task
-Canonical card/tile style: one `.appCard()` modifier (frosted `.ultraThinMaterial`, the settings
-look the user chose), migrate hand-rolled tile backgrounds to it. Slice 1 = the modifier + import flow.
+## Deferred backlog (carried over from prior session — NOT this task)
+**`.appCard()` card-migration** (slice 1 committed `3c20e26`). Remaining slices, still TODO:
+- slice 2 = wizard `Color(.systemGray6)` tiles (NotesStepView ×6, IngredientsStepView).
+- slice 3 = `Color.white.opacity` frost sites (RecipeServingsCard, LegalContactCard,
+  RecipeWizardView+Chrome, RecipeNameStepView).
+- Eventually route SettingsCard/CardView through `.appCard()` and collapse AppTheme's two
+  card tokens (`cardBackground` + `adaptiveCard`) into one.
+- Decision on record: canonical card = frosted `.ultraThinMaterial` (user's choice).
 
-## Completed this session (committed)
-- `4bcf684` Core Data 11–13 registration (permanent isSampleRecipe fix).
-- `670b79e` aesthetic #2/#3: raw Color.orange/.red → AppTheme.warning/.error; inline RGB → tokens;
-  `.large` nav title → `.inline`.
-- `94ed369` WIP=1 hard constraint in root CLAUDE.md.
-- (committed) SecureCredentialManager logging; encode-on-save `UserScopedStorage.setEncodable` helper
-  + 6 manager call sites + Apple-cache site + test.
-
-## In progress (UNCOMMITTED — this slice)
-- NEW `RecipeFinder/Theme/View+AppCard.swift` — `.appCard(cornerRadius:)` = `.ultraThinMaterial`
-  frosted fill (single source of truth for tile surfaces).
-- `RecipeImportView.swift` (URL field) + `PasteTextImportSheet.swift` (TextEditor) migrated
-  `Color(.systemGray6)` → `.appCard(...)`. This fixes the "import tiles are black" report.
-- pbxproj registers the new file.
-
-## Verified
-- BuildProject green. Unit suite 1579/1584 pass.
-- Import + sign-in accessibility audits PASS in isolation both WITH and WITHOUT my import edits
-  (git-stash baseline) → my change is contrast-safe; the full-suite audit failures are flaky under
-  full-suite contention.
-
-## Findings / pre-existing (NOT mine — for the bug sweep)
-- `RecipeImageStoreTests.persistsImageToDisk` + `resolvePersistsSelectedImage` FAIL consistently in
-  isolation on the committed tree. Cause: `fileExists(atPath: "RecipeImages/…jpg")` uses a RELATIVE
-  path (working-directory dependent). Causally independent of this session's changes. Real red — CI
-  may or may not hit it depending on CWD. **Investigate as its own task.**
-
-## Decisions
-- Canonical card = frosted `.ultraThinMaterial` (user chose it over solid `cardBackground`).
-- Root cause of app-wide tile drift: AppTheme has TWO card tokens (`cardBackground` + `adaptiveCard`)
-  and ~4 hand-rolled idioms. `.appCard()` is the consolidation point.
-- Did NOT fix the remaining tile sites piecemeal — they get migrated to `.appCard()` in later slices.
-
-## Next action
-Decide: (a) investigate the pre-existing RecipeImageStore relative-path failure, OR (b) continue the
-card migration — slice 2 = wizard `Color(.systemGray6)` tiles (NotesStepView ×6, IngredientsStepView),
-slice 3 = the `Color.white.opacity` frost sites (RecipeServingsCard, LegalContactCard,
-RecipeWizardView+Chrome, RecipeNameStepView). Eventually route SettingsCard/CardView through `.appCard()`
-and collapse the two AppTheme card tokens into one.
+**RESOLVED this session** (was flagged here as "investigate"): the
+`RecipeImageStoreTests` relative-path failures — fixed by asserting against
+`store.absolutePath(for:)` (production was correct; the test was wrong).

@@ -105,10 +105,10 @@ struct PasswordVerificationSheet: View {
                     if showError {
                         HStack(spacing: AppTheme.spacing8) {
                             Image(systemName: "exclamationmark.triangle.fill")
-                                .foregroundColor(.red)
+                                .foregroundColor(AppTheme.error)
                             Text(errorMessage)
                                 .font(.caption)
-                                .foregroundColor(.red)
+                                .foregroundColor(AppTheme.error)
                         }
                         .transition(.opacity)
                     }

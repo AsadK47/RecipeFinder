@@ -11,7 +11,7 @@ struct CookingModeView: View {
     @State private var currentIndex: Int = 0
     @State private var completedItems: Set<Int> = []
     @State private var showTimerSheet = false
-    @StateObject private var timerManager = RecipeTimerManager.shared
+    @Environment(\.recipeTimer) private var timerManager
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal

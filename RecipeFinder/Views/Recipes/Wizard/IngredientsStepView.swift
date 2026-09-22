@@ -41,7 +41,7 @@ struct IngredientsStepView: View {
                                         ingredientItems.removeAll { $0.id == item.id }
                                     }) {
                                         Image(systemName: "minus.circle.fill")
-                                            .foregroundColor(.red)
+                                            .foregroundColor(AppTheme.error)
                                             .font(.system(size: AppTheme.fontSize22))
                                     }
                                     .padding(.top, AppTheme.spacing14)

@@ -33,7 +33,7 @@ struct RecipeDetailView: View {
     @State var refreshErrorMessage: String?
     @State var showRefreshUpToDate = false
     // Internal so the relocated timer control (RecipeDetailView+Content) can read it.
-    @StateObject var recipeTimer = RecipeTimerManager.shared
+    @Environment(\.recipeTimer) var recipeTimer
     @AppStorage("measurementSystem") var measurementSystem: MeasurementSystem = .metric
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme

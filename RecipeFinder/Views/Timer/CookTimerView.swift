@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct CookTimerView: View {
-    @StateObject private var timerManager = RecipeTimerManager.shared
+    @Environment(\.recipeTimer) private var timerManager
     @State private var hours: Int = 0
     @State private var minutes: Int = 0
     @State private var seconds: Int = 0
