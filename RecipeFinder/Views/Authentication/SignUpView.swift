@@ -2,7 +2,7 @@ import SwiftUI
 import UIKit
 
 struct SignUpView: View {
-    @StateObject private var authManager = AuthenticationManager.shared
+    @Environment(\.auth) private var authManager
     @State private var fullName = ""
     @State private var email = ""
     @State private var password = ""

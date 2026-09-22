@@ -2,7 +2,7 @@ import SwiftUI
 import LocalAuthentication
 
 struct BiometricSetupView: View {
-    @StateObject private var authManager = AuthenticationManager.shared
+    @Environment(\.auth) private var authManager
     @Environment(\.dismiss) private var dismiss
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("biometricsEnabled") private var biometricsEnabled: Bool = false

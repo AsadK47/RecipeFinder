@@ -10,7 +10,7 @@ struct ContentView: View {
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    @StateObject private var authManager = AuthenticationManager.shared
+    @Environment(\.auth) private var authManager
     @Environment(\.badges) private var badgeManager
     @State private var showBadgeSheet = false
     @State private var showAccountFromBadge = false

@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct EmailSignInView: View {
-    @StateObject private var authManager = AuthenticationManager.shared
+    @Environment(\.auth) private var authManager
     @State private var email = ""
     @State private var password = ""
     @State private var isLoading = false

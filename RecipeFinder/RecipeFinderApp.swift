@@ -138,7 +138,7 @@ struct AppRootView: View {
     }
 
     let persistenceController = PersistenceController.shared
-    @StateObject private var authManager = AuthenticationManager.shared
+    @Environment(\.auth) private var authManager
     @StateObject private var themeManager = ThemeManager.shared
     @State private var activeOnboarding: ActiveOnboarding?
     @AppStorage("preferredColorScheme") private var colorSchemePreference: Int = 0

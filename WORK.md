@@ -47,7 +47,7 @@ singleton observed in many views is injected once at root and read via `@Environ
 - [x] #9  slice 5 — KitchenInventoryManager (KitchenSectionsView, MealPlanningView, KitchenShoppingView, ShoppingSectionsView, KitchenQuickAddSheet, PantryAlertsSectionContent) ✅ DONE — build + 31/31 kitchen tests green
 - [x] #10 slice 6 — ShoppingListManager (ShoppingSectionsView, KitchenShoppingView, ShoppingQuickAddSheet) ✅ DONE — build + 33/33 shopping tests green; last `.environmentObject` (dead) dropped from SettingsView preview
 - [x] #11 slice 7 — MealPlanningManager (MealPlanningView) ✅ DONE — build + 21/21 meal-planning tests green
-- [ ] #12 slice 8 — AuthenticationManager + AppleSignInManager (largest) ← **NEXT** + FINAL SWEEP: direct `PersistenceController.shared.fetchRecipes()`/`getRecipeCount()` in ContentView/RecipeSearchView/AccountBadgesSection, remaining ObservableObject (SubscriptionManager/NetworkMonitor/RecipeImporter as needed), reconcile root CLAUDE.md line with RecipeFinder/CLAUDE.md:59.
+- [x] #12 slice 8 — AuthenticationManager + AppleSignInManager + final sweep ✅ DONE — build + FULL 1584/1584 green + FINAL SWEEP: direct `PersistenceController.shared.fetchRecipes()`/`getRecipeCount()` in ContentView/RecipeSearchView/AccountBadgesSection, remaining ObservableObject (SubscriptionManager/NetworkMonitor/RecipeImporter as needed), reconcile root CLAUDE.md line with RecipeFinder/CLAUDE.md:59.
 
 ## Verification cadence (user directive — keep the loop fast)
 Per slice: `XcodeRefreshCodeIssuesInFile` on each touched file → `BuildProject` →
@@ -55,8 +55,23 @@ Per slice: `XcodeRefreshCodeIssuesInFile` on each touched file → `BuildProject
 suites cover manager-logic regressions). Do ONE `RunAllTests` at the very end, after all DI
 slices are done. Do NOT run the full 1584-suite per slice.
 
+## STATUS: view-level DI campaign COMPLETE (all 8 slices). Slices 1–7 committed by user;
+slice 8 (auth + sweep) uncommitted, awaiting user's review/commit. Full 1584/1584 green.
+
+## Follow-ups discovered (NOT done — each its own slice)
+- **ThemeManager DI** — still `ObservableObject`+`.shared`, observed in `AppRootView` via
+  `@StateObject` and injected with `.environmentObject(themeManager)` (3 sites → downstream
+  `@EnvironmentObject var themeManager` consumers). NOT `@MainActor`; it's `@unchecked Sendable`.
+  Migrating needs the whole environmentObject chain moved to `@Environment(\.theme)`. Deferred
+  deliberately — out of the original 8-manager scope + bigger blast radius. This is the ONE
+  remaining view-observed `.shared` singleton (see reconciled root CLAUDE.md line 29).
+- Left as composition-root/data-layer (intentional, documented in CLAUDE.md): direct
+  `PersistenceController.shared.fetchRecipes()/getRecipeCount()` in ContentView/RecipeSearchView/
+  AccountBadgesSection; `RecipeImporter()` is view-OWNED (`@StateObject` fresh instance, not a
+  singleton). SubscriptionManager/NetworkMonitor are not observed by any view → no migration needed.
+
 ## In progress
-Slices 1 (#5) + 2 (#6) + 3 (#7) + 4 (#8) + 5 (#9) + 6 (#10) + 7 (#11) COMPLETE in the working tree and verified green.
+Slices 1 (#5) + 2 (#6) + 3 (#7) + 4 (#8) + 5 (#9) + 6 (#10) + 7 (#11) + 8 (#12) COMPLETE in the working tree and verified green.
 Uncommitted, awaiting the user's review/commit. Established pattern (repeat per slice):
 manager → `@Observable` + `@ObservationIgnored` on non-observed stored props; protocol seam
 (`AnyObject, Observable`); private `EnvironmentKey` whose `defaultValue` returns `.shared`
@@ -68,24 +83,9 @@ aren't observed view state are LEFT as-is (composition-root use): `DataManagemen
 → AccountManager; `CookingModeView`/`ImportView`/`AccountManager.unlockWelcomeBadge()` →
 BadgeManager.
 
-## Next action — FINAL slice 8 (#12): Auth + final sweep
-1. `AuthenticationManager` (+ `AuthenticationManager+UserStore/+EmailAuth/+AppleSignIn` extensions)
-   and `AppleSignInManager` → `@Observable` + protocol seam(s) + `EnvironmentValues` key(s)
-   (default `.shared`); swap all view consumers (`ContentView`, `AccountView`, `SettingsView`,
-   auth/onboarding views) from `@StateObject … .shared` to `@Environment`. Auth is the largest —
-   trace every `authManager`/`AuthenticationManager.shared`/`AppleSignInManager` reference first;
-   watch `$authManager` two-way bindings (→ `@Bindable`), `@EnvironmentObject` chains, and child
-   views taking the manager as `@ObservedObject var` (→ `let … : any <Protocol>`).
-2. FINAL SWEEP: audit remaining direct `PersistenceController.shared.fetchRecipes()`/`getRecipeCount()`
-   in ContentView/RecipeSearchView/AccountBadgesSection; decide which stay as composition-root use.
-   Any remaining `ObservableObject` managers (SubscriptionManager/NetworkMonitor/RecipeImporter) —
-   migrate only if a view observes them; otherwise leave + note.
-3. Reconcile root `CLAUDE.md` "Views depend on protocols, not `.shared`" line with the
-   manager-level DI note in `RecipeFinder/CLAUDE.md:59`.
-4. Run the ONE full `RunAllTests` (whole campaign's integrated check) — must be green.
-
-For default-arg methods on a protocol requirement, prefer a protocol-extension convenience
-(as done for `ShoppingListManaging.addItem(name:)`) so call sites stay unchanged.
+## Next action
+Campaign done. Either (a) commit slice 8, then start the **ThemeManager DI** follow-up as its
+own slice (see Follow-ups above), or (b) pick up a different backlog item. Nothing in progress.
 
 ## Session state (uncommitted — user commits as their review step)
 Working tree GREEN (build + 1584/1584) as of task #2. Completed & awaiting the user's

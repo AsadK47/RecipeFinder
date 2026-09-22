@@ -26,7 +26,11 @@ Clean Architecture — dependencies point inward:
 - **Domain** (models, use cases, protocols) — pure Swift, Foundation only. Testable.
 - **Data** (`Persistence/`, `Services/`) — Core Data, Keychain, URLSession. Implements Domain protocols.
 
-Views depend on protocols, not `.shared` singletons. Files > ~300 lines are a smell — extract.
+Views observe managers through `@Environment` protocol seams (e.g. `@Environment(\.auth)`), not
+`.shared` singletons directly — each manager is an `@Observable` conforming to a `*ing`/`*Managing`
+protocol with an `EnvironmentKey` defaulting to `.shared`. Data-layer reads (`PersistenceController.shared`)
+and view-*owned* instances (`@StateObject … = RecipeImporter()`) are exempt. Known exception pending
+its own slice: `ThemeManager` (still `.environmentObject`). Files > ~300 lines are a smell — extract.
 
 ## Build & CI
 Run verification fastest-first; stop and fix at the first failure before proceeding.

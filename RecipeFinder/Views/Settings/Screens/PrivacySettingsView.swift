@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Biometric sign-in and privacy policy access.
 struct PrivacySettingsView: View {
-    @StateObject private var authManager = AuthenticationManager.shared
+    @Environment(\.auth) private var authManager
     @AppStorage("biometricsEnabled") private var biometricsEnabled: Bool = false
     @State private var showPrivacyPolicy = false
     @State private var showBiometricError = false

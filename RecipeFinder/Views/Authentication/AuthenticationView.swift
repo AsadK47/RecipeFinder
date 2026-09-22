@@ -4,8 +4,8 @@ import AuthenticationServices
 private let logger = AppLogger.logger(category: "Auth")
 
 struct AuthenticationView: View {
-    @StateObject private var authManager = AuthenticationManager.shared
-    @StateObject private var appleSignInManager = AppleSignInManager.shared
+    @Environment(\.auth) private var authManager
+    @Environment(\.appleSignIn) private var appleSignInManager
     @State private var showSignUp = false
     @State private var showSignIn = false
     @State private var showBiometricSetup = false

@@ -7,7 +7,7 @@ struct SettingsTabView: View {
     @AppStorage("appearanceMode") private var appearanceMode: AppearanceMode = .system
     @AppStorage("measurementSystem") private var measurementSystem: MeasurementSystem = .metric
     @Environment(\.account) private var accountManager
-    @StateObject private var authManager = AuthenticationManager.shared
+    @Environment(\.auth) private var authManager
     @State private var profileImage: UIImage?
     @State private var debugResetMessage: String?
     

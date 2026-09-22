@@ -5,15 +5,42 @@ import SwiftUI
 
 private let logger = AppLogger.logger(category: "AppleSignIn")
 
+/// Behavioural seam for Sign in with Apple so views depend on this protocol
+/// rather than the `AppleSignInManager` singleton — and tests can inject a fake.
 @MainActor
-final class AppleSignInManager: NSObject, ObservableObject {
+protocol AppleSignInHandling: AnyObject, Observable {
+    var errorMessage: String? { get }
+    func signIn()
+}
+
+private struct AppleSignInHandlingKey: EnvironmentKey {
+    // SwiftUI reads environment defaults on the main actor during view updates,
+    // so assuming main-actor isolation here is safe; the real app injects the
+    // shared instance at the composition root regardless.
+    static var defaultValue: any AppleSignInHandling {
+        MainActor.assumeIsolated { AppleSignInManager.shared }
+    }
+}
+
+extension EnvironmentValues {
+    /// Injected Apple sign-in handler. Defaults to the shared singleton; override
+    /// with `.environment(\.appleSignIn, fake)` in tests/previews.
+    var appleSignIn: any AppleSignInHandling {
+        get { self[AppleSignInHandlingKey.self] }
+        set { self[AppleSignInHandlingKey.self] = newValue }
+    }
+}
+
+@MainActor
+@Observable
+final class AppleSignInManager: NSObject, AppleSignInHandling {
     static let shared = AppleSignInManager()
-    
-    @Published var isAuthenticated = false
-    @Published var userIdentifier: String?
-    @Published var userEmail: String?
-    @Published var fullName: String?
-    @Published var errorMessage: String?
+
+    var isAuthenticated = false
+    var userIdentifier: String?
+    var userEmail: String?
+    var fullName: String?
+    var errorMessage: String?
     
     private override init() {
         super.init()

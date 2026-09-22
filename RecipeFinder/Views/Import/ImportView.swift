@@ -10,7 +10,7 @@ struct ImportView: View {
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("guestModeEnabled") private var guestModeEnabled = false
-    @StateObject private var authManager = AuthenticationManager.shared
+    @Environment(\.auth) private var authManager
 
     @State private var showLinkImport = false
     @State private var showPasteImport = false
