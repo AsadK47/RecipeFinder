@@ -1,26 +1,59 @@
-import Foundation
+import SwiftUI
 import UIKit
 
 private let logger = AppLogger.logger(category: "Account")
 
+/// Behavioural seam for the account profile so views depend on this protocol
+/// rather than the `AccountManager` singleton — and tests can inject a fake.
 @MainActor
-final class AccountManager: ObservableObject {
+protocol AccountManaging: AnyObject, Observable {
+    var firstName: String { get }
+    var lastName: String { get }
+    var chefType: ChefType { get }
+    var fullName: String { get }
+    var initials: String { get }
+    func loadProfileImage() -> UIImage?
+    func saveProfileImage(_ image: UIImage?)
+    func updateProfile(firstName: String, lastName: String, chefType: ChefType)
+}
+
+private struct AccountManagingKey: EnvironmentKey {
+    // SwiftUI reads environment defaults on the main actor during view updates,
+    // so assuming main-actor isolation here is safe; the real app injects the
+    // shared instance at the composition root regardless.
+    static var defaultValue: any AccountManaging {
+        MainActor.assumeIsolated { AccountManager.shared }
+    }
+}
+
+extension EnvironmentValues {
+    /// Injected account profile. Defaults to the shared singleton; override with
+    /// `.environment(\.account, fake)` in tests/previews.
+    var account: any AccountManaging {
+        get { self[AccountManagingKey.self] }
+        set { self[AccountManagingKey.self] = newValue }
+    }
+}
+
+@MainActor
+@Observable
+final class AccountManager: AccountManaging {
     static let shared = AccountManager()
-    
-    @Published private(set) var uuid: String = ""
-    @Published private(set) var firstName: String = ""
-    @Published private(set) var lastName: String = ""
-    @Published private(set) var chefType: ChefType = .homeCook
-    
-    @Published private(set) var recipeCount: Int = 0
-    @Published private(set) var kitchenItemCount: Int = 0
-    @Published private(set) var shoppingListCount: Int = 0
-    
-    private let uuidKey = "accountUUID"
-    private let firstNameKey = "accountFirstName"
-    private let lastNameKey = "accountLastName"
-    private let chefTypeKey = "accountChefType"
-    private let profileImageKey = "accountProfileImage"
+
+    private(set) var uuid: String = ""
+    private(set) var firstName: String = ""
+    private(set) var lastName: String = ""
+    private(set) var chefType: ChefType = .homeCook
+
+    private(set) var recipeCount: Int = 0
+    private(set) var kitchenItemCount: Int = 0
+    private(set) var shoppingListCount: Int = 0
+
+    @ObservationIgnored private let uuidKey = "accountUUID"
+    @ObservationIgnored private let firstNameKey = "accountFirstName"
+    @ObservationIgnored private let lastNameKey = "accountLastName"
+    @ObservationIgnored private let chefTypeKey = "accountChefType"
+    @ObservationIgnored private let profileImageKey = "accountProfileImage"
     
     var fullName: String {
         AccountNameFormatter.displayName(firstName: firstName, lastName: lastName)

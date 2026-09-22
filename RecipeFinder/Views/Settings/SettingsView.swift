@@ -6,7 +6,7 @@ struct SettingsTabView: View {
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("appearanceMode") private var appearanceMode: AppearanceMode = .system
     @AppStorage("measurementSystem") private var measurementSystem: MeasurementSystem = .metric
-    @StateObject private var accountManager = AccountManager.shared
+    @Environment(\.account) private var accountManager
     @StateObject private var authManager = AuthenticationManager.shared
     @State private var profileImage: UIImage?
     @State private var debugResetMessage: String?

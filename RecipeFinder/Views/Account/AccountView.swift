@@ -4,7 +4,7 @@ import AuthenticationServices
 private let logger = AppLogger.logger(category: "Account")
 
 struct AccountView: View {
-    @StateObject private var accountManager = AccountManager.shared
+    @Environment(\.account) private var accountManager
     @StateObject private var authManager = AuthenticationManager.shared
     @StateObject private var badgeManager = BadgeManager.shared
     @Environment(\.colorScheme) private var colorScheme

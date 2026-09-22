@@ -41,8 +41,8 @@ singleton observed in many views is injected once at root and read via `@Environ
 
 ## Slice order (task IDs)
 - [x] #5  slice 1 — RecipeTimerManager (self-contained; RecipeDetailView, CookingModeView, CookTimerView) ✅ DONE — build + 1584/1584 green
-- [ ] #6  slice 2 — AccountManager (AccountView, SettingsView; updateStats reads Shopping/Kitchen/Persistence) ← **NEXT**
-- [ ] #7  slice 3 — BadgeManager (AccountView, ContentView; celebration + BadgeTrigger)
+- [x] #6  slice 2 — AccountManager (AccountView, SettingsView) ✅ DONE — build + 1584/1584 green
+- [ ] #7  slice 3 — BadgeManager (AccountView, ContentView; celebration + BadgeTrigger) ← **NEXT**
 - [ ] #8  slice 4 — CollectionManager (RecipeSearchView, CollectionDetailView, CollectionsInlineView, AddToCollectionSheet, RecipePickerForCollectionSheet)
 - [ ] #9  slice 5 — KitchenInventoryManager (KitchenSectionsView, MealPlanningView, KitchenShoppingView, ShoppingSectionsView, AddIngredientSheet)
 - [ ] #10 slice 6 — ShoppingListManager (ShoppingSectionsView, KitchenShoppingView, ShoppingQuickAddSheet; SettingsView environmentObject)
@@ -50,18 +50,23 @@ singleton observed in many views is injected once at root and read via `@Environ
 - [ ] #12 slice 8 — AuthenticationManager + AppleSignInManager (largest) + FINAL SWEEP: direct `PersistenceController.shared.fetchRecipes()`/`getRecipeCount()` in ContentView/RecipeSearchView/AccountBadgesSection, remaining ObservableObject (SubscriptionManager/NetworkMonitor/RecipeImporter as needed), reconcile root CLAUDE.md line with RecipeFinder/CLAUDE.md:59.
 
 ## In progress
-Slice 1 (#5) COMPLETE in the working tree and verified green. Uncommitted, awaiting the
-user's review/commit. Pattern established: manager → `@Observable` + `@ObservationIgnored`
-on non-observed fields; `RecipeTiming` protocol (`AnyObject, Observable`); private
-`EnvironmentKey` whose `defaultValue` returns `.shared` via `MainActor.assumeIsolated`;
-consumers use `@Environment(\.recipeTimer)`. No explicit root injection needed (default
-covers it); no `$`-bindings existed so no `@Bindable` was required.
+Slices 1 (#5) + 2 (#6) COMPLETE in the working tree and verified green. Uncommitted,
+awaiting the user's review/commit. Established pattern (repeat per slice): manager →
+`@Observable` + `@ObservationIgnored` on non-observed stored props; protocol seam
+(`AnyObject, Observable`); private `EnvironmentKey` whose `defaultValue` returns `.shared`
+via `MainActor.assumeIsolated`; `extension EnvironmentValues` accessor; consumers swap
+`@StateObject … .shared` → `@Environment(\.<key>)`. No explicit root injection needed
+(default covers it). Slice 2 note: `AccountManager` had NO `$`-bindings and NO Account
+`.environmentObject` to replace (the `.environmentObject`s in SettingsView are Kitchen/
+Shopping — slices 5/6); `DataManagementSettingsView` calls `AccountManager.shared` directly
+(one-off, not observed) and was left as-is.
 
 ## Next action
-Start slice 2 (#6): AccountManager → `@Observable`, add protocol seam + `EnvironmentValues`
-key (default `.shared`), swap `AccountView` and `SettingsView` consumers to `@Environment`.
-Watch: `updateStats` reads ShoppingList/Kitchen/Persistence, and `SettingsView` currently
-does `.environmentObject(...)`. Verify build + tests before marking done.
+Start slice 3 (#7): BadgeManager → `@Observable` + `BadgeManaging` protocol +
+`EnvironmentValues.badges` (default `.shared`); swap `AccountView` + `ContentView`
+consumers to `@Environment`. Watch: badge celebration flow + `BadgeTrigger` integration,
+and `AccountManager.unlockWelcomeBadge()` still calls `BadgeManager.shared` directly
+(leave as composition-root use). Verify build + tests before marking done.
 
 ## Session state (uncommitted — user commits as their review step)
 Working tree GREEN (build + 1584/1584) as of task #2. Completed & awaiting the user's
