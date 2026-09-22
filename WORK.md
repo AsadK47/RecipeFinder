@@ -106,14 +106,23 @@ CLOSED no-change: oversized-views task — the 4 big views delegate logic to tes
 
 ---
 
-## Deferred backlog (carried over from prior session — NOT this task)
-**`.appCard()` card-migration** (slice 1 committed `3c20e26`). Remaining slices, still TODO:
-- slice 2 = wizard `Color(.systemGray6)` tiles (NotesStepView ×6, IngredientsStepView).
-- slice 3 = `Color.white.opacity` frost sites (RecipeServingsCard, LegalContactCard,
-  RecipeWizardView+Chrome, RecipeNameStepView).
-- Eventually route SettingsCard/CardView through `.appCard()` and collapse AppTheme's two
-  card tokens (`cardBackground` + `adaptiveCard`) into one.
-- Decision on record: canonical card = frosted `.ultraThinMaterial` (user's choice).
+## Deferred backlog (carried over from prior session)
+**`.appCard()` card-migration** (slice 1 committed `3c20e26`) — REASSESSED & LARGELY CLOSED.
+Verified the remaining "slices" against the actual code; the premise was a misread:
+- slice 2 `systemGray6` sites (NotesStepView 109/187/252, IngredientsStepView 89/131) are
+  input-field / picker CHROME (TextFields; a stroked Picker), NOT card tiles → `.appCard()`
+  (frosted `.ultraThinMaterial`) would regress them. LEFT as-is.
+- slice 3 `white.opacity` sites: `RecipeServingsCard` is already a `GlassCard` (its sites are a
+  Divider tint + a segment-button fill); `RecipeNameStepView` sites are field chrome. LEFT as-is.
+- `cardBackground` vs `adaptiveCard` are NOT redundant: solid/near-opaque (0.95 / `#1C1C1E`) vs
+  translucent (low opacity), plus `adaptiveCardMedium/High`, `elevatedCard`. Collapsing them
+  flattens a deliberate solid-vs-translucent distinction → needs a design call, not a merge.
+- ONLY arguable real target left: `LegalContactCard` inner button-rows (51, 82) → could be
+  `.appCard(cornerRadius: 12)`, but it's a marginal faint-tint→material change. Not done.
+- Net: genuine card surfaces already route through `GlassCard`/`.appCard()`/settings tiles.
+  Treat this backlog as DONE unless a specific screen looks visibly off. Optional future work:
+  an `.appInputField()` token to unify the `systemGray6` form-field chrome (separate concern
+  from cards).
 
 **RESOLVED this session** (was flagged here as "investigate"): the
 `RecipeImageStoreTests` relative-path failures — fixed by asserting against
