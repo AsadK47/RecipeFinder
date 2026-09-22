@@ -1,29 +1,57 @@
-import Foundation
+import SwiftUI
+
+/// Behavioural seam for badge state so views depend on this protocol rather than
+/// the `BadgeManager` singleton — and tests can inject a fake.
+@MainActor
+protocol BadgeManaging: AnyObject, Observable {
+    var pendingCelebration: BadgeType? { get }
+    func getAllBadges(recipeCount: Int) -> [Badge]
+    func dismissCelebration()
+}
+
+private struct BadgeManagingKey: EnvironmentKey {
+    // SwiftUI reads environment defaults on the main actor during view updates,
+    // so assuming main-actor isolation here is safe; the real app injects the
+    // shared instance at the composition root regardless.
+    static var defaultValue: any BadgeManaging {
+        MainActor.assumeIsolated { BadgeManager.shared }
+    }
+}
+
+extension EnvironmentValues {
+    /// Injected badge state. Defaults to the shared singleton; override with
+    /// `.environment(\.badges, fake)` in tests/previews.
+    var badges: any BadgeManaging {
+        get { self[BadgeManagingKey.self] }
+        set { self[BadgeManagingKey.self] = newValue }
+    }
+}
 
 @MainActor
-final class BadgeManager: ObservableObject {
+@Observable
+final class BadgeManager: BadgeManaging {
     static let shared = BadgeManager()
 
-    @Published var unlockedBadges: [String: Badge] = [:]
+    var unlockedBadges: [String: Badge] = [:]
 
     /// Non-nil when a badge celebration sheet should be shown. Set back to nil
     /// (via `dismissCelebration()`) when the sheet is dismissed; this drains the
     /// queue so back-to-back unlocks each get a moment.
-    @Published private(set) var pendingCelebration: BadgeType?
+    private(set) var pendingCelebration: BadgeType?
 
-    private let storage: UserScopedStorage
-    private let badgesKey = "unlockedBadges"
-    private let shownCelebrationsKey = "shownBadgeCelebrations"
+    @ObservationIgnored private let storage: UserScopedStorage
+    @ObservationIgnored private let badgesKey = "unlockedBadges"
+    @ObservationIgnored private let shownCelebrationsKey = "shownBadgeCelebrations"
 
     /// When true, badge unlocks are persisted but no celebration sheets fire.
     /// Set by bulk-import operations to avoid a parade of sheets.
-    var isBulkImporting = false
+    @ObservationIgnored var isBulkImporting = false
 
     // FIFO queue: badges earned faster than the user can dismiss pile up here.
-    private var celebrationQueue: [BadgeType] = []
+    @ObservationIgnored private var celebrationQueue: [BadgeType] = []
     // Persisted set so the celebration never fires twice for the same badge,
     // even if the app is killed mid-sheet.
-    private var shownCelebrationIds: Set<String> = []
+    @ObservationIgnored private var shownCelebrationIds: Set<String> = []
 
     private init() {
         self.storage = .shared

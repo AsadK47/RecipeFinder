@@ -11,7 +11,7 @@ struct ContentView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @StateObject private var authManager = AuthenticationManager.shared
-    @StateObject private var badgeManager = BadgeManager.shared
+    @Environment(\.badges) private var badgeManager
     @State private var showBadgeSheet = false
     @State private var showAccountFromBadge = false
     @State private var pendingFileImport: RecipeModel?

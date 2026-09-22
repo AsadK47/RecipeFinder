@@ -42,31 +42,40 @@ singleton observed in many views is injected once at root and read via `@Environ
 ## Slice order (task IDs)
 - [x] #5  slice 1 — RecipeTimerManager (self-contained; RecipeDetailView, CookingModeView, CookTimerView) ✅ DONE — build + 1584/1584 green
 - [x] #6  slice 2 — AccountManager (AccountView, SettingsView) ✅ DONE — build + 1584/1584 green
-- [ ] #7  slice 3 — BadgeManager (AccountView, ContentView; celebration + BadgeTrigger) ← **NEXT**
-- [ ] #8  slice 4 — CollectionManager (RecipeSearchView, CollectionDetailView, CollectionsInlineView, AddToCollectionSheet, RecipePickerForCollectionSheet)
+- [x] #7  slice 3 — BadgeManager (AccountView, ContentView, AccountBadgesSection) ✅ DONE — build + 35/35 badge tests green
+- [ ] #8  slice 4 — CollectionManager (RecipeSearchView, CollectionDetailView, CollectionsInlineView, AddToCollectionSheet, RecipePickerForCollectionSheet) ← **NEXT**
 - [ ] #9  slice 5 — KitchenInventoryManager (KitchenSectionsView, MealPlanningView, KitchenShoppingView, ShoppingSectionsView, AddIngredientSheet)
 - [ ] #10 slice 6 — ShoppingListManager (ShoppingSectionsView, KitchenShoppingView, ShoppingQuickAddSheet; SettingsView environmentObject)
 - [ ] #11 slice 7 — MealPlanningManager (MealPlanningView)
 - [ ] #12 slice 8 — AuthenticationManager + AppleSignInManager (largest) + FINAL SWEEP: direct `PersistenceController.shared.fetchRecipes()`/`getRecipeCount()` in ContentView/RecipeSearchView/AccountBadgesSection, remaining ObservableObject (SubscriptionManager/NetworkMonitor/RecipeImporter as needed), reconcile root CLAUDE.md line with RecipeFinder/CLAUDE.md:59.
 
+## Verification cadence (user directive — keep the loop fast)
+Per slice: `XcodeRefreshCodeIssuesInFile` on each touched file → `BuildProject` →
+`RunSomeTests <that manager's suite>` ONLY (build catches ~all view-wiring failures; the
+suites cover manager-logic regressions). Do ONE `RunAllTests` at the very end, after all DI
+slices are done. Do NOT run the full 1584-suite per slice.
+
 ## In progress
-Slices 1 (#5) + 2 (#6) COMPLETE in the working tree and verified green. Uncommitted,
-awaiting the user's review/commit. Established pattern (repeat per slice): manager →
-`@Observable` + `@ObservationIgnored` on non-observed stored props; protocol seam
+Slices 1 (#5) + 2 (#6) + 3 (#7) COMPLETE in the working tree and verified green.
+Uncommitted, awaiting the user's review/commit. Established pattern (repeat per slice):
+manager → `@Observable` + `@ObservationIgnored` on non-observed stored props; protocol seam
 (`AnyObject, Observable`); private `EnvironmentKey` whose `defaultValue` returns `.shared`
 via `MainActor.assumeIsolated`; `extension EnvironmentValues` accessor; consumers swap
-`@StateObject … .shared` → `@Environment(\.<key>)`. No explicit root injection needed
-(default covers it). Slice 2 note: `AccountManager` had NO `$`-bindings and NO Account
-`.environmentObject` to replace (the `.environmentObject`s in SettingsView are Kitchen/
-Shopping — slices 5/6); `DataManagementSettingsView` calls `AccountManager.shared` directly
-(one-off, not observed) and was left as-is.
+`@StateObject … .shared` → `@Environment(\.<key>)`. Child views that received the manager as
+`@ObservedObject var x: Concrete` become `let x: any <Protocol>` (slice 3: AccountBadgesSection).
+No explicit root injection needed (default covers it). One-off `.shared` method calls that
+aren't observed view state are LEFT as-is (composition-root use): `DataManagementSettingsView`
+→ AccountManager; `CookingModeView`/`ImportView`/`AccountManager.unlockWelcomeBadge()` →
+BadgeManager.
 
 ## Next action
-Start slice 3 (#7): BadgeManager → `@Observable` + `BadgeManaging` protocol +
-`EnvironmentValues.badges` (default `.shared`); swap `AccountView` + `ContentView`
-consumers to `@Environment`. Watch: badge celebration flow + `BadgeTrigger` integration,
-and `AccountManager.unlockWelcomeBadge()` still calls `BadgeManager.shared` directly
-(leave as composition-root use). Verify build + tests before marking done.
+Start slice 4 (#8): CollectionManager → `@Observable` + `CollectionManaging` protocol +
+`EnvironmentValues.collections` (default `.shared`); swap consumers (RecipeSearchView,
+CollectionDetailView, CollectionsInlineView, AddToCollectionSheet,
+RecipePickerForCollectionSheet) to `@Environment`, converting any `@ObservedObject`/
+`@StateObject` child params to `let … : any CollectionManaging`. Watch for `$`-bindings
+(needs `@Bindable`) since collection sheets may two-way bind. Verify via cadence above
+(build + `RunSomeTests CollectionManagerTests`).
 
 ## Session state (uncommitted — user commits as their review step)
 Working tree GREEN (build + 1584/1584) as of task #2. Completed & awaiting the user's

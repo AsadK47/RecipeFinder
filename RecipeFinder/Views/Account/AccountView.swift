@@ -6,7 +6,7 @@ private let logger = AppLogger.logger(category: "Account")
 struct AccountView: View {
     @Environment(\.account) private var accountManager
     @StateObject private var authManager = AuthenticationManager.shared
-    @StateObject private var badgeManager = BadgeManager.shared
+    @Environment(\.badges) private var badgeManager
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
