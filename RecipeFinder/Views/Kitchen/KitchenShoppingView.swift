@@ -200,7 +200,7 @@ struct KitchenShoppingView: View {
 // MARK: - Kitchen sheet
 
 private struct KitchenInventorySheet: View {
-    @ObservedObject private var manager = KitchenInventoryManager.shared
+    @Environment(\.kitchen) private var manager
     @State private var collapsed: Set<String> = []
     @State private var showAddIngredient = false
     @State private var showQuickAdd = false

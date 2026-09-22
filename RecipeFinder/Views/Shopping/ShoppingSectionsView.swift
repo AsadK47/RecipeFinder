@@ -7,7 +7,7 @@ struct ShoppingSectionsView: View {
     @Binding var collapsedCategories: Set<String>
 
     @ObservedObject private var manager = ShoppingListManager.shared
-    @ObservedObject private var kitchen = KitchenInventoryManager.shared
+    @Environment(\.kitchen) private var kitchen
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
 

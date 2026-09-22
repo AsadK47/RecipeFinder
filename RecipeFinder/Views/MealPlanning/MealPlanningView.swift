@@ -3,7 +3,7 @@ import SwiftUI
 struct MealPlanningView: View {
     @Binding var recipes: [RecipeModel]
     @ObservedObject private var mealPlanningManager = MealPlanningManager.shared
-    @ObservedObject private var kitchenManager = KitchenInventoryManager.shared
+    @Environment(\.kitchen) private var kitchenManager
     @State private var selectedDate: Date = Date()
     @State private var showMealTimeSelector = false
     @State private var selectedMealTimes: Set<MealTime> = []

@@ -1,22 +1,57 @@
-import Foundation
+import SwiftUI
 
 private let logger = AppLogger.logger(category: "KitchenInventory")
 
+/// Behavioural seam for the kitchen inventory so views depend on this protocol
+/// rather than the `KitchenInventoryManager` singleton — and tests can inject a fake.
 @MainActor
-final class KitchenInventoryManager: ObservableObject {
+protocol KitchenInventoryManaging: AnyObject, Observable {
+    var items: [KitchenItem] { get }
+    var inventoryItems: [KitchenInventoryModel] { get }
+    func groupedItems() -> [(category: String, items: [KitchenItem])]
+    func toggleItem(_ name: String, category: String?)
+    func removeItem(_ item: KitchenItem)
+    func removeInventoryItem(_ item: KitchenInventoryModel)
+    func clearAll()
+    func expiredItems() -> [KitchenInventoryModel]
+    func expiringSoonItems() -> [KitchenInventoryModel]
+    func lowStockItems() -> [KitchenInventoryModel]
+}
+
+private struct KitchenInventoryManagingKey: EnvironmentKey {
+    // SwiftUI reads environment defaults on the main actor during view updates,
+    // so assuming main-actor isolation here is safe; the real app injects the
+    // shared instance at the composition root regardless.
+    static var defaultValue: any KitchenInventoryManaging {
+        MainActor.assumeIsolated { KitchenInventoryManager.shared }
+    }
+}
+
+extension EnvironmentValues {
+    /// Injected kitchen inventory. Defaults to the shared singleton; override with
+    /// `.environment(\.kitchen, fake)` in tests/previews.
+    var kitchen: any KitchenInventoryManaging {
+        get { self[KitchenInventoryManagingKey.self] }
+        set { self[KitchenInventoryManagingKey.self] = newValue }
+    }
+}
+
+@MainActor
+@Observable
+final class KitchenInventoryManager: KitchenInventoryManaging {
 	static let shared = KitchenInventoryManager()
     
 	private let saveKey = Constants.UserDefaultsKeys.kitchenItems
 	private let inventorySaveKey = "kitchenInventoryItems"
 	private let migrationKey = "kitchenItemsMigrationCompleted_v1"
-    private let storage: UserScopedStorage
+    @ObservationIgnored private let storage: UserScopedStorage
 
-    @Published private(set) var items: [KitchenItem] = []
-    @Published private(set) var inventoryItems: [KitchenInventoryModel] = []
+    private(set) var items: [KitchenItem] = []
+    private(set) var inventoryItems: [KitchenInventoryModel] = []
     // O(1) name lookup — kept in sync with items on every save/load
-    private var itemNameSet: Set<String> = []
+    @ObservationIgnored private var itemNameSet: Set<String> = []
     // O(1) inventory name lookup — mirrors inventoryItems, same pattern as itemNameSet.
-    private var inventoryNameSet: Set<String> = []
+    @ObservationIgnored private var inventoryNameSet: Set<String> = []
     // Pre-grouped and sorted once per save/load; reading it in body is O(1).
     private(set) var groupedItemsCache: [(category: String, items: [KitchenItem])] = []
 

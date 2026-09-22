@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct KitchenQuickAddSheet: View {
-    @StateObject private var kitchenManager = KitchenInventoryManager.shared
+    @Environment(\.kitchen) private var kitchenManager
 
     var body: some View {
         QuickAddSheetView(
@@ -9,7 +9,7 @@ struct KitchenQuickAddSheet: View {
                 kitchenManager.items.contains { $0.name.lowercased() == ingredient.lowercased() }
             },
             onAdd: { ingredient in
-                kitchenManager.toggleItem(ingredient)
+                kitchenManager.toggleItem(ingredient, category: nil)
                 HapticManager.shared.success()
             }
         )

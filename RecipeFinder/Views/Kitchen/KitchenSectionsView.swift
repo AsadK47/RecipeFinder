@@ -7,7 +7,7 @@ struct KitchenSectionsView: View {
     @Binding var collapsedCategories: Set<String>
     let onAddMore: () -> Void
 
-    @ObservedObject private var manager = KitchenInventoryManager.shared
+    @Environment(\.kitchen) private var manager
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
