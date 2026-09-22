@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ShoppingQuickAddSheet: View {
-    @StateObject private var shoppingManager = ShoppingListManager.shared
+    @Environment(\.shopping) private var shoppingManager
 
     var body: some View {
         QuickAddSheetView(

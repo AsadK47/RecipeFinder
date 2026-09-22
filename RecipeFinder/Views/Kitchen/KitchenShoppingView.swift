@@ -5,7 +5,7 @@ import SwiftUI
 /// away via the fridge button in the header — accessible but not competing for
 /// space with the list itself.
 struct KitchenShoppingView: View {
-    @ObservedObject private var shopping = ShoppingListManager.shared
+    @Environment(\.shopping) private var shopping
     @State private var searchText = ""
     @FocusState private var isSearchFocused: Bool
     @State private var shoppingCollapsed: Set<String> = []

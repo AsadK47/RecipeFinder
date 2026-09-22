@@ -45,8 +45,8 @@ singleton observed in many views is injected once at root and read via `@Environ
 - [x] #7  slice 3 — BadgeManager (AccountView, ContentView, AccountBadgesSection) ✅ DONE — build + 35/35 badge tests green
 - [x] #8  slice 4 — CollectionManager (RecipeSearchView, CollectionDetailView, CollectionsInlineView, AddToCollectionSheet, RecipePickerForCollectionSheet, CollectionFormSheets) ✅ DONE — build + 20/20 CollectionManager tests green
 - [x] #9  slice 5 — KitchenInventoryManager (KitchenSectionsView, MealPlanningView, KitchenShoppingView, ShoppingSectionsView, KitchenQuickAddSheet, PantryAlertsSectionContent) ✅ DONE — build + 31/31 kitchen tests green
-- [ ] #10 slice 6 — ShoppingListManager (ShoppingSectionsView, KitchenShoppingView, ShoppingQuickAddSheet; SettingsView environmentObject) ← **NEXT**
-- [ ] #11 slice 7 — MealPlanningManager (MealPlanningView)
+- [x] #10 slice 6 — ShoppingListManager (ShoppingSectionsView, KitchenShoppingView, ShoppingQuickAddSheet) ✅ DONE — build + 33/33 shopping tests green; last `.environmentObject` (dead) dropped from SettingsView preview
+- [ ] #11 slice 7 — MealPlanningManager (MealPlanningView) ← **NEXT**
 - [ ] #12 slice 8 — AuthenticationManager + AppleSignInManager (largest) + FINAL SWEEP: direct `PersistenceController.shared.fetchRecipes()`/`getRecipeCount()` in ContentView/RecipeSearchView/AccountBadgesSection, remaining ObservableObject (SubscriptionManager/NetworkMonitor/RecipeImporter as needed), reconcile root CLAUDE.md line with RecipeFinder/CLAUDE.md:59.
 
 ## Verification cadence (user directive — keep the loop fast)
@@ -56,7 +56,7 @@ suites cover manager-logic regressions). Do ONE `RunAllTests` at the very end, a
 slices are done. Do NOT run the full 1584-suite per slice.
 
 ## In progress
-Slices 1 (#5) + 2 (#6) + 3 (#7) + 4 (#8) + 5 (#9) COMPLETE in the working tree and verified green.
+Slices 1 (#5) + 2 (#6) + 3 (#7) + 4 (#8) + 5 (#9) + 6 (#10) COMPLETE in the working tree and verified green.
 Uncommitted, awaiting the user's review/commit. Established pattern (repeat per slice):
 manager → `@Observable` + `@ObservationIgnored` on non-observed stored props; protocol seam
 (`AnyObject, Observable`); private `EnvironmentKey` whose `defaultValue` returns `.shared`
@@ -69,16 +69,15 @@ aren't observed view state are LEFT as-is (composition-root use): `DataManagemen
 BadgeManager.
 
 ## Next action
-Start slice 6 (#10): ShoppingListManager → `@Observable` + protocol seam +
-`EnvironmentValues` key (default `.shared`); swap consumers (ShoppingSectionsView holds it as
-`manager`, KitchenShoppingView, ShoppingQuickAddSheet). NOTE: `SettingsView` #Preview still has
-`.environmentObject(ShoppingListManager.shared)` (now the LAST `.environmentObject` line) —
-drop it once ShoppingListManager stops being `ObservableObject`, and move any
-`@EnvironmentObject var …: ShoppingListManager` consumer to `@Environment(\.<key>)`. Watch:
-ShoppingSectionsView has BOTH a shopping `manager` (ShoppingListManager, methods
-deleteItem/toggleRecurring/updateStore) and (now-injected) `kitchen` — keep them distinct.
-Slice-5 note carried: `toggleItem` default-arg → protocol requirement has no default, so
-call sites pass args explicitly. Verify via cadence (build + `RunSomeTests ShoppingListManagerTests`).
+Start slice 7 (#11): MealPlanningManager → `@Observable` + `MealPlanningManaging` protocol +
+`EnvironmentValues` key (default `.shared`); swap `MealPlanningView`'s `@ObservedObject … =
+MealPlanningManager.shared` (var `mealPlanningManager`, line ~5) to `@Environment`. Check for
+`$`-bindings and child views receiving the manager as `@ObservedObject var`. Verify via cadence
+(build + `RunSomeTests MealPlanningManagerTests`). After this, only slice 8 remains: Auth +
+AppleSignIn + FINAL SWEEP + the ONE full `RunAllTests`.
+
+For default-arg methods on a protocol requirement, prefer a protocol-extension convenience
+(as done for `ShoppingListManaging.addItem(name:)`) so call sites stay unchanged.
 
 ## Session state (uncommitted — user commits as their review step)
 Working tree GREEN (build + 1584/1584) as of task #2. Completed & awaiting the user's

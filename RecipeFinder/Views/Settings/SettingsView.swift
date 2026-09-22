@@ -184,6 +184,5 @@ struct SettingsTabView: View {
 
 #Preview {
     SettingsTabView()
-        .environmentObject(ShoppingListManager.shared)
         .environment(\.appTheme, AppTheme.ThemeType.teal)
 }

@@ -6,7 +6,7 @@ import SwiftUI
 struct ShoppingSectionsView: View {
     @Binding var collapsedCategories: Set<String>
 
-    @ObservedObject private var manager = ShoppingListManager.shared
+    @Environment(\.shopping) private var manager
     @Environment(\.kitchen) private var kitchen
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted

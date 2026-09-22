@@ -1,16 +1,57 @@
-import Foundation
+import SwiftUI
 
 private let logger = AppLogger.logger(category: "ShoppingList")
 
+/// Behavioural seam for the shopping list so views depend on this protocol
+/// rather than the `ShoppingListManager` singleton — and tests can inject a fake.
 @MainActor
-final class ShoppingListManager: ObservableObject {
-    static let shared = ShoppingListManager()
-    
-    private let saveKey = Constants.UserDefaultsKeys.shoppingListItems
-    private let storage: UserScopedStorage
-    private let badgeManager: BadgeManager
+protocol ShoppingListManaging: AnyObject, Observable {
+    var items: [ShoppingListModel] { get }
+    func addItem(name: String, quantity: Int, category: String?)
+    func updateCategory(at index: Int, category: String)
+    func updateStore(at index: Int, store: String?)
+    func updateQuantity(at index: Int, quantity: Int)
+    func toggleItem(at index: Int)
+    func toggleRecurring(at index: Int)
+    func deleteItem(at index: Int)
+    func clearCheckedItems()
+    func clearAllItems()
+}
 
-    @Published private(set) var items: [ShoppingListModel] = []
+extension ShoppingListManaging {
+    /// Convenience mirroring `addItem`'s default args, which a protocol requirement
+    /// can't carry — lets call sites keep writing `addItem(name:)`.
+    func addItem(name: String) { addItem(name: name, quantity: 1, category: nil) }
+}
+
+private struct ShoppingListManagingKey: EnvironmentKey {
+    // SwiftUI reads environment defaults on the main actor during view updates,
+    // so assuming main-actor isolation here is safe; the real app injects the
+    // shared instance at the composition root regardless.
+    static var defaultValue: any ShoppingListManaging {
+        MainActor.assumeIsolated { ShoppingListManager.shared }
+    }
+}
+
+extension EnvironmentValues {
+    /// Injected shopping list. Defaults to the shared singleton; override with
+    /// `.environment(\.shopping, fake)` in tests/previews.
+    var shopping: any ShoppingListManaging {
+        get { self[ShoppingListManagingKey.self] }
+        set { self[ShoppingListManagingKey.self] = newValue }
+    }
+}
+
+@MainActor
+@Observable
+final class ShoppingListManager: ShoppingListManaging {
+    static let shared = ShoppingListManager()
+
+    @ObservationIgnored private let saveKey = Constants.UserDefaultsKeys.shoppingListItems
+    @ObservationIgnored private let storage: UserScopedStorage
+    @ObservationIgnored private let badgeManager: BadgeManager
+
+    private(set) var items: [ShoppingListModel] = []
 
     private init() {
         self.storage = .shared
