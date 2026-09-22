@@ -4,7 +4,7 @@ import SwiftUI
 /// Presented from `RecipeDetailToolbar` via a binding on the detail view.
 struct AddToCollectionSheet: View {
     let recipe: RecipeModel
-    @ObservedObject private var manager = CollectionManager.shared
+    @Environment(\.collections) private var manager
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal

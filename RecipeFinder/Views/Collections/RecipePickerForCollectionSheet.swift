@@ -5,7 +5,7 @@ import SwiftUI
 struct RecipePickerForCollectionSheet: View {
     let collection: RecipeCollection
     let recipes: [RecipeModel]
-    @ObservedObject private var manager = CollectionManager.shared
+    @Environment(\.collections) private var manager
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal

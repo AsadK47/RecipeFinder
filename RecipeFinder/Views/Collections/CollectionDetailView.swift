@@ -5,7 +5,7 @@ import SwiftUI
 struct CollectionDetailView: View {
     let collection: RecipeCollection
     @Binding var recipes: [RecipeModel]
-    @ObservedObject private var manager = CollectionManager.shared
+    @Environment(\.collections) private var manager
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @State private var showAddRecipes = false

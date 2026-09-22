@@ -5,7 +5,7 @@ import SwiftUI
 /// links push onto the parent stack.
 struct CollectionsInlineView: View {
     @Binding var recipes: [RecipeModel]
-    @ObservedObject private var manager = CollectionManager.shared
+    @Environment(\.collections) private var manager
     @State private var showNewCollection = false
     @State private var collectionToEdit: RecipeCollection?
     @State private var collectionToDelete: RecipeCollection?

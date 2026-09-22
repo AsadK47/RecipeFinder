@@ -43,8 +43,8 @@ singleton observed in many views is injected once at root and read via `@Environ
 - [x] #5  slice 1 — RecipeTimerManager (self-contained; RecipeDetailView, CookingModeView, CookTimerView) ✅ DONE — build + 1584/1584 green
 - [x] #6  slice 2 — AccountManager (AccountView, SettingsView) ✅ DONE — build + 1584/1584 green
 - [x] #7  slice 3 — BadgeManager (AccountView, ContentView, AccountBadgesSection) ✅ DONE — build + 35/35 badge tests green
-- [ ] #8  slice 4 — CollectionManager (RecipeSearchView, CollectionDetailView, CollectionsInlineView, AddToCollectionSheet, RecipePickerForCollectionSheet) ← **NEXT**
-- [ ] #9  slice 5 — KitchenInventoryManager (KitchenSectionsView, MealPlanningView, KitchenShoppingView, ShoppingSectionsView, AddIngredientSheet)
+- [x] #8  slice 4 — CollectionManager (RecipeSearchView, CollectionDetailView, CollectionsInlineView, AddToCollectionSheet, RecipePickerForCollectionSheet, CollectionFormSheets) ✅ DONE — build + 20/20 CollectionManager tests green
+- [ ] #9  slice 5 — KitchenInventoryManager (KitchenSectionsView, MealPlanningView, KitchenShoppingView, ShoppingSectionsView, AddIngredientSheet) ← **NEXT**
 - [ ] #10 slice 6 — ShoppingListManager (ShoppingSectionsView, KitchenShoppingView, ShoppingQuickAddSheet; SettingsView environmentObject)
 - [ ] #11 slice 7 — MealPlanningManager (MealPlanningView)
 - [ ] #12 slice 8 — AuthenticationManager + AppleSignInManager (largest) + FINAL SWEEP: direct `PersistenceController.shared.fetchRecipes()`/`getRecipeCount()` in ContentView/RecipeSearchView/AccountBadgesSection, remaining ObservableObject (SubscriptionManager/NetworkMonitor/RecipeImporter as needed), reconcile root CLAUDE.md line with RecipeFinder/CLAUDE.md:59.
@@ -56,7 +56,7 @@ suites cover manager-logic regressions). Do ONE `RunAllTests` at the very end, a
 slices are done. Do NOT run the full 1584-suite per slice.
 
 ## In progress
-Slices 1 (#5) + 2 (#6) + 3 (#7) COMPLETE in the working tree and verified green.
+Slices 1 (#5) + 2 (#6) + 3 (#7) + 4 (#8) COMPLETE in the working tree and verified green.
 Uncommitted, awaiting the user's review/commit. Established pattern (repeat per slice):
 manager → `@Observable` + `@ObservationIgnored` on non-observed stored props; protocol seam
 (`AnyObject, Observable`); private `EnvironmentKey` whose `defaultValue` returns `.shared`
@@ -69,13 +69,15 @@ aren't observed view state are LEFT as-is (composition-root use): `DataManagemen
 BadgeManager.
 
 ## Next action
-Start slice 4 (#8): CollectionManager → `@Observable` + `CollectionManaging` protocol +
-`EnvironmentValues.collections` (default `.shared`); swap consumers (RecipeSearchView,
-CollectionDetailView, CollectionsInlineView, AddToCollectionSheet,
-RecipePickerForCollectionSheet) to `@Environment`, converting any `@ObservedObject`/
-`@StateObject` child params to `let … : any CollectionManaging`. Watch for `$`-bindings
-(needs `@Bindable`) since collection sheets may two-way bind. Verify via cadence above
-(build + `RunSomeTests CollectionManagerTests`).
+Start slice 5 (#9): KitchenInventoryManager → `@Observable` + protocol seam +
+`EnvironmentValues` key (default `.shared`); swap consumers (KitchenSectionsView,
+MealPlanningView, KitchenShoppingView, ShoppingSectionsView, AddIngredientSheet) to
+`@Environment`, converting child `@ObservedObject var x: KitchenInventoryManager` params to
+`let x: any <Protocol>`. NOTE: `SettingsView` injects `.environmentObject(KitchenInventoryManager.shared)`
+(line ~187) — that `@EnvironmentObject` consumer chain must move to `@Environment(\.<key>)`
+too, and the `.environmentObject(...)` call be dropped. Check for `$`-bindings (AddIngredientSheet
+may two-way bind quantity/name → `@Bindable`). Verify via cadence (build +
+`RunSomeTests KitchenInventoryManagerTests`).
 
 ## Session state (uncommitted — user commits as their review step)
 Working tree GREEN (build + 1584/1584) as of task #2. Completed & awaiting the user's

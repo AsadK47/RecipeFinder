@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Sheet for creating a new named, coloured collection.
 struct NewCollectionSheet: View {
-    @ObservedObject var manager: CollectionManager
+    let manager: any CollectionManaging
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
@@ -80,7 +80,7 @@ struct NewCollectionSheet: View {
 /// Sheet for renaming or recolouring an existing collection.
 struct EditCollectionSheet: View {
     let collection: RecipeCollection
-    @ObservedObject var manager: CollectionManager
+    let manager: any CollectionManaging
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
@@ -88,7 +88,7 @@ struct EditCollectionSheet: View {
     @State private var name: String
     @State private var selectedColor: CollectionColor
 
-    init(collection: RecipeCollection, manager: CollectionManager) {
+    init(collection: RecipeCollection, manager: any CollectionManaging) {
         self.collection = collection
         self.manager = manager
         _name = State(initialValue: collection.name)

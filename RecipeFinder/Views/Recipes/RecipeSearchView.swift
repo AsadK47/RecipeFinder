@@ -35,7 +35,7 @@ struct RecipeSearchView: View {
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @AppStorage("skipRecipeDeleteConfirmation") private var skipDeleteConfirmation: Bool = false
-    @ObservedObject private var collectionManager = CollectionManager.shared
+    @Environment(\.collections) private var collectionManager
     @State private var selectedCollectionID: UUID? = nil
     @State private var navigationPath = NavigationPath()
     // Refreshed on appear so pantry toggles in RecipeDetailView don't cause

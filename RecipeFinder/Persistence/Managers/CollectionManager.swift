@@ -1,15 +1,48 @@
-import Foundation
+import SwiftUI
 
 private let logger = AppLogger.logger(category: "CollectionManager")
 
+/// Behavioural seam for recipe collections so views depend on this protocol
+/// rather than the `CollectionManager` singleton — and tests can inject a fake.
 @MainActor
-final class CollectionManager: ObservableObject {
+protocol CollectionManaging: AnyObject, Observable {
+    var collections: [RecipeCollection] { get }
+    func collection(withID id: UUID) -> RecipeCollection?
+    func createCollection(name: String, color: CollectionColor)
+    func rename(_ collection: RecipeCollection, to name: String)
+    func recolor(_ collection: RecipeCollection, to color: CollectionColor)
+    func delete(_ collection: RecipeCollection)
+    func remove(recipeID: UUID, from collection: RecipeCollection)
+    @discardableResult func toggle(recipeID: UUID, in collection: RecipeCollection) -> Bool
+}
+
+private struct CollectionManagingKey: EnvironmentKey {
+    // SwiftUI reads environment defaults on the main actor during view updates,
+    // so assuming main-actor isolation here is safe; the real app injects the
+    // shared instance at the composition root regardless.
+    static var defaultValue: any CollectionManaging {
+        MainActor.assumeIsolated { CollectionManager.shared }
+    }
+}
+
+extension EnvironmentValues {
+    /// Injected collections store. Defaults to the shared singleton; override with
+    /// `.environment(\.collections, fake)` in tests/previews.
+    var collections: any CollectionManaging {
+        get { self[CollectionManagingKey.self] }
+        set { self[CollectionManagingKey.self] = newValue }
+    }
+}
+
+@MainActor
+@Observable
+final class CollectionManager: CollectionManaging {
     static let shared = CollectionManager()
 
-    private let saveKey = Constants.UserDefaultsKeys.collections
-    private let storage: UserScopedStorage
+    @ObservationIgnored private let saveKey = Constants.UserDefaultsKeys.collections
+    @ObservationIgnored private let storage: UserScopedStorage
 
-    @Published private(set) var collections: [RecipeCollection] = []
+    private(set) var collections: [RecipeCollection] = []
 
     private init() {
         self.storage = .shared
