@@ -58,13 +58,15 @@ slices are done. Do NOT run the full 1584-suite per slice.
 ## STATUS: view-level DI campaign COMPLETE (all 8 slices). Slices 1–7 committed by user;
 slice 8 (auth + sweep) uncommitted, awaiting user's review/commit. Full 1584/1584 green.
 
-## Follow-ups discovered (NOT done — each its own slice)
-- **ThemeManager DI** — still `ObservableObject`+`.shared`, observed in `AppRootView` via
-  `@StateObject` and injected with `.environmentObject(themeManager)` (3 sites → downstream
-  `@EnvironmentObject var themeManager` consumers). NOT `@MainActor`; it's `@unchecked Sendable`.
-  Migrating needs the whole environmentObject chain moved to `@Environment(\.theme)`. Deferred
-  deliberately — out of the original 8-manager scope + bigger blast radius. This is the ONE
-  remaining view-observed `.shared` singleton (see reconciled root CLAUDE.md line 29).
+## Follow-ups discovered
+- **ThemeManager DI** — ✅ RESOLVED (not a migration): it turned out to be entirely DEAD plumbing.
+  Nothing consumed it (`@EnvironmentObject`/`@Environment(\.themeManager)`/member access all zero;
+  `withThemeManager()` unused; its `.themeDidChange`-family notifications had no observers). Theming
+  actually runs through `@AppStorage("appTheme"/"cardStyle"/"appearanceMode")` + is inherently
+  reactive. DELETED the `ThemeManager` class, its `EnvironmentKey`/`\.themeManager` value,
+  `withThemeManager()`, the dead `Color.adaptiveText` extension, the 3 dead `Notification.Name`s,
+  and `AppRootView`'s `@StateObject` + 3 `.environmentObject(themeManager)` sites. KEPT the widely
+  used `CardStyle` (49 files) + `AppearanceMode` enums in Theme/ThemeManager.swift. Build + 1584 green.
 - Left as composition-root/data-layer (intentional, documented in CLAUDE.md): direct
   `PersistenceController.shared.fetchRecipes()/getRecipeCount()` in ContentView/RecipeSearchView/
   AccountBadgesSection; `RecipeImporter()` is view-OWNED (`@StateObject` fresh instance, not a
@@ -84,8 +86,12 @@ aren't observed view state are LEFT as-is (composition-root use): `DataManagemen
 BadgeManager.
 
 ## Next action
-Campaign done. Either (a) commit slice 8, then start the **ThemeManager DI** follow-up as its
-own slice (see Follow-ups above), or (b) pick up a different backlog item. Nothing in progress.
+View-level DI campaign + ThemeManager cleanup all COMPLETE and green. Nothing in progress —
+commit this ThemeManager-deletion change, then pick up a different backlog item (see the
+`.appCard()` card-migration deferred backlog below, or ROADMAP).
+
+Optional tidy (not done): `Theme/ThemeManager.swift` now only holds `CardStyle`/`AppearanceMode`
+enums — the filename is a misnomer; rename to `ThemeEnums.swift` via `XcodeMV` if desired.
 
 ## Session state (uncommitted — user commits as their review step)
 Working tree GREEN (build + 1584/1584) as of task #2. Completed & awaiting the user's

@@ -139,7 +139,6 @@ struct AppRootView: View {
 
     let persistenceController = PersistenceController.shared
     @Environment(\.auth) private var authManager
-    @StateObject private var themeManager = ThemeManager.shared
     @State private var activeOnboarding: ActiveOnboarding?
     @AppStorage("preferredColorScheme") private var colorSchemePreference: Int = 0
     @AppStorage("guestModeEnabled") private var guestModeEnabled = false
@@ -249,7 +248,6 @@ struct AppRootView: View {
         if authManager.isAuthenticated || guestModeEnabled {
             ContentView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
-                .environmentObject(themeManager)
                 .onAppear { if authManager.isAuthenticated { authManager.updateLastActiveTimestamp() } }
                 .overlay(alignment: .bottom) {
                     if guestModeEnabled && !authManager.isAuthenticated {
@@ -258,14 +256,12 @@ struct AppRootView: View {
                 }
                 .sheet(isPresented: $showGuestSignUpSheet) {
                     NavigationStack { AuthenticationView() }
-                        .environmentObject(themeManager)
                 }
                 .transition(.opacity.combined(with: .scale(scale: AppTheme.transitionScaleDown)))
         } else {
             NavigationStack {
                 AuthenticationView()
             }
-            .environmentObject(themeManager)
             .transition(.opacity.combined(with: .scale(scale: AppTheme.transitionScaleUp)))
         }
     }
