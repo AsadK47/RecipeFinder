@@ -9,7 +9,10 @@ struct ShoppingProgressBar: View {
 
     var body: some View {
         VStack(spacing: AppTheme.spacing6) {
-            ProgressView(value: Double(checkedCount), total: Double(totalCount))
+            // Clamp the denominator to ≥1: an empty list (or the transient frame
+            // while the last item animates out) makes total 0, which would give
+            // ProgressView a NaN fraction → "Invalid frame dimension (non-finite)".
+            ProgressView(value: Double(checkedCount), total: Double(max(totalCount, 1)))
                 .progressViewStyle(LinearProgressViewStyle(tint: AppTheme.accentColor(for: selectedTheme)))
                 .frame(height: AppTheme.height8)
                 .accessibilityLabel("Shopping progress")
