@@ -1,14 +1,49 @@
-import Foundation
+import SwiftUI
+
+/// Behavioural seam for meal planning so views depend on this protocol rather
+/// than the `MealPlanningManager` singleton — and tests can inject a fake.
+@MainActor
+protocol MealPlanningManaging: AnyObject, Observable {
+    func addMealPlan(_ mealPlan: MealPlanModel)
+    func removeMealPlan(for date: Date, mealTime: MealTime)
+    func toggleRecurring(_ mealPlan: MealPlanModel)
+    func propagateRecurring(toWeekStarting startDate: Date)
+    func clearOldMealPlans()
+    func mealPlan(for date: Date, mealTime: MealTime) -> MealPlanModel?
+    func mealPlans(for date: Date) -> [MealPlanModel]
+    func hasMealPlans(for date: Date) -> Bool
+    func mealPlansForWeek(starting startDate: Date) -> WeeklyMealPlan
+    func weekShoppingSummary(forWeekStarting startDate: Date, recipes: [RecipeModel]) -> WeekShoppingSummary
+}
+
+private struct MealPlanningManagingKey: EnvironmentKey {
+    // SwiftUI reads environment defaults on the main actor during view updates,
+    // so assuming main-actor isolation here is safe; the real app injects the
+    // shared instance at the composition root regardless.
+    static var defaultValue: any MealPlanningManaging {
+        MainActor.assumeIsolated { MealPlanningManager.shared }
+    }
+}
+
+extension EnvironmentValues {
+    /// Injected meal planner. Defaults to the shared singleton; override with
+    /// `.environment(\.mealPlanning, fake)` in tests/previews.
+    var mealPlanning: any MealPlanningManaging {
+        get { self[MealPlanningManagingKey.self] }
+        set { self[MealPlanningManagingKey.self] = newValue }
+    }
+}
 
 @MainActor
-final class MealPlanningManager: ObservableObject {
+@Observable
+final class MealPlanningManager: MealPlanningManaging {
     static let shared = MealPlanningManager()
 
-    @Published private(set) var mealPlans: [MealPlanModel] = []
-    
-    private let saveKey = "mealPlansStorage"
-    private let storage: UserScopedStorage
-    private let badgeManager: BadgeManager
+    private(set) var mealPlans: [MealPlanModel] = []
+
+    @ObservationIgnored private let saveKey = "mealPlansStorage"
+    @ObservationIgnored private let storage: UserScopedStorage
+    @ObservationIgnored private let badgeManager: BadgeManager
 
     private init() {
         self.storage = .shared
