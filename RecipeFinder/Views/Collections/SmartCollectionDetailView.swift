@@ -92,7 +92,7 @@ struct SmartCollectionDetailView: View {
         VStack(spacing: AppTheme.spacing16) {
             Image(systemName: smartCollection.systemImage)
                 .font(.system(size: AppTheme.fontSize50))
-                .foregroundColor(smartCollection.color.opacity(0.5))
+                .foregroundStyle(smartCollection.color.opacity(0.5))
 
             Text("No Recipes Yet")
                 .font(.title3.weight(.semibold))

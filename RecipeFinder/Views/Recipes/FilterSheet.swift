@@ -115,7 +115,7 @@ struct FilterSheet: View {
                             if availableIngredients.isEmpty {
                                 Text("Add ingredients in the Kitchen tab first")
                                     .font(.caption)
-                                    .foregroundColor(.orange)
+                                    .foregroundStyle(.orange)
                             }
                         }
                         

@@ -1,12 +1,11 @@
 import SwiftUI
 
-/// Header for the Groceries tab: title, a fridge button that opens kitchen inventory,
-/// an overflow menu for shopping actions, and a search field.
+/// Header for the Groceries tab: title, an overflow menu for kitchen inventory
+/// and shopping actions, and a search field.
 struct GroceriesHeader<MenuContent: View>: View {
     @Binding var searchText: String
     var isSearchFocused: FocusState<Bool>.Binding
     let onSubmit: () -> Void
-    let onKitchenTap: () -> Void
     @ViewBuilder let menuContent: () -> MenuContent
 
     @Environment(\.colorScheme) private var colorScheme
@@ -15,21 +14,13 @@ struct GroceriesHeader<MenuContent: View>: View {
     var body: some View {
         VStack(spacing: AppTheme.spacing12) {
             ScreenTitleHeader("Groceries") {
-                HStack(spacing: AppTheme.spacing8) {
-                    Button(action: onKitchenTap) {
-                        CircleButton(icon: "refrigerator") {}
-                            .allowsHitTesting(false)
-                    }
-                    .accessibilityLabel("Kitchen inventory")
-
-                    Menu {
-                        menuContent()
-                    } label: {
-                        CircleButton(icon: "line.3.horizontal") {}
-                            .allowsHitTesting(false)
-                    }
-                    .accessibilityLabel("More options")
+                Menu {
+                    menuContent()
+                } label: {
+                    CircleButton(icon: "line.3.horizontal") {}
+                        .allowsHitTesting(false)
                 }
+                .accessibilityLabel("More options")
             }
 
             searchBar
@@ -40,14 +31,14 @@ struct GroceriesHeader<MenuContent: View>: View {
         HStack(spacing: AppTheme.spacing12) {
             HStack(spacing: AppTheme.spacing12) {
                 Image(systemName: "magnifyingglass")
-                    .foregroundColor(AppTheme.adaptiveHighEmphasis(for: colorScheme))
+                    .foregroundStyle(AppTheme.adaptiveHighEmphasis(for: colorScheme))
                     .font(.system(size: AppTheme.fontSize18, weight: .medium))
 
                 ZStack(alignment: .leading) {
                     if searchText.isEmpty {
                         Text("Add or search groceries…")
                             .font(.callout)
-                            .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.disabledEmphasisOpacity) : .black.opacity(AppTheme.disabledEmphasisOpacity))
+                            .foregroundStyle(colorScheme == .dark ? .white.opacity(AppTheme.disabledEmphasisOpacity) : .black.opacity(AppTheme.disabledEmphasisOpacity))
                     }
                     TextField("", text: $searchText)
                         .focused(isSearchFocused)
@@ -65,7 +56,7 @@ struct GroceriesHeader<MenuContent: View>: View {
                         label: {
                             Image(systemName: "xmark.circle.fill")
                                 .font(.system(size: AppTheme.fontSize18))
-                                .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
+                                .foregroundStyle(AppTheme.adaptiveSubtitle(for: colorScheme))
                         }
                     )
                 }

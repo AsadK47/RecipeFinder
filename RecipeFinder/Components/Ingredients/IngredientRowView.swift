@@ -82,7 +82,7 @@ struct IngredientRowView: View {
                 Button(action: onSubstitute) {
                     Image(systemName: "arrow.2.squarepath")
                         .font(.system(size: AppTheme.fontSize16))
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel("Find substitute for \(ingredient.mainIngredientName)")
@@ -95,11 +95,26 @@ struct IngredientRowView: View {
                 }) {
                     Image(systemName: isInShoppingList ? "cart.fill" : "cart.badge.plus")
                         .font(.system(size: AppTheme.fontSize16))
-                        .foregroundColor(isInShoppingList ? .green : .secondary)
+                        .foregroundStyle(isInShoppingList ? .green : .secondary)
                 }
                 .buttonStyle(.plain)
                 .disabled(isInShoppingList)
             }
+
+            // Trailing checkbox — matches the pre-prep/instruction step rows so the
+            // recipe screen uses one consistent "check it off" affordance throughout.
+            Button(action: {
+                HapticManager.shared.light()
+                withAnimation(.spring(response: Timing.springResponse, dampingFraction: Timing.springDamping)) {
+                    toggle()
+                }
+            }) {
+                Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: AppTheme.fontSize22))
+                    .foregroundStyle(isChecked ? .green : .gray.opacity(AppTheme.lowEmphasisOpacity))
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(isChecked ? "Uncheck \(ingredient.mainIngredientName)" : "Check \(ingredient.mainIngredientName)")
         }
         .padding(.vertical, AppTheme.spacing8)
         .frame(maxWidth: .infinity)

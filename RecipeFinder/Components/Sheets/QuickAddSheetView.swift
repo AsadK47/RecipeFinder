@@ -83,7 +83,7 @@ struct QuickAddSheetView: View {
                 if isAdded {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.body)
-                        .foregroundColor(.green)
+                        .foregroundStyle(.green)
                 }
             }
             .padding(.horizontal, Layout.buttonHorizontalPadding)

@@ -31,7 +31,7 @@ struct BodyText: View {
     var body: some View {
         Text(text)
             .font(.body)
-            .foregroundColor(colorScheme == .dark ? AppTheme.textColor(for: colorScheme, opacity: AppTheme.cardLightOpacity) : .black.opacity(AppTheme.highEmphasisOpacity))
+            .foregroundStyle(colorScheme == .dark ? AppTheme.textColor(for: colorScheme, opacity: AppTheme.cardLightOpacity) : .black.opacity(AppTheme.highEmphasisOpacity))
             .fixedSize(horizontal: false, vertical: true)
     }
 }
@@ -50,7 +50,7 @@ struct LegalBulletPoint: View {
                 .adaptiveSecondaryForeground()
             Text(text)
                 .font(.body)
-                .foregroundColor(colorScheme == .dark ? AppTheme.textColor(for: colorScheme, opacity: AppTheme.cardLightOpacity) : .black.opacity(AppTheme.highEmphasisOpacity))
+                .foregroundStyle(colorScheme == .dark ? AppTheme.textColor(for: colorScheme, opacity: AppTheme.cardLightOpacity) : .black.opacity(AppTheme.highEmphasisOpacity))
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(.leading, AppTheme.spacing8)
@@ -94,7 +94,7 @@ struct CompanyInfoRow: View {
             Text(value)
                 .font(.subheadline)
                 .fontWeight(.medium)
-                .foregroundColor(valueColor == .primary ? AppTheme.textColor(for: colorScheme) : valueColor)
+                .foregroundStyle(valueColor == .primary ? AppTheme.textColor(for: colorScheme) : valueColor)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(.vertical, AppTheme.spacing4)
@@ -112,7 +112,7 @@ struct LegalDocRow: View {
     var body: some View {
         HStack(spacing: AppTheme.spacing12) {
             Image(systemName: icon)
-                .foregroundColor(iconColor)
+                .foregroundStyle(iconColor)
                 .font(.title3)
                 .frame(width: AppTheme.width30)
             
@@ -152,7 +152,7 @@ struct ComplianceBadge: View {
                 
                 Image(systemName: icon)
                     .font(.system(size: AppTheme.fontSize18, weight: .semibold))
-                    .foregroundColor(color)
+                    .foregroundStyle(color)
             }
             
             VStack(alignment: .leading, spacing: AppTheme.spacing4) {

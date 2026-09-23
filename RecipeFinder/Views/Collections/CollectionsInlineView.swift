@@ -115,7 +115,7 @@ struct CollectionsInlineView: View {
 
             Image(systemName: "rectangle.stack")
                 .font(.system(size: AppTheme.fontSize50))
-                .foregroundColor(.secondary.opacity(0.5))
+                .foregroundStyle(.secondary.opacity(0.5))
 
             Text("No Collections Yet")
                 .font(.title3.weight(.semibold))
@@ -167,12 +167,12 @@ private struct SmartCollectionCard: View {
                     .overlay(
                         Image(systemName: collection.systemImage)
                             .font(.caption2)
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                     )
                 Spacer()
                 Image(systemName: "sparkles")
                     .font(.system(size: AppTheme.fontSize8, weight: .semibold))
-                    .foregroundColor(collection.color.opacity(0.7))
+                    .foregroundStyle(collection.color.opacity(0.7))
             }
 
             Text(collection.name)

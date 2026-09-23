@@ -247,7 +247,7 @@ struct MealPlanningView: View {
             if let feedback = weekShoppingFeedback {
                 HStack(spacing: AppTheme.spacing8) {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(.green)
+                        .foregroundStyle(.green)
                     Text(feedback)
                         .font(.caption)
                         .adaptiveForegroundColor(opacity: AppTheme.highEmphasisOpacity)

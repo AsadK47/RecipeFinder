@@ -30,7 +30,7 @@ struct RecipeChecklistSection<Content: View>: View {
                         Image(systemName: "chevron.down")
                             .font(.title3)
                             .fontWeight(.semibold)
-                            .foregroundColor(AppTheme.adaptiveHighEmphasis(for: colorScheme))
+                            .foregroundStyle(AppTheme.adaptiveHighEmphasis(for: colorScheme))
                             .rotationEffect(.degrees(isExpanded ? 0 : -90))
                             .animation(.spring(response: 0.3), value: isExpanded)
                     }
@@ -67,7 +67,7 @@ struct RecipeInstructionRow: View {
             HStack(alignment: .center, spacing: AppTheme.spacing12) {
                 Text(text)
                     .font(.body)
-                    .foregroundColor(.primary)
+                    .foregroundStyle(.primary)
                     .strikethrough(isChecked, color: .primary)
                     .opacity(isChecked ? 0.5 : 1.0)
                     .fixedSize(horizontal: false, vertical: true)
@@ -77,7 +77,7 @@ struct RecipeInstructionRow: View {
 
                 Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
                     .font(.system(size: AppTheme.fontSize22))
-                    .foregroundColor(isChecked ? .green : .gray.opacity(AppTheme.lowEmphasisOpacity))
+                    .foregroundStyle(isChecked ? .green : .gray.opacity(AppTheme.lowEmphasisOpacity))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .contentShape(Rectangle())

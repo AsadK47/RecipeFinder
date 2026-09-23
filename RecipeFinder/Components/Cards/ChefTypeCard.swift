@@ -13,7 +13,7 @@ struct ChefTypeCard: View {
             VStack(spacing: AppTheme.spacing8) {
                 Image(systemName: chefType.icon)
                     .font(.system(size: AppTheme.fontSize32))
-                    .foregroundColor(isSelected ? AppTheme.accentColor(for: selectedTheme) : .secondary)
+                    .foregroundStyle(isSelected ? AppTheme.accentColor(for: selectedTheme) : .secondary)
 
                 Text(chefType.rawValue)
                     .font(.caption)

@@ -95,10 +95,10 @@ struct DataManagementSettingsView: View {
             if dataCleared {
                 HStack(spacing: AppTheme.spacing8) {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(.green)
+                        .foregroundStyle(.green)
                     Text("Data cleared successfully")
                         .font(.caption)
-                        .foregroundColor(.green)
+                        .foregroundStyle(.green)
                 }
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
@@ -106,10 +106,10 @@ struct DataManagementSettingsView: View {
             if let backupMessage {
                 HStack(spacing: AppTheme.spacing8) {
                     Image(systemName: backupMessageIsError ? "exclamationmark.triangle.fill" : "checkmark.circle.fill")
-                        .foregroundColor(backupMessageIsError ? .orange : .green)
+                        .foregroundStyle(backupMessageIsError ? .orange : .green)
                     Text(backupMessage)
                         .font(.caption)
-                        .foregroundColor(backupMessageIsError ? .orange : .green)
+                        .foregroundStyle(backupMessageIsError ? .orange : .green)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .transition(.opacity.combined(with: .move(edge: .top)))
@@ -118,10 +118,10 @@ struct DataManagementSettingsView: View {
             if let seedMessage {
                 HStack(spacing: AppTheme.spacing8) {
                     Image(systemName: seedMessageIsError ? "exclamationmark.triangle.fill" : "checkmark.circle.fill")
-                        .foregroundColor(seedMessageIsError ? .orange : .green)
+                        .foregroundStyle(seedMessageIsError ? .orange : .green)
                     Text(seedMessage)
                         .font(.caption)
-                        .foregroundColor(seedMessageIsError ? .orange : .green)
+                        .foregroundStyle(seedMessageIsError ? .orange : .green)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .transition(.opacity.combined(with: .move(edge: .top)))
@@ -180,7 +180,7 @@ struct DataManagementSettingsView: View {
                         Text(importStatus.title)
                             .font(.caption)
                             .fontWeight(.semibold)
-                            .foregroundColor(importStatus.isAvailable ? .green : .secondary)
+                            .foregroundStyle(importStatus.isAvailable ? .green : .secondary)
 
                         Text(importStatus.detail)
                             .font(.caption)

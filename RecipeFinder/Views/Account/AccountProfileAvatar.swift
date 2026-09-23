@@ -39,7 +39,7 @@ struct AccountProfileAvatar: View {
                         
                         Image(systemName: "camera.fill")
                             .font(.system(size: AppTheme.fontSize12, weight: .semibold))
-                            .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                            .foregroundStyle(AppTheme.accentColor(for: selectedTheme))
                     }
                 }
             }

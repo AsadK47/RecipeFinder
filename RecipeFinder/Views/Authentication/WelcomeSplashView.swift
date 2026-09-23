@@ -197,7 +197,7 @@ struct WelcomeSplashView: View {
     private var subtitleText: some View {
         Text("Find, save, and share recipes you love")
             .font(.system(size: AppTheme.fontSize17, weight: .medium, design: .rounded))
-            .foregroundColor(AppTheme.textColor(for: colorScheme))
+            .foregroundStyle(AppTheme.textColor(for: colorScheme))
             .multilineTextAlignment(.center)
             .frame(maxWidth: .infinity)
             .opacity(contentOpacity)
@@ -356,12 +356,12 @@ struct FeatureRow: View {
         HStack(spacing: spacing.md) {
             Image(systemName: icon)
                 .font(.system(size: AppTheme.fontSize16, weight: .semibold))
-                .foregroundColor(AppTheme.textColor(for: colorScheme))
+                .foregroundStyle(AppTheme.textColor(for: colorScheme))
                 .frame(width: spacing.iconMedium)
             
             Text(text)
                 .font(.system(size: AppTheme.fontSize15, weight: .medium))
-                .foregroundColor(AppTheme.textColor(for: colorScheme))
+                .foregroundStyle(AppTheme.textColor(for: colorScheme))
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
     }

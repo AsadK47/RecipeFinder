@@ -16,13 +16,13 @@ struct BadgeCard: View {
 
                 Image(systemName: badge.icon)
                     .font(.system(size: AppTheme.fontSize28))
-                    .foregroundColor(badge.isUnlocked ? badgeColor : .gray.opacity(AppTheme.glassLightOpacity))
+                    .foregroundStyle(badge.isUnlocked ? badgeColor : .gray.opacity(AppTheme.glassLightOpacity))
             }
 
             Text(badge.title.components(separatedBy: " ").first ?? badge.title)
                 .font(.caption2)
                 .fontWeight(.semibold)
-                .foregroundColor(badge.isUnlocked ? AppTheme.adaptiveEmphasis(for: colorScheme) : .gray)
+                .foregroundStyle(badge.isUnlocked ? AppTheme.adaptiveEmphasis(for: colorScheme) : .gray)
                 .lineLimit(1)
 
             if badge.isUnlocked, let date = badge.dateEarned {

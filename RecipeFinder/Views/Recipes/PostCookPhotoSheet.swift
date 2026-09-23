@@ -54,7 +54,7 @@ struct PostCookPhotoSheet: View {
                 .frame(width: 80, height: 80)
             Image(systemName: "checkmark")
                 .font(.system(size: 32, weight: .bold))
-                .foregroundColor(.green)
+                .foregroundStyle(.green)
         }
     }
 

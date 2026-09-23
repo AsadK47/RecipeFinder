@@ -164,7 +164,7 @@ struct SettingsChoiceRow: View {
                 if isSelected {
                     Image(systemName: "checkmark")
                         .font(.body.weight(.semibold))
-                        .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                        .foregroundStyle(AppTheme.accentColor(for: selectedTheme))
                 }
             }
             .contentShape(Rectangle())

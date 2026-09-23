@@ -24,7 +24,7 @@ struct DisplaySettingsView: View {
                 VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                     HStack(spacing: AppTheme.spacing12) {
                         Image(systemName: "info.circle.fill")
-                            .foregroundColor(.blue)
+                            .foregroundStyle(.blue)
                             .font(.title3)
 
                         Text("About This Setting")
@@ -42,7 +42,7 @@ struct DisplaySettingsView: View {
 
                     HStack(spacing: AppTheme.spacing8) {
                         Image(systemName: "battery.100")
-                            .foregroundColor(.green)
+                            .foregroundStyle(.green)
                             .font(.caption)
 
                         Text("Note: Keeping the screen on may use more battery")

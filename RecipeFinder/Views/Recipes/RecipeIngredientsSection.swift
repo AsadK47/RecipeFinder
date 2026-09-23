@@ -98,7 +98,7 @@ struct RecipeIngredientsSection: View {
             Image(systemName: "chevron.down")
                 .font(.title3)
                 .fontWeight(.semibold)
-                .foregroundColor(AppTheme.adaptiveHighEmphasis(for: colorScheme))
+                .foregroundStyle(AppTheme.adaptiveHighEmphasis(for: colorScheme))
                 .rotationEffect(.degrees(isExpanded ? 0 : -90))
                 .animation(.spring(response: 0.3), value: isExpanded)
         }

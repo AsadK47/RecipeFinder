@@ -136,14 +136,14 @@ extension FaceIDOnboardingSplash {
 
                 Text("Secure access in seconds")
                     .font(.system(size: AppTheme.fontSize20, weight: .medium, design: .rounded))
-                    .foregroundColor(AppTheme.textColor(for: colorScheme))
+                    .foregroundStyle(AppTheme.textColor(for: colorScheme))
                     .multilineTextAlignment(.center)
             }
 
             VStack(spacing: spacing.lg) {
                 Text("Intuitive and secure authentication")
                     .font(.system(size: AppTheme.fontSize17, weight: .medium))
-                    .foregroundColor(AppTheme.textColor(for: colorScheme))
+                    .foregroundStyle(AppTheme.textColor(for: colorScheme))
                     .multilineTextAlignment(.center)
                     .lineSpacing(AppTheme.lineSpacingNormal)
                     .padding(.horizontal, spacing.xl)
@@ -177,7 +177,7 @@ extension FaceIDOnboardingSplash {
                             .font(.system(size: AppTheme.fontSize20, weight: .bold))
                     }
                 }
-                .foregroundColor(.white)
+                .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
                 .frame(height: spacing.buttonHeightLarge)
                 .background(
@@ -217,7 +217,7 @@ extension FaceIDOnboardingSplash {
             Button(action: skipSetup) {
                 Text("Set Up Later")
                     .font(.system(size: AppTheme.fontSize17, weight: .semibold))
-                    .foregroundColor(AppTheme.textColor(for: colorScheme))
+                    .foregroundStyle(AppTheme.textColor(for: colorScheme))
                     .frame(maxWidth: .infinity)
                     .frame(height: spacing.buttonHeight)
                     .background(

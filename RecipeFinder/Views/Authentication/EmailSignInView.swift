@@ -76,7 +76,7 @@ struct EmailSignInView: View {
                             if !email.isEmpty && !isValidEmail {
                                 Text("Please enter a valid email address")
                                     .font(.caption)
-                                    .foregroundColor(.orange.opacity(AppTheme.veryHighEmphasisOpacity))
+                                    .foregroundStyle(.orange.opacity(AppTheme.veryHighEmphasisOpacity))
                             }
                         }
                         

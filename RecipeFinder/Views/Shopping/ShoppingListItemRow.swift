@@ -63,6 +63,7 @@ struct ShoppingListItemRow: View {
                                     .background(Circle().fill(AppTheme.accentColor))
                             }
                         }
+                        .contentShape(Rectangle())
                     })
                     .buttonStyle(PlainButtonStyle())
                     
@@ -72,14 +73,14 @@ struct ShoppingListItemRow: View {
                                 .font(.subheadline)
                                 .fontWeight(.medium)
                                 .strikethrough(item.isChecked)
-                                .foregroundColor(item.isChecked ? .gray : AppTheme.adaptiveEmphasis(for: colorScheme))
+                                .foregroundStyle(item.isChecked ? .gray : AppTheme.adaptiveEmphasis(for: colorScheme))
                                 .lineLimit(2)
                                 .fixedSize(horizontal: false, vertical: true)
 
                             if item.isRecurring {
                                 Image(systemName: "pin.fill")
                                     .font(.system(size: 9, weight: .semibold))
-                                    .foregroundColor(.orange)
+                                    .foregroundStyle(.orange)
                                     .rotationEffect(.degrees(45))
                             }
 
@@ -87,7 +88,7 @@ struct ShoppingListItemRow: View {
                                 Text("In kitchen")
                                     .font(.caption2)
                                     .fontWeight(.semibold)
-                                    .foregroundColor(.blue)
+                                    .foregroundStyle(.blue)
                                     .padding(.horizontal, AppTheme.spacing6)
                                     .padding(.vertical, AppTheme.spacing2)
                                     .background(Color.blue.opacity(0.12), in: Capsule())
@@ -99,7 +100,7 @@ struct ShoppingListItemRow: View {
                             Text(store)
                                 .font(.caption2)
                                 .fontWeight(.semibold)
-                                .foregroundColor(AppTheme.accentColor)
+                                .foregroundStyle(AppTheme.accentColor)
                                 .lineLimit(1)
                         }
                     }
@@ -113,7 +114,7 @@ struct ShoppingListItemRow: View {
                         }) {
                             Image(systemName: "minus")
                                 .font(.system(size: AppTheme.fontSize14, weight: .semibold))
-                                .foregroundColor(item.quantity > 1 ? (AppTheme.adaptiveEmphasis(for: colorScheme)) : .gray)
+                                .foregroundStyle(item.quantity > 1 ? (AppTheme.adaptiveEmphasis(for: colorScheme)) : .gray)
                                 .frame(width: AppTheme.iconSize28, height: AppTheme.iconSize28)
                                 .background {
                                     if cardStyle == .solid {
@@ -141,7 +142,7 @@ struct ShoppingListItemRow: View {
                         }) {
                             Image(systemName: "plus")
                                 .font(.system(size: AppTheme.fontSize14, weight: .semibold))
-                                .foregroundColor(item.quantity < 99 ? (AppTheme.adaptiveEmphasis(for: colorScheme)) : .gray)
+                                .foregroundStyle(item.quantity < 99 ? (AppTheme.adaptiveEmphasis(for: colorScheme)) : .gray)
                                 .frame(width: AppTheme.iconSize28, height: AppTheme.iconSize28)
                                 .background {
                                     if cardStyle == .solid {

@@ -29,7 +29,7 @@ struct PlannedMealsSection: View {
 
                 Text(selectedDateString)
                     .font(.subheadline)
-                    .foregroundColor(colorScheme == .dark
+                    .foregroundStyle(colorScheme == .dark
                         ? .white.opacity(AppTheme.subduedEmphasisOpacity)
                         : .black.opacity(AppTheme.subduedEmphasisOpacity))
             }
@@ -75,7 +75,7 @@ struct PlannedMealsSection: View {
             // Only this handle initiates the drag — tapping the card still changes the recipe.
             Image(systemName: "line.3.horizontal")
                 .font(.system(size: AppTheme.fontSize16))
-                .foregroundColor(colorScheme == .dark
+                .foregroundStyle(colorScheme == .dark
                     ? .white.opacity(AppTheme.lowEmphasisOpacity)
                     : .black.opacity(AppTheme.lowEmphasisOpacity))
                 .frame(width: 28, height: 52)
@@ -98,7 +98,7 @@ struct PlannedMealsSection: View {
             HStack(spacing: AppTheme.spacing12) {
                 Image(systemName: "plus.circle.fill")
                     .font(.title3)
-                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                    .foregroundStyle(AppTheme.accentColor(for: selectedTheme))
 
                 Text("Add Another Meal")
                     .font(.system(size: AppTheme.fontSize16, weight: .semibold))

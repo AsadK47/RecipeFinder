@@ -38,7 +38,7 @@ struct RecipeNameStepView: View {
                     VStack(alignment: .leading, spacing: AppTheme.spacing10) {
                         Text("Recipe Photo")
                             .font(.headline)
-                            .foregroundColor(.primary)
+                            .foregroundStyle(.primary)
 
                         ZStack(alignment: .topTrailing) {
                             Button(action: onPickPhoto) {
@@ -74,7 +74,7 @@ struct RecipeNameStepView: View {
                                     if selectedRecipeImage != nil || existingImageReference != nil {
                                         Label("Tap to change", systemImage: "photo.on.rectangle")
                                             .font(.caption2.weight(.semibold))
-                                            .foregroundColor(.white)
+                                            .foregroundStyle(.white)
                                             .padding(.horizontal, AppTheme.spacing8)
                                             .padding(.vertical, AppTheme.spacing4)
                                             .background(.black.opacity(0.45), in: Capsule())
@@ -92,7 +92,7 @@ struct RecipeNameStepView: View {
                                 }) {
                                     Image(systemName: "xmark")
                                         .font(.caption.weight(.bold))
-                                        .foregroundColor(.white)
+                                        .foregroundStyle(.white)
                                         .frame(width: 24, height: 24)
                                         .background(.black.opacity(0.55), in: Circle())
                                 }
@@ -109,7 +109,7 @@ struct RecipeNameStepView: View {
                         HStack {
                             Text("Additional Photos")
                                 .font(.headline)
-                                .foregroundColor(.primary)
+                                .foregroundStyle(.primary)
                             Spacer()
                             Text("Up to 4")
                                 .font(.caption)
@@ -127,7 +127,7 @@ struct RecipeNameStepView: View {
                                         } label: {
                                             Image(systemName: "xmark")
                                                 .font(.caption.weight(.bold))
-                                                .foregroundColor(.white)
+                                                .foregroundStyle(.white)
                                                 .frame(width: 20, height: 20)
                                                 .background(.black.opacity(0.55), in: Circle())
                                         }
@@ -148,7 +148,7 @@ struct RecipeNameStepView: View {
                                         } label: {
                                             Image(systemName: "xmark")
                                                 .font(.caption.weight(.bold))
-                                                .foregroundColor(.white)
+                                                .foregroundStyle(.white)
                                                 .frame(width: 20, height: 20)
                                                 .background(.black.opacity(0.55), in: Circle())
                                         }
@@ -182,7 +182,7 @@ struct RecipeNameStepView: View {
                     if let validationMessage = recipeNameValidationMessage {
                         Text(validationMessage)
                             .font(.caption)
-                            .foregroundColor(AppTheme.error)
+                            .foregroundStyle(AppTheme.error)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }

@@ -120,7 +120,7 @@ private struct MealPickerRecipeCard: View {
                 )
                 Image(systemName: "fork.knife")
                     .font(.system(size: 32))
-                    .foregroundColor(.white.opacity(0.2))
+                    .foregroundStyle(.white.opacity(0.2))
             }
         }
     }
@@ -136,7 +136,7 @@ private struct MealPickerRecipeCard: View {
 
             Text(recipe.name)
                 .font(.caption.weight(.semibold))
-                .foregroundColor(.white)
+                .foregroundStyle(.white)
                 .lineLimit(2)
                 .multilineTextAlignment(.leading)
                 .frame(maxWidth: .infinity, alignment: .leading)

@@ -20,7 +20,7 @@ struct SelectedDayEmptyStateView: View {
                 
                 Text(selectedDateString)
                     .font(.subheadline)
-                    .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.subduedEmphasisOpacity) : .black.opacity(AppTheme.subduedEmphasisOpacity))
+                    .foregroundStyle(colorScheme == .dark ? .white.opacity(AppTheme.subduedEmphasisOpacity) : .black.opacity(AppTheme.subduedEmphasisOpacity))
             }
             .padding(.horizontal, AppTheme.spacing4)
             

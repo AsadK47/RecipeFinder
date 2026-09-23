@@ -48,7 +48,7 @@ struct CookTimerView: View {
                 Spacer()
                 Text(timerManager.isActive ? (timerManager.isPaused ? "Paused" : "Running") : "Stopped")
                     .font(.caption)
-                    .foregroundColor(timerManager.isPaused ? .orange : AppTheme.accentColor(for: selectedTheme))
+                    .foregroundStyle(timerManager.isPaused ? .orange : AppTheme.accentColor(for: selectedTheme))
             }
 
             Text(timerManager.displayTime)

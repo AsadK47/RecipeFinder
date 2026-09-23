@@ -11,7 +11,7 @@ struct CircleButton: View {
         Button(action: action) {
             Image(systemName: icon)
                 .font(.title2)
-                .foregroundColor(AppTheme.adaptiveEmphasis(for: colorScheme))
+                .foregroundStyle(AppTheme.adaptiveEmphasis(for: colorScheme))
                 .padding(AppTheme.spacing12)
                 .background {
                     if cardStyle == .solid {

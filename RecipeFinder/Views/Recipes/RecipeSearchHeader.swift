@@ -54,14 +54,14 @@ struct RecipeSearchHeader: View {
         HStack(spacing: AppTheme.spacing12) {
             HStack(spacing: AppTheme.spacing12) {
                 Image(systemName: "magnifyingglass")
-                    .foregroundColor(AppTheme.adaptiveHighEmphasis(for: colorScheme))
+                    .foregroundStyle(AppTheme.adaptiveHighEmphasis(for: colorScheme))
                     .font(.system(size: AppTheme.fontSize18, weight: .medium))
 
                 ZStack(alignment: .leading) {
                     if searchText.isEmpty {
                         Text("What would you like to eat...?")
                             .font(.system(size: AppTheme.fontSize16))
-                            .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.disabledEmphasisOpacity) : .black.opacity(AppTheme.disabledEmphasisOpacity))
+                            .foregroundStyle(colorScheme == .dark ? .white.opacity(AppTheme.disabledEmphasisOpacity) : .black.opacity(AppTheme.disabledEmphasisOpacity))
                     }
                     TextField("", text: $searchText)
                         .focused(isSearchFocused)
@@ -77,7 +77,7 @@ struct RecipeSearchHeader: View {
                         label: {
                             Image(systemName: "xmark.circle.fill")
                                 .font(.system(size: AppTheme.fontSize18))
-                                .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
+                                .foregroundStyle(AppTheme.adaptiveSubtitle(for: colorScheme))
                         }
                     )
                 }

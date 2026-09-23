@@ -116,7 +116,7 @@ struct RecipeSearchView: View {
                 ))
                 .navigationDestination(for: UUID.self) { recipeId in
                     if let recipe = recipes.first(where: { $0.id == recipeId }) {
-                        RecipeDetailView(recipe: recipe)
+                        RecipeDetailView(recipe: recipe, onRecipeChange: refreshRecipes)
                     }
                 }
         }
@@ -237,7 +237,7 @@ struct RecipeSearchView: View {
     private func importToast(message: String) -> some View {
         HStack(spacing: AppTheme.spacing8) {
             Image(systemName: "checkmark.circle.fill")
-                .foregroundColor(.green)
+                .foregroundStyle(.green)
 
             Text(message)
                 .font(.subheadline)
@@ -315,7 +315,7 @@ struct RecipeSearchView: View {
             } else {
                 RecipeResultsList(
                     filteredRecipes: current,
-                    onFavoriteToggle: refreshRecipes,
+                    onRecipeChange: refreshRecipes,
                     onRequestDelete: requestDelete
                 )
             }

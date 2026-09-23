@@ -14,7 +14,7 @@ struct CollectionCard: View {
                     .overlay(
                         Image(systemName: "rectangle.stack.fill")
                             .font(.caption2)
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                     )
                 Spacer()
             }

@@ -42,7 +42,7 @@ struct CompactRecipeCard: View {
                 Text(recipe.name)
                     .font(.caption)
                     .fontWeight(.semibold)
-                    .foregroundColor(AppTheme.adaptiveEmphasis(for: colorScheme))
+                    .foregroundStyle(AppTheme.adaptiveEmphasis(for: colorScheme))
                     .lineLimit(Layout.nameLineLimit)
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity)
@@ -50,17 +50,17 @@ struct CompactRecipeCard: View {
                 HStack(spacing: AppTheme.spacing4) {
                     Image(systemName: "clock.fill")
                         .font(.system(size: AppTheme.fontSize11))
-                        .foregroundColor(.orange)
+                        .foregroundStyle(.orange)
                     Text(recipe.totalTime)
                         .font(.system(size: AppTheme.fontSize11))
-                        .foregroundColor(AppTheme.adaptiveCardTextEmphasis(for: colorScheme))
+                        .foregroundStyle(AppTheme.adaptiveCardTextEmphasis(for: colorScheme))
                 }
 
                 HStack(spacing: AppTheme.spacing6) {
                     DifficultyBarsView(difficulty: recipe.difficulty, size: Layout.difficultyBarSize)
                     Text(recipe.difficulty)
                         .font(.system(size: AppTheme.fontSize11))
-                        .foregroundColor(AppTheme.adaptiveCardTextEmphasis(for: colorScheme))
+                        .foregroundStyle(AppTheme.adaptiveCardTextEmphasis(for: colorScheme))
                 }
             }
             .padding(.bottom, AppTheme.spacing12)

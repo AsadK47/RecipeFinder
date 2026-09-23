@@ -14,7 +14,7 @@ struct ExpiryRecipeSuggestionsSection: View {
         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
             HStack(spacing: AppTheme.spacing6) {
                 Image(systemName: "clock.badge.exclamationmark.fill")
-                    .foregroundColor(.orange)
+                    .foregroundStyle(.orange)
                 Text("Cook Before They Expire")
                     .font(.system(size: AppTheme.fontSize20, weight: .bold))
                     .adaptiveForegroundColor()
@@ -37,7 +37,7 @@ struct ExpiryRecipeSuggestionsSection: View {
                     .fill(Color.orange.opacity(0.15))
                 Image(systemName: "fork.knife")
                     .font(.system(size: AppTheme.fontSize18, weight: .medium))
-                    .foregroundColor(.orange)
+                    .foregroundStyle(.orange)
             }
             .frame(width: 48, height: 48)
 
@@ -50,7 +50,7 @@ struct ExpiryRecipeSuggestionsSection: View {
                 if !suggestion.expiringItems.isEmpty {
                     Text("Uses: \(suggestion.expiringItems.joined(separator: ", "))")
                         .font(.caption)
-                        .foregroundColor(.orange)
+                        .foregroundStyle(.orange)
                         .lineLimit(1)
                 }
             }
@@ -61,7 +61,7 @@ struct ExpiryRecipeSuggestionsSection: View {
                 onPlan(suggestion.recipe)
             }
             .font(.system(size: AppTheme.fontSize14, weight: .semibold))
-            .foregroundColor(.white)
+            .foregroundStyle(.white)
             .padding(.horizontal, AppTheme.spacing12)
             .padding(.vertical, AppTheme.spacing6)
             .background(AppTheme.warning)

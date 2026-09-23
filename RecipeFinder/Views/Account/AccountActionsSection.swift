@@ -51,7 +51,7 @@ struct AccountActionsSection: View {
                         Text("Under Construction • Please Wait Patiently")
                             .font(.system(size: AppTheme.fontSize11, weight: .medium))
                     }
-                    .foregroundColor(.orange.opacity(AppTheme.highEmphasisOpacity))
+                    .foregroundStyle(.orange.opacity(AppTheme.highEmphasisOpacity))
                 }
             }
             
@@ -90,7 +90,7 @@ struct AccountActionsSection: View {
                 Text("Sign Out")
                     .font(.body)
                     .fontWeight(.semibold)
-                    .foregroundColor(AppTheme.error)
+                    .foregroundStyle(AppTheme.error)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, AppTheme.spacing16)
                     .background {
@@ -110,7 +110,7 @@ struct AccountActionsSection: View {
                     Text("Delete Account")
                         .font(.body)
                         .fontWeight(.semibold)
-                        .foregroundColor(AppTheme.error)
+                        .foregroundStyle(AppTheme.error)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, AppTheme.spacing16)
                         .background {

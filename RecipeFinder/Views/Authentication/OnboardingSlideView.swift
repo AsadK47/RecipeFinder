@@ -120,7 +120,7 @@ struct OnboardingSlideView: View {
                         .fill(slide.accentColor)
                         .shadow(color: slide.accentColor.opacity(0.4), radius: 12, y: 6)
                 )
-                .foregroundColor(.white)
+                .foregroundStyle(.white)
         }
     }
 }

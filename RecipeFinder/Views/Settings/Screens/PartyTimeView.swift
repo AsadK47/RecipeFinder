@@ -12,7 +12,7 @@ struct PartyTimeView: View {
             VStack(spacing: AppTheme.spacing12) {
                 Image(systemName: "party.popper.fill")
                     .font(.system(size: AppTheme.fontSize60))
-                    .foregroundColor(AppTheme.accentColor(for: appTheme))
+                    .foregroundStyle(AppTheme.accentColor(for: appTheme))
                     .symbolEffect(.bounce, value: isVibrating)
 
                 Text("Party Time")
@@ -84,7 +84,7 @@ struct PartyTimeView: View {
                 VStack(alignment: .leading, spacing: AppTheme.spacing16) {
                     HStack {
                         Image(systemName: "info.circle.fill")
-                            .foregroundColor(.blue)
+                            .foregroundStyle(.blue)
                         Text("How it works")
                             .font(.headline)
                             .adaptiveForegroundColor()
@@ -133,10 +133,10 @@ private struct BulletPoint: View {
     var body: some View {
         HStack(alignment: .top, spacing: AppTheme.spacing8) {
             Text("•")
-                .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
+                .foregroundStyle(AppTheme.adaptiveSubtitle(for: colorScheme))
             Text(text)
                 .font(.subheadline)
-                .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
+                .foregroundStyle(AppTheme.adaptiveSubtitle(for: colorScheme))
         }
     }
 }

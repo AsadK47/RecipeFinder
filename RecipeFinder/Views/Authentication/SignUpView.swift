@@ -106,7 +106,7 @@ struct SignUpView: View {
                                 if !email.isEmpty && !isValidEmail {
                                     Text("Please enter a valid email address")
                                         .font(.caption)
-                                        .foregroundColor(.orange.opacity(AppTheme.veryHighEmphasisOpacity))
+                                        .foregroundStyle(.orange.opacity(AppTheme.veryHighEmphasisOpacity))
                                 }
                             }
                             
@@ -135,16 +135,16 @@ struct SignUpView: View {
                                             .adaptiveForegroundColor(opacity: AppTheme.highEmphasisOpacity)
                                         Text("• 8+ characters")
                                             .font(.caption2)
-                                            .foregroundColor(password.count >= 8 ? .green : .red.opacity(AppTheme.highEmphasisOpacity))
+                                            .foregroundStyle(password.count >= 8 ? .green : .red.opacity(AppTheme.highEmphasisOpacity))
                                         Text("• Uppercase & lowercase letters")
                                             .font(.caption2)
-                                            .foregroundColor((password.rangeOfCharacter(from: .uppercaseLetters) != nil && password.rangeOfCharacter(from: .lowercaseLetters) != nil) ? .green : .red.opacity(AppTheme.highEmphasisOpacity))
+                                            .foregroundStyle((password.rangeOfCharacter(from: .uppercaseLetters) != nil && password.rangeOfCharacter(from: .lowercaseLetters) != nil) ? .green : .red.opacity(AppTheme.highEmphasisOpacity))
                                         Text("• At least one number")
                                             .font(.caption2)
-                                            .foregroundColor(password.rangeOfCharacter(from: .decimalDigits) != nil ? .green : .red.opacity(AppTheme.highEmphasisOpacity))
+                                            .foregroundStyle(password.rangeOfCharacter(from: .decimalDigits) != nil ? .green : .red.opacity(AppTheme.highEmphasisOpacity))
                                         Text("• Special character (!@#$%^&* etc.)")
                                             .font(.caption2)
-                                            .foregroundColor(password.rangeOfCharacter(from: CharacterSet(charactersIn: "!@#$%^&*()_+-=[]{}|;:',.<>?/~`")) != nil ? .green : .red.opacity(AppTheme.highEmphasisOpacity))
+                                            .foregroundStyle(password.rangeOfCharacter(from: CharacterSet(charactersIn: "!@#$%^&*()_+-=[]{}|;:',.<>?/~`")) != nil ? .green : .red.opacity(AppTheme.highEmphasisOpacity))
                                     }
                                     .padding(.top, AppTheme.spacing4)
                                 }
@@ -177,7 +177,7 @@ struct SignUpView: View {
                                 if !confirmPassword.isEmpty && password != confirmPassword {
                                     Text("Passwords do not match")
                                         .font(.caption)
-                                        .foregroundColor(.red.opacity(AppTheme.highEmphasisOpacity))
+                                        .foregroundStyle(.red.opacity(AppTheme.highEmphasisOpacity))
                                 }
                             }
                             

@@ -136,7 +136,7 @@ struct CollectionDetailView: View {
             if recipe.isFavorite {
                 Image(systemName: "heart.fill")
                     .font(.caption)
-                    .foregroundColor(.red)
+                    .foregroundStyle(.red)
             }
         }
         .padding(AppTheme.spacing12)
@@ -159,7 +159,7 @@ struct CollectionDetailView: View {
         VStack(spacing: AppTheme.spacing16) {
             Image(systemName: "tray")
                 .font(.system(size: AppTheme.fontSize50))
-                .foregroundColor(.secondary.opacity(0.5))
+                .foregroundStyle(.secondary.opacity(0.5))
 
             Text("No Recipes Yet")
                 .font(.title3.weight(.semibold))

@@ -183,7 +183,7 @@ struct CookingModeView: View {
                         HStack(spacing: AppTheme.spacing16) {
                             Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
                                 .font(.title3)
-                                .foregroundColor(isChecked ? .green : .white.opacity(0.6))
+                                .foregroundStyle(isChecked ? .green : .white.opacity(0.6))
                                 .frame(width: AppTheme.iconSize28)
 
                             let qty = ingredient.formattedWithUnit(for: recipe.scaleFactor, system: measurementSystem)

@@ -16,10 +16,10 @@ struct FilterChip: View {
             Button(action: onRemove, label: {
                 Image(systemName: "xmark.circle.fill")
                     .font(.caption)
-                    .foregroundColor(AppTheme.adaptiveHighEmphasis(for: colorScheme))
+                    .foregroundStyle(AppTheme.adaptiveHighEmphasis(for: colorScheme))
             })
         }
-        .foregroundColor(AppTheme.adaptiveEmphasis(for: colorScheme))
+        .foregroundStyle(AppTheme.adaptiveEmphasis(for: colorScheme))
         .padding(.horizontal, AppTheme.spacing12)
         .padding(.vertical, AppTheme.spacing6)
         .background(

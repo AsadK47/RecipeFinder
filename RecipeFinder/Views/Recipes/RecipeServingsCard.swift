@@ -32,23 +32,23 @@ struct RecipeServingsCard: View {
         VStack(spacing: AppTheme.spacing8) {
             Image(systemName: "person.2.fill")
                 .font(.title2)
-                .foregroundColor(.cyan)
+                .foregroundStyle(.cyan)
                 .accessibilityHidden(true)
             Text("Servings")
                 .font(.caption)
-                .foregroundColor(.primary)
+                .foregroundStyle(.primary)
                 .accessibilityHidden(true)
 
             HStack(spacing: AppTheme.spacing4) {
                 Text("\(recipe.currentServings)")
                     .font(.title2)
                     .fontWeight(.bold)
-                    .foregroundColor(.primary)
+                    .foregroundStyle(.primary)
 
                 if recipe.currentServings != recipe.baseServings {
                     Text("(\(String(format: "%.1fx", recipe.scaleFactor)))")
                         .font(.caption)
-                        .foregroundColor(AppTheme.accentColor)
+                        .foregroundStyle(AppTheme.accentColor)
                 }
             }
             .accessibilityElement(children: .ignore)
@@ -89,7 +89,7 @@ struct RecipeServingsCard: View {
             Text(label)
                 .font(.subheadline)
                 .fontWeight(isActive ? .bold : .medium)
-                .foregroundColor(isActive ? .white : .primary)
+                .foregroundStyle(isActive ? .white : .primary)
                 .frame(maxWidth: .infinity)
                 .frame(height: AppTheme.height36)
                 .background(

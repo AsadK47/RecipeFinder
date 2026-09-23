@@ -43,7 +43,6 @@ struct KitchenShoppingView: View {
                         searchText: $searchText,
                         isSearchFocused: $isSearchFocused,
                         onSubmit: addShoppingItem,
-                        onKitchenTap: { showKitchenSheet = true },
                         menuContent: { overflowMenu }
                     )
 
@@ -71,7 +70,7 @@ struct KitchenShoppingView: View {
                 confettiTrigger += 1
             }
         }
-        .confirmationDialog("Clear Shopping List", isPresented: $showClearShopping, titleVisibility: .visible) {
+        .confirmationDialog("Clear Groceries", isPresented: $showClearShopping, titleVisibility: .visible) {
             if checkedCount > 0 {
                 Button("Clear Checked Items (\(checkedCount))", role: .destructive) { shopping.clearCheckedItems() }
             }
@@ -123,7 +122,7 @@ struct KitchenShoppingView: View {
                 Image(systemName: "cart.circle.fill")
                     .font(.system(size: AppTheme.fontSize60))
                     .adaptiveForegroundColor(opacity: AppTheme.lowEmphasisOpacity)
-                Text("Your shopping list is empty")
+                Text("Your groceries list is empty")
                     .font(.title2).fontWeight(.bold)
                     .adaptiveForegroundColor()
                 Text("Search above to add items to your list.")
@@ -139,13 +138,15 @@ struct KitchenShoppingView: View {
 
     @ViewBuilder
     private var overflowMenu: some View {
+        Button { showKitchenSheet = true } label: { Label("Kitchen", systemImage: "refrigerator") }
+        Divider()
         Button { showShoppingQuickAdd = true } label: { Label("Quick Add", systemImage: "plus.circle") }
-        Button(action: shareShoppingList) { Label("Share List", systemImage: "square.and.arrow.up") }
+        Button(action: shareShoppingList) { Label("Share Groceries", systemImage: "square.and.arrow.up") }
         Button(action: toggleCollapseAll) {
             Label(isAllCollapsed ? "Expand All" : "Collapse All",
                   systemImage: isAllCollapsed ? "chevron.down" : "chevron.up")
         }
-        Button(role: .destructive) { showClearShopping = true } label: { Label("Clear List", systemImage: "trash") }
+        Button(role: .destructive) { showClearShopping = true } label: { Label("Clear Groceries", systemImage: "trash") }
     }
 
     private func addShoppingItem() {

@@ -19,7 +19,7 @@ struct KitchenSectionsView: View {
             HStack(spacing: AppTheme.spacing12) {
                 Text("\(manager.items.count) ingredient\(manager.items.count == 1 ? "" : "s")")
                     .font(.caption)
-                    .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
+                    .foregroundStyle(AppTheme.adaptiveSubtitle(for: colorScheme))
                 Spacer()
                 Button(action: {
                     onAddMore()
@@ -81,7 +81,7 @@ struct KitchenSectionsView: View {
             HStack(spacing: AppTheme.spacing12) {
                 Image(systemName: CategoryClassifier.categoryIcon(for: category))
                     .font(.body)
-                    .foregroundColor(CategoryClassifier.categoryColor(for: category))
+                    .foregroundStyle(CategoryClassifier.categoryColor(for: category))
                     .frame(width: AppTheme.iconSize28)
                 Text(category)
                     .font(.subheadline)
@@ -89,11 +89,11 @@ struct KitchenSectionsView: View {
                     .adaptiveForegroundColor()
                 Text("(\(items.count))")
                     .font(.footnote)
-                    .foregroundColor(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
+                    .foregroundStyle(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
                 Spacer()
                 Image(systemName: "chevron.up")
                     .font(.caption)
-                    .foregroundColor(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
+                    .foregroundStyle(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
                     .rotationEffect(.degrees(collapsedCategories.contains(category) ? 180 : 0))
             }
             .padding(.horizontal, AppTheme.spacing16)

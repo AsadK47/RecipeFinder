@@ -28,20 +28,20 @@ struct MealTimeCard: View {
                     Text(mealTime.timeRange)
                         .font(.caption)
                 }
-                .foregroundColor(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
+                .foregroundStyle(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
 
                 if let recipe = recipe {
                     HStack(spacing: AppTheme.spacing6) {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.caption2)
-                            .foregroundColor(.green)
+                            .foregroundStyle(.green)
                         Text(recipe.name)
                             .font(.caption)
                             .lineLimit(1)
                         if isRecurring {
                             Image(systemName: "repeat")
                                 .font(.system(size: 9, weight: .semibold))
-                                .foregroundColor(.orange)
+                                .foregroundStyle(.orange)
                         }
                     }
                     .adaptiveForegroundColor(opacity: AppTheme.veryHighEmphasisOpacity)
@@ -63,7 +63,7 @@ struct MealTimeCard: View {
                     Button(action: onRemove) {
                         Image(systemName: "trash")
                             .font(.system(size: AppTheme.fontSize14, weight: .semibold))
-                            .foregroundColor(AppTheme.error.opacity(0.7))
+                            .foregroundStyle(AppTheme.error.opacity(0.7))
                     }
                     .buttonStyle(.plain)
                 }
@@ -143,7 +143,7 @@ private struct MealThumbnail: View {
                         : Color.black.opacity(AppTheme.cardDarkOpacity))
                 Image(systemName: fallbackIcon)
                     .font(.system(size: AppTheme.fontSize22, weight: .semibold))
-                    .foregroundColor(colorScheme == .dark
+                    .foregroundStyle(colorScheme == .dark
                         ? .white.opacity(AppTheme.cardLightOpacity)
                         : .black.opacity(0.9))
             }

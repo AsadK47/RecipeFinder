@@ -65,7 +65,7 @@ struct MealTimeSelectorSheet: View {
                                             
                                             Image(systemName: mealTime.icon)
                                                 .font(.system(size: AppTheme.fontSize22, weight: .semibold))
-                                                .foregroundColor(selectedMealTimes.contains(mealTime) ? .green : (colorScheme == .dark ? .white.opacity(AppTheme.cardLightOpacity) : .black.opacity(0.9)))
+                                                .foregroundStyle(selectedMealTimes.contains(mealTime) ? .green : (colorScheme == .dark ? .white.opacity(AppTheme.cardLightOpacity) : .black.opacity(0.9)))
                                         }
                                         
                                         VStack(alignment: .leading, spacing: AppTheme.spacing6) {
@@ -79,7 +79,7 @@ struct MealTimeSelectorSheet: View {
                                                 Text(mealTime.timeRange)
                                                     .font(.caption)
                                             }
-                                            .foregroundColor(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
+                                            .foregroundStyle(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
                                         }
                                         
                                         Spacer()
@@ -87,11 +87,11 @@ struct MealTimeSelectorSheet: View {
                                         if selectedMealTimes.contains(mealTime) {
                                             Image(systemName: "checkmark.circle.fill")
                                                 .font(.title3)
-                                                .foregroundColor(.green)
+                                                .foregroundStyle(.green)
                                         } else {
                                             Image(systemName: "plus.circle")
                                                 .font(.title3)
-                                                .foregroundColor(colorScheme == .dark ? .white.opacity(AppTheme.lowEmphasisOpacity) : .black.opacity(AppTheme.lowEmphasisOpacity))
+                                                .foregroundStyle(colorScheme == .dark ? .white.opacity(AppTheme.lowEmphasisOpacity) : .black.opacity(AppTheme.lowEmphasisOpacity))
                                         }
                                     }
                                     .padding(AppTheme.spacing16)

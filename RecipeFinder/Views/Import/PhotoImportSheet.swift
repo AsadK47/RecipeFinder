@@ -64,7 +64,7 @@ struct PhotoImportSheet: View {
                     if let errorMessage {
                         Text(errorMessage)
                             .font(.footnote)
-                            .foregroundColor(.orange)
+                            .foregroundStyle(.orange)
                             .multilineTextAlignment(.center)
                     }
 

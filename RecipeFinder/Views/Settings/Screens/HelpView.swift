@@ -222,7 +222,7 @@ struct FAQItem: View {
                 HStack(alignment: .top, spacing: AppTheme.spacing12) {
                     Image(systemName: isExpanded ? "chevron.down.circle.fill" : "chevron.right.circle.fill")
                         .font(.title3)
-                        .foregroundColor(AppTheme.accentColor)
+                        .foregroundStyle(AppTheme.accentColor)
                         .frame(width: AppTheme.width30)
 
                     Text(question)

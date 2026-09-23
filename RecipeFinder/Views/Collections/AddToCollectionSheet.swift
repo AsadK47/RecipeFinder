@@ -59,13 +59,13 @@ struct AddToCollectionSheet: View {
                         .overlay(
                             Image(systemName: "rectangle.stack.fill")
                                 .font(.caption)
-                                .foregroundColor(.white)
+                                .foregroundStyle(.white)
                         )
 
                     VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                         Text(collection.name)
                             .font(.body)
-                            .foregroundColor(.primary)
+                            .foregroundStyle(.primary)
 
                         let count = collection.recipeIDs.count
                         Text(count == 1 ? "1 recipe" : "\(count) recipes")
@@ -76,7 +76,7 @@ struct AddToCollectionSheet: View {
                     Spacer()
 
                     Image(systemName: isMember ? "checkmark.circle.fill" : "circle")
-                        .foregroundColor(isMember ? collection.colorName.swiftUIColor : .secondary.opacity(0.4))
+                        .foregroundStyle(isMember ? collection.colorName.swiftUIColor : .secondary.opacity(0.4))
                         .font(.title3)
                 }
                 .contentShape(Rectangle())
@@ -91,7 +91,7 @@ struct AddToCollectionSheet: View {
         VStack(spacing: AppTheme.spacing16) {
             Image(systemName: "rectangle.stack")
                 .font(.system(size: AppTheme.fontSize50))
-                .foregroundColor(.secondary.opacity(0.5))
+                .foregroundStyle(.secondary.opacity(0.5))
 
             Text("No Collections Yet")
                 .font(.title3.weight(.semibold))

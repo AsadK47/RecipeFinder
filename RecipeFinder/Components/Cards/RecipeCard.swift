@@ -42,7 +42,7 @@ struct RecipeCard: View {
             VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                 Text(recipe.name)
                     .font(.system(size: AppTheme.fontSize16, weight: .semibold))
-                    .foregroundColor(AppTheme.adaptiveEmphasis(for: colorScheme))
+                    .foregroundStyle(AppTheme.adaptiveEmphasis(for: colorScheme))
                     .lineLimit(Layout.nameLineLimit)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .minimumScaleFactor(Layout.nameMinScaleFactor)
@@ -51,24 +51,24 @@ struct RecipeCard: View {
                     HStack(spacing: AppTheme.spacing5) {
                         Image(systemName: "clock.fill")
                             .font(.system(size: AppTheme.fontSize12, weight: .medium))
-                            .foregroundColor(.orange)
+                            .foregroundStyle(.orange)
                         Text(recipe.totalTime)
                             .font(.system(size: AppTheme.fontSize13, weight: .medium))
-                            .foregroundColor(AppTheme.adaptiveCardTextEmphasis(for: colorScheme))
+                            .foregroundStyle(AppTheme.adaptiveCardTextEmphasis(for: colorScheme))
                     }
 
                     HStack(spacing: AppTheme.spacing6) {
                         DifficultyBarsView(difficulty: recipe.difficulty, size: Layout.difficultyBarSize)
                         Text(recipe.difficulty)
                             .font(.system(size: AppTheme.fontSize13, weight: .medium))
-                            .foregroundColor(AppTheme.adaptiveCardTextEmphasis(for: colorScheme))
+                            .foregroundStyle(AppTheme.adaptiveCardTextEmphasis(for: colorScheme))
                     }
                 }
             }
 
             Image(systemName: "chevron.right")
                 .font(.system(size: AppTheme.fontSize14, weight: .semibold))
-                .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
+                .foregroundStyle(AppTheme.adaptiveSubtitle(for: colorScheme))
         }
         .padding(AppTheme.spacing16)
         .background {

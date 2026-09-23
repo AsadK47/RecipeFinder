@@ -35,7 +35,7 @@ struct BadgeDetailView: View {
 
                     Image(systemName: badge.icon)
                         .font(.system(size: AppTheme.fontSize60))
-                        .foregroundColor(badge.isUnlocked ? badgeColor : .gray.opacity(AppTheme.glassLightOpacity))
+                        .foregroundStyle(badge.isUnlocked ? badgeColor : .gray.opacity(AppTheme.glassLightOpacity))
                 }
                 .shadow(color: badge.isUnlocked ? badgeColor.opacity(AppTheme.shadowDarkOpacity) : .clear, radius: 20)
 
@@ -52,8 +52,8 @@ struct BadgeDetailView: View {
                 if badge.isUnlocked, let date = badge.dateEarned {
                     VStack(spacing: AppTheme.spacing8) {
                         HStack(spacing: AppTheme.spacing8) {
-                            Image(systemName: "checkmark.circle.fill").foregroundColor(.green)
-                            Text("Unlocked!").fontWeight(.semibold).foregroundColor(.green)
+                            Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
+                            Text("Unlocked!").fontWeight(.semibold).foregroundStyle(.green)
                         }
                         .font(.headline)
 

@@ -48,7 +48,7 @@ struct PasteTextImportSheet: View {
                     if let errorMessage {
                         Text(errorMessage)
                             .font(.footnote)
-                            .foregroundColor(.orange)
+                            .foregroundStyle(.orange)
                     }
 
                     Spacer()

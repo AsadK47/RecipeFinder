@@ -32,7 +32,7 @@ struct RecipeDeleteConfirmationSheet: View {
                             
                             Image(systemName: "fork.knife.circle.fill")
                                 .font(.system(size: AppTheme.fontSize50))
-                                .foregroundColor(.orange)
+                                .foregroundStyle(.orange)
                         }
                         .padding(.top, AppTheme.spacing20)
                         
@@ -67,7 +67,7 @@ struct RecipeDeleteConfirmationSheet: View {
                             HStack(spacing: AppTheme.spacing12) {
                                 Image(systemName: dontAskAgain ? "checkmark.square.fill" : "square")
                                     .font(.title3)
-                                    .foregroundColor(dontAskAgain ? AppTheme.accentColor : .white.opacity(AppTheme.mediumEmphasisOpacity))
+                                    .foregroundStyle(dontAskAgain ? AppTheme.accentColor : .white.opacity(AppTheme.mediumEmphasisOpacity))
                                 
                                 Text("Don't ask me again")
                                     .font(.subheadline)

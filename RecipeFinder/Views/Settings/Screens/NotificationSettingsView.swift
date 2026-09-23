@@ -80,7 +80,7 @@ struct NotificationSettingsView: View {
             VStack(alignment: .center, spacing: AppTheme.spacing16) {
                 Image(systemName: "bell.slash.fill")
                     .font(.system(size: AppTheme.fontSize60))
-                    .foregroundColor(.orange)
+                    .foregroundStyle(.orange)
                     .padding(.top, AppTheme.spacing10)
 
                 VStack(spacing: AppTheme.spacing8) {

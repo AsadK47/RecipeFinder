@@ -58,7 +58,7 @@ struct AccountPersonalInfoSection: View {
                         VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                             Text("Email")
                                 .font(.caption)
-                                .foregroundColor(.primary)
+                                .foregroundStyle(.primary)
                             
                             Text(email)
                                 .font(.body)

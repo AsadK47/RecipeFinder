@@ -71,7 +71,7 @@ struct RecipeFileImportSheet: View {
                             .padding(.horizontal, AppTheme.spacing8)
                             .padding(.vertical, AppTheme.spacing4)
                             .background(AppTheme.success.opacity(0.15))
-                            .foregroundColor(AppTheme.success)
+                            .foregroundStyle(AppTheme.success)
                             .clipShape(Capsule())
                     }
                 }
@@ -174,7 +174,7 @@ struct RecipeFileImportSheet: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, AppTheme.spacing16)
                 .background(AppTheme.accentColor(for: selectedTheme))
-                .foregroundColor(.white)
+                .foregroundStyle(.white)
                 .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius16))
         }
         .buttonStyle(.plain)

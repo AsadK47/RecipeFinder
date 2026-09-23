@@ -17,7 +17,7 @@ struct ProfileTextField: View {
             VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                 Text(label)
                     .font(.caption)
-                    .foregroundColor(.primary)
+                    .foregroundStyle(.primary)
 
                 TextField(placeholder, text: $text)
                     .adaptiveForegroundColor()

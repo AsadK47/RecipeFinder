@@ -121,7 +121,7 @@ struct QuickSnackSheet: View {
 
                                     if searchText.localizedCaseInsensitiveCompare(snack.name) == .orderedSame {
                                         Image(systemName: "checkmark")
-                                            .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                                            .foregroundStyle(AppTheme.accentColor(for: selectedTheme))
                                             .font(.callout.weight(.semibold))
                                     }
                                 }
@@ -173,7 +173,7 @@ struct QuickSnackSheet: View {
                         } label: {
                             Image(systemName: "minus.circle.fill")
                                 .font(.title3)
-                                .foregroundColor(servings > 1
+                                .foregroundStyle(servings > 1
                                     ? AppTheme.accentColor(for: selectedTheme)
                                     : .secondary)
                         }
@@ -190,7 +190,7 @@ struct QuickSnackSheet: View {
                         } label: {
                             Image(systemName: "plus.circle.fill")
                                 .font(.title3)
-                                .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                                .foregroundStyle(AppTheme.accentColor(for: selectedTheme))
                         }
                     }
 

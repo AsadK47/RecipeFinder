@@ -58,7 +58,7 @@ struct RecipeImportView: View {
                     VStack(spacing: AppTheme.spacing12) {
                         Image(systemName: "arrow.down.doc.fill")
                             .font(.system(size: AppTheme.fontSize60))
-                            .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                            .foregroundStyle(AppTheme.accentColor(for: selectedTheme))
                     
                     Text("Import Recipe")
                         .font(.title2)
@@ -125,13 +125,13 @@ struct RecipeImportView: View {
                             
                             Image(systemName: "sparkles")
                                 .font(.title)
-                                .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                                .foregroundStyle(AppTheme.accentColor(for: selectedTheme))
                         }
                         
                         VStack(spacing: AppTheme.spacing8) {
                             Text(loadingStage.message)
                                 .font(.headline)
-                                .foregroundColor(.primary)
+                                .foregroundStyle(.primary)
                             
                             Text("\(Int(loadingStage.progress * 100))% complete")
                                 .font(.caption)
@@ -163,11 +163,11 @@ struct RecipeImportView: View {
                     VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                         HStack(spacing: AppTheme.spacing12) {
                             Image(systemName: "exclamationmark.triangle.fill")
-                                .foregroundColor(.orange)
+                                .foregroundStyle(.orange)
                             
                             Text("Import Failed")
                                 .font(.headline)
-                                .foregroundColor(.primary)
+                                .foregroundStyle(.primary)
                         }
                         
                         Text(error)
@@ -185,7 +185,7 @@ struct RecipeImportView: View {
                     Text("Try these examples:")
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                        .foregroundColor(.primary)
+                        .foregroundStyle(.primary)
                         .padding(.horizontal)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
@@ -215,7 +215,7 @@ struct RecipeImportView: View {
                 VStack(spacing: AppTheme.spacing8) {
                     HStack(spacing: AppTheme.spacing8) {
                         Image(systemName: "sparkles")
-                            .foregroundColor(.purple)
+                            .foregroundStyle(.purple)
                         Text("AI-powered recipe parsing")
                             .font(.caption)
                             .adaptiveForegroundColor()
@@ -223,7 +223,7 @@ struct RecipeImportView: View {
 
                     HStack(spacing: AppTheme.spacing8) {
                         Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(.green)
+                            .foregroundStyle(.green)
                         Text("Works with most recipe websites")
                             .font(.caption)
                             .adaptiveForegroundColor()
@@ -231,7 +231,7 @@ struct RecipeImportView: View {
 
                     HStack(spacing: AppTheme.spacing8) {
                         Image(systemName: "lock.fill")
-                            .foregroundColor(.blue)
+                            .foregroundStyle(.blue)
                         Text("Your data stays on your device")
                             .font(.caption)
                             .adaptiveForegroundColor()

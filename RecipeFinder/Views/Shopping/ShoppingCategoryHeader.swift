@@ -17,7 +17,7 @@ struct ShoppingCategoryHeader: View {
                 HStack(spacing: AppTheme.spacing12) {
                     Image(systemName: CategoryClassifier.categoryIcon(for: category))
                         .font(.body)
-                        .foregroundColor(CategoryClassifier.categoryColor(for: category))
+                        .foregroundStyle(CategoryClassifier.categoryColor(for: category))
                         .frame(width: AppTheme.iconSize28)
                     
                     Text(category)
@@ -27,13 +27,13 @@ struct ShoppingCategoryHeader: View {
                     
                     Text("(\(items.filter { !$0.isChecked }.count)/\(items.count))")
                         .font(.footnote)
-                        .foregroundColor(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
+                        .foregroundStyle(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
                     
                     Spacer()
                     
                     Image(systemName: isCollapsed ? "chevron.down" : "chevron.up")
                         .font(.caption)
-                        .foregroundColor(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
+                        .foregroundStyle(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
                         .rotationEffect(.degrees(isCollapsed ? 0 : 180))
                 }
                 .padding(.horizontal, AppTheme.spacing16)

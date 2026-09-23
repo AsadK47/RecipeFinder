@@ -39,7 +39,7 @@ struct BasicInfoStepView: View {
                     VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                         Text("Prep Time")
                             .font(.headline)
-                            .foregroundColor(.primary)
+                            .foregroundStyle(.primary)
 
                         HStack {
                             Stepper(timeLabel(prepTime), value: $prepTime, in: 0...300, step: 5)
@@ -52,7 +52,7 @@ struct BasicInfoStepView: View {
                     VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                         Text("Cook Time")
                             .font(.headline)
-                            .foregroundColor(.primary)
+                            .foregroundStyle(.primary)
 
                         HStack {
                             Stepper(timeLabel(cookTime), value: $cookTime, in: 0...480, step: 5)
@@ -65,7 +65,7 @@ struct BasicInfoStepView: View {
                     VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                         Text("Difficulty")
                             .font(.headline)
-                            .foregroundColor(.primary)
+                            .foregroundStyle(.primary)
 
                         Picker("Difficulty", selection: $difficulty) {
                             ForEach(difficulties, id: \.self) { diff in
@@ -80,7 +80,7 @@ struct BasicInfoStepView: View {
                     VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                         Text("Category")
                             .font(.headline)
-                            .foregroundColor(.primary)
+                            .foregroundStyle(.primary)
 
                         Picker("Category", selection: $category) {
                             ForEach(categories, id: \.self) { cat in
@@ -95,7 +95,7 @@ struct BasicInfoStepView: View {
                     VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                         Text("Servings")
                             .font(.headline)
-                            .foregroundColor(.primary)
+                            .foregroundStyle(.primary)
 
                         HStack {
                             Stepper(
@@ -105,7 +105,7 @@ struct BasicInfoStepView: View {
                                         Text("\(servings)")
                                             .font(.title2)
                                             .fontWeight(.bold)
-                                            .foregroundColor(AppTheme.accentColor(for: appTheme))
+                                            .foregroundStyle(AppTheme.accentColor(for: appTheme))
                                             .frame(minWidth: AppTheme.iconSize32)
                                         Text(servings == 1 ? "serving" : "servings")
                                             .font(.body)

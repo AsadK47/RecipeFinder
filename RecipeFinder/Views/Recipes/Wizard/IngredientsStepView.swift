@@ -41,7 +41,7 @@ struct IngredientsStepView: View {
                                         ingredientItems.removeAll { $0.id == item.id }
                                     }) {
                                         Image(systemName: "minus.circle.fill")
-                                            .foregroundColor(AppTheme.error)
+                                            .foregroundStyle(AppTheme.error)
                                             .font(.system(size: AppTheme.fontSize22))
                                     }
                                     .padding(.top, AppTheme.spacing14)
@@ -67,7 +67,7 @@ struct IngredientsStepView: View {
                                                         VStack(alignment: .leading, spacing: AppTheme.spacing2) {
                                                             Text(suggestion.name)
                                                                 .font(.subheadline)
-                                                                .foregroundColor(.primary)
+                                                                .foregroundStyle(.primary)
                                                                 .lineLimit(1)
 
                                                             Text("\(suggestion.category) · \(suggestion.source)")
@@ -79,14 +79,14 @@ struct IngredientsStepView: View {
                                                         Spacer(minLength: 0)
 
                                                         Image(systemName: "arrow.up.left.circle.fill")
-                                                            .foregroundColor(AppTheme.accentColor(for: appTheme))
+                                                            .foregroundStyle(AppTheme.accentColor(for: appTheme))
                                                     }
                                                     .padding(.vertical, AppTheme.spacing10)
                                                     .padding(.horizontal, AppTheme.spacing12)
                                                     .frame(maxWidth: .infinity, alignment: .leading)
                                                     .background(
                                                         RoundedRectangle(cornerRadius: AppTheme.cornerRadius10)
-                                                            .fill(Color(.systemGray6))
+                                                            .fill(AppTheme.secondaryBackground(for: colorScheme))
                                                     )
                                                 }
                                                 .buttonStyle(.plain)
@@ -128,11 +128,11 @@ struct IngredientsStepView: View {
                                     .padding(.horizontal, AppTheme.spacing6)
                                     .background(
                                         RoundedRectangle(cornerRadius: AppTheme.cornerRadius6)
-                                            .fill(Color(.systemGray6))
+                                            .fill(AppTheme.secondaryBackground(for: colorScheme))
                                     )
                                     .overlay(
                                         RoundedRectangle(cornerRadius: AppTheme.cornerRadius6)
-                                            .stroke(Color(.systemGray4), lineWidth: 0.5)
+                                            .stroke(AppTheme.dividerColor, lineWidth: 0.5)
                                     )
                                 }
                             }
@@ -151,7 +151,7 @@ struct IngredientsStepView: View {
                         focusedIngredientID = newItem.id
                     }) {
                         Label("Add Ingredient", systemImage: "plus.circle.fill")
-                            .foregroundColor(AppTheme.accentColor(for: appTheme))
+                            .foregroundStyle(AppTheme.accentColor(for: appTheme))
                             .frame(maxWidth: .infinity)
                             .padding()
                     }

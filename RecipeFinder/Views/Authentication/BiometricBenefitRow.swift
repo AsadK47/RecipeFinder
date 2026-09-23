@@ -25,17 +25,17 @@ struct BiometricBenefitRow: View {
 
                 Image(systemName: icon)
                     .font(.system(size: AppTheme.fontSize18, weight: .semibold))
-                    .foregroundColor(AppTheme.textColor(for: colorScheme))
+                    .foregroundStyle(AppTheme.textColor(for: colorScheme))
             }
 
             VStack(alignment: .leading, spacing: spacing.xxs) {
                 Text(title)
                     .font(.system(size: AppTheme.fontSize16, weight: .semibold))
-                    .foregroundColor(AppTheme.textColor(for: colorScheme))
+                    .foregroundStyle(AppTheme.textColor(for: colorScheme))
 
                 Text(description)
                     .font(.system(size: AppTheme.fontSize14, weight: .medium))
-                    .foregroundColor(AppTheme.textColor(for: colorScheme, opacity: 0.85))
+                    .foregroundStyle(AppTheme.textColor(for: colorScheme, opacity: 0.85))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }

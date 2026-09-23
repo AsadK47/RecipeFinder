@@ -84,7 +84,7 @@ struct AppearanceAndThemeSettingsView: View {
                 if selectedTheme == theme {
                     Image(systemName: "checkmark")
                         .font(.caption.weight(.semibold))
-                        .foregroundColor(AppTheme.accentColor(for: theme))
+                        .foregroundStyle(AppTheme.accentColor(for: theme))
                 }
             }
             .padding(AppTheme.spacing12)

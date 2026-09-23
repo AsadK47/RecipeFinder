@@ -92,7 +92,7 @@ struct PrivacyInfoRow: View {
 
                 Image(systemName: icon)
                     .font(.system(size: AppTheme.fontSize18, weight: .semibold))
-                    .foregroundColor(iconColor)
+                    .foregroundStyle(iconColor)
             }
 
             VStack(alignment: .leading, spacing: AppTheme.spacing4) {

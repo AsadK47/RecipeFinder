@@ -98,11 +98,14 @@ extension RecipeDetailView {
                     }
                     .pickerStyle(.segmented)
 
-                    if isWhole {
-                        Text("Total for \(recipe.currentServings) serving\(recipe.currentServings == 1 ? "" : "s")")
-                            .font(.caption2)
-                            .adaptiveSecondaryForeground()
-                    }
+                    // Always present in both modes so the macro bar below keeps a
+                    // fixed vertical position — otherwise the bar jumps when this
+                    // caption appears only for "Whole recipe".
+                    Text(isWhole
+                         ? "Total for \(recipe.currentServings) serving\(recipe.currentServings == 1 ? "" : "s")"
+                         : "Amount per serving")
+                        .font(.caption2)
+                        .adaptiveSecondaryForeground()
 
                     NutritionMacroBar(nutrition: n)
 
@@ -431,7 +434,7 @@ extension RecipeDetailView {
                 if !recipe.notesForDisplay.isEmpty {
                     Text(RecipeNotesFormatter.attributedString(from: recipe.notesForDisplay))
                         .font(.subheadline)
-                        .foregroundColor(.primary)
+                        .foregroundStyle(.primary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -440,7 +443,7 @@ extension RecipeDetailView {
                         Link(destination: url) {
                             Label("View Original", systemImage: "link")
                                 .font(.subheadline)
-                                .foregroundColor(AppTheme.accentColor)
+                                .foregroundStyle(AppTheme.accentColor)
                         }
                         .buttonStyle(.plain)
 
@@ -581,10 +584,6 @@ private struct NutritionMacroBar: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing8) {
-            Text("Per serving")
-                .font(.caption)
-                .adaptiveSecondaryForeground()
-
             GeometryReader { geo in
                 HStack(spacing: 2) {
                     RoundedRectangle(cornerRadius: 4)

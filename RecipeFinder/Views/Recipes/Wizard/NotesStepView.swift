@@ -61,7 +61,7 @@ struct NotesStepView: View {
                     if hasPrefilledNotes && !notes.isEmpty {
                         HStack {
                             Image(systemName: "info.circle.fill")
-                                .foregroundColor(.blue)
+                                .foregroundStyle(.blue)
                             Text("Pre-filled notes from recipe")
                                 .font(.caption)
                                 .adaptiveSecondaryForeground()
@@ -74,26 +74,26 @@ struct NotesStepView: View {
                         if notes.isEmpty {
                             VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                                 Text("Add your notes here...")
-                                    .foregroundColor(.secondary.opacity(AppTheme.glassLightOpacity))
+                                    .foregroundStyle(.secondary.opacity(AppTheme.glassLightOpacity))
                                     .padding(.horizontal, AppTheme.spacing4)
                                     .padding(.vertical, AppTheme.spacing8)
 
                                 Text("Try adding:")
                                     .font(.caption)
-                                    .foregroundColor(.secondary.opacity(AppTheme.lowEmphasisOpacity))
+                                    .foregroundStyle(.secondary.opacity(AppTheme.lowEmphasisOpacity))
                                     .padding(.horizontal, AppTheme.spacing4)
 
                                 Text("• Substitution ideas")
                                     .font(.caption)
-                                    .foregroundColor(.secondary.opacity(AppTheme.lowEmphasisOpacity))
+                                    .foregroundStyle(.secondary.opacity(AppTheme.lowEmphasisOpacity))
                                     .padding(.horizontal, AppTheme.spacing4)
                                 Text("• Storage tips")
                                     .font(.caption)
-                                    .foregroundColor(.secondary.opacity(AppTheme.lowEmphasisOpacity))
+                                    .foregroundStyle(.secondary.opacity(AppTheme.lowEmphasisOpacity))
                                     .padding(.horizontal, AppTheme.spacing4)
                                 Text("• Serving suggestions")
                                     .font(.caption)
-                                    .foregroundColor(.secondary.opacity(AppTheme.lowEmphasisOpacity))
+                                    .foregroundStyle(.secondary.opacity(AppTheme.lowEmphasisOpacity))
                                     .padding(.horizontal, AppTheme.spacing4)
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -106,7 +106,7 @@ struct NotesStepView: View {
                             .padding(AppTheme.spacing4)
                     }
                     .padding(AppTheme.spacing8)
-                    .background(Color(.systemGray6))
+                    .background(AppTheme.secondaryBackground(for: colorScheme))
                     .cornerRadius(AppTheme.cornerRadius8)
 
                     VStack(alignment: .leading, spacing: AppTheme.spacing8) {
@@ -164,7 +164,7 @@ struct NotesStepView: View {
             }
             .padding(.horizontal, AppTheme.spacing12)
             .padding(.vertical, AppTheme.spacing6)
-            .background(Color(.systemGray5))
+            .background(AppTheme.secondaryBackground(for: colorScheme))
             .cornerRadius(AppTheme.cornerRadius16)
         }
         .buttonStyle(PlainButtonStyle())
@@ -184,7 +184,7 @@ struct NotesStepView: View {
                 .textFieldStyle(.plain)
                 .padding(.horizontal, AppTheme.spacing12)
                 .padding(.vertical, AppTheme.spacing8)
-                .background(Color(.systemGray6))
+                .background(AppTheme.secondaryBackground(for: colorScheme))
                 .cornerRadius(AppTheme.cornerRadius8)
 
             ScrollView(.horizontal, showsIndicators: false) {
@@ -198,7 +198,7 @@ struct NotesStepView: View {
                                 .font(.caption)
                                 .padding(.horizontal, AppTheme.spacing12)
                                 .padding(.vertical, AppTheme.spacing6)
-                                .background(Color(.systemGray5))
+                                .background(AppTheme.secondaryBackground(for: colorScheme))
                                 .cornerRadius(AppTheme.cornerRadius16)
                         }
                         .buttonStyle(PlainButtonStyle())
@@ -249,7 +249,7 @@ struct NotesStepView: View {
                     .textFieldStyle(.plain)
                     .padding(.horizontal, AppTheme.spacing12)
                     .padding(.vertical, AppTheme.spacing8)
-                    .background(Color(.systemGray6))
+                    .background(AppTheme.secondaryBackground(for: colorScheme))
                     .cornerRadius(AppTheme.cornerRadius8)
                     .onSubmit { addTag() }
 
@@ -273,7 +273,7 @@ struct NotesStepView: View {
                                     .font(.caption)
                                     .padding(.horizontal, AppTheme.spacing12)
                                     .padding(.vertical, AppTheme.spacing6)
-                                    .background(Color(.systemGray5))
+                                    .background(AppTheme.secondaryBackground(for: colorScheme))
                                     .cornerRadius(AppTheme.cornerRadius16)
                             }
                             .buttonStyle(PlainButtonStyle())

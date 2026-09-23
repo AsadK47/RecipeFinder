@@ -15,22 +15,22 @@ struct SearchBar: View {
         HStack(spacing: AppTheme.spacing12) {
             HStack(spacing: AppTheme.spacing12) {
                 Image(systemName: "magnifyingglass")
-                    .foregroundColor(AppTheme.adaptiveHighEmphasis(for: colorScheme))
+                    .foregroundStyle(AppTheme.adaptiveHighEmphasis(for: colorScheme))
                     .font(.body)
 
                 TextField(placeholder, text: $text)
                     .focused($isFocused)
                     .autocorrectionDisabled()
-                    .foregroundColor(AppTheme.adaptiveEmphasis(for: colorScheme))
+                    .foregroundStyle(AppTheme.adaptiveEmphasis(for: colorScheme))
                     .placeholder(when: text.isEmpty) {
                         Text(placeholder)
-                            .foregroundColor(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
+                            .foregroundStyle(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
                     }
 
                 if !text.isEmpty {
                     Button(action: { text = "" }, label: {
                         Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(AppTheme.adaptiveSubtitle(for: colorScheme))
+                            .foregroundStyle(AppTheme.adaptiveSubtitle(for: colorScheme))
                     })
                 }
             }
@@ -50,7 +50,7 @@ struct SearchBar: View {
                     text = ""
                     isFocused = false
                 }
-                .foregroundColor(AppTheme.adaptiveEmphasis(for: colorScheme))
+                .foregroundStyle(AppTheme.adaptiveEmphasis(for: colorScheme))
                 .fontWeight(.semibold)
                 .transition(.move(edge: .trailing).combined(with: .opacity))
             }

@@ -18,7 +18,7 @@ struct AboutView: View {
             VStack(spacing: AppTheme.spacing16) {
                 Image(systemName: "book.circle.fill")
                     .font(.system(size: AppTheme.fontSize80))
-                    .foregroundColor(AppTheme.accentColor(for: appTheme))
+                    .foregroundStyle(AppTheme.accentColor(for: appTheme))
 
                 Text("RecipeFinder")
                     .font(.system(size: AppTheme.fontSize32, weight: .bold))
@@ -111,12 +111,12 @@ struct AboutFeatureRow: View {
     var body: some View {
         HStack(spacing: AppTheme.spacing12) {
             Image(systemName: icon)
-                .foregroundColor(color)
+                .foregroundStyle(color)
                 .frame(width: AppTheme.iconSize20)
 
             Text(text)
                 .font(.subheadline)
-                .foregroundColor(AppTheme.adaptiveEmphasis(for: colorScheme, level: AppTheme.cardLightOpacity))
+                .foregroundStyle(AppTheme.adaptiveEmphasis(for: colorScheme, level: AppTheme.cardLightOpacity))
         }
     }
 }

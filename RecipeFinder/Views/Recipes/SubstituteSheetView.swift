@@ -19,7 +19,7 @@ struct SubstituteSheetView: View {
                         if substitutes.isEmpty {
                             Text("No known substitutes for \(ingredientName).")
                                 .font(.subheadline)
-                                .foregroundColor(.secondary)
+                                .foregroundStyle(.secondary)
                                 .padding(.top, AppTheme.spacing24)
                                 .frame(maxWidth: .infinity, alignment: .center)
                         } else {
@@ -51,13 +51,13 @@ struct SubstituteSheetView: View {
                 Text("\(number)")
                     .font(.subheadline)
                     .fontWeight(.bold)
-                    .foregroundColor(AppTheme.accentColor)
+                    .foregroundStyle(AppTheme.accentColor)
                     .frame(width: 20, alignment: .center)
                     .padding(.top, AppTheme.spacing2)
 
                 Text(text)
                     .font(.subheadline)
-                    .foregroundColor(.primary)
+                    .foregroundStyle(.primary)
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }

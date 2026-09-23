@@ -30,19 +30,19 @@ struct InfoItem: View {
                 } else {
                     Image(systemName: icon)
                         .font(.title2)
-                        .foregroundColor(iconColor)
+                        .foregroundStyle(iconColor)
                         .frame(height: Layout.iconFrameHeight)
                 }
             }
 
             Text(label)
                 .font(.caption)
-                .foregroundColor(.primary)
+                .foregroundStyle(.primary)
 
             Text(value)
                 .font(.subheadline)
                 .fontWeight(.semibold)
-                .foregroundColor(.primary)
+                .foregroundStyle(.primary)
         }
         .frame(maxWidth: .infinity)
     }

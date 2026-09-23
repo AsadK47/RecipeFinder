@@ -28,7 +28,7 @@ struct RecipeDetailToolbar: View {
             Button(action: onToggleFavorite) {
                 Image(systemName: recipe.isFavorite ? "heart.fill" : "heart")
                     .font(.title3)
-                    .foregroundColor(recipe.isFavorite ? .red : .primary)
+                    .foregroundStyle(recipe.isFavorite ? .red : .primary)
             }
             .accessibilityLabel(recipe.isFavorite ? "Remove from favourites" : "Add to favourites")
 

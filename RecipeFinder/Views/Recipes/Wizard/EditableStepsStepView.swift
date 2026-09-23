@@ -43,7 +43,7 @@ struct EditableStepsStepView: View {
                                         steps.removeAll { $0.id == step.id }
                                     }) {
                                         Image(systemName: "minus.circle.fill")
-                                            .foregroundColor(AppTheme.error)
+                                            .foregroundStyle(AppTheme.error)
                                     }
                                 }
                             }
@@ -63,7 +63,7 @@ struct EditableStepsStepView: View {
                         steps.append(EditableStep())
                     }) {
                         Label(addButtonTitle, systemImage: "plus.circle.fill")
-                            .foregroundColor(AppTheme.accentColor(for: appTheme))
+                            .foregroundStyle(AppTheme.accentColor(for: appTheme))
                             .frame(maxWidth: .infinity)
                             .padding()
                     }

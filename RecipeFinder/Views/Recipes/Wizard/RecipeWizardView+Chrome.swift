@@ -33,7 +33,7 @@ extension RecipeWizardView {
                 Button(action: {}) {
                     Text("Cancel")
                         .font(.body)
-                        .foregroundColor(.clear)
+                        .foregroundStyle(.clear)
                         .padding(.horizontal, AppTheme.spacing16)
                         .padding(.vertical, AppTheme.spacing8)
                 }
@@ -103,7 +103,7 @@ extension RecipeWizardView {
                 .frame(maxWidth: .infinity)
                 .padding()
                 .background(canProceed ? Color.white : Color.white.opacity(AppTheme.glassLightOpacity))
-                .foregroundColor(canProceed ? AppTheme.accentColor(for: appTheme) : .white)
+                .foregroundStyle(canProceed ? AppTheme.accentColor(for: appTheme) : .white)
                 .cornerRadius(AppTheme.cornerRadius12)
             }
             .disabled(!canProceed)

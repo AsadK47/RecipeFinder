@@ -67,7 +67,7 @@ struct PantryAlertsSectionContent: View {
         HStack(spacing: AppTheme.spacing8) {
             Image(systemName: "exclamationmark.triangle.fill")
                 .font(.caption)
-                .foregroundColor(.orange)
+                .foregroundStyle(.orange)
             Text("Pantry Alerts")
                 .font(.subheadline)
                 .fontWeight(.semibold)
@@ -75,7 +75,7 @@ struct PantryAlertsSectionContent: View {
             Spacer()
             Text("\(expired.count + expiringSoon.count + lowStockOnly.count)")
                 .font(.caption.monospacedDigit())
-                .foregroundColor(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
+                .foregroundStyle(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
         }
         .padding(.horizontal, AppTheme.spacing16)
         .padding(.vertical, AppTheme.spacing8)
@@ -101,7 +101,7 @@ struct PantryAlertsSectionContent: View {
             HStack(spacing: AppTheme.spacing12) {
                 Image(systemName: type.icon)
                     .font(.body)
-                    .foregroundColor(type.color)
+                    .foregroundStyle(type.color)
                     .frame(width: AppTheme.iconSize24)
 
                 VStack(alignment: .leading, spacing: AppTheme.spacing2) {
@@ -112,7 +112,7 @@ struct PantryAlertsSectionContent: View {
                         .lineLimit(1)
                     Text(item.expiryStatusText)
                         .font(.caption)
-                        .foregroundColor(type.color)
+                        .foregroundStyle(type.color)
                 }
 
                 Spacer(minLength: 0)
@@ -120,7 +120,7 @@ struct PantryAlertsSectionContent: View {
                 if type == .lowStock {
                     Text("Low stock")
                         .font(.caption)
-                        .foregroundColor(type.color)
+                        .foregroundStyle(type.color)
                 }
             }
             .padding(.horizontal, AppTheme.spacing12)

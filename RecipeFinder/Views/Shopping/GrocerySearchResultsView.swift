@@ -87,7 +87,7 @@ struct GrocerySearchResultsView: View {
         .padding(.vertical, AppTheme.spacing10)
         .background {
             RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                .fill(Color(UIColor.secondarySystemGroupedBackground))
+                .fill(AppTheme.elevatedCard(for: colorScheme))
         }
     }
 }

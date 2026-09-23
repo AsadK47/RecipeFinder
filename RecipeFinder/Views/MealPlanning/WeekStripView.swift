@@ -120,7 +120,7 @@ private struct WeekDayCell: View {
             VStack(spacing: AppTheme.spacing4) {
                 Text(dayLetter)
                     .font(.system(size: AppTheme.fontSize11, weight: .medium))
-                    .foregroundColor(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
+                    .foregroundStyle(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
 
                 ZStack {
                     if isSelected {
@@ -132,7 +132,7 @@ private struct WeekDayCell: View {
                     }
                     Text(dayNumber)
                         .font(.system(size: AppTheme.fontSize14, weight: isSelected || isToday ? .bold : .regular))
-                        .foregroundColor(
+                        .foregroundStyle(
                             isSelected ? .white
                             : isToday ? AppTheme.accentColor(for: selectedTheme)
                             : AppTheme.adaptiveEmphasis(for: colorScheme)

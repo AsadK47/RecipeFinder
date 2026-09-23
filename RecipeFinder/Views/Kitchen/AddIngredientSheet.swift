@@ -59,7 +59,7 @@ struct AddIngredientSheet: View {
                                         Image(systemName: "chevron.left")
                                         Text("Back to Categories")
                                     }
-                                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                                    .foregroundStyle(AppTheme.accentColor(for: selectedTheme))
                                     .padding(.horizontal, AppTheme.spacing20)
                                     .padding(.vertical, AppTheme.spacing8)
                                 }
@@ -100,7 +100,7 @@ struct AddIngredientSheet: View {
                     Button("Done") {
                         dismiss()
                     }
-                    .foregroundColor(AppTheme.accentColor(for: selectedTheme))
+                    .foregroundStyle(AppTheme.accentColor(for: selectedTheme))
                     .accessibilityHint("Closes add ingredients screen")
                 }
             }
@@ -117,7 +117,7 @@ struct AddIngredientSheet: View {
             HStack(spacing: AppTheme.spacing12) {
                 Image(systemName: CategoryClassifier.categoryIcon(for: category))
                     .font(.title3)
-                    .foregroundColor(CategoryClassifier.categoryColor(for: category))
+                    .foregroundStyle(CategoryClassifier.categoryColor(for: category))
                     .frame(width: AppTheme.iconSize40)
                 
                 VStack(alignment: .leading, spacing: AppTheme.spacing4) {
@@ -166,7 +166,7 @@ struct AddIngredientSheet: View {
         }) {
             HStack(spacing: AppTheme.spacing12) {
                 Image(systemName: CategoryClassifier.categoryIcon(for: category))
-                    .foregroundColor(CategoryClassifier.categoryColor(for: category))
+                    .foregroundStyle(CategoryClassifier.categoryColor(for: category))
                     .font(.body)
                 
                 Text(food)
@@ -176,7 +176,7 @@ struct AddIngredientSheet: View {
                 Spacer()
                 
                 Image(systemName: isInKitchen ? "checkmark.circle.fill" : "plus.circle")
-                    .foregroundColor(isInKitchen ? .green : AppTheme.accentColor(for: selectedTheme))
+                    .foregroundStyle(isInKitchen ? .green : AppTheme.accentColor(for: selectedTheme))
                     .font(.title3)
             }
             .padding(.horizontal, AppTheme.spacing16)

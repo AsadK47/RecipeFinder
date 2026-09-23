@@ -114,7 +114,7 @@ struct AccountView: View {
                         if showSuccessFeedback {
                             HStack(spacing: AppTheme.spacing8) {
                                 Image(systemName: "checkmark.circle.fill")
-                                    .foregroundColor(.green)
+                                    .foregroundStyle(.green)
                                 Text("Profile saved successfully!")
                                     .fontWeight(.medium)
                             }
