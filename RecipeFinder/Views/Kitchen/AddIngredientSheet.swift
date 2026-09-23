@@ -6,7 +6,6 @@ struct AddIngredientSheet: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @State private var searchText = ""
     @State private var selectedCategory: String? = nil
     
@@ -137,15 +136,7 @@ struct AddIngredientSheet: View {
                     .font(.caption)
             }
             .padding(AppTheme.spacing16)
-            .background {
-                if cardStyle == .solid {
-                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                        .fill(AppTheme.adaptiveCard(for: colorScheme))
-                } else {
-                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                        .fill(.ultraThinMaterial)
-                }
-            }
+            .appCard(cornerRadius: AppTheme.cornerRadius12)
         }
         .buttonStyle(PlainButtonStyle())
     }
@@ -181,15 +172,7 @@ struct AddIngredientSheet: View {
             }
             .padding(.horizontal, AppTheme.spacing16)
             .padding(.vertical, AppTheme.spacing14)
-            .background {
-                if cardStyle == .solid {
-                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                        .fill(AppTheme.adaptiveCard(for: colorScheme))
-                } else {
-                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                        .fill(.ultraThinMaterial)
-                }
-            }
+            .appCard(cornerRadius: AppTheme.cornerRadius12)
         }
         .buttonStyle(PlainButtonStyle())
     }

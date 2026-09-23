@@ -39,15 +39,7 @@ struct ShoppingCategoryHeader: View {
                 .padding(.horizontal, AppTheme.spacing16)
                 .padding(.vertical, AppTheme.spacing8)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background {
-                    if cardStyle == .solid {
-                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                            .fill(AppTheme.adaptiveCard(for: colorScheme))
-                    } else {
-                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                            .fill(.ultraThinMaterial)
-                    }
-                }
+                .appCard(cornerRadius: AppTheme.cornerRadius12)
                 .padding(.horizontal, AppTheme.spacing16)
                 .padding(.top, AppTheme.spacing2)
             }

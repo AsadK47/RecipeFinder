@@ -11,7 +11,6 @@ struct QuickSnackSheet: View {
     @State private var selectedEmoji = "🍿"
     @State private var servings = 1
 
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @Environment(\.colorScheme) var colorScheme
 
@@ -80,15 +79,7 @@ struct QuickSnackSheet: View {
                     }
                 }
                 .padding(AppTheme.spacing14)
-                .background {
-                    if cardStyle == .solid {
-                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                            .fill(AppTheme.adaptiveCard(for: colorScheme))
-                    } else {
-                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                            .fill(.ultraThinMaterial)
-                    }
-                }
+                .appCard(cornerRadius: AppTheme.cornerRadius12)
                 .padding(.horizontal, AppTheme.spacing20)
                 .padding(.bottom, AppTheme.spacing16)
 

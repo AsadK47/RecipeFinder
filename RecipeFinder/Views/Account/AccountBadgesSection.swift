@@ -58,14 +58,6 @@ struct AccountBadgesSection: View {
                 .padding(AppTheme.spacing24)
             }
         }
-        .background {
-            if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
-                    .fill(AppTheme.adaptiveCard(for: colorScheme))
-            } else {
-                RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
-                    .fill(.ultraThinMaterial)
-            }
-        }
+        .appCard(cornerRadius: AppTheme.cornerRadius16)
     }
 }

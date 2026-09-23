@@ -5,7 +5,6 @@ struct BadgeDetailView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
 
     var badgeColor: Color { Badge.color(for: badge.color) }
 
@@ -62,13 +61,7 @@ struct BadgeDetailView: View {
                             .adaptiveForegroundColor(opacity: AppTheme.mediumEmphasisOpacity)
                     }
                     .padding()
-                    .background {
-                        if cardStyle == .solid {
-                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius12).fill(AppTheme.adaptiveCard(for: colorScheme))
-                        } else {
-                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius12).fill(.ultraThinMaterial)
-                        }
-                    }
+                    .appCard(cornerRadius: AppTheme.cornerRadius12)
                 } else {
                     VStack(spacing: AppTheme.spacing8) {
                         HStack(spacing: AppTheme.spacing8) {
@@ -96,13 +89,7 @@ struct BadgeDetailView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
-                    .background {
-                        if cardStyle == .solid {
-                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius12).fill(AppTheme.adaptiveCard(for: colorScheme))
-                        } else {
-                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius12).fill(.ultraThinMaterial)
-                        }
-                    }
+                    .appCard(cornerRadius: AppTheme.cornerRadius12)
                 }
 
                 Spacer()

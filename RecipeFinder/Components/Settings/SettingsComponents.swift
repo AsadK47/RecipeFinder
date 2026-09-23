@@ -241,7 +241,6 @@ struct SettingsSectionHeader: View {
 /// Card container matching the app-wide frosted/solid card styles.
 struct SettingsCard<Content: View>: View {
     @Environment(\.colorScheme) var colorScheme
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     let content: Content
     
     init(@ViewBuilder content: () -> Content) {
@@ -251,15 +250,7 @@ struct SettingsCard<Content: View>: View {
     var body: some View {
         content
             .frame(maxWidth: .infinity)
-            .background {
-                if cardStyle == .solid {
-                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
-                        .fill(AppTheme.adaptiveCard(for: colorScheme))
-                } else {
-                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
-                        .fill(.ultraThinMaterial)
-                }
-            }
+            .appCard(cornerRadius: AppTheme.cornerRadius16)
     }
 }
 
