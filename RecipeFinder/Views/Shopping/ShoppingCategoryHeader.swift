@@ -6,7 +6,6 @@ struct ShoppingCategoryHeader: View {
     let category: String
     let items: [ShoppingListModel]
     let isCollapsed: Bool
-    let cardStyle: CardStyle
     let colorScheme: ColorScheme
     let onToggle: () -> Void
 

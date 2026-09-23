@@ -43,7 +43,6 @@ struct ShoppingSectionsView: View {
                 category: category,
                 items: items,
                 isCollapsed: collapsedCategories.contains(category),
-                cardStyle: cardStyle,
                 colorScheme: colorScheme,
                 onToggle: {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.85)) {

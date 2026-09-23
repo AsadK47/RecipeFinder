@@ -5,8 +5,6 @@ import SwiftUI
 struct AccountChefTypeSection: View {
     @Binding var selectedChefType: ChefType
     let selectedTheme: AppTheme.ThemeType
-    let cardStyle: CardStyle
-    let colorScheme: ColorScheme
 
     var body: some View {
         VStack(spacing: AppTheme.spacing12) {

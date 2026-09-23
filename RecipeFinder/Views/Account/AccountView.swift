@@ -72,7 +72,6 @@ struct AccountView: View {
                             firstName: $firstName,
                             lastName: $lastName,
                             email: displayEmail,
-                            cardStyle: cardStyle,
                             colorScheme: colorScheme
                         )
 
@@ -88,9 +87,7 @@ struct AccountView: View {
 
                         AccountChefTypeSection(
                             selectedChefType: $selectedChefType,
-                            selectedTheme: selectedTheme,
-                            cardStyle: cardStyle,
-                            colorScheme: colorScheme
+                            selectedTheme: selectedTheme
                         )
 
                         Button(action: {

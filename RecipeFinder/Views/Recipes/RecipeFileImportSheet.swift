@@ -165,18 +165,9 @@ struct RecipeFileImportSheet: View {
     }
 
     private var saveButton: some View {
-        Button {
+        PrimaryButton("Save to My Recipes", systemImage: "plus.circle.fill", fillWidth: true) {
             onSave(recipe)
             dismiss()
-        } label: {
-            Label("Save to My Recipes", systemImage: "plus.circle.fill")
-                .font(.headline)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, AppTheme.spacing16)
-                .background(AppTheme.accentColor(for: selectedTheme))
-                .foregroundStyle(.white)
-                .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius16))
         }
-        .buttonStyle(.plain)
     }
 }

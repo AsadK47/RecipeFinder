@@ -6,7 +6,6 @@ struct AccountPersonalInfoSection: View {
     @Binding var firstName: String
     @Binding var lastName: String
     let email: String
-    let cardStyle: CardStyle
     let colorScheme: ColorScheme
 
     var body: some View {
