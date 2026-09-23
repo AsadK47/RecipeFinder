@@ -8,9 +8,6 @@ struct RecipeSearchHeader: View {
     let onToggleFilters: () -> Void
     let onShowCollections: () -> Void
 
-    @Environment(\.colorScheme) private var colorScheme
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
-
     var body: some View {
         VStack(spacing: AppTheme.spacing12) {
             headerSection
@@ -51,66 +48,12 @@ struct RecipeSearchHeader: View {
     }
 
     private var searchBarSection: some View {
-        HStack(spacing: AppTheme.spacing12) {
-            HStack(spacing: AppTheme.spacing12) {
-                Image(systemName: "magnifyingglass")
-                    .foregroundStyle(AppTheme.adaptiveHighEmphasis(for: colorScheme))
-                    .font(.system(size: AppTheme.fontSize18, weight: .medium))
-
-                ZStack(alignment: .leading) {
-                    if searchText.isEmpty {
-                        Text("What would you like to eat...?")
-                            .font(.system(size: AppTheme.fontSize16))
-                            .foregroundStyle(colorScheme == .dark ? .white.opacity(AppTheme.disabledEmphasisOpacity) : .black.opacity(AppTheme.disabledEmphasisOpacity))
-                    }
-                    TextField("", text: $searchText)
-                        .focused(isSearchFocused)
-                        .autocorrectionDisabled()
-                        .font(.system(size: AppTheme.fontSize16))
-                        .adaptiveForegroundColor()
-                        .tint(AppTheme.textColor(for: colorScheme))
-                }
-
-                if !searchText.isEmpty {
-                    Button(
-                        action: { searchText = "" },
-                        label: {
-                            Image(systemName: "xmark.circle.fill")
-                                .font(.system(size: AppTheme.fontSize18))
-                                .foregroundStyle(AppTheme.adaptiveSubtitle(for: colorScheme))
-                        }
-                    )
-                }
-            }
-            .padding(.horizontal, AppTheme.spacing16)
-            .padding(.vertical, AppTheme.spacing14)
-            .background {
-                if cardStyle == .solid {
-                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                        .fill(AppTheme.adaptiveCard(for: colorScheme))
-                } else {
-                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                        .fill(.ultraThinMaterial)
-                }
-            }
-
-            if isSearchFocused.wrappedValue {
-                Button(
-                    action: {
-                        searchText = ""
-                        isSearchFocused.wrappedValue = false
-                    },
-                    label: {
-                        Text("Cancel")
-                            .font(.system(size: AppTheme.fontSize16, weight: .semibold))
-                            .adaptiveForegroundColor()
-                    }
-                )
-                .transition(.move(edge: .trailing).combined(with: .opacity))
-            }
-        }
+        AppSearchField(
+            text: $searchText,
+            placeholder: "What would you like to eat...?",
+            isFocused: isSearchFocused
+        )
         .padding(.horizontal, AppTheme.spacing20)
         .padding(.bottom, AppTheme.spacing12)
-        .animation(.spring(response: 0.3), value: isSearchFocused.wrappedValue)
     }
 }

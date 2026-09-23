@@ -542,28 +542,6 @@ extension RecipeDetailView {
         }
     }
 
-    @ViewBuilder
-    var feedbackOverlay: some View {
-        if let feedback = showAddedFeedback {
-            HStack(spacing: AppTheme.spacing12) {
-                Image(systemName: "basket.fill")
-                    .adaptiveForegroundColor()
-                Text("\(feedback) added to shopping list")
-                    .font(.subheadline)
-                    .adaptiveForegroundColor()
-            }
-            .padding(.horizontal, AppTheme.spacing20)
-            .padding(.vertical, AppTheme.spacing12)
-            .background(
-                Capsule()
-                    .fill(AppTheme.accentColor)
-                    .shadow(color: .black.opacity(AppTheme.overlayLightOpacity), radius: 8, y: 4)
-            )
-            .padding(.bottom, AppTheme.spacing20)
-            .transition(.move(edge: .bottom).combined(with: .opacity))
-            .opacity(showAddedFeedback != nil ? 1 : 0)
-        }
-    }
 }
 
 // MARK: - Nutrition macro bar

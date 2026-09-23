@@ -20,15 +20,9 @@ struct RecipeResultsList: View {
     }
 
     private func navigationLink(for recipe: RecipeModel) -> some View {
-        NavigationLink(
-            destination: RecipeDetailView(
-                recipe: recipe,
-                onRecipeChange: onRecipeChange
-            )
-        ) {
+        RecipeLink(recipe: recipe, onRecipeChange: onRecipeChange) {
             RecipeCard(recipe: recipe, viewMode: .list)
         }
-        .buttonStyle(PlainButtonStyle())
         .contextMenu {
             Button(role: .destructive) {
                 onRequestDelete(recipe)

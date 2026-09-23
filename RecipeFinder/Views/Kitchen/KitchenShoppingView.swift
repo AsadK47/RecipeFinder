@@ -118,21 +118,11 @@ struct KitchenShoppingView: View {
 
     private var emptyState: some View {
         ScrollView {
-            VStack(spacing: AppTheme.spacing16) {
-                Image(systemName: "cart.circle.fill")
-                    .font(.system(size: AppTheme.fontSize60))
-                    .adaptiveForegroundColor(opacity: AppTheme.lowEmphasisOpacity)
-                Text("Your groceries list is empty")
-                    .font(.title2).fontWeight(.bold)
-                    .adaptiveForegroundColor()
-                Text("Search above to add items to your list.")
-                    .font(.subheadline)
-                    .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, AppTheme.spacing32)
-            }
-            .padding(.top, AppTheme.spacing40)
-            .frame(maxWidth: .infinity)
+            EmptyStateView(
+                icon: "cart.circle.fill",
+                title: "Your groceries list is empty",
+                message: "Search above to add items to your list."
+            )
         }
     }
 
@@ -265,30 +255,13 @@ private struct KitchenInventorySheet: View {
 
     private var emptyState: some View {
         ScrollView {
-            VStack(spacing: AppTheme.spacing16) {
-                Image(systemName: "refrigerator")
-                    .font(.system(size: AppTheme.fontSize60))
-                    .adaptiveForegroundColor(opacity: AppTheme.lowEmphasisOpacity)
-                Text("Your kitchen is empty")
-                    .font(.title2).fontWeight(.bold)
-                    .adaptiveForegroundColor()
-                Text("Add ingredients you have at home.")
-                    .font(.subheadline)
-                    .adaptiveForegroundColor(opacity: AppTheme.subduedEmphasisOpacity)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, AppTheme.spacing32)
-                Button { showAddIngredient = true } label: {
-                    Label("Add Ingredient", systemImage: "plus.circle.fill")
-                        .font(.subheadline.weight(.semibold))
-                        .adaptiveForegroundColor()
-                        .padding(.horizontal, AppTheme.spacing20)
-                        .padding(.vertical, AppTheme.spacing10)
-                        .background(Capsule().fill(AppTheme.accentColor(for: selectedTheme)))
-                }
-                .buttonStyle(.plain)
-            }
-            .padding(.top, AppTheme.spacing40)
-            .frame(maxWidth: .infinity)
+            EmptyStateView(
+                icon: "refrigerator",
+                title: "Your kitchen is empty",
+                message: "Add ingredients you have at home.",
+                actionTitle: "Add Ingredient",
+                onAction: { showAddIngredient = true }
+            )
         }
     }
 }

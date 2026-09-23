@@ -88,24 +88,14 @@ struct AddToCollectionSheet: View {
     }
 
     private var emptyState: some View {
-        VStack(spacing: AppTheme.spacing16) {
-            Image(systemName: "rectangle.stack")
-                .font(.system(size: AppTheme.fontSize50))
-                .foregroundStyle(.secondary.opacity(0.5))
-
-            Text("No Collections Yet")
-                .font(.title3.weight(.semibold))
-
-            Button {
-                showNewCollection = true
-            } label: {
-                Label("Create your first collection", systemImage: "plus")
-                    .font(.subheadline)
-                    .padding(.horizontal, AppTheme.spacing20)
-                    .padding(.vertical, AppTheme.spacing12)
-                    .background(.ultraThinMaterial, in: Capsule())
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        EmptyStateView(
+            icon: "rectangle.stack",
+            title: "No Collections Yet",
+            message: "Create a collection to group your recipes.",
+            actionTitle: "Create Collection",
+            actionIcon: "plus",
+            onAction: { showNewCollection = true }
+        )
+        .frame(maxHeight: .infinity)
     }
 }

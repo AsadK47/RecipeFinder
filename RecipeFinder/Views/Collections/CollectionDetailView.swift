@@ -60,35 +60,16 @@ struct CollectionDetailView: View {
         .sheet(isPresented: $showAddRecipes) {
             RecipePickerForCollectionSheet(collection: currentCollection, recipes: recipes)
         }
-        .overlay(alignment: .bottom) {
-            if let feedback = shoppingListFeedback {
-                HStack(spacing: AppTheme.spacing12) {
-                    Image(systemName: "basket.fill")
-                        .adaptiveForegroundColor()
-                    Text(feedback)
-                        .font(.subheadline)
-                        .adaptiveForegroundColor()
-                }
-                .padding(.horizontal, AppTheme.spacing20)
-                .padding(.vertical, AppTheme.spacing12)
-                .background(Capsule().fill(AppTheme.accentColor).shadow(color: .black.opacity(0.15), radius: 8, y: 4))
-                .padding(.bottom, AppTheme.spacing20)
-                .transition(.move(edge: .bottom).combined(with: .opacity))
-            }
-        }
-        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: shoppingListFeedback)
+        .toast($shoppingListFeedback)
     }
 
     private var recipeList: some View {
         ScrollView {
             LazyVStack(spacing: AppTheme.cardVerticalSpacing) {
                 ForEach(collectionRecipes) { recipe in
-                    NavigationLink {
-                        RecipeDetailView(recipe: recipe)
-                    } label: {
-                        recipeRow(recipe)
+                    RecipeLink(recipe: recipe, onRecipeChange: refreshRecipes) {
+                        RecipeRow(recipe: recipe)
                     }
-                    .buttonStyle(.plain)
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                         Button(role: .destructive) {
                             manager.remove(recipeID: recipe.id, from: currentCollection)
@@ -105,42 +86,11 @@ struct CollectionDetailView: View {
         }
     }
 
-    private func recipeRow(_ recipe: RecipeModel) -> some View {
-        HStack(spacing: AppTheme.spacing12) {
-            RecipeImageView(imageName: recipe.imageName, height: Constants.Sizes.recipeImageSize, recipeName: recipe.name)
-                .frame(width: Constants.Sizes.recipeImageSize, height: Constants.Sizes.recipeImageSize)
-                .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius8))
-
-            VStack(alignment: .leading, spacing: AppTheme.spacing4) {
-                Text(recipe.name)
-                    .font(.subheadline.weight(.semibold))
-                    .adaptiveForegroundColor()
-                    .lineLimit(2)
-                    .multilineTextAlignment(.leading)
-
-                HStack(spacing: AppTheme.spacing6) {
-                    Text(recipe.category)
-                    Text("\u{2022}")
-                    Text(recipe.difficulty)
-                }
-                .font(.caption)
-                .adaptiveSecondaryForeground()
-
-                if !recipe.tags.isEmpty {
-                    TagRowView(tags: recipe.tags)
-                }
-            }
-
-            Spacer(minLength: 0)
-
-            if recipe.isFavorite {
-                Image(systemName: "heart.fill")
-                    .font(.caption)
-                    .foregroundStyle(.red)
-            }
-        }
-        .padding(AppTheme.spacing12)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
+    /// Re-syncs the bound recipe array from Core Data after a change made on the
+    /// detail screen (post-cook photo, rating, cook count…) so returning to this
+    /// collection shows fresh data rather than a stale copy.
+    private func refreshRecipes() {
+        Task { recipes = await PersistenceController.shared.fetchRecipesAsync() }
     }
 
     private func addAllToShoppingList() {
@@ -150,39 +100,17 @@ struct CollectionDetailView: View {
         HapticManager.shared.success()
         let recipeCount = collectionRecipes.count
         shoppingListFeedback = "\(ingredientCount) ingredient\(ingredientCount == 1 ? "" : "s") from \(recipeCount) recipe\(recipeCount == 1 ? "" : "s") added"
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
-            withAnimation { shoppingListFeedback = nil }
-        }
     }
 
     private var emptyState: some View {
-        VStack(spacing: AppTheme.spacing16) {
-            Image(systemName: "tray")
-                .font(.system(size: AppTheme.fontSize50))
-                .foregroundStyle(.secondary.opacity(0.5))
-
-            Text("No Recipes Yet")
-                .font(.title3.weight(.semibold))
-                .adaptiveForegroundColor()
-
-            Text("Add your recipes to \u{201c}\(currentCollection.name)\u{201d} to keep them together.")
-                .font(.subheadline)
-                .adaptiveSecondaryForeground()
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, AppTheme.spacing32)
-
-            Button {
-                HapticManager.shared.light()
-                showAddRecipes = true
-            } label: {
-                Label("Add Recipes", systemImage: "plus")
-                    .font(.headline)
-                    .padding(.horizontal, AppTheme.spacing24)
-                    .padding(.vertical, AppTheme.spacing12)
-                    .background(.ultraThinMaterial, in: Capsule())
-            }
-            .adaptiveForegroundColor()
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        EmptyStateView(
+            icon: "tray",
+            title: "No Recipes Yet",
+            message: "Add your recipes to \u{201c}\(currentCollection.name)\u{201d} to keep them together.",
+            actionTitle: "Add Recipes",
+            actionIcon: "plus",
+            onAction: { showAddRecipes = true }
+        )
+        .frame(maxHeight: .infinity)
     }
 }

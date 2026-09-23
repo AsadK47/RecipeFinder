@@ -54,7 +54,7 @@ struct CollectionsInlineView: View {
                 // Smart collections first — auto-populated, read-only
                 ForEach(visibleSmartCollections, id: \.0.id) { (sc, count) in
                     NavigationLink {
-                        SmartCollectionDetailView(smartCollection: sc, recipes: recipes)
+                        SmartCollectionDetailView(smartCollection: sc, recipes: $recipes)
                     } label: {
                         SmartCollectionCard(collection: sc, recipeCount: count)
                     }
@@ -110,38 +110,15 @@ struct CollectionsInlineView: View {
     }
 
     private var emptyState: some View {
-        VStack(spacing: AppTheme.spacing16) {
-            Spacer()
-
-            Image(systemName: "rectangle.stack")
-                .font(.system(size: AppTheme.fontSize50))
-                .foregroundStyle(.secondary.opacity(0.5))
-
-            Text("No Collections Yet")
-                .font(.title3.weight(.semibold))
-                .adaptiveForegroundColor()
-
-            Text("Create collections to organise your recipes \u{2014} \u{201c}Weeknight Dinners\u{201d}, \u{201c}Party Food\u{201d}, whatever works for you.")
-                .font(.subheadline)
-                .adaptiveSecondaryForeground()
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, AppTheme.spacing32)
-
-            Button {
-                HapticManager.shared.light()
-                showNewCollection = true
-            } label: {
-                Label("Create Collection", systemImage: "plus")
-                    .font(.headline)
-                    .padding(.horizontal, AppTheme.spacing24)
-                    .padding(.vertical, AppTheme.spacing12)
-                    .background(.ultraThinMaterial, in: Capsule())
-            }
-            .adaptiveForegroundColor()
-
-            Spacer()
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        EmptyStateView(
+            icon: "rectangle.stack",
+            title: "No Collections Yet",
+            message: "Create collections to organise your recipes \u{2014} \u{201c}Weeknight Dinners\u{201d}, \u{201c}Party Food\u{201d}, whatever works for you.",
+            actionTitle: "Create Collection",
+            actionIcon: "plus",
+            onAction: { showNewCollection = true }
+        )
+        .frame(maxHeight: .infinity)
     }
 
     private func updateSmartCollections() {

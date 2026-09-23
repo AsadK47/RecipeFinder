@@ -144,10 +144,7 @@ struct RecipeDetailView: View {
         .fullScreenCover(isPresented: $showCookingMode) {
             CookingModeView(recipe: recipe, onFinish: recordCook)
         }
-        .overlay(alignment: .bottom) {
-            feedbackOverlay
-        }
-        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: showAddedFeedback)
+        .toast($showAddedFeedback)
         .confettiCannon(trigger: $confettiCounter, num: AppTheme.confettiCount, radius: AppTheme.confettiRadius)
         .onChange(of: instructionsState) { _, newValue in
             checkForCompletion(newValue)
@@ -216,13 +213,7 @@ struct RecipeDetailView: View {
 
         addedIngredients.insert(ingredient.name)
 
-        showAddedFeedback = normalizedName
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayXLong) {
-            withAnimation(.easeOut(duration: AppTheme.animationDuration08)) {
-                showAddedFeedback = nil
-            }
-        }
+        showAddedFeedback = "\(normalizedName) added to Groceries"
 
         DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayFeedback) {
             withAnimation {
@@ -248,13 +239,7 @@ struct RecipeDetailView: View {
 
         guard addedCount > 0 else { return }
 
-        showAddedFeedback = addedCount == 1 ? "1 ingredient" : "\(addedCount) ingredients"
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayXLong) {
-            withAnimation(.easeOut(duration: AppTheme.animationDuration08)) {
-                showAddedFeedback = nil
-            }
-        }
+        showAddedFeedback = "\(addedCount == 1 ? "1 ingredient" : "\(addedCount) ingredients") added to Groceries"
 
         DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayFeedback) {
             withAnimation {

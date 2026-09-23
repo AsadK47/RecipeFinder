@@ -75,9 +75,7 @@ struct RecipeInstructionRow: View {
 
                 Spacer()
 
-                Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: AppTheme.fontSize22))
-                    .foregroundStyle(isChecked ? .green : .gray.opacity(AppTheme.lowEmphasisOpacity))
+                CheckmarkIcon(isChecked: isChecked)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .contentShape(Rectangle())

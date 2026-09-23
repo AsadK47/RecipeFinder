@@ -109,9 +109,7 @@ struct IngredientRowView: View {
                     toggle()
                 }
             }) {
-                Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: AppTheme.fontSize22))
-                    .foregroundStyle(isChecked ? .green : .gray.opacity(AppTheme.lowEmphasisOpacity))
+                CheckmarkIcon(isChecked: isChecked)
             }
             .buttonStyle(.plain)
             .accessibilityLabel(isChecked ? "Uncheck \(ingredient.mainIngredientName)" : "Check \(ingredient.mainIngredientName)")

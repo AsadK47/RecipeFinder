@@ -16,6 +16,11 @@ struct MealPlanningView: View {
     @State private var pantryExpirySuggestions: [PantryExpirySuggestions.Match] = []
     /// Non-nil while the user is picking a time slot for a pantry-suggested recipe.
     @State private var pendingSuggestedRecipe: RecipeModel?
+    /// Deduped items awaiting confirmation before being added to Groceries.
+    @State private var weekAddCandidates: [WeekShoppingSummary.Item] = []
+    @State private var weekMealsCovered = 0
+    @State private var weekSkippedInKitchen = 0
+    @State private var showAddWeekConfirm = false
 
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
@@ -87,6 +92,15 @@ struct MealPlanningView: View {
         .toolbarColorScheme(.dark, for: .navigationBar)
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: selectedMealTimes)
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: pantryExpirySuggestions.count)
+        .confirmationDialog("Add to Groceries", isPresented: $showAddWeekConfirm, titleVisibility: .visible) {
+            Button("Add \(weekAddCandidates.count) item\(weekAddCandidates.count == 1 ? "" : "s")") {
+                confirmAddWeek()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(weekAddConfirmMessage)
+        }
+        .toast($weekShoppingFeedback)
         .onAppear {
             if let start = currentWeekStart {
                 mealPlanningManager.propagateRecurring(toWeekStarting: start)
@@ -229,10 +243,10 @@ struct MealPlanningView: View {
 
     private var weekShoppingSection: some View {
         VStack(spacing: AppTheme.spacing8) {
-            Button(action: addWeekToShoppingList) {
+            Button(action: prepareAddWeek) {
                 HStack(spacing: AppTheme.spacing8) {
                     Image(systemName: "cart.badge.plus")
-                    Text("Add Week to Shopping List")
+                    Text("Add Week to Groceries")
                         .fontWeight(.semibold)
                 }
                 .font(.subheadline)
@@ -243,17 +257,6 @@ struct MealPlanningView: View {
                 .cornerRadius(AppTheme.cornerRadius12)
             }
             .buttonStyle(PlainButtonStyle())
-
-            if let feedback = weekShoppingFeedback {
-                HStack(spacing: AppTheme.spacing8) {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundStyle(.green)
-                    Text(feedback)
-                        .font(.caption)
-                        .adaptiveForegroundColor(opacity: AppTheme.highEmphasisOpacity)
-                }
-                .transition(.opacity.combined(with: .move(edge: .top)))
-            }
         }
     }
 
@@ -308,41 +311,63 @@ struct MealPlanningView: View {
         selectedMealTimes = Set(mealsForDate.map { $0.mealTime })
     }
 
-    private func addWeekToShoppingList() {
+    /// Computes what the week would add, skipping anything already in the
+    /// Kitchen, then asks for confirmation rather than silently bulk-dumping.
+    private func prepareAddWeek() {
         guard let start = currentWeekStart else { return }
-
         let summary = mealPlanningManager.weekShoppingSummary(forWeekStarting: start, recipes: recipes)
 
-        for item in summary.items {
-            ShoppingListManager.shared.addItem(name: item.name, quantity: item.quantity, category: nil)
-        }
+        let inKitchen = Set(
+            (kitchenManager.items.map(\.name) + kitchenManager.inventoryItems.map(\.name))
+                .map { IngredientNormalizer.normalize($0) }
+        )
+        let candidates = summary.items.filter { !inKitchen.contains(IngredientNormalizer.normalize($0.name)) }
 
-        guard !summary.isEmpty else { return }
+        weekAddCandidates = candidates
+        weekMealsCovered = summary.mealsCovered
+        weekSkippedInKitchen = summary.items.count - candidates.count
 
-        if summary.items.isEmpty {
-            HapticManager.shared.error()
-            showWeekShoppingFeedback("Couldn't find this week's recipes in your collection")
+        guard !candidates.isEmpty else {
+            HapticManager.shared.light()
+            let message: String
+            if summary.items.isEmpty {
+                message = summary.missingRecipeNames.isEmpty
+                    ? "No planned meals to shop for"
+                    : "Couldn't find this week's recipes"
+            } else {
+                message = "You already have everything in your kitchen"
+            }
+            showWeekShoppingFeedback(message)
             return
         }
 
+        HapticManager.shared.light()
+        showAddWeekConfirm = true
+    }
+
+    private func confirmAddWeek() {
+        for item in weekAddCandidates {
+            ShoppingListManager.shared.addItem(name: item.name, quantity: item.quantity, category: nil)
+        }
         HapticManager.shared.success()
 
-        var message = "Added \(summary.items.count) item\(summary.items.count == 1 ? "" : "s") from \(summary.mealsCovered) meal\(summary.mealsCovered == 1 ? "" : "s")"
-        if !summary.missingRecipeNames.isEmpty {
-            message += " · \(summary.missingRecipeNames.count) recipe\(summary.missingRecipeNames.count == 1 ? "" : "s") not found"
+        var message = "Added \(weekAddCandidates.count) item\(weekAddCandidates.count == 1 ? "" : "s") from \(weekMealsCovered) meal\(weekMealsCovered == 1 ? "" : "s")"
+        if weekSkippedInKitchen > 0 {
+            message += " · \(weekSkippedInKitchen) already in kitchen"
         }
         showWeekShoppingFeedback(message)
     }
 
+    private var weekAddConfirmMessage: String {
+        var parts = ["From \(weekMealsCovered) planned meal\(weekMealsCovered == 1 ? "" : "s")."]
+        if weekSkippedInKitchen > 0 {
+            parts.append("\(weekSkippedInKitchen) already in your kitchen will be skipped.")
+        }
+        return parts.joined(separator: " ")
+    }
+
     private func showWeekShoppingFeedback(_ message: String) {
-        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-            weekShoppingFeedback = message
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayFeedback) {
-            withAnimation(.easeOut(duration: AppTheme.animationDuration08)) {
-                weekShoppingFeedback = nil
-            }
-        }
+        weekShoppingFeedback = message
     }
 
     private func previousWeek() {
