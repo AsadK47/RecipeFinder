@@ -302,14 +302,18 @@ struct ContentView: View {
             return
         }
 
-        var fetched = PersistenceController.shared.fetchRecipes()
-        // Seed starter recipes for brand-new users — one-time per user account.
-        if fetched.isEmpty, !UserScopedStorage.shared.bool(forKey: "seedRecipesLoaded") {
-            SeedRecipeProvider.recipes.forEach { PersistenceController.shared.saveRecipeModel($0) }
-            UserScopedStorage.shared.set(true, forKey: "seedRecipesLoaded")
-            fetched = PersistenceController.shared.fetchRecipes()
+        // Fetch off the main thread so a large library (hundreds of recipes, each
+        // needing JSON decode) doesn't freeze the UI while loading.
+        Task {
+            var fetched = await PersistenceController.shared.fetchRecipesAsync()
+            // Seed starter recipes for brand-new users — one-time per user account.
+            if fetched.isEmpty, !UserScopedStorage.shared.bool(forKey: "seedRecipesLoaded") {
+                SeedRecipeProvider.recipes.forEach { PersistenceController.shared.saveRecipeModel($0) }
+                UserScopedStorage.shared.set(true, forKey: "seedRecipesLoaded")
+                fetched = await PersistenceController.shared.fetchRecipesAsync()
+            }
+            recipes = fetched
         }
-        recipes = fetched
     }
 }
 

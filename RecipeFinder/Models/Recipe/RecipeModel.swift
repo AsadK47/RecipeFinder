@@ -139,7 +139,12 @@ struct RecipeModel: Identifiable, Codable, Hashable {
     }
     
     var nutritionInfo: NutritionInfo? {
-        NutritionCalculator.calculate(ingredients: ingredients, servings: currentServings)
+        // Per-serving nutrition is invariant to the servings currently displayed:
+        // it's the base recipe's total divided by its base servings. Scaling the
+        // servings stepper changes the *total* you cook (see `NutritionInfo.scaled`),
+        // not the per-serving value — so this must divide by `baseServings`, never
+        // `currentServings`, or the figures drift as the user scales.
+        NutritionCalculator.calculate(ingredients: ingredients, servings: baseServings)
     }
 
     /// URL this recipe was imported from, derived from the last line of notes.

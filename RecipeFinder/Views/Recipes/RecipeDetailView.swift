@@ -32,6 +32,8 @@ struct RecipeDetailView: View {
     @State var showRefreshSheet = false
     @State var refreshErrorMessage: String?
     @State var showRefreshUpToDate = false
+    // Nutrition card: false = per-serving (invariant), true = whole-recipe totals.
+    @State var nutritionShowsWholeRecipe = false
     // Internal so the relocated timer control (RecipeDetailView+Content) can read it.
     @Environment(\.recipeTimer) var recipeTimer
     @AppStorage("measurementSystem") var measurementSystem: MeasurementSystem = .metric

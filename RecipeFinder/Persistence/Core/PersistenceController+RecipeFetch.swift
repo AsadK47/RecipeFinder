@@ -31,13 +31,43 @@ extension PersistenceController {
         do {
             let results = try context.fetch(fetchRequest)
             persistenceLogger.debug("✅ Fetched \(results.count) recipes from database for current user")
-            return results.compactMap(mapToRecipeModel)
+            return results.compactMap(Self.mapToRecipeModel)
         } catch {
             persistenceLogger.error("❌ Failed to fetch recipes: \(error.localizedDescription)")
             return []
         }
     }
-    
+
+    /// Off-main-thread recipe fetch. Runs the fetch **and** the per-recipe JSON
+    /// decoding (ingredients, dietary info) on a private background context, then
+    /// returns the value-type models to the caller's actor. Large libraries
+    /// (hundreds of recipes = hundreds of JSON decodes) would otherwise freeze the
+    /// UI on the main-actor `fetchRecipes()`. Prefer this for view loads.
+    func fetchRecipesAsync() async -> [RecipeModel] {
+        guard ensureStoreIsReady(), let userId = userID() else { return [] }
+        let container = self.container
+        return await withCheckedContinuation { continuation in
+            container.performBackgroundTask { context in
+                let request = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
+                request.sortDescriptors = [
+                    NSSortDescriptor(
+                        key: RecipeKey.name,
+                        ascending: true,
+                        selector: #selector(NSString.localizedCaseInsensitiveCompare(_:))
+                    )
+                ]
+                request.predicate = NSPredicate(format: "userId == %@", userId)
+                do {
+                    let results = try context.fetch(request)
+                    continuation.resume(returning: results.compactMap(Self.mapToRecipeModel))
+                } catch {
+                    persistenceLogger.error("❌ Async recipe fetch failed: \(error.localizedDescription)")
+                    continuation.resume(returning: [])
+                }
+            }
+        }
+    }
+
     func fetchRecipeCount() -> Int {
         guard ensureStoreIsReady() else { return 0 }
         
@@ -62,7 +92,7 @@ extension PersistenceController {
         return fetchRecipeCount()
     }
     
-    private func mapToRecipeModel(_ object: NSManagedObject) -> RecipeModel? {
+    nonisolated private static func mapToRecipeModel(_ object: NSManagedObject) -> RecipeModel? {
         guard 
             let id = object.value(forKey: RecipeKey.id) as? UUID,
             let name = object.value(forKey: RecipeKey.name) as? String,

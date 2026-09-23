@@ -460,6 +460,8 @@ struct RecipeSearchView: View {
             return
         }
 
-        recipes = PersistenceController.shared.fetchRecipes()
+        Task {
+            recipes = await PersistenceController.shared.fetchRecipesAsync()
+        }
     }
 }

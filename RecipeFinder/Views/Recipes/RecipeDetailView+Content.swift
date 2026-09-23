@@ -85,34 +85,53 @@ extension RecipeDetailView {
             colorScheme: colorScheme,
             onToggle: { toggleSection("Nutrition") }
         ) {
-            if let n = recipe.nutritionInfo {
+            if let perServing = recipe.nutritionInfo {
+                // Per-serving is invariant; "Whole recipe" multiplies by the servings
+                // currently selected on the servings card. % RI is a per-serving/
+                // per-person concept, so it's shown only in per-serving mode.
+                let isWhole = nutritionShowsWholeRecipe
+                let n = isWhole ? perServing.scaled(by: recipe.currentServings) : perServing
                 VStack(alignment: .leading, spacing: AppTheme.spacing12) {
-                    NutritionMacroBar(nutrition: n)
+                    Picker("Nutrition amount", selection: $nutritionShowsWholeRecipe) {
+                        Text("Per serving").tag(false)
+                        Text("Whole recipe").tag(true)
+                    }
+                    .pickerStyle(.segmented)
 
-                    HStack {
-                        Spacer()
-                        Text("% RI*")
+                    if isWhole {
+                        Text("Total for \(recipe.currentServings) serving\(recipe.currentServings == 1 ? "" : "s")")
                             .font(.caption2)
                             .adaptiveSecondaryForeground()
                     }
-                    .padding(.bottom, -AppTheme.spacing4)
+
+                    NutritionMacroBar(nutrition: n)
+
+                    if !isWhole {
+                        HStack {
+                            Spacer()
+                            Text("% RI*")
+                                .font(.caption2)
+                                .adaptiveSecondaryForeground()
+                        }
+                        .padding(.bottom, -AppTheme.spacing4)
+                    }
 
                     nutritionLabelRow(label: "Calories", value: "\(n.calories)", unit: "kcal", hero: true,
-                                      percent: drvPercent(Double(n.calories), of: 2000))
+                                      percent: isWhole ? nil : drvPercent(Double(n.calories), of: 2000))
 
                     Divider()
 
                     nutritionLabelRow(label: "Fat", value: formatMacro(n.fat), unit: "g",
-                                      percent: drvPercent(n.fat, of: 70))
+                                      percent: isWhole ? nil : drvPercent(n.fat, of: 70))
                     nutritionLabelSubrow(label: "of which saturates", value: formatMacro(n.saturates), unit: "g",
-                                         percent: drvPercent(n.saturates, of: 20))
+                                         percent: isWhole ? nil : drvPercent(n.saturates, of: 20))
 
                     Divider()
 
                     nutritionLabelRow(label: "Carbohydrate", value: formatMacro(n.carbs), unit: "g",
-                                      percent: drvPercent(n.carbs, of: 260))
+                                      percent: isWhole ? nil : drvPercent(n.carbs, of: 260))
                     nutritionLabelSubrow(label: "of which sugars", value: formatMacro(n.sugars), unit: "g",
-                                         percent: drvPercent(n.sugars, of: 90))
+                                         percent: isWhole ? nil : drvPercent(n.sugars, of: 90))
 
                     Divider()
 
@@ -121,12 +140,12 @@ extension RecipeDetailView {
                     Divider()
 
                     nutritionLabelRow(label: "Protein", value: formatMacro(n.protein), unit: "g",
-                                      percent: drvPercent(n.protein, of: 50))
+                                      percent: isWhole ? nil : drvPercent(n.protein, of: 50))
 
                     Divider()
 
                     nutritionLabelRow(label: "Salt", value: formatSalt(n.salt), unit: "g",
-                                      percent: drvPercent(n.salt, of: 6))
+                                      percent: isWhole ? nil : drvPercent(n.salt, of: 6))
 
                     if n.coverage < 0.8 {
                         Text("Estimated — \(Int(n.coverage * 100))% of ingredients matched")
@@ -135,10 +154,12 @@ extension RecipeDetailView {
                             .padding(.top, AppTheme.spacing4)
                     }
 
-                    Text("* Reference intakes for an average adult (8400 kJ / 2000 kcal)")
-                        .font(.caption2)
-                        .adaptiveSecondaryForeground()
-                        .padding(.top, AppTheme.spacing4)
+                    if !isWhole {
+                        Text("* Reference intakes for an average adult (8400 kJ / 2000 kcal)")
+                            .font(.caption2)
+                            .adaptiveSecondaryForeground()
+                            .padding(.top, AppTheme.spacing4)
+                    }
                 }
             }
         }

@@ -175,7 +175,14 @@ struct ImportView: View {
                     .accessibilityHidden(true)
             }
             .padding(AppTheme.spacing20)
-            .appCard()
+            // Opaque card fill (not `.appCard()`'s translucent material): the
+            // frosted material drops the `.primary` label below the a11y contrast
+            // threshold and fails `testImportTabPassesAudit`. Dark-mode "black tile"
+            // polish needs a contrast-safe treatment — tracked separately.
+            .background {
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
+                    .fill(Color(UIColor.secondarySystemGroupedBackground))
+            }
         }
         .buttonStyle(.plain)
     }

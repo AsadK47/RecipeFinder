@@ -23,6 +23,47 @@ import Foundation
         #expect(NutritionCalculator.calculate(ingredients: i, servings: 1) == nil)
     }
 
+    // MARK: - Per-serving invariance & whole-recipe scaling
+
+    /// Per-serving nutrition must not change when the user scales the servings
+    /// stepper — scaling changes the *total* cooked, not the per-serving value.
+    /// Regression guard: `RecipeModel.nutritionInfo` must divide by `baseServings`,
+    /// never `currentServings`.
+    @Test func nutritionInfoIsInvariantToCurrentServings() {
+        var recipe = RecipeModel(
+            name: "Chicken",
+            category: "Main",
+            difficulty: "Easy",
+            prepTime: "5 min",
+            cookingTime: "10 min",
+            baseServings: 2,
+            ingredients: [Ingredient(baseQuantity: 200, unit: "g", name: "chicken breast")],
+            prePrepInstructions: [],
+            instructions: [],
+            notes: ""
+        )
+        let atBase = recipe.nutritionInfo
+        recipe.updateServings(to: 8) // scale up 4×
+        let atScaled = recipe.nutritionInfo
+
+        #expect(atBase != nil)
+        #expect(atBase == atScaled)
+    }
+
+    @Test func scaledByServingsMultipliesEveryMacro() {
+        let perServing = NutritionInfo(
+            calories: 100, fat: 2, saturates: 1, carbs: 10,
+            sugars: 3, fibre: 1, protein: 8, salt: 0.5, coverage: 1.0
+        )
+        let whole = perServing.scaled(by: 4)
+
+        #expect(whole.calories == 400)
+        #expect(whole.fat == 8)
+        #expect(whole.protein == 32)
+        #expect(whole.salt == 2.0)
+        #expect(whole.coverage == 1.0) // a proportion — unchanged by scaling
+    }
+
     // MARK: - Weight unit conversions
 
     @Test(
