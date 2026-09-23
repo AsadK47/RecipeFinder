@@ -81,7 +81,7 @@ struct GrocerySearchResultsView: View {
             }
             .buttonStyle(.plain)
             .disabled(inList)
-            .accessibilityLabel(inList ? "Already in shopping list" : "Add to shopping list")
+            .accessibilityLabel(inList ? "Already in groceries" : "Add to groceries")
         }
         .padding(.horizontal, AppTheme.spacing16)
         .padding(.vertical, AppTheme.spacing10)

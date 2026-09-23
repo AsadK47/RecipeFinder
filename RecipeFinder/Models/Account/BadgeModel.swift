@@ -129,10 +129,10 @@ enum BadgeType: String, CaseIterable {
             return Badge(
                 id: rawValue,
                 title: "Grocery Ninja",
-                description: "Used the shopping list feature",
+                description: "Used the groceries feature",
                 icon: "cart.circle.fill",
                 color: "indigo",
-                howToEarn: "Add items to your shopping list and check them off as you shop."
+                howToEarn: "Add items to your groceries and check them off as you shop."
             )
         case .firstImport:
             return Badge(

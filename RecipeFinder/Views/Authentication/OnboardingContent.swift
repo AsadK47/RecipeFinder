@@ -13,7 +13,7 @@ enum OnboardingContent {
         ),
         OnboardingSlide(
             icon: "cart.badge.plus",
-            title: "Your shopping list writes itself",
+            title: "Your grocery list writes itself",
             description: "Open any recipe and tap the cart icon beside an ingredient to add it to Groceries — already sorted by category.",
             accentColor: .green
         ),

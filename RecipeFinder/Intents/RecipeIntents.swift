@@ -4,10 +4,10 @@ import Foundation
 // MARK: - Add to Shopping List
 
 struct AddToShoppingListIntent: AppIntent {
-    static let title: LocalizedStringResource = "Add Item to Shopping List"
+    static let title: LocalizedStringResource = "Add Item to Groceries"
     static let description = IntentDescription(
-        "Adds an ingredient or item to your RecipeFinder shopping list.",
-        categoryName: "Shopping"
+        "Adds an ingredient or item to your RecipeFinder groceries.",
+        categoryName: "Groceries"
     )
 
     @Parameter(title: "Item", description: "The ingredient or item to add.")
@@ -23,7 +23,7 @@ struct AddToShoppingListIntent: AppIntent {
         }
         return .result(
             value: name,
-            dialog: IntentDialog(stringLiteral: "\(name) added to your shopping list.")
+            dialog: IntentDialog(stringLiteral: "\(name) added to your groceries.")
         )
     }
 }
@@ -179,9 +179,9 @@ struct RecipeShortcutsProvider: AppShortcutsProvider {
             intent: AddToShoppingListIntent(),
             phrases: [
                 "Add item to my \(.applicationName) list",
-                "Add something to my \(.applicationName) shopping list"
+                "Add something to my \(.applicationName) groceries"
             ],
-            shortTitle: "Add to Shopping List",
+            shortTitle: "Add to Groceries",
             systemImageName: "cart.badge.plus"
         )
         AppShortcut(

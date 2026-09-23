@@ -250,7 +250,7 @@ struct WelcomeSplashView: View {
         VStack(spacing: spacing.lg) {
             FeatureRow(icon: "fork.knife.circle.fill", text: "Explore thousands of recipes", spacing: spacing)
             FeatureRow(icon: "calendar.badge.plus", text: "Plan meals for the week", spacing: spacing)
-            FeatureRow(icon: "cart.fill", text: "Create smart shopping lists", spacing: spacing)
+            FeatureRow(icon: "cart.fill", text: "Create smart grocery lists", spacing: spacing)
         }
         .opacity(contentOpacity)
         .padding(.horizontal, spacing.xxl + spacing.lg)

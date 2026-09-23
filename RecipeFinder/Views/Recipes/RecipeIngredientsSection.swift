@@ -66,7 +66,7 @@ struct RecipeIngredientsSection: View {
         }
         .buttonStyle(PlainButtonStyle())
         .disabled(recipe.ingredients.isEmpty)
-        .accessibilityLabel("Add all ingredients to shopping list")
+        .accessibilityLabel("Add all ingredients to groceries")
         .accessibilityHint("Adds every ingredient from this recipe in one tap")
     }
 

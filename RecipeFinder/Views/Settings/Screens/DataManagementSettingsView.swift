@@ -277,7 +277,7 @@ struct DataManagementSettingsView: View {
                         }
                     }
 
-                    Text("Exports your recipes, notes, shopping list, kitchen, meal plans, badges and tips to a single file. Importing merges a backup into your current library without overwriting anything.")
+                    Text("Exports your recipes, notes, groceries, kitchen, meal plans, badges and tips to a single file. Importing merges a backup into your current library without overwriting anything.")
                         .font(.subheadline)
                         .adaptiveSecondaryForeground()
                         .fixedSize(horizontal: false, vertical: true)

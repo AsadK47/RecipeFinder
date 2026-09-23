@@ -187,8 +187,8 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
     
     func notifyShoppingListUpdate(itemsCount: Int) {
         let content = UNMutableNotificationContent()
-        content.title = "🛒 Shopping List Updated"
-        content.body = "You have \(itemsCount) items in your shopping list"
+        content.title = "🛒 Groceries Updated"
+        content.body = "You have \(itemsCount) items in your groceries"
         content.sound = .default
         
         let request = UNNotificationRequest(

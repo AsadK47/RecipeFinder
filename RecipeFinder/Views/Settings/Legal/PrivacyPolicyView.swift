@@ -47,7 +47,7 @@ struct PrivacyPolicyView: View {
                             
                             BodyText("2.3 Data stored locally on your Device includes, without limitation:")
                             LegalBulletPoint("Recipe data (including imported recipes)")
-                            LegalBulletPoint("Shopping list items")
+                            LegalBulletPoint("Grocery list items")
                             LegalBulletPoint("Kitchen inventory records")
                             LegalBulletPoint("Meal planning information")
                             LegalBulletPoint("User preferences and settings")

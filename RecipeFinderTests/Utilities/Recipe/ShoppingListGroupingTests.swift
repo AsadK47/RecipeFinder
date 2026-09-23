@@ -71,7 +71,7 @@ struct ShoppingListGroupingTests {
 
         let text = ShoppingListGrouping.shareText(for: groups)
 
-        #expect(text.hasPrefix("🛒 Shopping List\n\n"))
+        #expect(text.hasPrefix("🛒 Groceries\n\n"))
         #expect(text.contains("Dairy\n"))
         #expect(text.contains("○ (3) Apples\n"))
         #expect(text.contains("✓ Milk\n"))

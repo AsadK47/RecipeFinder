@@ -41,10 +41,10 @@ struct CollectionDetailView: View {
                         Button {
                             addAllToShoppingList()
                         } label: {
-                            Image(systemName: "basket.badge.plus")
+                            Image(systemName: "cart.badge.plus")
                                 .adaptiveForegroundColor()
                         }
-                        .accessibilityLabel("Add all ingredients to shopping list")
+                        .accessibilityLabel("Add all ingredients to groceries")
                     }
                     Button {
                         HapticManager.shared.light()

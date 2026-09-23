@@ -48,8 +48,8 @@ struct HelpView: View {
 
                         HelpItem(
                             icon: "cart",
-                            title: "Shopping Lists",
-                            description: "Create shopping lists from recipes or add items manually. Check them off as you shop!"
+                            title: "Groceries",
+                            description: "Build your groceries from recipes or add items manually. Check them off as you shop!"
                         )
 
                         HelpItem(

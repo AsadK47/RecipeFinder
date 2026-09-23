@@ -28,7 +28,7 @@ enum ShoppingListGrouping {
 
     /// A plain-text rendering of the grouped shopping list, suitable for sharing.
     static func shareText(for groups: [(key: String, value: [ShoppingListModel])]) -> String {
-        var text = "🛒 Shopping List\n\n"
+        var text = "🛒 Groceries\n\n"
 
         for group in groups {
             text += "\(group.key)\n"

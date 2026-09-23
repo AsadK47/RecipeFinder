@@ -8,7 +8,7 @@ import SwiftUI
 /// auto-clear (recipe detail, collections, meal planning), which drifted in
 /// look and timing. Route feedback through `.toast(_:)` so it stays consistent.
 extension View {
-    func toast(_ message: Binding<String?>, icon: String = "basket.fill") -> some View {
+    func toast(_ message: Binding<String?>, icon: String = "cart.fill") -> some View {
         modifier(ToastModifier(message: message, icon: icon))
     }
 }

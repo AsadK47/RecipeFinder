@@ -15,7 +15,7 @@ struct ShoppingProgressBar: View {
             ProgressView(value: Double(checkedCount), total: Double(max(totalCount, 1)))
                 .progressViewStyle(LinearProgressViewStyle(tint: AppTheme.accentColor(for: selectedTheme)))
                 .frame(height: AppTheme.height8)
-                .accessibilityLabel("Shopping progress")
+                .accessibilityLabel("Groceries progress")
                 .accessibilityValue("\(checkedCount) of \(totalCount) items checked")
 
             HStack {

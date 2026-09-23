@@ -48,8 +48,8 @@ struct NotificationSettingsView: View {
                         SettingsToggleRow(
                             icon: "cart.fill",
                             iconColor: .blue,
-                            title: "Shopping List Reminders",
-                            subtitle: "Remind me to pick up shopping list items",
+                            title: "Groceries Reminders",
+                            subtitle: "Remind me to pick up groceries",
                             isOn: $shoppingListReminders
                         )
                     }
@@ -89,7 +89,7 @@ struct NotificationSettingsView: View {
                         .fontWeight(.bold)
                         .adaptiveForegroundColor()
 
-                    Text("Enable notifications in Settings to receive reminders and alerts for timers, meal plans, and shopping lists.")
+                    Text("Enable notifications in Settings to receive reminders and alerts for timers, meal plans, and groceries.")
                         .font(.subheadline)
                         .adaptiveSecondaryForeground()
                         .multilineTextAlignment(.center)
