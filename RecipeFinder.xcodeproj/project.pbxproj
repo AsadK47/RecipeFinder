@@ -177,9 +177,9 @@
 		F3AD2ED73064063100274E33 /* RecipeLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AD2ED63064063100274E33 /* RecipeLink.swift */; };
 		F3AD2EDA306409A800274E33 /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AD2ED9306409A800274E33 /* Toast.swift */; };
 		F3AD2EDC30640A6300274E33 /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AD2EDB30640A6300274E33 /* EmptyStateView.swift */; };
-		F3AD2EDE30640B1500274E33 /* CheckmarkIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AD2EDD30640B1500274E33 /* CheckmarkIcon.swift */; };
 		F3AD2EE030640B7500274E33 /* AppSearchField.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AD2EDF30640B7500274E33 /* AppSearchField.swift */; };
 		F3AD2EE2306414B500274E33 /* PrimaryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AD2EE1306414B500274E33 /* PrimaryButton.swift */; };
+		F3AD2EE43064200E00274E33 /* EditableCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AD2EE33064200E00274E33 /* EditableCard.swift */; };
 		F3B837BF305554C80003AEF8 /* UserScopedStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837BE305554C80003AEF8 /* UserScopedStorageTests.swift */; };
 		F3B837C1305562790003AEF8 /* SessionExpiryPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837C0305562790003AEF8 /* SessionExpiryPolicy.swift */; };
 		F3B837C33055628E0003AEF8 /* SessionExpiryPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837C23055628E0003AEF8 /* SessionExpiryPolicyTests.swift */; };
@@ -621,9 +621,9 @@
 		F3AD2ED63064063100274E33 /* RecipeLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeLink.swift; sourceTree = "<group>"; };
 		F3AD2ED9306409A800274E33 /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
 		F3AD2EDB30640A6300274E33 /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
-		F3AD2EDD30640B1500274E33 /* CheckmarkIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckmarkIcon.swift; sourceTree = "<group>"; };
 		F3AD2EDF30640B7500274E33 /* AppSearchField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSearchField.swift; sourceTree = "<group>"; };
 		F3AD2EE1306414B500274E33 /* PrimaryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButton.swift; sourceTree = "<group>"; };
+		F3AD2EE33064200E00274E33 /* EditableCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableCard.swift; sourceTree = "<group>"; };
 		F3B837BE305554C80003AEF8 /* UserScopedStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserScopedStorageTests.swift; sourceTree = "<group>"; };
 		F3B837C0305562790003AEF8 /* SessionExpiryPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionExpiryPolicy.swift; sourceTree = "<group>"; };
 		F3B837C23055628E0003AEF8 /* SessionExpiryPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionExpiryPolicyTests.swift; sourceTree = "<group>"; };
@@ -1221,7 +1221,7 @@
 				F3B837D43055F1170003AEF8 /* TagRowView.swift */,
 				F3D40551305635240076834D /* RecipePlaceholderView.swift */,
 				F3AD2ED43064062D00274E33 /* RecipeRow.swift */,
-				F3AD2EDD30640B1500274E33 /* CheckmarkIcon.swift */,
+				F3AD2EE33064200E00274E33 /* EditableCard.swift */,
 			);
 			path = Recipe;
 			sourceTree = "<group>";
@@ -2141,7 +2141,6 @@
 				F3E9D16630444D9A008BF231 /* GrocerySearchResultsView.swift in Sources */,
 				F3FF62E6305C18800008B191 /* RecipeRefreshSheet.swift in Sources */,
 				F3FF62EC305C1F2A0008B191 /* PostCookPhotoSheet.swift in Sources */,
-				F3AD2EDE30640B1500274E33 /* CheckmarkIcon.swift in Sources */,
 				F3E9D1BC30457DE4008BF231 /* PersistenceController+Database.swift in Sources */,
 				F36AED533040A5D700935A3C /* HTMLFetcher.swift in Sources */,
 				F3D405663058609C0076834D /* CollectionFormSheets.swift in Sources */,
@@ -2271,6 +2270,7 @@
 				F3AD2ED73064063100274E33 /* RecipeLink.swift in Sources */,
 				F3E9D1B430457BC0008BF231 /* OnboardingSlide.swift in Sources */,
 				F36AED693043360700935A3C /* RecipeFilterCriteria.swift in Sources */,
+				F3AD2EE43064200E00274E33 /* EditableCard.swift in Sources */,
 				9E5B39802FABB7D300C96DB3 /* HeartPalette.swift in Sources */,
 				F3E9D1313043A5EF008BF231 /* RecipeParser+WPRM.swift in Sources */,
 				F3E9D262304972FF008BF231 /* ImportView.swift in Sources */,

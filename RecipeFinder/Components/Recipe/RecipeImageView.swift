@@ -18,7 +18,12 @@ struct RecipeImageView: View {
         self.recipeName = recipeName
     }
 
-    private var kfSource: Source? {
+    private var kfSource: Source? { Self.resolvedSource(for: imageName) }
+
+    /// Resolves an `imageName` to a Kingfisher source, or `nil` when it can't be
+    /// displayed (empty, or a local file that no longer exists). Shared so callers
+    /// can ask `hasDisplayableImage` before reserving space for an image.
+    static func resolvedSource(for imageName: String?) -> Source? {
         guard let imageName = imageName, !imageName.isEmpty else { return nil }
         if imageName.hasPrefix("http"), let url = URL(string: imageName) {
             return .network(url)
@@ -39,11 +44,24 @@ struct RecipeImageView: View {
             }
             return nil
         }
-        // Current format: path relative to the documents directory.
+        // Current format: path relative to the documents directory. Only usable
+        // if the file is actually there (stale references resolve to nil).
         if let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            return .provider(LocalFileImageDataProvider(fileURL: docs.appendingPathComponent(imageName)))
+            let resolved = docs.appendingPathComponent(imageName)
+            return FileManager.default.fileExists(atPath: resolved.path)
+                ? .provider(LocalFileImageDataProvider(fileURL: resolved))
+                : nil
         }
         return nil
+    }
+
+    /// Whether `imageName` will actually render an image — a network URL, an
+    /// existing local file, or a bundled asset. Lets screens show a title-only
+    /// layout instead of reserving space for a blank/placeholder box.
+    static func hasDisplayableImage(_ imageName: String?) -> Bool {
+        if resolvedSource(for: imageName) != nil { return true }
+        if let name = imageName, !name.isEmpty, UIImage(named: name) != nil { return true }
+        return false
     }
 
     /// Downsample to the display size in pixels so a full-resolution photo isn't

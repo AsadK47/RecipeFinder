@@ -204,51 +204,50 @@ private struct KitchenInventorySheet: View {
                 AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
 
-                if manager.items.isEmpty {
-                    emptyState
-                } else {
-                    List {
-                        KitchenSectionsView(
-                            collapsedCategories: $collapsed,
-                            onAddMore: { showAddIngredient = true }
-                        )
+                VStack(spacing: 0) {
+                    ScreenTitleHeader("Kitchen") {
+                        Menu {
+                            overflowMenu
+                        } label: {
+                            CircleButton(icon: "line.3.horizontal") {}
+                                .allowsHitTesting(false)
+                        }
+                        .accessibilityLabel("Kitchen options")
                     }
-                    .listStyle(.plain)
-                    .scrollContentBackground(.hidden)
-                    .environment(\.defaultMinListHeaderHeight, 0)
+
+                    if manager.items.isEmpty {
+                        emptyState
+                    } else {
+                        List {
+                            KitchenSectionsView(
+                                collapsedCategories: $collapsed,
+                                onAddMore: { showAddIngredient = true }
+                            )
+                        }
+                        .listStyle(.plain)
+                        .scrollContentBackground(.hidden)
+                        .environment(\.defaultMinListHeaderHeight, 0)
+                    }
                 }
             }
-            .navigationTitle("Kitchen")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Menu {
-                        Button { showAddIngredient = true } label: {
-                            Label("Add Ingredient", systemImage: "plus.circle")
-                        }
-                        Button { showQuickAdd = true } label: {
-                            Label("Quick Add", systemImage: "bolt")
-                        }
-                        if !manager.items.isEmpty {
-                            Divider()
-                            Button(role: .destructive) { showClear = true } label: {
-                                Label("Clear All", systemImage: "trash")
-                            }
-                        }
-                    } label: {
-                        Image(systemName: "plus")
-                            .font(.body.weight(.semibold))
-                    }
-                    .accessibilityLabel("Add to kitchen")
-                }
-            }
+            .toolbar(.hidden, for: .navigationBar)
         }
+        .presentationDragIndicator(.visible)
         .sheet(isPresented: $showAddIngredient) { AddIngredientSheet() }
         .sheet(isPresented: $showQuickAdd) { KitchenQuickAddSheet() }
         .confirmationDialog("Clear Kitchen", isPresented: $showClear, titleVisibility: .visible) {
             Button("Clear All Ingredients", role: .destructive) { manager.clearAll() }
             Button("Cancel", role: .cancel) {}
+        }
+    }
+
+    @ViewBuilder
+    private var overflowMenu: some View {
+        Button { showAddIngredient = true } label: { Label("Add Ingredient", systemImage: "plus.circle") }
+        Button { showQuickAdd = true } label: { Label("Quick Add", systemImage: "bolt") }
+        if !manager.items.isEmpty {
+            Divider()
+            Button(role: .destructive) { showClear = true } label: { Label("Clear Kitchen", systemImage: "trash") }
         }
     }
 

@@ -73,9 +73,7 @@ struct RecipeInstructionRow: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .multilineTextAlignment(.leading)
 
-                Spacer()
-
-                CheckmarkIcon(isChecked: isChecked)
+                Spacer(minLength: 0)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .contentShape(Rectangle())

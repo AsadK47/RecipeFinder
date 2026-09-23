@@ -36,21 +36,9 @@ extension RecipeDetailView {
 
     var recipeTitleView: some View {
         VStack(spacing: AppTheme.spacing12) {
-            if let imageName = recipe.imageName, !imageName.isEmpty {
-                RecipeImageView(imageName: imageName, height: 220)
+            if !galleryImageNames.isEmpty {
+                imageGallery
                     .padding(.top, AppTheme.spacing8)
-            }
-
-            if !recipe.photoNames.isEmpty {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: AppTheme.spacing8) {
-                        ForEach(Array(recipe.photoNames.enumerated()), id: \.offset) { _, name in
-                            RecipeImageView(imageName: name, height: 90)
-                                .frame(width: 90, height: 90)
-                        }
-                    }
-                    .padding(.horizontal, AppTheme.spacing20)
-                }
             }
 
             Text(recipe.name)
@@ -58,10 +46,36 @@ extension RecipeDetailView {
                 .adaptiveForegroundColor()
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity, alignment: .center)
-                .padding(.top, recipe.imageName?.isEmpty == false ? 0 : AppTheme.spacing8)
+                .padding(.top, galleryImageNames.isEmpty ? AppTheme.spacing8 : 0)
                 .padding(.bottom, AppTheme.spacing20)
         }
         .padding(.horizontal, AppTheme.spacing20)
+    }
+
+    /// All displayable images for the recipe as one ordered set: the main image
+    /// first (if it resolves), then post-cook photos. Filtered so stale/missing
+    /// references don't leave gaps — and so a lone post-cook photo becomes the
+    /// hero when there's no main image.
+    private var galleryImageNames: [String] {
+        ([recipe.imageName].compactMap { $0 } + recipe.photoNames)
+            .filter { RecipeImageView.hasDisplayableImage($0) }
+    }
+
+    /// The 220pt hero. A single image renders directly; multiple images become a
+    /// swipeable paged gallery rather than thumbnails stacked below.
+    @ViewBuilder
+    private var imageGallery: some View {
+        if galleryImageNames.count == 1 {
+            RecipeImageView(imageName: galleryImageNames[0], height: 220, recipeName: recipe.name)
+        } else {
+            TabView {
+                ForEach(Array(galleryImageNames.enumerated()), id: \.offset) { _, name in
+                    RecipeImageView(imageName: name, height: 220, recipeName: recipe.name)
+                }
+            }
+            .frame(height: 220)
+            .tabViewStyle(.page)
+        }
     }
 
     var recipeInfoCardsView: some View {
@@ -245,6 +259,7 @@ extension RecipeDetailView {
             )
             .padding()
         }
+        .editableCard(onEdit: beginEdit, hint: "Edit prep and cook time")
     }
 
     var detailsInfoCard: some View {
@@ -264,6 +279,14 @@ extension RecipeDetailView {
             }
             .padding()
         }
+        .editableCard(onEdit: beginEdit, hint: "Edit difficulty, category and cuisine")
+    }
+
+    /// Opens the pre-filled recipe editor — shared by the toolbar Edit button and
+    /// the tappable info cards so both routes behave identically.
+    func beginEdit() {
+        HapticManager.shared.light()
+        showEditSheet = true
     }
 
     var ingredientsSection: some View {

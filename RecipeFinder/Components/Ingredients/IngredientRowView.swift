@@ -100,19 +100,6 @@ struct IngredientRowView: View {
                 .buttonStyle(.plain)
                 .disabled(isInShoppingList)
             }
-
-            // Trailing checkbox — matches the pre-prep/instruction step rows so the
-            // recipe screen uses one consistent "check it off" affordance throughout.
-            Button(action: {
-                HapticManager.shared.light()
-                withAnimation(.spring(response: Timing.springResponse, dampingFraction: Timing.springDamping)) {
-                    toggle()
-                }
-            }) {
-                CheckmarkIcon(isChecked: isChecked)
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel(isChecked ? "Uncheck \(ingredient.mainIngredientName)" : "Check \(ingredient.mainIngredientName)")
         }
         .padding(.vertical, AppTheme.spacing8)
         .frame(maxWidth: .infinity)

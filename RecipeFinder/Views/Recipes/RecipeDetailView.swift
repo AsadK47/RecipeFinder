@@ -13,7 +13,9 @@ struct RecipeDetailView: View {
     @State private var addedIngredients: Set<String> = []
     @State var showAddedFeedback: String?
     @State private var confettiCounter = 0
-    @State private var showEditSheet = false
+    // Internal (not private) so the tappable info cards in RecipeDetailView+Content
+    // can open the editor, matching the toolbar Edit button.
+    @State var showEditSheet = false
     @State private var showAddToCollection = false
     @State private var showCookingMode = false
     // Internal (not private) so the edit-completion handler in
@@ -158,13 +160,6 @@ struct RecipeDetailView: View {
             }
             if prePrepState.count != newRecipe.prePrepInstructions.count {
                 prePrepState = Array(repeating: false, count: newRecipe.prePrepInstructions.count)
-            }
-        }
-        .task(id: recipe.id) {
-            guard (recipe.imageName ?? "").isEmpty else { return }
-            if let url = await UnsplashClient().fetchImageURL(for: recipe.name) {
-                recipe.imageName = url.absoluteString
-                PersistenceController.shared.updateRecipe(recipe)
             }
         }
         .task {
