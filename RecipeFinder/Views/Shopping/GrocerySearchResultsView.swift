@@ -9,7 +9,6 @@ struct GrocerySearchResultsView: View {
     let isInShopping: (String) -> Bool
     let onAddToShopping: (String) -> Void
     let selectedTheme: AppTheme.ThemeType
-    let colorScheme: ColorScheme
 
     var body: some View {
         ScrollView {
@@ -85,9 +84,6 @@ struct GrocerySearchResultsView: View {
         }
         .padding(.horizontal, AppTheme.spacing16)
         .padding(.vertical, AppTheme.spacing10)
-        .background {
-            RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                .fill(AppTheme.elevatedCard(for: colorScheme))
-        }
+        .appCard(cornerRadius: AppTheme.cornerRadius12)
     }
 }

@@ -91,8 +91,7 @@ struct KitchenShoppingView: View {
                     shopping.items.contains { $0.name.lowercased() == ingredient.lowercased() }
                 },
                 onAddToShopping: addShoppingItemFromSearch,
-                selectedTheme: selectedTheme,
-                colorScheme: colorScheme
+                selectedTheme: selectedTheme
             )
         } else if shopping.items.isEmpty {
             emptyState

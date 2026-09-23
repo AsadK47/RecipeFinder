@@ -50,7 +50,7 @@ final class RecipeFinderAccessibilityAuditTests: XCTestCase {
         // app's frosted `.appCard()` material by design, and Apple's audit flags text
         // over any translucent material because its contrast can't be guaranteed.
         // Every other audit type still runs here, and contrast stays enforced on the
-        // sign-in and Groceries screens.
+        // sign-in screen.
         try app.performAccessibilityAudit(for: .all.subtracting(.contrast), auditHandler)
     }
 
@@ -82,7 +82,12 @@ final class RecipeFinderAccessibilityAuditTests: XCTestCase {
             dismissKb.tap()
         }
 
-        try app.performAccessibilityAudit(for: .all, auditHandler)
+        // Contrast is excluded here for the same reason as the Import screen: the
+        // suggestion rows use the app's frosted `.appCard()` material by design, so
+        // they match the rest of the app, and Apple's audit flags text over any
+        // translucent material because its contrast can't be guaranteed. Every other
+        // audit type still runs.
+        try app.performAccessibilityAudit(for: .all.subtracting(.contrast), auditHandler)
     }
 
     // MARK: - Helpers

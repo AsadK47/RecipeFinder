@@ -242,22 +242,7 @@ struct MealPlanningView: View {
     }
 
     private var weekShoppingSection: some View {
-        VStack(spacing: AppTheme.spacing8) {
-            Button(action: prepareAddWeek) {
-                HStack(spacing: AppTheme.spacing8) {
-                    Image(systemName: "cart.badge.plus")
-                    Text("Add Week to Groceries")
-                        .fontWeight(.semibold)
-                }
-                .font(.subheadline)
-                .adaptiveForegroundColor()
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, AppTheme.spacing12)
-                .background(AppTheme.accentColor(for: selectedTheme))
-                .cornerRadius(AppTheme.cornerRadius12)
-            }
-            .buttonStyle(PlainButtonStyle())
-        }
+        PrimaryButton("Add Week to Groceries", systemImage: "cart.badge.plus", fillWidth: true, action: prepareAddWeek)
     }
 
     // MARK: - Pantry suggestions
@@ -328,7 +313,6 @@ struct MealPlanningView: View {
         weekSkippedInKitchen = summary.items.count - candidates.count
 
         guard !candidates.isEmpty else {
-            HapticManager.shared.light()
             let message: String
             if summary.items.isEmpty {
                 message = summary.missingRecipeNames.isEmpty
@@ -341,7 +325,6 @@ struct MealPlanningView: View {
             return
         }
 
-        HapticManager.shared.light()
         showAddWeekConfirm = true
     }
 

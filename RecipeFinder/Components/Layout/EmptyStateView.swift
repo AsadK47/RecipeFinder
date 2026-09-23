@@ -15,7 +15,6 @@ struct EmptyStateView: View {
     var onAction: (() -> Void)?
 
     @Environment(\.colorScheme) private var colorScheme
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
 
     init(
         icon: String,
@@ -52,18 +51,7 @@ struct EmptyStateView: View {
                 .padding(.horizontal, AppTheme.spacing32)
 
             if let actionTitle, let onAction {
-                Button {
-                    HapticManager.shared.light()
-                    onAction()
-                } label: {
-                    Label(actionTitle, systemImage: actionIcon ?? "plus.circle.fill")
-                        .font(.subheadline.weight(.semibold))
-                        .adaptiveForegroundColor()
-                        .padding(.horizontal, AppTheme.spacing20)
-                        .padding(.vertical, AppTheme.spacing10)
-                        .background(Capsule().fill(AppTheme.accentColor(for: selectedTheme)))
-                }
-                .buttonStyle(.plain)
+                PrimaryButton(actionTitle, systemImage: actionIcon ?? "plus.circle.fill", action: onAction)
             }
         }
         .padding(.top, AppTheme.spacing40)

@@ -179,6 +179,7 @@
 		F3AD2EDC30640A6300274E33 /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AD2EDB30640A6300274E33 /* EmptyStateView.swift */; };
 		F3AD2EDE30640B1500274E33 /* CheckmarkIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AD2EDD30640B1500274E33 /* CheckmarkIcon.swift */; };
 		F3AD2EE030640B7500274E33 /* AppSearchField.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AD2EDF30640B7500274E33 /* AppSearchField.swift */; };
+		F3AD2EE2306414B500274E33 /* PrimaryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AD2EE1306414B500274E33 /* PrimaryButton.swift */; };
 		F3B837BF305554C80003AEF8 /* UserScopedStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837BE305554C80003AEF8 /* UserScopedStorageTests.swift */; };
 		F3B837C1305562790003AEF8 /* SessionExpiryPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837C0305562790003AEF8 /* SessionExpiryPolicy.swift */; };
 		F3B837C33055628E0003AEF8 /* SessionExpiryPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837C23055628E0003AEF8 /* SessionExpiryPolicyTests.swift */; };
@@ -622,6 +623,7 @@
 		F3AD2EDB30640A6300274E33 /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
 		F3AD2EDD30640B1500274E33 /* CheckmarkIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckmarkIcon.swift; sourceTree = "<group>"; };
 		F3AD2EDF30640B7500274E33 /* AppSearchField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSearchField.swift; sourceTree = "<group>"; };
+		F3AD2EE1306414B500274E33 /* PrimaryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButton.swift; sourceTree = "<group>"; };
 		F3B837BE305554C80003AEF8 /* UserScopedStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserScopedStorageTests.swift; sourceTree = "<group>"; };
 		F3B837C0305562790003AEF8 /* SessionExpiryPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionExpiryPolicy.swift; sourceTree = "<group>"; };
 		F3B837C23055628E0003AEF8 /* SessionExpiryPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionExpiryPolicyTests.swift; sourceTree = "<group>"; };
@@ -1163,6 +1165,7 @@
 			children = (
 				9E5B39812FABC2C700C96DB3 /* CircleButton.swift */,
 				9E6DEA432EF5EF47001E7B24 /* AnimatedHeartButton.swift */,
+				F3AD2EE1306414B500274E33 /* PrimaryButton.swift */,
 			);
 			path = Buttons;
 			sourceTree = "<group>";
@@ -2222,6 +2225,7 @@
 				F3D4054C305620510076834D /* NutritionInfo.swift in Sources */,
 				9E6C2C1C2FB394290083A08B /* BadgeManager.swift in Sources */,
 				9E5B39972FACFF9000C96DB3 /* KitchenQuickAddSheet.swift in Sources */,
+				F3AD2EE2306414B500274E33 /* PrimaryButton.swift in Sources */,
 				F3E9D14E3043AAD4008BF231 /* LegalContactCard.swift in Sources */,
 				F3E9D20B30462807008BF231 /* RecipeParser+Microdata.swift in Sources */,
 				9E5B39982FACFF9000C96DB3 /* ShoppingQuickAddSheet.swift in Sources */,
