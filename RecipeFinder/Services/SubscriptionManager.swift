@@ -1,13 +1,46 @@
-import Foundation
+import SwiftUI
 import StoreKit
 
 private let logger = AppLogger.logger(category: "Subscription")
+
+/// Behavioural seam for RecipeFinder+ subscription state so views (e.g. the
+/// paywall) depend on this protocol rather than the `SubscriptionManager`
+/// singleton — and previews/tests can inject a fake without touching StoreKit.
+@MainActor
+protocol SubscriptionProviding: AnyObject, Observable {
+    var isSubscribed: Bool { get }
+    var products: [Product] { get }
+    var purchaseInProgress: Bool { get }
+    var purchaseError: String? { get set }
+    func loadProducts() async
+    func purchase(_ product: Product) async
+    func restorePurchases() async
+}
+
+private struct SubscriptionProvidingKey: EnvironmentKey {
+    // SwiftUI reads environment defaults on the main actor during view updates,
+    // so assuming main-actor isolation here is safe; the real app injects the
+    // shared instance at the composition root regardless.
+    static var defaultValue: any SubscriptionProviding {
+        MainActor.assumeIsolated { SubscriptionManager.shared }
+    }
+}
+
+extension EnvironmentValues {
+    /// Injected subscription state. Defaults to the shared singleton; override with
+    /// `.environment(\.subscription, fake)` in tests/previews.
+    var subscription: any SubscriptionProviding {
+        get { self[SubscriptionProvidingKey.self] }
+        set { self[SubscriptionProvidingKey.self] = newValue }
+    }
+}
 
 /// Owns subscription state and orchestrates StoreKit 2 purchase / restore /
 /// entitlement flows for RecipeFinder+. Wire `isSubscribed` into any gate that
 /// requires a paid entitlement.
 @MainActor
-final class SubscriptionManager: ObservableObject {
+@Observable
+final class SubscriptionManager: SubscriptionProviding {
 
     static let shared = SubscriptionManager()
 
@@ -16,20 +49,20 @@ final class SubscriptionManager: ObservableObject {
     static let annualProductID  = "com.recipefinder.plus.annual"
     static let monthlyProductID = "com.recipefinder.plus.monthly"
 
-    // MARK: - Published state
+    // MARK: - Observable state
 
     /// `true` when the user has an active RecipeFinder+ subscription.
-    @Published private(set) var isSubscribed: Bool = false
+    private(set) var isSubscribed: Bool = false
     /// Products loaded from StoreKit, sorted annual-first.
-    @Published private(set) var products: [Product] = []
+    private(set) var products: [Product] = []
     /// `true` while a purchase or restore is in flight.
-    @Published private(set) var purchaseInProgress: Bool = false
+    private(set) var purchaseInProgress: Bool = false
     /// Non-nil when the most recent purchase attempt failed.
-    @Published var purchaseError: String?
+    var purchaseError: String?
 
     // MARK: - Private
 
-    private var transactionListener: Task<Void, Error>?
+    @ObservationIgnored private var transactionListener: Task<Void, Error>?
 
     private init() {
         transactionListener = startTransactionListener()

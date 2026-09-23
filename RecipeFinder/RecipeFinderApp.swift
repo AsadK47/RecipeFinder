@@ -35,18 +35,23 @@ struct RecipeFinderApp: App {
         configureAppearance()
         initializeDatabase()
 
-        // Runs after any -resetState wipe above so the known debug account is
-        // always available to sign in with.
+        // Dev test-account hooks run ONLY under UI testing (`-ui-testing`), so a
+        // plain DEBUG build on a real device behaves like release: real auth flow,
+        // no injected `test@email.com` account. This stops the test account from
+        // masking the user's own signed-in data during on-device development.
         #if DEBUG
-        AuthTestHelper.ensureTestAccountExists()
-        if ProcessInfo.processInfo.arguments.contains("-skip-auth") {
-            UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
-            UserDefaults.standard.set(true, forKey: "hasSeenBiometricOnboarding")
-            // Sign in synchronously so isAuthenticated = true on the first frame.
-            // This eliminates the async race that let UI tests land in guest mode
-            // and get redirected to sign-up instead of opening the requested flow.
-            MainActor.assumeIsolated {
-                AuthTestHelper.autoSignInSync()
+        let testArgs = ProcessInfo.processInfo.arguments
+        if testArgs.contains("-ui-testing") {
+            AuthTestHelper.ensureTestAccountExists()
+            if testArgs.contains("-skip-auth") {
+                UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
+                UserDefaults.standard.set(true, forKey: "hasSeenBiometricOnboarding")
+                // Sign in synchronously so isAuthenticated = true on the first frame.
+                // This eliminates the async race that let UI tests land in guest mode
+                // and get redirected to sign-up instead of opening the requested flow.
+                MainActor.assumeIsolated {
+                    AuthTestHelper.autoSignInSync()
+                }
             }
         }
         #endif

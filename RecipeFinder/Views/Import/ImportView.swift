@@ -175,10 +175,7 @@ struct ImportView: View {
                     .accessibilityHidden(true)
             }
             .padding(AppTheme.spacing20)
-            .background {
-                RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
-                    .fill(Color(UIColor.secondarySystemGroupedBackground))
-            }
+            .appCard()
         }
         .buttonStyle(.plain)
     }

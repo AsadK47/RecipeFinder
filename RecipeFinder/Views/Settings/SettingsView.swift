@@ -8,8 +8,10 @@ struct SettingsTabView: View {
     @AppStorage("measurementSystem") private var measurementSystem: MeasurementSystem = .metric
     @Environment(\.account) private var accountManager
     @Environment(\.auth) private var authManager
+    @Environment(\.subscription) private var subscription
     @State private var profileImage: UIImage?
     @State private var debugResetMessage: String?
+    @State private var showPaywall = false
     
     /// Real version string from the bundle — can never drift from the build settings
     private var versionLabel: String {
@@ -25,6 +27,8 @@ struct SettingsTabView: View {
             
             ScrollView {
                 VStack(spacing: AppTheme.spacing20) {
+                    subscriptionCard
+
                     SettingsSectionHeader(title: "Account")
 
                     SettingsCard {
@@ -143,6 +147,41 @@ struct SettingsTabView: View {
         .toolbarBackground(.hidden, for: .navigationBar)
         .onAppear {
             profileImage = accountManager.loadProfileImage()
+        }
+        .sheet(isPresented: $showPaywall) {
+            PaywallView()
+        }
+    }
+
+    @ViewBuilder
+    private var subscriptionCard: some View {
+        SettingsCard {
+            Button {
+                showPaywall = true
+            } label: {
+                HStack(spacing: AppTheme.spacing16) {
+                    Image(systemName: subscription.isSubscribed ? "star.circle.fill" : "star.circle")
+                        .font(.title)
+                        .foregroundStyle(AppTheme.accentColor(for: selectedTheme))
+                    VStack(alignment: .leading, spacing: AppTheme.spacing4) {
+                        Text(subscription.isSubscribed ? "RecipeFinder+ Member" : "Upgrade to RecipeFinder+")
+                            .font(.headline)
+                            .adaptiveForegroundColor()
+                        Text(subscription.isSubscribed ? "Thanks for your support!" : "Unlock the full library, sync & more")
+                            .font(.caption)
+                            .adaptiveSecondaryForeground()
+                    }
+                    Spacer()
+                    if !subscription.isSubscribed {
+                        Image(systemName: "chevron.right")
+                            .adaptiveSecondaryForeground()
+                            .font(.caption)
+                    }
+                }
+                .padding(AppTheme.spacing20)
+            }
+            .buttonStyle(PlainButtonStyle())
+            .disabled(subscription.isSubscribed)
         }
     }
 
