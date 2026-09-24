@@ -1,13 +1,30 @@
-# WORK.md — ACTIVE: Recipe Wizard rework
+# WORK.md — Recipe Wizard rework (DONE this session, awaiting commit)
 
-> Newest task on top. The DI-refactor section below is prior, mostly-committed history — keep it.
+> The DI-refactor section below is prior, mostly-committed history — keep it.
 
 ## Status
-NOT STARTED. This session already shipped + verified (BuildProject + RunAllTests
-green, 1596 tests): the sign-in freeze fix, cook-photo-on-card (`heroImageName`),
-detail re-read on appear, loading skeleton, StoreKit paywall (scheme wiring +
-`ProductLoadState` retry UI), timer one-tap start, and recipe photo editing
-(`RecipePhotoManagerSheet`). All uncommitted — user commits as their review step.
+DONE + verified (Option A: single scrollable form) — BuildProject + RunAllTests
+green (1596). Uncommitted, awaiting user's commit. What shipped in the wizard:
+- `RecipeWizardView` is now one `ScrollView` of all sections (no `currentStep`
+  stepper); deleted `RecipeWizardView+Chrome.swift` (headerBar/progressBar/
+  navigationButtons/canProceed all dead).
+- Toolbar Cancel + always-enabled Save/Update; `createRecipe` validates and shows
+  the alert if required fields are missing → save-anytime.
+- `WizardStepHeader` no longer renders "Step X of Y"; `stepNumber`/`totalSteps`
+  params removed from it and all 5 section views.
+- Deep-link: `RecipeWizardView.Section` enum + `openSection:` init param +
+  `ScrollViewReader`. Detail info cards (`beginEdit(section: .details)`) open the
+  editor scrolled to Details; toolbar Edit opens at top.
+
+Everything else this session also DONE + verified: sign-in freeze fix, cook-photo
+-on-card (`heroImageName`), detail re-read on appear, loading skeleton, StoreKit
+paywall (scheme wiring + `ProductLoadState` retry UI), timer one-tap start, recipe
+photo editing (`RecipePhotoManagerSheet`).
+
+## If revisiting
+Manual check: open create flow, Save with only name+1 ingredient+1 step; tap a
+recipe's prep-time card → editor opens scrolled to Details. Consider a light
+divider/heading between stacked sections if it reads too dense on device.
 
 ## The problem (user's words)
 "recipe wizard clearly needs to be modularised because you need to keep clicking

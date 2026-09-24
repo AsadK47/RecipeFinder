@@ -10,9 +10,7 @@ struct BasicInfoStepView: View {
     let difficulties: [String]
     let categories: [String]
     let appTheme: AppTheme.ThemeType
-    let cardStyle: CardStyle
     let colorScheme: ColorScheme
-    let totalSteps: Int
 
     private func timeLabel(_ minutes: Int) -> String {
         guard minutes > 0 else { return "0 min" }
@@ -29,13 +27,11 @@ struct BasicInfoStepView: View {
             WizardStepHeader(
                 title: "Tell us more",
                 subtitle: "Add some details about your recipe",
-                stepNumber: 2,
-                totalSteps: totalSteps,
                 illustration: "slider.horizontal.3"
             )
 
-            WizardCard(cardStyle: cardStyle, colorScheme: colorScheme) {
-                VStack(spacing: AppTheme.spacing24) {
+            WizardCard {
+                VStack(alignment: .leading, spacing: AppTheme.spacing24) {
                     VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                         Text("Prep Time")
                             .font(.headline)

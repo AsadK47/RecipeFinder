@@ -31,9 +31,7 @@ struct NotesStepView: View {
     @Binding var cuisine: String
     let hasPrefilledNotes: Bool
     let summary: WizardRecipeSummary
-    let cardStyle: CardStyle
     let colorScheme: ColorScheme
-    let totalSteps: Int
 
     @State private var tagInput: String = ""
 
@@ -42,21 +40,19 @@ struct NotesStepView: View {
             WizardStepHeader(
                 title: "Final Touches",
                 subtitle: "Add tags or notes to help you find this recipe later",
-                stepNumber: 6,
-                totalSteps: totalSteps,
                 illustration: "note.text"
             )
 
-            WizardCard(cardStyle: cardStyle, colorScheme: colorScheme) {
+            WizardCard {
                 VStack(alignment: .leading, spacing: AppTheme.spacing24) {
                     cuisineSection
                     Divider()
                     tagsSection
-                    Divider()
                 }
+                .padding()
             }
 
-            WizardCard(cardStyle: cardStyle, colorScheme: colorScheme) {
+            WizardCard {
                 VStack(spacing: AppTheme.spacing24) {
                     if hasPrefilledNotes && !notes.isEmpty {
                         HStack {

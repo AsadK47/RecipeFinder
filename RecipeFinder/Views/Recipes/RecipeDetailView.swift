@@ -23,12 +23,12 @@ struct RecipeDetailView: View {
     @State var showSaveError = false
     // Internal (not private) so the timer control in RecipeDetailView+Content can drive it.
     @State var showTimerSheet = false
-    @State var editingIngredientIndex: Int?
-    @State var editingQuantity: String = ""
-    @State var editingUnit: String = ""
     @State var substitutingIngredientIndex: Int?
     @State private var showPostCookPhotoPrompt = false
     @State private var showPhotoManager = false
+    // Which editor section to open on — set by the tappable info cards so the
+    // wizard deep-links to those fields; nil opens at the top (toolbar Edit).
+    @State var editSection: RecipeWizardView.Section?
     // Internal so RecipeDetailView+Content can trigger and track the source refresh.
     @State var isRefreshing = false
     @State var pendingRefreshDiff: RecipeDiff?
@@ -102,7 +102,7 @@ struct RecipeDetailView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 RecipeDetailToolbar(
                     recipe: recipe,
-                    onEdit: { showEditSheet = true },
+                    onEdit: { beginEdit() },
                     onToggleFavorite: toggleFavorite,
                     onAddToCollection: { showAddToCollection = true },
                     onStartCooking: { showCookingMode = true },
@@ -264,42 +264,6 @@ struct RecipeDetailView: View {
             return true
         }
         return false
-    }
-
-    func startEditingIngredient(at index: Int) {
-        HapticManager.shared.light()
-        let ingredient = recipe.ingredients[index]
-        editingQuantity = String(format: "%.2f", ingredient.baseQuantity)
-        editingUnit = ingredient.unit
-        editingIngredientIndex = index
-    }
-
-    func saveIngredientEdit(at index: Int) {
-        guard let quantity = Double(editingQuantity), quantity > 0 else {
-            editingIngredientIndex = nil
-            return
-        }
-
-        let originalIngredient = recipe.ingredients[index]
-        let newIngredient = Ingredient(
-            id: originalIngredient.id,
-            baseQuantity: quantity,
-            unit: editingUnit,
-            name: originalIngredient.name
-        )
-
-        recipe.ingredients[index] = newIngredient
-        editingIngredientIndex = nil
-
-        guard PersistenceController.shared.updateRecipe(recipe) else {
-            // Persist failed — undo the in-memory edit and tell the user rather
-            // than showing a change that won't survive relaunch.
-            recipe.ingredients[index] = originalIngredient
-            showSaveError = true
-            return
-        }
-
-        HapticManager.shared.success()
     }
 
     private func toggleFavorite() {

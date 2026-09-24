@@ -259,7 +259,7 @@ extension RecipeDetailView {
             )
             .padding()
         }
-        .editableCard(onEdit: beginEdit, hint: "Edit prep and cook time")
+        .editableCard(onEdit: { beginEdit(section: .details) }, hint: "Edit prep and cook time")
     }
 
     var detailsInfoCard: some View {
@@ -279,13 +279,15 @@ extension RecipeDetailView {
             }
             .padding()
         }
-        .editableCard(onEdit: beginEdit, hint: "Edit difficulty, category and cuisine")
+        .editableCard(onEdit: { beginEdit(section: .details) }, hint: "Edit difficulty, category and cuisine")
     }
 
     /// Opens the pre-filled recipe editor — shared by the toolbar Edit button and
-    /// the tappable info cards so both routes behave identically.
-    func beginEdit() {
+    /// the tappable info cards. Passing a `section` deep-links the editor to those
+    /// fields (tapping the time card opens on Details rather than the top).
+    func beginEdit(section: RecipeWizardView.Section? = nil) {
         HapticManager.shared.light()
+        editSection = section
         showEditSheet = true
     }
 
@@ -310,21 +312,10 @@ extension RecipeDetailView {
             },
             onAddAllToShopping: addAllIngredientsToShoppingList,
             isInShoppingList: { isIngredientInShoppingList($0) },
-            onEditIngredient: { index in startEditingIngredient(at: index) },
-            onSubstitute: { index in substitutingIngredientIndex = index }
+            onEditIngredient: { _ in beginEdit(section: .ingredients) },
+            onSubstitute: { index in substitutingIngredientIndex = index },
+            onEditIngredients: { beginEdit(section: .ingredients) }
         )
-        .sheet(item: Binding(
-            get: { editingIngredientIndex.map { EditingIngredient(index: $0) } },
-            set: { editingIngredientIndex = $0?.index }
-        )) { editingItem in
-            IngredientEditSheet(
-                ingredientName: recipe.ingredients[editingItem.index].name,
-                editingQuantity: $editingQuantity,
-                editingUnit: $editingUnit,
-                onCancel: { editingIngredientIndex = nil },
-                onSave: { saveIngredientEdit(at: editingItem.index) }
-            )
-        }
         .sheet(item: Binding(
             get: { substitutingIngredientIndex.map { EditingIngredient(index: $0) } },
             set: { substitutingIngredientIndex = $0?.index }
@@ -526,6 +517,7 @@ extension RecipeDetailView {
                 galleryImageURLs: recipe.photoNames.isEmpty ? nil : recipe.photoNames
             ),
             editingRecipeId: recipe.id,
+            focus: editSection,
             onComplete: { updatedRecipe in
                 let previous = recipe
                 recipe = updatedRecipe

@@ -7,26 +7,21 @@ struct EditableStepsStepView: View {
     @Binding var steps: [EditableStep]
     let title: String
     let subtitle: String
-    let stepNumber: Int
     let illustration: String
     let fieldPlaceholder: String
     let addButtonTitle: String
     let appTheme: AppTheme.ThemeType
-    let cardStyle: CardStyle
     let colorScheme: ColorScheme
-    let totalSteps: Int
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing24) {
             WizardStepHeader(
                 title: title,
                 subtitle: subtitle,
-                stepNumber: stepNumber,
-                totalSteps: totalSteps,
                 illustration: illustration
             )
 
-            WizardCard(cardStyle: cardStyle, colorScheme: colorScheme) {
+            WizardCard {
                 VStack(spacing: AppTheme.spacing12) {
                     ForEach($steps) { $step in
                         VStack(alignment: .leading, spacing: AppTheme.spacing4) {

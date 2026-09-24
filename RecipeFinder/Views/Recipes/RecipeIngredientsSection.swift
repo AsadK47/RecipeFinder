@@ -17,6 +17,8 @@ struct RecipeIngredientsSection: View {
     let isInShoppingList: (Ingredient) -> Bool
     let onEditIngredient: (Int) -> Void
     let onSubstitute: ((Int) -> Void)?
+    /// Opens the full recipe editor on the ingredients section (add/remove/reorder).
+    let onEditIngredients: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
@@ -51,11 +53,23 @@ struct RecipeIngredientsSection: View {
 
             Spacer()
 
+            editButton
             addAllButton
             measurementToggle
             chevronButton
         }
         .padding(.top, AppTheme.spacing24)
+    }
+
+    private var editButton: some View {
+        Button(action: onEditIngredients) {
+            Image(systemName: "pencil")
+                .font(.title3)
+                .adaptiveForegroundColor()
+        }
+        .buttonStyle(PlainButtonStyle())
+        .accessibilityLabel("Edit ingredients")
+        .accessibilityHint("Opens the recipe editor on the ingredients section")
     }
 
     private var addAllButton: some View {

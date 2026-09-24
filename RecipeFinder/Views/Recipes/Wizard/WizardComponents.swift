@@ -3,21 +3,16 @@ import SwiftUI
 /// Shared chrome for the Recipe Wizard steps, extracted from `RecipeWizardView`
 /// so each step can live in its own file.
 
-/// The title/subtitle/illustration header shown at the top of every wizard step.
+/// The title/subtitle/illustration header shown at the top of each wizard
+/// section. Renders as a plain section heading — the recipe editor is a single
+/// scrollable form, so there is no "Step X of Y" stepping.
 struct WizardStepHeader: View {
     let title: String
     let subtitle: String
-    let stepNumber: Int
-    let totalSteps: Int
     let illustration: String
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
-            Text("Step \(stepNumber) of \(totalSteps)")
-                .font(.caption)
-                .fontWeight(.medium)
-                .adaptiveForegroundColor(opacity: AppTheme.highEmphasisOpacity)
-
             HStack(alignment: .top, spacing: AppTheme.spacing12) {
                 VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                     Text(title)
@@ -41,28 +36,14 @@ struct WizardStepHeader: View {
     }
 }
 
-/// The card background wrapper used around each step's content.
+/// The card surface around each wizard section. Delegates to the app-wide
+/// `.appCard()` token so the wizard matches every other card in the app (and
+/// respects the solid/frosted setting) instead of hand-rolling its own fill.
 struct WizardCard<Content: View>: View {
-    let cardStyle: CardStyle
-    let colorScheme: ColorScheme
     @ViewBuilder let content: () -> Content
 
     var body: some View {
-        Group {
-            if cardStyle == .solid {
-                content()
-                    .background(
-                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
-                            .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : .white)
-                    )
-            } else {
-                content()
-                    .background(
-                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
-                            .fill(.ultraThinMaterial)
-                    )
-            }
-        }
+        content().appCard()
     }
 }
 

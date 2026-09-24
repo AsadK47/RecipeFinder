@@ -7,9 +7,7 @@ struct RecipeNameStepView: View {
     @Binding var existingImageReference: String?
     @Binding var selectedGalleryImages: [UIImage]
     @Binding var existingGalleryReferences: [String]
-    let cardStyle: CardStyle
     let colorScheme: ColorScheme
-    let totalSteps: Int
     let onPickPhoto: () -> Void
     let onAddGalleryPhoto: () -> Void
 
@@ -22,12 +20,10 @@ struct RecipeNameStepView: View {
             WizardStepHeader(
                 title: "Let's start with a name",
                 subtitle: "What would you like to call this recipe?",
-                stepNumber: 1,
-                totalSteps: totalSteps,
                 illustration: "doc.text.fill"
             )
 
-            WizardCard(cardStyle: cardStyle, colorScheme: colorScheme) {
+            WizardCard {
                 VStack(spacing: AppTheme.spacing16) {
                     TextField("Recipe Name", text: $recipeName)
                         .font(.title2)

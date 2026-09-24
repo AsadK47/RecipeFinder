@@ -7,21 +7,17 @@ struct IngredientsStepView: View {
     @FocusState.Binding var focusedIngredientID: UUID?
     let cookingUnitGroups: [(group: String, units: [String])]
     let appTheme: AppTheme.ThemeType
-    let cardStyle: CardStyle
     let colorScheme: ColorScheme
-    let totalSteps: Int
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing24) {
             WizardStepHeader(
                 title: "Ingredients",
                 subtitle: "Add your ingredients with quantities",
-                stepNumber: 3,
-                totalSteps: totalSteps,
                 illustration: "cart.fill"
             )
 
-            WizardCard(cardStyle: cardStyle, colorScheme: colorScheme) {
+            WizardCard {
                 VStack(spacing: AppTheme.spacing12) {
                     ForEach($ingredientItems) { $item in
                         VStack(alignment: .leading, spacing: AppTheme.spacing8) {
@@ -31,7 +27,8 @@ struct IngredientsStepView: View {
                                         .font(.caption2)
                                         .adaptiveSecondaryForeground()
                                     TextField("e.g. Chicken breast", text: $item.name)
-                                        .textFieldStyle(.roundedBorder)
+                                        .textFieldStyle(.plain)
+                                        .appInputField()
                                         .focused($focusedIngredientID, equals: item.id)
                                 }
 
@@ -104,8 +101,9 @@ struct IngredientsStepView: View {
                                         .adaptiveSecondaryForeground()
                                     TextField("0", text: $item.quantity)
                                         .keyboardType(.decimalPad)
-                                        .textFieldStyle(.roundedBorder)
+                                        .textFieldStyle(.plain)
                                         .frame(width: AppTheme.width70)
+                                        .appInputField()
                                 }
 
                                 VStack(alignment: .leading, spacing: AppTheme.spacing2) {
@@ -125,15 +123,7 @@ struct IngredientsStepView: View {
                                     .pickerStyle(.menu)
                                     .labelsHidden()
                                     .frame(maxWidth: .infinity, minHeight: AppTheme.height34, alignment: .leading)
-                                    .padding(.horizontal, AppTheme.spacing6)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius6)
-                                            .fill(AppTheme.secondaryBackground(for: colorScheme))
-                                    )
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius6)
-                                            .stroke(AppTheme.dividerColor, lineWidth: 0.5)
-                                    )
+                                    .appInputField()
                                 }
                             }
                         }

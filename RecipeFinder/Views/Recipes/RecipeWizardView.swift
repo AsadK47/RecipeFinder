@@ -4,16 +4,46 @@ struct RecipeWizardView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.appTheme) var appTheme
     @Environment(\.colorScheme) var colorScheme
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
 
     let onComplete: (RecipeModel) -> Void
     let prefilledData: PrefilledRecipeData?
     let editingRecipeId: UUID?
+    /// When set, the editor shows ONLY this section (a focused single-section
+    /// edit, e.g. tapping a recipe's ingredients). When nil, it shows every
+    /// section as one form (create / full edit). Same save path either way —
+    /// the sections are modular presentations of one canonical editor.
+    let focus: Section?
 
-    // Non-private members below are read by the navigation chrome living in
-    // RecipeWizardView+Chrome.swift; the rest of the wizard's state stays private.
-    @State var currentStep = 0
-    let totalSteps = 6
+    /// The modular sections of the editor, in display order.
+    enum Section: Hashable, CaseIterable {
+        case basics, details, ingredients, prePrep, instructions, notes
+
+        /// Screen title when the editor is focused on just this section.
+        var title: String {
+            switch self {
+            case .basics: "Name & Photo"
+            case .details: "Details"
+            case .ingredients: "Ingredients"
+            case .prePrep: "Pre-prep"
+            case .instructions: "Instructions"
+            case .notes: "Notes"
+            }
+        }
+
+        /// Sections to render for a given focus: every section (in order) when
+        /// unfocused, otherwise just the focused one. Pure so it's unit-tested.
+        static func shown(for focus: Section?) -> [Section] {
+            guard let focus else { return allCases }
+            return [focus]
+        }
+    }
+
+    /// The editor's navigation title. Pure so it's unit-tested independently of
+    /// the view.
+    static func editorTitle(focus: Section?, isEditing: Bool) -> String {
+        if let focus { return focus.title }
+        return isEditing ? "Edit Recipe" : "New Recipe"
+    }
 
     @State var recipeName = ""
 
@@ -47,9 +77,15 @@ struct RecipeWizardView: View {
 
     private let imageStore = RecipeImageStore()
 
-    init(prefilledData: PrefilledRecipeData? = nil, editingRecipeId: UUID? = nil, onComplete: @escaping (RecipeModel) -> Void) {
+    init(
+        prefilledData: PrefilledRecipeData? = nil,
+        editingRecipeId: UUID? = nil,
+        focus: Section? = nil,
+        onComplete: @escaping (RecipeModel) -> Void
+    ) {
         self.prefilledData = prefilledData
         self.editingRecipeId = editingRecipeId
+        self.focus = focus
         self.onComplete = onComplete
     }
 
@@ -72,28 +108,32 @@ struct RecipeWizardView: View {
                 AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
 
-                VStack(spacing: 0) {
-                    VStack(spacing: AppTheme.spacing12) {
-                        headerBar
+                ScrollView {
+                    VStack(alignment: .leading, spacing: AppTheme.spacing32) {
+                        sections
                     }
-                    .padding(.horizontal, AppTheme.spacing20)
                     .padding(.top, AppTheme.spacing16)
-
-                    progressBar
-
-                    ScrollView {
-                        VStack(spacing: AppTheme.spacing32) {
-                            stepContent
-                        }
-                        .padding(.top, AppTheme.spacing16)
-                        .padding(.horizontal, AppTheme.spacing20)
-                    }
-
-                    navigationButtons
+                    .padding(.horizontal, AppTheme.spacing20)
+                    .padding(.bottom, AppTheme.spacing32)
                 }
+                .onAppear { applyPrefilledData() }
             }
-            .onAppear {
-                applyPrefilledData()
+            .navigationTitle(navigationTitleText)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.hidden, for: .navigationBar)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        HapticManager.shared.selection()
+                        dismiss()
+                    }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(editingRecipeId != nil ? "Update" : "Save") {
+                        createRecipe()
+                    }
+                    .fontWeight(.semibold)
+                }
             }
         }
         .alert("Validation Error", isPresented: $showError) {
@@ -189,19 +229,24 @@ struct RecipeWizardView: View {
         }
     }
 
+    private var navigationTitleText: String {
+        Self.editorTitle(focus: focus, isEditing: editingRecipeId != nil)
+    }
+
+    private func shouldShow(_ section: Section) -> Bool {
+        Section.shown(for: focus).contains(section)
+    }
+
     @ViewBuilder
-    private var stepContent: some View {
-        switch currentStep {
-        case 0:
+    private var sections: some View {
+        if shouldShow(.basics) {
             RecipeNameStepView(
                 recipeName: $recipeName,
                 selectedRecipeImage: $selectedRecipeImage,
                 existingImageReference: $existingImageReference,
                 selectedGalleryImages: $selectedGalleryImages,
                 existingGalleryReferences: $existingGalleryReferences,
-                cardStyle: cardStyle,
                 colorScheme: colorScheme,
-                totalSteps: totalSteps,
                 onPickPhoto: {
                     HapticManager.shared.light()
                     showPhotoPicker = true
@@ -211,7 +256,9 @@ struct RecipeWizardView: View {
                     showGalleryPhotoPicker = true
                 }
             )
-        case 1:
+        }
+
+        if shouldShow(.details) {
             BasicInfoStepView(
                 prepTime: $prepTime,
                 cookTime: $cookTime,
@@ -221,61 +268,55 @@ struct RecipeWizardView: View {
                 difficulties: difficulties,
                 categories: categories,
                 appTheme: appTheme,
-                cardStyle: cardStyle,
-                colorScheme: colorScheme,
-                totalSteps: totalSteps
+                colorScheme: colorScheme
             )
-        case 2:
+        }
+
+        if shouldShow(.ingredients) {
             IngredientsStepView(
                 ingredientItems: $ingredientItems,
                 focusedIngredientID: $focusedIngredientID,
                 cookingUnitGroups: cookingUnitGroups,
                 appTheme: appTheme,
-                cardStyle: cardStyle,
-                colorScheme: colorScheme,
-                totalSteps: totalSteps
+                colorScheme: colorScheme
             )
-        case 3:
+        }
+
+        if shouldShow(.prePrep) {
             EditableStepsStepView(
                 steps: $prePrepSteps,
                 title: "Pre-prep Instructions",
                 subtitle: "Any prep work before cooking? (Optional)",
-                stepNumber: 4,
                 illustration: "list.bullet.clipboard.fill",
                 fieldPlaceholder: "Describe the pre-prep step",
                 addButtonTitle: "Add Pre-prep Step",
                 appTheme: appTheme,
-                cardStyle: cardStyle,
-                colorScheme: colorScheme,
-                totalSteps: totalSteps
+                colorScheme: colorScheme
             )
-        case 4:
+        }
+
+        if shouldShow(.instructions) {
             EditableStepsStepView(
                 steps: $mainInstructions,
                 title: "Cooking Instructions",
                 subtitle: "Walk us through the cooking process",
-                stepNumber: 5,
                 illustration: "flame.fill",
                 fieldPlaceholder: "Describe this cooking step",
                 addButtonTitle: "Add Cooking Step",
                 appTheme: appTheme,
-                cardStyle: cardStyle,
-                colorScheme: colorScheme,
-                totalSteps: totalSteps
+                colorScheme: colorScheme
             )
-        case 5:
+        }
+
+        if shouldShow(.notes) {
             NotesStepView(
                 notes: $notes,
                 tags: $recipeTags,
                 cuisine: $recipeCuisine,
                 hasPrefilledNotes: prefilledData?.notes != nil,
                 summary: recipeSummary,
-                cardStyle: cardStyle,
-                colorScheme: colorScheme,
-                totalSteps: totalSteps
+                colorScheme: colorScheme
             )
-        default:
-            EmptyView()
         }
     }
 
