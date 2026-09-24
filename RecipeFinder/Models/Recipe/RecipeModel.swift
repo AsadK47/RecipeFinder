@@ -124,6 +124,15 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         lhs.photoNames == rhs.photoNames
     }
     
+    /// The single image that represents this recipe in lists and cards: the main
+    /// image if one is set, otherwise the first post-cook photo. Lets a recipe
+    /// with no imported/main image still show the user's cook photo on its card
+    /// instead of a permanent filler glyph.
+    var heroImageName: String? {
+        if let imageName, !imageName.isEmpty { return imageName }
+        return photoNames.first
+    }
+
     var totalTime: String {
         let prepMinutes = TimeExtractor.extractMinutes(from: prepTime)
         let cookMinutes = TimeExtractor.extractMinutes(from: cookingTime)

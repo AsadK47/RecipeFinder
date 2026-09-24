@@ -68,6 +68,27 @@ extension PersistenceController {
         }
     }
 
+    /// Fetches the single persisted recipe with `id` in the current user's
+    /// scope, or `nil` if it isn't found. Used by the detail screen to re-read
+    /// the latest saved state on (re)appear so it never shows a stale in-memory
+    /// copy after edits made elsewhere (e.g. a post-cook photo added and then
+    /// the screen revisited from a parent list that hasn't re-synced).
+    func fetchRecipe(withId id: UUID) -> RecipeModel? {
+        guard ensureStoreIsReady(), let userId = userID() else { return nil }
+
+        let context = container.viewContext
+        let request = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
+        request.predicate = NSPredicate(format: "id == %@ AND userId == %@", id as CVarArg, userId)
+        request.fetchLimit = 1
+
+        do {
+            return try context.fetch(request).first.flatMap(Self.mapToRecipeModel)
+        } catch {
+            persistenceLogger.error("❌ Failed to fetch recipe \(id): \(error.localizedDescription)")
+            return nil
+        }
+    }
+
     func fetchRecipeCount() -> Int {
         guard ensureStoreIsReady() else { return 0 }
         

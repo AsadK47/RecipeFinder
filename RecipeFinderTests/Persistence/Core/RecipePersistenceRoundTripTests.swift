@@ -316,6 +316,38 @@ struct RecipePersistenceRoundTripTests {
         #expect(fetched?.photoNames == ["photo1.jpg", "photo2.jpg", "photo3.jpg"])
     }
 
+    // MARK: - Single-recipe re-read (detail screen)
+
+    @Test("fetchRecipe(withId:) returns the persisted recipe by id")
+    func fetchRecipe_returnsPersistedRecipe() {
+        let store = makeStore()
+        let recipe = makeRecipe(name: "Ramen")
+        #expect(store.saveRecipeModel(recipe) == true)
+
+        #expect(store.fetchRecipe(withId: recipe.id)?.name == "Ramen")
+    }
+
+    @Test("fetchRecipe(withId:) reflects a photo added after the first save")
+    func fetchRecipe_reflectsLaterPhotoEdit() {
+        // Mirrors the post-cook-photo bug: a recipe is saved, then a photo is
+        // persisted via update, and the detail screen re-reads the single recipe.
+        let store = makeStore()
+        let id = UUID()
+        #expect(store.saveRecipeModel(makeRecipe(id: id)) == true)
+
+        #expect(store.updateRecipe(makeRecipe(id: id, photoNames: ["cook.jpg"])) == true)
+
+        #expect(store.fetchRecipe(withId: id)?.photoNames == ["cook.jpg"])
+    }
+
+    @Test("fetchRecipe(withId:) returns nil for an unknown id")
+    func fetchRecipe_unknownId_returnsNil() {
+        let store = makeStore()
+        #expect(store.saveRecipeModel(makeRecipe()) == true)
+
+        #expect(store.fetchRecipe(withId: UUID()) == nil)
+    }
+
     @Test("updateRecipe does not reset cook history")
     func updateRecipe_preservesCookHistory() {
         let store = makeStore()

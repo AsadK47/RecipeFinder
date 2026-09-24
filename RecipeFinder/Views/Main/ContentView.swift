@@ -4,6 +4,9 @@ private let logger = AppLogger.logger(category: "ContentView")
 
 struct ContentView: View {
     @State private var recipes: [RecipeModel] = []
+    // Drives the loading skeleton: true until the first library load resolves,
+    // so sign-in shows shimmering placeholders rather than a blank/empty flash.
+    @State private var isLoadingRecipes = true
     @State private var selectedTab: Int = 0
     @State private var sidebarSelection: SidebarItem? = .recipes
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
@@ -137,7 +140,7 @@ struct ContentView: View {
                 .ignoresSafeArea()
 
             TabView(selection: $selectedTab) {
-                RecipeSearchView(recipes: $recipes)
+                RecipeSearchView(recipes: $recipes, isLoading: isLoadingRecipes)
                     .tabItem { Label("Recipes", systemImage: "book.fill") }
                     .tag(0)
                 KitchenShoppingView()
@@ -279,6 +282,7 @@ struct ContentView: View {
             if recipes.isEmpty {
                 recipes = SeedRecipeProvider.recipes
             }
+            isLoadingRecipes = false
             return
         }
 
@@ -315,6 +319,7 @@ struct ContentView: View {
                 fetched = await PersistenceController.shared.fetchRecipesAsync()
             }
             recipes = fetched
+            isLoadingRecipes = false
         }
     }
 }

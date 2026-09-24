@@ -4,6 +4,9 @@ private let logger = AppLogger.logger(category: "RecipeSearchView")
 
 struct RecipeSearchView: View {
     @Binding var recipes: [RecipeModel]
+    /// True while the library is still being fetched after sign-in, so an empty
+    /// `recipes` shows a loading skeleton instead of the "no recipes" empty state.
+    var isLoading: Bool = false
     @State private var showCollections = false
     @State private var searchText = ""
     @State private var showFilters = false
@@ -313,7 +316,9 @@ struct RecipeSearchView: View {
         // miss, so calling it twice in one body evaluation doubles the filter cost.
         let current = filteredRecipes
         return Group {
-            if current.isEmpty {
+            if isLoading && recipes.isEmpty {
+                RecipeListSkeleton()
+            } else if current.isEmpty {
                 RecipeEmptyStateView(activeFilterCount: activeFilterCount, onClearFilters: clearAllFilters)
             } else {
                 RecipeResultsList(

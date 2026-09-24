@@ -165,6 +165,15 @@ struct RecipeDetailView: View {
         .task {
             await silentRefreshFromSource()
         }
+        .task(id: recipe.id) {
+            // Re-read the persisted copy each time the screen (re)appears, so
+            // returning to it — even from a parent list that hasn't re-synced —
+            // shows the latest saved state (post-cook photos, rating, cook count)
+            // instead of a stale in-memory snapshot.
+            if let fresh = PersistenceController.shared.fetchRecipe(withId: recipe.id) {
+                recipe = fresh
+            }
+        }
     }
 
     func toggleSection(_ section: String) {

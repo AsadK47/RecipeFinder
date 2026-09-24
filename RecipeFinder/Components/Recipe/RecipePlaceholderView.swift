@@ -45,39 +45,6 @@ struct RecipePlaceholderView: View {
                 .font(.system(size: 32, weight: .light))
                 .foregroundStyle(palette.0.opacity(colorScheme == .dark ? 0.65 : 0.55))
         }
-        .overlay {
-            if showShimmer {
-                ShimmerOverlay()
-            }
-        }
-    }
-}
-
-private struct ShimmerOverlay: View {
-    @State private var offset: CGFloat = -1
-
-    var body: some View {
-        GeometryReader { geo in
-            let w = geo.size.width
-            LinearGradient(
-                stops: [
-                    .init(color: .clear, location: 0.0),
-                    .init(color: .white.opacity(0.20), location: 0.45),
-                    .init(color: .white.opacity(0.40), location: 0.50),
-                    .init(color: .white.opacity(0.20), location: 0.55),
-                    .init(color: .clear, location: 1.0),
-                ],
-                startPoint: .leading,
-                endPoint: .trailing
-            )
-            .frame(width: w * 2.5)
-            .offset(x: offset * w * 2.5)
-            .onAppear {
-                withAnimation(.linear(duration: 1.4).repeatForever(autoreverses: false)) {
-                    offset = 1
-                }
-            }
-        }
-        .clipped()
+        .shimmering(active: showShimmer)
     }
 }
