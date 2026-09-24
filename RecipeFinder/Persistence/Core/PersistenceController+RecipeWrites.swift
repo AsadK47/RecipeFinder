@@ -114,14 +114,38 @@ extension PersistenceController {
         }
         
         let recipe = NSManagedObject(entity: entity, insertInto: context)
-        
+        guard Self.populate(recipe, from: parameters, userId: userID()) else { return false }
+
+        do {
+            try context.save()
+            persistenceLogger.debug("✅ Recipe '\(parameters.name)' saved successfully")
+
+            let recipeCount = getRecipeCount()
+            BadgeManager.shared.checkAndUnlockBadges(recipeCount: recipeCount)
+            return true
+        } catch {
+            persistenceLogger.error("❌ Failed to save recipe '\(parameters.name)': \(error.localizedDescription)")
+            return false
+        }
+    }
+
+    /// Maps a `RecipeSaveParameters` onto a freshly inserted managed object.
+    /// Shared by single-recipe `saveRecipe` (main context) and the batch
+    /// `seedRecipes` (background context) so the field list has one home and
+    /// can't drift between the two write paths. `nonisolated` so it can run on a
+    /// background Core Data context. Returns false only if ingredients can't be
+    /// encoded (the one genuinely fallible field).
+    nonisolated private static func populate(
+        _ recipe: NSManagedObject,
+        from parameters: RecipeSaveParameters,
+        userId: String?
+    ) -> Bool {
         guard let ingredientData = try? JSONEncoder().encode(parameters.ingredients) else {
             persistenceLogger.error("❌ Failed to encode ingredients for recipe: \(parameters.name)")
             return false
         }
 
-        let recipeId = parameters.id ?? UUID()
-        recipe.setValue(recipeId, forKey: RecipeKey.id)
+        recipe.setValue(parameters.id ?? UUID(), forKey: RecipeKey.id)
         recipe.setValue(parameters.name, forKey: RecipeKey.name)
         recipe.setValue(parameters.category, forKey: RecipeKey.category)
         recipe.setValue(parameters.difficulty, forKey: RecipeKey.difficulty)
@@ -145,21 +169,39 @@ extension PersistenceController {
         if let dietaryData = try? JSONEncoder().encode(parameters.dietaryInfo) {
             recipe.setValue(dietaryData, forKey: RecipeKey.dietaryInfo)
         }
-
-        if let userId = userID() {
+        if let userId {
             recipe.setValue(userId, forKey: "userId")
         }
-        
-        do {
-            try context.save()
-            persistenceLogger.debug("✅ Recipe '\(parameters.name)' saved successfully")
+        return true
+    }
 
-            let recipeCount = getRecipeCount()
-            BadgeManager.shared.checkAndUnlockBadges(recipeCount: recipeCount)
-            return true
-        } catch {
-            persistenceLogger.error("❌ Failed to save recipe '\(parameters.name)': \(error.localizedDescription)")
-            return false
+    /// Bulk-inserts starter recipes for a brand-new user on a background context
+    /// with a single save, so first sign-in doesn't freeze on N synchronous
+    /// main-thread saves. Deliberately does no per-recipe count/badge work —
+    /// seed recipes aren't user achievements, and that per-item work was a large
+    /// part of the freeze.
+    func seedRecipes(_ models: [RecipeModel]) async {
+        guard ensureStoreIsReady(), let userId = userID() else { return }
+        let container = self.container
+        await withCheckedContinuation { continuation in
+            container.performBackgroundTask { context in
+                guard let entity = NSEntityDescription.entity(forEntityName: Entity.recipe, in: context) else {
+                    persistenceLogger.error("❌ Failed to find Recipe entity while seeding")
+                    continuation.resume()
+                    return
+                }
+                for model in models {
+                    let object = NSManagedObject(entity: entity, insertInto: context)
+                    _ = Self.populate(object, from: RecipeSaveParameters(from: model), userId: userId)
+                }
+                do {
+                    try context.save()
+                    persistenceLogger.debug("✅ Seeded \(models.count) starter recipes")
+                } catch {
+                    persistenceLogger.error("❌ Failed to seed starter recipes: \(error.localizedDescription)")
+                }
+                continuation.resume()
+            }
         }
     }
 

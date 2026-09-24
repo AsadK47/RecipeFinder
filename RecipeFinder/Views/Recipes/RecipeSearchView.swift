@@ -81,7 +81,10 @@ struct RecipeSearchView: View {
     private func computeFilterHash() -> Int {
         var hasher = Hasher()
         hasher.combine(filterCriteria)
-        hasher.combine(recipes.count)
+        // Hash recipe *content*, not just count: editing a recipe (rating, cook
+        // count, photo, title…) leaves the count unchanged, and a count-only key
+        // let the list keep serving stale cached cards after such edits.
+        hasher.combine(recipes)
         return hasher.finalize()
     }
     

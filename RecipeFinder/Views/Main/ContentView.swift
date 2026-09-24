@@ -307,8 +307,10 @@ struct ContentView: View {
         Task {
             var fetched = await PersistenceController.shared.fetchRecipesAsync()
             // Seed starter recipes for brand-new users — one-time per user account.
+            // Batched onto a background context (single save) so first sign-in
+            // doesn't freeze on a synchronous per-recipe save loop.
             if fetched.isEmpty, !UserScopedStorage.shared.bool(forKey: "seedRecipesLoaded") {
-                SeedRecipeProvider.recipes.forEach { PersistenceController.shared.saveRecipeModel($0) }
+                await PersistenceController.shared.seedRecipes(SeedRecipeProvider.recipes)
                 UserScopedStorage.shared.set(true, forKey: "seedRecipesLoaded")
                 fetched = await PersistenceController.shared.fetchRecipesAsync()
             }

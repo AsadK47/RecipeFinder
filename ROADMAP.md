@@ -29,7 +29,9 @@ account, purely local" is *not* a virtue — it's a data-loss liability: Core Da
 lives in the app sandbox, so deleting the app wipes the library and device
 backups are opt-in and stale. "Lost my recipes on a phone upgrade" is the
 category's #1 review-killer. So **durability — accounts, iCloud sync, real
-backup/export — is a first-class pillar, not something to strip.** "Private"
+backup/export — is a first-class pillar, not something to strip or paywall.**
+Sync ships in the **free tier**: it rides the user's own iCloud (CloudKit private
+DB) and costs us nothing, so charging for data safety would be indefensible. "Private"
 means the user's *own* iCloud and Apple ID, not the absence of an account:
 private and synced are compatible.
 
@@ -40,49 +42,63 @@ Their import is server-side AI, paywalled at 5/week.
 - **Our structural edge:** import is **on-device** (FoundationModels + Vision
   OCR), which costs us nothing per import — so **unlimited imports are free**,
   and that's a marketing line ReciMe can't match. Freemium must therefore be
-  genuine *added* value (iCloud sync, curated library, advanced planning), never
-  locked basics and never things that cost us nothing.
+  genuine *added* value (curated library, seasonal drops, supermarket, advanced
+  planning), never locked basics and never things that cost us nothing (imports,
+  iCloud sync).
 - **Where we already beat them:** we merge duplicate ingredients in the grocery
   list (they don't); our meal plan and shopping list are linked (theirs aren't).
 - **At parity, no work needed:** aisle-grouped shopping list, serving scaling,
   metric/imperial conversion, cookbook-style organisation, offline-first.
 
 **Subscription model (RecipeFinder+).**
-The business is free-tier-first with a single premium tier gated on genuine
-ongoing value — not crippled free features.
+Free-tier-first with a single premium **subscription** tier, gated on genuine
+*ongoing* value — never crippled basics, and never things that cost us nothing.
+**Subscription-only (no lifetime/one-time tier):** higher LTV per payer, with the
+deliberate trade-off that the recurring pitch must rest on continuously-delivered
+value (seasonal drops, live/collaborative features, supermarket) — not one-time
+content and not free infrastructure.
 
 *Free tier (permanent):*
-- 50 hand-curated recipes included from day 1 so the app is never empty
-- Unlimited personal imports (URL, photo, OCR, text, share extension)
+- 50 hand-curated recipes from day 1 so the app is never empty
+- Unlimited personal imports (URL, photo, OCR, text, share extension) — on-device,
+  so they cost us nothing and stay free forever (the line ReciMe can't match)
+- **iCloud sync + backup/export** — the user's library safe across their devices,
+  private. CloudKit's private DB rides the user's *own* iCloud, so sync costs us
+  nothing to provide; paywalling data safety would contradict both the privacy-
+  first durability pillar and our own "never monetise things that cost us nothing"
+  rule. Free is also a differentiator: *unlimited imports **and** private sync, free.*
 - All organisational features: search, filter, collections, tags, meal planning,
-  shopping list, pantry — local storage only
+  shopping list, pantry
 
-*RecipeFinder+ (subscription — target £2.99/month or £19.99/year):*
-- **iCloud sync** — library safe forever, available on all devices; the primary
-  value and the honest reason to charge (real infrastructure, real data safety)
-- **Curated library expansion** — 100 more recipes unlocked immediately on
-  subscribe; a further 150 released in drops over the following ~2 months
-  (~50/month cadence). Total 300 curated recipes. The library is finite by
-  design: these are original, tested recipes, not AI-generated content. Once
-  all 300 are released the library is complete — subscribers keep them, the app
-  keeps paying for iCloud sync
-- **Seasonal recipe drops** — new packs added quarterly after the initial 300
-  ship; gives the subscription ongoing value beyond the launch burst
-- **Family sharing** — up to 5 people; shared shopping list via CloudKit Sharing
-  (same infrastructure as sync)
-- **Collaborative shopping list** — real-time edits shared with a partner or
-  household (rides CloudKit Sharing)
-- **Auto meal plan** — "plan my week from my pantry" generates a 7-day plan
-  using kitchen inventory + preferences; infrastructure already exists
-  (`KitchenRecipeMatcher` + `PantryExpirySuggestions`), needs a generation layer
-- **Nutritional goals + HealthKit** — daily targets, per-meal tracking against
-  the plan, opt-in write to Apple Health
+*RecipeFinder+ (subscription — £2.49/month, or £24.99/year (~16% off 12× monthly £29.88, ≈£2.08/mo). New annual subscribers get a **£19.99 first-year intro** (StoreKit introductory offer, ~33% off; renews at £24.99)):*
+Recurring value is deliberately things that are ongoing or cost real money to
+produce — not sync, not a one-time content dump:
+- **Curated library** — 100 recipes unlocked on subscribe; a further 150 in drops
+  over ~2 months (~50/month). Original, tested recipes with photography (real
+  production cost). Finite by design — 300 total, then complete.
+- **Seasonal recipe drops** — new packs quarterly after the initial 300; the
+  primary *ongoing* reason the subscription keeps earning once the library is done.
+- **Supermarket integration** — match the shopping list to a retailer basket
+  (affiliate / deep-link); genuine added value we can legitimately charge for.
+- **Family sharing** (up to 5) + **collaborative shopping list** — real-time,
+  shared households via CloudKit Sharing.
+- **Auto meal plan** — "plan my week from my pantry" using kitchen inventory +
+  preferences; infrastructure exists (`KitchenRecipeMatcher` +
+  `PantryExpirySuggestions`), needs a generation layer.
+- **Nutritional goals + HealthKit** — daily targets, per-meal tracking, opt-in
+  write to Apple Health.
 
-*Not gated (ever):* imports, cooking mode, timers, basic meal planning, shopping
-list, pantry, backup/export, App Intents, Siri.
+*Caveat we accept (decision recorded, not forgotten):* the curated library is
+finite, so once all 300 ship the recurring charge is carried by drops +
+supermarket + collaboration + planning/HealthKit. If churn shows those don't
+sustain a monthly sub, revisit adding a lifetime unlock or repricing.
 
-*Implementation order:* StoreKit 2 paywall → iCloud sync (both need paid
-Developer Program enrollment) → curated library image pass (Unsplash) → auto
+*Not gated (ever):* imports, **iCloud sync, backup/export**, cooking mode, timers,
+basic meal planning, shopping list, pantry, App Intents, Siri.
+
+*Implementation order:* StoreKit 2 paywall (gates content + features) → iCloud
+sync (free to users, but the CloudKit capability still needs paid Developer
+Program enrollment) → curated library image pass (Unsplash) → supermarket → auto
 meal plan → HealthKit.
 
 **The core loop everything serves:** *get a recipe in → find it → cook from it
@@ -220,15 +236,17 @@ once into their store.
   `CookingModeTip` on the frying-pan toolbar button; configured at app launch with
   `.displayFrequency(.daily)`.
 
-### ✅ iPad-optimized layout
-*Problem:* RecipeFinder runs on iPad via iPhone scaling — it works, but wastes the
+### 🟢 iPad-optimized layout
+*Problem:* RecipeFinder ran on iPad via iPhone scaling — it worked, but wasted the
 screen. Every serious recipe app (Paprika, Mela, Crouton) uses `NavigationSplitView`
-on iPad: recipe list in the sidebar, detail in the main column. Cooking on a
-counter-propped iPad is a primary use case and the current layout feels broken there.
-*What to do:* adopt `NavigationSplitView` with a sidebar (recipe list / meal plan /
-shopping) and detail column. No new features needed — it's a layout change to
-`ContentView` and the major list views. `AdaptiveSpacing` already has
-`horizontalSizeClass` awareness, so spacing is partly ready.
+on iPad. Cooking on a counter-propped iPad is a primary use case.
+*What we did:* `ContentView` switches on `horizontalSizeClass` — iPhone keeps the
+`TabView`; iPad uses a `NavigationSplitView` with a section sidebar
+(Recipes/Groceries/Import/Planning/Settings) and a detail column
+(`sidebarDetailView`). `AdaptiveSpacing` is already `horizontalSizeClass`-aware.
+*Optional future:* a three-column, selection-driven **recipe list beside the open
+recipe** (Mail/Paprika style) would deepen it further — the current two-column
+split already removes the scaled-up-iPhone feel, so this is polish, not a fix.
 
 ### 🟢 Recipe image placeholders
 `RecipePlaceholderView` ships: name-seeded gradient palette (stable Unicode-scalar
@@ -415,7 +433,10 @@ A swap icon appears per ingredient row (only when substitutes exist); tapping op
 `SubstituteSheetView`. Lookup is case/whitespace insensitive with partial-name
 fuzzy matching. FoundationModels long-tail fallback deferred to Phase 2.
 
-### 🔴 iCloud Sync *(blocked on paid enrollment — keep the model ready)*
+### 🔴 iCloud Sync *(free-tier feature; blocked on paid enrollment — keep the model ready)*
+Note: this is a **free** feature, not a RecipeFinder+ hook — it costs us nothing
+(rides the user's own iCloud) and is the data-safety pillar. It's gated only by
+the CloudKit *capability*, which needs paid Developer Program enrollment.
 `NSPersistentCloudKitContainer` over the existing Core Data stack, using the
 user's own iCloud so the privacy story holds. Design work to reconcile
 `UserScopedStorage` per-account scoping with iCloud identity, and a sync strategy
@@ -485,8 +506,8 @@ for the curated batch; revisit rate limits at multi-user scale.
 - **Offline first** — core features work without internet; network features
   degrade gracefully.
 - **Freemium** — the free tier must be genuinely useful; monetise added value
-  (supermarket integration, advanced planning), never basics or things that cost
-  us nothing (imports).
+  (curated content + drops, supermarket integration, advanced planning), never
+  basics or things that cost us nothing (imports, iCloud sync).
 - **API keys** live in `.xcconfig` files excluded from version control.
 - **Clean as we go** — delete stale docs, dead code, and cruft alongside feature
   work, not just app code.
