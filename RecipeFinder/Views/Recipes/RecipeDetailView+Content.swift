@@ -419,12 +419,36 @@ extension RecipeDetailView {
             .accessibilityLabel("Recipe timer, \(recipeTimer.displayTime)")
             .accessibilityHint("Open timer actions")
         } else {
-            Button(action: { showTimerSheet = true }) {
-                timerRowLabel(icon: "timer", text: "Start a timer", monospaced: false)
+            Button(action: startCookTimer) {
+                timerRowLabel(
+                    icon: "timer",
+                    text: cookTimerMinutes > 0 ? "Start \(cookTimerMinutes)-min timer" : "Start a timer",
+                    monospaced: false
+                )
             }
             .buttonStyle(.plain)
-            .accessibilityHint("Start a cooking timer")
+            .accessibilityHint(cookTimerMinutes > 0
+                ? "Starts a \(cookTimerMinutes) minute timer"
+                : "Start a cooking timer")
         }
+    }
+
+    /// Minutes derived from the recipe's cook time — 0 when it can't be parsed.
+    private var cookTimerMinutes: Int {
+        TimeExtractor.extractMinutes(from: recipe.cookingTime)
+    }
+
+    /// One-tap start: kicks off a timer straight from the recipe's cook time so
+    /// the common case needs no picker. Only falls back to the picker sheet when
+    /// there's no usable cook time to start from.
+    private func startCookTimer() {
+        let minutes = cookTimerMinutes
+        guard minutes > 0 else {
+            showTimerSheet = true
+            return
+        }
+        HapticManager.shared.light()
+        recipeTimer.start(hours: minutes / 60, minutes: minutes % 60, seconds: 0)
     }
 
     private func timerRowLabel(icon: String, text: String, monospaced: Bool) -> some View {

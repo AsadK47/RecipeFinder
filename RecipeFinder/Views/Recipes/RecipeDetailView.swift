@@ -28,6 +28,7 @@ struct RecipeDetailView: View {
     @State var editingUnit: String = ""
     @State var substitutingIngredientIndex: Int?
     @State private var showPostCookPhotoPrompt = false
+    @State private var showPhotoManager = false
     // Internal so RecipeDetailView+Content can trigger and track the source refresh.
     @State var isRefreshing = false
     @State var pendingRefreshDiff: RecipeDiff?
@@ -105,6 +106,7 @@ struct RecipeDetailView: View {
                     onToggleFavorite: toggleFavorite,
                     onAddToCollection: { showAddToCollection = true },
                     onStartCooking: { showCookingMode = true },
+                    onManagePhotos: { showPhotoManager = true },
                     onPrint: { RecipePrintFormatter.present(for: recipe) }
                 )
             }
@@ -122,6 +124,9 @@ struct RecipeDetailView: View {
             PostCookPhotoSheet { image in
                 addCookPhoto(image)
             }
+        }
+        .sheet(isPresented: $showPhotoManager) {
+            RecipePhotoManagerSheet(recipe: $recipe, onChange: onRecipeChange)
         }
         .sheet(isPresented: $showRefreshSheet) {
             if let diff = pendingRefreshDiff, let url = recipe.importedFromURL {

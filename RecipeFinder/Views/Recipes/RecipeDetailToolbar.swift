@@ -11,6 +11,7 @@ struct RecipeDetailToolbar: View {
     let onToggleFavorite: () -> Void
     let onAddToCollection: () -> Void
     let onStartCooking: () -> Void
+    let onManagePhotos: () -> Void
     let onPrint: () -> Void
 
     private let cookingModeTip = CookingModeTip()
@@ -42,6 +43,9 @@ struct RecipeDetailToolbar: View {
             Menu {
                 Button(action: onEdit) {
                     Label("Edit Recipe", systemImage: "pencil")
+                }
+                Button(action: onManagePhotos) {
+                    Label("Manage Photos", systemImage: "photo.on.rectangle")
                 }
                 ShareLink(
                     item: RecipeTransferItem(recipe: recipe),

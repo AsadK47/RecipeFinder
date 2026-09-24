@@ -59,6 +59,9 @@
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
+      <StoreKitConfigurationFileReference
+         identifier = "../../RecipeFinder.storekit">
+      </StoreKitConfigurationFileReference>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Debug"

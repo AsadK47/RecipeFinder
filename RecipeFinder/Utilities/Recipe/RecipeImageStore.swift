@@ -97,6 +97,14 @@ struct RecipeImageStore {
         return paths
     }
 
+    /// Deletes the on-disk file a reference points at, if we own it. No-op for
+    /// remote URLs or already-missing files. Used when the user removes a photo
+    /// so we don't leak orphaned image files in the documents directory.
+    func deleteIfLocal(_ reference: String) {
+        guard isLocalReference(reference), let path = absolutePath(for: reference) else { return }
+        try? fileManager.removeItem(atPath: path)
+    }
+
     /// Whether `reference` points at an on-disk file we own (not a remote URL).
     /// Accepts both legacy absolute paths and the current relative-path format.
     func isLocalReference(_ reference: String) -> Bool {

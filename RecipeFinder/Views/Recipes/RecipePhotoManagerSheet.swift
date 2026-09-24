@@ -1,0 +1,198 @@
+import PhotosUI
+import SwiftUI
+import UIKit
+
+/// Lets the user manage a recipe's photos directly — add from the library, take
+/// a new one, or remove existing ones — outside the post-cook prompt and the
+/// wizard. Persists each change immediately (optimistic, with rollback) so the
+/// recipe card and gallery stay in sync.
+struct RecipePhotoManagerSheet: View {
+    @Binding var recipe: RecipeModel
+    /// Called after a change is persisted, so the parent list can re-sync.
+    var onChange: (() -> Void)?
+
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
+    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
+
+    @State private var selectedItems: [PhotosPickerItem] = []
+    @State private var showCamera = false
+    @State private var showSaveError = false
+
+    private let columns = [GridItem(.adaptive(minimum: 100), spacing: AppTheme.spacing12)]
+
+    /// Every displayable image for the recipe: the main image first, then photos.
+    private var allImageNames: [String] {
+        ([recipe.imageName].compactMap { $0 } + recipe.photoNames)
+            .filter { RecipeImageView.hasDisplayableImage($0) }
+    }
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
+                    .ignoresSafeArea()
+
+                ScrollView {
+                    VStack(spacing: AppTheme.spacing20) {
+                        if allImageNames.isEmpty {
+                            emptyState
+                        } else {
+                            photoGrid
+                        }
+                        addButtons
+                    }
+                    .padding(AppTheme.spacing20)
+                }
+            }
+            .navigationTitle("Photos")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.hidden, for: .navigationBar)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") { dismiss() }
+                }
+            }
+            .fullScreenCover(isPresented: $showCamera) {
+                CameraPicker { image in addPhotos([image]) }
+            }
+            .onChange(of: selectedItems) { _, items in
+                guard !items.isEmpty else { return }
+                Task { await addPickedItems(items) }
+            }
+            .alert("Couldn't Save Photos", isPresented: $showSaveError) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text("Your photo change couldn't be saved. Please try again.")
+            }
+        }
+    }
+
+    private var emptyState: some View {
+        VStack(spacing: AppTheme.spacing8) {
+            Image(systemName: "photo.on.rectangle.angled")
+                .font(.system(size: AppTheme.fontSize60))
+                .adaptiveSecondaryForeground()
+            Text("No photos yet")
+                .font(.headline)
+                .adaptiveForegroundColor()
+            Text("Add a photo of this dish to bring the recipe to life.")
+                .font(.subheadline)
+                .adaptiveSecondaryForeground()
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, AppTheme.spacing24)
+    }
+
+    private var photoGrid: some View {
+        LazyVGrid(columns: columns, spacing: AppTheme.spacing12) {
+            ForEach(allImageNames, id: \.self) { name in
+                RecipeImageView(imageName: name, height: 100, recipeName: recipe.name)
+                    .frame(height: 100)
+                    .frame(maxWidth: .infinity)
+                    .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
+                    .overlay(alignment: .topTrailing) {
+                        Button {
+                            removePhoto(name)
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.title3)
+                                .symbolRenderingMode(.palette)
+                                .foregroundStyle(.white, .black.opacity(0.5))
+                                .padding(AppTheme.spacing6)
+                        }
+                        .accessibilityLabel("Remove photo")
+                    }
+            }
+        }
+    }
+
+    private var addButtons: some View {
+        VStack(spacing: AppTheme.spacing12) {
+            PhotosPicker(selection: $selectedItems, matching: .images) {
+                Label("Choose from Library", systemImage: "photo.on.rectangle")
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, AppTheme.spacing14)
+                    .background(
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                            .fill(AppTheme.accentColor)
+                    )
+                    .foregroundStyle(.white)
+                    .font(.subheadline.weight(.semibold))
+            }
+            .buttonStyle(.plain)
+
+            if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                Button { showCamera = true } label: {
+                    Label("Take Photo", systemImage: "camera")
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, AppTheme.spacing14)
+                        .background(
+                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                                .fill(Color.white.opacity(AppTheme.overlayLightOpacity))
+                        )
+                        .adaptiveForegroundColor()
+                        .font(.subheadline.weight(.semibold))
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+
+    // MARK: - Mutations (optimistic, persisted, rolled back on failure)
+
+    private func addPickedItems(_ items: [PhotosPickerItem]) async {
+        var images: [UIImage] = []
+        for item in items {
+            if let data = try? await item.loadTransferable(type: Data.self),
+               let image = UIImage(data: data) {
+                images.append(image)
+            }
+        }
+        selectedItems = []
+        guard !images.isEmpty else { return }
+        addPhotos(images)
+    }
+
+    private func addPhotos(_ images: [UIImage]) {
+        let store = RecipeImageStore()
+        let newPaths = store.persistGallery(images, recipeId: recipe.id, startingIndex: recipe.photoNames.count)
+        guard !newPaths.isEmpty else { return }
+        recipe.photoNames.append(contentsOf: newPaths)
+        persist { recipe.photoNames.removeLast(newPaths.count) }
+    }
+
+    private func removePhoto(_ name: String) {
+        let store = RecipeImageStore()
+        let previousImageName = recipe.imageName
+        let previousPhotoNames = recipe.photoNames
+
+        if recipe.imageName == name {
+            recipe.imageName = nil
+        } else {
+            recipe.photoNames.removeAll { $0 == name }
+        }
+
+        persist(
+            onFailure: {
+                recipe.imageName = previousImageName
+                recipe.photoNames = previousPhotoNames
+            },
+            onSuccess: { store.deleteIfLocal(name) }
+        )
+    }
+
+    /// Persists the current recipe; on failure runs `onFailure` (to roll the
+    /// optimistic edit back) and surfaces an alert.
+    private func persist(onFailure: () -> Void, onSuccess: () -> Void = {}) {
+        guard PersistenceController.shared.saveRecipeModel(recipe) else {
+            onFailure()
+            showSaveError = true
+            return
+        }
+        onSuccess()
+        HapticManager.shared.success()
+        onChange?()
+    }
+}

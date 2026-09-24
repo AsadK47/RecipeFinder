@@ -38,6 +38,29 @@ struct RecipeImageStoreTests {
         #expect(FileManager.default.fileExists(atPath: absolutePath))
     }
 
+    @Test("deleteIfLocal removes an owned on-disk image file")
+    func deleteIfLocalRemovesFile() throws {
+        let directory = makeTempDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let store = RecipeImageStore(documentsDirectory: directory)
+        let path = try #require(store.persist(makeImage(), recipeId: UUID()))
+        let absolutePath = try #require(store.absolutePath(for: path))
+        #expect(FileManager.default.fileExists(atPath: absolutePath))
+
+        store.deleteIfLocal(path)
+
+        #expect(!FileManager.default.fileExists(atPath: absolutePath))
+    }
+
+    @Test("deleteIfLocal ignores remote URLs")
+    func deleteIfLocalIgnoresRemote() {
+        let directory = makeTempDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let store = RecipeImageStore(documentsDirectory: directory)
+        // Should simply no-op (and not crash) for a non-owned reference.
+        store.deleteIfLocal("https://example.com/photo.jpg")
+    }
+
     @Test("A freshly selected image is persisted and its path returned")
     func resolvePersistsSelectedImage() throws {
         let directory = makeTempDirectory()

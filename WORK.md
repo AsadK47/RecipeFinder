@@ -1,3 +1,57 @@
+# WORK.md — ACTIVE: Recipe Wizard rework
+
+> Newest task on top. The DI-refactor section below is prior, mostly-committed history — keep it.
+
+## Status
+NOT STARTED. This session already shipped + verified (BuildProject + RunAllTests
+green, 1596 tests): the sign-in freeze fix, cook-photo-on-card (`heroImageName`),
+detail re-read on appear, loading skeleton, StoreKit paywall (scheme wiring +
+`ProductLoadState` retry UI), timer one-tap start, and recipe photo editing
+(`RecipePhotoManagerSheet`). All uncommitted — user commits as their review step.
+
+## The problem (user's words)
+"recipe wizard clearly needs to be modularised because you need to keep clicking
+Next to save anything, and clicking prep time / cook time etc doesn't take you to
+that section."
+
+Two sub-problems:
+1. **Save-anytime**: `RecipeWizardView` is a linear 6-step stepper (`currentStep`
+   0–5, Back/Next `navigationButtons`, save only in `createRecipe()` at the last
+   step). User wants to save with just what they've filled in.
+2. **Deep-link to section**: tapping the prep/cook/details info cards on
+   `RecipeDetailView` (`editableCard` → `beginEdit` → `showEditSheet`) opens the
+   editor at the top, not scrolled to the tapped field.
+
+## Key files
+- `Views/Recipes/RecipeWizardView.swift` (360 lines) — linear CREATE flow;
+  `stepContent` switch on `currentStep` 0..5; `createRecipe()` builds+saves via
+  `RecipeWizardBuilder`. Preserve `applyPrefilledData` + `RecipeWizardBuilder.build`.
+- `Views/Recipes/RecipeDetailView+Content.swift` — `editableCard` on time/details
+  cards → `beginEdit()` → `showEditSheet`. Check what `editRecipeSheet` opens
+  (wizard vs a separate single-form editor) BEFORE choosing an approach.
+
+## Design fork (decide first)
+- **Option A (recommended): single scrollable sectioned form** with a persistent
+  Save (validates required fields: name + ≥1 ingredient + ≥1 step). Deep-link via
+  `ScrollViewReader` to a section id. Solves both sub-problems; modularise each
+  step into its own section View. Keep `RecipeWizardBuilder` as the save path.
+- **Option B: keep the stepper, make it non-linear** (tappable progress steps +
+  always-enabled Save). Smaller, but deep-linking stays clunky.
+
+## Suggested plan (Option A)
+1. Extract each step body into its own small section View (the "modularise" ask).
+2. Compose in one `ScrollViewReader { ScrollView { section(id:)… } }`.
+3. Replace Back/Next with an always-visible primary Save (reuse `createRecipe`
+   validation). Keep Cancel.
+4. Add an optional open-at-section anchor so `RecipeDetailView` info-card taps map
+   to a section id.
+5. Tests: `RecipeWizardBuilderTests` / `RecipeWizardPersistenceTests` already cover
+   build/save; add a "save with only required fields" validation-gating test. UI
+   layout is test-exempt. Verify: BuildProject + RunAllTests; manually save a
+   minimal recipe and confirm a prep-time card tap opens focused on Time & Servings.
+
+---
+
 # WORK.md — View-level DI refactor (backlog #1)
 
 ## Goal
