@@ -10,11 +10,21 @@ private let logger = AppLogger.logger(category: "Subscription")
 protocol SubscriptionProviding: AnyObject, Observable {
     var isSubscribed: Bool { get }
     var products: [Product] { get }
+    var productLoadState: ProductLoadState { get }
     var purchaseInProgress: Bool { get }
     var purchaseError: String? { get set }
     func loadProducts() async
     func purchase(_ product: Product) async
     func restorePurchases() async
+}
+
+/// Where the product fetch stands, so the paywall can show a spinner, an error
+/// with retry, or the plans — but never an indefinite spinner when the fetch
+/// finishes with no products (e.g. StoreKit not configured) or throws.
+enum ProductLoadState: Equatable {
+    case loading
+    case loaded
+    case failed
 }
 
 private struct SubscriptionProvidingKey: EnvironmentKey {
@@ -55,6 +65,8 @@ final class SubscriptionManager: SubscriptionProviding {
     private(set) var isSubscribed: Bool = false
     /// Products loaded from StoreKit, sorted annual-first.
     private(set) var products: [Product] = []
+    /// Progress of the product fetch; drives the paywall's loading/error UI.
+    private(set) var productLoadState: ProductLoadState = .loading
     /// `true` while a purchase or restore is in flight.
     private(set) var purchaseInProgress: Bool = false
     /// Non-nil when the most recent purchase attempt failed.
@@ -79,6 +91,7 @@ final class SubscriptionManager: SubscriptionProviding {
     // MARK: - Public API
 
     func loadProducts() async {
+        productLoadState = .loading
         do {
             let fetched = try await Product.products(for: [
                 Self.annualProductID,
@@ -86,8 +99,10 @@ final class SubscriptionManager: SubscriptionProviding {
             ])
             // Annual first so the paywall can lead with best value.
             products = fetched.sorted { $0.id == Self.annualProductID && $1.id != Self.annualProductID }
+            productLoadState = .loaded
             logger.info("Loaded \(fetched.count) subscription product(s)")
         } catch {
+            productLoadState = .failed
             logger.error("Product load failed: \(error)")
         }
     }

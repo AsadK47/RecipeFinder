@@ -101,11 +101,16 @@ struct PaywallView: View {
 
     @ViewBuilder
     private var productsSection: some View {
-        if subscription.products.isEmpty {
+        switch subscription.productLoadState {
+        case .loading:
             ProgressView("Loading plans…")
                 .frame(maxWidth: .infinity)
                 .padding(AppTheme.spacing24)
-        } else {
+        case .failed:
+            unavailablePlans("We couldn't load plans. Check your connection and try again.")
+        case .loaded where subscription.products.isEmpty:
+            unavailablePlans("Plans aren't available right now. Please try again later.")
+        case .loaded:
             VStack(spacing: AppTheme.spacing12) {
                 ForEach(subscription.products, id: \.id) { product in
                     productButton(product)
@@ -118,6 +123,23 @@ struct PaywallView: View {
                 }
             }
         }
+    }
+
+    /// Shown when the fetch finished but there's nothing to buy (no products, or
+    /// a load failure) — a clear message plus retry, never a hung spinner.
+    private func unavailablePlans(_ message: String) -> some View {
+        VStack(spacing: AppTheme.spacing12) {
+            Text(message)
+                .font(.subheadline)
+                .adaptiveSecondaryForeground()
+                .multilineTextAlignment(.center)
+            Button("Try Again") {
+                Task { await subscription.loadProducts() }
+            }
+            .font(.subheadline.weight(.semibold))
+        }
+        .frame(maxWidth: .infinity)
+        .padding(AppTheme.spacing24)
     }
 
     private func productButton(_ product: Product) -> some View {
