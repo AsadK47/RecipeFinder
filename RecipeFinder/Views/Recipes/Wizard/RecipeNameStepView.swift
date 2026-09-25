@@ -27,9 +27,8 @@ struct RecipeNameStepView: View {
                 VStack(spacing: AppTheme.spacing16) {
                     TextField("Recipe Name", text: $recipeName)
                         .font(.title2)
-                        .padding()
-                        .background(Color.white.opacity(AppTheme.dividerOpacity))
-                        .cornerRadius(AppTheme.cornerRadius12)
+                        .textFieldStyle(.plain)
+                        .appInputField()
 
                     VStack(alignment: .leading, spacing: AppTheme.spacing10) {
                         Text("Recipe Photo")

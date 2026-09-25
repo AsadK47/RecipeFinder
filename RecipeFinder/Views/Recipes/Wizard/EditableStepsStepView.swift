@@ -44,8 +44,9 @@ struct EditableStepsStepView: View {
                             }
 
                             TextField(fieldPlaceholder, text: $step.text, axis: .vertical)
-                                .textFieldStyle(.roundedBorder)
+                                .textFieldStyle(.plain)
                                 .lineLimit(2...5)
+                                .appInputField()
                         }
 
                         if step.id != steps.last?.id {

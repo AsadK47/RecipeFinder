@@ -19,6 +19,9 @@ These are non-negotiable. Violations are bugs, not style choices.
 - Verify unfamiliar/new APIs via `DocumentationSearch` (Liquid Glass, FoundationModels, etc.) — don't guess.
 - Comments explain *why*, not *what*.
 
+## Design system
+Visual language + shared UI tokens live in `RecipeFinder/DesignSystem.md` (living doc — update it when you make a styling call). Cards → `.appCard()`, inputs → `.textFieldStyle(.plain)` + `.appInputField()`; never `.roundedBorder` or a hand-rolled opaque fill on a frosted card. To match an existing element, read its modifiers and reuse the token — don't approximate.
+
 ## Design principles
 
 **SOLID:** SRP (one type, one reason to change), OCP (extend via new types, not modifying working code), LSP (subtypes must be substitutable), ISP (small focused protocols), DIP (depend on protocols not concrete types).

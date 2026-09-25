@@ -53,7 +53,7 @@ struct NotesStepView: View {
             }
 
             WizardCard {
-                VStack(spacing: AppTheme.spacing24) {
+                VStack(alignment: .leading, spacing: AppTheme.spacing24) {
                     if hasPrefilledNotes && !notes.isEmpty {
                         HStack {
                             Image(systemName: "info.circle.fill")
@@ -101,9 +101,7 @@ struct NotesStepView: View {
                             .lineLimit(8...15)
                             .padding(AppTheme.spacing4)
                     }
-                    .padding(AppTheme.spacing8)
-                    .background(AppTheme.secondaryBackground(for: colorScheme))
-                    .cornerRadius(AppTheme.cornerRadius8)
+                    .appInputField()
 
                     VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                         Text("Quick Add:")
@@ -121,9 +119,8 @@ struct NotesStepView: View {
                             }
                         }
                     }
-                }
 
-                Divider()
+                    Divider()
 
                     VStack(alignment: .leading, spacing: AppTheme.spacing12) {
                         Text("Recipe Summary")
@@ -139,6 +136,7 @@ struct NotesStepView: View {
                         WizardSummaryRow(icon: "list.number", label: "Pre-prep Steps", value: "\(summary.prePrepStepCount)")
                         WizardSummaryRow(icon: "list.number", label: "Cooking Steps", value: "\(summary.cookingStepCount)")
                     }
+                }
                 .padding()
             }
         }
@@ -178,10 +176,7 @@ struct NotesStepView: View {
 
             TextField("e.g. Italian, Mexican, Indian…", text: $cuisine)
                 .textFieldStyle(.plain)
-                .padding(.horizontal, AppTheme.spacing12)
-                .padding(.vertical, AppTheme.spacing8)
-                .background(AppTheme.secondaryBackground(for: colorScheme))
-                .cornerRadius(AppTheme.cornerRadius8)
+                .appInputField()
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: AppTheme.spacing8) {
@@ -243,10 +238,7 @@ struct NotesStepView: View {
             HStack(spacing: AppTheme.spacing8) {
                 TextField("Add a tag…", text: $tagInput)
                     .textFieldStyle(.plain)
-                    .padding(.horizontal, AppTheme.spacing12)
-                    .padding(.vertical, AppTheme.spacing8)
-                    .background(AppTheme.secondaryBackground(for: colorScheme))
-                    .cornerRadius(AppTheme.cornerRadius8)
+                    .appInputField()
                     .onSubmit { addTag() }
 
                 Button("Add", action: addTag)
