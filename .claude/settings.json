@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git show:*)",
+      "Bash(git branch:*)",
+      "mcp__xcode-tools__XcodeRead",
+      "mcp__xcode-tools__XcodeGrep",
+      "mcp__xcode-tools__XcodeGlob",
+      "mcp__xcode-tools__XcodeLS",
+      "mcp__xcode-tools__XcodeRefreshCodeIssuesInFile",
+      "mcp__xcode-tools__XcodeListNavigatorIssues",
+      "mcp__xcode-tools__DocumentationSearch",
+      "mcp__xcode-tools__GetTestList",
+      "mcp__xcode-tools__GetBuildLog",
+      "mcp__xcode-tools__BuildProject",
+      "mcp__xcode-tools__RunAllTests",
+      "mcp__xcode-tools__RunSomeTests",
+      "mcp__xcode-tools__RunCodeSnippet"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|mcp__xcode-tools__XcodeWrite|mcp__xcode-tools__XcodeUpdate",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/no-combine.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

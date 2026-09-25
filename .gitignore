@@ -75,3 +75,6 @@ config/secrets.*
 **/confidential_*
 # Xcode project backups (created by tooling; never commit)
 *.pbxproj.backup
+
+# Claude Code personal overrides
+.claude/settings.local.json
