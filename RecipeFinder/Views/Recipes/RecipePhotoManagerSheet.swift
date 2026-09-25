@@ -18,6 +18,7 @@ struct RecipePhotoManagerSheet: View {
     @State private var selectedItems: [PhotosPickerItem] = []
     @State private var showCamera = false
     @State private var showSaveError = false
+    @State private var photoViewer: PhotoViewerSource?
 
     private let columns = [GridItem(.adaptive(minimum: 100), spacing: AppTheme.spacing12)]
 
@@ -87,11 +88,15 @@ struct RecipePhotoManagerSheet: View {
 
     private var photoGrid: some View {
         LazyVGrid(columns: columns, spacing: AppTheme.spacing12) {
-            ForEach(allImageNames, id: \.self) { name in
+            ForEach(Array(allImageNames.enumerated()), id: \.element) { index, name in
                 RecipeImageView(imageName: name, height: 100, recipeName: recipe.name)
                     .frame(height: 100)
                     .frame(maxWidth: .infinity)
                     .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        photoViewer = PhotoViewerSource(imageNames: allImageNames, recipeName: recipe.name, startIndex: index)
+                    }
                     .overlay(alignment: .topTrailing) {
                         Button {
                             removePhoto(name)
@@ -106,6 +111,7 @@ struct RecipePhotoManagerSheet: View {
                     }
             }
         }
+        .fullScreenCover(item: $photoViewer) { FullScreenPhotoViewer(source: $0) }
     }
 
     private var addButtons: some View {

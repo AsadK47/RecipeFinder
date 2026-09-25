@@ -109,10 +109,21 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         photoNames          = (try? c.decodeIfPresent([String].self,   forKey: .photoNames))  ?? []
     }
     
+    // Mirror the fields `==` compares, not just `id`. An id-only hash collides
+    // for same-recipe-different-content, which silently defeats content-keyed
+    // caches (e.g. RecipeSearchView's filter cache) — a new cook photo or rating
+    // wouldn't invalidate them, leaving stale cards until relaunch.
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
+        hasher.combine(currentServings)
+        hasher.combine(ingredients)
+        hasher.combine(isFavorite)
+        hasher.combine(cookCount)
+        hasher.combine(rating)
+        hasher.combine(cuisine)
+        hasher.combine(photoNames)
     }
-    
+
     static func == (lhs: RecipeModel, rhs: RecipeModel) -> Bool {
         lhs.id == rhs.id &&
         lhs.currentServings == rhs.currentServings &&

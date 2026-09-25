@@ -6,6 +6,7 @@ struct RecipeResultsList: View {
     let filteredRecipes: [RecipeModel]
     let onRecipeChange: () -> Void
     let onRequestDelete: (RecipeModel) -> Void
+    let onRefresh: () async -> Void
 
     var body: some View {
         ScrollView {
@@ -17,6 +18,7 @@ struct RecipeResultsList: View {
             .padding(.horizontal, AppTheme.cardHorizontalPadding)
             .padding(.bottom, AppTheme.cardHorizontalPadding)
         }
+        .refreshable { await onRefresh() }
     }
 
     private func navigationLink(for recipe: RecipeModel) -> some View {

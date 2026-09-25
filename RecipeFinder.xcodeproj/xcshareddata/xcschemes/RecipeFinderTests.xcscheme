@@ -60,7 +60,7 @@
          </CommandLineArgument>
       </CommandLineArguments>
       <StoreKitConfigurationFileReference
-         identifier = "../../RecipeFinder.storekit">
+         identifier = "RecipeFinder.storekit">
       </StoreKitConfigurationFileReference>
    </LaunchAction>
    <ProfileAction

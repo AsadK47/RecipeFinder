@@ -324,7 +324,8 @@ struct RecipeSearchView: View {
                 RecipeResultsList(
                     filteredRecipes: current,
                     onRecipeChange: refreshRecipes,
-                    onRequestDelete: requestDelete
+                    onRequestDelete: requestDelete,
+                    onRefresh: refreshRecipesAsync
                 )
             }
         }
@@ -463,13 +464,16 @@ struct RecipeSearchView: View {
     }
     
     private func refreshRecipes() {
+        Task { await refreshRecipesAsync() }
+    }
+
+    /// Awaitable reload so pull-to-refresh keeps its spinner up until the fetch
+    /// completes. `refreshRecipes` wraps this for the fire-and-forget callers.
+    private func refreshRecipesAsync() async {
         guard PersistenceController.shared.hasCurrentUserScope() else {
             logger.debug("⚠️ Skipping recipe refresh because user scope is unavailable")
             return
         }
-
-        Task {
-            recipes = await PersistenceController.shared.fetchRecipesAsync()
-        }
+        recipes = await PersistenceController.shared.fetchRecipesAsync()
     }
 }

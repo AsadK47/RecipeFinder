@@ -62,20 +62,35 @@ extension RecipeDetailView {
     }
 
     /// The 220pt hero. A single image renders directly; multiple images become a
-    /// swipeable paged gallery rather than thumbnails stacked below.
-    @ViewBuilder
+    /// swipeable paged gallery rather than thumbnails stacked below. Tapping any
+    /// image opens it full-screen at that index.
     private var imageGallery: some View {
-        if galleryImageNames.count == 1 {
-            RecipeImageView(imageName: galleryImageNames[0], height: 220, recipeName: recipe.name)
+        galleryContent
+            .fullScreenCover(item: $photoViewer) { FullScreenPhotoViewer(source: $0) }
+    }
+
+    @ViewBuilder
+    private var galleryContent: some View {
+        let names = galleryImageNames
+        if names.count == 1 {
+            RecipeImageView(imageName: names[0], height: 220, recipeName: recipe.name)
+                .contentShape(Rectangle())
+                .onTapGesture { openViewer(names, at: 0) }
         } else {
             TabView {
-                ForEach(Array(galleryImageNames.enumerated()), id: \.offset) { _, name in
+                ForEach(Array(names.enumerated()), id: \.offset) { index, name in
                     RecipeImageView(imageName: name, height: 220, recipeName: recipe.name)
+                        .contentShape(Rectangle())
+                        .onTapGesture { openViewer(names, at: index) }
                 }
             }
             .frame(height: 220)
             .tabViewStyle(.page)
         }
+    }
+
+    private func openViewer(_ names: [String], at index: Int) {
+        photoViewer = PhotoViewerSource(imageNames: names, recipeName: recipe.name, startIndex: index)
     }
 
     var recipeInfoCardsView: some View {

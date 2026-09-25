@@ -26,6 +26,7 @@ struct RecipeDetailView: View {
     @State var substitutingIngredientIndex: Int?
     @State private var showPostCookPhotoPrompt = false
     @State private var showPhotoManager = false
+    @State var photoViewer: PhotoViewerSource?
     // Which editor section to open on — set by the tappable info cards so the
     // wizard deep-links to those fields; nil opens at the top (toolbar Edit).
     @State var editSection: RecipeWizardView.Section?
