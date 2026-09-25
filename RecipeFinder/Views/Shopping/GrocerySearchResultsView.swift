@@ -65,18 +65,24 @@ struct GrocerySearchResultsView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
 
             Button(action: { onAddToShopping(name) }) {
-                if inList {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.body.weight(.semibold))
-                        .foregroundStyle(.green)
-                        .frame(width: 52, height: 32)
-                } else {
-                    Text("Add")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(.white)
-                        .frame(width: 52, height: 32)
-                        .background(Capsule().fill(AppTheme.accentColor(for: selectedTheme)))
+                Group {
+                    if inList {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.body.weight(.semibold))
+                            .foregroundStyle(.green)
+                            .frame(width: 52, height: 32)
+                    } else {
+                        Text("Add")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(.white)
+                            .frame(width: 52, height: 32)
+                            .background(Capsule().fill(AppTheme.accentColor(for: selectedTheme)))
+                    }
                 }
+                // Keep the 32pt visual capsule but guarantee a ≥44pt tap target
+                // (accessibility hit-region minimum).
+                .frame(minWidth: 44, minHeight: 44)
+                .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .disabled(inList)

@@ -22,6 +22,25 @@ Four logically separate changes (suggest 4 commits):
 4. **StoreKit scheme fix + guide-adoption config** — both schemes point at
    `RecipeFinder.storekit` (SRCROOT); `.claude/settings.json` (permission allowlist +
    `no-combine.sh` guard hook); `.gitignore` ignores `settings.local.json`.
+5. **Latency: search filtering out of `body`** — `RecipeSearchView` no longer
+   hashes the whole library on every body pass. Deleted `computeFilterHash()`,
+   `lastFilterHash`, and the `filteredRecipes` computed prop; `recipeContentArea`
+   reads the `cachedFilteredRecipes` @State directly. `FilterCacheUpdateModifier`'s
+   `onChange(of: filterCriteria/recipes)` (already present) now solely drives
+   `updateFilterCache()` → `filterCriteria.apply(to:)`. Seeded the cache in a new
+   `init` to avoid a first-frame empty-state flash. NOTE: this supersedes the
+   RecipeModel `hash(into:)` enrichment as the stale-card mechanism — staleness now
+   clears via `onChange(of: recipes)` (== includes photoNames). The enriched hash is
+   kept for Hashable/Equatable consistency but is no longer load-bearing.
+
+## Latency findings NOT yet fixed (backlog, from the sweep)
+- **Regex recompiled per call** in import parsers (`RecipeParser(+WPRM/Microdata/
+  StructuredData)`, `TextRecipeParser`, `IngredientLineParser`) — hoist each
+  `NSRegularExpression` to `static let` (see `IngredientNameFormatter` for the pattern).
+- **JPEG encode on main** — `RecipeImageStore.persistGallery` `image.jpegData(...)`
+  runs on the calling (main) actor during photo save; offload to a background Task.
+- **A few sync Core Data on main** — `getRecipeCount()` in `AccountBadgesSection`,
+  `fetchRecipes()` in write-path dedup + App Intents (launch/list path already async).
 
 ## Next action — root fix: reactive `RecipeStore` (the durable fix the band-aids defer to)
 User chose STAGED: quick relief now (done above), then replace the fragile pattern.

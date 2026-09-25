@@ -29,7 +29,6 @@ struct RecipeSearchView: View {
     @State private var showDeleteAlert: Bool = false
     @State private var dontAskAgainDelete: Bool = false
     @State private var cachedFilteredRecipes: [RecipeModel] = []
-    @State private var lastFilterHash: Int = 0
     @State private var availableTags: [String] = []
     @State private var availableCuisines: [String] = []
     @State private var categories: [String] = []
@@ -44,16 +43,6 @@ struct RecipeSearchView: View {
     // Refreshed on appear so pantry toggles in RecipeDetailView don't cause
     // this buried view to re-render and re-run apply(to:) 3 times per toggle.
     @State private var availableIngredients: Set<String> = []
-
-    private var filteredRecipes: [RecipeModel] {
-        let currentHash = computeFilterHash()
-        
-        if currentHash == lastFilterHash && !cachedFilteredRecipes.isEmpty {
-            return cachedFilteredRecipes
-        }
-        
-        return filterCriteria.apply(to: recipes)
-    }
 
     /// The current filters as a plain value; all filtering/sorting lives in
     /// `RecipeFilterCriteria` so it stays out of `body` and is unit tested.
@@ -77,26 +66,20 @@ struct RecipeSearchView: View {
         return c
     }
     
-    /// Cache key derived from the whole `RecipeFilterCriteria` value (which is
-    /// `Hashable` and holds every filter, including the pantry) plus the recipe
-    /// count. Hashing the value directly means a newly added filter can't be
-    /// forgotten here the way a hand-maintained field list would.
-    private func computeFilterHash() -> Int {
-        var hasher = Hasher()
-        hasher.combine(filterCriteria)
-        // Hash recipe *content*, not just count: editing a recipe (rating, cook
-        // count, photo, title…) leaves the count unchanged, and a count-only key
-        // let the list keep serving stale cached cards after such edits.
-        hasher.combine(recipes)
-        return hasher.finalize()
-    }
-    
     var activeFilterCount: Int {
         filterCriteria.activeCount
     }
     
     var difficulties: [String] {
         ["Basic", "Expert", "Intermediate"]
+    }
+
+    init(recipes: Binding<[RecipeModel]>, isLoading: Bool = false) {
+        _recipes = recipes
+        self.isLoading = isLoading
+        // Seed the cache so the first frame renders the (unfiltered) library
+        // rather than flashing the empty state before onAppear seeds it.
+        _cachedFilteredRecipes = State(initialValue: RecipeFilterCriteria().apply(to: recipes.wrappedValue))
     }
 
     var body: some View {
@@ -312,9 +295,9 @@ struct RecipeSearchView: View {
     }
     
     private var recipeContentArea: some View {
-        // Capture once — filteredRecipes can fall through to apply(to:) on a cache
-        // miss, so calling it twice in one body evaluation doubles the filter cost.
-        let current = filteredRecipes
+        // Read the maintained cache directly — no filtering/hashing in `body`.
+        // `updateFilterCache()` keeps it current via onChange + onAppear.
+        let current = cachedFilteredRecipes
         return Group {
             if isLoading && recipes.isEmpty {
                 RecipeListSkeleton()
@@ -429,12 +412,11 @@ struct RecipeSearchView: View {
         categories = Array(Set(recipes.map { $0.category }).intersection(validCategories)).sorted()
     }
 
+    /// Recomputes the displayed list. Driven only by `FilterCacheUpdateModifier`'s
+    /// `onChange` (fires on a real filter/recipes change) + the initial `onAppear`,
+    /// so the ~10 filter passes never run inside `body`.
     private func updateFilterCache() {
-        let newHash = computeFilterHash()
-        if newHash != lastFilterHash {
-            cachedFilteredRecipes = filteredRecipes
-            lastFilterHash = newHash
-        }
+        cachedFilteredRecipes = filterCriteria.apply(to: recipes)
     }
     
     private func deleteRecipe(_ recipe: RecipeModel) {
