@@ -13,6 +13,7 @@ struct MealTimeCard: View {
         HStack(spacing: AppTheme.spacing16) {
             MealThumbnail(
                 imageName: recipe?.imageName ?? "",
+                recipeName: recipe?.name,
                 fallbackIcon: mealTime.icon,
                 colorScheme: colorScheme
             )
@@ -98,6 +99,10 @@ struct MealTimeCard: View {
 /// When no valid image is available the original icon circle is shown instead.
 private struct MealThumbnail: View {
     let imageName: String
+    /// Non-nil when a recipe is assigned to this slot — drives the per-recipe
+    /// coloured placeholder when that recipe has no photo. Nil = empty slot, which
+    /// keeps the meal-time icon as the "tap to add" affordance.
+    let recipeName: String?
     let fallbackIcon: String
     let colorScheme: ColorScheme
 
@@ -130,7 +135,13 @@ private struct MealThumbnail: View {
                 .scaledToFill()
                 .frame(width: Self.size, height: Self.size)
                 .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
+        } else if let recipeName {
+            // Recipe assigned but no photo → per-recipe coloured placeholder.
+            RecipePlaceholderView(recipeName: recipeName)
+                .frame(width: Self.size, height: Self.size)
+                .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
         } else {
+            // Empty slot → meal-time icon as the "tap to add" affordance.
             ZStack {
                 Circle()
                     .fill(colorScheme == .dark

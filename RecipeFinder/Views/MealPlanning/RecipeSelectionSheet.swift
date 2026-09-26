@@ -110,17 +110,8 @@ private struct MealPickerRecipeCard: View {
                 .resizable()
                 .scaledToFill()
         } else {
-            // No photo: subtle gradient placeholder — avoids the heavy solid-box look
-            ZStack {
-                LinearGradient(
-                    colors: [Color.white.opacity(0.12), Color.white.opacity(0.04)],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-                Image(systemName: "fork.knife")
-                    .font(.system(size: 32))
-                    .foregroundStyle(.white.opacity(0.2))
-            }
+            // Per-recipe coloured placeholder — matches the main recipe tab.
+            RecipePlaceholderView(recipeName: recipe.name)
         }
     }
 
