@@ -6,6 +6,7 @@ Proprietary — RecipeFinder Limited. GitHub: https://github.com/RecipeFinderLim
 ## Hard constraints
 These are non-negotiable. Violations are bugs, not style choices.
 
+- **MUST** answer concisely: lead with the result/answer; cut preamble, recaps, and reasoning the user didn't ask for. Detail only on request.
 - **MUST** run `BuildProject` + `RunAllTests` before committing.
 - **MUST NOT** commit partial or unverified work — write `WORK.md` instead.
 - **MUST** keep one task active at a time (WIP=1): finish it (`BuildProject` + `RunAllTests` green — "looks fine" is not done) before starting the next, and never "also refactor" B while doing A — record B as the next `WORK.md` action. *(verify before any batch edit; a wrong premise × N files is the expensive failure)*

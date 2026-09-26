@@ -19,9 +19,14 @@ Four logically separate changes (suggest 4 commits):
    compares. (No `Set<RecipeModel>`/dict relies on identity hashing — checked.)
 3. **Pull-to-refresh** — `.refreshable` on `RecipeResultsList` → new async
    `refreshRecipesAsync()` in `RecipeSearchView`.
-4. **StoreKit scheme fix + guide-adoption config** — both schemes point at
-   `RecipeFinder.storekit` (SRCROOT); `.claude/settings.json` (permission allowlist +
-   `no-combine.sh` guard hook); `.gitignore` ignores `settings.local.json`.
+4. **StoreKit scheme fix + guide-adoption config** — both schemes' StoreKit
+   `identifier` = `../../../RecipeFinder.storekit`. IMPORTANT: Xcode anchors this
+   path at the `.xcscheme`'s OWN directory (`…/xcshareddata/xcschemes/`), so
+   `../../../` = repo root where the file lives. This is the value `b582b5a` shipped;
+   an earlier mis-fix to a plain `RecipeFinder.storekit` (assuming SRCROOT anchoring)
+   BROKE it — do not repeat. The Tests scheme was separately wrong (`../../`), now
+   also corrected. Plus `.claude/settings.json` (permission allowlist + `no-combine.sh`
+   guard hook); `.gitignore` ignores `settings.local.json`.
 5. **Latency: search filtering out of `body`** — `RecipeSearchView` no longer
    hashes the whole library on every body pass. Deleted `computeFilterHash()`,
    `lastFilterHash`, and the `filteredRecipes` computed prop; `recipeContentArea`

@@ -80,6 +80,15 @@ final class RecipeFinderAccessibilityAuditTests: XCTestCase {
         let dismissKb = app.buttons["Dismiss keyboard"]
         if dismissKb.waitForExistence(timeout: 1) {
             dismissKb.tap()
+            // Wait for the dismiss animation to finish before auditing. Views in
+            // transition can momentarily report non-finite frames (same class the
+            // ShoppingProgressBar clamp guards against), which the audit flags as
+            // "Invalid frame dimension" — measure the settled layout instead.
+            let keyboardGone = XCTNSPredicateExpectation(
+                predicate: NSPredicate(format: "exists == false"),
+                object: dismissKb
+            )
+            wait(for: [keyboardGone], timeout: 3)
         }
 
         // Contrast is excluded here for the same reason as the Import screen: the

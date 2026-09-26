@@ -68,7 +68,7 @@
          </BuildableReference>
       </BuildableProductRunnable>
       <StoreKitConfigurationFileReference
-         identifier = "RecipeFinder.storekit">
+         identifier = "../../../RecipeFinder.storekit">
       </StoreKitConfigurationFileReference>
       <EnvironmentVariables>
          <EnvironmentVariable
