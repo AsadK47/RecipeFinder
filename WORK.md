@@ -61,12 +61,17 @@ RecipeSearchView (addRecipe/deleteRecipe + refreshRecipesAsync → store.refresh
 ImportView.store. `recordCook`/`updateRating` still use specialized PersistenceController
 ops + onRecipeChange (handle in slice 3).
 
+### SLICE 3 DONE (uncommitted, 1616 green)
+`recordCook`/`updateRating` now call `store.sync(recipe)` (new: upsert in-memory, no
+re-persist). Every recipe write path goes through the store. `onRecipeChange` still
+threaded — its teardown is coupled with Collections (they pass `refreshRecipes` to
+`RecipeLink` and hold their own recipe arrays), so do those together.
+
 ### Remaining slices (next actions)
-- Slice 3: delete the `onRecipeChange` threading (RecipeLink/RecipeResultsList/
-  RecipeDetailView/Collections) once writes go through the store; point
-  `RecipeSearchView.refreshRecipesAsync` at `store.refresh()`.
-- Slice 4: migrate child views off `@Binding var recipes` to `@Environment(\.recipeStore)`
-  and drop `recipesBinding`.
+- Slice 4: migrate Collections (CollectionDetailView/SmartCollectionDetailView/
+  CollectionsInlineView) + MealPlanning + RecipeSelectionSheet off `@Binding var recipes`
+  to `@Environment(\.recipeStore)`; then delete `onRecipeChange` from RecipeDetailView/
+  RecipeLink/RecipeResultsList/RecipePhotoManagerSheet and drop ContentView's `recipesBinding`.
 
 ## (superseded) original plan — reactive `RecipeStore`
 User chose STAGED: quick relief now (done above), then replace the fragile pattern.

@@ -13,6 +13,7 @@ protocol RecipeStoring: AnyObject, Observable {
     @discardableResult func save(_ recipe: RecipeModel) -> Bool
     @discardableResult func add(_ recipe: RecipeModel) -> Bool
     func delete(id: UUID)
+    func sync(_ recipe: RecipeModel)
 }
 
 private struct RecipeStoreKey: EnvironmentKey {
@@ -122,5 +123,14 @@ final class RecipeStore: RecipeStoring {
     func delete(id: UUID) {
         recipes.removeAll { $0.id == id }
         persistence.deleteRecipe(withId: id)
+    }
+
+    /// Upserts an already-persisted recipe into the in-memory library without a
+    /// re-write. For specialised persistence ops (recordCook/updateRating) that
+    /// persist via their own path but still need the observable array in sync.
+    func sync(_ recipe: RecipeModel) {
+        if let index = recipes.firstIndex(where: { $0.id == recipe.id }) {
+            recipes[index] = recipe
+        }
     }
 }

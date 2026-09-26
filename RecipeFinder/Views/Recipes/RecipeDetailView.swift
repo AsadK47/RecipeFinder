@@ -282,6 +282,7 @@ struct RecipeDetailView: View {
         recipe.cookCount += 1
         recipe.lastCookedAt = Date()
         PersistenceController.shared.recordCook(withId: recipe.id)
+        recipeStore.sync(recipe)
         onRecipeChange?()
         // Third cook of any recipe = genuine fan; ask for a review exactly once.
         if recipe.cookCount == 3 { requestReview() }
@@ -309,6 +310,7 @@ struct RecipeDetailView: View {
         HapticManager.shared.selection()
         recipe.rating = newRating
         PersistenceController.shared.updateRating(withId: recipe.id, rating: newRating)
+        recipeStore.sync(recipe)
         onRecipeChange?()
     }
 

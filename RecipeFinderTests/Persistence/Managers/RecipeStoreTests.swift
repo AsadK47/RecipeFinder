@@ -63,6 +63,21 @@ struct RecipeStoreTests {
         #expect(store.recipes.isEmpty)
     }
 
+    @Test("sync upserts an existing recipe in place, ignores unknown ids")
+    func syncUpserts() {
+        let store = makeStore()
+        let recipe = makeRecipe(rating: 0)
+        _ = store.add(recipe)
+
+        var edited = recipe
+        edited.rating = 4
+        store.sync(edited)
+        #expect(store.recipes.first?.rating == 4)
+
+        store.sync(makeRecipe(name: "Unknown"))   // not in the library
+        #expect(store.recipes.count == 1)
+    }
+
     @Test("refresh reloads the library from persistence")
     func refreshReloads() async {
         let store = makeStore()
