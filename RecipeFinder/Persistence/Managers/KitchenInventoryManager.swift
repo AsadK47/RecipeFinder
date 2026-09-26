@@ -203,7 +203,7 @@ final class KitchenInventoryManager: KitchenInventoryManaging {
 	}
 	
 	private func migrateOldDataIfNeeded() {
-		guard !UserDefaults.standard.bool(forKey: migrationKey) else { return }
+		guard !storage.bool(forKey: migrationKey) else { return }
 		
 		let validFoods = Set(FoodsList.getAllFoods().map { $0.lowercased() })
 		
@@ -218,7 +218,7 @@ final class KitchenInventoryManager: KitchenInventoryManaging {
 			saveItems(filteredItems)
 		}
 		
-		UserDefaults.standard.set(true, forKey: migrationKey)
+		storage.set(true, forKey: migrationKey)
 	}
     
 	/// Faithful, non-destructive restore of both kitchen stores: unions the quick
