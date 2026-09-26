@@ -20,6 +20,11 @@ struct RecipeIngredientsSection: View {
     /// Opens the full recipe editor on the ingredients section (add/remove/reorder).
     let onEditIngredients: () -> Void
 
+    // One-time discoverability hint for the tap-to-check / tap-amount-to-edit
+    // gestures, which aren't otherwise obvious. Hidden once seen or once the user
+    // has checked anything off (they've clearly discovered it).
+    @AppStorage("hasSeenIngredientTapHint") private var hasSeenTapHint = false
+
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
             header
@@ -122,6 +127,34 @@ struct RecipeIngredientsSection: View {
         .accessibilityAddTraits(.isButton)
     }
 
+    private var tapHint: some View {
+        HStack(alignment: .top, spacing: AppTheme.spacing8) {
+            Image(systemName: "hand.tap")
+                .font(.subheadline)
+                .foregroundStyle(AppTheme.accentColor)
+                .accessibilityHidden(true)
+            Text("Tap a name to check it off while cooking · tap its amount to edit.")
+                .font(.caption)
+                .adaptiveSecondaryForeground()
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: AppTheme.spacing8)
+            Button {
+                withAnimation { hasSeenTapHint = true }
+            } label: {
+                Image(systemName: "xmark")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(.secondary)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Dismiss tip")
+        }
+        .padding(AppTheme.spacing12)
+        .background(
+            RoundedRectangle(cornerRadius: AppTheme.cornerRadius8)
+                .fill(AppTheme.accentColor.opacity(0.10))
+        )
+    }
+
     // Pre-computed once per body evaluation so the O(table) substitute scan doesn't
     // run inside the ForEach body for every row on every re-render.
     private var ingredientsWithSubstitutes: Set<UUID> {
@@ -133,6 +166,9 @@ struct RecipeIngredientsSection: View {
     private var ingredientsList: some View {
         GlassCard {
             VStack(spacing: AppTheme.spacing16) {
+                if !hasSeenTapHint && !ingredientsState.contains(true) && !recipe.ingredients.isEmpty {
+                    tapHint
+                }
                 // ingredient.id as ForEach identity lets SwiftUI diff individual rows
                 // instead of rebuilding all N rows on every pantry/shopping-list change.
                 let substituteIDs = ingredientsWithSubstitutes

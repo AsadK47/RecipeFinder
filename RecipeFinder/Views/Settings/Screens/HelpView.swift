@@ -69,6 +69,33 @@ struct HelpView: View {
             }
 
             VStack(spacing: AppTheme.spacing8) {
+                SettingsSectionHeader(title: "Gestures")
+
+                SettingsCard {
+                    VStack(alignment: .leading, spacing: AppTheme.spacing24) {
+                        HelpItem(
+                            icon: "checkmark.circle",
+                            title: "Check off ingredients",
+                            description: "While cooking, tap an ingredient's name to cross it off. Tap its amount to jump straight into the editor for that ingredient."
+                        )
+
+                        HelpItem(
+                            icon: "frying.pan",
+                            title: "Cook mode",
+                            description: "Open a recipe and tap the pan icon in the toolbar for a big, glanceable step-by-step layout."
+                        )
+
+                        HelpItem(
+                            icon: "photo.on.rectangle",
+                            title: "Dish photos",
+                            description: "Add a photo after cooking, then tap any recipe photo to view it full-screen — swipe between photos and pinch to zoom."
+                        )
+                    }
+                    .padding(AppTheme.spacing20)
+                }
+            }
+
+            VStack(spacing: AppTheme.spacing8) {
                 SettingsSectionHeader(title: "Tips & Tricks")
 
                 SettingsCard {

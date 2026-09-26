@@ -514,6 +514,15 @@ for the curated batch; revisit rate limits at multi-user scale.
 
 ---
 
+## Onboarding & discoverability *(captured 2026-09-26 — ALL DONE 2026-09-26)*
+1. ✅ **Wizard intro** — `WizardIntroSheet`, one-time on first create flow (`hasSeenWizardIntro`).
+2. ✅ **Make cross-off obvious** — one-time dismissible tip in the ingredients card
+   (`hasSeenIngredientTapHint`), auto-hides once anything's checked.
+3. ✅ **Tap amount → edit** — was already shipped: `IngredientRowView` quantity pill →
+   `onTapQuantity` → wizard ingredients section; name → cross-off.
+4. ✅ **Settings tutorial** — added a "Gestures" card to the existing `HelpView`
+   (Settings → Help & Support), reusing `HelpItem` rather than a new page.
+
 ## Test coverage
 
 Legend: ✅ tested · ⚠️ unit/model only · ❌ no test  

@@ -67,6 +67,8 @@ struct RecipeWizardView: View {
 
     @State private var showError = false
     @State private var errorMessage = ""
+    @AppStorage("hasSeenWizardIntro") private var hasSeenWizardIntro = false
+    @State private var showIntro = false
     @State private var showPhotoPicker = false
     @State private var selectedRecipeImage: UIImage?
     @State private var existingImageReference: String?
@@ -116,7 +118,13 @@ struct RecipeWizardView: View {
                     .padding(.horizontal, AppTheme.spacing20)
                     .padding(.bottom, AppTheme.spacing32)
                 }
-                .onAppear { applyPrefilledData() }
+                .onAppear {
+                    applyPrefilledData()
+                    // First full create-flow only — not focused edits or updates.
+                    if focus == nil, editingRecipeId == nil, !hasSeenWizardIntro {
+                        showIntro = true
+                    }
+                }
             }
             .navigationTitle(navigationTitleText)
             .navigationBarTitleDisplayMode(.inline)
@@ -134,6 +142,12 @@ struct RecipeWizardView: View {
                     }
                     .fontWeight(.semibold)
                 }
+            }
+        }
+        .sheet(isPresented: $showIntro) {
+            WizardIntroSheet {
+                hasSeenWizardIntro = true
+                showIntro = false
             }
         }
         .alert("Validation Error", isPresented: $showError) {
