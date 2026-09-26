@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// The account actions on the Account screen: (disabled) Link Apple ID, configure
-/// biometrics, sign out, and delete account. Extracted from `AccountView`.
+/// Account actions: (disabled) Link Apple ID, biometrics, sign out, delete account.
 struct AccountActionsSection: View {
     let showLinkAppleID: Bool
     let biometricsAvailable: Bool

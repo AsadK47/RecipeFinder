@@ -155,15 +155,11 @@ struct RecipeWizardView: View {
         } message: {
             Text(errorMessage)
         }
-        .sheet(isPresented: $showPhotoPicker) {
-            ImagePicker(image: $selectedRecipeImage) {
-                HapticManager.shared.light()
-            }
+        .photoSourcePicker(isPresented: $showPhotoPicker) { image in
+            selectedRecipeImage = image
         }
-        .sheet(isPresented: $showGalleryPhotoPicker) {
-            ImagePicker(image: $pendingGalleryImage) {
-                HapticManager.shared.light()
-            }
+        .photoSourcePicker(isPresented: $showGalleryPhotoPicker) { image in
+            pendingGalleryImage = image
         }
         .onChange(of: selectedRecipeImage) { _, newImage in
             if newImage != nil {

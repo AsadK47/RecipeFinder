@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// The "Contact Information" card (company email and website links) on the legal
-/// information screen. Extracted from `LegalInformationView`.
+/// "Contact Information" card (company email and website links) on the legal screen.
 struct LegalContactCard: View {
     @Environment(\.colorScheme) var colorScheme
 

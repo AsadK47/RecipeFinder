@@ -2,13 +2,7 @@ import UIKit
 
 private let logger = AppLogger.logger(category: "RecipeImageStore")
 
-/// Persists user-picked recipe photos to disk and resolves which image
-/// reference a saved recipe should point at.
-///
-/// Extracted from `RecipeWizardView` so the file I/O can be exercised against a
-/// temporary directory in tests. The documents directory and `FileManager` are
-/// injectable for exactly that reason; production uses the app's real documents
-/// directory by default.
+/// Persists recipe photos to disk and resolves a saved recipe's image reference; FileManager/dir injectable for tests.
 struct RecipeImageStore {
     private let fileManager: FileManager
     private let documentsDirectory: URL?
@@ -21,9 +15,7 @@ struct RecipeImageStore {
         self.documentsDirectory = documentsDirectory
     }
 
-    /// Decides the image reference for a recipe being saved: a freshly picked
-    /// image is persisted; otherwise an existing reference is kept; otherwise a
-    /// stale local file is cleaned up and `nil` is returned.
+    /// Picks the save-time image ref: persist a new image, else keep existing ref, else clean up stale local file and return nil.
     func resolveReference(
         recipeId: UUID,
         selectedImage: UIImage?,
@@ -46,9 +38,7 @@ struct RecipeImageStore {
         return nil
     }
 
-    /// Writes `image` as JPEG under `RecipeImages/<id>.jpg`, returning a relative
-    /// path (`RecipeImages/<id>.jpg`) so stored references survive app container
-    /// changes (simulator rebuilds, OS updates, reinstalls).
+    /// Writes JPEG under `RecipeImages/<id>.jpg`; returns a relative path so refs survive container changes (rebuilds, OS updates, reinstalls).
     func persist(_ image: UIImage, recipeId: UUID) -> String? {
         guard let imageData = image.jpegData(compressionQuality: AppTheme.jpegCompressionQuality) else {
             return nil
@@ -71,10 +61,7 @@ struct RecipeImageStore {
         }
     }
 
-    /// Persists additional (non-hero) gallery images, naming them `<id>_g<n>.jpg`.
-    /// Returns relative paths for the same container-stability reason as `persist`.
-    /// `startingIndex` lets callers offset the index when combining with already-
-    /// saved references so existing gallery files are never overwritten.
+    /// Persists non-hero gallery images as `<id>_g<n>.jpg`; `startingIndex` offsets the index so existing gallery files aren't overwritten.
     func persistGallery(_ images: [UIImage], recipeId: UUID, startingIndex: Int = 0) -> [String] {
         var paths: [String] = []
         for (idx, img) in images.enumerated() {
@@ -97,24 +84,20 @@ struct RecipeImageStore {
         return paths
     }
 
-    /// Deletes the on-disk file a reference points at, if we own it. No-op for
-    /// remote URLs or already-missing files. Used when the user removes a photo
-    /// so we don't leak orphaned image files in the documents directory.
+    /// Deletes the owned on-disk file (no-op for remote/missing), so removed photos don't leak orphaned files.
     func deleteIfLocal(_ reference: String) {
         guard isLocalReference(reference), let path = absolutePath(for: reference) else { return }
         try? fileManager.removeItem(atPath: path)
     }
 
-    /// Whether `reference` points at an on-disk file we own (not a remote URL).
-    /// Accepts both legacy absolute paths and the current relative-path format.
+    /// Whether `reference` is an owned on-disk file (not a URL); accepts legacy absolute and current relative formats.
     func isLocalReference(_ reference: String) -> Bool {
         guard !reference.isEmpty, !reference.hasPrefix("http") else { return false }
         guard let path = absolutePath(for: reference) else { return false }
         return fileManager.fileExists(atPath: path)
     }
 
-    /// Resolves a stored reference (absolute legacy or relative new) to an
-    /// absolute filesystem path. Returns `nil` if the reference is a URL.
+    /// Resolves a stored reference (legacy absolute or new relative) to an absolute path; nil if it's a URL.
     func absolutePath(for reference: String) -> String? {
         guard !reference.isEmpty, !reference.hasPrefix("http") else { return nil }
         if reference.hasPrefix("/") { return reference }

@@ -1,9 +1,6 @@
 import SwiftUI
 
-/// Single source of truth for the user's recipe library. Views observe this
-/// `@Observable` store (via `@Environment(\.recipeStore)` or a store-backed
-/// binding) so a write anywhere updates every surface — replacing the old
-/// pattern of value-type copies kept in sync by manual `onRecipeChange` callbacks.
+// Single source of truth for the recipe library; observing views update on any write, replacing manual onRecipeChange sync of value-type copies.
 @MainActor
 protocol RecipeStoring: AnyObject, Observable {
     var recipes: [RecipeModel] { get set }
@@ -17,16 +14,14 @@ protocol RecipeStoring: AnyObject, Observable {
 }
 
 private struct RecipeStoreKey: EnvironmentKey {
-    // SwiftUI reads environment defaults on the main actor during view updates,
-    // so assuming main-actor isolation here is safe; the app shares one instance.
+    // SwiftUI reads environment defaults on the main actor, so assumeIsolated is safe; the app shares one instance.
     static var defaultValue: any RecipeStoring {
         MainActor.assumeIsolated { RecipeStore.shared }
     }
 }
 
 extension EnvironmentValues {
-    /// Injected recipe store. Defaults to the shared singleton; override with
-    /// `.environment(\.recipeStore, fake)` in tests/previews.
+    // Injected recipe store; defaults to shared singleton, override with `.environment(\.recipeStore, fake)` in tests/previews.
     var recipeStore: any RecipeStoring {
         get { self[RecipeStoreKey.self] }
         set { self[RecipeStoreKey.self] = newValue }

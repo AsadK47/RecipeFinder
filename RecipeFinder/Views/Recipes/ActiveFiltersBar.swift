@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// Horizontally-scrolling chips summarising the active filters, each removable,
-/// plus a "Clear All". Extracted from `RecipeSearchView`.
+// Removable chips summarising active filters, plus Clear All.
 struct ActiveFiltersBar: View {
     @Binding var showFavoritesOnly: Bool
     @Binding var availableIngredientsOnly: Bool

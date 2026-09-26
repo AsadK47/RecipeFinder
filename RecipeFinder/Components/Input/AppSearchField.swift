@@ -1,13 +1,6 @@
 import SwiftUI
 
-/// The screen-header search field — magnifying glass, placeholder, clear button,
-/// and a Cancel button that appears while focused. Used by the Recipes and
-/// Groceries headers, which both need the parent to own focus (to drive keyboard
-/// toolbars / submit), so focus is passed in rather than held internally.
-///
-/// `SearchBar` is the sibling for sheets that are happy to own focus themselves;
-/// this one exists specifically for the external-focus header case that the two
-/// headers previously hand-rolled near-identically.
+// Screen-header search field with external focus (parent owns it to drive keyboard toolbars/submit); `SearchBar` is the sibling for sheets that own focus themselves.
 struct AppSearchField: View {
     @Binding var text: String
     var placeholder: String

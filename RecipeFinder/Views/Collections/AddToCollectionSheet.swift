@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// Multi-select sheet for adding a recipe to one or more collections.
-/// Presented from `RecipeDetailToolbar` via a binding on the detail view.
+/// Multi-select sheet for adding a recipe to collections; presented from `RecipeDetailToolbar`.
 struct AddToCollectionSheet: View {
     let recipe: RecipeModel
     @Environment(\.collections) private var manager

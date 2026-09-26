@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// Behavioural seam for meal planning so views depend on this protocol rather
-/// than the `MealPlanningManager` singleton — and tests can inject a fake.
+/// Seam so views depend on this protocol, not the singleton, and tests can inject a fake.
 @MainActor
 protocol MealPlanningManaging: AnyObject, Observable {
     func addMealPlan(_ mealPlan: MealPlanModel)
@@ -17,17 +16,14 @@ protocol MealPlanningManaging: AnyObject, Observable {
 }
 
 private struct MealPlanningManagingKey: EnvironmentKey {
-    // SwiftUI reads environment defaults on the main actor during view updates,
-    // so assuming main-actor isolation here is safe; the real app injects the
-    // shared instance at the composition root regardless.
+    // SwiftUI reads environment defaults on the main actor, so assuming isolation is safe.
     static var defaultValue: any MealPlanningManaging {
         MainActor.assumeIsolated { MealPlanningManager.shared }
     }
 }
 
 extension EnvironmentValues {
-    /// Injected meal planner. Defaults to the shared singleton; override with
-    /// `.environment(\.mealPlanning, fake)` in tests/previews.
+    /// Injected meal planner; defaults to shared, override with `.environment(\.mealPlanning, fake)`.
     var mealPlanning: any MealPlanningManaging {
         get { self[MealPlanningManagingKey.self] }
         set { self[MealPlanningManagingKey.self] = newValue }
@@ -61,9 +57,7 @@ final class MealPlanningManager: MealPlanningManaging {
         loadMealPlans()
     }
     
-    /// Faithful, non-destructive restore: unions incoming plans by id and persists.
-    /// Unlike `addMealPlan`, it doesn't collapse same-day/same-slot entries —
-    /// restored plans keep the identity and fields they had when backed up.
+    /// Non-destructive restore: unions incoming plans by id without collapsing same-slot entries.
     func merge(_ incoming: [MealPlanModel]) {
         mealPlans = BackupMerge.merged(existing: mealPlans, incoming: incoming)
         saveMealPlans()
@@ -122,12 +116,8 @@ final class MealPlanningManager: MealPlanningManaging {
         saveMealPlans()
     }
 
-    /// Copies recurring meals from any previous week into the target week.
-    /// For each weekday+mealTime slot in the 7-day window starting at `startDate`
-    /// that has no concrete entry, the most recent recurring template for that
-    /// weekday+mealTime is materialised as a new stored entry (also marked recurring
-    /// so it continues to propagate in future weeks). Idempotent: calling it twice
-    /// for the same week produces no duplicates.
+    /// Materialises the most recent recurring template into each empty slot of the target week
+    /// (kept recurring so it propagates forward); idempotent — no duplicates on re-run.
     func propagateRecurring(toWeekStarting startDate: Date) {
         let cal = Calendar.current
         let start = cal.startOfDay(for: startDate)
@@ -136,12 +126,11 @@ final class MealPlanningManager: MealPlanningManaging {
         let templates = mealPlans.filter { $0.isRecurring && $0.date < start }
         guard !templates.isEmpty else { return }
 
-        // Pre-build an O(1) occupied-slot lookup instead of O(P) contains per slot.
+        // O(1) occupied-slot lookup instead of O(P) contains per slot.
         struct SlotKey: Hashable { let day: Date; let mealTime: MealTime }
         let occupiedSlots = Set(mealPlans.map { SlotKey(day: cal.startOfDay(for: $0.date), mealTime: $0.mealTime) })
 
-        // Pre-build template lookup by (weekday, mealTime), keeping the most recent
-        // per slot, so the inner loop is O(1) instead of O(T) filter + max.
+        // Template lookup by (weekday, mealTime) keeping the most recent, so inner loop is O(1).
         struct TemplateKey: Hashable { let weekday: Int; let mealTime: MealTime }
         var templateBySlot: [TemplateKey: MealPlanModel] = [:]
         for template in templates {
@@ -224,12 +213,8 @@ final class MealPlanningManager: MealPlanningManaging {
         return WeeklyMealPlan(startDate: start, meals: weekMeals)
     }
     
-    /// Aggregates the ingredients needed for every incomplete meal planned in
-    /// the week, resolving recipes from the caller's collection and merging
-    /// duplicates by normalized ingredient name.
-    ///
-    /// Recipes are matched by id first, then by name as a fallback so meals
-    /// survive a recipe being deleted and re-imported with a new id.
+    /// Aggregates ingredients for the week's incomplete meals, merging duplicates by normalized name;
+    /// recipes matched by id then name so meals survive a delete/re-import with a new id.
     func weekShoppingSummary(forWeekStarting startDate: Date, recipes: [RecipeModel]) -> WeekShoppingSummary {
         let plannedMeals = mealPlansForWeek(starting: startDate).meals.filter { !$0.isCompleted }
 
@@ -266,9 +251,7 @@ final class MealPlanningManager: MealPlanningManaging {
         return WeekShoppingSummary(items: items, mealsCovered: mealsCovered, missingRecipeNames: missingRecipeNames)
     }
 
-    /// Returns a stable display order for `selected`, preserving any custom
-    /// sequence in `existing` and appending newly-added slots in their natural
-    /// sort position (breakfast → lunch → dinner → snack).
+    /// Stable order for `selected`: preserves `existing` sequence, appends new slots in natural sort.
     nonisolated static func sortedOrderedMealTimes(
         existing: [MealTime],
         selected: Set<MealTime>

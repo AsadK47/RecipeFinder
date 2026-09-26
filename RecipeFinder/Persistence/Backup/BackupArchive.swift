@@ -1,15 +1,8 @@
 import Foundation
 
-/// A complete, versioned snapshot of a user's library, suitable for writing to a
-/// file and restoring later (or on another device). Every store the app persists
-/// is `Codable`, so a backup is just the sum of them plus a schema version.
-///
-/// The previous export attempt failed by omitting recipes and mangling notes on
-/// restore; this type includes every store explicitly and is exercised by
-/// round-trip tests so that can't regress.
+/// Versioned snapshot of a user's library (every store is `Codable`); includes each store explicitly + round-trip tested so restore can't drop recipes/notes.
 struct BackupArchive: Codable {
-    /// Bump when the on-disk shape changes incompatibly. `BackupCodec` refuses to
-    /// decode archives newer than it understands rather than silently dropping data.
+    /// Bump on incompatible on-disk shape changes; `BackupCodec` rejects newer archives rather than dropping data.
     static let currentSchemaVersion = 1
 
     var schemaVersion: Int
@@ -45,9 +38,7 @@ struct BackupArchive: Codable {
         self.collections = collections
     }
 
-    // `collections` was added after v1 archives were written, so old backups
-    // won't have the key. Decode it optionally so restoring a pre-collections
-    // backup still works rather than throwing `.corruptedData`.
+    // `collections` postdates v1 archives; decode optionally so pre-collections backups restore instead of throwing `.corruptedData`.
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         schemaVersion = try c.decode(Int.self, forKey: .schemaVersion)
@@ -63,7 +54,7 @@ struct BackupArchive: Codable {
 }
 
 enum BackupError: LocalizedError, Equatable {
-    /// The archive was written by a newer app version than this one understands.
+    /// Archive written by a newer app version than this one understands.
     case unsupportedSchemaVersion(found: Int, supported: Int)
     case corruptedData
 
@@ -77,8 +68,7 @@ enum BackupError: LocalizedError, Equatable {
     }
 }
 
-/// Encodes/decodes `BackupArchive` to a stable, self-describing JSON representation
-/// and enforces the schema-version guard on the way in.
+/// Encodes/decodes `BackupArchive` as stable JSON and enforces the schema-version guard on decode.
 enum BackupCodec {
     static let fileExtension = "recipefinderbackup"
 

@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// A collapsible category header in the shopping list, showing the category name,
-/// remaining/total counts, and a chevron. Extracted from `ShoppingListView`.
+/// Collapsible shopping-list category header: name, remaining/total counts, chevron.
 struct ShoppingCategoryHeader: View {
     let category: String
     let items: [ShoppingListModel]

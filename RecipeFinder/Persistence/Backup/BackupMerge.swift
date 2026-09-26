@@ -1,15 +1,9 @@
 import Foundation
 
-/// Pure, non-destructive merge rules for restoring a `BackupArchive` into a user's
-/// current library. Kept separate from any store so the dedupe logic — the part
-/// most likely to silently lose or duplicate data — is unit-tested in isolation.
-///
-/// Non-destructive means: everything currently present is kept; only genuinely new
-/// items from the backup are added.
+/// Pure, non-destructive merge rules for restoring a `BackupArchive`: keeps everything present, adds only genuinely new items. Store-independent so the dedupe logic is unit-tested in isolation.
 enum BackupMerge {
 
-    /// Union by identity: keep all `existing`, then append `incoming` whose id isn't
-    /// already present. Existing order is preserved; new items append in order.
+    /// Union by identity: keep `existing`, then append `incoming` with unseen ids, preserving order.
     static func merged<T: Identifiable>(existing: [T], incoming: [T]) -> [T] {
         var seen = Set(existing.map(\.id))
         var result = existing
@@ -20,8 +14,7 @@ enum BackupMerge {
         return result
     }
 
-    /// Recipes dedupe by id AND by normalized name — re-imports of the same recipe
-    /// often get a fresh UUID, so an id-only merge would create visible duplicates.
+    /// Dedupe by id AND normalized name — re-imports often get a fresh UUID, so id-only would create visible duplicates.
     static func mergedRecipes(existing: [RecipeModel], incoming: [RecipeModel]) -> [RecipeModel] {
         var seenIDs = Set(existing.map(\.id))
         var seenNames = Set(existing.map { normalizedName($0.name) })
@@ -36,8 +29,7 @@ enum BackupMerge {
         return result
     }
 
-    /// Badges keyed by id; on a key collision keep the currently-held badge (its
-    /// `dateEarned` reflects this device's history).
+    /// On id collision keep the held badge — its `dateEarned` reflects this device's history.
     static func mergedBadges(existing: [String: Badge], incoming: [String: Badge]) -> [String: Badge] {
         existing.merging(incoming) { current, _ in current }
     }

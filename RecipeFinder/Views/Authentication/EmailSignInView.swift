@@ -21,14 +21,8 @@ struct EmailSignInView: View {
         ProcessInfo.processInfo.arguments.contains("-ui-testing")
     }
 
-    private var isValidEmail: Bool {
-        let emailRegex = "^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
-        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
-        return emailPredicate.evaluate(with: email)
-    }
-    
     private var canSignIn: Bool {
-        !email.isEmpty && !password.isEmpty && isValidEmail
+        !email.isEmpty && !password.isEmpty && Validator.isValidEmail(email)
     }
     
     init(prefillEmail: String = "") {
@@ -73,7 +67,7 @@ struct EmailSignInView: View {
                                 .autocorrectionDisabled()
                                 .accessibilityIdentifier("signin.email")
                             
-                            if !email.isEmpty && !isValidEmail {
+                            if !email.isEmpty && !Validator.isValidEmail(email) {
                                 Text("Please enter a valid email address")
                                     .font(.caption)
                                     .foregroundStyle(.orange.opacity(AppTheme.veryHighEmphasisOpacity))

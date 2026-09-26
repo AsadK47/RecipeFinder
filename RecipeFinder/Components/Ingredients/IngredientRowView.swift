@@ -19,9 +19,7 @@ struct IngredientRowView: View {
     var body: some View {
         HStack(alignment: .center, spacing: AppTheme.spacing12) {
 
-            // Left: fixed-width amount column (no box) so names line up cleanly
-            // down the list. The whole column stays the tap target for editing the
-            // amount. Reserved even when empty ("salt to taste") to keep alignment.
+            // Fixed-width amount column so names align; whole column is the tap target, reserved even when empty to keep alignment.
             Button(action: { onTapQuantity?() }) {
                 HStack(alignment: .firstTextBaseline, spacing: 3) {
                     if convertedIngredient.quantity > 0 {
@@ -45,7 +43,7 @@ struct IngredientRowView: View {
             .buttonStyle(.plain)
             .disabled(onTapQuantity == nil)
 
-            // Middle: name + optional prep notes — tapping the text area toggles checked state.
+            // Name + optional prep notes; tapping toggles checked state.
             Button(action: {
                 HapticManager.shared.light()
                 withAnimation(.spring(response: Timing.springResponse, dampingFraction: Timing.springDamping)) {
@@ -114,10 +112,7 @@ struct IngredientRowView: View {
         FractionFormatter.format(prettyQuantity(quantity))
     }
 
-    /// Snaps converted quantities to cooking-sensible precision so unit
-    /// conversions don't surface ugly values like "14.79 ml". Large amounts read
-    /// as whole numbers; small amounts snap to quarters/eighths (which the
-    /// fraction formatter then renders as ¼, ½, ¾…).
+    // Snaps converted quantities to cooking-sensible precision so conversions don't surface ugly values like "14.79 ml".
     private func prettyQuantity(_ q: Double) -> Double {
         guard q > 0 else { return q }
         if q >= 100 { return (q / 5).rounded() * 5 }

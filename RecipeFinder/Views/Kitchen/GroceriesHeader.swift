@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// Header for the Groceries tab: title, an overflow menu for kitchen inventory
-/// and shopping actions, and a search field.
+/// Groceries tab header: title, overflow menu (kitchen + shopping actions), and search field.
 struct GroceriesHeader<MenuContent: View>: View {
     @Binding var searchText: String
     var isSearchFocused: FocusState<Bool>.Binding

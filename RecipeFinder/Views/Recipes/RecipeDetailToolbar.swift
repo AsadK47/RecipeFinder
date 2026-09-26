@@ -1,10 +1,7 @@
 import SwiftUI
 import TipKit
 
-/// The trailing toolbar controls on the recipe detail screen. Deliberately minimal:
-/// a single expressive Favorite toggle plus an overflow menu for the less-frequent
-/// actions (Edit, Share). Contextual actions — the cooking timer and
-/// add-all-to-shopping — live in the content next to what they act on, not here.
+// Trailing detail toolbar: minimal — Favorite toggle + overflow menu; contextual actions live inline in the content.
 struct RecipeDetailToolbar: View {
     let recipe: RecipeModel
     let onEdit: () -> Void
@@ -26,12 +23,7 @@ struct RecipeDetailToolbar: View {
             .accessibilityLabel("Start Cooking Mode")
             .popoverTip(cookingModeTip, arrowEdge: .top)
 
-            Button(action: onToggleFavorite) {
-                Image(systemName: recipe.isFavorite ? "heart.fill" : "heart")
-                    .font(.title3)
-                    .foregroundStyle(recipe.isFavorite ? .red : .primary)
-            }
-            .accessibilityLabel(recipe.isFavorite ? "Remove from favourites" : "Add to favourites")
+            AnimatedHeartButton(isFavorite: .constant(recipe.isFavorite), action: onToggleFavorite)
 
             Button(action: onAddToCollection) {
                 Image(systemName: "rectangle.stack.badge.plus")

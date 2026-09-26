@@ -3,12 +3,7 @@ import Foundation
 
 let persistenceLogger = AppLogger.logger(category: "PersistenceController")
 
-/// Core Data stack owner. Store lifecycle (load, configure, recover) lives here;
-/// recipe reads/writes and database maintenance live in focused extensions:
-/// - `PersistenceController+RecipeWrites` — save/update/delete/favorite
-/// - `PersistenceController+RecipeFetch` — fetch/count/mapping
-/// - `PersistenceController+Database` — clear/reset
-/// - `SampleRecipeData` — sample data population
+/// Core Data stack owner; store lifecycle here, reads/writes/maintenance in focused extensions.
 @MainActor
 final class PersistenceController {
     static let shared = PersistenceController()
@@ -17,9 +12,7 @@ final class PersistenceController {
     private(set) var loadError: Error?
     private(set) var isStoreLoaded = false
 
-    /// Current account scope. Recipes are stamped with and filtered by this id.
-    /// Defaults to the shared per-user store; injected in tests so scoping can be
-    /// exercised against an in-memory store without touching global state.
+    /// Account scope: recipes are stamped/filtered by this id. Injected in tests for isolation.
     let userID: () -> String?
 
     enum Entity {
@@ -52,10 +45,7 @@ final class PersistenceController {
         static let photoNames = "photoNames"
     }
 
-    /// - Parameters:
-    ///   - inMemory: back the store with `/dev/null` (isolated, non-persisted)
-    ///     for tests. Kept as SQLite so batch operations still work.
-    ///   - userID: account-scope provider (see `userID`).
+    /// `inMemory`: back store with `/dev/null` for tests (still SQLite so batch ops work). `userID`: account-scope provider.
     init(
         inMemory: Bool = false,
         storeURL: URL? = nil,
@@ -75,11 +65,7 @@ final class PersistenceController {
     private func configureStore() {
         guard let description = container.persistentStoreDescriptions.first else { return }
 
-        // Automatic lightweight migration. Supported baseline is model v6+ (the
-        // all-Binary `ingredients` era); pre-v6 versions used a Transformable
-        // `ingredients` that can't lightweight-migrate to the current model — see
-        // CoreDataMigrationTests. The app is unreleased, so no shipped store is
-        // affected, and attemptStoreRecovery() preserves any store it can't open.
+        // Lightweight migration; baseline is model v6+ (all-Binary `ingredients`). Pre-v6 Transformable can't migrate (see CoreDataMigrationTests) — app unreleased, and recovery preserves any store it can't open.
         description.setOption(true as NSNumber, forKey: NSMigratePersistentStoresAutomaticallyOption)
         description.setOption(true as NSNumber, forKey: NSInferMappingModelAutomaticallyOption)
 
@@ -88,13 +74,7 @@ final class PersistenceController {
     }
 
     private func loadStore() {
-        // The store loads synchronously (shouldAddStoreAsynchronously is
-        // false by default), so this completion runs on the main thread
-        // before loadPersistentStores returns. isStoreLoaded must be set
-        // right here, not via a deferred Task: deferring it left the flag
-        // false for the first runloop turn, so the launch-time fetchRecipes()
-        // returned [] with no retry and the recipe list stayed empty for the
-        // whole session — intermittently, depending on scheduling.
+        // Store loads synchronously, so set isStoreLoaded here (not a deferred Task): deferring left the flag false for one runloop turn, so launch-time fetchRecipes() returned [] and the list stayed empty for the session.
         container.loadPersistentStores { [weak self] storeDescription, error in
             MainActor.assumeIsolated {
                 guard let self else { return }
@@ -124,10 +104,7 @@ final class PersistenceController {
             return
         }
 
-        // Never destroy the user's data. Move the unreadable store aside (with its
-        // -wal/-shm sidecars) instead of deleting it, so a failed migration or a
-        // corrupt file is recoverable rather than silent total loss. Only after the
-        // originals are safely preserved do we let a fresh store take their place.
+        // Never destroy data: move the unreadable store (+ -wal/-shm sidecars) aside rather than delete, so a failed migration is recoverable. Only replace once originals are preserved.
         let backupSuffix = ".corrupt-\(Int(Date().timeIntervalSince1970))"
         var preservedMainStore = false
         for sidecar in ["", "-wal", "-shm"] {
@@ -142,8 +119,7 @@ final class PersistenceController {
             }
         }
 
-        // If we couldn't move the main store aside, do NOT recreate over it —
-        // reloading will just re-fail, leaving the data intact for a later attempt.
+        // Couldn't move the main store aside: don't recreate over it — leave data intact for a later attempt.
         guard preservedMainStore else {
             persistenceLogger.error("❌ Could not preserve the unreadable store; leaving it in place to avoid data loss")
             self.isStoreLoaded = false

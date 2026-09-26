@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// Search suggestions for the Groceries tab: an "add free text" row plus
-/// matching foods from the ingredient catalog. Tapping "Add" adds directly
-/// to the shopping list and dismisses the search.
+/// Groceries search suggestions: an "add free text" row plus catalog matches; "Add" appends to the list and dismisses search.
 struct GrocerySearchResultsView: View {
     let searchText: String
     let searchResults: [String]
@@ -79,8 +77,7 @@ struct GrocerySearchResultsView: View {
                             .background(Capsule().fill(AppTheme.accentColor(for: selectedTheme)))
                     }
                 }
-                // Keep the 32pt visual capsule but guarantee a ≥44pt tap target
-                // (accessibility hit-region minimum).
+                // 32pt visual capsule but ≥44pt tap target (accessibility hit-region minimum).
                 .frame(minWidth: 44, minHeight: 44)
                 .contentShape(Rectangle())
             }

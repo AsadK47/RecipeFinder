@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// Read-only list of recipes matching a `SmartCollection` rule.
-/// Mirrors the layout of `CollectionDetailView` without edit controls.
+/// Read-only list of recipes matching a `SmartCollection` rule; mirrors `CollectionDetailView`.
 struct SmartCollectionDetailView: View {
     let smartCollection: SmartCollection
     @Binding var recipes: [RecipeModel]

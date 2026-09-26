@@ -141,7 +141,7 @@ struct Validator {
             throw AppError.weakPassword(reason: "Must contain at least one special character (!@#$%^&* etc.)")
         }
     }
-    
+
     static func validateRecipeName(_ name: String) throws {
         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else {

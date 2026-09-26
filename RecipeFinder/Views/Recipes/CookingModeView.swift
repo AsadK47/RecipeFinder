@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// Full-screen cooking mode: large text, screen stays awake, greasy-hands tap
-/// targets, step-by-step navigation with optional per-step timers.
+// Full-screen cooking mode: large text, screen stays awake, per-step timers.
 struct CookingModeView: View {
     let recipe: RecipeModel
     var onFinish: (() -> Void)?
@@ -63,13 +62,7 @@ struct CookingModeView: View {
         }
     }
 
-    /// Minutes for a step's timer button. Unlike `TimeExtractor` (which treats a
-    /// bare number as minutes — correct for prep/cook-time fields), this only
-    /// counts numbers explicitly followed by a time unit, so temperatures like
-    /// "350°F" or counts like "2 eggs" don't get read as a timer duration.
-    /// Pure + static so it's unit-tested.
-    /// Compiled once, not per call — this runs from a computed property read on
-    /// every body evaluation and step change.
+    // Only counts numbers followed by a time unit, so "350°F"/"2 eggs" aren't read as durations. Compiled once (read every body eval).
     private static let cookTimerRegex = try? NSRegularExpression(
         pattern: #"(\d+(?:\.\d+)?)\s*(hours?|hrs?|minutes?|mins?|seconds?|secs?)\b"#,
         options: [.caseInsensitive]
@@ -145,9 +138,7 @@ struct CookingModeView: View {
                 UIApplication.shared.isIdleTimerDisabled = false
                 CookingSession.shared.end()
             }
-            // Guarantee the idle timer is restored even if the view is interrupted
-            // (incoming call, PiP, system alert) and onDisappear never fires: keep
-            // the screen awake only while cooking mode is the active foreground view.
+            // Restore idle timer if interrupted (call/PiP/alert) and onDisappear never fires.
             .onChange(of: scenePhase) { _, phase in
                 UIApplication.shared.isIdleTimerDisabled = (phase == .active)
             }
@@ -268,8 +259,7 @@ struct CookingModeView: View {
 
             if let minutes = stepTimerMinutes {
                 Button {
-                    // Don't clobber a timer already running (e.g. from an earlier
-                    // step) — just open the sheet so the user can see/manage it.
+                    // Don't clobber a timer already running from an earlier step.
                     if !timerManager.isActive {
                         timerManager.start(hours: 0, minutes: minutes, seconds: 0)
                     }

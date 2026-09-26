@@ -3,11 +3,9 @@ import StoreKit
 import SwiftUI
 
 struct RecipeDetailView: View {
-    // State read by both `body` and the view-building content in
-    // `RecipeDetailView+Content.swift`, so it is `internal` rather than `private`.
+    // State is `internal` (not private) so RecipeDetailView+Content can read it.
     @State var recipe: RecipeModel
-    /// Cached displayable gallery images — recomputed only when the recipe changes
-    /// (see `galleryNames(for:)`), not on every body pass.
+    // Cached displayable gallery images; recomputed only when the recipe changes.
     @State var galleryImageNames: [String]
     @State var ingredientsState: [Bool]
     @State var instructionsState: [Bool]
@@ -16,32 +14,24 @@ struct RecipeDetailView: View {
     @State private var addedIngredients: Set<String> = []
     @State var showAddedFeedback: String?
     @State private var confettiCounter = 0
-    // Internal (not private) so the tappable info cards in RecipeDetailView+Content
-    // can open the editor, matching the toolbar Edit button.
     @State var showEditSheet = false
     @State private var showAddToCollection = false
     @State private var showCookingMode = false
-    // Internal (not private) so the edit-completion handler in
-    // RecipeDetailView+Content can set it on a failed save.
     @State var showSaveError = false
-    // Internal (not private) so the timer control in RecipeDetailView+Content can drive it.
     @State var showTimerSheet = false
     @State var substitutingIngredientIndex: Int?
     @State private var showPostCookPhotoPrompt = false
     @State private var showPhotoManager = false
     @State var photoViewer: PhotoViewerSource?
-    // Which editor section to open on — set by the tappable info cards so the
-    // wizard deep-links to those fields; nil opens at the top (toolbar Edit).
+    // Editor section to deep-link to; nil opens at the top.
     @State var editSection: RecipeWizardView.Section?
-    // Internal so RecipeDetailView+Content can trigger and track the source refresh.
     @State var isRefreshing = false
     @State var pendingRefreshDiff: RecipeDiff?
     @State var showRefreshSheet = false
     @State var refreshErrorMessage: String?
     @State var showRefreshUpToDate = false
-    // Nutrition card: false = per-serving (invariant), true = whole-recipe totals.
+    // Nutrition card: false = per-serving, true = whole-recipe totals.
     @State var nutritionShowsWholeRecipe = false
-    // Internal so the relocated timer control (RecipeDetailView+Content) can read it.
     @Environment(\.recipeTimer) var recipeTimer
     @Environment(\.recipeStore) var recipeStore
     @AppStorage("measurementSystem") var measurementSystem: MeasurementSystem = .metric
@@ -172,10 +162,7 @@ struct RecipeDetailView: View {
             await silentRefreshFromSource()
         }
         .task(id: recipe.id) {
-            // Re-read the persisted copy each time the screen (re)appears, so
-            // returning to it — even from a parent list that hasn't re-synced —
-            // shows the latest saved state (post-cook photos, rating, cook count)
-            // instead of a stale in-memory snapshot.
+            // Re-read persisted copy on (re)appear so returning shows latest saved state, not a stale snapshot.
             if let fresh = PersistenceController.shared.fetchRecipe(withId: recipe.id) {
                 recipe = fresh
             }
@@ -281,9 +268,9 @@ struct RecipeDetailView: View {
         recipe.lastCookedAt = Date()
         PersistenceController.shared.recordCook(withId: recipe.id)
         recipeStore.sync(recipe)
-        // Third cook of any recipe = genuine fan; ask for a review exactly once.
+        // Third cook = genuine fan; ask for a review exactly once.
         if recipe.cookCount == 3 { requestReview() }
-        // Delay lets any active fullScreenCover (CookingModeView) dismiss before the sheet appears.
+        // Delay lets any active fullScreenCover dismiss before the sheet appears.
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
             showPostCookPhotoPrompt = true
         }
@@ -292,7 +279,7 @@ struct RecipeDetailView: View {
     private func addCookPhoto(_ image: UIImage) {
         let store = RecipeImageStore()
         let newPaths = store.persistGallery([image], recipeId: recipe.id, startingIndex: recipe.photoNames.count)
-        // Surface the failure (e.g. disk full) instead of silently dropping the photo.
+        // Surface the failure (e.g. disk full) instead of dropping the photo.
         guard !newPaths.isEmpty else {
             showSaveError = true
             return
@@ -313,8 +300,7 @@ struct RecipeDetailView: View {
         recipeStore.sync(recipe)
     }
 
-    /// Auto-triggered on every open; silently discards network errors so browsing
-    /// isn't interrupted. Only shows the diff sheet when there are actual changes.
+    // Auto-runs on open; discards network errors silently, shows diff sheet only on real changes.
     func silentRefreshFromSource() async {
         guard let url = recipe.importedFromURL else { return }
         let importer = RecipeImporter()

@@ -1,9 +1,7 @@
 import ConfettiSwiftUI
 import SwiftUI
 
-/// The "Groceries" tab: a focused shopping list. Kitchen inventory is one tap
-/// away via the fridge button in the header — accessible but not competing for
-/// space with the list itself.
+/// "Groceries" tab: focused shopping list; kitchen inventory tucked behind the header fridge button so it doesn't compete for space.
 struct KitchenShoppingView: View {
     @Environment(\.shopping) private var shopping
     @State private var searchText = ""

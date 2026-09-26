@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// The collapsible "Achievements" badges grid on the Account screen. Extracted
-/// from `AccountView`.
+/// Collapsible "Achievements" badges grid on the Account screen.
 struct AccountBadgesSection: View {
     let badgeManager: any BadgeManaging
     @Binding var isExpanded: Bool

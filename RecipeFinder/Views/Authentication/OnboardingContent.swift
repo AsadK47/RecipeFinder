@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// Canonical slide data for app onboarding.
-/// Extracted from `OnboardingView` so the content contract (count, copy quality)
-/// can be verified by `OnboardingContentTests` independently of the view layer.
+/// Canonical onboarding slide data, extracted so `OnboardingContentTests` can verify the content contract independently of the view.
 enum OnboardingContent {
     static let slides: [OnboardingSlide] = [
         OnboardingSlide(

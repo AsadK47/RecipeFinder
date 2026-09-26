@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// The collections grid rendered inside `RecipeSearchView`'s existing
-/// `NavigationStack`. Does not own a `NavigationStack` itself — navigation
-/// links push onto the parent stack.
+/// Collections grid inside `RecipeSearchView`'s `NavigationStack`; links push onto the parent stack.
 struct CollectionsInlineView: View {
     @Binding var recipes: [RecipeModel]
     @Environment(\.collections) private var manager
@@ -51,7 +49,7 @@ struct CollectionsInlineView: View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: AppTheme.spacing12) {
 
-                // Smart collections first — auto-populated, read-only
+                // Smart collections first: auto-populated, read-only
                 ForEach(visibleSmartCollections, id: \.0.id) { (sc, count) in
                     NavigationLink {
                         SmartCollectionDetailView(smartCollection: sc, recipes: $recipes)

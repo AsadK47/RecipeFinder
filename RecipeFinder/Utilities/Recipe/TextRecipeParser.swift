@@ -1,17 +1,9 @@
 import Foundation
 
-/// Parses free-form recipe text — pasted notes, social media captions,
-/// shared messages — into wizard prefill data for the user to review.
-///
-/// Two strategies, tried in order:
-/// 1. Section headers ("Ingredients", "Instructions"/"Method"/"Directions"/
-///    "Steps") split the text explicitly. Headers are matched loosely so
-///    caption styling like "INGREDIENTS 👇" or "what you need" still counts.
-///    If only one section is found via headers, the other is filled by
-///    strategy 2 (see supplement step).
-/// 2. Without headers, each line is classified: quantity-, bullet-, or
-///    emoji-led lines are ingredients; numbered or imperative ("Melt the
-///    butter…") lines are instructions.
+/// Parses free-form recipe text (pasted notes, captions, messages) into wizard prefill data.
+/// Strategy 1: loose section headers ("INGREDIENTS 👇", "Method:") split the text; if only one
+/// section is found, the other is filled by strategy 2. Strategy 2: classify each line —
+/// quantity/bullet/emoji-led = ingredient, numbered/imperative = instruction.
 enum TextRecipeParser {
 
     static func parse(_ text: String) -> RecipeWizardView.PrefilledRecipeData? {
@@ -23,10 +15,7 @@ enum TextRecipeParser {
         guard lines.count >= 3 else { return nil }
 
         let servings = firstIntMatch(#"(?:serves|servings?|yield)\s*:?\s*(\d+)"#, in: text)
-        // "time" is optional so a sidebar "Prep 20 minutes" / "Cook 30 mins" still
-        // resolves (many printed recipes omit the word "time"). extractMinutes handles
-        // both "45 minutes" and "2 hours" so printed recipes with hour-denominated
-        // times aren't stored as 2 minutes instead of 120.
+        // "time" optional so "Prep 20 minutes" resolves; extractMinutes handles hours so "2 hours" → 120, not 2.
         let prepTime = extractMinutes(#"prep(?:aration)?(?:\s*time)?\s*:?\s*(\d+)"#, in: text)
         let cookTime = extractMinutes(#"cook(?:ing)?(?:\s*time)?\s*:?\s*(\d+)"#, in: text)
 
@@ -36,9 +25,7 @@ enum TextRecipeParser {
         if let sections = splitBySectionHeaders(lines) {
             ingredients = sections.ingredients
             instructions = mergeInstructionLines(sections.instructions)
-            // Supplement: if only one section was found via headers, fill the
-            // other via line classification (e.g. ingredients listed under a
-            // recognised header but method is unnumbered prose, or vice versa).
+            // If only one section was found via headers, fill the other via line classification.
             if ingredients.isEmpty || instructions.isEmpty {
                 let classified = classifyLines(lines)
                 if ingredients.isEmpty { ingredients = classified.ingredients }
@@ -49,12 +36,9 @@ enum TextRecipeParser {
             instructions = mergeInstructionLines(instructions)
         }
 
-        // Drop footnotes/notes on the raw line first (before list markers are
-        // stripped) so a leading "*" footnote is still recognisable.
+        // Drop footnotes on the raw line first (before markers stripped) so a leading "*" footnote is recognisable.
         ingredients = ingredients.filter { !isAsideLine($0) }.map(stripListMarker).filter { !$0.isEmpty && !isMetadataLine($0) }
-        // isMetadataLine is intentionally NOT applied to instructions: after merging,
-        // a step that starts with "Prep the tin…" and later mentions "10 minutes"
-        // would be incorrectly discarded by the Prep-time pattern.
+        // isMetadataLine NOT applied to instructions: a merged step like "Prep the tin…10 minutes" would be wrongly dropped.
         instructions = instructions.filter { !isAsideLine($0) }.map(stripListMarker).filter { !$0.isEmpty }
 
         guard !ingredients.isEmpty, !instructions.isEmpty else { return nil }
@@ -86,9 +70,7 @@ enum TextRecipeParser {
             .trimmingCharacters(in: .whitespaces)
         guard cleaned.count <= 80, !looksLikeIngredient(cleaned) else { return nil }
 
-        // Printed recipes often set titles in ALL CAPS. Vision OCR may also split a
-        // wrapped title across two consecutive observations ("CHICKEN TIKKA" / "MASALA").
-        // Merge the second line when both are short, all-caps, and digit-free.
+        // OCR may split a wrapped ALL-CAPS title across two lines; merge line 2 when both are short, all-caps, digit-free.
         if candidates.count >= 2 {
             let raw2 = candidates[1].trimmingCharacters(in: .whitespaces)
             let isAllCaps1 = cleaned == cleaned.uppercased() && cleaned.contains(where: { $0.isLetter })
@@ -101,8 +83,7 @@ enum TextRecipeParser {
             }
         }
 
-        // Convert ALL CAPS title to title case — printed cookbook headers are frequently
-        // set in capitals and would shout at the user in the wizard.
+        // Convert ALL CAPS cookbook headers to title case so they don't shout at the user.
         if cleaned == cleaned.uppercased() && cleaned.contains(where: { $0.isLetter }) {
             cleaned = cleaned.localizedCapitalized
         }

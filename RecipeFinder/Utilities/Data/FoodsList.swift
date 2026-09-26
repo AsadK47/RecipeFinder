@@ -241,8 +241,7 @@ struct FoodsList {
         return map
     }()
 
-    /// Maps regional/alternate names to the canonical catalog entry so that
-    /// searching "beef mince" finds "Ground Beef" rather than producing 5 near-identical results.
+    // Maps regional/alternate names to the canonical catalog entry (e.g. "beef mince" -> "Ground Beef")
     static let synonyms: [String: String] = [
         // Ground beef — UK/US name variants
         "beef mince":       "Ground Beef",

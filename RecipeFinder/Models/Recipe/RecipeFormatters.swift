@@ -76,14 +76,3 @@ enum TimeExtractor {
         return foundNumber ? max(0, Int(totalMinutes.rounded())) : 0
     }
 }
-
-func formattedImageName(for recipeName: String) -> String {
-    return recipeName
-        .lowercased()
-        .replacingOccurrences(of: " ", with: "_")
-        .replacingOccurrences(of: "(", with: "")
-        .replacingOccurrences(of: ")", with: "")
-        .replacingOccurrences(of: ",", with: "")
-        .replacingOccurrences(of: "'", with: "")
-        .replacingOccurrences(of: "&", with: "and")
-}
