@@ -79,10 +79,12 @@ When a new failure class appears or a convention changes, update the relevant se
 
 **Replace or refine, don't append.** When a failure tempts you to "add a new rule," first ask whether an existing rule should be sharpened instead. Each CLAUDE.md file has a line budget: root ≤100, RecipeFinder/ ≤100, RecipeFinderTests/ ≤50. Exceeding budget is a signal to consolidate, not to keep adding.
 
-## Commit messages
-Only commit once the full check passes (`BuildProject` + `RunAllTests` green). A partial or unverified state must not be committed — update `WORK.md` instead and resume next session.
+## Commit messages & branch policy
+Claude MAY `git commit` verified-green work to a **non-`main` branch** (never `main`; never `git push` unless asked). Gate per commit: `BuildProject` + affected `RunSomeTests` green; one logical fix per commit. Partial/unverified state must not be committed — update `WORK.md` instead.
 
-End every code-changing response with one conventional-commit line. No body, no Co-Authored-By, no preamble.
+**Batch before review.** Keep per-fix commits, but do NOT push/surface a PR after each small fix — accumulate commits on the branch and open the PR only once a **logically complete unit** (whole feature/area) is done. A one-file PR isn't worth reviewing; the user rubber-stamps it. The user reviews the branch/PR as a whole, not each diff.
+
+Conventional-commit subjects only. No body, no Co-Authored-By, no preamble.
 `fix(import): fix grey text in ImportView header`
 
 ## Git / auth
