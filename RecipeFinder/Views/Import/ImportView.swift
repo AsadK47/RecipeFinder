@@ -6,6 +6,7 @@ import SwiftUI
 /// app, and points people at the share-sheet route for social recipes.
 struct ImportView: View {
     @Binding var recipes: [RecipeModel]
+    @Environment(\.recipeStore) private var recipeStore
 
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
@@ -120,10 +121,7 @@ struct ImportView: View {
     /// insertion is rolled back and the user is alerted rather than the recipe
     /// silently disappearing on relaunch.
     private func store(_ recipe: RecipeModel, source: ImportSource = .wizard) {
-        recipes.append(recipe)
-
-        guard PersistenceController.shared.saveRecipeModel(recipe) else {
-            recipes.removeAll { $0.id == recipe.id }
+        guard recipeStore.add(recipe) else {
             saveErrorRecipeName = recipe.name
             return
         }

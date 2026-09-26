@@ -54,10 +54,14 @@ delegates to it (removed its `@State recipes`/`isLoadingRecipes`/`loadRecipes`);
 views keep their `@Binding var recipes` API via a store-backed `recipesBinding`. +4
 `RecipeStoreTests`. Build + 1615 green.
 
+### SLICE 2 DONE (uncommitted, 1615 green)
+Write paths route through the store: RecipeDetailView (addCookPhoto, applyRefresh),
+RecipeDetailView+Content (editor onComplete), RecipePhotoManagerSheet.persist,
+RecipeSearchView (addRecipe/deleteRecipe + refreshRecipesAsync → store.refresh),
+ImportView.store. `recordCook`/`updateRating` still use specialized PersistenceController
+ops + onRecipeChange (handle in slice 3).
+
 ### Remaining slices (next actions)
-- Slice 2: route the 11 write sites (RecipeDetailView save/recordCook/updateRating,
-  RecipePhotoManagerSheet, RecipeSearchView save/delete, ImportView) through
-  `store.save/add/delete` instead of `PersistenceController.shared.*` + local mutation.
 - Slice 3: delete the `onRecipeChange` threading (RecipeLink/RecipeResultsList/
   RecipeDetailView/Collections) once writes go through the store; point
   `RecipeSearchView.refreshRecipesAsync` at `store.refresh()`.

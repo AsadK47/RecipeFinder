@@ -40,6 +40,7 @@ struct RecipeDetailView: View {
     @State var nutritionShowsWholeRecipe = false
     // Internal so the relocated timer control (RecipeDetailView+Content) can read it.
     @Environment(\.recipeTimer) var recipeTimer
+    @Environment(\.recipeStore) var recipeStore
     @AppStorage("measurementSystem") var measurementSystem: MeasurementSystem = .metric
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
@@ -295,7 +296,7 @@ struct RecipeDetailView: View {
         let newPaths = store.persistGallery([image], recipeId: recipe.id, startingIndex: recipe.photoNames.count)
         guard !newPaths.isEmpty else { return }
         recipe.photoNames.append(contentsOf: newPaths)
-        guard PersistenceController.shared.saveRecipeModel(recipe) else {
+        guard recipeStore.save(recipe) else {
             recipe.photoNames.removeLast(newPaths.count)
             showSaveError = true
             return
@@ -353,7 +354,7 @@ struct RecipeDetailView: View {
     func applyRefresh(_ updated: RecipeModel) {
         let previous = recipe
         recipe = updated
-        guard PersistenceController.shared.saveRecipeModel(updated) else {
+        guard recipeStore.save(updated) else {
             recipe = previous
             showSaveError = true
             return

@@ -536,7 +536,7 @@ extension RecipeDetailView {
             onComplete: { updatedRecipe in
                 let previous = recipe
                 recipe = updatedRecipe
-                guard PersistenceController.shared.saveRecipeModel(updatedRecipe) else {
+                guard recipeStore.save(updatedRecipe) else {
                     recipe = previous
                     showSaveError = true
                     return

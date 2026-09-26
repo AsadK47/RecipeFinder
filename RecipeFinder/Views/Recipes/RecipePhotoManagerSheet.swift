@@ -19,6 +19,7 @@ struct RecipePhotoManagerSheet: View {
     @State private var showCamera = false
     @State private var showSaveError = false
     @State private var photoViewer: PhotoViewerSource?
+    @Environment(\.recipeStore) private var recipeStore
 
     private let columns = [GridItem(.adaptive(minimum: 100), spacing: AppTheme.spacing12)]
 
@@ -192,7 +193,7 @@ struct RecipePhotoManagerSheet: View {
     /// Persists the current recipe; on failure runs `onFailure` (to roll the
     /// optimistic edit back) and surfaces an alert.
     private func persist(onFailure: () -> Void, onSuccess: () -> Void = {}) {
-        guard PersistenceController.shared.saveRecipeModel(recipe) else {
+        guard recipeStore.save(recipe) else {
             onFailure()
             showSaveError = true
             return

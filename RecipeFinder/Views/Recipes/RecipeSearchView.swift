@@ -4,6 +4,7 @@ private let logger = AppLogger.logger(category: "RecipeSearchView")
 
 struct RecipeSearchView: View {
     @Binding var recipes: [RecipeModel]
+    @Environment(\.recipeStore) private var recipeStore
     /// True while the library is still being fetched after sign-in, so an empty
     /// `recipes` shows a loading skeleton instead of the "no recipes" empty state.
     var isLoading: Bool = false
@@ -186,10 +187,7 @@ struct RecipeSearchView: View {
     /// persists. If the save fails, the optimistic insertion is rolled back and
     /// the user is told — rather than the recipe silently vanishing on relaunch.
     private func addRecipe(_ recipe: RecipeModel, successMessage: String) {
-        recipes.append(recipe)
-
-        guard PersistenceController.shared.saveRecipeModel(recipe) else {
-            recipes.removeAll { $0.id == recipe.id }
+        guard recipeStore.add(recipe) else {
             showImportToast("Couldn't save \"\(recipe.name)\". Please try again.")
             return
         }
@@ -421,9 +419,8 @@ struct RecipeSearchView: View {
     
     private func deleteRecipe(_ recipe: RecipeModel) {
         withAnimation {
-            recipes.removeAll { $0.id == recipe.id }
+            recipeStore.delete(id: recipe.id)
         }
-        PersistenceController.shared.deleteRecipe(withId: recipe.id)
         HapticManager.shared.success()
     }
     
@@ -452,10 +449,6 @@ struct RecipeSearchView: View {
     /// Awaitable reload so pull-to-refresh keeps its spinner up until the fetch
     /// completes. `refreshRecipes` wraps this for the fire-and-forget callers.
     private func refreshRecipesAsync() async {
-        guard PersistenceController.shared.hasCurrentUserScope() else {
-            logger.debug("⚠️ Skipping recipe refresh because user scope is unavailable")
-            return
-        }
-        recipes = await PersistenceController.shared.fetchRecipesAsync()
+        await recipeStore.refresh()
     }
 }
