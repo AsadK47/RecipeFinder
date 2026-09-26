@@ -34,7 +34,7 @@ struct SmartCollectionDetailView: View {
         ScrollView {
             LazyVStack(spacing: AppTheme.cardVerticalSpacing) {
                 ForEach(matchingRecipes) { recipe in
-                    RecipeLink(recipe: recipe, onRecipeChange: refreshRecipes) {
+                    RecipeLink(recipe: recipe) {
                         RecipeRow(recipe: recipe)
                     }
                 }
@@ -43,12 +43,6 @@ struct SmartCollectionDetailView: View {
             .padding(.vertical, AppTheme.spacing12)
             .padding(.bottom, AppTheme.spacing100)
         }
-    }
-
-    /// Re-syncs the bound recipe array from Core Data after a change made on the
-    /// detail screen so returning to this smart collection shows fresh data.
-    private func refreshRecipes() {
-        Task { recipes = await PersistenceController.shared.fetchRecipesAsync() }
     }
 
     private var emptyState: some View {

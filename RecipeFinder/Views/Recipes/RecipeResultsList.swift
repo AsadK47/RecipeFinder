@@ -4,7 +4,6 @@ import SwiftUI
 /// flat list — section labels and sample/user distinctions are not surfaced here.
 struct RecipeResultsList: View {
     let filteredRecipes: [RecipeModel]
-    let onRecipeChange: () -> Void
     let onRequestDelete: (RecipeModel) -> Void
     let onRefresh: () async -> Void
 
@@ -22,7 +21,7 @@ struct RecipeResultsList: View {
     }
 
     private func navigationLink(for recipe: RecipeModel) -> some View {
-        RecipeLink(recipe: recipe, onRecipeChange: onRecipeChange) {
+        RecipeLink(recipe: recipe) {
             RecipeCard(recipe: recipe, viewMode: .list)
         }
         .contextMenu {

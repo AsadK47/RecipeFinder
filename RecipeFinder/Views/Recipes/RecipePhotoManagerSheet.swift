@@ -9,7 +9,6 @@ import UIKit
 struct RecipePhotoManagerSheet: View {
     @Binding var recipe: RecipeModel
     /// Called after a change is persisted, so the parent list can re-sync.
-    var onChange: (() -> Void)?
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
@@ -200,6 +199,5 @@ struct RecipePhotoManagerSheet: View {
         }
         onSuccess()
         HapticManager.shared.success()
-        onChange?()
     }
 }

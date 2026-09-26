@@ -106,7 +106,7 @@ struct RecipeSearchView: View {
                 ))
                 .navigationDestination(for: UUID.self) { recipeId in
                     if let recipe = recipes.first(where: { $0.id == recipeId }) {
-                        RecipeDetailView(recipe: recipe, onRecipeChange: refreshRecipes)
+                        RecipeDetailView(recipe: recipe)
                     }
                 }
         }
@@ -304,7 +304,6 @@ struct RecipeSearchView: View {
             } else {
                 RecipeResultsList(
                     filteredRecipes: current,
-                    onRecipeChange: refreshRecipes,
                     onRequestDelete: requestDelete,
                     onRefresh: refreshRecipesAsync
                 )
@@ -442,12 +441,7 @@ struct RecipeSearchView: View {
         }
     }
     
-    private func refreshRecipes() {
-        Task { await refreshRecipesAsync() }
-    }
-
-    /// Awaitable reload so pull-to-refresh keeps its spinner up until the fetch
-    /// completes. `refreshRecipes` wraps this for the fire-and-forget callers.
+    /// Awaitable reload so pull-to-refresh keeps its spinner up until the fetch completes.
     private func refreshRecipesAsync() async {
         await recipeStore.refresh()
     }

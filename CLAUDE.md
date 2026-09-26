@@ -38,9 +38,9 @@ Run verification fastest-first; stop and fix at the first failure before proceed
 1. `XcodeRefreshCodeIssuesInFile` — type-check a single file (seconds); run after every edit
 2. `RunSomeTests <SuiteName>` — run the directly affected test suite after adding/changing logic
 3. `BuildProject` — full compile; run before marking any task done
-4. `RunAllTests` — full suite; run for refactors or changes touching >1 file
+4. `RunAllTests` — full suite; run ONCE before the user commits, or when a change plausibly affects unrelated areas. Do NOT re-run it per slice/iteration.
 
-**Full check:** `BuildProject` then `RunAllTests` — both must be green before a task is considered done.
+**Per slice/iteration:** `BuildProject` + `RunSomeTests <affected suite>` is enough. Reserve `RunAllTests` for the pre-commit gate. CI catches anything missed on push.
 
 CI runs the full test suite on every push to `main` — red tests fail the build.
 

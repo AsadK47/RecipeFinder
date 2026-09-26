@@ -49,14 +49,8 @@ struct RecipeDetailView: View {
     var hasPrePrep: Bool { !recipe.prePrepInstructions.isEmpty }
     var hasNotes: Bool { !recipe.notesForDisplay.isEmpty || recipe.importedFromURL != nil }
 
-    /// Called after any change that's been persisted to Core Data (favourite,
-    /// cook count, rating, post-cook photo…) so the parent list can re-sync its
-    /// in-memory copy — otherwise navigating away and back shows stale data.
-    var onRecipeChange: (() -> Void)?
-
-    init(recipe: RecipeModel, onRecipeChange: (() -> Void)? = nil) {
+    init(recipe: RecipeModel) {
         _recipe = State(initialValue: recipe)
-        self.onRecipeChange = onRecipeChange
 
         _ingredientsState = State(initialValue: Array(repeating: false, count: recipe.ingredients.count))
         _instructionsState = State(initialValue: Array(repeating: false, count: recipe.instructions.count))
@@ -128,7 +122,7 @@ struct RecipeDetailView: View {
             }
         }
         .sheet(isPresented: $showPhotoManager) {
-            RecipePhotoManagerSheet(recipe: $recipe, onChange: onRecipeChange)
+            RecipePhotoManagerSheet(recipe: $recipe)
         }
         .sheet(isPresented: $showRefreshSheet) {
             if let diff = pendingRefreshDiff, let url = recipe.importedFromURL {
@@ -273,8 +267,7 @@ struct RecipeDetailView: View {
         recipe.isFavorite.toggle()
 
         PersistenceController.shared.toggleFavorite(withId: recipe.id)
-
-        onRecipeChange?()
+        recipeStore.sync(recipe)
     }
 
     func recordCook() {
@@ -283,7 +276,6 @@ struct RecipeDetailView: View {
         recipe.lastCookedAt = Date()
         PersistenceController.shared.recordCook(withId: recipe.id)
         recipeStore.sync(recipe)
-        onRecipeChange?()
         // Third cook of any recipe = genuine fan; ask for a review exactly once.
         if recipe.cookCount == 3 { requestReview() }
         // Delay lets any active fullScreenCover (CookingModeView) dismiss before the sheet appears.
@@ -303,7 +295,6 @@ struct RecipeDetailView: View {
             return
         }
         HapticManager.shared.success()
-        onRecipeChange?()
     }
 
     func updateRating(_ newRating: Int) {
@@ -311,7 +302,6 @@ struct RecipeDetailView: View {
         recipe.rating = newRating
         PersistenceController.shared.updateRating(withId: recipe.id, rating: newRating)
         recipeStore.sync(recipe)
-        onRecipeChange?()
     }
 
     /// Auto-triggered on every open; silently discards network errors so browsing

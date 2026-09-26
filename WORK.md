@@ -67,11 +67,20 @@ re-persist). Every recipe write path goes through the store. `onRecipeChange` st
 threaded — its teardown is coupled with Collections (they pass `refreshRecipes` to
 `RecipeLink` and hold their own recipe arrays), so do those together.
 
-### Remaining slices (next actions)
-- Slice 4: migrate Collections (CollectionDetailView/SmartCollectionDetailView/
-  CollectionsInlineView) + MealPlanning + RecipeSelectionSheet off `@Binding var recipes`
-  to `@Environment(\.recipeStore)`; then delete `onRecipeChange` from RecipeDetailView/
-  RecipeLink/RecipeResultsList/RecipePhotoManagerSheet and drop ContentView's `recipesBinding`.
+### SLICE 4 DONE (uncommitted, build green — run full suite before commit)
+Deleted all `onRecipeChange`/`onChange` plumbing (RecipeDetailView, RecipeLink,
+RecipeResultsList, RecipePhotoManagerSheet, RecipeSearchView, CollectionDetailView,
+SmartCollectionDetailView) + their local `refreshRecipes` re-fetches. `toggleFavorite`
+now also `store.sync`s (was a missed write path). Edits propagate via the store alone.
+
+### Optional cleanup (low priority — NOT needed for correctness)
+Collections/MealPlanning/RecipeSelectionSheet still take `@Binding var recipes`, but it
+already points at `store.recipes` (ContentView's `recipesBinding`), so they observe the
+store correctly. Swapping them to `@Environment(\.recipeStore)` + dropping `recipesBinding`
+is cosmetic — do only if touching those files anyway.
+
+## RecipeStore refactor: COMPLETE (slices 1–4). Store is the single source of truth;
+## all writes route through it; no manual refresh callbacks remain.
 
 ## (superseded) original plan — reactive `RecipeStore`
 User chose STAGED: quick relief now (done above), then replace the fragile pattern.

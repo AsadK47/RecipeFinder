@@ -67,7 +67,7 @@ struct CollectionDetailView: View {
         ScrollView {
             LazyVStack(spacing: AppTheme.cardVerticalSpacing) {
                 ForEach(collectionRecipes) { recipe in
-                    RecipeLink(recipe: recipe, onRecipeChange: refreshRecipes) {
+                    RecipeLink(recipe: recipe) {
                         RecipeRow(recipe: recipe)
                     }
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
@@ -84,13 +84,6 @@ struct CollectionDetailView: View {
             .padding(.vertical, AppTheme.spacing12)
             .padding(.bottom, AppTheme.spacing100)
         }
-    }
-
-    /// Re-syncs the bound recipe array from Core Data after a change made on the
-    /// detail screen (post-cook photo, rating, cook count…) so returning to this
-    /// collection shows fresh data rather than a stale copy.
-    private func refreshRecipes() {
-        Task { recipes = await PersistenceController.shared.fetchRecipesAsync() }
     }
 
     private func addAllToShoppingList() {
