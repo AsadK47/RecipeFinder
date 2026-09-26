@@ -29,13 +29,7 @@ struct SignUpView: View {
     }
     
     private var isPasswordStrong: Bool {
-        let hasUppercase = password.rangeOfCharacter(from: .uppercaseLetters) != nil
-        let hasLowercase = password.rangeOfCharacter(from: .lowercaseLetters) != nil
-        let hasNumber = password.rangeOfCharacter(from: .decimalDigits) != nil
-        let specialCharacters = CharacterSet(charactersIn: "!@#$%^&*()_+-=[]{}|;:',.<>?/~`")
-        let hasSpecialChar = password.rangeOfCharacter(from: specialCharacters) != nil
-        
-        return password.count >= 8 && hasUppercase && hasLowercase && hasNumber && hasSpecialChar
+        (try? Validator.validatePassword(password)) != nil
     }
     
     private var isUITesting: Bool {
