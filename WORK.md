@@ -1,5 +1,11 @@
 # WORK.md — recipe state consistency (staged)
 
+## LATEST (2026-09-26): import-placeholder fix DONE (39/39 import tests green) —
+## builder no longer fabricates "See recipe"/"See original recipe"; RecipeImportView
+## warns before saving an incomplete import. StoreKit scheme SETTLED at
+## `../../RecipeFinder.storekit` (see [[storekit-scheme-path]]). `improve-loop` skill built.
+## NEXT: run `/improve-loop the cook flow` → fix top verified finding → repeat.
+
 ## This session — DONE + verified (uncommitted, user commits as review step)
 Working tree: `BuildProject` green; `RunAllTests` 1609/1611 (the 2 reds are the
 known-unrelated sign-in-contrast + groceries-hit-area audit tests — see

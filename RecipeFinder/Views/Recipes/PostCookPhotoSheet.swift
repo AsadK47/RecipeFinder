@@ -13,6 +13,7 @@ struct PostCookPhotoSheet: View {
 
     @State private var selectedItem: PhotosPickerItem?
     @State private var showCamera = false
+    @State private var loadFailed = false
 
     var body: some View {
         ZStack {
@@ -42,8 +43,16 @@ struct PostCookPhotoSheet: View {
                    let image = UIImage(data: data) {
                     onPhotoSelected(image)
                     dismiss()
+                } else {
+                    // Don't fail silently — tell the user the photo didn't load.
+                    loadFailed = true
                 }
             }
+        }
+        .alert("Couldn't load photo", isPresented: $loadFailed) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("That photo couldn't be loaded. Please try another.")
         }
     }
 

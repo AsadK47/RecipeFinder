@@ -6,6 +6,9 @@ struct RecipeDetailView: View {
     // State read by both `body` and the view-building content in
     // `RecipeDetailView+Content.swift`, so it is `internal` rather than `private`.
     @State var recipe: RecipeModel
+    /// Cached displayable gallery images — recomputed only when the recipe changes
+    /// (see `galleryNames(for:)`), not on every body pass.
+    @State var galleryImageNames: [String]
     @State var ingredientsState: [Bool]
     @State var instructionsState: [Bool]
     @State var prePrepState: [Bool]
@@ -51,6 +54,7 @@ struct RecipeDetailView: View {
 
     init(recipe: RecipeModel) {
         _recipe = State(initialValue: recipe)
+        _galleryImageNames = State(initialValue: RecipeDetailView.galleryNames(for: recipe))
 
         _ingredientsState = State(initialValue: Array(repeating: false, count: recipe.ingredients.count))
         _instructionsState = State(initialValue: Array(repeating: false, count: recipe.instructions.count))
@@ -153,6 +157,7 @@ struct RecipeDetailView: View {
             checkForCompletion(newValue)
         }
         .onChange(of: recipe) { _, newRecipe in
+            galleryImageNames = RecipeDetailView.galleryNames(for: newRecipe)
             if ingredientsState.count != newRecipe.ingredients.count {
                 ingredientsState = Array(repeating: false, count: newRecipe.ingredients.count)
             }
@@ -287,7 +292,11 @@ struct RecipeDetailView: View {
     private func addCookPhoto(_ image: UIImage) {
         let store = RecipeImageStore()
         let newPaths = store.persistGallery([image], recipeId: recipe.id, startingIndex: recipe.photoNames.count)
-        guard !newPaths.isEmpty else { return }
+        // Surface the failure (e.g. disk full) instead of silently dropping the photo.
+        guard !newPaths.isEmpty else {
+            showSaveError = true
+            return
+        }
         recipe.photoNames.append(contentsOf: newPaths)
         guard recipeStore.save(recipe) else {
             recipe.photoNames.removeLast(newPaths.count)

@@ -56,7 +56,11 @@ extension RecipeDetailView {
     /// first (if it resolves), then post-cook photos. Filtered so stale/missing
     /// references don't leave gaps — and so a lone post-cook photo becomes the
     /// hero when there's no main image.
-    private var galleryImageNames: [String] {
+    ///
+    /// Pure + static: the result is cached in `galleryImageNames` (@State) and only
+    /// recomputed when the recipe changes, so the `FileManager` existence checks
+    /// don't run 3× on every `body` evaluation.
+    static func galleryNames(for recipe: RecipeModel) -> [String] {
         ([recipe.imageName].compactMap { $0 } + recipe.photoNames)
             .filter { RecipeImageView.hasDisplayableImage($0) }
     }

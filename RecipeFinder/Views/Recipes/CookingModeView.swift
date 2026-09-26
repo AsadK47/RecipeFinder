@@ -13,6 +13,7 @@ struct CookingModeView: View {
     @State private var showTimerSheet = false
     @Environment(\.recipeTimer) private var timerManager
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("measurementSystem") private var measurementSystem: MeasurementSystem = .metric
@@ -67,9 +68,15 @@ struct CookingModeView: View {
     /// counts numbers explicitly followed by a time unit, so temperatures like
     /// "350°F" or counts like "2 eggs" don't get read as a timer duration.
     /// Pure + static so it's unit-tested.
+    /// Compiled once, not per call — this runs from a computed property read on
+    /// every body evaluation and step change.
+    private static let cookTimerRegex = try? NSRegularExpression(
+        pattern: #"(\d+(?:\.\d+)?)\s*(hours?|hrs?|minutes?|mins?|seconds?|secs?)\b"#,
+        options: [.caseInsensitive]
+    )
+
     static func cookTimerMinutes(in text: String) -> Int? {
-        let pattern = #"(\d+(?:\.\d+)?)\s*(hours?|hrs?|minutes?|mins?|seconds?|secs?)\b"#
-        guard let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive]) else { return nil }
+        guard let regex = cookTimerRegex else { return nil }
         let ns = text as NSString
         var totalMinutes = 0.0
         for match in regex.matches(in: text, range: NSRange(location: 0, length: ns.length)) {
@@ -137,6 +144,12 @@ struct CookingModeView: View {
             .onDisappear {
                 UIApplication.shared.isIdleTimerDisabled = false
                 CookingSession.shared.end()
+            }
+            // Guarantee the idle timer is restored even if the view is interrupted
+            // (incoming call, PiP, system alert) and onDisappear never fires: keep
+            // the screen awake only while cooking mode is the active foreground view.
+            .onChange(of: scenePhase) { _, phase in
+                UIApplication.shared.isIdleTimerDisabled = (phase == .active)
             }
             .onChange(of: currentIndex) { _, new in
                 CookingSession.shared.setIndex(new)
