@@ -26,12 +26,7 @@ struct RecipeDetailToolbar: View {
             .accessibilityLabel("Start Cooking Mode")
             .popoverTip(cookingModeTip, arrowEdge: .top)
 
-            Button(action: onToggleFavorite) {
-                Image(systemName: recipe.isFavorite ? "heart.fill" : "heart")
-                    .font(.title3)
-                    .foregroundStyle(recipe.isFavorite ? .red : .primary)
-            }
-            .accessibilityLabel(recipe.isFavorite ? "Remove from favourites" : "Add to favourites")
+            AnimatedHeartButton(isFavorite: .constant(recipe.isFavorite), action: onToggleFavorite)
 
             Button(action: onAddToCollection) {
                 Image(systemName: "rectangle.stack.badge.plus")
