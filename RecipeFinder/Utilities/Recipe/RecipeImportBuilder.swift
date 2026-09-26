@@ -18,9 +18,9 @@ struct RecipeImportBuilder {
             prepTime: data.prepTimeMinutes.map { "\($0) minutes" } ?? "0 minutes",
             cookingTime: data.cookTimeMinutes.map { "\($0) minutes" } ?? "0 minutes",
             baseServings: data.servings ?? 4,
-            ingredients: ingredients.isEmpty
-                ? [Ingredient(baseQuantity: 1, unit: "", name: "See recipe")]
-                : ingredients,
+            // Don't fabricate a "See recipe" placeholder — leave empty so the
+            // caller can surface the gap for review instead of saving fake content.
+            ingredients: ingredients,
             prePrepInstructions: [],
             instructions: data.instructions.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty },
             notes: buildNotes(from: data),

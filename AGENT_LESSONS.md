@@ -1,0 +1,32 @@
+# Agent working lessons
+
+Hard-won lessons from AI-assisted sessions on this repo. Keep short; promote a
+recurring one into `CLAUDE.md` (a gate) or the `improve-loop` workflow (a step).
+
+## Process
+1. **Verify a finding's premise before editing.** Audits/reviews are frequently
+   overstated (e.g. "scaling wipes ingredient check-offs" was false — a count-guard
+   prevented it). Read the actual code; downgrade or drop findings that don't hold.
+   The `improve-loop` workflow bakes this in as an adversarial verify step.
+2. **Before removing a string/symbol, grep for dependents case-INSENSITIVELY.** A
+   case-sensitive grep for "See recipe" missed a test asserting `"See Recipe"` →
+   broke the suite. Check tests + code for exact and near-exact matches first.
+3. **Fix one thing → verify with a *separate* agent → human commits.** WIP=1. The
+   agent that wrote the code shouldn't be the only one that blesses it.
+4. **Test cadence:** build + the affected suite per slice; run the full `RunAllTests`
+   once before a commit — not per iteration. (Also in `CLAUDE.md`.)
+
+## Judgement
+5. **Proportionate fixes.** Prefer a small honest change over a big flow rewrite
+   (e.g. imports: stop fabricating placeholders + warn, rather than re-route the
+   whole pipeline through the wizard).
+6. **Colour is not a readability tool over themed gradients.** Accent text on the
+   teal/blue gradient is unreadable on some themes. Use the consistent type scale
+   (size/weight + primary colour), not one-off colour pops, for legible values.
+7. **Don't over-ask, don't over-talk.** Lead with the result; ask only when the
+   answer changes what you build. (Concise-answers gate is in `CLAUDE.md`.)
+
+## Repo gotchas (see also memory)
+- StoreKit scheme `identifier` = `../../RecipeFinder.storekit` (anchored at the
+  `xcshareddata` dir, NOT SRCROOT). Cost several wrong guesses — see memory.
+- New Swift files via `XcodeWrite`; new tests via Swift Testing (no new XCTest).

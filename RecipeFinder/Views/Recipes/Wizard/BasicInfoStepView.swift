@@ -101,7 +101,7 @@ struct BasicInfoStepView: View {
                                         Text("\(servings)")
                                             .font(.title2)
                                             .fontWeight(.bold)
-                                            .foregroundStyle(AppTheme.accentColor(for: appTheme))
+                                            .adaptiveForegroundColor()
                                             .frame(minWidth: AppTheme.iconSize32)
                                         Text(servings == 1 ? "serving" : "servings")
                                             .font(.body)

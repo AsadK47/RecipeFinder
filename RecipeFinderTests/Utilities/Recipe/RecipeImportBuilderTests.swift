@@ -107,11 +107,11 @@ final class RecipeImportBuilderTests: XCTestCase {
         XCTAssertNil(recipe.imageName)
     }
 
-    func testBuild_fallbackIngredientWhenListEmpty() {
+    func testBuild_emptyIngredientListStaysEmpty() {
+        // No fabricated "See Recipe" placeholder — the import flow surfaces the gap.
         let data = makeData(rawIngredients: [])
         let recipe = builder.build(from: data)
-        XCTAssertEqual(recipe.ingredients.count, 1)
-        XCTAssertEqual(recipe.ingredients[0].name, "See Recipe")
+        XCTAssertTrue(recipe.ingredients.isEmpty)
     }
 
     func testBuild_filtersBlankInstructions() {

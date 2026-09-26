@@ -57,10 +57,34 @@ struct CookingModeView: View {
     private var stepTimerMinutes: Int? {
         switch current {
         case .prePrep(_, let text), .step(_, let text):
-            let mins = TimeExtractor.extractMinutes(from: text)
-            return mins > 0 ? mins : nil
+            return Self.cookTimerMinutes(in: text)
         default: return nil
         }
+    }
+
+    /// Minutes for a step's timer button. Unlike `TimeExtractor` (which treats a
+    /// bare number as minutes — correct for prep/cook-time fields), this only
+    /// counts numbers explicitly followed by a time unit, so temperatures like
+    /// "350°F" or counts like "2 eggs" don't get read as a timer duration.
+    /// Pure + static so it's unit-tested.
+    static func cookTimerMinutes(in text: String) -> Int? {
+        let pattern = #"(\d+(?:\.\d+)?)\s*(hours?|hrs?|minutes?|mins?|seconds?|secs?)\b"#
+        guard let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive]) else { return nil }
+        let ns = text as NSString
+        var totalMinutes = 0.0
+        for match in regex.matches(in: text, range: NSRange(location: 0, length: ns.length)) {
+            let value = Double(ns.substring(with: match.range(at: 1))) ?? 0
+            let unit = ns.substring(with: match.range(at: 2)).lowercased()
+            if unit.hasPrefix("h") {
+                totalMinutes += value * 60
+            } else if unit.hasPrefix("s") {
+                totalMinutes += value / 60
+            } else {
+                totalMinutes += value
+            }
+        }
+        let rounded = Int(totalMinutes.rounded())
+        return rounded > 0 ? rounded : nil
     }
 
     // MARK: - Body
@@ -231,11 +255,15 @@ struct CookingModeView: View {
 
             if let minutes = stepTimerMinutes {
                 Button {
-                    timerManager.start(hours: 0, minutes: minutes, seconds: 0)
+                    // Don't clobber a timer already running (e.g. from an earlier
+                    // step) — just open the sheet so the user can see/manage it.
+                    if !timerManager.isActive {
+                        timerManager.start(hours: 0, minutes: minutes, seconds: 0)
+                    }
                     showTimerSheet = true
                     HapticManager.shared.success()
                 } label: {
-                    Label("Start \(minutes)-minute timer", systemImage: "timer")
+                    Label(timerManager.isActive ? "Timer running" : "Start \(minutes)-minute timer", systemImage: "timer")
                         .font(.headline)
                         .padding(.horizontal, AppTheme.spacing24)
                         .padding(.vertical, AppTheme.spacing14)

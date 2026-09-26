@@ -391,6 +391,8 @@
 		F3F189E73067DE160097A65F /* RecipeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F189E63067DE160097A65F /* RecipeStore.swift */; };
 		F3F189E93067DF470097A65F /* RecipeStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F189E83067DF470097A65F /* RecipeStoreTests.swift */; };
 		F3F189EB3067EC850097A65F /* WizardIntroSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F189EA3067EC850097A65F /* WizardIntroSheet.swift */; };
+		F3F189ED306828CF0097A65F /* CookingModeTimerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F189EC306828CF0097A65F /* CookingModeTimerTests.swift */; };
+		F3F189EF30682A720097A65F /* RecipeImportBuilderPlaceholderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F189EE30682A720097A65F /* RecipeImportBuilderPlaceholderTests.swift */; };
 		F3F941D630405E230067C6C8 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = F3F941D530405E230067C6C8 /* CLAUDE.md */; };
 		F3FF62D6305BE4550008B191 /* PantryExpirySuggestions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FF62D5305BE4550008B191 /* PantryExpirySuggestions.swift */; };
 		F3FF62D8305BE4610008B191 /* ExpiryRecipeSuggestionsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FF62D7305BE4610008B191 /* ExpiryRecipeSuggestionsSection.swift */; };
@@ -603,6 +605,7 @@
 		9EE5AAF12D08FCBF00C1B736 /* RecipeFinderUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RecipeFinderUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9EEDD0812D09F955003C7296 /* RecipeModel 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "RecipeModel 4.xcdatamodel"; sourceTree = "<group>"; };
 		9EF757642FCF3D8F0012B2B7 /* IngredientAutocompleteEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientAutocompleteEngine.swift; sourceTree = "<group>"; };
+		F30951C630683B0B005B0DFD /* RecipeFinder.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = RecipeFinder.storekit; sourceTree = "<group>"; };
 		F36AED523040A5D700935A3C /* HTMLFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLFetcher.swift; sourceTree = "<group>"; };
 		F36AED543040A5F200935A3C /* RecipeImporterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeImporterTests.swift; sourceTree = "<group>"; };
 		F36AED62304333DB00935A3C /* MemoCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoCache.swift; sourceTree = "<group>"; };
@@ -839,6 +842,8 @@
 		F3F189E63067DE160097A65F /* RecipeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeStore.swift; sourceTree = "<group>"; };
 		F3F189E83067DF470097A65F /* RecipeStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeStoreTests.swift; sourceTree = "<group>"; };
 		F3F189EA3067EC850097A65F /* WizardIntroSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WizardIntroSheet.swift; sourceTree = "<group>"; };
+		F3F189EC306828CF0097A65F /* CookingModeTimerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookingModeTimerTests.swift; sourceTree = "<group>"; };
+		F3F189EE30682A720097A65F /* RecipeImportBuilderPlaceholderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeImportBuilderPlaceholderTests.swift; sourceTree = "<group>"; };
 		F3F941D530405E230067C6C8 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 		F3FF62D5305BE4550008B191 /* PantryExpirySuggestions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryExpirySuggestions.swift; sourceTree = "<group>"; };
 		F3FF62D7305BE4610008B191 /* ExpiryRecipeSuggestionsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpiryRecipeSuggestionsSection.swift; sourceTree = "<group>"; };
@@ -1602,6 +1607,7 @@
 				F3FF62F3305C24CE0008B191 /* RecipeFileExporterTests.swift */,
 				F3FF62F8305DA5FC0008B191 /* RecipeParserTextContentTests.swift */,
 				F3D04F31306033FF005A930D /* TextRecipeParserOCRTests.swift */,
+				F3F189EE30682A720097A65F /* RecipeImportBuilderPlaceholderTests.swift */,
 			);
 			path = Recipe;
 			sourceTree = "<group>";
@@ -1723,6 +1729,7 @@
 		9EE5AACC2D08FCBE00C1B736 = {
 			isa = PBXGroup;
 			children = (
+				F30951C630683B0B005B0DFD /* RecipeFinder.storekit */,
 				F3E9D2A930554A0D008BF231 /* RecipeFinderTests.xctestplan */,
 				F3E9D2A73055452E008BF231 /* RecipeFinder.xctestplan */,
 				F3F941D530405E230067C6C8 /* CLAUDE.md */,
@@ -1801,6 +1808,7 @@
 			isa = PBXGroup;
 			children = (
 				F3AD2EEE3065739600274E33 /* RecipeWizardSectionTests.swift */,
+				F3F189EC306828CF0097A65F /* CookingModeTimerTests.swift */,
 			);
 			path = Recipes;
 			sourceTree = "<group>";
@@ -2453,6 +2461,7 @@
 				F3E9D289304E056A008BF231 /* CoreDataStorePersistenceTests.swift in Sources */,
 				9E6C2C532FB478290083A08B /* AccountSheetTests.swift in Sources */,
 				9E6C2C4D2FB477ED0083A08B /* CardViewTests.swift in Sources */,
+				F3F189EF30682A720097A65F /* RecipeImportBuilderPlaceholderTests.swift in Sources */,
 				9E6C2C192FB394090083A08B /* CategoryClassifierTests.swift in Sources */,
 				F3E9D16030444D4C008BF231 /* ShoppingListGroupingTests.swift in Sources */,
 				F3FF62DA305BE4760008B191 /* PantryExpirySuggestionsTests.swift in Sources */,
@@ -2537,6 +2546,7 @@
 				F3E9D292304EADA3008BF231 /* IngredientLineParserTests.swift in Sources */,
 				F3FF62F9305DA5FC0008B191 /* RecipeParserTextContentTests.swift in Sources */,
 				F3D4057B305AFEA30076834D /* HTMLFetcherTests.swift in Sources */,
+				F3F189ED306828CF0097A65F /* CookingModeTimerTests.swift in Sources */,
 				F36AED673043343300935A3C /* MemoCacheTests.swift in Sources */,
 				F3E9D27A304D7D16008BF231 /* RecipeTextImportRouterTests.swift in Sources */,
 				F3B837E13055F9EE0003AEF8 /* RecipeWizardPersistenceTests.swift in Sources */,

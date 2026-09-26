@@ -12,6 +12,7 @@ struct RecipeImportView: View {
     @State private var loadingStage: LoadingStage = .idle
     @State private var pendingRecipe: RecipeModel?
     @State private var showDuplicateAlert = false
+    @State private var showIncompleteAlert = false
     private let builder = RecipeImportBuilder()
 
     /// When set (e.g. arriving from the share extension), the URL field is
@@ -267,6 +268,25 @@ struct RecipeImportView: View {
         } message: { recipe in
             Text("\"\(recipe.name)\" is already in your recipes. Import as a duplicate?")
         }
+        .alert(
+            "Recipe looks incomplete",
+            isPresented: $showIncompleteAlert,
+            presenting: pendingRecipe
+        ) { recipe in
+            Button("Save & Add Later") {
+                onImport(recipe)
+                pendingRecipe = nil
+                dismiss()
+            }
+            Button("Cancel", role: .cancel) {
+                pendingRecipe = nil
+            }
+        } message: { recipe in
+            let missing = recipe.ingredients.isEmpty
+                ? (recipe.instructions.isEmpty ? "ingredients or steps" : "ingredients")
+                : "cooking steps"
+            Text("We couldn't find the \(missing) for \"\(recipe.name)\". Save it and add them yourself, or cancel?")
+        }
         .onAppear {
             if let initialURL, urlText.isEmpty {
                 urlText = initialURL
@@ -353,6 +373,11 @@ struct RecipeImportView: View {
                     pendingRecipe = recipe
                     loadingStage = .idle
                     showDuplicateAlert = true
+                } else if recipe.ingredients.isEmpty || recipe.instructions.isEmpty {
+                    // Don't silently save an incomplete import — let the user decide.
+                    pendingRecipe = recipe
+                    loadingStage = .idle
+                    showIncompleteAlert = true
                 } else {
                     onImport(recipe)
                     dismiss()

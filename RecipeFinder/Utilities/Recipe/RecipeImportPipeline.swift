@@ -101,7 +101,10 @@ struct RecipeImportPipeline: Sendable {
         }
 
         // Instructions are optional — many sites structure them in ways the parser misses
-        let instructions = parsed.instructions.isEmpty ? ["See original recipe for instructions."] : parsed.instructions
+        // Leave instructions empty when none parse (don't fabricate a placeholder
+        // step) — the source URL is kept in notes, and the import flow prompts the
+        // user to review/add steps rather than silently saving a fake one.
+        let instructions = parsed.instructions
 
         let extracted = ExtractedRecipeData(
             name: name,
