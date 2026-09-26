@@ -187,6 +187,7 @@
 		F3AD2EEF3065739600274E33 /* RecipeWizardSectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AD2EEE3065739600274E33 /* RecipeWizardSectionTests.swift */; };
 		F3AD2EF130657D2100274E33 /* View+AppInputField.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AD2EF030657D2100274E33 /* View+AppInputField.swift */; };
 		F3B7D8DC30684E5900991908 /* RecipeImageViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D8DB30684E5900991908 /* RecipeImageViewTests.swift */; };
+		F3B7D8DE30684FC800991908 /* PhotoSourcePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D8DD30684FC800991908 /* PhotoSourcePicker.swift */; };
 		F3B837BF305554C80003AEF8 /* UserScopedStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837BE305554C80003AEF8 /* UserScopedStorageTests.swift */; };
 		F3B837C1305562790003AEF8 /* SessionExpiryPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837C0305562790003AEF8 /* SessionExpiryPolicy.swift */; };
 		F3B837C33055628E0003AEF8 /* SessionExpiryPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837C23055628E0003AEF8 /* SessionExpiryPolicyTests.swift */; };
@@ -643,6 +644,7 @@
 		F3AD2EEE3065739600274E33 /* RecipeWizardSectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeWizardSectionTests.swift; sourceTree = "<group>"; };
 		F3AD2EF030657D2100274E33 /* View+AppInputField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+AppInputField.swift"; sourceTree = "<group>"; };
 		F3B7D8DB30684E5900991908 /* RecipeImageViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeImageViewTests.swift; sourceTree = "<group>"; };
+		F3B7D8DD30684FC800991908 /* PhotoSourcePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoSourcePicker.swift; sourceTree = "<group>"; };
 		F3B837BE305554C80003AEF8 /* UserScopedStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserScopedStorageTests.swift; sourceTree = "<group>"; };
 		F3B837C0305562790003AEF8 /* SessionExpiryPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionExpiryPolicy.swift; sourceTree = "<group>"; };
 		F3B837C23055628E0003AEF8 /* SessionExpiryPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionExpiryPolicyTests.swift; sourceTree = "<group>"; };
@@ -961,6 +963,7 @@
 				9E6DEA5C2EF5EF47001E7B24 /* Sheets */,
 				9E47960F3006BD1A00A14D3F /* Settings */,
 				F3AD2ED8306409A800274E33 /* Feedback */,
+				F3B7D8DD30684FC800991908 /* PhotoSourcePicker.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -2183,6 +2186,7 @@
 				F3E9D1D03045DA58008BF231 /* RecipeImageStore.swift in Sources */,
 				F3E9D16630444D9A008BF231 /* GrocerySearchResultsView.swift in Sources */,
 				F3FF62E6305C18800008B191 /* RecipeRefreshSheet.swift in Sources */,
+				F3B7D8DE30684FC800991908 /* PhotoSourcePicker.swift in Sources */,
 				F3FF62EC305C1F2A0008B191 /* PostCookPhotoSheet.swift in Sources */,
 				F3E9D1BC30457DE4008BF231 /* PersistenceController+Database.swift in Sources */,
 				F36AED533040A5D700935A3C /* HTMLFetcher.swift in Sources */,
