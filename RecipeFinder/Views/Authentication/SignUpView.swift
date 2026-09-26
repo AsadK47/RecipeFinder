@@ -15,14 +15,10 @@ struct SignUpView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismiss
     
-    private var isValidEmail: Bool {
-        Validator.isValidEmail(email)
-    }
-    
     var isFormValid: Bool {
         !fullName.isEmpty &&
         !email.isEmpty &&
-        isValidEmail &&
+        Validator.isValidEmail(email) &&
         !password.isEmpty &&
         password == confirmPassword &&
         isPasswordStrong
@@ -95,7 +91,7 @@ struct SignUpView: View {
                                     .autocorrectionDisabled()
                                     .accessibilityIdentifier("signup.email")
                                 
-                                if !email.isEmpty && !isValidEmail {
+                                if !email.isEmpty && !Validator.isValidEmail(email) {
                                     Text("Please enter a valid email address")
                                         .font(.caption)
                                         .foregroundStyle(.orange.opacity(AppTheme.veryHighEmphasisOpacity))

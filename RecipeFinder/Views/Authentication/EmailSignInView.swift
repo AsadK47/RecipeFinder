@@ -21,12 +21,8 @@ struct EmailSignInView: View {
         ProcessInfo.processInfo.arguments.contains("-ui-testing")
     }
 
-    private var isValidEmail: Bool {
-        Validator.isValidEmail(email)
-    }
-    
     private var canSignIn: Bool {
-        !email.isEmpty && !password.isEmpty && isValidEmail
+        !email.isEmpty && !password.isEmpty && Validator.isValidEmail(email)
     }
     
     init(prefillEmail: String = "") {
@@ -71,7 +67,7 @@ struct EmailSignInView: View {
                                 .autocorrectionDisabled()
                                 .accessibilityIdentifier("signin.email")
                             
-                            if !email.isEmpty && !isValidEmail {
+                            if !email.isEmpty && !Validator.isValidEmail(email) {
                                 Text("Please enter a valid email address")
                                     .font(.caption)
                                     .foregroundStyle(.orange.opacity(AppTheme.veryHighEmphasisOpacity))
