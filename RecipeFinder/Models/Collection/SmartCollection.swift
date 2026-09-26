@@ -1,9 +1,7 @@
 import SwiftUI
 import Foundation
 
-/// A built-in, auto-populated recipe group defined by a matching rule.
-/// Unlike `RecipeCollection`, membership is computed from the recipe list
-/// at read time — nothing is stored.
+/// Built-in recipe group defined by a matching rule; membership computed at read time, nothing stored.
 enum SmartCollection: String, CaseIterable, Identifiable {
     case quickMeals
     case easyRecipes
@@ -47,7 +45,7 @@ enum SmartCollection: String, CaseIterable, Identifiable {
         }
     }
 
-    /// Returns `true` when `recipe` satisfies this collection's rule.
+    /// True when `recipe` satisfies this collection's rule.
     func matches(_ recipe: RecipeModel) -> Bool {
         switch self {
         case .quickMeals:
@@ -69,7 +67,7 @@ enum SmartCollection: String, CaseIterable, Identifiable {
         }
     }
 
-    /// All recipes from `all` that satisfy this collection's rule.
+    /// Recipes from `all` that satisfy this collection's rule.
     func recipes(from all: [RecipeModel]) -> [RecipeModel] {
         all.filter { matches($0) }
     }

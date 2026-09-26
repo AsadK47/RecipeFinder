@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// View-building pieces of `FaceIDOnboardingSplash`, split out to keep the main
-/// file focused on state and behavior. Reads the owning view's `@State`/helpers,
-/// which are therefore internal rather than private.
+/// View-building pieces of `FaceIDOnboardingSplash`; reads the owning view's `@State`/helpers (hence internal, not private).
 extension FaceIDOnboardingSplash {
 
     func particleLayer() -> some View {

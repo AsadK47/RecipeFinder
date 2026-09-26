@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// The shopping list rendered as bare `List` `Section`s — no enclosing `List` and no
-/// title bar of its own — so the Groceries screen can host it in one scroll.
-/// Row actions go straight to `ShoppingListManager.shared`.
+/// Shopping list as bare `List` `Section`s (no own `List`/title) so Groceries hosts it in one scroll; row actions go straight to `ShoppingListManager.shared`.
 struct ShoppingSectionsView: View {
     @Binding var collapsedCategories: Set<String>
 
@@ -11,8 +9,7 @@ struct ShoppingSectionsView: View {
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
 
-    /// Names the user already has in their kitchen, lowercased, so each shopping
-    /// row can flag "you already have this".
+    /// Lowercased kitchen item names so each shopping row can flag "you already have this".
     private var kitchenNameSet: Set<String> {
         Set(kitchen.items.map { $0.name.lowercased() })
             .union(kitchen.inventoryItems.map { $0.name.lowercased() })

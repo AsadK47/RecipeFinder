@@ -3,10 +3,7 @@ import Foundation
 
 struct IngredientNormalizer {
 
-    // Memoize results: `normalize` runs several regex passes plus a scan over the
-    // ~140-entry normalization map, and it's called per-ingredient across recipe
-    // filtering and meal planning. Dropping this cache once caused a serious
-    // rendering-path slowdown, so keep it (MemoCache is Swift 6 concurrency-safe).
+    // Memoize: normalize runs several regex passes + a ~140-entry map scan per ingredient across filtering/meal-planning; dropping this cache once caused a serious rendering slowdown.
     private static let cache = MemoCache<String, String>(maxSize: 200)
 
     private static let normalizationMap: [String: String] = [
@@ -153,11 +150,7 @@ struct IngredientNormalizer {
         "canned coconut milk": "Coconut Milk"
     ]
 
-    // Fallback order for the substring/whole-word scan: most-specific (longest)
-    // key first, then alphabetical. A `Dictionary` has no defined iteration order,
-    // so the previous `for (key, value) in normalizationMap` could return a
-    // different match between launches when an input contained two keys. Sorting
-    // once here makes the winner deterministic.
+    // Longest key first, then alphabetical: Dictionary iteration order is undefined, so sort once to make the whole-word scan winner deterministic across launches.
     private static let sortedNormalizationEntries: [(key: String, value: String)] =
         normalizationMap
             .map { (key: $0.key, value: $0.value) }
@@ -200,8 +193,7 @@ struct IngredientNormalizer {
             return standardName
         }
 
-        // Whole-word fallback (deterministic order): matches a map key that appears
-        // as a run of whole words, so "hot saucepan" isn't conflated with "hot sauce".
+        // Whole-word fallback: match a key only as a run of whole words, so "hot saucepan" isn't conflated with "hot sauce".
         let normalizedWords = IngredientWordMatcher.words(in: normalized)
         for entry in sortedNormalizationEntries
         where IngredientWordMatcher.matches(textWords: normalizedWords, keyword: entry.key) {

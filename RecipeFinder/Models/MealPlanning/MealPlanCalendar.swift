@@ -1,11 +1,6 @@
 import Foundation
 
-/// Pure calendar/date math for the meal planner's calendar and weekly views.
-///
-/// Extracted from `MealPlanningView` so the month-grid and week computations are
-/// unit testable and no longer live inline inside a SwiftUI `body`. The
-/// `Calendar` is injected so tests are deterministic regardless of the device's
-/// locale and time zone.
+/// Pure calendar/date math for the planner, extracted from `MealPlanningView` for testability; `Calendar` injected for determinism.
 struct MealPlanCalendar {
     let calendar: Calendar
 
@@ -13,8 +8,7 @@ struct MealPlanCalendar {
         self.calendar = calendar
     }
 
-    /// The seven dates of the week containing `date`, starting on the calendar's
-    /// first weekday.
+    /// The seven dates of the week containing `date`, from the calendar's first weekday.
     func daysInWeek(containing date: Date) -> [Date] {
         guard let week = calendar.dateInterval(of: .weekOfYear, for: date) else {
             return []
@@ -32,9 +26,7 @@ struct MealPlanCalendar {
         return days
     }
 
-    /// The month containing `date` laid out as a 7-column grid: leading `nil`s
-    /// pad the first week up to the 1st, one entry per day of the month, then
-    /// trailing `nil`s pad the final week. The count is always a multiple of 7.
+    /// The month as a 7-column grid: leading/trailing `nil`s pad partial weeks, one entry per day; count is a multiple of 7.
     func monthGrid(containing date: Date) -> [Date?] {
         guard let month = calendar.dateInterval(of: .month, for: date),
               let firstWeek = calendar.dateInterval(of: .weekOfMonth, for: month.start) else {

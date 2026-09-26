@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// Renders `Section` rows for expired, expiring-soon, and low-stock inventory
-/// items. Designed to be embedded at the top of a `List` inside
-/// `KitchenSectionsView`. Hidden entirely when there are no alerts.
+/// Expired / expiring-soon / low-stock `Section` rows embedded atop `KitchenSectionsView`'s `List`; hidden when no alerts.
 struct PantryAlertsSectionContent: View {
     let manager: any KitchenInventoryManaging
     @Environment(\.colorScheme) private var colorScheme

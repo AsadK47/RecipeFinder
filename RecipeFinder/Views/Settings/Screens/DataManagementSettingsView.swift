@@ -13,10 +13,10 @@ struct DataManagementSettingsView: View {
     @State private var backupMessage: String?
     @State private var backupMessageIsError = false
 
-    // On-device import availability (read on appear)
+    // On-device import availability, read on appear.
     @State private var importStatus: OnDeviceRecipeImportStatus = .unknown
 
-    // Personal recipe collection seed
+    // Personal recipe collection seed.
     @State private var isSeeding = false
     @State private var seedMessage: String?
     @State private var seedMessageIsError = false
@@ -335,9 +335,7 @@ struct DataManagementSettingsView: View {
             let data = try Data(contentsOf: url)
             try BackupService().importData(data)
 
-            // The managers' @Published state refreshes live via the merge seam;
-            // the Core Data-backed recipe list only reloads on a scope-change
-            // signal, so nudge it to re-fetch the newly merged recipes.
+            // Core Data recipe list only reloads on a scope-change signal — nudge it to re-fetch the merged recipes.
             NotificationCenter.default.post(name: .userScopeDidChange, object: nil)
 
             showBackupMessage("Backup restored.", isError: false)
@@ -360,10 +358,7 @@ struct DataManagementSettingsView: View {
     }
 
     private func resetToDefault() {
-        // Scope the wipe to the signed-in user — a batch delete with no predicate
-        // (the previous implementation) also erased other accounts' recipes, and
-        // wiping the whole UserDefaults domain desynced the in-memory auth/scope
-        // state and left populateDatabase() unable to repopulate.
+        // Scope the wipe to the signed-in user — an unpredicated delete erases other accounts and desyncs auth/scope state.
         PersistenceController.shared.clearAllRecipes()
         UserScopedStorage.shared.clearCurrentUserData()
 

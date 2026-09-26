@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// The tappable profile avatar (photo or initials) plus chef-type caption on the
-/// Account screen. Extracted from `AccountView`.
+/// Tappable profile avatar (photo or initials) plus chef-type caption on the Account screen.
 struct AccountProfileAvatar: View {
     let image: UIImage?
     let initials: String

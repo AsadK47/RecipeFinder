@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// The "Personal Information" card (first/last name fields and email) on the
-/// Account screen. Extracted from `AccountView`.
+/// "Personal Information" card (first/last name fields and email) on the Account screen.
 struct AccountPersonalInfoSection: View {
     @Binding var firstName: String
     @Binding var lastName: String

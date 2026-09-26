@@ -4,13 +4,7 @@ import Foundation
 import UIKit
 #endif
 
-/// Parses recipe data out of a page's HTML. Tries structured data first
-/// (JSON-LD, then WP Recipe Maker markup) and falls back to free-text heuristics.
-///
-/// The individual strategies live in focused extensions:
-/// - `RecipeParser+StructuredData` — schema.org JSON-LD
-/// - `RecipeParser+WPRM` — WP Recipe Maker markup
-/// - `RecipeParser+TextMetadata` / `RecipeParser+TextContent` — free-text heuristics
+/// Parses recipe data from HTML: structured data first (JSON-LD, then WP Recipe Maker), falling back to free-text heuristics. Strategies live in focused RecipeParser+* extensions.
 struct RecipeParser {
 
     struct ParsedRecipe {
@@ -126,9 +120,7 @@ struct RecipeParser {
 
         text = text.replacingOccurrences(of: "<br\\s*/?>", with: "\n", options: .regularExpression)
         text = text.replacingOccurrences(of: "</p>", with: "\n\n", options: .regularExpression)
-        // Turn every block-level close into a line break so headings and list items
-        // stay on their own lines — including on minified pages with no source
-        // newlines between tags, which the line-based heuristics otherwise miss.
+        // Turn every block-level close into a line break so headings/list items stay on their own lines — including minified pages with no source newlines, which the line-based heuristics otherwise miss.
         text = text.replacingOccurrences(
             of: "</(div|li|h[1-6]|ul|ol|tr|section|article|header|table|blockquote)>",
             with: "\n",

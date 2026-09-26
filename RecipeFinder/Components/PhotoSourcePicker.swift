@@ -1,15 +1,7 @@
 import SwiftUI
 import UIKit
 
-/// A reusable "add photo" source chooser. Presents a Take Photo / Choose from
-/// Library action sheet (the camera option only appears when the device has a
-/// camera), then the matching picker, and hands the chosen `UIImage` back via
-/// `onPick`.
-///
-/// Consolidates what were two divergent flows: the post-cook photo sheet offered
-/// camera + library, while the recipe wizard's "+" buttons offered library only.
-/// Both now route through this modifier so every photo entry point gives the same
-/// options.
+// Reusable "add photo" chooser (Take Photo shown only if a camera exists) so every photo entry point offers the same options; returns the chosen `UIImage` via `onPick`.
 extension View {
     func photoSourcePicker(
         isPresented: Binding<Bool>,
@@ -52,7 +44,7 @@ private struct PhotoSourcePickerModifier: ViewModifier {
                 }
                 .ignoresSafeArea()
             }
-            // ImagePicker dismisses itself on selection; deliver once the image lands.
+            // ImagePicker self-dismisses on selection; deliver once the image lands.
             .onChange(of: libraryImage) { _, newValue in
                 if let newValue {
                     onPick(newValue)

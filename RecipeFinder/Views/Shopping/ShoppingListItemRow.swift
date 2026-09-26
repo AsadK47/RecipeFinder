@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// A single shopping list item row: a checkbox, name/store, quantity steppers,
-/// and a menu for store/category changes and deletion.
+/// Single shopping-list row: checkbox, name/store, quantity steppers, and a store/category/delete menu.
 struct ShoppingListItemRow: View {
     let item: ShoppingListModel
     let isInKitchen: Bool
@@ -29,7 +28,7 @@ struct ShoppingListItemRow: View {
         let baseline = ["Produce", "Dairy & Eggs", "Meat", "Poultry", "Seafood", "Sauces & Condiments"]
         let available = baseline.filter { allCategories.contains($0) && $0 != defaultCategory }
 
-        // Keep the list compact to reduce menu rendering work and UI jitter.
+        // Keep compact to reduce menu rendering work and UI jitter.
         if available.count >= 5 {
             return available
         }

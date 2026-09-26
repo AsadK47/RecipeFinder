@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// The "Chef Type" selection grid on the Account screen. Extracted from
-/// `AccountView`.
+/// "Chef Type" selection grid on the Account screen.
 struct AccountChefTypeSection: View {
     @Binding var selectedChefType: ChefType
     let selectedTheme: AppTheme.ThemeType

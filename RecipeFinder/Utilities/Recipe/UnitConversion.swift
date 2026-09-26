@@ -241,9 +241,7 @@ struct UnitConversion {
             "poppy seed": (tsp: 3.3, tbsp: 10, cup: 160)
         ]
         
-        // Whole-word match, most-specific (longest) keyword first, so a multi-word
-        // name resolves deterministically instead of depending on Dictionary order
-        // (e.g. "garlic powder" wins over a bare "garlic" were both present).
+        // Longest keyword first so multi-word names resolve deterministically, not by Dictionary order (e.g. "garlic powder" beats "garlic").
         let orderedDensities = densityMap.sorted { lhs, rhs in
             let lWords = lhs.key.split(separator: " ").count
             let rWords = rhs.key.split(separator: " ").count

@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// Shows all recipes inside a single collection, with the ability to remove
-/// recipes from the collection via swipe-to-delete.
+/// Shows all recipes in a collection; swipe-to-delete removes from the collection.
 struct CollectionDetailView: View {
     let collection: RecipeCollection
     @Binding var recipes: [RecipeModel]

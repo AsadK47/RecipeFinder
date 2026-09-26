@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// Sheet for adding ingredients to the kitchen, either by searching foods or
-/// browsing them by category.
+/// Sheet for adding kitchen ingredients by searching foods or browsing by category.
 struct AddIngredientSheet: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme

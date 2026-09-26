@@ -1,8 +1,6 @@
 import Foundation
 
-/// Per-100 g nutritional reference data for common cooking ingredients.
-/// Values follow UK FSA / USDA data and match the UK standard nutrition label order:
-/// energy, fat, saturates, carbohydrate, sugars, fibre, protein, salt.
+/// Per-100 g nutrition reference (UK FSA / USDA), in UK label order: energy, fat, saturates, carbs, sugars, fibre, protein, salt.
 enum NutritionDatabase {
 
     struct Entry {
@@ -16,11 +14,10 @@ enum NutritionDatabase {
         let saltPer100g: Double
         /// Density for converting volume units (ml, cup, tbsp …) to grams.
         let gramsPerMl: Double
-        /// Weight per canonical count unit (e.g. "clove" → 5 g, "piece" → 150 g).
+        /// Weight per count unit (e.g. "clove" → 5 g).
         let gramsPerUnit: [String: Double]
 
-        /// Positional init: kcal, protein, carbs, fat — then keyword args for the rest.
-        /// `sat`, `sugars`, `salt` default to 0 where exact data is unavailable.
+        /// Positional kcal/protein/carbs/fat, rest keyword; sat/sugars/salt default 0 when data unavailable.
         init(
             _ kcal: Double,
             _ protein: Double,
@@ -52,7 +49,7 @@ enum NutritionDatabase {
         let key = normalize(rawName)
         if let entry = entries[key] { return entry }
 
-        // Progressively drop leading words ("extra virgin olive oil" → "olive oil")
+        // Drop leading words progressively ("extra virgin olive oil" → "olive oil")
         var words = key.split(separator: " ").map(String.init)
         while words.count > 1 {
             words.removeFirst()
@@ -60,7 +57,7 @@ enum NutritionDatabase {
             if let entry = entries[candidate] { return entry }
         }
 
-        // Substring: return entry whose key is the longest substring of the normalised name
+        // Fall back to entry whose key is the longest substring of the normalised name
         var best: (key: String, entry: Entry)? = nil
         for (dbKey, entry) in entries where dbKey.count >= 3 {
             if key.contains(dbKey), best == nil || dbKey.count > best!.key.count {

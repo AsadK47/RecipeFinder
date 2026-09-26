@@ -1,11 +1,6 @@
 import SwiftUI
 
-/// The app's primary call-to-action button — a themed accent capsule.
-///
-/// Screens previously hand-rolled prominent actions with mixed shapes (capsules,
-/// rounded rectangles at radius 12 and 16) and foregrounds. Route always-enabled
-/// primary actions through this so they share one look. Buttons with bespoke
-/// disabled/loading states keep their own styling for now.
+// Shared primary CTA (themed accent capsule) so always-enabled actions share one look; bespoke disabled/loading buttons keep their own styling.
 struct PrimaryButton: View {
     let title: String
     var systemImage: String?

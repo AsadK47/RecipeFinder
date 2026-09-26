@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// A single ingredient row in the kitchen inventory list: quantity steppers plus
-/// a menu for changing category or removing the item.
+/// Single kitchen inventory row: quantity steppers plus a menu to recategorise or remove.
 struct KitchenItemRow: View {
     let item: KitchenItem
 

@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// A collapsible titled section (Pre-Prep, Instructions, Notes) on the recipe
-/// detail screen. Extracted from `RecipeDetailView`; expansion state is owned by
-/// the parent.
+// Collapsible titled section (Pre-Prep/Instructions/Notes); parent owns expansion state.
 struct RecipeChecklistSection<Content: View>: View {
     let title: String
     let icon: String
@@ -56,7 +54,7 @@ struct RecipeChecklistSection<Content: View>: View {
     }
 }
 
-/// A single tappable instruction/pre-prep step row with a checkmark.
+// Tappable instruction/pre-prep step row with a checkmark.
 struct RecipeInstructionRow: View {
     let text: String
     let isChecked: Bool

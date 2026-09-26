@@ -3,9 +3,7 @@ import SwiftUI
 
 enum CategoryClassifier {
 
-    // Memoize categorization: each call scans the categorization rules with per-word
-    // keyword matching, and it runs per-item while grouping shopping-list rows during
-    // rendering. MemoCache is Swift 6 concurrency-safe.
+    // Memoize categorize(): runs per-item during shopping-list rendering and scans all rules. MemoCache is Swift 6 concurrency-safe.
     private static let categoryCache = MemoCache<String, String>(maxSize: 500)
 
     static let categoryOrder = [
@@ -278,7 +276,7 @@ enum CategoryClassifier {
         }
     }
     
-    // Pre-built once at app launch — avoids rebuilding on every categorize() call
+    // Built once — avoids rebuilding on every categorize() call
     private static let categorizationRules: [(String, [String])] = [
         ("Frozen",                    ["frozen", "ice cream"]),
         ("Bakery",                    ["bread", "baguette", "croissant", "bagel", "muffin", "donut",
@@ -308,8 +306,7 @@ enum CategoryClassifier {
         let lowercased = itemName.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
 
         return categoryCache.value(for: lowercased) { normalized in
-            // Tokenise the item name once, then test each rule's keywords against it
-            // with whole-word matching (so "graham" isn't Meat via "ham", etc.).
+            // Whole-word match so "graham" isn't Meat via "ham"
             let itemWords = IngredientWordMatcher.words(in: normalized)
 
             func matches(_ keywords: [String]) -> Bool {

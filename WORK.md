@@ -14,9 +14,16 @@ cleared.)
   different, note it and SKIP — do not force reuse.
 - Keep each change minimal and focused on that one cluster.
 
+## Progress: 5/12 committed on `refactor/reuse-pass` (all build + affected tests green)
+Done: 1 email ✓ · 2 planner placeholder ✓ · 3 heart button ✓ · 4 password ✓ · 12 dead code ✓
+Remaining safe: 6 DateFormatter · 7 empty states.
+Remaining — NEEDS A DECISION: 5 `.appCard()` (12 sites, verify each) ·
+8 photo pickers (PostCook/PhotoImport UX differs) · 9 keyword merge (behaviour) ·
+10 quantity rounding (may INTENTIONALLY differ) · 11 `.trimmed` (135-site sweep).
+
 ## Slices (highest value / lowest risk first)
 
-- [ ] **1. Email validation** — 3 inline regexes → `Validator.isValidEmail()`.
+- [x] **1. Email validation** — 3 inline regexes → `Validator.isValidEmail()`.
       EmailSignInView.swift, SignUpView.swift. ⚠️ Real bug: view regex `{2,}` vs
       Validator `{2,64}` — behaviour differs.
 - [ ] **2. Planner no-photo placeholder** → `RecipePlaceholderView`.

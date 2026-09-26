@@ -71,8 +71,7 @@ struct NewCollectionSheet: View {
             .padding(.vertical, AppTheme.spacing4)
             .padding(.horizontal, AppTheme.spacing16)
         }
-        // Remove list-row insets so the scroll view fills the full cell width —
-        // without this the trailing inset clips the last colour swatch.
+        // Remove list-row insets so the trailing inset doesn't clip the last colour swatch.
         .listRowInsets(EdgeInsets())
     }
 }

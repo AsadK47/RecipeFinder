@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// One onboarding slide: icon, title, short description, and a single action
-/// button. Designed to fit on any screen without scrolling.
+/// One onboarding slide (icon, title, description, action button); fits any screen without scrolling.
 struct OnboardingSlideView: View {
     let slide: OnboardingSlide
     let isLastSlide: Bool

@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// Shared building blocks for the legal information screens: text primitives used
-/// by the policy documents and the row components used by the overview.
+/// Shared text/row primitives for the legal information screens.
 
 struct SectionTitle: View {
     let text: String

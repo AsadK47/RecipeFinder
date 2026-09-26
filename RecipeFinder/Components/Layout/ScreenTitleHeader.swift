@@ -1,9 +1,6 @@
 import SwiftUI
 
-/// One consistent title bar for the main tabs: a centred bold title with balanced
-/// side gutters and an optional trailing action (usually an overflow menu), sized
-/// and padded identically everywhere. Adopt this instead of each screen rolling
-/// its own title row, so the tabs read as one app.
+// Consistent main-tab title bar: centred bold title with balanced gutters and an optional trailing action, so tabs read as one app.
 struct ScreenTitleHeader<Trailing: View>: View {
     let title: String
     private let trailing: Trailing
@@ -19,9 +16,7 @@ struct ScreenTitleHeader<Trailing: View>: View {
                 .font(.largeTitle.weight(.bold))
                 .adaptiveForegroundColor()
                 .multilineTextAlignment(.center)
-                // Reserve space for the trailing button on both sides so the title
-                // stays centred. No lineLimit — titles must wrap at large Dynamic
-                // Type sizes rather than clip (accessibility audit requirement).
+                // Reserve trailing-button space both sides to keep title centred; no lineLimit so it wraps at large Dynamic Type (a11y requirement).
                 .padding(.horizontal, AppTheme.height44)
                 .frame(maxWidth: .infinity, alignment: .center)
 

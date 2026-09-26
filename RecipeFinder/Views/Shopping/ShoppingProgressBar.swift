@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// The checked/total progress bar shown above the shopping list. Extracted from
-/// `ShoppingListView`.
+/// Checked/total progress bar shown above the shopping list.
 struct ShoppingProgressBar: View {
     let checkedCount: Int
     let totalCount: Int
@@ -9,9 +8,7 @@ struct ShoppingProgressBar: View {
 
     var body: some View {
         VStack(spacing: AppTheme.spacing6) {
-            // Clamp the denominator to ≥1: an empty list (or the transient frame
-            // while the last item animates out) makes total 0, which would give
-            // ProgressView a NaN fraction → "Invalid frame dimension (non-finite)".
+            // Clamp denominator to ≥1: total 0 gives ProgressView a NaN fraction → "Invalid frame dimension (non-finite)".
             ProgressView(value: Double(checkedCount), total: Double(max(totalCount, 1)))
                 .progressViewStyle(LinearProgressViewStyle(tint: AppTheme.accentColor(for: selectedTheme)))
                 .frame(height: AppTheme.height8)

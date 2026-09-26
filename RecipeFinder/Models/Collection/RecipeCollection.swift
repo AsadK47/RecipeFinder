@@ -1,8 +1,6 @@
 import Foundation
 
-/// A user-created named group of recipes. Collections are local-only, backed
-/// by `CollectionManager` (JSON in `UserScopedStorage`). Recipe membership is
-/// stored here as a set of IDs so no changes are needed to `RecipeModel`.
+/// User-created recipe group; local-only (CollectionManager JSON), membership by ID so RecipeModel stays untouched.
 struct RecipeCollection: Identifiable, Codable, Hashable {
     var id: UUID
     var name: String
@@ -38,8 +36,7 @@ struct RecipeCollection: Identifiable, Codable, Hashable {
     }
 }
 
-/// Palette for collection colour chips. Stored as a string so new colours can
-/// be added without breaking existing encoded archives.
+/// Collection colour chip; string-backed so new colours don't break encoded archives.
 enum CollectionColor: String, Codable, CaseIterable, Identifiable {
     case blue, green, orange, pink, purple, red, teal, yellow
 

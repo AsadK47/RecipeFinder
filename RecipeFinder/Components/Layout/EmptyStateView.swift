@@ -1,10 +1,6 @@
 import SwiftUI
 
-/// Standard empty-state block — large icon, title, message, and an optional CTA.
-///
-/// Screens previously each hand-rolled this VStack (icon + title + subtitle ±
-/// button) and it drifted in icon size, fonts, colours and spacing. Route empty
-/// states through here so they stay consistent.
+// Standard empty-state block (icon, title, message, optional CTA) so empty states stay consistent across screens.
 struct EmptyStateView: View {
     let icon: String
     var iconTint: Color?

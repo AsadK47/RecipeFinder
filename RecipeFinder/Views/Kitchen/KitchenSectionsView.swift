@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// The kitchen inventory rendered as bare `List` `Section`s — no enclosing `List`
-/// and no title bar of its own — so the merged Groceries screen can host it in one
-/// scroll below the shopping sections. Row/collapse state is driven by the parent.
+/// Kitchen inventory as bare `List` `Section`s (no own `List`/title) so Groceries can host it in one scroll below the shopping sections; collapse state driven by parent.
 struct KitchenSectionsView: View {
     @Binding var collapsedCategories: Set<String>
     let onAddMore: () -> Void

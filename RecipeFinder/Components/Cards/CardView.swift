@@ -53,5 +53,5 @@ struct CardView<Content: View>: View {
     }
 }
 
-// GlassCard is an alias — identical behaviour, kept for call-site compatibility
+// Alias kept for call-site compatibility — identical behaviour.
 typealias GlassCard = CardView

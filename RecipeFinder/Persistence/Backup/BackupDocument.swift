@@ -1,13 +1,9 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
-/// Thin `FileDocument` wrapper so SwiftUI's `fileExporter` can write, and
-/// `fileImporter` can read, a backup as a single `.recipefinderbackup` file.
-/// The bytes are produced/consumed by `BackupCodec`; this type only moves them
-/// in and out of the document browser.
+/// `FileDocument` wrapper letting `fileExporter`/`fileImporter` move `BackupCodec` bytes as a `.recipefinderbackup` file.
 struct BackupDocument: FileDocument {
-    /// The backup's content type, derived from `BackupCodec.fileExtension`. Falls
-    /// back to JSON if the system can't resolve the custom extension.
+    /// Content type from `BackupCodec.fileExtension`, falling back to JSON if the custom extension can't resolve.
     static let backupType = UTType(filenameExtension: BackupCodec.fileExtension) ?? .json
 
     static var readableContentTypes: [UTType] { [backupType, .json] }

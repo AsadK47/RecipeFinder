@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// Supporting views for `BiometricSetupView`: floating particles, the animated
-/// biometric icon (with pulsing rings), the enable button, and benefit rows.
+/// Supporting views for `BiometricSetupView`: particles, animated icon, enable button, benefit rows.
 
 struct ParticleView: View {
     let particle: (icon: String, size: CGFloat, x: CGFloat, y: CGFloat)

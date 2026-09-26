@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// Lets the user add or remove recipes from a collection in one place.
-/// Same grid layout as `RecipeSelectionSheet`; selected recipes show a checkmark overlay.
+/// Add/remove recipes from a collection; `RecipeSelectionSheet` grid with a checkmark on selected.
 struct RecipePickerForCollectionSheet: View {
     let collection: RecipeCollection
     let recipes: [RecipeModel]

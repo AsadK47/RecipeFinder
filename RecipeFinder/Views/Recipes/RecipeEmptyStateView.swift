@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// Shown when no recipes match the current search/filters, with a shortcut to
-/// clear filters when any are active. Extracted from `RecipeSearchView`.
+// Empty state for no search/filter matches, with a clear-filters shortcut.
 struct RecipeEmptyStateView: View {
     let activeFilterCount: Int
     let onClearFilters: () -> Void

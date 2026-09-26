@@ -4,8 +4,7 @@ import SwiftUI
 import LocalAuthentication
 import Security
 
-/// Behavioural seam for authentication so views depend on this protocol rather
-/// than the `AuthenticationManager` singleton — and tests can inject a fake.
+/// Behavioural seam so views/tests depend on this protocol, not the singleton.
 @MainActor
 protocol Authenticating: AnyObject, Observable {
     var isAuthenticated: Bool { get }

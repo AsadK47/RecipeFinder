@@ -2,9 +2,7 @@ import PhotosUI
 import SwiftUI
 import UIKit
 
-/// Lightweight bottom card shown after "Mark as Cooked" — invites the user to
-/// photograph their finished dish. Calls `onPhotoSelected` with the raw UIImage;
-/// the caller is responsible for persisting it.
+// Post-cook card inviting a dish photo; caller persists the returned UIImage.
 struct PostCookPhotoSheet: View {
     let onPhotoSelected: (UIImage) -> Void
     @Environment(\.dismiss) private var dismiss

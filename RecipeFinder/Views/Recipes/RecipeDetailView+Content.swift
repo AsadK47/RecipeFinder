@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// 1–5 star rating control. Tap the active star to clear back to 0 (unrated).
+// 1–5 star rating; tap the active star to clear to 0 (unrated).
 private struct StarRatingView: View {
     let rating: Int
     let onTap: (Int) -> Void
@@ -24,10 +24,7 @@ private struct StarRatingView: View {
     }
 }
 
-/// View-building content for `RecipeDetailView`, split out to keep the main file
-/// focused on state, `body`, and actions. These are moved verbatim from the
-/// orchestrator; `RecipeDetailView`'s state and helpers are `internal` so this
-/// same-type extension (in a separate file) can read them.
+// View-building content for RecipeDetailView, split out to keep the main file focused on state/body/actions.
 extension RecipeDetailView {
     var backgroundView: some View {
         AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
@@ -52,22 +49,13 @@ extension RecipeDetailView {
         .padding(.horizontal, AppTheme.spacing20)
     }
 
-    /// All displayable images for the recipe as one ordered set: the main image
-    /// first (if it resolves), then post-cook photos. Filtered so stale/missing
-    /// references don't leave gaps — and so a lone post-cook photo becomes the
-    /// hero when there's no main image.
-    ///
-    /// Pure + static: the result is cached in `galleryImageNames` (@State) and only
-    /// recomputed when the recipe changes, so the `FileManager` existence checks
-    /// don't run 3× on every `body` evaluation.
+    // Ordered displayable images (main first, then post-cook photos); filtered so stale refs don't gap. Cached in galleryImageNames to avoid FileManager checks every body pass.
     static func galleryNames(for recipe: RecipeModel) -> [String] {
         ([recipe.imageName].compactMap { $0 } + recipe.photoNames)
             .filter { RecipeImageView.hasDisplayableImage($0) }
     }
 
-    /// The 220pt hero. A single image renders directly; multiple images become a
-    /// swipeable paged gallery rather than thumbnails stacked below. Tapping any
-    /// image opens it full-screen at that index.
+    // 220pt hero: single image renders directly, multiple become a paged gallery; tap opens full-screen at that index.
     private var imageGallery: some View {
         galleryContent
             .fullScreenCover(item: $photoViewer) { FullScreenPhotoViewer(source: $0) }
@@ -119,9 +107,7 @@ extension RecipeDetailView {
             onToggle: { toggleSection("Nutrition") }
         ) {
             if let perServing = recipe.nutritionInfo {
-                // Per-serving is invariant; "Whole recipe" multiplies by the servings
-                // currently selected on the servings card. % RI is a per-serving/
-                // per-person concept, so it's shown only in per-serving mode.
+                // Whole-recipe multiplies per-serving by current servings; % RI is per-serving only.
                 let isWhole = nutritionShowsWholeRecipe
                 let n = isWhole ? perServing.scaled(by: recipe.currentServings) : perServing
                 VStack(alignment: .leading, spacing: AppTheme.spacing12) {
@@ -131,9 +117,7 @@ extension RecipeDetailView {
                     }
                     .pickerStyle(.segmented)
 
-                    // Always present in both modes so the macro bar below keeps a
-                    // fixed vertical position — otherwise the bar jumps when this
-                    // caption appears only for "Whole recipe".
+                    // Present in both modes so the macro bar below doesn't jump vertically.
                     Text(isWhole
                          ? "Total for \(recipe.currentServings) serving\(recipe.currentServings == 1 ? "" : "s")"
                          : "Amount per serving")
@@ -301,9 +285,7 @@ extension RecipeDetailView {
         .editableCard(onEdit: { beginEdit(section: .details) }, hint: "Edit difficulty, category and cuisine")
     }
 
-    /// Opens the pre-filled recipe editor — shared by the toolbar Edit button and
-    /// the tappable info cards. Passing a `section` deep-links the editor to those
-    /// fields (tapping the time card opens on Details rather than the top).
+    // Opens the pre-filled editor; `section` deep-links to those fields (else top).
     func beginEdit(section: RecipeWizardView.Section? = nil) {
         HapticManager.shared.light()
         editSection = section
@@ -402,8 +384,7 @@ extension RecipeDetailView {
         }
     }
 
-    /// Cooking timer, co-located with the steps it's used alongside. Shows a
-    /// "Start a timer" button when idle, and a live, controllable pill when active.
+    // Cooking timer co-located with the steps: Start button when idle, live pill when active.
     @ViewBuilder
     var timerControl: some View {
         if recipeTimer.isActive {
@@ -443,14 +424,12 @@ extension RecipeDetailView {
         }
     }
 
-    /// Minutes derived from the recipe's cook time — 0 when it can't be parsed.
+    // Minutes from the recipe's cook time; 0 when unparseable.
     private var cookTimerMinutes: Int {
         TimeExtractor.extractMinutes(from: recipe.cookingTime)
     }
 
-    /// One-tap start: kicks off a timer straight from the recipe's cook time so
-    /// the common case needs no picker. Only falls back to the picker sheet when
-    /// there's no usable cook time to start from.
+    // One-tap start from the recipe's cook time; falls back to the picker sheet when there's none.
     private func startCookTimer() {
         let minutes = cookTimerMinutes
         guard minutes > 0 else {
@@ -604,8 +583,7 @@ extension RecipeDetailView {
 
 // MARK: - Nutrition macro bar
 
-/// Horizontal proportional bar showing the calorie split between fat, carbs, and protein.
-/// Uses standard 4/4/9 kcal-per-gram coefficients so the segments reflect energy, not mass.
+// Proportional calorie-split bar (fat/carbs/protein) using 4/4/9 kcal-per-gram, so segments reflect energy not mass.
 private struct NutritionMacroBar: View {
     let nutrition: NutritionInfo
 
