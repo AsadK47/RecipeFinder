@@ -47,7 +47,24 @@ Four logically separate changes (suggest 4 commits):
 - **A few sync Core Data on main** — `getRecipeCount()` in `AccountBadgesSection`,
   `fetchRecipes()` in write-path dedup + App Intents (launch/list path already async).
 
-## Next action — root fix: reactive `RecipeStore` (the durable fix the band-aids defer to)
+## RecipeStore — SLICE 1 DONE (uncommitted, verified green)
+`RecipeStore` (`@Observable` + `RecipeStoring` protocol + `@Environment(\.recipeStore)`,
+`.shared` default) now owns `recipes` + load/seed/refresh/save/add/delete. `ContentView`
+delegates to it (removed its `@State recipes`/`isLoadingRecipes`/`loadRecipes`); child
+views keep their `@Binding var recipes` API via a store-backed `recipesBinding`. +4
+`RecipeStoreTests`. Build + 1615 green.
+
+### Remaining slices (next actions)
+- Slice 2: route the 11 write sites (RecipeDetailView save/recordCook/updateRating,
+  RecipePhotoManagerSheet, RecipeSearchView save/delete, ImportView) through
+  `store.save/add/delete` instead of `PersistenceController.shared.*` + local mutation.
+- Slice 3: delete the `onRecipeChange` threading (RecipeLink/RecipeResultsList/
+  RecipeDetailView/Collections) once writes go through the store; point
+  `RecipeSearchView.refreshRecipesAsync` at `store.refresh()`.
+- Slice 4: migrate child views off `@Binding var recipes` to `@Environment(\.recipeStore)`
+  and drop `recipesBinding`.
+
+## (superseded) original plan — reactive `RecipeStore`
 User chose STAGED: quick relief now (done above), then replace the fragile pattern.
 
 **Problem:** recipes are the one major entity NOT behind an `@Observable` source of

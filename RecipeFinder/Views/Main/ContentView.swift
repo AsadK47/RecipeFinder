@@ -3,10 +3,7 @@ import SwiftUI
 private let logger = AppLogger.logger(category: "ContentView")
 
 struct ContentView: View {
-    @State private var recipes: [RecipeModel] = []
-    // Drives the loading skeleton: true until the first library load resolves,
-    // so sign-in shows shimmering placeholders rather than a blank/empty flash.
-    @State private var isLoadingRecipes = true
+    @Environment(\.recipeStore) private var store
     @State private var selectedTab: Int = 0
     @State private var sidebarSelection: SidebarItem? = .recipes
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
@@ -20,6 +17,12 @@ struct ContentView: View {
     @State private var pendingFileImport: RecipeModel?
 
     private var themeBinding: AppTheme.ThemeType { selectedTheme }
+
+    // Store-backed binding so existing `@Binding var recipes` view APIs keep
+    // working while `RecipeStore` owns the single source of truth.
+    private var recipesBinding: Binding<[RecipeModel]> {
+        Binding(get: { store.recipes }, set: { store.recipes = $0 })
+    }
 
     private enum SidebarItem: Int, Hashable, CaseIterable {
         case recipes, groceries, importRecipes, planning, settings
@@ -54,21 +57,21 @@ struct ContentView: View {
             }
         }
         .onAppear {
-            if recipes.isEmpty {
-                loadRecipes()
+            if store.recipes.isEmpty {
+                store.load(isAuthenticated: authManager.isAuthenticated)
             }
             NotificationManager.shared.requestPermission { _ in }
         }
         .onChange(of: authManager.isAuthenticated) { _, isAuthenticated in
             if isAuthenticated {
-                loadRecipes()
+                store.load(isAuthenticated: true)
             } else {
-                recipes = []
+                store.recipes = []
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .userScopeDidChange)) { _ in
             guard authManager.isAuthenticated else { return }
-            loadRecipes()
+            store.load(isAuthenticated: true)
         }
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("OpenRecipes"))) { _ in
             selectedTab = 0
@@ -125,11 +128,10 @@ struct ContentView: View {
     }
 
     private func saveImportedRecipe(_ recipe: RecipeModel) {
-        guard PersistenceController.shared.saveRecipeModel(recipe) else {
+        guard store.add(recipe) else {
             logger.error("Failed to save imported recipe '\(recipe.name)'")
             return
         }
-        recipes.append(recipe)
         selectedTab = 0
         sidebarSelection = .recipes
     }
@@ -140,16 +142,16 @@ struct ContentView: View {
                 .ignoresSafeArea()
 
             TabView(selection: $selectedTab) {
-                RecipeSearchView(recipes: $recipes, isLoading: isLoadingRecipes)
+                RecipeSearchView(recipes: recipesBinding, isLoading: store.isLoading)
                     .tabItem { Label("Recipes", systemImage: "book.fill") }
                     .tag(0)
                 KitchenShoppingView()
                     .tabItem { Label("Groceries", systemImage: "cart.fill") }
                     .tag(1)
-                ImportView(recipes: $recipes)
+                ImportView(recipes: recipesBinding)
                     .tabItem { Label("Import", systemImage: "plus.circle.fill") }
                     .tag(2)
-                MealPlanningView(recipes: $recipes)
+                MealPlanningView(recipes: recipesBinding)
                     .tabItem { Label("Planning", systemImage: "calendar") }
                     .tag(3)
                 NavigationStack {
@@ -205,13 +207,13 @@ struct ContentView: View {
     private var sidebarDetailView: some View {
         switch sidebarSelection ?? .recipes {
         case .recipes:
-            RecipeSearchView(recipes: $recipes)
+            RecipeSearchView(recipes: recipesBinding)
         case .groceries:
             KitchenShoppingView()
         case .importRecipes:
-            ImportView(recipes: $recipes)
+            ImportView(recipes: recipesBinding)
         case .planning:
-            MealPlanningView(recipes: $recipes)
+            MealPlanningView(recipes: recipesBinding)
         case .settings:
             NavigationStack { SettingsTabView() }
         }
@@ -276,52 +278,6 @@ struct ContentView: View {
         }
     }
 
-    private func loadRecipes(retryAttempt: Int = 0) {
-        // Guest mode: show seed recipes so the app isn't empty before sign-up.
-        guard authManager.isAuthenticated else {
-            if recipes.isEmpty {
-                recipes = SeedRecipeProvider.recipes
-            }
-            isLoadingRecipes = false
-            return
-        }
-
-        guard PersistenceController.shared.hasCurrentUserScope() else {
-            logger.debug("⚠️ Skipping recipe reload because user scope is not available")
-            return
-        }
-
-        // The store loads synchronously at launch, but corrupted-store
-        // recovery reloads it late. Without a retry, one empty fetch here
-        // used to strand the user with a blank recipe list for the session.
-        guard PersistenceController.shared.isStoreLoaded else {
-            guard retryAttempt < 5 else {
-                logger.error("❌ Store never became ready; giving up on recipe reload")
-                return
-            }
-            logger.debug("⚠️ Store not ready; retrying recipe load (attempt \(retryAttempt + 1))")
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                loadRecipes(retryAttempt: retryAttempt + 1)
-            }
-            return
-        }
-
-        // Fetch off the main thread so a large library (hundreds of recipes, each
-        // needing JSON decode) doesn't freeze the UI while loading.
-        Task {
-            var fetched = await PersistenceController.shared.fetchRecipesAsync()
-            // Seed starter recipes for brand-new users — one-time per user account.
-            // Batched onto a background context (single save) so first sign-in
-            // doesn't freeze on a synchronous per-recipe save loop.
-            if fetched.isEmpty, !UserScopedStorage.shared.bool(forKey: "seedRecipesLoaded") {
-                await PersistenceController.shared.seedRecipes(SeedRecipeProvider.recipes)
-                UserScopedStorage.shared.set(true, forKey: "seedRecipesLoaded")
-                fetched = await PersistenceController.shared.fetchRecipesAsync()
-            }
-            recipes = fetched
-            isLoadingRecipes = false
-        }
-    }
 }
 
 #Preview {
