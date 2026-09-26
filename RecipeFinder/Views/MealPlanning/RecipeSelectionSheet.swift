@@ -84,11 +84,10 @@ private struct MealPickerRecipeCard: View {
 
     @State private var loadFailed = false
 
+    // Shared resolver: handles http, legacy-absolute, and current relative paths,
+    // and versions the cache key so a replaced photo never serves the stale image.
     private var kfSource: Source? {
-        guard let name = recipe.imageName, !name.isEmpty else { return nil }
-        if name.hasPrefix("http"), let url = URL(string: name) { return .network(url) }
-        if name.hasPrefix("/") { return .provider(LocalFileImageDataProvider(fileURL: URL(fileURLWithPath: name))) }
-        return nil
+        RecipeImageView.resolvedSource(for: recipe.imageName)
     }
 
     var body: some View {

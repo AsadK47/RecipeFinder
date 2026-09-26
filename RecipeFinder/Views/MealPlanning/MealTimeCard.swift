@@ -104,15 +104,10 @@ private struct MealThumbnail: View {
     private static let size: CGFloat = 52
     @State private var loadFailed = false
 
+    // Shared resolver: handles http, legacy-absolute, and current relative paths,
+    // and versions the cache key so a replaced photo never serves the stale image.
     private var kfSource: Source? {
-        guard !imageName.isEmpty else { return nil }
-        if imageName.hasPrefix("http"), let url = URL(string: imageName) {
-            return .network(url)
-        }
-        if imageName.hasPrefix("/") {
-            return .provider(LocalFileImageDataProvider(fileURL: URL(fileURLWithPath: imageName)))
-        }
-        return nil
+        RecipeImageView.resolvedSource(for: imageName)
     }
 
     var body: some View {

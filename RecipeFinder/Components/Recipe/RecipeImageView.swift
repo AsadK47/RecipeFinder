@@ -33,13 +33,13 @@ struct RecipeImageView: View {
         // back to looking up the file by name in the expected directory.
         if imageName.hasPrefix("/") {
             if FileManager.default.fileExists(atPath: imageName) {
-                return .provider(LocalFileImageDataProvider(fileURL: URL(fileURLWithPath: imageName)))
+                return .provider(localProvider(for: URL(fileURLWithPath: imageName)))
             }
             let filename = URL(fileURLWithPath: imageName).lastPathComponent
             if let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
                 let resolved = docs.appendingPathComponent("RecipeImages").appendingPathComponent(filename)
                 if FileManager.default.fileExists(atPath: resolved.path) {
-                    return .provider(LocalFileImageDataProvider(fileURL: resolved))
+                    return .provider(localProvider(for: resolved))
                 }
             }
             return nil
@@ -49,10 +49,35 @@ struct RecipeImageView: View {
         if let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
             let resolved = docs.appendingPathComponent(imageName)
             return FileManager.default.fileExists(atPath: resolved.path)
-                ? .provider(LocalFileImageDataProvider(fileURL: resolved))
+                ? .provider(localProvider(for: resolved))
                 : nil
         }
         return nil
+    }
+
+    /// Wraps a local file in a provider whose cache key is versioned by the file's
+    /// modification time + size. Recipe photos live at a STABLE path
+    /// (`RecipeImages/<id>.jpg`), so deleting a photo and adding a new one reuses
+    /// the same path — and Kingfisher, which keys its cache by file URL, would keep
+    /// serving the OLD image. Versioning the key forces a fresh decode after a
+    /// replace while still caching across ordinary reads.
+    private static func localProvider(for fileURL: URL) -> LocalFileImageDataProvider {
+        let attributes = try? FileManager.default.attributesOfItem(atPath: fileURL.path)
+        let key = imageCacheKey(
+            base: fileURL.absoluteString,
+            modificationDate: attributes?[.modificationDate] as? Date,
+            size: (attributes?[.size] as? NSNumber)?.intValue
+        )
+        return LocalFileImageDataProvider(fileURL: fileURL, cacheKey: key)
+    }
+
+    /// Pure cache-key builder: the base URL string plus a version suffix from the
+    /// file's modification time (ms) and byte size. Same file → same key (cache
+    /// hit); rewritten file → new key (cache miss, fresh decode). Extracted so the
+    /// staleness guarantee can be unit-tested without a running view.
+    static func imageCacheKey(base: String, modificationDate: Date?, size: Int?) -> String {
+        let stamp = modificationDate.map { String(Int($0.timeIntervalSince1970 * 1000)) } ?? "0"
+        return "\(base)#v=\(stamp)-\(size ?? 0)"
     }
 
     /// Whether `imageName` will actually render an image — a network URL, an
