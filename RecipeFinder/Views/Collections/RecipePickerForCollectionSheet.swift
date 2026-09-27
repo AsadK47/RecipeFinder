@@ -31,14 +31,13 @@ struct RecipePickerForCollectionSheet: View {
 
                     if filteredRecipes.isEmpty {
                         Spacer()
-                        VStack(spacing: AppTheme.spacing12) {
-                            Image(systemName: "book.closed")
-                                .font(.system(size: AppTheme.fontSize40))
-                                .adaptiveSecondaryForeground()
-                            Text(recipes.isEmpty ? "No recipes yet" : "No results")
-                                .font(.headline)
-                                .adaptiveSecondaryForeground()
-                        }
+                        EmptyStateView(
+                            icon: "book.closed",
+                            title: recipes.isEmpty ? "No recipes yet" : "No results",
+                            message: recipes.isEmpty
+                                ? "Add recipes to your library to put them in this collection."
+                                : "Try a different search."
+                        )
                         Spacer()
                     } else {
                         ScrollView {
