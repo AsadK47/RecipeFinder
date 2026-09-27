@@ -2,7 +2,8 @@ import SwiftUI
 
 /// Collections grid inside `RecipeSearchView`'s `NavigationStack`; links push onto the parent stack.
 struct CollectionsInlineView: View {
-    @Binding var recipes: [RecipeModel]
+    @Environment(\.recipeStore) private var recipeStore
+    private var recipes: [RecipeModel] { recipeStore.recipes }
     @Environment(\.collections) private var manager
     @State private var showNewCollection = false
     @State private var collectionToEdit: RecipeCollection?
@@ -52,7 +53,7 @@ struct CollectionsInlineView: View {
                 // Smart collections first: auto-populated, read-only
                 ForEach(visibleSmartCollections, id: \.0.id) { (sc, count) in
                     NavigationLink {
-                        SmartCollectionDetailView(smartCollection: sc, recipes: $recipes)
+                        SmartCollectionDetailView(smartCollection: sc)
                     } label: {
                         SmartCollectionCard(collection: sc, recipeCount: count)
                     }
@@ -62,7 +63,7 @@ struct CollectionsInlineView: View {
                 // User-created collections
                 ForEach(manager.collections) { collection in
                     NavigationLink {
-                        CollectionDetailView(collection: collection, recipes: $recipes)
+                        CollectionDetailView(collection: collection)
                     } label: {
                         CollectionCard(
                             collection: collection,

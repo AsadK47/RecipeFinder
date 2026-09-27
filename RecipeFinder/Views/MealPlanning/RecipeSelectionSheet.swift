@@ -2,7 +2,8 @@ import SwiftUI
 import Kingfisher
 
 struct RecipeSelectionSheet: View {
-    @Binding var recipes: [RecipeModel]
+    @Environment(\.recipeStore) private var recipeStore
+    private var recipes: [RecipeModel] { recipeStore.recipes }
     let mealTime: MealTime?
     let onSelectExisting: (RecipeModel) -> Void
 

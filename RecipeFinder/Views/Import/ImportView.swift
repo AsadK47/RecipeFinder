@@ -2,8 +2,8 @@ import SwiftUI
 
 /// Centre-tab import hub reusing RecipeImportView and RecipeWizardView for consistent behaviour, plus a share-sheet hint for social recipes.
 struct ImportView: View {
-    @Binding var recipes: [RecipeModel]
     @Environment(\.recipeStore) private var recipeStore
+    private var recipes: [RecipeModel] { recipeStore.recipes }
 
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
@@ -188,6 +188,6 @@ struct ImportView: View {
 }
 
 #Preview {
-    ImportView(recipes: .constant([]))
+    ImportView()
         .environment(\.appTheme, .teal)
 }

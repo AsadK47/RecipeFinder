@@ -4,7 +4,7 @@ import SwiftUI
 
 struct QuickSnackSheet: View {
     @Environment(\.dismiss) var dismiss
-    @Binding var recipes: [RecipeModel]
+    @Environment(\.recipeStore) private var recipeStore
     let onSnackAdded: (RecipeModel) -> Void
 
     @State private var searchText = ""
@@ -224,7 +224,8 @@ struct QuickSnackSheet: View {
             imageName: nil,
             notes: "\(selectedEmoji) Quick snack"
         )
-        recipes.append(recipe)
+        // Snacks are ephemeral: keep them in the store's in-memory list so this session can resolve the planned meal, but don't persist them into the recipe library.
+        recipeStore.recipes.append(recipe)
         onSnackAdded(recipe)
         HapticManager.shared.success()
         dismiss()
@@ -263,9 +264,6 @@ struct QuickSnackSheet: View {
 
 struct QuickSnackSheet_Previews: PreviewProvider {
     static var previews: some View {
-        QuickSnackSheet(
-            recipes: .constant([]),
-            onSnackAdded: { _ in }
-        )
+        QuickSnackSheet(onSnackAdded: { _ in })
     }
 }

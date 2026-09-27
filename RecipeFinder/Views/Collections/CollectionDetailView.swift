@@ -3,7 +3,8 @@ import SwiftUI
 /// Shows all recipes in a collection; swipe-to-delete removes from the collection.
 struct CollectionDetailView: View {
     let collection: RecipeCollection
-    @Binding var recipes: [RecipeModel]
+    @Environment(\.recipeStore) private var recipeStore
+    private var recipes: [RecipeModel] { recipeStore.recipes }
     @Environment(\.collections) private var manager
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal

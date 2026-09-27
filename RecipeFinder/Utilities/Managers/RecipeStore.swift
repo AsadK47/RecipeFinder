@@ -33,7 +33,7 @@ extension EnvironmentValues {
 final class RecipeStore: RecipeStoring {
     static let shared = RecipeStore()
 
-    /// Settable so a store-backed `Binding` can front existing `@Binding var recipes` view APIs during migration.
+    /// Settable for the sign-out reset (`ContentView`) and ephemeral in-memory adds (e.g. quick snacks) that shouldn't touch Core Data.
     var recipes: [RecipeModel] = []
     private(set) var isLoading = true
 

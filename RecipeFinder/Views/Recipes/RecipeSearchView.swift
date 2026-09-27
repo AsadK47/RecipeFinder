@@ -3,8 +3,9 @@ import SwiftUI
 private let logger = AppLogger.logger(category: "RecipeSearchView")
 
 struct RecipeSearchView: View {
-    @Binding var recipes: [RecipeModel]
     @Environment(\.recipeStore) private var recipeStore
+    /// The library, read from the store so any write re-renders observing views (replaces the old @Binding bridge).
+    private var recipes: [RecipeModel] { recipeStore.recipes }
     /// True while the library is still fetching post-sign-in, so empty `recipes` shows a skeleton, not the empty state.
     var isLoading: Bool = false
     @State private var showCollections = false
@@ -72,11 +73,10 @@ struct RecipeSearchView: View {
         ["Basic", "Expert", "Intermediate"]
     }
 
-    init(recipes: Binding<[RecipeModel]>, isLoading: Bool = false) {
-        _recipes = recipes
+    init(isLoading: Bool = false) {
         self.isLoading = isLoading
-        // Seed the cache so the first frame renders the unfiltered library instead of flashing the empty state before onAppear.
-        _cachedFilteredRecipes = State(initialValue: RecipeFilterCriteria().apply(to: recipes.wrappedValue))
+        // Seed the cache from the shared store (the environment default) so the first frame renders the library instead of flashing the empty state before onAppear repopulates it.
+        _cachedFilteredRecipes = State(initialValue: RecipeFilterCriteria().apply(to: RecipeStore.shared.recipes))
     }
 
     var body: some View {
@@ -243,7 +243,7 @@ struct RecipeSearchView: View {
             ZStack {
                 AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
-                CollectionsInlineView(recipes: $recipes)
+                CollectionsInlineView()
             }
             .navigationTitle("Collections")
             .navigationBarTitleDisplayMode(.inline)
