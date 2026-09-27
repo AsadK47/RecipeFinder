@@ -4,7 +4,7 @@ private let logger = AppLogger.logger(category: "RecipeSearchView")
 
 struct RecipeSearchView: View {
     @Environment(\.recipeStore) private var recipeStore
-    /// The library, read from the store so any write re-renders observing views (replaces the old @Binding bridge).
+    /// Library from the store; reading it in a body re-renders that view on any write.
     private var recipes: [RecipeModel] { recipeStore.recipes }
     /// True while the library is still fetching post-sign-in, so empty `recipes` shows a skeleton, not the empty state.
     var isLoading: Bool = false
@@ -75,7 +75,7 @@ struct RecipeSearchView: View {
 
     init(isLoading: Bool = false) {
         self.isLoading = isLoading
-        // Seed the cache from the shared store (the environment default) so the first frame renders the library instead of flashing the empty state before onAppear repopulates it.
+        // Seed from the shared store (the env default) so the first frame isn't an empty-state flash.
         _cachedFilteredRecipes = State(initialValue: RecipeFilterCriteria().apply(to: RecipeStore.shared.recipes))
     }
 

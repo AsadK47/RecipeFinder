@@ -38,7 +38,6 @@ struct RecipeImportBuilder {
 
     // MARK: - Notes generation
 
-    // Built once; DateFormatter init is costly and this runs on every import.
     private static let importDateFormatter: DateFormatter = {
         let f = DateFormatter(); f.dateStyle = .medium; return f
     }()

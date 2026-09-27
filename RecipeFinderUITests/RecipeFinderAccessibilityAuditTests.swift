@@ -91,11 +91,7 @@ final class RecipeFinderAccessibilityAuditTests: XCTestCase {
             wait(for: [keyboardGone], timeout: 3)
         }
 
-        // Contrast is excluded here for the same reason as the Import screen: the
-        // suggestion rows use the app's frosted `.appCard()` material by design, so
-        // they match the rest of the app, and Apple's audit flags text over any
-        // translucent material because its contrast can't be guaranteed. Every other
-        // audit type still runs.
+        // Skip contrast: rows sit on frosted `.appCard()` material, which the audit always flags.
         try app.performAccessibilityAudit(for: .all.subtracting(.contrast), auditHandler)
     }
 

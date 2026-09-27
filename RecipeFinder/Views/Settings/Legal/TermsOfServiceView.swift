@@ -5,7 +5,6 @@ struct TermsOfServiceView: View {
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     
-    // Static so the DateFormatter is built once, not on every SwiftUI view-struct init.
     private static let dateFormatter: DateFormatter = {
         let f = DateFormatter(); f.dateFormat = "d MMMM yyyy"; return f
     }()

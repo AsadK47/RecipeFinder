@@ -224,7 +224,7 @@ struct QuickSnackSheet: View {
             imageName: nil,
             notes: "\(selectedEmoji) Quick snack"
         )
-        // Snacks are ephemeral: keep them in the store's in-memory list so this session can resolve the planned meal, but don't persist them into the recipe library.
+        // Snacks are ephemeral: in-memory only so the planned meal resolves this session, never persisted to the library.
         recipeStore.recipes.append(recipe)
         onSnackAdded(recipe)
         HapticManager.shared.success()
