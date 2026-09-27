@@ -1,9 +1,6 @@
 import SwiftUI
 
-/// The centre-tab import hub: the app's front door for getting recipes in.
-/// Reuses the existing import (`RecipeImportView`) and manual-create
-/// (`RecipeWizardView`) flows so behaviour stays consistent with the rest of the
-/// app, and points people at the share-sheet route for social recipes.
+/// Centre-tab import hub reusing RecipeImportView and RecipeWizardView for consistent behaviour, plus a share-sheet hint for social recipes.
 struct ImportView: View {
     @Binding var recipes: [RecipeModel]
     @Environment(\.recipeStore) private var recipeStore
@@ -116,10 +113,7 @@ struct ImportView: View {
         }
     }
 
-    /// Appends a finished recipe to the list and persists it. Shared by every
-    /// import route so they save identically. If the save fails, the optimistic
-    /// insertion is rolled back and the user is alerted rather than the recipe
-    /// silently disappearing on relaunch.
+    /// Appends and persists a recipe; shared by every import route. On save failure the optimistic insert is rolled back and the user alerted.
     private func store(_ recipe: RecipeModel, source: ImportSource = .wizard) {
         guard recipeStore.add(recipe) else {
             saveErrorRecipeName = recipe.name
@@ -158,9 +152,7 @@ struct ImportView: View {
                         .foregroundStyle(.primary)
                     Text(subtitle)
                         .font(.caption)
-                        // .primary is a semantic system colour that the contrast
-                        // audit correctly resolves against material backgrounds,
-                        // where adaptiveForegroundColor() can return the wrong hue.
+                        // .primary resolves correctly against material backgrounds where adaptiveForegroundColor() can pick the wrong hue.
                         .foregroundStyle(.primary)
                         .fixedSize(horizontal: false, vertical: true)
                 }

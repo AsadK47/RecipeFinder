@@ -2,9 +2,7 @@ import SwiftUI
 
 // MARK: - Settings Design System
 //
-// Shared building blocks for every settings screen. Rows, sections, and icon
-// tiles are defined once here so alignment and spacing stay consistent by
-// construction rather than by vigilance.
+// Shared building blocks (rows, sections, icon tiles) defined once so alignment stays consistent by construction.
 
 // MARK: - Icon Tile
 
@@ -28,10 +26,7 @@ struct SettingsIconTile: View {
 
 // MARK: - Row
 
-/// A single settings row: icon tile, title, optional current value, accessory.
-///
-/// The row itself is layout-only; wrap it in a `NavigationLink` or `Button`,
-/// or use the `SettingsSection` conveniences that do so for you.
+/// Layout-only settings row (icon tile, title, optional value, accessory); wrap in a `NavigationLink`/`Button` or use `SettingsSection`.
 struct SettingsRow: View {
     enum Accessory {
         case chevron
@@ -127,8 +122,7 @@ struct SettingsToggleRow: View {
 
 // MARK: - Choice Row
 
-/// Settings row for one option in a mutually exclusive group; shows a
-/// checkmark when selected and fires a selection haptic on tap.
+/// Settings row for one option in a mutually exclusive group; shows a checkmark when selected and fires a selection haptic on tap.
 struct SettingsChoiceRow: View {
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     
@@ -187,9 +181,7 @@ struct SettingsRowDivider: View {
 
 // MARK: - Screen Scaffold
 
-/// Standard settings screen chrome: themed gradient background, scroll view,
-/// and inline navigation title. Every settings sub-screen wraps its sections
-/// in this so backgrounds and margins stay identical by construction.
+/// Standard settings screen chrome (themed gradient, scroll view, inline title) so every sub-screen's backgrounds and margins stay identical.
 struct SettingsScreen<Content: View>: View {
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
@@ -254,10 +246,7 @@ struct SettingsCard<Content: View>: View {
     }
 }
 
-/// A titled group of rows inside a card, with automatic dividers.
-///
-/// Rows are passed as an array of configurations so dividers and padding are
-/// applied uniformly — the call site can never misalign them.
+/// A titled group of rows inside a card; rows passed as configs so dividers/padding apply uniformly and call sites can't misalign them.
 struct SettingsSection: View {
     struct Item: Identifiable {
         let id = UUID()

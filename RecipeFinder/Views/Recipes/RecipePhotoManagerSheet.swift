@@ -2,13 +2,9 @@ import PhotosUI
 import SwiftUI
 import UIKit
 
-/// Lets the user manage a recipe's photos directly — add from the library, take
-/// a new one, or remove existing ones — outside the post-cook prompt and the
-/// wizard. Persists each change immediately (optimistic, with rollback) so the
-/// recipe card and gallery stay in sync.
+/// Manage a recipe's photos (add/take/remove) outside the post-cook prompt and wizard; each change persists optimistically with rollback.
 struct RecipePhotoManagerSheet: View {
     @Binding var recipe: RecipeModel
-    /// Called after a change is persisted, so the parent list can re-sync.
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
@@ -189,8 +185,7 @@ struct RecipePhotoManagerSheet: View {
         )
     }
 
-    /// Persists the current recipe; on failure runs `onFailure` (to roll the
-    /// optimistic edit back) and surfaces an alert.
+    /// Persists the recipe; on failure runs `onFailure` to roll back the optimistic edit and surfaces an alert.
     private func persist(onFailure: () -> Void, onSuccess: () -> Void = {}) {
         guard recipeStore.save(recipe) else {
             onFailure()

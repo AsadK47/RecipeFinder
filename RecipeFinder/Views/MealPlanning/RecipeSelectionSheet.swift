@@ -76,16 +76,13 @@ struct RecipeSelectionSheet: View {
     }
 }
 
-/// Photo-forward recipe card for the meal planner picker.
-/// The image fills the entire card area; the recipe name overlays the bottom with a gradient scrim.
-/// No separate card background or border — the photo is the card.
+/// Photo-forward meal-planner picker card: image fills the card, name overlays the bottom with a scrim, no separate background/border.
 private struct MealPickerRecipeCard: View {
     let recipe: RecipeModel
 
     @State private var loadFailed = false
 
-    // Shared resolver: handles http, legacy-absolute, and current relative paths,
-    // and versions the cache key so a replaced photo never serves the stale image.
+    // Shared resolver: handles http/legacy-absolute/relative paths and versions the cache key so a replaced photo never serves stale.
     private var kfSource: Source? {
         RecipeImageView.resolvedSource(for: recipe.imageName)
     }

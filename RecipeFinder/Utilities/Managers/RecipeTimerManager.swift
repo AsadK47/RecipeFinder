@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// Behavioural seam for the recipe cook-timer so views depend on this protocol
-/// rather than the `RecipeTimerManager` singleton — and tests can inject a fake.
+/// Behavioural seam for the cook-timer so views depend on this protocol, not the `RecipeTimerManager` singleton, and tests can inject a fake.
 @MainActor
 protocol RecipeTiming: AnyObject, Observable {
     var durationSeconds: Int { get }
@@ -18,17 +17,14 @@ protocol RecipeTiming: AnyObject, Observable {
 }
 
 private struct RecipeTimingKey: EnvironmentKey {
-    // SwiftUI reads environment defaults on the main actor during view updates,
-    // so assuming main-actor isolation here is safe; the real app injects the
-    // shared instance at the composition root regardless.
+    // SwiftUI reads environment defaults on the main actor, so assumeIsolated is safe; the app injects the shared instance anyway.
     static var defaultValue: any RecipeTiming {
         MainActor.assumeIsolated { RecipeTimerManager.shared }
     }
 }
 
 extension EnvironmentValues {
-    /// Injected cook-timer. Defaults to the shared singleton; override with
-    /// `.environment(\.recipeTimer, fake)` in tests/previews.
+    /// Injected cook-timer; defaults to shared singleton, override with `.environment(\.recipeTimer, fake)` in tests/previews.
     var recipeTimer: any RecipeTiming {
         get { self[RecipeTimingKey.self] }
         set { self[RecipeTimingKey.self] = newValue }
@@ -81,9 +77,7 @@ final class RecipeTimerManager: RecipeTiming {
         let total = max(0, (hours * 3600) + (minutes * 60) + seconds)
         guard total > 0 else { return }
 
-        // Request permission here — the user has just started a timer so the
-        // purpose is obvious. The system only shows the dialog once; subsequent
-        // calls are no-ops once the user has responded.
+        // Request permission on timer start when purpose is obvious; the system shows the dialog only once.
         let notificationsEnabled = (defaults.object(forKey: "timerNotifications") as? Bool) ?? true
         if notificationsEnabled {
             NotificationManager.shared.requestPermission { _ in }

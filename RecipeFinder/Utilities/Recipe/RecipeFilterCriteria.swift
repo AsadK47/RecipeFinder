@@ -7,11 +7,7 @@ enum SortOrder: String, CaseIterable, Hashable {
     case mostCooked = "Most Cooked"
 }
 
-/// The full set of recipe-search filters as a plain value.
-///
-/// Extracted from `RecipeSearchView` so the filtering/sorting is pure and unit
-/// testable, and so the work no longer lives inline in a SwiftUI `body`. The view
-/// builds one of these from its `@State` and calls `apply(to:)`.
+/// Full recipe-search filter set as a plain value; extracted from `RecipeSearchView` so filter/sort is pure and testable (view builds one from `@State` and calls `apply(to:)`).
 struct RecipeFilterCriteria: Hashable {
     var searchText: String = ""
     var ingredientSearchText: String = ""
@@ -24,21 +20,16 @@ struct RecipeFilterCriteria: Hashable {
     var selectedTags: Set<String> = []
     var selectedCuisines: Set<String> = []
 
-    /// Sort order applied after filtering. Ignored when ingredient-match ranking
-    /// is active, since percentage rank is more useful than alphabetical in that mode.
+    /// Post-filter sort order; ignored when ingredient-match ranking is active (percentage rank beats alphabetical there).
     var sortOrder: SortOrder = .nameAZ
 
-    /// When non-nil, only recipes whose `id` is in this set pass the filter.
-    /// The caller resolves which IDs belong to the chosen collection; the
-    /// criteria stays pure and independent of `CollectionManager`.
+    /// When non-nil, only recipes whose `id` is in this set pass; caller resolves the collection so criteria stays independent of `CollectionManager`.
     var selectedCollectionRecipeIDs: Set<UUID>? = nil
 
-    /// Kitchen inventory, lowercased. Only consulted when `availableIngredientsOnly`
-    /// is set; used both to filter and to rank by how much of a recipe you can make.
+    /// Lowercased kitchen inventory; only consulted when `availableIngredientsOnly` is set, to filter and rank by how much you can make.
     var availableIngredients: Set<String> = []
 
-    /// Number of *chips* the UI shows as active. Deliberately excludes free-text
-    /// `searchText` and `sortOrder` (which has its own control and no chip).
+    /// Count of active *chips*; excludes free-text `searchText` and `sortOrder` (own control, no chip).
     var activeCount: Int {
         selectedCategories.count +
         selectedDifficulties.count +
@@ -52,9 +43,7 @@ struct RecipeFilterCriteria: Hashable {
         (selectedCollectionRecipeIDs != nil ? 1 : 0)
     }
 
-    /// Applies every active filter, then ranks by ingredient match when
-    /// "can make now" is on. Order of the individual filters is irrelevant to the
-    /// result; it mirrors the original view code to stay behavior-preserving.
+    /// Applies every active filter, then ranks by ingredient match when "can make now" is on; filter order mirrors the original view to stay behavior-preserving.
     func apply(to recipes: [RecipeModel]) -> [RecipeModel] {
         var results = recipes
 
@@ -119,9 +108,7 @@ struct RecipeFilterCriteria: Hashable {
             }
         }
 
-        // "Can make now": keep recipes you can mostly make and rank by match percentage.
-        // When active, percentage ranking takes precedence over sortOrder.
-        // Match percentage is computed once here — not inside the comparator (O(n log n) recomputes).
+        // "Can make now": keep mostly-makeable recipes ranked by match %, taking precedence over sortOrder; % computed once here, not per comparator call.
         if availableIngredientsOnly && !availableIngredients.isEmpty {
             return results
                 .map { ($0, $0.ingredientMatchPercentage(availableIngredients: availableIngredients)) }

@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// The meal planner's title bar with its overflow menu. Extracted from
-/// `MealPlanningView`; menu actions are delegated through closures.
+/// The meal planner's title bar with overflow menu; menu actions delegated via closures.
 struct MealPlannerHeader: View {
     let onAddMeal: () -> Void
     let onClearOldPlans: () -> Void

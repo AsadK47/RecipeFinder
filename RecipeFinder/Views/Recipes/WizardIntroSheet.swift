@@ -1,9 +1,6 @@
 import SwiftUI
 
-/// One-time introduction shown the first time the full recipe wizard opens.
-/// Explains the save-anytime, jump-to-any-section model so the editor doesn't
-/// feel like a rigid form. Dismissed via "Get started"; the caller records that
-/// it's been seen so it never shows again.
+/// One-time intro on first wizard open explaining the save-anytime/jump-to-section model; caller records dismissal so it never shows again.
 struct WizardIntroSheet: View {
     let onDismiss: () -> Void
 

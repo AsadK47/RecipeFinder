@@ -1,16 +1,6 @@
 import SwiftUI
 
-/// The app's single source of truth for a tile / card surface.
-///
-/// Historically each view hand-rolled its own background (`Color(.systemGray6)`,
-/// `Color.white.opacity(...)`, `AppTheme.cardBackground`, bare materials), which is
-/// why tiles drifted out of sync across screens. Route every card/tile through
-/// `.appCard()` so the surface stays consistent.
-///
-/// Honours the user's `cardStyle` appearance setting — frosted translucent by
-/// default, or an opaque solid fill (matching `CardView`) when they choose Solid.
-/// It previously hardcoded `.ultraThinMaterial`, so `.appCard()` tiles silently
-/// ignored the Solid setting while hand-rolled tiles respected it.
+/// Single source of truth for card/tile surfaces so they stay consistent; honours the user's `cardStyle` setting (frosted by default, opaque Solid on request).
 extension View {
     func appCard(cornerRadius: CGFloat = AppTheme.cornerRadius16) -> some View {
         modifier(AppCardModifier(cornerRadius: cornerRadius))

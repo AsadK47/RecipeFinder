@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// Behavioural seam for badge state so views depend on this protocol rather than
-/// the `BadgeManager` singleton — and tests can inject a fake.
+/// Behavioural seam so views depend on this protocol, not the `BadgeManager` singleton, and tests can inject a fake.
 @MainActor
 protocol BadgeManaging: AnyObject, Observable {
     var pendingCelebration: BadgeType? { get }
@@ -10,17 +9,14 @@ protocol BadgeManaging: AnyObject, Observable {
 }
 
 private struct BadgeManagingKey: EnvironmentKey {
-    // SwiftUI reads environment defaults on the main actor during view updates,
-    // so assuming main-actor isolation here is safe; the real app injects the
-    // shared instance at the composition root regardless.
+    // SwiftUI reads environment defaults on the main actor, so assuming main-actor isolation is safe.
     static var defaultValue: any BadgeManaging {
         MainActor.assumeIsolated { BadgeManager.shared }
     }
 }
 
 extension EnvironmentValues {
-    /// Injected badge state. Defaults to the shared singleton; override with
-    /// `.environment(\.badges, fake)` in tests/previews.
+    /// Injected badge state; defaults to the shared singleton, override with `.environment(\.badges, fake)` in tests/previews.
     var badges: any BadgeManaging {
         get { self[BadgeManagingKey.self] }
         set { self[BadgeManagingKey.self] = newValue }
@@ -34,23 +30,19 @@ final class BadgeManager: BadgeManaging {
 
     var unlockedBadges: [String: Badge] = [:]
 
-    /// Non-nil when a badge celebration sheet should be shown. Set back to nil
-    /// (via `dismissCelebration()`) when the sheet is dismissed; this drains the
-    /// queue so back-to-back unlocks each get a moment.
+    /// Non-nil when a celebration sheet should show; `dismissCelebration()` clears it and drains the queue for back-to-back unlocks.
     private(set) var pendingCelebration: BadgeType?
 
     @ObservationIgnored private let storage: UserScopedStorage
     @ObservationIgnored private let badgesKey = "unlockedBadges"
     @ObservationIgnored private let shownCelebrationsKey = "shownBadgeCelebrations"
 
-    /// When true, badge unlocks are persisted but no celebration sheets fire.
-    /// Set by bulk-import operations to avoid a parade of sheets.
+    /// When true, unlocks persist but no celebration sheets fire; set by bulk-import to avoid a parade of sheets.
     @ObservationIgnored var isBulkImporting = false
 
     // FIFO queue: badges earned faster than the user can dismiss pile up here.
     @ObservationIgnored private var celebrationQueue: [BadgeType] = []
-    // Persisted set so the celebration never fires twice for the same badge,
-    // even if the app is killed mid-sheet.
+    // Persisted so a celebration never fires twice for the same badge, even if killed mid-sheet.
     @ObservationIgnored private var shownCelebrationIds: Set<String> = []
 
     private init() {
@@ -70,10 +62,7 @@ final class BadgeManager: BadgeManaging {
         loadShownCelebrations()
     }
 
-    /// Faithful, non-destructive restore: unions incoming badges by id. On a key
-    /// collision the currently-held badge wins, so this device's `dateEarned` is
-    /// preserved rather than overwritten by the backup's. Restored badges never
-    /// trigger celebration sheets — they were already earned elsewhere.
+    /// Non-destructive restore: unions by id (held badge wins on collision, preserving `dateEarned`); restored badges never trigger celebration sheets.
     func merge(_ incoming: [String: Badge]) {
         let previousIds = Set(unlockedBadges.keys)
         unlockedBadges = BackupMerge.mergedBadges(existing: unlockedBadges, incoming: incoming)
@@ -90,15 +79,13 @@ final class BadgeManager: BadgeManaging {
         for badgeType in BadgeType.allCases {
             guard recipeCount >= badgeType.requiredCount,
                   !isBadgeUnlocked(badgeType.rawValue) else { continue }
-            // welcomeAboard fires silently — a "you joined" pop mid-session
-            // would be contextually confusing; the others are recipe-count wins.
+            // welcomeAboard fires silently — a "you joined" pop mid-session would be confusing.
             let shouldBeSilent = silent || badgeType == .welcomeAboard
             unlockBadge(badgeType, silent: shouldBeSilent)
         }
     }
 
-    /// Unlock a badge. Pass `silent: true` to persist the unlock without showing
-    /// the celebration sheet (used for welcome/seed badges that fire at launch).
+    /// Unlock a badge; `silent: true` persists without a celebration sheet (used for welcome/seed badges at launch).
     func unlockBadge(_ badgeType: BadgeType, customDate: Date? = nil, silent: Bool = false) {
         guard !isBadgeUnlocked(badgeType.rawValue) else { return }
 
@@ -121,8 +108,7 @@ final class BadgeManager: BadgeManaging {
         drainQueueIfIdle()
     }
 
-    /// Call this when the badge-earned sheet is dismissed to advance to the next
-    /// queued celebration, if any.
+    /// Call when the badge-earned sheet is dismissed to advance to the next queued celebration.
     func dismissCelebration() {
         pendingCelebration = nil
         drainQueueIfIdle()

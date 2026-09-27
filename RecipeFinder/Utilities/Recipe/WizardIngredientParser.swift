@@ -1,10 +1,6 @@
 import Foundation
 
-/// Splits a free-text ingredient line (e.g. "2 cups flour") into quantity, unit,
-/// and name for the manual wizard's editable fields. A thin adapter over the
-/// shared `IngredientLineParser` (the single source of truth) so manual entry and
-/// import parse identically — it just surfaces the quantity as text for the
-/// editable field.
+/// Thin adapter over the shared `IngredientLineParser` splitting a line into quantity/unit/name for the wizard's editable fields (quantity surfaced as text) so manual and import parse identically.
 enum WizardIngredientParser {
 
     struct Parsed: Equatable {

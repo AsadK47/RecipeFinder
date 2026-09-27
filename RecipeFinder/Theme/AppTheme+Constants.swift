@@ -1,7 +1,6 @@
 import Foundation
 
-/// Non-dimensional tokens: opacities, animation timings, shimmer/confetti config,
-/// haptic intervals, and other constants.
+/// Non-dimensional tokens: opacities, animation timings, shimmer/confetti config, haptic intervals.
 extension AppTheme {
 
     static let shimmerPhaseDistance: CGFloat = 400

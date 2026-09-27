@@ -1,9 +1,7 @@
 import SwiftUI
 import Kingfisher
 
-/// Context handed to `FullScreenPhotoViewer`. Being `Identifiable` lets call sites
-/// drive presentation with `.fullScreenCover(item:)` and open at the exact photo
-/// the user tapped, without threading a separate `isPresented` + index pair.
+/// Context for `FullScreenPhotoViewer`; `Identifiable` so call sites use `.fullScreenCover(item:)` and open at the tapped photo without a separate isPresented + index pair.
 struct PhotoViewerSource: Identifiable {
     let id = UUID()
     let imageNames: [String]
@@ -11,10 +9,7 @@ struct PhotoViewerSource: Identifiable {
     let startIndex: Int
 }
 
-/// Full-screen, Photos-app-style viewer: swipe between a recipe's images, pinch or
-/// double-tap to zoom, pan a zoomed photo, and swipe-down or tap to dismiss. Reused
-/// by both the detail hero gallery and the photo-manager grid so tapping a photo
-/// behaves identically everywhere.
+/// Full-screen Photos-style viewer (swipe/pinch/double-tap zoom, pan, swipe-down or tap to dismiss); reused by detail hero gallery and photo-manager grid for identical behaviour.
 struct FullScreenPhotoViewer: View {
     let source: PhotoViewerSource
 
@@ -58,8 +53,7 @@ struct FullScreenPhotoViewer: View {
     }
 }
 
-/// A single zoomable, pannable photo. At 1× a downward drag dismisses; once zoomed
-/// the same drag pans the image instead. A double-tap toggles between fit and 2.5×.
+/// A single zoomable/pannable photo: at 1× a downward drag dismisses, once zoomed the drag pans; double-tap toggles fit ↔ 2.5×.
 private struct ZoomablePhoto: View {
     let imageName: String
     let recipeName: String?

@@ -1,12 +1,7 @@
 import Foundation
 import Security
 
-/// Abstraction over the system Keychain so credential storage can be exercised
-/// against an in-memory fake in tests instead of the real, device-global
-/// Keychain (which is shared process state and unavailable in some CI hosts).
-///
-/// Queries use the same `[String: Any]` attribute dictionaries that `SecItem*`
-/// expects, so the real implementation is a thin pass-through.
+/// Abstraction over the system Keychain so credential storage can use an in-memory fake in tests; queries mirror `SecItem*` attribute dictionaries so the real impl is a thin pass-through.
 protocol KeychainStore: Sendable {
     func add(_ attributes: [String: Any]) -> OSStatus
     func copyMatching(_ query: [String: Any]) -> (status: OSStatus, data: Data?)

@@ -2,9 +2,7 @@ import UIKit
 
 private let logger = AppLogger.logger(category: "Print")
 
-/// Generates a print-ready HTML layout for a recipe and presents
-/// `UIPrintInteractionController`. The `html(for:)` method is pure and testable;
-/// `present(for:)` is the thin UIKit bridge and is not unit-tested.
+/// Print-ready HTML for a recipe + `UIPrintInteractionController` presentation; `html(for:)` is pure/testable, `present(for:)` is the thin untested UIKit bridge.
 enum RecipePrintFormatter {
 
     // MARK: - Present

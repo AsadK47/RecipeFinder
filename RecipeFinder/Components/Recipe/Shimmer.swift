@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// A left-to-right light sweep that signals "content is loading" on skeleton
-/// placeholders. Extracted so the recipe image placeholder and the list
-/// skeleton share one implementation instead of each hand-rolling the sweep.
+/// Left-to-right loading sweep for skeleton placeholders; shared so image placeholder and list skeleton use one implementation.
 extension View {
     func shimmering(active: Bool = true) -> some View {
         modifier(ShimmerModifier(active: active))

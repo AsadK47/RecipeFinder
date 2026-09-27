@@ -2,8 +2,7 @@ import Foundation
 
 private let logger = AppLogger.logger(category: "PersonalRecipeSeed")
 
-/// Bulk-imports the bundled personal recipe collection (recipes_seed.json) into
-/// Core Data, skipping any recipe whose name already exists in the current scope.
+/// Bulk-imports the bundled personal collection (recipes_seed.json) into Core Data, skipping names already in the current scope.
 struct PersonalRecipeSeedService {
 
     private let persistence: PersistenceController
@@ -34,8 +33,7 @@ struct PersonalRecipeSeedService {
 
     // MARK: - Public API
 
-    /// Parses and saves every bundled recipe, skipping names that already exist.
-    /// Yields once at the start so any pending spinner state update renders first.
+    /// Parses and saves every bundled recipe, skipping existing names; yields first so a pending spinner renders.
     @MainActor
     func seed() async -> SeedResult {
         await Task.yield()
@@ -54,9 +52,7 @@ struct PersonalRecipeSeedService {
         var skipped  = 0
         var failed   = 0
 
-        // Suppress badge celebrations for the duration of the bulk import.
-        // Badges are still persisted; one silent pass at the end catches any
-        // newly-earned milestones without triggering a parade of sheets.
+        // Suppress badge celebrations during bulk import; still persisted, and one silent pass at the end catches new milestones without a parade of sheets.
         BadgeManager.shared.isBulkImporting = true
         defer { BadgeManager.shared.isBulkImporting = false }
 

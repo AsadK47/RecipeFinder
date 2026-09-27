@@ -2,8 +2,7 @@ import SwiftUI
 
 private let logger = AppLogger.logger(category: "ShoppingList")
 
-/// Behavioural seam for the shopping list so views depend on this protocol
-/// rather than the `ShoppingListManager` singleton — and tests can inject a fake.
+/// Behavioural seam so views depend on this protocol, not the `ShoppingListManager` singleton, and tests can inject a fake.
 @MainActor
 protocol ShoppingListManaging: AnyObject, Observable {
     var items: [ShoppingListModel] { get }
@@ -19,23 +18,19 @@ protocol ShoppingListManaging: AnyObject, Observable {
 }
 
 extension ShoppingListManaging {
-    /// Convenience mirroring `addItem`'s default args, which a protocol requirement
-    /// can't carry — lets call sites keep writing `addItem(name:)`.
+    /// Mirrors `addItem`'s default args (a protocol requirement can't carry them) so call sites keep writing `addItem(name:)`.
     func addItem(name: String) { addItem(name: name, quantity: 1, category: nil) }
 }
 
 private struct ShoppingListManagingKey: EnvironmentKey {
-    // SwiftUI reads environment defaults on the main actor during view updates,
-    // so assuming main-actor isolation here is safe; the real app injects the
-    // shared instance at the composition root regardless.
+    // SwiftUI reads environment defaults on the main actor, so assuming main-actor isolation is safe.
     static var defaultValue: any ShoppingListManaging {
         MainActor.assumeIsolated { ShoppingListManager.shared }
     }
 }
 
 extension EnvironmentValues {
-    /// Injected shopping list. Defaults to the shared singleton; override with
-    /// `.environment(\.shopping, fake)` in tests/previews.
+    /// Injected shopping list; defaults to the shared singleton, override with `.environment(\.shopping, fake)` in tests/previews.
     var shopping: any ShoppingListManaging {
         get { self[ShoppingListManagingKey.self] }
         set { self[ShoppingListManagingKey.self] = newValue }
@@ -87,15 +82,12 @@ final class ShoppingListManager: ShoppingListManaging {
         storage.setEncodable(newItems, forKey: saveKey)
     }
     
-    /// Faithful, non-destructive restore: unions incoming items by id and persists.
-    /// Unlike `addItem`, it doesn't merge by name or re-classify — restored items
-    /// keep exactly the identity and fields they had when backed up.
+    /// Non-destructive restore: unions incoming items by id, without the name-merge or re-classify that `addItem` applies.
     func merge(_ incoming: [ShoppingListModel]) {
         saveItems(BackupMerge.merged(existing: items, incoming: incoming))
     }
 
-    /// Adds all ingredients from a recipe to the list, merging duplicates by name.
-    /// Fractional quantities are rounded to the nearest whole number (minimum 1).
+    /// Adds a recipe's ingredients, merging duplicates by name; fractional quantities round to nearest whole (min 1).
     func addIngredients(from recipe: RecipeModel) {
         for ingredient in recipe.ingredients {
             let qty = max(1, Int(round(ingredient.baseQuantity)))
@@ -103,9 +95,7 @@ final class ShoppingListManager: ShoppingListManaging {
         }
     }
 
-    /// Adds ingredients from every recipe in the collection, merging duplicates
-    /// by name across all recipes (same ingredient appearing in two recipes
-    /// accumulates quantity rather than creating a duplicate row).
+    /// Adds ingredients from every recipe, merging duplicates by name across all so shared ingredients accumulate quantity.
     func addIngredients(from recipes: [RecipeModel]) {
         for recipe in recipes {
             addIngredients(from: recipe)

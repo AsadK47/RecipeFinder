@@ -10,9 +10,7 @@ struct NotificationSettingsView: View {
     @State private var showingTimePicker = false
     @State private var notificationPermission: UNAuthorizationStatus = .notDetermined
 
-    /// Fixed-format times must use en_US_POSIX: with the device's 12/24-hour
-    /// override, a bare "HH:mm" formatter can emit "1:30 PM"-style strings
-    /// that then fail to parse, silently discarding the user's chosen time.
+    /// Must use en_US_POSIX: with a 12/24-hour device override, a bare "HH:mm" formatter can emit unparseable "1:30 PM" strings, silently dropping the chosen time.
     static let reminderTimeFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")

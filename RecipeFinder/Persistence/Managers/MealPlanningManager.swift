@@ -116,8 +116,7 @@ final class MealPlanningManager: MealPlanningManaging {
         saveMealPlans()
     }
 
-    /// Materialises the most recent recurring template into each empty slot of the target week
-    /// (kept recurring so it propagates forward); idempotent — no duplicates on re-run.
+    /// Materialises the latest recurring template into each empty slot of the target week (stays recurring); idempotent.
     func propagateRecurring(toWeekStarting startDate: Date) {
         let cal = Calendar.current
         let start = cal.startOfDay(for: startDate)
@@ -213,8 +212,7 @@ final class MealPlanningManager: MealPlanningManaging {
         return WeeklyMealPlan(startDate: start, meals: weekMeals)
     }
     
-    /// Aggregates ingredients for the week's incomplete meals, merging duplicates by normalized name;
-    /// recipes matched by id then name so meals survive a delete/re-import with a new id.
+    /// Aggregates ingredients for the week's incomplete meals (merged by normalized name); recipes matched by id then name to survive re-imports.
     func weekShoppingSummary(forWeekStarting startDate: Date, recipes: [RecipeModel]) -> WeekShoppingSummary {
         let plannedMeals = mealPlansForWeek(starting: startDate).meals.filter { !$0.isCompleted }
 

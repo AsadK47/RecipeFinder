@@ -154,8 +154,7 @@ struct AuthenticationView: View {
                     Button(action: { guestModeEnabled = true; dismiss() }) {
                         Text("Browse first")
                             .font(.footnote)
-                            // Primary (not secondary) adaptive colour: small muted text
-                            // over the gradient dips below the contrast-audit threshold.
+                            // Primary (not secondary) adaptive colour: small muted text over the gradient fails the contrast audit.
                             .adaptiveForegroundColor()
                             .lineLimit(nil)
                             .fixedSize(horizontal: false, vertical: true)

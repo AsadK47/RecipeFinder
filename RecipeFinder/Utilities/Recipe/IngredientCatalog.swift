@@ -1,8 +1,6 @@
 import Foundation
 
-/// Pure ingredient/recipe queries backing `IngredientSearchView`. Extracted from
-/// the view so the browsing, search, and filtering logic is unit-testable and no
-/// longer computed inline inside a SwiftUI `body`.
+/// Pure ingredient/recipe queries backing `IngredientSearchView`; extracted from the view so browse/search/filter logic is unit-testable, not inline in `body`.
 struct IngredientCatalog {
     let recipes: [RecipeModel]
 
@@ -11,8 +9,7 @@ struct IngredientCatalog {
         Set(recipes.flatMap { $0.ingredients.map { $0.name } }).sorted()
     }
 
-    /// Ingredients grouped under the kitchen categories they match, with similar
-    /// ingredients collapsed. Categories with no matches are omitted.
+    /// Ingredients grouped under matching kitchen categories with similar ones collapsed; empty categories omitted.
     var categorizedIngredients: [(category: String, ingredients: [String])] {
         let ingredients = allIngredients
         return CategoryClassifier.kitchenCategories.compactMap { category in

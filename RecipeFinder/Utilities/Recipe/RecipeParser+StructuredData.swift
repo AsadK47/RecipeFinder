@@ -1,7 +1,6 @@
 import Foundation
 
-/// Schema.org JSON-LD parsing for `RecipeParser`. This is the highest-confidence
-/// path: sites that embed `application/ld+json` Recipe data are parsed directly.
+/// Schema.org JSON-LD parsing for `RecipeParser` — the highest-confidence path (embedded `application/ld+json` Recipe data parsed directly).
 extension RecipeParser {
 
     static func extractJSONLD(from html: String) -> ParsedRecipe? {
@@ -33,9 +32,7 @@ extension RecipeParser {
         return nil
     }
 
-    /// Match "Recipe" regardless of whether the site emits the bare token or a
-    /// fully-qualified schema.org URL (e.g. "https://schema.org/Recipe"), and
-    /// regardless of case. Real sites use all of these forms.
+    /// Match "Recipe" as a bare token or full schema.org URL, case-insensitively — real sites use all these forms.
     private static func isRecipeType(_ item: [String: Any]) -> Bool {
         func matchesRecipe(_ type: String) -> Bool {
             let token = type.split(separator: "/").last.map(String.init) ?? type
@@ -49,10 +46,7 @@ extension RecipeParser {
         return false
     }
 
-    /// Locate the Recipe node anywhere JSON-LD commonly hides it: a top-level
-    /// Recipe, an entry in a `@graph`, a plain array of nodes, or nested under a
-    /// wrapper's `mainEntity` (the shape Yoast/WordPress emit). Recurses so deep
-    /// graphs and `mainEntity`-inside-`@graph` combinations resolve too.
+    /// Recursively locate the Recipe node wherever JSON-LD hides it: top-level, in `@graph`, in an array, or under `mainEntity` (Yoast/WordPress shape).
     private static func findRecipeDict(in json: Any) -> [String: Any]? {
         if let dict = json as? [String: Any] {
             if isRecipeType(dict) { return dict }
@@ -165,9 +159,7 @@ extension RecipeParser {
         return nil
     }
 
-    /// Recursively extracts individual instruction step strings from a `recipeInstructions` array.
-    /// Handles flat `HowToStep` arrays, `HowToSection` containers, and mixed nesting.
-    /// Previously, sections were collapsed with `.joined(separator: " ")`, losing step boundaries.
+    /// Recursively extracts step strings from `recipeInstructions`, handling flat `HowToStep` arrays, `HowToSection` containers, and mixed nesting without collapsing step boundaries.
     private static func flattenInstructionSteps(from items: [Any]) -> [String] {
         var steps: [String] = []
         for item in items {
@@ -202,11 +194,7 @@ extension RecipeParser {
     }
 
     static func parseISO8601Duration(_ duration: String) -> Int? {
-        // Full ISO-8601 duration: an optional date part (weeks/days) and an optional
-        // time part after "T" (hours/minutes/seconds). The date part matters because
-        // sites emit forms like "P0DT0H30M" — the old "PT"-only pattern skipped those
-        // entirely and lost the time. Seconds are recognised but don't count toward
-        // whole minutes.
+        // Full ISO-8601 duration (date + time parts); date part needed for forms like "P0DT0H30M" that a "PT"-only pattern dropped. Seconds matched but ignored for whole minutes.
         let pattern = #"^P(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$"#
 
         let trimmed = duration.trimmingCharacters(in: .whitespacesAndNewlines)

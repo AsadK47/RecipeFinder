@@ -15,8 +15,7 @@ struct RecipeImportView: View {
     @State private var showIncompleteAlert = false
     private let builder = RecipeImportBuilder()
 
-    /// When set (e.g. arriving from the share extension), the URL field is
-    /// prefilled and the import starts automatically.
+    /// When set (e.g. from the share extension), prefills the URL field and auto-starts the import.
     var initialURL: String? = nil
     var existingNames: [String] = []
     var onImport: (RecipeModel) -> Void

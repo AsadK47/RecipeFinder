@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// Shown when the user opens a `.recipefinderrecipe` file from AirDrop,
-/// Messages, Mail, or Files. Previews key recipe fields and lets the user
-/// confirm before saving to their library.
+/// Previews a shared `.recipefinderrecipe` file (AirDrop/Messages/Mail/Files) so the user confirms before saving.
 struct RecipeFileImportSheet: View {
     let recipe: RecipeModel
     let onSave: (RecipeModel) -> Void

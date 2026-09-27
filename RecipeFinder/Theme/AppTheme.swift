@@ -11,13 +11,7 @@ extension EnvironmentValues {
     }
 }
 
-/// Design tokens and theming for the app. Tokens are grouped into focused
-/// extensions to keep this navigable:
-/// - `AppTheme+Metrics` — sizing (fonts, spacing, radii, heights, widths, shadows)
-/// - `AppTheme+Constants` — opacities, animation timings, counts, intervals
-/// - `AppTheme+Palette` — raw and semantic colors
-/// - `AppTheme+Colors` — adaptive color helpers and accent colors
-/// - `AppTheme+Gradients` — cached background gradients
+/// Design tokens and theming, split across focused extensions: `+Metrics` (sizing), `+Constants` (opacities/timings), `+Palette` (colors), `+Colors` (adaptive/accent), `+Gradients`.
 enum AppTheme {
     enum ThemeType: String, CaseIterable, Identifiable {
         case teal = "Teal"

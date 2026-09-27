@@ -1,7 +1,6 @@
 import Foundation
 
-/// Free-text heuristics for `RecipeParser`: scanning cleaned page text for the
-/// ingredient and instruction sections. Used when no structured data is present.
+/// Free-text heuristics for `RecipeParser`: scan cleaned page text for ingredient/instruction sections when no structured data is present.
 extension RecipeParser {
 
     static func extractIngredients(from text: String, lines: [String]) -> [String] {
@@ -190,8 +189,7 @@ extension RecipeParser {
             return true
         }
 
-        // Structural markers — time, temperature, connective phrases — are a
-        // reliable signal without depending on a finite verb whitelist.
+        // Structural markers (time, temperature, connective phrases) signal a step without a finite verb whitelist.
         let cookingPhrases = [
             "until", "for about", "minutes", "hours", "degrees", "°f", "°c",
             "in a", "on a", "into the", "to the", "with the",
@@ -201,9 +199,7 @@ extension RecipeParser {
             if lowercased.contains(phrase) { return true }
         }
 
-        // Within a confirmed instruction section, any sentence of instruction-like
-        // length is almost certainly a cooking step. Navigation links and labels
-        // are typically very short; a finite verb whitelist is not needed here.
+        // Inside a confirmed section, any instruction-length sentence is almost certainly a step (nav links/labels are short), so no verb whitelist needed.
         return trimmed.count >= 15
     }
 

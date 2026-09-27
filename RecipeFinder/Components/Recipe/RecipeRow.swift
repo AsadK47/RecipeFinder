@@ -1,9 +1,6 @@
 import SwiftUI
 
-/// Compact recipe row — image, name, category · difficulty, tags when present,
-/// and a favourite heart when favourited. One row so collection screens don't
-/// each hand-roll a near-identical layout (they had drifted: one showed tags +
-/// heart, the other didn't).
+/// Compact recipe row (image, name, category · difficulty, tags, favourite heart); one shared row so collection screens don't drift apart.
 struct RecipeRow: View {
     let recipe: RecipeModel
 

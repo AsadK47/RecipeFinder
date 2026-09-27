@@ -2,11 +2,7 @@ import Foundation
 
 private let logger = AppLogger.logger(category: "SharedTextImporter")
 
-/// Decides how a free-text share becomes a recipe: try the on-device
-/// interpreter, otherwise hand the raw text back for the heuristic parser. Either
-/// way the result is reviewed and edited in the wizard before it is saved — the
-/// importer no longer builds or persists a recipe itself. Pure and injectable so
-/// the decision is unit-tested without the on-device model.
+/// Decides how a free-text share becomes a recipe: on-device interpreter, else raw text back for the heuristic parser — always reviewed in the wizard before saving (never persists here). Pure/injectable so the decision is testable without the model.
 struct SharedTextImporter {
     enum Outcome: Equatable {
         /// The interpreter produced a usable recipe — review it in the wizard.

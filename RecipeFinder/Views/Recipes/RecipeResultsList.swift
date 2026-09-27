@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// The scrollable results for the recipe search screen. Renders recipes as a
-/// flat list — section labels and sample/user distinctions are not surfaced here.
+/// Scrollable search results as a flat list — no section labels or sample/user distinctions.
 struct RecipeResultsList: View {
     let filteredRecipes: [RecipeModel]
     let onRequestDelete: (RecipeModel) -> Void

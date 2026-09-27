@@ -3,9 +3,7 @@ import Foundation
 import FoundationModels
 #endif
 
-/// Human-facing state of the on-device recipe interpreter, so the UI can show
-/// people why AI import is or isn't working on their device. Foundation-only and
-/// `Equatable` so the copy mapping is unit-tested without the model.
+/// Human-facing state of the on-device interpreter so the UI can explain why AI import does/doesn't work; Foundation-only + Equatable so copy is testable without the model.
 enum OnDeviceRecipeImportStatus: Equatable {
     case available
     case deviceNotEligible
@@ -45,8 +43,7 @@ enum OnDeviceRecipeImportStatus: Equatable {
     }
 }
 
-/// Reads the current availability of the on-device model. Gated so it compiles
-/// and returns a sensible value on older SDKs / OSes.
+/// Reads the on-device model's availability; gated to compile and return a sensible value on older SDKs/OSes.
 enum OnDeviceRecipeImport {
     static func currentStatus() -> OnDeviceRecipeImportStatus {
         #if canImport(FoundationModels)

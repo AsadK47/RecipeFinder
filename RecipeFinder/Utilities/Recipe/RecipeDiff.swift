@@ -1,8 +1,6 @@
 import Foundation
 
-/// Identifies which content fields differ between a stored recipe and a freshly-fetched
-/// upstream version. Personal data fields (notes, tags, servings, ratings, cook history)
-/// are never included — they are always preserved on apply.
+/// Content fields that differ between a stored recipe and a freshly-fetched upstream; personal data (notes, tags, servings, ratings, cook history) is never included and always preserved on apply.
 enum RecipeDiffField: String, CaseIterable, Hashable {
     case name
     case ingredients
@@ -36,9 +34,7 @@ struct RecipeDiff {
 
     var hasChanges: Bool { !changed.isEmpty }
 
-    /// Computes which content fields differ between `stored` and a freshly-fetched
-    /// `upstream`. Ingredient equality is content-based, not identity-based, because
-    /// each import run assigns new UUIDs.
+    /// Content fields differing between `stored` and `upstream`; ingredient equality is content-based (each import assigns new UUIDs).
     static func compute(stored: RecipeModel, upstream: RecipeModel) -> RecipeDiff {
         var changed = Set<RecipeDiffField>()
         if stored.name != upstream.name                             { changed.insert(.name) }
@@ -60,9 +56,7 @@ struct RecipeDiff {
         }
     }
 
-    /// Returns a new recipe with only `selections` replaced by upstream values.
-    /// Personal data (notes, tags, servings, ratings, cook history, photo gallery)
-    /// is always carried over from `stored` unchanged.
+    /// New recipe with only `selections` replaced by upstream; personal data (notes, tags, servings, ratings, cook history, gallery) carried from `stored` unchanged.
     func applying(selections: Set<RecipeDiffField>) -> RecipeModel {
         RecipeModel(
             id:                  stored.id,

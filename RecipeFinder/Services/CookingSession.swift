@@ -9,14 +9,7 @@ extension Notification.Name {
 
 // MARK: - CookingSession
 
-/// Shared state for the active cooking session, used by AppIntents to
-/// advance/retreat steps via voice ("Hey Siri, next step").
-///
-/// `CookingModeView` starts/ends the session and keeps `currentIndex` in sync
-/// via `setIndex(_:)`. Intents call `advance()` / `retreat()`, which update the
-/// session index and post a notification so the live view follows.
-///
-/// The `init()` is internal so test code can create isolated instances.
+/// Shared active-cooking-session state driven by voice AppIntents; `CookingModeView` syncs via `setIndex(_:)`, intents call `advance()`/`retreat()` which post notifications so the view follows.
 @MainActor
 final class CookingSession {
 
@@ -60,8 +53,7 @@ final class CookingSession {
         currentIndex = index
     }
 
-    /// Called by intents to advance one step. Posts a notification so the live
-    /// `CookingModeView` follows without needing to observe this object.
+    /// Called by intents to advance one step; posts a notification so `CookingModeView` follows without observing this object.
     func advance() {
         guard currentIndex < items.count - 1 else { return }
         currentIndex += 1

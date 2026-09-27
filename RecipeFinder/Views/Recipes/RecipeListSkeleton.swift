@@ -1,9 +1,6 @@
 import SwiftUI
 
-/// Shown while the recipe library loads after sign-in: real card chrome filled
-/// with dimmed shimmering shapes, so the wait reads as "content is coming"
-/// rather than an empty library (which would otherwise flash the empty state).
-/// Non-interactive and hidden from VoiceOver.
+/// Loading placeholder (card chrome + shimmer) so the post-sign-in wait reads as "content coming", not a flashed empty state; non-interactive, VoiceOver-hidden.
 struct RecipeListSkeleton: View {
     private let placeholderCount = 6
 
@@ -22,8 +19,7 @@ struct RecipeListSkeleton: View {
     }
 }
 
-/// One skeleton row mirroring `RecipeCard`'s list layout: a square image block
-/// plus a title bar and a shorter metadata bar.
+/// One skeleton row mirroring `RecipeCard`'s layout: square image block, title bar, shorter metadata bar.
 private struct RecipeCardSkeleton: View {
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted

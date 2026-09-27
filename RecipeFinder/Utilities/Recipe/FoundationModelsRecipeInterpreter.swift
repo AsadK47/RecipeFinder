@@ -2,18 +2,11 @@
 import Foundation
 import FoundationModels
 
-/// On-device recipe interpretation backed by Apple's FoundationModels. Runs the
-/// system foundation model locally — private, free, and offline — to turn a
-/// social caption / pasted text into a structured recipe via guided generation.
-///
-/// Availability is gated: the framework is iOS 26+, and even there the model may
-/// be off (Apple Intelligence disabled, still downloading, ineligible device),
-/// so `interpret` returns `nil` when it can't run and callers fall back.
+/// On-device (private/free/offline) recipe interpretation via Apple's FoundationModels guided generation; gated to iOS 26+ and `interpret` returns nil when the model can't run (AI off, downloading, ineligible) so callers fall back.
 @available(iOS 26.0, *)
 struct FoundationModelsRecipeInterpreter: RecipeTextInterpreting {
 
-    /// Guided-generation shape the model fills in. Kept small and clearly named
-    /// to fit the on-device context window.
+    /// Guided-generation shape the model fills in; kept small/clearly-named for the on-device context window.
     @Generable
     struct GeneratedRecipe {
         @Guide(description: "The dish's name")

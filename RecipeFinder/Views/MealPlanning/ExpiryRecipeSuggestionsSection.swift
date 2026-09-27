@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// Compact pantry-aware suggestion strip shown in the meal planner when
-/// inventory items are expiring within three days. Each card lets the user
-/// jump straight to the meal-time picker for the suggested recipe.
+/// Pantry-aware suggestion strip shown when inventory expires within three days; each card jumps to the meal-time picker for that recipe.
 struct ExpiryRecipeSuggestionsSection: View {
     let suggestions: [PantryExpirySuggestions.Match]
     let cardStyle: CardStyle
@@ -68,17 +66,7 @@ struct ExpiryRecipeSuggestionsSection: View {
             .cornerRadius(AppTheme.cornerRadius8)
         }
         .padding(AppTheme.spacing12)
-        .background {
-            if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
-                    .fill(colorScheme == .dark
-                        ? Color.white.opacity(AppTheme.glassSubtleOpacity)
-                        : Color.white.opacity(AppTheme.cardDarkOpacity))
-            } else {
-                RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
-                    .fill(.ultraThinMaterial)
-            }
-        }
+        .appCard()
         .overlay(
             RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                 .stroke(Color.orange.opacity(0.25), lineWidth: 1)

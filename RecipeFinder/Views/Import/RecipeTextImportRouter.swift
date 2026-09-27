@@ -1,10 +1,6 @@
 import Foundation
 
-/// Turns free text — a pasted caption, photo OCR output, or a share-sheet
-/// payload — into wizard prefill for review. Runs the on-device interpreter when
-/// it's available and falls back to the heuristic `TextRecipeParser`, so the
-/// paste-text, photo, and share entry points all share one path. The interpreter
-/// is injected so the routing is unit-tested without the model or network.
+/// Turns free text (pasted caption, photo OCR, share payload) into wizard prefill via the on-device interpreter or heuristic `TextRecipeParser` fallback; one shared path for paste/photo/share, interpreter injected for testability.
 @MainActor
 struct RecipeTextImportRouter {
     private let interpreter: RecipeTextInterpreting
@@ -24,9 +20,7 @@ struct RecipeTextImportRouter {
     }
 }
 
-/// Selects the on-device FoundationModels interpreter when the OS and hardware
-/// support it, otherwise an interpreter that always declines so callers fall
-/// back to the heuristic parser / manual entry.
+/// On-device FoundationModels interpreter when OS/hardware support it, else one that always declines so callers fall back to the heuristic parser.
 func makeRecipeTextInterpreter() -> RecipeTextInterpreting {
     #if canImport(FoundationModels)
     if #available(iOS 26.0, *) {

@@ -1,17 +1,7 @@
 import Foundation
 
-/// Canonical parser for a single free-text ingredient line — "2 tablespoons olive
-/// oil", "1½ red pepper", "salt to taste". The single source of truth shared by
-/// the import builder and the manual wizard so both entry paths behave identically
-/// (previously two diverged copies).
-///
-/// Design notes:
-/// - Units are recognised by synonym (spelled-out or abbreviated) and stored as a
-///   canonical token ("tablespoons" → "tbsp", "grams" → "g") that `UnitConversion`
-///   understands.
-/// - A missing quantity is `0` (unspecified), never a fabricated `1`.
-/// - The name keeps commas / prep notes ("garlic, minced"); `IngredientNameFormatter`
-///   splits main-name vs prep note at display time.
+/// Canonical single-source parser for one free-text ingredient line, shared by the import builder and manual wizard so both entry paths match.
+/// Units → canonical synonym token for `UnitConversion`; missing quantity is 0 (never a fabricated 1); name keeps commas/prep notes, split at display time.
 enum IngredientLineParser {
 
     struct Parsed: Equatable {
@@ -22,8 +12,7 @@ enum IngredientLineParser {
     }
 
     static func parse(_ line: String) -> Parsed {
-        // 1. Unicode fractions → ASCII with surrounding spaces so a digit-glued
-        //    fraction ("1½") becomes "1 1/2", not "11/2".
+        // 1. Unicode fractions → spaced ASCII so a glued "1½" becomes "1 1/2", not "11/2".
         var working = normaliseUnicodeFractions(line)
 
         // 2. Drop parenthetical asides: "1 (14 oz) can ..." → "1  can ...".
@@ -37,8 +26,7 @@ enum IngredientLineParser {
         // 4. European decimal comma at the start: "1,5 dl" → "1.5 dl".
         working = working.replacingOccurrences(of: #"^(\d+),(\d+)"#, with: "$1.$2", options: .regularExpression)
 
-        // 4b. UK multipack "1 x 400g tin ..." — drop the leading "N x" so the pack
-        //     size (400 g) parses rather than the count.
+        // 4b. UK multipack "1 x 400g tin ..." — drop leading "N x" so the pack size parses, not the count.
         working = working.replacingOccurrences(of: #"^\d+\s*[x×]\s+(?=\d)"#, with: "", options: .regularExpression)
 
         // 5. Split a leading number glued to letters: "200g" → "200 g".
@@ -48,8 +36,7 @@ enum IngredientLineParser {
         working = working.replacingOccurrences(of: #"\s+"#, with: " ", options: .regularExpression)
                          .trimmingCharacters(in: .whitespaces)
 
-        // 6. Resolve the quantity exactly once (range upper-bound → mixed → simple),
-        //    so no later pass clobbers an earlier match.
+        // 6. Resolve quantity once (range upper-bound → mixed → simple) so no later pass clobbers an earlier match.
         let (quantityText, afterQuantity) = extractQuantity(from: working)
 
         // 7. Canonical unit.
@@ -75,8 +62,7 @@ enum IngredientLineParser {
     // MARK: - Quantity
 
     private static func extractQuantity(from text: String) -> (quantity: String, remaining: String) {
-        // Range like "3/4 - 1", "3/4 – 1", or "2 to 3": take the upper bound.
-        // (The trailing digit requirement keeps "2 tomatoes" from matching "to".)
+        // Range "3/4 - 1" / "2 to 3": take upper bound (trailing-digit requirement keeps "2 tomatoes" from matching "to").
         if let m = firstMatch(#"^[\d./]+\s*(?:[-–—]|to)\s*([\d./]+)(?:\s+|$)"#, in: text) {
             return (m.group(1), m.remainder)
         }
@@ -91,8 +77,7 @@ enum IngredientLineParser {
         return ("", text)
     }
 
-    /// Converts quantity text to a Double. Returns 0 for missing/unparseable
-    /// (an ingredient with no stated amount), never a fabricated 1.
+    /// Converts quantity text to Double; returns 0 for missing/unparseable (no stated amount), never a fabricated 1.
     static func parseQuantity(_ s: String) -> Double {
         let trimmed = s.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty else { return 0 }
@@ -126,8 +111,7 @@ enum IngredientLineParser {
         return (canonical, m.remainder)
     }
 
-    /// Synonym → canonical token. Abbreviations and spelled-out forms collapse to
-    /// one token; count/other units keep a literal singular form.
+    /// Synonym → canonical token; abbreviations and spelled-out forms collapse to one, count units keep a literal singular.
     private static let unitCanonical: [String: String] = [
         "teaspoon": "tsp", "teaspoons": "tsp", "tsp": "tsp",
         "tablespoon": "tbsp", "tablespoons": "tbsp", "tbsp": "tbsp", "tbs": "tbsp",
@@ -158,9 +142,7 @@ enum IngredientLineParser {
         "inch": "inch", "inches": "inch"
     ]
 
-    /// Anchored alternation of every synonym, longest first so "tablespoons" wins
-    /// over "tbsp" and "lb" over "l". Must be followed by whitespace or end so a
-    /// unit never swallows the start of an ingredient name ("l" vs "lemon").
+    /// Anchored synonym alternation, longest-first ("tablespoons" beats "tbsp", "lb" beats "l"), trailed by \s/end so a unit never eats a name ("l" vs "lemon").
     private static let unitPattern: String = {
         let alternatives = unitCanonical.keys
             .sorted { $0.count != $1.count ? $0.count > $1.count : $0 < $1 }

@@ -1,9 +1,7 @@
 import SwiftUI
 import UIKit
 
-/// Minimal camera-capture bridge for photo-to-recipe. `PhotosPicker` covers the
-/// library; live capture still needs UIKit's image picker. Hands the captured
-/// image back and dismisses itself.
+/// Camera-capture bridge for photo-to-recipe (PhotosPicker covers the library; live capture needs UIKit); hands the image back and dismisses.
 struct CameraPicker: UIViewControllerRepresentable {
     var onCapture: (UIImage) -> Void
     @Environment(\.dismiss) private var dismiss

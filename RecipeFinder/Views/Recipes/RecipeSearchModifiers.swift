@@ -52,8 +52,7 @@ struct FilterCacheUpdateModifier: ViewModifier {
     let updateAction: () -> Void
 
     func body(content: Content) -> some View {
-        // One observation of the whole criteria value (plus the recipe list)
-        // replaces a per-field list that had to be kept in sync by hand.
+        // Observe the whole criteria value (plus recipe list) instead of a hand-synced per-field list.
         content
             .onChange(of: filterCriteria) { _, _ in updateAction() }
             .onChange(of: recipes) { _, _ in updateAction() }

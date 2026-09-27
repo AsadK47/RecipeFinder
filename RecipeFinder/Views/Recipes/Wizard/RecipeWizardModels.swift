@@ -1,9 +1,7 @@
 import Foundation
 
 extension RecipeWizardView {
-    /// Recipe data used to pre-populate the wizard — from an import, the share
-    /// sheet, or an edit. Every field is optional so partial data can seed the
-    /// form and the user fills in the rest.
+    /// Data to pre-populate the wizard (import/share/edit); every field optional so partial data seeds the form.
     struct PrefilledRecipeData {
         let name: String?
         let description: String?
@@ -33,10 +31,7 @@ extension RecipeWizardView {
 }
 
 extension RecipeWizardView.PrefilledRecipeData {
-    /// Seeds the wizard from an on-device-interpreted recipe so the user reviews
-    /// and edits the AI's output before saving. Category/difficulty are left nil
-    /// (free text rarely states them reliably) and the one-line summary becomes
-    /// the notes seed.
+    /// Seeds the wizard from an on-device-interpreted recipe for user review; category/difficulty left nil (unreliable in free text), summary becomes the notes seed.
     init(interpreted recipe: InterpretedRecipe) {
         let summary = recipe.summary?.trimmingCharacters(in: .whitespacesAndNewlines)
         self.init(

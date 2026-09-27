@@ -1,10 +1,7 @@
 import SwiftUI
 import StoreKit
 
-/// RecipeFinder+ paywall. Presents the available subscription products (annual
-/// first) with purchase + restore, backed by the injected `\.subscription` seam
-/// so it previews/tests without touching StoreKit. Dismisses itself once the
-/// user becomes subscribed.
+/// RecipeFinder+ paywall: subscription products (annual first) with purchase/restore via the injected `\.subscription` seam; dismisses once subscribed.
 struct PaywallView: View {
     @Environment(\.subscription) private var subscription
     @Environment(\.dismiss) private var dismiss
@@ -125,8 +122,7 @@ struct PaywallView: View {
         }
     }
 
-    /// Shown when the fetch finished but there's nothing to buy (no products, or
-    /// a load failure) — a clear message plus retry, never a hung spinner.
+    /// Fetch finished with nothing to buy or a load failure — message plus retry, never a hung spinner.
     private func unavailablePlans(_ message: String) -> some View {
         VStack(spacing: AppTheme.spacing12) {
             Text(message)

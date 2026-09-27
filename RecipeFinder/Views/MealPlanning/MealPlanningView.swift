@@ -296,8 +296,7 @@ struct MealPlanningView: View {
         selectedMealTimes = Set(mealsForDate.map { $0.mealTime })
     }
 
-    /// Computes what the week would add, skipping anything already in the
-    /// Kitchen, then asks for confirmation rather than silently bulk-dumping.
+    /// Computes what the week would add, skipping items already in the Kitchen, then asks for confirmation rather than bulk-dumping.
     private func prepareAddWeek() {
         guard let start = currentWeekStart else { return }
         let summary = mealPlanningManager.weekShoppingSummary(forWeekStarting: start, recipes: recipes)
@@ -374,8 +373,7 @@ struct MealPlanningView: View {
 
     // MARK: - Derived date values
 
-    // DateFormatter construction is expensive (Obj-C runtime init). Static lets are
-    // created once and reused; body runs on every @ObservedObject change so this matters.
+    // DateFormatter init is expensive; static lets are built once and reused since body runs on every change.
     private static let monthYearFormatter: DateFormatter = {
         let f = DateFormatter(); f.dateFormat = "MMMM yyyy"; return f
     }()

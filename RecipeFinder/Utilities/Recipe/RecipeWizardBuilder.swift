@@ -1,14 +1,9 @@
 import Foundation
 
-/// Pure recipe-assembly logic extracted from `RecipeWizardView`.
-///
-/// Keeping validation and model construction here — rather than inline in the
-/// view's `createRecipe` — makes the wizard's business rules testable without a
-/// running UI.
+/// Pure recipe-assembly logic extracted from `RecipeWizardView` so validation/construction is testable without a running UI.
 enum RecipeWizardBuilder {
 
-    /// Errors surfaced to the wizard's validation alert. The wording matches
-    /// what the wizard has always shown so the extraction is behaviour-preserving.
+    /// Validation-alert errors; wording matches the wizard's originals so the extraction is behaviour-preserving.
     enum BuilderError: LocalizedError {
         case missingIngredients
         case missingInstructions
@@ -35,8 +30,7 @@ enum RecipeWizardBuilder {
         }
     }
 
-    /// Non-empty ingredient rows converted to domain `Ingredient`s. A blank
-    /// quantity falls back to `1.0`, matching the wizard's original behaviour.
+    /// Non-empty ingredient rows as domain `Ingredient`s; blank quantity falls back to 1.0, matching the wizard's original behaviour.
     static func makeIngredients(from items: [RecipeWizardView.IngredientItem]) -> [Ingredient] {
         items
             .filter { !$0.name.isEmpty }
@@ -46,9 +40,7 @@ enum RecipeWizardBuilder {
             }
     }
 
-    /// Validates the wizard's inputs, throwing on the first failure. Ordered to
-    /// match the wizard's original checks (name → servings → ingredients →
-    /// instructions) so the same alert appears for the same input.
+    /// Validates inputs, throwing on first failure in the wizard's original order (name → servings → ingredients → instructions) so the same alert appears.
     static func validate(
         name: String,
         servings: Int,

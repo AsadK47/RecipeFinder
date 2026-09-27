@@ -23,31 +23,21 @@ protocol Authenticating: AnyObject, Observable {
 }
 
 private struct AuthenticatingKey: EnvironmentKey {
-    // SwiftUI reads environment defaults on the main actor during view updates,
-    // so assuming main-actor isolation here is safe; the real app injects the
-    // shared instance at the composition root regardless.
+    // SwiftUI reads environment defaults on the main actor, so assuming main-actor isolation is safe.
     static var defaultValue: any Authenticating {
         MainActor.assumeIsolated { AuthenticationManager.shared }
     }
 }
 
 extension EnvironmentValues {
-    /// Injected authentication state. Defaults to the shared singleton; override
-    /// with `.environment(\.auth, fake)` in tests/previews.
+    /// Injected authentication state; defaults to the shared singleton, override with `.environment(\.auth, fake)` in tests/previews.
     var auth: any Authenticating {
         get { self[AuthenticatingKey.self] }
         set { self[AuthenticatingKey.self] = newValue }
     }
 }
 
-/// Owns the app's authentication state and orchestrates the sign-in flows. The
-/// individual concerns live in focused extensions to keep this a manageable size:
-/// - `AuthenticationManager+Models` — `User` / `AuthError`
-/// - `AuthenticationManager+Session` — status checks, session expiry, sign out
-/// - `AuthenticationManager+EmailAuth` — email/password sign in & sign up
-/// - `AuthenticationManager+Biometrics` — Face ID / Touch ID
-/// - `AuthenticationManager+UserStore` — Keychain user persistence
-/// - `AuthenticationManager+AppleSignIn` — Sign in with Apple
+/// Owns auth state and orchestrates sign-in flows; concerns split across `+Models`/`+Session`/`+EmailAuth`/`+Biometrics`/`+UserStore`/`+AppleSignIn` extensions.
 @MainActor
 @Observable
 final class AuthenticationManager: NSObject, Authenticating {
@@ -55,8 +45,7 @@ final class AuthenticationManager: NSObject, Authenticating {
     let logger = AppLogger.logger(category: "Authentication")
     let credentialManager = SecureCredentialManager.shared
 
-    // Auth state stays `private(set)`; the concern-specific extensions mutate it
-    // only via `setAuthState`/`setCurrentUser` below, preserving that invariant.
+    // Auth state stays `private(set)`; extensions mutate only via `setAuthState`/`setCurrentUser`.
     private(set) var isAuthenticated: Bool = false
     private(set) var currentUser: User?
     var authError: AuthError?
@@ -78,8 +67,7 @@ final class AuthenticationManager: NSObject, Authenticating {
         UserDefaults.standard.set(Date(), forKey: lastActiveTimestampKey)
     }
 
-    /// Sets the authentication state. Centralised so the `private(set)` invariant
-    /// is preserved: extensions call this rather than assigning the flags directly.
+    /// Sets auth state centrally so extensions don't assign the `private(set)` flags directly.
     func setAuthState(isAuthenticated: Bool, user: User?) {
         self.isAuthenticated = isAuthenticated
         self.currentUser = user

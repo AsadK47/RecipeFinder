@@ -1,8 +1,6 @@
 import Foundation
 
-/// Free-text heuristics for `RecipeParser`: recipe name, description, times,
-/// servings, and difficulty. Used when no structured data (JSON-LD / WPRM) is
-/// available.
+/// Free-text heuristics for `RecipeParser` (name, description, times, servings, difficulty) used when no structured data is available.
 extension RecipeParser {
 
     static func extractRecipeName(from html: String, text: String) -> String? {
@@ -19,9 +17,7 @@ extension RecipeParser {
                 }
             }
 
-            // Page titles are almost always "Recipe Name <separator> Site Name".
-            // Keep the first segment so the site name doesn't end up in the recipe
-            // title. Checked longest/most-specific separators first.
+            // Titles are usually "Recipe Name <sep> Site Name" — keep the first segment; most-specific separators first.
             for separator in [" | ", " – ", " — ", " • ", " - "] {
                 if let range = title.range(of: separator) {
                     let candidate = title[..<range.lowerBound].trimmingCharacters(in: .whitespaces)

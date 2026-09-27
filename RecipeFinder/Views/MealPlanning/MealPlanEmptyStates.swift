@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// Empty-state views for the meal planner's selected-day detail area. Extracted
-/// from `MealPlanningView`; the add-meal action is delegated through a closure.
+/// Empty state for the meal planner's selected-day detail; add-meal action delegated via closure.
 struct SelectedDayEmptyStateView: View {
     let selectedDateString: String
     let shortDateString: String
@@ -56,15 +55,7 @@ struct SelectedDayEmptyStateView: View {
             }
             .frame(maxWidth: .infinity)
             .padding(AppTheme.spacing40)
-            .background {
-                if cardStyle == .solid {
-                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
-                        .fill(colorScheme == .dark ? Color.white.opacity(AppTheme.glassSubtleOpacity) : Color.white.opacity(AppTheme.cardDarkOpacity))
-                } else {
-                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
-                        .fill(.ultraThinMaterial)
-                }
-            }
+            .appCard()
         }
     }
 }

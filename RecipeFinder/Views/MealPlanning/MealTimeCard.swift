@@ -76,17 +76,7 @@ struct MealTimeCard: View {
             }
         }
         .padding(AppTheme.spacing16)
-        .background {
-            if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
-                    .fill(colorScheme == .dark
-                        ? Color.white.opacity(AppTheme.glassSubtleOpacity)
-                        : Color.white.opacity(AppTheme.cardDarkOpacity))
-            } else {
-                RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
-                    .fill(.ultraThinMaterial)
-            }
-        }
+        .appCard()
         .overlay(
             RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                 .stroke(recipe != nil ? AppTheme.success.opacity(0.3) : Color.white.opacity(0.1), lineWidth: 1)
@@ -94,14 +84,10 @@ struct MealTimeCard: View {
     }
 }
 
-/// 52×52 recipe photo thumbnail with a meal-time icon circle as fallback.
-/// Resolves HTTP URLs and local file paths via Kingfisher; named assets via UIImage.
-/// When no valid image is available the original icon circle is shown instead.
+/// 52×52 recipe photo thumbnail (Kingfisher for URLs/local paths, UIImage for named assets) falling back to a meal-time icon circle.
 private struct MealThumbnail: View {
     let imageName: String
-    /// Non-nil when a recipe is assigned to this slot — drives the per-recipe
-    /// coloured placeholder when that recipe has no photo. Nil = empty slot, which
-    /// keeps the meal-time icon as the "tap to add" affordance.
+    /// Non-nil = recipe assigned (drives the coloured placeholder when it has no photo); nil = empty slot keeping the "tap to add" icon.
     let recipeName: String?
     let fallbackIcon: String
     let colorScheme: ColorScheme
@@ -109,8 +95,7 @@ private struct MealThumbnail: View {
     private static let size: CGFloat = 52
     @State private var loadFailed = false
 
-    // Shared resolver: handles http, legacy-absolute, and current relative paths,
-    // and versions the cache key so a replaced photo never serves the stale image.
+    // Shared resolver: handles http/legacy-absolute/relative paths and versions the cache key so a replaced photo never serves stale.
     private var kfSource: Source? {
         RecipeImageView.resolvedSource(for: imageName)
     }

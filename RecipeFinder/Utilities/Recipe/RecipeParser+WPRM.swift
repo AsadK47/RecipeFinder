@@ -1,8 +1,6 @@
 import Foundation
 
-/// WP Recipe Maker (WPRM) parsing for `RecipeParser`. Many WordPress food blogs
-/// emit `wprm-recipe-*` markup; this extracts structured fields from it and falls
-/// back to the text heuristics for instructions when needed.
+/// WP Recipe Maker parsing for `RecipeParser`; extracts structured fields from `wprm-recipe-*` markup, falling back to text heuristics for instructions.
 extension RecipeParser {
 
     static func extractWPRM(from html: String) -> ParsedRecipe? {
@@ -123,11 +121,7 @@ extension RecipeParser {
                 var name = ""
                 var notes = ""
 
-                // Broad pattern: captures all inner HTML of the amount span up to the closing </span>
-                // that is immediately followed by the unit/name/notes sibling span.
-                // This handles WPRM's nested fraction HTML, e.g.:
-                //   1<span class="wprm-recipe-fraction"><span>1</span>/<span>4</span></span>
-                // where the old ([^<]+) pattern would only capture "1", dropping the "/4".
+                // Capture the amount span's full inner HTML up to the sibling unit/name/notes span, so WPRM's nested fraction markup (1<span>1/4</span>) isn't truncated to "1" like the old ([^<]+).
                 let amountBroadPattern = #"class="wprm-recipe-ingredient-amount"[^>]*>([\s\S]*?)</span>\s*<span[^>]*class="[^"]*wprm-recipe-ingredient-(?:unit|name|notes)"#
                 if let amountRegex = try? NSRegularExpression(pattern: amountBroadPattern, options: []),
                    let firstMatch = amountRegex.firstMatch(in: liContent, options: [], range: NSRange(location: 0, length: (liContent as NSString).length)),

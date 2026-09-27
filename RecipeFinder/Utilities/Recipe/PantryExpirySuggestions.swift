@@ -1,8 +1,6 @@
 import Foundation
 
-/// Pure, side-effect-free helper that surfaces recipes whose ingredients
-/// match pantry items expiring within the next three days.
-/// Kept separate from the view so the logic is unit-testable in isolation.
+/// Pure helper surfacing recipes whose ingredients match pantry items expiring within three days; kept out of the view for isolated testing.
 enum PantryExpirySuggestions {
 
     struct Match {
@@ -13,8 +11,7 @@ enum PantryExpirySuggestions {
 
     static let maxSuggestions = 3
 
-    /// Returns up to `maxSuggestions` recipes that use at least one item
-    /// expiring within three days, sorted by match count (most matches first).
+    /// Up to `maxSuggestions` recipes using ≥1 item expiring within three days, sorted by match count (most first).
     static func matches(
         recipes: [RecipeModel],
         inventoryItems: [KitchenInventoryModel]

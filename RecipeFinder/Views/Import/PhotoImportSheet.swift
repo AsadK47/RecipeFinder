@@ -3,10 +3,7 @@ import PhotosUI
 
 private let logger = AppLogger.logger(category: "PhotoImport")
 
-/// Photo-to-recipe entry point: pick a cookbook page / screenshot from the
-/// library or capture one with the camera, OCR it on device (Vision), then route
-/// the recognised text through the same interpreter/parser and present the
-/// wizard to review and edit before saving.
+/// Photo-to-recipe: pick or capture a cookbook page/screenshot, OCR on device (Vision), route the text through the shared interpreter, then present the wizard to review before saving.
 struct PhotoImportSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
@@ -29,8 +26,7 @@ struct PhotoImportSheet: View {
     }
 
     var body: some View {
-        // Capture the actor-isolated theme as a Sendable value so the picker/button
-        // label closures (inferred @Sendable under Swift 6) don't touch @MainActor state.
+        // Capture theme/scheme as Sendable values so the @Sendable label closures don't touch @MainActor state.
         let theme = selectedTheme
         let scheme = colorScheme
         return NavigationStack {
@@ -136,8 +132,7 @@ struct PhotoImportSheet: View {
     }
 }
 
-/// File-scope so the `PhotosPicker`/`Button` label builders (inferred nonisolated
-/// under Swift 6) can build it without crossing actor isolation.
+/// File-scope so the nonisolated PhotosPicker/Button label builders can build it without crossing actor isolation.
 @ViewBuilder
 private func photoSourceLabel(icon: String, title: String, theme: AppTheme.ThemeType) -> some View {
     HStack(spacing: AppTheme.spacing12) {

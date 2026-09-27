@@ -122,9 +122,7 @@ extension AuthenticationManager {
     }
 
     #if DEBUG
-    /// Synchronous sign-in for UI tests: bypasses the async `completeSignIn` so
-    /// `isAuthenticated` is true before the first SwiftUI frame renders, eliminating
-    /// the race between `autoSignIn()` and the test's first tap.
+    /// Synchronous sign-in for UI tests: bypasses async `completeSignIn` so `isAuthenticated` is true before the first frame, avoiding a race with the test's first tap.
     func signInSyncForUITesting(email: String, password: String) throws {
         try validateSignInInput(email: email, password: password)
         let userInfo = try verifyAndRetrieveUser(email: email, password: password)

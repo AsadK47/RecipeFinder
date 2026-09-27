@@ -328,9 +328,7 @@ enum CategoryClassifier {
         var mainIngredients = Set<String>()
 
         for ingredient in ingredients {
-            // Take the part before the first comma, then trim. The parentheses matter:
-            // without them `.trimmingCharacters` bound to the `?? ingredient` fallback,
-            // leaving `cleaned` untrimmed.
+            // Part before first comma, then trim; parens needed or `.trimmingCharacters` binds to the `?? ingredient` fallback and leaves it untrimmed.
             let cleaned = (ingredient.components(separatedBy: ",").first ?? ingredient)
                 .trimmingCharacters(in: .whitespacesAndNewlines)
 

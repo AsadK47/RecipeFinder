@@ -1,9 +1,6 @@
 import SwiftUI
 
-/// Makes an info card tappable to edit, with a subtle pencil affordance in the
-/// top-trailing corner so it's discoverable. Used by the recipe-detail info
-/// cards (time, category/difficulty) so tapping them opens the pre-filled editor
-/// — a natural alternative to hunting for the toolbar Edit button.
+/// Makes an info card tappable to edit with a top-trailing pencil affordance; used by recipe-detail cards so tapping opens the pre-filled editor.
 extension View {
     func editableCard(onEdit: @escaping () -> Void, hint: String) -> some View {
         modifier(EditableCardModifier(onEdit: onEdit, hint: hint))

@@ -1,11 +1,9 @@
 import Foundation
 
-/// Curated lookup table of common ingredient substitutions.
-/// Normalized on both sides so lookups are case/whitespace insensitive.
+/// Curated ingredient-substitution table; both sides normalized so lookups are case/whitespace insensitive.
 enum IngredientSubstituteProvider {
 
-    // Called once per ingredient per RecipeIngredientsSection body evaluation;
-    // cache so repeated renders (pantry toggles, etc.) are O(1) lookups.
+    // Called per ingredient per RecipeIngredientsSection body eval; cache so repeated renders are O(1).
     private static let cache = MemoCache<String, [String]>(maxSize: 300)
 
     static func substitutes(for ingredientName: String) -> [String] {

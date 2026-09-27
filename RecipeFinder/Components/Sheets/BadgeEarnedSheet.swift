@@ -1,14 +1,11 @@
 import SwiftUI
 import ConfettiSwiftUI
 
-/// Celebratory bottom sheet shown once per badge unlock.
-/// Fires confetti + success haptic on appear, auto-dismisses after 4 s,
-/// and dequeues the next badge via `BadgeManager.dismissCelebration()`.
+/// Celebratory bottom sheet per badge unlock: confetti + haptic on appear, auto-dismisses after 4 s, dequeues next via `BadgeManager.dismissCelebration()`.
 struct BadgeEarnedSheet: View {
     let badge: BadgeType
     let onDismiss: () -> Void
-    /// Called when the user explicitly taps "View all badges" — distinct from
-    /// auto-dismiss so the caller can navigate to the badges screen.
+    /// Fired only on explicit "View all badges" tap (distinct from auto-dismiss) so the caller can navigate.
     let onViewAllBadges: () -> Void
 
     @Environment(\.appTheme) private var theme

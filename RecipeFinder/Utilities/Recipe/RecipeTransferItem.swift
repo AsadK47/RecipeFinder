@@ -1,9 +1,7 @@
 import CoreTransferable
 import UniformTypeIdentifiers
 
-/// Wraps a `RecipeModel` for use with `ShareLink`.
-/// Exports as a `.recipefinderrecipe` file so other RecipeFinder users can
-/// import it directly; falls back to plain text for every other app.
+/// Wraps a `RecipeModel` for `ShareLink`: exports a `.recipefinderrecipe` file for direct import by other users, plain text elsewhere.
 struct RecipeTransferItem: Transferable {
     let recipe: RecipeModel
 

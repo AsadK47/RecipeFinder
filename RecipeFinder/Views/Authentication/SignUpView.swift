@@ -32,9 +32,7 @@ struct SignUpView: View {
         ProcessInfo.processInfo.arguments.contains("-ui-testing")
     }
 
-    /// Under UI testing, suppress the strong-password AutoFill overlay so typed
-    /// credentials aren't intercepted or replaced (see RecipeFinderApp's
-    /// `-ui-testing` hooks). Harmless in release — the argument is never present.
+    /// Under UI testing, suppress the strong-password AutoFill overlay so typed credentials aren't intercepted (see RecipeFinderApp's `-ui-testing` hooks); no-op in release.
     private var passwordContentType: UITextContentType? {
         isUITesting ? nil : .newPassword
     }

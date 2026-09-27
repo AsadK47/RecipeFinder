@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// Compact 7-day week strip that replaces the full-month calendar grid.
-/// Tapping a day selects it; the parent shows that day's planned meals below.
-/// Prev/next arrow buttons advance by one week.
+/// Compact 7-day week strip replacing the month grid: tap a day to select it (parent shows its meals), arrows advance by a week.
 struct WeekStripView: View {
     let week: [Date]
     let selectedDate: Date
@@ -22,17 +20,7 @@ struct WeekStripView: View {
             dayStrip
         }
         .padding(AppTheme.spacing20)
-        .background {
-            if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: AppTheme.cornerRadius20)
-                    .fill(colorScheme == .dark
-                        ? Color.white.opacity(AppTheme.glassSubtleOpacity)
-                        : Color.white.opacity(AppTheme.cardDarkOpacity))
-            } else {
-                RoundedRectangle(cornerRadius: AppTheme.cornerRadius20)
-                    .fill(.ultraThinMaterial)
-            }
-        }
+        .appCard(cornerRadius: AppTheme.cornerRadius20)
     }
 
     private var weekHeader: some View {

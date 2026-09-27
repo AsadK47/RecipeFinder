@@ -1,8 +1,6 @@
 import Foundation
 
-/// Builds an `AttributedString` from a recipe's notes, detecting URLs and styling
-/// them as tappable links. Extracted from `RecipeDetailView` so the link
-/// detection is unit-testable and not computed inline in a SwiftUI `body`.
+/// Builds an `AttributedString` from notes, styling detected URLs as tappable links; extracted from `RecipeDetailView` so detection is testable, not inline in `body`.
 enum RecipeNotesFormatter {
 
     static func attributedString(from notes: String) -> AttributedString {

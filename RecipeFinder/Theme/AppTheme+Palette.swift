@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// Raw theme color palette and semantic surface/text colors. These are used by
-/// `AppTheme+Colors` (accents/adaptive) and `AppTheme+Gradients`.
+/// Raw theme color palette and semantic surface/text colors; consumed by `AppTheme+Colors` and `AppTheme+Gradients`.
 extension AppTheme {
 
     static let tealBrightLight = Color(red: 20/255, green: 184/255, blue: 166/255)

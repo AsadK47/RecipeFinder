@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// A reusable Recipe Wizard step for editing an ordered list of `EditableStep`s.
-/// Both the pre-prep and cooking-instructions steps use this; only the labels
-/// differ.
+/// Reusable wizard step for editing an ordered `EditableStep` list; used by both pre-prep and cooking-instructions (only labels differ).
 struct EditableStepsStepView: View {
     @Binding var steps: [EditableStep]
     let title: String

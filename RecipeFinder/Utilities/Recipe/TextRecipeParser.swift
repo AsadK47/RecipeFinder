@@ -1,9 +1,6 @@
 import Foundation
 
-/// Parses free-form recipe text (pasted notes, captions, messages) into wizard prefill data.
-/// Strategy 1: loose section headers ("INGREDIENTS 👇", "Method:") split the text; if only one
-/// section is found, the other is filled by strategy 2. Strategy 2: classify each line —
-/// quantity/bullet/emoji-led = ingredient, numbered/imperative = instruction.
+/// Parses free-form recipe text (notes, captions, messages) into wizard prefill: S1 splits on loose section headers ("INGREDIENTS 👇", "Method:"), filling any missing section via S2 line classification (quantity/bullet/emoji = ingredient, numbered/imperative = instruction).
 enum TextRecipeParser {
 
     static func parse(_ text: String) -> RecipeWizardView.PrefilledRecipeData? {
@@ -149,10 +146,7 @@ enum TextRecipeParser {
         matchesHeader(line, keywords: ingredientHeaderKeywords + instructionHeaderKeywords)
     }
 
-    /// Loose header match: reduce the line to just its letters/spaces (dropping
-    /// emoji, colons, `#`, bullets) and compare to the keyword, so "INGREDIENTS
-    /// 👇" and "Method:" both match while "Ingredients you'll need for the base"
-    /// (a longer phrase) does not.
+    /// Loose match: reduce line to letters/spaces and compare to keyword, so "INGREDIENTS 👇"/"Method:" match but a longer phrase like "Ingredients you'll need for the base" doesn't.
     private static func matchesHeader(_ line: String, keywords: [String]) -> Bool {
         let normalized = normalizedHeader(line)
         guard !normalized.isEmpty else { return false }
@@ -174,9 +168,7 @@ enum TextRecipeParser {
     private static func classifyLines(_ lines: [String]) -> (ingredients: [String], instructions: [String]) {
         var ingredients: [String] = []
         var instructions: [String] = []
-        // Caption-style text sometimes repeats the recipe title on the second line
-        // (e.g. "Margaritas\nMargaritas\n…"). Skip it so it can't merge into the
-        // first real instruction step.
+        // Captions sometimes repeat the title on line 2 ("Margaritas\nMargaritas\n…"); skip it so it can't merge into the first real step.
         let normalizedTitle = stripListMarker(lines.first ?? "").lowercased()
 
         // Skip the title line when classifying.
@@ -185,10 +177,7 @@ enum TextRecipeParser {
             guard !stripped.isEmpty else { continue }
             if stripped.lowercased() == normalizedTitle && !looksLikeIngredient(line) { continue }
 
-            // Numbered steps ("1. Preheat…", "Step 2: …") take priority because
-            // they start with a digit and would otherwise match looksLikeIngredient.
-            // Everything else that isn't a structural ingredient defaults to an
-            // instruction — no finite verb whitelist needed.
+            // Numbered steps take priority (digit-led, else they'd match looksLikeIngredient); anything non-ingredient defaults to instruction, no verb whitelist.
             if looksLikeNumberedStep(line) {
                 instructions.append(line)
             } else if looksLikeIngredient(line) {
@@ -202,8 +191,7 @@ enum TextRecipeParser {
     }
 
     private static func looksLikeIngredient(_ line: String) -> Bool {
-        // Quantity-led ("2 cups flour", "½ tsp salt"), bulleted ("- flour"),
-        // or emoji-led ("🧄 garlic, minced").
+        // Quantity-led ("2 cups flour"), bulleted ("- flour"), or emoji-led ("🧄 garlic").
         line.range(of: #"^[-•*]?\s*(\d|[¼½¾⅓⅔⅛⅜⅝⅞⅕⅖⅗⅘⅙⅚])"#, options: .regularExpression) != nil
             || line.range(of: #"^[-•*]\s+\S"#, options: .regularExpression) != nil
             || startsWithBullet(line)
@@ -214,8 +202,7 @@ enum TextRecipeParser {
         if line.range(of: #"^(step\s+\d+|\d+[\.\)])\s*"#, options: [.regularExpression, .caseInsensitive]) != nil {
             return true
         }
-        // OCR sometimes drops the period: "1 Preheat oven…". Case-sensitive so
-        // "2 cups flour" (lowercase 'c') isn't mistaken for a numbered step.
+        // OCR drops the period ("1 Preheat oven…"); case-sensitive so "2 cups flour" isn't mistaken for a step.
         return line.range(of: #"^\d+\s+[A-Z][a-z]"#, options: .regularExpression) != nil
     }
 
@@ -248,8 +235,7 @@ enum TextRecipeParser {
         return isBulletCharacter(first)
     }
 
-    /// A leading decoration — dash/star bullet or an emoji — never a letter,
-    /// digit, or fraction (those are recipe content we must keep).
+    /// A leading decoration (dash/star bullet or emoji), never a letter/digit/fraction (those are content to keep).
     private static func isBulletCharacter(_ c: Character) -> Bool {
         if c.isLetter || c.isNumber { return false }
         if "-•*▪◦‣·▫●○▶►➤➥➢".contains(c) { return true }
@@ -257,19 +243,14 @@ enum TextRecipeParser {
         return c.unicodeScalars.contains { $0.properties.isEmoji && ($0.value > 0x238C || $0.properties.isEmojiPresentation) }
     }
 
-    /// True for footnotes / asides that shouldn't be an ingredient or a step:
-    /// a "Note:"/"Tip:" line, or a "*"-glued footnote ("*on the rocks: ...").
-    /// A spaced "* " bullet ("* 2 eggs") is a real ingredient and is NOT matched —
-    /// footnotes glue the asterisk to their text, bullets don't.
+    /// Footnotes/asides that aren't ingredient or step: a "Note:"/"Tip:" line or a "*"-glued footnote; a spaced "* " bullet ("* 2 eggs") is real content and is NOT matched.
     private static func isAsideLine(_ line: String) -> Bool {
         let trimmed = line.trimmingCharacters(in: .whitespaces)
         return trimmed.range(of: #"^(note|notes|tip|tips)\b\s*[:.\-]"#, options: [.regularExpression, .caseInsensitive]) != nil
             || trimmed.range(of: #"^\*[^\s*]"#, options: .regularExpression) != nil
     }
 
-    /// True for non-ingredient sidebar/metadata lines that OCR and captions mix in
-    /// with the ingredient list — servings, times, and lone labels/numbers — so
-    /// they never become "ingredients".
+    /// Non-ingredient sidebar/metadata lines OCR/captions mix in (servings, times, lone labels/numbers) so they never become "ingredients".
     private static func isMetadataLine(_ line: String) -> Bool {
         let trimmed = line.trimmingCharacters(in: .whitespaces)
         let patterns = [
@@ -285,13 +266,7 @@ enum TextRecipeParser {
 
     // MARK: - Instruction line merging
 
-    /// Joins OCR/column-wrapped instruction lines into logical steps.
-    /// Vision OCR on a printed page produces one physical line per observation;
-    /// without merging, a single instruction like "Heat a wok…add the oil,
-    /// garlic…" becomes a dozen fragmented pseudo-steps. The merge rule:
-    /// a new step only begins when the previous line ended with sentence-closing
-    /// punctuation (.!?) AND the current line starts with an uppercase letter, OR
-    /// when the current line looks like an explicit numbered step.
+    /// Joins OCR/column-wrapped lines into logical steps (one OCR observation per physical line would otherwise fragment a step): new step begins only when the previous line ended in .!? and this one starts uppercase, or it's an explicit numbered step.
     private static func mergeInstructionLines(_ lines: [String]) -> [String] {
         guard !lines.isEmpty else { return [] }
         var steps: [String] = []
@@ -315,8 +290,7 @@ enum TextRecipeParser {
         return prevEndsSentence && (line.first?.isUppercase ?? false)
     }
 
-    /// Extracts a time value in minutes. Pattern must capture the number in group 1.
-    /// Appends an optional unit group so "2 hours" returns 120 and "45 mins" returns 45.
+    /// Time in minutes (pattern must capture the number in group 1); appends an optional unit group so "2 hours" → 120 and "45 mins" → 45.
     private static func extractMinutes(_ pattern: String, in text: String) -> Int? {
         let withUnit = pattern + #"\s*(h(?:r|rs|our|ours)?|m(?:in|ins|inute|inutes)?)?\b"#
         guard let regex = try? NSRegularExpression(pattern: withUnit, options: .caseInsensitive) else { return nil }

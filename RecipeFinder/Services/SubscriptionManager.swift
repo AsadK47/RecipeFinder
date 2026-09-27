@@ -3,9 +3,7 @@ import StoreKit
 
 private let logger = AppLogger.logger(category: "Subscription")
 
-/// Behavioural seam for RecipeFinder+ subscription state so views (e.g. the
-/// paywall) depend on this protocol rather than the `SubscriptionManager`
-/// singleton — and previews/tests can inject a fake without touching StoreKit.
+/// Behavioural seam so views depend on this protocol, not the `SubscriptionManager` singleton, and tests can inject a fake without touching StoreKit.
 @MainActor
 protocol SubscriptionProviding: AnyObject, Observable {
     var isSubscribed: Bool { get }
@@ -18,9 +16,7 @@ protocol SubscriptionProviding: AnyObject, Observable {
     func restorePurchases() async
 }
 
-/// Where the product fetch stands, so the paywall can show a spinner, an error
-/// with retry, or the plans — but never an indefinite spinner when the fetch
-/// finishes with no products (e.g. StoreKit not configured) or throws.
+/// Product-fetch state so the paywall shows a spinner, error+retry, or plans — never an indefinite spinner when the fetch returns empty or throws.
 enum ProductLoadState: Equatable {
     case loading
     case loaded
@@ -28,26 +24,21 @@ enum ProductLoadState: Equatable {
 }
 
 private struct SubscriptionProvidingKey: EnvironmentKey {
-    // SwiftUI reads environment defaults on the main actor during view updates,
-    // so assuming main-actor isolation here is safe; the real app injects the
-    // shared instance at the composition root regardless.
+    // SwiftUI reads environment defaults on the main actor, so assuming main-actor isolation is safe.
     static var defaultValue: any SubscriptionProviding {
         MainActor.assumeIsolated { SubscriptionManager.shared }
     }
 }
 
 extension EnvironmentValues {
-    /// Injected subscription state. Defaults to the shared singleton; override with
-    /// `.environment(\.subscription, fake)` in tests/previews.
+    /// Injected subscription state; defaults to the shared singleton, override with `.environment(\.subscription, fake)` in tests/previews.
     var subscription: any SubscriptionProviding {
         get { self[SubscriptionProvidingKey.self] }
         set { self[SubscriptionProvidingKey.self] = newValue }
     }
 }
 
-/// Owns subscription state and orchestrates StoreKit 2 purchase / restore /
-/// entitlement flows for RecipeFinder+. Wire `isSubscribed` into any gate that
-/// requires a paid entitlement.
+/// Owns subscription state and orchestrates StoreKit 2 purchase/restore/entitlement for RecipeFinder+; wire `isSubscribed` into any paid gate.
 @MainActor
 @Observable
 final class SubscriptionManager: SubscriptionProviding {
@@ -148,8 +139,7 @@ final class SubscriptionManager: SubscriptionProviding {
         }
     }
 
-    /// Re-evaluates current entitlements and updates `isSubscribed`. Call on
-    /// launch and whenever a transaction update arrives.
+    /// Re-evaluates entitlements and updates `isSubscribed`; call on launch and on each transaction update.
     func checkEntitlement() async {
         var entitled = false
         for await result in Transaction.currentEntitlements {
@@ -164,8 +154,7 @@ final class SubscriptionManager: SubscriptionProviding {
 
     // MARK: - Private helpers
 
-    /// Listens for background transaction updates (renewals, refunds, revocations)
-    /// so `isSubscribed` stays current without requiring a relaunch.
+    /// Listens for background transaction updates (renewals, refunds, revocations) so `isSubscribed` stays current without a relaunch.
     private func startTransactionListener() -> Task<Void, Error> {
         Task.detached { [weak self] in
             for await result in Transaction.updates {

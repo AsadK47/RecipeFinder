@@ -1,9 +1,6 @@
 import Foundation
 
-/// Structured recipe data pulled from a web page, before it's turned into a
-/// `RecipeModel`. Foundation-only and `Codable` so the share extension can
-/// produce one, hand it to the app through the App Group, and the app can build
-/// the final recipe on next launch.
+/// Structured web-page recipe data before it becomes a `RecipeModel`; Foundation-only + Codable so the extension can produce one, pass it via App Group, and the app builds the recipe on next launch.
 struct ExtractedRecipeData: Equatable, Sendable, Codable {
     let name: String
     let description: String?
@@ -47,10 +44,7 @@ enum RecipeImportError: LocalizedError, Equatable {
     }
 }
 
-/// Pure fetch-and-parse core shared by the app's `RecipeImporter` (which wraps it
-/// in observable UI state) and the share extension (which runs it headless and
-/// stashes the result). Foundation-only and free of app singletons so it compiles
-/// into the extension target without dragging the UI/model layer along.
+/// Pure fetch-and-parse core shared by `RecipeImporter` (observable UI wrapper) and the headless share extension; Foundation-only and singleton-free so it compiles into the extension without the UI/model layer.
 struct RecipeImportPipeline: Sendable {
     private let fetcher: HTMLFetching
 
@@ -58,9 +52,7 @@ struct RecipeImportPipeline: Sendable {
         self.fetcher = fetcher
     }
 
-    /// Fetches the page and parses it into an outcome, following up to five
-    /// redirects. Runs off any actor and touches no UI state, so it's unit-testable
-    /// with a fake `HTMLFetching`.
+    /// Fetches and parses the page, following up to five redirects; actor-free and UI-free so it's testable with a fake `HTMLFetching`.
     func fetchAndParse(from url: URL, redirectCount: Int = 0) async throws -> RecipeImportOutcome {
         guard redirectCount < 5 else {
             throw RecipeImportError.tooManyRedirects
@@ -74,9 +66,7 @@ struct RecipeImportPipeline: Sendable {
 
         let (data, httpResponse) = try await fetcher.fetch(request)
 
-        // Follow every redirect status (301/302/303/307/308). In production
-        // `URLSession` already follows them, so this only fires for an injected
-        // fetcher that surfaces the 3xx itself (tests, headless extension paths).
+        // Follow 3xx redirects; only fires for an injected fetcher that surfaces them (tests/extension) since production URLSession already does.
         if [301, 302, 303, 307, 308].contains(httpResponse.statusCode) {
             if let location = httpResponse.value(forHTTPHeaderField: "Location"),
                let redirectURL = URL(string: location, relativeTo: url) {
@@ -100,10 +90,7 @@ struct RecipeImportPipeline: Sendable {
             throw RecipeImportError.missingRequiredData("No ingredients found")
         }
 
-        // Instructions are optional — many sites structure them in ways the parser misses
-        // Leave instructions empty when none parse (don't fabricate a placeholder
-        // step) — the source URL is kept in notes, and the import flow prompts the
-        // user to review/add steps rather than silently saving a fake one.
+        // Instructions optional (parser misses some layouts); leave empty rather than fabricate a step — source URL stays in notes and the flow prompts the user to add steps.
         let instructions = parsed.instructions
 
         let extracted = ExtractedRecipeData(
@@ -126,12 +113,7 @@ struct RecipeImportPipeline: Sendable {
         return RecipeImportOutcome(data: extracted, confidence: parsed.confidence)
     }
 
-    /// Decodes fetched bytes into HTML text. Recipe blogs are frequently served as
-    /// ISO-8859-1 / Windows-1252, for which a strict UTF-8 decode returns nil and
-    /// used to kill the import (`.invalidEncoding`). Honour the response's declared
-    /// charset first, then try UTF-8 and the common legacy encodings, and finally
-    /// fall back to a lossy UTF-8 decode so a single stray byte can never sink the
-    /// whole import.
+    /// Decodes bytes to HTML: declared charset → UTF-8/legacy encodings → lossy UTF-8, so latin-1/CP1252 blogs (once `.invalidEncoding` failures) or a stray byte can't sink the import.
     static func decodeHTML(_ data: Data, response: HTTPURLResponse) -> String {
         if let charset = response.textEncodingName {
             let cfEncoding = CFStringConvertIANACharSetNameToEncoding(charset as CFString)

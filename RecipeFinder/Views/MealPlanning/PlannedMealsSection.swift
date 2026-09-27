@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// The "Planned Meals" list shown for the selected day.
-/// Drag-to-reorder: drag the ≡ handle (to the right of each card) to reorder within the day.
-/// The handle lives outside the card boundary so it renders cleanly without clipping.
+/// "Planned Meals" list for the selected day; drag the ≡ handle (right of each card, outside the boundary to avoid clipping) to reorder within the day.
 struct PlannedMealsSection: View {
     @Binding var mealTimes: [MealTime]
     let selectedDateString: String
@@ -71,8 +69,7 @@ struct PlannedMealsSection: View {
                 }
             }
 
-            // ≡ grip handle lives outside the card so it never clips against the card boundary.
-            // Only this handle initiates the drag — tapping the card still changes the recipe.
+            // ≡ grip handle sits outside the card (no clipping); only it initiates the drag — tapping the card still changes the recipe.
             Image(systemName: "line.3.horizontal")
                 .font(.system(size: AppTheme.fontSize16))
                 .foregroundStyle(colorScheme == .dark
@@ -107,17 +104,7 @@ struct PlannedMealsSection: View {
                 Spacer()
             }
             .padding(AppTheme.spacing16)
-            .background {
-                if cardStyle == .solid {
-                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
-                        .fill(colorScheme == .dark
-                            ? Color.white.opacity(AppTheme.glassSubtleOpacity)
-                            : Color.white.opacity(AppTheme.cardDarkOpacity))
-                } else {
-                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
-                        .fill(.ultraThinMaterial)
-                }
-            }
+            .appCard()
             .overlay(
                 RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                     .stroke(Color.white.opacity(0.1), style: StrokeStyle(lineWidth: 1, dash: [5]))

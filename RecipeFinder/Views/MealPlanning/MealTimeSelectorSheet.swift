@@ -95,15 +95,7 @@ struct MealTimeSelectorSheet: View {
                                         }
                                     }
                                     .padding(AppTheme.spacing16)
-                                    .background {
-                                        if cardStyle == .solid {
-                                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
-                                                .fill(colorScheme == .dark ? Color.white.opacity(AppTheme.glassSubtleOpacity) : Color.white.opacity(AppTheme.cardDarkOpacity))
-                                        } else {
-                                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
-                                                .fill(.ultraThinMaterial)
-                                        }
-                                    }
+                                    .appCard()
                                     .overlay(
                                         RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                                             .stroke(selectedMealTimes.contains(mealTime) 

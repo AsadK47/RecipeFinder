@@ -1,12 +1,6 @@
 import SwiftUI
 
-/// Consistent chrome for a text/menu input on a form card: a translucent fill
-/// that blends into the frosted `.appCard()` surface — the same treatment the
-/// recipe-name field uses — instead of an opaque box.
-///
-/// Use this (paired with `.textFieldStyle(.plain)`) rather than
-/// `.textFieldStyle(.roundedBorder)`, whose solid white fill clashes with the
-/// app's frosted cards. One home for field chrome so inputs can't drift.
+/// Translucent input chrome that blends into frosted `.appCard()` surfaces; pair with `.textFieldStyle(.plain)` instead of `.roundedBorder` (whose solid fill clashes).
 extension View {
     func appInputField(cornerRadius: CGFloat = AppTheme.cornerRadius12) -> some View {
         modifier(AppInputFieldModifier(cornerRadius: cornerRadius))
@@ -24,9 +18,7 @@ private struct AppInputFieldModifier: ViewModifier {
                 RoundedRectangle(cornerRadius: cornerRadius)
                     .fill(Color.white.opacity(AppTheme.dividerOpacity))
             )
-            // Hairline border so the field stays legible on any part of the
-            // background gradient — the translucent fill alone has too little
-            // contrast on the lighter areas. Divider colour adapts to light/dark.
+            // Hairline border so the field stays legible over lighter gradient areas where the translucent fill has too little contrast.
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius)
                     .stroke(AppTheme.dividerColor, lineWidth: 0.5)

@@ -12,9 +12,7 @@ struct MealPlanModel: Identifiable, Codable, Hashable {
     var isRecurring: Bool
     var createdDate: Date
 
-    // Explicit CodingKeys so the synthesised encode(to:) includes isRecurring,
-    // and the hand-written init(from:) can decode it with a default of false
-    // for JSON written before this field existed.
+    // Explicit keys so isRecurring is encoded and decodes to false for JSON predating the field.
     private enum CodingKeys: String, CodingKey {
         case id, recipeId, recipeName, date, mealTime, servings, notes,
              isCompleted, isRecurring, createdDate
@@ -136,11 +134,7 @@ struct WeeklyMealPlan: Identifiable {
     }
 }
 
-/// Aggregated shopping needs for one week of planned meals.
-///
-/// Ingredient names are normalized and merged, so "2 cups chopped onions" in
-/// one recipe and "1 onion, diced" in another become a single line item whose
-/// quantity is the number of planned meals that use it.
+/// Aggregated weekly shopping needs; ingredient names are normalized and merged, quantity = planned meals using each.
 struct WeekShoppingSummary: Equatable {
     struct Item: Equatable {
         let name: String

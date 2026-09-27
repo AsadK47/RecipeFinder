@@ -3,14 +3,10 @@ import SwiftUI
 
 private let logger = AppLogger.logger(category: "RecipeImporter")
 
-/// Observable wrapper around `RecipeImportPipeline` that drives the interactive
-/// import UI. The fetch/parse logic itself lives in the pipeline (Foundation-only,
-/// shared with the share extension); this type only adds `@Published` state and
-/// the network-availability guard.
+/// Observable wrapper driving the interactive import UI; fetch/parse lives in `RecipeImportPipeline`, this only adds `@Published` state and the network guard.
 @MainActor
 final class RecipeImporter: ObservableObject {
-    // The concrete types moved to `RecipeImportPipeline` so the extension can
-    // share them; callers and tests still reach them through `RecipeImporter`.
+    // Concrete types live in `RecipeImportPipeline` (shared with the extension); callers/tests still reach them via `RecipeImporter`.
     typealias ExtractedRecipeData = RecipeFinder.ExtractedRecipeData
     typealias ImportOutcome = RecipeImportOutcome
     typealias ImportError = RecipeImportError
@@ -31,8 +27,7 @@ final class RecipeImporter: ObservableObject {
         self.isNetworkAvailable = isNetworkAvailable
     }
 
-    /// Drives the observable UI state around a single import: fetches + parses
-    /// off the main actor, then publishes the result (or an error message).
+    /// Drives observable state for one import: fetch+parse off the main actor, then publish the result or an error message.
     func importRecipe(from url: URL) async {
         isLoading = true
         errorMessage = nil
@@ -57,8 +52,7 @@ final class RecipeImporter: ObservableObject {
         }
     }
 
-    /// Delegates to the shared pipeline. Kept as an instance method for source and
-    /// test compatibility with the pre-extraction API.
+    /// Delegates to the shared pipeline; kept an instance method for source/test compatibility with the pre-extraction API.
     nonisolated func fetchAndParse(from url: URL, redirectCount: Int = 0) async throws -> ImportOutcome {
         try await pipeline.fetchAndParse(from: url, redirectCount: redirectCount)
     }

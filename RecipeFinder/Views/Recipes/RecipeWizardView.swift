@@ -8,10 +8,7 @@ struct RecipeWizardView: View {
     let onComplete: (RecipeModel) -> Void
     let prefilledData: PrefilledRecipeData?
     let editingRecipeId: UUID?
-    /// When set, the editor shows ONLY this section (a focused single-section
-    /// edit, e.g. tapping a recipe's ingredients). When nil, it shows every
-    /// section as one form (create / full edit). Same save path either way —
-    /// the sections are modular presentations of one canonical editor.
+    /// When set, shows ONLY this section (focused edit); when nil, shows all sections as one form (create/full edit). Same save path — modular views of one canonical editor.
     let focus: Section?
 
     /// The modular sections of the editor, in display order.
@@ -30,16 +27,14 @@ struct RecipeWizardView: View {
             }
         }
 
-        /// Sections to render for a given focus: every section (in order) when
-        /// unfocused, otherwise just the focused one. Pure so it's unit-tested.
+        /// Sections to render: all (in order) when unfocused, else just the focused one. Pure so it's unit-tested.
         static func shown(for focus: Section?) -> [Section] {
             guard let focus else { return allCases }
             return [focus]
         }
     }
 
-    /// The editor's navigation title. Pure so it's unit-tested independently of
-    /// the view.
+    /// The editor's navigation title. Pure so it's unit-tested independently of the view.
     static func editorTitle(focus: Section?, isEditing: Bool) -> String {
         if let focus { return focus.title }
         return isEditing ? "Edit Recipe" : "New Recipe"

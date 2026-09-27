@@ -10,8 +10,7 @@ struct IngredientNameFormatter {
         "room temperature", "softened", "melted", "beaten"
     ]
 
-    // NSRegularExpression is expensive to construct — cache once at load time instead of
-    // allocating two instances per mainIngredientName call (called for every ingredient row).
+    // NSRegularExpression is expensive to construct — cache once instead of allocating per ingredient row.
     private static let leadingRangeRegex = try? NSRegularExpression(pattern: #"^[-–]\s+"#, options: [])
     private static let qtyUnitRegex = try? NSRegularExpression(
         pattern: #"^[\d/\.\-]+\s+(tbsp|tsp|cups?|ml|l|g|kg|oz|lbs?|inch(?:es)?)\s+"#,

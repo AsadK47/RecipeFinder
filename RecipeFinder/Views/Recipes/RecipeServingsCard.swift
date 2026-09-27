@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// The servings display, +/- controls, and quick-scale buttons on the recipe
-/// detail screen. Extracted from `RecipeDetailView`; mutates the bound recipe's
-/// servings directly.
+/// Servings display, +/- controls, and quick-scale buttons extracted from `RecipeDetailView`; mutates the bound recipe's servings directly.
 struct RecipeServingsCard: View {
     @Binding var recipe: RecipeModel
 

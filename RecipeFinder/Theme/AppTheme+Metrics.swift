@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// Sizing tokens: fonts, spacing, corner radii, icon/height/width dimensions,
-/// shadows, and other layout metrics.
+/// Sizing tokens: fonts, spacing, corner radii, icon/height/width dimensions, shadows.
 extension AppTheme {
 
     static let fontSize4: CGFloat = 4

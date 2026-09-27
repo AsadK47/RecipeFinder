@@ -3,8 +3,7 @@ import UIKit
 
 private let logger = AppLogger.logger(category: "Account")
 
-/// Behavioural seam for the account profile so views depend on this protocol
-/// rather than the `AccountManager` singleton — and tests can inject a fake.
+/// Behavioural seam so views depend on this protocol, not the `AccountManager` singleton, and tests can inject a fake.
 @MainActor
 protocol AccountManaging: AnyObject, Observable {
     var firstName: String { get }
@@ -18,17 +17,14 @@ protocol AccountManaging: AnyObject, Observable {
 }
 
 private struct AccountManagingKey: EnvironmentKey {
-    // SwiftUI reads environment defaults on the main actor during view updates,
-    // so assuming main-actor isolation here is safe; the real app injects the
-    // shared instance at the composition root regardless.
+    // SwiftUI reads environment defaults on the main actor, so assuming main-actor isolation is safe.
     static var defaultValue: any AccountManaging {
         MainActor.assumeIsolated { AccountManager.shared }
     }
 }
 
 extension EnvironmentValues {
-    /// Injected account profile. Defaults to the shared singleton; override with
-    /// `.environment(\.account, fake)` in tests/previews.
+    /// Injected account profile; defaults to the shared singleton, override with `.environment(\.account, fake)` in tests/previews.
     var account: any AccountManaging {
         get { self[AccountManagingKey.self] }
         set { self[AccountManagingKey.self] = newValue }

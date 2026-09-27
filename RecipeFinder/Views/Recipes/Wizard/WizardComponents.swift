@@ -1,11 +1,8 @@
 import SwiftUI
 
-/// Shared chrome for the Recipe Wizard steps, extracted from `RecipeWizardView`
-/// so each step can live in its own file.
+// Shared chrome for the Recipe Wizard steps, extracted from `RecipeWizardView`.
 
-/// The title/subtitle/illustration header shown at the top of each wizard
-/// section. Renders as a plain section heading — the recipe editor is a single
-/// scrollable form, so there is no "Step X of Y" stepping.
+/// Plain section heading (title/subtitle/illustration) — the editor is one scrollable form, so there's no "Step X of Y".
 struct WizardStepHeader: View {
     let title: String
     let subtitle: String
@@ -36,9 +33,7 @@ struct WizardStepHeader: View {
     }
 }
 
-/// The card surface around each wizard section. Delegates to the app-wide
-/// `.appCard()` token so the wizard matches every other card in the app (and
-/// respects the solid/frosted setting) instead of hand-rolling its own fill.
+/// Card surface for each wizard section; delegates to `.appCard()` so it matches every other card (and respects solid/frosted) instead of hand-rolling a fill.
 struct WizardCard<Content: View>: View {
     @ViewBuilder let content: () -> Content
 

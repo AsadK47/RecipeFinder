@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// Step 3 of the Recipe Wizard: the ingredient list with amount/unit and
-/// autocomplete suggestions.
+/// Step 3 of the Recipe Wizard: ingredient list with amount/unit and autocomplete suggestions.
 struct IngredientsStepView: View {
     @Binding var ingredientItems: [RecipeWizardView.IngredientItem]
     @FocusState.Binding var focusedIngredientID: UUID?

@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// Sheet that presents a field-by-field diff between the saved recipe and a
-/// freshly-fetched upstream version. The user toggles which fields to accept;
-/// personal data (notes, tags, servings, ratings) is always preserved.
+/// Field-by-field diff of saved vs. freshly-fetched upstream recipe; user toggles fields to accept, personal data always preserved.
 struct RecipeRefreshSheet: View {
     let diff: RecipeDiff
     let sourceURL: URL

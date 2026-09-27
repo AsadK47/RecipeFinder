@@ -1,10 +1,6 @@
 import Foundation
 
-/// Abstraction over the network fetch used by the recipe importer.
-///
-/// Injecting this (rather than reaching for `URLSession.shared` directly) lets
-/// the importer be tested offline with a fake that returns canned HTML,
-/// redirects, or errors.
+/// Abstraction over the importer's network fetch so it can be tested offline with a fake returning canned HTML/redirects/errors.
 protocol HTMLFetching: Sendable {
     func fetch(_ request: URLRequest) async throws -> (data: Data, response: HTTPURLResponse)
 }

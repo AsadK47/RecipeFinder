@@ -81,8 +81,7 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         self.photoNames = photoNames
     }
 
-    // Custom decoder so old backups (pre-v13) that lack the new keys still
-    // decode cleanly with safe defaults rather than throwing .keyNotFound.
+    // Custom decoder so pre-v13 backups lacking new keys decode with safe defaults instead of throwing .keyNotFound.
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         id                  = try c.decode(UUID.self,          forKey: .id)
@@ -109,10 +108,7 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         photoNames          = (try? c.decodeIfPresent([String].self,   forKey: .photoNames))  ?? []
     }
     
-    // Mirror the fields `==` compares, not just `id`. An id-only hash collides
-    // for same-recipe-different-content, which silently defeats content-keyed
-    // caches (e.g. RecipeSearchView's filter cache) — a new cook photo or rating
-    // wouldn't invalidate them, leaving stale cards until relaunch.
+    // Mirror the fields `==` compares, not just `id`, so content-keyed caches invalidate on rating/photo changes.
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
         hasher.combine(currentServings)
@@ -135,10 +131,7 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         lhs.photoNames == rhs.photoNames
     }
     
-    /// The single image that represents this recipe in lists and cards: the main
-    /// image if one is set, otherwise the first post-cook photo. Lets a recipe
-    /// with no imported/main image still show the user's cook photo on its card
-    /// instead of a permanent filler glyph.
+    /// Image for lists/cards: main image if set, else the first post-cook photo.
     var heroImageName: String? {
         if let imageName, !imageName.isEmpty { return imageName }
         return photoNames.first
@@ -152,23 +145,17 @@ struct RecipeModel: Identifiable, Codable, Hashable {
     }
     
     var scaleFactor: Double {
-        // A zero base (possible via imports or old data) would make this
-        // infinite, and Int(infinity) traps downstream in FractionFormatter.
+        // A zero base would make this infinite; Int(infinity) traps downstream in FractionFormatter.
         guard baseServings > 0 else { return 1.0 }
         return Double(currentServings) / Double(baseServings)
     }
     
     var nutritionInfo: NutritionInfo? {
-        // Per-serving nutrition is invariant to the servings currently displayed:
-        // it's the base recipe's total divided by its base servings. Scaling the
-        // servings stepper changes the *total* you cook (see `NutritionInfo.scaled`),
-        // not the per-serving value — so this must divide by `baseServings`, never
-        // `currentServings`, or the figures drift as the user scales.
+        // Per-serving nutrition must divide by `baseServings`, never `currentServings`, or figures drift as the user scales.
         NutritionCalculator.calculate(ingredients: ingredients, servings: baseServings)
     }
 
-    /// URL this recipe was imported from, derived from the last line of notes.
-    /// Returns nil for manually created recipes or notes with no trailing URL.
+    /// Import URL derived from the last line of notes; nil for manual recipes or notes with no trailing URL.
     var importedFromURL: URL? {
         guard let lastLine = notes.components(separatedBy: "\n")
             .last(where: { !$0.trimmingCharacters(in: .whitespaces).isEmpty }),
@@ -222,9 +209,7 @@ struct RecipeModel: Identifiable, Codable, Hashable {
             .filter { !$0.isEmpty })
     }
 
-    /// Whether `ingredient` is covered by the (already normalised) pantry, using
-    /// the shared word-boundary matcher so short terms don't match inside longer
-    /// words (e.g. "ice" must not satisfy "rice").
+    /// Whether the normalised pantry covers `ingredient`, via the word-boundary matcher so "ice" doesn't satisfy "rice".
     private static func isSatisfied(_ ingredient: Ingredient, by pantry: Set<String>) -> Bool {
         let term = KitchenRecipeMatcher.normalizedTerm(ingredient.name)
         guard !term.isEmpty else { return false }

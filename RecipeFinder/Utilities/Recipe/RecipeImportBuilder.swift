@@ -1,7 +1,6 @@
 import Foundation
 
-/// Converts `RecipeImporter.ExtractedRecipeData` into a `RecipeModel` without
-/// requiring user interaction (no wizard step).
+/// Converts `RecipeImporter.ExtractedRecipeData` into a `RecipeModel` with no wizard step.
 struct RecipeImportBuilder {
 
     // MARK: - Public API
@@ -18,8 +17,7 @@ struct RecipeImportBuilder {
             prepTime: data.prepTimeMinutes.map { "\($0) minutes" } ?? "0 minutes",
             cookingTime: data.cookTimeMinutes.map { "\($0) minutes" } ?? "0 minutes",
             baseServings: data.servings ?? 4,
-            // Don't fabricate a "See recipe" placeholder — leave empty so the
-            // caller can surface the gap for review instead of saving fake content.
+            // Leave empty rather than fabricate a "See recipe" placeholder, so the caller can surface the gap for review.
             ingredients: ingredients,
             prePrepInstructions: [],
             instructions: data.instructions.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty },
@@ -32,8 +30,7 @@ struct RecipeImportBuilder {
 
     // MARK: - Ingredient parsing
 
-    /// Delegates to the shared `IngredientLineParser` so import and manual entry
-    /// parse identically. A missing amount stays 0 (unspecified), not a fake 1.
+    /// Delegates to shared `IngredientLineParser` so import and manual entry parse identically; missing amount stays 0, not a fake 1.
     func parseIngredient(_ fullIngredient: String) -> Ingredient {
         let parsed = IngredientLineParser.parse(fullIngredient)
         return Ingredient(baseQuantity: parsed.quantity, unit: parsed.unit, name: parsed.name)

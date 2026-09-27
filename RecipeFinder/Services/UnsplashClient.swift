@@ -2,19 +2,14 @@ import Foundation
 
 private let logger = AppLogger.logger(category: "UnsplashClient")
 
-/// Fetches a landscape food photo URL from the Unsplash API by keyword.
-///
-/// Set `UnsplashAccessKey` in `Info.plist` (or via an xcconfig variable) to enable.
-/// When the key is absent or empty the client is a no-op and returns `nil` silently —
-/// the rest of the app degrades gracefully (placeholder images remain visible).
+/// Fetches a landscape food photo URL from Unsplash by keyword; needs `UnsplashAccessKey` in `Info.plist`, otherwise a silent no-op returning `nil` (placeholders remain).
 struct UnsplashClient {
 
     private static let apiKey: String = {
         Bundle.main.object(forInfoDictionaryKey: "UnsplashAccessKey") as? String ?? ""
     }()
 
-    /// Returns the `regular`-size image URL for a photo matching `query`.
-    /// Returns `nil` on any failure (missing key, network error, no results).
+    /// Returns the `regular`-size image URL matching `query`; `nil` on any failure (missing key, network error, no results).
     func fetchImageURL(for query: String) async -> URL? {
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !Self.apiKey.isEmpty, !trimmed.isEmpty else { return nil }

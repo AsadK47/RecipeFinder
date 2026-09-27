@@ -1,8 +1,6 @@
 import Foundation
 
-/// The recipe-store surface `BackupService` needs. Kept as a protocol so the
-/// service can be exercised with an in-memory fake instead of the real Core Data
-/// stack (which is a disk-backed singleton). `PersistenceController` conforms.
+/// Recipe-store surface `BackupService` needs; a protocol so tests can use an in-memory fake instead of the disk-backed Core Data singleton.
 @MainActor
 protocol RecipeBackupStore {
     func fetchRecipes() -> [RecipeModel]
@@ -11,13 +9,7 @@ protocol RecipeBackupStore {
 
 extension PersistenceController: RecipeBackupStore {}
 
-/// Assembles a full `BackupArchive` from every store and restores one back into
-/// the current user's library. Reading and restoring both go through the stores'
-/// public surface (getters + the faithful `merge(_:)` seam) so encoding/keys stay
-/// encapsulated and the UI's `@Published` state refreshes on restore.
-///
-/// Restore is non-destructive: `merge` unions by identity, so importing a backup
-/// never overwrites or deletes the work already on the device.
+/// Assembles a `BackupArchive` from every store and restores one via each store's `merge(_:)` seam; restore is non-destructive (unions by identity, never overwrites/deletes).
 @MainActor
 struct BackupService {
     private let recipeStore: RecipeBackupStore
@@ -73,8 +65,7 @@ struct BackupService {
         try BackupCodec.encode(makeArchive())
     }
 
-    /// Decodes backup-file bytes (enforcing the schema-version guard) and restores
-    /// them into the current library.
+    /// Decodes backup-file bytes (enforcing the schema-version guard) and restores them.
     func importData(_ data: Data) throws {
         restore(try BackupCodec.decode(data))
     }

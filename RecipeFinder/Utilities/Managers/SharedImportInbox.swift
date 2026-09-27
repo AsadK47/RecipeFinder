@@ -1,16 +1,6 @@
 import Foundation
 
-/// Hand-off point between the share extension and the app, backed by the
-/// App Group's defaults.
-///
-/// The extension tries to complete the fetch + parse itself and store the
-/// resulting `ExtractedRecipeData` (`storeExtractedRecipe`). The app turns that
-/// into a `RecipeModel` and saves it silently on next launch. When the extension
-/// can't finish — no network, unparseable page, plain-text share — it stores the
-/// raw URL/text instead and the app falls back to the interactive import flow.
-///
-/// This file is compiled into both the app and RecipeShareExtension, so it must
-/// stay Foundation-only (no app singletons / UI).
+/// Share-extension↔app hand-off via App Group defaults: extension stores parsed `ExtractedRecipeData` (app saves silently) or, if it can't finish, raw URL/text for the interactive flow. Compiled into both targets, so Foundation-only (no app singletons/UI).
 enum SharedImportInbox {
     static let appGroupID = "group.com.asadkhan.recipefinder"
     private static let recipeKey = "pendingSharedImportRecipeJSON"
@@ -53,8 +43,7 @@ enum SharedImportInbox {
         case text(String)
     }
 
-    /// Returns whatever the extension left behind — extracted recipe data, a
-    /// link, or plain text — and clears the inbox.
+    /// Returns whatever the extension left behind (extracted data, link, or text) and clears the inbox.
     static func consumePayload() -> Payload? {
         guard let defaults else { return nil }
 
@@ -69,10 +58,7 @@ enum SharedImportInbox {
         return resolvePayload(recipeData: recipeData, urlString: urlString, text: text)
     }
 
-    /// Pure resolution of the three raw slots into a single payload, in priority
-    /// order: a decodable extracted recipe wins; then a link; then plain text
-    /// (with a link embedded in text promoted to `.url`). Kept separate from
-    /// `UserDefaults` so the precedence rules are unit-testable.
+    /// Pure precedence resolution (decodable recipe > link > text, with embedded links promoted to `.url`); kept off `UserDefaults` so it's unit-testable.
     static func resolvePayload(recipeData: Data?, urlString: String?, text: String?) -> Payload? {
         if let recipeData,
            let data = try? JSONDecoder().decode(ExtractedRecipeData.self, from: recipeData) {

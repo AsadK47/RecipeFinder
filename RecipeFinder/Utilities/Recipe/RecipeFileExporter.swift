@@ -7,9 +7,7 @@ extension UTType {
 
 // MARK: - Wire format
 
-/// Versioned JSON package for sharing recipes as `.recipefinderrecipe` files.
-/// Contains only content fields — personal data (rating, cookCount, isFavorite,
-/// local photo paths) is intentionally excluded so the recipient starts fresh.
+/// Versioned JSON package for `.recipefinderrecipe` files; content fields only, personal data (rating, cookCount, isFavorite, local photos) excluded so the recipient starts fresh.
 struct RecipePackage: Codable {
     let version: Int
     let name: String
@@ -27,8 +25,7 @@ struct RecipePackage: Codable {
     let dietaryInfo: DietaryInfo
     /// Original source URL, if this recipe was imported from the web.
     let sourceURL: String?
-    /// Hero image URL — only included when the image is an HTTP URL.
-    /// Local file paths from the sender's device are omitted.
+    /// Hero image URL — only when it's an HTTP URL; sender's local file paths omitted.
     let imageURL: String?
 
     struct PackagedIngredient: Codable {
@@ -83,8 +80,7 @@ enum RecipeFileExporter {
         try encode(recipe).write(to: url, options: .atomic)
     }
 
-    /// Decodes `data` into a fresh `RecipeModel` with a new UUID.
-    /// Personal data fields are reset to defaults.
+    /// Decodes `data` into a fresh `RecipeModel` with a new UUID; personal data reset to defaults.
     static func decode(_ data: Data) throws -> RecipeModel {
         let package = try decoder.decode(RecipePackage.self, from: data)
         guard package.version == 1 else {

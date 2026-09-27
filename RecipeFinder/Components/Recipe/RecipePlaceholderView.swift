@@ -1,11 +1,6 @@
 import SwiftUI
 
-/// Themed gradient + dish glyph shown when a recipe has no image — used as both
-/// the Kingfisher loading placeholder (with shimmer) and the permanent fallback
-/// when a load fails (without shimmer).
-///
-/// The gradient hue is seeded from the recipe name so a mixed list looks varied
-/// rather than a uniform grey wall.
+/// Gradient + dish glyph for imageless recipes (loading placeholder with shimmer, or permanent fallback without); hue seeded from the name so lists look varied.
 struct RecipePlaceholderView: View {
     let recipeName: String?
     var showShimmer: Bool = false
@@ -23,8 +18,7 @@ struct RecipePlaceholderView: View {
         (Color(red: 0.50, green: 0.20, blue: 0.70), Color(red: 0.20, green: 0.30, blue: 0.90)),
     ]
 
-    // Stable across launches: sum Unicode scalar values rather than using
-    // String.hashValue, which is randomised per-session in Swift.
+    // Sum Unicode scalars (not String.hashValue, which is randomised per-session) so the hue is stable across launches.
     private var palette: (Color, Color) {
         guard let name = recipeName, !name.isEmpty else { return Self.palettes[0] }
         let hash = name.unicodeScalars.reduce(0) { $0 &+ Int($1.value) }

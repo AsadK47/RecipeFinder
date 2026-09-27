@@ -6,10 +6,7 @@ extension Notification.Name {
     static let userScopeDidChange = Notification.Name("UserScopeDidChange")
 }
 
-/// Thread-safe by construction: both stored properties are immutable `let`s and
-/// every read/write is delegated to `UserDefaults`, which Apple documents as
-/// thread-safe. `@unchecked` is required only because `UserDefaults` isn't itself
-/// annotated `Sendable` in the SDK — there is no unsynchronised mutable state here.
+/// Thread-safe by construction (immutable `let`s delegating to the thread-safe `UserDefaults`); `@unchecked` only because `UserDefaults` isn't SDK-`Sendable` — no unsynchronised mutable state here.
 final class UserScopedStorage: @unchecked Sendable {
     static let shared = UserScopedStorage()
     
@@ -68,9 +65,7 @@ final class UserScopedStorage: @unchecked Sendable {
         userDefaults.data(forKey: scopedKey(key))
     }
 
-    /// Encodes a `Codable` value to JSON and stores it. Unlike a bare `try?`, an
-    /// encoding failure is logged at the failure site instead of silently
-    /// dropping the write, so lost persistence is diagnosable.
+    /// Encodes a `Codable` to JSON and stores it, logging encode failures at the site (unlike a bare `try?`) so lost writes are diagnosable.
     func setEncodable<T: Encodable>(_ value: T, forKey key: String) {
         do {
             let data = try JSONEncoder().encode(value)

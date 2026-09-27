@@ -72,10 +72,7 @@ extension AppTheme {
             : Color.black.opacity(cardHighEmphasisLightOpacity)
     }
     
-    /// Secondary text: pure black in light mode for legibility, system
-    /// secondaryLabel in dark mode where contrast is already adequate.
-    /// Use `.adaptiveSecondaryForeground()` on a view rather than setting this
-    /// colour directly on a modifier.
+    /// Secondary text: pure black in light mode for legibility, secondaryLabel in dark; apply via `.adaptiveSecondaryForeground()`, not directly.
     static let adaptiveSecondary = Color(UIColor { traits in
         traits.userInterfaceStyle == .dark ? .secondaryLabel : .label
     })

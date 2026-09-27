@@ -20,17 +20,13 @@ struct RecipeImageView: View {
 
     private var kfSource: Source? { Self.resolvedSource(for: imageName) }
 
-    /// Resolves an `imageName` to a Kingfisher source, or `nil` when it can't be
-    /// displayed (empty, or a local file that no longer exists). Shared so callers
-    /// can ask `hasDisplayableImage` before reserving space for an image.
+    /// Resolves `imageName` to a Kingfisher source, or `nil` if undisplayable (empty or missing local file); shared with `hasDisplayableImage`.
     static func resolvedSource(for imageName: String?) -> Source? {
         guard let imageName = imageName, !imageName.isEmpty else { return nil }
         if imageName.hasPrefix("http"), let url = URL(string: imageName) {
             return .network(url)
         }
-        // Legacy format: absolute path saved before relative-path migration.
-        // The container path changes on reinstall / Simulator rebuilds, so fall
-        // back to looking up the file by name in the expected directory.
+        // Legacy absolute path (pre relative-path migration); container path changes on reinstall, so fall back to looking up by filename.
         if imageName.hasPrefix("/") {
             if FileManager.default.fileExists(atPath: imageName) {
                 return .provider(localProvider(for: URL(fileURLWithPath: imageName)))
@@ -44,8 +40,7 @@ struct RecipeImageView: View {
             }
             return nil
         }
-        // Current format: path relative to the documents directory. Only usable
-        // if the file is actually there (stale references resolve to nil).
+        // Current format: path relative to documents dir; stale references resolve to nil.
         if let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
             let resolved = docs.appendingPathComponent(imageName)
             return FileManager.default.fileExists(atPath: resolved.path)
@@ -55,12 +50,7 @@ struct RecipeImageView: View {
         return nil
     }
 
-    /// Wraps a local file in a provider whose cache key is versioned by the file's
-    /// modification time + size. Recipe photos live at a STABLE path
-    /// (`RecipeImages/<id>.jpg`), so deleting a photo and adding a new one reuses
-    /// the same path — and Kingfisher, which keys its cache by file URL, would keep
-    /// serving the OLD image. Versioning the key forces a fresh decode after a
-    /// replace while still caching across ordinary reads.
+    /// Provider whose cache key is versioned by mtime + size: photos live at a stable path, so without this Kingfisher would keep serving the old image after a replace.
     private static func localProvider(for fileURL: URL) -> LocalFileImageDataProvider {
         let attributes = try? FileManager.default.attributesOfItem(atPath: fileURL.path)
         let key = imageCacheKey(
@@ -71,26 +61,20 @@ struct RecipeImageView: View {
         return LocalFileImageDataProvider(fileURL: fileURL, cacheKey: key)
     }
 
-    /// Pure cache-key builder: the base URL string plus a version suffix from the
-    /// file's modification time (ms) and byte size. Same file → same key (cache
-    /// hit); rewritten file → new key (cache miss, fresh decode). Extracted so the
-    /// staleness guarantee can be unit-tested without a running view.
+    /// Pure cache-key builder: base URL plus a version suffix from mtime (ms) + size, so a rewritten file gets a fresh key; extracted for unit testing.
     static func imageCacheKey(base: String, modificationDate: Date?, size: Int?) -> String {
         let stamp = modificationDate.map { String(Int($0.timeIntervalSince1970 * 1000)) } ?? "0"
         return "\(base)#v=\(stamp)-\(size ?? 0)"
     }
 
-    /// Whether `imageName` will actually render an image — a network URL, an
-    /// existing local file, or a bundled asset. Lets screens show a title-only
-    /// layout instead of reserving space for a blank/placeholder box.
+    /// Whether `imageName` will render (network URL, existing local file, or bundled asset), so screens can use a title-only layout instead of a blank box.
     static func hasDisplayableImage(_ imageName: String?) -> Bool {
         if resolvedSource(for: imageName) != nil { return true }
         if let name = imageName, !name.isEmpty, UIImage(named: name) != nil { return true }
         return false
     }
 
-    /// Downsample to the display size in pixels so a full-resolution photo isn't
-    /// decoded at native size into a small thumbnail.
+    /// Downsample target in pixels so a full-res photo isn't decoded at native size into a small thumbnail.
     private var targetPixelSize: CGSize {
         let side = height * UIScreen.main.scale
         return CGSize(width: side, height: side)

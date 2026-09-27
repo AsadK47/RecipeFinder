@@ -129,12 +129,7 @@ extension PersistenceController {
         }
     }
 
-    /// Maps a `RecipeSaveParameters` onto a freshly inserted managed object.
-    /// Shared by single-recipe `saveRecipe` (main context) and the batch
-    /// `seedRecipes` (background context) so the field list has one home and
-    /// can't drift between the two write paths. `nonisolated` so it can run on a
-    /// background Core Data context. Returns false only if ingredients can't be
-    /// encoded (the one genuinely fallible field).
+    /// Maps `RecipeSaveParameters` onto a fresh managed object; shared by `saveRecipe` and `seedRecipes` so the field list has one home. Returns false only if ingredients can't be encoded.
     nonisolated private static func populate(
         _ recipe: NSManagedObject,
         from parameters: RecipeSaveParameters,
@@ -175,11 +170,7 @@ extension PersistenceController {
         return true
     }
 
-    /// Bulk-inserts starter recipes for a brand-new user on a background context
-    /// with a single save, so first sign-in doesn't freeze on N synchronous
-    /// main-thread saves. Deliberately does no per-recipe count/badge work —
-    /// seed recipes aren't user achievements, and that per-item work was a large
-    /// part of the freeze.
+    /// Bulk-inserts starter recipes on a background context in one save so first sign-in doesn't freeze; skips per-recipe count/badge work by design.
     func seedRecipes(_ models: [RecipeModel]) async {
         guard ensureStoreIsReady(), let userId = userID() else { return }
         let container = self.container
@@ -225,10 +216,7 @@ extension PersistenceController {
         }
     }
     
-    /// Faithful, non-destructive restore of recipes from a backup. Existing recipes
-    /// are left untouched; only genuinely new ones (per `BackupMerge.mergedRecipes`,
-    /// which dedupes by id AND normalized name so re-imports with fresh UUIDs don't
-    /// duplicate) are saved into the current user's scope.
+    /// Non-destructive restore: saves only new recipes per `BackupMerge.mergedRecipes` (dedupes by id AND normalized name so re-imports don't duplicate).
     func mergeRecipes(_ incoming: [RecipeModel]) {
         let existing = fetchRecipes()
         let existingIDs = Set(existing.map(\.id))
@@ -301,9 +289,7 @@ extension PersistenceController {
             if let dietaryData = try? JSONEncoder().encode(recipe.dietaryInfo) {
                 managedRecipe.setValue(dietaryData, forKey: RecipeKey.dietaryInfo)
             }
-            // cookCount and lastCookedAt are intentionally not updated here —
-            // they are managed solely by recordCook(_:) to preserve cook history
-            // across content edits.
+            // cookCount/lastCookedAt intentionally not updated here — only recordCook(_:) touches them, preserving cook history across edits.
 
             try context.save()
             persistenceLogger.debug("✅ Recipe '\(recipe.name)' updated successfully")
@@ -314,8 +300,7 @@ extension PersistenceController {
         }
     }
     
-    /// Atomically increments `cookCount` and stamps `lastCookedAt` to now.
-    /// Does NOT go through `updateRecipe` — cook history is separate from content edits.
+    /// Increments `cookCount` and stamps `lastCookedAt`; bypasses `updateRecipe` since cook history is separate from content edits.
     func recordCook(withId id: UUID) {
         guard ensureStoreIsReady() else { return }
 

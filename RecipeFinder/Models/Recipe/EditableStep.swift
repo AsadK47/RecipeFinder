@@ -1,12 +1,6 @@
 import Foundation
 
-/// A recipe wizard step with a stable identity.
-///
-/// Steps were previously plain strings rendered with `ForEach(id: \.offset)`.
-/// Offset-based identity crashes ("Swift/ContiguousArrayBuffer.swift: Index
-/// out of range") when rows are added or removed while their TextField
-/// bindings are live: rows keyed by offset outlive the array slot their
-/// binding points at. A UUID identity keeps row and binding in sync.
+/// Recipe wizard step with stable UUID identity; offset-based `ForEach` identity crashed when rows were added/removed with live TextField bindings.
 struct EditableStep: Identifiable, Equatable {
     let id: UUID
     var text: String
@@ -18,8 +12,7 @@ struct EditableStep: Identifiable, Equatable {
 }
 
 extension Array where Element == EditableStep {
-    /// Wraps raw strings as steps; guarantees at least one editable row so
-    /// the wizard always has a field to type into.
+    /// Wraps raw strings as steps; guarantees at least one editable row.
     static func steps(from texts: [String]) -> [EditableStep] {
         texts.isEmpty ? [EditableStep()] : texts.map { EditableStep(text: $0) }
     }

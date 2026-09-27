@@ -1,8 +1,6 @@
 import Foundation
 
-/// Groups and orders shopping list items for display, and renders the shareable
-/// text. Extracted from `ShoppingListView` so the logic is unit-testable and no
-/// longer computed inline in a SwiftUI `body`.
+/// Groups/orders shopping list items and renders the shareable text; extracted from `ShoppingListView` so the logic is testable, not inline in `body`.
 enum ShoppingListGrouping {
 
     // Pre-built rank map eliminates O(C) firstIndex scans inside the sorted comparator.
@@ -10,9 +8,7 @@ enum ShoppingListGrouping {
         uniqueKeysWithValues: CategoryClassifier.categoryOrder.enumerated().map { ($1, $0) }
     )
 
-    /// Groups `items` by category, sorts each group so unchecked items come
-    /// before checked ones, and orders the groups by `CategoryClassifier.categoryOrder`
-    /// (falling back to alphabetical for categories not in that order).
+    /// Groups `items` by category, unchecked before checked within each, groups ordered by `CategoryClassifier.categoryOrder` (alphabetical fallback).
     static func grouped(_ items: [ShoppingListModel]) -> [(key: String, value: [ShoppingListModel])] {
         Dictionary(grouping: items, by: { $0.category })
             .map { (key: $0.key, value: $0.value.sorted { !$0.isChecked && $1.isChecked }) }

@@ -2,8 +2,7 @@ import SwiftUI
 
 private let logger = AppLogger.logger(category: "CollectionManager")
 
-/// Behavioural seam for recipe collections so views depend on this protocol
-/// rather than the `CollectionManager` singleton — and tests can inject a fake.
+/// Behavioural seam so views depend on this protocol, not the `CollectionManager` singleton, and tests can inject a fake.
 @MainActor
 protocol CollectionManaging: AnyObject, Observable {
     var collections: [RecipeCollection] { get }
@@ -17,17 +16,14 @@ protocol CollectionManaging: AnyObject, Observable {
 }
 
 private struct CollectionManagingKey: EnvironmentKey {
-    // SwiftUI reads environment defaults on the main actor during view updates,
-    // so assuming main-actor isolation here is safe; the real app injects the
-    // shared instance at the composition root regardless.
+    // SwiftUI reads environment defaults on the main actor, so assuming main-actor isolation is safe.
     static var defaultValue: any CollectionManaging {
         MainActor.assumeIsolated { CollectionManager.shared }
     }
 }
 
 extension EnvironmentValues {
-    /// Injected collections store. Defaults to the shared singleton; override with
-    /// `.environment(\.collections, fake)` in tests/previews.
+    /// Injected collections store; defaults to the shared singleton, override with `.environment(\.collections, fake)` in tests/previews.
     var collections: any CollectionManaging {
         get { self[CollectionManagingKey.self] }
         set { self[CollectionManagingKey.self] = newValue }

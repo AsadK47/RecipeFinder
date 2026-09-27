@@ -1,9 +1,6 @@
 import Foundation
 
-/// Bundled starter recipes shown to brand-new users so the app isn't empty on
-/// first launch. All recipes carry `isSampleRecipe = true` and stable, fixed
-/// UUIDs so seeding is idempotent — re-running the loader never creates
-/// duplicates even if the guard flag is somehow reset.
+/// Bundled starter recipes for brand-new users; all carry `isSampleRecipe = true` and fixed UUIDs so seeding is idempotent even if the guard flag resets.
 enum SeedRecipeProvider {
 
     static let recipes: [RecipeModel] = [

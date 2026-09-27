@@ -2,8 +2,7 @@ import Foundation
 
 enum NutritionCalculator {
 
-    /// Returns estimated per-serving nutrition for the given ingredients, or `nil`
-    /// if fewer than 10% of ingredients could be matched to the database.
+    /// Estimated per-serving nutrition, or nil if under 10% of ingredients match the database.
     static func calculate(ingredients: [Ingredient], servings: Int) -> NutritionInfo? {
         guard servings > 0, !ingredients.isEmpty else { return nil }
 
@@ -19,8 +18,7 @@ enum NutritionCalculator {
 
         for ingredient in ingredients {
             guard let entry = NutritionDatabase.lookup(ingredient.mainIngredientName) else { continue }
-            // Count as matched even if we can't quantify it (e.g. a pinch with no unit mapping),
-            // so coverage reflects name recognition rather than unit coverage.
+            // Count as matched even if unquantifiable (e.g. a pinch), so coverage reflects name recognition, not unit coverage.
             matchedCount += 1
             let grams = gramWeight(quantity: ingredient.baseQuantity, unit: ingredient.unit, entry: entry)
             guard grams > 0 else { continue }

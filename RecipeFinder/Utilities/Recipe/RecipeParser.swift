@@ -129,10 +129,7 @@ struct RecipeParser {
 
         text = text.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
 
-        // Preserve line structure across entity decoding. `decodeHTMLEntities` uses
-        // the NSAttributedString HTML importer, which collapses insignificant
-        // whitespace — including newlines — and would otherwise flatten the whole
-        // page to a single line, defeating the line-based free-text heuristics.
+        // Preserve line structure: `decodeHTMLEntities`' NSAttributedString importer collapses newlines, which would flatten the page and defeat the line-based heuristics.
         text = text.replacingOccurrences(of: "\n", with: " \u{2424} ")
         text = decodeHTMLEntities(text)
         text = text.replacingOccurrences(of: "\\s*\u{2424}\\s*", with: "\n", options: .regularExpression)
@@ -144,8 +141,7 @@ struct RecipeParser {
     }
 
     static func decodeHTMLEntities(_ text: String) -> String {
-        // Use NSAttributedString to decode all named and numeric HTML entities
-        // (e.g. &eacute; → é, &amp; → &, &#233; → é)
+        // NSAttributedString decodes named + numeric HTML entities (&eacute; → é, &amp; → &, &#233; → é).
         let wrapped = "<html><body>\(text)</body></html>"
         let decoded: String
         if let data = wrapped.data(using: .utf8),

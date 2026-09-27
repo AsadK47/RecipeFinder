@@ -42,17 +42,9 @@ enum FractionFormatter {
 }
 
 enum TimeExtractor {
-    /// Total minutes in a free-form duration string. Understands hours and
-    /// minutes and sums them ("1 hr 30 min" → 90, "1.5 hours" → 90); a bare
-    /// leading number is treated as minutes ("30" → 30). Anything unparseable
-    /// is 0.
-    ///
-    /// Previously this read only the leading integer, so "1 hour" collapsed to
-    /// 1 minute and hour-based times slipped through the cook-time filter.
+    /// Sums hours and minutes in a free-form duration ("1 hr 30 min" → 90, "1.5 hours" → 90); bare number = minutes; unparseable = 0.
     static func extractMinutes(from timeString: String) -> Int {
-        // Collapse a numeric range to its upper bound ("20-30 min" → "30 min")
-        // first, so the hyphen isn't scanned as a negative sign (which produced
-        // negative times) and additive parsing below stays correct.
+        // Collapse a numeric range to its upper bound ("20-30 min" → "30 min") so the hyphen isn't scanned as a negative sign.
         let normalized = timeString.lowercased()
             .replacing(/([0-9.]+)\s*[-–—]\s*([0-9.]+)/) { String($0.output.2) }
 

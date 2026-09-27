@@ -18,8 +18,7 @@ struct ContentView: View {
 
     private var themeBinding: AppTheme.ThemeType { selectedTheme }
 
-    // Store-backed binding so existing `@Binding var recipes` view APIs keep
-    // working while `RecipeStore` owns the single source of truth.
+    // Store-backed binding so `@Binding var recipes` view APIs keep working while RecipeStore owns the source of truth.
     private var recipesBinding: Binding<[RecipeModel]> {
         Binding(get: { store.recipes }, set: { store.recipes = $0 })
     }

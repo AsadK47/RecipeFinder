@@ -13,8 +13,7 @@ struct NutritionInfo: Equatable {
     /// Fraction of recipe ingredients that matched the nutrition database (0–1).
     let coverage: Double
 
-    /// Scales every macro by `servings` to turn a per-serving estimate into a
-    /// whole-recipe total. `coverage` is a proportion, so it stays unchanged.
+    /// Scales macros by `servings` (per-serving → whole-recipe); `coverage` is a proportion, unchanged.
     func scaled(by servings: Int) -> NutritionInfo {
         let factor = Double(max(servings, 1))
         return NutritionInfo(

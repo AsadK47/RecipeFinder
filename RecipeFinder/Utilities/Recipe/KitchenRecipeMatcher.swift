@@ -1,16 +1,12 @@
 import Foundation
 
-/// Matches recipes against the ingredients a user has in their kitchen. Extracted
-/// from `KitchenView` so the fuzzy-matching and ranking logic is unit-testable
-/// and no longer computed inline in a SwiftUI view.
+/// Matches recipes against a user's kitchen ingredients; extracted from `KitchenView` so fuzzy-match/ranking is unit-testable, not inline.
 enum KitchenRecipeMatcher {
 
-    // Ingredient name normalization is called for every recipe × ingredient × kitchen item
-    // on every pantry toggle. Cache results so repeated toggles are O(1) after the first pass.
+    // Normalization runs per recipe × ingredient × kitchen item on every pantry toggle; cache so repeated toggles are O(1).
     private static let normCache = MemoCache<String, String>(maxSize: 1000)
 
-    /// Normalises an ingredient name to its comparable main term (lowercased,
-    /// whitespace-collapsed, brand/qualifier stripped via `IngredientNameFormatter`).
+    /// Normalises an ingredient name to its comparable main term (lowercased, whitespace-collapsed, qualifiers stripped).
     static func normalizedTerm(_ raw: String) -> String {
         normCache.value(for: raw) { _ in
             let main = IngredientNameFormatter.extractMainName(raw)
@@ -23,11 +19,7 @@ enum KitchenRecipeMatcher {
         }
     }
 
-    /// Whether two normalised ingredient terms match. Exact matches always count;
-    /// otherwise they match only when they share a whole word (≥ 3 chars) — so a
-    /// multi-word ingredient like "chicken breast" matches "chicken", but a short
-    /// term is never matched as a mere substring of a longer word (e.g. "gin" must
-    /// not match "ginger", "ice" must not match "rice").
+    /// Two normalised terms match on exact equality or a shared whole word (≥3 chars), never on substrings ("gin" ≠ "ginger").
     static func ingredientMatches(_ recipeIngredient: String, _ kitchenIngredient: String) -> Bool {
         if recipeIngredient == kitchenIngredient {
             return true
@@ -36,9 +28,7 @@ enum KitchenRecipeMatcher {
         return !words(recipeIngredient).isDisjoint(with: words(kitchenIngredient))
     }
 
-    /// The set of whole words in a term worth matching on (≥ 3 chars, so filler like
-    /// "of" can't create spurious matches). Words are singularised so a pantry
-    /// "egg" matches a recipe's "eggs" (and "tomato" ↔ "tomatoes").
+    /// Whole words worth matching on (≥3 chars to drop filler like "of"), singularised so "egg" matches "eggs".
     private static func words(_ term: String) -> Set<String> {
         Set(
             term.split(separator: " ")
@@ -48,9 +38,7 @@ enum KitchenRecipeMatcher {
         )
     }
 
-    /// Conservative English singularisation for plural matching. Only reshapes
-    /// clear plural endings; anything else is returned unchanged so it can't
-    /// collide distinct ingredients (e.g. "ice"/"rice" stay put).
+    /// Conservative English singularisation: only reshapes clear plural endings, else returns unchanged so it can't collide distinct ingredients ("ice"/"rice").
     private static func singularized(_ word: String) -> String {
         if word.count > 4, word.hasSuffix("ies") {
             return String(word.dropLast(3)) + "y"            // berries → berry
@@ -67,8 +55,7 @@ enum KitchenRecipeMatcher {
         return word
     }
 
-    /// How many of `recipe`'s ingredients match any of `kitchenIngredients`.
-    /// `kitchenIngredients` is used as supplied (the caller decides normalisation).
+    /// How many of `recipe`'s ingredients match any of `kitchenIngredients` (used as-supplied; caller decides normalisation).
     static func matchCount(recipe: RecipeModel, kitchenIngredients: Set<String>) -> Int {
         let recipeIngredients = recipe.ingredients
             .map { normalizedTerm($0.name) }
@@ -81,8 +68,7 @@ enum KitchenRecipeMatcher {
         }.count
     }
 
-    /// Recipes that share at least one ingredient with the kitchen, ranked by the
-    /// number of matching ingredients (most matches first).
+    /// Recipes sharing ≥1 kitchen ingredient, ranked by match count (most first).
     static func quickMatches(recipes: [RecipeModel], kitchenItemNames: [String]) -> [RecipeModel] {
         guard !kitchenItemNames.isEmpty else { return [] }
 
@@ -94,9 +80,7 @@ enum KitchenRecipeMatcher {
 
         guard !kitchenIngredients.isEmpty else { return [] }
 
-        // Pre-normalize each recipe's ingredient terms once so both the filter pass and
-        // the sort pass reuse the same strings — previously `matchCount` re-normalized
-        // every recipe's ingredients for every sort comparison (O(R log R × I × regex)).
+        // Pre-normalize each recipe's terms once so filter and sort reuse them; avoids re-normalizing per sort comparison (O(R log R × I × regex)).
         let normalized: [(recipe: RecipeModel, terms: [String])] = recipes.map { recipe in
             (recipe, recipe.ingredients.map { normalizedTerm($0.name) }.filter { !$0.isEmpty })
         }

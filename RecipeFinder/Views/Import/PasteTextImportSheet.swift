@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// Paste-a-caption entry point: the user drops in free text (an Instagram/TikTok
-/// caption, notes, a message), we route it through the on-device interpreter /
-/// heuristic parser, and present the wizard to review and edit before saving.
+/// Paste-a-caption entry point: free text is routed through the on-device interpreter/heuristic parser, then the wizard is presented to review before saving.
 struct PasteTextImportSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme

@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// Per-theme background gradients, cached because `backgroundGradient` is read
-/// from every screen's `body` (re-runs on each render/tab switch). `MemoCache`
-/// is Swift 6 concurrency-safe and there are only a handful of theme/scheme keys.
+/// Per-theme background gradients, cached because `backgroundGradient` is read from every screen's `body` on each render/tab switch.
 extension AppTheme {
 
     private static let gradientCache = MemoCache<String, LinearGradient>(maxSize: AppTheme.ThemeType.allCases.count * 2)

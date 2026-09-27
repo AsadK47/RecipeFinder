@@ -5,8 +5,7 @@ private let logger = AppLogger.logger(category: "RecipeSearchView")
 struct RecipeSearchView: View {
     @Binding var recipes: [RecipeModel]
     @Environment(\.recipeStore) private var recipeStore
-    /// True while the library is still being fetched after sign-in, so an empty
-    /// `recipes` shows a loading skeleton instead of the "no recipes" empty state.
+    /// True while the library is still fetching post-sign-in, so empty `recipes` shows a skeleton, not the empty state.
     var isLoading: Bool = false
     @State private var showCollections = false
     @State private var searchText = ""
@@ -41,12 +40,10 @@ struct RecipeSearchView: View {
     @Environment(\.collections) private var collectionManager
     @State private var selectedCollectionID: UUID? = nil
     @State private var navigationPath = NavigationPath()
-    // Refreshed on appear so pantry toggles in RecipeDetailView don't cause
-    // this buried view to re-render and re-run apply(to:) 3 times per toggle.
+    // Refreshed on appear so RecipeDetailView pantry toggles don't re-render this buried view and re-run apply(to:) 3x per toggle.
     @State private var availableIngredients: Set<String> = []
 
-    /// The current filters as a plain value; all filtering/sorting lives in
-    /// `RecipeFilterCriteria` so it stays out of `body` and is unit tested.
+    /// Current filters as a plain value; filtering/sorting lives in `RecipeFilterCriteria` to stay out of `body` and be unit tested.
     private var filterCriteria: RecipeFilterCriteria {
         var c = RecipeFilterCriteria()
         c.searchText = searchText
@@ -78,8 +75,7 @@ struct RecipeSearchView: View {
     init(recipes: Binding<[RecipeModel]>, isLoading: Bool = false) {
         _recipes = recipes
         self.isLoading = isLoading
-        // Seed the cache so the first frame renders the (unfiltered) library
-        // rather than flashing the empty state before onAppear seeds it.
+        // Seed the cache so the first frame renders the unfiltered library instead of flashing the empty state before onAppear.
         _cachedFilteredRecipes = State(initialValue: RecipeFilterCriteria().apply(to: recipes.wrappedValue))
     }
 
@@ -140,10 +136,7 @@ struct RecipeSearchView: View {
         }
     }
 
-    /// Handles whatever the share extension left in the App Group inbox: a
-    /// finished recipe is saved silently with a toast, a URL opens the
-    /// interactive import sheet, and plain text is parsed into a prefilled
-    /// wizard for review.
+    /// Handles the share-extension App Group inbox: finished recipe saved with a toast, URL opens the import sheet, text prefills the wizard.
     private func checkSharedImportInbox() {
         switch SharedImportInbox.consumePayload() {
         case .extracted(let data):
@@ -158,8 +151,7 @@ struct RecipeSearchView: View {
         }
     }
 
-    /// Routes shared free text into the wizard for review — AI results are never
-    /// saved silently. Shows a toast when no recipe can be found.
+    /// Routes shared free text into the wizard for review (AI results never saved silently); toasts when no recipe is found.
     private func importSharedText(_ text: String) async {
         if let prefill = await RecipeTextImportRouter().prefill(for: text) {
             sharedWizardPrefill = prefill
@@ -183,9 +175,7 @@ struct RecipeSearchView: View {
         addRecipe(recipe, successMessage: "Imported \"\(recipe.name)\"")
     }
 
-    /// Adds a newly created/imported recipe: optimistically shows it, then
-    /// persists. If the save fails, the optimistic insertion is rolled back and
-    /// the user is told — rather than the recipe silently vanishing on relaunch.
+    /// Adds a new/imported recipe optimistically then persists; on save failure it rolls back and alerts rather than vanishing on relaunch.
     private func addRecipe(_ recipe: RecipeModel, successMessage: String) {
         guard recipeStore.add(recipe) else {
             showImportToast("Couldn't save \"\(recipe.name)\". Please try again.")
@@ -293,8 +283,7 @@ struct RecipeSearchView: View {
     }
     
     private var recipeContentArea: some View {
-        // Read the maintained cache directly — no filtering/hashing in `body`.
-        // `updateFilterCache()` keeps it current via onChange + onAppear.
+        // Read the maintained cache directly (no filtering/hashing in `body`); updateFilterCache() keeps it current via onChange + onAppear.
         let current = cachedFilteredRecipes
         return Group {
             if isLoading && recipes.isEmpty {
@@ -311,8 +300,7 @@ struct RecipeSearchView: View {
         }
     }
 
-    /// Applies the user's delete preference: skip straight to deletion when the
-    /// "don't ask again" setting is on, otherwise stage the recipe and confirm.
+    /// Applies the delete preference: delete immediately when "don't ask again" is on, otherwise stage the recipe and confirm.
     private func requestDelete(_ recipe: RecipeModel) {
         recipeToDelete = recipe
         if skipDeleteConfirmation {
@@ -409,9 +397,7 @@ struct RecipeSearchView: View {
         categories = Array(Set(recipes.map { $0.category }).intersection(validCategories)).sorted()
     }
 
-    /// Recomputes the displayed list. Driven only by `FilterCacheUpdateModifier`'s
-    /// `onChange` (fires on a real filter/recipes change) + the initial `onAppear`,
-    /// so the ~10 filter passes never run inside `body`.
+    /// Recomputes the displayed list only via `FilterCacheUpdateModifier`'s onChange + initial onAppear, so ~10 filter passes never run in `body`.
     private func updateFilterCache() {
         cachedFilteredRecipes = filterCriteria.apply(to: recipes)
     }

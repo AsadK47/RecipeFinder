@@ -1,10 +1,6 @@
 import Foundation
 
-/// Pure presentation rules for an account's display name and initials, extracted
-/// from `AccountManager` so they're unit-testable without constructing the
-/// singleton (which loads the profile and touches every other store on init).
-/// Behaviour is preserved exactly: an empty name shows the "Recipe Chef" / "RC"
-/// placeholders the UI has always shown.
+/// Pure display-name/initials rules extracted from `AccountManager` for unit-testing; empty name yields the "Recipe Chef" / "RC" placeholders.
 enum AccountNameFormatter {
 
     static func displayName(firstName: String, lastName: String) -> String {

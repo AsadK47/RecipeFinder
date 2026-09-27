@@ -65,9 +65,7 @@ struct AuthTestHelper {
         logger.debug("🗑️ Deleted user: \(email)")
     }
 
-    /// Synchronous sign-in for the app's `-skip-auth` init path: sets
-    /// `isAuthenticated = true` before the first SwiftUI frame renders so UI
-    /// tests never race against the async `autoSignIn` Task.
+    /// Synchronous sign-in for `-skip-auth`: sets `isAuthenticated` before the first frame so UI tests don't race `autoSignIn`.
     @MainActor
     static func autoSignInSync() {
         do {

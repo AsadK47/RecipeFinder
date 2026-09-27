@@ -38,11 +38,7 @@ extension PersistenceController {
         }
     }
 
-    /// Off-main-thread recipe fetch. Runs the fetch **and** the per-recipe JSON
-    /// decoding (ingredients, dietary info) on a private background context, then
-    /// returns the value-type models to the caller's actor. Large libraries
-    /// (hundreds of recipes = hundreds of JSON decodes) would otherwise freeze the
-    /// UI on the main-actor `fetchRecipes()`. Prefer this for view loads.
+    /// Off-main-thread fetch + per-recipe JSON decode on a background context; use for view loads so large libraries don't freeze the UI.
     func fetchRecipesAsync() async -> [RecipeModel] {
         guard ensureStoreIsReady(), let userId = userID() else { return [] }
         let container = self.container
@@ -68,11 +64,7 @@ extension PersistenceController {
         }
     }
 
-    /// Fetches the single persisted recipe with `id` in the current user's
-    /// scope, or `nil` if it isn't found. Used by the detail screen to re-read
-    /// the latest saved state on (re)appear so it never shows a stale in-memory
-    /// copy after edits made elsewhere (e.g. a post-cook photo added and then
-    /// the screen revisited from a parent list that hasn't re-synced).
+    /// Fetches the single recipe with `id` in the current user's scope; the detail screen re-reads on appear to avoid stale in-memory copies.
     func fetchRecipe(withId id: UUID) -> RecipeModel? {
         guard ensureStoreIsReady(), let userId = userID() else { return nil }
 

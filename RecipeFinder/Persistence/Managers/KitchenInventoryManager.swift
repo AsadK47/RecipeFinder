@@ -2,8 +2,7 @@ import SwiftUI
 
 private let logger = AppLogger.logger(category: "KitchenInventory")
 
-/// Behavioural seam for the kitchen inventory so views depend on this protocol
-/// rather than the `KitchenInventoryManager` singleton — and tests can inject a fake.
+/// Behavioural seam so views depend on this protocol, not the `KitchenInventoryManager` singleton, and tests can inject a fake.
 @MainActor
 protocol KitchenInventoryManaging: AnyObject, Observable {
     var items: [KitchenItem] { get }
@@ -19,17 +18,14 @@ protocol KitchenInventoryManaging: AnyObject, Observable {
 }
 
 private struct KitchenInventoryManagingKey: EnvironmentKey {
-    // SwiftUI reads environment defaults on the main actor during view updates,
-    // so assuming main-actor isolation here is safe; the real app injects the
-    // shared instance at the composition root regardless.
+    // SwiftUI reads environment defaults on the main actor, so assuming main-actor isolation is safe.
     static var defaultValue: any KitchenInventoryManaging {
         MainActor.assumeIsolated { KitchenInventoryManager.shared }
     }
 }
 
 extension EnvironmentValues {
-    /// Injected kitchen inventory. Defaults to the shared singleton; override with
-    /// `.environment(\.kitchen, fake)` in tests/previews.
+    /// Injected kitchen inventory; defaults to the shared singleton, override with `.environment(\.kitchen, fake)` in tests/previews.
     var kitchen: any KitchenInventoryManaging {
         get { self[KitchenInventoryManagingKey.self] }
         set { self[KitchenInventoryManagingKey.self] = newValue }
@@ -50,7 +46,7 @@ final class KitchenInventoryManager: KitchenInventoryManaging {
     private(set) var inventoryItems: [KitchenInventoryModel] = []
     // O(1) name lookup — kept in sync with items on every save/load
     @ObservationIgnored private var itemNameSet: Set<String> = []
-    // O(1) inventory name lookup — mirrors inventoryItems, same pattern as itemNameSet.
+    // O(1) inventory name lookup — mirrors inventoryItems.
     @ObservationIgnored private var inventoryNameSet: Set<String> = []
     // Pre-grouped and sorted once per save/load; reading it in body is O(1).
     private(set) var groupedItemsCache: [(category: String, items: [KitchenItem])] = []
@@ -221,10 +217,7 @@ final class KitchenInventoryManager: KitchenInventoryManaging {
 		storage.set(true, forKey: migrationKey)
 	}
     
-	/// Faithful, non-destructive restore of both kitchen stores: unions the quick
-	/// `items` list and the detailed `inventory` list by id and persists each.
-	/// Unlike `addItem`/`addInventoryItem`, it doesn't dedupe by name or validate
-	/// expiry/quantity — restored entries keep exactly what they had when backed up.
+	/// Non-destructive restore: unions both `items` and `inventory` lists by id, without the name-dedupe or expiry/quantity validation that add methods apply.
 	func merge(items incomingItems: [KitchenItem], inventory incomingInventory: [KitchenInventoryModel]) {
 		saveItems(BackupMerge.merged(existing: items, incoming: incomingItems))
 		saveInventoryItems(BackupMerge.merged(existing: inventoryItems, incoming: incomingInventory))
@@ -310,8 +303,7 @@ final class KitchenInventoryManager: KitchenInventoryManaging {
 		saveItems([])
 	}
     
-    // Returns the pre-computed cache — O(1) from any call site.
-    // Previously called inline in body, which made it O(K log K) per re-render.
+    // Returns the pre-computed cache — O(1); computing inline in body was O(K log K) per re-render.
 	func groupedItems() -> [(category: String, items: [KitchenItem])] {
         groupedItemsCache
 	}

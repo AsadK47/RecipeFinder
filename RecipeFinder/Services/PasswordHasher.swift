@@ -2,15 +2,9 @@ import Foundation
 import Security
 import CommonCrypto
 
-/// Pure, dependency-free password hashing (PBKDF2 / HMAC-SHA256) and salt
-/// generation.
-///
-/// Kept separate from Keychain storage so the cryptographic behaviour can be
-/// unit-tested in isolation — historically this logic shipped a bug where a
-/// failed derivation was mistaken for a valid (empty) hash.
+/// Pure PBKDF2/HMAC-SHA256 password hashing and salt generation, kept separate from Keychain storage for isolated unit-testing (a failed derivation once passed as a valid empty hash).
 struct PasswordHasher: Sendable {
-    /// PBKDF2 iteration count. Configurable so tests can run with fewer rounds;
-    /// production uses an OWASP-scale default.
+    /// PBKDF2 iteration count; configurable so tests use fewer rounds than the OWASP-scale production default.
     let rounds: Int
     /// Derived-key length in bytes.
     let keyByteCount: Int
@@ -27,10 +21,7 @@ struct PasswordHasher: Sendable {
         return bytes.hexEncodedString
     }
 
-    /// Derives a hex-encoded hash for `password` using the hex-encoded `salt`.
-    ///
-    /// Returns `nil` when the salt is not valid hex or the derivation fails —
-    /// never an empty string, which must not be treated as a valid hash.
+    /// Derives a hex hash for `password` using hex `salt`; returns `nil` (never an empty string) on invalid hex or failed derivation.
     func hash(password: String, salt: String) -> String? {
         guard let passwordData = password.data(using: .utf8),
               let saltData = Data(hexString: salt) else {
@@ -44,8 +35,7 @@ struct PasswordHasher: Sendable {
         return derivedKey.hexEncodedString
     }
 
-    /// Returns `nil` (never partial/empty `Data`) when derivation fails, so a
-    /// failed hash cannot be mistaken for a valid value.
+    /// Returns `nil` (never partial/empty `Data`) on failure so a failed hash can't be mistaken for a valid value.
     private func pbkdf2(password: Data, salt: Data) -> Data? {
         var derivedKeyData = Data(count: keyByteCount)
         let derivationStatus = derivedKeyData.withUnsafeMutableBytes { derivedKeyBytes in
@@ -81,8 +71,7 @@ extension Sequence where Element == UInt8 {
 }
 
 extension Data {
-    /// Decodes an even-length hex string into bytes. Returns `nil` for odd-length
-    /// input or any non-hex character.
+    /// Decodes an even-length hex string into bytes; `nil` for odd-length input or any non-hex character.
     init?(hexString: String) {
         let len = hexString.count / 2
         guard hexString.count == len * 2 else { return nil }

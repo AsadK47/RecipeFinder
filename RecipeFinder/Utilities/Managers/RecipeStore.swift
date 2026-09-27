@@ -33,8 +33,7 @@ extension EnvironmentValues {
 final class RecipeStore: RecipeStoring {
     static let shared = RecipeStore()
 
-    /// Settable so a store-backed `Binding` can front existing `@Binding var
-    /// recipes` view APIs during the migration.
+    /// Settable so a store-backed `Binding` can front existing `@Binding var recipes` view APIs during migration.
     var recipes: [RecipeModel] = []
     private(set) var isLoading = true
 
@@ -44,8 +43,7 @@ final class RecipeStore: RecipeStoring {
         self.persistence = persistence
     }
 
-    /// Loads the library for the current user (or seed recipes in guest mode).
-    /// Mirrors the retry/seed behaviour previously inline in `ContentView`.
+    /// Loads the current user's library (or seed recipes in guest mode); mirrors the retry/seed behaviour once inline in `ContentView`.
     func load(isAuthenticated: Bool) {
         loadRecipes(isAuthenticated: isAuthenticated, retryAttempt: 0)
     }
@@ -64,9 +62,7 @@ final class RecipeStore: RecipeStoring {
             return
         }
 
-        // The store loads synchronously at launch, but corrupted-store recovery
-        // reloads it late. Retry so one early empty fetch doesn't strand the user
-        // with a blank list for the session.
+        // Corrupted-store recovery reloads the store late, so retry — one early empty fetch shouldn't strand the user with a blank list.
         guard persistence.isStoreLoaded else {
             guard retryAttempt < 5 else { return }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
@@ -95,9 +91,7 @@ final class RecipeStore: RecipeStoring {
         recipes = await persistence.fetchRecipesAsync()
     }
 
-    /// Persists an edit and upserts it into the in-memory library so every
-    /// observing surface updates. Returns false (and leaves state untouched) on
-    /// a persistence failure so callers can surface an error.
+    /// Persists an edit and upserts it into the in-memory library so observers update; returns false (state untouched) on failure.
     @discardableResult
     func save(_ recipe: RecipeModel) -> Bool {
         guard persistence.saveRecipeModel(recipe) else { return false }
@@ -120,9 +114,7 @@ final class RecipeStore: RecipeStoring {
         persistence.deleteRecipe(withId: id)
     }
 
-    /// Upserts an already-persisted recipe into the in-memory library without a
-    /// re-write. For specialised persistence ops (recordCook/updateRating) that
-    /// persist via their own path but still need the observable array in sync.
+    /// Upserts an already-persisted recipe into the in-memory library without re-writing — for ops (recordCook/updateRating) that persist via their own path but still need the observable array synced.
     func sync(_ recipe: RecipeModel) {
         if let index = recipes.firstIndex(where: { $0.id == recipe.id }) {
             recipes[index] = recipe

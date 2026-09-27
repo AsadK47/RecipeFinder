@@ -2,22 +2,13 @@ import Foundation
 import UIKit
 import Vision
 
-/// Extracts text from an image (a cookbook page, screenshot, or photo) so it can
-/// be fed to the same free-text import path as pasted captions. A protocol so the
-/// import routing is unit-tested with a fake, independent of Vision.
+/// Extracts image text for the free-text import path; a protocol so import routing is unit-tested with a fake, independent of Vision.
 protocol RecipeImageTextRecognizing: Sendable {
-    /// Recognised text, newline-separated top-to-bottom. Empty when no text is
-    /// found (callers treat that as "no recipe here").
+    /// Recognised text, newline-separated top-to-bottom; empty means no text found ("no recipe here").
     func recognizeText(in image: UIImage) async throws -> String
 }
 
-/// On-device OCR backed by Vision's `VNRecognizeTextRequest` — private, free, and
-/// offline. Uses the accurate path without language correction (which mangles food
-/// proper nouns like dish names) and supplements with a culinary custom-word list
-/// so Vision treats food-specific terms as valid vocabulary.
-///
-/// Images that may be rotated (e.g. a cookbook photographed sideways) are retried
-/// with up to 3 other orientations when the initial recognition confidence is low.
+/// On-device OCR via Vision: accurate path, no language correction (it mangles dish names), plus a culinary custom-word list; retries up to 3 orientations when initial confidence is low.
 struct VisionRecipeImageTextRecognizer: RecipeImageTextRecognizing {
     enum RecognitionError: LocalizedError {
         case invalidImage
@@ -34,8 +25,7 @@ struct VisionRecipeImageTextRecognizer: RecipeImageTextRecognizing {
     // Fewer than this many text blocks and we also try other orientations.
     private static let minimumObservations = 5
 
-    // Domain-specific vocabulary that general English language models don't know,
-    // preventing Vision from "correcting" them to dictionary words.
+    // Domain vocabulary general English models lack, preventing Vision from "correcting" them to dictionary words.
     static let culinaryCustomWords: [String] = [
         "Dynamite", "Sriracha", "Tempura", "Teriyaki", "Katsu", "Tonkatsu",
         "Ramen", "Udon", "Soba", "Edamame", "Miso", "Dashi", "Bonito",
@@ -68,8 +58,7 @@ struct VisionRecipeImageTextRecognizer: RecipeImageTextRecognizing {
             return first.text
         }
 
-        // Low confidence or sparse results — the image may be rotated. Try the
-        // remaining three cardinal orientations and keep the best result.
+        // Low confidence or sparse results — image may be rotated; try the other cardinal orientations, keep the best.
         var best = first
         for orientation in orientationFallbacks(after: naturalOrientation) {
             let result = try await recognize(cgImage: cgImage, orientation: orientation)
@@ -117,16 +106,14 @@ struct VisionRecipeImageTextRecognizer: RecipeImageTextRecognizing {
         }
     }
 
-    /// The three cardinal orientations that aren't `start`, tried in the order
-    /// most likely to succeed for a sideways-photographed cookbook page.
+    /// The three cardinal orientations other than `start`, ordered for a sideways-photographed cookbook page.
     func orientationFallbacks(after start: CGImagePropertyOrientation) -> [CGImagePropertyOrientation] {
         [.right, .left, .down, .up].filter { $0 != start }
     }
 }
 
 private extension CGImagePropertyOrientation {
-    /// Vision reads pixels in their stored orientation, so pass the photo's
-    /// display orientation through or text comes out rotated/garbled.
+    /// Vision reads pixels in stored orientation, so pass display orientation through or text comes out rotated/garbled.
     init(_ uiOrientation: UIImage.Orientation) {
         switch uiOrientation {
         case .up: self = .up

@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// The collapsible ingredients section on the recipe detail screen: the header
-/// with a measurement toggle, and the checklist of ingredient rows. Extracted
-/// from `RecipeDetailView`; all state mutation is delegated through closures.
+/// Collapsible ingredients section extracted from `RecipeDetailView`; all state mutation is delegated through closures.
 struct RecipeIngredientsSection: View {
     let recipe: RecipeModel
     let ingredientsState: [Bool]
@@ -20,9 +18,7 @@ struct RecipeIngredientsSection: View {
     /// Opens the full recipe editor on the ingredients section (add/remove/reorder).
     let onEditIngredients: () -> Void
 
-    // One-time discoverability hint for the tap-to-check / tap-amount-to-edit
-    // gestures, which aren't otherwise obvious. Hidden once seen or once the user
-    // has checked anything off (they've clearly discovered it).
+    // One-time hint for the non-obvious tap-to-check / tap-amount-to-edit gestures; hidden once seen or anything is checked off.
     @AppStorage("hasSeenIngredientTapHint") private var hasSeenTapHint = false
 
     var body: some View {
@@ -155,8 +151,7 @@ struct RecipeIngredientsSection: View {
         )
     }
 
-    // Pre-computed once per body evaluation so the O(table) substitute scan doesn't
-    // run inside the ForEach body for every row on every re-render.
+    // Pre-computed once per body so the O(table) substitute scan doesn't run per-row on every re-render.
     private var ingredientsWithSubstitutes: Set<UUID> {
         Set(recipe.ingredients.compactMap { ingredient in
             IngredientSubstituteProvider.substitutes(for: ingredient.name).isEmpty ? nil : ingredient.id
@@ -169,8 +164,7 @@ struct RecipeIngredientsSection: View {
                 if !hasSeenTapHint && !ingredientsState.contains(true) && !recipe.ingredients.isEmpty {
                     tapHint
                 }
-                // ingredient.id as ForEach identity lets SwiftUI diff individual rows
-                // instead of rebuilding all N rows on every pantry/shopping-list change.
+                // ingredient.id identity lets SwiftUI diff individual rows, not rebuild all N on every pantry/shopping change.
                 let substituteIDs = ingredientsWithSubstitutes
                 ForEach(Array(recipe.ingredients.enumerated()), id: \.element.id) { index, ingredient in
                     IngredientRowView(
