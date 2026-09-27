@@ -38,6 +38,8 @@ final class RecipeStore: RecipeStoring {
     private(set) var isLoading = true
 
     @ObservationIgnored private let persistence: PersistenceController
+    /// Bumped on each load so a slow earlier fetch (e.g. previous account) can't overwrite a newer one's result.
+    @ObservationIgnored private var loadGeneration = 0
 
     init(persistence: PersistenceController = .shared) {
         self.persistence = persistence
@@ -78,14 +80,18 @@ final class RecipeStore: RecipeStoring {
         }
 
         // Fetch off the main thread so a large library doesn't freeze the UI.
+        loadGeneration += 1
+        let generation = loadGeneration
         Task {
             var fetched = await persistence.fetchRecipesAsync()
-            // Seed starter recipes for brand-new users — one-time per account.
+            // Seed starter recipes for brand-new users — one-time per account. Set the flag before awaiting so a concurrent load doesn't seed twice.
             if fetched.isEmpty, !UserScopedStorage.shared.bool(forKey: "seedRecipesLoaded") {
-                await persistence.seedRecipes(SeedRecipeProvider.recipes)
                 UserScopedStorage.shared.set(true, forKey: "seedRecipesLoaded")
+                await persistence.seedRecipes(SeedRecipeProvider.recipes)
                 fetched = await persistence.fetchRecipesAsync()
             }
+            // Ignore a stale fetch superseded by a newer load (account switch / scope change).
+            guard generation == loadGeneration else { return }
             recipes = fetched
             isLoading = false
         }

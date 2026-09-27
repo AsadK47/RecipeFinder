@@ -107,10 +107,11 @@ extension RecipeParser {
                 if let valueRange = match.range(of: "[0-9]+", options: .regularExpression),
                    let value = Int(match[valueRange]) {
 
+                    let capped = min(value, 1_000_000)  // guard `* 60` against overflow on garbage input
                     if match.lowercased().contains("hour") || match.lowercased().contains("hr") {
-                        return value * 60
+                        return capped * 60
                     }
-                    return value
+                    return capped
                 }
             }
         }

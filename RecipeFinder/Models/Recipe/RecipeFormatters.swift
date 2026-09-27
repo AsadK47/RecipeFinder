@@ -65,6 +65,7 @@ enum TimeExtractor {
             totalMinutes += unit.hasPrefix("h") ? number * 60 : number
         }
 
-        return foundNumber ? max(0, Int(totalMinutes.rounded())) : 0
+        // Clamp before Int() — a huge parsed number (garbage/OCR) would trap the Double→Int conversion.
+        return foundNumber ? max(0, Int(min(totalMinutes.rounded(), 1_000_000))) : 0
     }
 }

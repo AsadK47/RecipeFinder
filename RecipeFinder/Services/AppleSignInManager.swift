@@ -62,6 +62,8 @@ final class AppleSignInManager: NSObject, AppleSignInHandling {
                     self.loadUserData()
                     
                     ShoppingListManager.shared.reloadForCurrentUser()
+                    KitchenInventoryManager.shared.reloadForCurrentUser()
+                    MealPlanningManager.shared.reloadForCurrentUser()
                     BadgeManager.shared.reloadForCurrentUser()
                     CollectionManager.shared.reloadForCurrentUser()
                 case .revoked, .notFound:
@@ -98,6 +100,8 @@ final class AppleSignInManager: NSObject, AppleSignInHandling {
         
         Task { @MainActor in
             ShoppingListManager.shared.reloadForCurrentUser()
+            KitchenInventoryManager.shared.reloadForCurrentUser()
+            MealPlanningManager.shared.reloadForCurrentUser()
             BadgeManager.shared.reloadForCurrentUser()
             CollectionManager.shared.reloadForCurrentUser()
         }
@@ -133,6 +137,8 @@ final class AppleSignInManager: NSObject, AppleSignInHandling {
         
         Task { @MainActor in
             ShoppingListManager.shared.reloadForCurrentUser()
+            KitchenInventoryManager.shared.reloadForCurrentUser()
+            MealPlanningManager.shared.reloadForCurrentUser()
             BadgeManager.shared.reloadForCurrentUser()
             CollectionManager.shared.reloadForCurrentUser()
 

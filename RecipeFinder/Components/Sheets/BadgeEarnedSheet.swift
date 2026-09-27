@@ -12,6 +12,7 @@ struct BadgeEarnedSheet: View {
     @Environment(\.colorScheme) private var colorScheme
     @State private var confettiCounter = 0
     @State private var appeared = false
+    @State private var dismissTask: Task<Void, Never>?
 
     private var badgeColor: Color { Badge.color(for: badge.badge.color) }
 
@@ -99,12 +100,14 @@ struct BadgeEarnedSheet: View {
             appeared = true
             confettiCounter += 1
             HapticManager.shared.celebrate()
-            // Auto-dismiss after 4 s so it never blocks the UI indefinitely.
-            Task {
+            // Auto-dismiss after 4 s; hold the task so a queued next badge cancels it instead of being dismissed by this one's timer.
+            dismissTask = Task {
                 try? await Task.sleep(for: .seconds(4))
+                guard !Task.isCancelled else { return }
                 onDismiss()
             }
         }
+        .onDisappear { dismissTask?.cancel() }
     }
 }
 

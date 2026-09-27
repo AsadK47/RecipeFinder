@@ -100,8 +100,8 @@ extension RecipeParser {
 
     private static func minutesFromText(_ text: String) -> Int? {
         var total = 0
-        if let h = firstCapture(#"(\d+)\s*(?:hours?|hrs?)\b"#, in: text) { total += (Int(h) ?? 0) * 60 }
-        if let m = firstCapture(#"(\d+)\s*(?:minutes?|mins?)\b"#, in: text) { total += Int(m) ?? 0 }
+        if let h = firstCapture(#"(\d+)\s*(?:hours?|hrs?)\b"#, in: text) { total += min(Int(h) ?? 0, 1_000_000) * 60 }
+        if let m = firstCapture(#"(\d+)\s*(?:minutes?|mins?)\b"#, in: text) { total += min(Int(m) ?? 0, 1_000_000) }
         return total > 0 ? total : nil
     }
 

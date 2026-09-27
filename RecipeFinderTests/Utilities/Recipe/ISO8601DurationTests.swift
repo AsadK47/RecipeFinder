@@ -39,4 +39,14 @@ struct ISO8601DurationTests {
     func noUsableDuration(duration: String) {
         #expect(RecipeParser.parseISO8601Duration(duration) == nil)
     }
+
+    @Test(
+        "Absurdly large components are clamped, not overflow-trapped",
+        arguments: ["P916000000000000W", "PT999999999999999999H", "P100000000000000DT0H0M"]
+    )
+    func hugeComponentsDoNotCrash(duration: String) {
+        // Previously trapped on Int overflow in the minute arithmetic; now clamped.
+        let result = RecipeParser.parseISO8601Duration(duration)
+        #expect(result == nil || result! > 0)
+    }
 }

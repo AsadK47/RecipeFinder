@@ -25,7 +25,8 @@ struct CollectionsInlineView: View {
             }
         }
         .onAppear { updateSmartCollections() }
-        .onChange(of: recipes.count) { _, _ in updateSmartCollections() }
+        // Observe the whole list, not just count — smart-collection membership tracks rating/cook-date/content, which change without count changing.
+        .onChange(of: recipes) { _, _ in updateSmartCollections() }
         .sheet(isPresented: $showNewCollection) {
             NewCollectionSheet(manager: manager)
         }

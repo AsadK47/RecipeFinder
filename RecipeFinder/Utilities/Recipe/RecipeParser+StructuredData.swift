@@ -209,7 +209,8 @@ extension RecipeParser {
             guard index < match.numberOfRanges else { return 0 }
             let range = match.range(at: index)
             guard range.location != NSNotFound else { return 0 }
-            return Int(nsString.substring(with: range)) ?? 0
+            // Clamp so a garbage duration (e.g. "P916000000000000W") can't overflow the minute arithmetic below.
+            return min(Int(nsString.substring(with: range)) ?? 0, 1_000_000)
         }
 
         let weeks = value(at: 1)

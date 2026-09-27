@@ -93,7 +93,13 @@ enum IngredientCategory: String, Codable, CaseIterable {
     case canned = "Canned Goods"
     case baking = "Baking Supplies"
     case other = "Other"
-    
+
+    /// Fall back to `.other` on an unknown/renamed raw value so one drifted item can't fail the whole inventory decode.
+    init(from decoder: Decoder) throws {
+        let raw = try decoder.singleValueContainer().decode(String.self)
+        self = IngredientCategory(rawValue: raw) ?? .other
+    }
+
     var icon: String {
         switch self {
         case .produce: return "leaf.fill"
@@ -135,7 +141,13 @@ enum StorageLocation: String, Codable, CaseIterable {
     case freezer = "Freezer"
     case cabinet = "Cabinet"
     case counter = "Counter"
-    
+
+    /// Fall back to `.pantry` on an unknown/renamed raw value so one drifted item can't fail the whole inventory decode.
+    init(from decoder: Decoder) throws {
+        let raw = try decoder.singleValueContainer().decode(String.self)
+        self = StorageLocation(rawValue: raw) ?? .pantry
+    }
+
     var icon: String {
         switch self {
         case .pantry: return "cabinet.fill"
