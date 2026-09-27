@@ -1,15 +1,9 @@
 import XCTest
 
-/// Critical-flow UI test: email sign-in.
+/// Critical-flow UI test: email sign-in lands on the main app.
 ///
-/// Builds on the clean-state launch hooks (`-ui-testing`, `-resetState`; see
-/// `RecipeFinderApp.init`). From the signed-out screen, tapping "Sign In with
-/// Email", entering the test account credentials, and submitting must land on
-/// the main app with its tab bar visible.
-///
-/// The `-resetState` hook now also sets `hasCompletedOnboarding` and
-/// `hasSeenBiometricOnboarding`, so sign-in lands directly on the main content
-/// rather than an interstitial onboarding screen.
+/// `-resetState` also sets `hasCompletedOnboarding`/`hasSeenBiometricOnboarding`
+/// so sign-in lands on main content, not an interstitial onboarding screen.
 final class RecipeFinderSignInUITests: XCTestCase {
 
     override func setUp() {
@@ -28,12 +22,11 @@ final class RecipeFinderSignInUITests: XCTestCase {
             "A clean-state launch should land on the sign-in screen."
         )
 
-        // Navigate to the email sign-in form.
         let signInLink = app.buttons["auth.showSignIn"]
         XCTAssertTrue(signInLink.waitForExistence(timeout: 5), "Sign In with Email button should exist.")
         signInLink.tap()
 
-        // Fill in the test account credentials (created by AuthTestHelper.ensureTestAccountExists).
+        // Credentials for the account created by AuthTestHelper.ensureTestAccountExists.
         let emailField = app.textFields["signin.email"]
         XCTAssertTrue(emailField.waitForExistence(timeout: 5), "Email field should appear after navigation.")
         emailField.tap()
@@ -48,7 +41,6 @@ final class RecipeFinderSignInUITests: XCTestCase {
         XCTAssertTrue(submitButton.waitForExistence(timeout: 5), "Sign In button should exist.")
         submitButton.tap()
 
-        // A successful sign-in navigates to the main tab bar.
         XCTAssertTrue(
             app.tabBars.buttons["Recipes"].waitForExistence(timeout: 10),
             "A valid sign-in should land on the main app showing the tab bar."

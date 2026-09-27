@@ -3,7 +3,8 @@ import SwiftUI
 /// Read-only list of recipes matching a `SmartCollection` rule; mirrors `CollectionDetailView`.
 struct SmartCollectionDetailView: View {
     let smartCollection: SmartCollection
-    @Binding var recipes: [RecipeModel]
+    @Environment(\.recipeStore) private var recipeStore
+    private var recipes: [RecipeModel] { recipeStore.recipes }
 
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @Environment(\.colorScheme) var colorScheme

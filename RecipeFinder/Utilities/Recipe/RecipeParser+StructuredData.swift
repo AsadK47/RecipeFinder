@@ -167,7 +167,6 @@ extension RecipeParser {
                 let decoded = decodeHTMLEntities(str.trimmingCharacters(in: .whitespacesAndNewlines))
                 if decoded.count >= 10 { steps.append(decoded) }
             } else if let dict = item as? [String: Any] {
-                // Resolve @type whether it's a String or [String]
                 let typeStr: String
                 if let t = dict["@type"] as? String {
                     typeStr = t
@@ -178,7 +177,6 @@ extension RecipeParser {
                 }
 
                 if typeStr == "HowToSection", let subItems = dict["itemListElement"] as? [Any] {
-                    // Recurse into section — each section step becomes its own entry
                     steps.append(contentsOf: flattenInstructionSteps(from: subItems))
                 } else if let text = dict["text"] as? String {
                     // HowToStep (or any dict with a "text" field)

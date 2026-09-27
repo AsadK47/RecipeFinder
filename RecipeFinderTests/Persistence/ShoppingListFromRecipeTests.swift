@@ -143,7 +143,7 @@ import Foundation
     @Test func clearCheckedItems_removesOnlyCheckedItems() {
         let manager = makeManager()
         manager.addIngredients(from: recipe(ingredients: [ing("Salt"), ing("Pepper"), ing("Cumin")]))
-        manager.toggleItem(at: 0)    // check first item
+        manager.toggleItem(at: 0)
         manager.clearCheckedItems()
         #expect(manager.items.count == 2)
         #expect(manager.items.allSatisfy { !$0.isChecked })

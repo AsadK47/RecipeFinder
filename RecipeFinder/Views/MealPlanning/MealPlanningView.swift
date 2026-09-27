@@ -1,7 +1,8 @@
 import SwiftUI
 
 struct MealPlanningView: View {
-    @Binding var recipes: [RecipeModel]
+    @Environment(\.recipeStore) private var recipeStore
+    private var recipes: [RecipeModel] { recipeStore.recipes }
     @Environment(\.mealPlanning) private var mealPlanningManager
     @Environment(\.kitchen) private var kitchenManager
     @State private var selectedDate: Date = Date()
@@ -140,7 +141,6 @@ struct MealPlanningView: View {
         }
         .sheet(isPresented: $showRecipeSelector) {
             RecipeSelectionSheet(
-                recipes: $recipes,
                 mealTime: currentMealTime,
                 onSelectExisting: { recipe in
                     if let mealTime = currentMealTime {
@@ -152,7 +152,7 @@ struct MealPlanningView: View {
             )
         }
         .sheet(isPresented: $showQuickSnackSheet) {
-            QuickSnackSheet(recipes: $recipes) { snackRecipe in
+            QuickSnackSheet { snackRecipe in
                 if let mealTime = currentMealTime {
                     saveMealPlan(recipe: snackRecipe, for: selectedDate, mealTime: mealTime)
                 }
@@ -403,5 +403,5 @@ struct MealPlanningView: View {
 }
 
 #Preview {
-    MealPlanningView(recipes: .constant([]))
+    MealPlanningView()
 }

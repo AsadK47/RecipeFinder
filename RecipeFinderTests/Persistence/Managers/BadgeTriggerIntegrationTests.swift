@@ -70,14 +70,12 @@ struct BadgeTriggerIntegrationTests {
         let badge = makeBadgeManager()
         let shopping = makeShoppingManager(badgeManager: badge)
 
-        // First add — badge fires.
         shopping.addItem(name: "Milk")
         badge.dismissCelebration()
 
-        // Manually mark badge as already shown so we can isolate the next check.
-        // Adding the same item again only updates quantity — the badge path is
-        // only reached when a *new* item is appended.
-        shopping.addItem(name: "Milk")   // merges with existing, no new append
+        // Adding the same item again only updates quantity; the badge path is
+        // reached only when a *new* item is appended.
+        shopping.addItem(name: "Milk")
         #expect(badge.pendingCelebration == nil)
     }
 

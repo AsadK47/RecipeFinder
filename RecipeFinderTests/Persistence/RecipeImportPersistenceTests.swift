@@ -30,12 +30,10 @@ import Foundation
         let controller = PersistenceController(inMemory: true, userID: { "userA" })
         #expect(controller.isStoreLoaded)
 
-        // Parse → build → persist.
         let outcome = try await pipeline.fetchAndParse(from: url)
         let built = RecipeImportBuilder().build(from: outcome.data)
         controller.saveRecipeModel(built)
 
-        // Reload from the store and prove the recipe survived the round trip.
         let fetched = controller.fetchRecipes()
         #expect(fetched.count == 1)
         let stored = try #require(fetched.first)

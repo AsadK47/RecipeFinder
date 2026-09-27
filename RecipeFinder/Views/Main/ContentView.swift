@@ -18,11 +18,6 @@ struct ContentView: View {
 
     private var themeBinding: AppTheme.ThemeType { selectedTheme }
 
-    // Store-backed binding so `@Binding var recipes` view APIs keep working while RecipeStore owns the source of truth.
-    private var recipesBinding: Binding<[RecipeModel]> {
-        Binding(get: { store.recipes }, set: { store.recipes = $0 })
-    }
-
     private enum SidebarItem: Int, Hashable, CaseIterable {
         case recipes, groceries, importRecipes, planning, settings
 
@@ -141,16 +136,16 @@ struct ContentView: View {
                 .ignoresSafeArea()
 
             TabView(selection: $selectedTab) {
-                RecipeSearchView(recipes: recipesBinding, isLoading: store.isLoading)
+                RecipeSearchView(isLoading: store.isLoading)
                     .tabItem { Label("Recipes", systemImage: "book.fill") }
                     .tag(0)
                 KitchenShoppingView()
                     .tabItem { Label("Groceries", systemImage: "cart.fill") }
                     .tag(1)
-                ImportView(recipes: recipesBinding)
+                ImportView()
                     .tabItem { Label("Import", systemImage: "plus.circle.fill") }
                     .tag(2)
-                MealPlanningView(recipes: recipesBinding)
+                MealPlanningView()
                     .tabItem { Label("Planning", systemImage: "calendar") }
                     .tag(3)
                 NavigationStack {
@@ -206,13 +201,13 @@ struct ContentView: View {
     private var sidebarDetailView: some View {
         switch sidebarSelection ?? .recipes {
         case .recipes:
-            RecipeSearchView(recipes: recipesBinding)
+            RecipeSearchView()
         case .groceries:
             KitchenShoppingView()
         case .importRecipes:
-            ImportView(recipes: recipesBinding)
+            ImportView()
         case .planning:
-            MealPlanningView(recipes: recipesBinding)
+            MealPlanningView()
         case .settings:
             NavigationStack { SettingsTabView() }
         }

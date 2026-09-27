@@ -6,7 +6,6 @@ struct DataManagementSettingsView: View {
     @State private var dataCleared = false
     @AppStorage("skipRecipeDeleteConfirmation") private var skipDeleteConfirmation: Bool = false
 
-    // Backup & Restore
     @State private var isExporting = false
     @State private var isImporting = false
     @State private var exportDocument: BackupDocument?
@@ -312,10 +311,12 @@ struct DataManagementSettingsView: View {
         .cornerRadius(AppTheme.cornerRadius12)
     }
 
+    private static let backupDateFormatter: DateFormatter = {
+        let f = DateFormatter(); f.dateFormat = "yyyy-MM-dd"; return f
+    }()
+
     private static func defaultBackupFilename() -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        return "RecipeFinder-Backup-\(formatter.string(from: Date()))"
+        "RecipeFinder-Backup-\(backupDateFormatter.string(from: Date()))"
     }
 
     private func exportBackup() {

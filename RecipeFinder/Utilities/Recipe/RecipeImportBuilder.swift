@@ -38,6 +38,10 @@ struct RecipeImportBuilder {
 
     // MARK: - Notes generation
 
+    private static let importDateFormatter: DateFormatter = {
+        let f = DateFormatter(); f.dateStyle = .medium; return f
+    }()
+
     func buildNotes(from data: RecipeImporter.ExtractedRecipeData) -> String {
         var lines: [String] = []
 
@@ -49,9 +53,7 @@ struct RecipeImportBuilder {
         }
 
         if !lines.isEmpty { lines.append("") }
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
-        lines.append("Imported · \(dateFormatter.string(from: Date()))")
+        lines.append("Imported · \(Self.importDateFormatter.string(from: Date()))")
         lines.append(data.sourceURL.absoluteString)
 
         return lines.joined(separator: "\n")

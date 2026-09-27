@@ -2,7 +2,8 @@ import SwiftUI
 import Kingfisher
 
 struct RecipeSelectionSheet: View {
-    @Binding var recipes: [RecipeModel]
+    @Environment(\.recipeStore) private var recipeStore
+    private var recipes: [RecipeModel] { recipeStore.recipes }
     let mealTime: MealTime?
     let onSelectExisting: (RecipeModel) -> Void
 
@@ -31,14 +32,11 @@ struct RecipeSelectionSheet: View {
 
                     if filteredRecipes.isEmpty {
                         Spacer()
-                        VStack(spacing: AppTheme.spacing12) {
-                            Image(systemName: "book.closed")
-                                .font(.system(size: AppTheme.fontSize40))
-                                .adaptiveSecondaryForeground()
-                            Text("No recipes found")
-                                .font(.headline)
-                                .adaptiveSecondaryForeground()
-                        }
+                        EmptyStateView(
+                            icon: "book.closed",
+                            title: "No recipes found",
+                            message: "Try a different search, or add a recipe to your library."
+                        )
                         Spacer()
                     } else {
                         ScrollView {
