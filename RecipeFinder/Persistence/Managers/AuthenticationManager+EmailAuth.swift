@@ -33,8 +33,6 @@ extension AuthenticationManager {
             throw AuthError.invalidCredentials
         }
         
-        let sessionToken = credentialManager.generateSessionToken()
-        credentialManager.saveSessionToken(sessionToken, for: email)
         
         return userInfo
     }
@@ -169,8 +167,6 @@ extension AuthenticationManager {
             throw AuthError.userCreationFailed
         }
         
-        let sessionToken = credentialManager.generateSessionToken()
-        credentialManager.saveSessionToken(sessionToken, for: email)
         
         let components = fullName.components(separatedBy: " ")
         let givenName = components.first

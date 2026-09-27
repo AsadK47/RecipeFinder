@@ -158,14 +158,12 @@ struct RecipeDetailView: View {
                 prePrepState = Array(repeating: false, count: newRecipe.prePrepInstructions.count)
             }
         }
-        .task {
-            await silentRefreshFromSource()
-        }
         .task(id: recipe.id) {
-            // Re-read persisted copy on (re)appear so returning shows latest saved state, not a stale snapshot.
+            // Re-read the persisted copy first, then refresh — so the diff runs against saved state, not the stale navigation snapshot (avoids the two-task race).
             if let fresh = PersistenceController.shared.fetchRecipe(withId: recipe.id) {
                 recipe = fresh
             }
+            await silentRefreshFromSource()
         }
     }
 

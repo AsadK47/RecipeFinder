@@ -173,33 +173,6 @@ struct SecureCredentialManagerTests {
         #expect(sut.hashEmail("a@x.com").count == 64)
     }
 
-    // MARK: - Session tokens
-
-    @Test("Session token round-trips and can be deleted")
-    func sessionToken_roundTripsAndDeletes() {
-        let (sut, _) = makeSUT()
-        #expect(sut.saveSessionToken("tok-123", for: "a@b.com"))
-        #expect(sut.getSessionToken(for: "a@b.com") == "tok-123")
-        #expect(sut.deleteSessionToken(for: "a@b.com"))
-        #expect(sut.getSessionToken(for: "a@b.com") == nil)
-        // Deleting again is tolerated.
-        #expect(sut.deleteSessionToken(for: "a@b.com"))
-    }
-
-    @Test("Unknown session token returns nil")
-    func getSessionToken_unknown_returnsNil() {
-        let (sut, _) = makeSUT()
-        #expect(sut.getSessionToken(for: "ghost@b.com") == nil)
-    }
-
-    @Test("Delete-all credentials leaves session tokens intact")
-    func deleteAllCredentials_doesNotTouchSessionTokens() {
-        let (sut, _) = makeSUT()
-        _ = sut.saveCredentials(email: "a@b.com", password: "Secret1!", fullName: "Ann")
-        _ = sut.saveSessionToken("tok", for: "a@b.com")
-        _ = sut.deleteAllCredentials()
-        #expect(sut.getSessionToken(for: "a@b.com") == "tok")
-    }
 }
 
 @Suite("PasswordHasher")

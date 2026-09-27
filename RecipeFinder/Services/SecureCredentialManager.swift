@@ -163,64 +163,6 @@ final class SecureCredentialManager: Sendable {
         let status = keychain.delete(query)
         return status == errSecSuccess || status == errSecItemNotFound
     }
-    
-    func generateSessionToken() -> String {
-        return UUID().uuidString
-    }
-    
-    @discardableResult
-    func saveSessionToken(_ token: String, for email: String) -> Bool {
-        let hashedEmail = hashEmail(email)
-        let data = Data(token.utf8)
-        
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: "\(hashedEmail).token",
-            kSecAttrService as String: "com.recipefinder.session",
-            kSecValueData as String: data,
-            kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlockedThisDeviceOnly
-        ]
 
-        _ = keychain.delete(query)
-
-        let status = keychain.add(query)
-        return status == errSecSuccess
-    }
-
-    func getSessionToken(for email: String) -> String? {
-        let hashedEmail = hashEmail(email)
-
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: "\(hashedEmail).token",
-            kSecAttrService as String: "com.recipefinder.session",
-            kSecReturnData as String: true,
-            kSecMatchLimit as String: kSecMatchLimitOne
-        ]
-
-        let (status, data) = keychain.copyMatching(query)
-
-        guard status == errSecSuccess,
-              let data,
-              let token = String(data: data, encoding: .utf8) else {
-            return nil
-        }
-
-        return token
-    }
-
-    @discardableResult
-    func deleteSessionToken(for email: String) -> Bool {
-        let hashedEmail = hashEmail(email)
-
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: "\(hashedEmail).token",
-            kSecAttrService as String: "com.recipefinder.session"
-        ]
-
-        let status = keychain.delete(query)
-        return status == errSecSuccess || status == errSecItemNotFound
-    }
 }
 

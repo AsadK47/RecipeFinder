@@ -85,7 +85,6 @@ extension AuthenticationManager {
         
         if let email = UserDefaults.standard.string(forKey: currentEmailKey) {
             credentialManager.deleteCredentials(email: email)
-            credentialManager.deleteSessionToken(for: email)
         }
         
         let userDataQuery: [String: Any] = [

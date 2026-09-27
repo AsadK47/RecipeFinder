@@ -56,6 +56,12 @@ final class RecipeStore: RecipeStoring {
             return
         }
 
+        // Drop guest seed recipes on the transition to a signed-in library so they don't linger during the async fetch.
+        if recipes == SeedRecipeProvider.recipes {
+            recipes = []
+            isLoading = true
+        }
+
         guard persistence.hasCurrentUserScope() else {
             AppLogger.logger(category: "RecipeStore")
                 .debug("⚠️ Skipping recipe reload because user scope is not available")

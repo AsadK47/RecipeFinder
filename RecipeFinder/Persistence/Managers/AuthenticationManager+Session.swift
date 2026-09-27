@@ -47,11 +47,6 @@ extension AuthenticationManager {
     func signOut() {
         logger.debug("🚪 Sign out initiated")
         
-        if let email = UserDefaults.standard.string(forKey: currentEmailKey) {
-            credentialManager.deleteSessionToken(for: email)
-            logger.debug("🗑️ Deleted session token for: \(email)")
-        }
-        
         UserScopedStorage.shared.currentUserId = nil
         
         setAuthState(isAuthenticated: false, user: nil)
