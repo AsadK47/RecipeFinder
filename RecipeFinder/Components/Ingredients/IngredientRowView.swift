@@ -43,7 +43,6 @@ struct IngredientRowView: View {
             .buttonStyle(.plain)
             .disabled(onTapQuantity == nil)
 
-            // Name + optional prep notes; tapping toggles checked state.
             Button(action: {
                 HapticManager.shared.light()
                 withAnimation(.spring(response: Timing.springResponse, dampingFraction: Timing.springDamping)) {

@@ -235,7 +235,7 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         content.userInfo = ["type": "expiry", "itemId": item.id.uuidString]
 
         var components = Calendar.current.dateComponents([.year, .month, .day], from: notifyDate)
-        components.hour = 18  // 6 PM
+        components.hour = 18
         let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
         let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
 

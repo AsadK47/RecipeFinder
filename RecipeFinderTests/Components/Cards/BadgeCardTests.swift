@@ -13,8 +13,6 @@ final class BadgeCardTests: XCTestCase {
     }
 
     func testBadgeColor_usesStaticColorMap() {
-        // BadgeCard.badgeColor is computed as Badge.color(for: badge.color)
-        // Verify the two are always identical for all named colours
         let namedColors: [(String, Color)] = [
             ("purple", .purple), ("green", .green), ("mint", .mint),
             ("blue", .blue), ("orange", .orange), ("yellow", .yellow),
@@ -22,7 +20,6 @@ final class BadgeCardTests: XCTestCase {
         ]
         for (name, expected) in namedColors {
             let badge = makeBadge(color: name)
-            // BadgeCard reads badge.color via Badge.color(for:) — verify consistency
             XCTAssertEqual(Badge.color(for: badge.color), expected,
                            "BadgeCard.badgeColor mismatch for color '\(name)'")
         }

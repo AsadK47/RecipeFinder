@@ -34,7 +34,6 @@ final class AccountSheetTests: XCTestCase {
     }
 
     func testId_staticCasesDoNotClashWithBadgePrefix() {
-        // No static id starts with "badge_"
         let staticIds = [AccountSheet.privacyPolicy.id,
                          AccountSheet.imagePicker.id,
                          AccountSheet.passwordVerification.id]

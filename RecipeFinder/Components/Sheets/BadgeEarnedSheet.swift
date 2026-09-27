@@ -52,7 +52,6 @@ struct BadgeEarnedSheet: View {
                 }
                 .padding(.top, AppTheme.spacing32)
 
-                // Text
                 VStack(spacing: AppTheme.spacing8) {
                     Text("Badge Earned!")
                         .font(.caption)
@@ -75,7 +74,6 @@ struct BadgeEarnedSheet: View {
 
                 Spacer()
 
-                // CTA
                 Button(action: onViewAllBadges) {
                     Text("View all badges")
                         .font(.subheadline)

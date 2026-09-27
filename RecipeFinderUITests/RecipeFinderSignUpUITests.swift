@@ -1,15 +1,10 @@
 import XCTest
 
-/// Critical-flow UI test: email sign-up.
+/// Critical-flow UI test: email sign-up lands on the welcome screen.
 ///
-/// Builds on the clean-state launch hooks (`-ui-testing`, `-resetState`; see
-/// `RecipeFinderApp.init`). From the signed-out screen, opening Sign Up, filling
-/// a valid new account, and submitting must land on the welcome screen that only
-/// appears after `signUpWithoutLogin` succeeds.
-///
-/// Note: under `-ui-testing` the password fields render as plain `TextField`s
-/// (SignUpView) so iOS's new-password AutoFill can't cap manual entry — hence the
-/// password/confirm fields are queried as `textFields`, not `secureTextFields`.
+/// Under `-ui-testing` the password fields render as plain `TextField`s so iOS's
+/// new-password AutoFill can't cap manual entry — hence they're queried as
+/// `textFields`, not `secureTextFields`.
 final class RecipeFinderSignUpUITests: XCTestCase {
 
     override func setUp() {
@@ -52,7 +47,6 @@ final class RecipeFinderSignUpUITests: XCTestCase {
         if !submit.isHittable { app.swipeUp() }
         submit.tap()
 
-        // WelcomeSplashView only appears after a successful sign-up.
         XCTAssertTrue(
             app.staticTexts["Account created successfully"].waitForExistence(timeout: 10),
             "A valid sign-up should land on the welcome screen."

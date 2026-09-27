@@ -1,16 +1,8 @@
 import XCTest
 
-/// Automated accessibility audits using Apple's `performAccessibilityAudit` API
-/// (XCUIAutomation, iOS 17+). Runs the same checks as Accessibility Inspector:
-/// contrast, element descriptions, hit regions, Dynamic Type, clipped text,
-/// traits, and element detection. A failure here is a real regression — fix it,
-/// don't suppress it.
-///
-/// Screens covered:
-///   - Sign-in (auth screen, clean reset state)
-///   - Import tab
-///   - Groceries tab while a search is active (surfaces GrocerySearchResultsView
-///     with its action-icon buttons — the area we just improved for a11y)
+/// Automated accessibility audits via `performAccessibilityAudit` (iOS 17+),
+/// running the same checks as Accessibility Inspector. A failure here is a real
+/// regression — fix it, don't suppress it.
 final class RecipeFinderAccessibilityAuditTests: XCTestCase {
 
     override func setUp() {
@@ -46,11 +38,7 @@ final class RecipeFinderAccessibilityAuditTests: XCTestCase {
             "Import screen should be visible."
         )
 
-        // Contrast is intentionally excluded on this screen: the import tiles use the
-        // app's frosted `.appCard()` material by design, and Apple's audit flags text
-        // over any translucent material because its contrast can't be guaranteed.
-        // Every other audit type still runs here, and contrast stays enforced on the
-        // sign-in screen.
+        // Skip contrast: import tiles use frosted `.appCard()` material, which the audit always flags over translucency.
         try app.performAccessibilityAudit(for: .all.subtracting(.contrast), auditHandler)
     }
 
@@ -72,18 +60,11 @@ final class RecipeFinderAccessibilityAuditTests: XCTestCase {
             "Search suggestions should appear."
         )
 
-        // Dismiss the software keyboard if it is visible so the contrast audit
-        // measures elements against their card backgrounds and not the keyboard
-        // material that sits over them at lower y-positions on the screen.
-        // showingSearchResults no longer requires isSearchFocused, so the results
-        // remain visible after dismissal.
+        // Dismiss the keyboard so contrast measures against card backgrounds, not the keyboard material over them.
         let dismissKb = app.buttons["Dismiss keyboard"]
         if dismissKb.waitForExistence(timeout: 1) {
             dismissKb.tap()
-            // Wait for the dismiss animation to finish before auditing. Views in
-            // transition can momentarily report non-finite frames (same class the
-            // ShoppingProgressBar clamp guards against), which the audit flags as
-            // "Invalid frame dimension" — measure the settled layout instead.
+            // Wait out the dismiss animation: in-transition views report non-finite frames the audit flags as "Invalid frame dimension".
             let keyboardGone = XCTNSPredicateExpectation(
                 predicate: NSPredicate(format: "exists == false"),
                 object: dismissKb
@@ -102,9 +83,7 @@ final class RecipeFinderAccessibilityAuditTests: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments += ["-ui-testing", "-skip-auth"]
         app.launch()
-        // autoSignIn() fires asynchronously; wait for it to settle so the app
-        // is fully authenticated (isGuest = false) before tests tap action elements.
-        // The nudge button disappears once authManager.isAuthenticated becomes true.
+        // autoSignIn() is async; wait for the guest nudge to vanish (isAuthenticated == true) before tapping.
         _ = app.tabBars.firstMatch.waitForExistence(timeout: 10)
         let nudge = app.buttons["guest.nudge.cta"]
         if nudge.exists {
@@ -117,9 +96,7 @@ final class RecipeFinderAccessibilityAuditTests: XCTestCase {
         return app
     }
 
-    /// Issue handler: attaches a detail string for every failing issue so CI
-    /// reports show exactly what element and rule failed. Always returns `false`
-    /// (fail) — suppress nothing unless there is a documented reason.
+    /// Attaches a detail string per issue for CI, and always returns `false` (fail) — suppress nothing without a documented reason.
     private var auditHandler: (XCUIAccessibilityAuditIssue) throws -> Bool {
         { [self] issue in
             let elem = issue.element

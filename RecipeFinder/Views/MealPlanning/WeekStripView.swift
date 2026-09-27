@@ -128,7 +128,6 @@ private struct WeekDayCell: View {
                 }
                 .frame(width: 32, height: 32)
 
-                // One dot per planned meal time, up to 4
                 HStack(spacing: 2) {
                     ForEach(Array(mealTimes.prefix(3).enumerated()), id: \.offset) { _, mt in
                         Circle()

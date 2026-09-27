@@ -6,7 +6,6 @@ struct DataManagementSettingsView: View {
     @State private var dataCleared = false
     @AppStorage("skipRecipeDeleteConfirmation") private var skipDeleteConfirmation: Bool = false
 
-    // Backup & Restore
     @State private var isExporting = false
     @State private var isImporting = false
     @State private var exportDocument: BackupDocument?

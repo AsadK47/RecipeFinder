@@ -60,7 +60,6 @@ struct CollectionsInlineView: View {
                     .buttonStyle(.plain)
                 }
 
-                // User-created collections
                 ForEach(manager.collections) { collection in
                     NavigationLink {
                         CollectionDetailView(collection: collection)

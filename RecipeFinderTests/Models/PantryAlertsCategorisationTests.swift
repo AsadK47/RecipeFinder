@@ -71,7 +71,6 @@ struct PantryAlertsCategorisationTests {
 
     @Test("expired item that also needs restock is excluded from lowStockOnly")
     func expiredAndLowStockIsNotInLowStockOnly() {
-        // expired AND below minimum quantity
         let item = makeItem(daysUntilExpiry: -2, quantity: 1, minimumQuantity: 3)
         #expect(item.isExpired)
         #expect(item.needsRestock)
@@ -117,7 +116,6 @@ struct PantryAlertsCategorisationTests {
         let expiringSoonBucket = items.filter { $0.isExpiringSoon }
         let lowBucket         = lowStockOnly(from: items)
 
-        // Correct assignment
         #expect(expiredBucket.map(\.name) == ["Milk"])
         #expect(expiringSoonBucket.map(\.name) == ["Cheese"])
         #expect(lowBucket.map(\.name) == ["Eggs"])
