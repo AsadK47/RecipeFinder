@@ -114,9 +114,12 @@ struct MealTimeSelectorSheet: View {
             }
         }
         
+        // Static so the DateFormatter is built once, not rebuilt on every body render.
+        private static let dateFormatter: DateFormatter = {
+            let f = DateFormatter(); f.dateFormat = "EEEE, MMM d, yyyy"; return f
+        }()
+
         private var dateString: String {
-            let formatter = DateFormatter()
-            formatter.dateFormat = "EEEE, MMM d, yyyy"
-            return formatter.string(from: selectedDate)
+            Self.dateFormatter.string(from: selectedDate)
         }
     }

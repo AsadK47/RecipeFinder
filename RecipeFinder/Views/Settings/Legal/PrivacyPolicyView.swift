@@ -5,11 +5,11 @@ struct PrivacyPolicyView: View {
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     
-    private let currentDateFormatted: String = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "d MMMM yyyy"
-        return formatter.string(from: Date())
+    // Static so the DateFormatter is built once, not on every SwiftUI view-struct init.
+    private static let dateFormatter: DateFormatter = {
+        let f = DateFormatter(); f.dateFormat = "d MMMM yyyy"; return f
     }()
+    private var currentDateFormatted: String { Self.dateFormatter.string(from: Date()) }
     
     var body: some View {
         NavigationStack {
