@@ -2,10 +2,7 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// Integration: `RecipeFilterCriteria.apply(to:)` working against a realistic
-/// set of `RecipeModel` values. The unit tests in `RecipeFilterCriteriaTests`
-/// check individual criteria in isolation; these tests verify the full
-/// criteria object correctly gates the recipe list that the search view shows.
+/// Integration: `RecipeFilterCriteria.apply(to:)` over realistic `RecipeModel` values — verifying the full criteria object gates the search list, where `RecipeFilterCriteriaTests` checks criteria in isolation.
 @Suite struct RecipeFilterIntegrationTests {
 
     private func recipe(

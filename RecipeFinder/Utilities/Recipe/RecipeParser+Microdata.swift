@@ -26,7 +26,16 @@ extension RecipeParser {
         guard let scopeRange = html.range(of: scopePattern, options: [.regularExpression, .caseInsensitive]) else {
             return nil
         }
-        let scoped = String(html[scopeRange.lowerBound...])
+        // Bound to this recipe: stop at the next schema.org/Recipe scope so a trailing related/comment recipe block doesn't bleed its ingredients in.
+        let tail = String(html[scopeRange.lowerBound...])
+        let scoped: String
+        if tail.count > 1,
+           let next = tail.range(of: scopePattern, options: [.regularExpression, .caseInsensitive],
+                                 range: tail.index(after: tail.startIndex)..<tail.endIndex) {
+            scoped = String(tail[..<next.lowerBound])
+        } else {
+            scoped = tail
+        }
 
         // Ingredients — current property, then the legacy `ingredients` spelling.
         var ingredients = innerTexts(prop: "recipeIngredient", attr: propAttr, in: scoped)

@@ -2,11 +2,7 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// Integration for the JSON-backed stores' per-account scoping across a
-/// simulated app restart. Every manager scopes through the same mechanism
-/// (`UserScopedStorage`'s per-user key prefix), so `ShoppingListManager` stands
-/// in for the pattern: data written under one account survives a fresh manager
-/// (a relaunch) and stays invisible to a different account.
+/// JSON-backed stores' per-account scoping across a simulated restart, with `ShoppingListManager` standing in for the shared `UserScopedStorage` pattern: data survives a fresh manager and stays invisible to a different account.
 @MainActor
 @Suite struct ManagerScopePersistenceTests {
 

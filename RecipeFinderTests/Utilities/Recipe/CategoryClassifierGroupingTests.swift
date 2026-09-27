@@ -1,9 +1,7 @@
 import Testing
 @testable import RecipeFinder
 
-/// Characterization tests for `groupSimilarIngredients` (used by `IngredientCatalog`),
-/// which previously had no coverage. They lock the compound/descriptor/comma
-/// behaviour so the precedence cleanup is provably behaviour-preserving.
+/// Characterization tests locking `groupSimilarIngredients` (used by `IngredientCatalog`) compound/descriptor/comma behaviour, so the precedence cleanup is provably behaviour-preserving.
 @Suite("CategoryClassifier grouping")
 struct CategoryClassifierGroupingTests {
 

@@ -121,7 +121,7 @@ struct MealPlanningView: View {
         .onChange(of: recipes.count) { _, _ in
             updatePantryExpirySuggestions()
         }
-        .sheet(isPresented: $showMealTimeSelector) {
+        .sheet(isPresented: $showMealTimeSelector, onDismiss: { pendingSuggestedRecipe = nil }) {
             MealTimeSelectorSheet(
                 selectedDate: selectedDate,
                 selectedMealTimes: $selectedMealTimes,

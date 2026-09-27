@@ -176,11 +176,12 @@ struct RecipeParser {
                 }
             }
 
+            // Apply NSString-side: NSRange offsets are UTF-16, so mixing them with grapheme-based String.index mis-slices or crashes on non-BMP input (emoji before an entity).
+            let mutable = NSMutableString(string: result)
             for (range, replacement) in replacements.reversed() {
-                let start = result.index(result.startIndex, offsetBy: range.location)
-                let end = result.index(start, offsetBy: range.length)
-                result.replaceSubrange(start..<end, with: replacement)
+                mutable.replaceCharacters(in: range, with: replacement)
             }
+            result = mutable as String
         }
 
         return result

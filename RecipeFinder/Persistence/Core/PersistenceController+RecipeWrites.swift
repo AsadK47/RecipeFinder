@@ -102,6 +102,14 @@ extension PersistenceController {
         }
     }
     
+    /// Scopes a recipe lookup to the current user so the shared fixed seed UUIDs can't let one account's write land on another's row; id-only fallback for guests (no userId).
+    private func recipeIdPredicate(_ id: UUID) -> NSPredicate {
+        if let userId = userID() {
+            return NSPredicate(format: "\(RecipeKey.id) == %@ AND userId == %@", id as CVarArg, userId)
+        }
+        return NSPredicate(format: "\(RecipeKey.id) == %@", id as CVarArg)
+    }
+
     @discardableResult
     func saveRecipe(parameters: RecipeSaveParameters) -> Bool {
         guard ensureStoreIsReady() else { return false }
@@ -200,7 +208,7 @@ extension PersistenceController {
     func saveRecipeModel(_ recipe: RecipeModel) -> Bool {
         let context = container.viewContext
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
-        fetchRequest.predicate = NSPredicate(format: "\(RecipeKey.id) == %@", recipe.id as CVarArg)
+        fetchRequest.predicate = recipeIdPredicate(recipe.id)
         fetchRequest.fetchLimit = 1
 
         do {
@@ -231,7 +239,7 @@ extension PersistenceController {
         
         let context = container.viewContext
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
-        fetchRequest.predicate = NSPredicate(format: "\(RecipeKey.id) == %@", id as CVarArg)
+        fetchRequest.predicate = recipeIdPredicate(id)
         fetchRequest.fetchLimit = 1
         
         do {
@@ -254,7 +262,7 @@ extension PersistenceController {
 
         let context = container.viewContext
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
-        fetchRequest.predicate = NSPredicate(format: "\(RecipeKey.id) == %@", recipe.id as CVarArg)
+        fetchRequest.predicate = recipeIdPredicate(recipe.id)
         fetchRequest.fetchLimit = 1
 
         do {
@@ -306,7 +314,7 @@ extension PersistenceController {
 
         let context = container.viewContext
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
-        fetchRequest.predicate = NSPredicate(format: "\(RecipeKey.id) == %@", id as CVarArg)
+        fetchRequest.predicate = recipeIdPredicate(id)
         fetchRequest.fetchLimit = 1
 
         do {
@@ -331,7 +339,7 @@ extension PersistenceController {
 
         let context = container.viewContext
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
-        fetchRequest.predicate = NSPredicate(format: "\(RecipeKey.id) == %@", id as CVarArg)
+        fetchRequest.predicate = recipeIdPredicate(id)
         fetchRequest.fetchLimit = 1
 
         do {
@@ -353,7 +361,7 @@ extension PersistenceController {
         
         let context = container.viewContext
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
-        fetchRequest.predicate = NSPredicate(format: "\(RecipeKey.id) == %@", id as CVarArg)
+        fetchRequest.predicate = recipeIdPredicate(id)
         fetchRequest.fetchLimit = 1
         
         do {

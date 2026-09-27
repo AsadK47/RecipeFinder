@@ -1,8 +1,6 @@
 import XCTest
 
-/// Critical-flow launch test: a clean-state launch (`-resetState`) must wipe
-/// persisted auth and land on the signed-out screen. Smallest end-to-end proof
-/// that launch + reset works, before the other UI tests build on it.
+/// Critical-flow launch test: a clean-state launch (`-resetState`) must wipe persisted auth and land signed-out — the smallest proof that launch + reset works before other UI tests build on it.
 final class RecipeFinderLaunchUITests: XCTestCase {
 
     override func setUp() {

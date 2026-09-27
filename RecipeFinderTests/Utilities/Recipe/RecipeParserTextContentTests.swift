@@ -54,9 +54,7 @@ struct RecipeParserTextContentTests {
 
     // MARK: - Default acceptance within confirmed instruction section
 
-    // These lines have no action verb from the old whitelist and no cooking phrase,
-    // but are legitimate instruction sentences. The old code returned false for all
-    // of them; the new code accepts anything >= 15 chars within the section.
+    // Legitimate instruction sentences with no whitelisted verb or cooking phrase; old code rejected all, new code accepts anything >= 15 chars within the section.
     @Test("accepts non-verb instruction sentences of sufficient length", arguments: [
         "Rest the dough at room temperature.",
         "The bread is ready when it sounds hollow.",

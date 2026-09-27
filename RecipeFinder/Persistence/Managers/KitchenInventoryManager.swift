@@ -53,8 +53,8 @@ final class KitchenInventoryManager: KitchenInventoryManaging {
 
 	private init() {
         self.storage = .shared
-		migrateOldDataIfNeeded()
         loadItems()
+		migrateOldDataIfNeeded()
         loadInventoryItems()
 	}
 

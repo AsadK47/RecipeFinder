@@ -174,9 +174,7 @@ final class RecipeParserTests: XCTestCase {
 
     // MARK: - WPRM parsing
 
-    /// Regression: WPRM renders fractions as nested `<span>` elements. The old `([^<]+)` pattern
-    /// stopped at the first `<`, so "1/4" became "1" (the whole-number prefix before the inner span)
-    /// and combined with the unit "cup" produced "1 cup" instead of "1/4 cup".
+    /// Regression: WPRM renders fractions as nested `<span>`s; the old `([^<]+)` stopped at the first `<`, so "1/4 cup" became "1 cup".
     func testParse_wprm_fractionInNestedSpan_preservesFraction() {
         let html = wprmHTML(
             ingredients: [wprmIngredientLI(fractionAmount: ("1", "4"), unit: "cup", name: "neutral oil", notes: "such as grapeseed or avocado oil")],
@@ -329,9 +327,7 @@ final class RecipeParserTests: XCTestCase {
 
     // MARK: - Real-world fixture: Aloo Gosht (teaforturmeric.com)
 
-    /// JSON-LD fixture matching the schema.org/Recipe structure that teaforturmeric.com
-    /// (a WPRM-powered site) generates. Tests that the key ingredients are parsed verbatim,
-    /// including the fractional amounts that caused the "1/4 → 1 cup" regression.
+    /// JSON-LD fixture mirroring teaforturmeric.com (WPRM) schema.org/Recipe; checks key ingredients parse verbatim, including the fractions behind the "1/4 → 1 cup" regression.
     func testParse_alooGosht_jsonLD_ingredientsPreservedVerbatim() {
         let result = RecipeParser.parse(html: alooGoshtJSONLDHTML())
         XCTAssertEqual(result.name, "Aloo Gosht (Mutton/Lamb and Potato Curry)")
@@ -474,9 +470,7 @@ final class RecipeParserTests: XCTestCase {
         """
     }
 
-    /// Realistic JSON-LD fixture for the Aloo Gosht recipe from teaforturmeric.com.
-    /// Mirrors the schema.org/Recipe structure that WPRM generates, including two
-    /// HowToSection blocks (Stovetop + Instant Pot) and fractional ingredient amounts.
+    /// Realistic Aloo Gosht JSON-LD (teaforturmeric.com/WPRM schema.org/Recipe) with two HowToSection blocks (Stovetop + Instant Pot) and fractional amounts.
     private func alooGoshtJSONLDHTML() -> String {
         """
         <html><head>

@@ -62,8 +62,9 @@ struct KitchenShoppingView: View {
             .toolbarBackground(.hidden, for: .navigationBar)
         }
         .confettiCannon(trigger: $confettiTrigger, num: AppTheme.confettiCount, radius: AppTheme.confettiRadius)
-        .onChange(of: checkedCount) { _, newValue in
-            if !shopping.items.isEmpty && newValue == totalCount {
+        .onChange(of: checkedCount) { oldValue, newValue in
+            // Only celebrate when a check completes the list — `newValue > oldValue` avoids firing when deleting a checked item drops the count onto totalCount.
+            if !shopping.items.isEmpty && newValue == totalCount && newValue > oldValue {
                 HapticManager.shared.success()
                 confettiTrigger += 1
             }

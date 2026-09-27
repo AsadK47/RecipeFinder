@@ -11,6 +11,7 @@ struct PhotoImportSheet: View {
 
     @State private var selectedItem: PhotosPickerItem?
     @State private var showCamera = false
+    @State private var capturedImage: UIImage?
     @State private var prefill: RecipeWizardView.PrefilledRecipeData?
     @State private var showReview = false
     @State private var isProcessing = false
@@ -81,9 +82,16 @@ struct PhotoImportSheet: View {
             guard let newItem else { return }
             Task { await handlePickedItem(newItem) }
         }
-        .sheet(isPresented: $showCamera) {
-            CameraPicker { image in
+        // Process after the camera sheet fully dismisses; presenting the review sheet while the camera is still dismissing makes SwiftUI drop it.
+        .sheet(isPresented: $showCamera, onDismiss: {
+            if let image = capturedImage {
+                capturedImage = nil
                 Task { await process(image) }
+            }
+        }) {
+            CameraPicker { image in
+                capturedImage = image
+                showCamera = false
             }
             .ignoresSafeArea()
         }

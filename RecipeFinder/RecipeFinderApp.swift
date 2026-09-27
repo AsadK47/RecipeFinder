@@ -9,9 +9,7 @@ struct RecipeFinderApp: App {
 
     init() {
         #if DEBUG
-        // UI-test launch hooks, consumed only under XCUITest and gated to DEBUG
-        // so no reset path can ever ship in a release build. App.init runs on
-        // the main thread, so assuming main-actor isolation here is safe.
+        // UI-test launch hooks; DEBUG-gated so no reset path ships, and App.init is main-thread so assumeIsolated is safe.
         MainActor.assumeIsolated {
             let arguments = ProcessInfo.processInfo.arguments
             if arguments.contains("-ui-testing") {
@@ -35,10 +33,7 @@ struct RecipeFinderApp: App {
         configureAppearance()
         initializeDatabase()
 
-        // Dev test-account hooks run ONLY under UI testing (`-ui-testing`), so a
-        // plain DEBUG build on a real device behaves like release: real auth flow,
-        // no injected `test@email.com` account. This stops the test account from
-        // masking the user's own signed-in data during on-device development.
+        // Dev test-account hooks run ONLY under `-ui-testing`, so a plain DEBUG build on-device behaves like release — no injected account masking real data.
         #if DEBUG
         let testArgs = ProcessInfo.processInfo.arguments
         if testArgs.contains("-ui-testing") {
@@ -46,9 +41,7 @@ struct RecipeFinderApp: App {
             if testArgs.contains("-skip-auth") {
                 UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
                 UserDefaults.standard.set(true, forKey: "hasSeenBiometricOnboarding")
-                // Sign in synchronously so isAuthenticated = true on the first frame.
-                // This eliminates the async race that let UI tests land in guest mode
-                // and get redirected to sign-up instead of opening the requested flow.
+                // Sign in synchronously so isAuthenticated is true on the first frame, avoiding the async race that redirected UI tests to sign-up.
                 MainActor.assumeIsolated {
                     AuthTestHelper.autoSignInSync()
                 }
@@ -58,12 +51,7 @@ struct RecipeFinderApp: App {
     }
     
     var body: some Scene {
-        // The scene content closure can be evaluated by SwiftUI's async
-        // renderer off the main thread. It must stay trivial: all MainActor
-        // state (auth, onboarding, theme) lives inside AppRootView, whose
-        // body is guaranteed main-actor by the View protocol. Reading that
-        // state directly here crashes with dispatch_assert_queue_fail
-        // (EXC_BREAKPOINT in RecipeFinderApp.body closure #1).
+        // Keep trivial: SwiftUI may evaluate this closure off-main, so all MainActor state stays in AppRootView — reading it here crashes (dispatch_assert_queue_fail).
         WindowGroup {
             AppRootView()
         }
@@ -218,11 +206,7 @@ struct AppRootView: View {
     }
 
     private func evaluateOnboardingFlow() {
-        // UI tests use -ui-testing to bypass auth state; skip onboarding so the
-        // tab bar is immediately reachable. The launch hooks write to bare
-        // UserDefaults keys, but UserScopedStorage reads user-prefixed keys, so
-        // the scoped values are never set during a test run — which would
-        // otherwise trigger onboarding and hide the tab bar.
+        // Under -ui-testing, skip onboarding so the tab bar is reachable: launch hooks write bare UserDefaults keys but UserScopedStorage reads user-prefixed ones, so scoped flags never get set.
         #if DEBUG
         if ProcessInfo.processInfo.arguments.contains("-ui-testing") {
             activeOnboarding = nil

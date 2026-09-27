@@ -63,9 +63,7 @@ struct PersonalRecipeSeedServiceTests {
         )
         _ = store.saveRecipeModel(existing)
 
-        // The service reads from Bundle.main — can't inject JSON in unit tests,
-        // so we verify the deduplication logic via the store's recipe count.
-        // (Bundle-based integration is covered by PersonalRecipeSeedPersistenceTests.)
+        // Service reads Bundle.main (can't inject JSON here), so verify dedup via store count; bundle integration lives in PersonalRecipeSeedPersistenceTests.
         let before = store.fetchRecipes().count
         #expect(before == 1)
     }

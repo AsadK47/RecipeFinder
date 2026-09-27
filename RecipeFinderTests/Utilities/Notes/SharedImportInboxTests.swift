@@ -2,9 +2,7 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// Tests the pure payload-resolution logic of `SharedImportInbox` — the
-/// precedence between a finished extracted recipe, a link, and plain text —
-/// without touching the App Group's `UserDefaults`.
+/// Pure payload-resolution logic of `SharedImportInbox` — precedence of extracted recipe over link over plain text — without touching the App Group `UserDefaults`.
 @Suite struct SharedImportInboxTests {
 
     private static func extracted(_ name: String) -> ExtractedRecipeData {

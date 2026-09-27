@@ -292,20 +292,24 @@ enum TextRecipeParser {
 
     /// Time in minutes (pattern must capture the number in group 1); appends an optional unit group so "2 hours" → 120 and "45 mins" → 45.
     private static func extractMinutes(_ pattern: String, in text: String) -> Int? {
-        let withUnit = pattern + #"\s*(h(?:r|rs|our|ours)?|m(?:in|ins|inute|inutes)?)?\b"#
+        // Optional trailing minutes term (group 3) so "1 hr 30 min" → 90, not 60.
+        let withUnit = pattern + #"\s*(h(?:r|rs|our|ours)?|m(?:in|ins|inute|inutes)?)?(?:\s*(\d+)\s*m(?:in|ins|inute|inutes)?)?\b"#
         guard let regex = try? NSRegularExpression(pattern: withUnit, options: .caseInsensitive) else { return nil }
         let nsRange = NSRange(text.startIndex..., in: text)
         guard let match = regex.firstMatch(in: text, options: [], range: nsRange),
               match.numberOfRanges > 1,
               let numRange = Range(match.range(at: 1), in: text),
               let value = Int(text[numRange]) else { return nil }
-        let isHours: Bool
+        var isHours = false
         if match.numberOfRanges > 2, let unitRange = Range(match.range(at: 2), in: text) {
             isHours = String(text[unitRange]).lowercased().hasPrefix("h")
-        } else {
-            isHours = false
         }
-        return isHours ? value * 60 : value
+        guard isHours else { return value }
+        var minutes = value * 60
+        if match.numberOfRanges > 3, let extraRange = Range(match.range(at: 3), in: text), let extra = Int(text[extraRange]) {
+            minutes += extra
+        }
+        return minutes
     }
 
     private static func firstIntMatch(_ pattern: String, in text: String) -> Int? {

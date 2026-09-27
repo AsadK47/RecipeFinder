@@ -14,7 +14,7 @@ struct PlannedMealsSection: View {
     let onToggleRecurring: (MealTime) -> Void
     let onAddAnother: () -> Void
 
-    @State private var dragging: MealTime?
+    @State private var dropTarget: MealTime?
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
@@ -69,7 +69,7 @@ struct PlannedMealsSection: View {
                 }
             }
 
-            // ≡ grip handle sits outside the card (no clipping); only it initiates the drag — tapping the card still changes the recipe.
+            // Only the ≡ handle initiates the drag; tapping the card still changes the recipe.
             Image(systemName: "line.3.horizontal")
                 .font(.system(size: AppTheme.fontSize16))
                 .foregroundStyle(colorScheme == .dark
@@ -77,17 +77,35 @@ struct PlannedMealsSection: View {
                     : .black.opacity(AppTheme.lowEmphasisOpacity))
                 .frame(width: 28, height: 52)
                 .contentShape(Rectangle())
-                .onDrag {
-                    dragging = mealTime
-                    return NSItemProvider(object: mealTime.rawValue as NSString)
+                .draggable(mealTime.rawValue) {
+                    MealTimeCard(
+                        mealTime: mealTime,
+                        recipe: recipeFor(mealTime),
+                        isRecurring: mealPlanFor(mealTime)?.isRecurring ?? false,
+                        cardStyle: cardStyle,
+                        colorScheme: colorScheme,
+                        onRemove: {}
+                    )
+                    .frame(width: 260)
                 }
         }
-        .opacity(dragging == mealTime ? 0.4 : 1)
-        .animation(.easeInOut(duration: 0.2), value: dragging)
-        .onDrop(
-            of: [.text],
-            delegate: MealTimeDropDelegate(item: mealTime, items: $mealTimes, dragging: $dragging)
-        )
+        .overlay(alignment: .top) {
+            if dropTarget == mealTime {
+                RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
+                    .stroke(AppTheme.accentColor(for: selectedTheme), lineWidth: 2)
+            }
+        }
+        .animation(.easeInOut(duration: 0.2), value: dropTarget)
+        // .draggable/.dropDestination manage drag+cancel state, so there's no manual flag to get stuck (the old greyed-out bug).
+        .dropDestination(for: String.self) { items, _ in
+            guard let raw = items.first, let from = MealTime(rawValue: raw) else { return false }
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                mealTimes = MealTimeReorder.moved(mealTimes, moving: from, to: mealTime)
+            }
+            return true
+        } isTargeted: { targeted in
+            dropTarget = targeted ? mealTime : (dropTarget == mealTime ? nil : dropTarget)
+        }
     }
 
     private var addAnotherButton: some View {
@@ -113,26 +131,15 @@ struct PlannedMealsSection: View {
     }
 }
 
-private struct MealTimeDropDelegate: DropDelegate {
-    let item: MealTime
-    @Binding var items: [MealTime]
-    @Binding var dragging: MealTime?
-
-    func performDrop(info: DropInfo) -> Bool {
-        dragging = nil
-        return true
-    }
-
-    func dropEntered(info: DropInfo) {
-        guard let current = dragging, current != item else { return }
-        guard let from = items.firstIndex(of: current),
-              let to = items.firstIndex(of: item) else { return }
-        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-            items.move(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)
-        }
-    }
-
-    func dropUpdated(info: DropInfo) -> DropProposal? {
-        DropProposal(operation: .move)
+/// Pure reorder for the planner's drag-to-reorder; extracted so it's unit-testable.
+enum MealTimeReorder {
+    static func moved(_ items: [MealTime], moving from: MealTime, to target: MealTime) -> [MealTime] {
+        guard from != target,
+              let fromIndex = items.firstIndex(of: from),
+              let toIndex = items.firstIndex(of: target) else { return items }
+        var result = items
+        result.move(fromOffsets: IndexSet(integer: fromIndex),
+                    toOffset: toIndex > fromIndex ? toIndex + 1 : toIndex)
+        return result
     }
 }

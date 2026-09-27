@@ -2,9 +2,7 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// Integration tests for the Core Data recipe store: the real stack, backed by an
-/// in-memory (`/dev/null`) store so each test is isolated, with the account scope
-/// injected so per-user isolation is exercised without touching global state.
+/// Integration on the real Core Data recipe stack, backed by an in-memory (`/dev/null`) store for isolation with an injected account scope so per-user isolation is exercised without global state.
 @MainActor
 @Suite struct PersistenceControllerTests {
 

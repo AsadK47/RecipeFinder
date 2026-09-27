@@ -2,14 +2,7 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// Tests the categorisation and de-duplication logic used by PantryAlertsSectionContent.
-///
-/// The view computes three buckets:
-///   expired      = items where isExpired
-///   expiringSoon = items where isExpiringSoon
-///   lowStockOnly = items where needsRestock && !isExpired && !isExpiringSoon
-///
-/// The critical property under test is that no item appears in more than one bucket.
+/// PantryAlertsSectionContent's bucketing (expired / expiringSoon / lowStockOnly) and de-duplication: no item may appear in more than one bucket.
 @Suite("PantryAlertsCategorisation")
 struct PantryAlertsCategorisationTests {
 

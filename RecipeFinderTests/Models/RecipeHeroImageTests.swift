@@ -2,9 +2,7 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// `heroImageName` decides which single image represents a recipe on its card.
-/// Pins the bug where a recipe with only a post-cook photo (no main image) kept
-/// its filler glyph because the card ignored `photoNames`.
+/// `heroImageName` picks the card image; pins the bug where a recipe with only a post-cook photo (no main image) kept its filler glyph because the card ignored `photoNames`.
 @Suite("RecipeModel hero image")
 struct RecipeHeroImageTests {
 

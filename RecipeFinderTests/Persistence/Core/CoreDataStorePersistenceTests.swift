@@ -3,11 +3,7 @@ import Foundation
 import CoreData
 @testable import RecipeFinder
 
-/// Integration guard for the on-disk Core Data store: a recipe written by one
-/// container must reload from a brand-new container opened at the same file,
-/// exercising real SQLite persistence and the automatic lightweight-migration
-/// options the app configures. This is the "relaunch after an app upgrade" path
-/// that the in-memory (`/dev/null`) tests can't reach.
+/// On-disk Core Data guard: a recipe written by one container reloads from a fresh container at the same file — the real-SQLite "relaunch after upgrade" path (with lightweight migration) that `/dev/null` tests can't reach.
 @MainActor
 @Suite struct CoreDataStorePersistenceTests {
 

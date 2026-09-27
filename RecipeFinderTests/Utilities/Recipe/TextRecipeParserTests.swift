@@ -28,10 +28,7 @@ final class TextRecipeParserTests: XCTestCase {
         XCTAssertEqual(result?.instructions?.first, "Dice the onion and fry until soft.")
     }
 
-    /// Regression (scanned printed page): OCR interleaves a sidebar (SERVES / TIME
-    /// / Prep / Cook) and a GARNISH header with the ingredient list. Those lines
-    /// must not become ingredients; garnish items must remain; servings/times are
-    /// extracted. Mirrors RecipeFinder/Images/PhotoRecipe.jpeg.
+    /// Regression (scanned page): OCR interleaves a SERVES/TIME/Prep/Cook sidebar and GARNISH header into the ingredients — sidebar lines must not become ingredients, garnish items stay, servings/times extract. Mirrors RecipeFinder/Images/PhotoRecipe.jpeg.
     func testFencesSidebarMetadataAndGarnishHeader() {
         let text = """
         Sweet & Sour Prawns

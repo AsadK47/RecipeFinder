@@ -1,10 +1,7 @@
 import Testing
 @testable import RecipeFinder
 
-/// The recipe editor's modular behaviour: which sections render for a given
-/// focus, and the navigation title. Pins the focused-vs-full-form logic behind
-/// the deep-link (tap ingredients → Ingredients-only editor) and the create /
-/// edit / focused titles.
+/// The recipe editor's modular behaviour: which sections render for a given focus, and the create/edit/focused navigation titles (pins the deep-link focused-vs-full-form logic).
 @MainActor
 @Suite("Recipe editor sections")
 struct RecipeWizardSectionTests {

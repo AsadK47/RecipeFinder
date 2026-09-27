@@ -5,10 +5,7 @@ final class EditableStepTests: XCTestCase {
 
     // MARK: - Identity (regression guard for the wizard crash)
 
-    /// The wizard crash came from rows identified by array offset: two blank
-    /// steps were indistinguishable, so adding/removing rows left TextField
-    /// bindings pointing at dead indices. Identical texts must still have
-    /// distinct identities.
+    /// Identical step texts must keep distinct identities — array-offset row IDs left TextField bindings pointing at dead indices (the wizard crash).
     func testIdenticalTextsHaveDistinctIdentities() {
         let steps: [EditableStep] = .steps(from: ["", "", ""])
         XCTAssertEqual(Set(steps.map(\.id)).count, 3)

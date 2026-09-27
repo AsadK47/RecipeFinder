@@ -2,15 +2,8 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// Tests for `URLSessionHTMLFetcher` — the live `HTMLFetching` implementation.
-///
-/// `RecipeImporterTests` already exercises all pipeline logic with a `FakeFetcher`
-/// that bypasses the network. These tests cover the real URLSession path: a
-/// `URLProtocol` stub intercepts every request so no network is needed, and
-/// `URLSessionHTMLFetcher` is tested in isolation.
-///
-/// `.serialized` is required because `StubURLProtocol` holds its canned response
-/// in a `static var` shared across URLProtocol instances.
+/// `URLSessionHTMLFetcher` (the live `HTMLFetching`) on the real URLSession path, with a `URLProtocol` stub intercepting every request so no network is needed.
+/// `.serialized` is required because `StubURLProtocol` holds its canned response in a `static var` shared across URLProtocol instances.
 @Suite("URLSessionHTMLFetcher", .serialized)
 struct HTMLFetcherTests {
 

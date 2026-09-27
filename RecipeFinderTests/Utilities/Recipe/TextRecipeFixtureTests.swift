@@ -2,11 +2,7 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// Corpus tests for `TextRecipeParser` against real recipes captured from
-/// textonlyrecipes.com (see `TextRecipeFixtures`). Proves the text/paste/OCR path
-/// extracts name, ingredients, and instructions correctly across both headered
-/// and header-less layouts — and that the extracted lines feed the ingredient
-/// parser cleanly end to end.
+/// Corpus tests for `TextRecipeParser` against real textonlyrecipes.com recipes (`TextRecipeFixtures`): the text/paste/OCR path extracts name/ingredients/instructions across headered and header-less layouts and feeds the ingredient parser cleanly end to end.
 @Suite struct TextRecipeFixtureTests {
 
     @Test(

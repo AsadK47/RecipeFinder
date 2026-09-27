@@ -1,9 +1,7 @@
 import Testing
 @testable import RecipeFinder
 
-/// Tests for OCR-specific parser improvements: ALL-CAPS title normalisation,
-/// wrapped-title merging, hour-denominated time extraction, and numbered steps
-/// without punctuation being correctly classified as instructions.
+/// OCR-specific parser improvements: ALL-CAPS title normalisation, wrapped-title merging, hour-denominated time extraction, and punctuation-less numbered steps classified as instructions.
 @Suite struct TextRecipeParserOCRTests {
 
     // MARK: - Title: ALL CAPS → title case

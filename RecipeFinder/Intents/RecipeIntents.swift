@@ -74,7 +74,10 @@ struct OpenRecipeIntent: AppIntent {
             throw $recipeName.needsValueError("Which recipe would you like to open?")
         }
         let recipes = await MainActor.run { PersistenceController.shared.fetchRecipes() }
-        guard let recipe = recipes.first(where: { $0.name.localizedCaseInsensitiveContains(name) }) else {
+        // Prefer an exact name match so "Chicken Soup" doesn't open "Chicken"; fall back to a substring match.
+        let match = recipes.first { $0.name.localizedCaseInsensitiveCompare(name) == .orderedSame }
+            ?? recipes.first { $0.name.localizedCaseInsensitiveContains(name) }
+        guard let recipe = match else {
             throw $recipeName.needsValueError("Couldn't find a recipe called \"\(name)\". Try a different name.")
         }
         await MainActor.run {
@@ -110,7 +113,10 @@ struct StartCookingIntent: AppIntent {
             throw $recipeName.needsValueError("What would you like to cook?")
         }
         let recipes = await MainActor.run { PersistenceController.shared.fetchRecipes() }
-        guard let recipe = recipes.first(where: { $0.name.localizedCaseInsensitiveContains(name) }) else {
+        // Prefer an exact name match so a substring doesn't open the wrong recipe; fall back to a substring match.
+        let match = recipes.first { $0.name.localizedCaseInsensitiveCompare(name) == .orderedSame }
+            ?? recipes.first { $0.name.localizedCaseInsensitiveContains(name) }
+        guard let recipe = match else {
             throw $recipeName.needsValueError("Couldn't find a recipe called \"\(name)\". Try a different name.")
         }
         await MainActor.run {
@@ -141,9 +147,15 @@ struct NextCookingStepIntent: AppIntent {
         guard isActive else {
             return .result(dialog: "No recipe is currently open in RecipeFinder cooking mode.")
         }
-        let text = await MainActor.run {
+        let text = await MainActor.run { () -> String in
+            // advance() is a no-op at the last step, so detect "no change" and report completion instead of re-reading the final step.
+            let before = CookingSession.shared.currentStepText
             CookingSession.shared.advance()
-            return CookingSession.shared.currentStepText ?? "You've finished the recipe."
+            let after = CookingSession.shared.currentStepText
+            if before == after {
+                return "That's the last step — you've finished the recipe."
+            }
+            return after ?? "You've finished the recipe."
         }
         return .result(dialog: IntentDialog(stringLiteral: text))
     }

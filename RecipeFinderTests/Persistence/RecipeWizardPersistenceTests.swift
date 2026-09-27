@@ -2,11 +2,7 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// Integration across the wizard → persistence seam: `RecipeWizardBuilder.assemble`
-/// produces a `RecipeModel` that is saved to the Core Data store and fetched back
-/// with every field intact. This guards the handoff between the wizard layer and
-/// the store so regressions in field mapping or Core Data encoding are caught here
-/// rather than at runtime.
+/// Integration across the wizard → persistence seam: `RecipeWizardBuilder.assemble` produces a `RecipeModel` that saves and fetches back with every field intact — catches field-mapping or Core Data encoding regressions before runtime.
 @MainActor
 @Suite struct RecipeWizardPersistenceTests {
 

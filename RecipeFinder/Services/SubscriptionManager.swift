@@ -143,7 +143,7 @@ final class SubscriptionManager: SubscriptionProviding {
     func checkEntitlement() async {
         var entitled = false
         for await result in Transaction.currentEntitlements {
-            guard case .verified(let transaction) = result else { continue }
+            guard case .verified(let transaction) = result, transaction.revocationDate == nil else { continue }
             if transaction.productID == Self.annualProductID ||
                transaction.productID == Self.monthlyProductID {
                 entitled = true

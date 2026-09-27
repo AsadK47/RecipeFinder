@@ -2,9 +2,7 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// `AccountNameFormatter` — the display-name and initials rules extracted from
-/// `AccountManager`. These pin the placeholder fallbacks ("Recipe Chef" / "RC")
-/// and the one-sided-name handling so the extraction stays behaviour-preserving.
+/// `AccountNameFormatter`'s display-name/initials rules (extracted from `AccountManager`): pins the placeholder fallbacks ("Recipe Chef" / "RC") and one-sided-name handling.
 @Suite struct AccountNameFormatterTests {
 
     // MARK: - displayName

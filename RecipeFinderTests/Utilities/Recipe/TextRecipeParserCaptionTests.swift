@@ -1,9 +1,7 @@
 import Testing
 @testable import RecipeFinder
 
-/// Real-world social-caption cases for `TextRecipeParser` — emoji section
-/// headers, emoji/symbol bullets, and unnumbered imperative steps — the shapes
-/// that matter most on devices without the on-device model.
+/// Real social-caption cases for `TextRecipeParser` (emoji headers, emoji/symbol bullets, unnumbered imperative steps) — the shapes that matter most on devices without the on-device model.
 @Suite struct TextRecipeParserCaptionTests {
 
     @Test func parsesEmojiHeadersAndBullets() {

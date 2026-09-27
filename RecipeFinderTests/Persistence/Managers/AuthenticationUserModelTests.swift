@@ -2,11 +2,7 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// `AuthenticationManager.User`'s presentation fallbacks — the display name and
-/// initials shown across account UI. Pure logic with real branch precedence, so
-/// it's worth pinning: display name prefers full name → given name → email →
-/// "User"; initials prefer given+family → the first two words of the full name →
-/// "U".
+/// `AuthenticationManager.User` presentation fallbacks: display name prefers full name → given name → email → "User"; initials prefer given+family → first two words of full name → "U".
 @Suite struct AuthenticationUserModelTests {
 
     private func user(

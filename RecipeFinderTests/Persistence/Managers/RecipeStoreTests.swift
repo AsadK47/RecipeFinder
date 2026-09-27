@@ -2,9 +2,7 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// Unit tests for `RecipeStore`'s in-memory library semantics (upsert on save,
-/// append on add, remove on delete, reload on refresh) against an in-memory
-/// persistence controller.
+/// `RecipeStore`'s in-memory library semantics (upsert on save, append on add, remove on delete, reload on refresh) against an in-memory persistence controller.
 @MainActor
 @Suite("RecipeStore")
 struct RecipeStoreTests {

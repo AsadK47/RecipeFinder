@@ -2,15 +2,8 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// Tests for the faithful `merge(_:)` restore seam on each store manager.
-///
-/// The seam must be:
-/// - **non-destructive** — everything already present is kept;
-/// - **deduping by identity** — re-importing the same item doesn't duplicate it;
-/// - **date-faithful** — unlike the normal mutators, restore must NOT re-stamp
-///   `createdDate` (that class of bug was the root cause of the old "corrupted on
-///   restore" export — see the data-durability notes);
-/// - **persisting** — a fresh manager on the same storage sees the merged result.
+/// Each store manager's `merge(_:)` restore seam must be non-destructive, dedupe by identity, and persist across a fresh manager.
+/// Critically it must NOT re-stamp `createdDate` (root cause of the old "corrupted on restore" export — see data-durability notes).
 @MainActor
 @Suite struct ManagerMergeTests {
 

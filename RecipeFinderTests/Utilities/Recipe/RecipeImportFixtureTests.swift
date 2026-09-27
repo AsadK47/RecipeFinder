@@ -1,10 +1,7 @@
 import Testing
 @testable import RecipeFinder
 
-/// Real-world import robustness, driven by full-page HTML fixtures
-/// (see `RecipeHTMLFixtures`). Where `RecipeParserTests` checks the parser on
-/// clean synthetic markup, these prove it survives how real sites actually
-/// structure their pages.
+/// Real-world import robustness driven by full-page HTML fixtures (`RecipeHTMLFixtures`) — where `RecipeParserTests` uses clean synthetic markup, these prove the parser survives how real sites structure pages.
 @Suite struct RecipeImportFixtureTests {
 
     // MARK: - Modern WordPress blog (JSON-LD @graph, @type array, HowToSection)

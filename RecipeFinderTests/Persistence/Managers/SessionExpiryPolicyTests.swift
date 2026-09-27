@@ -2,11 +2,7 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// The session-timeout rule extracted from `AuthenticationManager`. A session is
-/// expired once *more than* `timeout` seconds have elapsed since last activity;
-/// exactly `timeout` is still valid. These pin the boundary and the clock-skew
-/// edge (activity timestamped in the future) so a refactor can't silently sign
-/// users out early or keep a stale session alive.
+/// `AuthenticationManager`'s session-timeout rule: expired once *more than* `timeout` seconds elapse since last activity (exactly `timeout` still valid); pins that boundary and the future-timestamp clock-skew edge.
 @Suite struct SessionExpiryPolicyTests {
 
     private let timeout: TimeInterval = 86_400   // 24h, matching AuthenticationManager

@@ -20,17 +20,17 @@ extension AuthenticationManager {
                 localizedReason: reason
             )
             guard success else { return }
-            
-            setAuthState(isAuthenticated: true, user: currentUser)
+
+            // Load the user first and require one — never flip to authenticated with no user (leaves managers on the wrong scope).
+            loadUser()
+            guard let user = currentUser else { throw AuthError.biometricsFailed }
+
+            setAuthState(isAuthenticated: true, user: user)
             UserDefaults.standard.set(true, forKey: isAuthenticatedKey)
             updateLastActiveTimestamp()
-            loadUser()
-            
-            if let user = currentUser {
-                UserScopedStorage.shared.currentUserId = user.id
-                reloadAllManagers()
-            }
-            
+            UserScopedStorage.shared.currentUserId = user.id
+            reloadAllManagers()
+
             HapticManager.shared.success()
         } catch {
             throw AuthError.biometricsFailed

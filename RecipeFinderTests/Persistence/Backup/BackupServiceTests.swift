@@ -2,9 +2,7 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// End-to-end tests for `BackupService`: that `makeArchive()` gathers every store
-/// and that `restore()` merges an archive back non-destructively. The recipe store
-/// is faked in-memory; the other stores are real managers on isolated storage.
+/// End-to-end `BackupService`: `makeArchive()` gathers every store, `restore()` merges back non-destructively (recipe store faked in-memory, others real managers on isolated storage).
 @MainActor
 @Suite struct BackupServiceTests {
 

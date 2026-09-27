@@ -2,12 +2,7 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// Integration across the photo OCR → persistence seam: raw OCR text goes
-/// through `RecipeTextImportRouter` (on-device model unavailable, so the
-/// heuristic `TextRecipeParser` path is taken), is assembled via
-/// `RecipeWizardBuilder`, saved to an in-memory Core Data store, and fetched
-/// back — confirming the full OCR capture path preserves name, ingredients,
-/// and instructions without requiring a real camera or model.
+/// Integration across the photo OCR → persistence seam: raw OCR text routes through the heuristic `TextRecipeParser` path, assembles via `RecipeWizardBuilder`, saves to in-memory Core Data, and fetches back preserving name, ingredients, and instructions.
 @MainActor
 @Suite struct PhotoOCRImportPersistenceTests {
 

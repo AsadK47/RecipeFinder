@@ -2,9 +2,7 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// Regression tests for the dietaryInfo and isSampleRecipe fields that were
-/// previously absent from the Core Data schema — both were silently dropped on
-/// every save, making dietary filters return 0 results after a restart.
+/// Regression for the dietaryInfo and isSampleRecipe fields once absent from the schema — both were silently dropped on save, making dietary filters return 0 results after a restart.
 @MainActor
 @Suite("RecipeDietaryInfo persistence")
 struct RecipeDietaryInfoPersistenceTests {

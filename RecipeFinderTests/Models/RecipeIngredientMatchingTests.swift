@@ -2,9 +2,7 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// Word-boundary correctness for the "what can I make?" matching. These pin the
-/// bug that naïve substring matching caused: short pantry terms matching inside
-/// unrelated longer words ("ice" in "rice", "gin" in "ginger").
+/// Word-boundary correctness for "what can I make?" matching: pins the naïve-substring bug where short pantry terms matched inside longer words ("ice" in "rice", "gin" in "ginger").
 @Suite("RecipeModel ingredient matching")
 struct RecipeIngredientMatchingTests {
 

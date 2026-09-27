@@ -127,6 +127,7 @@ final class RecipeTimerManager: RecipeTiming {
     }
 
     func stop() {
+        stopTicker()
         durationSeconds = 0
         remainingSeconds = 0
         isRunning = false

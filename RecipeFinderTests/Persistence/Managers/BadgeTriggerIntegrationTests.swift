@@ -2,12 +2,7 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// Integration tests: manager action → badge earned.
-///
-/// Each test wires an isolated BadgeManager (fresh UserDefaults) into the
-/// manager under test via constructor injection, performs the action that
-/// should trigger a badge, and asserts the correct badge was queued.
-/// Nothing here touches singletons or shared state.
+/// Integration: manager action → badge earned. Each test injects an isolated BadgeManager (fresh UserDefaults, no singletons), performs the triggering action, and asserts the right badge was queued.
 @MainActor
 @Suite("Badge trigger integration")
 struct BadgeTriggerIntegrationTests {

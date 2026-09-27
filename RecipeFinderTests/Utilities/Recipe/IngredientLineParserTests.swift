@@ -2,9 +2,7 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// The canonical ingredient-line parser shared by import and the manual wizard.
-/// Cases include the real OCR lines from a scanned cookbook page (spelled-out
-/// units, `1`→`I` OCR slips, glued unicode fractions).
+/// The canonical ingredient-line parser shared by import and the manual wizard; cases include real scanned-cookbook OCR lines (spelled-out units, `1`→`I` slips, glued unicode fractions).
 @Suite struct IngredientLineParserTests {
 
     @Test(

@@ -1,13 +1,7 @@
 import Foundation
 
-/// Real recipe text captured from textonlyrecipes.com (a plain-text recipe site),
-/// used as a corpus for `TextRecipeParser` — the same path pasted captions and
-/// photo OCR go through. Two shapes are represented: explicit `Ingredients:` /
-/// `Instructions:` headers (curry, pancakes, bolognese) and a header-less
-/// blank-line-separated layout (banana bread) that exercises line classification.
-///
-/// Stored as string constants (not bundled files) so they travel with the source,
-/// matching `RecipeHTMLFixtures`.
+/// Real recipe text from textonlyrecipes.com, a corpus for `TextRecipeParser` (same path as pasted captions/OCR): headered shapes (curry, pancakes, bolognese) and a header-less blank-line layout (banana bread) exercising line classification.
+/// Stored as string constants (not bundled files) so they travel with the source, matching `RecipeHTMLFixtures`.
 enum TextRecipeFixtures {
 
     /// Header-less: title, blank line, quantity-led ingredients, blank line, then
@@ -120,9 +114,7 @@ enum TextRecipeFixtures {
     5. Serve the spaghetti topped with the bolognese sauce and sprinkled with Parmesan cheese. Enjoy!
     """
 
-    /// Headered; range ("6-7"), "1 package (14.1 ounces)" parenthetical, and a
-    /// trailing "Note:" line (currently counted as a final instruction).
-    /// Source: /recipes/apple-pie.
+    /// Headered; range ("6-7"), "1 package (14.1 ounces)" parenthetical, trailing "Note:" line (counted as a final instruction). Source: /recipes/apple-pie.
     static let applePie = """
     Apple Pie
     Ingredients:

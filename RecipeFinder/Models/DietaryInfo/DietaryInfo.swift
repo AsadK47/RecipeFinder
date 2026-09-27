@@ -192,15 +192,7 @@ struct SnackDatabase {
     }
     
     static func popularSnacks() -> [SnackItem] {
-        return [
-            allSnacks.first { $0.name == "Apple" }!,
-            allSnacks.first { $0.name == "Banana" }!,
-            allSnacks.first { $0.name == "Almonds" }!,
-            allSnacks.first { $0.name == "Yogurt" }!,
-            allSnacks.first { $0.name == "Popcorn" }!,
-            allSnacks.first { $0.name == "String Cheese" }!,
-            allSnacks.first { $0.name == "Granola Bar" }!,
-            allSnacks.first { $0.name == "Carrots" }!,
-        ]
+        let names = ["Apple", "Banana", "Almonds", "Yogurt", "Popcorn", "String Cheese", "Granola Bar", "Carrots"]
+        return names.compactMap { name in allSnacks.first { $0.name == name } }
     }
 }

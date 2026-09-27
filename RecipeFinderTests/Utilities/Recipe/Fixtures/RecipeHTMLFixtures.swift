@@ -1,16 +1,10 @@
 import Foundation
 
-/// Realistic, full-page HTML samples that mirror how real recipe sites structure
-/// their markup — used to prove the importer survives real-world messiness rather
-/// than only the clean synthetic markup in `RecipeParserTests`.
-///
-/// Embedded as string constants (not bundled resource files) so the fixtures are
-/// robust to test-target resource-phase quirks and travel with the test source.
+/// Realistic full-page HTML samples proving the importer survives real-world messiness, not just the clean synthetic markup in `RecipeParserTests`.
+/// Embedded as string constants (not bundled resources) so they dodge resource-phase quirks and travel with the test source.
 enum RecipeHTMLFixtures {
 
-    /// Modern WordPress food blog: JSON-LD inside `@graph`, `@type` as an array,
-    /// `recipeYield` as an array, image as an array, and instructions split across
-    /// `HowToSection` containers. Represents the single most common real-world case.
+    /// Modern WordPress blog (most common real case): JSON-LD in `@graph` with `@type`/`recipeYield`/image as arrays and instructions split across `HowToSection` containers.
     static let modernWordPressBlog = #"""
     <!DOCTYPE html>
     <html lang="en">
@@ -44,9 +38,7 @@ enum RecipeHTMLFixtures {
     </html>
     """#
 
-    /// Schema.org **microdata** (`itemscope`/`itemprop`) with NO JSON-LD — an older
-    /// recipe-site style still common in the wild. Ingredients and steps are flat
-    /// `<li itemprop="...">` lists; times use `<time datetime="PT...">`.
+    /// Schema.org microdata (`itemscope`/`itemprop`) with no JSON-LD — an older but common style; flat `<li itemprop>` lists and `<time datetime="PT...">`.
     static let microdataOnly = #"""
     <!DOCTYPE html>
     <html lang="en">
@@ -84,10 +76,7 @@ enum RecipeHTMLFixtures {
     </html>
     """#
 
-    /// A page whose only structured data is **RDFa Lite** (`vocab`/`typeof`/
-    /// `property`) — no JSON-LD, WPRM, or microdata. Older/Drupal-style sites still
-    /// emit this. `typeof` is the bare "Recipe" token paired with a `vocab`; times
-    /// use `<time property="..." datetime="PT...">`; instructions are a flat list.
+    /// RDFa Lite only (`vocab`/`typeof`/`property`), no JSON-LD/WPRM/microdata — older Drupal-style sites; bare "Recipe" `typeof`, `<time property datetime="PT...">`, flat instruction list.
     static let rdfaOnly = #"""
     <!DOCTYPE html>
     <html lang="en">
@@ -125,11 +114,7 @@ enum RecipeHTMLFixtures {
     </html>
     """#
 
-    /// A plain blog post with **no structured data at all** (no JSON-LD, WPRM, or
-    /// microdata) — just a headed `<h1>`, intro prose, an "Ingredients" `<ul>` and
-    /// an "Instructions" `<ol>`. Exercises the free-text fallback, the hardest and
-    /// most common messy case. The `<title>` carries a site-name suffix and the
-    /// section headings sit directly against their lists.
+    /// Plain blog post with no structured data — just `<h1>`, prose, and "Ingredients"/"Instructions" lists — exercising the free-text fallback (hardest, most common case); `<title>` has a site-name suffix.
     static let plainBlogNoStructuredData = #"""
     <!DOCTYPE html>
     <html lang="en">
@@ -164,9 +149,7 @@ enum RecipeHTMLFixtures {
     </html>
     """#
 
-    /// Same shape, but `@type` is the fully-qualified schema.org URL
-    /// (`https://schema.org/Recipe`) rather than the bare `"Recipe"`. Plenty of
-    /// real sites emit this form, and it must still be recognized as a recipe.
+    /// JSON-LD whose `@type` is the fully-qualified `https://schema.org/Recipe` URL, not the bare "Recipe" — a common form that must still be recognized.
     static let schemaOrgURLType = #"""
     <!DOCTYPE html>
     <html lang="en">
@@ -191,9 +174,7 @@ enum RecipeHTMLFixtures {
     </html>
     """#
 
-    /// JSON-LD where the singular-friendly fields use single values instead of
-    /// arrays: `recipeIngredient` as one String and `recipeInstructions` as one
-    /// `HowToStep` object. Both are schema.org-valid and appear in the wild.
+    /// JSON-LD using single values instead of arrays: `recipeIngredient` as one String, `recipeInstructions` as one `HowToStep` — both schema.org-valid and seen in the wild.
     static let jsonLDSingleValues = #"""
     <!DOCTYPE html>
     <html lang="en">
@@ -212,9 +193,7 @@ enum RecipeHTMLFixtures {
     </html>
     """#
 
-    /// Microdata where `recipeInstructions` is a single container element wrapping
-    /// `<p>` steps (rather than one itemprop per step). The steps must be pulled
-    /// from inside that container.
+    /// Microdata where `recipeInstructions` is one container wrapping `<p>` steps (not one itemprop per step) — steps must be pulled from inside it.
     static let microdataContainerInstructions = #"""
     <!DOCTYPE html>
     <html lang="en">
@@ -237,11 +216,7 @@ enum RecipeHTMLFixtures {
     </html>
     """#
 
-    /// JSON-LD where the Recipe is nested under a `WebPage`'s `mainEntity` rather
-    /// than being a top-level node or a `@graph` entry — the shape Yoast/WordPress
-    /// emit on many sites. The visible body carries no ingredient/step lists, so if
-    /// this isn't pulled from the structured data it falls through to a near-empty
-    /// free-text result.
+    /// Recipe nested under a `WebPage`'s `mainEntity` (Yoast/WordPress shape), not top-level or `@graph`; the body has no lists, so missing the structured data yields a near-empty free-text result.
     static let jsonLDMainEntity = #"""
     <!DOCTYPE html>
     <html lang="en">
@@ -265,10 +240,7 @@ enum RecipeHTMLFixtures {
     </html>
     """#
 
-    /// Otherwise-valid Recipe JSON-LD marred by trailing commas before closing
-    /// brackets/braces — a common hand-authored / templating defect. `JSONSerialization`
-    /// happens to tolerate these, so this is a regression guard proving the JSON-LD
-    /// path still wins here rather than dropping to the weaker free-text fallback.
+    /// Valid Recipe JSON-LD with trailing commas (a common templating defect `JSONSerialization` tolerates) — regression guard that the JSON-LD path still wins over the free-text fallback.
     static let jsonLDTrailingCommas = #"""
     <!DOCTYPE html>
     <html lang="en">

@@ -1,8 +1,6 @@
 import XCTest
 
-/// Automated accessibility audits via `performAccessibilityAudit` (iOS 17+),
-/// running the same checks as Accessibility Inspector. A failure here is a real
-/// regression — fix it, don't suppress it.
+/// Automated accessibility audits via `performAccessibilityAudit` (iOS 17+, same checks as Accessibility Inspector); a failure is a real regression — fix it, don't suppress it.
 final class RecipeFinderAccessibilityAuditTests: XCTestCase {
 
     override func setUp() {

@@ -1,10 +1,7 @@
 import XCTest
 
 /// Critical-flow UI test: email sign-up lands on the welcome screen.
-///
-/// Under `-ui-testing` the password fields render as plain `TextField`s so iOS's
-/// new-password AutoFill can't cap manual entry — hence they're queried as
-/// `textFields`, not `secureTextFields`.
+/// Under `-ui-testing` password fields render as plain `TextField`s (AutoFill can't cap manual entry), so they're queried as `textFields`, not `secureTextFields`.
 final class RecipeFinderSignUpUITests: XCTestCase {
 
     override func setUp() {

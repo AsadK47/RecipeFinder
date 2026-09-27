@@ -2,13 +2,8 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-// Tests for KitchenInventoryManager.toggleItem / hasItem —
-// the pantry-toggle path used by the house icon in RecipeDetailView.
-//
-// The view-layer bounds guard (guard index < recipe.ingredients.count)
-// cannot be unit-tested here; it lives in a SwiftUI closure (UI layout
-// exemption per coverage policy). These tests cover the underlying
-// manager behaviour to confirm toggleItem never crashes on its own.
+// KitchenInventoryManager.toggleItem / hasItem — the pantry-toggle path behind RecipeDetailView's house icon; confirms toggleItem never crashes on its own.
+// (The view-layer bounds guard lives in a SwiftUI closure — UI-layout exemption per coverage policy.)
 @MainActor
 @Suite struct KitchenItemToggleTests {
 

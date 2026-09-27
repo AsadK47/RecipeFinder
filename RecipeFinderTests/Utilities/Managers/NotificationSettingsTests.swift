@@ -2,13 +2,7 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// Covers the logic-bearing part of `NotificationSettingsView`:
-/// the `reminderTimeFormatter` round-trip and parsing contract.
-///
-/// The formatter uses `HH:mm` (24-hour) with `en_US_POSIX` locale. The POSIX
-/// locale is critical — without it, the device's 12/24-hour override silently
-/// reformats the stored string (e.g. "10:00" becomes "10:00 AM"), causing the
-/// parse on next launch to fail and reset the reminder to midnight.
+/// `reminderTimeFormatter` round-trip/parsing contract: `HH:mm` with `en_US_POSIX` is critical — without POSIX the device 12/24h override reformats the string, failing the next-launch parse and resetting the reminder to midnight.
 @MainActor
 @Suite struct NotificationSettingsTests {
 

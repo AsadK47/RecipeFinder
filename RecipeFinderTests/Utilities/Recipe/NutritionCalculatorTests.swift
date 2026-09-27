@@ -25,10 +25,7 @@ import Foundation
 
     // MARK: - Per-serving invariance & whole-recipe scaling
 
-    /// Per-serving nutrition must not change when the user scales the servings
-    /// stepper — scaling changes the *total* cooked, not the per-serving value.
-    /// Regression guard: `RecipeModel.nutritionInfo` must divide by `baseServings`,
-    /// never `currentServings`.
+    /// Per-serving nutrition must stay fixed as the servings stepper scales the total; regression guard that `RecipeModel.nutritionInfo` divides by `baseServings`, never `currentServings`.
     @Test func nutritionInfoIsInvariantToCurrentServings() {
         var recipe = RecipeModel(
             name: "Chicken",

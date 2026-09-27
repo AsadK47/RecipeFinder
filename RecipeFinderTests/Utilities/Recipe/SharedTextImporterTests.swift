@@ -2,9 +2,7 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// Tests the free-text import decision without the on-device model, by injecting
-/// a stub interpreter. The importer now hands back reviewable data (no build /
-/// persist), so the wizard is the save gate.
+/// Free-text import decision with a stub interpreter (no on-device model); the importer returns reviewable data without building/persisting, so the wizard is the save gate.
 @Suite struct SharedTextImporterTests {
 
     struct DummyError: Error {}

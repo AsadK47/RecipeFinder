@@ -56,8 +56,7 @@ struct IngredientNameFormatter {
             }
         }
 
-        let lowercased = result.lowercased()
-        if let commaIndex = lowercased.firstIndex(of: ",") {
+        if let commaIndex = result.firstIndex(of: ",") {
             let mainPart = String(result[..<commaIndex]).trimmingCharacters(in: .whitespaces)
             return removeLeadingPrepWords(mainPart)
         }
@@ -67,9 +66,7 @@ struct IngredientNameFormatter {
     
     static func extractPreparationNotes(_ name: String) -> String? {
         var notes: [String] = []
-        let lowercased = name.lowercased()
-        
-        if let commaIndex = lowercased.firstIndex(of: ",") {
+        if let commaIndex = name.firstIndex(of: ",") {
             let prepPart = String(name[name.index(after: commaIndex)...])
                 .trimmingCharacters(in: .whitespaces)
             notes.append(prepPart.lowercased())

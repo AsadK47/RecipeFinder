@@ -2,9 +2,7 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// Integration: verifies that `PersistenceController`'s write operations
-/// (toggle-favourite, delete, notes, tags) survive the save→fetch round-trip.
-/// Each test uses an in-memory store so nothing crosses between runs.
+/// Integration: `PersistenceController` writes (toggle-favourite, delete, notes, tags) survive the save→fetch round-trip, each on an isolated in-memory store.
 @MainActor
 @Suite("Recipe persistence round-trip")
 struct RecipePersistenceRoundTripTests {

@@ -2,14 +2,8 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// Behaviour contract for `UserScopedStorage`, the per-user key-prefixing layer
-/// that keeps one account's data invisible to another. A regression here is a
-/// data-leak between accounts, so these lock down the scoping, the typed
-/// accessors, the scope-change notification, and the targeted clear.
-///
-/// Each test uses a throwaway `UserDefaults(suiteName:)` so cases stay isolated,
-/// and every account id is UUID-unique so the shared `NotificationCenter` (which
-/// the production code posts to) can't cross-talk with parallel tests.
+/// `UserScopedStorage` contract (per-user key-prefixing; a regression here leaks data between accounts): locks down scoping, typed accessors, scope-change notification, and targeted clear.
+/// Each test uses a throwaway `UserDefaults(suiteName:)` and a UUID-unique account id so the shared `NotificationCenter` can't cross-talk with parallel tests.
 @MainActor
 @Suite struct UserScopedStorageTests {
 

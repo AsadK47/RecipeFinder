@@ -2,10 +2,7 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// Thin adapter over `IngredientLineParser` (see `IngredientLineParserTests` for
-/// the exhaustive cases). These assert the wizard surface: quantity as text, and
-/// that manual entry now benefits from the shared fixes (canonical units,
-/// mixed/glued numbers, prep-note retention).
+/// Thin adapter over `IngredientLineParser` (exhaustive cases in `IngredientLineParserTests`); asserts the wizard surface — quantity as text and manual entry inheriting the shared fixes (canonical units, mixed/glued numbers, prep-note retention).
 @Suite("WizardIngredientParser")
 struct WizardIngredientParserTests {
 

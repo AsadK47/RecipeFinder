@@ -2,11 +2,8 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// Guards the fix for the "old photo reappears after delete + replace" bug.
-/// Recipe photos are written to a STABLE path (`RecipeImages/<id>.jpg`), so a
-/// replaced photo reuses the same file URL. Kingfisher keys its cache by that
-/// URL, so without a versioned key it would keep serving the stale image. The
-/// key must therefore change whenever the file's contents change.
+/// Guards the "old photo reappears after delete + replace" fix: photos use a STABLE path, so a replacement reuses the URL and Kingfisher's URL-keyed cache serves the stale image.
+/// The cache key must therefore change whenever the file's contents change.
 @MainActor
 @Suite("RecipeImageView.imageCacheKey")
 struct RecipeImageViewTests {

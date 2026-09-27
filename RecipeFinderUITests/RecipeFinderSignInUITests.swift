@@ -1,9 +1,7 @@
 import XCTest
 
 /// Critical-flow UI test: email sign-in lands on the main app.
-///
-/// `-resetState` also sets `hasCompletedOnboarding`/`hasSeenBiometricOnboarding`
-/// so sign-in lands on main content, not an interstitial onboarding screen.
+/// `-resetState` also sets `hasCompletedOnboarding`/`hasSeenBiometricOnboarding` so sign-in lands on main content, not an onboarding interstitial.
 final class RecipeFinderSignInUITests: XCTestCase {
 
     override func setUp() {

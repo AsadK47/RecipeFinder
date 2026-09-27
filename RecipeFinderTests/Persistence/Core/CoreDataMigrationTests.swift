@@ -3,15 +3,8 @@ import CoreData
 import Foundation
 @testable import RecipeFinder
 
-/// Migration-safety guard. The modern store baseline (v9, all-Binary `ingredients`)
-/// must lightweight-migrate to the current model with no data loss, so future
-/// model bumps can't silently regress the upgrade path.
-///
-/// Audit note (2026-09-08): `ingredients` oscillated Transformable↔Binary across
-/// early versions, so stores at v1/v3/v4/v5 do NOT lightweight-migrate to the
-/// current model ("Source and destination attribute types are incompatible").
-/// Those versions predate the modern Binary baseline (v6+); the app is unreleased,
-/// so no shipped store is affected. This test pins the supported v6→current range.
+/// Migration-safety guard: the modern baseline (v9, all-Binary `ingredients`) must lightweight-migrate to the current model with no data loss.
+/// v1/v3/v4/v5 don't migrate (`ingredients` oscillated Transformable↔Binary before the v6+ baseline); app is unreleased so none shipped — this pins the supported v6→current range.
 @MainActor
 @Suite struct CoreDataMigrationTests {
     private typealias RecipeKey = PersistenceController.RecipeKey
@@ -54,9 +47,7 @@ import Foundation
         #expect(rows.first?.value(forKey: "name") as? String == "Legacy Dish")
     }
 
-    /// Validates that every RecipeKey constant maps to a real attribute on the current
-    /// Recipe entity. If .xccurrentversion points at the wrong model version this test
-    /// fails immediately — before any KVC crash occurs at runtime.
+    /// Every RecipeKey constant must map to a real attribute on the current Recipe entity — fails fast if .xccurrentversion points at the wrong model version, before a runtime KVC crash.
     @Test func currentModelContainsAllRecipeKeys() throws {
         let momd = try #require(Bundle(for: PersistenceController.self).url(forResource: "RecipeModel", withExtension: "momd"))
         let model = try #require(NSManagedObjectModel(contentsOf: momd))

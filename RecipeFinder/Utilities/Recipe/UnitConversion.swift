@@ -366,6 +366,7 @@ struct UnitConversion {
             
             let cups = ml / Volume.mlPerCup
             if cups >= 1 {
+                if cups >= 16 { return (cups / 16, "gal") }
                 if cups >= 4 { return (cups / 4, "qt") }
                 return (cups, "cup")
             }

@@ -2,11 +2,7 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// Integration across the AI import → persistence seam: an `InterpretedRecipe`
-/// produced by the on-device model (or its fake in tests) is mapped to wizard
-/// prefill data, assembled into a `RecipeModel` via `RecipeWizardBuilder`, saved
-/// to the Core Data store, and fetched back — proving no field is lost between
-/// the interpreter and the store.
+/// Integration across the AI import → persistence seam: an `InterpretedRecipe` maps to wizard prefill, assembles via `RecipeWizardBuilder`, saves to Core Data, and fetches back with no field lost.
 @MainActor
 @Suite struct AIImportPersistenceTests {
 
@@ -14,9 +10,7 @@ import Foundation
         PersistenceController(inMemory: true, userID: { "test-user" })
     }
 
-    /// Simulates what the wizard does when the user accepts AI-prefilled data:
-    /// parse ingredient strings into `IngredientItem`s, wrap instructions as
-    /// `EditableStep`s, then delegate to `RecipeWizardBuilder.assemble`.
+    /// Mirrors the wizard's accept-prefill path: parse ingredients into `IngredientItem`s, wrap instructions as `EditableStep`s, then `RecipeWizardBuilder.assemble`.
     private func buildRecipe(from prefill: RecipeWizardView.PrefilledRecipeData) -> RecipeModel {
         let ingredientItems = (prefill.ingredients ?? []).map { line in
             let p = WizardIngredientParser.parse(line)

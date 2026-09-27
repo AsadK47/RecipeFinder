@@ -2,10 +2,7 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// Integration across the import → persistence seam: a page parsed by the real
-/// pipeline, built into a `RecipeModel`, saved to the Core Data store, and
-/// fetched back — proving the handoff (builder mapping + Core Data
-/// encode/decode of ingredients and step arrays) preserves the recipe.
+/// Integration across the import → persistence seam: a page parsed by the real pipeline, built into a `RecipeModel`, saved and fetched back — proving builder mapping and Core Data encode/decode of ingredient/step arrays preserve the recipe.
 @MainActor
 @Suite struct RecipeImportPersistenceTests {
 

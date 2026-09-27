@@ -2,9 +2,7 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// Integration: `ShoppingListManager.addIngredients(from:)` — the path from a
-/// `RecipeModel` with `Ingredient` values into the shopping list store.
-/// Each test uses isolated `UserDefaults` so no state crosses between runs.
+/// Integration: `ShoppingListManager.addIngredients(from:)` — a `RecipeModel`'s `Ingredient` values into the shopping list store, each test on isolated `UserDefaults`.
 @MainActor
 @Suite struct ShoppingListFromRecipeTests {
 

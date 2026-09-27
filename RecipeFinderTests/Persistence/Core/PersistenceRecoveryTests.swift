@@ -3,10 +3,7 @@ import CoreData
 import Foundation
 @testable import RecipeFinder
 
-/// Durability guard for the store-recovery path: an unreadable/corrupt store must
-/// be **preserved** (moved aside), never silently deleted, so a failed migration
-/// or corruption can't wipe the user's recipes. The app still recovers by starting
-/// a fresh store, but the original bytes remain on disk for recovery.
+/// Store-recovery durability: a corrupt/unreadable store must be moved aside and preserved, never silently deleted, so a failed migration can't wipe recipes — the app starts fresh but the original bytes stay on disk.
 @MainActor
 @Suite struct PersistenceRecoveryTests {
 

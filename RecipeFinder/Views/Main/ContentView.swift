@@ -201,7 +201,7 @@ struct ContentView: View {
     private var sidebarDetailView: some View {
         switch sidebarSelection ?? .recipes {
         case .recipes:
-            RecipeSearchView()
+            RecipeSearchView(isLoading: store.isLoading)
         case .groceries:
             KitchenShoppingView()
         case .importRecipes:

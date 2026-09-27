@@ -1,9 +1,7 @@
 import Testing
 @testable import RecipeFinder
 
-/// `parseISO8601Duration` used to require a literal "PT", so any duration carrying
-/// a date component (e.g. "P0DT0H30M", which Google/AllRecipes emit) failed to
-/// match and the time silently vanished on import.
+/// `parseISO8601Duration` once required a literal "PT", so durations with a date component (e.g. "P0DT0H30M" from Google/AllRecipes) failed to match and the time silently vanished on import.
 @Suite("parseISO8601Duration")
 struct ISO8601DurationTests {
 

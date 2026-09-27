@@ -2,17 +2,8 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// Guardrail against silent performance regressions on the rendering hot path.
-///
-/// These are deliberately *loose* wall-clock budgets: they exist to catch
-/// order-of-magnitude regressions — e.g. accidentally deleting the memoization
-/// on `normalize`/`categorize`, which is exactly what once made tab switching
-/// crawl — not small run-to-run fluctuations. The cached path collapses a large
-/// call count into a few real computations plus cheap lookups, so it finishes in
-/// a few milliseconds; an uncached path scales linearly and blows past the budget.
-///
-/// If one of these ever fails, do not bump the number reflexively: check whether
-/// a cache or other memoization was removed first.
+/// Deliberately loose wall-clock budgets guarding the render hot path: they catch order-of-magnitude regressions (e.g. dropping `normalize`/`categorize` memoization, which once made tab switching crawl), not run-to-run jitter.
+/// If one fails, don't bump the number reflexively — check first whether a cache or memoization was removed.
 @Suite("Performance budgets")
 struct PerformanceBudgetTests {
 
