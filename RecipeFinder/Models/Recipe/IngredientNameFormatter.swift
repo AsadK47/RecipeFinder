@@ -38,6 +38,13 @@ struct IngredientNameFormatter {
             result = String(result[range.upperBound...]).trimmingCharacters(in: .whitespaces)
         }
 
+        // Strip a leading bare quantity/count with no unit ("1 chicken breast" → "chicken breast", "2-3 eggs" → "eggs"); the amount has its own column.
+        result = result.replacingOccurrences(
+            of: #"^\d+(?:[./]\d+)?(?:\s*[-–—]\s*\d+(?:[./]\d+)?)?\s+(?=\S)"#,
+            with: "",
+            options: .regularExpression
+        ).trimmingCharacters(in: .whitespaces)
+
         // Strip parenthetical content (handles nested and unclosed parens)
         if let parenStart = result.firstIndex(of: "(") {
             result = String(result[..<parenStart]).trimmingCharacters(in: .whitespaces)
@@ -65,23 +72,28 @@ struct IngredientNameFormatter {
     }
     
     static func extractPreparationNotes(_ name: String) -> String? {
-        var notes: [String] = []
-        if let commaIndex = name.firstIndex(of: ",") {
-            let prepPart = String(name[name.index(after: commaIndex)...])
-                .trimmingCharacters(in: .whitespaces)
-            notes.append(prepPart.lowercased())
+        let parts = name.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
+        var phrases: [String] = []
+
+        // Comma clauses after the main name are the prep detail ("chicken breast, cut into cubes" → "cut into cubes").
+        phrases.append(contentsOf: parts.dropFirst().map { $0.lowercased() })
+
+        // Plus any prep keyword in the descriptor before the first comma ("boneless skinless chicken" → boneless, skinless).
+        let head = parts.first ?? name
+        for word in head.components(separatedBy: .whitespaces) {
+            let clean = word.trimmingCharacters(in: CharacterSet.punctuationCharacters).lowercased()
+            if preparationKeywords.contains(clean) { phrases.append(clean) }
         }
-        
-        let words = name.components(separatedBy: .whitespaces)
-        for word in words {
-            let cleanWord = word.trimmingCharacters(in: CharacterSet.punctuationCharacters)
-            if preparationKeywords.contains(cleanWord.lowercased()) {
-                notes.append(cleanWord.lowercased())
-            }
+
+        // Dedupe: drop empties, exact repeats, and any phrase already contained in a longer kept one ("cut" ⊂ "cut into cubes").
+        var kept: [String] = []
+        for phrase in phrases where !phrase.isEmpty {
+            if kept.contains(where: { $0.contains(phrase) }) { continue }
+            kept.removeAll { phrase.contains($0) }
+            kept.append(phrase)
         }
-        
-        let uniqueNotes = Array(Set(notes)).sorted()
-        return uniqueNotes.isEmpty ? nil : uniqueNotes.joined(separator: ", ")
+
+        return kept.isEmpty ? nil : kept.joined(separator: ", ")
     }
     
     private static func removeLeadingPrepWords(_ text: String) -> String {
