@@ -3,6 +3,70 @@ import Foundation
 /// Schema.org microdata + RDFa Lite parsing via a shared attribute-driven core; runs after JSON-LD/WPRM but before free-text heuristics so structured non-JSON-LD sites parse structurally.
 extension RecipeParser {
 
+    /// Generic DOM fallback for recipe sites with no JSON-LD/WPRM/microdata but semantically-classed lists
+    /// (BBC Good Food's `ingredients-list__item` / `method-steps__list-item`, generic `class*="ingredient"`).
+    /// Class-scoped to `<li>` so nav links like "5-ingredient meal plan" aren't captured. Fallback-tier only.
+    static func extractDOMList(from html: String) -> ParsedRecipe? {
+        var ingredients = liItems(in: html, matchingAny: [#"class="[^"]*ingredient[^"]*""#]).filter(isPlausibleIngredientLine)
+        if ingredients.count < 2 {
+            // Tasty Recipes tags the <li> with a data attribute, not an "ingredient" class.
+            ingredients = liItems(in: html, matchingAny: ["data-tr-ingredient"]).filter(isPlausibleIngredientLine)
+        }
+        guard ingredients.count >= 2 else { return nil }
+
+        let text = cleanHTML(html)
+        guard let name = extractRecipeName(from: html, text: text) else { return nil }
+
+        var result = ParsedRecipe()
+        result.name = name
+        result.ingredients = ingredients
+
+        var steps = liItems(in: html, matchingAny: [
+            #"class="[^"]*instruction[^"]*""#,
+            #"class="[^"]*method-step[^"]*""#,
+            #"class="[^"]*direction[^"]*""#,
+            "data-tr-instruction"
+        ]).filter { $0.count >= 10 }
+        if steps.isEmpty {
+            let lines = text.components(separatedBy: .newlines).filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+            steps = extractInstructions(from: text, lines: lines)
+        }
+        result.instructions = steps
+        result.prepTime = extractTime(from: text, type: .prep)
+        result.cookTime = extractTime(from: text, type: .cook)
+        result.servings = extractServings(from: text)
+        result.confidence = 0.6
+        return result
+    }
+
+    /// Inner text of every `<li>` whose opening tag matches one of the regex `fragments` (a class substring or data attribute); tags stripped, entities decoded, de-duplicated in document order.
+    private static func liItems(in html: String, matchingAny fragments: [String]) -> [String] {
+        var results: [String] = []
+        var seen = Set<String>()
+        let ns = html as NSString
+        for fragment in fragments {
+            let pattern = "<li[^>]*\(fragment)[^>]*>([\\s\\S]*?)</li>"
+            guard let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive]) else { continue }
+            for m in regex.matches(in: html, range: NSRange(location: 0, length: ns.length)) where m.numberOfRanges > 1 {
+                let inner = ns.substring(with: m.range(at: 1))
+                let decoded = decodeHTMLEntities(inner.replacingOccurrences(of: "<[^>]+>", with: " ", options: .regularExpression))
+                    .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                if !decoded.isEmpty, seen.insert(decoded.lowercased()).inserted {
+                    results.append(decoded)
+                }
+            }
+        }
+        return results
+    }
+
+    private static func isPlausibleIngredientLine(_ s: String) -> Bool {
+        let t = s.trimmingCharacters(in: .whitespaces)
+        guard t.count >= 2, t.count <= 180, t.rangeOfCharacter(from: .letters) != nil else { return false }
+        let banned: Set<String> = ["ingredients", "method", "you will need", "advertisement", "subscribe"]
+        return !banned.contains(t.lowercased())
+    }
+
     static func extractMicrodata(from html: String) -> ParsedRecipe? {
         // Require an explicit schema.org Recipe scope to avoid false positives.
         extractSchemaAttributes(

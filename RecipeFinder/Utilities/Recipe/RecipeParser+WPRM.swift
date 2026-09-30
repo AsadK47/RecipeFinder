@@ -3,6 +3,13 @@ import Foundation
 /// WP Recipe Maker parsing for `RecipeParser`; extracts structured fields from `wprm-recipe-*` markup, falling back to text heuristics for instructions.
 extension RecipeParser {
 
+    /// Inner HTML → plain text (strip tags, collapse whitespace). WPRM wraps ingredient names/units in `<a>` glossary links, so a `[^<]+` capture returns empty and the name is lost.
+    private static func strippedInner(_ s: String) -> String {
+        s.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
+            .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+            .trimmingCharacters(in: .whitespaces)
+    }
+
     static func extractWPRM(from html: String) -> ParsedRecipe? {
         guard html.contains("wprm-recipe") || html.contains("wp-recipe-maker") else {
             return nil
@@ -147,30 +154,27 @@ extension RecipeParser {
                     }
                 }
 
-                let unitPattern = #"class="wprm-recipe-ingredient-unit">([^<]+)<"#
+                let unitPattern = #"class="wprm-recipe-ingredient-unit"[^>]*>([\s\S]*?)</span>"#
                 if let unitRegex = try? NSRegularExpression(pattern: unitPattern, options: []) {
                     let unitMatches = unitRegex.matches(in: liContent, options: [], range: NSRange(location: 0, length: (liContent as NSString).length))
                     if let firstMatch = unitMatches.first, firstMatch.numberOfRanges > 1 {
-                        let unitRange = firstMatch.range(at: 1)
-                        unit = (liContent as NSString).substring(with: unitRange).trimmingCharacters(in: .whitespaces)
+                        unit = Self.strippedInner((liContent as NSString).substring(with: firstMatch.range(at: 1)))
                     }
                 }
 
-                let namePattern = #"class="wprm-recipe-ingredient-name">([^<]+)<"#
+                let namePattern = #"class="wprm-recipe-ingredient-name"[^>]*>([\s\S]*?)</span>"#
                 if let nameRegex = try? NSRegularExpression(pattern: namePattern, options: []) {
                     let nameMatches = nameRegex.matches(in: liContent, options: [], range: NSRange(location: 0, length: (liContent as NSString).length))
                     if let firstMatch = nameMatches.first, firstMatch.numberOfRanges > 1 {
-                        let nameRange = firstMatch.range(at: 1)
-                        name = (liContent as NSString).substring(with: nameRange).trimmingCharacters(in: .whitespaces)
+                        name = Self.strippedInner((liContent as NSString).substring(with: firstMatch.range(at: 1)))
                     }
                 }
 
-                let notesPattern = #"class="wprm-recipe-ingredient-notes[^\"]*\">([^<]+)<"#
+                let notesPattern = #"class="wprm-recipe-ingredient-notes[^"]*"[^>]*>([\s\S]*?)</span>"#
                 if let notesRegex = try? NSRegularExpression(pattern: notesPattern, options: []) {
                     let notesMatches = notesRegex.matches(in: liContent, options: [], range: NSRange(location: 0, length: (liContent as NSString).length))
                     if let firstMatch = notesMatches.first, firstMatch.numberOfRanges > 1 {
-                        let notesRange = firstMatch.range(at: 1)
-                        notes = (liContent as NSString).substring(with: notesRange).trimmingCharacters(in: .whitespaces)
+                        notes = Self.strippedInner((liContent as NSString).substring(with: firstMatch.range(at: 1)))
                     }
                 }
 

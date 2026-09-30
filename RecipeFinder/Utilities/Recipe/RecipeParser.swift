@@ -60,6 +60,15 @@ struct RecipeParser {
             return enriched
         }
 
+        // Generic semantic-list fallback (BBC Good Food etc.) before free-text heuristics.
+        if let domList = extractDOMList(from: html) {
+            var enriched = domList
+            if enriched.imageURL == nil {
+                enriched.imageURL = extractOGImage(from: html)
+            }
+            return enriched
+        }
+
         let text = cleanHTML(html)
         let lines = text.components(separatedBy: .newlines).filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
 
