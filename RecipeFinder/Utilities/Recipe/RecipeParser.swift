@@ -114,6 +114,21 @@ struct RecipeParser {
             confidenceScore += 0.5
         }
 
+        // Social/caption fallback: TikTok/Instagram pages carry no recipe body text, but the creator's caption lives in og:description.
+        if result.ingredients.isEmpty, let caption = extractMetaContent(property: "og:description", from: html) {
+            let capLines = caption.components(separatedBy: .newlines).filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+            let capIngredients = extractIngredients(from: caption, lines: capLines)
+            if !capIngredients.isEmpty {
+                result.ingredients = capIngredients
+                result.instructions = extractInstructions(from: caption, lines: capLines)
+                // On social pages the body title is junk ("loading…"); og:title is the real name.
+                if let ogTitle = extractMetaContent(property: "og:title", from: html)?.trimmingCharacters(in: .whitespacesAndNewlines), !ogTitle.isEmpty {
+                    result.name = ogTitle
+                }
+                confidenceScore += 1.5
+            }
+        }
+
         result.imageURL = extractOGImage(from: html)
         result.confidence = confidenceScore / maxScore
         return result
@@ -211,5 +226,34 @@ struct RecipeParser {
             return String(html[range])
         }
         return nil
+    }
+
+    /// Content of an OpenGraph meta tag (e.g. `og:description`, `og:title`) — the caption TikTok/Instagram expose when the page has no recipe body text. Handles either attribute order; entities decoded (so `&#10;` → newline).
+    static func extractMetaContent(property: String, from html: String) -> String? {
+        let patterns = [
+            "<meta[^>]+property=[\"']\(property)[\"'][^>]*\\scontent=\"([^\"]*)\"",
+            "<meta[^>]+content=\"([^\"]*)\"[^>]*property=[\"']\(property)[\"']"
+        ]
+        for pattern in patterns {
+            if let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive]),
+               let match = regex.firstMatch(in: html, options: [], range: NSRange(html.startIndex..., in: html)),
+               let range = Range(match.range(at: 1), in: html) {
+                let decoded = decodeMetaPreservingNewlines(String(html[range]))
+                if !decoded.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    return decoded
+                }
+            }
+        }
+        return nil
+    }
+
+    /// Decode a meta/caption value while keeping line breaks — plain `decodeHTMLEntities` flattens newlines, which destroys the caption's ingredient/step structure. Mirrors `cleanHTML`'s newline-protection trick.
+    private static func decodeMetaPreservingNewlines(_ s: String) -> String {
+        var t = s.replacingOccurrences(of: "&#10;", with: "\n")
+            .replacingOccurrences(of: "&#13;", with: "\n")
+            .replacingOccurrences(of: "<br\\s*/?>", with: "\n", options: .regularExpression)
+        t = t.replacingOccurrences(of: "\n", with: " \u{2424} ")
+        t = decodeHTMLEntities(t)
+        return t.replacingOccurrences(of: "\\s*\u{2424}\\s*", with: "\n", options: .regularExpression)
     }
 }
