@@ -112,6 +112,37 @@ import Foundation
         #expect(item.quantity == 5)
     }
 
+    // MARK: - Unit preservation (regression: merge dropped the unit → "flour 6" unitless)
+
+    @Test func addIngredients_preservesUnit() throws {
+        let manager = makeManager()
+        manager.addIngredients(from: recipe(ingredients: [ing("Flour", qty: 200, unit: "g")]))
+        let item = try #require(manager.items.first)
+        #expect(item.name == "Flour")
+        #expect(item.unit == "g")
+    }
+
+    @Test func addIngredients_sameNameSameUnit_mergesAndKeepsUnit() throws {
+        let manager = makeManager()
+        manager.addIngredients(from: recipe(name: "Bread", ingredients: [ing("Flour", qty: 200, unit: "g")]))
+        manager.addIngredients(from: recipe(name: "Cake",  ingredients: [ing("Flour", qty: 300, unit: "g")]))
+
+        #expect(manager.items.count == 1)
+        let item = try #require(manager.items.first)
+        #expect(item.quantity == 500)
+        #expect(item.unit == "g")
+    }
+
+    @Test func addIngredients_sameNameDifferentUnit_staysSeparate() {
+        let manager = makeManager()
+        manager.addIngredients(from: recipe(name: "Bake",  ingredients: [ing("Flour", qty: 200, unit: "g")]))
+        manager.addIngredients(from: recipe(name: "Sauce", ingredients: [ing("Flour", qty: 2,   unit: "cups")]))
+
+        #expect(manager.items.count == 2)
+        let units = Set(manager.items.map(\.unit))
+        #expect(units == ["g", "cups"])
+    }
+
     // MARK: - Check / uncheck
 
     @Test func newItems_areUnchecked() {

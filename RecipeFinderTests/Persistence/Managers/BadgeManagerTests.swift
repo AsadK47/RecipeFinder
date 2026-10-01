@@ -98,6 +98,26 @@ struct BadgeManagerTests {
         #expect(sut.pendingCelebration == nil)
     }
 
+    // MARK: - Bulk import suppression (restore crosses count thresholds without a parade of sheets)
+
+    @Test func bulkImporting_unlocksBadgeWithoutCelebration() {
+        let sut = makeSUT()
+        sut.isBulkImporting = true
+        sut.unlockBadge(.firstRecipe)
+        #expect(sut.isBadgeUnlocked(BadgeType.firstRecipe.rawValue))  // still persisted
+        #expect(sut.pendingCelebration == nil)                        // but no sheet
+    }
+
+    @Test func bulkImporting_laterChecksDoNotRequeueSuppressedBadge() {
+        let sut = makeSUT()
+        sut.isBulkImporting = true
+        sut.unlockBadge(.firstRecipe)
+        sut.isBulkImporting = false
+        // A normal (non-silent) unlock attempt for the already-held badge must not pop a late sheet.
+        sut.unlockBadge(.firstRecipe)
+        #expect(sut.pendingCelebration == nil)
+    }
+
     @Test func alreadyUnlockedBadge_doesNotQueueCelebrationAgain() {
         let sut = makeSUT()
         sut.unlockBadge(.firstRecipe)

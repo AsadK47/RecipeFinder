@@ -6,7 +6,7 @@ private let logger = AppLogger.logger(category: "ShoppingList")
 @MainActor
 protocol ShoppingListManaging: AnyObject, Observable {
     var items: [ShoppingListModel] { get }
-    func addItem(name: String, quantity: Int, category: String?)
+    func addItem(name: String, quantity: Int, unit: String, category: String?)
     func updateCategory(at index: Int, category: String)
     func updateStore(at index: Int, store: String?)
     func updateQuantity(at index: Int, quantity: Int)
@@ -19,7 +19,7 @@ protocol ShoppingListManaging: AnyObject, Observable {
 
 extension ShoppingListManaging {
     /// Mirrors `addItem`'s default args (a protocol requirement can't carry them) so call sites keep writing `addItem(name:)`.
-    func addItem(name: String) { addItem(name: name, quantity: 1, category: nil) }
+    func addItem(name: String) { addItem(name: name, quantity: 1, unit: "", category: nil) }
 }
 
 private struct ShoppingListManagingKey: EnvironmentKey {
@@ -91,7 +91,7 @@ final class ShoppingListManager: ShoppingListManaging {
     func addIngredients(from recipe: RecipeModel) {
         for ingredient in recipe.ingredients {
             let qty = max(1, Int(round(ingredient.baseQuantity)))
-            addItem(name: ingredient.name, quantity: qty, category: nil)
+            addItem(name: ingredient.name, quantity: qty, unit: ingredient.unit, category: nil)
         }
     }
 
@@ -102,9 +102,10 @@ final class ShoppingListManager: ShoppingListManaging {
         }
     }
 
-    func addItem(name: String, quantity: Int = 1, category: String? = nil) {
+    func addItem(name: String, quantity: Int = 1, unit: String = "", category: String? = nil) {
         var items = getItems()
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedUnit = unit.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedName.isEmpty else {
             logger.error("❌ ShoppingListManager: Empty item name")
             return
@@ -122,7 +123,11 @@ final class ShoppingListManager: ShoppingListManaging {
             return
         }
         
-        if let existingIndex = items.firstIndex(where: { $0.name.lowercased() == trimmedName.lowercased() }) {
+        // Merge only when name AND unit match — summing across units ("200 g" + "2 cups") would be meaningless, so differing units stay as separate lines.
+        if let existingIndex = items.firstIndex(where: {
+            $0.name.lowercased() == trimmedName.lowercased()
+                && $0.unit.lowercased() == trimmedUnit.lowercased()
+        }) {
             logger.debug("✅ ShoppingListManager: Updating existing item '\(trimmedName)'")
             let newQuantity = items[existingIndex].quantity + quantity
             items[existingIndex].quantity = min(newQuantity, 999)
@@ -132,7 +137,7 @@ final class ShoppingListManager: ShoppingListManaging {
         }
         
         let detectedCategory = category ?? CategoryClassifier.categorize(trimmedName)
-        let newItem = ShoppingListModel(name: trimmedName, quantity: quantity, category: detectedCategory)
+        let newItem = ShoppingListModel(name: trimmedName, quantity: quantity, unit: trimmedUnit, category: detectedCategory)
         items.append(newItem)
         logger.debug("✅ ShoppingListManager: Added '\(trimmedName)' in category '\(detectedCategory)'. Total items: \(items.count)")
         saveItems(items)

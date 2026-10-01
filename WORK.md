@@ -1,18 +1,30 @@
 # WORK: Pre-launch punch list
 
 ## ▶ Resume here (cold start: read this block first, update it last)
-- **Last done:** doc audit + minimisation. Added the **Feature map** (what ships + how
-  tested) to the top of `ROADMAP.md`, linked from `HANDBOOK.md`. Earlier this session:
-  background-timer notification fix (`RecipeTimerManager`, build + 26 tests green).
-- **Open decision (awaiting user "go"):** compress ROADMAP Part I/II/III done-feature
-  *prose* → one-liners (keep all why/decisions + open 🔴/🟡 items; ~555→~200 lines), and
-  retire `CORE_LOOP_AUDIT.md` by folding its 2 open items (search debounce, cook-state
-  residue) into this file. Nothing cut yet.
-- **Uncommitted in working tree:** timer fix + full doc-audit cleanup (ROADMAP feature map,
-  readme/HANDBOOK/CORE_LOOP/WORK edits, deleted `legal/*.md`, removed Common Crawl scripts).
-  Left for the user to review — do NOT assume committed; run `git status`.
-- **Next action:** either execute the compression above, or pick a product task —
-  **badge summary toast** (item 5, small) or **meal-time notifications** (new idea).
+- **Last done (uncommitted, all green — 1653 tests):** two fixes landed this session.
+  1. **Grocery unit-drop bug** — `ShoppingListManager.addItem` now threads `unit`; merge
+     matches name **+** unit so "200 g flour" and "2 cups flour" stay separate instead of
+     collapsing to a unitless sum. `addIngredients(from:)` passes `ingredient.unit`.
+     +3 tests in `ShoppingListFromRecipeTests`.
+  2. **Build-blocker** — `legal/TERMS_OF_SERVICE.md` + `legal/PRIVACY_POLICY.md` were
+     deleted in `a8d807b` but still referenced in `project.pbxproj` as Resources, so `main`
+     did NOT build. Removed the 8 dangling references (nothing loads them at runtime).
+  3. **Badge/restore parade (item 5, premise re-corrected)** — the "bulk import silently
+     unlocks, no feedback" premise is WRONG. Reality: normal import = 1 recipe = 1
+     celebration; seed = silent by design; the real wart is **backup restore**
+     (`BackupService.restore:53 → mergeRecipes`) looping `saveRecipe → checkAndUnlockBadges`
+     non-silently → a PARADE of milestone sheets. Fixed by wrapping `mergeRecipes` in
+     `BadgeManager.shared.isBulkImporting` (mirrors the seed + `badges.merge` suppression).
+     +2 tests in `BadgeManagerTests`. No "summary toast" built — it was the wrong fix.
+- **Uncommitted in working tree:** the three fixes above (ShoppingListManager, pbxproj,
+  PersistenceController+RecipeWrites, BadgeManager + 2 test files). Review + commit per the
+  3 suggested messages. Run `git status`.
+- **Next action:** **meal-time notifications** (slice 3) — needs a product decision + a
+  notification-scheduling seam first (see "New ideas" + "Follow-ups"). Then optionally the
+  ROADMAP compression (docs, token-heavy, low value — confirm it's still wanted).
+- **Open decision (still awaiting "go"):** compress ROADMAP Part I/II/III done-feature
+  *prose* → one-liners (keep all why/decisions + open items; ~555→~200 lines) + fold
+  `CORE_LOOP_AUDIT.md`'s 2 open items here. Nothing cut yet.
 - **Verify green:** `BuildProject` + `RunAllTests` before committing anything.
 - **Boot ritual:** new session → read this block → `git status` → continue. Nothing else needed.
 
@@ -43,12 +55,13 @@ the loop self-correcting, not just a to-do list.
 - [ ] **3. Trim onboarding** — today: 3 slides + biometric splash. Make it leaner.
 - [ ] **4. Populated home without loading 300+ at once** — today all recipes load into
       memory on appear (`RecipeStore.load`), no search debounce (re-filters per keystroke).
-- [ ] **5. Badges overhaul** — CORRECTED (2026-10-01): the audit's "triggers missing"
-      claim was FALSE. All five fire at real call sites (ImportView:127/129,
-      MealPlanningManager:78, ShoppingListManager:140, CookingModeView:337);
-      shoppingExpert/mealPlanner have integration tests. The one real gap: bulk import
-      silently unlocks all count badges with no feedback (wants a single summary toast).
-      Smaller than first thought — verify against code before touching.
+- [x] **5. Badges overhaul** — DONE (premise re-corrected 2026-10-01). The "bulk import
+      silently unlocks, no feedback" claim was itself WRONG. No user-facing bulk *import*
+      exists (import = 1 recipe = 1 celebration); seed is silent by design. The real wart
+      was **backup restore** popping a parade of milestone sheets (`mergeRecipes` →
+      `saveRecipe` → `checkAndUnlockBadges` non-silent, before `badges.merge` runs). Fixed
+      by suppressing celebrations during `mergeRecipes` via `isBulkImporting`. No toast —
+      it would have been the wrong fix. (uncommitted; +2 BadgeManagerTests)
 - [ ] **6. Hide deprecated Apple sign-in item** — `AccountActionsSection.swift:16-55`,
       already `disabled(true)` ("Under Construction"); hide until the entitlement is real
       (needs paid Apple account).
@@ -71,7 +84,7 @@ the loop self-correcting, not just a to-do list.
 ## Core-loop open bugs (single home: CORE_LOOP_AUDIT.md — don't restate here)
 The import→find→cook→track loop's ranked open findings live in
 [CORE_LOOP_AUDIT.md](CORE_LOOP_AUDIT.md). Still open and worth pulling forward:
-- ⚠️ Grocery merge sums by name but **drops the unit** ("flour 6" unitless) — `ShoppingListManager.swift:135`.
+- ✅ FIXED (uncommitted) Grocery merge dropped the unit ("flour 6" unitless) — `ShoppingListManager` now stores + merges on name+unit.
 - Search debounce (~250ms) — this is the same concern as punch-list item 4; owned there/here, not duplicated into a third place.
 
 ## Legal (pre-launch must-fix, not optional)
@@ -101,7 +114,11 @@ The import→find→cook→track loop's ranked open findings live in
   suspended in the background).
 
 ## In progress
-(none — timer fix complete + verified, uncommitted)
+(none — slices 1+2 complete + verified green, uncommitted)
 
 ## Next action
-Pick: **badge overhaul (item 5)** or **meal-time notifications (new idea)**.
+**Meal-time notifications (slice 3).** Before coding, get the product-shape decision
+(opt-in vs on-by-default, default times, one-shot vs repeat, editor location) and add a
+`MealReminderScheduling` seam over `NotificationManager` so `MealPlanningManager` scheduling
+is unit-testable. Then: `MealPlanModel.reminderTime` → schedule on add/update, cancel on
+remove/clearOld, reschedule on propagateRecurring (don't miss a mutation path) → editable UI.
