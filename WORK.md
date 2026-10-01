@@ -1,8 +1,17 @@
 # WORK: Pre-launch punch list
 
-The canonical "are we there yet" tracker. Lead with the result; update status as each
-lands. Per slice: `BuildProject` + affected `RunSomeTests` green before it's "done".
-WIP=1 — one item active at a time. Leave verified work uncommitted for the user to review.
+**North star:** *"ReciMe, but private, unlimited, great at the actual cooking — and your
+library is safe."* The core loop everything serves: **get a recipe in → find it → cook
+from it well → decide what to cook next.** Full direction in [ROADMAP.md](ROADMAP.md);
+front door is [HANDBOOK.md](HANDBOOK.md). Every item below must earn its place in that loop.
+
+The canonical "are we there yet" tracker — where we are vs. where ROADMAP says we're going.
+Per slice: `BuildProject` + affected `RunSomeTests` green before it's "done". WIP=1 — one
+item active at a time. Leave verified work uncommitted for the user to review.
+
+**Before building any item, verify its premise against the code** (audits/status markers
+drift — see item 5, where the audit was wrong and the ROADMAP right). This is what keeps
+the loop self-correcting, not just a to-do list.
 
 ## Status
 `[x]` done & verified · `[~]` in progress · `[ ]` not started
@@ -18,9 +27,12 @@ WIP=1 — one item active at a time. Leave verified work uncommitted for the use
 - [ ] **3. Trim onboarding** — today: 3 slides + biometric splash. Make it leaner.
 - [ ] **4. Populated home without loading 300+ at once** — today all recipes load into
       memory on appear (`RecipeStore.load`), no search debounce (re-filters per keystroke).
-- [ ] **5. Badges overhaul** — two real defects: (a) `firstImport`, `firstPhotoImport`,
-      `mealPlanner`, `shoppingExpert`, `headChef` have NO unlock trigger — unearnable;
-      (b) bulk import silently unlocks all count badges with no feedback.
+- [ ] **5. Badges overhaul** — CORRECTED (2026-10-01): the audit's "triggers missing"
+      claim was FALSE. All five fire at real call sites (ImportView:127/129,
+      MealPlanningManager:78, ShoppingListManager:140, CookingModeView:337);
+      shoppingExpert/mealPlanner have integration tests. The one real gap: bulk import
+      silently unlocks all count badges with no feedback (wants a single summary toast).
+      Smaller than first thought — verify against code before touching.
 - [ ] **6. Hide deprecated Apple sign-in item** — `AccountActionsSection.swift:16-55`,
       already `disabled(true)` ("Under Construction"); hide until the entitlement is real
       (needs paid Apple account).

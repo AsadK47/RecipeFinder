@@ -14,6 +14,7 @@ RecipeFinder is a privacy-first, offline-first iOS recipe manager
 - [CLAUDE.md](CLAUDE.md) — landing page for the AI agent harness: architecture overview, verification commands, session state. Module conventions live next to their code (`RecipeFinder/CLAUDE.md`, `RecipeFinderTests/CLAUDE.md`).
 
 ## How we work
+- [WORK.md](WORK.md) — the live "are we there yet" tracker: current pre-launch punch list, each item checked against the ROADMAP north star. Start here to see where we are vs. where we're going.
 - [AGENT_LESSONS.md](AGENT_LESSONS.md) — hard-won lessons for AI-assisted sessions (verify premises, proportionate fixes, test cadence). The `improve-loop` workflow encodes the audit→verify step.
 - [CORE_LOOP_AUDIT.md](CORE_LOOP_AUDIT.md) — ranked audit of the import→find→cook→track loop; live fix tracker.
 

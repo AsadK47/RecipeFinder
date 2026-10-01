@@ -4,9 +4,12 @@ Hard-won lessons from AI-assisted sessions on this repo. Keep short; promote a
 recurring one into `CLAUDE.md` (a gate) or the `improve-loop` workflow (a step).
 
 ## Process
-1. **Verify a finding's premise before editing.** Audits/reviews are frequently
-   overstated (e.g. "scaling wipes ingredient check-offs" was false — a count-guard
-   prevented it). Read the actual code; downgrade or drop findings that don't hold.
+1. **Verify a finding's premise before editing — in *both* directions.** Audits/reviews
+   are frequently overstated (e.g. "scaling wipes ingredient check-offs" was false — a
+   count-guard prevented it; and 2026-10-01: "5 badges have no unlock trigger" was false —
+   all fire at real call sites, ImportView/MealPlanningManager/ShoppingListManager/
+   CookingModeView). The status source can *also* be wrong the other way: there the
+   ROADMAP table was right and the fresh audit wrong. Trust neither marker — read the code.
    The `improve-loop` workflow bakes this in as an adversarial verify step.
 2. **Before removing a string/symbol, grep for dependents case-INSENSITIVELY.** A
    case-sensitive grep for "See recipe" missed a test asserting `"See Recipe"` →
