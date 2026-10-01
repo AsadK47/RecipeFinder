@@ -1,61 +1,65 @@
-# WORK: reuse-pass refactor campaign
+# WORK: Pre-launch punch list
 
-Branch: `refactor/reuse-pass`. Goal: stop reinventing wheels — route every site
-through the shared component/utility that already exists. One cluster = one slice
-= one commit. Verify line refs against real code BEFORE editing (audit scan refs
-may be stale). Per slice: `BuildProject` + affected `RunSomeTests` green before commit.
+The canonical "are we there yet" tracker. Lead with the result; update status as each
+lands. Per slice: `BuildProject` + affected `RunSomeTests` green before it's "done".
+WIP=1 — one item active at a time. Leave verified work uncommitted for the user to review.
 
-(Prior WORK.md content — the RecipeStore DI refactor — is complete and committed;
-cleared.)
+## Status
+`[x]` done & verified · `[~]` in progress · `[ ]` not started
 
-## Rules
-- WIP=1. Finish + verify + commit a slice before starting the next.
-- Verify each cluster's premise first; if a "duplicate" is actually justified/
-  different, note it and SKIP — do not force reuse.
-- Keep each change minimal and focused on that one cluster.
+## Launch punch list
+- [ ] **1. Plus loop works locally** — StoreKit purchase/restore/paywall already built
+      and `.storekit` wired to the scheme; the GAP is nothing is gated (`isSubscribed`
+      only toggles the Settings card). Decision pending: what Plus gates.
+      Plan: launch FREE, build the gate behind a flag, prove the full loop on the local
+      `.storekit` config. iCloud sync stays FREE. Recommend a freemium power-feature cap
+      (AI/photo import, meal planning) over curated content — no content to gate yet.
+- [ ] **2. YOTI-level simplicity** — north-star principle, applies to every view touched.
+- [ ] **3. Trim onboarding** — today: 3 slides + biometric splash. Make it leaner.
+- [ ] **4. Populated home without loading 300+ at once** — today all recipes load into
+      memory on appear (`RecipeStore.load`), no search debounce (re-filters per keystroke).
+- [ ] **5. Badges overhaul** — two real defects: (a) `firstImport`, `firstPhotoImport`,
+      `mealPlanner`, `shoppingExpert`, `headChef` have NO unlock trigger — unearnable;
+      (b) bulk import silently unlocks all count badges with no feedback.
+- [ ] **6. Hide deprecated Apple sign-in item** — `AccountActionsSection.swift:16-55`,
+      already `disabled(true)` ("Under Construction"); hide until the entitlement is real
+      (needs paid Apple account).
+- [ ] **7. "Share with a friend" → App Store link** — missing entirely (only recipe-to-
+      recipe ShareLink exists). Add a share entry in Settings.
+- [x] **8. Rate-on-App-Store after a significant moment** — DONE. `RecipeDetailView:270`
+      fires `requestReview()` after the 3rd cook of a recipe; never cold.
+- [x] **9. Timer notifications fire in the background** — DONE. `RecipeTimerManager`
+      schedules the completion alert up front at start/resume, cancels on pause/stop.
+      Build + 26 timer tests green. (uncommitted)
 
-## Progress: 5/12 committed on `refactor/reuse-pass` (all build + affected tests green)
-Done: 1 email ✓ · 2 planner placeholder ✓ · 3 heart button ✓ · 4 password ✓ · 12 dead code ✓
-Remaining safe: 6 DateFormatter · 7 empty states.
-Remaining — NEEDS A DECISION: 5 `.appCard()` (12 sites, verify each) ·
-8 photo pickers (PostCook/PhotoImport UX differs) · 9 keyword merge (behaviour) ·
-10 quantity rounding (may INTENTIONALLY differ) · 11 `.trimmed` (135-site sweep).
+## New ideas (backlog)
+- **Meal-time notifications** — meal-planner slots (breakfast/lunch/dinner/snack) get an
+  editable associated time; when that time arrives, notify "Time for Lunch: <recipe>".
+  Infra already exists: `NotificationManager.scheduleMealReminder` schedules a
+  `UNCalendarNotificationTrigger`. Needs: a per-slot time field on the meal-plan model +
+  editable UI (sensible defaults, e.g. 08:00/13:00/19:00) + wire to scheduleMealReminder +
+  cancel/reschedule on edit/delete. Natural companion to item 9.
 
-## Slices (highest value / lowest risk first)
+## Follow-ups / debt
+- **Notification seam** — `RecipeTimerManager` calls `NotificationManager.shared` directly,
+  so "schedules up front" isn't unit-testable. Inject a protocol to assert it.
+- **Bulk-import badge summary** — show one "you earned N achievements" toast instead of
+  silently unlocking (ties into item 5).
 
-- [x] **1. Email validation** — 3 inline regexes → `Validator.isValidEmail()`.
-      EmailSignInView.swift, SignUpView.swift. ⚠️ Real bug: view regex `{2,}` vs
-      Validator `{2,64}` — behaviour differs.
-- [ ] **2. Planner no-photo placeholder** → `RecipePlaceholderView`.
-      RecipeSelectionSheet (MealPickerRecipeCard), MealTimeCard (MealThumbnail).
-      Per-recipe colours; user-reported.
-- [ ] **3. AnimatedHeartButton** — exists but UNUSED. Adopt in RecipeDetailToolbar
-      (toggle path) or delete. Static badges (RecipeCard/CompactRecipeCard/RecipeRow)
-      are decorative — leave.
-- [ ] **4. Password strength** — SignUpView inline → `Validator.validatePassword()`.
-- [ ] **5. Card background** — hand-rolled RoundedRectangle fills → `.appCard()`
-      (~12 sites; verify each is really the card token's job — some Circles aren't).
-- [ ] **6. Inline DateFormatter** — 5 one-off → static cached lets (mirror
-      MealPlanningView): RecipeImportBuilder, DataManagementSettingsView,
-      PrivacyPolicyView, TermsOfServiceView, MealTimeSelectorSheet.
-- [ ] **7. Empty states** — RecipeSelectionSheet + RecipePickerForCollectionSheet → `EmptyStateView`.
-- [ ] **8. Photo pickers** — PostCookPhotoSheet + PhotoImportSheet → `.photoSourcePicker()`
-      (RecipePhotoManagerSheet is multi-select; may not fit — check).
-- [ ] **9. Prep-keyword lists** — merge IngredientNameFormatter.preparationKeywords +
-      CategoryClassifier.descriptorWords into one source.
-- [ ] **10. Quantity rounding** — 3 strategies → shared QuantityFormatter. CAUTION:
-      they may intentionally differ; confirm before merging.
-- [ ] **11. `.trimmed` / `.isBlank`** — 0% used, 135+ inline. LOW priority, huge diff;
-      do LAST, possibly scoped.
-- [ ] **12. Dead code** — remove `RecipeFormatters.formattedImageName(for:)` (0 callers).
-
-## Deferred (convention, not accidental dup — own unit later)
-- Sheet gradient scaffold (43) + `.toolbarBackground(.hidden)` (33) → `.sheetScaffold()`.
-- Error `.alert` boilerplate (17) → `.errorAlert()`.
+## Decisions
+- **Common Crawl / millions-scale validation: PARKED.** Removed `harvest_commoncrawl.py`
+  + `commoncrawl_query.sql`. Kept `fetch_and_label.py` + `urls.txt` + the corpus-gated
+  `ImportAccuracyHarnessTests` (the live-URL labeller that produced 94% fallback / 100%
+  structured). Why: CC denies anonymous S3 LIST; no AWS/bandwidth in the sandbox; marginal
+  value is low vs. infra cost. Revive only in CI with real AWS creds if ever needed.
+- **Plus = launch free, gate behind a flag, test loop locally.** iCloud sync stays free
+  (table stakes). Freemium power-feature cap > curated content for launch (reversible,
+  zero new content). What exactly to gate is still the user's open call.
+- **Timer notifications scheduled up front**, not sent from the in-app ticker (which is
+  suspended in the background).
 
 ## In progress
-Slice 1 — email validation.
+(none — timer fix complete + verified, uncommitted)
 
 ## Next action
-Verify EmailSignInView / SignUpView / Validator line refs, route both views through
-`Validator.isValidEmail()`, build + RunSomeTests (ValidatorTests + auth), commit.
+Pick: **badge overhaul (item 5)** or **meal-time notifications (new idea)**.

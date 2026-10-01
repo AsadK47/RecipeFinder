@@ -45,6 +45,8 @@ final class RecipeTimerManager: RecipeTiming {
     @ObservationIgnored private var ticker: Timer?
     @ObservationIgnored private let defaults: UserDefaults
 
+    private static let completionNotificationId = "recipe-timer-complete"
+
     private enum Keys {
         static let duration = "recipeTimer.duration"
         static let remaining = "recipeTimer.remaining"
@@ -91,6 +93,7 @@ final class RecipeTimerManager: RecipeTiming {
 
         startTickerIfNeeded()
         persistState()
+        scheduleCompletionNotification(after: TimeInterval(total))
         HapticManager.shared.success()
     }
 
@@ -102,6 +105,8 @@ final class RecipeTimerManager: RecipeTiming {
         isRunning = false
         endDate = nil
 
+        // A paused timer won't fire — drop the pending alert so it can't go off mid-pause.
+        NotificationManager.shared.cancelNotification(identifier: Self.completionNotificationId)
         persistState()
         HapticManager.shared.light()
     }
@@ -115,6 +120,7 @@ final class RecipeTimerManager: RecipeTiming {
 
         startTickerIfNeeded()
         persistState()
+        scheduleCompletionNotification(after: TimeInterval(remainingSeconds))
         HapticManager.shared.light()
     }
 
@@ -134,6 +140,7 @@ final class RecipeTimerManager: RecipeTiming {
         isPaused = false
         endDate = nil
 
+        NotificationManager.shared.cancelNotification(identifier: Self.completionNotificationId)
         persistState()
         HapticManager.shared.light()
     }
@@ -162,15 +169,21 @@ final class RecipeTimerManager: RecipeTiming {
 
         persistState()
         HapticManager.shared.celebrate()
-        // Respect the user's notification preference before firing.
+        // The alert was scheduled up front at start/resume, so it fires even if we never reach this
+        // in-app completion (app backgrounded). Nothing to send here.
+    }
+
+    /// Schedule the completion alert up front so it fires even when the app is backgrounded — the
+    /// in-app ticker is suspended in the background and can't notify on its own.
+    private func scheduleCompletionNotification(after seconds: TimeInterval) {
         let notificationsEnabled = (defaults.object(forKey: "timerNotifications") as? Bool) ?? true
-        if notificationsEnabled {
-            NotificationManager.shared.sendImmediateNotification(
-                title: "⏰ Timer Complete!",
-                body: "Your recipe timer has finished.",
-                identifier: "recipe-timer-complete"
-            )
-        }
+        guard notificationsEnabled, seconds > 0 else { return }
+        NotificationManager.shared.scheduleTimerNotification(
+            title: "⏰ Timer Complete!",
+            body: "Your recipe timer has finished.",
+            timeInterval: seconds,
+            identifier: Self.completionNotificationId
+        )
     }
 
     private func startTickerIfNeeded() {
