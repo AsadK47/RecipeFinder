@@ -23,7 +23,11 @@ RecipeFinder is a privacy-first, offline-first iOS recipe manager
 
 ## Legal & licensing
 - [LICENSE](LICENSE) — proprietary licence.
-- [legal/PRIVACY_POLICY.md](legal/PRIVACY_POLICY.md) · [legal/TERMS_OF_SERVICE.md](legal/TERMS_OF_SERVICE.md)
+- Privacy Policy & Terms: the canonical copies are the in-app views
+  (`RecipeFinder/Views/Settings/Legal/PrivacyPolicyView.swift`,
+  `TermsOfServiceView.swift`) and the website (recipefinder.uk/privacy.html, /terms.html).
+  ⚠️ Pre-launch: the in-app text still says "no accounts / no data collected" — stale vs.
+  Apple/email sign-in + planned iCloud sync; needs a lawyer-reviewed rewrite.
 
 ---
 

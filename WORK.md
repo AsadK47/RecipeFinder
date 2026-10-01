@@ -52,6 +52,20 @@ the loop self-correcting, not just a to-do list.
   editable UI (sensible defaults, e.g. 08:00/13:00/19:00) + wire to scheduleMealReminder +
   cancel/reschedule on edit/delete. Natural companion to item 9.
 
+## Core-loop open bugs (single home: CORE_LOOP_AUDIT.md — don't restate here)
+The import→find→cook→track loop's ranked open findings live in
+[CORE_LOOP_AUDIT.md](CORE_LOOP_AUDIT.md). Still open and worth pulling forward:
+- ⚠️ Grocery merge sums by name but **drops the unit** ("flour 6" unitless) — `ShoppingListManager.swift:135`.
+- Search debounce (~250ms) — this is the same concern as punch-list item 4; owned there/here, not duplicated into a third place.
+
+## Legal (pre-launch must-fix, not optional)
+- In-app `PrivacyPolicyView`/`TermsOfServiceView` text is a fossil of the old
+  "purely local, no account" framing — it asserts *no user accounts* and *no personal
+  data collected*, which is false now (Apple/email sign-in, Keychain credentials, planned
+  iCloud sync). Needs a lawyer-reviewed rewrite before App Store submission. The website
+  copy (recipefinder.uk/privacy.html, /terms.html) likely has the same fossil — check both.
+  (Stale legal `.md` third copy deleted 2026-10-01; in-app views + website are canonical.)
+
 ## Follow-ups / debt
 - **Notification seam** — `RecipeTimerManager` calls `NotificationManager.shared` directly,
   so "schedules up front" isn't unit-testable. Inject a protocol to assert it.

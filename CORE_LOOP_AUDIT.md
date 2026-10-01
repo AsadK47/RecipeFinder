@@ -5,22 +5,12 @@ Findings from a 4-stage code audit. Ranked; each has file:line + a one-line fix.
 ⚠️ = likely real bug (verify then fix). ✎ = UX/polish judgement.
 
 ## Top cross-cutting priorities (fix these first)
-1. ↓ DOWNGRADED (audit overstated) — verified: scaling does NOT reset check-offs (the
-   guard at `RecipeDetailView.swift:156` only resets on ingredient *count* change, i.e.
-   add/remove). Real residue: index-based state can misalign on a mid-list insert. Low
-   priority; revisit if it bites.
-2. ✅ DONE + agent-verified — cook-mode timers. Added `CookingModeView.cookTimerMinutes(in:)`
-   (unit-required, ignores temps/counts) replacing the number-summing `TimeExtractor`;
-   guarded the start button on `timerManager.isActive` so it no longer clobbers a running
-   timer. +5 `CookingModeTimerTests`. (Still TODO, lower: inline live-countdown pill (2c).)
-3. ✅ DONE + agent-verified — imports no longer fabricate "See recipe" /
-   "See original recipe for instructions." placeholders; `RecipeImportView` now shows
-   a "Recipe looks incomplete" alert (Save & Add Later / Cancel) instead of silently
-   saving when ingredients or steps are missing. +tests; updated the stale
-   `testBuild_fallbackIngredientWhenListEmpty` assertion.
-4. ✎ **Search filters on every keystroke, no debounce** — list flickers while typing
-   (`RecipeFilterCriteria.swift:65`, `RecipeSearchModifiers.swift:58`). Fix: debounce
-   ~250ms.
+*Done items trimmed 2026-10-01 — history is in git. Still open:*
+- ✎ **Search filters on every keystroke, no debounce** — list flickers while typing
+  (`RecipeFilterCriteria.swift:65`, `RecipeSearchModifiers.swift:58`). Fix: debounce ~250ms.
+  (Same concern as WORK.md punch-list item 4 — owned there, not duplicated.)
+- ↓ Low-pri residue: index-based cook/check state can misalign on a mid-list insert
+  (`RecipeDetailView.swift:156` guard only resets on ingredient count change). Revisit if it bites.
 
 ## Import / add
 - ⚠️ No parse-confidence surfaced — 20%-confidence and 95% save identically (`RecipeImporter.swift:49`). Show a confidence badge + warn <60%.

@@ -55,9 +55,9 @@ open RecipeFinder.xcodeproj  # Press ⌘+R to run
 ### Core Features
 - **📖 Recipe Management** - Curated collection, URL import, custom creation, favorites, and sharing
 - **🛒 Smart Shopping Lists** - Auto-categorized ingredients, add from recipes, track inventory
-- **🍽 Meal Planning** - Weekly calendar, schedule meals, get automatic notifications
+- **🍽 Meal Planning** - Weekly calendar, schedule meals, add a week to your shopping list
 - **🏠 Kitchen Inventory** - Track ingredients, expiry dates, find recipes you can make now
-- **⏲ Multi-Timers** - Run multiple named timers with background alerts and haptic feedback
+- **⏲ Cook Timer** - Step timer with background alerts and haptic feedback
 
 ### Security & Privacy
 - **🔐 Local Authentication** - Face ID/Touch ID support with PBKDF2 password hashing (100,000 rounds)
