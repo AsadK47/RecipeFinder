@@ -115,6 +115,33 @@ turning it on later isn't a rewrite.
 
 ---
 
+## Feature map — what the app does & how solid
+
+The at-a-glance capability list so nobody has to read the source to know what ships and
+what's trustworthy. Coarse by design (feature-level, not per-test) so it ages slowly.
+Trust: ✅ logic tested via a named suite · ⚠️ partial (unlock/glue only) · 🧪 view-only, no unit test.
+The test **suite + CI** remain the source of truth for *coverage detail*; this is orientation.
+
+| Area | Ships | Trust |
+|---|---|---|
+| **Recipes** — create/edit/delete, favourite, tags, dietary, notes, servings scaling, cook history + rating, multiple photos, ingredient substitutions, nutrition calc | ✅ | ✅ |
+| **Import** — URL/link, paste-text, photo OCR, share-extension, on-device AI free-text, social caption fallback, duplicate detection | ✅ | ✅ |
+| **Search & filter** — text, category/difficulty/dietary, available-ingredients ("can make now"), tag, collection, sort orders | ✅ | ✅ |
+| **Collections & tags** — user CRUD + membership + batch-add; smart collections (6 rules) | ✅ | ✅ |
+| **Meal planning** — slots, overwrite, recurring weekly, pantry-aware suggestions, calendar, add-week-to-shopping | ✅ | ✅ |
+| **Shopping list** — add/remove/check, add-from-recipe, aisle categorisation, grouping + text share | ✅ | ✅ |
+| **Kitchen / pantry** — inventory CRUD, expiry/low-stock alerts, recipe matching, expiry notifications | ✅ | ✅ |
+| **Cooking mode** — step nav, per-step timer, screen-awake; timer fires in background | ✅ | ⚠️ timer ✅, step UI 🧪 |
+| **Backup / restore** — `.recipefinderbackup` round-trip, per-store merge, per-user scope | ✅ | ✅ |
+| **Badges** — 12 achievements, unlock + celebration queue | ✅ | ⚠️ shopping/meal triggers ✅; import/photo/headChef unlock-tested, trigger at call site |
+| **Auth & account** — email + Apple sign-in, guest mode, biometrics, Keychain + PBKDF2, session expiry | ✅ | ⚠️ store/session/model ✅; sign-in *flows* 🧪 (DI seam pending) |
+| **App Intents / Siri** — add-to-list, what's-for-dinner, open-recipe, start-cooking | ✅ | ⚠️ thin glue |
+| **Recipe source refresh** — "view original" + diff-and-reapply | ✅ | ✅ diff tested, sheet 🧪 |
+| **Subscription (Plus)** — StoreKit purchase/restore/paywall built | ✅ built | ⚠️ **nothing gated yet** — loop untested (see WORK.md) |
+| **iCloud sync** | 🔴 blocked on paid Apple enrollment | — |
+
+---
+
 ## Part I — Hardening
 
 Before adding surface area, we spent a campaign making the existing app

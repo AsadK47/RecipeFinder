@@ -10,6 +10,7 @@ RecipeFinder is a privacy-first, offline-first iOS recipe manager
 ---
 
 ## How the app works
+- [ROADMAP.md#feature-map](ROADMAP.md) — **the feature map**: every capability the app ships + how well-tested it is, at a glance. Start here to know what the app does without reading source.
 - [readme.md](readme.md) — public overview: features, screenshots, tech stack, build/run instructions.
 - [CLAUDE.md](CLAUDE.md) — landing page for the AI agent harness: architecture overview, verification commands, session state. Module conventions live next to their code (`RecipeFinder/CLAUDE.md`, `RecipeFinderTests/CLAUDE.md`).
 
@@ -33,5 +34,5 @@ RecipeFinder is a privacy-first, offline-first iOS recipe manager
 
 ### Conventions for these docs
 - **`readme.md` / `CLAUDE.md` / `ROADMAP.md`** are long-lived — edit in place, don't append dated changelog entries (history lives in git).
-- **`PLAN-*.md`** are scratch plans for one push — tick items as they land, delete the file when the work ships, add a new one for the next push.
+- **`WORK.md`** is the live scratch tracker for the current push — tick items as they land, clear it when the work ships. One at a time (WIP=1), not a pile of stale plans.
 - New durable doc? Add a one-line pointer here so this stays the single front door.

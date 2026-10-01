@@ -1,5 +1,16 @@
 # WORK: Pre-launch punch list
 
+## ▶ Resume here (cold start: read this block first, update it last)
+- **Last done:** background-timer notification fix (`RecipeTimerManager`) — fires when
+  backgrounded. Build + 26 timer tests green.
+- **Uncommitted in working tree:** the timer fix + the full doc-audit cleanup
+  (ROADMAP/readme/HANDBOOK/CORE_LOOP/WORK edits + deleted `legal/*.md` + removed Common
+  Crawl scripts). Left for the user to review — do NOT assume it's committed; run `git status`.
+- **Next action:** pick **badge summary toast** (item 5, small) or **meal-time
+  notifications** (new idea) — both scoped below.
+- **Verify green:** `BuildProject` + `RunAllTests` before committing anything.
+- **Boot ritual:** new session → read this block → `git status` → continue. Nothing else needed.
+
 **North star:** *"ReciMe, but private, unlimited, great at the actual cooking — and your
 library is safe."* The core loop everything serves: **get a recipe in → find it → cook
 from it well → decide what to cook next.** Full direction in [ROADMAP.md](ROADMAP.md);
