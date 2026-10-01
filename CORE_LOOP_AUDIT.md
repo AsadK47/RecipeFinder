@@ -36,7 +36,7 @@ Findings from a 4-stage code audit. Ranked; each has file:line + a one-line fix.
 ## Track / after cooking
 - ✎ No "Marked as cooked" confirmation when the photo sheet is skipped (`PostCookPhotoSheet.swift:103`).
 - ✎ Rating + photo are disjointed — no post-cook rate prompt; must scroll to the history card (`RecipeDetailView.swift:273`). Consider a compact cook→rate→photo flow.
-- ⚠️ Grocery merge sums quantities by name but drops the unit, so "flour 6" is unitless after scaling/merge (`ShoppingListManager.swift:135`, `ShoppingListModel` unit not persisted through). Carry the unit.
+- ✅ FIXED (uncommitted) Grocery merge dropped the unit ("flour 6" unitless). `ShoppingListManager.addItem` now threads `unit` and merges on name+unit (`ShoppingListFromRecipeTests` +3).
 - ✎ Meal-plan → groceries loses unit context and is binary vs kitchen stock (has-any skips the item even if you need more) (`MealPlanningManager.swift:255`, `MealPlanningView.swift:305`).
 - ✎ No visible link that groceries came from a meal plan (`MealPlanningView.swift:244`).
 

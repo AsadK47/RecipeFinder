@@ -29,11 +29,15 @@
      `MealPlanningManager` (inject seam + sync across all mutation paths + updateMealPlan on
      protocol), `MealReminderSheet.swift` (new), `PlannedMealsSection` + `MealPlanningView`
      (UI). +11 tests (`MealReminderSchedulingTests`). Default times 08:00/13:00/19:00/15:00.
-- **Next action:** optional ROADMAP compression (docs, token-heavy — confirm still wanted),
-  or next punch-list item. All four requested items (slices 1–3 + this) are done.
-- **Open decision (still awaiting "go"):** compress ROADMAP Part I/II/III done-feature
-  *prose* → one-liners (keep all why/decisions + open items; ~555→~200 lines) + fold
-  `CORE_LOOP_AUDIT.md`'s 2 open items here. Nothing cut yet.
+  5. **ROADMAP compression** — DONE (uncommitted). Part I/II/III done-feature prose →
+     one-liners; kept every why/decision, the "Where we stand" strategy, the Feature-map
+     table, and all open 🔴/🟡 blocks (iCloud + storage decision, Nutrition, Supermarket,
+     Recipe sharing, Auto images). 558→390 lines (not ~200 — the rest is strategy/why that
+     the brief said to preserve). **CORE_LOOP_AUDIT.md NOT retired:** its "2 open items" was
+     a wrong premise — it holds ~18 real findings (import/find/cook/track backlog). Kept as
+     the core-loop backlog home; only marked the grocery-unit item fixed.
+- **Next action:** next punch-list item — #3 trim onboarding, #4 home perf + search
+  debounce, or #1 Plus gating (needs your call on what to gate). Legal rewrite needs a lawyer.
 - **Verify green:** `BuildProject` + `RunAllTests` before committing anything.
 - **Boot ritual:** new session → read this block → `git status` → continue. Nothing else needed.
 

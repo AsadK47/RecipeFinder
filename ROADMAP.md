@@ -144,71 +144,34 @@ The test **suite + CI** remain the source of truth for *coverage detail*; this i
 
 ## Part I — Hardening
 
-Before adding surface area, we spent a campaign making the existing app
-trustworthy. Each item below was its own commit + review checkpoint. This is the
-foundation the rest of the roadmap stands on.
+Before adding surface area, a campaign made the existing app trustworthy — each
+item its own commit + review checkpoint. All 🟢 done; the *why* is kept, the
+blow-by-blow is in git.
 
-### 🟢 Auth & credentials
-*Problem:* the highest-stakes code had zero tests, and a real account-takeover
-bug once let `signUp()` overwrite an existing account's credentials.
-*What we did:* put a `KeychainStore` protocol seam in front of the system
-Keychain (real vs in-memory fake), extracted a pure PBKDF2 `PasswordHasher`, and
-covered the credential/session lifecycle — including the historical empty-hash
-bug and stable-user-id-on-resave — with Swift Testing cases.
-*Why:* credentials are where a privacy-first app cannot afford to be wrong.
-
-### 🟢 Search & filter robustness
-*Problem:* "what can I make?" quietly returned wrong results — ingredient
-matching hit substrings (ice ↔ rice), time parsing mishandled hours and ranges
-("20-30 min" → −10), and filtering recomputed on every keystroke.
-*What we did:* unified matching on a word-boundary `KitchenRecipeMatcher` (with
-conservative singularisation so egg↔eggs matches without reviving ice↔rice),
-taught `TimeExtractor` to parse hours and range→upper-bound, and made
-`RecipeFilterCriteria` a single `Hashable` value that computes match % once and
-keys the filter cache — so a new filter field can't silently be forgotten.
-*Why:* the headline "find something to cook" feature has to be correct *and* fast.
-
-### 🟢 Failure-state surfacing
-*Problem:* recipe writes swallowed every failure into a log and returned — a
-failed save still showed "Imported" and then vanished on relaunch (silent data
-loss).
-*What we did:* writes now return a result the UI acts on; create/import/edit
-sites roll back the optimistic change and tell the user (toast/alert) instead of
-lying. *Deferred, tied to clean-arch:* a typed error (disk-full vs encode vs
-not-ready) and a single add-and-persist use case to end the duplicated
-optimistic-insert logic across the two import hubs.
-*Why:* losing a user's recipe silently is the worst thing this app can do.
-
-### 🟢 Concurrency (Swift 6 strict)
-*Problem:* the shared singleton managers leaned on `nonisolated(unsafe)` escape
-hatches, and one (`BadgeManager`) held genuinely unsynchronised mutable state.
-*What we did:* audited all eleven managers; made `BadgeManager` `@MainActor`,
-expressed `UserScopedStorage`'s real thread-safety as a documented
-`Sendable` conformance, and removed a fragile `@objc` NotificationCenter observer
-that was a latent hop-crash. No `nonisolated(unsafe)` left in the managers.
-*Why:* data races are invisible until they corrupt a user's library.
-
-### 🟢 Import robustness (the corpus)
-*Problem:* real recipe pages are messier than clean synthetic markup — minified
-HTML, microdata, fully-qualified schema URLs, `HowToSection` nesting, Recipes
-buried under `mainEntity`, OCR quirks from photographed pages.
-*What we did:* built a durable fixture bed of real-world full-page HTML and
-plain-text recipes, then hardened the parser against each: JSON-LD
-`@graph`/`mainEntity`/array nesting, microdata, block-level line reconstruction,
-a single canonical `IngredientLineParser` (spelled-out units, glued fractions,
-ranges, no fabricated quantities), and note/footnote fencing in the text parser.
-*Why:* no import → empty library → dead app. Import must feel like it *always*
-works.
-
-### 🟢 Data durability — backup/export
-*Problem:* local-only storage is wiped on app delete, and the old importer was
-removed as broken.
-*What we did:* a real `.recipefinderbackup` round-trip (`BackupService` +
-`BackupArchive`/`BackupCodec`) with a non-destructive, date-faithful `merge(_:)`
-seam on every store, wired into Data Management settings — covering recipes,
-meal plans, shopping list, inventory, and badges, per-user scoped.
-*Why:* until iCloud is unblocked, this is the user's safety net against losing
-everything. (iCloud sync itself lives in Part III.)
+- **🟢 Auth & credentials** — `KeychainStore` seam (real vs in-memory fake) + pure
+  PBKDF2 `PasswordHasher` + credential/session lifecycle tests, including the
+  historical account-overwrite and empty-hash bugs. *Why:* credentials are where a
+  privacy-first app cannot afford to be wrong.
+- **🟢 Search & filter robustness** — word-boundary `KitchenRecipeMatcher`
+  (egg↔eggs without reviving ice↔rice), `TimeExtractor` hours + range→upper-bound,
+  and `RecipeFilterCriteria` as one `Hashable` value computing match % once and
+  keying the cache. *Why:* "find something to cook" must be correct *and* fast.
+- **🟢 Failure-state surfacing** — writes return a result the UI acts on (rollback
+  + toast) instead of silently showing "Imported" then losing it. *Deferred
+  (clean-arch):* a typed error + a single add-and-persist use case to end the
+  duplicated optimistic-insert logic across the two import hubs.
+- **🟢 Concurrency (Swift 6 strict)** — audited all eleven managers; `BadgeManager`
+  `@MainActor`; `UserScopedStorage` documented `Sendable`; removed a latent `@objc`
+  hop-crash. No `nonisolated(unsafe)` left. *Why:* races corrupt libraries invisibly.
+- **🟢 Import robustness (the corpus)** — a real-world HTML/text fixture bed, and a
+  parser hardened against each: JSON-LD `@graph`/`mainEntity`/array nesting,
+  microdata, block-level line reconstruction, a canonical `IngredientLineParser`
+  (spelled-out units, glued fractions, ranges, no fabricated quantities), note
+  fencing. *Why:* no import → empty library → dead app.
+- **🟢 Data durability — backup/export** — a `.recipefinderbackup` round-trip
+  (`BackupService` + `BackupArchive`/`BackupCodec`) with a non-destructive,
+  date-faithful `merge(_:)` on every store, per-user scoped. *Why:* the safety net
+  until iCloud is unblocked. (iCloud sync lives in Part III.)
 
 ### Engineering foundation
 The durable rules that keep the above from regressing:
@@ -229,147 +192,47 @@ The durable rules that keep the above from regressing:
 
 ## Part II — Improvements
 
-Sharpening the product we already have. These aren't new pillars — they remove
-friction and make existing features pull their weight.
+Sharpening the product we already have — removing friction, making existing
+features pull their weight. All 🟢 done unless a *Remaining* note says otherwise.
 
-### ✅ The sign-up moment — fix the timing, not the account
-*Problem:* a brand-new user hits four gates before any value — notification
-prompt at launch → sign-in wall → Face ID splash → onboarding → an *empty* app.
-*What we did:* brand-new users (no prior sign-in history) now land straight in
-`ContentView` in guest mode — the auth wall is gone on first launch. Returning
-signed-out users still see the auth screen. A soft nudge banner sits above the
-tab bar ("Sign in to save your own recipes") and opens the sign-up sheet. The
-Import tab is gated for guests: any import action redirects to sign-up instead
-of the importer, so the value moment is "I want to save this recipe" rather
-than "I want to use the app." `hasEverAuthenticated` (`@AppStorage`) persists
-the distinction between a new user and a signed-out one across launches.
-
-### 🟢 Move the notification prompt off launch
-`requestPermission` is called only from `RecipeTimerManager` the first time a
-timer fires — never at app launch. Already in-context.
-
-### 🟢 Kill the empty state — seed recipes
-`SeedRecipeProvider` ships 6 bundled starter recipes (spaghetti bolognese,
-chicken tikka masala, avocado toast, etc.) with stable fixed UUIDs (idempotent).
-Guest users see them before sign-up; newly signed-in users get them seeded
-once into their store.
-
-### 🟢 Engagement surfaces
-- **Badges** ✅ `BadgeEarnedSheet` is wired in `ContentView` — fires on any
-  `pendingCelebration`; confetti + sheet on unlock.
-- **StoreKit `RequestReviewAction`** ✅ triggered after 3rd cook of any recipe
-  (`RecipeDetailView.recordCook`); Apple's SDK throttles to respect the yearly cap.
-- **TipKit** ✅ `CanMakeNowTip` on the filter button (pantry filter discovery) and
-  `CookingModeTip` on the frying-pan toolbar button; configured at app launch with
-  `.displayFrequency(.daily)`.
-
-### 🟢 iPad-optimized layout
-*Problem:* RecipeFinder ran on iPad via iPhone scaling — it worked, but wasted the
-screen. Every serious recipe app (Paprika, Mela, Crouton) uses `NavigationSplitView`
-on iPad. Cooking on a counter-propped iPad is a primary use case.
-*What we did:* `ContentView` switches on `horizontalSizeClass` — iPhone keeps the
-`TabView`; iPad uses a `NavigationSplitView` with a section sidebar
-(Recipes/Groceries/Import/Planning/Settings) and a detail column
-(`sidebarDetailView`). `AdaptiveSpacing` is already `horizontalSizeClass`-aware.
-*Optional future:* a three-column, selection-driven **recipe list beside the open
-recipe** (Mail/Paprika style) would deepen it further — the current two-column
-split already removes the scaled-up-iPhone feel, so this is polish, not a fix.
-
-### 🟢 Recipe image placeholders
-`RecipePlaceholderView` ships: name-seeded gradient palette (stable Unicode-scalar
-hash), fork-knife glyph, shimmer overlay during Kingfisher load, cross-fade on
-success. Used as Kingfisher's loading placeholder *and* the permanent failure
-fallback in `RecipeImageView`. All recipe cards pass `recipeName` for varied
-palettes.
-
-### 🟢 Smart search & filtering coverage
-All filters ship: text search, category, difficulty, cook time, dietary flags,
-tags, collection membership, "available ingredients only" with pantry-ranked
-results. Filter criteria is a single pure `Hashable` value fully covered by
-integration tests.
-
-### 🟢 Meal planner enhancements
-Meal-type slots (breakfast/lunch/dinner/snack), "add the week to the shopping
-list," weekly/calendar views, drag-to-reorder within a day, and **recurring
-weekly meals** ("Meal Prep Sunday") all ship. Recurring: `isRecurring` flag on
-`MealPlanModel`, `toggleRecurring`/`propagateRecurring` in the manager,
-materialises to the visible week on navigation; long-press card → "Repeat
-Weekly" / "Stop Repeating"; ↻ badge on the recipe name row.
-Pantry-aware meal suggestions now ship: `PantryExpirySuggestions.matches` (pure
-helper) surfaces up to 3 recipes that use expiring inventory items; the
-`ExpiryRecipeSuggestionsSection` appears in the meal planner whenever items are
-expiring within 3 days; tapping "Plan" reuses the meal-time picker and saves
-the recipe directly without going via the recipe selector.
-Remaining: weekly nutrition summary (tied to the Nutrition item in Part III).
-
-### 🟢 Recipe library sort order
-*Problem:* the recipe list has no sort control — recipes appear in insertion
-order. Every comparable app lets users sort by name, date added, cook time, or
-favourites count.
-*What we did:* added `SortOrder` enum (name A–Z/Z–A, highest rated, most cooked)
-to `RecipeFilterCriteria`; wired through `FilterSheet` sort picker and
-`RecipeSearchView`. Ingredient-match ranking takes precedence when "Can Make Now"
-is active. Fully unit-tested in `RecipeFilterCriteriaTests`.
-
-### 🟢 Pantry expiry & restock — surface what's already tracked
-*Problem:* `KitchenInventoryModel` already tracks `expiryDate` / `isExpired` /
-`isExpiringSoon` / `needsRestock`, and the manager exposes `expiredItems()` /
-`expiringSoonItems()` / `lowStockItems()` — but none of it is surfaced, so it may
-as well not exist.
-*What we did:* `PantryAlertsSectionContent` surfaces expired / expiring-soon /
-low-stock items at the top of the kitchen list with colour-coded icons and
-swipe-to-remove; wired into `KitchenSectionsView`. `NotificationManager` schedules
-a `UNCalendarNotificationTrigger` at 6 PM the evening before each item's expiry
-(identifier `expiry-<UUID>`); wired into `KitchenInventoryManager` on add/update/
-remove. Permission requested at first app launch via `ContentView.onAppear`; tapping
-the notification deep-links to the Groceries tab via `NSNotificationCenter`.
-*Remaining:* barcode scanning via Vision (`VNDetectBarcodesRequest`).
-
-### 🟢 Cook history & recipe rating
-*Problem:* the two most useful signals for "should I cook this again?" — when did
-I last make it, and did we like it? — are not tracked at all. Paprika, Mela, and
-Whisk all surface this. Without it, favourites is the only signal and it's binary.
-*What we did:* added `lastCookedAt`, `cookCount`, and `rating` to the Core Data
-entity (v12→v13 lightweight migration); `recordCook`/`updateRating` write atomically
-(separate from content edits so history survives recipe edits); `cookHistoryCard`
-on recipe detail shows a `StarRatingView` (tap-to-rate, tap-again to clear) and
-a "Mark as Cooked" button with optimistic update + persist. Rating feeds into the
-"highest rated" and "most cooked" sort tiers added to `SortOrder`.
-
-### ✅ Multiple photos per recipe
-*Problem:* a single hero image can't capture step shots, plating variants, or
-"my result" photos that help the next cook. Paprika lets you add several.
-*What was done:* `RecipeImageStore.persistGallery` persists up to 4 additional
-images (named `<UUID>_g0.jpg` etc.) alongside the hero. The wizard's name step
-now shows an "Additional Photos" gallery strip (horizontal thumbnails, remove and
-add buttons). The detail view renders a horizontal scroll of gallery thumbnails
-below the hero. Edit flow round-trips `photoNames` through `PrefilledRecipeData`.
-Data layer was already complete — `RecipeModel.photoNames` and Core Data v13 both
-existed; the gap was purely UI and image-store plumbing.
-
-### 🟢 Recipe source link & re-fetch
-*Problem:* the source URL is stored on import (in `RecipeImportBuilder`) but never
-surfaced in the UI. Users can't get back to the original page, and if the source
-recipe is corrected, there's no way to pick up the fix without re-importing and
-losing edits.
-*What we did:* "View Original" link surfaces on recipe detail for any URL-imported
-recipe (`importedFromURL` parsed from the notes footer; import metadata stripped
-from displayed notes via `notesForDisplay`). "Refresh from Source" button runs the
-existing `RecipeImporter` against the same URL, builds a fresh `RecipeModel`, and
-computes a `RecipeDiff` comparing only content fields (name, ingredients,
-instructions, times, difficulty, category, cuisine, image). If changes exist,
-`RecipeRefreshSheet` lists each changed field with old→new values and per-field
-toggles; the user selects what to accept and taps "Apply". Personal data (notes,
-tags, servings, ratings, cook history, gallery) is always preserved. "Recipe Up to
-Date" alert surfaces when no diff is found. Covered by `RecipeDiffTests` (12 tests).
-
-### 🟢 Recurring / staple shopping items
-*Problem:* eggs, milk, bread — the same items go on every shop. Manually
-re-adding them after each clear is friction that every mature shopping-list app
-(AnyList, OurGroceries) solves.
-*What to do:* add an `isRecurring` flag to `ShoppingListItem`; recurring items
-are auto-restored when the list is cleared, or surfaced in a "Staples" quick-add
-section at the top of the list.
+- **🟢 The sign-up moment (timing, not the account)** — brand-new users land
+  straight into guest mode (no auth wall on first launch); a soft nudge banner +
+  guest-gated Import tab make the value moment "I want to save *this* recipe."
+  `hasEverAuthenticated` distinguishes new from signed-out across launches.
+- **🟢 Notification prompt off launch** — `requestPermission` fires only from
+  `RecipeTimerManager` on first timer use, never at launch.
+- **🟢 Kill the empty state** — `SeedRecipeProvider` ships 6 bundled starters with
+  stable fixed UUIDs (idempotent); guests see them, new users get them seeded once.
+- **🟢 Engagement surfaces** — `BadgeEarnedSheet` on any `pendingCelebration`;
+  `RequestReviewAction` after the 3rd cook; TipKit (`CanMakeNowTip`, `CookingModeTip`).
+- **🟢 iPad layout** — `ContentView` switches on size class: iPhone `TabView`, iPad
+  `NavigationSplitView` (section sidebar + detail). *Optional future:* three-column
+  list-beside-recipe (Mail/Paprika style) — polish, not a fix.
+- **🟢 Recipe image placeholders** — `RecipePlaceholderView`: name-seeded gradient +
+  shimmer during load + cross-fade; also the permanent failure fallback.
+- **🟢 Smart search & filtering** — all filters ship (text, category, difficulty,
+  time, dietary, tags, collection, available-ingredients); criteria is one tested
+  `Hashable` value.
+- **🟢 Meal planner** — slots, add-week-to-shopping, calendar, drag-reorder,
+  recurring weekly meals, and pantry-expiry suggestions
+  (`PantryExpirySuggestions` → `ExpiryRecipeSuggestionsSection`). *Remaining:*
+  weekly nutrition summary (ties to Nutrition in Part III).
+- **🟢 Library sort order** — `SortOrder` (name, highest rated, most cooked);
+  match-% ranking wins under "Can Make Now." Tested in `RecipeFilterCriteriaTests`.
+- **🟢 Pantry expiry & restock** — alerts surfaced in `PantryAlertsSectionContent`
+  + a 6 PM-evening-before `UNCalendarNotificationTrigger` per item. *Remaining:*
+  barcode scanning via Vision.
+- **🟢 Cook history & rating** — `lastCookedAt`/`cookCount`/`rating` (v12→v13
+  migration), written atomically so history survives content edits; feeds the
+  rated/most-cooked sort tiers.
+- **🟢 Multiple photos per recipe** — up to 4 gallery images beside the hero
+  (`RecipeImageStore.persistGallery`), round-tripped through wizard/detail/edit.
+- **🟢 Recipe source link & re-fetch** — "View Original" + "Refresh from Source":
+  re-runs the importer, `RecipeDiff`s content fields, and offers per-field accept;
+  personal data (notes/tags/servings/ratings/history/gallery) always preserved.
+  `RecipeDiffTests` (12).
+- **🟢 Recurring / staple shopping items** — `isRecurring` on shopping items;
+  staples survive list clears (and reset to unchecked) rather than needing re-adding.
 
 ---
 
@@ -378,43 +241,26 @@ section at the top of the list.
 Net-new bets, ordered by priority.
 
 ### 🟢 Capture — the ReciMe loop *(shipped; this is the wedge)*
-The loop that defines the release is live end-to-end:
-- **Share extension** captures URLs and text and, when it can, does the full
-  fetch+parse *in the extension* (`RecipeImportPipeline`) so the recipe is simply
-  *there* on next open; otherwise it hands the raw URL/text to the app.
-- **Social & text import** runs captions through on-device FoundationModels
-  (`RecipeTextInterpreting` seam, availability-gated), falling back to
-  `TextRecipeParser`/manual wizard — private, free, offline.
-- **Photo-to-recipe** turns a cookbook page or screenshot into a recipe via
-  Vision OCR, same on-device parser.
-- Every AI/text/photo import lands in a **review/edit step** before saving;
-  nothing is saved silently. *Marketing: unlimited free imports vs ReciMe's 5/week.*
+Live end-to-end: a **share extension** that fetches+parses *in the extension*
+(`RecipeImportPipeline`) when it can so the recipe is just *there*; **social/text
+import** via on-device FoundationModels (`RecipeTextInterpreting` seam, gated) with
+`TextRecipeParser`/wizard fallback; **photo-to-recipe** via Vision OCR. Every
+AI/text/photo import lands in a **review/edit step** — nothing saved silently.
+*Marketing: unlimited free imports vs ReciMe's 5/week.*
 
 ### 🟢 Collections & Tags
-User-created collections (create / rename / recolour / delete, add/remove
-recipes, batch-add to shopping list) and custom tags on recipes (add in wizard
-and edit flow, filter by tag, tags survive the full wizard→persistence round-
-trip) all ship. Collections are accessible inline from the Recipes tab and from
-recipe detail. Filter criteria supports both tag and collection filtering.
-Smart collections now ship: `SmartCollection` enum (6 rules — Quick Meals ≤30 min,
-Easy Recipes, Vegetarian, Highly Rated ≥4★, Recently Cooked ≤30 days, 5 Ingredients
-or Less) auto-populates at read time; `CollectionsInlineView` shows them above
-user-created collections with a sparkle badge; tapping opens `SmartCollectionDetailView`
-(read-only, same recipe-row layout). Covered by `SmartCollectionTests` (20 tests).
+User collections (CRUD, add/remove, batch-add to shopping) and custom tags
+(wizard + edit, filter, full round-trip) ship, inline from Recipes and detail.
+Smart collections ship too: `SmartCollection` (6 rules) auto-populates at read
+time with a sparkle badge + read-only detail. `SmartCollectionTests` (20).
 *Remaining:* a dedicated Collections tab if the library grows large enough.
 
 ### 🟢 Cuisine tagging
-*Problem:* category (e.g. "Main", "Dessert") describes meal position, not
-origin. Filtering "show me Italian weeknight mains" requires a separate cuisine
-dimension — Italian, Mexican, Asian, Middle Eastern, etc. — that Category
-doesn't cover. Most recipe imports include cuisine in JSON-LD (`recipeCuisine`),
-which we currently discard.
-*What we did:* added `cuisine: String?` to the Core Data entity and `RecipeModel`;
-`RecipeImportBuilder` now populates the structured field from `recipeCuisine`
-instead of embedding it as freetext in notes; cuisine is a first-class filter in
-`RecipeFilterCriteria` (chip multi-select in `FilterSheet`, `ActiveFiltersBar`);
-wizard step 6 has a cuisine text field with 12 tap-to-select suggestion chips;
-edit sheet pre-populates cuisine. Full round-trip tested.
+`cuisine: String?` on the entity + `RecipeModel`, populated from JSON-LD
+`recipeCuisine` (previously discarded) instead of freetext notes; a first-class
+filter (chip multi-select) + wizard field (12 suggestion chips) + edit pre-fill.
+Full round-trip tested. *Why:* category is meal position, not origin — "Italian
+weeknight mains" needs its own dimension.
 
 ### 🟢 Cooking Experience
 `CookingModeView` ships: step navigation, mark complete, `RecipeTimerManager`
@@ -435,30 +281,21 @@ keeps the screen awake, and 56 pt minimum-height tap targets for greasy hands.
 - **Text-to-speech step reading** — read the current step aloud as the user navigates, so the phone never needs to be touched. `AVSpeechSynthesizer` on-device (free, no API). Toggle in cooking mode UI. Pairs naturally with the Watch companion and greasy-hands use case.
 
 ### 🟢 Shopping list sharing
-`KitchenShoppingView` overflow menu → "Share List" formats the grouped list as
-plain text via `ShoppingListGrouping.shareText` and hands it to
-`UIActivityViewController`. Live share (CloudKit Sharing) deferred to iCloud.
+`KitchenShoppingView` → "Share List" formats the grouped list as plain text
+(`ShoppingListGrouping.shareText`) into `UIActivityViewController`. Live share
+(CloudKit Sharing) deferred to iCloud.
 
 ### 🟢 App Intents & Siri shortcuts
-*Problem:* RecipeFinder is invisible to the OS. Competitors that register
-`AppIntent`s surface in Spotlight, Shortcuts, the Siri suggestion row, and the
-Action Button — we appear in none of them.
-*What we did:* `AddToShoppingListIntent`, `WhatsForDinnerIntent`,
-`OpenRecipeIntent` ("Open recipe in RecipeFinder" → Siri asks for name →
-navigates to `RecipeDetailView` via `NavigationPath`), and `StartCookingIntent`
-("Start cooking in RecipeFinder") — all wired via `RecipeShortcutsProvider`,
-all on-device. Deep-link routing uses `NSNotification("OpenRecipe")`: `ContentView`
-switches to the Recipes tab; `RecipeSearchView` (now path-based `NavigationStack`)
-pushes the matching recipe by UUID onto `navigationPath`.
+`AddToShoppingListIntent`, `WhatsForDinnerIntent`, `OpenRecipeIntent`,
+`StartCookingIntent` — all via `RecipeShortcutsProvider`, all on-device; deep-link
+routing through `NSNotification("OpenRecipe")` into the path-based Recipes stack.
+*Why:* without `AppIntent`s we're invisible to Spotlight/Shortcuts/Action Button.
 
 ### 🟢 Ingredient substitutions
-*Problem:* mid-cook "I don't have X, what can I use?" is one of the most
-searched cooking queries. Currently users have to leave the app.
-*What we did:* `IngredientSubstituteProvider` ships a curated 30+ entry lookup table
-covering dairy, eggs, flour, leavening, sweeteners, oils, stocks, and chocolate.
-A swap icon appears per ingredient row (only when substitutes exist); tapping opens
-`SubstituteSheetView`. Lookup is case/whitespace insensitive with partial-name
-fuzzy matching. FoundationModels long-tail fallback deferred to Phase 2.
+`IngredientSubstituteProvider` — a curated 30+ entry table (dairy, eggs, flour,
+leavening, sweeteners, oils, stocks, chocolate); per-row swap icon → `SubstituteSheetView`,
+case/whitespace-insensitive fuzzy lookup. FoundationModels long-tail fallback
+deferred to Phase 2. *Why:* mid-cook "what can I use instead?" shouldn't send users out of the app.
 
 ### 🔴 iCloud Sync *(free-tier feature; blocked on paid enrollment — keep the model ready)*
 Note: this is a **free** feature, not a RecipeFinder+ hook — it costs us nothing
@@ -541,14 +378,10 @@ for the curated batch; revisit rate limits at multi-user scale.
 
 ---
 
-## Onboarding & discoverability *(captured 2026-09-26 — ALL DONE 2026-09-26)*
-1. ✅ **Wizard intro** — `WizardIntroSheet`, one-time on first create flow (`hasSeenWizardIntro`).
-2. ✅ **Make cross-off obvious** — one-time dismissible tip in the ingredients card
-   (`hasSeenIngredientTapHint`), auto-hides once anything's checked.
-3. ✅ **Tap amount → edit** — was already shipped: `IngredientRowView` quantity pill →
-   `onTapQuantity` → wizard ingredients section; name → cross-off.
-4. ✅ **Settings tutorial** — added a "Gestures" card to the existing `HelpView`
-   (Settings → Help & Support), reusing `HelpItem` rather than a new page.
+## Onboarding & discoverability *(ALL DONE 2026-09-26)*
+`WizardIntroSheet` (one-time first-create), a dismissible ingredient cross-off tip
+(`hasSeenIngredientTapHint`), tap-amount→edit on the quantity pill, and a "Gestures"
+card in `HelpView`.
 
 ## Test coverage
 The test **suite + CI are the source of truth** for what's covered — a hand-maintained
