@@ -71,11 +71,12 @@ the loop self-correcting, not just a to-do list.
       `saveRecipe` → `checkAndUnlockBadges` non-silent, before `badges.merge` runs). Fixed
       by suppressing celebrations during `mergeRecipes` via `isBulkImporting`. No toast —
       it would have been the wrong fix. (uncommitted; +2 BadgeManagerTests)
-- [ ] **6. Hide deprecated Apple sign-in item** — `AccountActionsSection.swift:16-55`,
-      already `disabled(true)` ("Under Construction"); hide until the entitlement is real
-      (needs paid Apple account).
-- [ ] **7. "Share with a friend" → App Store link** — missing entirely (only recipe-to-
-      recipe ShareLink exists). Add a share entry in Settings.
+- [x] **6. Hide deprecated Apple sign-in item** — DONE (uncommitted). `AccountView.swift`
+      now passes `showLinkAppleID: false` (component kept intact; comment says flip back when
+      the entitlement is live). The "Under Construction" row no longer ships.
+- [x] **7. "Share with a friend" → App Store link** — DONE (uncommitted). "Share with a
+      Friend" `ShareLink` card added to Settings (Support area). Uses recipefinder.uk until
+      the App Store listing exists (comment to swap to apps.apple.com at launch).
 - [x] **8. Rate-on-App-Store after a significant moment** — DONE. `RecipeDetailView:270`
       fires `requestReview()` after the 3rd cook of a recipe; never cold.
 - [x] **9. Timer notifications fire in the background** — DONE. `RecipeTimerManager`

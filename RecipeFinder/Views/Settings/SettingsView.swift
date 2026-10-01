@@ -102,6 +102,26 @@ struct SettingsTabView: View {
                         )
                     ])
 
+                    // Until the App Store listing is live, share the marketing site (swap to the apps.apple.com link at launch).
+                    if let shareURL = URL(string: "https://recipefinder.uk") {
+                        SettingsCard {
+                            ShareLink(
+                                item: shareURL,
+                                subject: Text("RecipeFinder"),
+                                message: Text("Check out RecipeFinder — a private, offline-first recipe app.")
+                            ) {
+                                SettingsRow(
+                                    icon: "square.and.arrow.up",
+                                    iconColor: .green,
+                                    title: "Share with a Friend",
+                                    accessory: .externalLink
+                                )
+                                .padding(AppTheme.spacing20)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
+                    }
+
 #if DEBUG
                     SettingsSection(title: "Developer (Debug)", items: [
                         .init(

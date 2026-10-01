@@ -122,7 +122,10 @@ struct AccountView: View {
                         }
 
                         AccountActionsSection(
-                            showLinkAppleID: authManager.currentUser?.appleUserID == nil,
+                            // Hidden until Apple-ID linking is a real entitlement (needs paid Apple account);
+                            // the "Under Construction" row shipped to users otherwise. Flip back to
+                            // `authManager.currentUser?.appleUserID == nil` when the feature is live.
+                            showLinkAppleID: false,
                             biometricsAvailable: authManager.biometricsAvailable,
                             biometricType: authManager.biometricType,
                             selectedTheme: selectedTheme,
