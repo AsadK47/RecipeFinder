@@ -110,7 +110,8 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         mealName: String,
         recipeName: String,
         date: Date,
-        identifier: String? = nil
+        identifier: String? = nil,
+        repeatsWeekly: Bool = false
     ) -> String {
         let notificationId = identifier ?? "meal-\(UUID().uuidString)"
         
@@ -121,13 +122,14 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         content.badge = 1
         content.userInfo = ["type": "meal", "identifier": notificationId]
         
-        let dateComponents = Calendar.current.dateComponents(
-            [.year, .month, .day, .hour, .minute],
-            from: date
-        )
+        // Weekly repeat matches on weekday+time only; a one-off fires at the exact date.
+        let fields: Set<Calendar.Component> = repeatsWeekly
+            ? [.weekday, .hour, .minute]
+            : [.year, .month, .day, .hour, .minute]
+        let dateComponents = Calendar.current.dateComponents(fields, from: date)
         let trigger = UNCalendarNotificationTrigger(
             dateMatching: dateComponents,
-            repeats: false
+            repeats: repeatsWeekly
         )
         
         let request = UNNotificationRequest(

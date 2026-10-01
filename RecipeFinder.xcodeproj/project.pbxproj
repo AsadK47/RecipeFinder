@@ -190,6 +190,9 @@
 		F3B7D8E23069CA3900991908 /* ImportAccuracyHarnessTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D8E13069CA3900991908 /* ImportAccuracyHarnessTests.swift */; };
 		F3B7D8E4306A6B3A00991908 /* IngredientNameFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D8E3306A6B3A00991908 /* IngredientNameFormatterTests.swift */; };
 		F3B7D8E8306D0F3000991908 /* SocialCaptionImportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D8E7306D0F3000991908 /* SocialCaptionImportTests.swift */; };
+		F3B7D8F2306E8C7E00991908 /* MealReminderScheduling.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D8F1306E8C7E00991908 /* MealReminderScheduling.swift */; };
+		F3B7D8F4306E8D4000991908 /* MealReminderSchedulingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D8F3306E8D4000991908 /* MealReminderSchedulingTests.swift */; };
+		F3B7D8F6306E8DBA00991908 /* MealReminderSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D8F5306E8DBA00991908 /* MealReminderSheet.swift */; };
 		F3B837BF305554C80003AEF8 /* UserScopedStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837BE305554C80003AEF8 /* UserScopedStorageTests.swift */; };
 		F3B837C1305562790003AEF8 /* SessionExpiryPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837C0305562790003AEF8 /* SessionExpiryPolicy.swift */; };
 		F3B837C33055628E0003AEF8 /* SessionExpiryPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837C23055628E0003AEF8 /* SessionExpiryPolicyTests.swift */; };
@@ -649,6 +652,9 @@
 		F3B7D8E13069CA3900991908 /* ImportAccuracyHarnessTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportAccuracyHarnessTests.swift; sourceTree = "<group>"; };
 		F3B7D8E3306A6B3A00991908 /* IngredientNameFormatterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientNameFormatterTests.swift; sourceTree = "<group>"; };
 		F3B7D8E7306D0F3000991908 /* SocialCaptionImportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialCaptionImportTests.swift; sourceTree = "<group>"; };
+		F3B7D8F1306E8C7E00991908 /* MealReminderScheduling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealReminderScheduling.swift; sourceTree = "<group>"; };
+		F3B7D8F3306E8D4000991908 /* MealReminderSchedulingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealReminderSchedulingTests.swift; sourceTree = "<group>"; };
+		F3B7D8F5306E8DBA00991908 /* MealReminderSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealReminderSheet.swift; sourceTree = "<group>"; };
 		F3B837BE305554C80003AEF8 /* UserScopedStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserScopedStorageTests.swift; sourceTree = "<group>"; };
 		F3B837C0305562790003AEF8 /* SessionExpiryPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionExpiryPolicy.swift; sourceTree = "<group>"; };
 		F3B837C23055628E0003AEF8 /* SessionExpiryPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionExpiryPolicyTests.swift; sourceTree = "<group>"; };
@@ -1024,6 +1030,7 @@
 				F3E9D11B30434E20008BF231 /* MealPlannerHeader.swift */,
 				F3D40578305A9C2A0076834D /* WeekStripView.swift */,
 				F3FF62D7305BE4610008B191 /* ExpiryRecipeSuggestionsSection.swift */,
+				F3B7D8F5306E8DBA00991908 /* MealReminderSheet.swift */,
 			);
 			path = MealPlanning;
 			sourceTree = "<group>";
@@ -1177,6 +1184,7 @@
 				F3D40561305855180076834D /* BadgeTriggerIntegrationTests.swift */,
 				F3D04F2F305F3A80005A930D /* KitchenItemToggleTests.swift */,
 				F3F189E83067DF470097A65F /* RecipeStoreTests.swift */,
+				F3B7D8F3306E8D4000991908 /* MealReminderSchedulingTests.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -1317,6 +1325,7 @@
 				9E6DEA7E2EF5EFE8001E7B24 /* NotificationManager.swift */,
 				9E97EEC83009401100D35FAB /* SharedImportInbox.swift */,
 				F3F189E63067DE160097A65F /* RecipeStore.swift */,
+				F3B7D8F1306E8C7E00991908 /* MealReminderScheduling.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -2204,6 +2213,7 @@
 				F3E9D10830434D43008BF231 /* MealTimeCard.swift in Sources */,
 				9E97EECF300D0EEC00D35FAB /* TextRecipeParser.swift in Sources */,
 				F3E9D18E304515FA008BF231 /* AuthenticationManager+Session.swift in Sources */,
+				F3B7D8F2306E8C7E00991908 /* MealReminderScheduling.swift in Sources */,
 				F3E9D1A430451832008BF231 /* AccountBadgesSection.swift in Sources */,
 				9E12E8952EC15AFA0077B1DA /* AppleSignInManager.swift in Sources */,
 				F3E9D1DA3045DCE8008BF231 /* RecipeDetailView+Content.swift in Sources */,
@@ -2420,6 +2430,7 @@
 				F3E9D25F30497270008BF231 /* KitchenShoppingView.swift in Sources */,
 				F3F189E53066E24B0097A65F /* FullScreenPhotoViewer.swift in Sources */,
 				9E77ABEE2EB412C600666BB0 /* SecureCredentialManager.swift in Sources */,
+				F3B7D8F6306E8DBA00991908 /* MealReminderSheet.swift in Sources */,
 				F3E9D1B630457BEA008BF231 /* OnboardingSlideView.swift in Sources */,
 				F3E9D22530476397008BF231 /* BackupDocument.swift in Sources */,
 				F3FF62D6305BE4550008B191 /* PantryExpirySuggestions.swift in Sources */,
@@ -2538,6 +2549,7 @@
 				9E97EECD300D0E0600D35FAB /* EditableStepTests.swift in Sources */,
 				F3E9D17630444F5E008BF231 /* RecipeNotesFormatterTests.swift in Sources */,
 				F3FF62E0305BF9F40008B191 /* SmartCollectionTests.swift in Sources */,
+				F3B7D8F4306E8D4000991908 /* MealReminderSchedulingTests.swift in Sources */,
 				F36AED653043342300935A3C /* PerformanceBudgetTests.swift in Sources */,
 				9E6C2C732FB4C8450083A08B /* ShoppingListManagerTests.swift in Sources */,
 				9E6C2C742FB4C8450083A08B /* KitchenInventoryManagerTests.swift in Sources */,

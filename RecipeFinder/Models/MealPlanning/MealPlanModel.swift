@@ -11,11 +11,13 @@ struct MealPlanModel: Identifiable, Codable, Hashable {
     var isCompleted: Bool
     var isRecurring: Bool
     var createdDate: Date
+    /// Clock time (hour/minute meaningful; day ignored) at which to fire a reminder; nil = no reminder (opt-in).
+    var reminderTime: Date?
 
     // Explicit keys so isRecurring is encoded and decodes to false for JSON predating the field.
     private enum CodingKeys: String, CodingKey {
         case id, recipeId, recipeName, date, mealTime, servings, notes,
-             isCompleted, isRecurring, createdDate
+             isCompleted, isRecurring, createdDate, reminderTime
     }
 
     init(
@@ -28,7 +30,8 @@ struct MealPlanModel: Identifiable, Codable, Hashable {
         notes: String? = nil,
         isCompleted: Bool = false,
         isRecurring: Bool = false,
-        createdDate: Date = Date()
+        createdDate: Date = Date(),
+        reminderTime: Date? = nil
     ) {
         self.id = id
         self.recipeId = recipeId
@@ -40,20 +43,22 @@ struct MealPlanModel: Identifiable, Codable, Hashable {
         self.isCompleted = isCompleted
         self.isRecurring = isRecurring
         self.createdDate = createdDate
+        self.reminderTime = reminderTime
     }
 
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
-        id          = try c.decode(UUID.self,     forKey: .id)
-        recipeId    = try c.decode(UUID.self,     forKey: .recipeId)
-        recipeName  = try c.decode(String.self,   forKey: .recipeName)
-        date        = try c.decode(Date.self,     forKey: .date)
-        mealTime    = try c.decode(MealTime.self, forKey: .mealTime)
-        servings    = try c.decode(Int.self,      forKey: .servings)
-        notes       = try c.decodeIfPresent(String.self, forKey: .notes)
-        isCompleted = try c.decode(Bool.self,     forKey: .isCompleted)
-        isRecurring = try c.decodeIfPresent(Bool.self, forKey: .isRecurring) ?? false
-        createdDate = try c.decode(Date.self,     forKey: .createdDate)
+        id           = try c.decode(UUID.self,     forKey: .id)
+        recipeId     = try c.decode(UUID.self,     forKey: .recipeId)
+        recipeName   = try c.decode(String.self,   forKey: .recipeName)
+        date         = try c.decode(Date.self,     forKey: .date)
+        mealTime     = try c.decode(MealTime.self, forKey: .mealTime)
+        servings     = try c.decode(Int.self,      forKey: .servings)
+        notes        = try c.decodeIfPresent(String.self, forKey: .notes)
+        isCompleted  = try c.decode(Bool.self,     forKey: .isCompleted)
+        isRecurring  = try c.decodeIfPresent(Bool.self, forKey: .isRecurring) ?? false
+        createdDate  = try c.decode(Date.self,     forKey: .createdDate)
+        reminderTime = try c.decodeIfPresent(Date.self, forKey: .reminderTime)
     }
     
     var normalizedDate: Date {
@@ -104,6 +109,24 @@ enum MealTime: String, Codable, CaseIterable {
         case .dinner: return 2
         case .snack: return 3
         }
+    }
+
+    /// Sensible default reminder clock time per slot (breakfast 08:00, lunch 13:00, dinner 19:00, snack 15:00).
+    var defaultReminderHourMinute: (hour: Int, minute: Int) {
+        switch self {
+        case .breakfast: return (8, 0)
+        case .lunch: return (13, 0)
+        case .dinner: return (19, 0)
+        case .snack: return (15, 0)
+        }
+    }
+
+    /// Today's date at this slot's default reminder time — a ready default for the time picker.
+    var defaultReminderTime: Date {
+        let (hour, minute) = defaultReminderHourMinute
+        return Calendar.current.date(
+            bySettingHour: hour, minute: minute, second: 0, of: Date()
+        ) ?? Date()
     }
 }
 

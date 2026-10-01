@@ -4,6 +4,7 @@ import SwiftUI
 @MainActor
 protocol MealPlanningManaging: AnyObject, Observable {
     func addMealPlan(_ mealPlan: MealPlanModel)
+    func updateMealPlan(_ mealPlan: MealPlanModel)
     func removeMealPlan(for date: Date, mealTime: MealTime)
     func toggleRecurring(_ mealPlan: MealPlanModel)
     func propagateRecurring(toWeekStarting startDate: Date)
@@ -40,16 +41,23 @@ final class MealPlanningManager: MealPlanningManaging {
     @ObservationIgnored private let saveKey = "mealPlansStorage"
     @ObservationIgnored private let storage: UserScopedStorage
     @ObservationIgnored private let badgeManager: BadgeManager
+    @ObservationIgnored private let reminders: any MealReminderScheduling
 
     private init() {
         self.storage = .shared
         self.badgeManager = .shared
+        self.reminders = NotificationManager.shared
         loadMealPlans()
     }
 
-    init(storage: UserScopedStorage, badgeManager: BadgeManager = .shared) {
+    init(
+        storage: UserScopedStorage,
+        badgeManager: BadgeManager = .shared,
+        reminders: any MealReminderScheduling = NotificationManager.shared
+    ) {
         self.storage = storage
         self.badgeManager = badgeManager
+        self.reminders = reminders
         loadMealPlans()
     }
 
@@ -59,8 +67,11 @@ final class MealPlanningManager: MealPlanningManaging {
     
     /// Non-destructive restore: unions incoming plans by id without collapsing same-slot entries.
     func merge(_ incoming: [MealPlanModel]) {
+        let previousIds = Set(mealPlans.map(\.id))
         mealPlans = BackupMerge.merged(existing: mealPlans, incoming: incoming)
         saveMealPlans()
+        // Re-arm reminders for newly-restored plans so they survive a device migration.
+        for plan in mealPlans where !previousIds.contains(plan.id) { syncReminder(for: plan) }
     }
 
     func addMealPlan(_ mealPlan: MealPlanModel) {
@@ -68,6 +79,8 @@ final class MealPlanningManager: MealPlanningManaging {
             Calendar.current.isDate($0.date, inSameDayAs: mealPlan.date) &&
             $0.mealTime == mealPlan.mealTime
         }) {
+            // The replaced occupant has a different id, so cancel its reminder before it's overwritten.
+            cancelReminder(for: mealPlans[existingIndex])
             mealPlans[existingIndex] = mealPlan
         } else {
             mealPlans.append(mealPlan)
@@ -75,6 +88,7 @@ final class MealPlanningManager: MealPlanningManaging {
 
         HapticManager.shared.medium()
         saveMealPlans()
+        syncReminder(for: mealPlan)
         badgeManager.unlockBadge(.mealPlanner)
     }
     
@@ -83,16 +97,21 @@ final class MealPlanningManager: MealPlanningManaging {
             mealPlans[index] = mealPlan
             HapticManager.shared.light()
             saveMealPlans()
+            syncReminder(for: mealPlan)
         }
     }
     
     func removeMealPlan(_ mealPlan: MealPlanModel) {
+        cancelReminder(for: mealPlan)
         mealPlans.removeAll { $0.id == mealPlan.id }
         HapticManager.shared.light()
         saveMealPlans()
     }
     
     func removeMealPlan(for date: Date, mealTime: MealTime) {
+        for plan in mealPlans where Calendar.current.isDate(plan.date, inSameDayAs: date) && plan.mealTime == mealTime {
+            cancelReminder(for: plan)
+        }
         mealPlans.removeAll {
             Calendar.current.isDate($0.date, inSameDayAs: date) &&
             $0.mealTime == mealTime
@@ -106,6 +125,8 @@ final class MealPlanningManager: MealPlanningManaging {
             mealPlans[index].isCompleted.toggle()
             HapticManager.shared.light()
             saveMealPlans()
+            // Don't nag to cook a meal already marked done; re-arm if it's un-completed.
+            syncReminder(for: mealPlans[index])
         }
     }
 
@@ -114,6 +135,8 @@ final class MealPlanningManager: MealPlanningManaging {
         mealPlans[index].isRecurring.toggle()
         HapticManager.shared.light()
         saveMealPlans()
+        // Recurrence flips the reminder between weekly-repeat and one-off.
+        syncReminder(for: mealPlans[index])
     }
 
     /// Materialises the latest recurring template into each empty slot of the target week (stays recurring); idempotent.
@@ -160,7 +183,8 @@ final class MealPlanningManager: MealPlanningManaging {
                     mealTime: mealTime,
                     servings: template.servings,
                     notes: template.notes,
-                    isRecurring: true
+                    isRecurring: true,
+                    reminderTime: template.reminderTime
                 ))
                 newOccupied.insert(slot)
             }
@@ -169,6 +193,7 @@ final class MealPlanningManager: MealPlanningManaging {
         guard !newEntries.isEmpty else { return }
         mealPlans.append(contentsOf: newEntries)
         saveMealPlans()
+        for entry in newEntries { syncReminder(for: entry) }
     }
 
     func clearOldMealPlans() {
@@ -176,6 +201,9 @@ final class MealPlanningManager: MealPlanningManaging {
             return
         }
         // Recurring entries are retained as templates; only past one-off meals are purged.
+        for plan in mealPlans where plan.date < oneWeekAgo && !plan.isRecurring {
+            cancelReminder(for: plan)
+        }
         mealPlans.removeAll { $0.date < oneWeekAgo && !$0.isRecurring }
         saveMealPlans()
     }
@@ -285,6 +313,41 @@ final class MealPlanningManager: MealPlanningManaging {
             .map { (date: $0.key, meals: $0.value.sorted { $0.mealTime.sortOrder < $1.mealTime.sortOrder }) }
     }
     
+    // MARK: - Reminders
+
+    /// Stable notification id for a plan, so re-scheduling replaces rather than duplicates.
+    private func reminderId(for plan: MealPlanModel) -> String { "meal-\(plan.id.uuidString)" }
+
+    /// Cancels any existing reminder for the plan, then schedules a fresh one when it still warrants one.
+    private func syncReminder(for plan: MealPlanModel) {
+        let id = reminderId(for: plan)
+        reminders.cancelNotification(identifier: id)
+
+        guard !plan.isCompleted,
+              let time = plan.reminderTime,
+              let fireDate = Self.reminderFireDate(day: plan.date, time: time) else { return }
+        // A one-off whose moment has passed is pointless; a weekly repeat still fires on its next weekday.
+        if !plan.isRecurring && fireDate <= Date() { return }
+
+        reminders.scheduleMealReminder(
+            mealName: plan.mealTime.rawValue,
+            recipeName: plan.recipeName,
+            date: fireDate,
+            identifier: id,
+            repeatsWeekly: plan.isRecurring
+        )
+    }
+
+    private func cancelReminder(for plan: MealPlanModel) {
+        reminders.cancelNotification(identifier: reminderId(for: plan))
+    }
+
+    /// Combines a meal's day with a reminder's clock time into the concrete fire date. Extracted for testing.
+    nonisolated static func reminderFireDate(day: Date, time: Date, calendar: Calendar = .current) -> Date? {
+        let t = calendar.dateComponents([.hour, .minute], from: time)
+        return calendar.date(bySettingHour: t.hour ?? 0, minute: t.minute ?? 0, second: 0, of: day)
+    }
+
     private func saveMealPlans() {
         storage.setEncodable(mealPlans, forKey: saveKey)
     }

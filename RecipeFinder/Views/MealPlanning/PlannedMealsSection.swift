@@ -12,6 +12,8 @@ struct PlannedMealsSection: View {
     let onSelectMealTime: (MealTime) -> Void
     let onRemove: (MealTime) -> Void
     let onToggleRecurring: (MealTime) -> Void
+    let onEditReminder: (MealTime) -> Void
+    let onRemoveReminder: (MealTime) -> Void
     let onAddAnother: () -> Void
 
     @State private var dropTarget: MealTime?
@@ -43,6 +45,10 @@ struct PlannedMealsSection: View {
         }
     }
 
+    private func hasReminder(_ mealTime: MealTime) -> Bool {
+        mealPlanFor(mealTime)?.reminderTime != nil
+    }
+
     @ViewBuilder
     private func mealRow(for mealTime: MealTime) -> some View {
         HStack(spacing: AppTheme.spacing8) {
@@ -66,7 +72,23 @@ struct PlannedMealsSection: View {
                     ) {
                         onToggleRecurring(mealTime)
                     }
+
+                    if hasReminder(mealTime) {
+                        Button("Edit Reminder", systemImage: "bell") { onEditReminder(mealTime) }
+                        Button("Remove Reminder", systemImage: "bell.slash", role: .destructive) {
+                            onRemoveReminder(mealTime)
+                        }
+                    } else {
+                        Button("Remind Me…", systemImage: "bell") { onEditReminder(mealTime) }
+                    }
                 }
+            }
+
+            if hasReminder(mealTime) {
+                Image(systemName: "bell.fill")
+                    .font(.system(size: AppTheme.fontSize12))
+                    .foregroundStyle(AppTheme.accentColor(for: selectedTheme))
+                    .accessibilityLabel("Reminder set")
             }
 
             // Only the ≡ handle initiates the drag; tapping the card still changes the recipe.

@@ -22,6 +22,8 @@ struct MealPlanningView: View {
     @State private var weekMealsCovered = 0
     @State private var weekSkippedInKitchen = 0
     @State private var showAddWeekConfirm = false
+    /// Non-nil while the meal-reminder time picker is presented.
+    @State private var reminderContext: ReminderContext?
 
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
@@ -160,6 +162,18 @@ struct MealPlanningView: View {
                 currentMealTime = nil
             }
         }
+        .sheet(item: $reminderContext) { context in
+            MealReminderSheet(
+                mealTime: context.mealTime,
+                recipeName: context.recipeName,
+                initialTime: context.initialTime,
+                onSave: { time in
+                    saveReminder(time, for: context.mealTime)
+                    reminderContext = nil
+                },
+                onCancel: { reminderContext = nil }
+            )
+        }
     }
 
     // MARK: - Sections
@@ -212,6 +226,8 @@ struct MealPlanningView: View {
                     mealPlanningManager.toggleRecurring(plan)
                 }
             },
+            onEditReminder: editReminder,
+            onRemoveReminder: removeReminder,
             onAddAnother: {
                 showMealTimeSelector = true
                 HapticManager.shared.light()
@@ -285,6 +301,34 @@ struct MealPlanningView: View {
         if mealPlanningManager.mealPlan(for: date, mealTime: mealTime) == nil {
             selectedMealTimes.remove(mealTime)
         }
+    }
+
+    // MARK: - Reminders
+
+    private func editReminder(for mealTime: MealTime) {
+        guard let plan = mealPlanningManager.mealPlan(for: selectedDate, mealTime: mealTime) else { return }
+        reminderContext = ReminderContext(
+            mealTime: mealTime,
+            recipeName: getRecipe(for: selectedDate, mealTime: mealTime)?.name ?? plan.recipeName,
+            initialTime: plan.reminderTime ?? mealTime.defaultReminderTime
+        )
+        HapticManager.shared.light()
+    }
+
+    private func saveReminder(_ time: Date, for mealTime: MealTime) {
+        guard var plan = mealPlanningManager.mealPlan(for: selectedDate, mealTime: mealTime) else { return }
+        plan.reminderTime = time
+        // Reminders are useless without permission; prompt on first opt-in (no-op if already granted).
+        NotificationManager.shared.requestPermission { _ in }
+        mealPlanningManager.updateMealPlan(plan)
+        HapticManager.shared.success()
+    }
+
+    private func removeReminder(for mealTime: MealTime) {
+        guard var plan = mealPlanningManager.mealPlan(for: selectedDate, mealTime: mealTime) else { return }
+        plan.reminderTime = nil
+        mealPlanningManager.updateMealPlan(plan)
+        HapticManager.shared.light()
     }
 
     private func hasMealPlans(for date: Date) -> Bool {
@@ -400,6 +444,14 @@ struct MealPlanningView: View {
     private var daysInCurrentWeek: [Date] {
         mealCalendar.daysInWeek(containing: selectedDate)
     }
+}
+
+/// Identifiable payload driving the meal-reminder time-picker sheet.
+private struct ReminderContext: Identifiable {
+    let id = UUID()
+    let mealTime: MealTime
+    let recipeName: String
+    let initialTime: Date
 }
 
 #Preview {

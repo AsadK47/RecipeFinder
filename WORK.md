@@ -19,9 +19,18 @@
 - **Uncommitted in working tree:** the three fixes above (ShoppingListManager, pbxproj,
   PersistenceController+RecipeWrites, BadgeManager + 2 test files). Review + commit per the
   3 suggested messages. Run `git status`.
-- **Next action:** **meal-time notifications** (slice 3) — needs a product decision + a
-  notification-scheduling seam first (see "New ideas" + "Follow-ups"). Then optionally the
-  ROADMAP compression (docs, token-heavy, low value — confirm it's still wanted).
+  4. **Meal-time notifications (slice 3)** — DONE & green. Opt-in per meal: a reminder
+     time editor in the planner row's context menu ("Remind Me…"/"Edit"/"Remove"), a bell
+     indicator when set, fires "Time for <slot>: <recipe>". Recurring meals repeat weekly,
+     one-offs fire once; past one-offs + completed meals don't schedule. New
+     `MealReminderScheduling` seam over `NotificationManager` (the old untestable-seam debt,
+     now closed). Files: `MealReminderScheduling.swift` (new), `NotificationManager`
+     (+repeatsWeekly), `MealPlanModel` (+reminderTime, MealTime default times),
+     `MealPlanningManager` (inject seam + sync across all mutation paths + updateMealPlan on
+     protocol), `MealReminderSheet.swift` (new), `PlannedMealsSection` + `MealPlanningView`
+     (UI). +11 tests (`MealReminderSchedulingTests`). Default times 08:00/13:00/19:00/15:00.
+- **Next action:** optional ROADMAP compression (docs, token-heavy — confirm still wanted),
+  or next punch-list item. All four requested items (slices 1–3 + this) are done.
 - **Open decision (still awaiting "go"):** compress ROADMAP Part I/II/III done-feature
   *prose* → one-liners (keep all why/decisions + open items; ~555→~200 lines) + fold
   `CORE_LOOP_AUDIT.md`'s 2 open items here. Nothing cut yet.
@@ -74,12 +83,7 @@ the loop self-correcting, not just a to-do list.
       Build + 26 timer tests green. (uncommitted)
 
 ## New ideas (backlog)
-- **Meal-time notifications** — meal-planner slots (breakfast/lunch/dinner/snack) get an
-  editable associated time; when that time arrives, notify "Time for Lunch: <recipe>".
-  Infra already exists: `NotificationManager.scheduleMealReminder` schedules a
-  `UNCalendarNotificationTrigger`. Needs: a per-slot time field on the meal-plan model +
-  editable UI (sensible defaults, e.g. 08:00/13:00/19:00) + wire to scheduleMealReminder +
-  cancel/reschedule on edit/delete. Natural companion to item 9.
+- ✅ **Meal-time notifications** — SHIPPED (uncommitted). See resume block item 4.
 
 ## Core-loop open bugs (single home: CORE_LOOP_AUDIT.md — don't restate here)
 The import→find→cook→track loop's ranked open findings live in
@@ -96,10 +100,9 @@ The import→find→cook→track loop's ranked open findings live in
   (Stale legal `.md` third copy deleted 2026-10-01; in-app views + website are canonical.)
 
 ## Follow-ups / debt
-- **Notification seam** — `RecipeTimerManager` calls `NotificationManager.shared` directly,
-  so "schedules up front" isn't unit-testable. Inject a protocol to assert it.
-- **Bulk-import badge summary** — show one "you earned N achievements" toast instead of
-  silently unlocking (ties into item 5).
+- **Notification seam (partial)** — meal reminders now go through the testable
+  `MealReminderScheduling` seam. `RecipeTimerManager` STILL calls `NotificationManager.shared`
+  directly (its "schedules up front" path remains unasserted); give it the same seam.
 
 ## Decisions
 - **Common Crawl / millions-scale validation: PARKED.** Removed `harvest_commoncrawl.py`
@@ -114,11 +117,7 @@ The import→find→cook→track loop's ranked open findings live in
   suspended in the background).
 
 ## In progress
-(none — slices 1+2 complete + verified green, uncommitted)
+(none — slices 1–3 complete + verified green at 1664 tests, uncommitted)
 
 ## Next action
-**Meal-time notifications (slice 3).** Before coding, get the product-shape decision
-(opt-in vs on-by-default, default times, one-shot vs repeat, editor location) and add a
-`MealReminderScheduling` seam over `NotificationManager` so `MealPlanningManager` scheduling
-is unit-testable. Then: `MealPlanModel.reminderTime` → schedule on add/update, cancel on
-remove/clearOld, reschedule on propagateRecurring (don't miss a mutation path) → editable UI.
+Optional: ROADMAP prose compression (confirm still wanted) or the next punch-list item.
