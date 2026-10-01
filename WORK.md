@@ -1,13 +1,18 @@
 # WORK: Pre-launch punch list
 
 ## ▶ Resume here (cold start: read this block first, update it last)
-- **Last done:** background-timer notification fix (`RecipeTimerManager`) — fires when
-  backgrounded. Build + 26 timer tests green.
-- **Uncommitted in working tree:** the timer fix + the full doc-audit cleanup
-  (ROADMAP/readme/HANDBOOK/CORE_LOOP/WORK edits + deleted `legal/*.md` + removed Common
-  Crawl scripts). Left for the user to review — do NOT assume it's committed; run `git status`.
-- **Next action:** pick **badge summary toast** (item 5, small) or **meal-time
-  notifications** (new idea) — both scoped below.
+- **Last done:** doc audit + minimisation. Added the **Feature map** (what ships + how
+  tested) to the top of `ROADMAP.md`, linked from `HANDBOOK.md`. Earlier this session:
+  background-timer notification fix (`RecipeTimerManager`, build + 26 tests green).
+- **Open decision (awaiting user "go"):** compress ROADMAP Part I/II/III done-feature
+  *prose* → one-liners (keep all why/decisions + open 🔴/🟡 items; ~555→~200 lines), and
+  retire `CORE_LOOP_AUDIT.md` by folding its 2 open items (search debounce, cook-state
+  residue) into this file. Nothing cut yet.
+- **Uncommitted in working tree:** timer fix + full doc-audit cleanup (ROADMAP feature map,
+  readme/HANDBOOK/CORE_LOOP/WORK edits, deleted `legal/*.md`, removed Common Crawl scripts).
+  Left for the user to review — do NOT assume committed; run `git status`.
+- **Next action:** either execute the compression above, or pick a product task —
+  **badge summary toast** (item 5, small) or **meal-time notifications** (new idea).
 - **Verify green:** `BuildProject` + `RunAllTests` before committing anything.
 - **Boot ritual:** new session → read this block → `git status` → continue. Nothing else needed.
 
