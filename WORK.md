@@ -58,12 +58,14 @@ the loop self-correcting, not just a to-do list.
 `[x]` done & verified · `[~]` in progress · `[ ]` not started
 
 ## Launch punch list
-- [ ] **1. Plus loop works locally** — StoreKit purchase/restore/paywall already built
-      and `.storekit` wired to the scheme; the GAP is nothing is gated (`isSubscribed`
-      only toggles the Settings card). Decision pending: what Plus gates.
-      Plan: launch FREE, build the gate behind a flag, prove the full loop on the local
-      `.storekit` config. iCloud sync stays FREE. Recommend a freemium power-feature cap
-      (AI/photo import, meal planning) over curated content — no content to gate yet.
+- [x] **1. Plus gating** — DONE (uncommitted; decision made 2026-10-02: power-feature cap).
+      `PremiumGate` (pure, tested) with master flag `isEnabled = false` → **launch free, nothing
+      gated**; flip to enforce. Gated entry points route to `PaywallView`: AI paste-text import
+      + photo OCR import (`ImportView.gated(_:_:)`), meal reminders (`MealPlanningView.editReminder`).
+      URL import, manual wizard, iCloud sync, organisation stay free. +10 `PremiumGateTests`.
+      To prove the full purchase→gate→unlock loop locally: flip `PremiumGate.isEnabled` to `true`
+      in a dev build and buy via the local `.storekit`. Still TODO before charging: decide the
+      remote/remote-config source for `isEnabled`, and the paywall copy for each gated feature.
 - [ ] **2. YOTI-level simplicity** — north-star principle, applies to every view touched.
 - [ ] **3. Trim onboarding** — today: 3 slides + biometric splash. Make it leaner.
 - [x] **4. Search debounce** — DONE (uncommitted). `FilterCacheUpdateModifier` now debounces

@@ -27,7 +27,9 @@ Findings from a 4-stage code audit. Ranked; each has file:line + a one-line fix.
 - ✎ Difficulty filter is hardcoded `["Basic","Expert","Intermediate"]` — may not match data (`RecipeSearchView.swift`). Derive from recipes.
 
 ## Cook
-- ⚠️ Quantity tap-to-edit is live in cook mode too — accidental edit taps instead of check-off (`IngredientRowView` used by `CookingModeView:189`). Pass `onTapQuantity: nil` in cook mode.
+- ✅ NOT A BUG (verified 2026-10-02) — cook mode renders its own check-off button
+  (`CookingModeView.ingredientsCard`), not `IngredientRowView`; the whole row toggles the
+  checkmark, there's no quantity tap-to-edit to misfire. Audit predated cook mode's rewrite.
 - ✎ Timer step-button only appears when a number is found; no "set custom time" fallback (`CookingModeView.swift:232`).
 - ✎ Idle-timer stays disabled for the whole cook-mode session, not just while a timer runs (`CookingModeView.swift:100`).
 - ✎ Progress bar counts the ingredient-list screen as "step 1", so counts feel off-by-one (`CookingModeView.swift:41`).
