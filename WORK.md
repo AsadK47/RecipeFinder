@@ -66,8 +66,13 @@ the loop self-correcting, not just a to-do list.
       (AI/photo import, meal planning) over curated content — no content to gate yet.
 - [ ] **2. YOTI-level simplicity** — north-star principle, applies to every view touched.
 - [ ] **3. Trim onboarding** — today: 3 slides + biometric splash. Make it leaner.
-- [ ] **4. Populated home without loading 300+ at once** — today all recipes load into
-      memory on appear (`RecipeStore.load`), no search debounce (re-filters per keystroke).
+- [x] **4. Search debounce** — DONE (uncommitted). `FilterCacheUpdateModifier` now debounces
+      criteria changes ~250 ms via `.task(id: filterCriteria)` (cancels the pending sleep on
+      each keystroke), so `apply(to:)` runs once on pause instead of per keystroke; library
+      changes still reflect immediately. The "loads 300 into memory" half was a non-issue —
+      fetch is off-main (`fetchRecipesAsync`) and SwiftUI renders lazily, so no pagination
+      needed. Build green; no logic changed (filter logic stays covered by
+      `RecipeFilterCriteriaTests`). Also closes the CORE_LOOP_AUDIT search-debounce item.
 - [x] **5. Badges overhaul** — DONE (premise re-corrected 2026-10-01). The "bulk import
       silently unlocks, no feedback" claim was itself WRONG. No user-facing bulk *import*
       exists (import = 1 recipe = 1 celebration); seed is silent by design. The real wart

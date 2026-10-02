@@ -6,9 +6,8 @@ Findings from a 4-stage code audit. Ranked; each has file:line + a one-line fix.
 
 ## Top cross-cutting priorities (fix these first)
 *Done items trimmed 2026-10-01 — history is in git. Still open:*
-- ✎ **Search filters on every keystroke, no debounce** — list flickers while typing
-  (`RecipeFilterCriteria.swift:65`, `RecipeSearchModifiers.swift:58`). Fix: debounce ~250ms.
-  (Same concern as WORK.md punch-list item 4 — owned there, not duplicated.)
+- ✅ FIXED (uncommitted) Search filtered on every keystroke (list flicker). `FilterCacheUpdateModifier`
+  now debounces criteria changes ~250 ms via `.task(id: filterCriteria)`; library changes stay immediate.
 - ↓ Low-pri residue: index-based cook/check state can misalign on a mid-list insert
   (`RecipeDetailView.swift:156` guard only resets on ingredient count change). Revisit if it bites.
 

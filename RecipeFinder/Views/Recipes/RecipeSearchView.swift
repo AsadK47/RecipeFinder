@@ -397,7 +397,7 @@ struct RecipeSearchView: View {
         categories = Array(Set(recipes.map { $0.category }).intersection(validCategories)).sorted()
     }
 
-    /// Recomputes the displayed list only via `FilterCacheUpdateModifier`'s onChange + initial onAppear, so ~10 filter passes never run in `body`.
+    /// Recomputes the displayed list only via `FilterCacheUpdateModifier` (debounced on criteria change, immediate on library change) + initial onAppear, so filter passes never run in `body`.
     private func updateFilterCache() {
         cachedFilteredRecipes = filterCriteria.apply(to: recipes)
     }
