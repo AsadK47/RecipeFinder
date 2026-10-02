@@ -1,5 +1,6 @@
 import Testing
 import Foundation
+import UIKit
 @testable import RecipeFinder
 
 /// `RecipeStore`'s in-memory library semantics (upsert on save, append on add, remove on delete, reload on refresh) against an in-memory persistence controller.
@@ -59,6 +60,42 @@ struct RecipeStoreTests {
 
         store.delete(id: recipe.id)
         #expect(store.recipes.isEmpty)
+    }
+
+    @Test("delete removes owned hero and gallery image files (no orphaned files)")
+    func deleteCleansUpImages() throws {
+        let tmp = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: tmp, withIntermediateDirectories: true)
+        let imageStore = RecipeImageStore(documentsDirectory: tmp)
+        let store = RecipeStore(
+            persistence: PersistenceController(inMemory: true, userID: { "test-user" }),
+            imageStore: imageStore
+        )
+
+        let id = UUID()
+        let image = Self.tinyImage()
+        let hero = try #require(imageStore.persist(image, recipeId: id))
+        let gallery = imageStore.persistGallery([image], recipeId: id)
+        #expect(gallery.count == 1)
+
+        var recipe = makeRecipe(id: id)
+        recipe.imageName = hero
+        recipe.photoNames = gallery
+        _ = store.add(recipe)
+
+        #expect(FileManager.default.fileExists(atPath: tmp.appendingPathComponent(hero).path))
+
+        store.delete(id: id)
+
+        #expect(!FileManager.default.fileExists(atPath: tmp.appendingPathComponent(hero).path))
+        #expect(!FileManager.default.fileExists(atPath: tmp.appendingPathComponent(gallery[0]).path))
+    }
+
+    private static func tinyImage() -> UIImage {
+        UIGraphicsImageRenderer(size: CGSize(width: 2, height: 2)).image { ctx in
+            UIColor.red.setFill()
+            ctx.fill(CGRect(x: 0, y: 0, width: 2, height: 2))
+        }
     }
 
     @Test("sync upserts an existing recipe in place, ignores unknown ids")

@@ -38,11 +38,13 @@ final class RecipeStore: RecipeStoring {
     private(set) var isLoading = true
 
     @ObservationIgnored private let persistence: PersistenceController
+    @ObservationIgnored private let imageStore: RecipeImageStore
     /// Bumped on each load so a slow earlier fetch (e.g. previous account) can't overwrite a newer one's result.
     @ObservationIgnored private var loadGeneration = 0
 
-    init(persistence: PersistenceController = .shared) {
+    init(persistence: PersistenceController = .shared, imageStore: RecipeImageStore = RecipeImageStore()) {
         self.persistence = persistence
+        self.imageStore = imageStore
     }
 
     /// Loads the current user's library (or seed recipes in guest mode); mirrors the retry/seed behaviour once inline in `ContentView`.
@@ -122,6 +124,11 @@ final class RecipeStore: RecipeStoring {
     }
 
     func delete(id: UUID) {
+        // Clean up owned image files so deleting a recipe doesn't leak orphaned hero/gallery photos on disk.
+        if let recipe = recipes.first(where: { $0.id == id }) {
+            if let hero = recipe.imageName { imageStore.deleteIfLocal(hero) }
+            recipe.photoNames.forEach { imageStore.deleteIfLocal($0) }
+        }
         recipes.removeAll { $0.id == id }
         persistence.deleteRecipe(withId: id)
     }

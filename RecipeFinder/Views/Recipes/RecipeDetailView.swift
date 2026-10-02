@@ -202,13 +202,13 @@ struct RecipeDetailView: View {
     func addIngredientToShoppingList(_ ingredient: Ingredient) {
         HapticManager.shared.light()
 
-        let normalizedName = IngredientNormalizer.normalize(ingredient.mainIngredientName)
+        guard let item = RecipeShoppingList.item(from: ingredient) else { return }
 
-        ShoppingListManager.shared.addItem(name: normalizedName, quantity: 1, category: nil)
+        ShoppingListManager.shared.addItem(name: item.name, quantity: item.quantity, unit: item.unit, category: nil)
 
         addedIngredients.insert(ingredient.name)
 
-        showAddedFeedback = "\(normalizedName) added to Groceries"
+        showAddedFeedback = "\(item.name) added to Groceries"
 
         DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayFeedback) {
             withAnimation {
@@ -224,10 +224,9 @@ struct RecipeDetailView: View {
 
         var addedCount = 0
         for ingredient in recipe.ingredients {
-            let normalizedName = IngredientNormalizer.normalize(ingredient.mainIngredientName)
-            guard !normalizedName.isEmpty else { continue }
+            guard let item = RecipeShoppingList.item(from: ingredient) else { continue }
 
-            ShoppingListManager.shared.addItem(name: normalizedName, quantity: 1, category: nil)
+            ShoppingListManager.shared.addItem(name: item.name, quantity: item.quantity, unit: item.unit, category: nil)
             addedIngredients.insert(ingredient.name)
             addedCount += 1
         }

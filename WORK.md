@@ -1,43 +1,36 @@
 # WORK: Pre-launch punch list
 
 ## ▶ Resume here (cold start: read this block first, update it last)
-- **Last done (uncommitted, all green — 1653 tests):** two fixes landed this session.
-  1. **Grocery unit-drop bug** — `ShoppingListManager.addItem` now threads `unit`; merge
-     matches name **+** unit so "200 g flour" and "2 cups flour" stay separate instead of
-     collapsing to a unitless sum. `addIngredients(from:)` passes `ingredient.unit`.
-     +3 tests in `ShoppingListFromRecipeTests`.
-  2. **Build-blocker** — `legal/TERMS_OF_SERVICE.md` + `legal/PRIVACY_POLICY.md` were
-     deleted in `a8d807b` but still referenced in `project.pbxproj` as Resources, so `main`
-     did NOT build. Removed the 8 dangling references (nothing loads them at runtime).
-  3. **Badge/restore parade (item 5, premise re-corrected)** — the "bulk import silently
-     unlocks, no feedback" premise is WRONG. Reality: normal import = 1 recipe = 1
-     celebration; seed = silent by design; the real wart is **backup restore**
-     (`BackupService.restore:53 → mergeRecipes`) looping `saveRecipe → checkAndUnlockBadges`
-     non-silently → a PARADE of milestone sheets. Fixed by wrapping `mergeRecipes` in
-     `BadgeManager.shared.isBulkImporting` (mirrors the seed + `badges.merge` suppression).
-     +2 tests in `BadgeManagerTests`. No "summary toast" built — it was the wrong fix.
-- **Uncommitted in working tree:** the three fixes above (ShoppingListManager, pbxproj,
-  PersistenceController+RecipeWrites, BadgeManager + 2 test files). Review + commit per the
-  3 suggested messages. Run `git status`.
-  4. **Meal-time notifications (slice 3)** — DONE & green. Opt-in per meal: a reminder
-     time editor in the planner row's context menu ("Remind Me…"/"Edit"/"Remove"), a bell
-     indicator when set, fires "Time for <slot>: <recipe>". Recurring meals repeat weekly,
-     one-offs fire once; past one-offs + completed meals don't schedule. New
-     `MealReminderScheduling` seam over `NotificationManager` (the old untestable-seam debt,
-     now closed). Files: `MealReminderScheduling.swift` (new), `NotificationManager`
-     (+repeatsWeekly), `MealPlanModel` (+reminderTime, MealTime default times),
-     `MealPlanningManager` (inject seam + sync across all mutation paths + updateMealPlan on
-     protocol), `MealReminderSheet.swift` (new), `PlannedMealsSection` + `MealPlanningView`
-     (UI). +11 tests (`MealReminderSchedulingTests`). Default times 08:00/13:00/19:00/15:00.
-  5. **ROADMAP compression** — DONE (uncommitted). Part I/II/III done-feature prose →
-     one-liners; kept every why/decision, the "Where we stand" strategy, the Feature-map
-     table, and all open 🔴/🟡 blocks (iCloud + storage decision, Nutrition, Supermarket,
-     Recipe sharing, Auto images). 558→390 lines (not ~200 — the rest is strategy/why that
-     the brief said to preserve). **CORE_LOOP_AUDIT.md NOT retired:** its "2 open items" was
-     a wrong premise — it holds ~18 real findings (import/find/cook/track backlog). Kept as
-     the core-loop backlog home; only marked the grocery-unit item fixed.
-- **Next action:** next punch-list item — #3 trim onboarding, #4 home perf + search
-  debounce, or #1 Plus gating (needs your call on what to gate). Legal rewrite needs a lawyer.
+- **Prior sessions (committed):** grocery-unit manager fix, build-blocker (legal pbxproj
+  refs), badge/restore parade fix, meal-time notifications, ROADMAP compression, search
+  debounce (#4), hide WIP Apple-ID row (#6), share-with-a-friend (#7), PremiumGate power-
+  feature cap (#1, free at launch). History in git.
+- **This session — a full state-of-app audit (4 parallel agents) + fixes. Uncommitted, all
+  green (1680 tests):**
+  1. **Grocery unit/qty loss — the REAL fix.** Earlier "fixed" was only the manager API; the
+     high-traffic detail-view paths bypassed it. New pure `RecipeShoppingList.item(from:)`
+     (normalized name + qty + unit); `RecipeDetailView.addIngredient/addAll` now use it.
+     +5 `RecipeShoppingListTests`. *(Still open: `MealPlanningView.confirmAddWeek` drops unit —
+     needs `WeekShoppingSummary` to model units; separate slice.)*
+  2. **Orphaned images on delete (disk leak).** `RecipeStore.delete` now cleans hero +
+     gallery files via an injected `RecipeImageStore`. +1 `RecipeStoreTests`.
+  3. **Rating placement.** Star rating now only shows after `cookCount > 0` (you rate what
+     you've cooked); before first cook the card leads with "Mark as Cooked". (Rating/cooked
+     were always post-creation; the bug was showing the rating before ever cooking.)
+- **Audit verdicts (see summary below / this turn's chat):** email auth sound (PBKDF2 ok);
+  **Apple Sign In is BLOCKED — not a code task:** `com.apple.developer.applesignin` is a
+  restricted entitlement requiring PAID enrollment; a free team cannot add it (same gate as
+  iCloud/push). Code exists but can't run/test locally — DEFER to enrollment; meanwhile
+  consider deleting one of the two divergent dead managers. Purchase loop is complete +
+  correct (incl. the `Transaction.updates` listener) but has ZERO StoreKit tests + no
+  `SubscriptionProviding` fake.
+- **Next action (biggest ask: make the core loop habit-forming — "reward cooking, not
+  browsing"):** implement a **cooking streak / activity** loop. Needs a persisted **cook-date
+  log** (current data only stores `lastCookedAt`+`cookCount`, so true consecutive-period
+  streaks aren't computable yet) → pure `CookingActivity`/`CookingStreak` engine (cooks-this-
+  week, streak, days-since, rediscovery pick) → a home/planner habit card + a smart
+  re-engagement notification ("you haven't made X in a while"). Do engine+tests first, then
+  surface. See "Habit loop plan" section.
 - **Verify green:** `BuildProject` + `RunAllTests` before committing anything.
 - **Boot ritual:** new session → read this block → `git status` → continue. Nothing else needed.
 
@@ -66,6 +59,32 @@ the loop self-correcting, not just a to-do list.
       To prove the full purchase→gate→unlock loop locally: flip `PremiumGate.isEnabled` to `true`
       in a dev build and buy via the local `.storekit`. Still TODO before charging: decide the
       remote/remote-config source for `isEnabled`, and the paywall copy for each gated feature.
+- [ ] **10. Habit loop (make the core loop habit-forming)** — research-backed (reward the act
+      of *cooking*, not browsing; streaks + rediscovery + smart notifications are the proven
+      levers for recipe apps). PLAN, do in order:
+      - **(a) Cook-date log** — add a persisted list of cook timestamps (not just `lastCookedAt`),
+        so consecutive-period streaks are computable. Smallest version: a `[Date]` per recipe or
+        a single user-scoped cook-log in `UserScopedStorage`. Needed before real streaks.
+      - **(b) Pure `CookingActivity`/`CookingStreak` engine** (fully unit-tested): current streak,
+        cooks-this-week, days-since-last, and a **rediscovery pick** (loved recipe not made in
+        >~21 days). Compute from the log + existing `cookCount`/`isFavorite`/`rating`.
+      - **(c) Surface**: a home/planner "habit card" — "🔥 N-week streak · M cooked this week" +
+        a rediscovery nudge ("You haven't made X in a while"). Keep it YOTI-minimal.
+      - **(d) Smart re-engagement notification** via `NotificationManager` (reuse the seam) —
+        a gentle nudge when the streak is about to lapse / a loved recipe has gone cold. Opt-in.
+      - Also wire the dead `CanMakeNowTip` (defined, never attached) while here.
+- [ ] **11. Apple Sign In — BLOCKED on paid enrollment, not code.** `com.apple.developer.applesignin`
+      is a restricted entitlement; a free team can't add it (confirmed via Apple docs/forums).
+      DEFER until Developer Program enrollment. Pre-work that IS doable now: delete/ consolidate
+      the two divergent dead managers (`AuthenticationManager+AppleSignIn` [Keychain, correct] vs
+      `AppleSignInManager` [UserDefaults, wrong]) down to one, so enabling later is clean.
+- [ ] **12. confirmAddWeek unit loss** — `WeekShoppingSummary.Item` has no unit; weekly add-to-
+      groceries drops units. Needs the summary to model units (merge across recipes by name+unit).
+- [ ] **13. Test gaps from the audit** (stop manual retesting): `SubscriptionProviding` fake +
+      StoreKitTest `SKTestSession` suite (purchase/restore/**revoke→isSubscribed flips**); auth
+      orchestration (signIn/signUp/duplicate-guard/signOut/session-expiry/guest); extract a
+      cooking-mode view-model (step count/progress off-by-one + headChef-on-finish); `recordCook`
+      review-threshold helper (2→no,3→yes,4→no); import→save→appears flow with a failing-persist fake.
 - [ ] **2. YOTI-level simplicity** — north-star principle, applies to every view touched.
 - [ ] **3. Trim onboarding** — today: 3 slides + biometric splash. Make it leaner.
 - [x] **4. Search debounce** — DONE (uncommitted). `FilterCacheUpdateModifier` now debounces

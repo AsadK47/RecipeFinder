@@ -532,15 +532,19 @@ extension RecipeDetailView {
     var cookHistoryCard: some View {
         GlassCard {
             VStack(alignment: .leading, spacing: AppTheme.spacing12) {
-                HStack {
-                    Label("Rating", systemImage: "star")
-                        .font(.caption)
-                        .adaptiveSecondaryForeground()
-                    Spacer()
-                    StarRatingView(rating: recipe.rating, onTap: updateRating)
-                }
+                // Rating only appears once the recipe has actually been cooked — you rate what you've made,
+                // not a recipe you've never tried. Before the first cook the card leads with "Mark as Cooked".
+                if recipe.cookCount > 0 {
+                    HStack {
+                        Label("Rating", systemImage: "star")
+                            .font(.caption)
+                            .adaptiveSecondaryForeground()
+                        Spacer()
+                        StarRatingView(rating: recipe.rating, onTap: updateRating)
+                    }
 
-                Divider()
+                    Divider()
+                }
 
                 HStack(alignment: .firstTextBaseline) {
                     Label(
