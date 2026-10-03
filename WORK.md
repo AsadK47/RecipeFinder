@@ -59,20 +59,26 @@ the loop self-correcting, not just a to-do list.
       To prove the full purchase→gate→unlock loop locally: flip `PremiumGate.isEnabled` to `true`
       in a dev build and buy via the local `.storekit`. Still TODO before charging: decide the
       remote/remote-config source for `isEnabled`, and the paywall copy for each gated feature.
-- [ ] **10. Habit loop (make the core loop habit-forming)** — research-backed (reward the act
-      of *cooking*, not browsing; streaks + rediscovery + smart notifications are the proven
-      levers for recipe apps). PLAN, do in order:
-      - **(a) Cook-date log** — add a persisted list of cook timestamps (not just `lastCookedAt`),
-        so consecutive-period streaks are computable. Smallest version: a `[Date]` per recipe or
-        a single user-scoped cook-log in `UserScopedStorage`. Needed before real streaks.
-      - **(b) Pure `CookingActivity`/`CookingStreak` engine** (fully unit-tested): current streak,
-        cooks-this-week, days-since-last, and a **rediscovery pick** (loved recipe not made in
-        >~21 days). Compute from the log + existing `cookCount`/`isFavorite`/`rating`.
-      - **(c) Surface**: a home/planner "habit card" — "🔥 N-week streak · M cooked this week" +
-        a rediscovery nudge ("You haven't made X in a while"). Keep it YOTI-minimal.
-      - **(d) Smart re-engagement notification** via `NotificationManager` (reuse the seam) —
-        a gentle nudge when the streak is about to lapse / a loved recipe has gone cold. Opt-in.
-      - Also wire the dead `CanMakeNowTip` (defined, never attached) while here.
+- [~] **10. Habit loop (make the core loop habit-forming)** — WEEKLY cooking streak (reward
+      cooking, not app-opens; decided 2026-10-02). Foundation DONE & green (uncommitted):
+      - [x] **(a) Cook-date log** — `CookingStreakManager` persists `[Date]` cook log in
+        `UserScopedStorage` (per-user); records from the single cook choke point
+        (`RecipeDetailView.recordCook` → `cookingStreak.recordCookToday()`); reloads on
+        account switch (`reloadAllManagers`) + data reset (`DataManagementSettingsView`).
+      - [x] **(b) Pure `CookingStreak` engine** — weekly streak with a one-week grace,
+        cooks-this-week; +7 `CookingStreakTests`, +4 `CookingStreakManagerTests`.
+      - [x] **(c) Surface** — `CookingStreakCard` on the Recipes home (above the list, shown
+        once the library has recipes): "🔥 N-week streak · M cooked this week" / start nudge.
+      - [ ] **(d) Smart re-engagement notification** — reuse `NotificationManager`: gentle nudge
+        when the streak is about to lapse (cooked last week, nothing yet this week) / a loved
+        recipe has gone cold. Opt-in; schedule weekly, cancel on cook.
+      - [ ] **(e) Rediscovery nudge** — "You haven't made X in a while" card/row: a favourite or
+        highly-rated recipe with the oldest `lastCookedAt` beyond ~21 days (pure fn + surface).
+      - [ ] **(f) Milestone celebration** — confetti/haptic + maybe a streak badge when the streak
+        extends or hits a milestone (reuse `BadgeEarnedSheet`/`ConfettiSwiftUI`).
+      - [ ] **(g)** Wire the dead `CanMakeNowTip` (defined in `RecipeTips.swift`, never attached).
+      - [ ] **(h)** Consider a streak-freeze/"rest day" grace like Duolingo if churn data shows
+        week-misses hurt; and decide whether to show the card during active search/filter.
 - [ ] **11. Apple Sign In — BLOCKED on paid enrollment, not code.** `com.apple.developer.applesignin`
       is a restricted entitlement; a free team can't add it (confirmed via Apple docs/forums).
       DEFER until Developer Program enrollment. Pre-work that IS doable now: delete/ consolidate

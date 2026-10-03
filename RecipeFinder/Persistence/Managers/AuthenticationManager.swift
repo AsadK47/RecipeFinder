@@ -84,6 +84,7 @@ final class AuthenticationManager: NSObject, Authenticating {
         MealPlanningManager.shared.reloadForCurrentUser()
         BadgeManager.shared.reloadForCurrentUser()
         CollectionManager.shared.reloadForCurrentUser()
+        CookingStreakManager.shared.reloadForCurrentUser()
         AccountManager.shared.loadProfile()
     }
 }

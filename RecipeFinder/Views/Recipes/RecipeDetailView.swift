@@ -34,6 +34,7 @@ struct RecipeDetailView: View {
     @State var nutritionShowsWholeRecipe = false
     @Environment(\.recipeTimer) var recipeTimer
     @Environment(\.recipeStore) var recipeStore
+    @Environment(\.cookingStreak) var cookingStreak
     @AppStorage("measurementSystem") var measurementSystem: MeasurementSystem = .metric
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.appTheme) var appTheme
@@ -265,6 +266,7 @@ struct RecipeDetailView: View {
         recipe.lastCookedAt = Date()
         PersistenceController.shared.recordCook(withId: recipe.id)
         recipeStore.sync(recipe)
+        cookingStreak.recordCookToday()   // feeds the weekly cooking-streak habit loop
         // Third cook = genuine fan; ask for a review exactly once.
         if recipe.cookCount == 3 { requestReview() }
         // Delay lets any active fullScreenCover dismiss before the sheet appears.

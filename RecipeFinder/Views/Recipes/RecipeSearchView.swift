@@ -39,6 +39,7 @@ struct RecipeSearchView: View {
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @AppStorage("skipRecipeDeleteConfirmation") private var skipDeleteConfirmation: Bool = false
     @Environment(\.collections) private var collectionManager
+    @Environment(\.cookingStreak) private var cookingStreak
     @State private var selectedCollectionID: UUID? = nil
     @State private var navigationPath = NavigationPath()
     // Refreshed on appear so RecipeDetailView pantry toggles don't re-render this buried view and re-run apply(to:) 3x per toggle.
@@ -233,8 +234,19 @@ struct RecipeSearchView: View {
     private var allRecipesContent: some View {
         VStack(spacing: 0) {
             searchHeaderGroup
+            streakSection
             activeFiltersSection
             recipeContentArea
+        }
+    }
+
+    /// Weekly cooking-streak habit card; shown once the library has recipes (not for an empty first-run).
+    @ViewBuilder
+    private var streakSection: some View {
+        if !recipes.isEmpty {
+            CookingStreakCard(streak: cookingStreak.streak)
+                .padding(.horizontal, AppTheme.spacing16)
+                .padding(.bottom, AppTheme.spacing8)
         }
     }
 
