@@ -93,7 +93,6 @@ extension RecipeDetailView {
             if !recipe.tags.isEmpty {
                 tagsCard
             }
-            cookHistoryCard
         }
         .padding(.horizontal, AppTheme.spacing20)
     }

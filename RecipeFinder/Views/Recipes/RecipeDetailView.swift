@@ -73,6 +73,12 @@ struct RecipeDetailView: View {
                             notesSection
                         }
 
+                        // Cook history + rating comes after the recipe content (you rate/log a cook
+                        // once you've read the ingredients and instructions), but before nutrition.
+                        cookHistoryCard
+                            .padding(.horizontal, AppTheme.spacing20)
+                            .padding(.top, AppTheme.spacing16)
+
                         if recipe.nutritionInfo != nil {
                             nutritionSection
                         }
