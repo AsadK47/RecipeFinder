@@ -202,6 +202,9 @@
 		F3B7D9053070057500991908 /* CookingStreakCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D9043070057500991908 /* CookingStreakCard.swift */; };
 		F3B7D907307005D500991908 /* CookingStreakTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D906307005D500991908 /* CookingStreakTests.swift */; };
 		F3B7D909307005DF00991908 /* CookingStreakManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D908307005DF00991908 /* CookingStreakManagerTests.swift */; };
+		F3B7D90B30726A0E00991908 /* RecipeRediscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D90A30726A0E00991908 /* RecipeRediscovery.swift */; };
+		F3B7D90D30726A2200991908 /* RecipeRediscoveryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D90C30726A2200991908 /* RecipeRediscoveryTests.swift */; };
+		F3B7D90F30726A6800991908 /* RediscoveryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D90E30726A6800991908 /* RediscoveryCard.swift */; };
 		F3B837BF305554C80003AEF8 /* UserScopedStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837BE305554C80003AEF8 /* UserScopedStorageTests.swift */; };
 		F3B837C1305562790003AEF8 /* SessionExpiryPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837C0305562790003AEF8 /* SessionExpiryPolicy.swift */; };
 		F3B837C33055628E0003AEF8 /* SessionExpiryPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837C23055628E0003AEF8 /* SessionExpiryPolicyTests.swift */; };
@@ -673,6 +676,9 @@
 		F3B7D9043070057500991908 /* CookingStreakCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookingStreakCard.swift; sourceTree = "<group>"; };
 		F3B7D906307005D500991908 /* CookingStreakTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookingStreakTests.swift; sourceTree = "<group>"; };
 		F3B7D908307005DF00991908 /* CookingStreakManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookingStreakManagerTests.swift; sourceTree = "<group>"; };
+		F3B7D90A30726A0E00991908 /* RecipeRediscovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeRediscovery.swift; sourceTree = "<group>"; };
+		F3B7D90C30726A2200991908 /* RecipeRediscoveryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeRediscoveryTests.swift; sourceTree = "<group>"; };
+		F3B7D90E30726A6800991908 /* RediscoveryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RediscoveryCard.swift; sourceTree = "<group>"; };
 		F3B837BE305554C80003AEF8 /* UserScopedStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserScopedStorageTests.swift; sourceTree = "<group>"; };
 		F3B837C0305562790003AEF8 /* SessionExpiryPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionExpiryPolicy.swift; sourceTree = "<group>"; };
 		F3B837C23055628E0003AEF8 /* SessionExpiryPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionExpiryPolicyTests.swift; sourceTree = "<group>"; };
@@ -1137,6 +1143,7 @@
 				F3B7D8DF306947ED00991908 /* MealTimeReorderTests.swift */,
 				F3B7D8E3306A6B3A00991908 /* IngredientNameFormatterTests.swift */,
 				F3B7D906307005D500991908 /* CookingStreakTests.swift */,
+				F3B7D90C30726A2200991908 /* RecipeRediscoveryTests.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1244,6 +1251,7 @@
 				9E6DEA472EF5EF47001E7B24 /* CompactRecipeCard.swift */,
 				9E6DEA482EF5EF47001E7B24 /* RecipeCard.swift */,
 				F3B7D9043070057500991908 /* CookingStreakCard.swift */,
+				F3B7D90E30726A6800991908 /* RediscoveryCard.swift */,
 			);
 			path = Cards;
 			sourceTree = "<group>";
@@ -1864,6 +1872,7 @@
 			isa = PBXGroup;
 			children = (
 				F3B7D9003070054400991908 /* CookingStreak.swift */,
+				F3B7D90A30726A0E00991908 /* RecipeRediscovery.swift */,
 			);
 			path = Engagement;
 			sourceTree = "<group>";
@@ -2333,6 +2342,7 @@
 				F3E9D1AE30457AD8008BF231 /* AppTheme+Palette.swift in Sources */,
 				F3E9D12730439F2C008BF231 /* BasicInfoStepView.swift in Sources */,
 				9E5B39992FACFF9000C96DB3 /* QuickAddItems.swift in Sources */,
+				F3B7D90B30726A0E00991908 /* RecipeRediscovery.swift in Sources */,
 				F3E9D264304A1DFB008BF231 /* ScreenTitleHeader.swift in Sources */,
 				F3E9D1B030457AEA008BF231 /* AppTheme+Colors.swift in Sources */,
 				F3D4057730599DC80076834D /* RecipeIntents.swift in Sources */,
@@ -2350,6 +2360,7 @@
 				9E6DEA8A2EF5EFE8001E7B24 /* CategoryClassifier.swift in Sources */,
 				F36AED6F3043392200935A3C /* RecipeFilterButton.swift in Sources */,
 				F36AED77304342AD00935A3C /* ActiveFiltersBar.swift in Sources */,
+				F3B7D90F30726A6800991908 /* RediscoveryCard.swift in Sources */,
 				F3E9D1963045164E008BF231 /* AuthenticationManager+AppleSignIn.swift in Sources */,
 				F3AD2EDC30640A6300274E33 /* EmptyStateView.swift in Sources */,
 				9E6DEA8B2EF5EFE8001E7B24 /* NotificationManager.swift in Sources */,
@@ -2522,6 +2533,7 @@
 				F3E9D2A63052A02E008BF231 /* RecipeSaveResultTests.swift in Sources */,
 				F3E9D21F3047105C008BF231 /* ManagerMergeTests.swift in Sources */,
 				F3B837C93055CD5A0003AEF8 /* AccountNameFormatterTests.swift in Sources */,
+				F3B7D90D30726A2200991908 /* RecipeRediscoveryTests.swift in Sources */,
 				F3E9D289304E056A008BF231 /* CoreDataStorePersistenceTests.swift in Sources */,
 				9E6C2C532FB478290083A08B /* AccountSheetTests.swift in Sources */,
 				9E6C2C4D2FB477ED0083A08B /* CardViewTests.swift in Sources */,

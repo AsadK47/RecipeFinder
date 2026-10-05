@@ -72,8 +72,9 @@ the loop self-correcting, not just a to-do list.
       - [ ] **(d) Smart re-engagement notification** — reuse `NotificationManager`: gentle nudge
         when the streak is about to lapse (cooked last week, nothing yet this week) / a loved
         recipe has gone cold. Opt-in; schedule weekly, cancel on cook.
-      - [ ] **(e) Rediscovery nudge** — "You haven't made X in a while" card/row: a favourite or
-        highly-rated recipe with the oldest `lastCookedAt` beyond ~21 days (pure fn + surface).
+      - [x] **(e) Rediscovery nudge** — DONE. Pure `RecipeRediscovery.pick` (stale cooked recipe,
+        favour favourite/rating, oldest tie-break; +6 tests) + `RediscoveryCard` on the Recipes
+        home below the streak card (browse state only); tap opens the recipe via `navigationPath`.
       - [ ] **(f) Milestone celebration** — confetti/haptic + maybe a streak badge when the streak
         extends or hits a milestone (reuse `BadgeEarnedSheet`/`ConfettiSwiftUI`).
       - [ ] **(g)** Wire the dead `CanMakeNowTip` (defined in `RecipeTips.swift`, never attached).

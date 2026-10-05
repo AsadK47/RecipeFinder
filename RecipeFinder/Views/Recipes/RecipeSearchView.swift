@@ -235,6 +235,7 @@ struct RecipeSearchView: View {
         VStack(spacing: 0) {
             searchHeaderGroup
             streakSection
+            rediscoverySection
             activeFiltersSection
             recipeContentArea
         }
@@ -247,6 +248,19 @@ struct RecipeSearchView: View {
             CookingStreakCard(streak: cookingStreak.streak)
                 .padding(.horizontal, AppTheme.spacing16)
                 .padding(.bottom, AppTheme.spacing8)
+        }
+    }
+
+    /// "Cook it again" nudge for a loved recipe gone cold — only on the plain browse home (no search/filter).
+    @ViewBuilder
+    private var rediscoverySection: some View {
+        if searchText.isEmpty, activeFilterCount == 0, let pick = RecipeRediscovery.pick(from: recipes) {
+            RediscoveryCard(recipe: pick) {
+                HapticManager.shared.light()
+                navigationPath.append(pick.id)
+            }
+            .padding(.horizontal, AppTheme.spacing16)
+            .padding(.bottom, AppTheme.spacing8)
         }
     }
 
