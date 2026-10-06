@@ -4,13 +4,14 @@ import SwiftUI
 @MainActor
 protocol CookingStreakTracking: AnyObject, Observable {
     var streak: CookingStreak { get }
-    func recordCook(on date: Date)
+    /// Records a cook; returns `true` if it extended the weekly streak (a new week was counted), so the UI can celebrate.
+    @discardableResult func recordCook(on date: Date) -> Bool
     func reloadForCurrentUser()
 }
 
 extension CookingStreakTracking {
     /// Record a cook at the current moment. (A protocol requirement can't carry a default arg.)
-    func recordCookToday() { recordCook(on: Date()) }
+    @discardableResult func recordCookToday() -> Bool { recordCook(on: Date()) }
 }
 
 private struct CookingStreakTrackingKey: EnvironmentKey {
@@ -50,10 +51,13 @@ final class CookingStreakManager: CookingStreakTracking {
         load()
     }
 
-    func recordCook(on date: Date = Date()) {
+    @discardableResult
+    func recordCook(on date: Date = Date()) -> Bool {
+        let weeksBefore = streak.currentWeeks
         cookDates.append(date)
         storage.setEncodable(cookDates, forKey: saveKey)
         recompute()
+        return streak.currentWeeks > weeksBefore
     }
 
     func reloadForCurrentUser() {

@@ -21,6 +21,17 @@ import Foundation
         #expect(sut.streak.currentWeeks == 1)
     }
 
+    @Test func recordCook_returnsTrue_whenItStartsOrExtendsStreak() {
+        let sut = makeManager()
+        #expect(sut.recordCook(on: Date()) == true)   // 0 → 1 week: streak started
+    }
+
+    @Test func recordCook_returnsFalse_forSecondCookSameWeek() {
+        let sut = makeManager()
+        _ = sut.recordCook(on: Date())
+        #expect(sut.recordCook(on: Date()) == false)   // same week, no new week counted
+    }
+
     @Test func recordCook_persistsAcrossReload() {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
         let storage = UserScopedStorage(userDefaults: defaults)

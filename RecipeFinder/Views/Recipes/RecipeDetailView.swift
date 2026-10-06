@@ -272,7 +272,13 @@ struct RecipeDetailView: View {
         recipe.lastCookedAt = Date()
         PersistenceController.shared.recordCook(withId: recipe.id)
         recipeStore.sync(recipe)
-        cookingStreak.recordCookToday()   // feeds the weekly cooking-streak habit loop
+        // Feed the weekly cooking-streak habit loop; celebrate when this cook extends it.
+        if cookingStreak.recordCookToday() {
+            confettiCounter += 1
+            HapticManager.shared.celebrate()
+            let weeks = cookingStreak.streak.currentWeeks
+            showAddedFeedback = weeks <= 1 ? "🔥 Cooking streak started!" : "🔥 \(weeks)-week cooking streak!"
+        }
         // Third cook = genuine fan; ask for a review exactly once.
         if recipe.cookCount == 3 { requestReview() }
         // Delay lets any active fullScreenCover dismiss before the sheet appears.

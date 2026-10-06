@@ -75,8 +75,9 @@ the loop self-correcting, not just a to-do list.
       - [x] **(e) Rediscovery nudge** — DONE. Pure `RecipeRediscovery.pick` (stale cooked recipe,
         favour favourite/rating, oldest tie-break; +6 tests) + `RediscoveryCard` on the Recipes
         home below the streak card (browse state only); tap opens the recipe via `navigationPath`.
-      - [ ] **(f) Milestone celebration** — confetti/haptic + maybe a streak badge when the streak
-        extends or hits a milestone (reuse `BadgeEarnedSheet`/`ConfettiSwiftUI`).
+      - [x] **(f) Milestone celebration** — DONE. `recordCook` returns whether it extended the
+        streak; `RecipeDetailView.recordCook` fires confetti + `HapticManager.celebrate()` +
+        "🔥 N-week streak!" toast on extend. +2 `CookingStreakManagerTests`.
       - [ ] **(g)** Wire the dead `CanMakeNowTip` (defined in `RecipeTips.swift`, never attached).
       - [ ] **(h)** Consider a streak-freeze/"rest day" grace like Duolingo if churn data shows
         week-misses hurt; and decide whether to show the card during active search/filter.
