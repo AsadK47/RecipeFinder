@@ -55,6 +55,21 @@ import Foundation
         #expect(s.currentWeeks == 0)
     }
 
+    @Test func isAtRisk_whenLiveStreakButNoCookThisWeek() {
+        // Cooked last week + the week before, nothing yet this week → streak alive but at risk.
+        let s = compute([weeksAgo(1), weeksAgo(2)])
+        #expect(s.currentWeeks == 2)
+        #expect(s.isAtRisk)
+    }
+
+    @Test func notAtRisk_whenCookedThisWeek() {
+        #expect(compute([now, weeksAgo(1)]).isAtRisk == false)
+    }
+
+    @Test func notAtRisk_whenNoStreak() {
+        #expect(compute([]).isAtRisk == false)
+    }
+
     @Test func multipleCooksSameWeek_countThisWeek() {
         let s = compute([now, cal.date(byAdding: .hour, value: -3, to: now)!])
         #expect(s.cooksThisWeek == 2)

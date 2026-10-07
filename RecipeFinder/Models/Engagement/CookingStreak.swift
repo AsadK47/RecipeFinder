@@ -14,6 +14,10 @@ struct CookingStreak: Equatable {
     /// Whether the user has cooked at least once this week.
     var cookedThisWeek: Bool { cooksThisWeek > 0 }
 
+    /// Live streak but no cook yet this week — the grace window where the streak is about to lapse.
+    /// Drives the loss-aversion "cook this week to keep it" nudge (amber flame).
+    var isAtRisk: Bool { currentWeeks > 0 && !cookedThisWeek }
+
     static let empty = CookingStreak(currentWeeks: 0, cooksThisWeek: 0)
 
     static func compute(cookDates: [Date], now: Date = Date(), calendar: Calendar = .current) -> CookingStreak {

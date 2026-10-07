@@ -67,8 +67,10 @@ the loop self-correcting, not just a to-do list.
         account switch (`reloadAllManagers`) + data reset (`DataManagementSettingsView`).
       - [x] **(b) Pure `CookingStreak` engine** — weekly streak with a one-week grace,
         cooks-this-week; +7 `CookingStreakTests`, +4 `CookingStreakManagerTests`.
-      - [x] **(c) Surface** — `CookingStreakCard` on the Recipes home (above the list, shown
-        once the library has recipes): "🔥 N-week streak · M cooked this week" / start nudge.
+      - [x] **(c) Surface** — REPOSITIONED (Duolingo-style): a compact `StreakChip` (flame + week
+        count) lives in the Recipes **header**, always visible, orange when on-track / **yellow when
+        at risk** (loss aversion via `CookingStreak.isAtRisk`). Replaced the bulky `CookingStreakCard`
+        (deleted). Chip hidden for an empty library / zero streak. +3 `isAtRisk` tests.
       - [ ] **(d) Smart re-engagement notification** — reuse `NotificationManager`: gentle nudge
         when the streak is about to lapse (cooked last week, nothing yet this week) / a loved
         recipe has gone cold. Opt-in; schedule weekly, cancel on cook.
@@ -86,6 +88,17 @@ the loop self-correcting, not just a to-do list.
       DEFER until Developer Program enrollment. Pre-work that IS doable now: delete/ consolidate
       the two divergent dead managers (`AuthenticationManager+AppleSignIn` [Keychain, correct] vs
       `AppleSignInManager` [UserDefaults, wrong]) down to one, so enabling later is clean.
+- [x] **15. Habit-loop UI verification + smoke test** — ran the app on the simulator (found &
+      fixed a real bug: the streak chip collided with the centered "RecipeFinder" title in the
+      header → moved it to a slim left-aligned row under the title). Added
+      `RecipeFinderHabitLoopUITests` (2): cook → rating + streak chip appear; import screen has no
+      example links. Added `streak.chip`/`recipe.rating`/`recipe.row` accessibility IDs. Visually
+      confirmed chip renders as "🔥 1" cleanly. Note: raw simctl can't drive taps (no idb) →
+      XCUITest is the GUI handle here.
+- [x] **14. Removed dead import example links** — the 3 hardcoded "Try these examples" URLs in
+      `RecipeImportView` (AllRecipes/BBC/Taming Twins) rotted and made import look broken on first
+      tap. Deleted them + the `exampleButton` helper; kept the reassurance copy. If examples ever
+      return, they must be a CI-verified set (a test that fetches+parses, failing when one rots).
 - [ ] **12. confirmAddWeek unit loss** — `WeekShoppingSummary.Item` has no unit; weekly add-to-
       groceries drops units. Needs the summary to model units (merge across recipes by name+unit).
 - [ ] **13. Test gaps from the audit** (stop manual retesting): `SubscriptionProviding` fake +

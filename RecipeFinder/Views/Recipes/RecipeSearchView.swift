@@ -234,20 +234,9 @@ struct RecipeSearchView: View {
     private var allRecipesContent: some View {
         VStack(spacing: 0) {
             searchHeaderGroup
-            streakSection
             rediscoverySection
             activeFiltersSection
             recipeContentArea
-        }
-    }
-
-    /// Weekly cooking-streak habit card; shown once the library has recipes (not for an empty first-run).
-    @ViewBuilder
-    private var streakSection: some View {
-        if !recipes.isEmpty {
-            CookingStreakCard(streak: cookingStreak.streak)
-                .padding(.horizontal, AppTheme.spacing16)
-                .padding(.bottom, AppTheme.spacing8)
         }
     }
 
@@ -282,6 +271,7 @@ struct RecipeSearchView: View {
             searchText: $searchText,
             isSearchFocused: $isSearchFocused,
             activeFilterCount: activeFilterCount,
+            streak: recipes.isEmpty ? nil : cookingStreak.streak,
             onToggleFilters: { showFilters.toggle() },
             onShowCollections: { showCollections = true }
         )

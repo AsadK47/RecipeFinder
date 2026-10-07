@@ -12,5 +12,6 @@ struct RecipeLink<Label: View>: View {
             label()
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier("recipe.row")
     }
 }

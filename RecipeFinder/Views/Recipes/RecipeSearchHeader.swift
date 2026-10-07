@@ -5,19 +5,39 @@ struct RecipeSearchHeader: View {
     @Binding var searchText: String
     var isSearchFocused: FocusState<Bool>.Binding
     let activeFilterCount: Int
+    /// Current cooking streak; the flame chip shows only when there's a live streak (nil/zero hides it).
+    var streak: CookingStreak?
     let onToggleFilters: () -> Void
     let onShowCollections: () -> Void
 
     var body: some View {
         VStack(spacing: AppTheme.spacing12) {
             headerSection
+            streakRow
             searchBarSection
         }
     }
 
     private var headerSection: some View {
         ScreenTitleHeader("RecipeFinder") {
-            Menu {
+            filterMenu
+        }
+    }
+
+    /// Slim left-aligned streak chip under the title — persistent + compact, without crowding the centered title.
+    @ViewBuilder
+    private var streakRow: some View {
+        if let streak, streak.currentWeeks > 0 {
+            HStack {
+                StreakChip(streak: streak)
+                Spacer()
+            }
+            .padding(.horizontal, AppTheme.spacing20)
+        }
+    }
+
+    private var filterMenu: some View {
+        Menu {
                 Button(action: onShowCollections) {
                     Label("Collections", systemImage: "square.stack")
                 }
@@ -44,7 +64,6 @@ struct RecipeSearchHeader: View {
             }
             .buttonStyle(.plain)
             .accessibilityLabel(activeFilterCount > 0 ? "Menu, \(activeFilterCount) active filters" : "Menu")
-        }
     }
 
     private var searchBarSection: some View {

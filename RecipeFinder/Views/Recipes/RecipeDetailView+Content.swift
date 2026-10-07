@@ -540,6 +540,7 @@ extension RecipeDetailView {
                             .adaptiveSecondaryForeground()
                         Spacer()
                         StarRatingView(rating: recipe.rating, onTap: updateRating)
+                            .accessibilityIdentifier("recipe.rating")
                     }
 
                     Divider()

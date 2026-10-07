@@ -181,35 +181,6 @@ struct RecipeImportView: View {
                     .padding(.horizontal)
                 }
                 
-                VStack(alignment: .leading, spacing: AppTheme.spacing12) {
-                    Text("Try these examples:")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.primary)
-                        .padding(.horizontal)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    VStack(alignment: .leading, spacing: AppTheme.spacing8) {
-                        exampleButton(
-                            url: "https://www.allrecipes.com/recipe/223042/chicken-parmesan/", 
-                            title: "Chicken Parmesan",
-                            subtitle: "AllRecipes"
-                        )
-                        exampleButton(
-                            url: "https://www.bbcgoodfood.com/recipes/spaghetti-carbonara-recipe",
-                            title: "Spaghetti Carbonara",
-                            subtitle: "BBC Good Food"
-                        )
-                        exampleButton(
-                            url: "https://www.tamingtwins.com/mexican-chicken-and-rice-one-pot/",
-                            title: "Mexican Chicken and Rice",
-                            subtitle: "Taming Twins"
-                        )
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal)
-                }
-                
                 Spacer()
                 
                 VStack(spacing: AppTheme.spacing8) {
@@ -295,39 +266,6 @@ struct RecipeImportView: View {
 
     }
 
-    private func exampleButton(url: String, title: String, subtitle: String) -> some View {
-        Button(
-            action: { 
-                urlText = url
-                HapticManager.shared.light()
-            },
-            label: {
-                VStack(alignment: .leading, spacing: AppTheme.spacing4) {
-                    Text(title)
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .adaptiveForegroundColor()
-                    
-                    Text(subtitle)
-                        .font(.caption2)
-                        .adaptiveSecondaryForeground()
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, AppTheme.spacing16)
-                .padding(.vertical, AppTheme.spacing12)
-                .background(
-                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                        .fill(AppTheme.accentColor(for: selectedTheme).opacity(0.1))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                                .stroke(AppTheme.accentColor(for: selectedTheme).opacity(0.3), lineWidth: 1)
-                        )
-                )
-            }
-        )
-        .buttonStyle(PlainButtonStyle())
-    }
-    
     private func pasteFromClipboard() {
         guard let string = UIPasteboard.general.string,
               let url = URL(string: string.trimmingCharacters(in: .whitespacesAndNewlines)),
