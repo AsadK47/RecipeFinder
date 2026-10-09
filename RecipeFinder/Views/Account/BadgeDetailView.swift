@@ -51,10 +51,14 @@ struct BadgeDetailView: View {
                 if badge.isUnlocked, let date = badge.dateEarned {
                     VStack(spacing: AppTheme.spacing8) {
                         HStack(spacing: AppTheme.spacing8) {
-                            Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
-                            Text("Unlocked!").fontWeight(.semibold).foregroundStyle(.green)
+                            Image(systemName: "checkmark.circle.fill")
+                            Text("Unlocked!").fontWeight(.semibold)
                         }
-                        .font(.headline)
+                        .font(.subheadline)
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, AppTheme.spacing12)
+                        .padding(.vertical, AppTheme.spacing6)
+                        .background(Capsule().fill(.green))
 
                         Text("Earned on \(date.formatted(date: .long, time: .omitted))")
                             .font(.subheadline)

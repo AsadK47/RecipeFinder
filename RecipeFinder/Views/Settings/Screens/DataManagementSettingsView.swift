@@ -94,11 +94,13 @@ struct DataManagementSettingsView: View {
             if dataCleared {
                 HStack(spacing: AppTheme.spacing8) {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundStyle(.green)
                     Text("Data cleared successfully")
-                        .font(.caption)
-                        .foregroundStyle(.green)
+                        .font(.caption.weight(.semibold))
                 }
+                .foregroundStyle(.white)
+                .padding(.horizontal, AppTheme.spacing12)
+                .padding(.vertical, AppTheme.spacing6)
+                .background(Capsule().fill(.green))
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
 
