@@ -113,9 +113,12 @@ the loop self-correcting, not just a to-do list.
       an existing account keep their old parse (seed runs once, skips existing names) — only
       re-imports / fresh accounts get the fix.
       **Corpus quality GATE added** (`SeedCorpusParseQualityTests`): parses all 355 seed entries every
-      build, asserts a locked floor `parseNil <= 3` + `good% >= 88`. Measured now: **355 total, 3
+      build. TWO checks: (1) `seedCorpusParsesWithRealAmounts` — aggregate floor `parseNil <= 3` +
+      `good% >= 88`; (2) `eachSeedRecipeMatchesKnownQuality` — PER-RECIPE gate vs a pinned golden set
+      (`RecipeSeed/seed_parse_known_poor.json`, 34 names): fails naming the exact recipe if a non-listed
+      one degrades (regression) OR a listed one recovers (shrink the list). Measured now: **355 total, 3
       unparseable, 321 good (90%), 31 poor** (up from 85%) — so "is the seed OK?" is answered by CI,
-      not manual checking; any regression fails the build.
+      not manual checking; any regression fails the build with the specific recipe named.
       **Second fix pass (this session), all +tests green:** (a) name-first embedded amounts
       ("Minced chicken 500g" → 500 g) via `extractEmbeddedAmount`; (b) leading scrape/scale artifacts
       ("750 500 grams"→500 g, "5 1 teaspoon"→1 tsp, "8421052632 2 cups"→2 cups, "4210526316 1/2 tsp"→

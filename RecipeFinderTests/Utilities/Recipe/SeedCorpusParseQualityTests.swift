@@ -9,41 +9,61 @@ import Foundation
 
     private struct Stats { var total = 0; var parseNil = 0; var good = 0; var poor = 0; var poorNames: [String] = [] }
 
-    /// Resolve the seed JSON from the source tree (walk up from this file); skips if unavailable.
-    private func corpusURL() -> URL? {
+    /// Resolve a file in the seed directory from the source tree (walk up from this file); skips if unavailable.
+    private func seedFileURL(_ name: String) -> URL? {
         var dir = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
         for _ in 0..<8 {
-            let candidate = dir.appendingPathComponent("RecipeFinder/RecipeSeed/recipes_seed.json")
+            let candidate = dir.appendingPathComponent("RecipeFinder/RecipeSeed/\(name)")
             if FileManager.default.fileExists(atPath: candidate.path) { return candidate }
             dir = dir.deletingLastPathComponent()
         }
         return nil
     }
 
-    private func measure() throws -> Stats {
-        let url = try #require(corpusURL(), "recipes_seed.json not found from \(#filePath)")
-        let data = try Data(contentsOf: url)
-        let entries = try #require(try JSONSerialization.jsonObject(with: data) as? [[String: String]])
+    private func corpusURL() -> URL? { seedFileURL("recipes_seed.json") }
 
-        var s = Stats()
-        for e in entries {
-            s.total += 1
-            guard let pre = TextRecipeParser.parse(e["rawText"] ?? "") else {
-                s.parseNil += 1
-                s.poorNames.append("NIL:" + (e["name"] ?? "?"))
-                continue
-            }
+    /// One recipe's name + whether its ingredients parse "well" (≥2 lines, ≤half with no amount).
+    /// Single source of truth for both the aggregate floor and the per-recipe golden test.
+    private func classifyAll() throws -> [(name: String, good: Bool)] {
+        let url = try #require(corpusURL(), "recipes_seed.json not found from \(#filePath)")
+        let entries = try #require(try JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [[String: String]])
+        return entries.map { e in
+            let name = e["name"] ?? "?"
+            guard let pre = TextRecipeParser.parse(e["rawText"] ?? "") else { return (name, false) }
             let lines = pre.ingredients ?? []
             let zero = lines.map { IngredientLineParser.parse($0) }.filter { $0.quantity == 0 }.count
             let zeroFrac = lines.isEmpty ? 1.0 : Double(zero) / Double(lines.count)
-            if lines.count >= 2 && zeroFrac <= 0.5 {
-                s.good += 1
-            } else {
-                s.poor += 1
-                if s.poorNames.count < 20 { s.poorNames.append(e["name"] ?? "?") }
-            }
+            return (name, lines.count >= 2 && zeroFrac <= 0.5)
+        }
+    }
+
+    private func measure() throws -> Stats {
+        var s = Stats()
+        for r in try classifyAll() {
+            s.total += 1
+            if r.good { s.good += 1 }
+            else { s.poor += 1; if s.poorNames.count < 20 { s.poorNames.append(r.name) } }
         }
         return s
+    }
+
+    /// Per-recipe gate: each recipe is checked individually against a pinned golden set of known-poor names
+    /// (`seed_parse_known_poor.json`, next to the corpus). Fails — naming the exact recipes — if either:
+    ///   • a recipe NOT on the list now parses poorly → a real regression a parser change introduced, or
+    ///   • a recipe ON the list now parses well → the golden set is stale, shrink it (keeps it honest as
+    ///     the parser improves, so "known-poor" can't quietly hide a recipe that recovered).
+    /// Regenerate the baseline deliberately (never blindly) when the delta is understood. The pinned entries
+    /// are messy SOURCE data (method prose in the ingredient list, unitless spice lists), not parser bugs.
+    @Test func eachSeedRecipeMatchesKnownQuality() throws {
+        let goldenURL = try #require(seedFileURL("seed_parse_known_poor.json"), "golden baseline not found")
+        let golden = Set(try #require(try JSONSerialization.jsonObject(with: Data(contentsOf: goldenURL)) as? [String]))
+
+        let currentPoor = Set(try classifyAll().filter { !$0.good }.map(\.name))
+        let regressions = currentPoor.subtracting(golden).sorted()   // good → poor: a change broke these
+        let recovered = golden.subtracting(currentPoor).sorted()     // poor → good: remove from the golden set
+
+        #expect(regressions.isEmpty, "These seed recipes regressed to poor import quality: \(regressions.joined(separator: " | "))")
+        #expect(recovered.isEmpty, "These seed recipes now parse well — remove them from seed_parse_known_poor.json: \(recovered.joined(separator: " | "))")
     }
 
     @Test func seedCorpusParsesWithRealAmounts() throws {
