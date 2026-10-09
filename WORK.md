@@ -111,8 +111,15 @@ the loop self-correcting, not just a to-do list.
       `TextRecipeParser.isBulletCharacter`. 60-entry sample → 55 good / 5 marginal / 0 nil; Achari
       Chicken 22/22→2/22 zero-qty. +7 `IngredientLineParserTests`. *Note:* already-seeded recipes in
       an existing account keep their old parse (seed runs once, skips existing names) — only
-      re-imports / fresh accounts get the fix. *Smaller follow-up:* sub-section labels ("Spices",
-      "Wet ingredients", "For the dough:") still leak as zero-qty ingredient lines.
+      re-imports / fresh accounts get the fix.
+      **Corpus quality GATE added** (`SeedCorpusParseQualityTests`): parses all 355 seed entries every
+      build, asserts a locked floor `parseNil <= 3` + `good% >= 84`. Measured now: **355 total, 3
+      unparseable, 302 good (85%), 50 poor** — so "is the seed OK?" is answered by CI, not manual
+      checking; any regression fails the build. Raise the floor as the parser improves.
+      **Known residual (50 poor + 3 nil), NOT fixed — messy corpus formats, riskier:** (a) scraper-
+      prepended scale numbers ("575 200g flour"), (b) name-first lines ("butter 100g, chopped"),
+      (c) sub-section labels leaking as zero-qty lines. Needs an amount-anywhere fallback (risks the
+      302 good) or a one-time corpus data clean — decide before attempting.
 - [x] **14. Removed dead import example links** — the 3 hardcoded "Try these examples" URLs in
       `RecipeImportView` (AllRecipes/BBC/Taming Twins) rotted and made import look broken on first
       tap. Deleted them + the `exampleButton` helper; kept the reassurance copy. If examples ever
