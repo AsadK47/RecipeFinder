@@ -48,7 +48,7 @@ struct ExpiryRecipeSuggestionsSection: View {
                 if !suggestion.expiringItems.isEmpty {
                     Text("Uses: \(suggestion.expiringItems.joined(separator: ", "))")
                         .font(.caption)
-                        .foregroundStyle(.orange)
+                        .adaptiveSecondaryForeground()
                         .lineLimit(1)
                 }
             }

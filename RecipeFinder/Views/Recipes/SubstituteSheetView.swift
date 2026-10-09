@@ -48,11 +48,13 @@ struct SubstituteSheetView: View {
     private func substituteRow(_ text: String, number: Int) -> some View {
         GlassCard {
             HStack(alignment: .top, spacing: AppTheme.spacing12) {
+                // White-on-accent step badge — accent text on the frosted card was low-contrast.
                 Text("\(number)")
-                    .font(.subheadline)
+                    .font(.caption)
                     .fontWeight(.bold)
-                    .foregroundStyle(AppTheme.accentColor)
-                    .frame(width: 20, alignment: .center)
+                    .foregroundStyle(.white)
+                    .frame(width: 22, height: 22)
+                    .background(Circle().fill(AppTheme.accentColor))
                     .padding(.top, AppTheme.spacing2)
 
                 Text(text)

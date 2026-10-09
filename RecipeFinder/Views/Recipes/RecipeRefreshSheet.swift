@@ -83,11 +83,12 @@ struct RecipeRefreshSheet: View {
                 HStack(spacing: AppTheme.spacing4) {
                     Image(systemName: "arrow.right")
                         .font(.caption2.weight(.semibold))
+                        .foregroundStyle(AppTheme.accentColor)   // colour cue stays on the icon
                     Text(newValue(for: field))
                         .font(.caption.weight(.medium))
+                        .adaptiveForegroundColor()               // readable on the gradient; accent text was near-invisible
                         .lineLimit(1)
                 }
-                .foregroundStyle(AppTheme.accentColor)
             }
             Spacer(minLength: 0)
             Toggle("", isOn: Binding(

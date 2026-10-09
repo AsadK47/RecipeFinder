@@ -44,9 +44,14 @@ struct RecipeServingsCard: View {
                     .foregroundStyle(.primary)
 
                 if recipe.currentServings != recipe.baseServings {
-                    Text("(\(String(format: "%.1fx", recipe.scaleFactor)))")
-                        .font(.caption)
-                        .foregroundStyle(AppTheme.accentColor)
+                    // A filled pill (white on accent) stays legible on the light frosted card — the old
+                    // low-contrast accent-on-glass text was hard to read.
+                    Text(String(format: "%.1fx", recipe.scaleFactor))
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, AppTheme.spacing6)
+                        .padding(.vertical, AppTheme.spacing2)
+                        .background(Capsule().fill(AppTheme.accentColor))
                 }
             }
             .accessibilityElement(children: .ignore)

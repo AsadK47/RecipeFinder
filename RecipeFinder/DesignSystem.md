@@ -50,3 +50,10 @@ inputs **blend** into the glass via translucent fills, not solid fills.
 - **2026-09-24 — One editor, presented modularly.** Duplicate editors for the
   same data = drift. Single canonical editor (`RecipeWizardBuilder` save path),
   shown focused per section. See the recipe wizard.
+- **2026-10-09 — Never colour content *text* with the brand accent on a frosted/
+  gradient surface.** `accentColor` (teal) text on a `GlassCard`/`.appCard()`/the
+  teal gradient is near-invisible (e.g. the servings "2.0x", shopping store name,
+  refresh-diff value). **Rule:** content Text → `.primary` / `adaptiveForegroundColor()`
+  / `adaptiveSecondaryForeground()`. Keep the colour on an *icon* beside it, or make
+  the text a **filled pill** (white on an accent `Capsule`/`Circle`). Same "picture it
+  on both ends of the gradient" test — now applied to text colour, not just fills.

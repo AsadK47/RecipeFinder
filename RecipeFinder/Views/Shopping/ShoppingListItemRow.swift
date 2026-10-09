@@ -96,10 +96,11 @@ struct ShoppingListItemRow: View {
                         }
                         
                         if let store = item.preferredStore {
+                            // Scheme-aware secondary colour — teal accent text was unreadable on the frosted card.
                             Text(store)
                                 .font(.caption2)
                                 .fontWeight(.semibold)
-                                .foregroundStyle(AppTheme.accentColor)
+                                .adaptiveSecondaryForeground()
                                 .lineLimit(1)
                         }
                     }
