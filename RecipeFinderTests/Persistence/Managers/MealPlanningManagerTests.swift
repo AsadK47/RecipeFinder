@@ -175,7 +175,41 @@ final class MealPlanningManagerTests: XCTestCase {
 
         let chicken = summary.items.first { $0.name.lowercased().contains("chicken") }
         XCTAssertEqual(chicken?.quantity, 2, "Chicken appears in both meals so it should merge with quantity 2")
+        XCTAssertEqual(chicken?.unit, "unit", "The ingredient unit is carried through, not dropped")
         XCTAssertEqual(summary.items.filter { $0.name.lowercased().contains("chicken") }.count, 1)
+    }
+
+    func testWeekShoppingSummary_sumsSameUnitButKeepsDifferentUnitsSeparate() {
+        // Two recipes both need "flour": one in grams, one in cups. Grams should sum; cups stay a separate line.
+        let a = RecipeModel(
+            name: "Bread", category: "Test", difficulty: "Basic", prepTime: "5 min", cookingTime: "5 min",
+            baseServings: 1, ingredients: [Ingredient(baseQuantity: 200, unit: "g", name: "flour")],
+            prePrepInstructions: [], instructions: [], notes: ""
+        )
+        let b = RecipeModel(
+            name: "Rolls", category: "Test", difficulty: "Basic", prepTime: "5 min", cookingTime: "5 min",
+            baseServings: 1, ingredients: [Ingredient(baseQuantity: 100, unit: "g", name: "flour")],
+            prePrepInstructions: [], instructions: [], notes: ""
+        )
+        let c = RecipeModel(
+            name: "Pancakes", category: "Test", difficulty: "Basic", prepTime: "5 min", cookingTime: "5 min",
+            baseServings: 1, ingredients: [Ingredient(baseQuantity: 1, unit: "cup", name: "flour")],
+            prePrepInstructions: [], instructions: [], notes: ""
+        )
+        let start = weekStart(containing: Date())
+        let d1 = Calendar.current.date(byAdding: .day, value: 1, to: start)!
+        let d2 = Calendar.current.date(byAdding: .day, value: 2, to: start)!
+        let d3 = Calendar.current.date(byAdding: .day, value: 3, to: start)!
+        sut.addMealPlan(makePlan(recipeId: a.id, recipeName: a.name, date: d1, mealTime: .dinner))
+        sut.addMealPlan(makePlan(recipeId: b.id, recipeName: b.name, date: d2, mealTime: .dinner))
+        sut.addMealPlan(makePlan(recipeId: c.id, recipeName: c.name, date: d3, mealTime: .dinner))
+
+        let summary = sut.weekShoppingSummary(forWeekStarting: start, recipes: [a, b, c])
+        let flour = summary.items.filter { $0.name.lowercased().contains("flour") }
+
+        XCTAssertEqual(flour.count, 2, "Grams merge into one line; cups stay separate")
+        XCTAssertEqual(flour.first { $0.unit == "g" }?.quantity, 300, "200g + 100g sum")
+        XCTAssertEqual(flour.first { $0.unit == "cup" }?.quantity, 1)
     }
 
     func testWeekShoppingSummary_skipsCompletedMeals() {

@@ -301,6 +301,15 @@ struct BadgeManagerTests {
         #expect(sut.isBadgeUnlocked(BadgeType.firstCookPhoto.rawValue))
     }
 
+    @Test func metrics_silentBackfillUnlocksWithoutCelebration() {
+        let sut = makeSUT()
+        var m = BadgeMetrics(); m.recipesCooked = 25; m.weeklyStreak = 4
+        sut.checkAndUnlockBadges(metrics: m, silent: true)
+        #expect(sut.isBadgeUnlocked(BadgeType.cookedTwentyFive.rawValue))  // unlocked…
+        #expect(sut.isBadgeUnlocked(BadgeType.streakFourWeeks.rawValue))
+        #expect(sut.pendingCelebration == nil)                            // …but no launch parade
+    }
+
     /// Regression guard: the library-size path must never unlock cooking badges (they default to 0 required).
     @Test func recipeCountPath_doesNotUnlockCookingBadges() {
         let sut = makeSUT()

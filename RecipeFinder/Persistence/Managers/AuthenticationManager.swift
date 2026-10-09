@@ -86,5 +86,14 @@ final class AuthenticationManager: NSObject, Authenticating {
         CollectionManager.shared.reloadForCurrentUser()
         CookingStreakManager.shared.reloadForCurrentUser()
         AccountManager.shared.loadProfile()
+
+        // Backfill cooking badges from existing history so upgraders (who cooked before these badges existed)
+        // see them immediately, not only after their next cook. Reads persistence directly — the in-memory
+        // RecipeStore may still be loading at sign-in. Silent: past achievements don't deserve a launch parade.
+        let metrics = BadgeMetrics.from(
+            recipes: PersistenceController.shared.fetchRecipes(),
+            streakWeeks: CookingStreakManager.shared.streak.currentWeeks
+        )
+        BadgeManager.shared.checkAndUnlockBadges(metrics: metrics, silent: true)
     }
 }

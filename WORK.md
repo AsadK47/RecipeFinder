@@ -136,8 +136,12 @@ the loop self-correcting, not just a to-do list.
       `RecipeImportView` (AllRecipes/BBC/Taming Twins) rotted and made import look broken on first
       tap. Deleted them + the `exampleButton` helper; kept the reassurance copy. If examples ever
       return, they must be a CI-verified set (a test that fetches+parses, failing when one rots).
-- [ ] **12. confirmAddWeek unit loss** — `WeekShoppingSummary.Item` has no unit; weekly add-to-
-      groceries drops units. Needs the summary to model units (merge across recipes by name+unit).
+- [x] **12. confirmAddWeek unit loss — FIXED** (uncommitted). `WeekShoppingSummary.Item` now carries a
+      `unit`, and `weekShoppingSummary` merges ingredient lines by **(name, unit)** using the same
+      `RecipeShoppingList.item(from:)` mapping the single-recipe path uses — so amounts in the same unit sum
+      (200g + 100g = 300g) and different units stay separate (cups ≠ grams). Previously `quantity` was a
+      meal-count pushed into groceries with no unit ("flour 2"). `confirmAddWeek` passes `unit:` through.
+      +1 test (different-units-stay-separate), existing merge test extended to assert the unit carries.
 - [ ] **13. Test gaps from the audit** (stop manual retesting): `SubscriptionProviding` fake +
       StoreKitTest `SKTestSession` suite (purchase/restore/**revoke→isSubscribed flips**); auth
       orchestration (signIn/signUp/duplicate-guard/signOut/session-expiry/guest); extract a
@@ -214,7 +218,7 @@ Approved direction: full cook-centric overhaul + tappable streak chip → Cookin
 - **Cooking sheet** (`Components/Sheets/CookingSheet.swift`, NEW): streak chip is now a Button → sheet explaining the streak in plain language + cooking-badge progress. Answers "users won't know what the flame means."
 - Tests: +new `BadgeModelTests` (metrics aggregation, progress, criteria) + `BadgeManagerTests` (metrics path, breadth/depth/quality, recipe-count regression guard).
 
-**Follow-ups (not done):** (a) "Variety Pack" (3 cuisines in one week) deferred — needs a time-windowed metric; (b) `CookingModeView:337` still unlocks headChef directly — now redundant (recordCook covers it) but harmless, remove when touching that file; (c) one-time migration so already-cooked recipes backfill cook badges on upgrade (currently they unlock on the next cook); (d) visually verify the Cooking sheet + progress bars on-device.
+**Follow-ups:** (a) "Variety Pack" (3 cuisines in one week) deferred — needs a time-windowed metric; (b) `CookingModeView:337` still unlocks headChef directly — now redundant (recordCook covers it) but harmless, remove when touching that file; (c) ✅ DONE — `AuthenticationManager.reloadAllManagers()` now silently backfills cooking badges from existing history on every sign-in (reads `PersistenceController.fetchRecipes()` directly since the in-memory store loads async); +1 test; (d) visually verify the Cooking sheet + progress bars on-device.
 
 ## In progress
 (none — badge overhaul complete + verified green at 1776 tests, uncommitted)

@@ -383,7 +383,7 @@ struct MealPlanningView: View {
 
     private func confirmAddWeek() {
         for item in weekAddCandidates {
-            ShoppingListManager.shared.addItem(name: item.name, quantity: item.quantity, category: nil)
+            ShoppingListManager.shared.addItem(name: item.name, quantity: item.quantity, unit: item.unit, category: nil)
         }
         HapticManager.shared.success()
 

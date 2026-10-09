@@ -244,8 +244,11 @@ final class MealPlanningManager: MealPlanningManaging {
     func weekShoppingSummary(forWeekStarting startDate: Date, recipes: [RecipeModel]) -> WeekShoppingSummary {
         let plannedMeals = mealPlansForWeek(starting: startDate).meals.filter { !$0.isCompleted }
 
-        var quantities: [String: Int] = [:]
-        var itemOrder: [String] = []
+        // Merge by (name, unit) so amounts in the same unit sum and different units stay separate — reusing the
+        // same per-ingredient mapping the single-recipe "add to groceries" path uses, so both carry real amounts.
+        struct Key: Hashable { let name: String; let unit: String }
+        var quantities: [Key: Int] = [:]
+        var itemOrder: [Key] = []
         var mealsCovered = 0
         var missingRecipeNames: [String] = []
 
@@ -263,17 +266,16 @@ final class MealPlanningManager: MealPlanningManaging {
             mealsCovered += 1
 
             for ingredient in recipe.ingredients {
-                let name = IngredientNormalizer.normalize(ingredient.mainIngredientName)
-                guard !name.isEmpty else { continue }
-
-                if quantities[name] == nil {
-                    itemOrder.append(name)
+                guard let line = RecipeShoppingList.item(from: ingredient) else { continue }
+                let key = Key(name: line.name, unit: line.unit)
+                if quantities[key] == nil {
+                    itemOrder.append(key)
                 }
-                quantities[name, default: 0] += 1
+                quantities[key, default: 0] += line.quantity
             }
         }
 
-        let items = itemOrder.map { WeekShoppingSummary.Item(name: $0, quantity: quantities[$0] ?? 0) }
+        let items = itemOrder.map { WeekShoppingSummary.Item(name: $0.name, quantity: quantities[$0] ?? 0, unit: $0.unit) }
         return WeekShoppingSummary(items: items, mealsCovered: mealsCovered, missingRecipeNames: missingRecipeNames)
     }
 
