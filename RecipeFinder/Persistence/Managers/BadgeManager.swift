@@ -75,11 +75,26 @@ final class BadgeManager: BadgeManaging {
         saveBadges()
     }
 
+    /// Legacy library-size path (import/add trigger sites). Only unlocks collection badges — cooking/streak/
+    /// breadth badges go through `checkAndUnlockBadges(metrics:)` so they can't unlock on a zero threshold.
     func checkAndUnlockBadges(recipeCount: Int, silent: Bool = false) {
         for badgeType in BadgeType.allCases {
-            guard recipeCount >= badgeType.requiredCount,
+            guard badgeType.criterion.metric == .recipesCollected,
+                  recipeCount >= badgeType.criterion.threshold,
                   !isBadgeUnlocked(badgeType.rawValue) else { continue }
             // welcomeAboard fires silently — a "you joined" pop mid-session would be confusing.
+            let shouldBeSilent = silent || badgeType == .welcomeAboard
+            unlockBadge(badgeType, silent: shouldBeSilent)
+        }
+    }
+
+    /// Unified metrics path: unlocks every threshold badge whose metric has reached its target. A superset of
+    /// the recipe-count path (it also catches collection badges), driven from the cook choke point.
+    func checkAndUnlockBadges(metrics: BadgeMetrics, silent: Bool = false) {
+        for badgeType in BadgeType.allCases {
+            guard let metric = badgeType.criterion.metric,
+                  metrics.value(for: metric) >= badgeType.criterion.threshold,
+                  !isBadgeUnlocked(badgeType.rawValue) else { continue }
             let shouldBeSilent = silent || badgeType == .welcomeAboard
             unlockBadge(badgeType, silent: shouldBeSilent)
         }

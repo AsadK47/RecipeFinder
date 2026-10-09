@@ -281,6 +281,10 @@ struct RecipeDetailView: View {
             let weeks = cookingStreak.streak.currentWeeks
             showAddedFeedback = weeks <= 1 ? "🔥 Cooking streak started!" : "🔥 \(weeks)-week cooking streak!"
         }
+
+        // Cooking is now the main path to badges: volume (10/25/50/100), streak, cuisines, and mastery all
+        // key off this choke point.
+        refreshCookingBadges()
         // Third cook = genuine fan; ask for a review exactly once.
         if recipe.cookCount == 3 { requestReview() }
         // Delay lets any active fullScreenCover dismiss before the sheet appears.
@@ -304,6 +308,7 @@ struct RecipeDetailView: View {
             return
         }
         HapticManager.shared.success()
+        refreshCookingBadges()   // first cook photo → "Food Stylist"
     }
 
     func updateRating(_ newRating: Int) {
@@ -311,6 +316,14 @@ struct RecipeDetailView: View {
         recipe.rating = newRating
         PersistenceController.shared.updateRating(withId: recipe.id, rating: newRating)
         recipeStore.sync(recipe)
+        refreshCookingBadges()   // rating 10 recipes → "Critic"
+    }
+
+    /// Re-evaluate cooking/collection badges from the current library + streak. Safe after any action that
+    /// changes a metric (cook, cook photo, rating); unlocking is idempotent.
+    private func refreshCookingBadges() {
+        let metrics = BadgeMetrics.from(recipes: recipeStore.recipes, streakWeeks: cookingStreak.streak.currentWeeks)
+        BadgeManager.shared.checkAndUnlockBadges(metrics: metrics)
     }
 
     // Auto-runs on open; discards network errors silently, shows diff sheet only on real changes.

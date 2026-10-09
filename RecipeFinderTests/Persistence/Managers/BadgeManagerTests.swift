@@ -253,4 +253,61 @@ struct BadgeManagerTests {
         #expect(sut.isBadgeUnlocked(badgeType.rawValue))
         #expect(sut.pendingCelebration == badgeType)
     }
+
+    // MARK: - checkAndUnlockBadges(metrics:)
+
+    @Test func metrics_unlocksHeadChefOnFirstCook() {
+        let sut = makeSUT()
+        var m = BadgeMetrics(); m.recipesCooked = 1
+        sut.checkAndUnlockBadges(metrics: m)
+        #expect(sut.isBadgeUnlocked(BadgeType.headChef.rawValue))
+    }
+
+    @Test func metrics_unlocksCookVolumeAtThreshold() {
+        let sut = makeSUT()
+        var m = BadgeMetrics(); m.recipesCooked = 25
+        sut.checkAndUnlockBadges(metrics: m)
+        #expect(sut.isBadgeUnlocked(BadgeType.cookedTen.rawValue))
+        #expect(sut.isBadgeUnlocked(BadgeType.cookedTwentyFive.rawValue))
+        #expect(!sut.isBadgeUnlocked(BadgeType.cookedFifty.rawValue))
+    }
+
+    @Test func metrics_unlocksStreakBadge() {
+        let sut = makeSUT()
+        var m = BadgeMetrics(); m.weeklyStreak = 2
+        sut.checkAndUnlockBadges(metrics: m)
+        #expect(sut.isBadgeUnlocked(BadgeType.streakTwoWeeks.rawValue))
+        #expect(!sut.isBadgeUnlocked(BadgeType.streakFourWeeks.rawValue))
+    }
+
+    @Test func metrics_doesNotUnlockBelowThreshold() {
+        let sut = makeSUT()
+        var m = BadgeMetrics(); m.recipesCooked = 9
+        sut.checkAndUnlockBadges(metrics: m)
+        #expect(!sut.isBadgeUnlocked(BadgeType.cookedTen.rawValue))
+    }
+
+    @Test func metrics_breadthDepthQualityBadges() {
+        let sut = makeSUT()
+        var m = BadgeMetrics()
+        m.cuisinesCooked = 5
+        m.sameRecipeCooked = 5
+        m.recipesRated = 10
+        m.cookPhotos = 1
+        sut.checkAndUnlockBadges(metrics: m)
+        #expect(sut.isBadgeUnlocked(BadgeType.cuisinesFive.rawValue))
+        #expect(sut.isBadgeUnlocked(BadgeType.sameRecipeFive.rawValue))
+        #expect(sut.isBadgeUnlocked(BadgeType.ratedTen.rawValue))
+        #expect(sut.isBadgeUnlocked(BadgeType.firstCookPhoto.rawValue))
+    }
+
+    /// Regression guard: the library-size path must never unlock cooking badges (they default to 0 required).
+    @Test func recipeCountPath_doesNotUnlockCookingBadges() {
+        let sut = makeSUT()
+        sut.checkAndUnlockBadges(recipeCount: 100)  // huge library, zero cooks
+        #expect(!sut.isBadgeUnlocked(BadgeType.headChef.rawValue))
+        #expect(!sut.isBadgeUnlocked(BadgeType.cookedTen.rawValue))
+        #expect(!sut.isBadgeUnlocked(BadgeType.streakTwoWeeks.rawValue))
+        #expect(sut.isBadgeUnlocked(BadgeType.hundredRecipes.rawValue))  // collection still unlocks
+    }
 }

@@ -109,4 +109,63 @@ struct BadgeModelTests {
     func colorFor_unknownFallsBackToGray(name: String) {
         #expect(Badge.color(for: name) == .gray)
     }
+
+    // MARK: - BadgeMetrics aggregation
+
+    private func recipe(category: String = "Main", cuisine: String? = nil,
+                        cookCount: Int = 0, rating: Int = 0, photos: [String] = []) -> RecipeModel {
+        RecipeModel(
+            name: "R", category: category, difficulty: "Basic",
+            prepTime: "5 minutes", cookingTime: "5 minutes", baseServings: 1,
+            ingredients: [], prePrepInstructions: [], instructions: ["Do"],
+            notes: "", cookCount: cookCount, rating: rating, cuisine: cuisine, photoNames: photos
+        )
+    }
+
+    @Test func metrics_aggregateLibrary() {
+        let recipes = [
+            recipe(category: "Main", cuisine: "Italian", cookCount: 3, rating: 5, photos: ["a.jpg"]),
+            recipe(category: "Main", cuisine: "Thai", cookCount: 2, rating: 4),
+            recipe(category: "Dessert", cuisine: "Italian", cookCount: 1),  // Italian again → not a new cuisine
+            recipe(category: "Snack", cuisine: nil, cookCount: 0)           // uncooked → excluded from cuisines
+        ]
+        let m = BadgeMetrics.from(recipes: recipes, streakWeeks: 7)
+        #expect(m.recipesCollected == 4)
+        #expect(m.recipesCooked == 6)        // 3 + 2 + 1 + 0
+        #expect(m.weeklyStreak == 7)
+        #expect(m.sameRecipeCooked == 3)     // the most-cooked single recipe
+        #expect(m.recipesRated == 2)
+        #expect(m.cookPhotos == 1)
+        #expect(m.cuisinesCooked == 2)       // Italian + Thai (uncooked snack excluded)
+    }
+
+    @Test func metrics_cuisineFallsBackToCategoryWhenCuisineMissing() {
+        let recipes = [recipe(category: "Korean", cuisine: nil, cookCount: 1)]
+        #expect(BadgeMetrics.from(recipes: recipes, streakWeeks: 0).cuisinesCooked == 1)
+    }
+
+    // MARK: - progress(for:)
+
+    @Test func progress_countsTowardThreshold() {
+        var m = BadgeMetrics(); m.recipesCooked = 7
+        let p = BadgeType.cookedTen.progress(for: m)
+        #expect(p?.current == 7)
+        #expect(p?.target == 10)
+    }
+
+    @Test func progress_capsAtTarget() {
+        var m = BadgeMetrics(); m.recipesCooked = 50
+        #expect(BadgeType.cookedTen.progress(for: m)?.current == 10)
+    }
+
+    @Test func progress_nilForEventBadge() {
+        #expect(BadgeType.firstImport.progress(for: BadgeMetrics()) == nil)
+    }
+
+    // MARK: - New cook-centric criteria
+
+    @Test(arguments: [BadgeType.cookedTen, .streakTwoWeeks, .cuisinesFive, .sameRecipeFive, .ratedTen, .firstCookPhoto])
+    func cookingBadges_haveZeroRequiredCount(type: BadgeType) {
+        #expect(type.requiredCount == 0)  // not collection badges → excluded from the recipe-count path
+    }
 }

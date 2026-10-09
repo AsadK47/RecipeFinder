@@ -40,6 +40,7 @@ struct RecipeSearchView: View {
     @AppStorage("skipRecipeDeleteConfirmation") private var skipDeleteConfirmation: Bool = false
     @Environment(\.collections) private var collectionManager
     @Environment(\.cookingStreak) private var cookingStreak
+    @State private var showCookingSheet = false
     @State private var selectedCollectionID: UUID? = nil
     @State private var navigationPath = NavigationPath()
     // Refreshed on appear so RecipeDetailView pantry toggles don't re-render this buried view and re-run apply(to:) 3x per toggle.
@@ -108,6 +109,7 @@ struct RecipeSearchView: View {
                 }
         }
         .sheet(isPresented: $showCollections) { collectionsSheet }
+        .sheet(isPresented: $showCookingSheet) { CookingSheet(streak: cookingStreak.streak) }
         .onAppear {
             availableIngredients = Set(KitchenInventoryManager.shared.items.map { $0.name.lowercased() })
             updateFilterCache()
@@ -273,7 +275,8 @@ struct RecipeSearchView: View {
             activeFilterCount: activeFilterCount,
             streak: recipes.isEmpty ? nil : cookingStreak.streak,
             onToggleFilters: { showFilters.toggle() },
-            onShowCollections: { showCollections = true }
+            onShowCollections: { showCollections = true },
+            onShowStreak: { showCookingSheet = true }
         )
     }
     

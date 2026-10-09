@@ -4,9 +4,18 @@ struct BadgeDetailView: View {
     let badge: Badge
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.recipeStore) private var recipeStore
+    @Environment(\.cookingStreak) private var cookingStreak
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
 
     var badgeColor: Color { Badge.color(for: badge.color) }
+
+    /// How far the user is toward a still-locked threshold badge, or nil for event/unlocked badges.
+    private var progress: (current: Int, target: Int)? {
+        guard !badge.isUnlocked, let type = BadgeType(rawValue: badge.id) else { return nil }
+        let metrics = BadgeMetrics.from(recipes: recipeStore.recipes, streakWeeks: cookingStreak.streak.currentWeeks)
+        return type.progress(for: metrics)
+    }
 
     var body: some View {
         ZStack {
@@ -88,6 +97,18 @@ struct BadgeDetailView: View {
                                     .font(.subheadline)
                                     .adaptiveForegroundColor(opacity: AppTheme.highEmphasisOpacity)
                                     .fixedSize(horizontal: false, vertical: true)
+                            }
+                        }
+
+                        if let progress {
+                            Divider().padding(.vertical, AppTheme.spacing4)
+                            VStack(alignment: .leading, spacing: AppTheme.spacing6) {
+                                ProgressView(value: Double(progress.current), total: Double(progress.target))
+                                    .tint(badgeColor)
+                                Text("\(progress.current) / \(progress.target)")
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
+                                    .adaptiveForegroundColor(opacity: AppTheme.mediumEmphasisOpacity)
                             }
                         }
                     }

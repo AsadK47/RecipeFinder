@@ -9,6 +9,8 @@ struct RecipeSearchHeader: View {
     var streak: CookingStreak?
     let onToggleFilters: () -> Void
     let onShowCollections: () -> Void
+    /// Tapping the streak chip opens the Cooking sheet (explains the streak + shows cooking-badge progress).
+    var onShowStreak: () -> Void = {}
 
     var body: some View {
         VStack(spacing: AppTheme.spacing12) {
@@ -25,9 +27,13 @@ struct RecipeSearchHeader: View {
         // persistent + Duolingo-like, taking no vertical space of its own.
         .overlay(alignment: .topLeading) {
             if let streak, streak.currentWeeks > 0 {
-                StreakChip(streak: streak)
-                    .padding(.leading, AppTheme.spacing20)
-                    .padding(.top, AppTheme.spacing16)
+                Button(action: onShowStreak) {
+                    StreakChip(streak: streak)
+                }
+                .buttonStyle(.plain)
+                .accessibilityHint("Shows what your cooking streak means and your badge progress")
+                .padding(.leading, AppTheme.spacing20)
+                .padding(.top, AppTheme.spacing16)
             }
         }
     }

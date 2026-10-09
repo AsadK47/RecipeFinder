@@ -205,8 +205,19 @@ The import→find→cook→track loop's ranked open findings live in
 - **Timer notifications scheduled up front**, not sent from the in-app ticker (which is
   suspended in the background).
 
+## Badge overhaul + Cooking sheet (DONE this session, uncommitted, 1776 green)
+Approved direction: full cook-centric overhaul + tappable streak chip → Cooking sheet. Shipped:
+- **Model** (`BadgeModel.swift`): new `BadgeCriterion`/`BadgeMetric` abstraction + pure `BadgeMetrics.from(recipes:streakWeeks:)`; **12 new badges** — cook volume (Head Chef=first cook, Home Cook 10, Seasoned 25, Kitchen Veteran 50, Iron Chef 100), streak (On a Roll 2, Hot Streak 4, Unstoppable 12, Year of Cooking 52), Globetrotter (5 cuisines), Signature Dish (one recipe ×5), Critic (rate 10), Food Stylist (cook photo). `requiredCount` now derived from criterion.
+- **Manager** (`BadgeManager.swift`): added `checkAndUnlockBadges(metrics:)`; the legacy `recipeCount` path is guarded to collection badges only (regression-tested so a big library can't unlock cooking badges).
+- **Wiring** (`RecipeDetailView`): `recordCook`/`addCookPhoto`/`updateRating` call `refreshCookingBadges()` → marking as cooked is now the main path to badges.
+- **Progress bars** (`BadgeDetailView`): locked threshold badges show current/target, computed from env metrics.
+- **Cooking sheet** (`Components/Sheets/CookingSheet.swift`, NEW): streak chip is now a Button → sheet explaining the streak in plain language + cooking-badge progress. Answers "users won't know what the flame means."
+- Tests: +new `BadgeModelTests` (metrics aggregation, progress, criteria) + `BadgeManagerTests` (metrics path, breadth/depth/quality, recipe-count regression guard).
+
+**Follow-ups (not done):** (a) "Variety Pack" (3 cuisines in one week) deferred — needs a time-windowed metric; (b) `CookingModeView:337` still unlocks headChef directly — now redundant (recordCook covers it) but harmless, remove when touching that file; (c) one-time migration so already-cooked recipes backfill cook badges on upgrade (currently they unlock on the next cook); (d) visually verify the Cooking sheet + progress bars on-device.
+
 ## In progress
-(none — slices 1–3 complete + verified green at 1664 tests, uncommitted)
+(none — badge overhaul complete + verified green at 1776 tests, uncommitted)
 
 ## Next action
-Optional: ROADMAP prose compression (confirm still wanted) or the next punch-list item.
+Visually verify the Cooking sheet / badge progress on the simulator, or pick the next punch-list item.
