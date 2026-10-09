@@ -20,6 +20,21 @@ struct CookingStreak: Equatable {
 
     static let empty = CookingStreak(currentWeeks: 0, cooksThisWeek: 0)
 
+    /// When to fire the "don't lose your streak" nudge: the last day of the current week at `hour`,
+    /// but only when the streak is live-but-at-risk and that moment is still in the future. Pure + testable.
+    static func lapseReminder(
+        for streak: CookingStreak,
+        now: Date,
+        calendar: Calendar = .current,
+        hour: Int = 18
+    ) -> Date? {
+        guard streak.isAtRisk else { return nil }
+        guard let weekEnd = calendar.dateInterval(of: .weekOfYear, for: now)?.end,
+              let lastDay = calendar.date(byAdding: .day, value: -1, to: weekEnd),
+              let fire = calendar.date(bySettingHour: hour, minute: 0, second: 0, of: lastDay) else { return nil }
+        return fire > now ? fire : nil
+    }
+
     static func compute(cookDates: [Date], now: Date = Date(), calendar: Calendar = .current) -> CookingStreak {
         guard !cookDates.isEmpty else { return .empty }
 

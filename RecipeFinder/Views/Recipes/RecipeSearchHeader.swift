@@ -13,7 +13,6 @@ struct RecipeSearchHeader: View {
     var body: some View {
         VStack(spacing: AppTheme.spacing12) {
             headerSection
-            streakRow
             searchBarSection
         }
     }
@@ -22,17 +21,14 @@ struct RecipeSearchHeader: View {
         ScreenTitleHeader("RecipeFinder") {
             filterMenu
         }
-    }
-
-    /// Slim left-aligned streak chip under the title — persistent + compact, without crowding the centered title.
-    @ViewBuilder
-    private var streakRow: some View {
-        if let streak, streak.currentWeeks > 0 {
-            HStack {
+        // A compact flame badge floats in the top-left gutter (title stays centred, menu top-right) —
+        // persistent + Duolingo-like, taking no vertical space of its own.
+        .overlay(alignment: .topLeading) {
+            if let streak, streak.currentWeeks > 0 {
                 StreakChip(streak: streak)
-                Spacer()
+                    .padding(.leading, AppTheme.spacing20)
+                    .padding(.top, AppTheme.spacing16)
             }
-            .padding(.horizontal, AppTheme.spacing20)
         }
     }
 

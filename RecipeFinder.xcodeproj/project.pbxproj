@@ -206,6 +206,7 @@
 		F3B7D90F30726A6800991908 /* RediscoveryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D90E30726A6800991908 /* RediscoveryCard.swift */; };
 		F3B7D9113074FCFF00991908 /* StreakChip.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D9103074FCFF00991908 /* StreakChip.swift */; };
 		F3B7D91330765C9600991908 /* RecipeFinderHabitLoopUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D91230765C9600991908 /* RecipeFinderHabitLoopUITests.swift */; };
+		F3B7D91530766CA400991908 /* StreakReminderScheduling.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D91430766CA400991908 /* StreakReminderScheduling.swift */; };
 		F3B837BF305554C80003AEF8 /* UserScopedStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837BE305554C80003AEF8 /* UserScopedStorageTests.swift */; };
 		F3B837C1305562790003AEF8 /* SessionExpiryPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837C0305562790003AEF8 /* SessionExpiryPolicy.swift */; };
 		F3B837C33055628E0003AEF8 /* SessionExpiryPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837C23055628E0003AEF8 /* SessionExpiryPolicyTests.swift */; };
@@ -681,6 +682,7 @@
 		F3B7D90E30726A6800991908 /* RediscoveryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RediscoveryCard.swift; sourceTree = "<group>"; };
 		F3B7D9103074FCFF00991908 /* StreakChip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreakChip.swift; sourceTree = "<group>"; };
 		F3B7D91230765C9600991908 /* RecipeFinderHabitLoopUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeFinderHabitLoopUITests.swift; sourceTree = "<group>"; };
+		F3B7D91430766CA400991908 /* StreakReminderScheduling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreakReminderScheduling.swift; sourceTree = "<group>"; };
 		F3B837BE305554C80003AEF8 /* UserScopedStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserScopedStorageTests.swift; sourceTree = "<group>"; };
 		F3B837C0305562790003AEF8 /* SessionExpiryPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionExpiryPolicy.swift; sourceTree = "<group>"; };
 		F3B837C23055628E0003AEF8 /* SessionExpiryPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionExpiryPolicyTests.swift; sourceTree = "<group>"; };
@@ -1358,6 +1360,7 @@
 				9E97EEC83009401100D35FAB /* SharedImportInbox.swift */,
 				F3F189E63067DE160097A65F /* RecipeStore.swift */,
 				F3B7D8F1306E8C7E00991908 /* MealReminderScheduling.swift */,
+				F3B7D91430766CA400991908 /* StreakReminderScheduling.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -2251,6 +2254,7 @@
 				F3B7D8FC3070007600991908 /* RecipeShoppingList.swift in Sources */,
 				F3E9D1BC30457DE4008BF231 /* PersistenceController+Database.swift in Sources */,
 				F36AED533040A5D700935A3C /* HTMLFetcher.swift in Sources */,
+				F3B7D91530766CA400991908 /* StreakReminderScheduling.swift in Sources */,
 				F3D405663058609C0076834D /* CollectionFormSheets.swift in Sources */,
 				9E51C3A82EB40DC90064B917 /* AuthenticationView.swift in Sources */,
 				9E51C3972EB3E6540064B917 /* MealPlanningView.swift in Sources */,

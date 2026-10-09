@@ -10,6 +10,27 @@ import Foundation
         CookingStreakManager(storage: UserScopedStorage(userDefaults: UserDefaults(suiteName: UUID().uuidString)!))
     }
 
+    /// Records what the streak manager asks of the notification seam.
+    final class FakeStreakReminderScheduler: StreakReminderScheduling {
+        private(set) var scheduled: [(weeks: Int, date: Date, id: String)] = []
+        private(set) var cancelled: [String] = []
+        func scheduleStreakReminder(weeks: Int, at date: Date, identifier: String) {
+            scheduled.append((weeks, date, identifier))
+        }
+        func cancelNotification(identifier: String) { cancelled.append(identifier) }
+    }
+
+    @Test func cookingThisWeek_cancelsLapseReminder_schedulesNone() {
+        let fake = FakeStreakReminderScheduler()
+        let sut = CookingStreakManager(
+            storage: UserScopedStorage(userDefaults: UserDefaults(suiteName: UUID().uuidString)!),
+            reminders: fake
+        )
+        sut.recordCook(on: Date())   // cooked this week → not at risk
+        #expect(fake.cancelled.contains("cooking-streak-lapse"))
+        #expect(fake.scheduled.isEmpty)
+    }
+
     @Test func initialState_isEmpty() {
         #expect(makeManager().streak == .empty)
     }

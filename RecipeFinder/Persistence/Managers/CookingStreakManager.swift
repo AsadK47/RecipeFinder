@@ -38,16 +38,20 @@ final class CookingStreakManager: CookingStreakTracking {
     private(set) var streak: CookingStreak = .empty
 
     @ObservationIgnored private let storage: UserScopedStorage
+    @ObservationIgnored private let reminders: any StreakReminderScheduling
     @ObservationIgnored private let saveKey = "cookDatesLog"
+    @ObservationIgnored private let reminderId = "cooking-streak-lapse"
     @ObservationIgnored private var cookDates: [Date] = []
 
     private init() {
         self.storage = .shared
+        self.reminders = NotificationManager.shared
         load()
     }
 
-    init(storage: UserScopedStorage) {
+    init(storage: UserScopedStorage, reminders: any StreakReminderScheduling = NotificationManager.shared) {
         self.storage = storage
+        self.reminders = reminders
         load()
     }
 
@@ -76,5 +80,15 @@ final class CookingStreakManager: CookingStreakTracking {
 
     private func recompute() {
         streak = CookingStreak.compute(cookDates: cookDates)
+        syncReminder()
+    }
+
+    /// Cancels any pending lapse nudge, then schedules a fresh one only when the streak is at risk.
+    /// Cooking this week clears the at-risk state, so the reminder is cancelled; a new week re-arms it.
+    private func syncReminder() {
+        reminders.cancelNotification(identifier: reminderId)
+        if let fire = CookingStreak.lapseReminder(for: streak, now: Date()) {
+            reminders.scheduleStreakReminder(weeks: streak.currentWeeks, at: fire, identifier: reminderId)
+        }
     }
 }

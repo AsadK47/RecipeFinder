@@ -71,9 +71,13 @@ the loop self-correcting, not just a to-do list.
         count) lives in the Recipes **header**, always visible, orange when on-track / **yellow when
         at risk** (loss aversion via `CookingStreak.isAtRisk`). Replaced the bulky `CookingStreakCard`
         (deleted). Chip hidden for an empty library / zero streak. +3 `isAtRisk` tests.
-      - [ ] **(d) Smart re-engagement notification** — reuse `NotificationManager`: gentle nudge
-        when the streak is about to lapse (cooked last week, nothing yet this week) / a loved
-        recipe has gone cold. Opt-in; schedule weekly, cancel on cook.
+      - [x] **(d) Smart re-engagement notification** — DONE. When the streak is **at risk** (live
+        streak, no cook yet this week) the manager schedules a one-shot end-of-week nudge ("Keep
+        your 🔥 N-week streak") via a new `StreakReminderScheduling` seam + `NotificationManager`;
+        cooking clears at-risk → the nudge is cancelled, a new week re-arms it. Pure
+        `CookingStreak.lapseReminder(for:now:calendar:hour:)` (last day of week @18:00, future-only).
+        Non-intrusive: no new permission prompt — rides existing notification authorization.
+        +3 pure tests + 1 manager cancel-on-cook test (fake scheduler).
       - [x] **(e) Rediscovery nudge** — DONE. Pure `RecipeRediscovery.pick` (stale cooked recipe,
         favour favourite/rating, oldest tie-break; +6 tests) + `RediscoveryCard` on the Recipes
         home below the streak card (browse state only); tap opens the recipe via `navigationPath`.
@@ -95,6 +99,14 @@ the loop self-correcting, not just a to-do list.
       example links. Added `streak.chip`/`recipe.rating`/`recipe.row` accessibility IDs. Visually
       confirmed chip renders as "🔥 1" cleanly. Note: raw simctl can't drive taps (no idb) →
       XCUITest is the GUI handle here.
+- [x] **16. Streak → floating fire badge (not a row)** — moved `StreakChip` from its own header
+      row into a top-left `.overlay` on the title bar (title stays centred, menu top-right); takes
+      zero vertical space. Verified visually via simctl screenshot (🔥1 top-left) + the habit-loop
+      UITest still finds `streak.chip`.
+- [ ] **17. Import parser misses amounts on some recipes** — e.g. "Sourdough Bread" imports with no
+      quantities, everything dumped into description/notes (ingredient section not detected). NEEDS
+      the failing input (URL or pasted text) to reproduce → add to the fixture bed, write a failing
+      test, then fix `TextRecipeParser`/`IngredientLineParser`/`RecipeParser`. Don't guess.
 - [x] **14. Removed dead import example links** — the 3 hardcoded "Try these examples" URLs in
       `RecipeImportView` (AllRecipes/BBC/Taming Twins) rotted and made import look broken on first
       tap. Deleted them + the `exampleButton` helper; kept the reassurance copy. If examples ever

@@ -70,6 +70,27 @@ import Foundation
         #expect(compute([]).isAtRisk == false)
     }
 
+    // MARK: - Lapse reminder
+
+    @Test func lapseReminder_atRisk_isEndOfWeekAtSixPM_inFuture() throws {
+        let day = cal.date(from: DateComponents(year: 2030, month: 6, day: 3, hour: 9))!
+        let atRisk = CookingStreak(currentWeeks: 2, cooksThisWeek: 0)
+
+        let fire = try #require(CookingStreak.lapseReminder(for: atRisk, now: day, calendar: cal, hour: 18))
+        #expect(fire > day)
+        let weekEnd = cal.dateInterval(of: .weekOfYear, for: day)!.end
+        let lastDay = cal.date(byAdding: .day, value: -1, to: weekEnd)!
+        #expect(fire == cal.date(bySettingHour: 18, minute: 0, second: 0, of: lastDay)!)
+    }
+
+    @Test func lapseReminder_notAtRisk_isNil() {
+        #expect(CookingStreak.lapseReminder(for: CookingStreak(currentWeeks: 2, cooksThisWeek: 1), now: now) == nil)
+    }
+
+    @Test func lapseReminder_noStreak_isNil() {
+        #expect(CookingStreak.lapseReminder(for: .empty, now: now) == nil)
+    }
+
     @Test func multipleCooksSameWeek_countThisWeek() {
         let s = compute([now, cal.date(byAdding: .hour, value: -3, to: now)!])
         #expect(s.cooksThisWeek == 2)

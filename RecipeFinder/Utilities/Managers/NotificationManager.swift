@@ -149,6 +149,26 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate, Sen
         return notificationId
     }
     
+    /// One-shot weekly cooking-streak lapse nudge (fires once at `date`); delivered only if the user has granted notifications.
+    func scheduleStreakReminder(weeks: Int, at date: Date, identifier: String) {
+        let content = UNMutableNotificationContent()
+        content.title = "🔥 Keep your streak!"
+        content.body = weeks <= 1
+            ? "Cook something this week to keep your streak going."
+            : "Your \(weeks)-week cooking streak ends soon — cook this week to keep it."
+        content.sound = .default
+        content.userInfo = ["type": "streak", "identifier": identifier]
+
+        let components = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: date)
+        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                logger.error("❌ Failed to schedule streak reminder: \(error.localizedDescription)")
+            }
+        }
+    }
+
     @discardableResult
     func scheduleDailyCookingReminder(
         hour: Int,
