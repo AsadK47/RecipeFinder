@@ -24,6 +24,7 @@ final class RecipeFinderHabitLoopUITests: XCTestCase {
     }
 
     /// Matches an element by accessibility identifier regardless of its element type.
+    @MainActor
     private func element(_ app: XCUIApplication, id: String) -> XCUIElement {
         app.descendants(matching: .any).matching(identifier: id).firstMatch
     }

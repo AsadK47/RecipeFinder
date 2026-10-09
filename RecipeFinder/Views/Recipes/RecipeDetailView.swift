@@ -267,15 +267,17 @@ struct RecipeDetailView: View {
     }
 
     func recordCook() {
-        HapticManager.shared.success()
         recipe.cookCount += 1
         recipe.lastCookedAt = Date()
         PersistenceController.shared.recordCook(withId: recipe.id)
         recipeStore.sync(recipe)
-        // Feed the weekly cooking-streak habit loop; celebrate when this cook extends it.
+
+        // Cooking is the rewarded action — celebrate every cook, not just the week's first.
+        confettiCounter += 1
+        HapticManager.shared.celebrate()
+
+        // Feed the weekly cooking-streak habit loop; the toast is the milestone when this cook EXTENDS it.
         if cookingStreak.recordCookToday() {
-            confettiCounter += 1
-            HapticManager.shared.celebrate()
             let weeks = cookingStreak.streak.currentWeeks
             showAddedFeedback = weeks <= 1 ? "🔥 Cooking streak started!" : "🔥 \(weeks)-week cooking streak!"
         }

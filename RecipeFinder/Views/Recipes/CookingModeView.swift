@@ -63,12 +63,14 @@ struct CookingModeView: View {
     }
 
     // Only counts numbers followed by a time unit, so "350°F"/"2 eggs" aren't read as durations. Compiled once (read every body eval).
-    private static let cookTimerRegex = try? NSRegularExpression(
+    // `nonisolated`: pure string parsing with no UI/state — it has no business inheriting the View's @MainActor isolation,
+    // so the view body and unit tests can both call it off any actor without a concurrency warning.
+    nonisolated private static let cookTimerRegex = try? NSRegularExpression(
         pattern: #"(\d+(?:\.\d+)?)\s*(hours?|hrs?|minutes?|mins?|seconds?|secs?)\b"#,
         options: [.caseInsensitive]
     )
 
-    static func cookTimerMinutes(in text: String) -> Int? {
+    nonisolated static func cookTimerMinutes(in text: String) -> Int? {
         guard let regex = cookTimerRegex else { return nil }
         let ns = text as NSString
         var totalMinutes = 0.0
