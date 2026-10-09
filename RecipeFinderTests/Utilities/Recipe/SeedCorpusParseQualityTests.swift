@@ -53,11 +53,12 @@ import Foundation
         print("SEED CORPUS QUALITY — \(summary)")
         print("poor/nil sample: \(s.poorNames.prefix(20).joined(separator: " | "))")
 
-        // Regression floor locked to measured quality (2026-10-09): 355 entries, 3 unparseable, 85% good.
-        // Raise these as the parser improves; a drop below means a change regressed import quality.
-        // Known residual in the "poor" bucket: scraper-prepended scale numbers ("575 200g flour") and
-        // name-first lines ("butter 100g, chopped") — messy corpus formatting, a separate riskier fix.
+        // Regression floor locked to measured quality (2026-10-09): 355 entries, 3 unparseable, 90% good
+        // after ▢-glyph, name-first, and scrape-artifact fixes. Raise as the parser improves; a drop below
+        // means a change regressed import quality. The residual "poor" bucket is now dominated by METHOD/
+        // prose lines leaking into the ingredient list (a TextRecipeParser section-detection issue, tracked
+        // in WORK.md) and genuinely-unitless spice lists — not a per-line amount bug.
         #expect(s.parseNil <= 3, "More seed recipes fail to parse than before. \(summary)")
-        #expect(goodFrac >= 0.84, "Seed amount-parse quality regressed below the locked floor. \(summary)")
+        #expect(goodFrac >= 0.88, "Seed amount-parse quality regressed below the locked floor. \(summary)")
     }
 }

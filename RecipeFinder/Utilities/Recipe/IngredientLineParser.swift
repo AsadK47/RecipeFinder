@@ -48,7 +48,24 @@ enum IngredientLineParser {
                          .trimmingCharacters(in: .whitespaces)
 
         // 6. Resolve quantity once (range upper-bound → mixed → simple) so no later pass clobbers an earlier match.
-        let (quantityText, afterQuantity) = extractQuantity(from: working)
+        var (quantityText, afterQuantity) = extractQuantity(from: working)
+
+        // 6b. Drop a prepended scrape/scale artifact: a bare integer immediately followed by ANOTHER number
+        // ("750 500 grams", "5 1 teaspoon", "8421052632 2 cups") is a scaled/garbage value — prefer the real
+        // second amount. Only fires integer-then-number, so "3 chicken" / "1 1/2 tbsp" / ranges are untouched.
+        var hops = 0
+        while hops < 4,
+              quantityText.range(of: #"^\d+$"#, options: .regularExpression) != nil {
+            // Re-split a glued "<number><letter>" ("900g") the line-start pass in step 5 couldn't reach.
+            let rest = afterQuantity.trimmingCharacters(in: .whitespaces)
+                .replacingOccurrences(of: #"^([0-9][0-9/.]*)([a-zA-Z])"#, with: "$1 $2", options: .regularExpression)
+            guard let first = rest.unicodeScalars.first, CharacterSet.decimalDigits.contains(first) else { break }
+            let (q2, rem2) = extractQuantity(from: rest)
+            guard !q2.isEmpty else { break }
+            quantityText = q2
+            afterQuantity = rem2
+            hops += 1
+        }
 
         // 7. Canonical unit.
         let (unit, afterUnit) = extractUnit(from: afterQuantity)
@@ -57,6 +74,18 @@ enum IngredientLineParser {
         var name = afterUnit.trimmingCharacters(in: .whitespaces)
         name = name.replacingOccurrences(of: #"^of\s+"#, with: "", options: [.regularExpression, .caseInsensitive])
         name = name.trimmingCharacters(in: .whitespaces)
+
+        // Name-first fallback: lines like "Minced chicken 500g", "Butter: 60g", "Sugar 3tsp" have no
+        // LEADING amount, so lift the first embedded "<number><unit>" out and keep the rest as the name.
+        // Only runs when no leading quantity/unit was found, so the common leading-amount lines are untouched.
+        if quantityText.isEmpty, unit.isEmpty, let embedded = extractEmbeddedAmount(from: working) {
+            return Parsed(
+                quantity: parseQuantity(embedded.quantityText),
+                quantityText: embedded.quantityText,
+                unit: embedded.unit,
+                name: embedded.name
+            )
+        }
 
         if quantityText.isEmpty && unit.isEmpty && name.isEmpty {
             name = working
@@ -70,6 +99,42 @@ enum IngredientLineParser {
         )
     }
 
+    /// First embedded "<number><unit>" in a name-first line (e.g. "flour 200g", "butter: 60g", "sugar 3tsp"),
+    /// with the amount lifted out and the rest returned as the name. Requires a real unit token (so trailing
+    /// scale artifacts like "chopped 50" or bare counts like "eggs 4 2" don't false-match).
+    private static func extractEmbeddedAmount(from text: String) -> (quantityText: String, unit: String, name: String)? {
+        guard let regex = try? NSRegularExpression(pattern: embeddedAmountPattern, options: [.caseInsensitive]) else { return nil }
+        let ns = text as NSString
+        guard let m = regex.firstMatch(in: text, options: [], range: NSRange(location: 0, length: ns.length)),
+              m.numberOfRanges >= 3 else { return nil }
+
+        let quantityText = ns.substring(with: m.range(at: 1))
+            .replacingOccurrences(of: #"\s+"#, with: " ", options: .regularExpression)
+        let rawUnit = ns.substring(with: m.range(at: 2)).lowercased()
+            .replacingOccurrences(of: #"\s+"#, with: " ", options: .regularExpression)
+        let unit = unitCanonical[rawUnit] ?? rawUnit
+
+        let before = ns.substring(to: m.range.location)
+        let after = ns.substring(from: m.range.location + m.range.length)
+        var name = (before + " " + after)
+            .replacingOccurrences(of: #"\s+"#, with: " ", options: .regularExpression)
+            .trimmingCharacters(in: CharacterSet(charactersIn: " ,:;-"))
+        name = name.replacingOccurrences(of: #"^of\s+"#, with: "", options: [.regularExpression, .caseInsensitive])
+        name = name.trimmingCharacters(in: .whitespaces)
+
+        guard !name.isEmpty else { return nil }
+        return (quantityText, unit, name)
+    }
+
+    /// Non-anchored "<number> <unit>" for the name-first fallback; units longest-first so "grams" beats "g".
+    private static let embeddedAmountPattern: String = {
+        let alternatives = unitCanonical.keys
+            .sorted { $0.count != $1.count ? $0.count > $1.count : $0 < $1 }
+            .map { NSRegularExpression.escapedPattern(for: $0) }
+            .joined(separator: "|")
+        return #"(\d+(?:\.\d+)?(?:\s+\d+/\d+)?|\d*/\d+)\s*("# + alternatives + #")(?![A-Za-z])"#
+    }()
+
     // MARK: - Quantity
 
     private static func extractQuantity(from text: String) -> (quantity: String, remaining: String) {
@@ -77,8 +142,9 @@ enum IngredientLineParser {
         if let m = firstMatch(#"^[\d./]+\s*(?:[-–—]|to)\s*([\d./]+)(?:\s+|$)"#, in: text) {
             return (m.group(1), m.remainder)
         }
-        // Mixed number "1 1/2".
-        if let m = firstMatch(#"^(\d+\s+\d+/\d+)(?:\s+|$)"#, in: text) {
+        // Mixed number "1 1/2" — whole part 1–2 digits; a 3+ digit "whole" before a fraction is a scrape
+        // artifact ("4210526316 1/2"), left for the simple rule + artifact loop to split.
+        if let m = firstMatch(#"^(\d{1,2}\s+\d+/\d+)(?:\s+|$)"#, in: text) {
             return (m.group(1), m.remainder)
         }
         // Simple integer / decimal / fraction.

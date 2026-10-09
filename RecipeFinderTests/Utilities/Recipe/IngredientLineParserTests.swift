@@ -60,6 +60,25 @@ import Foundation
     }
 
     @Test(
+        "Drops a prepended scrape/scale artifact and keeps the real second amount (regression)",
+        arguments: [
+            // (input, quantity, unit, name) — real seed lines where the scraper prepended a scaled/garbage number.
+            ("750 500 grams (1 pound) ground beef or lamb", 500.0, "g", "ground beef or lamb"),
+            ("5 1 teaspoon ginger paste", 1.0, "tsp", "ginger paste"),
+            ("3 2 teaspoons garlic paste", 2.0, "tsp", "garlic paste"),
+            ("5 900g boneless lamb leg", 900.0, "g", "boneless lamb leg"),
+            ("8421052632 2 cups (475 ml) plain whole milk yogurt", 2.0, "cup", "plain whole milk yogurt"),
+            ("4210526316 1/2 teaspoon ground cumin", 0.5, "tsp", "ground cumin")
+        ]
+    )
+    func dropsLeadingScrapeArtifact(input: String, quantity: Double, unit: String, name: String) {
+        let p = IngredientLineParser.parse(input)
+        #expect(abs(p.quantity - quantity) < 0.0001, "quantity for \(input)")
+        #expect(p.unit == unit, "unit for \(input)")
+        #expect(p.name == name, "name for \(input)")
+    }
+
+    @Test(
         "Unit synonyms collapse to a canonical token",
         arguments: [
             ("1 teaspoon vanilla", "tsp"),

@@ -113,13 +113,22 @@ the loop self-correcting, not just a to-do list.
       an existing account keep their old parse (seed runs once, skips existing names) — only
       re-imports / fresh accounts get the fix.
       **Corpus quality GATE added** (`SeedCorpusParseQualityTests`): parses all 355 seed entries every
-      build, asserts a locked floor `parseNil <= 3` + `good% >= 84`. Measured now: **355 total, 3
-      unparseable, 302 good (85%), 50 poor** — so "is the seed OK?" is answered by CI, not manual
-      checking; any regression fails the build. Raise the floor as the parser improves.
-      **Known residual (50 poor + 3 nil), NOT fixed — messy corpus formats, riskier:** (a) scraper-
-      prepended scale numbers ("575 200g flour"), (b) name-first lines ("butter 100g, chopped"),
-      (c) sub-section labels leaking as zero-qty lines. Needs an amount-anywhere fallback (risks the
-      302 good) or a one-time corpus data clean — decide before attempting.
+      build, asserts a locked floor `parseNil <= 3` + `good% >= 88`. Measured now: **355 total, 3
+      unparseable, 321 good (90%), 31 poor** (up from 85%) — so "is the seed OK?" is answered by CI,
+      not manual checking; any regression fails the build.
+      **Second fix pass (this session), all +tests green:** (a) name-first embedded amounts
+      ("Minced chicken 500g" → 500 g) via `extractEmbeddedAmount`; (b) leading scrape/scale artifacts
+      ("750 500 grams"→500 g, "5 1 teaspoon"→1 tsp, "8421052632 2 cups"→2 cups, "4210526316 1/2 tsp"→
+      0.5 tsp) — a bare integer immediately followed by another number is dropped (artifact loop +
+      1–2-digit cap on the mixed-number rule + glued-number re-split). +6 `dropsLeadingScrapeArtifact`
+      cases. Floor raised 84→88 to lock the gain.
+      **Remaining residual (31 poor + 3 nil) is NO LONGER a per-line amount bug** — it's dominated by
+      METHOD/instruction prose leaking into the ingredient list ("Steps to Make It", "In a large
+      bowl…", "Recipe Variations", "YouTube Tutorial") plus genuinely-unitless spice lists and caps
+      sub-headers. The real amounts in those recipes DO parse; the junk lines inflate the zero-count.
+      **Next (separate, riskier task):** `TextRecipeParser` section-detection — stop the method section
+      bleeding into ingredients when no explicit method header is found. Affects the whole import path,
+      not just seed data → own slice with its own fixture bed. Do NOT fold into the per-line parser.
 - [x] **14. Removed dead import example links** — the 3 hardcoded "Try these examples" URLs in
       `RecipeImportView` (AllRecipes/BBC/Taming Twins) rotted and made import look broken on first
       tap. Deleted them + the `exampleButton` helper; kept the reassurance copy. If examples ever
