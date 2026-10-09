@@ -238,7 +238,7 @@ enum TextRecipeParser {
     /// A leading decoration (dash/star bullet or emoji), never a letter/digit/fraction (those are content to keep).
     private static func isBulletCharacter(_ c: Character) -> Bool {
         if c.isLetter || c.isNumber { return false }
-        if "-•*▪◦‣·▫●○▶►➤➥➢".contains(c) { return true }
+        if "-•*▪◦‣·▫●○▶►➤➥➢▢□☐◻◽◾◼".contains(c) { return true }
         // Emoji, but not low-codepoint symbols like fractions or punctuation.
         return c.unicodeScalars.contains { $0.properties.isEmoji && ($0.value > 0x238C || $0.properties.isEmojiPresentation) }
     }

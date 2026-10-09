@@ -103,10 +103,16 @@ the loop self-correcting, not just a to-do list.
       row into a top-left `.overlay` on the title bar (title stays centred, menu top-right); takes
       zero vertical space. Verified visually via simctl screenshot (🔥1 top-left) + the habit-loop
       UITest still finds `streak.chip`.
-- [ ] **17. Import parser misses amounts on some recipes** — e.g. "Sourdough Bread" imports with no
-      quantities, everything dumped into description/notes (ingredient section not detected). NEEDS
-      the failing input (URL or pasted text) to reproduce → add to the fixture bed, write a failing
-      test, then fix `TextRecipeParser`/`IngredientLineParser`/`RecipeParser`. Don't guess.
+- [x] **17. Import parser misses amounts — FIXED.** Root cause (measured over the 355-entry
+      `recipes_seed.json`): WordPress-Recipe-Maker `▢` checkbox glyphs prefix ingredient lines
+      (`▢100 g flour`), which `IngredientLineParser` didn't strip → qty 0, unit "", whole string
+      became the name. Fix: strip leading list/checkbox markers at the top of
+      `IngredientLineParser.parse` (fixes ALL callers) + added the box glyphs to
+      `TextRecipeParser.isBulletCharacter`. 60-entry sample → 55 good / 5 marginal / 0 nil; Achari
+      Chicken 22/22→2/22 zero-qty. +7 `IngredientLineParserTests`. *Note:* already-seeded recipes in
+      an existing account keep their old parse (seed runs once, skips existing names) — only
+      re-imports / fresh accounts get the fix. *Smaller follow-up:* sub-section labels ("Spices",
+      "Wet ingredients", "For the dough:") still leak as zero-qty ingredient lines.
 - [x] **14. Removed dead import example links** — the 3 hardcoded "Try these examples" URLs in
       `RecipeImportView` (AllRecipes/BBC/Taming Twins) rotted and made import look broken on first
       tap. Deleted them + the `exampleButton` helper; kept the reassurance copy. If examples ever

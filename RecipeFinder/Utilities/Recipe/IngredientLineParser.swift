@@ -11,9 +11,20 @@ enum IngredientLineParser {
         var name: String          // full name; commas / prep notes retained
     }
 
+    /// Leading list/checkbox glyphs recipe sites prepend to ingredient rows (WordPress Recipe Maker "▢",
+    /// ballot boxes, bullets). Stripped so the quantity is seen instead of swallowed into the name.
+    private static let leadingMarkers = CharacterSet(charactersIn: "▢□☐◻◽◾◼▪▫◦‣·•●○∙-*")
+
     static func parse(_ line: String) -> Parsed {
+        // 0. Strip a leading marker/checkbox glyph + whitespace so "▢100 g flour" parses as 100 g, not a bare name.
+        var stripped = Substring(line)
+        while let first = stripped.unicodeScalars.first,
+              CharacterSet.whitespaces.contains(first) || leadingMarkers.contains(first) {
+            stripped = stripped.dropFirst()
+        }
+
         // 1. Unicode fractions → spaced ASCII so a glued "1½" becomes "1 1/2", not "11/2".
-        var working = normaliseUnicodeFractions(line)
+        var working = normaliseUnicodeFractions(String(stripped))
 
         // 2. Drop parenthetical asides: "1 (14 oz) can ..." → "1  can ...".
         working = working.replacingOccurrences(of: #"\([^)]*\)"#, with: " ", options: .regularExpression)

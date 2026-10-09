@@ -40,6 +40,26 @@ import Foundation
     }
 
     @Test(
+        "Strips leading list/checkbox markers so the amount parses (regression: WPRM ▢ lines)",
+        arguments: [
+            // (input, quantity, unit, name) — real lines from the seed corpus that previously parsed as qty 0.
+            ("▢100 g all-purpose flour", 100.0, "g", "all-purpose flour"),
+            ("▢3 tablespoons oil of choice", 3.0, "tbsp", "oil of choice"),
+            ("▢2½ teaspoons kosher salt", 2.5, "tsp", "kosher salt"),
+            ("▢1 bay leaf", 1.0, "", "bay leaf"),
+            ("- 2 eggs", 2.0, "", "eggs"),
+            ("• 500 g beef", 500.0, "g", "beef"),
+            ("☐ 1 cup rice", 1.0, "cup", "rice")
+        ]
+    )
+    func stripsLeadingMarkers(input: String, quantity: Double, unit: String, name: String) {
+        let p = IngredientLineParser.parse(input)
+        #expect(p.quantity == quantity)
+        #expect(p.unit == unit)
+        #expect(p.name == name)
+    }
+
+    @Test(
         "Unit synonyms collapse to a canonical token",
         arguments: [
             ("1 teaspoon vanilla", "tsp"),
