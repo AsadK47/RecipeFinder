@@ -26,7 +26,7 @@ extension AuthenticationManager {
             throw AuthError.userCreationFailed
         }
         
-        UserDefaults.standard.removeObject(forKey: userDataKey)
+        defaults.removeObject(forKey: userDataKey)
     }
     
     func loadUser() {
@@ -50,7 +50,7 @@ extension AuthenticationManager {
             return data
         }
         
-        guard let legacyData = UserDefaults.standard.data(forKey: userDataKey) else {
+        guard let legacyData = defaults.data(forKey: userDataKey) else {
             return nil
         }
         
@@ -63,7 +63,7 @@ extension AuthenticationManager {
         ]
         
         if SecItemAdd(addQuery as CFDictionary, nil) == errSecSuccess {
-            UserDefaults.standard.removeObject(forKey: userDataKey)
+            defaults.removeObject(forKey: userDataKey)
             logger.debug("✅ Migrated user data from UserDefaults to Keychain")
         }
         
@@ -83,7 +83,7 @@ extension AuthenticationManager {
     func deleteAccount() async throws {
         let userId = currentUser?.id
         
-        if let email = UserDefaults.standard.string(forKey: currentEmailKey) {
+        if let email = defaults.string(forKey: currentEmailKey) {
             credentialManager.deleteCredentials(email: email)
         }
         
@@ -93,14 +93,14 @@ extension AuthenticationManager {
             kSecAttrService as String: "com.recipefinder.userdata"
         ]
         SecItemDelete(userDataQuery as CFDictionary)
-        UserDefaults.standard.removeObject(forKey: userDataKey)
-        UserDefaults.standard.removeObject(forKey: isAuthenticatedKey)
-        UserDefaults.standard.removeObject(forKey: biometricsEnabledKey)
-        UserDefaults.standard.removeObject(forKey: currentEmailKey)
-        UserDefaults.standard.removeObject(forKey: lastActiveTimestampKey)
-        UserDefaults.standard.removeObject(forKey: appleUserCacheKey)
+        defaults.removeObject(forKey: userDataKey)
+        defaults.removeObject(forKey: isAuthenticatedKey)
+        defaults.removeObject(forKey: biometricsEnabledKey)
+        defaults.removeObject(forKey: currentEmailKey)
+        defaults.removeObject(forKey: lastActiveTimestampKey)
+        defaults.removeObject(forKey: appleUserCacheKey)
         if let userId {
-            UserDefaults.standard.removeObject(forKey: "user_\(userId)_initialized")
+            defaults.removeObject(forKey: "user_\(userId)_initialized")
         }
         
         AccountManager.shared.clearAllData()

@@ -19,8 +19,6 @@ struct ImportView: View {
     @State private var showSignUpForGuest = false
     @State private var showPaywall = false
 
-    private enum ImportSource { case link, photo, paste, wizard }
-
     private var isGuest: Bool { guestModeEnabled && !authManager.isAuthenticated }
 
     var body: some View {
@@ -135,20 +133,12 @@ struct ImportView: View {
 
     /// Appends and persists a recipe; shared by every import route. On save failure the optimistic insert is rolled back and the user alerted.
     private func store(_ recipe: RecipeModel, source: ImportSource = .wizard) {
-        guard recipeStore.add(recipe) else {
-            saveErrorRecipeName = recipe.name
-            return
-        }
-
-        HapticManager.shared.success()
-
-        switch source {
-        case .link, .paste:
-            BadgeManager.shared.unlockBadge(.firstImport)
-        case .photo:
-            BadgeManager.shared.unlockBadge(.firstPhotoImport)
-        case .wizard:
-            break
+        switch RecipeImportStore.outcome(didPersist: recipeStore.add(recipe), recipeName: recipe.name, source: source) {
+        case .failed(let name):
+            saveErrorRecipeName = name
+        case .saved(let badge):
+            HapticManager.shared.success()
+            if let badge { BadgeManager.shared.unlockBadge(badge) }
         }
     }
 

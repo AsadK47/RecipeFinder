@@ -142,11 +142,16 @@ the loop self-correcting, not just a to-do list.
       (200g + 100g = 300g) and different units stay separate (cups ≠ grams). Previously `quantity` was a
       meal-count pushed into groceries with no unit ("flour 2"). `confirmAddWeek` passes `unit:` through.
       +1 test (different-units-stay-separate), existing merge test extended to assert the unit carries.
-- [ ] **13. Test gaps from the audit** (stop manual retesting): `SubscriptionProviding` fake +
-      StoreKitTest `SKTestSession` suite (purchase/restore/**revoke→isSubscribed flips**); auth
-      orchestration (signIn/signUp/duplicate-guard/signOut/session-expiry/guest); extract a
-      cooking-mode view-model (step count/progress off-by-one + headChef-on-finish); `recordCook`
-      review-threshold helper (2→no,3→yes,4→no); import→save→appears flow with a failing-persist fake.
+- [~] **13. Test gaps from the audit** — MOSTLY DONE (uncommitted). Closed: cooking-mode logic → pure
+      `CookingPlan` (+7); `recordCook` review-threshold → `ReviewPrompt` (+6); **auth orchestration** →
+      injectable credential seam on `AuthenticationManager` + `AuthenticationManagerTests` (+9, incl. the
+      security guard that signup-over-existing-email can't hijack credentials); **import→save→appears
+      failing-persist** → pure `RecipeImportStore.outcome` (+8, failed persist surfaces error + awards no
+      badge). Discovered the credential core (PBKDF2/constant-time/round-trip) was ALREADY covered by
+      `SecureCredentialManagerTests`. **Still open (deferred, not feasible without more):** `SubscriptionProviding`
+      fake + `SKTestSession` suite — user declined building subscription tests for now; session-expiry has
+      `SessionExpiryPolicyTests` already (full sign-in success path stays an integration/UITest concern since it
+      fans out to every singleton).
 - [ ] **2. YOTI-level simplicity** — north-star principle, applies to every view touched.
 - [ ] **3. Trim onboarding** — today: 3 slides + biometric splash. Make it leaner.
 - [x] **4. Search debounce** — DONE (uncommitted). `FilterCacheUpdateModifier` now debounces
@@ -221,7 +226,9 @@ Approved direction: full cook-centric overhaul + tappable streak chip → Cookin
 **Follow-ups:** (a) "Variety Pack" (3 cuisines in one week) deferred — needs a time-windowed metric; (b) `CookingModeView:337` still unlocks headChef directly — now redundant (recordCook covers it) but harmless, remove when touching that file; (c) ✅ DONE — `AuthenticationManager.reloadAllManagers()` now silently backfills cooking badges from existing history on every sign-in (reads `PersistenceController.fetchRecipes()` directly since the in-memory store loads async); +1 test; (d) visually verify the Cooking sheet + progress bars on-device.
 
 ## In progress
-(none — badge overhaul complete + verified green at 1776 tests, uncommitted)
+(none — uncommitted this run: `CookingPlan` extraction + #13 test gaps closed — `ReviewPrompt`,
+`AuthenticationManager` credential seam + orchestration tests, `RecipeImportStore`. 1808 green.)
 
 ## Next action
-Visually verify the Cooking sheet / badge progress on the simulator, or pick the next punch-list item.
+Pick the next punch-list item: #3 trim onboarding, #2 YOTI-simplicity pass, or the legal rewrite (needs a lawyer).
+Deferred: subscription `SKTestSession` tests (user declined), `TextRecipeParser` section-detection (own slice).

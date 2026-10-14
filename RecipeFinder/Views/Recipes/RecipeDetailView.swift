@@ -286,7 +286,7 @@ struct RecipeDetailView: View {
         // key off this choke point.
         refreshCookingBadges()
         // Third cook = genuine fan; ask for a review exactly once.
-        if recipe.cookCount == 3 { requestReview() }
+        if ReviewPrompt.shouldRequestReview(afterCookCount: recipe.cookCount) { requestReview() }
         // Delay lets any active fullScreenCover dismiss before the sheet appears.
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
             showPostCookPhotoPrompt = true

@@ -74,26 +74,26 @@ extension AuthenticationManager {
         try saveUser(user)
         
         setAuthState(isAuthenticated: true, user: user)
-        UserDefaults.standard.set(true, forKey: isAuthenticatedKey)
-        UserDefaults.standard.set(email, forKey: currentEmailKey)
+        defaults.set(true, forKey: isAuthenticatedKey)
+        defaults.set(email, forKey: currentEmailKey)
         updateLastActiveTimestamp()
         
         UserScopedStorage.shared.currentUserId = user.id
         reloadAllManagers()
         
         let userKey = "user_\(user.id)_initialized"
-        let isNewUser = !UserDefaults.standard.bool(forKey: userKey)
+        let isNewUser = !defaults.bool(forKey: userKey)
         
         if isNewUser {
             logger.debug("🆕 New user detected - populating sample recipes")
             PersistenceController.shared.populateDatabase()
-            UserDefaults.standard.set(true, forKey: userKey)
+            defaults.set(true, forKey: userKey)
             BadgeManager.shared.unlockBadge(.welcomeAboard)
         }
 
         let personalSeedKey = "user_\(user.id)_personal_seeded"
-        if !UserDefaults.standard.bool(forKey: personalSeedKey) {
-            UserDefaults.standard.set(true, forKey: personalSeedKey)
+        if !defaults.bool(forKey: personalSeedKey) {
+            defaults.set(true, forKey: personalSeedKey)
             Task {
                 let result = await PersonalRecipeSeedService().seed()
                 if result.imported > 0 {
@@ -127,16 +127,16 @@ extension AuthenticationManager {
         let user = createUser(from: userInfo, email: email)
         try saveUser(user)
         setAuthState(isAuthenticated: true, user: user)
-        UserDefaults.standard.set(true, forKey: isAuthenticatedKey)
-        UserDefaults.standard.set(email, forKey: currentEmailKey)
+        defaults.set(true, forKey: isAuthenticatedKey)
+        defaults.set(email, forKey: currentEmailKey)
         updateLastActiveTimestamp()
         UserScopedStorage.shared.currentUserId = user.id
         reloadAllManagers()
 
         let userKey = "user_\(user.id)_initialized"
-        if !UserDefaults.standard.bool(forKey: userKey) {
+        if !defaults.bool(forKey: userKey) {
             PersistenceController.shared.populateDatabase()
-            UserDefaults.standard.set(true, forKey: userKey)
+            defaults.set(true, forKey: userKey)
         }
     }
     #endif
@@ -188,23 +188,23 @@ extension AuthenticationManager {
         try saveUser(user)
         
         setAuthState(isAuthenticated: true, user: user)
-        UserDefaults.standard.set(true, forKey: isAuthenticatedKey)
-        UserDefaults.standard.set(email, forKey: currentEmailKey)
+        defaults.set(true, forKey: isAuthenticatedKey)
+        defaults.set(email, forKey: currentEmailKey)
         updateLastActiveTimestamp()
         
         UserScopedStorage.shared.currentUserId = user.id
         reloadAllManagers()
         
         let userKey = "user_\(user.id)_initialized"
-        if !UserDefaults.standard.bool(forKey: userKey) {
+        if !defaults.bool(forKey: userKey) {
             PersistenceController.shared.populateDatabase()
-            UserDefaults.standard.set(true, forKey: userKey)
+            defaults.set(true, forKey: userKey)
             BadgeManager.shared.unlockBadge(.welcomeAboard)
         }
 
         let personalSeedKey = "user_\(user.id)_personal_seeded"
-        if !UserDefaults.standard.bool(forKey: personalSeedKey) {
-            UserDefaults.standard.set(true, forKey: personalSeedKey)
+        if !defaults.bool(forKey: personalSeedKey) {
+            defaults.set(true, forKey: personalSeedKey)
             Task {
                 let result = await PersonalRecipeSeedService().seed()
                 if result.imported > 0 {

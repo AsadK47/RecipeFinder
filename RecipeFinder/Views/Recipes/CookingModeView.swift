@@ -19,39 +19,14 @@ struct CookingModeView: View {
 
     // MARK: - Cooking items (ingredients + pre-prep + steps combined in order)
 
-    private enum CookingItem {
-        case ingredientList
-        case prePrep(index: Int, text: String)
-        case step(index: Int, text: String)
+    // Pure, unit-tested model owns the ordering + index math; the view just renders it.
+    private typealias CookingItem = CookingPlan.Item
+    private var plan: CookingPlan { CookingPlan(prePrep: recipe.prePrepInstructions, steps: recipe.instructions) }
+    private var cookingItems: [CookingItem] { plan.items }
 
-        var displayText: String {
-            switch self {
-            case .ingredientList: return ""
-            case .prePrep(_, let text): return text
-            case .step(_, let text):    return text
-            }
-        }
-
-        var isIngredientList: Bool {
-            if case .ingredientList = self { return true }
-            return false
-        }
-    }
-
-    private var cookingItems: [CookingItem] {
-        var items: [CookingItem] = [.ingredientList]
-        for (i, text) in recipe.prePrepInstructions.enumerated() {
-            items.append(.prePrep(index: i, text: text))
-        }
-        for (i, text) in recipe.instructions.enumerated() {
-            items.append(.step(index: i, text: text))
-        }
-        return items
-    }
-
-    private var current: CookingItem { cookingItems[currentIndex] }
-    private var isFirst: Bool { currentIndex == 0 }
-    private var isLast:  Bool { currentIndex == cookingItems.count - 1 }
+    private var current: CookingItem { plan.items[currentIndex] }
+    private var isFirst: Bool { plan.isFirst(currentIndex) }
+    private var isLast:  Bool { plan.isLast(currentIndex) }
 
     // Minutes extracted from the current step's text — drives the timer button.
     private var stepTimerMinutes: Int? {
@@ -171,7 +146,7 @@ struct CookingModeView: View {
                 RoundedRectangle(cornerRadius: 2)
                     .fill(.white.opacity(0.85))
                     .frame(
-                        width: geo.size.width * CGFloat(currentIndex + 1) / CGFloat(cookingItems.count),
+                        width: geo.size.width * CGFloat(plan.progress(currentIndex)),
                         height: 4
                     )
                     .animation(.spring(response: 0.4, dampingFraction: 0.8), value: currentIndex)
@@ -294,24 +269,8 @@ struct CookingModeView: View {
         }
     }
 
-    private var stepLabelAndTotal: (String, Int) {
-        switch current {
-        case .prePrep:
-            return ("Pre-Prep", recipe.prePrepInstructions.count)
-        case .step:
-            return ("Step", recipe.instructions.count)
-        default:
-            return ("", 0)
-        }
-    }
-
-    private var stepPositionInPhase: Int {
-        switch current {
-        case .prePrep(let i, _): return i + 1
-        case .step(let i, _):    return i + 1
-        default: return 0
-        }
-    }
+    private var stepLabelAndTotal: (String, Int) { plan.phaseLabel(at: currentIndex) }
+    private var stepPositionInPhase: Int { plan.positionInPhase(at: currentIndex) }
 
     // MARK: - Navigation row
 

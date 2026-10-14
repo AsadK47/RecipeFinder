@@ -4,11 +4,11 @@ import Foundation
 extension AuthenticationManager {
 
     func checkAuthenticationStatus() {
-        let authed = UserDefaults.standard.bool(forKey: isAuthenticatedKey)
+        let authed = defaults.bool(forKey: isAuthenticatedKey)
         setAuthState(isAuthenticated: authed, user: currentUser)
         guard authed else { return }
         
-        if let lastActive = UserDefaults.standard.object(forKey: lastActiveTimestampKey) as? Date,
+        if let lastActive = defaults.object(forKey: lastActiveTimestampKey) as? Date,
            SessionExpiryPolicy.isExpired(lastActive: lastActive, timeout: sessionTimeoutSeconds) {
             let timeAway = Date().timeIntervalSince(lastActive)
             logger.debug("⏱️ Session expired after \(Int(timeAway))s away")
@@ -24,8 +24,8 @@ extension AuthenticationManager {
         updateLastActiveTimestamp()
 
         let personalSeedKey = "user_\(user.id)_personal_seeded"
-        if !UserDefaults.standard.bool(forKey: personalSeedKey) {
-            UserDefaults.standard.set(true, forKey: personalSeedKey)
+        if !defaults.bool(forKey: personalSeedKey) {
+            defaults.set(true, forKey: personalSeedKey)
             Task {
                 let result = await PersonalRecipeSeedService().seed()
                 if result.imported > 0 {
@@ -37,7 +37,7 @@ extension AuthenticationManager {
 
     func checkSessionExpiration() {
         guard isAuthenticated else { return }
-        guard let lastActive = UserDefaults.standard.object(forKey: lastActiveTimestampKey) as? Date else { return }
+        guard let lastActive = defaults.object(forKey: lastActiveTimestampKey) as? Date else { return }
         
         guard SessionExpiryPolicy.isExpired(lastActive: lastActive, timeout: sessionTimeoutSeconds) else { return }
         logger.debug("⏱️ Session expired - signing out")
@@ -51,9 +51,9 @@ extension AuthenticationManager {
         
         setAuthState(isAuthenticated: false, user: nil)
         
-        UserDefaults.standard.set(false, forKey: self.isAuthenticatedKey)
-        UserDefaults.standard.removeObject(forKey: self.currentEmailKey)
-        UserDefaults.standard.removeObject(forKey: self.lastActiveTimestampKey)
+        defaults.set(false, forKey: self.isAuthenticatedKey)
+        defaults.removeObject(forKey: self.currentEmailKey)
+        defaults.removeObject(forKey: self.lastActiveTimestampKey)
         
         self.logger.debug("✅ Sign out complete - UI should now show login screen")
         HapticManager.shared.light()

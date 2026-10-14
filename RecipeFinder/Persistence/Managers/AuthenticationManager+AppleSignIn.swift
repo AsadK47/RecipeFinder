@@ -29,7 +29,7 @@ extension AuthenticationManager: ASAuthorizationControllerDelegate {
         }
         
         var cachedUserData: (email: String?, fullName: String?, givenName: String?, familyName: String?)?
-        if let cachedData = UserDefaults.standard.data(forKey: appleUserCacheKey),
+        if let cachedData = defaults.data(forKey: appleUserCacheKey),
            let cached = try? JSONDecoder().decode(AppleUserCache.self, from: cachedData),
            cached.appleUserID == appleIDCredential.user {
             cachedUserData = (cached.email, cached.fullName, cached.givenName, cached.familyName)
@@ -50,7 +50,7 @@ extension AuthenticationManager: ASAuthorizationControllerDelegate {
             )
             do {
                 let encoded = try JSONEncoder().encode(cache)
-                UserDefaults.standard.set(encoded, forKey: appleUserCacheKey)
+                defaults.set(encoded, forKey: appleUserCacheKey)
             } catch {
                 logger.error("❌ Failed to cache Apple user info: \(error.localizedDescription)")
             }
@@ -72,22 +72,22 @@ extension AuthenticationManager: ASAuthorizationControllerDelegate {
                 try saveUser(user)
                 
                 setAuthState(isAuthenticated: true, user: user)
-                UserDefaults.standard.set(true, forKey: isAuthenticatedKey)
+                defaults.set(true, forKey: isAuthenticatedKey)
                 updateLastActiveTimestamp()
                 
                 UserScopedStorage.shared.currentUserId = user.id
                 reloadAllManagers()
                 
                 let userKey = "user_\(user.id)_initialized"
-                if !UserDefaults.standard.bool(forKey: userKey) {
+                if !defaults.bool(forKey: userKey) {
                     PersistenceController.shared.populateDatabase()
-                    UserDefaults.standard.set(true, forKey: userKey)
+                    defaults.set(true, forKey: userKey)
                     BadgeManager.shared.unlockBadge(.welcomeAboard)
                 }
 
                 let personalSeedKey = "user_\(user.id)_personal_seeded"
-                if !UserDefaults.standard.bool(forKey: personalSeedKey) {
-                    UserDefaults.standard.set(true, forKey: personalSeedKey)
+                if !defaults.bool(forKey: personalSeedKey) {
+                    defaults.set(true, forKey: personalSeedKey)
                     Task {
                         let result = await PersonalRecipeSeedService().seed()
                         if result.imported > 0 {

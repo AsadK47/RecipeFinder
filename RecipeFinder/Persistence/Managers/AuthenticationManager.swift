@@ -43,7 +43,10 @@ extension EnvironmentValues {
 final class AuthenticationManager: NSObject, Authenticating {
     static let shared = AuthenticationManager()
     let logger = AppLogger.logger(category: "Authentication")
-    let credentialManager = SecureCredentialManager.shared
+    /// Injectable so tests can back auth flows with an in-memory keychain instead of the device Keychain.
+    let credentialManager: SecureCredentialManager
+    /// Injectable session-state store; defaults to `.standard` in production so tests can run isolated from the device's global defaults.
+    @ObservationIgnored let defaults: UserDefaults
 
     // Auth state stays `private(set)`; extensions mutate only via `setAuthState`/`setCurrentUser`.
     private(set) var isAuthenticated: Bool = false
@@ -59,12 +62,22 @@ final class AuthenticationManager: NSObject, Authenticating {
     let sessionTimeoutSeconds: TimeInterval = 86400
 
     private override init() {
+        self.credentialManager = .shared
+        self.defaults = .standard
+        super.init()
+        checkAuthenticationStatus()
+    }
+
+    /// Test seam: inject a credential manager (e.g. backed by an in-memory keychain) and an isolated defaults suite. Not used in production.
+    init(credentialManager: SecureCredentialManager, defaults: UserDefaults = .standard) {
+        self.credentialManager = credentialManager
+        self.defaults = defaults
         super.init()
         checkAuthenticationStatus()
     }
 
     func updateLastActiveTimestamp() {
-        UserDefaults.standard.set(Date(), forKey: lastActiveTimestampKey)
+        defaults.set(Date(), forKey: lastActiveTimestampKey)
     }
 
     /// Sets auth state centrally so extensions don't assign the `private(set)` flags directly.

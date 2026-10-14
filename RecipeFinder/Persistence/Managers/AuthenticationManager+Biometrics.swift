@@ -26,7 +26,7 @@ extension AuthenticationManager {
             guard let user = currentUser else { throw AuthError.biometricsFailed }
 
             setAuthState(isAuthenticated: true, user: user)
-            UserDefaults.standard.set(true, forKey: isAuthenticatedKey)
+            defaults.set(true, forKey: isAuthenticatedKey)
             updateLastActiveTimestamp()
             UserScopedStorage.shared.currentUserId = user.id
             reloadAllManagers()

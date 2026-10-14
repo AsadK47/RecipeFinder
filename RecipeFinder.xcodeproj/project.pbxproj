@@ -209,6 +209,13 @@
 		F3B7D91530766CA400991908 /* StreakReminderScheduling.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D91430766CA400991908 /* StreakReminderScheduling.swift */; };
 		F3B7D9173079017B00991908 /* SeedCorpusParseQualityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D9163079017B00991908 /* SeedCorpusParseQualityTests.swift */; };
 		F3B7D91930791F1E00991908 /* CookingSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D91830791F1E00991908 /* CookingSheet.swift */; };
+		F3B7D91B30793B6300991908 /* CookingPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D91A30793B6300991908 /* CookingPlan.swift */; };
+		F3B7D91D30793B9100991908 /* CookingPlanTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D91C30793B9100991908 /* CookingPlanTests.swift */; };
+		F3B7D91F3079DAC100991908 /* ReviewPrompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D91E3079DAC100991908 /* ReviewPrompt.swift */; };
+		F3B7D9213079DADA00991908 /* ReviewPromptTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D9203079DADA00991908 /* ReviewPromptTests.swift */; };
+		F3B7D9233079DC1E00991908 /* AuthenticationManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D9223079DC1E00991908 /* AuthenticationManagerTests.swift */; };
+		F3B7D9253079DCA300991908 /* RecipeImportStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D9243079DCA300991908 /* RecipeImportStore.swift */; };
+		F3B7D9273079DCB900991908 /* RecipeImportStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D9263079DCB900991908 /* RecipeImportStoreTests.swift */; };
 		F3B837BF305554C80003AEF8 /* UserScopedStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837BE305554C80003AEF8 /* UserScopedStorageTests.swift */; };
 		F3B837C1305562790003AEF8 /* SessionExpiryPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837C0305562790003AEF8 /* SessionExpiryPolicy.swift */; };
 		F3B837C33055628E0003AEF8 /* SessionExpiryPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837C23055628E0003AEF8 /* SessionExpiryPolicyTests.swift */; };
@@ -687,6 +694,13 @@
 		F3B7D91430766CA400991908 /* StreakReminderScheduling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreakReminderScheduling.swift; sourceTree = "<group>"; };
 		F3B7D9163079017B00991908 /* SeedCorpusParseQualityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedCorpusParseQualityTests.swift; sourceTree = "<group>"; };
 		F3B7D91830791F1E00991908 /* CookingSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookingSheet.swift; sourceTree = "<group>"; };
+		F3B7D91A30793B6300991908 /* CookingPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookingPlan.swift; sourceTree = "<group>"; };
+		F3B7D91C30793B9100991908 /* CookingPlanTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookingPlanTests.swift; sourceTree = "<group>"; };
+		F3B7D91E3079DAC100991908 /* ReviewPrompt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewPrompt.swift; sourceTree = "<group>"; };
+		F3B7D9203079DADA00991908 /* ReviewPromptTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewPromptTests.swift; sourceTree = "<group>"; };
+		F3B7D9223079DC1E00991908 /* AuthenticationManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationManagerTests.swift; sourceTree = "<group>"; };
+		F3B7D9243079DCA300991908 /* RecipeImportStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeImportStore.swift; sourceTree = "<group>"; };
+		F3B7D9263079DCB900991908 /* RecipeImportStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeImportStoreTests.swift; sourceTree = "<group>"; };
 		F3B837BE305554C80003AEF8 /* UserScopedStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserScopedStorageTests.swift; sourceTree = "<group>"; };
 		F3B837C0305562790003AEF8 /* SessionExpiryPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionExpiryPolicy.swift; sourceTree = "<group>"; };
 		F3B837C23055628E0003AEF8 /* SessionExpiryPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionExpiryPolicyTests.swift; sourceTree = "<group>"; };
@@ -1047,6 +1061,7 @@
 				9E6DEA7F2EF5EFE8001E7B24 /* Managers */,
 				9E6DEA862EF5EFE8001E7B24 /* Recipe */,
 				F3D4057330599D390076834D /* RecipeTips.swift */,
+				F3B7D91E3079DAC100991908 /* ReviewPrompt.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -1153,6 +1168,7 @@
 				F3B7D8E3306A6B3A00991908 /* IngredientNameFormatterTests.swift */,
 				F3B7D906307005D500991908 /* CookingStreakTests.swift */,
 				F3B7D90C30726A2200991908 /* RecipeRediscoveryTests.swift */,
+				F3B7D91C30793B9100991908 /* CookingPlanTests.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1221,6 +1237,7 @@
 				F3F189E83067DF470097A65F /* RecipeStoreTests.swift */,
 				F3B7D8F3306E8D4000991908 /* MealReminderSchedulingTests.swift */,
 				F3B7D908307005DF00991908 /* CookingStreakManagerTests.swift */,
+				F3B7D9223079DC1E00991908 /* AuthenticationManagerTests.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -1412,6 +1429,7 @@
 				F3FF62ED305C243E0008B191 /* RecipeFileExporter.swift */,
 				F3FF62EF305C24460008B191 /* RecipeTransferItem.swift */,
 				F3B7D8FB3070007600991908 /* RecipeShoppingList.swift */,
+				F3B7D9243079DCA300991908 /* RecipeImportStore.swift */,
 			);
 			path = Recipe;
 			sourceTree = "<group>";
@@ -1615,6 +1633,7 @@
 				F3E9D1E7304620E4008BF231 /* Notes */,
 				F3B837E23055FC5C0003AEF8 /* Managers */,
 				F3D04F2D305F3A72005A930D /* RecipeTipsTests.swift */,
+				F3B7D9203079DADA00991908 /* ReviewPromptTests.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -1677,6 +1696,7 @@
 				F3B7D8E7306D0F3000991908 /* SocialCaptionImportTests.swift */,
 				F3B7D8FD3070009200991908 /* RecipeShoppingListTests.swift */,
 				F3B7D9163079017B00991908 /* SeedCorpusParseQualityTests.swift */,
+				F3B7D9263079DCB900991908 /* RecipeImportStoreTests.swift */,
 			);
 			path = Recipe;
 			sourceTree = "<group>";
@@ -1765,6 +1785,7 @@
 				F3E9D1C53045D77D008BF231 /* IngredientNameFormatter.swift */,
 				F3E9D1C93045D78D008BF231 /* RecipeFormatters.swift */,
 				F3E9D1CB3045D7CB008BF231 /* RecipeDietaryInfo.swift */,
+				F3B7D91A30793B6300991908 /* CookingPlan.swift */,
 			);
 			path = Recipe;
 			sourceTree = "<group>";
@@ -2252,6 +2273,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F3E9D1A830451864008BF231 /* AccountChefTypeSection.swift in Sources */,
+				F3B7D91F3079DAC100991908 /* ReviewPrompt.swift in Sources */,
 				F3E9D1D03045DA58008BF231 /* RecipeImageStore.swift in Sources */,
 				F3E9D16630444D9A008BF231 /* GrocerySearchResultsView.swift in Sources */,
 				F3FF62E6305C18800008B191 /* RecipeRefreshSheet.swift in Sources */,
@@ -2329,6 +2351,7 @@
 				F3AD2EE83065445300274E33 /* Shimmer.swift in Sources */,
 				9E87D3362EB6C0E900FFA1D1 /* PasswordVerificationSheet.swift in Sources */,
 				9E4796113006BD1A00A14D3F /* SettingsComponents.swift in Sources */,
+				F3B7D9253079DCA300991908 /* RecipeImportStore.swift in Sources */,
 				F3E9D1A630451849008BF231 /* AccountActionsSection.swift in Sources */,
 				9E7B9A862E9BED16007E1786 /* RecipeSearchView.swift in Sources */,
 				F3E9D16830444DA5008BF231 /* ShoppingCategoryHeader.swift in Sources */,
@@ -2492,6 +2515,7 @@
 				F3E9D1503043EB63008BF231 /* KitchenRecipeMatcher.swift in Sources */,
 				F3E9D25F30497270008BF231 /* KitchenShoppingView.swift in Sources */,
 				F3F189E53066E24B0097A65F /* FullScreenPhotoViewer.swift in Sources */,
+				F3B7D91B30793B6300991908 /* CookingPlan.swift in Sources */,
 				9E77ABEE2EB412C600666BB0 /* SecureCredentialManager.swift in Sources */,
 				F3B7D8F6306E8DBA00991908 /* MealReminderSheet.swift in Sources */,
 				F3E9D1B630457BEA008BF231 /* OnboardingSlideView.swift in Sources */,
@@ -2530,6 +2554,7 @@
 			files = (
 				F3E9D2113046D45B008BF231 /* BackupArchiveTests.swift in Sources */,
 				9E5B39922FABCA7600C96DB3 /* DifficultyBarsViewTests.swift in Sources */,
+				F3B7D9233079DC1E00991908 /* AuthenticationManagerTests.swift in Sources */,
 				F3E9D1523043EB86008BF231 /* KitchenRecipeMatcherTests.swift in Sources */,
 				9E5B397F2FABB7D300C96DB3 /* HeartPalette.swift in Sources */,
 				9E5B398B2FABC70C00C96DB3 /* FlowLayoutTests.swift in Sources */,
@@ -2623,6 +2648,7 @@
 				9E6C2C732FB4C8450083A08B /* ShoppingListManagerTests.swift in Sources */,
 				9E6C2C742FB4C8450083A08B /* KitchenInventoryManagerTests.swift in Sources */,
 				F3E9D294304FF7D7008BF231 /* TextRecipeFixtures.swift in Sources */,
+				F3B7D9213079DADA00991908 /* ReviewPromptTests.swift in Sources */,
 				F3B837EA3055FD5C0003AEF8 /* RecipeFilterIntegrationTests.swift in Sources */,
 				F3B7D8E4306A6B3A00991908 /* IngredientNameFormatterTests.swift in Sources */,
 				F3D04F30305F3A80005A930D /* KitchenItemToggleTests.swift in Sources */,
@@ -2632,6 +2658,7 @@
 				F3B837C5305562980003AEF8 /* AuthenticationUserModelTests.swift in Sources */,
 				9E6C2C632FB4A4BE0083A08B /* AdaptiveSpacingTests.swift in Sources */,
 				F3AD2EEF3065739600274E33 /* RecipeWizardSectionTests.swift in Sources */,
+				F3B7D9273079DCB900991908 /* RecipeImportStoreTests.swift in Sources */,
 				9E97EED1300D0F3200D35FAB /* TextRecipeParserTests.swift in Sources */,
 				F3D4056430585ED10076834D /* RecipePersistenceRoundTripTests.swift in Sources */,
 				F3E9D21D30470E4B008BF231 /* BackupMergeTests.swift in Sources */,
@@ -2645,6 +2672,7 @@
 				F3B7D8FE3070009200991908 /* RecipeShoppingListTests.swift in Sources */,
 				F3D4057B305AFEA30076834D /* HTMLFetcherTests.swift in Sources */,
 				F3B7D909307005DF00991908 /* CookingStreakManagerTests.swift in Sources */,
+				F3B7D91D30793B9100991908 /* CookingPlanTests.swift in Sources */,
 				F3F189ED306828CF0097A65F /* CookingModeTimerTests.swift in Sources */,
 				F36AED673043343300935A3C /* MemoCacheTests.swift in Sources */,
 				F3E9D27A304D7D16008BF231 /* RecipeTextImportRouterTests.swift in Sources */,
