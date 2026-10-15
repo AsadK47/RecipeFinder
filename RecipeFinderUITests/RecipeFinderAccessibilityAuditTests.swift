@@ -13,7 +13,9 @@ final class RecipeFinderAccessibilityAuditTests: XCTestCase {
     @MainActor
     func testSignInScreenPassesAudit() throws {
         let app = XCUIApplication()
-        app.launchArguments += ["-ui-testing", "-resetState"]
+        // `-force-auth-ui` overrides the guest-only AuthUIGate so the sign-in screen (otherwise hidden)
+        // is shown for the audit. Remove it when AuthUIGate.showAuthUI becomes the default.
+        app.launchArguments += ["-ui-testing", "-resetState", "-force-auth-ui"]
         app.launch()
 
         XCTAssertTrue(

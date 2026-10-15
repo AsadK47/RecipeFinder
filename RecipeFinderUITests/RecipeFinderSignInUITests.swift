@@ -12,7 +12,9 @@ final class RecipeFinderSignInUITests: XCTestCase {
     @MainActor
     func testEmailSignInLandsOnMainApp() {
         let app = XCUIApplication()
-        app.launchArguments += ["-ui-testing", "-resetState"]
+        // `-force-auth-ui` overrides the guest-only AuthUIGate so this test still exercises the
+        // (otherwise hidden) sign-in flow. Remove it when AuthUIGate.showAuthUI becomes the default.
+        app.launchArguments += ["-ui-testing", "-resetState", "-force-auth-ui"]
         app.launch()
 
         XCTAssertTrue(

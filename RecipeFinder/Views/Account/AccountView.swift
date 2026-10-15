@@ -126,6 +126,7 @@ struct AccountView: View {
                             // the "Under Construction" row shipped to users otherwise. Flip back to
                             // `authManager.currentUser?.appleUserID == nil` when the feature is live.
                             showLinkAppleID: false,
+                            isAuthenticated: authManager.isAuthenticated,
                             biometricsAvailable: authManager.biometricsAvailable,
                             biometricType: authManager.biometricType,
                             selectedTheme: selectedTheme,

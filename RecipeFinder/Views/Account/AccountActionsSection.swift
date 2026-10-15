@@ -3,6 +3,8 @@ import SwiftUI
 /// Account actions: (disabled) Link Apple ID, biometrics, sign out, delete account.
 struct AccountActionsSection: View {
     let showLinkAppleID: Bool
+    /// Guests have no account, so sign-out / delete are hidden for them.
+    var isAuthenticated: Bool = true
     let biometricsAvailable: Bool
     let biometricType: String
     let selectedTheme: AppTheme.ThemeType
@@ -83,28 +85,29 @@ struct AccountActionsSection: View {
                 .buttonStyle(PlainButtonStyle())
             }
             
-            Button {
-                onSignOut()
-            } label: {
-                Text("Sign Out")
-                    .font(.body)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(AppTheme.error)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, AppTheme.spacing16)
-                    .background {
-                        if cardStyle == .solid {
-                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                                .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white)
-                        } else {
-                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                                .fill(.ultraThinMaterial)
+            if isAuthenticated {
+                Button {
+                    onSignOut()
+                } label: {
+                    Text("Sign Out")
+                        .font(.body)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(AppTheme.error)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, AppTheme.spacing16)
+                        .background {
+                            if cardStyle == .solid {
+                                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                                    .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : Color.white)
+                            } else {
+                                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                                    .fill(.ultraThinMaterial)
+                            }
                         }
-                    }
-            }
-            
-            Button {
-                onDeleteAccount()
+                }
+
+                Button {
+                    onDeleteAccount()
                 } label: {
                     Text("Delete Account")
                         .font(.body)
@@ -123,6 +126,7 @@ struct AccountActionsSection: View {
                         }
                 }
                 .buttonStyle(PlainButtonStyle())
+            }
         }
     }
 }

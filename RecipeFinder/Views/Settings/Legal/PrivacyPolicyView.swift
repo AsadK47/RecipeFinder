@@ -1,106 +1,136 @@
 import SwiftUI
 
+// NOTE: Rewritten 2026-10-14 to reflect the app as it actually ships (optional accounts +
+// local-only storage), replacing the earlier "no accounts / collects nothing" fossil.
+// Two deliberate defaults, flagged for legal review:
+//   • "Sign in with Apple" is intentionally NOT described — it is hidden/blocked until paid
+//     Apple Developer Program enrolment. Add a clause here when the entitlement goes live.
+//   • Minimum age is stated as 13 (UK age of digital consent under UK GDPR).
+// This copy is drafted from the code's real data flows; have a solicitor review before App Store submission.
 struct PrivacyPolicyView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
-    
+
     private static let dateFormatter: DateFormatter = {
         let f = DateFormatter(); f.dateFormat = "d MMMM yyyy"; return f
     }()
     private var currentDateFormatted: String { Self.dateFormatter.string(from: Date()) }
-    
+
     var body: some View {
         NavigationStack {
             ZStack {
                 AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
                     .ignoresSafeArea()
-                
+
                 ScrollView {
                     VStack(alignment: .leading, spacing: AppTheme.spacing24) {
                         Group {
                             Text("Privacy Policy")
                                 .font(.system(size: AppTheme.fontSize32, weight: .bold))
                                 .adaptiveForegroundColor()
-                            
+
                             Text("Last Updated: \(currentDateFormatted)")
                                 .font(.caption)
                                 .adaptiveSecondaryForeground()
-                            
+
                             Divider()
-                            
+
                             SectionTitle("1. Interpretation and Definitions")
-                            
+
                             BodyText("1.1 In this Privacy Policy:")
                             LegalBulletPoint("\"Company\", \"we\", \"us\" or \"our\" means RECIPEFINDER LIMITED (company number 16833243), a private limited company registered in England and Wales.")
                             LegalBulletPoint("\"Application\" means the RecipeFinder mobile application software.")
                             LegalBulletPoint("\"User\", \"you\" or \"your\" means the individual accessing or using the Application.")
                             LegalBulletPoint("\"Personal Information\" means any information relating to an identified or identifiable natural person.")
                             LegalBulletPoint("\"Device\" means any device that can access the Application, such as an iPhone or iPad.")
-                            
-                            SectionTitle("2. Information Collection and Processing")
-                            
-                            BodyText("2.1 The Company does not collect, process, store or transmit any Personal Information through the Application.")
-                            
-                            BodyText("2.2 The Application operates on a local-only basis. All data generated through your use of the Application is stored exclusively on your Device using Core Data and UserDefaults frameworks.")
-                            
-                            BodyText("2.3 Data stored locally on your Device includes, without limitation:")
-                            LegalBulletPoint("Recipe data (including imported recipes)")
-                            LegalBulletPoint("Grocery list items")
-                            LegalBulletPoint("Kitchen inventory records")
-                            LegalBulletPoint("Meal planning information")
-                            LegalBulletPoint("User preferences and settings")
-                            LegalBulletPoint("Favorited items")
-                            
-                            BodyText("2.4 No user accounts, registrations or authentication mechanisms are required to use the Application.")
                         }
-                        
+
                         Group {
-                            SectionTitle("3. Third-Party Services and Analytics")
-                            
-                            BodyText("3.1 The Application does not integrate with any third-party analytics services, advertising networks or tracking systems.")
-                            
-                            BodyText("3.2 When you elect to import a recipe by providing a URL, the Application retrieves content directly from the URL you supply. The Company does not intermediate, store copies of or monitor such requests.")
-                            
-                            SectionTitle("4. Data Security")
-                            
-                            BodyText("4.1 As all data remains on your Device and is not transmitted to the Company's servers or any third party, data security is primarily dependent on your Device's security measures.")
-                            
-                            BodyText("4.2 The Company recommends that you maintain appropriate security measures on your Device, including but not limited to password protection and device encryption.")
-                            
-                            SectionTitle("5. Your Rights and Control")
-                            
-                            BodyText("5.1 You retain complete control over all data stored by the Application on your Device.")
-                            
-                            BodyText("5.2 You may at any time:")
-                            LegalBulletPoint("Export all data via the Account section of the Application")
-                            LegalBulletPoint("Delete all data via Settings > Data Management")
+                            SectionTitle("2. Our Approach to Privacy")
+
+                            BodyText("2.1 The Application is offline-first and private by design. The Company operates no servers and maintains no backend account for you. Information you enter or generate is stored on your Device and is not collected by, transmitted to, or accessible to the Company or any third party, except where you explicitly direct the Application to retrieve content from the internet (see Section 5).")
+
+                            SectionTitle("3. Accounts and Credentials")
+
+                            BodyText("3.1 An account is optional. You may use the Application in guest mode without creating an account or providing any Personal Information.")
+
+                            BodyText("3.2 If you choose to create an account, the Application stores the email address and name you provide. These are stored locally on your Device in the iOS Keychain. Your email address is stored in hashed form, and your password is never stored in plain text — it is secured using salted PBKDF2 hashing. Your credentials are not transmitted to the Company or any third party.")
+                        }
+
+                        Group {
+                            SectionTitle("4. Information Stored on Your Device")
+
+                            BodyText("4.1 The following is created and held solely on your Device:")
+                            LegalBulletPoint("Recipes you create or import, including ingredients, instructions, notes, tags, cuisine and dietary information")
+                            LegalBulletPoint("Meal plans, shopping lists and kitchen inventory")
+                            LegalBulletPoint("Collections, cooking history, ratings and achievements")
+                            LegalBulletPoint("Photos you add to recipes, together with your profile name and any profile photo")
+                            LegalBulletPoint("Your app preferences and settings")
+                        }
+
+                        Group {
+                            SectionTitle("5. Network Activity")
+
+                            BodyText("5.1 Recipe import. When you import a recipe by supplying a URL (directly or via the share sheet), the Application retrieves content directly from the website you specify. The Company does not intermediate, store copies of, or monitor those requests.")
+
+                            BodyText("5.2 Images. The Application may load recipe images directly from image addresses contained within recipes you import. No information about you is sent to those sources beyond what is required to request the image.")
+
+                            BodyText("5.3 On-device processing. Where supported, recipe text interpretation (using Apple's on-device foundation models) and photo text recognition (using Apple's Vision framework) run entirely on your Device. The text and photos you process are not sent to the Company or any third party.")
+
+                            BodyText("5.4 The Application does not integrate with any third-party analytics services, advertising networks, or tracking technologies, and does not use advertising identifiers.")
+                        }
+
+                        Group {
+                            SectionTitle("6. Apple Services")
+
+                            BodyText("6.1 In-app purchases. If the Application offers optional paid features, purchases are processed by Apple under Apple's terms and privacy policy. The Company does not receive or store your payment card details.")
+
+                            BodyText("6.2 Notifications. The Application may schedule local notifications (such as cooking timers and meal reminders) on your Device, only with your permission. No notifications are sent from the Company's servers.")
+
+                            BodyText("6.3 Ratings. The Application may ask you to rate it using Apple's standard prompt. No information is collected through this prompt.")
+
+                            SectionTitle("7. Cloud Synchronisation")
+
+                            BodyText("7.1 The Application does not currently synchronise your data to any cloud service; all data remains on your Device. If optional iCloud synchronisation is introduced in a future version, your data would be stored in your own private iCloud account, governed by Apple's terms, and the Company would not have access to it.")
+                        }
+
+                        Group {
+                            SectionTitle("8. Data Security")
+
+                            BodyText("8.1 Credentials are held in the iOS Keychain. As your other data remains on your Device and is not transmitted to the Company, its security depends primarily on your Device's own protections.")
+
+                            BodyText("8.2 The Company recommends that you secure your Device with a passcode and biometric authentication, and keep device encryption enabled.")
+
+                            SectionTitle("9. Your Rights and Control")
+
+                            BodyText("9.1 You retain complete control over your data. You may at any time:")
+                            LegalBulletPoint("Export your data via the Account section of the Application")
+                            LegalBulletPoint("Delete your data via Settings > Data Management")
+                            LegalBulletPoint("Delete your account, which removes your stored credentials and profile from your Device")
                             LegalBulletPoint("Remove all data by uninstalling the Application from your Device")
                         }
-                        
+
                         Group {
-                            SectionTitle("6. Compliance with Data Protection Laws")
-                            
-                            BodyText("6.1 The Application is designed to comply with:")
-                            LegalBulletPoint("UK General Data Protection Regulation (UK GDPR)")
-                            LegalBulletPoint("Data Protection Act 2018")
-                            LegalBulletPoint("Children's Online Privacy Protection Act (COPPA)")
-                            
-                            BodyText("6.2 Given that the Company does not collect or process any Personal Information, the majority of data protection obligations under these laws do not apply.")
-                            
-                            SectionTitle("7. Children's Privacy")
-                            
-                            BodyText("7.1 The Application may be used by individuals under the age of 13. As no Personal Information is collected, parental consent is not required.")
-                            
-                            SectionTitle("8. Changes to This Privacy Policy")
-                            
-                            BodyText("8.1 The Company reserves the right to amend this Privacy Policy at any time. The date of the most recent revision shall be indicated at the top of this Privacy Policy.")
-                            
-                            BodyText("8.2 Material changes shall be notified through the Application. Continued use of the Application following notification constitutes acceptance of the amended Privacy Policy.")
-                            
-                            SectionTitle("9. Contact Information")
-                            
-                            BodyText("9.1 For enquiries regarding this Privacy Policy, you may contact:")
+                            SectionTitle("10. Data Protection Laws")
+
+                            BodyText("10.1 The Application is designed to comply with the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018. Because the information you enter remains on your Device and is not collected or received by the Company, the Company does not act as a data controller of that information for most purposes. You remain in control of the data held on your Device.")
+
+                            SectionTitle("11. Children's Privacy")
+
+                            BodyText("11.1 The Application is not directed to children under the age of 13, and you should not create an account if you are under 13.")
+
+                            SectionTitle("12. Changes to This Privacy Policy")
+
+                            BodyText("12.1 The Company may amend this Privacy Policy at any time. The date of the most recent revision is shown at the top of this Privacy Policy.")
+
+                            BodyText("12.2 Material changes will be notified through the Application. Continued use of the Application following notification constitutes acceptance of the amended Privacy Policy.")
+                        }
+
+                        Group {
+                            SectionTitle("13. Contact Information")
+
+                            BodyText("13.1 For enquiries regarding this Privacy Policy, you may contact:")
                             BodyText("RECIPEFINDER LIMITED")
                             BodyText("Company Number: 16833243")
                             BodyText("Email: recipefinderlimited@icloud.com")

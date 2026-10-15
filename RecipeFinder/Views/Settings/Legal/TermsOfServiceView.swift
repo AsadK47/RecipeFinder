@@ -1,5 +1,8 @@
 import SwiftUI
 
+// NOTE: Updated 2026-10-14 alongside the Privacy Policy rewrite to reflect optional accounts
+// and local-only storage. Minimum age stated as 13 (UK age of digital consent). Have a
+// solicitor review before App Store submission.
 struct TermsOfServiceView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
@@ -42,10 +45,14 @@ struct TermsOfServiceView: View {
                             SectionTitle("2. Scope of Service")
                             
                             BodyText("2.1 The Application provides recipe discovery, import, organization and related recipe management features. The Company may modify, suspend or discontinue the Application (or any part thereof) at any time.")
-                            
+
+                            BodyText("2.2 The Application may offer optional paid features. Where it does, these are sold and processed by Apple through your App Store account under Apple's terms, and are subject to Apple's billing, renewal and refund policies.")
+
                             SectionTitle("3. User Accounts and Access")
-                            
-                            BodyText("3.1 Account creation is not required to use the Application. All data is stored locally on your device.")
+
+                            BodyText("3.1 An account is optional. You may use the Application in guest mode without creating one. If you create an account, your credentials and profile are stored locally on your device (see the Privacy Policy); the Company does not maintain a server-side account for you.")
+
+                            BodyText("3.2 You are responsible for the accuracy of the information you provide and for keeping your device and account credentials secure. You must be at least 13 years old to create an account.")
                             
                             SectionTitle("4. Acceptable Use")
                             
@@ -64,7 +71,7 @@ struct TermsOfServiceView: View {
                             
                             SectionTitle("6. User Content")
                             
-                            BodyText("6.1 You retain ownership of content you submit to the Application. By submitting content you grant the Company a non-exclusive, worldwide, royalty-free licence to use, reproduce and display such content for the purposes of operating and providing the Application.")
+                            BodyText("6.1 You retain ownership of all content you create or import within the Application. Because this content is stored only on your device and is not transmitted to the Company, the Company does not access, store, or claim any licence over it.")
                             
                             BodyText("6.2 When importing recipes from third-party websites, you are responsible for ensuring compliance with applicable copyright laws and terms of use of such websites.")
                             

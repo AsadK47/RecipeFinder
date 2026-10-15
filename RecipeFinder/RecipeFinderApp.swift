@@ -177,9 +177,10 @@ struct AppRootView: View {
                 rootView
                     .animation(.easeInOut(duration: AppTheme.animationDelayXShort), value: authManager.isAuthenticated)
                     .onAppear {
-                        // First-time user: skip the auth wall, let them see the app immediately.
-                        // Returning users who signed out keep their auth wall (hasEverAuthenticated = true).
-                        if !authManager.isAuthenticated && !guestModeEnabled && !hasEverAuthenticated {
+                        // Guest-only build (AuthUIGate.showAuthUI == false): never show the auth wall —
+                        // everyone browses as a guest. Otherwise: first-time users skip the wall; returning
+                        // signed-out users keep it (hasEverAuthenticated = true).
+                        if !authManager.isAuthenticated && !guestModeEnabled && (!AuthUIGate.showAuthUI || !hasEverAuthenticated) {
                             guestModeEnabled = true
                         }
                         if authManager.isAuthenticated {
@@ -239,7 +240,8 @@ struct AppRootView: View {
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .onAppear { if authManager.isAuthenticated { authManager.updateLastActiveTimestamp() } }
                 .overlay(alignment: .bottom) {
-                    if guestModeEnabled && !authManager.isAuthenticated {
+                    // No nudge in a guest-only build — there's no sign-in to offer yet.
+                    if guestModeEnabled && !authManager.isAuthenticated && AuthUIGate.showAuthUI {
                         guestSignUpNudge
                     }
                 }

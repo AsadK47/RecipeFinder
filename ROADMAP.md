@@ -113,6 +113,20 @@ I/O and is done**; **iCloud sync is deferred**, but the Core Data model is kept
 CloudKit-ready (no unique constraints, optional relationships, defaults) so
 turning it on later isn't a rewrite.
 
+**Identity & accounts decision *(2026-10-14)*.** The app runs **no backend** and
+won't get one for private libraries. Identity will be **Sign in with Apple only**
+once the paid Developer Program is enrolled — there is deliberately **no
+first-party email/password account**. A local email login without a server can't
+verify emails, reset passwords, or sync, so it was a facade; it also triggers
+Apple's Guideline 4.8 (offer email login → *must also* offer Apple). Until
+enrolment the app ships **guest-only**: the sign-up/sign-in UI is hidden behind
+`AuthUIGate.showAuthUI` (the `AuthenticationManager` engine is kept intact behind
+the flag, not deleted; UI tests force it on via `-force-auth-ui`). Every feature —
+badges, streaks, profile/personality, import — works **locally for guests**.
+**Login unlocks sync/durability (CloudKit), never features.** First-party email
+accounts would only earn their place in a cross-platform (Android/web) future,
+which is out of scope.
+
 ---
 
 ## Feature map — what the app does & how solid

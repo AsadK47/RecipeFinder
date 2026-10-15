@@ -20,6 +20,9 @@ struct ImportView: View {
     @State private var showPaywall = false
 
     private var isGuest: Bool { guestModeEnabled && !authManager.isAuthenticated }
+    /// Only divert guests to sign-up when the auth UI exists. In a guest-only build there's no
+    /// account to create, so guests run every import/create action directly.
+    private var gatesToSignUp: Bool { isGuest && AuthUIGate.showAuthUI }
 
     var body: some View {
         NavigationStack {
@@ -43,7 +46,7 @@ struct ImportView: View {
                                 color: .orange,
                                 title: "Paste a link",
                                 subtitle: "Import from a recipe website — we fetch and parse it for you.",
-                                action: isGuest ? { showSignUpForGuest = true } : { showLinkImport = true }
+                                action: gatesToSignUp ? { showSignUpForGuest = true } : { showLinkImport = true }
                             )
                             .accessibilityIdentifier("import.link")
 
@@ -70,7 +73,7 @@ struct ImportView: View {
                                 color: .blue,
                                 title: "Create manually",
                                 subtitle: "Add a recipe yourself, step by step.",
-                                action: isGuest ? { showSignUpForGuest = true } : { showWizard = true }
+                                action: gatesToSignUp ? { showSignUpForGuest = true } : { showWizard = true }
                             )
                             .accessibilityIdentifier("import.wizard")
 
@@ -121,7 +124,7 @@ struct ImportView: View {
     /// check is a no-op, so this behaves exactly like the guest-only gate.
     private func gated(_ feature: PremiumFeature, _ action: @escaping () -> Void) -> () -> Void {
         {
-            if isGuest {
+            if gatesToSignUp {
                 showSignUpForGuest = true
             } else if !PremiumGate.isUnlocked(feature, isSubscribed: subscription.isSubscribed) {
                 showPaywall = true
