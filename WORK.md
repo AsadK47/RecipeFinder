@@ -225,10 +225,40 @@ Approved direction: full cook-centric overhaul + tappable streak chip → Cookin
 
 **Follow-ups:** (a) "Variety Pack" (3 cuisines in one week) deferred — needs a time-windowed metric; (b) `CookingModeView:337` still unlocks headChef directly — now redundant (recordCook covers it) but harmless, remove when touching that file; (c) ✅ DONE — `AuthenticationManager.reloadAllManagers()` now silently backfills cooking badges from existing history on every sign-in (reads `PersistenceController.fetchRecipes()` directly since the in-memory store loads async); +1 test; (d) visually verify the Cooking sheet + progress bars on-device.
 
+## Core-loop audit fix session (2026-10-15, improve-loop; uncommitted, see also guest-only + legal below)
+Ran `/improve-loop` on import→find→cook→track: 30 raw → 19 "confirmed" → but **second-layer
+verification (premise vs. real code + existing tests) reclassified several**. Lesson: the audit's
+"confirmed" means *code matches the claim*, not *it's a defect to fix*. Triage:
+- **DROPPED as false positive / intended-tested behaviour:**
+  - #2 Cuisine filter "excludes nil cuisine" — INTENDED (`cuisineFilter_nilCuisine_isExcluded` test);
+    proposed `cuisine ?? category` fix is wrong (category≠cuisine) and would break that test.
+  - #3 `RecipeStore.sync()` ignores unknown ids — INTENDED, tested contract (`syncUpserts`); recordCook
+    only ever runs on a library recipe, so "stale UI" is theoretical. Appending would surface out-of-scope recipes.
+- **DONE (uncommitted, green):** #14a — hardened `RecipeImportPersistenceTests.importedWebRecipeSavesAndReloadsIntact`
+  to assert ingredient qty/unit/name + full instruction text round-trip (was count-only → serialization
+  regressions passed silently). Stays green ⇒ serialization is sound.
+- **REAL — needs a product decision (not a mechanical fix):** #1 CookingMode "Done" (top-left) only
+  `dismiss()`es; cook is recorded only by the green "Finish" on the last step (CookingModeView.swift:90 vs 296-300).
+  Stepping through then tapping Done loses the cook (no streak/badge/lastCookedAt). Decide semantics:
+  record-on-Done-if-last-step? warn? disable Done until last step? UI behaviour → wants manual verify.
+- **REAL — queued, verified against code, each its own TDD slice:**
+  - #4 (high) main-thread Core Data fetch+save in `recordCook`/`updateRating` (PersistenceController+RecipeWrites.swift:317-362);
+    violates async-only. Careful background-context refactor (don't cross contexts) — own slice.
+  - #8 (med) share-extension ingest (RecipeSearchView.ingest→addRecipe) bypasses `RecipeWizardBuilder.validate()`
+    → can save zero-instruction recipes. Verify path, add validation.
+  - #12 (med) meal-plan→groceries binary vs kitchen stock (MealPlanningView.swift:358-362 skips by name, ignores
+    qty needed vs on-hand). Pair with #15 test (write the red test first = executable repro).
+  - #7 (med) import stores baseQuantity==0 silently (RecipeImportBuilder) — surfacing is a UX choice.
+  - #9 (med) nutrition silently nil under 10% coverage — surface "incomplete" instead of omitting.
+  - #5/#6/#13 (perf) CookingStreakManager re-encodes whole date array per cook; BadgeManager persists whole
+    dict per unlock during bulk; cook-time regex not memoized + filterCriteria rebuilt per keystroke + refresh() no in-flight guard.
+Full ranked report + the 11 adversarially-dropped findings: task output `wvo37ik1a` / this session's transcript.
+
 ## In progress
-(none — uncommitted this run: `CookingPlan` extraction + #13 test gaps closed — `ReviewPrompt`,
-`AuthenticationManager` credential seam + orchestration tests, `RecipeImportStore`. 1808 green.)
+(none — uncommitted this run: #14a import-persistence fidelity test. Plus earlier uncommitted work:
+guest-only beta (AuthUIGate), legal rewrite, auth test-isolation fix, `CookingPlan`/`ReviewPrompt`/`RecipeImportStore`.)
 
 ## Next action
-Pick the next punch-list item: #3 trim onboarding, #2 YOTI-simplicity pass, or the legal rewrite (needs a lawyer).
+Core-loop fixes, each a TDD slice (red→fix→BuildProject+RunSomeTests): START #4 (main-thread Core Data, highest
+clean value) after the user decides #1's semantics. Then #8, #12(+#15), #7, #9, perf batch.
 Deferred: subscription `SKTestSession` tests (user declined), `TextRecipeParser` section-detection (own slice).

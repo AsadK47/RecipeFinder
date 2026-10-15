@@ -42,6 +42,15 @@ import Foundation
         // buildNotes stamps the source URL and description into notes.
         #expect(stored.notes.contains(source))
         #expect(stored.notes.contains("Juicy pan-seared"))
+
+        // Fidelity, not just counts: every ingredient's quantity + unit + name and the full instruction/
+        // pre-prep text must survive the Core Data JSON encode/decode round-trip. A count-only check (as this
+        // test originally had) would stay green through a serialization regression — the trap class we hit before.
+        #expect(stored.ingredients.map(\.name) == built.ingredients.map(\.name))
+        #expect(stored.ingredients.map(\.baseQuantity) == built.ingredients.map(\.baseQuantity))
+        #expect(stored.ingredients.map(\.unit) == built.ingredients.map(\.unit))
+        #expect(stored.instructions == built.instructions)
+        #expect(stored.prePrepInstructions == built.prePrepInstructions)
     }
 
     // MARK: - mergeRecipes duplicate detection
