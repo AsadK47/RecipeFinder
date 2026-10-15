@@ -64,6 +64,14 @@ struct CookingModeView: View {
         return rounded > 0 ? rounded : nil
     }
 
+    /// Records the cook (streak + badges, via `onFinish`) and leaves. Shared by the "Finish" button and by
+    /// "Done" when the user is already on the last step, so reaching the end credits the cook either way.
+    private func finishCooking() {
+        BadgeManager.shared.unlockBadge(.headChef)
+        onFinish?()
+        dismiss()
+    }
+
     // MARK: - Body
 
     var body: some View {
@@ -87,7 +95,9 @@ struct CookingModeView: View {
             .toolbarBackground(.hidden, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Done") { dismiss() }
+                    // On the last step, Done counts as finishing — otherwise a user who cooked all the way
+                    // through but tapped Done (not the green Finish) would silently lose streak/badge credit.
+                    Button("Done") { isLast ? finishCooking() : dismiss() }
                         .font(.body.weight(.semibold))
                         .adaptiveForegroundColor()
                 }
@@ -295,9 +305,7 @@ struct CookingModeView: View {
 
             Button {
                 if isLast {
-                    BadgeManager.shared.unlockBadge(.headChef)
-                    onFinish?()
-                    dismiss()
+                    finishCooking()
                 } else {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) { currentIndex += 1 }
                     HapticManager.shared.selection()

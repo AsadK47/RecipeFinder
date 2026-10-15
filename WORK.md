@@ -237,10 +237,10 @@ verification (premise vs. real code + existing tests) reclassified several**. Le
 - **DONE (uncommitted, green):** #14a — hardened `RecipeImportPersistenceTests.importedWebRecipeSavesAndReloadsIntact`
   to assert ingredient qty/unit/name + full instruction text round-trip (was count-only → serialization
   regressions passed silently). Stays green ⇒ serialization is sound.
-- **REAL — needs a product decision (not a mechanical fix):** #1 CookingMode "Done" (top-left) only
-  `dismiss()`es; cook is recorded only by the green "Finish" on the last step (CookingModeView.swift:90 vs 296-300).
-  Stepping through then tapping Done loses the cook (no streak/badge/lastCookedAt). Decide semantics:
-  record-on-Done-if-last-step? warn? disable Done until last step? UI behaviour → wants manual verify.
+- **#1 DONE (uncommitted, green):** CookingMode "Done" now records the cook when on the **last step**
+  (option A chosen). Extracted shared `finishCooking()` (unlock headChef + onFinish + dismiss); Done calls it
+  iff `plan.isLast(currentIndex)` (predicate already unit-tested in `CookingPlanTests.firstAndLast`), else
+  plain dismiss. Mid-recipe Done still abandons without crediting. Verified: CookingPlan/timer units + habit-loop UITest green.
 - **REAL — queued, verified against code, each its own TDD slice:**
   - #4 (high) main-thread Core Data fetch+save in `recordCook`/`updateRating` (PersistenceController+RecipeWrites.swift:317-362);
     violates async-only. Careful background-context refactor (don't cross contexts) — own slice.
