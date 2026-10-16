@@ -29,14 +29,29 @@ final class RecipeFinderHabitLoopUITests: XCTestCase {
         app.descendants(matching: .any).matching(identifier: id).firstMatch
     }
 
+    /// Taps once the element exists and settles. On a cold boot the first recipe row can be on-screen but
+    /// momentarily report non-hittable (async image/layout settle); wait for hittability, then fall back to a
+    /// coordinate tap. Not masking — a wrong tap still fails the later assertions.
+    @MainActor
+    private func tapWhenReady(_ element: XCUIElement, _ message: String, timeout: TimeInterval = 10) {
+        XCTAssertTrue(element.waitForExistence(timeout: timeout), message)
+        if !element.isHittable {
+            _ = XCTWaiter().wait(for: [XCTNSPredicateExpectation(
+                predicate: NSPredicate(format: "isHittable == true"), object: element)], timeout: timeout)
+        }
+        if element.isHittable {
+            element.tap()
+        } else {
+            element.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        }
+    }
+
     @MainActor
     func testCookingShowsRatingAndStreakChip() {
         let app = launchAuthenticated()
 
         // Open the first recipe in the library (guest seeds in a clean install, or the user's own recipes).
-        let firstRecipe = element(app, id: "recipe.row")
-        XCTAssertTrue(firstRecipe.waitForExistence(timeout: 10), "The Recipes home should list at least one recipe.")
-        firstRecipe.tap()
+        tapWhenReady(element(app, id: "recipe.row"), "The Recipes home should list at least one recipe.")
 
         let markCooked = app.buttons["Mark as Cooked"]
         XCTAssertTrue(markCooked.waitForExistence(timeout: 10), "Recipe detail should show 'Mark as Cooked'.")
