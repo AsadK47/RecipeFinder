@@ -217,6 +217,7 @@
 		F3B7D9253079DCA300991908 /* RecipeImportStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D9243079DCA300991908 /* RecipeImportStore.swift */; };
 		F3B7D9273079DCB900991908 /* RecipeImportStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D9263079DCB900991908 /* RecipeImportStoreTests.swift */; };
 		F3B7D929307FE65D00991908 /* AuthUIGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D928307FE65D00991908 /* AuthUIGate.swift */; };
+		F3B7D92B3082474000991908 /* RecipeFinderSheetAndScopeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D92A3082474000991908 /* RecipeFinderSheetAndScopeUITests.swift */; };
 		F3B837BF305554C80003AEF8 /* UserScopedStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837BE305554C80003AEF8 /* UserScopedStorageTests.swift */; };
 		F3B837C1305562790003AEF8 /* SessionExpiryPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837C0305562790003AEF8 /* SessionExpiryPolicy.swift */; };
 		F3B837C33055628E0003AEF8 /* SessionExpiryPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837C23055628E0003AEF8 /* SessionExpiryPolicyTests.swift */; };
@@ -703,6 +704,7 @@
 		F3B7D9243079DCA300991908 /* RecipeImportStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeImportStore.swift; sourceTree = "<group>"; };
 		F3B7D9263079DCB900991908 /* RecipeImportStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeImportStoreTests.swift; sourceTree = "<group>"; };
 		F3B7D928307FE65D00991908 /* AuthUIGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthUIGate.swift; sourceTree = "<group>"; };
+		F3B7D92A3082474000991908 /* RecipeFinderSheetAndScopeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeFinderSheetAndScopeUITests.swift; sourceTree = "<group>"; };
 		F3B837BE305554C80003AEF8 /* UserScopedStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserScopedStorageTests.swift; sourceTree = "<group>"; };
 		F3B837C0305562790003AEF8 /* SessionExpiryPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionExpiryPolicy.swift; sourceTree = "<group>"; };
 		F3B837C23055628E0003AEF8 /* SessionExpiryPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionExpiryPolicyTests.swift; sourceTree = "<group>"; };
@@ -985,6 +987,7 @@
 				F3D4057C305AFEB10076834D /* RecipeFinderSignInUITests.swift */,
 				F3D4057E305AFEBC0076834D /* RecipeFinderImportUITests.swift */,
 				F3B7D91230765C9600991908 /* RecipeFinderHabitLoopUITests.swift */,
+				F3B7D92A3082474000991908 /* RecipeFinderSheetAndScopeUITests.swift */,
 			);
 			path = RecipeFinderUITests;
 			sourceTree = "<group>";
@@ -2691,6 +2694,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F3B7D92B3082474000991908 /* RecipeFinderSheetAndScopeUITests.swift in Sources */,
 				F3B837CB3055E8600003AEF8 /* RecipeFinderLaunchUITests.swift in Sources */,
 				F3D40540305608DE0076834D /* RecipeFinderAccessibilityAuditTests.swift in Sources */,
 				F3B837CC3055E8600003AEF8 /* RecipeFinderSignUpUITests.swift in Sources */,

@@ -262,6 +262,7 @@ extension RecipeDetailView {
             .padding()
         }
         .editableCard(onEdit: { beginEdit(section: .details) }, hint: "Edit prep and cook time")
+        .accessibilityIdentifier("recipe.card.time")
     }
 
     var detailsInfoCard: some View {

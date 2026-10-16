@@ -35,7 +35,7 @@ struct SettingsTabView: View {
                         NavigationLink(destination: AccountView()) {
                             HStack(spacing: AppTheme.spacing16) {
                                 profileAvatar
-                                
+
                                 VStack(alignment: .leading, spacing: AppTheme.spacing4) {
                                     Text(accountManager.fullName.isEmpty ? "Account" : accountManager.fullName)
                                         .font(.headline)
