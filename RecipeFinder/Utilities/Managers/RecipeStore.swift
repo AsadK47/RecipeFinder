@@ -88,9 +88,14 @@ final class RecipeStore: RecipeStoring {
             var fetched = await persistence.fetchRecipesAsync()
             // Seed starter recipes for brand-new users — one-time per account. Set the flag before awaiting so a concurrent load doesn't seed twice.
             if fetched.isEmpty, !UserScopedStorage.shared.bool(forKey: "seedRecipesLoaded") {
+                // Set the flag before awaiting so a concurrent load doesn't seed twice; reset it if the seed save
+                // fails so the next launch retries instead of stranding the user with an empty library.
                 UserScopedStorage.shared.set(true, forKey: "seedRecipesLoaded")
-                await persistence.seedRecipes(SeedRecipeProvider.recipes)
-                fetched = await persistence.fetchRecipesAsync()
+                if await persistence.seedRecipes(SeedRecipeProvider.recipes) {
+                    fetched = await persistence.fetchRecipesAsync()
+                } else {
+                    UserScopedStorage.shared.set(false, forKey: "seedRecipesLoaded")
+                }
             }
             // Ignore a stale fetch superseded by a newer load (account switch / scope change).
             guard generation == loadGeneration else { return }

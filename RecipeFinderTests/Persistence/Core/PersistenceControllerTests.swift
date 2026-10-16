@@ -63,6 +63,29 @@ import Foundation
         #expect(fetched.first?.isFavorite == true)
     }
 
+    // MARK: - Seeding
+
+    @Test func seedRecipes_whenScoped_returnsTrueAndPersistsAll() async {
+        let controller = makeController(userID: { "userA" })
+        let models = [makeRecipe(name: "Seed One"), makeRecipe(name: "Seed Two")]
+
+        let ok = await controller.seedRecipes(models)
+
+        #expect(ok)
+        #expect(controller.fetchRecipes().count == 2)
+    }
+
+    /// No user scope ⇒ the save can't be attributed, so seeding reports failure and writes nothing — this is the
+    /// signal RecipeStore uses to clear its "seeded" flag and retry next launch rather than strand an empty library.
+    @Test func seedRecipes_whenUnscoped_returnsFalseAndPersistsNothing() async {
+        let controller = makeController(userID: { nil })
+
+        let ok = await controller.seedRecipes([makeRecipe(name: "Seed One")])
+
+        #expect(!ok)
+        #expect(controller.fetchRecipes().isEmpty)
+    }
+
     @Test func delete_removesOnlyThatRecipe() {
         let controller = makeController(userID: { "userA" })
         let keep = makeRecipe(name: "Keep")

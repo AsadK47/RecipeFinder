@@ -178,15 +178,18 @@ extension PersistenceController {
         return true
     }
 
-    /// Bulk-inserts starter recipes on a background context in one save so first sign-in doesn't freeze; skips per-recipe count/badge work by design.
-    func seedRecipes(_ models: [RecipeModel]) async {
-        guard ensureStoreIsReady(), let userId = userID() else { return }
+    /// Bulk-inserts starter recipes on a background context in one save so first sign-in doesn't freeze; skips
+    /// per-recipe count/badge work by design. Returns `true` only if the save succeeded, so the caller can
+    /// clear the "seeded" flag and retry next launch rather than strand the user with an empty library.
+    @discardableResult
+    func seedRecipes(_ models: [RecipeModel]) async -> Bool {
+        guard ensureStoreIsReady(), let userId = userID() else { return false }
         let container = self.container
-        await withCheckedContinuation { continuation in
+        return await withCheckedContinuation { continuation in
             container.performBackgroundTask { context in
                 guard let entity = NSEntityDescription.entity(forEntityName: Entity.recipe, in: context) else {
                     persistenceLogger.error("❌ Failed to find Recipe entity while seeding")
-                    continuation.resume()
+                    continuation.resume(returning: false)
                     return
                 }
                 for model in models {
@@ -196,10 +199,11 @@ extension PersistenceController {
                 do {
                     try context.save()
                     persistenceLogger.debug("✅ Seeded \(models.count) starter recipes")
+                    continuation.resume(returning: true)
                 } catch {
                     persistenceLogger.error("❌ Failed to seed starter recipes: \(error.localizedDescription)")
+                    continuation.resume(returning: false)
                 }
-                continuation.resume()
             }
         }
     }
