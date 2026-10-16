@@ -54,7 +54,11 @@ extension AuthenticationManager {
         defaults.set(false, forKey: self.isAuthenticatedKey)
         defaults.removeObject(forKey: self.currentEmailKey)
         defaults.removeObject(forKey: self.lastActiveTimestampKey)
-        
+
+        // Reload every manager into the now-guest (nil) scope — mirrors the sign-IN path. Without this the
+        // AccountManager keeps the previous user's name in memory and the Settings screen shows it while browsing.
+        reloadAllManagers()
+
         self.logger.debug("✅ Sign out complete - UI should now show login screen")
         HapticManager.shared.light()
     }

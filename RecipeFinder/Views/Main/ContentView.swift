@@ -60,7 +60,10 @@ struct ContentView: View {
             if isAuthenticated {
                 store.load(isAuthenticated: true)
             } else {
+                // Sign-out: clear the previous user's library, then reload guest seed recipes so browsing
+                // isn't left empty (ContentView stays mounted across the transition, so onAppear won't re-fire).
                 store.recipes = []
+                store.load(isAuthenticated: false)
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .userScopeDidChange)) { _ in

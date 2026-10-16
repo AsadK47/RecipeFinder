@@ -32,4 +32,14 @@ struct RecipeWizardSectionTests {
         #expect(RecipeWizardView.editorTitle(focus: nil, isEditing: false) == "New Recipe")
         #expect(RecipeWizardView.editorTitle(focus: nil, isEditing: true) == "Edit Recipe")
     }
+
+    // Each focused section is its own `.sheet(item:)` identity, distinct from the full (nil) editor — so tapping
+    // "cook time" then an ingredient re-presents instead of reusing a stale sheet. Guards the detent-size bug fix.
+    @Test("Focused edit targets have a stable id distinct from the full editor", arguments: RecipeWizardView.Section.allCases)
+    func editTargetIdsAreDistinct(section: RecipeWizardView.Section) {
+        let focused = RecipeDetailView.EditTarget(section: section)
+        let full = RecipeDetailView.EditTarget(section: nil)
+        #expect(focused.id != full.id)
+        #expect(focused.id == RecipeDetailView.EditTarget(section: section).id)
+    }
 }

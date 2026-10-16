@@ -242,8 +242,11 @@ verification (premise vs. real code + existing tests) reclassified several**. Le
   iff `plan.isLast(currentIndex)` (predicate already unit-tested in `CookingPlanTests.firstAndLast`), else
   plain dismiss. Mid-recipe Done still abandons without crediting. Verified: CookingPlan/timer units + habit-loop UITest green.
 - **REAL — queued, verified against code, each its own TDD slice:**
-  - #4 (high) main-thread Core Data fetch+save in `recordCook`/`updateRating` (PersistenceController+RecipeWrites.swift:317-362);
-    violates async-only. Careful background-context refactor (don't cross contexts) — own slice.
+  - #4 DONE (uncommitted, full suite 1808 green). `recordCook`/`updateRating` are now `async`, writing on a
+    background context via `performBackgroundTask` + `withCheckedContinuation` (mirrors `seedRecipes`); new
+    `nonisolated static scopedRecipePredicate(id:userId:)` builds the lookup inside the @Sendable closure
+    (no main-actor capture). Call sites wrapped in `Task {}` (RecipeDetailView). 7 round-trip tests made
+    `async`/`await` — now deterministic, not racy. No main-thread Core Data I/O left in these paths.
   - #8 (med) share-extension ingest (RecipeSearchView.ingest→addRecipe) bypasses `RecipeWizardBuilder.validate()`
     → can save zero-instruction recipes. Verify path, add validation.
   - #12 (med) meal-plan→groceries binary vs kitchen stock (MealPlanningView.swift:358-362 skips by name, ignores

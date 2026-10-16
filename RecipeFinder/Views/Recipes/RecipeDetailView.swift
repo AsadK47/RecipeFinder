@@ -14,7 +14,6 @@ struct RecipeDetailView: View {
     @State private var addedIngredients: Set<String> = []
     @State var showAddedFeedback: String?
     @State private var confettiCounter = 0
-    @State var showEditSheet = false
     @State private var showAddToCollection = false
     @State private var showCookingMode = false
     @State var showSaveError = false
@@ -23,8 +22,8 @@ struct RecipeDetailView: View {
     @State private var showPostCookPhotoPrompt = false
     @State private var showPhotoManager = false
     @State var photoViewer: PhotoViewerSource?
-    // Editor section to deep-link to; nil opens at the top.
-    @State var editSection: RecipeWizardView.Section?
+    // Drives the editor sheet; `section` deep-links to those fields (nil = full editor). Presented via `.sheet(item:)` so content rebuilds from the target — avoids the stale-first-render race of `.sheet(isPresented:)` + separate state.
+    @State var editTarget: EditTarget?
     @State var isRefreshing = false
     @State var pendingRefreshDiff: RecipeDiff?
     @State var showRefreshSheet = false
@@ -42,6 +41,12 @@ struct RecipeDetailView: View {
 
     var hasPrePrep: Bool { !recipe.prePrepInstructions.isEmpty }
     var hasNotes: Bool { !recipe.notesForDisplay.isEmpty || recipe.importedFromURL != nil }
+
+    // Identifiable editor target; a nil section means the full (unfocused) editor. Stable `id` so `.sheet(item:)` treats "edit details" and "edit all" as distinct presentations.
+    struct EditTarget: Identifiable {
+        let section: RecipeWizardView.Section?
+        var id: String { section.map(String.init(describing:)) ?? "__all__" }
+    }
 
     init(recipe: RecipeModel) {
         _recipe = State(initialValue: recipe)
@@ -108,8 +113,8 @@ struct RecipeDetailView: View {
                 )
             }
         }
-        .sheet(isPresented: $showEditSheet) {
-            editRecipeSheet
+        .sheet(item: $editTarget) { target in
+            editRecipeSheet(focus: target.section)
         }
         .sheet(isPresented: $showAddToCollection) {
             AddToCollectionSheet(recipe: recipe)
@@ -269,7 +274,7 @@ struct RecipeDetailView: View {
     func recordCook() {
         recipe.cookCount += 1
         recipe.lastCookedAt = Date()
-        PersistenceController.shared.recordCook(withId: recipe.id)
+        Task { await PersistenceController.shared.recordCook(withId: recipe.id) }
         recipeStore.sync(recipe)
 
         // Cooking is the rewarded action — celebrate every cook, not just the week's first.
@@ -314,7 +319,7 @@ struct RecipeDetailView: View {
     func updateRating(_ newRating: Int) {
         HapticManager.shared.selection()
         recipe.rating = newRating
-        PersistenceController.shared.updateRating(withId: recipe.id, rating: newRating)
+        Task { await PersistenceController.shared.updateRating(withId: recipe.id, rating: newRating) }
         recipeStore.sync(recipe)
         refreshCookingBadges()   // rating 10 recipes → "Critic"
     }

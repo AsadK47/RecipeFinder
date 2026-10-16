@@ -313,51 +313,70 @@ extension PersistenceController {
         }
     }
     
-    /// Increments `cookCount` and stamps `lastCookedAt`; bypasses `updateRecipe` since cook history is separate from content edits.
-    func recordCook(withId id: UUID) {
+    /// Background-safe recipe lookup predicate (user-scoped when signed in, id-only for guests). `nonisolated static`
+    /// so it can be built inside a `performBackgroundTask` closure without touching the @MainActor instance.
+    nonisolated static func scopedRecipePredicate(id: UUID, userId: String?) -> NSPredicate {
+        if let userId {
+            return NSPredicate(format: "\(RecipeKey.id) == %@ AND userId == %@", id as CVarArg, userId)
+        }
+        return NSPredicate(format: "\(RecipeKey.id) == %@", id as CVarArg)
+    }
+
+    /// Increments `cookCount` and stamps `lastCookedAt` on a background context so the post-cook flow never blocks
+    /// the main thread; `await`s the save so callers/tests observe a completed write. Bypasses `updateRecipe` since
+    /// cook history is separate from content edits.
+    func recordCook(withId id: UUID) async {
         guard ensureStoreIsReady() else { return }
-
-        let context = container.viewContext
-        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
-        fetchRequest.predicate = recipeIdPredicate(id)
-        fetchRequest.fetchLimit = 1
-
-        do {
-            guard let recipe = try context.fetch(fetchRequest).first else {
-                persistenceLogger.debug("⚠️ Recipe with id \(id) not found")
-                return
+        let container = self.container
+        let userId = userID()
+        await withCheckedContinuation { continuation in
+            container.performBackgroundTask { context in
+                let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
+                fetchRequest.predicate = Self.scopedRecipePredicate(id: id, userId: userId)
+                fetchRequest.fetchLimit = 1
+                do {
+                    guard let recipe = try context.fetch(fetchRequest).first else {
+                        persistenceLogger.debug("⚠️ Recipe with id \(id) not found")
+                        continuation.resume()
+                        return
+                    }
+                    let current = recipe.value(forKey: RecipeKey.cookCount) as? Int ?? 0
+                    recipe.setValue(current + 1, forKey: RecipeKey.cookCount)
+                    recipe.setValue(Date(), forKey: RecipeKey.lastCookedAt)
+                    try context.save()
+                    persistenceLogger.debug("✅ Cook recorded for recipe \(id), count now \(current + 1)")
+                } catch {
+                    persistenceLogger.error("❌ Failed to record cook: \(error.localizedDescription)")
+                }
+                continuation.resume()
             }
-
-            let current = recipe.value(forKey: RecipeKey.cookCount) as? Int ?? 0
-            recipe.setValue(current + 1, forKey: RecipeKey.cookCount)
-            recipe.setValue(Date(), forKey: RecipeKey.lastCookedAt)
-
-            try context.save()
-            persistenceLogger.debug("✅ Cook recorded for recipe \(id), count now \(current + 1)")
-        } catch {
-            persistenceLogger.error("❌ Failed to record cook: \(error.localizedDescription)")
         }
     }
 
-    func updateRating(withId id: UUID, rating: Int) {
+    /// Persists a rating on a background context (off the main thread); `await`s the save.
+    func updateRating(withId id: UUID, rating: Int) async {
         guard ensureStoreIsReady() else { return }
-
-        let context = container.viewContext
-        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
-        fetchRequest.predicate = recipeIdPredicate(id)
-        fetchRequest.fetchLimit = 1
-
-        do {
-            guard let recipe = try context.fetch(fetchRequest).first else {
-                persistenceLogger.debug("⚠️ Recipe with id \(id) not found")
-                return
+        let container = self.container
+        let userId = userID()
+        await withCheckedContinuation { continuation in
+            container.performBackgroundTask { context in
+                let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
+                fetchRequest.predicate = Self.scopedRecipePredicate(id: id, userId: userId)
+                fetchRequest.fetchLimit = 1
+                do {
+                    guard let recipe = try context.fetch(fetchRequest).first else {
+                        persistenceLogger.debug("⚠️ Recipe with id \(id) not found")
+                        continuation.resume()
+                        return
+                    }
+                    recipe.setValue(rating, forKey: RecipeKey.rating)
+                    try context.save()
+                    persistenceLogger.debug("✅ Rating updated to \(rating) for recipe \(id)")
+                } catch {
+                    persistenceLogger.error("❌ Failed to update rating: \(error.localizedDescription)")
+                }
+                continuation.resume()
             }
-
-            recipe.setValue(rating, forKey: RecipeKey.rating)
-            try context.save()
-            persistenceLogger.debug("✅ Rating updated to \(rating) for recipe \(id)")
-        } catch {
-            persistenceLogger.error("❌ Failed to update rating: \(error.localizedDescription)")
         }
     }
 

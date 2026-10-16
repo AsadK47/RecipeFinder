@@ -113,6 +113,17 @@ struct RecipeStoreTests {
         #expect(store.recipes.count == 1)
     }
 
+    @Test("guest load restores seed recipes into an empty library")
+    func guestLoadSeedsWhenEmpty() {
+        let store = makeStore()
+        store.recipes = []
+
+        store.load(isAuthenticated: false)
+
+        // Browsing signed-out must not strand the user with a blank list (the post-sign-out reload path).
+        #expect(store.recipes == SeedRecipeProvider.recipes)
+    }
+
     @Test("refresh reloads the library from persistence")
     func refreshReloads() async {
         let store = makeStore()

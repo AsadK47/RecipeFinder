@@ -287,8 +287,7 @@ extension RecipeDetailView {
     // Opens the pre-filled editor; `section` deep-links to those fields (else top).
     func beginEdit(section: RecipeWizardView.Section? = nil) {
         HapticManager.shared.light()
-        editSection = section
-        showEditSheet = true
+        editTarget = EditTarget(section: section)
     }
 
     var ingredientsSection: some View {
@@ -493,7 +492,7 @@ extension RecipeDetailView {
         }
     }
 
-    var editRecipeSheet: some View {
+    func editRecipeSheet(focus: RecipeWizardView.Section?) -> some View {
         RecipeWizardView(
             prefilledData: RecipeWizardView.PrefilledRecipeData(
                 name: recipe.name,
@@ -514,7 +513,7 @@ extension RecipeDetailView {
                 galleryImageURLs: recipe.photoNames.isEmpty ? nil : recipe.photoNames
             ),
             editingRecipeId: recipe.id,
-            focus: editSection,
+            focus: focus,
             onComplete: { updatedRecipe in
                 let previous = recipe
                 recipe = updatedRecipe
