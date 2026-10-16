@@ -14,6 +14,7 @@ struct ContentView: View {
     @Environment(\.badges) private var badgeManager
     @State private var showAccountFromBadge = false
     @State private var pendingFileImport: RecipeModel?
+    @State private var fileImportError: String?
 
     private var themeBinding: AppTheme.ThemeType { selectedTheme }
 
@@ -91,8 +92,18 @@ struct ContentView: View {
                 let data = try Data(contentsOf: url)
                 pendingFileImport = try RecipeFileExporter.decode(data)
             } catch {
+                // Surface the failure — tapping a shared recipe file that won't open must not be a silent no-op.
                 logger.error("Failed to open shared recipe file: \(error.localizedDescription)")
+                fileImportError = "This recipe file couldn't be opened. It may be damaged or from a newer version."
             }
+        }
+        .alert("Couldn't Open Recipe", isPresented: Binding(
+            get: { fileImportError != nil },
+            set: { if !$0 { fileImportError = nil } }
+        )) {
+            Button("OK", role: .cancel) { fileImportError = nil }
+        } message: {
+            Text(fileImportError ?? "")
         }
         .sheet(item: Binding(
             get: { badgeManager.pendingCelebration },

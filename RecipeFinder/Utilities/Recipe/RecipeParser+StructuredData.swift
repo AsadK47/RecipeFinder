@@ -103,7 +103,7 @@ extension RecipeParser {
         } else if let instructionsString = data["recipeInstructions"] as? String {
             let steps = instructionsString.components(separatedBy: .newlines)
                 .map { decodeHTMLEntities($0.trimmingCharacters(in: .whitespacesAndNewlines)) }
-                .filter { !$0.isEmpty && $0.count >= 10 }
+                .filter { !$0.isEmpty }
             result.instructions = steps
         }
 
@@ -165,7 +165,7 @@ extension RecipeParser {
         for item in items {
             if let str = item as? String {
                 let decoded = decodeHTMLEntities(str.trimmingCharacters(in: .whitespacesAndNewlines))
-                if decoded.count >= 10 { steps.append(decoded) }
+                if !decoded.isEmpty { steps.append(decoded) }
             } else if let dict = item as? [String: Any] {
                 let typeStr: String
                 if let t = dict["@type"] as? String {
@@ -179,9 +179,10 @@ extension RecipeParser {
                 if typeStr == "HowToSection", let subItems = dict["itemListElement"] as? [Any] {
                     steps.append(contentsOf: flattenInstructionSteps(from: subItems))
                 } else if let text = dict["text"] as? String {
-                    // HowToStep (or any dict with a "text" field)
+                    // HowToStep (or any dict with a "text" field). Keep any non-empty step — these are
+                    // author-marked instructions, so a short one ("Serve hot.", "Stir.") is real, not noise.
                     let decoded = decodeHTMLEntities(text.trimmingCharacters(in: .whitespacesAndNewlines))
-                    if decoded.count >= 10 { steps.append(decoded) }
+                    if !decoded.isEmpty { steps.append(decoded) }
                 } else if let subItems = dict["itemListElement"] as? [Any] {
                     // Generic itemListElement fallback (unknown @type)
                     steps.append(contentsOf: flattenInstructionSteps(from: subItems))

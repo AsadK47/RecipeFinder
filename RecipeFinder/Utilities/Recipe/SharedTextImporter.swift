@@ -24,7 +24,8 @@ struct SharedTextImporter {
         do {
             if let interpreted = try await interpreter.interpret(trimmed),
                !interpreted.name.trimmingCharacters(in: .whitespaces).isEmpty,
-               interpreted.ingredients.contains(where: { !$0.trimmingCharacters(in: .whitespaces).isEmpty }) {
+               interpreted.ingredients.contains(where: { !$0.trimmingCharacters(in: .whitespaces).isEmpty }),
+               interpreted.steps.contains(where: { !$0.trimmingCharacters(in: .whitespaces).isEmpty }) {
                 return .interpreted(interpreted)
             }
         } catch {

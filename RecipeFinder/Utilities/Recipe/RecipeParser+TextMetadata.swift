@@ -131,7 +131,10 @@ extension RecipeParser {
             if let range = text.range(of: pattern, options: [.regularExpression, .caseInsensitive]) {
                 let match = String(text[range])
                 if let valueRange = match.range(of: "[0-9]+", options: .regularExpression),
-                   let value = Int(match[valueRange]) {
+                   let value = Int(match[valueRange]),
+                   // Reject implausible yields ("Serves: 0", "Makes 999999 servings") so a typo on the source
+                   // page doesn't poison serving-scaling; keep scanning the remaining patterns.
+                   (1...100).contains(value) {
                     return value
                 }
             }

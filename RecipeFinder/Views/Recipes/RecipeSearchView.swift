@@ -181,6 +181,13 @@ struct RecipeSearchView: View {
             return
         }
 
+        // Don't silently save an unusable recipe — the interactive URL import already gates on this, so the
+        // share-extension path must too rather than dropping a half-parsed page into the library.
+        guard !recipe.ingredients.isEmpty, !recipe.instructions.isEmpty else {
+            showImportToast("Couldn't read a full recipe from that share")
+            return
+        }
+
         addRecipe(recipe, successMessage: "Imported \"\(recipe.name)\"")
     }
 

@@ -54,4 +54,13 @@ import Foundation
         let sut = SharedTextImporter(interpreter: StubInterpreter(recipe: Self.sample))
         #expect(await sut.handle("   ") == .needsManualEntry("   "))
     }
+
+    @Test func manualWhenNoSteps() async {
+        // Name + ingredients but no steps isn't a usable recipe — fall back to manual rather than opening the
+        // wizard with empty instructions the user can't save.
+        let noSteps = InterpretedRecipe(name: "Soup", ingredients: ["1 onion"], steps: [],
+                                        prepMinutes: nil, cookMinutes: nil, servings: nil, summary: nil)
+        let sut = SharedTextImporter(interpreter: StubInterpreter(recipe: noSteps))
+        #expect(await sut.handle("text") == .needsManualEntry("text"))
+    }
 }
