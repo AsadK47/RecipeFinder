@@ -2,7 +2,10 @@ import Foundation
 
 extension RecipeWizardView {
     /// Data to pre-populate the wizard (import/share/edit); every field optional so partial data seeds the form.
-    struct PrefilledRecipeData {
+    /// Identifiable (fresh `id` per instance) so callers present it via `.sheet(item:)` — rebuilding content from
+    /// the value avoids the stale-first-render race of `.sheet(isPresented:)` + a separately-set prefill.
+    struct PrefilledRecipeData: Identifiable {
+        let id = UUID()
         let name: String?
         let description: String?
         let ingredients: [String]?

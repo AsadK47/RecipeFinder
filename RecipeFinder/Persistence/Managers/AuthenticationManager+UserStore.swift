@@ -104,11 +104,16 @@ extension AuthenticationManager {
         }
         
         AccountManager.shared.clearAllData()
-        
+
         UserScopedStorage.shared.clearCurrentUserData()
         UserScopedStorage.shared.currentUserId = nil
-        
+
         setAuthState(isAuthenticated: false, user: nil)
+
+        // Reload every manager into the now-guest (nil) scope — same reset the sign-IN paths and signOut() run.
+        // Without this the deleted user's shopping/kitchen/meal/badge/collection/streak data lingers in memory.
+        reloadAllManagers()
+
         HapticManager.shared.success()
     }
 }

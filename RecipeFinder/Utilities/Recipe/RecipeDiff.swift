@@ -27,10 +27,14 @@ enum RecipeDiffField: String, CaseIterable, Hashable {
     }
 }
 
-struct RecipeDiff {
+struct RecipeDiff: Identifiable {
     let changed: Set<RecipeDiffField>
     let stored: RecipeModel
     let upstream: RecipeModel
+
+    // Identifiable so the refresh sheet presents via `.sheet(item:)` — content rebuilds from the diff rather than
+    // reading a separately-set `@State`, which rendered an empty sheet on first open.
+    var id: UUID { stored.id }
 
     var hasChanges: Bool { !changed.isEmpty }
 

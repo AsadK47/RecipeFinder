@@ -1,44 +1,28 @@
 import SwiftUI
 
+// Only genuinely boolean sheets live here. The share-import and wizard sheets are data-carrying and are presented
+// directly via `.sheet(item:)` in RecipeSearchView, so their content rebuilds from the value (no stale first render).
 struct SheetPresentationModifier: ViewModifier {
     @Binding var showFilters: Bool
-    @Binding var showImportSheet: Bool
-    @Binding var showRecipeWizard: Bool
     @Binding var showDeleteAlert: Bool
-    
+
     let filterSheet: AnyView
-    let importSheet: AnyView
-    let wizardSheet: AnyView
     let deleteSheet: AnyView
-    
+
     init(showFilters: Binding<Bool>,
-         showImportSheet: Binding<Bool>,
-         showRecipeWizard: Binding<Bool>,
          showDeleteAlert: Binding<Bool>,
          filterSheet: some View,
-         importSheet: some View,
-         wizardSheet: some View,
          deleteSheet: some View) {
         self._showFilters = showFilters
-        self._showImportSheet = showImportSheet
-        self._showRecipeWizard = showRecipeWizard
         self._showDeleteAlert = showDeleteAlert
         self.filterSheet = AnyView(filterSheet)
-        self.importSheet = AnyView(importSheet)
-        self.wizardSheet = AnyView(wizardSheet)
         self.deleteSheet = AnyView(deleteSheet)
     }
-    
+
     func body(content: Content) -> some View {
         content
             .sheet(isPresented: $showFilters) {
                 filterSheet
-            }
-            .sheet(isPresented: $showImportSheet) {
-                importSheet
-            }
-            .sheet(isPresented: $showRecipeWizard) {
-                wizardSheet
             }
             .sheet(isPresented: $showDeleteAlert) {
                 deleteSheet

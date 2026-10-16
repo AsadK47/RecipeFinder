@@ -26,7 +26,6 @@ struct RecipeDetailView: View {
     @State var editTarget: EditTarget?
     @State var isRefreshing = false
     @State var pendingRefreshDiff: RecipeDiff?
-    @State var showRefreshSheet = false
     @State var refreshErrorMessage: String?
     @State var showRefreshUpToDate = false
     // Nutrition card: false = per-serving, true = whole-recipe totals.
@@ -130,8 +129,8 @@ struct RecipeDetailView: View {
         .sheet(isPresented: $showPhotoManager) {
             RecipePhotoManagerSheet(recipe: $recipe)
         }
-        .sheet(isPresented: $showRefreshSheet) {
-            if let diff = pendingRefreshDiff, let url = recipe.importedFromURL {
+        .sheet(item: $pendingRefreshDiff) { diff in
+            if let url = recipe.importedFromURL {
                 RecipeRefreshSheet(diff: diff, sourceURL: url) { updated in
                     applyRefresh(updated)
                 }
@@ -341,7 +340,6 @@ struct RecipeDetailView: View {
         let diff = RecipeDiff.compute(stored: recipe, upstream: upstream)
         if diff.hasChanges {
             pendingRefreshDiff = diff
-            showRefreshSheet = true
         }
     }
 
@@ -360,7 +358,6 @@ struct RecipeDetailView: View {
             let diff = RecipeDiff.compute(stored: recipe, upstream: upstream)
             if diff.hasChanges {
                 pendingRefreshDiff = diff
-                showRefreshSheet = true
             } else {
                 showRefreshUpToDate = true
             }

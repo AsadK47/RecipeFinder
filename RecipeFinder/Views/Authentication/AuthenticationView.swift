@@ -10,7 +10,14 @@ struct AuthenticationView: View {
     @State private var showSignIn = false
     @State private var showBiometricSetup = false
     @State private var newUserEmail = ""
-    @State private var showWelcomeSplash = false
+    // Presented via `.fullScreenCover(item:)` so the splash rebuilds from this value — `.fullScreenCover(isPresented:)`
+    // read a separately-set email and could show a blank name on first sign-up.
+    @State private var welcomeSplash: WelcomeSplash?
+
+    private struct WelcomeSplash: Identifiable {
+        let id = UUID()
+        let email: String
+    }
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("hasBeenPromptedForBiometrics") private var hasBeenPromptedForBiometrics = false
     @AppStorage("biometricsEnabled") private var biometricsEnabled: Bool = false
@@ -173,15 +180,15 @@ struct AuthenticationView: View {
         .sheet(isPresented: $showSignUp) {
             SignUpView(onSignUpSuccess: { email in
                 newUserEmail = email
-                showWelcomeSplash = true
+                welcomeSplash = WelcomeSplash(email: email)
             })
         }
         .sheet(isPresented: $showSignIn) {
             EmailSignInView(prefillEmail: newUserEmail)
         }
-        .fullScreenCover(isPresented: $showWelcomeSplash) {
-            WelcomeSplashView(email: newUserEmail) {
-                showWelcomeSplash = false
+        .fullScreenCover(item: $welcomeSplash) { splash in
+            WelcomeSplashView(email: splash.email) {
+                welcomeSplash = nil
                 DispatchQueue.main.asyncAfter(deadline: .now() + AppTheme.animationDelayShort) {
                     showSignIn = true
                 }

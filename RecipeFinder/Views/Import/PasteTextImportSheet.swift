@@ -8,7 +8,6 @@ struct PasteTextImportSheet: View {
 
     @State private var text = ""
     @State private var prefill: RecipeWizardView.PrefilledRecipeData?
-    @State private var showReview = false
     @State private var isProcessing = false
     @State private var errorMessage: String?
     @FocusState private var focused: Bool
@@ -71,12 +70,10 @@ struct PasteTextImportSheet: View {
                 .onAppear { focused = true }
             }
         }
-        .sheet(isPresented: $showReview) {
-            if let prefill {
-                RecipeWizardView(prefilledData: prefill) { recipe in
-                    onImport(recipe)
-                    dismiss()
-                }
+        .sheet(item: $prefill) { prefill in
+            RecipeWizardView(prefilledData: prefill) { recipe in
+                onImport(recipe)
+                dismiss()
             }
         }
     }
@@ -89,7 +86,6 @@ struct PasteTextImportSheet: View {
             defer { isProcessing = false }
             if let result = await RecipeTextImportRouter().prefill(for: text) {
                 prefill = result
-                showReview = true
             } else {
                 errorMessage = "Couldn't find a recipe in that text. Try putting ingredients and steps on separate lines."
                 HapticManager.shared.error()

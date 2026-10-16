@@ -13,7 +13,6 @@ struct PhotoImportSheet: View {
     @State private var showCamera = false
     @State private var capturedImage: UIImage?
     @State private var prefill: RecipeWizardView.PrefilledRecipeData?
-    @State private var showReview = false
     @State private var isProcessing = false
     @State private var errorMessage: String?
 
@@ -95,12 +94,10 @@ struct PhotoImportSheet: View {
             }
             .ignoresSafeArea()
         }
-        .sheet(isPresented: $showReview) {
-            if let prefill {
-                RecipeWizardView(prefilledData: prefill) { recipe in
-                    onImport(recipe)
-                    dismiss()
-                }
+        .sheet(item: $prefill) { prefill in
+            RecipeWizardView(prefilledData: prefill) { recipe in
+                onImport(recipe)
+                dismiss()
             }
         }
     }
@@ -128,7 +125,6 @@ struct PhotoImportSheet: View {
             let text = try await recognizer.recognizeText(in: image)
             if let result = await RecipeTextImportRouter().prefill(for: text) {
                 prefill = result
-                showReview = true
             } else {
                 errorMessage = "Couldn't find a recipe in that photo. Try a clearer, straight-on shot."
                 HapticManager.shared.error()

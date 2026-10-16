@@ -21,11 +21,9 @@ struct RecipeSearchView: View {
     @State private var ingredientSearchText = ""
     @State private var availableIngredientsOnly = false
     @State private var showFavoritesOnly = false
-    @State private var showImportSheet = false
-    @State private var sharedImportURL: String?
+    @State private var sharedImportURL: SharedImportURL?
     @State private var sharedWizardPrefill: RecipeWizardView.PrefilledRecipeData?
     @State private var importToastMessage: String?
-    @State private var showRecipeWizard: Bool = false
     @State private var recipeToDelete: RecipeModel?
     @State private var showDeleteAlert: Bool = false
     @State private var dontAskAgainDelete: Bool = false
@@ -89,14 +87,20 @@ struct RecipeSearchView: View {
                 .toolbar { keyboardToolbar }
                 .modifier(SheetPresentationModifier(
                     showFilters: $showFilters,
-                    showImportSheet: $showImportSheet,
-                    showRecipeWizard: $showRecipeWizard,
                     showDeleteAlert: $showDeleteAlert,
                     filterSheet: filterSheet,
-                    importSheet: recipeImportSheet,
-                    wizardSheet: recipeWizardSheet,
                     deleteSheet: deleteConfirmationSheet
                 ))
+                .sheet(item: $sharedImportURL) { shared in
+                    RecipeImportView(initialURL: shared.url, existingNames: recipes.map { $0.name }) { importedRecipe in
+                        addRecipe(importedRecipe, successMessage: "Imported \"\(importedRecipe.name)\"")
+                    }
+                }
+                .sheet(item: $sharedWizardPrefill) { prefill in
+                    RecipeWizardView(prefilledData: prefill) { newRecipe in
+                        addRecipe(newRecipe, successMessage: "Added \"\(newRecipe.name)\"")
+                    }
+                }
                 .modifier(FilterCacheUpdateModifier(
                     filterCriteria: filterCriteria,
                     recipes: recipes,
@@ -120,16 +124,6 @@ struct RecipeSearchView: View {
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             checkSharedImportInbox()
         }
-        .onChange(of: showImportSheet) { _, isPresented in
-            if !isPresented {
-                sharedImportURL = nil
-            }
-        }
-        .onChange(of: showRecipeWizard) { _, isPresented in
-            if !isPresented {
-                sharedWizardPrefill = nil
-            }
-        }
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("OpenRecipe"))) { notification in
             guard let idString = notification.userInfo?["recipeId"] as? String,
                   let recipeId = UUID(uuidString: idString),
@@ -145,8 +139,7 @@ struct RecipeSearchView: View {
         case .extracted(let data):
             ingest(sharedRecipe: RecipeImportBuilder().build(from: data))
         case .url(let urlString):
-            sharedImportURL = urlString
-            showImportSheet = true
+            sharedImportURL = SharedImportURL(url: urlString)
         case .text(let text):
             Task { await importSharedText(text) }
         case nil:
@@ -158,7 +151,6 @@ struct RecipeSearchView: View {
     private func importSharedText(_ text: String) async {
         if let prefill = await RecipeTextImportRouter().prefill(for: text) {
             sharedWizardPrefill = prefill
-            showRecipeWizard = true
         } else {
             showImportToast("Couldn't find a recipe in the shared text")
         }
@@ -374,18 +366,14 @@ struct RecipeSearchView: View {
         )
     }
     
-    private var recipeImportSheet: some View {
-        RecipeImportView(initialURL: sharedImportURL, existingNames: recipes.map { $0.name }) { importedRecipe in
-            addRecipe(importedRecipe, successMessage: "Imported \"\(importedRecipe.name)\"")
-        }
+    // Identifiable wrapper so a shared import URL presents via `.sheet(item:)` — content rebuilds from the value
+    // rather than reading a separately-set `@State`, which opened the import sheet with a nil URL on first run.
+    private struct SharedImportURL: Identifiable {
+        let id = UUID()
+        let url: String
     }
 
-    private var recipeWizardSheet: some View {
-        RecipeWizardView(prefilledData: sharedWizardPrefill) { newRecipe in
-            addRecipe(newRecipe, successMessage: "Added \"\(newRecipe.name)\"")
-        }
-    }
-    
+
     private var deleteConfirmationSheet: some View {
         RecipeDeleteConfirmationSheet(
             recipeName: recipeToDelete?.name ?? "",
