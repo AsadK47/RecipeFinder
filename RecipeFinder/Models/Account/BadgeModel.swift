@@ -108,7 +108,10 @@ struct BadgeMetrics: Equatable {
     }
 }
 
-enum BadgeType: String, CaseIterable {
+enum BadgeType: String, CaseIterable, Identifiable {
+    // Stable id (the raw value) so the badge-celebration sheet presents via `.sheet(item:)`.
+    var id: String { rawValue }
+
     // Collection (library size)
     case welcomeAboard = "welcome_aboard"
     case firstRecipe = "first_recipe"

@@ -169,6 +169,14 @@ struct RecipeDetailView: View {
                 prePrepState = Array(repeating: false, count: newRecipe.prePrepInstructions.count)
             }
         }
+        .onChange(of: recipeStore.recipes) { _, newRecipes in
+            // Reflect edits made to this recipe elsewhere (favourite/cook/rating/edit on another screen, or the
+            // list beside us in iPad split view). Guard on inequality so our own writes don't loop. Deletion is
+            // left as-is — navigation owns dismissal.
+            if let fresh = newRecipes.first(where: { $0.id == recipe.id }), fresh != recipe {
+                recipe = fresh
+            }
+        }
         .task(id: recipe.id) {
             // Re-read the persisted copy first, then refresh — so the diff runs against saved state, not the stale navigation snapshot (avoids the two-task race).
             if let fresh = PersistenceController.shared.fetchRecipe(withId: recipe.id) {

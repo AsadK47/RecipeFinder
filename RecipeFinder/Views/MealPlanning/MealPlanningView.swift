@@ -9,9 +9,22 @@ struct MealPlanningView: View {
     @State private var selectedDate: Date = Date()
     @State private var showMealTimeSelector = false
     @State private var selectedMealTimes: Set<MealTime> = []
-    @State private var showRecipeSelector = false
-    @State private var showQuickSnackSheet = false
-    @State private var currentMealTime: MealTime?
+    @State private var mealPlanSheet: MealPlanSheet?
+
+    /// One Identifiable target for the recipe-picker / quick-snack sheets so content rebuilds from the value
+    /// (`.sheet(item:)`) instead of reading a `currentMealTime` set in the same action — which rendered the
+    /// sheet with a nil meal time on first present.
+    private enum MealPlanSheet: Identifiable {
+        case recipeSelection(MealTime)
+        case quickSnack(MealTime)
+
+        var id: String {
+            switch self {
+            case .recipeSelection(let mealTime): "recipe-\(mealTime)"
+            case .quickSnack(let mealTime): "snack-\(mealTime)"
+            }
+        }
+    }
     @State private var weekShoppingFeedback: String?
     /// Display order for the selected day's meal cards; persists drag order within a day.
     @State private var orderedMealTimes: [MealTime] = []
@@ -130,38 +143,33 @@ struct MealPlanningView: View {
                 selectedDate: selectedDate,
                 selectedMealTimes: $selectedMealTimes,
                 onContinue: { mealTime in
-                    currentMealTime = mealTime
                     showMealTimeSelector = false
                     if let suggested = pendingSuggestedRecipe {
                         saveMealPlan(recipe: suggested, for: selectedDate, mealTime: mealTime)
                         pendingSuggestedRecipe = nil
                     } else if mealTime == .snack {
-                        showQuickSnackSheet = true
+                        mealPlanSheet = .quickSnack(mealTime)
                     } else {
-                        showRecipeSelector = true
+                        mealPlanSheet = .recipeSelection(mealTime)
                     }
                 }
             )
         }
-        .sheet(isPresented: $showRecipeSelector) {
-            RecipeSelectionSheet(
-                mealTime: currentMealTime,
-                onSelectExisting: { recipe in
-                    if let mealTime = currentMealTime {
+        .sheet(item: $mealPlanSheet) { sheet in
+            switch sheet {
+            case .recipeSelection(let mealTime):
+                RecipeSelectionSheet(
+                    mealTime: mealTime,
+                    onSelectExisting: { recipe in
                         saveMealPlan(recipe: recipe, for: selectedDate, mealTime: mealTime)
+                        mealPlanSheet = nil
                     }
-                    showRecipeSelector = false
-                    currentMealTime = nil
-                }
-            )
-        }
-        .sheet(isPresented: $showQuickSnackSheet) {
-            QuickSnackSheet { snackRecipe in
-                if let mealTime = currentMealTime {
+                )
+            case .quickSnack(let mealTime):
+                QuickSnackSheet { snackRecipe in
                     saveMealPlan(recipe: snackRecipe, for: selectedDate, mealTime: mealTime)
+                    mealPlanSheet = nil
                 }
-                showQuickSnackSheet = false
-                currentMealTime = nil
             }
         }
         .sheet(item: $reminderContext) { context in
@@ -216,8 +224,7 @@ struct MealPlanningView: View {
             recipeFor: { getRecipe(for: selectedDate, mealTime: $0) },
             mealPlanFor: { mealPlanningManager.mealPlan(for: selectedDate, mealTime: $0) },
             onSelectMealTime: { mealTime in
-                currentMealTime = mealTime
-                showRecipeSelector = true
+                mealPlanSheet = .recipeSelection(mealTime)
                 HapticManager.shared.light()
             },
             onRemove: { mealTime in

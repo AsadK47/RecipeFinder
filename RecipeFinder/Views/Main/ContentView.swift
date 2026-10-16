@@ -12,7 +12,6 @@ struct ContentView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.auth) private var authManager
     @Environment(\.badges) private var badgeManager
-    @State private var showBadgeSheet = false
     @State private var showAccountFromBadge = false
     @State private var pendingFileImport: RecipeModel?
 
@@ -95,22 +94,18 @@ struct ContentView: View {
                 logger.error("Failed to open shared recipe file: \(error.localizedDescription)")
             }
         }
-        .onChange(of: badgeManager.pendingCelebration) { _, newValue in
-            if newValue != nil { showBadgeSheet = true }
-        }
-        .sheet(isPresented: $showBadgeSheet, onDismiss: {
-            badgeManager.dismissCelebration()
-        }) {
-            if let badge = badgeManager.pendingCelebration {
-                BadgeEarnedSheet(badge: badge, onDismiss: {
-                    showBadgeSheet = false
-                }, onViewAllBadges: {
-                    showBadgeSheet = false
-                    showAccountFromBadge = true
-                })
-                .presentationDetents([.height(380)])
-                .presentationDragIndicator(.visible)
-            }
+        .sheet(item: Binding(
+            get: { badgeManager.pendingCelebration },
+            set: { if $0 == nil { badgeManager.dismissCelebration() } }
+        )) { badge in
+            BadgeEarnedSheet(badge: badge, onDismiss: {
+                badgeManager.dismissCelebration()
+            }, onViewAllBadges: {
+                badgeManager.dismissCelebration()
+                showAccountFromBadge = true
+            })
+            .presentationDetents([.height(380)])
+            .presentationDragIndicator(.visible)
         }
         .sheet(isPresented: $showAccountFromBadge) {
             NavigationStack {

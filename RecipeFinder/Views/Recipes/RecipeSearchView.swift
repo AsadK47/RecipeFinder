@@ -23,6 +23,7 @@ struct RecipeSearchView: View {
     @State private var showFavoritesOnly = false
     @State private var sharedImportURL: SharedImportURL?
     @State private var sharedWizardPrefill: RecipeWizardView.PrefilledRecipeData?
+    @State private var pendingOpenRecipeId: UUID?
     @State private var importToastMessage: String?
     @State private var recipeToDelete: RecipeModel?
     @State private var showDeleteAlert: Bool = false
@@ -120,17 +121,30 @@ struct RecipeSearchView: View {
             checkSharedImportInbox()
             updateDerivedMetadata()
         }
-        .onChange(of: recipes) { _, _ in updateDerivedMetadata() }
+        .onChange(of: recipes) { _, _ in
+            updateDerivedMetadata()
+            openPendingRecipeIfAvailable()
+        }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             checkSharedImportInbox()
         }
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("OpenRecipe"))) { notification in
             guard let idString = notification.userInfo?["recipeId"] as? String,
-                  let recipeId = UUID(uuidString: idString),
-                  recipes.contains(where: { $0.id == recipeId }) else { return }
-            navigationPath = NavigationPath()
-            navigationPath.append(recipeId)
+                  let recipeId = UUID(uuidString: idString) else { return }
+            // Remember the target and open it now if loaded, else when `recipes` arrives — a deep link that
+            // lands before the library finishes loading must not be silently dropped.
+            pendingOpenRecipeId = recipeId
+            openPendingRecipeIfAvailable()
         }
+    }
+
+    /// Navigates to a pending "OpenRecipe" deep link once its recipe is present in the loaded library; a no-op
+    /// until then, so the request survives arriving before `recipes` loads instead of being dropped.
+    private func openPendingRecipeIfAvailable() {
+        guard let id = pendingOpenRecipeId, recipes.contains(where: { $0.id == id }) else { return }
+        pendingOpenRecipeId = nil
+        navigationPath = NavigationPath()
+        navigationPath.append(id)
     }
 
     /// Handles the share-extension App Group inbox: finished recipe saved with a toast, URL opens the import sheet, text prefills the wizard.
