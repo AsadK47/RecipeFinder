@@ -139,6 +139,15 @@ struct BadgeModelTests {
         #expect(m.cuisinesCooked == 2)       // Italian + Thai (uncooked snack excluded)
     }
 
+    /// Starter recipes aren't collected by the user — counting them awarded First Bite / Getting Hungry on a first cook.
+    @Test func metrics_recipesCollectedExcludesStarterRecipes() {
+        var starter = recipe(cookCount: 1)
+        starter.isSampleRecipe = true
+        let m = BadgeMetrics.from(recipes: [starter, starter, recipe()], streakWeeks: 0)
+        #expect(m.recipesCollected == 1)
+        #expect(m.recipesCooked == 2)   // cooking a starter still counts as cooking
+    }
+
     @Test func metrics_cuisineFallsBackToCategoryWhenCuisineMissing() {
         let recipes = [recipe(category: "Korean", cuisine: nil, cookCount: 1)]
         #expect(BadgeMetrics.from(recipes: recipes, streakWeeks: 0).cuisinesCooked == 1)

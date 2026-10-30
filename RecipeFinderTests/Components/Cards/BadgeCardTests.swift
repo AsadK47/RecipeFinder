@@ -1,5 +1,7 @@
 import XCTest
+import Testing
 import SwiftUI
+import ViewInspector
 @testable import RecipeFinder
 
 final class BadgeCardTests: XCTestCase {
@@ -34,5 +36,17 @@ final class BadgeCardTests: XCTestCase {
         // "PURPLE" should NOT map to .purple — it falls back to .gray
         let badge = makeBadge(color: "PURPLE")
         XCTAssertEqual(Badge.color(for: badge.color), .gray)
+    }
+}
+
+@MainActor
+@Suite struct BadgeCardTitleTests {
+    @Test("Shows the full multi-word badge title, not just the first word")
+    func showsFullTitle() throws {
+        let badge = Badge(id: "firstBite", title: "First Bite", description: "Desc",
+                          icon: "star", color: "green", dateEarned: nil,
+                          isUnlocked: false, howToEarn: "Add a recipe")
+        let view = try BadgeCard(badge: badge, colorScheme: .light, cardStyle: .frosted).inspect()
+        _ = try view.find(text: "First Bite")
     }
 }

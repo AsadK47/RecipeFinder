@@ -102,12 +102,9 @@ extension PersistenceController {
         }
     }
     
-    /// Scopes a recipe lookup to the current user so the shared fixed seed UUIDs can't let one account's write land on another's row; id-only fallback for guests (no userId).
+    /// Scopes a recipe lookup to the current user (or the guest scope) so the shared fixed seed UUIDs can't let one owner's write land on another's row.
     private func recipeIdPredicate(_ id: UUID) -> NSPredicate {
-        if let userId = userID() {
-            return NSPredicate(format: "\(RecipeKey.id) == %@ AND userId == %@", id as CVarArg, userId)
-        }
-        return NSPredicate(format: "\(RecipeKey.id) == %@", id as CVarArg)
+        Self.scopedRecipePredicate(id: id, userId: userID())
     }
 
     @discardableResult
@@ -128,8 +125,7 @@ extension PersistenceController {
             try context.save()
             persistenceLogger.debug("✅ Recipe '\(parameters.name)' saved successfully")
 
-            let recipeCount = getRecipeCount()
-            BadgeManager.shared.checkAndUnlockBadges(recipeCount: recipeCount)
+            BadgeManager.shared.checkAndUnlockBadges(recipeCount: fetchCollectedRecipeCount())
             return true
         } catch {
             persistenceLogger.error("❌ Failed to save recipe '\(parameters.name)': \(error.localizedDescription)")
@@ -183,7 +179,9 @@ extension PersistenceController {
     /// clear the "seeded" flag and retry next launch rather than strand the user with an empty library.
     @discardableResult
     func seedRecipes(_ models: [RecipeModel]) async -> Bool {
-        guard ensureStoreIsReady(), let userId = userID() else { return false }
+        // nil userId seeds the guest scope — guests get a persisted library like any account.
+        guard ensureStoreIsReady() else { return false }
+        let userId = userID()
         let container = self.container
         return await withCheckedContinuation { continuation in
             container.performBackgroundTask { context in
@@ -317,13 +315,13 @@ extension PersistenceController {
         }
     }
     
-    /// Background-safe recipe lookup predicate (user-scoped when signed in, id-only for guests). `nonisolated static`
+    /// Background-safe recipe lookup predicate (user-scoped when signed in, guest rows only for guests). `nonisolated static`
     /// so it can be built inside a `performBackgroundTask` closure without touching the @MainActor instance.
     nonisolated static func scopedRecipePredicate(id: UUID, userId: String?) -> NSPredicate {
-        if let userId {
-            return NSPredicate(format: "\(RecipeKey.id) == %@ AND userId == %@", id as CVarArg, userId)
-        }
-        return NSPredicate(format: "\(RecipeKey.id) == %@", id as CVarArg)
+        NSCompoundPredicate(andPredicateWithSubpredicates: [
+            NSPredicate(format: "\(RecipeKey.id) == %@", id as CVarArg),
+            ownerPredicate(userId)
+        ])
     }
 
     /// Increments `cookCount` and stamps `lastCookedAt` on a background context so the post-cook flow never blocks

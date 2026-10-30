@@ -558,14 +558,16 @@ extension RecipeDetailView {
 
                     if let lastCooked = recipe.lastCookedAt {
                         Spacer()
-                        Text(lastCooked, style: .relative)
+                        // Named relative ("2 minutes ago"); `style: .relative` read like a duration ("44 secs").
+                        Text(lastCooked.formatted(.relative(presentation: .named)))
                             .font(.caption)
                             .adaptiveSecondaryForeground()
                     }
                 }
 
+                let cookedToday = recipe.wasCookedToday()
                 Button(action: recordCook) {
-                    Label("Mark as Cooked", systemImage: "checkmark.circle.fill")
+                    Label(cookedToday ? "Cooked today" : "Mark as Cooked", systemImage: "checkmark.circle.fill")
                         .font(.subheadline.weight(.semibold))
                         .adaptiveForegroundColor()
                         .frame(maxWidth: .infinity)
@@ -576,7 +578,10 @@ extension RecipeDetailView {
                         )
                 }
                 .buttonStyle(.plain)
-                .accessibilityHint("Increments the cook count and records today")
+                .disabled(cookedToday)
+                .accessibilityIdentifier("recipe.markCooked")
+                .opacity(cookedToday ? AppTheme.glassLightOpacity : 1)
+                .accessibilityHint(cookedToday ? "Already logged today" : "Increments the cook count and records today")
             }
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)

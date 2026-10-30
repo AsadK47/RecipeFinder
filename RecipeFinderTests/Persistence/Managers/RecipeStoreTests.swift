@@ -113,15 +113,61 @@ struct RecipeStoreTests {
         #expect(store.recipes.count == 1)
     }
 
-    @Test("guest load restores seed recipes into an empty library")
-    func guestLoadSeedsWhenEmpty() {
-        let store = makeStore()
-        store.recipes = []
+    /// `load` fetches on a background Task; poll until it lands (bounded so a hang fails, not stalls).
+    private func waitUntilLoaded(_ store: RecipeStore) async {
+        for _ in 0..<200 where store.isLoading {
+            try? await Task.sleep(for: .milliseconds(10))
+        }
+    }
 
-        store.load(isAuthenticated: false)
+    @Test("a guest's added recipe survives a relaunch (fresh store, same database)")
+    func guestRecipePersistsAcrossRelaunch() async {
+        let persistence = PersistenceController(inMemory: true, userID: { nil })
+        let recipe = makeRecipe(name: "Guest Toast")
+        #expect(RecipeStore(persistence: persistence).add(recipe))
 
-        // Browsing signed-out must not strand the user with a blank list (the post-sign-out reload path).
-        #expect(store.recipes == SeedRecipeProvider.recipes)
+        let relaunched = RecipeStore(persistence: persistence)
+        relaunched.load(isAuthenticated: false)
+        await waitUntilLoaded(relaunched)
+
+        // Regression: guest load used to show only in-memory seeds, hiding every recipe a guest saved.
+        #expect(relaunched.recipes.contains { $0.id == recipe.id })
+    }
+
+    @Test("guest and account libraries are isolated — no cross-reads or cross-writes on a shared id")
+    func guestAndAccountScopesAreIsolated() {
+        let scope = ScopeBox(userId: "account")
+        let persistence = PersistenceController(inMemory: true, userID: { scope.userId })
+        let shared = UUID()   // seed recipes share fixed ids across scopes
+        #expect(persistence.saveRecipeModel(makeRecipe(id: shared, name: "Account copy")))
+
+        scope.userId = nil
+        #expect(persistence.fetchRecipes().isEmpty)
+        #expect(persistence.saveRecipeModel(makeRecipe(id: shared, name: "Guest copy")))
+        #expect(persistence.fetchRecipes().map(\.name) == ["Guest copy"])
+
+        scope.userId = "account"
+        #expect(persistence.fetchRecipes().map(\.name) == ["Account copy"])
+    }
+
+    @Test("collected-recipe count (badge input) excludes starter recipes")
+    func collectedCountExcludesStarters() async {
+        let persistence = PersistenceController(inMemory: true, userID: { nil })
+        #expect(await persistence.seedRecipes(SeedRecipeProvider.recipes))
+        #expect(persistence.fetchCollectedRecipeCount() == 0)
+
+        #expect(persistence.saveRecipeModel(makeRecipe(name: "Mine")))
+        #expect(persistence.fetchCollectedRecipeCount() == 1)
+        #expect(persistence.fetchRecipeCount() == SeedRecipeProvider.recipes.count + 1)
+    }
+
+    @Test("guest backup includes the guest's recipes")
+    func guestBackupIncludesRecipes() {
+        let persistence = PersistenceController(inMemory: true, userID: { nil })
+        #expect(persistence.saveRecipeModel(makeRecipe(name: "Guest Toast")))
+
+        let archive = BackupService(recipeStore: persistence).makeArchive()
+        #expect(archive.recipes.map(\.name) == ["Guest Toast"])
     }
 
     @Test("refresh reloads the library from persistence")
@@ -133,4 +179,11 @@ struct RecipeStoreTests {
         await store.refresh()
         #expect(store.recipes.contains { $0.name == "Alpha" })
     }
+}
+
+/// Mutable account scope for the `userID` provider, so one test can switch guest ↔ account.
+@MainActor
+private final class ScopeBox {
+    var userId: String?
+    init(userId: String?) { self.userId = userId }
 }

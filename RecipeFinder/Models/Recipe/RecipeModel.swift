@@ -256,6 +256,13 @@ struct RecipeModel: Identifiable, Codable, Hashable {
 }
 
 extension RecipeModel {
+    /// True when a cook was already logged today — finishing cooking mode logs one, so the manual
+    /// "Mark as Cooked" button is disabled to stop an accidental second tap double-counting.
+    func wasCookedToday(now: Date = Date(), calendar: Calendar = .current) -> Bool {
+        guard let lastCookedAt else { return false }
+        return calendar.isDate(lastCookedAt, inSameDayAs: now)
+    }
+
     /// Plain-text representation of the recipe for sharing via the system share sheet
     var shareText: String {
         var lines: [String] = []

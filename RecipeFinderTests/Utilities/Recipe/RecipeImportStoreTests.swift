@@ -20,8 +20,9 @@ struct RecipeImportStoreTests {
         #expect(RecipeImportStore.outcome(didPersist: true, recipeName: "X", source: .link) == .saved(badge: .firstImport))
     }
 
-    @Test func pasteImport_awardsFirstImport() {
-        #expect(RecipeImportStore.outcome(didPersist: true, recipeName: "X", source: .paste) == .saved(badge: .firstImport))
+    /// Paste is typed text, not a web import — it must not award "Link Master".
+    @Test func pasteImport_awardsNoWebBadge() {
+        #expect(RecipeImportStore.outcome(didPersist: true, recipeName: "X", source: .paste) == .saved(badge: nil))
     }
 
     @Test func photoImport_awardsFirstPhotoImport() {

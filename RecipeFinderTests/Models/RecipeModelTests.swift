@@ -1,4 +1,5 @@
 import XCTest
+import Testing
 @testable import RecipeFinder
 
 final class RecipeModelTests: XCTestCase {
@@ -416,5 +417,39 @@ final class RecipeModelTests: XCTestCase {
             instructions: [],
             notes: notes
         )
+    }
+}
+
+@Suite struct RecipeCookedTodayTests {
+    private let calendar: Calendar = {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC") ?? .current
+        return calendar
+    }()
+    private let now = Date(timeIntervalSince1970: 1_800_000_000)   // fixed instant, UTC midday-ish
+
+    private func recipe(lastCookedAt: Date?) -> RecipeModel {
+        var recipe = RecipeModel(
+            name: "Toast", category: "Breakfast", difficulty: "Basic",
+            prepTime: "5 minutes", cookingTime: "5 minutes", baseServings: 1,
+            ingredients: [], prePrepInstructions: [], instructions: ["Toast"], notes: ""
+        )
+        recipe.lastCookedAt = lastCookedAt
+        return recipe
+    }
+
+    @Test("Never cooked ⇒ not cooked today")
+    func neverCooked() {
+        #expect(!recipe(lastCookedAt: nil).wasCookedToday(now: now, calendar: calendar))
+    }
+
+    @Test("Cooked earlier the same day ⇒ cooked today (Mark as Cooked disabled)")
+    func cookedSameDay() {
+        #expect(recipe(lastCookedAt: now.addingTimeInterval(-60)).wasCookedToday(now: now, calendar: calendar))
+    }
+
+    @Test("Cooked yesterday ⇒ not cooked today")
+    func cookedYesterday() {
+        #expect(!recipe(lastCookedAt: now.addingTimeInterval(-86_400)).wasCookedToday(now: now, calendar: calendar))
     }
 }

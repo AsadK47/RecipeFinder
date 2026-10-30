@@ -75,15 +75,15 @@ import Foundation
         #expect(controller.fetchRecipes().count == 2)
     }
 
-    /// No user scope ⇒ the save can't be attributed, so seeding reports failure and writes nothing — this is the
-    /// signal RecipeStore uses to clear its "seeded" flag and retry next launch rather than strand an empty library.
-    @Test func seedRecipes_whenUnscoped_returnsFalseAndPersistsNothing() async {
+    /// No user scope = the guest scope: guests get a persisted starter library like any account (the
+    /// guest-only build would otherwise show seeds that vanish with every cook/edit on relaunch).
+    @Test func seedRecipes_whenUnscoped_seedsTheGuestScope() async {
         let controller = makeController(userID: { nil })
 
         let ok = await controller.seedRecipes([makeRecipe(name: "Seed One")])
 
-        #expect(!ok)
-        #expect(controller.fetchRecipes().isEmpty)
+        #expect(ok)
+        #expect(controller.fetchRecipes().map(\.name) == ["Seed One"])
     }
 
     @Test func delete_removesOnlyThatRecipe() {
@@ -139,9 +139,9 @@ import Foundation
         #expect(controller.fetchRecipes().map(\.id) == [a.id])
     }
 
-    @Test func withoutScope_savesAreInvisible() {
+    @Test func withoutScope_savesLandInTheGuestScope() {
         let controller = makeController(userID: { nil })
-        controller.saveRecipeModel(makeRecipe(name: "Orphan"))
-        #expect(controller.fetchRecipes().isEmpty)
+        controller.saveRecipeModel(makeRecipe(name: "Guest"))
+        #expect(controller.fetchRecipes().map(\.name) == ["Guest"])
     }
 }

@@ -7,7 +7,16 @@ extension PersistenceController {
     func hasCurrentUserScope() -> Bool {
         userID() != nil
     }
-    
+
+    /// Rows owned by `userId`; a nil id is the guest scope (`userId == nil` rows), mirroring `UserScopedStorage`'s
+    /// "no_user" scope. Guests must not see — or write to — signed-in accounts' rows, which share seed UUIDs.
+    nonisolated static func ownerPredicate(_ userId: String?) -> NSPredicate {
+        if let userId {
+            return NSPredicate(format: "userId == %@", userId)
+        }
+        return NSPredicate(format: "userId == nil")
+    }
+
     func fetchRecipes() -> [RecipeModel] {
         guard ensureStoreIsReady() else { return [] }
         
@@ -22,12 +31,8 @@ extension PersistenceController {
             )
         ]
         
-        if let userId = userID() {
-            fetchRequest.predicate = NSPredicate(format: "userId == %@", userId)
-        } else {
-            return []
-        }
-        
+        fetchRequest.predicate = Self.ownerPredicate(userID())
+
         do {
             let results = try context.fetch(fetchRequest)
             persistenceLogger.debug("✅ Fetched \(results.count) recipes from database for current user")
@@ -40,7 +45,8 @@ extension PersistenceController {
 
     /// Off-main-thread fetch + per-recipe JSON decode on a background context; use for view loads so large libraries don't freeze the UI.
     func fetchRecipesAsync() async -> [RecipeModel] {
-        guard ensureStoreIsReady(), let userId = userID() else { return [] }
+        guard ensureStoreIsReady() else { return [] }
+        let predicate = Self.ownerPredicate(userID())
         let container = self.container
         return await withCheckedContinuation { continuation in
             container.performBackgroundTask { context in
@@ -52,7 +58,7 @@ extension PersistenceController {
                         selector: #selector(NSString.localizedCaseInsensitiveCompare(_:))
                     )
                 ]
-                request.predicate = NSPredicate(format: "userId == %@", userId)
+                request.predicate = predicate
                 do {
                     let results = try context.fetch(request)
                     continuation.resume(returning: results.compactMap(Self.mapToRecipeModel))
@@ -66,11 +72,11 @@ extension PersistenceController {
 
     /// Fetches the single recipe with `id` in the current user's scope; the detail screen re-reads on appear to avoid stale in-memory copies.
     func fetchRecipe(withId id: UUID) -> RecipeModel? {
-        guard ensureStoreIsReady(), let userId = userID() else { return nil }
+        guard ensureStoreIsReady() else { return nil }
 
         let context = container.viewContext
         let request = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
-        request.predicate = NSPredicate(format: "id == %@ AND userId == %@", id as CVarArg, userId)
+        request.predicate = Self.scopedRecipePredicate(id: id, userId: userID())
         request.fetchLimit = 1
 
         do {
@@ -87,11 +93,7 @@ extension PersistenceController {
         let context = container.viewContext
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
         
-        if let userId = userID() {
-            fetchRequest.predicate = NSPredicate(format: "userId == %@", userId)
-        } else {
-            return 0
-        }
+        fetchRequest.predicate = Self.ownerPredicate(userID())
         
         do {
             return try context.count(for: fetchRequest)
@@ -103,6 +105,23 @@ extension PersistenceController {
     
     func getRecipeCount() -> Int {
         return fetchRecipeCount()
+    }
+
+    /// Recipes the user actually collected — excludes bundled starter recipes, so collection badges
+    /// ("First Bite", "Getting Hungry") reflect what they added, not the seeds every library starts with.
+    func fetchCollectedRecipeCount() -> Int {
+        guard ensureStoreIsReady() else { return 0 }
+        let request = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            Self.ownerPredicate(userID()),
+            NSPredicate(format: "\(RecipeKey.isSampleRecipe) != YES")
+        ])
+        do {
+            return try container.viewContext.count(for: request)
+        } catch {
+            persistenceLogger.error("❌ Failed to count collected recipes: \(error.localizedDescription)")
+            return 0
+        }
     }
     
     nonisolated private static func mapToRecipeModel(_ object: NSManagedObject) -> RecipeModel? {

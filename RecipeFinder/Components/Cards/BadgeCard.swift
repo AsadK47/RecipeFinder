@@ -19,11 +19,13 @@ struct BadgeCard: View {
                     .foregroundStyle(badge.isUnlocked ? badgeColor : .gray.opacity(AppTheme.glassLightOpacity))
             }
 
-            Text(badge.title.components(separatedBy: " ").first ?? badge.title)
+            // Full title — first-word truncation turned "First Bite" / "Head Chef" into "First" / "Head".
+            Text(badge.title)
                 .font(.caption2)
                 .fontWeight(.semibold)
                 .foregroundStyle(badge.isUnlocked ? AppTheme.adaptiveEmphasis(for: colorScheme) : .gray)
-                .lineLimit(1)
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
 
             if badge.isUnlocked, let date = badge.dateEarned {
                 Text(date.formatted(date: .abbreviated, time: .omitted))

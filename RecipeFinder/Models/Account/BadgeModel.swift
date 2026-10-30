@@ -90,7 +90,8 @@ struct BadgeMetrics: Equatable {
     /// Aggregate the whole library (+ current streak) into one metrics snapshot.
     static func from(recipes: [RecipeModel], streakWeeks: Int) -> BadgeMetrics {
         var m = BadgeMetrics()
-        m.recipesCollected = recipes.count
+        // Starter recipes aren't "collected" — counting them awarded First Bite / Getting Hungry on the first cook.
+        m.recipesCollected = recipes.filter { !$0.isSampleRecipe }.count
         m.weeklyStreak = streakWeeks
         m.recipesCooked = recipes.reduce(0) { $0 + max(0, $1.cookCount) }
         m.sameRecipeCooked = recipes.map(\.cookCount).max() ?? 0

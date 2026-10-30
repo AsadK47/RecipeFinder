@@ -53,17 +53,20 @@ final class RecipeFinderHabitLoopUITests: XCTestCase {
         // Open the first recipe in the library (guest seeds in a clean install, or the user's own recipes).
         tapWhenReady(element(app, id: "recipe.row"), "The Recipes home should list at least one recipe.")
 
-        let markCooked = app.buttons["Mark as Cooked"]
-        XCTAssertTrue(markCooked.waitForExistence(timeout: 10), "Recipe detail should show 'Mark as Cooked'.")
+        let markCooked = app.buttons["recipe.markCooked"]
+        XCTAssertTrue(markCooked.waitForExistence(timeout: 10), "Recipe detail should show the mark-cooked button.")
 
-        // Cook it.
-        markCooked.tap()
+        // Cook it — unless an earlier run (state isn't reset) already logged a cook today, which disables the button.
+        if markCooked.isEnabled {
+            markCooked.tap()
 
-        // A post-cook photo sheet auto-presents ~0.8s later — dismiss it.
-        let skip = app.buttons["Skip"]
-        if skip.waitForExistence(timeout: 4) {
-            skip.tap()
+            // A post-cook photo sheet auto-presents ~0.8s later — dismiss it.
+            let skip = app.buttons["Skip"]
+            if skip.waitForExistence(timeout: 4) {
+                skip.tap()
+            }
         }
+        XCTAssertFalse(markCooked.isEnabled, "After a cook today, 'Mark as Cooked' must be disabled (no double count).")
 
         // Durable post-conditions: the rating control is now shown on the detail…
         XCTAssertTrue(element(app, id: "recipe.rating").waitForExistence(timeout: 5),

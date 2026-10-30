@@ -41,6 +41,8 @@ final class RecipeStore: RecipeStoring {
     @ObservationIgnored private let imageStore: RecipeImageStore
     /// Bumped on each load so a slow earlier fetch (e.g. previous account) can't overwrite a newer one's result.
     @ObservationIgnored private var loadGeneration = 0
+    /// Which library the last load targeted (nil before the first load); detects guest↔account switches.
+    @ObservationIgnored private var isGuestLibrary: Bool?
 
     init(persistence: PersistenceController = .shared, imageStore: RecipeImageStore = RecipeImageStore()) {
         self.persistence = persistence
@@ -53,20 +55,17 @@ final class RecipeStore: RecipeStoring {
     }
 
     private func loadRecipes(isAuthenticated: Bool, retryAttempt: Int) {
-        // Guest mode: show seed recipes so the app isn't empty before sign-up.
-        guard isAuthenticated else {
-            if recipes.isEmpty { recipes = SeedRecipeProvider.recipes }
-            isLoading = false
-            return
-        }
-
-        // Drop guest seed recipes on the transition to a signed-in library so they don't linger during the async fetch.
-        if recipes == SeedRecipeProvider.recipes {
+        // Guests load the persisted guest scope (nil userId) through the same fetch/seed path as accounts —
+        // showing only in-memory seeds dropped every recipe a guest added or cooked on relaunch.
+        // Clear on a guest↔account switch so one library doesn't linger during the other's async fetch.
+        if isGuestLibrary == isAuthenticated {
             recipes = []
             isLoading = true
         }
+        isGuestLibrary = !isAuthenticated
 
-        guard persistence.hasCurrentUserScope() else {
+        // Signed in but the account scope isn't set yet: don't fall through to the guest scope.
+        guard !isAuthenticated || persistence.hasCurrentUserScope() else {
             AppLogger.logger(category: "RecipeStore")
                 .debug("⚠️ Skipping recipe reload because user scope is not available")
             return
@@ -106,7 +105,7 @@ final class RecipeStore: RecipeStoring {
 
     /// Awaitable reload from the store (used by pull-to-refresh and post-write syncs).
     func refresh() async {
-        guard persistence.hasCurrentUserScope() else { return }
+        guard isGuestLibrary == true || persistence.hasCurrentUserScope() else { return }
         recipes = await persistence.fetchRecipesAsync()
     }
 

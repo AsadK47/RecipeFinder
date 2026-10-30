@@ -17,9 +17,10 @@ enum RecipeImportStore {
     static func outcome(didPersist: Bool, recipeName: String, source: ImportSource) -> Outcome {
         guard didPersist else { return .failed(recipeName: recipeName) }
         switch source {
-        case .link, .paste: return .saved(badge: .firstImport)
-        case .photo:        return .saved(badge: .firstPhotoImport)
-        case .wizard:       return .saved(badge: nil)
+        case .link:           return .saved(badge: .firstImport)
+        case .photo:          return .saved(badge: .firstPhotoImport)
+        // Paste is typed text, not a web import — "Link Master" ("from the web", "pasting a URL") would mislabel it.
+        case .paste, .wizard: return .saved(badge: nil)
         }
     }
 }
