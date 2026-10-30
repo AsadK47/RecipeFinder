@@ -219,6 +219,8 @@
 		F3B7D929307FE65D00991908 /* AuthUIGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D928307FE65D00991908 /* AuthUIGate.swift */; };
 		F3B7D92B3082474000991908 /* RecipeFinderSheetAndScopeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D92A3082474000991908 /* RecipeFinderSheetAndScopeUITests.swift */; };
 		F3B7D92D308267E800991908 /* RecipeImportHardeningTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D92C308267E800991908 /* RecipeImportHardeningTests.swift */; };
+		F3B7D93030826F6500991908 /* ViewInspector in Frameworks */ = {isa = PBXBuildFile; productRef = F3B7D92F30826F6500991908 /* ViewInspector */; };
+		F3B7D9333082796000991908 /* GrocerySearchResultsViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D9323082796000991908 /* GrocerySearchResultsViewTests.swift */; };
 		F3B837BF305554C80003AEF8 /* UserScopedStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837BE305554C80003AEF8 /* UserScopedStorageTests.swift */; };
 		F3B837C1305562790003AEF8 /* SessionExpiryPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837C0305562790003AEF8 /* SessionExpiryPolicy.swift */; };
 		F3B837C33055628E0003AEF8 /* SessionExpiryPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B837C23055628E0003AEF8 /* SessionExpiryPolicyTests.swift */; };
@@ -707,6 +709,7 @@
 		F3B7D928307FE65D00991908 /* AuthUIGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthUIGate.swift; sourceTree = "<group>"; };
 		F3B7D92A3082474000991908 /* RecipeFinderSheetAndScopeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeFinderSheetAndScopeUITests.swift; sourceTree = "<group>"; };
 		F3B7D92C308267E800991908 /* RecipeImportHardeningTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeImportHardeningTests.swift; sourceTree = "<group>"; };
+		F3B7D9323082796000991908 /* GrocerySearchResultsViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrocerySearchResultsViewTests.swift; sourceTree = "<group>"; };
 		F3B837BE305554C80003AEF8 /* UserScopedStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserScopedStorageTests.swift; sourceTree = "<group>"; };
 		F3B837C0305562790003AEF8 /* SessionExpiryPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionExpiryPolicy.swift; sourceTree = "<group>"; };
 		F3B837C23055628E0003AEF8 /* SessionExpiryPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionExpiryPolicyTests.swift; sourceTree = "<group>"; };
@@ -967,6 +970,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F3B7D93030826F6500991908 /* ViewInspector in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1203,6 +1207,7 @@
 				9E6C2C502FB478290083A08B /* Account */,
 				F3D4054130560A2C0076834D /* Authentication */,
 				F3AD2EED3065739500274E33 /* Recipes */,
+				F3B7D9313082796000991908 /* Shopping */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1759,13 +1764,6 @@
 			path = Core;
 			sourceTree = "<group>";
 		};
-		9E9DE5F72ECCA111005CD593 /* legal */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = legal;
-			sourceTree = "<group>";
-		};
 		9E9DE5FC2ECCA111005CD593 /* screenshots */ = {
 			isa = PBXGroup;
 			children = (
@@ -1832,7 +1830,6 @@
 				F3F941D530405E230067C6C8 /* CLAUDE.md */,
 				19BC863E22BB4A40B9307393 /* RecipeFinderUITests */,
 				9E90AAFC2FA9022600096D9D /* RecipeFinderTests */,
-				9E9DE5F72ECCA111005CD593 /* legal */,
 				9E9DE5F82ECCA111005CD593 /* LICENSE */,
 				9E9DE5FC2ECCA111005CD593 /* screenshots */,
 				9E37D12A2D09082C005BC8FA /* readme.md */,
@@ -1917,6 +1914,14 @@
 				F3B7D90A30726A0E00991908 /* RecipeRediscovery.swift */,
 			);
 			path = Engagement;
+			sourceTree = "<group>";
+		};
+		F3B7D9313082796000991908 /* Shopping */ = {
+			isa = PBXGroup;
+			children = (
+				F3B7D9323082796000991908 /* GrocerySearchResultsViewTests.swift */,
+			);
+			path = Shopping;
 			sourceTree = "<group>";
 		};
 		F3B837CD3055F0CA0003AEF8 /* Collection */ = {
@@ -2200,6 +2205,7 @@
 			packageReferences = (
 				9E09461C2EFB8BA20072BDFE /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
 				9EF757612FBDBDD30012B2B7 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				F3B7D92E30826F6500991908 /* XCRemoteSwiftPackageReference "ViewInspector" */,
 			);
 			productRefGroup = 9EE5AAD62D08FCBE00C1B736 /* Products */;
 			projectDirPath = "";
@@ -2681,6 +2687,7 @@
 				F3FF62F9305DA5FC0008B191 /* RecipeParserTextContentTests.swift in Sources */,
 				F3B7D8FE3070009200991908 /* RecipeShoppingListTests.swift in Sources */,
 				F3D4057B305AFEA30076834D /* HTMLFetcherTests.swift in Sources */,
+				F3B7D9333082796000991908 /* GrocerySearchResultsViewTests.swift in Sources */,
 				F3B7D909307005DF00991908 /* CookingStreakManagerTests.swift in Sources */,
 				F3B7D91D30793B9100991908 /* CookingPlanTests.swift in Sources */,
 				F3F189ED306828CF0097A65F /* CookingModeTimerTests.swift in Sources */,
@@ -3129,6 +3136,14 @@
 				minimumVersion = 8.9.0;
 			};
 		};
+		F3B7D92E30826F6500991908 /* XCRemoteSwiftPackageReference "ViewInspector" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/nalexn/ViewInspector";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.10.5;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -3141,6 +3156,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 9EF757612FBDBDD30012B2B7 /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
+		};
+		F3B7D92F30826F6500991908 /* ViewInspector */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F3B7D92E30826F6500991908 /* XCRemoteSwiftPackageReference "ViewInspector" */;
+			productName = ViewInspector;
 		};
 /* End XCSwiftPackageProductDependency section */
 

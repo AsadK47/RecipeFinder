@@ -33,7 +33,6 @@
 - **Beautiful Design** - Six elegant color themes with seamless light/dark mode
 - **Complete Toolkit** - Recipes, shopping lists, meal planning, kitchen inventory, and timers in one app
 - **Smart Import** - Grab recipes from any website with automatic ingredient parsing
-- **Offline Ready** - Full functionality without internet connection
 
 ## 🚀 Installation
 
