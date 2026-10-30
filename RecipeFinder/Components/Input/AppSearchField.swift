@@ -6,6 +6,8 @@ struct AppSearchField: View {
     var placeholder: String
     var isFocused: FocusState<Bool>.Binding
     var onSubmit: (() -> Void)?
+    /// Applied to the inner `TextField` only, so UI tests can target it without matching other screens' fields.
+    var accessibilityID: String?
 
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
@@ -33,6 +35,7 @@ struct AppSearchField: View {
                         .font(.callout)
                         .adaptiveForegroundColor()
                         .tint(AppTheme.textColor(for: colorScheme))
+                        .accessibilityIdentifier(accessibilityID ?? "")
                 }
 
                 if !text.isEmpty {

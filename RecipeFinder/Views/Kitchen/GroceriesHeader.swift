@@ -28,7 +28,8 @@ struct GroceriesHeader<MenuContent: View>: View {
             text: $searchText,
             placeholder: "Add or search groceries…",
             isFocused: isSearchFocused,
-            onSubmit: onSubmit
+            onSubmit: onSubmit,
+            accessibilityID: "groceries.search"
         )
         .padding(.horizontal, AppTheme.spacing20)
         .padding(.bottom, AppTheme.spacing12)

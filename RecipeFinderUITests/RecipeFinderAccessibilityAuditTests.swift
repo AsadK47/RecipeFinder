@@ -50,7 +50,8 @@ final class RecipeFinderAccessibilityAuditTests: XCTestCase {
 
         app.tabBars.buttons["Groceries"].tap()
 
-        let search = app.textFields.firstMatch
+        // By identifier: TabView keeps Settings' name fields in the hierarchy, so `firstMatch` hit those instead.
+        let search = app.textFields["groceries.search"]
         XCTAssertTrue(search.waitForExistence(timeout: 5), "Groceries search field should exist.")
         search.tap()
         search.typeText("Apple")
@@ -92,6 +93,17 @@ final class RecipeFinderAccessibilityAuditTests: XCTestCase {
                 object: nudge
             )
             wait(for: [gone], timeout: 10)
+        }
+        // State left by earlier suites can unlock a badge on launch; its bottom sheet covers the tab bar and a
+        // tab tap lands on "View all badges" (opening Account). Swipe it away. Case-insensitive: the title is uppercased.
+        let badgeSheet = app.staticTexts.matching(NSPredicate(format: "label ==[c] 'Badge Earned!'")).firstMatch
+        if badgeSheet.waitForExistence(timeout: 2) {
+            badgeSheet.swipeDown()
+            let dismissed = XCTNSPredicateExpectation(
+                predicate: NSPredicate(format: "exists == false"),
+                object: badgeSheet
+            )
+            wait(for: [dismissed], timeout: 8)
         }
         return app
     }
