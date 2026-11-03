@@ -340,7 +340,7 @@ struct RecipeDetailView: View {
 
     // Auto-runs on open; discards network errors silently, shows diff sheet only on real changes.
     func silentRefreshFromSource() async {
-        guard let url = recipe.importedFromURL else { return }
+        guard recipe.shouldAutoRefreshFromSource, let url = recipe.importedFromURL else { return }
         let importer = RecipeImporter()
         await importer.importRecipe(from: url)
         guard let data = importer.extractedData else { return }

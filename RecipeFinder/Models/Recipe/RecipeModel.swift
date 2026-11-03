@@ -164,6 +164,12 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         return url
     }
 
+    /// Whether opening the recipe should re-check its source page for changes: the user's own URL imports only.
+    /// Bundled recipes are a fixed snapshot — checking would hit a third-party site on every open and always "differ".
+    var shouldAutoRefreshFromSource: Bool {
+        importedFromURL != nil && !isSampleRecipe
+    }
+
     /// Notes with the auto-generated import footer ("Imported · date\nURL") stripped.
     var notesForDisplay: String {
         guard importedFromURL != nil else { return notes }

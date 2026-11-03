@@ -364,6 +364,17 @@ final class RecipeModelTests: XCTestCase {
         XCTAssertEqual(recipe.importedFromURL, URL(string: "https://food.com/pasta"))
     }
 
+    func testShouldAutoRefreshFromSource_onlyForUserURLImports() {
+        var imported = makeRecipe(notes: "Imported · 14 Sep 2026\nhttps://example.com/recipe")
+        XCTAssertTrue(imported.shouldAutoRefreshFromSource)
+
+        // Bundled recipes carry a source link for credit/photos but must not hit the site on every open.
+        imported.isSampleRecipe = true
+        XCTAssertFalse(imported.shouldAutoRefreshFromSource)
+
+        XCTAssertFalse(makeRecipe(notes: "Just a personal note").shouldAutoRefreshFromSource)
+    }
+
     func testImportedFromURL_noURL_returnsNil() {
         let recipe = makeRecipe(notes: "Just a personal note")
         XCTAssertNil(recipe.importedFromURL)
