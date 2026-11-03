@@ -345,8 +345,9 @@ extension RecipeDetailView {
                 ForEach(recipe.prePrepInstructions.indices, id: \.self) { index in
                     RecipeInstructionRow(
                         text: recipe.prePrepInstructions[index],
-                        isChecked: prePrepState[index],
+                        isChecked: prePrepState[safe: index] ?? false,
                         toggle: {
+                            guard prePrepState.indices.contains(index) else { return }
                             HapticManager.shared.light()
                             prePrepState[index].toggle()
                             checkForCompletion()
@@ -371,8 +372,9 @@ extension RecipeDetailView {
                 ForEach(recipe.instructions.indices, id: \.self) { index in
                     RecipeInstructionRow(
                         text: recipe.instructions[index],
-                        isChecked: instructionsState[index],
+                        isChecked: instructionsState[safe: index] ?? false,
                         toggle: {
+                            guard instructionsState.indices.contains(index) else { return }
                             HapticManager.shared.light()
                             instructionsState[index].toggle()
                             checkForCompletion()

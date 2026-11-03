@@ -169,7 +169,8 @@ struct RecipeIngredientsSection: View {
                 ForEach(Array(recipe.ingredients.enumerated()), id: \.element.id) { index, ingredient in
                     IngredientRowView(
                         ingredient: ingredient,
-                        isChecked: ingredientsState[index],
+                        // Safe read: the parent resizes its state in onChange, which runs after this render sees an edited recipe.
+                        isChecked: ingredientsState[safe: index] ?? false,
                         toggle: { onToggleIngredient(index) },
                         scaleFactor: recipe.scaleFactor,
                         measurementSystem: measurementSystem,
