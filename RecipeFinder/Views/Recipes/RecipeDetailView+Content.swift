@@ -483,12 +483,6 @@ extension RecipeDetailView {
                                 .foregroundStyle(AppTheme.accentColor)
                         }
                         .buttonStyle(.plain)
-
-                        if isRefreshing {
-                            Spacer()
-                            ProgressView().scaleEffect(0.8)
-                                .adaptiveSecondaryForeground()
-                        }
                     }
                 }
             }

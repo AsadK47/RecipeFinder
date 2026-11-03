@@ -24,10 +24,7 @@ struct RecipeDetailView: View {
     @State var photoViewer: PhotoViewerSource?
     // Drives the editor sheet; `section` deep-links to those fields (nil = full editor). Presented via `.sheet(item:)` so content rebuilds from the target — avoids the stale-first-render race of `.sheet(isPresented:)` + separate state.
     @State var editTarget: EditTarget?
-    @State var isRefreshing = false
     @State var pendingRefreshDiff: RecipeDiff?
-    @State var refreshErrorMessage: String?
-    @State var showRefreshUpToDate = false
     // Nutrition card: false = per-serving, true = whole-recipe totals.
     @State var nutritionShowsWholeRecipe = false
     @Environment(\.recipeTimer) var recipeTimer
@@ -135,19 +132,6 @@ struct RecipeDetailView: View {
                     applyRefresh(updated)
                 }
             }
-        }
-        .alert("Recipe Up to Date", isPresented: $showRefreshUpToDate) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text("Your saved recipe already matches the source.")
-        }
-        .alert("Couldn't Refresh Recipe", isPresented: Binding(
-            get: { refreshErrorMessage != nil },
-            set: { if !$0 { refreshErrorMessage = nil } }
-        )) {
-            Button("OK", role: .cancel) { refreshErrorMessage = nil }
-        } message: {
-            Text(refreshErrorMessage ?? "")
         }
         .fullScreenCover(isPresented: $showCookingMode) {
             CookingModeView(recipe: recipe, onFinish: recordCook)
@@ -348,29 +332,6 @@ struct RecipeDetailView: View {
         let diff = RecipeDiff.compute(stored: recipe, upstream: upstream)
         if diff.hasChanges {
             pendingRefreshDiff = diff
-        }
-    }
-
-    func refreshFromSource() async {
-        guard let url = recipe.importedFromURL else { return }
-        isRefreshing = true
-        refreshErrorMessage = nil
-
-        let importer = RecipeImporter()
-        await importer.importRecipe(from: url)
-
-        isRefreshing = false
-
-        if let data = importer.extractedData {
-            let upstream = RecipeImportBuilder().build(from: data)
-            let diff = RecipeDiff.compute(stored: recipe, upstream: upstream)
-            if diff.hasChanges {
-                pendingRefreshDiff = diff
-            } else {
-                showRefreshUpToDate = true
-            }
-        } else if let errorMsg = importer.errorMessage {
-            refreshErrorMessage = errorMsg
         }
     }
 
