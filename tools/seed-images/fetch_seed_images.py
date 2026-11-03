@@ -12,7 +12,7 @@ Existing entries are kept, so re-runs only fetch new/missing URLs. Pass --refres
 Usage:  python3 tools/seed-images/fetch_seed_images.py [--refresh]
 Then re-run BundledRecipeCatalogTests to regenerate recipes_seed.json.
 """
-import sys, os, re, json, html, urllib.request
+import sys, os, re, json, html, urllib.request, urllib.parse
 from concurrent.futures import ThreadPoolExecutor
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -64,6 +64,11 @@ def find_recipe_image(node):
     return None
 
 
+def clean(image):
+    # Percent-encode non-ASCII path characters so Swift's URL(string:) always accepts it.
+    return urllib.parse.quote(html.unescape(image), safe=":/?&=%#@+,;~!$'()*[]")
+
+
 def resolve(url):
     try:
         page = fetch(url)
@@ -75,10 +80,10 @@ def resolve(url):
         except ValueError:
             continue
         if image and image.startswith("http"):
-            return url, html.unescape(image), None
+            return url, clean(image), None
     match = OG_RE.search(page) or OG_REV_RE.search(page)
     if match and match.group(1).startswith("http"):
-        return url, html.unescape(match.group(1)), None
+        return url, clean(match.group(1)), None
     return url, None, "no image found"
 
 

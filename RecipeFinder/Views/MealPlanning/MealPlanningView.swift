@@ -5,7 +5,6 @@ struct MealPlanningView: View {
     private var recipes: [RecipeModel] { recipeStore.recipes }
     @Environment(\.mealPlanning) private var mealPlanningManager
     @Environment(\.kitchen) private var kitchenManager
-    @Environment(\.subscription) private var subscription
     @State private var selectedDate: Date = Date()
     @State private var showMealTimeSelector = false
     @State private var selectedMealTimes: Set<MealTime> = []
@@ -38,7 +37,6 @@ struct MealPlanningView: View {
     @State private var showAddWeekConfirm = false
     /// Non-nil while the meal-reminder time picker is presented.
     @State private var reminderContext: ReminderContext?
-    @State private var showPaywall = false
 
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
@@ -184,9 +182,6 @@ struct MealPlanningView: View {
                 onCancel: { reminderContext = nil }
             )
         }
-        .sheet(isPresented: $showPaywall) {
-            PaywallView()
-        }
     }
 
     // MARK: - Sections
@@ -318,11 +313,6 @@ struct MealPlanningView: View {
     // MARK: - Reminders
 
     private func editReminder(for mealTime: MealTime) {
-        guard PremiumGate.isUnlocked(.mealReminders, isSubscribed: subscription.isSubscribed) else {
-            showPaywall = true
-            HapticManager.shared.light()
-            return
-        }
         guard let plan = mealPlanningManager.mealPlan(for: selectedDate, mealTime: mealTime) else { return }
         reminderContext = ReminderContext(
             mealTime: mealTime,

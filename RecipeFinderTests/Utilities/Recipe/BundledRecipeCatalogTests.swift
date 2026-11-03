@@ -19,13 +19,14 @@ struct BundledRecipeCatalogTests {
     // MARK: - Generator
 
     /// Parses raw entries into sample recipes with name-derived stable ids. Drops unparseable entries and
-    /// duplicate names (the corpus has a few, and some overlap the hard-coded starters).
-    static func generate(from entries: [SourceEntry]) -> [RecipeModel] {
+    /// duplicate names (the corpus has a few, and some overlap the hard-coded starters). `images` maps a source URL
+    /// to its page's hero image (`recipes_source_images.json`, from tools/seed-images) — hotlinked, never bundled.
+    static func generate(from entries: [SourceEntry], images: [String: String] = [:]) -> [RecipeModel] {
         var seen = Set(SeedRecipeProvider.recipes.map { normalised($0.name) })
         var recipes: [RecipeModel] = []
         for entry in entries {
             guard let prefill = TextRecipeParser.parse(entry.rawText) else { continue }
-            let model = makeModel(from: prefill, entry: entry)
+            let model = makeModel(from: prefill, entry: entry, images: images)
             guard seen.insert(normalised(model.name)).inserted else { continue }
             recipes.append(model)
         }
@@ -39,11 +40,12 @@ struct BundledRecipeCatalogTests {
         return try encoder.encode(recipes)
     }
 
-    private static func makeModel(from prefill: RecipeWizardView.PrefilledRecipeData, entry: SourceEntry) -> RecipeModel {
+    private static func makeModel(from prefill: RecipeWizardView.PrefilledRecipeData, entry: SourceEntry, images: [String: String]) -> RecipeModel {
         let name = prefill.name
             .flatMap { $0.trimmingCharacters(in: .whitespaces).isEmpty ? nil : $0 }
             ?? entry.name
         let key = normalised(name)
+        let source = sourceURL(in: entry.rawText)
 
         let ingredients = (prefill.ingredients ?? [])
             .filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
@@ -66,7 +68,8 @@ struct BundledRecipeCatalogTests {
                 : ingredients,
             prePrepInstructions: prefill.prePrepInstructions ?? [],
             instructions: prefill.instructions ?? [],
-            notes: notes(prefill.notes ?? "", sourceURL: sourceURL(in: entry.rawText)),
+            notes: notes(prefill.notes ?? "", sourceURL: source),
+            imageName: source.flatMap { images[$0] },
             isSampleRecipe: true,
             cuisine: prefill.cuisine
         )
@@ -118,12 +121,19 @@ struct BundledRecipeCatalogTests {
         return try JSONDecoder().decode([SourceEntry].self, from: Data(contentsOf: dir.appendingPathComponent("recipes_source.json")))
     }
 
+    /// Optional: a missing map just means no photos.
+    private static func loadImages() throws -> [String: String] {
+        let dir = try #require(seedDirectory())
+        guard let data = try? Data(contentsOf: dir.appendingPathComponent("recipes_source_images.json")) else { return [:] }
+        return try JSONDecoder().decode([String: String].self, from: data)
+    }
+
     // MARK: - Drift gate
 
     @Test("committed recipes_seed.json matches the generator (rewrites it when stale)")
     func committedCatalogMatchesGenerator() throws {
         let dir = try #require(Self.seedDirectory())
-        let fresh = try Self.encode(Self.generate(from: Self.loadSource()))
+        let fresh = try Self.encode(Self.generate(from: Self.loadSource(), images: Self.loadImages()))
         let outputURL = dir.appendingPathComponent("recipes_seed.json")
         guard (try? Data(contentsOf: outputURL)) != fresh else { return }
         try fresh.write(to: outputURL)
@@ -133,7 +143,8 @@ struct BundledRecipeCatalogTests {
     @Test("generation is deterministic")
     func generationIsDeterministic() throws {
         let source = try Self.loadSource()
-        #expect(try Self.encode(Self.generate(from: source)) == Self.encode(Self.generate(from: source)))
+        let images = try Self.loadImages()
+        #expect(try Self.encode(Self.generate(from: source, images: images)) == Self.encode(Self.generate(from: source, images: images)))
     }
 
     // MARK: - Generator behaviour
@@ -162,6 +173,18 @@ struct BundledRecipeCatalogTests {
         #expect(!names.contains("greek salad"))
     }
 
+    @Test("source image is hotlinked as an https imageName; recipes without one stay image-less")
+    func sourceImageBecomesImageName() {
+        let raw = "Ingredients\n200g rice\n1 onion\nMethod\nCook the rice."
+        let entries = [
+            SourceEntry(name: "Rice", rawText: "Rice\nhttps://example.com/rice\n" + raw),
+            SourceEntry(name: "Noodles", rawText: "Noodles\n" + raw),
+        ]
+        let recipes = Self.generate(from: entries, images: ["https://example.com/rice": "https://example.com/rice.jpg"])
+        #expect(recipes.first { $0.name == "Rice" }?.imageName == "https://example.com/rice.jpg")
+        #expect(recipes.first { $0.name == "Noodles" }?.imageName == nil)
+    }
+
     // MARK: - Bundled output (what the app ships)
 
     @Test("bundled catalog decodes from the app bundle with unique, sample-flagged recipes")
@@ -173,6 +196,9 @@ struct BundledRecipeCatalogTests {
         #expect(ids.isDisjoint(with: SeedRecipeProvider.recipes.map(\.id)))
         #expect(recipes.allSatisfy { $0.isSampleRecipe })
         #expect(recipes.allSatisfy { !$0.name.isEmpty && !$0.ingredients.isEmpty })
+        // Photos are hotlinked from the source site, never bundled files.
+        #expect(recipes.compactMap(\.imageName).allSatisfy { $0.hasPrefix("https://") || $0.hasPrefix("http://") })
+        #expect(recipes.compactMap(\.imageName).allSatisfy { URL(string: $0) != nil })
     }
 
     @Test("seeding starters + bundled catalog persists every recipe without counting toward badges")

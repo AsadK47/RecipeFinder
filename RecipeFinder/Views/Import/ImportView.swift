@@ -9,7 +9,6 @@ struct ImportView: View {
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("guestModeEnabled") private var guestModeEnabled = false
     @Environment(\.auth) private var authManager
-    @Environment(\.subscription) private var subscription
 
     @State private var showLinkImport = false
     @State private var showPasteImport = false
@@ -17,7 +16,6 @@ struct ImportView: View {
     @State private var showWizard = false
     @State private var saveErrorRecipeName: String?
     @State private var showSignUpForGuest = false
-    @State private var showPaywall = false
 
     private var isGuest: Bool { guestModeEnabled && !authManager.isAuthenticated }
     /// Only divert guests to sign-up when the auth UI exists. In a guest-only build there's no
@@ -55,7 +53,7 @@ struct ImportView: View {
                                 color: .green,
                                 title: "Paste text",
                                 subtitle: "Paste a caption, note, or message — we pull out the recipe to review.",
-                                action: gated(.aiTextImport) { showPasteImport = true }
+                                action: gated { showPasteImport = true }
                             )
                             .accessibilityIdentifier("import.paste")
 
@@ -64,7 +62,7 @@ struct ImportView: View {
                                 color: .purple,
                                 title: "Scan a photo",
                                 subtitle: "A cookbook page, screenshot, or handwritten recipe — read on device.",
-                                action: gated(.photoImport) { showPhotoImport = true }
+                                action: gated { showPhotoImport = true }
                             )
                             .accessibilityIdentifier("import.photo")
 
@@ -102,9 +100,6 @@ struct ImportView: View {
         .sheet(isPresented: $showSignUpForGuest) {
             NavigationStack { AuthenticationView() }
         }
-        .sheet(isPresented: $showPaywall) {
-            PaywallView()
-        }
         .alert(
             "Couldn't Save Recipe",
             isPresented: Binding(
@@ -119,15 +114,11 @@ struct ImportView: View {
         }
     }
 
-    /// Wraps a premium import action with the two gates it must pass: guests go to sign-up, locked
-    /// non-subscribers to the paywall, everyone else runs it. With gating off (launch) the premium
-    /// check is a no-op, so this behaves exactly like the guest-only gate.
-    private func gated(_ feature: PremiumFeature, _ action: @escaping () -> Void) -> () -> Void {
+    /// Wraps an import action with the guest gate: guests who must sign up go to sign-up, everyone else runs it.
+    private func gated(_ action: @escaping () -> Void) -> () -> Void {
         {
             if gatesToSignUp {
                 showSignUpForGuest = true
-            } else if !PremiumGate.isUnlocked(feature, isSubscribed: subscription.isSubscribed) {
-                showPaywall = true
             } else {
                 action()
             }

@@ -2,7 +2,7 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// Quality gate over the ENTIRE bundled seed corpus (`recipes_seed.json`, ~355 recipes): proves the
+/// Quality gate over the ENTIRE seed corpus (`recipes_source.json`, ~355 raw recipes): proves the
 /// seed import still parses well on every change, so nobody has to eyeball recipes after a parser edit.
 /// Fails if any entry can't be parsed, or if the share of recipes with real ingredient amounts drops.
 @Suite struct SeedCorpusParseQualityTests {
@@ -20,12 +20,12 @@ import Foundation
         return nil
     }
 
-    private func corpusURL() -> URL? { seedFileURL("recipes_seed.json") }
+    private func corpusURL() -> URL? { seedFileURL("recipes_source.json") }
 
     /// One recipe's name + whether its ingredients parse "well" (≥2 lines, ≤half with no amount).
     /// Single source of truth for both the aggregate floor and the per-recipe golden test.
     private func classifyAll() throws -> [(name: String, good: Bool)] {
-        let url = try #require(corpusURL(), "recipes_seed.json not found from \(#filePath)")
+        let url = try #require(corpusURL(), "recipes_source.json not found from \(#filePath)")
         let entries = try #require(try JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [[String: String]])
         return entries.map { e in
             let name = e["name"] ?? "?"

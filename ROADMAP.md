@@ -50,56 +50,16 @@ Their import is server-side AI, paywalled at 5/week.
 - **At parity, no work needed:** aisle-grouped shopping list, serving scaling,
   metric/imperial conversion, cookbook-style organisation, offline-first.
 
-**Subscription model (RecipeFinder+).**
-Free-tier-first with a single premium **subscription** tier, gated on genuine
-*ongoing* value — never crippled basics, and never things that cost us nothing.
-**Subscription-only (no lifetime/one-time tier):** higher LTV per payer, with the
-deliberate trade-off that the recurring pitch must rest on continuously-delivered
-value (seasonal drops, live/collaborative features, supermarket) — not one-time
-content and not free infrastructure.
-
-*Free tier (permanent):*
-- 50 hand-curated recipes from day 1 so the app is never empty
-- Unlimited personal imports (URL, photo, OCR, text, share extension) — on-device,
-  so they cost us nothing and stay free forever (the line ReciMe can't match)
-- **iCloud sync + backup/export** — the user's library safe across their devices,
-  private. CloudKit's private DB rides the user's *own* iCloud, so sync costs us
-  nothing to provide; paywalling data safety would contradict both the privacy-
-  first durability pillar and our own "never monetise things that cost us nothing"
-  rule. Free is also a differentiator: *unlimited imports **and** private sync, free.*
-- All organisational features: search, filter, collections, tags, meal planning,
-  shopping list, pantry
-
-*RecipeFinder+ (subscription — £2.49/month, or £24.99/year (~16% off 12× monthly £29.88, ≈£2.08/mo). New annual subscribers get a **£19.99 first-year intro** (StoreKit introductory offer, ~33% off; renews at £24.99)):*
-Recurring value is deliberately things that are ongoing or cost real money to
-produce — not sync, not a one-time content dump:
-- **Curated library** — 100 recipes unlocked on subscribe; a further 150 in drops
-  over ~2 months (~50/month). Original, tested recipes with photography (real
-  production cost). Finite by design — 300 total, then complete.
-- **Seasonal recipe drops** — new packs quarterly after the initial 300; the
-  primary *ongoing* reason the subscription keeps earning once the library is done.
-- **Supermarket integration** — match the shopping list to a retailer basket
-  (affiliate / deep-link); genuine added value we can legitimately charge for.
-- **Family sharing** (up to 5) + **collaborative shopping list** — real-time,
-  shared households via CloudKit Sharing.
-- **Auto meal plan** — "plan my week from my pantry" using kitchen inventory +
-  preferences; infrastructure exists (`KitchenRecipeMatcher` +
-  `PantryExpirySuggestions`), needs a generation layer.
-- **Nutritional goals + HealthKit** — daily targets, per-meal tracking, opt-in
-  write to Apple Health.
-
-*Caveat we accept (decision recorded, not forgotten):* the curated library is
-finite, so once all 300 ship the recurring charge is carried by drops +
-supermarket + collaboration + planning/HealthKit. If churn shows those don't
-sustain a monthly sub, revisit adding a lifetime unlock or repricing.
-
-*Not gated (ever):* imports, **iCloud sync, backup/export**, cooking mode, timers,
-basic meal planning, shopping list, pantry, App Intents, Siri.
-
-*Implementation order:* StoreKit 2 paywall (gates content + features) → iCloud
-sync (free to users, but the CloudKit capability still needs paid Developer
-Program enrollment) → curated library image pass (Unsplash) → supermarket → auto
-meal plan → HealthKit.
+**Business model: free *(decided 2026-11-03 — supersedes RecipeFinder+)*.**
+The app is **completely free**; the goal is adoption and retention, not income.
+RecipeFinder+ (subscription, curated 300 library, drops) is **scrapped** — the
+"curated library" never existed (`recipes_seed.json` is a personal collection),
+and an on-device, no-server app has no honest recurring cost to charge for.
+Everything ships to everyone, including the bundled recipe collection.
+*Revisit only once there are users:* a one-time "Pro" unlock (Paprika/Mela
+model) or tip jar for whatever proves popular — not a subscription. The StoreKit
+paywall (`SubscriptionManager`, `PaywallView`, `PremiumGate`, Settings upgrade
+card, `RecipeFinder.storekit`) was deleted 2026-11-03 — recover from git if needed.
 
 **The core loop everything serves:** *get a recipe in → find it → cook from it
 well → decide what to cook next.* Anything not serving that loop is secondary.
@@ -151,7 +111,7 @@ The test **suite + CI** remain the source of truth for *coverage detail*; this i
 | **Auth & account** — email + Apple sign-in, guest mode, biometrics, Keychain + PBKDF2, session expiry | ✅ | ⚠️ store/session/model ✅; sign-in *flows* 🧪 (DI seam pending) |
 | **App Intents / Siri** — add-to-list, what's-for-dinner, open-recipe, start-cooking | ✅ | ⚠️ thin glue |
 | **Recipe source refresh** — "view original" + diff-and-reapply | ✅ | ✅ diff tested, sheet 🧪 |
-| **Subscription (Plus)** — StoreKit purchase/restore/paywall built | ✅ built | ⚠️ **nothing gated yet** — loop untested (see WORK.md) |
+| **Subscription (Plus)** — StoreKit paywall | ❌ scrapped + deleted 2026-11-03 | — |
 | **iCloud sync** | 🔴 blocked on paid Apple enrollment | — |
 
 ---
@@ -311,8 +271,8 @@ leavening, sweeteners, oils, stocks, chocolate); per-row swap icon → `Substitu
 case/whitespace-insensitive fuzzy lookup. FoundationModels long-tail fallback
 deferred to Phase 2. *Why:* mid-cook "what can I use instead?" shouldn't send users out of the app.
 
-### 🔴 iCloud Sync *(free-tier feature; blocked on paid enrollment — keep the model ready)*
-Note: this is a **free** feature, not a RecipeFinder+ hook — it costs us nothing
+### 🔴 iCloud Sync *(blocked on paid enrollment — keep the model ready)*
+Note: free like everything else — it costs us nothing
 (rides the user's own iCloud) and is the data-safety pillar. It's gated only by
 the CloudKit *capability*, which needs paid Developer Program enrollment.
 `NSPersistentCloudKitContainer` over the existing Core Data stack, using the
@@ -352,7 +312,7 @@ No external API needed for phase 1 — the on-device calculator covers it.
 Health via `HKHealthStore` as an opt-in toggle in Settings — expected by
 health-conscious users and straightforward to add once the data surface exists.
 
-### 🔴 Supermarket integration *(a genuine premium candidate)*
+### 🔴 Supermarket integration
 Match shopping-list items to a retailer's catalogue (Tesco, Sainsbury's, Ocado)
 and auto-build a basket via deep links or affiliate APIs (scraping last resort),
 with price comparison and smart substitutions. This is added value we can
@@ -369,11 +329,11 @@ Covered by `RecipePrintFormatterTests` (15 tests — structure, escaping, sectio
 *Remaining:* rich link sharing, import from other RecipeFinder users.
 
 ### 🔴 Auto recipe images (Unsplash)
-Auto-assign images by recipe name. **High priority for the curated library** —
-the 300 curated recipes ship with no photography and need images before
-RecipeFinder+ launches. URL imports already extract JSON-LD/OG images; user
-photos already work. Unsplash covers the gap for manually created and curated
-recipes only. Cache locally; API key in `.xcconfig`. Free tier 50 req/hr is fine
+Auto-assign images by recipe name. The bundled collection ships without photos:
+the ~242 with a source URL can show the source page's own image (hotlinked
+`og:image`/JSON-LD, credited + linked, never bundled); Unsplash covers the rest
+and manually created recipes. URL imports already extract JSON-LD/OG images; user
+photos already work. Cache locally; API key in `.xcconfig`. Free tier 50 req/hr is fine
 for the curated batch; revisit rate limits at multi-user scale.
 
 ---

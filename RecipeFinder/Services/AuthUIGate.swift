@@ -4,7 +4,7 @@ import Foundation
 ///
 /// `false` = **guest-only** build: no sign-up / sign-in surfaces are shown; everyone uses the app
 /// as a local guest. Flip to `true` once Sign in with Apple is live (needs paid Apple Developer
-/// Program enrolment). Mirrors `PremiumGate.isEnabled`.
+/// Program enrolment).
 ///
 /// The auth engine (`AuthenticationManager` + the Authentication views) is kept intact behind this
 /// flag, not deleted, so re-enabling is a one-line change. UI tests that cover the dormant auth flow

@@ -85,22 +85,44 @@ final class RecipeStore: RecipeStoring {
         let generation = loadGeneration
         Task {
             var fetched = await persistence.fetchRecipesAsync()
-            // Seed starter recipes for brand-new users — one-time per account. Set the flag before awaiting so a concurrent load doesn't seed twice.
-            if fetched.isEmpty, !UserScopedStorage.shared.bool(forKey: "seedRecipesLoaded") {
-                // Set the flag before awaiting so a concurrent load doesn't seed twice; reset it if the seed save
-                // fails so the next launch retries instead of stranding the user with an empty library.
-                UserScopedStorage.shared.set(true, forKey: "seedRecipesLoaded")
-                if await persistence.seedRecipes(SeedRecipeProvider.recipes) {
-                    fetched = await persistence.fetchRecipesAsync()
-                } else {
-                    UserScopedStorage.shared.set(false, forKey: "seedRecipesLoaded")
-                }
+            if let seeded = await seedIfNeeded(existing: fetched) {
+                fetched = seeded
             }
             // Ignore a stale fetch superseded by a newer load (account switch / scope change).
             guard generation == loadGeneration else { return }
             recipes = fetched
             isLoading = false
         }
+    }
+
+    /// One-time seeding per scope: starters for an empty library, plus the bundled collection (once, even for existing
+    /// libraries — ids already present are skipped). Returns the refetched library, or nil if nothing was seeded.
+    /// Flags are set before awaiting so a concurrent load doesn't seed twice, and reset if the save fails so the
+    /// next launch retries instead of stranding the user with an empty library.
+    private func seedIfNeeded(existing: [RecipeModel]) async -> [RecipeModel]? {
+        let storage = UserScopedStorage.shared
+        let startersKey = "seedRecipesLoaded"
+        let bundledKey = "bundledRecipesSeeded_v1"
+        let seedStarters = existing.isEmpty && !storage.bool(forKey: startersKey)
+        let seedBundled = !storage.bool(forKey: bundledKey)
+        guard seedStarters || seedBundled else { return nil }
+        if seedStarters { storage.set(true, forKey: startersKey) }
+        if seedBundled { storage.set(true, forKey: bundledKey) }
+
+        var toSeed = seedStarters ? SeedRecipeProvider.recipes : []
+        if seedBundled {
+            // Decode the bundled JSON off the main actor — it's a few hundred recipes.
+            let bundled = await Task.detached(priority: .userInitiated) { BundledRecipeCatalog.load() }.value
+            let existingIDs = Set(existing.map(\.id))
+            toSeed += bundled.filter { !existingIDs.contains($0.id) }
+        }
+        guard !toSeed.isEmpty else { return nil }
+        guard await persistence.seedRecipes(toSeed) else {
+            if seedStarters { storage.set(false, forKey: startersKey) }
+            if seedBundled { storage.set(false, forKey: bundledKey) }
+            return nil
+        }
+        return await persistence.fetchRecipesAsync()
     }
 
     /// Awaitable reload from the store (used by pull-to-refresh and post-write syncs).

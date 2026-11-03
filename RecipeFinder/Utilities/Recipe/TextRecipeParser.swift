@@ -199,7 +199,8 @@ enum TextRecipeParser {
 
     private static func looksLikeNumberedStep(_ line: String) -> Bool {
         // "1. Preheat…", "2) Mix…", "Step 3: …"
-        if line.range(of: #"^(step\s+\d+|\d+[\.\)])\s*"#, options: [.regularExpression, .caseInsensitive]) != nil {
+        // `(?!\d)` so a decimal amount ("1.75 tbsp ghee") isn't read as list marker "1.".
+        if line.range(of: #"^(step\s+\d+|\d+[\.\)](?!\d))\s*"#, options: [.regularExpression, .caseInsensitive]) != nil {
             return true
         }
         // OCR drops the period ("1 Preheat oven…"); case-sensitive so "2 cups flour" isn't mistaken for a step.
@@ -210,7 +211,7 @@ enum TextRecipeParser {
 
     private static func stripListMarker(_ line: String) -> String {
         let withoutNumber = line.replacingOccurrences(
-            of: #"^(step\s+\d+\s*[:\.\)]?|\d+[\.\)])\s*"#,
+            of: #"^(step\s+\d+\s*[:\.\)]?|\d+[\.\)](?!\d))\s*"#,
             with: "", options: [.regularExpression, .caseInsensitive]
         )
         return stripLeadingBullets(withoutNumber).trimmingCharacters(in: .whitespaces)
