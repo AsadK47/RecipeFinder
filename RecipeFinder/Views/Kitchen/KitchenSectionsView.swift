@@ -6,7 +6,6 @@ struct KitchenSectionsView: View {
     let onAddMore: () -> Void
 
     @Environment(\.kitchen) private var manager
-    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         PantryAlertsSectionContent(manager: manager)
@@ -15,7 +14,7 @@ struct KitchenSectionsView: View {
             HStack(spacing: AppTheme.spacing12) {
                 Text("\(manager.items.count) ingredient\(manager.items.count == 1 ? "" : "s")")
                     .font(.caption)
-                    .foregroundStyle(AppTheme.adaptiveSubtitle(for: colorScheme))
+                    .foregroundStyle(AppTheme.adaptiveSubtitle)
                 Spacer()
                 Button(action: {
                     onAddMore()
@@ -85,11 +84,11 @@ struct KitchenSectionsView: View {
                     .adaptiveForegroundColor()
                 Text("(\(items.count))")
                     .font(.footnote)
-                    .foregroundStyle(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
+                    .foregroundStyle(AppTheme.adaptiveMediumEmphasis)
                 Spacer()
                 Image(systemName: "chevron.up")
                     .font(.caption)
-                    .foregroundStyle(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
+                    .foregroundStyle(AppTheme.adaptiveMediumEmphasis)
                     .rotationEffect(.degrees(collapsedCategories.contains(category) ? 180 : 0))
             }
             .padding(.horizontal, AppTheme.spacing16)

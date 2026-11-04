@@ -3,7 +3,6 @@ import SwiftUI
 /// Expired / expiring-soon / low-stock `Section` rows embedded atop `KitchenSectionsView`'s `List`; hidden when no alerts.
 struct PantryAlertsSectionContent: View {
     let manager: any KitchenInventoryManaging
-    @Environment(\.colorScheme) private var colorScheme
 
     private enum AlertType {
         case expired, expiringSoon, lowStock
@@ -72,7 +71,7 @@ struct PantryAlertsSectionContent: View {
             Spacer()
             Text("\(expired.count + expiringSoon.count + lowStockOnly.count)")
                 .font(.caption.monospacedDigit())
-                .foregroundStyle(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
+                .foregroundStyle(AppTheme.adaptiveMediumEmphasis)
         }
         .padding(.horizontal, AppTheme.spacing16)
         .padding(.vertical, AppTheme.spacing8)

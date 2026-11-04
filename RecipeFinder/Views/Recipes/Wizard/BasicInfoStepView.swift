@@ -9,7 +9,6 @@ struct BasicInfoStepView: View {
     @Binding var servings: Int
     let difficulties: [String]
     let categories: [String]
-    let colorScheme: ColorScheme
 
     private func timeLabel(_ minutes: Int) -> String {
         guard minutes > 0 else { return "0 min" }

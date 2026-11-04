@@ -2,7 +2,6 @@ import SwiftUI
 
 struct RecipeWizardView: View {
     @Environment(\.dismiss) var dismiss
-    @Environment(\.colorScheme) var colorScheme
 
     let onComplete: (RecipeModel) -> Void
     let prefilledData: PrefilledRecipeData?
@@ -238,7 +237,6 @@ struct RecipeWizardView: View {
                 existingImageReference: $existingImageReference,
                 selectedGalleryImages: $selectedGalleryImages,
                 existingGalleryReferences: $existingGalleryReferences,
-                colorScheme: colorScheme,
                 onPickPhoto: {
                     HapticManager.shared.light()
                     showPhotoPicker = true
@@ -258,8 +256,7 @@ struct RecipeWizardView: View {
                 category: $category,
                 servings: $servings,
                 difficulties: difficulties,
-                categories: categories,
-                colorScheme: colorScheme
+                categories: categories
             )
         }
 
@@ -267,8 +264,7 @@ struct RecipeWizardView: View {
             IngredientsStepView(
                 ingredientItems: $ingredientItems,
                 focusedIngredientID: $focusedIngredientID,
-                cookingUnitGroups: cookingUnitGroups,
-                colorScheme: colorScheme
+                cookingUnitGroups: cookingUnitGroups
             )
         }
 
@@ -279,8 +275,7 @@ struct RecipeWizardView: View {
                 subtitle: "Any prep work before cooking? (Optional)",
                 illustration: "list.bullet.clipboard.fill",
                 fieldPlaceholder: "Describe the pre-prep step",
-                addButtonTitle: "Add Pre-prep Step",
-                colorScheme: colorScheme
+                addButtonTitle: "Add Pre-prep Step"
             )
         }
 
@@ -291,8 +286,7 @@ struct RecipeWizardView: View {
                 subtitle: "Walk us through the cooking process",
                 illustration: "flame.fill",
                 fieldPlaceholder: "Describe this cooking step",
-                addButtonTitle: "Add Cooking Step",
-                colorScheme: colorScheme
+                addButtonTitle: "Add Cooking Step"
             )
         }
 
@@ -302,8 +296,7 @@ struct RecipeWizardView: View {
                 tags: $recipeTags,
                 cuisine: $recipeCuisine,
                 hasPrefilledNotes: prefilledData?.notes != nil,
-                summary: recipeSummary,
-                colorScheme: colorScheme
+                summary: recipeSummary
             )
         }
     }

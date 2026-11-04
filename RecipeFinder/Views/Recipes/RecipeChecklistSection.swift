@@ -5,7 +5,6 @@ struct RecipeChecklistSection<Content: View>: View {
     let title: String
     let icon: String
     let isExpanded: Bool
-    let colorScheme: ColorScheme
     let onToggle: () -> Void
     @ViewBuilder let content: () -> Content
 
@@ -28,7 +27,7 @@ struct RecipeChecklistSection<Content: View>: View {
                         Image(systemName: "chevron.down")
                             .font(.title3)
                             .fontWeight(.semibold)
-                            .foregroundStyle(AppTheme.adaptiveHighEmphasis(for: colorScheme))
+                            .foregroundStyle(AppTheme.adaptiveHighEmphasis)
                             .rotationEffect(.degrees(isExpanded ? 0 : -90))
                             .animation(.appSpring, value: isExpanded)
                     }

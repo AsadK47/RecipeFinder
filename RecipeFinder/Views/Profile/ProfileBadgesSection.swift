@@ -4,7 +4,6 @@ import SwiftUI
 struct ProfileBadgesSection: View {
     let badgeManager: any BadgeManaging
     @Binding var isExpanded: Bool
-    let colorScheme: ColorScheme
     let onSelectBadge: (Badge) -> Void
 
     var body: some View {
@@ -44,7 +43,7 @@ struct ProfileBadgesSection: View {
                                 onSelectBadge(badge)
                                 HapticManager.shared.light()
                             }) {
-                                BadgeCard(badge: badge, colorScheme: colorScheme)
+                                BadgeCard(badge: badge)
                             }
                             .buttonStyle(PlainButtonStyle())
                             .accessibilityLabel(badge.title)

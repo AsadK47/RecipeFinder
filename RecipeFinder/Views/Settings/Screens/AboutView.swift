@@ -2,7 +2,6 @@ import SwiftUI
 
 /// App identity, version details, and support contact.
 struct AboutView: View {
-    @Environment(\.colorScheme) var colorScheme
 
     private var appVersion: String {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
@@ -105,7 +104,6 @@ struct AboutFeatureRow: View {
     let icon: String
     let text: String
     let color: Color
-    @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
         HStack(spacing: AppTheme.spacing12) {
@@ -115,7 +113,7 @@ struct AboutFeatureRow: View {
 
             Text(text)
                 .font(.subheadline)
-                .foregroundStyle(AppTheme.adaptiveEmphasis(for: colorScheme, level: AppTheme.cardLightOpacity))
+                .foregroundStyle(AppTheme.adaptiveEmphasis(level: AppTheme.cardLightOpacity))
         }
     }
 }

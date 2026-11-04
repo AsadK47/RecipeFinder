@@ -31,7 +31,6 @@ struct RecipeDetailView: View {
     @Environment(\.recipeStore) var recipeStore
     @Environment(\.cookingStreak) var cookingStreak
     @AppStorage("measurementSystem") var measurementSystem: MeasurementSystem = .metric
-    @Environment(\.colorScheme) var colorScheme
     @Environment(\.requestReview) private var requestReview
 
     var hasPrePrep: Bool { !recipe.prePrepInstructions.isEmpty }

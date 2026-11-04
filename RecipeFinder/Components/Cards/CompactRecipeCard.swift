@@ -2,7 +2,6 @@ import SwiftUI
 
 struct CompactRecipeCard: View {
     let recipe: RecipeModel
-    @Environment(\.colorScheme) var colorScheme
 
     private enum Layout {
         static let cardHeight: CGFloat = 220
@@ -41,7 +40,7 @@ struct CompactRecipeCard: View {
                 Text(recipe.name)
                     .font(.caption)
                     .fontWeight(.semibold)
-                    .foregroundStyle(AppTheme.adaptiveEmphasis(for: colorScheme))
+                    .foregroundStyle(AppTheme.adaptiveEmphasis())
                     .lineLimit(Layout.nameLineLimit)
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity)
@@ -53,7 +52,7 @@ struct CompactRecipeCard: View {
                             .foregroundStyle(.orange)
                         Text(recipe.totalTime)
                             .font(.system(size: AppTheme.fontSize11))
-                            .foregroundStyle(AppTheme.adaptiveCardTextEmphasis(for: colorScheme))
+                            .foregroundStyle(AppTheme.adaptiveCardTextEmphasis)
                     }
                 }
 
@@ -61,7 +60,7 @@ struct CompactRecipeCard: View {
                     DifficultyBarsView(difficulty: recipe.difficulty, size: Layout.difficultyBarSize)
                     Text(recipe.difficulty)
                         .font(.system(size: AppTheme.fontSize11))
-                        .foregroundStyle(AppTheme.adaptiveCardTextEmphasis(for: colorScheme))
+                        .foregroundStyle(AppTheme.adaptiveCardTextEmphasis)
                 }
             }
             .padding(.bottom, AppTheme.spacing12)

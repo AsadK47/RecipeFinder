@@ -6,7 +6,6 @@ struct ShoppingSectionsView: View {
 
     @Environment(\.shopping) private var manager
     @Environment(\.kitchen) private var kitchen
-    @Environment(\.colorScheme) private var colorScheme
 
     /// Lowercased kitchen item names so each shopping row can flag "you already have this".
     private var kitchenNameSet: Set<String> {
@@ -39,7 +38,6 @@ struct ShoppingSectionsView: View {
                 category: category,
                 items: items,
                 isCollapsed: collapsedCategories.contains(category),
-                colorScheme: colorScheme,
                 onToggle: {
                     withAnimation(.appSpring) {
                         if collapsedCategories.contains(category) {

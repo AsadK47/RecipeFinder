@@ -9,22 +9,19 @@ struct AppSearchField: View {
     /// Applied to the inner `TextField` only, so UI tests can target it without matching other screens' fields.
     var accessibilityID: String?
 
-    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         HStack(spacing: AppTheme.spacing12) {
             HStack(spacing: AppTheme.spacing12) {
                 Image(systemName: "magnifyingglass")
-                    .foregroundStyle(AppTheme.adaptiveHighEmphasis(for: colorScheme))
+                    .foregroundStyle(AppTheme.adaptiveHighEmphasis)
                     .font(.system(size: AppTheme.fontSize18, weight: .medium))
 
                 ZStack(alignment: .leading) {
                     if text.isEmpty {
                         Text(placeholder)
                             .font(.callout)
-                            .foregroundStyle(colorScheme == .dark
-                                ? .white.opacity(AppTheme.disabledEmphasisOpacity)
-                                : .black.opacity(AppTheme.disabledEmphasisOpacity))
+                            .foregroundStyle(AppTheme.textColor(opacity: AppTheme.disabledEmphasisOpacity))
                     }
                     TextField("", text: $text)
                         .focused(isFocused)
@@ -33,7 +30,7 @@ struct AppSearchField: View {
                         .onSubmit { onSubmit?() }
                         .font(.callout)
                         .adaptiveForegroundColor()
-                        .tint(AppTheme.textColor(for: colorScheme))
+                        .tint(AppTheme.textColor())
                         .accessibilityIdentifier(accessibilityID ?? "")
                 }
 
@@ -41,7 +38,7 @@ struct AppSearchField: View {
                     Button(action: { text = "" }) {
                         Image(systemName: "xmark.circle.fill")
                             .font(.system(size: AppTheme.fontSize18))
-                            .foregroundStyle(AppTheme.adaptiveSubtitle(for: colorScheme))
+                            .foregroundStyle(AppTheme.adaptiveSubtitle)
                     }
                 }
             }

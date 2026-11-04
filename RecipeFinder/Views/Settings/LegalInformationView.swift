@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct LegalInformationView: View {
-    @Environment(\.colorScheme) var colorScheme
     @State private var showPrivacyPolicy = false
     @State private var showTermsOfService = false
     @State private var showCompanyCompliance = false
@@ -48,7 +47,7 @@ struct LegalInformationView: View {
                             }) {
                                 LegalDocRow(
                                     icon: "hand.raised.fill",
-                                    iconColor: AppTheme.textColor(for: colorScheme),
+                                    iconColor: AppTheme.textColor(),
                                     title: "Privacy Policy",
                                     subtitle: "How we handle your data"
                                 )
@@ -64,7 +63,7 @@ struct LegalInformationView: View {
                             }) {
                                 LegalDocRow(
                                     icon: "doc.text.fill",
-                                    iconColor: AppTheme.textColor(for: colorScheme),
+                                    iconColor: AppTheme.textColor(),
                                     title: "Terms of Service",
                                     subtitle: "Terms and conditions of use"
                                 )
@@ -80,7 +79,7 @@ struct LegalInformationView: View {
                             }) {
                                 LegalDocRow(
                                     icon: "checkmark.shield.fill",
-                                    iconColor: AppTheme.textColor(for: colorScheme),
+                                    iconColor: AppTheme.textColor(),
                                     title: "UK Company Compliance",
                                     subtitle: "Companies Act 2006 compliance"
                                 )
@@ -109,28 +108,28 @@ struct LegalInformationView: View {
                                 icon: "checkmark.seal.fill",
                                 title: "UK GDPR",
                                 description: "Compliant with UK General Data Protection Regulation",
-                                color: AppTheme.textColor(for: colorScheme)
+                                color: AppTheme.textColor()
                             )
 
                             ComplianceBadge(
                                 icon: "lock.shield.fill",
                                 title: "Data Protection Act 2018",
                                 description: "Adherence to UK data protection legislation",
-                                color: AppTheme.textColor(for: colorScheme)
+                                color: AppTheme.textColor()
                             )
 
                             ComplianceBadge(
                                 icon: "building.columns.fill",
                                 title: "Companies Act 2006",
                                 description: "Registered and compliant with UK company law",
-                                color: AppTheme.textColor(for: colorScheme)
+                                color: AppTheme.textColor()
                             )
 
                             ComplianceBadge(
                                 icon: "doc.text.fill",
                                 title: "Companies House",
                                 description: "Active registration in England and Wales",
-                                color: AppTheme.textColor(for: colorScheme)
+                                color: AppTheme.textColor()
                             )
                         }
                         .padding(AppTheme.spacing24)
@@ -167,7 +166,7 @@ struct LegalInformationView: View {
                             }
                             .padding(AppTheme.spacing12)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(Color.white.opacity(colorScheme == .dark ? AppTheme.dividerOpacity : 0.05))
+                            .background(AppTheme.adaptive(light: Color.white.opacity(0.05), dark: Color.white.opacity(AppTheme.dividerOpacity)))
                             .cornerRadius(AppTheme.cornerRadius12)
                         }
                         .padding(AppTheme.spacing24)

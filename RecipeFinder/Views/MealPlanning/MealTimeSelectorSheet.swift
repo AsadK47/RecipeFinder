@@ -6,7 +6,6 @@ struct MealTimeSelectorSheet: View {
     let onContinue: (MealTime) -> Void
     
     @Environment(\.dismiss) var dismiss
-    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         ZStack {
@@ -57,12 +56,12 @@ struct MealTimeSelectorSheet: View {
                                             Circle()
                                                 .fill(selectedMealTimes.contains(mealTime) 
                                                       ? AppTheme.success.opacity(0.2) 
-                                                      : (colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity)))
+                                                      : (AppTheme.adaptive(light: Color.black.opacity(AppTheme.dividerOpacity), dark: Color.white.opacity(0.1))))
                                                 .frame(width: 50, height: AppTheme.height50)
                                             
                                             Image(systemName: mealTime.icon)
                                                 .font(.system(size: AppTheme.fontSize22, weight: .semibold))
-                                                .foregroundStyle(selectedMealTimes.contains(mealTime) ? .green : (colorScheme == .dark ? .white.opacity(AppTheme.cardLightOpacity) : .black.opacity(0.9)))
+                                                .foregroundStyle(selectedMealTimes.contains(mealTime) ? .green : (AppTheme.adaptive(light: Color.black.opacity(0.9), dark: Color.white.opacity(AppTheme.cardLightOpacity))))
                                         }
                                         
                                         VStack(alignment: .leading, spacing: AppTheme.spacing6) {
@@ -76,7 +75,7 @@ struct MealTimeSelectorSheet: View {
                                                 Text(mealTime.timeRange)
                                                     .font(.caption)
                                             }
-                                            .foregroundStyle(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
+                                            .foregroundStyle(AppTheme.adaptiveMediumEmphasis)
                                         }
                                         
                                         Spacer()
@@ -88,7 +87,7 @@ struct MealTimeSelectorSheet: View {
                                         } else {
                                             Image(systemName: "plus.circle")
                                                 .font(.title3)
-                                                .foregroundStyle(colorScheme == .dark ? .white.opacity(AppTheme.lowEmphasisOpacity) : .black.opacity(AppTheme.lowEmphasisOpacity))
+                                                .foregroundStyle(AppTheme.adaptive(light: Color.black.opacity(AppTheme.lowEmphasisOpacity), dark: Color.white.opacity(AppTheme.lowEmphasisOpacity)))
                                         }
                                     }
                                     .padding(AppTheme.spacing16)
@@ -97,7 +96,7 @@ struct MealTimeSelectorSheet: View {
                                         RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
                                             .stroke(selectedMealTimes.contains(mealTime) 
                                                     ? AppTheme.success.opacity(0.5) 
-                                                    : (colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(AppTheme.dividerOpacity)), 
+                                                    : (AppTheme.adaptive(light: Color.black.opacity(AppTheme.dividerOpacity), dark: Color.white.opacity(0.1))), 
                                                     lineWidth: selectedMealTimes.contains(mealTime) ? 2 : 1)
                                     )
                                 }

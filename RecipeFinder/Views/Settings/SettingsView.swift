@@ -2,7 +2,6 @@ import SwiftUI
 
 /// Root of the Settings tab. Each sub-screen lives in Views/Settings/Screens/.
 struct SettingsTabView: View {
-    @Environment(\.colorScheme) var colorScheme
     @AppStorage("appearanceMode") private var appearanceMode: AppearanceMode = .system
     @AppStorage("measurementSystem") private var measurementSystem: MeasurementSystem = .metric
     @Environment(\.profile) private var profileManager
@@ -168,7 +167,7 @@ struct SettingsTabView: View {
                 .overlay {
                     Text(profileManager.initials)
                         .font(.system(size: AppTheme.fontSize22, weight: .semibold))
-                        .foregroundStyle(colorScheme == .dark ? .white : .black)
+                        .foregroundStyle(AppTheme.adaptive(light: Color.black, dark: Color.white))
                 }
         }
     }

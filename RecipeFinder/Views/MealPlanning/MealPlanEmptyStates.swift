@@ -4,7 +4,6 @@ import SwiftUI
 struct SelectedDayEmptyStateView: View {
     let selectedDateString: String
     let shortDateString: String
-    let colorScheme: ColorScheme
     let onAddMeal: () -> Void
 
     var body: some View {
@@ -18,7 +17,7 @@ struct SelectedDayEmptyStateView: View {
                 
                 Text(selectedDateString)
                     .font(.subheadline)
-                    .foregroundStyle(colorScheme == .dark ? .white.opacity(AppTheme.subduedEmphasisOpacity) : .black.opacity(AppTheme.subduedEmphasisOpacity))
+                    .foregroundStyle(AppTheme.adaptive(light: Color.black.opacity(AppTheme.subduedEmphasisOpacity), dark: Color.white.opacity(AppTheme.subduedEmphasisOpacity)))
             }
             .padding(.horizontal, AppTheme.spacing4)
             
@@ -48,7 +47,7 @@ struct SelectedDayEmptyStateView: View {
                     .padding(.vertical, AppTheme.spacing14)
                     .background(
                         Capsule()
-                            .fill(colorScheme == .dark ? Color.white.opacity(AppTheme.overlayLightOpacity) : Color.black.opacity(0.15))
+                            .fill(AppTheme.adaptive(light: Color.black.opacity(0.15), dark: Color.white.opacity(AppTheme.overlayLightOpacity)))
                     )
                 }
             }

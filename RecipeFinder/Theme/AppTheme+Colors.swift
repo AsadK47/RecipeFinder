@@ -3,69 +3,43 @@ import SwiftUI
 /// Adaptive (color-scheme aware) color helpers and theme accent colors.
 extension AppTheme {
 
-    static func elevatedCard(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? elevatedCardDark : elevatedCardLight
+    // Every colour here resolves light/dark from the trait collection, so views use them directly — no
+    // `@Environment(\.colorScheme)` read or `colorScheme == .dark ? … : …` at call sites.
+
+    static let secondaryBackground = adaptive(light: secondaryBackgroundLight, dark: secondaryBackgroundDark)
+
+    /// Black in light mode, white in dark.
+    static func textColor(opacity: Double = 1.0) -> Color {
+        adaptive(light: .black.opacity(opacity), dark: .white.opacity(opacity))
     }
-    
-    static func secondaryBackground(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? secondaryBackgroundDark : secondaryBackgroundLight
+
+    static let adaptiveFilterChip = adaptive(
+        light: Color(white: cardLightOpacity).opacity(cardLightOpacity),
+        dark: Color(white: cardDarkMediumOpacity).opacity(highEmphasisOpacity)
+    )
+
+    /// Same as `textColor(opacity:)`; kept as the emphasis-scale spelling used across views.
+    static func adaptiveEmphasis(level: Double = 1.0) -> Color {
+        textColor(opacity: level)
     }
-    
-    static func textColor(for colorScheme: ColorScheme, opacity: Double = 1.0) -> Color {
-        let baseColor = colorScheme == .dark ? Color.white : Color.black
-        return opacity == 1.0 ? baseColor : baseColor.opacity(opacity)
-    }
-    
-    static func adaptiveCardHigh(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? Color(white: cardDarkOpacity) : Color.white.opacity(cardLightHighOpacity)
-    }
-    
-    static func adaptiveGlass(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? Color(white: cardDarkOpacity) : Color.white.opacity(glassLightOpacity)
-    }
-    
-    static func adaptiveShadow(for colorScheme: ColorScheme) -> Color {
-        Color.black.opacity(colorScheme == .dark ? shadowDarkOpacity : shadowLightOpacity)
-    }
-    
-    static func adaptiveFilterChip(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark 
-            ? Color(white: cardDarkMediumOpacity).opacity(highEmphasisOpacity) 
-            : Color(white: cardLightOpacity).opacity(cardLightOpacity)
-    }
-    
-    static func adaptiveEmphasis(for colorScheme: ColorScheme, level: Double = 1.0) -> Color {
-        colorScheme == .dark ? Color.white.opacity(level) : Color.black.opacity(level)
-    }
-    
-    static func adaptiveHighEmphasis(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? Color.white.opacity(highEmphasisOpacity) : Color.black.opacity(mediumEmphasisOpacity)
-    }
-    
-    static func adaptiveMediumEmphasis(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? Color.white.opacity(mediumEmphasisOpacity) : Color.black.opacity(lowEmphasisOpacity)
-    }
-    
-    static func adaptiveSecondaryIndicator(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? Color.white.opacity(glassLightOpacity) : Color.black.opacity(lowEmphasisOpacity)
-    }
-    
-    static func adaptiveSubtitle(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? Color.white.opacity(0.7) : Color.black.opacity(mediumEmphasisOpacity)
-    }
-    
-    static func adaptiveCardTextEmphasis(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark 
-            ? Color.white.opacity(cardLightHighOpacity) 
-            : Color.black.opacity(cardHighEmphasisLightOpacity)
-    }
-    
+
+    static let adaptiveHighEmphasis = adaptive(light: .black.opacity(mediumEmphasisOpacity), dark: .white.opacity(highEmphasisOpacity))
+
+    static let adaptiveMediumEmphasis = adaptive(light: .black.opacity(lowEmphasisOpacity), dark: .white.opacity(mediumEmphasisOpacity))
+
+    static let adaptiveSubtitle = adaptive(light: .black.opacity(mediumEmphasisOpacity), dark: .white.opacity(0.7))
+
+    static let adaptiveCardTextEmphasis = adaptive(
+        light: .black.opacity(cardHighEmphasisLightOpacity),
+        dark: .white.opacity(cardLightHighOpacity)
+    )
+
     /// Secondary text: pure black in light mode for legibility, secondaryLabel in dark; apply via `.adaptiveSecondaryForeground()`, not directly.
     static let adaptiveSecondary = Color(UIColor { traits in
         traits.userInterfaceStyle == .dark ? .secondaryLabel : .label
     })
 
-    /// Trait-resolved light/dark colour, so shared modifiers needn't read `@Environment(\.colorScheme)` (which warns when evaluated outside a view, e.g. under ViewInspector).
+    /// Trait-resolved light/dark colour, so views and shared modifiers needn't read `@Environment(\.colorScheme)` (which warns when evaluated outside a view, e.g. under ViewInspector).
     static func adaptive(light: Color, dark: Color) -> Color {
         Color(UIColor { traits in
             traits.userInterfaceStyle == .dark ? UIColor(dark) : UIColor(light)

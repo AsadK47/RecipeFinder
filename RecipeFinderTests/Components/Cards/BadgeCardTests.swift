@@ -46,7 +46,7 @@ final class BadgeCardTests: XCTestCase {
         let badge = Badge(id: "firstBite", title: "First Bite", description: "Desc",
                           icon: "star", color: "green", dateEarned: nil,
                           isUnlocked: false, howToEarn: "Add a recipe")
-        let view = try BadgeCard(badge: badge, colorScheme: .light).inspect()
+        let view = try BadgeCard(badge: badge).inspect()
         _ = try view.find(text: "First Bite")
     }
 }

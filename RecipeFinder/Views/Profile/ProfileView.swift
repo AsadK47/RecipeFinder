@@ -3,7 +3,6 @@ import SwiftUI
 struct ProfileView: View {
     @Environment(\.profile) private var profileManager
     @Environment(\.badges) private var badgeManager
-    @Environment(\.colorScheme) private var colorScheme
 
     @State private var activeSheet: ProfileSheet?
     @State private var profileImage: UIImage?
@@ -46,7 +45,6 @@ struct ProfileView: View {
                             image: profileImage,
                             initials: getInitials(),
                             chefType: selectedChefType,
-                            colorScheme: colorScheme,
                             onTap: {
                                 activeSheet = .imagePicker
                                 HapticManager.shared.light()
@@ -55,14 +53,12 @@ struct ProfileView: View {
 
                         ProfilePersonalInfoSection(
                             firstName: $firstName,
-                            lastName: $lastName,
-                            colorScheme: colorScheme
+                            lastName: $lastName
                         )
 
                         ProfileBadgesSection(
                             badgeManager: badgeManager,
                             isExpanded: $badgesSectionExpanded,
-                            colorScheme: colorScheme,
                             onSelectBadge: { badge in
                                 activeSheet = .badge(badge)
                             }

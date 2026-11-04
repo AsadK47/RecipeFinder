@@ -31,7 +31,6 @@ struct NotesStepView: View {
     @Binding var cuisine: String
     let hasPrefilledNotes: Bool
     let summary: WizardRecipeSummary
-    let colorScheme: ColorScheme
 
     @State private var tagInput: String = ""
 
@@ -158,7 +157,7 @@ struct NotesStepView: View {
             }
             .padding(.horizontal, AppTheme.spacing12)
             .padding(.vertical, AppTheme.spacing6)
-            .background(AppTheme.secondaryBackground(for: colorScheme))
+            .background(AppTheme.secondaryBackground)
             .cornerRadius(AppTheme.cornerRadius16)
         }
         .buttonStyle(PlainButtonStyle())
@@ -189,7 +188,7 @@ struct NotesStepView: View {
                                 .font(.caption)
                                 .padding(.horizontal, AppTheme.spacing12)
                                 .padding(.vertical, AppTheme.spacing6)
-                                .background(AppTheme.secondaryBackground(for: colorScheme))
+                                .background(AppTheme.secondaryBackground)
                                 .cornerRadius(AppTheme.cornerRadius16)
                         }
                         .buttonStyle(PlainButtonStyle())
@@ -261,7 +260,7 @@ struct NotesStepView: View {
                                     .font(.caption)
                                     .padding(.horizontal, AppTheme.spacing12)
                                     .padding(.vertical, AppTheme.spacing6)
-                                    .background(AppTheme.secondaryBackground(for: colorScheme))
+                                    .background(AppTheme.secondaryBackground)
                                     .cornerRadius(AppTheme.cornerRadius16)
                             }
                             .buttonStyle(PlainButtonStyle())

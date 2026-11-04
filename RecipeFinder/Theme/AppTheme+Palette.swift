@@ -51,8 +51,6 @@ extension AppTheme {
     static let goldCharcoal = Color(red: 45/255, green: 45/255, blue: 45/255)
     static let goldBlack = Color(red: 15/255, green: 15/255, blue: 15/255)
     
-    static let elevatedCardLight = Color.white
-    static let elevatedCardDark = Color(red: 38/255, green: 38/255, blue: 40/255)
     
     static let secondaryBackgroundLight = Color(red: 242/255, green: 242/255, blue: 247/255)
     static let secondaryBackgroundDark = Color(red: 18/255, green: 18/255, blue: 20/255)

@@ -5,7 +5,6 @@ struct ShoppingCategoryHeader: View {
     let category: String
     let items: [ShoppingListModel]
     let isCollapsed: Bool
-    let colorScheme: ColorScheme
     let onToggle: () -> Void
 
     var body: some View {
@@ -25,13 +24,13 @@ struct ShoppingCategoryHeader: View {
                     
                     Text("(\(items.filter { !$0.isChecked }.count)/\(items.count))")
                         .font(.footnote)
-                        .foregroundStyle(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
+                        .foregroundStyle(AppTheme.adaptiveMediumEmphasis)
                     
                     Spacer()
                     
                     Image(systemName: isCollapsed ? "chevron.down" : "chevron.up")
                         .font(.caption)
-                        .foregroundStyle(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
+                        .foregroundStyle(AppTheme.adaptiveMediumEmphasis)
                         .rotationEffect(.degrees(isCollapsed ? 0 : 180))
                 }
                 .padding(.horizontal, AppTheme.spacing16)

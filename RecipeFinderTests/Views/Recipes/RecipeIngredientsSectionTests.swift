@@ -16,7 +16,6 @@ import ViewInspector
             ingredientsState: state,
             measurementSystem: .metric,
             isExpanded: true,
-            colorScheme: .light,
             onToggleSection: {},
             onToggleMeasurement: {},
             onToggleIngredient: { _ in },

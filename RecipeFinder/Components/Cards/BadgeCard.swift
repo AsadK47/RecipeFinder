@@ -2,7 +2,6 @@ import SwiftUI
 
 struct BadgeCard: View {
     let badge: Badge
-    let colorScheme: ColorScheme
 
     var badgeColor: Color { Badge.color(for: badge.color) }
 
@@ -22,7 +21,7 @@ struct BadgeCard: View {
             Text(badge.title)
                 .font(.caption2)
                 .fontWeight(.semibold)
-                .foregroundStyle(badge.isUnlocked ? AppTheme.adaptiveEmphasis(for: colorScheme) : .gray)
+                .foregroundStyle(badge.isUnlocked ? AppTheme.adaptiveEmphasis() : .gray)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
 

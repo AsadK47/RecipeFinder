@@ -5,7 +5,6 @@ struct IngredientsStepView: View {
     @Binding var ingredientItems: [RecipeWizardView.IngredientItem]
     @FocusState.Binding var focusedIngredientID: UUID?
     let cookingUnitGroups: [(group: String, units: [String])]
-    let colorScheme: ColorScheme
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing24) {
@@ -81,7 +80,7 @@ struct IngredientsStepView: View {
                                                     .frame(maxWidth: .infinity, alignment: .leading)
                                                     .background(
                                                         RoundedRectangle(cornerRadius: AppTheme.cornerRadius10)
-                                                            .fill(AppTheme.secondaryBackground(for: colorScheme))
+                                                            .fill(AppTheme.secondaryBackground)
                                                     )
                                                 }
                                                 .buttonStyle(.plain)

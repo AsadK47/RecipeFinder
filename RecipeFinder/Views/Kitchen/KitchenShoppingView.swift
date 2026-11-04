@@ -12,7 +12,6 @@ struct KitchenShoppingView: View {
     @State private var showClearShopping = false
     @State private var showKitchenSheet = false
 
-    @Environment(\.colorScheme) private var colorScheme
 
     private var searchResults: [String] {
         guard !searchText.isEmpty else { return [] }
@@ -190,7 +189,6 @@ private struct KitchenInventorySheet: View {
     @State private var showAddIngredient = false
     @State private var showQuickAdd = false
     @State private var showClear = false
-    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         NavigationStack {

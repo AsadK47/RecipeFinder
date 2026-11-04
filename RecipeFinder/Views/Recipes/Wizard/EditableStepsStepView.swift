@@ -8,7 +8,6 @@ struct EditableStepsStepView: View {
     let illustration: String
     let fieldPlaceholder: String
     let addButtonTitle: String
-    let colorScheme: ColorScheme
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing24) {

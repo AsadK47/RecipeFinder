@@ -207,7 +207,6 @@ struct HelpItem: View {
     let title: String
     let description: String
 
-    @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
         HStack(alignment: .top, spacing: AppTheme.spacing16) {
@@ -235,7 +234,6 @@ struct FAQItem: View {
     let question: String
     let answer: String
 
-    @Environment(\.colorScheme) var colorScheme
     @State private var isExpanded = false
 
     var body: some View {

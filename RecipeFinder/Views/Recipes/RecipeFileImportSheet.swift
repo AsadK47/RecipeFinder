@@ -6,7 +6,6 @@ struct RecipeFileImportSheet: View {
     let onSave: (RecipeModel) -> Void
 
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         ScrollView {
@@ -64,9 +63,7 @@ struct RecipeFileImportSheet: View {
         .padding(AppTheme.spacing20)
         .background {
             RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
-                .fill(colorScheme == .dark
-                    ? Color.white.opacity(AppTheme.glassSubtleOpacity)
-                    : Color.white.opacity(AppTheme.cardDarkOpacity))
+                .fill(AppTheme.adaptive(light: Color.white.opacity(AppTheme.cardDarkOpacity), dark: Color.white.opacity(AppTheme.glassSubtleOpacity)))
         }
     }
 
@@ -101,9 +98,7 @@ struct RecipeFileImportSheet: View {
         .padding(.vertical, AppTheme.spacing12)
         .background {
             RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                .fill(colorScheme == .dark
-                    ? Color.white.opacity(AppTheme.glassSubtleOpacity)
-                    : Color.white.opacity(AppTheme.cardDarkOpacity))
+                .fill(AppTheme.adaptive(light: Color.white.opacity(AppTheme.cardDarkOpacity), dark: Color.white.opacity(AppTheme.glassSubtleOpacity)))
         }
     }
 
@@ -141,9 +136,7 @@ struct RecipeFileImportSheet: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background {
             RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
-                .fill(colorScheme == .dark
-                    ? Color.white.opacity(AppTheme.glassSubtleOpacity)
-                    : Color.white.opacity(AppTheme.cardDarkOpacity))
+                .fill(AppTheme.adaptive(light: Color.white.opacity(AppTheme.cardDarkOpacity), dark: Color.white.opacity(AppTheme.glassSubtleOpacity)))
         }
     }
 

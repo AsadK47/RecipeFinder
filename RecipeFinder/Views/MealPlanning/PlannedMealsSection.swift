@@ -4,7 +4,6 @@ import SwiftUI
 struct PlannedMealsSection: View {
     @Binding var mealTimes: [MealTime]
     let selectedDateString: String
-    let colorScheme: ColorScheme
     let recipeFor: (MealTime) -> RecipeModel?
     let mealPlanFor: (MealTime) -> MealPlanModel?
     let onSelectMealTime: (MealTime) -> Void
@@ -27,9 +26,7 @@ struct PlannedMealsSection: View {
 
                 Text(selectedDateString)
                     .font(.subheadline)
-                    .foregroundStyle(colorScheme == .dark
-                        ? .white.opacity(AppTheme.subduedEmphasisOpacity)
-                        : .black.opacity(AppTheme.subduedEmphasisOpacity))
+                    .foregroundStyle(AppTheme.textColor(opacity: AppTheme.subduedEmphasisOpacity))
             }
             .padding(.horizontal, AppTheme.spacing4)
 
@@ -55,7 +52,6 @@ struct PlannedMealsSection: View {
                     mealTime: mealTime,
                     recipe: recipeFor(mealTime),
                     isRecurring: mealPlanFor(mealTime)?.isRecurring ?? false,
-                    colorScheme: colorScheme,
                     onRemove: { onRemove(mealTime) }
                 )
             }
@@ -91,9 +87,7 @@ struct PlannedMealsSection: View {
             // Only the ≡ handle initiates the drag; tapping the card still changes the recipe.
             Image(systemName: "line.3.horizontal")
                 .font(.system(size: AppTheme.fontSize16))
-                .foregroundStyle(colorScheme == .dark
-                    ? .white.opacity(AppTheme.lowEmphasisOpacity)
-                    : .black.opacity(AppTheme.lowEmphasisOpacity))
+                .foregroundStyle(AppTheme.textColor(opacity: AppTheme.lowEmphasisOpacity))
                 .frame(width: 28, height: 52)
                 .contentShape(Rectangle())
                 .draggable(mealTime.rawValue) {
@@ -101,7 +95,6 @@ struct PlannedMealsSection: View {
                         mealTime: mealTime,
                         recipe: recipeFor(mealTime),
                         isRecurring: mealPlanFor(mealTime)?.isRecurring ?? false,
-                        colorScheme: colorScheme,
                         onRemove: {}
                     )
                     .frame(width: 260)

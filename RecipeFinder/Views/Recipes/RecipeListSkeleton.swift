@@ -21,7 +21,6 @@ struct RecipeListSkeleton: View {
 
 /// One skeleton row mirroring `RecipeCard`'s layout: square image block, title bar, shorter metadata bar.
 private struct RecipeCardSkeleton: View {
-    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         HStack(spacing: AppTheme.cardVerticalSpacing) {
@@ -49,6 +48,6 @@ private struct RecipeCardSkeleton: View {
     }
 
     private var blockColor: Color {
-        Color.primary.opacity(colorScheme == .dark ? 0.14 : 0.10)
+        AppTheme.adaptive(light: Color.primary.opacity(0.10), dark: Color.primary.opacity(0.14))
     }
 }

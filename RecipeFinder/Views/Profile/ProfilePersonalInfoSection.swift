@@ -4,7 +4,6 @@ import SwiftUI
 struct ProfilePersonalInfoSection: View {
     @Binding var firstName: String
     @Binding var lastName: String
-    let colorScheme: ColorScheme
 
     var body: some View {
         VStack(spacing: 0) {
@@ -25,8 +24,7 @@ struct ProfilePersonalInfoSection: View {
                     icon: "person.circle",
                     label: "First Name",
                     text: $firstName,
-                    placeholder: "John",
-                    colorScheme: colorScheme
+                    placeholder: "John"
                 )
                 
                 Divider()
@@ -37,8 +35,7 @@ struct ProfilePersonalInfoSection: View {
                     icon: "person.crop.circle",
                     label: "Last Name",
                     text: $lastName,
-                    placeholder: "Doe",
-                    colorScheme: colorScheme
+                    placeholder: "Doe"
                 )
             }
         }

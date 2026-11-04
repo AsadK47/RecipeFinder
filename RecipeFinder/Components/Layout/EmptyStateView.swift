@@ -10,7 +10,6 @@ struct EmptyStateView: View {
     var actionIcon: String?
     var onAction: (() -> Void)?
 
-    @Environment(\.colorScheme) private var colorScheme
 
     init(
         icon: String,
@@ -34,7 +33,7 @@ struct EmptyStateView: View {
         VStack(spacing: AppTheme.spacing16) {
             Image(systemName: icon)
                 .font(.system(size: AppTheme.fontSize60))
-                .foregroundStyle(iconTint?.opacity(0.5) ?? AppTheme.textColor(for: colorScheme, opacity: AppTheme.lowEmphasisOpacity))
+                .foregroundStyle(iconTint?.opacity(0.5) ?? AppTheme.textColor(opacity: AppTheme.lowEmphasisOpacity))
 
             Text(title)
                 .font(.title2).fontWeight(.bold)

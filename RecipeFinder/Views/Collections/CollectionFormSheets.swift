@@ -4,7 +4,6 @@ import SwiftUI
 struct NewCollectionSheet: View {
     let manager: any CollectionManaging
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.colorScheme) private var colorScheme
 
     @State private var name: String = ""
     @State private var selectedColor: CollectionColor = .blue
@@ -69,7 +68,6 @@ struct EditCollectionSheet: View {
     let collection: RecipeCollection
     let manager: any CollectionManaging
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.colorScheme) private var colorScheme
 
     @State private var name: String
     @State private var selectedColor: CollectionColor

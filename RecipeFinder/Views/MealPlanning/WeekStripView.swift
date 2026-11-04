@@ -5,7 +5,6 @@ struct WeekStripView: View {
     let week: [Date]
     let selectedDate: Date
     let monthYearString: String
-    let colorScheme: ColorScheme
     /// Returns the planned meal times for a given date, used to draw indicator dots.
     let mealTimesFor: (Date) -> [MealTime]
     let onSelectDate: (Date) -> Void
@@ -29,9 +28,7 @@ struct WeekStripView: View {
                     .adaptiveForegroundColor()
                     .frame(width: AppTheme.height40, height: AppTheme.height40)
                     .background(Circle().fill(
-                        colorScheme == .dark
-                            ? Color.white.opacity(0.1)
-                            : Color.black.opacity(AppTheme.dividerOpacity)
+                        AppTheme.adaptive(light: Color.black.opacity(AppTheme.dividerOpacity), dark: Color.white.opacity(0.1))
                     ))
             }
 
@@ -49,9 +46,7 @@ struct WeekStripView: View {
                     .adaptiveForegroundColor()
                     .frame(width: AppTheme.height40, height: AppTheme.height40)
                     .background(Circle().fill(
-                        colorScheme == .dark
-                            ? Color.white.opacity(0.1)
-                            : Color.black.opacity(AppTheme.dividerOpacity)
+                        AppTheme.adaptive(light: Color.black.opacity(AppTheme.dividerOpacity), dark: Color.white.opacity(0.1))
                     ))
             }
         }
@@ -65,7 +60,6 @@ struct WeekStripView: View {
                     isSelected: Calendar.current.isDate(date, inSameDayAs: selectedDate),
                     isToday: Calendar.current.isDateInToday(date),
                     mealTimes: mealTimesFor(date),
-                    colorScheme: colorScheme,
                     onTap: { onSelectDate(date) }
                 )
             }
@@ -78,7 +72,6 @@ private struct WeekDayCell: View {
     let isSelected: Bool
     let isToday: Bool
     let mealTimes: [MealTime]
-    let colorScheme: ColorScheme
     let onTap: () -> Void
 
     private var dayLetter: String {
@@ -104,7 +97,7 @@ private struct WeekDayCell: View {
             VStack(spacing: AppTheme.spacing4) {
                 Text(dayLetter)
                     .font(.system(size: AppTheme.fontSize11, weight: .medium))
-                    .foregroundStyle(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
+                    .foregroundStyle(AppTheme.adaptiveMediumEmphasis)
 
                 ZStack {
                     if isSelected {
@@ -119,7 +112,7 @@ private struct WeekDayCell: View {
                         .foregroundStyle(
                             isSelected ? .white
                             : isToday ? AppTheme.accentColor
-                            : AppTheme.adaptiveEmphasis(for: colorScheme)
+                            : AppTheme.adaptiveEmphasis()
                         )
                 }
                 .frame(width: 32, height: 32)

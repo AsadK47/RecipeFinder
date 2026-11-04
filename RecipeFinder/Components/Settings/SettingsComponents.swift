@@ -181,7 +181,6 @@ struct SettingsRowDivider: View {
 
 /// Standard settings screen chrome (themed gradient, scroll view, inline title) so every sub-screen's backgrounds and margins stay identical.
 struct SettingsScreen<Content: View>: View {
-    @Environment(\.colorScheme) var colorScheme
     
     let title: String
     let content: Content

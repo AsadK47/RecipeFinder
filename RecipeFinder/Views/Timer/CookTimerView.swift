@@ -6,7 +6,6 @@ struct CookTimerView: View {
     @State private var minutes: Int = 0
     @State private var seconds: Int = 0
 
-    @Environment(\.colorScheme) var colorScheme
 
     private var selectedTotalSeconds: Int {
         (hours * 3600) + (minutes * 60) + seconds

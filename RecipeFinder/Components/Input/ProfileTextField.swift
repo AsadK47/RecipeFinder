@@ -5,7 +5,6 @@ struct ProfileTextField: View {
     let label: String
     @Binding var text: String
     let placeholder: String
-    let colorScheme: ColorScheme
 
     var body: some View {
         HStack(spacing: AppTheme.spacing16) {

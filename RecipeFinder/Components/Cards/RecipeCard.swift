@@ -3,7 +3,6 @@ import SwiftUI
 struct RecipeCard: View {
     let recipe: RecipeModel
     let viewMode: RecipeViewMode
-    @Environment(\.colorScheme) var colorScheme
 
     private enum Layout {
         static let difficultyBarSize: CGFloat = 3.5
@@ -41,7 +40,7 @@ struct RecipeCard: View {
             VStack(alignment: .leading, spacing: AppTheme.spacing8) {
                 Text(recipe.name)
                     .font(.system(size: AppTheme.fontSize16, weight: .semibold))
-                    .foregroundStyle(AppTheme.adaptiveEmphasis(for: colorScheme))
+                    .foregroundStyle(AppTheme.adaptiveEmphasis())
                     .lineLimit(Layout.nameLineLimit)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .minimumScaleFactor(Layout.nameMinScaleFactor)
@@ -54,7 +53,7 @@ struct RecipeCard: View {
                                 .foregroundStyle(.orange)
                             Text(recipe.totalTime)
                                 .font(.system(size: AppTheme.fontSize13, weight: .medium))
-                                .foregroundStyle(AppTheme.adaptiveCardTextEmphasis(for: colorScheme))
+                                .foregroundStyle(AppTheme.adaptiveCardTextEmphasis)
                         }
                     }
 
@@ -62,14 +61,14 @@ struct RecipeCard: View {
                         DifficultyBarsView(difficulty: recipe.difficulty, size: Layout.difficultyBarSize)
                         Text(recipe.difficulty)
                             .font(.system(size: AppTheme.fontSize13, weight: .medium))
-                            .foregroundStyle(AppTheme.adaptiveCardTextEmphasis(for: colorScheme))
+                            .foregroundStyle(AppTheme.adaptiveCardTextEmphasis)
                     }
                 }
             }
 
             Image(systemName: "chevron.right")
                 .font(.system(size: AppTheme.fontSize14, weight: .semibold))
-                .foregroundStyle(AppTheme.adaptiveSubtitle(for: colorScheme))
+                .foregroundStyle(AppTheme.adaptiveSubtitle)
         }
         .padding(AppTheme.spacing16)
         .appCard(cornerRadius: AppTheme.cardCornerRadius)

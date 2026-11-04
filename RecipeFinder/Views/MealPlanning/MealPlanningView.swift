@@ -38,7 +38,6 @@ struct MealPlanningView: View {
     /// Non-nil while the meal-reminder time picker is presented.
     @State private var reminderContext: ReminderContext?
 
-    @Environment(\.colorScheme) var colorScheme
 
     private let mealCalendar = MealPlanCalendar()
 
@@ -66,7 +65,6 @@ struct MealPlanningView: View {
                         if !pantryExpirySuggestions.isEmpty {
                             ExpiryRecipeSuggestionsSection(
                                 suggestions: pantryExpirySuggestions,
-                                colorScheme: colorScheme,
                                 onPlan: { recipe in
                                     pendingSuggestedRecipe = recipe
                                     showMealTimeSelector = true
@@ -186,7 +184,6 @@ struct MealPlanningView: View {
             week: daysInCurrentWeek,
             selectedDate: selectedDate,
             monthYearString: monthYearString,
-            colorScheme: colorScheme,
             mealTimesFor: { date in
                 mealPlanningManager.mealPlans(for: date).map { $0.mealTime }
             },
@@ -206,7 +203,6 @@ struct MealPlanningView: View {
         PlannedMealsSection(
             mealTimes: $orderedMealTimes,
             selectedDateString: selectedDateString,
-            colorScheme: colorScheme,
             recipeFor: { getRecipe(for: selectedDate, mealTime: $0) },
             mealPlanFor: { mealPlanningManager.mealPlan(for: selectedDate, mealTime: $0) },
             onSelectMealTime: { mealTime in
@@ -237,7 +233,6 @@ struct MealPlanningView: View {
         SelectedDayEmptyStateView(
             selectedDateString: selectedDateString,
             shortDateString: shortDateString,
-            colorScheme: colorScheme,
             onAddMeal: {
                 showMealTimeSelector = true
                 HapticManager.shared.light()

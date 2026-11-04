@@ -2,7 +2,6 @@ import SwiftUI
 
 /// "Contact Information" card (company email and website links) on the legal screen.
 struct LegalContactCard: View {
-    @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
         SettingsCard {
@@ -47,7 +46,7 @@ struct LegalContactCard: View {
                             .font(.caption)
                     }
                     .padding(AppTheme.spacing12)
-                    .background(Color.white.opacity(colorScheme == .dark ? AppTheme.dividerOpacity : 0.05))
+                    .background(AppTheme.adaptive(light: Color.white.opacity(0.05), dark: Color.white.opacity(AppTheme.dividerOpacity)))
                     .cornerRadius(AppTheme.cornerRadius12)
                 }
                 .buttonStyle(PlainButtonStyle())
@@ -78,7 +77,7 @@ struct LegalContactCard: View {
                             .font(.caption)
                     }
                     .padding(AppTheme.spacing12)
-                    .background(Color.white.opacity(colorScheme == .dark ? AppTheme.dividerOpacity : 0.05))
+                    .background(AppTheme.adaptive(light: Color.white.opacity(0.05), dark: Color.white.opacity(AppTheme.dividerOpacity)))
                     .cornerRadius(AppTheme.cornerRadius12)
                 }
                 .buttonStyle(PlainButtonStyle())

@@ -5,7 +5,6 @@ struct RecipePlaceholderView: View {
     let recipeName: String?
     var showShimmer: Bool = false
 
-    @Environment(\.colorScheme) private var colorScheme
 
     private static let palettes: [(Color, Color)] = [
         (Color(red: 0.20, green: 0.60, blue: 0.70), Color(red: 0.10, green: 0.40, blue: 0.90)),
@@ -29,15 +28,15 @@ struct RecipePlaceholderView: View {
         ZStack {
             LinearGradient(
                 colors: [
-                    palette.0.opacity(colorScheme == .dark ? 0.45 : 0.35),
-                    palette.1.opacity(colorScheme == .dark ? 0.30 : 0.20),
+                    AppTheme.adaptive(light: palette.0.opacity(0.35), dark: palette.0.opacity(0.45)),
+                    AppTheme.adaptive(light: palette.1.opacity(0.20), dark: palette.1.opacity(0.30)),
                 ],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
             Image(systemName: "fork.knife")
                 .font(.system(size: 32, weight: .light))
-                .foregroundStyle(palette.0.opacity(colorScheme == .dark ? 0.65 : 0.55))
+                .foregroundStyle(AppTheme.adaptive(light: palette.0.opacity(0.55), dark: palette.0.opacity(0.65)))
         }
         .shimmering(active: showShimmer)
     }

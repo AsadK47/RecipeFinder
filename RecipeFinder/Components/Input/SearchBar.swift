@@ -4,7 +4,6 @@ struct SearchBar: View {
     @Binding var text: String
     var placeholder: String
     @FocusState private var isFocused: Bool
-    @Environment(\.colorScheme) var colorScheme
 
     private enum Timing {
         static let springResponse: Double = 0.3
@@ -14,22 +13,22 @@ struct SearchBar: View {
         HStack(spacing: AppTheme.spacing12) {
             HStack(spacing: AppTheme.spacing12) {
                 Image(systemName: "magnifyingglass")
-                    .foregroundStyle(AppTheme.adaptiveHighEmphasis(for: colorScheme))
+                    .foregroundStyle(AppTheme.adaptiveHighEmphasis)
                     .font(.body)
 
                 TextField(placeholder, text: $text)
                     .focused($isFocused)
                     .autocorrectionDisabled()
-                    .foregroundStyle(AppTheme.adaptiveEmphasis(for: colorScheme))
+                    .foregroundStyle(AppTheme.adaptiveEmphasis())
                     .placeholder(when: text.isEmpty) {
                         Text(placeholder)
-                            .foregroundStyle(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
+                            .foregroundStyle(AppTheme.adaptiveMediumEmphasis)
                     }
 
                 if !text.isEmpty {
                     Button(action: { text = "" }, label: {
                         Image(systemName: "xmark.circle.fill")
-                            .foregroundStyle(AppTheme.adaptiveSubtitle(for: colorScheme))
+                            .foregroundStyle(AppTheme.adaptiveSubtitle)
                     })
                 }
             }
@@ -41,7 +40,7 @@ struct SearchBar: View {
                     text = ""
                     isFocused = false
                 }
-                .foregroundStyle(AppTheme.adaptiveEmphasis(for: colorScheme))
+                .foregroundStyle(AppTheme.adaptiveEmphasis())
                 .fontWeight(.semibold)
                 .transition(.move(edge: .trailing).combined(with: .opacity))
             }

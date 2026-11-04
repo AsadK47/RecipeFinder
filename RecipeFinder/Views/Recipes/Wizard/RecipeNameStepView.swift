@@ -7,7 +7,6 @@ struct RecipeNameStepView: View {
     @Binding var existingImageReference: String?
     @Binding var selectedGalleryImages: [UIImage]
     @Binding var existingGalleryReferences: [String]
-    let colorScheme: ColorScheme
     let onPickPhoto: () -> Void
     let onAddGalleryPhoto: () -> Void
 

@@ -5,7 +5,6 @@ struct MealTimeCard: View {
     let mealTime: MealTime
     let recipe: RecipeModel?
     var isRecurring: Bool = false
-    let colorScheme: ColorScheme
     var onRemove: (() -> Void)? = nil
 
     var body: some View {
@@ -13,8 +12,7 @@ struct MealTimeCard: View {
             MealThumbnail(
                 imageName: recipe?.imageName ?? "",
                 recipeName: recipe?.name,
-                fallbackIcon: mealTime.icon,
-                colorScheme: colorScheme
+                fallbackIcon: mealTime.icon
             )
 
             VStack(alignment: .leading, spacing: AppTheme.spacing6) {
@@ -28,7 +26,7 @@ struct MealTimeCard: View {
                     Text(mealTime.timeRange)
                         .font(.caption)
                 }
-                .foregroundStyle(AppTheme.adaptiveMediumEmphasis(for: colorScheme))
+                .foregroundStyle(AppTheme.adaptiveMediumEmphasis)
 
                 if let recipe = recipe {
                     HStack(spacing: AppTheme.spacing6) {
@@ -89,7 +87,6 @@ private struct MealThumbnail: View {
     /// Non-nil = recipe assigned (drives the coloured placeholder when it has no photo); nil = empty slot keeping the "tap to add" icon.
     let recipeName: String?
     let fallbackIcon: String
-    let colorScheme: ColorScheme
 
     private static let size: CGFloat = 52
     @State private var loadFailed = false
@@ -128,14 +125,10 @@ private struct MealThumbnail: View {
             // Empty slot → meal-time icon as the "tap to add" affordance.
             ZStack {
                 Circle()
-                    .fill(colorScheme == .dark
-                        ? Color.white.opacity(AppTheme.cardDarkOpacity)
-                        : Color.black.opacity(AppTheme.cardDarkOpacity))
+                    .fill(AppTheme.textColor(opacity: AppTheme.cardDarkOpacity))
                 Image(systemName: fallbackIcon)
                     .font(.system(size: AppTheme.fontSize22, weight: .semibold))
-                    .foregroundStyle(colorScheme == .dark
-                        ? .white.opacity(AppTheme.cardLightOpacity)
-                        : .black.opacity(0.9))
+                    .foregroundStyle(AppTheme.adaptive(light: Color.black.opacity(0.9), dark: Color.white.opacity(AppTheme.cardLightOpacity)))
             }
             .frame(width: Self.size, height: Self.size)
         }

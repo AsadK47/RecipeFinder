@@ -1,4 +1,4 @@
-# WORK: De-duplication campaign batch 2 (2026-11-04) — #1 fc4920b, #2 0662f3f committed; Solid card style DELETED (uncommitted, full suite 1798 green)
+# WORK: De-duplication campaign batch 2 (2026-11-04) — #1 fc4920b, #2 0662f3f, 2b 202dd70 committed; #3 adaptive colours DONE (uncommitted, 1798 green, light/dark live-switch sim-checked)
 Order (user-approved): 1 sheet scaffold → 2 card styles → 3 adaptive colours → 4 search fields → 5 ingredient normalisers → 6 duration code.
 1. [x] `Components/Sheets/SheetScaffold.swift`: `.sheetScaffold(title)` (NavigationStack + AppBackground + appNavigationChrome) and
    `.sheetDismissButton(_:placement:)` applied to 17 sheets. Decisions: modifier not container (toolbars must sit inside the stack, and
@@ -15,7 +15,12 @@ Order (user-approved): 1 sheet scaffold → 2 card styles → 3 adaptive colours
 2b. [x] Solid mode deleted (user OK'd): CardStyle enum, every solid branch (appCard, BadgeCard, tab bar), reset-to-default key,
    orphaned helpers (cardBackground(for:), cardBackground/Dark, adaptiveCard, adaptiveCardMedium). DesignSystem.md updated (appCard
    + sheetScaffold). Stale "cardStyle" UserDefaults key left on old installs — harmless, unread.
-**Next action:** user commits 2b; then #3 adaptive colours (60 colorScheme-ternary calls → self-switching colours).
+3. [x] AppTheme colour helpers are now trait-resolved (`AppTheme.adaptiveSubtitle`, `textColor(opacity:)`, `adaptiveEmphasis(level:)`
+   …) — no `for: colorScheme`; inline `colorScheme == .dark ? A : B` → `AppTheme.adaptive(light:dark:)` / `textColor(opacity:)`;
+   ~60 @Environment(\.colorScheme) reads + 20 pass-through `colorScheme:` params deleted (58 files). Unused helpers removed
+   (elevatedCard, adaptiveCardHigh/Glass/Shadow/SecondaryIndicator). Kept colorScheme only where non-colour: gradient cache key
+   (AppTheme+Gradients), UIKit tab bar (ContentView). Pre-existing 🟢 seen on sim: About icon teal-on-teal in Light.
+**Next action:** user commits #3; then #4 SearchBar vs AppSearchField.
 
 # WORK: De-duplication campaign (2026-11-04) — low-risk batch 1–6 DONE (1798 green, uncommitted)
 User: "search for duplication and remove it — works once, easier to maintain". Sweep (Explore agent) ranked 15; doing

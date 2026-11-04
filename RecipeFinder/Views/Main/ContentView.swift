@@ -150,7 +150,7 @@ struct ContentView: View {
                 .tabItem { Label("Settings", systemImage: "gearshape.fill") }
                 .tag(4)
             }
-            .tint(AppTheme.textColor(for: colorScheme))
+            .tint(AppTheme.textColor())
             .onAppear {
                 configureTabBarAppearance()
             }

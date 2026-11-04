@@ -34,9 +34,6 @@ private struct AdaptiveForegroundColorModifier: ViewModifier {
     let opacity: Double
 
     func body(content: Content) -> some View {
-        content.foregroundStyle(AppTheme.adaptive(
-            light: AppTheme.textColor(for: .light, opacity: opacity),
-            dark: AppTheme.textColor(for: .dark, opacity: opacity)
-        ))
+        content.foregroundStyle(AppTheme.textColor(opacity: opacity))
     }
 }

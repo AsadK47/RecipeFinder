@@ -101,7 +101,6 @@ extension RecipeDetailView {
             title: "Nutrition",
             icon: "chart.pie",
             isExpanded: expandedSections.contains("Nutrition"),
-            colorScheme: colorScheme,
             onToggle: { toggleSection("Nutrition") }
         ) {
             if let perServing = recipe.nutritionInfo {
@@ -293,7 +292,6 @@ extension RecipeDetailView {
             ingredientsState: ingredientsState,
             measurementSystem: measurementSystem,
             isExpanded: expandedSections.contains("Ingredients"),
-            colorScheme: colorScheme,
             onToggleSection: { toggleSection("Ingredients") },
             onToggleMeasurement: toggleMeasurementSystem,
             onToggleIngredient: { index in
@@ -334,7 +332,6 @@ extension RecipeDetailView {
             title: "Pre-Prep",
             icon: "list.clipboard",
             isExpanded: expandedSections.contains("Pre-Prep"),
-            colorScheme: colorScheme,
             onToggle: { toggleSection("Pre-Prep") }
         ) {
             VStack(alignment: .leading, spacing: AppTheme.spacing24) {
@@ -359,7 +356,6 @@ extension RecipeDetailView {
             title: "Instructions",
             icon: "text.alignleft",
             isExpanded: expandedSections.contains("Instructions"),
-            colorScheme: colorScheme,
             onToggle: { toggleSection("Instructions") }
         ) {
             VStack(alignment: .leading, spacing: AppTheme.spacing24) {
@@ -451,7 +447,7 @@ extension RecipeDetailView {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: AppTheme.cornerRadius8)
-                .fill(colorScheme == .dark ? Color.white.opacity(AppTheme.overlayLightOpacity) : Color.black.opacity(AppTheme.dividerOpacity))
+                .fill(AppTheme.adaptive(light: Color.black.opacity(AppTheme.dividerOpacity), dark: Color.white.opacity(AppTheme.overlayLightOpacity)))
         )
     }
 
@@ -460,7 +456,6 @@ extension RecipeDetailView {
             title: "Notes",
             icon: "note.text",
             isExpanded: expandedSections.contains("Notes"),
-            colorScheme: colorScheme,
             onToggle: { toggleSection("Notes") }
         ) {
             VStack(alignment: .leading, spacing: AppTheme.spacing12) {

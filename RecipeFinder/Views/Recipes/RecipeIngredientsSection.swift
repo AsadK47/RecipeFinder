@@ -6,7 +6,6 @@ struct RecipeIngredientsSection: View {
     let ingredientsState: [Bool]
     let measurementSystem: MeasurementSystem
     let isExpanded: Bool
-    let colorScheme: ColorScheme
     let onToggleSection: () -> Void
     let onToggleMeasurement: () -> Void
     let onToggleIngredient: (Int) -> Void
@@ -102,7 +101,7 @@ struct RecipeIngredientsSection: View {
             .padding(.vertical, AppTheme.spacing6)
             .background(
                 RoundedRectangle(cornerRadius: AppTheme.cornerRadius8)
-                    .fill(colorScheme == .dark ? Color.white.opacity(AppTheme.overlayLightOpacity) : Color.black.opacity(AppTheme.dividerOpacity))
+                    .fill(AppTheme.adaptive(light: Color.black.opacity(AppTheme.dividerOpacity), dark: Color.white.opacity(AppTheme.overlayLightOpacity)))
             )
         }
         .buttonStyle(PlainButtonStyle())
@@ -116,7 +115,7 @@ struct RecipeIngredientsSection: View {
             Image(systemName: "chevron.down")
                 .font(.title3)
                 .fontWeight(.semibold)
-                .foregroundStyle(AppTheme.adaptiveHighEmphasis(for: colorScheme))
+                .foregroundStyle(AppTheme.adaptiveHighEmphasis)
                 .rotationEffect(.degrees(isExpanded ? 0 : -90))
                 .animation(.appSpring, value: isExpanded)
         }

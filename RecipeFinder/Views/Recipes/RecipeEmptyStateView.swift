@@ -5,7 +5,6 @@ struct RecipeEmptyStateView: View {
     let activeFilterCount: Int
     let onClearFilters: () -> Void
 
-    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         ScrollView {

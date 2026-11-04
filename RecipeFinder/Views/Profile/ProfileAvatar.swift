@@ -5,7 +5,6 @@ struct ProfileAvatar: View {
     let image: UIImage?
     let initials: String
     let chefType: ChefType
-    let colorScheme: ColorScheme
     let onTap: () -> Void
 
     var body: some View {
@@ -32,7 +31,7 @@ struct ProfileAvatar: View {
                     
                     ZStack {
                         Circle()
-                            .fill(colorScheme == .dark ? Color(white: AppTheme.cardDarkOpacity) : .white)
+                            .fill(AppTheme.adaptive(light: Color.white, dark: Color(white: AppTheme.cardDarkOpacity)))
                             .frame(width: AppTheme.iconSize28, height: AppTheme.iconSize28)
                         
                         Image(systemName: "camera.fill")

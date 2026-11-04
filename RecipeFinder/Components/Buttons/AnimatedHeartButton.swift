@@ -6,7 +6,6 @@ struct AnimatedHeartButton: View {
     @Binding var isFavorite: Bool
     let action: () -> Void
 
-    @Environment(\.colorScheme) var colorScheme
     @State private var isAnimating = false
     @State private var scale: CGFloat = Timing.scaleReset
     @State private var particlesVisible = false
@@ -60,7 +59,7 @@ struct AnimatedHeartButton: View {
                         isFavorite
                             ? heartGradient
                             : LinearGradient(
-                                gradient: Gradient(colors: [AppTheme.textColor(for: colorScheme)]),
+                                gradient: Gradient(colors: [AppTheme.textColor()]),
                                 startPoint: .top,
                                 endPoint: .bottom
                             )

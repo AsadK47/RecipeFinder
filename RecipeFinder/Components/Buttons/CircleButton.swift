@@ -4,13 +4,12 @@ struct CircleButton: View {
     let icon: String
     let action: () -> Void
 
-    @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
         Button(action: action) {
             Image(systemName: icon)
                 .font(.title2)
-                .foregroundStyle(AppTheme.adaptiveEmphasis(for: colorScheme))
+                .foregroundStyle(AppTheme.adaptiveEmphasis())
                 .padding(AppTheme.spacing12)
                 .appCard(in: Circle())
         }

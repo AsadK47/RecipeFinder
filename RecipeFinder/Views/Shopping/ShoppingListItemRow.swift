@@ -16,7 +16,6 @@ struct ShoppingListItemRow: View {
     let allCategories: [String]
     let availableStores: [String] = ["ASDA", "Tesco", "Sainsbury's", "Lidl", "Aldi", "Morrisons", "Waitrose"]
     
-    @Environment(\.colorScheme) var colorScheme
 
     private var defaultCategory: String {
         CategoryClassifier.categorize(item.name)
@@ -73,7 +72,7 @@ struct ShoppingListItemRow: View {
                             .font(.subheadline)
                             .fontWeight(.medium)
                             .strikethrough(item.isChecked)
-                            .foregroundStyle(item.isChecked ? .gray : AppTheme.adaptiveEmphasis(for: colorScheme))
+                            .foregroundStyle(item.isChecked ? .gray : AppTheme.adaptiveEmphasis())
                             .lineLimit(2)
                             .fixedSize(horizontal: false, vertical: true)
 
@@ -115,7 +114,7 @@ struct ShoppingListItemRow: View {
                     }) {
                         Image(systemName: "minus")
                             .font(.system(size: AppTheme.fontSize14, weight: .semibold))
-                            .foregroundStyle(item.quantity > 1 ? (AppTheme.adaptiveEmphasis(for: colorScheme)) : .gray)
+                            .foregroundStyle(item.quantity > 1 ? (AppTheme.adaptiveEmphasis()) : .gray)
                             .frame(width: AppTheme.iconSize28, height: AppTheme.iconSize28)
                             .appCard(in: Circle())
                     }
@@ -137,7 +136,7 @@ struct ShoppingListItemRow: View {
                     }) {
                         Image(systemName: "plus")
                             .font(.system(size: AppTheme.fontSize14, weight: .semibold))
-                            .foregroundStyle(item.quantity < ShoppingListItemRow.maxQuantity ? (AppTheme.adaptiveEmphasis(for: colorScheme)) : .gray)
+                            .foregroundStyle(item.quantity < ShoppingListItemRow.maxQuantity ? (AppTheme.adaptiveEmphasis()) : .gray)
                             .frame(width: AppTheme.iconSize28, height: AppTheme.iconSize28)
                             .appCard(in: Circle())
                     }

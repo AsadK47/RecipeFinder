@@ -3,7 +3,6 @@ import SwiftUI
 /// Pantry-aware suggestion strip shown when inventory expires within three days; each card jumps to the meal-time picker for that recipe.
 struct ExpiryRecipeSuggestionsSection: View {
     let suggestions: [PantryExpirySuggestions.Match]
-    let colorScheme: ColorScheme
     let onPlan: (RecipeModel) -> Void
 
     var body: some View {

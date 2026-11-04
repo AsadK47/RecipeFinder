@@ -123,7 +123,6 @@ struct PartyTimeView: View {
 
 private struct BulletPoint: View {
     let text: String
-    @Environment(\.colorScheme) var colorScheme
 
     init(_ text: String) {
         self.text = text
@@ -132,10 +131,10 @@ private struct BulletPoint: View {
     var body: some View {
         HStack(alignment: .top, spacing: AppTheme.spacing8) {
             Text("•")
-                .foregroundStyle(AppTheme.adaptiveSubtitle(for: colorScheme))
+                .foregroundStyle(AppTheme.adaptiveSubtitle)
             Text(text)
                 .font(.subheadline)
-                .foregroundStyle(AppTheme.adaptiveSubtitle(for: colorScheme))
+                .foregroundStyle(AppTheme.adaptiveSubtitle)
         }
     }
 }

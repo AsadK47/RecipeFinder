@@ -6,7 +6,6 @@ private let logger = AppLogger.logger(category: "PhotoImport")
 /// Photo-to-recipe: pick or capture a cookbook page/screenshot, OCR on device (Vision), route the text through the shared interpreter, then present the wizard to review before saving.
 struct PhotoImportSheet: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.colorScheme) private var colorScheme
 
     @State private var selectedItem: PhotosPickerItem?
     @State private var showCamera = false
@@ -25,9 +24,8 @@ struct PhotoImportSheet: View {
     }
 
     var body: some View {
-        // Capture theme/scheme as Sendable values so the @Sendable label closures don't touch @MainActor state.
+        // Capture the theme as a Sendable value so the @Sendable label closures don't touch @MainActor state.
         let theme = ThemeStore.shared.theme
-        let scheme = colorScheme
         return VStack(spacing: AppTheme.spacing16) {
             Text("Point at a cookbook page, screenshot, or handwritten recipe. We read the text on your device — nothing leaves your phone.")
                 .font(.subheadline)

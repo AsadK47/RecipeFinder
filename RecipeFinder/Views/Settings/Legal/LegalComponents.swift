@@ -4,7 +4,6 @@ import SwiftUI
 
 struct SectionTitle: View {
     let text: String
-    @Environment(\.colorScheme) var colorScheme
     
     init(_ text: String) {
         self.text = text
@@ -21,7 +20,6 @@ struct SectionTitle: View {
 
 struct BodyText: View {
     let text: String
-    @Environment(\.colorScheme) var colorScheme
     
     init(_ text: String) {
         self.text = text
@@ -30,14 +28,13 @@ struct BodyText: View {
     var body: some View {
         Text(text)
             .font(.body)
-            .foregroundStyle(colorScheme == .dark ? AppTheme.textColor(for: colorScheme, opacity: AppTheme.cardLightOpacity) : .black.opacity(AppTheme.highEmphasisOpacity))
+            .foregroundStyle(AppTheme.adaptive(light: .black.opacity(AppTheme.highEmphasisOpacity), dark: .white.opacity(AppTheme.cardLightOpacity)))
             .fixedSize(horizontal: false, vertical: true)
     }
 }
 
 struct LegalBulletPoint: View {
     let text: String
-    @Environment(\.colorScheme) var colorScheme
     
     init(_ text: String) {
         self.text = text
@@ -49,7 +46,7 @@ struct LegalBulletPoint: View {
                 .adaptiveSecondaryForeground()
             Text(text)
                 .font(.body)
-                .foregroundStyle(colorScheme == .dark ? AppTheme.textColor(for: colorScheme, opacity: AppTheme.cardLightOpacity) : .black.opacity(AppTheme.highEmphasisOpacity))
+                .foregroundStyle(AppTheme.adaptive(light: .black.opacity(AppTheme.highEmphasisOpacity), dark: .white.opacity(AppTheme.cardLightOpacity)))
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(.leading, AppTheme.spacing8)
@@ -59,7 +56,6 @@ struct LegalBulletPoint: View {
 struct CompanyDetailRow: View {
     let label: String
     let value: String
-    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         HStack {
@@ -81,7 +77,6 @@ struct CompanyInfoRow: View {
     let value: String
     var valueColor: Color = .primary
     
-    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         HStack(alignment: .top) {
@@ -93,7 +88,7 @@ struct CompanyInfoRow: View {
             Text(value)
                 .font(.subheadline)
                 .fontWeight(.medium)
-                .foregroundStyle(valueColor == .primary ? AppTheme.textColor(for: colorScheme) : valueColor)
+                .foregroundStyle(valueColor == .primary ? AppTheme.textColor() : valueColor)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(.vertical, AppTheme.spacing4)
@@ -106,7 +101,6 @@ struct LegalDocRow: View {
     let title: String
     let subtitle: String
     
-    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         HStack(spacing: AppTheme.spacing12) {
@@ -140,7 +134,6 @@ struct ComplianceBadge: View {
     let description: String
     let color: Color
     
-    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         HStack(alignment: .top, spacing: AppTheme.spacing12) {
