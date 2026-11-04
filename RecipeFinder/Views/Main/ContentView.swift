@@ -6,7 +6,6 @@ struct ContentView: View {
     @Environment(\.recipeStore) private var store
     @State private var selectedTab: Int = 0
     @State private var sidebarSelection: SidebarItem? = .recipes
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.badges) private var badgeManager
@@ -158,9 +157,6 @@ struct ContentView: View {
             .onChange(of: ThemeStore.shared.theme) { _, _ in
                 configureTabBarAppearance()
             }
-            .onChange(of: cardStyle) { _, _ in
-                configureTabBarAppearance()
-            }
             .onChange(of: colorScheme) { _, _ in
                 configureTabBarAppearance()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
@@ -214,18 +210,11 @@ struct ContentView: View {
             ? UIColor.white.withAlphaComponent(0.6) 
             : UIColor.black.withAlphaComponent(0.6)
         
-        if cardStyle == .solid {
-            appearance.configureWithOpaqueBackground()
-            appearance.backgroundColor = isDarkMode 
-                ? UIColor(white: 0.12, alpha: 0.98)
-                : UIColor(white: 0.98, alpha: 0.98)
-        } else {
-            appearance.configureWithDefaultBackground()
-            appearance.backgroundEffect = UIBlurEffect(style: isDarkMode ? .systemMaterialDark : .systemMaterialLight)
-            appearance.backgroundColor = isDarkMode
-                ? UIColor(white: 0.1, alpha: 0.85)
-                : UIColor(white: 0.95, alpha: 0.90)
-        }
+        appearance.configureWithDefaultBackground()
+        appearance.backgroundEffect = UIBlurEffect(style: isDarkMode ? .systemMaterialDark : .systemMaterialLight)
+        appearance.backgroundColor = isDarkMode
+            ? UIColor(white: 0.1, alpha: 0.85)
+            : UIColor(white: 0.95, alpha: 0.90)
         
         appearance.stackedLayoutAppearance.selected.iconColor = textColor
         appearance.stackedLayoutAppearance.selected.titleTextAttributes = [

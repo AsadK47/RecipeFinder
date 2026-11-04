@@ -224,9 +224,8 @@ struct SettingsSectionHeader: View {
     }
 }
 
-/// Card container matching the app-wide frosted/solid card styles.
+/// Card container matching the app-wide card surface.
 struct SettingsCard<Content: View>: View {
-    @Environment(\.colorScheme) var colorScheme
     let content: Content
     
     init(@ViewBuilder content: () -> Content) {

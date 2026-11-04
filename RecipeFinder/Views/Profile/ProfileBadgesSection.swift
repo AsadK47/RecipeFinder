@@ -5,7 +5,6 @@ struct ProfileBadgesSection: View {
     let badgeManager: any BadgeManaging
     @Binding var isExpanded: Bool
     let colorScheme: ColorScheme
-    let cardStyle: CardStyle
     let onSelectBadge: (Badge) -> Void
 
     var body: some View {
@@ -45,7 +44,7 @@ struct ProfileBadgesSection: View {
                                 onSelectBadge(badge)
                                 HapticManager.shared.light()
                             }) {
-                                BadgeCard(badge: badge, colorScheme: colorScheme, cardStyle: cardStyle)
+                                BadgeCard(badge: badge, colorScheme: colorScheme)
                             }
                             .buttonStyle(PlainButtonStyle())
                             .accessibilityLabel(badge.title)

@@ -1,4 +1,4 @@
-# WORK: De-duplication campaign batch 2 (2026-11-04) — #1 committed fc4920b; #2 card styles DONE (uncommitted, full suite 1798 green, sim-checked)
+# WORK: De-duplication campaign batch 2 (2026-11-04) — #1 fc4920b, #2 0662f3f committed; Solid card style DELETED (uncommitted, full suite 1798 green)
 Order (user-approved): 1 sheet scaffold → 2 card styles → 3 adaptive colours → 4 search fields → 5 ingredient normalisers → 6 duration code.
 1. [x] `Components/Sheets/SheetScaffold.swift`: `.sheetScaffold(title)` (NavigationStack + AppBackground + appNavigationChrome) and
    `.sheetDismissButton(_:placement:)` applied to 17 sheets. Decisions: modifier not container (toolbars must sit inside the stack, and
@@ -12,7 +12,10 @@ Order (user-approved): 1 sheet scaffold → 2 card styles → 3 adaptive colours
    section card; full-strength surface looked heavy on sim). Solid colours unified to cardBackground; CookTimer frosted
    regularMaterial → ultraThin. FINDING: no Settings UI sets Solid any more (picker removed in 6be34e4) → Solid mode is
    unreachable; deleting CardStyle entirely is the bigger simplification — ask user.
-**Next action:** user commits #2; ask whether to delete Solid card style; then #3 adaptive colours.
+2b. [x] Solid mode deleted (user OK'd): CardStyle enum, every solid branch (appCard, BadgeCard, tab bar), reset-to-default key,
+   orphaned helpers (cardBackground(for:), cardBackground/Dark, adaptiveCard, adaptiveCardMedium). DesignSystem.md updated (appCard
+   + sheetScaffold). Stale "cardStyle" UserDefaults key left on old installs — harmless, unread.
+**Next action:** user commits 2b; then #3 adaptive colours (60 colorScheme-ternary calls → self-switching colours).
 
 # WORK: De-duplication campaign (2026-11-04) — low-risk batch 1–6 DONE (1798 green, uncommitted)
 User: "search for duplication and remove it — works once, easier to maintain". Sweep (Explore agent) ranked 15; doing

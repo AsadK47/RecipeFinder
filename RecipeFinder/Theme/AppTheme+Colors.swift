@@ -3,10 +3,6 @@ import SwiftUI
 /// Adaptive (color-scheme aware) color helpers and theme accent colors.
 extension AppTheme {
 
-    static func cardBackground(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? cardBackgroundDark : cardBackground
-    }
-    
     static func elevatedCard(for colorScheme: ColorScheme) -> Color {
         colorScheme == .dark ? elevatedCardDark : elevatedCardLight
     }
@@ -18,14 +14,6 @@ extension AppTheme {
     static func textColor(for colorScheme: ColorScheme, opacity: Double = 1.0) -> Color {
         let baseColor = colorScheme == .dark ? Color.white : Color.black
         return opacity == 1.0 ? baseColor : baseColor.opacity(opacity)
-    }
-    
-    static func adaptiveCard(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? Color(white: cardDarkOpacity) : Color.white.opacity(cardLightOpacity)
-    }
-    
-    static func adaptiveCardMedium(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? Color(white: cardDarkMediumOpacity) : Color.white.opacity(cardLightOpacity)
     }
     
     static func adaptiveCardHigh(for colorScheme: ColorScheme) -> Color {

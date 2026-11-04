@@ -3,7 +3,6 @@ import SwiftUI
 struct BadgeCard: View {
     let badge: Badge
     let colorScheme: ColorScheme
-    let cardStyle: CardStyle
 
     var badgeColor: Color { Badge.color(for: badge.color) }
 
@@ -39,16 +38,10 @@ struct BadgeCard: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, AppTheme.spacing12)
+        // Lighter glass than .appCard(): badges sit on a section card.
         .background {
-            if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                    .fill(colorScheme == .dark
-                          ? Color(white: 0.1)
-                          : Color.white.opacity(AppTheme.glassLightOpacity))
-            } else {
-                RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                    .fill(.ultraThinMaterial.opacity(AppTheme.glassLightOpacity))
-            }
+            RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
+                .fill(.ultraThinMaterial.opacity(AppTheme.glassLightOpacity))
         }
         .overlay {
             if !badge.isUnlocked {

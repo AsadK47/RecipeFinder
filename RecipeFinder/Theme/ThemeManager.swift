@@ -1,11 +1,6 @@
 
 import SwiftUI
 
-enum CardStyle: String, CaseIterable {
-    case frosted = "Frost Light"
-    case solid = "Ember Dark"
-}
-
 enum AppearanceMode: String, CaseIterable {
     case system = "System"
     case light = "Light"

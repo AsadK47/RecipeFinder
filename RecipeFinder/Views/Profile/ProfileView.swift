@@ -4,7 +4,6 @@ struct ProfileView: View {
     @Environment(\.profile) private var profileManager
     @Environment(\.badges) private var badgeManager
     @Environment(\.colorScheme) private var colorScheme
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
 
     @State private var activeSheet: ProfileSheet?
     @State private var profileImage: UIImage?
@@ -64,7 +63,6 @@ struct ProfileView: View {
                             badgeManager: badgeManager,
                             isExpanded: $badgesSectionExpanded,
                             colorScheme: colorScheme,
-                            cardStyle: cardStyle,
                             onSelectBadge: { badge in
                                 activeSheet = .badge(badge)
                             }

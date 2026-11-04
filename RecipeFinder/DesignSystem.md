@@ -12,11 +12,10 @@ inputs **blend** into the glass via translucent fills, not solid fills.
 ## Tokens — use these, never hand-roll a surface
 | Token | Use for | Definition |
 |---|---|---|
-| `.appCard()` | any card / tile / section container | `Theme/View+AppCard.swift` — `.ultraThinMaterial` (frosted) or the solid fill when `cardStyle == .solid`. Honours the user's setting. |
+| `.appCard()` | any card / tile / section container; `elevated: true` for stand-alone cards (drop shadow); `.appCard(in: Circle())` / `Capsule()` for icon buttons and pills | `Theme/View+AppCard.swift` — `.ultraThinMaterial`. The only card surface (no Solid style; `GlassCard` removed). |
 | `.appInputField()` | any text field / menu-style input on a card | `Theme/View+AppInputField.swift` — translucent `white.opacity(dividerOpacity)` fill + a 0.5pt `dividerColor` hairline border, radius 12. Pair with `.textFieldStyle(.plain)`. |
 | `.shimmering(active:)` | loading skeleton sweep | `Components/Recipe/Shimmer.swift` |
-| `GlassCard` | detail-screen info cards | existing component |
-| `AppBackground()` | every screen/sheet backdrop (`ZStack { AppBackground(); content }`) | `Theme/ThemeStore.swift` — themed gradient, ignores safe area |
+| `AppBackground()` | every screen backdrop (`ZStack { AppBackground(); content }`); sheets use `.sheetScaffold(title)` + `.sheetDismissButton()` (`Components/Sheets/SheetScaffold.swift`) instead | `Theme/ThemeStore.swift` — themed gradient, ignores safe area |
 | `AppTheme.accentColor` | the user's theme colour | reads `ThemeStore.shared` (single source; Observation re-renders readers on change) |
 | `PrimaryButton` | primary CTAs (capsule) | existing component |
 
@@ -57,7 +56,7 @@ inputs **blend** into the glass via translucent fills, not solid fills.
   same data = drift. Single canonical editor (`RecipeWizardBuilder` save path),
   shown focused per section. See the recipe wizard.
 - **2026-10-09 — Never colour content *text* with the brand accent on a frosted/
-  gradient surface.** `accentColor` (teal) text on a `GlassCard`/`.appCard()`/the
+  gradient surface.** `accentColor` (teal) text on a `.appCard()`/the
   teal gradient is near-invisible (e.g. the servings "2.0x", shopping store name,
   refresh-diff value). **Rule:** content Text → `.primary` / `adaptiveForegroundColor()`
   / `adaptiveSecondaryForeground()`. Keep the colour on an *icon* beside it, or make

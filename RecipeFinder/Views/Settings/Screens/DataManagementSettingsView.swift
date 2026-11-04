@@ -296,7 +296,6 @@ struct DataManagementSettingsView: View {
         // Appearance settings are app-wide (global @AppStorage) — restore defaults.
         let defaults = UserDefaults.standard
         ThemeStore.shared.theme = .teal
-        defaults.set("Frost Light", forKey: "cardStyle")
         defaults.set("metric", forKey: "measurementSystem")
 
         // Seed flags were cleared above, so this re-seeds the starters + bundled collection a fresh install gets and
