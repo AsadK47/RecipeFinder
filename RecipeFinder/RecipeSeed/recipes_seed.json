@@ -4687,7 +4687,7 @@
       {
         "baseQuantity" : 140,
         "id" : "F3CDFDEA-352F-5324-A045-AACBAEFA61A1",
-        "name" : "milk, milk alternative or water",
+        "name" : "milk, or a milk alternative or water",
         "unit" : "g"
       },
       {
@@ -14369,7 +14369,7 @@
       {
         "baseQuantity" : 30,
         "id" : "DB49DBCD-5687-5BA7-8196-EA4F3732D385",
-        "name" : "sugar",
+        "name" : "sugar, for the filling",
         "unit" : "g"
       },
       {
@@ -14399,7 +14399,7 @@
       {
         "baseQuantity" : 1,
         "id" : "55F1A882-A4FF-557F-AEA2-F0FB45402449",
-        "name" : "sugar",
+        "name" : "sugar, for the dough",
         "unit" : "tbsp"
       },
       {
@@ -14493,7 +14493,7 @@
       {
         "baseQuantity" : 0.5,
         "id" : "BBF48D61-369C-5F25-9E08-DA35207CCB38",
-        "name" : "turmeric",
+        "name" : "turmeric, for the meat",
         "unit" : "tsp"
       },
       {
@@ -14535,7 +14535,7 @@
       {
         "baseQuantity" : 0.5,
         "id" : "DFB1669D-E3D0-5A5D-B0A1-5032B0046044",
-        "name" : "turmeric",
+        "name" : "turmeric, for the lentils",
         "unit" : "tsp"
       },
       {
@@ -14629,7 +14629,7 @@
       {
         "baseQuantity" : 1,
         "id" : "3E36ECE2-03B1-5302-ABEF-6F0DB85E3D1A",
-        "name" : "oil",
+        "name" : "oil, for the chilli oil",
         "unit" : "cup"
       },
       {
@@ -14641,7 +14641,7 @@
       {
         "baseQuantity" : 3,
         "id" : "7E0A4AB6-0BD6-5F97-98B0-1786430768E6",
-        "name" : "oil",
+        "name" : "oil, for the meat",
         "unit" : "tsp"
       },
       {
@@ -14671,7 +14671,7 @@
       {
         "baseQuantity" : 0.5,
         "id" : "EA621CCD-801A-5E54-B804-8B2735A88CF2",
-        "name" : "five spice powder",
+        "name" : "five spice powder, for the meat",
         "unit" : "tsp"
       },
       {
@@ -14701,7 +14701,7 @@
       {
         "baseQuantity" : 0.25,
         "id" : "6663DE3E-3779-5A2D-BFF4-2308EC3A99E7",
-        "name" : "five spice powder",
+        "name" : "five spice powder, for the sauce",
         "unit" : "tsp"
       },
       {
@@ -16012,13 +16012,13 @@
       {
         "baseQuantity" : 0.25,
         "id" : "6F6C01D4-03E8-5749-A3CF-8B34F289E28C",
-        "name" : "turmeric powder",
+        "name" : "turmeric powder, for the marinade",
         "unit" : "tsp"
       },
       {
         "baseQuantity" : 0.75,
         "id" : "59259874-CB66-51BE-92F8-276F0D5F7C9A",
-        "name" : "kosher salt",
+        "name" : "kosher salt, for the marinade",
         "unit" : "tsp"
       },
       {
@@ -16090,13 +16090,13 @@
       {
         "baseQuantity" : 0.5,
         "id" : "634F49DA-E7F1-5389-9847-E5E89E770F93",
-        "name" : "turmeric powder",
+        "name" : "turmeric powder, for the curry",
         "unit" : "tsp"
       },
       {
         "baseQuantity" : 1.5,
         "id" : "EEAC844D-39D1-5FDF-89B9-18848AE92EDF",
-        "name" : "kosher salt",
+        "name" : "kosher salt, for the curry",
         "unit" : "tsp"
       },
       {
@@ -20794,7 +20794,7 @@
       {
         "baseQuantity" : 1.5,
         "id" : "6A9ADFF9-8B78-5ED7-8813-2A4639F084A3",
-        "name" : "garlic, crushed",
+        "name" : "garlic, crushed, for the meatballs",
         "unit" : "tsp"
       },
       {
@@ -20926,7 +20926,7 @@
       {
         "baseQuantity" : 4,
         "id" : "ED36E44E-206E-5CB4-9896-291E2EAA6729",
-        "name" : "garlic, crushed",
+        "name" : "garlic, crushed, for the curry",
         "unit" : "clove"
       },
       {
@@ -21167,7 +21167,7 @@
       {
         "baseQuantity" : 1,
         "id" : "6170D044-23DC-5A6A-9321-7CF840DB6F32",
-        "name" : "soy sauce",
+        "name" : "soy sauce, for the seasoning",
         "unit" : "tbsp"
       },
       {
@@ -21179,7 +21179,7 @@
       {
         "baseQuantity" : 2,
         "id" : "EEBCA593-F627-560C-9D14-549D3C275988",
-        "name" : "garlic, minced",
+        "name" : "garlic, minced, for the seasoning",
         "unit" : "tsp"
       },
       {
@@ -21209,7 +21209,7 @@
       {
         "baseQuantity" : 1,
         "id" : "D9BE47D9-17C4-522A-9BC0-5BED97CFA15C",
-        "name" : "soy sauce",
+        "name" : "soy sauce, for the sauce",
         "unit" : "tbsp"
       },
       {
@@ -21227,7 +21227,7 @@
       {
         "baseQuantity" : 2,
         "id" : "E1AB03BF-C822-53C2-82F3-2873E3DCA336",
-        "name" : "garlic, minced",
+        "name" : "garlic, minced, for the sauce",
         "unit" : "tsp"
       }
     ],
@@ -21276,7 +21276,7 @@
       {
         "baseQuantity" : 450,
         "id" : "9EE81E64-C205-541C-9B0D-75911376CD5F",
-        "name" : "plain flour",
+        "name" : "plain flour, for the buns",
         "unit" : "g"
       },
       {
@@ -21288,7 +21288,7 @@
       {
         "baseQuantity" : 0.5,
         "id" : "EC36A294-CAE5-5FC1-8BE5-1C5283DAA189",
-        "name" : "salt",
+        "name" : "salt, for the buns",
         "unit" : "tsp"
       },
       {
@@ -21336,7 +21336,7 @@
       {
         "baseQuantity" : 0.5,
         "id" : "BCA635CB-D325-502E-AFF0-87468B001E24",
-        "name" : "salt",
+        "name" : "salt, for the marinade",
         "unit" : "tsp"
       },
       {
@@ -21348,19 +21348,19 @@
       {
         "baseQuantity" : 0.25,
         "id" : "1F744ED6-DDF7-5468-A382-24492000C086",
-        "name" : "garlic salt",
+        "name" : "garlic salt, for the marinade",
         "unit" : "tsp"
       },
       {
         "baseQuantity" : 180,
         "id" : "99000D02-85E4-58D6-96D4-969E9BA3CB1E",
-        "name" : "plain flour",
+        "name" : "plain flour, for the coating",
         "unit" : "g"
       },
       {
         "baseQuantity" : 1,
         "id" : "19AE8272-C519-5FB8-ABBF-79E2D7229525",
-        "name" : "salt",
+        "name" : "salt, for the coating",
         "unit" : "tsp"
       },
       {
@@ -21372,7 +21372,7 @@
       {
         "baseQuantity" : 0.5,
         "id" : "4E4ED3BF-82C6-5800-8837-2C8F2F66C14B",
-        "name" : "garlic salt",
+        "name" : "garlic salt, for the coating",
         "unit" : "tsp"
       },
       {
@@ -22097,7 +22097,7 @@
       {
         "baseQuantity" : 1,
         "id" : "92B3CF4A-8E31-52FC-B127-A5B56E031DA2",
-        "name" : "salt",
+        "name" : "salt, for the meatballs",
         "unit" : "tsp"
       },
       {
@@ -22127,7 +22127,7 @@
       {
         "baseQuantity" : 1,
         "id" : "3501DB00-B265-540D-A21F-DC157080C4FA",
-        "name" : "salt",
+        "name" : "salt, for the sauce",
         "unit" : "tsp"
       },
       {
@@ -22397,7 +22397,7 @@
       {
         "baseQuantity" : 0.5,
         "id" : "D701FBE9-EC0E-56DF-9AB6-D38A38C1D760",
-        "name" : "cumin seeds",
+        "name" : "cumin seeds, for the broth",
         "unit" : "tbsp"
       },
       {
@@ -22421,7 +22421,7 @@
       {
         "baseQuantity" : 1,
         "id" : "C4E8A591-5BFE-5E22-8972-88E3F1F96EB3",
-        "name" : "dried bay leaf",
+        "name" : "dried bay leaf, for the broth",
         "unit" : ""
       },
       {
@@ -22433,19 +22433,19 @@
       {
         "baseQuantity" : 1,
         "id" : "BEAAC490-28AC-56D9-BD84-9C2DDF5348C7",
-        "name" : "black cardamom",
+        "name" : "black cardamom, for the broth",
         "unit" : ""
       },
       {
         "baseQuantity" : 4,
         "id" : "E23ECE3C-1E4B-59BD-A323-8877AAD5CA96",
-        "name" : "whole cloves",
+        "name" : "whole cloves, for the broth",
         "unit" : ""
       },
       {
         "baseQuantity" : 2,
         "id" : "924A4BE8-113D-586B-8311-735154490703",
-        "name" : "kosher salt",
+        "name" : "kosher salt, for the broth",
         "unit" : "tsp"
       },
       {
@@ -22475,13 +22475,13 @@
       {
         "baseQuantity" : 1,
         "id" : "97C35B89-52CE-5E28-A553-2AAEAEE33EE0",
-        "name" : "dried bay leaf",
+        "name" : "dried bay leaf, for the pulao",
         "unit" : ""
       },
       {
         "baseQuantity" : 0.75,
         "id" : "C3995B5D-C436-572F-9769-BC3B46055012",
-        "name" : "cumin seeds",
+        "name" : "cumin seeds, for the pulao",
         "unit" : "tsp"
       },
       {
@@ -22493,13 +22493,13 @@
       {
         "baseQuantity" : 4,
         "id" : "688A80B4-6967-5F3D-B2E3-89C620325D0B",
-        "name" : "whole cloves",
+        "name" : "whole cloves, for the pulao",
         "unit" : ""
       },
       {
         "baseQuantity" : 1,
         "id" : "B6298598-6F8E-598C-B7F1-4EC160B74FDA",
-        "name" : "black cardamom",
+        "name" : "black cardamom, for the pulao",
         "unit" : ""
       },
       {
@@ -22517,7 +22517,7 @@
       {
         "baseQuantity" : 0.5,
         "id" : "0C7EF4DB-7C26-5F4E-92A7-E0F6978353DD",
-        "name" : "kosher salt",
+        "name" : "kosher salt, for the pulao",
         "unit" : "tsp"
       },
       {
@@ -23207,7 +23207,7 @@
       {
         "baseQuantity" : 2,
         "id" : "F440702F-4632-5C36-9AEC-6AF07F265B09",
-        "name" : "caster sugar",
+        "name" : "caster sugar, for the buns",
         "unit" : "tbsp"
       },
       {
@@ -23243,7 +23243,7 @@
       {
         "baseQuantity" : 90,
         "id" : "B6D67906-9BA5-5664-AF76-20A3AB3FB7B8",
-        "name" : "caster sugar",
+        "name" : "caster sugar, for the filling",
         "unit" : "g"
       },
       {
@@ -23424,7 +23424,7 @@
       {
         "baseQuantity" : 225,
         "id" : "1B522610-5511-5C47-B8A1-8FB886E3BFCB",
-        "name" : "caster sugar",
+        "name" : "caster sugar, for the cake",
         "unit" : "g"
       },
       {
@@ -23454,7 +23454,7 @@
       {
         "baseQuantity" : 85,
         "id" : "B2B9B55C-6119-57A0-8265-A175FF7F12F3",
-        "name" : "caster sugar",
+        "name" : "caster sugar, for the drizzle",
         "unit" : "g"
       }
     ],
@@ -23923,7 +23923,7 @@
       {
         "baseQuantity" : 0.5,
         "id" : "F4B4F736-A785-5721-9E48-8DC96E367130",
-        "name" : "salt",
+        "name" : "salt, for the filling",
         "unit" : "tsp"
       },
       {
@@ -23941,7 +23941,7 @@
       {
         "baseQuantity" : 1,
         "id" : "CEC99FD0-75EC-5825-AABC-75FCFFDABB4C",
-        "name" : "salt",
+        "name" : "salt, for the wrapper",
         "unit" : "tsp"
       },
       {
@@ -25376,7 +25376,7 @@
       {
         "baseQuantity" : 0.5,
         "id" : "696ED71B-3F36-5430-BD3E-62F5A2405617",
-        "name" : "salt",
+        "name" : "salt, for the cupcakes",
         "unit" : "tsp"
       },
       {
@@ -25394,7 +25394,7 @@
       {
         "baseQuantity" : 1,
         "id" : "7C96AB13-48D8-5842-8F25-1CC5C9112AE8",
-        "name" : "vanilla extract",
+        "name" : "vanilla extract, for the cupcakes",
         "unit" : "tsp"
       },
       {
@@ -25424,7 +25424,7 @@
       {
         "baseQuantity" : 0.25,
         "id" : "9A0ED77D-D6C1-5B34-92DA-956C2E1D28D0",
-        "name" : "salt",
+        "name" : "salt, for the frosting",
         "unit" : "tsp"
       },
       {
@@ -25436,7 +25436,7 @@
       {
         "baseQuantity" : 1,
         "id" : "DC6BFACB-87FB-5AB1-B03F-DCC9D3CF94EC",
-        "name" : "vanilla extract",
+        "name" : "vanilla extract, for the frosting",
         "unit" : "tsp"
       }
     ],
@@ -26389,7 +26389,7 @@
       {
         "baseQuantity" : 0.5,
         "id" : "8BB8C7F8-2CE5-5521-837B-21BE962E17F9",
-        "name" : "salt",
+        "name" : "salt, for the skewers",
         "unit" : "tsp"
       },
       {
@@ -26401,7 +26401,7 @@
       {
         "baseQuantity" : 1,
         "id" : "30C35A08-2441-519E-ACDE-FBAF6BA94846",
-        "name" : "lime, juiced",
+        "name" : "lime, juiced, for the skewers",
         "unit" : ""
       },
       {
@@ -26485,7 +26485,7 @@
       {
         "baseQuantity" : 1,
         "id" : "9DBCE370-481D-5807-8C5A-27F36029C945",
-        "name" : "lime, juiced",
+        "name" : "lime, juiced, for the picante",
         "unit" : ""
       },
       {
@@ -26503,7 +26503,7 @@
       {
         "baseQuantity" : 0.5,
         "id" : "3A9D385E-ACFF-5C68-9035-AC9A21ECB889",
-        "name" : "salt",
+        "name" : "salt, for the picante",
         "unit" : "tsp"
       },
       {
@@ -27164,7 +27164,7 @@
       {
         "baseQuantity" : 1,
         "id" : "4524B032-0E31-5FB1-9D81-A1438A7CCCAC",
-        "name" : "vanilla extract",
+        "name" : "vanilla extract, for the cake",
         "unit" : "tsp"
       },
       {
@@ -27194,7 +27194,7 @@
       {
         "baseQuantity" : 0.5,
         "id" : "880C6646-26C4-5EA8-BBCE-49AF253FCF9D",
-        "name" : "vanilla extract",
+        "name" : "vanilla extract, for the ice cream",
         "unit" : "tsp"
       },
       {
@@ -36433,7 +36433,7 @@
       {
         "baseQuantity" : 1,
         "id" : "3CCF72E1-77CD-5A0E-B257-B3FF80F1D4B3",
-        "name" : "salt",
+        "name" : "salt, for the paste",
         "unit" : "pinch"
       },
       {
@@ -36463,7 +36463,7 @@
       {
         "baseQuantity" : 1,
         "id" : "C26A46F5-F5BE-5457-9C0D-DC212C6F1472",
-        "name" : "salt",
+        "name" : "salt, for the meat",
         "unit" : "tsp"
       },
       {

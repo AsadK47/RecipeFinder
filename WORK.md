@@ -12,6 +12,10 @@ ON-SCREEN CHECK (3 rounds, iPhone 18 Pro): content passes; fixed display layer �
 non-herb solids, tidy rounding (ml 5/10, oz ½, ≥16 oz → lb, ≥4 tbsp → cups), thirds kept (⅓ not ⅜), "Not set" for
 unknown times, "L", plural cups, starter categories → filter list. Full suite 1789/1789. Last two fixes (thirds, 1 lb)
 verified by tests only. Open 🟢: Miso source link truncated "watch?"; near-duplicate pairs kept (distinct sources).
+RENDER AUDIT: `BundledRecipeRenderAuditTests` renders all bundled + starter recipes through the real display code
+(`IngredientRowView.amount` — now shared with cooking mode — and `Ingredient.displayParts`) in Metric + Imperial and
+lints titles, times, servings, amounts, units, names, brackets, duplicates, steps. 0 findings; 22 duplicate rows
+labelled "for the …" from source. Full suite 1790/1790.
 Next: user commits; then Kitchen surfacing / 🟡 backlog.
 
 # WORK: Account removal (2026-11-04) — STAGES 1–3 DONE (uncommitted; build + full suite 1769/1769 green)

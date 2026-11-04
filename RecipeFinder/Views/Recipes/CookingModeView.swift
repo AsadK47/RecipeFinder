@@ -214,7 +214,9 @@ struct CookingModeView: View {
                                 .foregroundStyle(isChecked ? .green : .white.opacity(0.6))
                                 .frame(width: AppTheme.iconSize28)
 
-                            let qty = ingredient.formattedWithUnit(for: recipe.scaleFactor, system: measurementSystem)
+                            // Same amount text as the recipe screen (it used to differ: "13 g" vs "12½ g").
+                            let amount = IngredientRowView.amount(for: ingredient, scaleFactor: recipe.scaleFactor, system: measurementSystem)
+                            let qty = [amount.quantity, amount.unit].compactMap { $0 }.joined(separator: " ")
                             Text(qty.isEmpty ? ingredient.displayName : "\(qty) \(ingredient.displayName)")
                                 .font(.body)
                                 .adaptiveForegroundColor()

@@ -21,16 +21,17 @@ struct IngredientRowView: View {
 
             // Fixed-width amount column so names align; whole column is the tap target, reserved even when empty to keep alignment.
             Button(action: { onTapQuantity?() }) {
+                let amount = Self.amount(for: ingredient, scaleFactor: scaleFactor, system: measurementSystem)
                 HStack(alignment: .firstTextBaseline, spacing: 3) {
-                    if convertedIngredient.quantity > 0 {
-                        Text(formatQuantity(convertedIngredient.quantity))
+                    if let quantity = amount.quantity {
+                        Text(quantity)
                             .font(.subheadline)
                             .fontWeight(.bold)
                             .foregroundStyle(isChecked ? .secondary : .primary)
                     }
 
-                    if !convertedIngredient.unit.isEmpty {
-                        Text(Self.displayUnit(convertedIngredient.unit, quantity: convertedIngredient.quantity))
+                    if let unit = amount.unit {
+                        Text(unit)
                             .font(.caption)
                             .adaptiveSecondaryForeground()
                             .lineLimit(1)
@@ -99,22 +100,20 @@ struct IngredientRowView: View {
         .contentShape(Rectangle())
     }
 
-    private var convertedIngredient: (quantity: Double, unit: String) {
-        UnitConversion.convert(
+    /// The amount column exactly as shown — one function shared by the row and the bundled-recipe render audit.
+    static func amount(for ingredient: Ingredient, scaleFactor: Double, system: MeasurementSystem) -> (quantity: String?, unit: String?) {
+        let converted = UnitConversion.convert(
             value: ingredient.scaledQuantity(for: scaleFactor),
             unit: ingredient.unit,
-            to: measurementSystem,
+            to: system,
             ingredientName: ingredient.name
         )
-    }
-
-    private func formatQuantity(_ quantity: Double) -> String {
-        FractionFormatter.format(prettyQuantity(quantity))
+        let quantity = converted.quantity > 0 ? FractionFormatter.format(prettyQuantity(converted.quantity)) : nil
+        let unit = converted.unit.isEmpty ? nil : displayUnit(converted.unit, quantity: converted.quantity)
+        return (quantity, unit)
     }
 
     // Snaps converted quantities to cooking-sensible precision so conversions don't surface ugly values like "14.79 ml".
-    private func prettyQuantity(_ q: Double) -> Double { Self.prettyQuantity(q) }
-
     /// Nearest of the fractions cooks use — eighths/quarters OR thirds, whichever is closer (⅓ used to become ⅜).
     static func prettyQuantity(_ q: Double) -> Double {
         guard q > 0 else { return q }
