@@ -20,11 +20,6 @@ final class AppErrorTests: XCTestCase {
         XCTAssertEqual(error.errorDescription, "Failed to delete: locked")
     }
 
-    func testWeakPassword_errorDescription_containsReason() {
-        let error = AppError.weakPassword(reason: "too short")
-        XCTAssertEqual(error.errorDescription, "Password is too weak: too short")
-    }
-
     func testImportFailed_errorDescription_containsReason() {
         let error = AppError.importFailed(reason: "timeout")
         XCTAssertEqual(error.errorDescription, "Import failed: timeout")
@@ -53,22 +48,6 @@ final class AppErrorTests: XCTestCase {
 
     func testNotFound_errorDescription() {
         XCTAssertEqual(AppError.notFound.errorDescription, "Item not found")
-    }
-
-    func testInvalidCredentials_errorDescription() {
-        XCTAssertEqual(AppError.invalidCredentials.errorDescription, "Invalid email or password")
-    }
-
-    func testInvalidEmail_errorDescription() {
-        XCTAssertEqual(AppError.invalidEmail.errorDescription, "Please enter a valid email address")
-    }
-
-    func testUserAlreadyExists_errorDescription() {
-        XCTAssertEqual(AppError.userAlreadyExists.errorDescription, "An account with this email already exists")
-    }
-
-    func testSessionExpired_errorDescription() {
-        XCTAssertEqual(AppError.sessionExpired.errorDescription, "Your session has expired. Please sign in again")
     }
 
     func testInvalidRecipeName_errorDescription() {
@@ -105,8 +84,6 @@ final class AppErrorTests: XCTestCase {
         let errors: [AppError] = [
             .saveFailed(details: "x"), .loadFailed(details: "x"), .deleteFailed(details: "x"),
             .duplicateEntry, .notFound,
-            .invalidCredentials, .weakPassword(reason: "x"), .invalidEmail,
-            .userAlreadyExists, .authenticationFailed, .sessionExpired,
             .invalidRecipeName, .missingIngredients, .missingInstructions,
             .invalidServings, .invalidCookTime,
             .networkUnavailable, .importFailed(reason: "x"), .invalidURL, .parsingFailed,
@@ -122,14 +99,6 @@ final class AppErrorTests: XCTestCase {
 
     func testRecoverySuggestion_networkUnavailable_isNonNil() {
         XCTAssertNotNil(AppError.networkUnavailable.recoverySuggestion)
-    }
-
-    func testRecoverySuggestion_weakPassword_isNonNil() {
-        XCTAssertNotNil(AppError.weakPassword(reason: "x").recoverySuggestion)
-    }
-
-    func testRecoverySuggestion_invalidEmail_isNonNil() {
-        XCTAssertNotNil(AppError.invalidEmail.recoverySuggestion)
     }
 
     func testRecoverySuggestion_invalidRecipeName_isNonNil() {

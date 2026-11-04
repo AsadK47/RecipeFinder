@@ -7,7 +7,7 @@ import Foundation
 @Suite struct AIImportPersistenceTests {
 
     private func makeController() -> PersistenceController {
-        PersistenceController(inMemory: true, userID: { "test-user" })
+        PersistenceController(inMemory: true)
     }
 
     /// Mirrors the wizard's accept-prefill path: parse ingredients into `IngredientItem`s, wrap instructions as `EditableStep`s, then `RecipeWizardBuilder.assemble`.

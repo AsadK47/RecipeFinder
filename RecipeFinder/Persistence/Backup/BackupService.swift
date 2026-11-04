@@ -35,7 +35,7 @@ struct BackupService {
         self.collections = collections
     }
 
-    /// A complete snapshot of the current user's library.
+    /// A complete snapshot of the library.
     func makeArchive() -> BackupArchive {
         BackupArchive(
             recipes: recipeStore.fetchRecipes(),

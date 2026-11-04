@@ -11,13 +11,13 @@ struct BadgeTriggerIntegrationTests {
 
     private func makeBadgeManager() -> BadgeManager {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
-        return BadgeManager(storage: UserScopedStorage(userDefaults: defaults))
+        return BadgeManager(storage: LocalStore(userDefaults: defaults))
     }
 
     private func makeShoppingManager(badgeManager: BadgeManager) -> ShoppingListManager {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
         return ShoppingListManager(
-            storage: UserScopedStorage(userDefaults: defaults),
+            storage: LocalStore(userDefaults: defaults),
             badgeManager: badgeManager
         )
     }
@@ -25,7 +25,7 @@ struct BadgeTriggerIntegrationTests {
     private func makeMealManager(badgeManager: BadgeManager) -> MealPlanningManager {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
         return MealPlanningManager(
-            storage: UserScopedStorage(userDefaults: defaults),
+            storage: LocalStore(userDefaults: defaults),
             badgeManager: badgeManager
         )
     }

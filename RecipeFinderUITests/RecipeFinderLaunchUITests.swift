@@ -1,6 +1,7 @@
 import XCTest
 
-/// Critical-flow launch test: a clean-state launch (`-resetState`) must wipe persisted auth and land signed-out — the smallest proof that launch + reset works before other UI tests build on it.
+/// Critical-flow launch test: a launch must land straight on the recipe list (no gate or splash in front of it) — the smallest
+/// proof that launch works before other UI tests build on it.
 final class RecipeFinderLaunchUITests: XCTestCase {
 
     override func setUp() {
@@ -10,22 +11,17 @@ final class RecipeFinderLaunchUITests: XCTestCase {
     }
 
     @MainActor
-    func testLaunchLandsOnSignInScreen() {
+    func testLaunchLandsOnRecipeList() {
         let app = XCUIApplication()
-        // `-force-auth-ui` overrides the guest-only AuthUIGate so this test still exercises the
-        // (otherwise hidden) sign-in flow. Remove it when AuthUIGate.showAuthUI becomes the default.
-        app.launchArguments += ["-ui-testing", "-resetState", "-force-auth-ui"]
+        app.launchArguments += ["-ui-testing"]
         app.launch()
 
-        // Tagline is unique to the signed-out screen, so its presence proves the reset dropped us to a clean state.
-        let tagline = app.staticTexts["Discover, Create, Cook"]
-        XCTAssertTrue(
-            tagline.waitForExistence(timeout: 10),
-            "A clean-state launch should land on the sign-in screen."
-        )
+        let recipesTab = app.tabBars.buttons["Recipes"]
+        XCTAssertTrue(recipesTab.waitForExistence(timeout: 10), "Launch should land on the main tabs.")
+        XCTAssertTrue(recipesTab.isSelected, "The Recipes tab should be selected on launch.")
 
         let screenshot = XCTAttachment(screenshot: app.screenshot())
-        screenshot.name = "Launch — Sign In screen"
+        screenshot.name = "Launch — Recipe list"
         screenshot.lifetime = .keepAlways
         add(screenshot)
     }

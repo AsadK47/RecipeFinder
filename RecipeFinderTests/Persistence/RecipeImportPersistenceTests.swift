@@ -24,7 +24,7 @@ import Foundation
         let source = "https://example.com/garlic-butter-chicken"
         let url = try #require(URL(string: source))
         let pipeline = RecipeImportPipeline(fetcher: FakeFetcher(url: source, body: RecipeHTMLFixtures.modernWordPressBlog))
-        let controller = PersistenceController(inMemory: true, userID: { "userA" })
+        let controller = PersistenceController(inMemory: true)
         #expect(controller.isStoreLoaded)
 
         let outcome = try await pipeline.fetchAndParse(from: url)
@@ -56,7 +56,7 @@ import Foundation
     // MARK: - mergeRecipes duplicate detection
 
     @Test func mergeRecipes_withSameId_doesNotDuplicate() {
-        let controller = PersistenceController(inMemory: true, userID: { "userA" })
+        let controller = PersistenceController(inMemory: true)
         let id = UUID()
         controller.saveRecipeModel(recipe("Soup", id: id))
 
@@ -68,7 +68,7 @@ import Foundation
     }
 
     @Test func mergeRecipes_withSameName_doesNotDuplicate() {
-        let controller = PersistenceController(inMemory: true, userID: { "userA" })
+        let controller = PersistenceController(inMemory: true)
         controller.saveRecipeModel(recipe("Chicken Soup"))
 
         // Different UUID but same normalised name — should be suppressed.
@@ -79,7 +79,7 @@ import Foundation
     }
 
     @Test func mergeRecipes_withGenuinelyNewRecipes_addsAll() {
-        let controller = PersistenceController(inMemory: true, userID: { "userA" })
+        let controller = PersistenceController(inMemory: true)
         controller.saveRecipeModel(recipe("Soup"))
 
         controller.mergeRecipes([recipe("Stew"), recipe("Pie")])
@@ -88,7 +88,7 @@ import Foundation
     }
 
     @Test func mergeRecipes_doesNotModifyExistingRecipeFields() {
-        let controller = PersistenceController(inMemory: true, userID: { "userA" })
+        let controller = PersistenceController(inMemory: true)
         let id = UUID()
         controller.saveRecipeModel(recipe("Lasagne", id: id))
 
@@ -100,7 +100,7 @@ import Foundation
     }
 
     @Test func mergeRecipes_intoEmptyStore_savesAll() {
-        let controller = PersistenceController(inMemory: true, userID: { "userA" })
+        let controller = PersistenceController(inMemory: true)
 
         controller.mergeRecipes([recipe("A"), recipe("B"), recipe("C")])
 

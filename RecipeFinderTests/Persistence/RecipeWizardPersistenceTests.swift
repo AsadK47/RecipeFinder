@@ -7,7 +7,7 @@ import Foundation
 @Suite struct RecipeWizardPersistenceTests {
 
     private func makeController() -> PersistenceController {
-        let controller = PersistenceController(inMemory: true, userID: { "test-user" })
+        let controller = PersistenceController(inMemory: true)
         #expect(controller.isStoreLoaded)
         return controller
     }

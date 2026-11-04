@@ -8,7 +8,7 @@ struct BadgeManagerTests {
 
     private func makeSUT() -> BadgeManager {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
-        return BadgeManager(storage: UserScopedStorage(userDefaults: defaults))
+        return BadgeManager(storage: LocalStore(userDefaults: defaults))
     }
 
     // MARK: - Initial state
@@ -129,7 +129,7 @@ struct BadgeManagerTests {
 
     @Test func shownCelebrationIds_persistAcrossReload() {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
-        let storage = UserScopedStorage(userDefaults: defaults)
+        let storage = LocalStore(userDefaults: defaults)
         let sut1 = BadgeManager(storage: storage)
         sut1.unlockBadge(.firstRecipe)
         sut1.dismissCelebration()
@@ -204,7 +204,7 @@ struct BadgeManagerTests {
 
     @Test func persistence_badgesAcrossReload() {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
-        let storage = UserScopedStorage(userDefaults: defaults)
+        let storage = LocalStore(userDefaults: defaults)
         let sut1 = BadgeManager(storage: storage)
         sut1.unlockBadge(.firstRecipe)
         let sut2 = BadgeManager(storage: storage)

@@ -10,12 +10,11 @@ struct ContentView: View {
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    @Environment(\.auth) private var authManager
     @Environment(\.badges) private var badgeManager
-    @State private var showAccountFromBadge = false
-    /// Set by "View all badges"; the Account sheet opens only once the badge sheet has fully dismissed (presenting
+    @State private var showProfileFromBadge = false
+    /// Set by "View all badges"; the Profile sheet opens only once the badge sheet has fully dismissed (presenting
     /// it mid-dismissal was silently dropped, so the button appeared to do nothing).
-    @State private var openAccountAfterBadge = false
+    @State private var openProfileAfterBadge = false
     @State private var pendingFileImport: RecipeModel?
     @State private var fileImportError: String?
 
@@ -55,22 +54,8 @@ struct ContentView: View {
         }
         .onAppear {
             if store.recipes.isEmpty {
-                store.load(isAuthenticated: authManager.isAuthenticated)
+                store.load()
             }
-        }
-        .onChange(of: authManager.isAuthenticated) { _, isAuthenticated in
-            if isAuthenticated {
-                store.load(isAuthenticated: true)
-            } else {
-                // Sign-out: clear the previous user's library, then reload guest seed recipes so browsing
-                // isn't left empty (ContentView stays mounted across the transition, so onAppear won't re-fire).
-                store.recipes = []
-                store.load(isAuthenticated: false)
-            }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .userScopeDidChange)) { _ in
-            guard authManager.isAuthenticated else { return }
-            store.load(isAuthenticated: true)
         }
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("OpenRecipes"))) { _ in
             selectedTab = 0
@@ -111,23 +96,23 @@ struct ContentView: View {
             get: { badgeManager.pendingCelebration },
             set: { if $0 == nil { badgeManager.dismissCelebration() } }
         ), onDismiss: {
-            if openAccountAfterBadge {
-                openAccountAfterBadge = false
-                showAccountFromBadge = true
+            if openProfileAfterBadge {
+                openProfileAfterBadge = false
+                showProfileFromBadge = true
             }
         }) { badge in
             BadgeEarnedSheet(badge: badge, onDismiss: {
                 badgeManager.dismissCelebration()
             }, onViewAllBadges: {
-                openAccountAfterBadge = true
+                openProfileAfterBadge = true
                 badgeManager.dismissCelebration()
             })
             .presentationDetents([.height(380)])
             .presentationDragIndicator(.visible)
         }
-        .sheet(isPresented: $showAccountFromBadge) {
+        .sheet(isPresented: $showProfileFromBadge) {
             NavigationStack {
-                AccountView()
+                ProfileView()
             }
         }
         .sheet(item: $pendingFileImport) { recipe in

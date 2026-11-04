@@ -6,8 +6,7 @@ struct SettingsTabView: View {
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("appearanceMode") private var appearanceMode: AppearanceMode = .system
     @AppStorage("measurementSystem") private var measurementSystem: MeasurementSystem = .metric
-    @Environment(\.account) private var accountManager
-    @Environment(\.auth) private var authManager
+    @Environment(\.profile) private var profileManager
     @State private var profileImage: UIImage?
     @State private var debugResetMessage: String?
     
@@ -25,19 +24,19 @@ struct SettingsTabView: View {
             
             ScrollView {
                 VStack(spacing: AppTheme.spacing20) {
-                    SettingsSectionHeader(title: "Account")
+                    SettingsSectionHeader(title: "Profile")
 
                     SettingsCard {
-                        NavigationLink(destination: AccountView()) {
+                        NavigationLink(destination: ProfileView()) {
                             HStack(spacing: AppTheme.spacing16) {
                                 profileAvatar
 
                                 VStack(alignment: .leading, spacing: AppTheme.spacing4) {
-                                    Text(accountManager.fullName.isEmpty ? "Account" : accountManager.fullName)
+                                    Text(profileManager.fullName.isEmpty ? "Profile" : profileManager.fullName)
                                         .font(.headline)
                                         .adaptiveForegroundColor()
                                     
-                                    Text("Profile & Settings")
+                                    Text("Name, photo & badges")
                                         .font(.caption)
                                         .adaptiveSecondaryForeground()
                                 }
@@ -121,16 +120,8 @@ struct SettingsTabView: View {
 #if DEBUG
                     SettingsSection(title: "Developer (Debug)", items: [
                         .init(
-                            row: SettingsRow(icon: "arrow.counterclockwise.circle.fill", iconColor: .orange, title: "Reset Main Onboarding", accessory: .none),
-                            action: { resetOnboardingFlags(resetMainOnboarding: true, resetBiometricOnboarding: false) }
-                        ),
-                        .init(
-                            row: SettingsRow(icon: "faceid", iconColor: .blue, title: "Reset Biometric Onboarding", accessory: .none),
-                            action: { resetOnboardingFlags(resetMainOnboarding: false, resetBiometricOnboarding: true) }
-                        ),
-                        .init(
-                            row: SettingsRow(icon: "arrow.counterclockwise.icloud.fill", iconColor: .purple, title: "Reset All Onboarding", accessory: .none),
-                            action: { resetOnboardingFlags(resetMainOnboarding: true, resetBiometricOnboarding: true) }
+                            row: SettingsRow(icon: "arrow.counterclockwise.circle.fill", iconColor: .orange, title: "Reset Onboarding", accessory: .none),
+                            action: { resetOnboarding() }
                         )
                     ])
 
@@ -162,7 +153,7 @@ struct SettingsTabView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
         .onAppear {
-            profileImage = accountManager.loadProfileImage()
+            profileImage = profileManager.loadProfileImage()
         }
     }
 
@@ -179,25 +170,16 @@ struct SettingsTabView: View {
                 .fill(AppTheme.accentColor(for: selectedTheme))
                 .frame(width: AppTheme.height54, height: AppTheme.height54)
                 .overlay {
-                    Text(accountManager.initials)
+                    Text(profileManager.initials)
                         .font(.system(size: AppTheme.fontSize22, weight: .semibold))
                         .foregroundStyle(colorScheme == .dark ? .white : .black)
                 }
         }
     }
 
-    private func resetOnboardingFlags(resetMainOnboarding: Bool, resetBiometricOnboarding: Bool) {
-        if resetMainOnboarding {
-            UserScopedStorage.shared.set(false, forKey: "hasCompletedOnboarding")
-            UserDefaults.standard.set(false, forKey: "hasCompletedOnboarding")
-        }
-
-        if resetBiometricOnboarding {
-            UserScopedStorage.shared.set(false, forKey: "hasSeenBiometricOnboarding")
-            UserDefaults.standard.set(false, forKey: "hasSeenBiometricOnboarding")
-        }
-
-        debugResetMessage = "Onboarding flags reset for this account. Sign out and back in, or relaunch the app, to run onboarding again."
+    private func resetOnboarding() {
+        LocalStore.shared.set(false, forKey: "hasCompletedOnboarding")
+        debugResetMessage = "Onboarding reset. Relaunch the app to run onboarding again."
         HapticManager.shared.success()
     }
 }

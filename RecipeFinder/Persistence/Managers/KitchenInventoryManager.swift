@@ -40,7 +40,7 @@ final class KitchenInventoryManager: KitchenInventoryManaging {
 	private let saveKey = Constants.UserDefaultsKeys.kitchenItems
 	private let inventorySaveKey = "kitchenInventoryItems"
 	private let migrationKey = "kitchenItemsMigrationCompleted_v1"
-    @ObservationIgnored private let storage: UserScopedStorage
+    @ObservationIgnored private let storage: LocalStore
 
     private(set) var items: [KitchenItem] = []
     private(set) var inventoryItems: [KitchenInventoryModel] = []
@@ -58,13 +58,13 @@ final class KitchenInventoryManager: KitchenInventoryManaging {
         loadInventoryItems()
 	}
 
-    init(storage: UserScopedStorage) {
+    init(storage: LocalStore) {
         self.storage = storage
         loadItems()
         loadInventoryItems()
     }
     
-    func reloadForCurrentUser() {
+    func reload() {
         loadItems()
         loadInventoryItems()
     }

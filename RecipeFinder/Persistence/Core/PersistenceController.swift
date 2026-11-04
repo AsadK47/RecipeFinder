@@ -12,9 +12,6 @@ final class PersistenceController {
     private(set) var loadError: Error?
     private(set) var isStoreLoaded = false
 
-    /// Account scope: recipes are stamped/filtered by this id. Injected in tests for isolation.
-    let userID: () -> String?
-
     enum Entity {
         static let recipe = "Recipe"
     }
@@ -37,7 +34,6 @@ final class PersistenceController {
         static let isSampleRecipe = "isSampleRecipe"
         static let dietaryInfo = "dietaryInfo"
         static let tags = "tags"
-        static let userId = "userId"
         static let cookCount = "cookCount"
         static let lastCookedAt = "lastCookedAt"
         static let rating = "rating"
@@ -45,13 +41,8 @@ final class PersistenceController {
         static let photoNames = "photoNames"
     }
 
-    /// `inMemory`: back store with `/dev/null` for tests (still SQLite so batch ops work). `userID`: account-scope provider.
-    init(
-        inMemory: Bool = false,
-        storeURL: URL? = nil,
-        userID: @escaping () -> String? = { UserScopedStorage.shared.currentUserId }
-    ) {
-        self.userID = userID
+    /// `inMemory`: back store with `/dev/null` for tests (still SQLite so batch ops work).
+    init(inMemory: Bool = false, storeURL: URL? = nil) {
         container = NSPersistentContainer(name: "RecipeModel")
         if inMemory {
             container.persistentStoreDescriptions.first?.url = URL(fileURLWithPath: "/dev/null")
@@ -140,7 +131,6 @@ final class PersistenceController {
                     persistenceLogger.debug("✅ Store recovered successfully")
                     self.isStoreLoaded = true
                     self.loadError = nil
-                    self.populateDatabase()
                 }
             }
         }

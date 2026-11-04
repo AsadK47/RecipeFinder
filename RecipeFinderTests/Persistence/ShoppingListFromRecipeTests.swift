@@ -7,7 +7,7 @@ import Foundation
 @Suite struct ShoppingListFromRecipeTests {
 
     private func makeManager() -> ShoppingListManager {
-        ShoppingListManager(storage: UserScopedStorage(
+        ShoppingListManager(storage: LocalStore(
             userDefaults: UserDefaults(suiteName: UUID().uuidString)!
         ))
     }
@@ -239,7 +239,7 @@ import Foundation
 
     @Test func addIngredients_persistsAcrossManagerRestart() {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
-        let storage = UserScopedStorage(userDefaults: defaults)
+        let storage = LocalStore(userDefaults: defaults)
         let first = ShoppingListManager(storage: storage)
         first.addIngredients(from: recipe(ingredients: [ing("Oats", qty: 2.0)]))
 

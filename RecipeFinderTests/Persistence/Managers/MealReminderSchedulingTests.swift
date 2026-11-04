@@ -36,7 +36,7 @@ final class FakeMealReminderScheduler: MealReminderScheduling {
 
     private func makeManager(_ scheduler: FakeMealReminderScheduler) -> MealPlanningManager {
         MealPlanningManager(
-            storage: UserScopedStorage(userDefaults: UserDefaults(suiteName: UUID().uuidString)!),
+            storage: LocalStore(userDefaults: UserDefaults(suiteName: UUID().uuidString)!),
             reminders: scheduler
         )
     }

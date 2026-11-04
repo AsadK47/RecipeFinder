@@ -3,7 +3,6 @@ import SwiftUI
 /// Factory reset and destructive-action confirmation preferences.
 struct DataManagementSettingsView: View {
     @Environment(\.recipeStore) private var recipeStore
-    @Environment(\.auth) private var auth
     @State private var showingResetAlert = false
     @State private var dataCleared = false
     @AppStorage("skipRecipeDeleteConfirmation") private var skipDeleteConfirmation: Bool = false
@@ -271,8 +270,8 @@ struct DataManagementSettingsView: View {
             let data = try Data(contentsOf: url)
             try BackupService().importData(data)
 
-            // Core Data recipe list only reloads on a scope-change signal — nudge it to re-fetch the merged recipes.
-            NotificationCenter.default.post(name: .userScopeDidChange, object: nil)
+            // Re-fetch so the merged recipes appear in the library immediately.
+            recipeStore.load()
 
             showBackupMessage("Backup restored. New recipes and items were added to your library.", isError: false)
             HapticManager.shared.success()
@@ -291,9 +290,8 @@ struct DataManagementSettingsView: View {
     }
 
     private func resetToDefault() {
-        // Scope the wipe to the current scope (account, or the guest's nil scope) — never other accounts.
-        PersistenceController.shared.clearAllRecipes()
-        UserScopedStorage.shared.clearCurrentUserData()
+        PersistenceController.shared.deleteAllRecipes()
+        LocalStore.shared.clearAll()
 
         // Appearance settings are app-wide (global @AppStorage) — restore defaults.
         let defaults = UserDefaults.standard
@@ -303,17 +301,17 @@ struct DataManagementSettingsView: View {
 
         // Seed flags were cleared above, so this re-seeds the starters + bundled collection a fresh install gets and
         // refreshes the visible list (previously the list kept showing the deleted recipes).
-        recipeStore.load(isAuthenticated: auth.isAuthenticated)
+        recipeStore.load()
 
         // Refresh in-memory managers so the UI reflects the reset immediately.
-        ShoppingListManager.shared.reloadForCurrentUser()
-        KitchenInventoryManager.shared.reloadForCurrentUser()
-        MealPlanningManager.shared.reloadForCurrentUser()
-        CollectionManager.shared.reloadForCurrentUser()
-        BadgeManager.shared.reloadForCurrentUser()  // else cleared badges stay in memory and get re-persisted on the next write
-        CookingStreakManager.shared.reloadForCurrentUser()
-        AccountManager.shared.loadProfile()
-        AccountManager.shared.updateStats()
+        ShoppingListManager.shared.reload()
+        KitchenInventoryManager.shared.reload()
+        MealPlanningManager.shared.reload()
+        CollectionManager.shared.reload()
+        BadgeManager.shared.reload()  // else cleared badges stay in memory and get re-persisted on the next write
+        CookingStreakManager.shared.reload()
+        ProfileManager.shared.loadProfile()
+        ProfileManager.shared.updateStats()
 
         dataCleared = true
         HapticManager.shared.success()

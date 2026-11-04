@@ -1,0 +1,32 @@
+import Testing
+import Foundation
+@testable import RecipeFinder
+
+/// `ProfileNameFormatter`'s display-name/initials rules (extracted from `ProfileManager`): pins the placeholder fallbacks ("Recipe Chef" / "RC") and one-sided-name handling.
+@Suite struct ProfileNameFormatterTests {
+
+    // MARK: - displayName
+
+    @Test(arguments: [
+        (first: "Jane", last: "Doe", expected: "Jane Doe"),
+        (first: "Jane", last: "",    expected: "Jane"),        // first name only
+        (first: "",     last: "Doe", expected: "Doe"),         // last name only, no leading space
+        (first: "",     last: "",    expected: "Recipe Chef"), // placeholder
+    ])
+    func displayName(first: String, last: String, expected: String) {
+        #expect(ProfileNameFormatter.displayName(firstName: first, lastName: last) == expected)
+    }
+
+    // MARK: - initials
+
+    @Test(arguments: [
+        (first: "Jane", last: "Doe", expected: "JD"),
+        (first: "jane", last: "doe", expected: "JD"),   // uppercased
+        (first: "Jane", last: "",    expected: "J"),    // first initial only
+        (first: "",     last: "Doe", expected: "D"),    // last initial only
+        (first: "",     last: "",    expected: "RC"),   // placeholder
+    ])
+    func initials(first: String, last: String, expected: String) {
+        #expect(ProfileNameFormatter.initials(firstName: first, lastName: last) == expected)
+    }
+}

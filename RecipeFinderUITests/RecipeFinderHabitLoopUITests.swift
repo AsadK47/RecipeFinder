@@ -11,15 +11,11 @@ final class RecipeFinderHabitLoopUITests: XCTestCase {
     }
 
     @MainActor
-    private func launchAuthenticated() -> XCUIApplication {
+    private func launchApp() -> XCUIApplication {
         let app = XCUIApplication()
-        app.launchArguments += ["-ui-testing", "-skip-auth"]
+        app.launchArguments += ["-ui-testing"]
         app.launch()
         _ = app.tabBars.firstMatch.waitForExistence(timeout: 10)
-        let nudge = app.buttons["guest.nudge.cta"]
-        if nudge.exists {
-            wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false"), object: nudge)], timeout: 10)
-        }
         return app
     }
 
@@ -48,9 +44,9 @@ final class RecipeFinderHabitLoopUITests: XCTestCase {
 
     @MainActor
     func testCookingShowsRatingAndStreakChip() {
-        let app = launchAuthenticated()
+        let app = launchApp()
 
-        // Open the first recipe in the library (guest seeds in a clean install, or the user's own recipes).
+        // Open the first recipe in the library (starter seeds in a clean install, or the user's own recipes).
         tapWhenReady(element(app, id: "recipe.row"), "The Recipes home should list at least one recipe.")
 
         let markCooked = app.buttons["recipe.markCooked"]
@@ -85,7 +81,7 @@ final class RecipeFinderHabitLoopUITests: XCTestCase {
 
     @MainActor
     func testImportScreenHasNoExampleLinks() {
-        let app = launchAuthenticated()
+        let app = launchApp()
 
         app.tabBars.buttons["Import"].tap()
         XCTAssertTrue(app.staticTexts["Import a Recipe"].waitForExistence(timeout: 5),

@@ -6,7 +6,7 @@ protocol CookingStreakTracking: AnyObject, Observable {
     var streak: CookingStreak { get }
     /// Records a cook; returns `true` if it extended the weekly streak (a new week was counted), so the UI can celebrate.
     @discardableResult func recordCook(on date: Date) -> Bool
-    func reloadForCurrentUser()
+    func reload()
 }
 
 extension CookingStreakTracking {
@@ -28,7 +28,7 @@ extension EnvironmentValues {
     }
 }
 
-/// Owns the per-user cook-date log and derives the weekly cooking streak. Recording is called from the
+/// Owns the cook-date log and derives the weekly cooking streak. Recording is called from the
 /// single cook choke point (`RecipeDetailView.recordCook`, which cooking-mode's finish also routes through).
 @MainActor
 @Observable
@@ -37,7 +37,7 @@ final class CookingStreakManager: CookingStreakTracking {
 
     private(set) var streak: CookingStreak = .empty
 
-    @ObservationIgnored private let storage: UserScopedStorage
+    @ObservationIgnored private let storage: LocalStore
     @ObservationIgnored private let reminders: any StreakReminderScheduling
     @ObservationIgnored private let saveKey = "cookDatesLog"
     @ObservationIgnored private let reminderId = "cooking-streak-lapse"
@@ -49,7 +49,7 @@ final class CookingStreakManager: CookingStreakTracking {
         load()
     }
 
-    init(storage: UserScopedStorage, reminders: any StreakReminderScheduling = NotificationManager.shared) {
+    init(storage: LocalStore, reminders: any StreakReminderScheduling = NotificationManager.shared) {
         self.storage = storage
         self.reminders = reminders
         load()
@@ -64,7 +64,7 @@ final class CookingStreakManager: CookingStreakTracking {
         return streak.currentWeeks > weeksBefore
     }
 
-    func reloadForCurrentUser() {
+    func reload() {
         load()
     }
 

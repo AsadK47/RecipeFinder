@@ -2,12 +2,12 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// `CookingStreakManager` recording + per-user persistence, on isolated UserDefaults.
+/// `CookingStreakManager` recording + persistence, on isolated UserDefaults.
 @MainActor
 @Suite struct CookingStreakManagerTests {
 
     private func makeManager() -> CookingStreakManager {
-        CookingStreakManager(storage: UserScopedStorage(userDefaults: UserDefaults(suiteName: UUID().uuidString)!))
+        CookingStreakManager(storage: LocalStore(userDefaults: UserDefaults(suiteName: UUID().uuidString)!))
     }
 
     /// Records what the streak manager asks of the notification seam.
@@ -23,7 +23,7 @@ import Foundation
     @Test func cookingThisWeek_cancelsLapseReminder_schedulesNone() {
         let fake = FakeStreakReminderScheduler()
         let sut = CookingStreakManager(
-            storage: UserScopedStorage(userDefaults: UserDefaults(suiteName: UUID().uuidString)!),
+            storage: LocalStore(userDefaults: UserDefaults(suiteName: UUID().uuidString)!),
             reminders: fake
         )
         sut.recordCook(on: Date())   // cooked this week → not at risk
@@ -55,7 +55,7 @@ import Foundation
 
     @Test func recordCook_persistsAcrossReload() {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
-        let storage = UserScopedStorage(userDefaults: defaults)
+        let storage = LocalStore(userDefaults: defaults)
 
         let first = CookingStreakManager(storage: storage)
         first.recordCook(on: Date())
@@ -66,15 +66,15 @@ import Foundation
         #expect(second.streak.currentWeeks == 1)
     }
 
-    @Test func reloadForCurrentUser_picksUpStoredLog() {
+    @Test func reload_picksUpStoredLog() {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
-        let storage = UserScopedStorage(userDefaults: defaults)
+        let storage = LocalStore(userDefaults: defaults)
 
         let writer = CookingStreakManager(storage: storage)
         writer.recordCook(on: Date())
 
         let reader = CookingStreakManager(storage: storage)
-        reader.reloadForCurrentUser()
+        reader.reload()
         #expect(reader.streak.cookedThisWeek)
     }
 }

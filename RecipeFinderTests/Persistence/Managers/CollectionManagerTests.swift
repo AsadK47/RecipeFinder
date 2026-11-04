@@ -8,7 +8,7 @@ struct CollectionManagerTests {
 
     private func makeSUT() -> CollectionManager {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
-        let storage = UserScopedStorage(userDefaults: defaults)
+        let storage = LocalStore(userDefaults: defaults)
         return CollectionManager(storage: storage)
     }
 
@@ -195,7 +195,7 @@ struct CollectionManagerTests {
 
     @Test func roundTrip_survivesReload() {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
-        let storage = UserScopedStorage(userDefaults: defaults)
+        let storage = LocalStore(userDefaults: defaults)
         let first = CollectionManager(storage: storage)
         first.createCollection(name: "Baking", color: .orange)
         let id = UUID()

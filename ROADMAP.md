@@ -24,16 +24,15 @@ RecipeFinder is a privacy-first, offline-first recipe manager. The one-line pitc
 > **"ReciMe, but private, unlimited, great at the actual cooking — and your
 > library is safe."**
 
-That last clause is deliberate and was a correction to an earlier framing. "No
-account, purely local" is *not* a virtue — it's a data-loss liability: Core Data
-lives in the app sandbox, so deleting the app wipes the library and device
-backups are opt-in and stale. "Lost my recipes on a phone upgrade" is the
-category's #1 review-killer. So **durability — accounts, iCloud sync, real
-backup/export — is a first-class pillar, not something to strip or paywall.**
-Sync ships in the **free tier**: it rides the user's own iCloud (CloudKit private
-DB) and costs us nothing, so charging for data safety would be indefensible. "Private"
-means the user's *own* iCloud and Apple ID, not the absence of an account:
-private and synced are compatible.
+That last clause is deliberate. "Purely local" is *not* a virtue on its own —
+it's a data-loss liability: Core Data lives in the app sandbox, so deleting the
+app wipes the library and device backups are opt-in and stale. "Lost my recipes
+on a phone upgrade" is the category's #1 review-killer. So **durability — iCloud
+sync, real backup/export — is a first-class pillar, not something to strip or
+paywall.** Sync ships in the **free tier**: it rides the user's own iCloud
+(CloudKit private DB) and costs us nothing, so charging for data safety would be
+indefensible. "Private" means the user's *own* iCloud: private and synced are
+compatible.
 
 **The competitive read.** ReciMe won 10M+ users on a single loop: see a recipe
 on social → share into the app → AI turns it into a clean card → grocery list.
@@ -73,19 +72,10 @@ I/O and is done**; **iCloud sync is deferred**, but the Core Data model is kept
 CloudKit-ready (no unique constraints, optional relationships, defaults) so
 turning it on later isn't a rewrite.
 
-**Identity & accounts decision *(2026-10-14)*.** The app runs **no backend** and
-won't get one for private libraries. Identity will be **Sign in with Apple only**
-once the paid Developer Program is enrolled — there is deliberately **no
-first-party email/password account**. A local email login without a server can't
-verify emails, reset passwords, or sync, so it was a facade; it also triggers
-Apple's Guideline 4.8 (offer email login → *must also* offer Apple). Until
-enrolment the app ships **guest-only**: the sign-up/sign-in UI is hidden behind
-`AuthUIGate.showAuthUI` (the `AuthenticationManager` engine is kept intact behind
-the flag, not deleted; UI tests force it on via `-force-auth-ui`). Every feature —
-badges, streaks, profile/personality, import — works **locally for guests**.
-**Login unlocks sync/durability (CloudKit), never features.** First-party email
-accounts would only earn their place in a cross-platform (Android/web) future,
-which is out of scope.
+**No accounts *(decided 2026-11-04)*.** RecipeFinder is a single-user, local app
+with no backend and no sign-in. The on-device Profile (name, photo, chef type,
+badges, stats) is local data, not an account. Future iCloud sync rides the
+user's own iCloud (CloudKit private DB) and needs no login.
 
 ---
 
@@ -106,9 +96,8 @@ The test **suite + CI** remain the source of truth for *coverage detail*; this i
 | **Shopping list** — add/remove/check, add-from-recipe, aisle categorisation, grouping + text share | ✅ | ✅ |
 | **Kitchen / pantry** — inventory CRUD, expiry/low-stock alerts, recipe matching, expiry notifications | ✅ | ✅ |
 | **Cooking mode** — step nav, per-step timer, screen-awake; timer fires in background | ✅ | ⚠️ timer ✅, step UI 🧪 |
-| **Backup / restore** — `.recipefinderbackup` round-trip, per-store merge, per-user scope | ✅ | ✅ |
+| **Backup / restore** — `.recipefinderbackup` round-trip, per-store merge | ✅ | ✅ |
 | **Badges** — 12 achievements, unlock + celebration queue | ✅ | ⚠️ shopping/meal triggers ✅; import/photo/headChef unlock-tested, trigger at call site |
-| **Auth & account** — email + Apple sign-in, guest mode, biometrics, Keychain + PBKDF2, session expiry | ✅ | ⚠️ store/session/model ✅; sign-in *flows* 🧪 (DI seam pending) |
 | **App Intents / Siri** — add-to-list, what's-for-dinner, open-recipe, start-cooking | ✅ | ⚠️ thin glue |
 | **Recipe source refresh** — "view original" + diff-and-reapply | ✅ | ✅ diff tested, sheet 🧪 |
 | **Subscription (Plus)** — StoreKit paywall | ❌ scrapped + deleted 2026-11-03 | — |
@@ -122,10 +111,6 @@ Before adding surface area, a campaign made the existing app trustworthy — eac
 item its own commit + review checkpoint. All 🟢 done; the *why* is kept, the
 blow-by-blow is in git.
 
-- **🟢 Auth & credentials** — `KeychainStore` seam (real vs in-memory fake) + pure
-  PBKDF2 `PasswordHasher` + credential/session lifecycle tests, including the
-  historical account-overwrite and empty-hash bugs. *Why:* credentials are where a
-  privacy-first app cannot afford to be wrong.
 - **🟢 Search & filter robustness** — word-boundary `KitchenRecipeMatcher`
   (egg↔eggs without reviving ice↔rice), `TimeExtractor` hours + range→upper-bound,
   and `RecipeFilterCriteria` as one `Hashable` value computing match % once and
@@ -135,7 +120,7 @@ blow-by-blow is in git.
   (clean-arch):* a typed error + a single add-and-persist use case to end the
   duplicated optimistic-insert logic across the two import hubs.
 - **🟢 Concurrency (Swift 6 strict)** — audited all eleven managers; `BadgeManager`
-  `@MainActor`; `UserScopedStorage` documented `Sendable`; removed a latent `@objc`
+  `@MainActor`; `LocalStore` documented `Sendable`; removed a latent `@objc`
   hop-crash. No `nonisolated(unsafe)` left. *Why:* races corrupt libraries invisibly.
 - **🟢 Import robustness (the corpus)** — a real-world HTML/text fixture bed, and a
   parser hardened against each: JSON-LD `@graph`/`mainEntity`/array nesting,
@@ -144,7 +129,7 @@ blow-by-blow is in git.
   fencing. *Why:* no import → empty library → dead app.
 - **🟢 Data durability — backup/export** — a `.recipefinderbackup` round-trip
   (`BackupService` + `BackupArchive`/`BackupCodec`) with a non-destructive,
-  date-faithful `merge(_:)` on every store, per-user scoped. *Why:* the safety net
+  date-faithful `merge(_:)` on every store. *Why:* the safety net
   until iCloud is unblocked. (iCloud sync lives in Part III.)
 
 ### Engineering foundation
@@ -155,7 +140,7 @@ The durable rules that keep the above from regressing:
   opportunistically when an area is touched); parameterize data-driven cases;
   inject fakes rather than reaching for singletons.
 - **Dependency injection** — external dependencies behind protocols (e.g.
-  `HTMLFetching`, `KeychainStore`) so logic is testable offline.
+  `HTMLFetching`, `RecipeTextInterpreting`) so logic is testable offline.
 - **Clean Architecture** — Presentation / Domain / Data with dependencies
   pointing inward; a large view file is a refactor signal, not a style choice.
 - **Performance** — no non-trivial work in a SwiftUI `body`; memoize hot pure
@@ -169,14 +154,10 @@ The durable rules that keep the above from regressing:
 Sharpening the product we already have — removing friction, making existing
 features pull their weight. All 🟢 done unless a *Remaining* note says otherwise.
 
-- **🟢 The sign-up moment (timing, not the account)** — brand-new users land
-  straight into guest mode (no auth wall on first launch); a soft nudge banner +
-  guest-gated Import tab make the value moment "I want to save *this* recipe."
-  `hasEverAuthenticated` distinguishes new from signed-out across launches.
 - **🟢 Notification prompt off launch** — `requestPermission` fires only from
   `RecipeTimerManager` on first timer use, never at launch.
 - **🟢 Kill the empty state** — `SeedRecipeProvider` ships 6 bundled starters with
-  stable fixed UUIDs (idempotent); guests see them, new users get them seeded once.
+  stable fixed UUIDs (idempotent); new installs get them seeded once.
 - **🟢 Engagement surfaces** — `BadgeEarnedSheet` on any `pendingCelebration`;
   `RequestReviewAction` after the 3rd cook; TipKit (`CanMakeNowTip`, `CookingModeTip`).
 - **🟢 iPad layout** — `ContentView` switches on size class: iPhone `TabView`, iPad
@@ -276,9 +257,9 @@ Note: free like everything else — it costs us nothing
 (rides the user's own iCloud) and is the data-safety pillar. It's gated only by
 the CloudKit *capability*, which needs paid Developer Program enrollment.
 `NSPersistentCloudKitContainer` over the existing Core Data stack, using the
-user's own iCloud so the privacy story holds. Design work to reconcile
-`UserScopedStorage` per-account scoping with iCloud identity, and a sync strategy
-for the JSON-backed stores (meal plans, shopping list, inventory). Deferred until
+user's own iCloud so the privacy story holds (no login — the device's iCloud
+identity is the only identity). Design work: a sync strategy for the
+`LocalStore`/JSON-backed stores (meal plans, shopping list, inventory). Deferred until
 the Developer Program is enrolled; until then the model stays CloudKit-compatible
 so enabling it is a switch, not a rewrite.
 
@@ -340,7 +321,7 @@ for the curated batch; revisit rate limits at multi-user scale.
 
 ## Operating principles
 
-- **Privacy first** — minimal data collection; all user data scoped per account.
+- **Privacy first** — minimal data collection; all data stays on the device (or the user's own iCloud).
 - **Offline first** — core features work without internet; network features
   degrade gracefully.
 - **Freemium** — the free tier must be genuinely useful; monetise added value

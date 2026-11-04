@@ -41,7 +41,6 @@ import CoreData
         object.setValue(recipeId, forKey: "id")
         object.setValue("Pancakes", forKey: "name")
         object.setValue(ingredientData, forKey: "ingredients")
-        object.setValue("userA", forKey: "userId")
         try context.save()
         if let store = first.persistentStoreCoordinator.persistentStores.first {
             try first.persistentStoreCoordinator.remove(store)

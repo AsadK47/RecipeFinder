@@ -4,12 +4,12 @@ import XCTest
 @MainActor
 final class KitchenInventoryManagerTests: XCTestCase {
 
-    private var storage: UserScopedStorage!
+    private var storage: LocalStore!
     private var sut: KitchenInventoryManager!
 
     override func setUp() async throws {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
-        storage = UserScopedStorage(userDefaults: defaults)
+        storage = LocalStore(userDefaults: defaults)
         sut = KitchenInventoryManager(storage: storage)
     }
 
@@ -197,6 +197,6 @@ final class KitchenInventoryManagerTests: XCTestCase {
         if let data = try? JSONEncoder().encode(items) {
             storage.set(data, forKey: "kitchenInventoryItems")
         }
-        sut.reloadForCurrentUser()
+        sut.reload()
     }
 }

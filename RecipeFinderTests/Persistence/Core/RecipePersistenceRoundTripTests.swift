@@ -8,7 +8,7 @@ import Foundation
 struct RecipePersistenceRoundTripTests {
 
     private func makeStore() -> PersistenceController {
-        PersistenceController(inMemory: true, userID: { "test-user" })
+        PersistenceController(inMemory: true)
     }
 
     private func makeRecipe(

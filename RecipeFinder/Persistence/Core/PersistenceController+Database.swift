@@ -1,17 +1,14 @@
 import CoreData
 import Foundation
 
-/// Database maintenance: clearing and resetting the current user's recipes.
+/// Database maintenance.
 extension PersistenceController {
 
-    func clearDatabase() {
+    func deleteAllRecipes() {
         guard ensureStoreIsReady() else { return }
-        
+
         let context = container.viewContext
         let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: Entity.recipe)
-        // nil userId = the guest's own scope (rows with userId == nil), so this never touches an account's recipes.
-        fetchRequest.predicate = Self.ownerPredicate(userID())
-
         let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
         deleteRequest.resultType = .resultTypeObjectIDs
 
@@ -22,22 +19,9 @@ extension PersistenceController {
                 NSManagedObjectContext.mergeChanges(fromRemoteContextSave: [NSDeletedObjectsKey: ids], into: [context])
             }
             try context.save()
-            persistenceLogger.debug("✅ Database cleared successfully for current user")
+            persistenceLogger.debug("✅ All recipes deleted")
         } catch {
-            persistenceLogger.error("❌ Failed to clear database: \(error.localizedDescription)")
+            persistenceLogger.error("❌ Failed to delete all recipes: \(error.localizedDescription)")
         }
-    }
-    
-    func resetDatabase() {
-        persistenceLogger.debug("🔄 Resetting database...")
-        clearDatabase()
-        UserScopedStorage.shared.set(false, forKey: Constants.UserDefaultsKeys.hasPopulatedDatabase)
-        populateDatabase()
-        UserScopedStorage.shared.set(true, forKey: Constants.UserDefaultsKeys.hasPopulatedDatabase)
-        persistenceLogger.debug("✅ Database reset complete")
-    }
-    
-    func clearAllRecipes() {
-        clearDatabase()
     }
 }

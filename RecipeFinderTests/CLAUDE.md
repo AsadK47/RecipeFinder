@@ -6,7 +6,7 @@ Applies to everything under `RecipeFinderTests/`.
 These are non-negotiable. Violations are bugs, not style choices.
 
 - **MUST** use Swift Testing (`@Suite`, `@Test`, `#expect`) for all new tests — no new XCTest.
-- **MUST NOT** use real Keychain, Core Data, or network in unit tests — inject fakes.
+- **MUST NOT** use shared `UserDefaults`, real Core Data, or network in unit tests — inject fakes.
 
 ## Framework
 Swift Testing (`@Suite`, `@Test`, `#expect`) for all new/migrated tests. No new XCTest — migrate XCTest files opportunistically. UI tests stay XCUITest.
@@ -16,7 +16,7 @@ Red → green → refactor. Write the failing test first. TDD required for all l
 
 ## Conventions
 - Parameterise data-driven cases with `@Test(arguments: [...])`.
-- Inject fakes — no real Keychain / Core Data / network in unit tests.
+- Inject fakes — no shared `UserDefaults` / real Core Data / network in unit tests.
 - One behaviour per test. Arrange–Act–Assert. Name the behaviour, not the method.
 - Pyramid: many unit tests, targeted integration tests, small set of UI tests for critical flows.
 

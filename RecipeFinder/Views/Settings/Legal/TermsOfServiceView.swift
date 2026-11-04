@@ -1,8 +1,7 @@
 import SwiftUI
 
-// NOTE: Updated 2026-10-14 alongside the Privacy Policy rewrite to reflect optional accounts
-// and local-only storage. Minimum age stated as 13 (UK age of digital consent). Have a
-// solicitor review before App Store submission.
+// NOTE: Updated 2026-11-04 alongside the Privacy Policy: no accounts or sign-in, local-only storage.
+// Minimum age stated as 13 (UK age of digital consent). Have a solicitor review before App Store submission.
 struct TermsOfServiceView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
@@ -48,11 +47,11 @@ struct TermsOfServiceView: View {
 
                             BodyText("2.2 The Application may offer optional paid features. Where it does, these are sold and processed by Apple through your App Store account under Apple's terms, and are subject to Apple's billing, renewal and refund policies.")
 
-                            SectionTitle("3. User Accounts and Access")
+                            SectionTitle("3. Access")
 
-                            BodyText("3.1 An account is optional. You may use the Application in guest mode without creating one. If you create an account, your credentials and profile are stored locally on your device (see the Privacy Policy); the Company does not maintain a server-side account for you.")
+                            BodyText("3.1 The Application does not have accounts or sign-in. Your profile and data are stored locally on your device (see the Privacy Policy); the Company does not maintain a server-side account for you.")
 
-                            BodyText("3.2 You are responsible for the accuracy of the information you provide and for keeping your device and account credentials secure. You must be at least 13 years old to create an account.")
+                            BodyText("3.2 You are responsible for keeping your device secure. You must be at least 13 years old to use the Application.")
                             
                             SectionTitle("4. Acceptable Use")
                             

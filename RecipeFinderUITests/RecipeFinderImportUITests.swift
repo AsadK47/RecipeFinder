@@ -1,7 +1,6 @@
 import XCTest
 
 /// Critical-flow UI tests: each Import tab entry point opens its expected sheet.
-/// Uses the `-skip-auth` hook to land directly on the main app.
 final class RecipeFinderImportUITests: XCTestCase {
 
     override func setUp() {
@@ -10,20 +9,11 @@ final class RecipeFinderImportUITests: XCTestCase {
     }
 
     @MainActor
-    private func launchAuthenticated() -> XCUIApplication {
+    private func launchApp() -> XCUIApplication {
         let app = XCUIApplication()
-        app.launchArguments += ["-ui-testing", "-skip-auth"]
+        app.launchArguments += ["-ui-testing"]
         app.launch()
-        // autoSignIn() is async; wait for the guest nudge to vanish (isAuthenticated == true) before tapping.
         _ = app.tabBars.firstMatch.waitForExistence(timeout: 10)
-        let nudge = app.buttons["guest.nudge.cta"]
-        if nudge.exists {
-            let gone = XCTNSPredicateExpectation(
-                predicate: NSPredicate(format: "exists == false"),
-                object: nudge
-            )
-            wait(for: [gone], timeout: 10)
-        }
         return app
     }
 
@@ -31,7 +21,7 @@ final class RecipeFinderImportUITests: XCTestCase {
 
     @MainActor
     func testCreateManuallyOpensWizard() {
-        let app = launchAuthenticated()
+        let app = launchApp()
 
         app.tabBars.buttons["Import"].tap()
         XCTAssertTrue(
@@ -56,7 +46,7 @@ final class RecipeFinderImportUITests: XCTestCase {
 
     @MainActor
     func testPasteTextOpensSheet() {
-        let app = launchAuthenticated()
+        let app = launchApp()
 
         app.tabBars.buttons["Import"].tap()
         XCTAssertTrue(

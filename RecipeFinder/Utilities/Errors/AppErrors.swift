@@ -8,13 +8,6 @@ enum AppError: LocalizedError {
     case duplicateEntry
     case notFound
     
-    case invalidCredentials
-    case weakPassword(reason: String)
-    case invalidEmail
-    case userAlreadyExists
-    case authenticationFailed
-    case sessionExpired
-    
     case invalidRecipeName
     case missingIngredients
     case missingInstructions
@@ -44,19 +37,6 @@ enum AppError: LocalizedError {
             return "This item already exists"
         case .notFound:
             return "Item not found"
-            
-        case .invalidCredentials:
-            return "Invalid email or password"
-        case .weakPassword(let reason):
-            return "Password is too weak: \(reason)"
-        case .invalidEmail:
-            return "Please enter a valid email address"
-        case .userAlreadyExists:
-            return "An account with this email already exists"
-        case .authenticationFailed:
-            return "Authentication failed. Please try again"
-        case .sessionExpired:
-            return "Your session has expired. Please sign in again"
             
         case .invalidRecipeName:
             return "Recipe name must be at least 3 characters"
@@ -94,10 +74,6 @@ enum AppError: LocalizedError {
         switch self {
         case .networkUnavailable:
             return "Check your internet connection and try again"
-        case .weakPassword:
-            return "Use at least 8 characters with numbers and letters"
-        case .invalidEmail:
-            return "Enter email in format: name@example.com"
         case .invalidRecipeName:
             return "Enter a descriptive recipe name"
         case .missingIngredients:
@@ -112,36 +88,6 @@ enum AppError: LocalizedError {
 
 struct Validator {
     
-    static func isValidEmail(_ email: String) -> Bool {
-        let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
-        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
-        return emailPredicate.evaluate(with: email)
-    }
-    
-    static func validatePassword(_ password: String) throws {
-        guard password.count >= 8 else {
-            throw AppError.weakPassword(reason: "Must be at least 8 characters")
-        }
-        
-        let hasUppercase = password.rangeOfCharacter(from: .uppercaseLetters) != nil
-        let hasLowercase = password.rangeOfCharacter(from: .lowercaseLetters) != nil
-        let hasNumber = password.rangeOfCharacter(from: .decimalDigits) != nil
-        let specialCharacters = CharacterSet(charactersIn: "!@#$%^&*()_+-=[]{}|;:',.<>?/~`")
-        let hasSpecialChar = password.rangeOfCharacter(from: specialCharacters) != nil
-        
-        guard hasUppercase && hasLowercase else {
-            throw AppError.weakPassword(reason: "Must contain uppercase and lowercase letters")
-        }
-        
-        guard hasNumber else {
-            throw AppError.weakPassword(reason: "Must contain at least one number")
-        }
-        
-        guard hasSpecialChar else {
-            throw AppError.weakPassword(reason: "Must contain at least one special character (!@#$%^&* etc.)")
-        }
-    }
-
     static func validateRecipeName(_ name: String) throws {
         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else {

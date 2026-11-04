@@ -102,11 +102,6 @@ extension PersistenceController {
         }
     }
     
-    /// Scopes a recipe lookup to the current user (or the guest scope) so the shared fixed seed UUIDs can't let one owner's write land on another's row.
-    private func recipeIdPredicate(_ id: UUID) -> NSPredicate {
-        Self.scopedRecipePredicate(id: id, userId: userID())
-    }
-
     @discardableResult
     func saveRecipe(parameters: RecipeSaveParameters) -> Bool {
         guard ensureStoreIsReady() else { return false }
@@ -119,7 +114,7 @@ extension PersistenceController {
         }
         
         let recipe = NSManagedObject(entity: entity, insertInto: context)
-        guard Self.populate(recipe, from: parameters, userId: userID()) else { return false }
+        guard Self.populate(recipe, from: parameters) else { return false }
 
         do {
             try context.save()
@@ -136,8 +131,7 @@ extension PersistenceController {
     /// Maps `RecipeSaveParameters` onto a fresh managed object; shared by `saveRecipe` and `seedRecipes` so the field list has one home. Returns false only if ingredients can't be encoded.
     nonisolated private static func populate(
         _ recipe: NSManagedObject,
-        from parameters: RecipeSaveParameters,
-        userId: String?
+        from parameters: RecipeSaveParameters
     ) -> Bool {
         guard let ingredientData = try? JSONEncoder().encode(parameters.ingredients) else {
             persistenceLogger.error("❌ Failed to encode ingredients for recipe: \(parameters.name)")
@@ -168,20 +162,15 @@ extension PersistenceController {
         if let dietaryData = try? JSONEncoder().encode(parameters.dietaryInfo) {
             recipe.setValue(dietaryData, forKey: RecipeKey.dietaryInfo)
         }
-        if let userId {
-            recipe.setValue(userId, forKey: "userId")
-        }
         return true
     }
 
-    /// Bulk-inserts starter recipes on a background context in one save so first sign-in doesn't freeze; skips
+    /// Bulk-inserts starter recipes on a background context in one save so first launch doesn't freeze; skips
     /// per-recipe count/badge work by design. Returns `true` only if the save succeeded, so the caller can
     /// clear the "seeded" flag and retry next launch rather than strand the user with an empty library.
     @discardableResult
     func seedRecipes(_ models: [RecipeModel]) async -> Bool {
-        // nil userId seeds the guest scope — guests get a persisted library like any account.
         guard ensureStoreIsReady() else { return false }
-        let userId = userID()
         let container = self.container
         return await withCheckedContinuation { continuation in
             container.performBackgroundTask { context in
@@ -192,7 +181,7 @@ extension PersistenceController {
                 }
                 for model in models {
                     let object = NSManagedObject(entity: entity, insertInto: context)
-                    _ = Self.populate(object, from: RecipeSaveParameters(from: model), userId: userId)
+                    _ = Self.populate(object, from: RecipeSaveParameters(from: model))
                 }
                 do {
                     try context.save()
@@ -210,7 +199,7 @@ extension PersistenceController {
     func saveRecipeModel(_ recipe: RecipeModel) -> Bool {
         let context = container.viewContext
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
-        fetchRequest.predicate = recipeIdPredicate(recipe.id)
+        fetchRequest.predicate = Self.recipeIdPredicate(recipe.id)
         fetchRequest.fetchLimit = 1
 
         do {
@@ -246,7 +235,7 @@ extension PersistenceController {
         
         let context = container.viewContext
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
-        fetchRequest.predicate = recipeIdPredicate(id)
+        fetchRequest.predicate = Self.recipeIdPredicate(id)
         fetchRequest.fetchLimit = 1
         
         do {
@@ -269,7 +258,7 @@ extension PersistenceController {
 
         let context = container.viewContext
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
-        fetchRequest.predicate = recipeIdPredicate(recipe.id)
+        fetchRequest.predicate = Self.recipeIdPredicate(recipe.id)
         fetchRequest.fetchLimit = 1
 
         do {
@@ -315,13 +304,10 @@ extension PersistenceController {
         }
     }
     
-    /// Background-safe recipe lookup predicate (user-scoped when signed in, guest rows only for guests). `nonisolated static`
-    /// so it can be built inside a `performBackgroundTask` closure without touching the @MainActor instance.
-    nonisolated static func scopedRecipePredicate(id: UUID, userId: String?) -> NSPredicate {
-        NSCompoundPredicate(andPredicateWithSubpredicates: [
-            NSPredicate(format: "\(RecipeKey.id) == %@", id as CVarArg),
-            ownerPredicate(userId)
-        ])
+    /// Recipe lookup by id. `nonisolated static` so it can be built inside a `performBackgroundTask` closure without
+    /// touching the @MainActor instance.
+    nonisolated static func recipeIdPredicate(_ id: UUID) -> NSPredicate {
+        NSPredicate(format: "\(RecipeKey.id) == %@", id as CVarArg)
     }
 
     /// Increments `cookCount` and stamps `lastCookedAt` on a background context so the post-cook flow never blocks
@@ -330,11 +316,10 @@ extension PersistenceController {
     func recordCook(withId id: UUID) async {
         guard ensureStoreIsReady() else { return }
         let container = self.container
-        let userId = userID()
         await withCheckedContinuation { continuation in
             container.performBackgroundTask { context in
                 let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
-                fetchRequest.predicate = Self.scopedRecipePredicate(id: id, userId: userId)
+                fetchRequest.predicate = Self.recipeIdPredicate(id)
                 fetchRequest.fetchLimit = 1
                 do {
                     guard let recipe = try context.fetch(fetchRequest).first else {
@@ -359,11 +344,10 @@ extension PersistenceController {
     func updateRating(withId id: UUID, rating: Int) async {
         guard ensureStoreIsReady() else { return }
         let container = self.container
-        let userId = userID()
         await withCheckedContinuation { continuation in
             container.performBackgroundTask { context in
                 let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
-                fetchRequest.predicate = Self.scopedRecipePredicate(id: id, userId: userId)
+                fetchRequest.predicate = Self.recipeIdPredicate(id)
                 fetchRequest.fetchLimit = 1
                 do {
                     guard let recipe = try context.fetch(fetchRequest).first else {
@@ -387,7 +371,7 @@ extension PersistenceController {
         
         let context = container.viewContext
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: Entity.recipe)
-        fetchRequest.predicate = recipeIdPredicate(id)
+        fetchRequest.predicate = Self.recipeIdPredicate(id)
         fetchRequest.fetchLimit = 1
         
         do {

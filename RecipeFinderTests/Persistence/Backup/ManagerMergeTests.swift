@@ -7,11 +7,10 @@ import Foundation
 @MainActor
 @Suite struct ManagerMergeTests {
 
-    /// Fresh, isolated per-user storage under a signed-in scope.
-    private static func makeStorage() -> UserScopedStorage {
+    /// Fresh, isolated storage.
+    private static func makeStorage() -> LocalStore {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
-        let storage = UserScopedStorage(userDefaults: defaults)
-        storage.currentUserId = "merge-test-user"
+        let storage = LocalStore(userDefaults: defaults)
         return storage
     }
 

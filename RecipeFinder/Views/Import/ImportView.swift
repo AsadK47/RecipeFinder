@@ -7,20 +7,12 @@ struct ImportView: View {
 
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
-    @AppStorage("guestModeEnabled") private var guestModeEnabled = false
-    @Environment(\.auth) private var authManager
 
     @State private var showLinkImport = false
     @State private var showPasteImport = false
     @State private var showPhotoImport = false
     @State private var showWizard = false
     @State private var saveErrorRecipeName: String?
-    @State private var showSignUpForGuest = false
-
-    private var isGuest: Bool { guestModeEnabled && !authManager.isAuthenticated }
-    /// Only divert guests to sign-up when the auth UI exists. In a guest-only build there's no
-    /// account to create, so guests run every import/create action directly.
-    private var gatesToSignUp: Bool { isGuest && AuthUIGate.showAuthUI }
 
     var body: some View {
         NavigationStack {
@@ -44,7 +36,7 @@ struct ImportView: View {
                                 color: .orange,
                                 title: "Paste a link",
                                 subtitle: "Import from a recipe website — we fetch and parse it for you.",
-                                action: gatesToSignUp ? { showSignUpForGuest = true } : { showLinkImport = true }
+                                action: { showLinkImport = true }
                             )
                             .accessibilityIdentifier("import.link")
 
@@ -53,7 +45,7 @@ struct ImportView: View {
                                 color: .green,
                                 title: "Paste text",
                                 subtitle: "Paste a caption, note, or message — we pull out the recipe to review.",
-                                action: gated { showPasteImport = true }
+                                action: { showPasteImport = true }
                             )
                             .accessibilityIdentifier("import.paste")
 
@@ -62,7 +54,7 @@ struct ImportView: View {
                                 color: .purple,
                                 title: "Scan a photo",
                                 subtitle: "A cookbook page, screenshot, or handwritten recipe — read on device.",
-                                action: gated { showPhotoImport = true }
+                                action: { showPhotoImport = true }
                             )
                             .accessibilityIdentifier("import.photo")
 
@@ -71,7 +63,7 @@ struct ImportView: View {
                                 color: .blue,
                                 title: "Create manually",
                                 subtitle: "Add a recipe yourself, step by step.",
-                                action: gatesToSignUp ? { showSignUpForGuest = true } : { showWizard = true }
+                                action: { showWizard = true }
                             )
                             .accessibilityIdentifier("import.wizard")
 
@@ -97,9 +89,6 @@ struct ImportView: View {
         .sheet(isPresented: $showWizard) {
             RecipeWizardView(prefilledData: nil) { store($0, source: .wizard) }
         }
-        .sheet(isPresented: $showSignUpForGuest) {
-            NavigationStack { AuthenticationView() }
-        }
         .alert(
             "Couldn't Save Recipe",
             isPresented: Binding(
@@ -111,17 +100,6 @@ struct ImportView: View {
             Button("OK", role: .cancel) {}
         } message: { name in
             Text("\"\(name)\" couldn't be saved. Please try again.")
-        }
-    }
-
-    /// Wraps an import action with the guest gate: guests who must sign up go to sign-up, everyone else runs it.
-    private func gated(_ action: @escaping () -> Void) -> () -> Void {
-        {
-            if gatesToSignUp {
-                showSignUpForGuest = true
-            } else {
-                action()
-            }
         }
     }
 

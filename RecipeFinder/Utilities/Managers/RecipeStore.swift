@@ -5,7 +5,7 @@ import SwiftUI
 protocol RecipeStoring: AnyObject, Observable {
     var recipes: [RecipeModel] { get set }
     var isLoading: Bool { get }
-    func load(isAuthenticated: Bool)
+    func load()
     func refresh() async
     @discardableResult func save(_ recipe: RecipeModel) -> Bool
     @discardableResult func add(_ recipe: RecipeModel) -> Bool
@@ -33,49 +33,31 @@ extension EnvironmentValues {
 final class RecipeStore: RecipeStoring {
     static let shared = RecipeStore()
 
-    /// Settable for the sign-out reset (`ContentView`) and ephemeral in-memory adds (e.g. quick snacks) that shouldn't touch Core Data.
+    /// Settable for ephemeral in-memory adds (e.g. quick snacks) that shouldn't touch Core Data.
     var recipes: [RecipeModel] = []
     private(set) var isLoading = true
 
     @ObservationIgnored private let persistence: PersistenceController
     @ObservationIgnored private let imageStore: RecipeImageStore
-    /// Bumped on each load so a slow earlier fetch (e.g. previous account) can't overwrite a newer one's result.
+    /// Bumped on each load so a slow earlier fetch can't overwrite a newer one's result.
     @ObservationIgnored private var loadGeneration = 0
-    /// Which library the last load targeted (nil before the first load); detects guest↔account switches.
-    @ObservationIgnored private var isGuestLibrary: Bool?
 
     init(persistence: PersistenceController = .shared, imageStore: RecipeImageStore = RecipeImageStore()) {
         self.persistence = persistence
         self.imageStore = imageStore
     }
 
-    /// Loads the current user's library (or seed recipes in guest mode); mirrors the retry/seed behaviour once inline in `ContentView`.
-    func load(isAuthenticated: Bool) {
-        loadRecipes(isAuthenticated: isAuthenticated, retryAttempt: 0)
+    /// Loads the library, seeding starter + bundled recipes on first run.
+    func load() {
+        loadRecipes(retryAttempt: 0)
     }
 
-    private func loadRecipes(isAuthenticated: Bool, retryAttempt: Int) {
-        // Guests load the persisted guest scope (nil userId) through the same fetch/seed path as accounts —
-        // showing only in-memory seeds dropped every recipe a guest added or cooked on relaunch.
-        // Clear on a guest↔account switch so one library doesn't linger during the other's async fetch.
-        if isGuestLibrary == isAuthenticated {
-            recipes = []
-            isLoading = true
-        }
-        isGuestLibrary = !isAuthenticated
-
-        // Signed in but the account scope isn't set yet: don't fall through to the guest scope.
-        guard !isAuthenticated || persistence.hasCurrentUserScope() else {
-            AppLogger.logger(category: "RecipeStore")
-                .debug("⚠️ Skipping recipe reload because user scope is not available")
-            return
-        }
-
+    private func loadRecipes(retryAttempt: Int) {
         // Corrupted-store recovery reloads the store late, so retry — one early empty fetch shouldn't strand the user with a blank list.
         guard persistence.isStoreLoaded else {
             guard retryAttempt < 5 else { return }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-                self?.loadRecipes(isAuthenticated: isAuthenticated, retryAttempt: retryAttempt + 1)
+                self?.loadRecipes(retryAttempt: retryAttempt + 1)
             }
             return
         }
@@ -88,19 +70,19 @@ final class RecipeStore: RecipeStoring {
             if let seeded = await seedIfNeeded(existing: fetched) {
                 fetched = seeded
             }
-            // Ignore a stale fetch superseded by a newer load (account switch / scope change).
+            // Ignore a stale fetch superseded by a newer load.
             guard generation == loadGeneration else { return }
             recipes = fetched
             isLoading = false
         }
     }
 
-    /// One-time seeding per scope: starters for an empty library, plus the bundled collection (once, even for existing
+    /// One-time seeding: starters for an empty library, plus the bundled collection (once, even for existing
     /// libraries — ids already present are skipped). Returns the refetched library, or nil if nothing was seeded.
     /// Flags are set before awaiting so a concurrent load doesn't seed twice, and reset if the save fails so the
     /// next launch retries instead of stranding the user with an empty library.
     private func seedIfNeeded(existing: [RecipeModel]) async -> [RecipeModel]? {
-        let storage = UserScopedStorage.shared
+        let storage = LocalStore.shared
         let startersKey = "seedRecipesLoaded"
         let bundledKey = "bundledRecipesSeeded_v1"
         let seedStarters = existing.isEmpty && !storage.bool(forKey: startersKey)
@@ -127,7 +109,6 @@ final class RecipeStore: RecipeStoring {
 
     /// Awaitable reload from the store (used by pull-to-refresh and post-write syncs).
     func refresh() async {
-        guard isGuestLibrary == true || persistence.hasCurrentUserScope() else { return }
         recipes = await persistence.fetchRecipesAsync()
     }
 

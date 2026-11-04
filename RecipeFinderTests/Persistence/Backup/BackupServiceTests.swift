@@ -28,8 +28,7 @@ import Foundation
 
     private static func makeHarness(recipes: [RecipeModel] = []) -> Harness {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
-        let storage = UserScopedStorage(userDefaults: defaults)
-        storage.currentUserId = "backup-test-user"
+        let storage = LocalStore(userDefaults: defaults)
 
         let recipeStore = InMemoryRecipeStore(recipes)
         let shopping = ShoppingListManager(storage: storage)

@@ -13,7 +13,7 @@ import Foundation
     }
 
     private func makeController() -> PersistenceController {
-        PersistenceController(inMemory: true, userID: { "test-user" })
+        PersistenceController(inMemory: true)
     }
 
     /// Converts wizard prefill to a `RecipeModel` the same way the wizard view

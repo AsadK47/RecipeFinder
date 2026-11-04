@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Loading placeholder (card chrome + shimmer) so the post-sign-in wait reads as "content coming", not a flashed empty state; non-interactive, VoiceOver-hidden.
+/// Loading placeholder (card chrome + shimmer) so the launch-time load reads as "content coming", not a flashed empty state; non-interactive, VoiceOver-hidden.
 struct RecipeListSkeleton: View {
     private let placeholderCount = 6
 

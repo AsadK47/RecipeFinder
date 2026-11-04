@@ -5,13 +5,13 @@ import Testing
 @MainActor
 final class MealPlanningManagerTests: XCTestCase {
 
-    private var storage: UserScopedStorage!
+    private var storage: LocalStore!
     private var sut: MealPlanningManager!
     private let recipeId = UUID()
 
     override func setUp() async throws {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
-        storage = UserScopedStorage(userDefaults: defaults)
+        storage = LocalStore(userDefaults: defaults)
         sut = MealPlanningManager(storage: storage)
     }
 
@@ -300,7 +300,7 @@ final class MealPlanningManagerTests: XCTestCase {
         if let data = try? JSONEncoder().encode(plans) {
             storage.set(data, forKey: "mealPlansStorage")
         }
-        sut.reloadForCurrentUser()
+        sut.reload()
     }
 }
 
@@ -353,7 +353,7 @@ struct SortedOrderedMealTimesTests {
 struct RecurringMealPlanTests {
 
     private func makeManager() -> MealPlanningManager {
-        MealPlanningManager(storage: UserScopedStorage(
+        MealPlanningManager(storage: LocalStore(
             userDefaults: UserDefaults(suiteName: UUID().uuidString)!
         ))
     }

@@ -9,7 +9,7 @@ import Foundation
 
     private func makeSUT() -> KitchenInventoryManager {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
-        let storage = UserScopedStorage(userDefaults: defaults)
+        let storage = LocalStore(userDefaults: defaults)
         return KitchenInventoryManager(storage: storage)
     }
 

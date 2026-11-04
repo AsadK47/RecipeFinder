@@ -11,7 +11,7 @@ These are non-negotiable. Violations are bugs, not style choices.
 - **MUST NOT** commit partial or unverified work — write `WORK.md` instead.
 - **MUST** keep one task active at a time (WIP=1): finish it (`BuildProject` + `RunAllTests` green — "looks fine" is not done) before starting the next, and never "also refactor" B while doing A — record B as the next `WORK.md` action. *(verify before any batch edit; a wrong premise × N files is the expensive failure)*
 - **MUST** use `XcodeWrite` (not `Write`) when creating new Swift files. *(source: Xcode requires explicit project file registration; retire if Claude Code auto-registers)*
-- **MUST NOT** point `.xccurrentversion` at anything older than `RecipeModel 13`. If the app crashes with `valueForUndefinedKey: isSampleRecipe`, this file was clobbered — restore it to `RecipeModel 13.xcdatamodel`. *(update this number whenever the Core Data model version increments)*
+- **MUST NOT** point `.xccurrentversion` at anything older than `RecipeModel 14`. If the app crashes with `valueForUndefinedKey: isSampleRecipe`, this file was clobbered — restore it to `RecipeModel 14.xcdatamodel`. *(update this number whenever the Core Data model version increments)*
 
 ## Topic docs (loaded automatically by directory)
 - `RecipeFinder/CLAUDE.md` — Swift/SwiftUI rules, design principles, security, DI, UX checklist. Read when editing any app source file.
@@ -23,11 +23,11 @@ These are non-negotiable. Violations are bugs, not style choices.
 
 ## Architecture
 Clean Architecture — dependencies point inward:
-- **Presentation** (`Views/`, `Components/`) — SwiftUI only. No direct Core Data / Keychain / URLSession.
+- **Presentation** (`Views/`, `Components/`) — SwiftUI only. No direct Core Data / `LocalStore` / URLSession.
 - **Domain** (models, use cases, protocols) — pure Swift, Foundation only. Testable.
-- **Data** (`Persistence/`, `Services/`) — Core Data, Keychain, URLSession. Implements Domain protocols.
+- **Data** (`Persistence/`, `Services/`) — Core Data, `LocalStore` (UserDefaults), URLSession. Implements Domain protocols.
 
-Views observe managers through `@Environment` protocol seams (e.g. `@Environment(\.auth)`), not
+Views observe managers through `@Environment` protocol seams (e.g. `@Environment(\.recipeStore)`), not
 `.shared` singletons directly — each manager is an `@Observable` conforming to a `*ing`/`*Managing`
 protocol with an `EnvironmentKey` defaulting to `.shared`. Data-layer reads (`PersistenceController.shared`)
 and view-*owned* instances (`@StateObject … = RecipeImporter()`) are exempt. Files > ~300 lines are a
@@ -50,10 +50,10 @@ CI runs the full test suite on every push to `main` — red tests fail the build
 |---|---|---|
 | Force-unwrap or `try?` in new code | Task definition | Swift 6 / no-force rules not stated |
 | Combine creeping back in | Task definition | `async/await` only rule not stated |
-| Test hits real `UserDefaults` or Keychain | Task definition | DI requirement not stated |
+| Test hits real `UserDefaults` | Task definition | DI requirement not stated |
 | Agent re-implements existing utility | Insufficient context | Skipped `XcodeGrep` for prior art |
 | New file not found by Xcode | Misconfigured env | Used `Write` instead of `XcodeWrite` |
-| Core Data crash `valueForUndefinedKey: isSampleRecipe` | Misconfigured env | `.xccurrentversion` reverted off RecipeModel 13 |
+| Core Data crash `valueForUndefinedKey: isSampleRecipe` | Misconfigured env | `.xccurrentversion` reverted off RecipeModel 14 |
 | SwiftUI view crashes on empty data | Missing verification | Empty-state path not covered by a test |
 | Verification skipped or simpler fix chosen near session end | Context pressure | Agent sensed low context → rushed finish; write WORK.md Decisions before this happens |
 
@@ -61,7 +61,7 @@ CI runs the full test suite on every push to `main` — red tests fail the build
 1. Read `WORK.md` — if it has content, resume from "Next action" without repeating completed work.
 2. If `WORK.md` is empty, orient via `git log --oneline -10` and `ROADMAP.md` before starting work.
 3. `git status` — no unexpected staged/unstaged changes from a prior partial run.
-4. Check `.xccurrentversion` points at `RecipeModel 13` if Core Data was recently touched.
+4. Check `.xccurrentversion` points at `RecipeModel 14` if Core Data was recently touched.
 
 ## Session end checklist
 1. Update `WORK.md` Decisions — options rejected, tradeoffs accepted, constraints discovered.

@@ -169,7 +169,7 @@ struct HelpView: View {
 
                         FAQItem(
                             question: "How do I backup my data?",
-                            answer: "Your data is automatically saved. You can also export your data from the Account tab."
+                            answer: "Your data is automatically saved. You can also export a backup from Settings > Data Management."
                         )
 
                         FAQItem(
@@ -188,8 +188,8 @@ struct HelpView: View {
                         )
 
                         FAQItem(
-                            question: "How do I delete my account?",
-                            answer: "Go to Settings > Account > Delete Account. Note that this will remove all your data permanently."
+                            question: "How do I delete my data?",
+                            answer: "Go to Settings > Data Management > Reset App to Default. Note that this will remove all your data permanently."
                         )
                     }
                     .padding(AppTheme.spacing20)

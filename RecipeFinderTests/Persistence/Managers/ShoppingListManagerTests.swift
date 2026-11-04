@@ -4,12 +4,12 @@ import XCTest
 @MainActor
 final class ShoppingListManagerTests: XCTestCase {
 
-    private var storage: UserScopedStorage!
+    private var storage: LocalStore!
     private var sut: ShoppingListManager!
 
     override func setUp() async throws {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
-        storage = UserScopedStorage(userDefaults: defaults)
+        storage = LocalStore(userDefaults: defaults)
         sut = ShoppingListManager(storage: storage)
     }
 

@@ -1,4 +1,12 @@
-# WORK: New-user exploratory QA (2026-11-03) — PAUSED mid-run
+# WORK: Account removal (2026-11-04) — STAGES 1–3 DONE (uncommitted; build + full suite 1769/1769 green)
+- S1: auth engine/UI, Keychain/PasswordHasher/SessionExpiry, sign-in UI tests and launch args deleted; legal/help copy de-accounted.
+- S2: per-user scoping → `LocalStore` (unscoped "rf." keys, no migration); Core Data `userId` dropped in RecipeModel 14.
+- S3: Account→Profile rename (ProfileManager/ProfileManaging/`\.profile`, Views/Profile, Models/Profile, ProfileSheet etc.;
+  storage keys profile*/`profileCreatedDate`, no migration); UI "Account"→"Profile"; docs (ROADMAP "No accounts", SHIP_BAR,
+  CLAUDE.md x3, readme, HANDBOOK) cleaned; create_account.png removed; SheetAndScope UI test → SheetPresentationUITests.
+**Next action:** user commits; then next steps.
+
+# (previous) New-user exploratory QA (2026-11-03)
 
 ## ▶ Resume here
 Working tree clean before this file (all prior work committed: 184b2ed). No code changes in progress.

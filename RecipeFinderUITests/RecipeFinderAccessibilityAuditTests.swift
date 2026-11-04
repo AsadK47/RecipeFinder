@@ -8,29 +8,11 @@ final class RecipeFinderAccessibilityAuditTests: XCTestCase {
         continueAfterFailure = false
     }
 
-    // MARK: - Auth screen
-
-    @MainActor
-    func testSignInScreenPassesAudit() throws {
-        let app = XCUIApplication()
-        // `-force-auth-ui` overrides the guest-only AuthUIGate so the sign-in screen (otherwise hidden)
-        // is shown for the audit. Remove it when AuthUIGate.showAuthUI becomes the default.
-        app.launchArguments += ["-ui-testing", "-resetState", "-force-auth-ui"]
-        app.launch()
-
-        XCTAssertTrue(
-            app.staticTexts["Discover, Create, Cook"].waitForExistence(timeout: 10),
-            "Should land on the sign-in screen."
-        )
-
-        try app.performAccessibilityAudit(for: .all, auditHandler)
-    }
-
     // MARK: - Import tab
 
     @MainActor
     func testImportTabPassesAudit() throws {
-        let app = launchAuthenticated()
+        let app = launchApp()
 
         app.tabBars.buttons["Import"].tap()
         XCTAssertTrue(
@@ -46,7 +28,7 @@ final class RecipeFinderAccessibilityAuditTests: XCTestCase {
 
     @MainActor
     func testGroceriesSearchResultsPassesAudit() throws {
-        let app = launchAuthenticated()
+        let app = launchApp()
 
         app.tabBars.buttons["Groceries"].tap()
 
@@ -80,22 +62,13 @@ final class RecipeFinderAccessibilityAuditTests: XCTestCase {
     // MARK: - Helpers
 
     @MainActor
-    private func launchAuthenticated() -> XCUIApplication {
+    private func launchApp() -> XCUIApplication {
         let app = XCUIApplication()
-        app.launchArguments += ["-ui-testing", "-skip-auth"]
+        app.launchArguments += ["-ui-testing"]
         app.launch()
-        // autoSignIn() is async; wait for the guest nudge to vanish (isAuthenticated == true) before tapping.
         _ = app.tabBars.firstMatch.waitForExistence(timeout: 10)
-        let nudge = app.buttons["guest.nudge.cta"]
-        if nudge.exists {
-            let gone = XCTNSPredicateExpectation(
-                predicate: NSPredicate(format: "exists == false"),
-                object: nudge
-            )
-            wait(for: [gone], timeout: 10)
-        }
         // State left by earlier suites can unlock a badge on launch; its bottom sheet covers the tab bar and a
-        // tab tap lands on "View all badges" (opening Account). Swipe it away. Case-insensitive: the title is uppercased.
+        // tab tap lands on "View all badges" (opening Profile). Swipe it away. Case-insensitive: the title is uppercased.
         let badgeSheet = app.staticTexts.matching(NSPredicate(format: "label ==[c] 'Badge Earned!'")).firstMatch
         if badgeSheet.waitForExistence(timeout: 2) {
             badgeSheet.swipeDown()

@@ -60,7 +60,7 @@ import Foundation
             RecipeKey.currentServings, RecipeKey.ingredients, RecipeKey.prePrepInstructions,
             RecipeKey.instructions, RecipeKey.notes, RecipeKey.imageName,
             RecipeKey.isFavorite, RecipeKey.isSampleRecipe, RecipeKey.dietaryInfo,
-            RecipeKey.tags, RecipeKey.userId, RecipeKey.cookCount,
+            RecipeKey.tags, RecipeKey.cookCount,
             RecipeKey.lastCookedAt, RecipeKey.rating, RecipeKey.cuisine,
             RecipeKey.photoNames,
         ]
@@ -114,5 +114,45 @@ import Foundation
         #expect(row.value(forKey: "cuisine") as? String == nil)
         #expect(row.value(forKey: "lastCookedAt") as? Date == nil)
         #expect(row.value(forKey: "photoNames") as? [String] ?? [] == [])
+    }
+
+    /// Pins the v13→v14 upgrade path (v14 drops the accounts-era `userId` column): a store whose rows carry a
+    /// `userId` must lightweight-migrate cleanly and keep every recipe.
+    @Test func v13StoreWithUserIdMigratesKeepingRecipes() throws {
+        let momd = try #require(Bundle(for: PersistenceController.self).url(forResource: "RecipeModel", withExtension: "momd"))
+        let source = try #require(NSManagedObjectModel(contentsOf: momd.appendingPathComponent("RecipeModel 13.mom")))
+        let current = try #require(NSManagedObjectModel(contentsOf: momd))
+        #expect(current.entitiesByName["Recipe"]?.attributesByName["userId"] == nil)
+
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString).appendingPathExtension("sqlite")
+        defer { for s in ["", "-wal", "-shm"] { try? FileManager.default.removeItem(at: URL(fileURLWithPath: url.path + s)) } }
+
+        let ids = [UUID(), UUID()]
+        let sourceCoordinator = NSPersistentStoreCoordinator(managedObjectModel: source)
+        try sourceCoordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: url, options: nil)
+        let writeContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        writeContext.persistentStoreCoordinator = sourceCoordinator
+        let entity = try #require(NSEntityDescription.entity(forEntityName: "Recipe", in: writeContext))
+        for (index, (id, owner)) in zip(ids, ["userA", nil] as [String?]).enumerated() {
+            let obj = NSManagedObject(entity: entity, insertInto: writeContext)
+            obj.setValue(id, forKey: "id")
+            obj.setValue("Dish \(index)", forKey: "name")
+            obj.setValue(owner, forKey: "userId")
+        }
+        try writeContext.save()
+        try sourceCoordinator.remove(try #require(sourceCoordinator.persistentStores.first))
+
+        let currentCoordinator = NSPersistentStoreCoordinator(managedObjectModel: current)
+        try currentCoordinator.addPersistentStore(
+            ofType: NSSQLiteStoreType, configurationName: nil, at: url,
+            options: [NSMigratePersistentStoresAutomaticallyOption: true, NSInferMappingModelAutomaticallyOption: true]
+        )
+        let readContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        readContext.persistentStoreCoordinator = currentCoordinator
+        let rows = try readContext.fetch(NSFetchRequest<NSManagedObject>(entityName: "Recipe"))
+
+        #expect(Set(rows.compactMap { $0.value(forKey: "id") as? UUID }) == Set(ids))
+        #expect(Set(rows.compactMap { $0.value(forKey: "name") as? String }) == ["Dish 0", "Dish 1"])
     }
 }

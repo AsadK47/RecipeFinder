@@ -36,7 +36,7 @@ final class CollectionManager: CollectionManaging {
     static let shared = CollectionManager()
 
     @ObservationIgnored private let saveKey = Constants.UserDefaultsKeys.collections
-    @ObservationIgnored private let storage: UserScopedStorage
+    @ObservationIgnored private let storage: LocalStore
 
     private(set) var collections: [RecipeCollection] = []
 
@@ -45,12 +45,12 @@ final class CollectionManager: CollectionManaging {
         loadCollections()
     }
 
-    init(storage: UserScopedStorage) {
+    init(storage: LocalStore) {
         self.storage = storage
         loadCollections()
     }
 
-    func reloadForCurrentUser() {
+    func reload() {
         loadCollections()
     }
 

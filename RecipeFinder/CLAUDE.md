@@ -8,7 +8,7 @@ These are non-negotiable. Violations are bugs, not style choices.
 - **MUST NOT** use Combine — use `async`/`await` only.
 - **MUST NOT** force-unwrap (`!`) or force-try (`try!`).
 - **MUST NOT** use `print()` in shipping code — use `AppLogger.logger(category:)`.
-- **MUST NOT** store credentials or secrets in `UserDefaults`, Core Data, or plain files — Keychain only.
+- **MUST NOT** store secrets (API keys, tokens) in `UserDefaults`, Core Data, or plain files — Keychain only.
 - **MUST** use `NavigationStack` — `NavigationView` is banned.
 - **MUST** use `XcodeWrite` (not `Write`) when creating new Swift files.
 
@@ -31,7 +31,7 @@ Visual language + shared UI tokens live in `RecipeFinder/DesignSystem.md` (livin
 **Design:** Composition over inheritance. CQS — a function either returns a value or changes state, not both. Law of Demeter — talk to direct collaborators only. Fail fast — surface invalid state immediately.
 
 ## Security
-- Keychain only for credentials/secrets. Never `UserDefaults`, Core Data, or unencrypted filesystem.
+- Keychain only for secrets. Never `UserDefaults`, Core Data, or unencrypted filesystem.
 - Debug-only constants inside `#if DEBUG`.
 - Validate at trust boundaries only (user input, URL imports, OCR output).
 - No network calls that send recipe data or identifiers without explicit consent.

@@ -39,7 +39,7 @@ final class MealPlanningManager: MealPlanningManaging {
     private(set) var mealPlans: [MealPlanModel] = []
 
     @ObservationIgnored private let saveKey = "mealPlansStorage"
-    @ObservationIgnored private let storage: UserScopedStorage
+    @ObservationIgnored private let storage: LocalStore
     @ObservationIgnored private let badgeManager: BadgeManager
     @ObservationIgnored private let reminders: any MealReminderScheduling
 
@@ -51,7 +51,7 @@ final class MealPlanningManager: MealPlanningManaging {
     }
 
     init(
-        storage: UserScopedStorage,
+        storage: LocalStore,
         badgeManager: BadgeManager = .shared,
         reminders: any MealReminderScheduling = NotificationManager.shared
     ) {
@@ -61,7 +61,7 @@ final class MealPlanningManager: MealPlanningManaging {
         loadMealPlans()
     }
 
-    func reloadForCurrentUser() {
+    func reload() {
         loadMealPlans()
     }
     

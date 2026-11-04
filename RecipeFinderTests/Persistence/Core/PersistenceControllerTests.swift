@@ -2,12 +2,12 @@ import Testing
 import Foundation
 @testable import RecipeFinder
 
-/// Integration on the real Core Data recipe stack, backed by an in-memory (`/dev/null`) store for isolation with an injected account scope so per-user isolation is exercised without global state.
+/// Integration on the real Core Data recipe stack, backed by an in-memory (`/dev/null`) store for isolation from global state.
 @MainActor
 @Suite struct PersistenceControllerTests {
 
-    private func makeController(userID: @escaping () -> String?) -> PersistenceController {
-        let controller = PersistenceController(inMemory: true, userID: userID)
+    private func makeController() -> PersistenceController {
+        let controller = PersistenceController(inMemory: true)
         #expect(controller.isStoreLoaded)
         #expect(controller.loadError == nil)
         return controller
@@ -44,7 +44,7 @@ import Foundation
     // MARK: - Round trip
 
     @Test func saveThenFetch_returnsSameRecipe() {
-        let controller = makeController(userID: { "userA" })
+        let controller = makeController()
         let recipe = makeRecipe(name: "Rice Bowl", favorite: true)
 
         controller.saveRecipeModel(recipe)
@@ -65,8 +65,8 @@ import Foundation
 
     // MARK: - Seeding
 
-    @Test func seedRecipes_whenScoped_returnsTrueAndPersistsAll() async {
-        let controller = makeController(userID: { "userA" })
+    @Test func seedRecipes_returnsTrueAndPersistsAll() async {
+        let controller = makeController()
         let models = [makeRecipe(name: "Seed One"), makeRecipe(name: "Seed Two")]
 
         let ok = await controller.seedRecipes(models)
@@ -75,19 +75,8 @@ import Foundation
         #expect(controller.fetchRecipes().count == 2)
     }
 
-    /// No user scope = the guest scope: guests get a persisted starter library like any account (the
-    /// guest-only build would otherwise show seeds that vanish with every cook/edit on relaunch).
-    @Test func seedRecipes_whenUnscoped_seedsTheGuestScope() async {
-        let controller = makeController(userID: { nil })
-
-        let ok = await controller.seedRecipes([makeRecipe(name: "Seed One")])
-
-        #expect(ok)
-        #expect(controller.fetchRecipes().map(\.name) == ["Seed One"])
-    }
-
     @Test func delete_removesOnlyThatRecipe() {
-        let controller = makeController(userID: { "userA" })
+        let controller = makeController()
         let keep = makeRecipe(name: "Keep")
         let drop = makeRecipe(name: "Drop")
         controller.saveRecipeModel(keep)
@@ -99,7 +88,7 @@ import Foundation
     }
 
     @Test func saveModelWithExistingId_updatesInPlace() {
-        let controller = makeController(userID: { "userA" })
+        let controller = makeController()
         let recipe = makeRecipe(name: "Original")
         controller.saveRecipeModel(recipe)
 
@@ -111,7 +100,7 @@ import Foundation
     }
 
     @Test func toggleFavorite_flipsPersistedFlag() {
-        let controller = makeController(userID: { "userA" })
+        let controller = makeController()
         let recipe = makeRecipe(name: "Toggle", favorite: false)
         controller.saveRecipeModel(recipe)
 
@@ -120,44 +109,17 @@ import Foundation
         #expect(controller.fetchRecipes().first?.isFavorite == true)
     }
 
-    // MARK: - Per-user scope
+    // MARK: - Reset
 
-    @Test func recipesAreIsolatedPerUser() {
-        var currentUser = "userA"
-        let controller = makeController(userID: { currentUser })
+    @Test func deleteAllRecipes_removesEveryRecipe() {
+        // Settings → Reset clears the whole library.
+        let controller = makeController()
+        controller.saveRecipeModel(makeRecipe(name: "One"))
+        controller.saveRecipeModel(makeRecipe(name: "Two"))
 
-        let a = makeRecipe(name: "A only")
-        controller.saveRecipeModel(a)
-
-        currentUser = "userB"
-        let b = makeRecipe(name: "B only")
-        controller.saveRecipeModel(b)
-
-        #expect(controller.fetchRecipes().map(\.id) == [b.id])
-
-        currentUser = "userA"
-        #expect(controller.fetchRecipes().map(\.id) == [a.id])
-    }
-
-    @Test func withoutScope_savesLandInTheGuestScope() {
-        let controller = makeController(userID: { nil })
-        controller.saveRecipeModel(makeRecipe(name: "Guest"))
-        #expect(controller.fetchRecipes().map(\.name) == ["Guest"])
-    }
-
-    @Test func clearDatabase_asGuest_clearsGuestRecipesButNeverAnAccounts() {
-        // Settings → Reset as a guest used to be a silent no-op (nil scope refused); it must clear the guest's rows only.
-        var currentUser: String? = "userA"
-        let controller = makeController(userID: { currentUser })
-        let account = makeRecipe(name: "Account recipe")
-        controller.saveRecipeModel(account)
-
-        currentUser = nil
-        controller.saveRecipeModel(makeRecipe(name: "Guest recipe"))
-        controller.clearDatabase()
+        controller.deleteAllRecipes()
 
         #expect(controller.fetchRecipes().isEmpty)
-        currentUser = "userA"
-        #expect(controller.fetchRecipes().map(\.id) == [account.id])
+        #expect(controller.fetchRecipeCount() == 0)
     }
 }

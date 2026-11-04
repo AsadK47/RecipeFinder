@@ -27,7 +27,7 @@ import Foundation
     }
 
     @Test func saveRecipeModel_onReadyStore_returnsTrueAndPersists() {
-        let controller = PersistenceController(inMemory: true, userID: { "u" })
+        let controller = PersistenceController(inMemory: true)
         #expect(controller.isStoreLoaded)
 
         let recipe = makeRecipe(name: "Soup")
@@ -36,14 +36,14 @@ import Foundation
     }
 
     @Test func updateRecipe_whenRecipeMissing_returnsFalse() {
-        let controller = PersistenceController(inMemory: true, userID: { "u" })
+        let controller = PersistenceController(inMemory: true)
         #expect(controller.isStoreLoaded)
         // No matching recipe in the store → nothing to update.
         #expect(controller.updateRecipe(makeRecipe(name: "Ghost")) == false)
     }
 
     @Test func updateRecipe_existingRecipe_returnsTrue() {
-        let controller = PersistenceController(inMemory: true, userID: { "u" })
+        let controller = PersistenceController(inMemory: true)
         let recipe = makeRecipe(name: "Stew")
         #expect(controller.saveRecipeModel(recipe) == true)
 

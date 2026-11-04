@@ -1,11 +1,7 @@
 import SwiftUI
 
-// NOTE: Rewritten 2026-10-14 to reflect the app as it actually ships (optional accounts +
-// local-only storage), replacing the earlier "no accounts / collects nothing" fossil.
-// Two deliberate defaults, flagged for legal review:
-//   • "Sign in with Apple" is intentionally NOT described — it is hidden/blocked until paid
-//     Apple Developer Program enrolment. Add a clause here when the entitlement goes live.
-//   • Minimum age is stated as 13 (UK age of digital consent under UK GDPR).
+// NOTE: Updated 2026-11-04: the app has no accounts or sign-in — a single local user, local-only storage.
+// Flagged for legal review: minimum age is stated as 13 (UK age of digital consent under UK GDPR).
 // This copy is drafted from the code's real data flows; have a solicitor review before App Store submission.
 struct PrivacyPolicyView: View {
     @Environment(\.dismiss) var dismiss
@@ -51,11 +47,9 @@ struct PrivacyPolicyView: View {
 
                             BodyText("2.1 The Application is offline-first and private by design. The Company operates no servers and maintains no backend account for you. Information you enter or generate is stored on your Device and is not collected by, transmitted to, or accessible to the Company or any third party, except where you explicitly direct the Application to retrieve content from the internet (see Section 5).")
 
-                            SectionTitle("3. Accounts and Credentials")
+                            SectionTitle("3. No Accounts")
 
-                            BodyText("3.1 An account is optional. You may use the Application in guest mode without creating an account or providing any Personal Information.")
-
-                            BodyText("3.2 If you choose to create an account, the Application stores the email address and name you provide. These are stored locally on your Device in the iOS Keychain. Your email address is stored in hashed form, and your password is never stored in plain text — it is secured using salted PBKDF2 hashing. Your credentials are not transmitted to the Company or any third party.")
+                            BodyText("3.1 The Application does not have accounts or sign-in. You can use every feature without creating an account or providing any Personal Information. Any name or photo you add to your profile is stored only on your Device.")
                         }
 
                         Group {
@@ -98,16 +92,15 @@ struct PrivacyPolicyView: View {
                         Group {
                             SectionTitle("8. Data Security")
 
-                            BodyText("8.1 Credentials are held in the iOS Keychain. As your other data remains on your Device and is not transmitted to the Company, its security depends primarily on your Device's own protections.")
+                            BodyText("8.1 As your data remains on your Device and is not transmitted to the Company, its security depends primarily on your Device's own protections.")
 
-                            BodyText("8.2 The Company recommends that you secure your Device with a passcode and biometric authentication, and keep device encryption enabled.")
+                            BodyText("8.2 The Company recommends that you secure your Device with a strong passcode, and keep device encryption enabled.")
 
                             SectionTitle("9. Your Rights and Control")
 
                             BodyText("9.1 You retain complete control over your data. You may at any time:")
-                            LegalBulletPoint("Export your data via the Account section of the Application")
+                            LegalBulletPoint("Export your data via Settings > Data Management")
                             LegalBulletPoint("Delete your data via Settings > Data Management")
-                            LegalBulletPoint("Delete your account, which removes your stored credentials and profile from your Device")
                             LegalBulletPoint("Remove all data by uninstalling the Application from your Device")
                         }
 
@@ -118,7 +111,7 @@ struct PrivacyPolicyView: View {
 
                             SectionTitle("11. Children's Privacy")
 
-                            BodyText("11.1 The Application is not directed to children under the age of 13, and you should not create an account if you are under 13.")
+                            BodyText("11.1 The Application is not directed to children under the age of 13, and you should not use the Application if you are under 13.")
 
                             SectionTitle("12. Changes to This Privacy Policy")
 

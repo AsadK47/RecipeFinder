@@ -3,7 +3,6 @@ import Foundation
 enum Constants {
     
     enum UserDefaultsKeys {
-        static let hasPopulatedDatabase = "hasPopulatedDatabase"
         static let shoppingListItems = "ShoppingListItems"
         static let kitchenItems = "KitchenItems"
         static let collections = "RecipeCollections"

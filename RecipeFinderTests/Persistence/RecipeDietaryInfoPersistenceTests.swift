@@ -29,7 +29,7 @@ struct RecipeDietaryInfoPersistenceTests {
 
     @Test("vegetarian flag survives a save/fetch round-trip")
     func vegetarianRoundTrip() throws {
-        let store = PersistenceController(inMemory: true, userID: { "u1" })
+        let store = PersistenceController(inMemory: true)
         let recipe = makeRecipe(dietary: DietaryInfo(isVegetarian: true))
         store.saveRecipeModel(recipe)
         let loaded = try #require(store.fetchRecipes().first)
@@ -39,7 +39,7 @@ struct RecipeDietaryInfoPersistenceTests {
 
     @Test("vegan flag survives a save/fetch round-trip")
     func veganRoundTrip() throws {
-        let store = PersistenceController(inMemory: true, userID: { "u1" })
+        let store = PersistenceController(inMemory: true)
         let recipe = makeRecipe(dietary: DietaryInfo(isVegetarian: true, isVegan: true))
         store.saveRecipeModel(recipe)
         let loaded = try #require(store.fetchRecipes().first)
@@ -49,7 +49,7 @@ struct RecipeDietaryInfoPersistenceTests {
 
     @Test("gluten-free flag survives a save/fetch round-trip")
     func glutenFreeRoundTrip() throws {
-        let store = PersistenceController(inMemory: true, userID: { "u1" })
+        let store = PersistenceController(inMemory: true)
         let recipe = makeRecipe(dietary: DietaryInfo(isGlutenFree: true))
         store.saveRecipeModel(recipe)
         let loaded = try #require(store.fetchRecipes().first)
@@ -58,7 +58,7 @@ struct RecipeDietaryInfoPersistenceTests {
 
     @Test("all dietary flags survive a save/fetch round-trip")
     func allFlagsRoundTrip() throws {
-        let store = PersistenceController(inMemory: true, userID: { "u1" })
+        let store = PersistenceController(inMemory: true)
         let info = DietaryInfo(isVegetarian: true, isVegan: true, isGlutenFree: true, isDairyFree: true, isNutFree: true)
         let recipe = makeRecipe(dietary: info)
         store.saveRecipeModel(recipe)
@@ -72,7 +72,7 @@ struct RecipeDietaryInfoPersistenceTests {
 
     @Test("recipe with no dietary flags loads with all-false DietaryInfo")
     func noDietaryFlagsDefaultsToAllFalse() throws {
-        let store = PersistenceController(inMemory: true, userID: { "u1" })
+        let store = PersistenceController(inMemory: true)
         let recipe = makeRecipe(dietary: DietaryInfo())
         store.saveRecipeModel(recipe)
         let loaded = try #require(store.fetchRecipes().first)
@@ -83,7 +83,7 @@ struct RecipeDietaryInfoPersistenceTests {
 
     @Test("isSampleRecipe true survives a save/fetch round-trip")
     func isSampleRecipeRoundTrip() throws {
-        let store = PersistenceController(inMemory: true, userID: { "u1" })
+        let store = PersistenceController(inMemory: true)
         let recipe = makeRecipe(dietary: DietaryInfo(), isSample: true)
         store.saveRecipeModel(recipe)
         let loaded = try #require(store.fetchRecipes().first)
@@ -92,7 +92,7 @@ struct RecipeDietaryInfoPersistenceTests {
 
     @Test("isSampleRecipe false is preserved (not coerced to true)")
     func isSampleRecipeFalsePreserved() throws {
-        let store = PersistenceController(inMemory: true, userID: { "u1" })
+        let store = PersistenceController(inMemory: true)
         let recipe = makeRecipe(dietary: DietaryInfo(), isSample: false)
         store.saveRecipeModel(recipe)
         let loaded = try #require(store.fetchRecipes().first)
@@ -101,7 +101,7 @@ struct RecipeDietaryInfoPersistenceTests {
 
     @Test("dietaryInfo survives an update (not just a create)")
     func dietaryInfoSurvivesUpdate() throws {
-        let store = PersistenceController(inMemory: true, userID: { "u1" })
+        let store = PersistenceController(inMemory: true)
         var recipe = makeRecipe(dietary: DietaryInfo())
         store.saveRecipeModel(recipe)
 

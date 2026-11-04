@@ -6,7 +6,7 @@ struct RecipeSearchView: View {
     @Environment(\.recipeStore) private var recipeStore
     /// Library from the store; reading it in a body re-renders that view on any write.
     private var recipes: [RecipeModel] { recipeStore.recipes }
-    /// True while the library is still fetching post-sign-in, so empty `recipes` shows a skeleton, not the empty state.
+    /// True while the library is still fetching on launch, so empty `recipes` shows a skeleton, not the empty state.
     var isLoading: Bool = false
     @State private var showCollections = false
     @State private var searchText = ""

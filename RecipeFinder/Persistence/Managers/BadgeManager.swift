@@ -33,7 +33,7 @@ final class BadgeManager: BadgeManaging {
     /// Non-nil when a celebration sheet should show; `dismissCelebration()` clears it and drains the queue for back-to-back unlocks.
     private(set) var pendingCelebration: BadgeType?
 
-    @ObservationIgnored private let storage: UserScopedStorage
+    @ObservationIgnored private let storage: LocalStore
     @ObservationIgnored private let badgesKey = "unlockedBadges"
     @ObservationIgnored private let shownCelebrationsKey = "shownBadgeCelebrations"
 
@@ -51,13 +51,13 @@ final class BadgeManager: BadgeManaging {
         loadShownCelebrations()
     }
 
-    init(storage: UserScopedStorage) {
+    init(storage: LocalStore) {
         self.storage = storage
         loadBadges()
         loadShownCelebrations()
     }
 
-    func reloadForCurrentUser() {
+    func reload() {
         loadBadges()
         loadShownCelebrations()
     }

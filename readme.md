@@ -19,11 +19,9 @@
 
 <div align="center">
 
-<img src="screenshots/create_account.png" alt="Create Account" width="250"/>
 <img src="screenshots/home_page.png" alt="Home Page" width="250"/>
-<img src="screenshots/splash_1.png" alt="Welcome Splash" width="250"/>
 
-*Beautiful recipe management from sign-up to cooking*
+*Beautiful recipe management from import to cooking*
 
 </div>
 
@@ -59,8 +57,7 @@ open RecipeFinder.xcodeproj  # Press ⌘+R to run
 - **⏲ Cook Timer** - Step timer with background alerts and haptic feedback
 
 ### Security & Privacy
-- **🔐 Local Authentication** - Face ID/Touch ID support with PBKDF2 password hashing (100,000 rounds)
-- **🔒 Secure Storage** - iOS Keychain integration with Secure Enclave
+- **🔐 No Accounts** - No sign-in, no backend; your recipes and profile stay on your device
 - **🛡️ Privacy-Focused** - Designed with data protection and privacy in mind
 
 ### Design & Accessibility
@@ -73,7 +70,7 @@ open RecipeFinder.xcodeproj  # Press ⌘+R to run
 **Architecture**: SwiftUI with Clean Architecture (Presentation / Domain / Data) • Core Data persistence • Swift async/await concurrency  
 **Dependencies**: [Kingfisher](https://github.com/onevcat/Kingfisher) (image loading & caching) • [ConfettiSwiftUI](https://github.com/simibac/ConfettiSwiftUI) (celebration effects)  
 **Performance**: Hardware-accelerated rendering • Async image loading • Optimized Core Data fetches  
-**Security**: Local-first storage • PBKDF2 password hashing (HMAC-SHA256, 100k rounds) • iOS Keychain • Secure Enclave biometrics  
+**Security**: Local-first storage • No accounts or backend  
 **Privacy**: Privacy-focused design • See Privacy Policy for details  
 **Accessibility**: VoiceOver support • Dynamic Type • WCAG 2.1 AA contrast • 44pt tap targets
 

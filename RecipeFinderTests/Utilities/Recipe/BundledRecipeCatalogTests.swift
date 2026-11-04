@@ -286,7 +286,7 @@ struct BundledRecipeCatalogTests {
     @Test("seeding starters + bundled catalog persists every recipe without counting toward badges")
     @MainActor
     func seedingPersistsAll() async {
-        let persistence = PersistenceController(inMemory: true, userID: { nil })
+        let persistence = PersistenceController(inMemory: true)
         let all = SeedRecipeProvider.recipes + BundledRecipeCatalog.load()
         #expect(await persistence.seedRecipes(all))
         #expect(persistence.fetchRecipeCount() == all.count)

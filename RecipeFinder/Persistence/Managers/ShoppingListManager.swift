@@ -43,7 +43,7 @@ final class ShoppingListManager: ShoppingListManaging {
     static let shared = ShoppingListManager()
 
     @ObservationIgnored private let saveKey = Constants.UserDefaultsKeys.shoppingListItems
-    @ObservationIgnored private let storage: UserScopedStorage
+    @ObservationIgnored private let storage: LocalStore
     @ObservationIgnored private let badgeManager: BadgeManager
 
     private(set) var items: [ShoppingListModel] = []
@@ -54,13 +54,13 @@ final class ShoppingListManager: ShoppingListManaging {
         loadItems()
     }
 
-    init(storage: UserScopedStorage, badgeManager: BadgeManager = .shared) {
+    init(storage: LocalStore, badgeManager: BadgeManager = .shared) {
         self.storage = storage
         self.badgeManager = badgeManager
         loadItems()
     }
     
-    func reloadForCurrentUser() {
+    func reload() {
         loadItems()
     }
     
