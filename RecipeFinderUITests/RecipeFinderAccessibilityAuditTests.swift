@@ -54,6 +54,15 @@ final class RecipeFinderAccessibilityAuditTests: XCTestCase {
             )
             wait(for: [keyboardGone], timeout: 3)
         }
+        // The button vanishes before the keyboard finishes sliding out; wait for the keyboard itself to leave.
+        let keyboard = app.keyboards.firstMatch
+        if keyboard.exists {
+            let keyboardHidden = XCTNSPredicateExpectation(
+                predicate: NSPredicate(format: "exists == false"),
+                object: keyboard
+            )
+            wait(for: [keyboardHidden], timeout: 3)
+        }
 
         // Skip contrast: rows sit on frosted `.appCard()` material, which the audit always flags.
         try app.performAccessibilityAudit(for: .all.subtracting(.contrast), auditHandler)

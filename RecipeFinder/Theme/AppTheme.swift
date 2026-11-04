@@ -42,10 +42,12 @@ extension View {
 }
 
 private struct AdaptiveForegroundColorModifier: ViewModifier {
-    @Environment(\.colorScheme) var colorScheme
     let opacity: Double
 
     func body(content: Content) -> some View {
-        content.foregroundStyle(AppTheme.textColor(for: colorScheme, opacity: opacity))
+        content.foregroundStyle(AppTheme.adaptive(
+            light: AppTheme.textColor(for: .light, opacity: opacity),
+            dark: AppTheme.textColor(for: .dark, opacity: opacity)
+        ))
     }
 }

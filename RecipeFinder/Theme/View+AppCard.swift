@@ -8,7 +8,6 @@ extension View {
 }
 
 private struct AppCardModifier: ViewModifier {
-    @Environment(\.colorScheme) private var colorScheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     let cornerRadius: CGFloat
 
@@ -16,7 +15,10 @@ private struct AppCardModifier: ViewModifier {
         content.background {
             let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
             if cardStyle == .solid {
-                shape.fill(AppTheme.cardBackground(for: colorScheme))
+                shape.fill(AppTheme.adaptive(
+                    light: AppTheme.cardBackground(for: .light),
+                    dark: AppTheme.cardBackground(for: .dark)
+                ))
             } else {
                 shape.fill(.ultraThinMaterial)
             }

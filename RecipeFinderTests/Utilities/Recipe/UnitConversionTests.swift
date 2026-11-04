@@ -234,6 +234,7 @@ final class UnitConversionTests: XCTestCase {
 }
 
 @Suite("Ingredient display")
+@MainActor
 struct IngredientDisplayTests {
     @Test("Small spoonfuls of spice stay as spoons in both systems (was \"½ g\" of cumin)", arguments: ["tsp", "tbsp", "pinch"])
     func smallSpoonsUnchanged(unit: String) {

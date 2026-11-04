@@ -11,7 +11,6 @@ enum CardViewLayout {
 }
 
 struct CardView<Content: View>: View {
-    @Environment(\.colorScheme) var colorScheme
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     let content: Content
 
@@ -25,11 +24,15 @@ struct CardView<Content: View>: View {
             .clipShape(RoundedRectangle(cornerRadius: CardViewLayout.cornerRadius))
     }
 
+    // Trait-resolved colours rather than @Environment(\.colorScheme), which warns when evaluated outside a hosted view.
     @ViewBuilder
     private var cardBackground: some View {
         if cardStyle == .solid {
             RoundedRectangle(cornerRadius: CardViewLayout.cornerRadius)
-                .fill(AppTheme.cardBackground(for: colorScheme))
+                .fill(AppTheme.adaptive(
+                    light: AppTheme.cardBackground(for: .light),
+                    dark: AppTheme.cardBackground(for: .dark)
+                ))
                 .shadow(
                     color: Color.black.opacity(CardViewLayout.shadowOpacitySolid),
                     radius: CardViewLayout.shadowRadius,
@@ -40,7 +43,10 @@ struct CardView<Content: View>: View {
             RoundedRectangle(cornerRadius: CardViewLayout.cornerRadius)
                 .fill(.ultraThinMaterial)
                 .shadow(
-                    color: Color.black.opacity(frostedShadowOpacity(for: colorScheme)),
+                    color: AppTheme.adaptive(
+                        light: Color.black.opacity(frostedShadowOpacity(for: .light)),
+                        dark: Color.black.opacity(frostedShadowOpacity(for: .dark))
+                    ),
                     radius: CardViewLayout.shadowRadiusFrosted,
                     x: 0,
                     y: CardViewLayout.shadowY

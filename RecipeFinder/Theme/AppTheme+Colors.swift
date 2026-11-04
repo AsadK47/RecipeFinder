@@ -77,6 +77,13 @@ extension AppTheme {
         traits.userInterfaceStyle == .dark ? .secondaryLabel : .label
     })
 
+    /// Trait-resolved light/dark colour, so shared modifiers needn't read `@Environment(\.colorScheme)` (which warns when evaluated outside a view, e.g. under ViewInspector).
+    static func adaptive(light: Color, dark: Color) -> Color {
+        Color(UIColor { traits in
+            traits.userInterfaceStyle == .dark ? UIColor(dark) : UIColor(light)
+        })
+    }
+
     static func accentColor(for theme: ThemeType) -> Color {
         switch theme {
         case .teal:     return tealBrightLight
