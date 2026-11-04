@@ -33,8 +33,6 @@ struct RecipeSearchView: View {
     @State private var availableCuisines: [String] = []
     @State private var categories: [String] = []
     @FocusState private var isSearchFocused: Bool
-    @Environment(\.colorScheme) var colorScheme
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @AppStorage("skipRecipeDeleteConfirmation") private var skipDeleteConfirmation: Bool = false
     @Environment(\.collections) private var collectionManager
@@ -271,8 +269,7 @@ struct RecipeSearchView: View {
     private var collectionsSheet: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                    .ignoresSafeArea()
+                AppBackground()
                 CollectionsInlineView()
             }
             .navigationTitle("Collections")
@@ -358,8 +355,7 @@ struct RecipeSearchView: View {
     }
     
     private var backgroundView: some View {
-        AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-            .ignoresSafeArea()
+        AppBackground()
     }
     
     

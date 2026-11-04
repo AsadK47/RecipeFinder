@@ -5,15 +5,12 @@ struct AddToCollectionSheet: View {
     let recipe: RecipeModel
     @Environment(\.collections) private var manager
     @Environment(\.dismiss) var dismiss
-    @Environment(\.colorScheme) private var colorScheme
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @State private var showNewCollection = false
 
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                    .ignoresSafeArea()
+                AppBackground()
 
                 Group {
                     if manager.collections.isEmpty {

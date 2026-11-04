@@ -16,9 +16,15 @@ inputs **blend** into the glass via translucent fills, not solid fills.
 | `.appInputField()` | any text field / menu-style input on a card | `Theme/View+AppInputField.swift` — translucent `white.opacity(dividerOpacity)` fill + a 0.5pt `dividerColor` hairline border, radius 12. Pair with `.textFieldStyle(.plain)`. |
 | `.shimmering(active:)` | loading skeleton sweep | `Components/Recipe/Shimmer.swift` |
 | `GlassCard` | detail-screen info cards | existing component |
+| `AppBackground()` | every screen/sheet backdrop (`ZStack { AppBackground(); content }`) | `Theme/ThemeStore.swift` — themed gradient, ignores safe area |
+| `AppTheme.accentColor` | the user's theme colour | reads `ThemeStore.shared` (single source; Observation re-renders readers on change) |
 | `PrimaryButton` | primary CTAs (capsule) | existing component |
 
 ## Hard rules (violations are the bugs we keep re-fixing)
+- **Never** keep a per-view theme copy (`@AppStorage("appTheme")`, a `selectedTheme`
+  parameter) or pass `colorScheme` into a colour helper in shared modifiers — read
+  `AppTheme.accentColor` / `AppBackground()`, and use `AppTheme.adaptive(light:dark:)`
+  for light/dark colours. Per-view copies drifted (22 sites stayed teal).
 - **Never** `.textFieldStyle(.roundedBorder)` — it paints an opaque white box that
   clashes with frosted cards. Use `.textFieldStyle(.plain)` + `.appInputField()`.
 - **Never** hand-roll a card/field background (`Color.white.opacity(...)`,

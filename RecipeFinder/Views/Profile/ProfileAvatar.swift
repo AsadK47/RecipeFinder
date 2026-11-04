@@ -5,7 +5,6 @@ struct ProfileAvatar: View {
     let image: UIImage?
     let initials: String
     let chefType: ChefType
-    let selectedTheme: AppTheme.ThemeType
     let colorScheme: ColorScheme
     let onTap: () -> Void
 
@@ -22,7 +21,7 @@ struct ProfileAvatar: View {
                     } else {
                         ZStack {
                             Circle()
-                                .fill(AppTheme.accentColor(for: selectedTheme))
+                                .fill(AppTheme.accentColor)
                                 .frame(width: AppTheme.width100, height: AppTheme.width100)
                             
                             Text(initials)
@@ -38,7 +37,7 @@ struct ProfileAvatar: View {
                         
                         Image(systemName: "camera.fill")
                             .font(.system(size: AppTheme.fontSize12, weight: .semibold))
-                            .foregroundStyle(AppTheme.accentColor(for: selectedTheme))
+                            .foregroundStyle(AppTheme.accentColor)
                     }
                 }
             }

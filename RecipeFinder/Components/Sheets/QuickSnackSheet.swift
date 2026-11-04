@@ -11,8 +11,6 @@ struct QuickSnackSheet: View {
     @State private var selectedEmoji = "🍿"
     @State private var servings = 1
 
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
-    @Environment(\.colorScheme) var colorScheme
 
     private var filteredSnacks: [SnackItem] {
         guard !searchText.isEmpty else { return SnackDatabase.allSnacks }
@@ -27,8 +25,7 @@ struct QuickSnackSheet: View {
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                .ignoresSafeArea()
+            AppBackground()
 
             VStack(spacing: 0) {
 
@@ -112,7 +109,7 @@ struct QuickSnackSheet: View {
 
                                     if searchText.localizedCaseInsensitiveCompare(snack.name) == .orderedSame {
                                         Image(systemName: "checkmark")
-                                            .foregroundStyle(AppTheme.accentColor(for: selectedTheme))
+                                            .foregroundStyle(AppTheme.accentColor)
                                             .font(.callout.weight(.semibold))
                                     }
                                 }
@@ -165,7 +162,7 @@ struct QuickSnackSheet: View {
                             Image(systemName: "minus.circle.fill")
                                 .font(.title3)
                                 .foregroundStyle(servings > 1
-                                    ? AppTheme.accentColor(for: selectedTheme)
+                                    ? AppTheme.accentColor
                                     : .secondary)
                         }
                         .disabled(servings <= 1)
@@ -181,7 +178,7 @@ struct QuickSnackSheet: View {
                         } label: {
                             Image(systemName: "plus.circle.fill")
                                 .font(.title3)
-                                .foregroundStyle(AppTheme.accentColor(for: selectedTheme))
+                                .foregroundStyle(AppTheme.accentColor)
                         }
                     }
 
@@ -191,7 +188,7 @@ struct QuickSnackSheet: View {
                             .lineLimit(1)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, AppTheme.spacing14)
-                            .background(AppTheme.accentColor(for: selectedTheme)
+                            .background(AppTheme.accentColor
                                 .opacity(canAdd ? 1 : 0.4))
                             .adaptiveForegroundColor()
                             .cornerRadius(AppTheme.cornerRadius12)

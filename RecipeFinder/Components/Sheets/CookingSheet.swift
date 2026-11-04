@@ -8,8 +8,6 @@ struct CookingSheet: View {
     @Environment(\.recipeStore) private var recipeStore
     @Environment(\.badges) private var badges
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.colorScheme) private var colorScheme
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
 
     private var metrics: BadgeMetrics {
         BadgeMetrics.from(recipes: recipeStore.recipes, streakWeeks: streak.currentWeeks)
@@ -32,7 +30,7 @@ struct CookingSheet: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme).ignoresSafeArea()
+                AppBackground()
 
                 ScrollView {
                     VStack(spacing: AppTheme.spacing20) {

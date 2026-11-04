@@ -6,7 +6,6 @@ struct ContentView: View {
     @Environment(\.recipeStore) private var store
     @State private var selectedTab: Int = 0
     @State private var sidebarSelection: SidebarItem? = .recipes
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
@@ -18,7 +17,6 @@ struct ContentView: View {
     @State private var pendingFileImport: RecipeModel?
     @State private var fileImportError: String?
 
-    private var themeBinding: AppTheme.ThemeType { selectedTheme }
 
     private enum SidebarItem: Int, Hashable, CaseIterable {
         case recipes, groceries, importRecipes, planning, settings
@@ -133,8 +131,7 @@ struct ContentView: View {
 
     private var iPhoneLayout: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: themeBinding, colorScheme: colorScheme)
-                .ignoresSafeArea()
+            AppBackground()
 
             TabView(selection: $selectedTab) {
                 RecipeSearchView(isLoading: store.isLoading)
@@ -155,12 +152,11 @@ struct ContentView: View {
                 .tabItem { Label("Settings", systemImage: "gearshape.fill") }
                 .tag(4)
             }
-            .environment(\.appTheme, themeBinding)
             .tint(AppTheme.textColor(for: colorScheme))
             .onAppear {
                 configureTabBarAppearance()
             }
-            .onChange(of: selectedTheme) { _, _ in
+            .onChange(of: ThemeStore.shared.theme) { _, _ in
                 configureTabBarAppearance()
             }
             .onChange(of: cardStyle) { _, _ in
@@ -181,8 +177,7 @@ struct ContentView: View {
     private var iPadLayout: some View {
         NavigationSplitView {
             ZStack {
-                AppTheme.backgroundGradient(for: themeBinding, colorScheme: colorScheme)
-                    .ignoresSafeArea()
+                AppBackground()
 
                 List(SidebarItem.allCases, id: \.self, selection: $sidebarSelection) { item in
                     Label(item.label, systemImage: item.icon)
@@ -194,7 +189,6 @@ struct ContentView: View {
             }
         } detail: {
             sidebarDetailView
-                .environment(\.appTheme, themeBinding)
         }
     }
 

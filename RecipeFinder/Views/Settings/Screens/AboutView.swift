@@ -3,7 +3,6 @@ import SwiftUI
 /// App identity, version details, and support contact.
 struct AboutView: View {
     @Environment(\.colorScheme) var colorScheme
-    @Environment(\.appTheme) var appTheme
 
     private var appVersion: String {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
@@ -18,7 +17,7 @@ struct AboutView: View {
             VStack(spacing: AppTheme.spacing16) {
                 Image(systemName: "book.circle.fill")
                     .font(.system(size: AppTheme.fontSize80))
-                    .foregroundStyle(AppTheme.accentColor(for: appTheme))
+                    .foregroundStyle(AppTheme.accentColor)
 
                 Text("RecipeFinder")
                     .font(.system(size: AppTheme.fontSize32, weight: .bold))

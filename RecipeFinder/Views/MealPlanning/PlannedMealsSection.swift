@@ -6,7 +6,6 @@ struct PlannedMealsSection: View {
     let selectedDateString: String
     let cardStyle: CardStyle
     let colorScheme: ColorScheme
-    let selectedTheme: AppTheme.ThemeType
     let recipeFor: (MealTime) -> RecipeModel?
     let mealPlanFor: (MealTime) -> MealPlanModel?
     let onSelectMealTime: (MealTime) -> Void
@@ -87,7 +86,7 @@ struct PlannedMealsSection: View {
             if hasReminder(mealTime) {
                 Image(systemName: "bell.fill")
                     .font(.system(size: AppTheme.fontSize12))
-                    .foregroundStyle(AppTheme.accentColor(for: selectedTheme))
+                    .foregroundStyle(AppTheme.accentColor)
                     .accessibilityLabel("Reminder set")
             }
 
@@ -114,7 +113,7 @@ struct PlannedMealsSection: View {
         .overlay(alignment: .top) {
             if dropTarget == mealTime {
                 RoundedRectangle(cornerRadius: AppTheme.cornerRadius16)
-                    .stroke(AppTheme.accentColor(for: selectedTheme), lineWidth: 2)
+                    .stroke(AppTheme.accentColor, lineWidth: 2)
             }
         }
         .animation(.easeInOut(duration: 0.2), value: dropTarget)
@@ -135,7 +134,7 @@ struct PlannedMealsSection: View {
             HStack(spacing: AppTheme.spacing12) {
                 Image(systemName: "plus.circle.fill")
                     .font(.title3)
-                    .foregroundStyle(AppTheme.accentColor(for: selectedTheme))
+                    .foregroundStyle(AppTheme.accentColor)
 
                 Text("Add Another Meal")
                     .font(.system(size: AppTheme.fontSize16, weight: .semibold))

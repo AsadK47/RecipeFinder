@@ -1,16 +1,5 @@
 import SwiftUI
 
-private struct ThemeEnvironmentKey: EnvironmentKey {
-    static let defaultValue: AppTheme.ThemeType = .teal
-}
-
-extension EnvironmentValues {
-    var appTheme: AppTheme.ThemeType {
-        get { self[ThemeEnvironmentKey.self] }
-        set { self[ThemeEnvironmentKey.self] = newValue }
-    }
-}
-
 /// Design tokens and theming, split across focused extensions: `+Metrics` (sizing), `+Constants` (opacities/timings), `+Palette` (colors), `+Colors` (adaptive/accent), `+Gradients`.
 enum AppTheme {
     enum ThemeType: String, CaseIterable, Identifiable {

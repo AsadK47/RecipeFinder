@@ -3,8 +3,6 @@ import SwiftUI
 /// Paste-a-caption entry point: free text is routed through the on-device interpreter/heuristic parser, then the wizard is presented to review before saving.
 struct PasteTextImportSheet: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.colorScheme) private var colorScheme
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
 
     @State private var text = ""
     @State private var prefill: RecipeWizardView.PrefilledRecipeData?
@@ -20,8 +18,7 @@ struct PasteTextImportSheet: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                    .ignoresSafeArea()
+                AppBackground()
 
                 VStack(alignment: .leading, spacing: AppTheme.spacing16) {
                     Text("Paste a recipe from anywhere — a caption, notes, or a message. We'll pull out the ingredients and steps for you to review.")

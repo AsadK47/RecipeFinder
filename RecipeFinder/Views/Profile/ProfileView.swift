@@ -4,7 +4,6 @@ struct ProfileView: View {
     @Environment(\.profile) private var profileManager
     @Environment(\.badges) private var badgeManager
     @Environment(\.colorScheme) private var colorScheme
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
 
     @State private var activeSheet: ProfileSheet?
@@ -20,8 +19,7 @@ struct ProfileView: View {
 
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                .ignoresSafeArea()
+            AppBackground()
 
             VStack(spacing: 0) {
                 VStack(spacing: AppTheme.spacing12) {
@@ -49,7 +47,6 @@ struct ProfileView: View {
                             image: profileImage,
                             initials: getInitials(),
                             chefType: selectedChefType,
-                            selectedTheme: selectedTheme,
                             colorScheme: colorScheme,
                             onTap: {
                                 activeSheet = .imagePicker
@@ -75,7 +72,6 @@ struct ProfileView: View {
 
                         ProfileChefTypeSection(
                             selectedChefType: $selectedChefType,
-                            selectedTheme: selectedTheme
                         )
 
                         Button(action: saveProfile) {
@@ -86,7 +82,7 @@ struct ProfileView: View {
                             }
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(AppTheme.accentColor(for: selectedTheme))
+                            .background(AppTheme.accentColor)
                             .adaptiveForegroundColor()
                             .cornerRadius(AppTheme.cornerRadius12)
                         }

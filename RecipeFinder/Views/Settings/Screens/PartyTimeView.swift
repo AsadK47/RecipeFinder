@@ -3,7 +3,6 @@ import AudioToolbox
 
 /// Hold-to-vibrate easter egg tucked behind Appearance & Theme.
 struct PartyTimeView: View {
-    @Environment(\.appTheme) var appTheme
     @State private var isVibrating = false
     @State private var vibrationTimer: Timer?
 
@@ -12,7 +11,7 @@ struct PartyTimeView: View {
             VStack(spacing: AppTheme.spacing12) {
                 Image(systemName: "party.popper.fill")
                     .font(.system(size: AppTheme.fontSize60))
-                    .foregroundStyle(AppTheme.accentColor(for: appTheme))
+                    .foregroundStyle(AppTheme.accentColor)
                     .symbolEffect(.bounce, value: isVibrating)
 
                 Text("Party Time")
@@ -33,7 +32,7 @@ struct PartyTimeView: View {
                     if isVibrating {
                         ForEach(0..<3) { index in
                             Circle()
-                                .stroke(AppTheme.accentColor(for: appTheme).opacity(0.3), lineWidth: 2)
+                                .stroke(AppTheme.accentColor.opacity(0.3), lineWidth: 2)
                                 .frame(width: AppTheme.width200, height: AppTheme.height200)
                                 .scaleEffect(isVibrating ? AppTheme.scaleEffectBounce : AppTheme.scaleNeutral)
                                 .opacity(isVibrating ? AppTheme.zeroOpacity : AppTheme.highEmphasisOpacity)
@@ -50,14 +49,14 @@ struct PartyTimeView: View {
                         .fill(
                             LinearGradient(
                                 colors: isVibrating ?
-                                    [AppTheme.accentColor(for: appTheme), AppTheme.accentColor(for: appTheme).opacity(0.7)] :
-                                    [AppTheme.accentColor(for: appTheme).opacity(0.8), AppTheme.accentColor(for: appTheme).opacity(0.6)],
+                                    [AppTheme.accentColor, AppTheme.accentColor.opacity(0.7)] :
+                                    [AppTheme.accentColor.opacity(0.8), AppTheme.accentColor.opacity(0.6)],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
                         )
                         .frame(width: AppTheme.width200, height: AppTheme.height200)
-                        .shadow(color: AppTheme.accentColor(for: appTheme).opacity(0.5), radius: isVibrating ? AppTheme.shadowRadiusGlowActive : AppTheme.shadowRadiusGlow)
+                        .shadow(color: AppTheme.accentColor.opacity(0.5), radius: isVibrating ? AppTheme.shadowRadiusGlowActive : AppTheme.shadowRadiusGlow)
                         .scaleEffect(isVibrating ? AppTheme.transitionScaleUp : AppTheme.scaleNeutral)
                         .animation(.easeInOut(duration: AppTheme.animationDelayMedium).repeatForever(autoreverses: true), value: isVibrating)
 

@@ -2,8 +2,6 @@ import SwiftUI
 
 struct FilterSheet: View {
     @Environment(\.dismiss) var dismiss
-    @Environment(\.colorScheme) var colorScheme
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
     let categories: [String]
@@ -34,8 +32,7 @@ struct FilterSheet: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                    .ignoresSafeArea()
+                AppBackground()
                 
                 ScrollView {
                     VStack(alignment: .leading, spacing: AppTheme.spacing32) {

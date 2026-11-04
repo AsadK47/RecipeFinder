@@ -7,8 +7,6 @@ struct RecipeRefreshSheet: View {
     @State private var selectedFields: Set<RecipeDiffField>
     let onApply: (RecipeModel) -> Void
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.colorScheme) private var colorScheme
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
 
     init(diff: RecipeDiff, sourceURL: URL, onApply: @escaping (RecipeModel) -> Void) {
         self.diff = diff
@@ -20,8 +18,7 @@ struct RecipeRefreshSheet: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                    .ignoresSafeArea()
+                AppBackground()
                 List {
                     Section {
                         Label {

@@ -180,6 +180,8 @@
 		F3AEF8D3309B571D00A9C5E0 /* LocalStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AEF8D2309B571D00A9C5E0 /* LocalStoreTests.swift */; };
 		F3AEF8D5309B572300A9C5E0 /* ManagerRelaunchPersistenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AEF8D4309B572300A9C5E0 /* ManagerRelaunchPersistenceTests.swift */; };
 		F3AEF8D7309B754900A9C5E0 /* BundledRecipeRenderAuditTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AEF8D6309B754900A9C5E0 /* BundledRecipeRenderAuditTests.swift */; };
+		F3AEF8D9309B80F800A9C5E0 /* ThemeStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AEF8D8309B80F800A9C5E0 /* ThemeStoreTests.swift */; };
+		F3AEF8DB309B80FC00A9C5E0 /* ThemeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AEF8DA309B80FC00A9C5E0 /* ThemeStore.swift */; };
 		F3B7D8DC30684E5900991908 /* RecipeImageViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D8DB30684E5900991908 /* RecipeImageViewTests.swift */; };
 		F3B7D8DE30684FC800991908 /* PhotoSourcePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D8DD30684FC800991908 /* PhotoSourcePicker.swift */; };
 		F3B7D8E0306947ED00991908 /* MealTimeReorderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B7D8DF306947ED00991908 /* MealTimeReorderTests.swift */; };
@@ -636,6 +638,8 @@
 		F3AEF8D2309B571D00A9C5E0 /* LocalStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalStoreTests.swift; sourceTree = "<group>"; };
 		F3AEF8D4309B572300A9C5E0 /* ManagerRelaunchPersistenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagerRelaunchPersistenceTests.swift; sourceTree = "<group>"; };
 		F3AEF8D6309B754900A9C5E0 /* BundledRecipeRenderAuditTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundledRecipeRenderAuditTests.swift; sourceTree = "<group>"; };
+		F3AEF8D8309B80F800A9C5E0 /* ThemeStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeStoreTests.swift; sourceTree = "<group>"; };
+		F3AEF8DA309B80FC00A9C5E0 /* ThemeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeStore.swift; sourceTree = "<group>"; };
 		F3B7D8DB30684E5900991908 /* RecipeImageViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeImageViewTests.swift; sourceTree = "<group>"; };
 		F3B7D8DD30684FC800991908 /* PhotoSourcePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoSourcePicker.swift; sourceTree = "<group>"; };
 		F3B7D8DF306947ED00991908 /* MealTimeReorderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealTimeReorderTests.swift; sourceTree = "<group>"; };
@@ -978,6 +982,7 @@
 				F3E9D1B130457B00008BF231 /* AppTheme+Gradients.swift */,
 				F3AD2EBD3061940600274E33 /* View+AppCard.swift */,
 				F3AD2EF030657D2100274E33 /* View+AppInputField.swift */,
+				F3AEF8DA309B80FC00A9C5E0 /* ThemeStore.swift */,
 			);
 			path = Theme;
 			sourceTree = "<group>";
@@ -1133,6 +1138,7 @@
 				9E6C2C5D2FB4A4BE0083A08B /* AdaptiveSpacingTests.swift */,
 				9E6C2C5E2FB4A4BE0083A08B /* ExtensionsTests.swift */,
 				F36AED663043343300935A3C /* MemoCacheTests.swift */,
+				F3AEF8D8309B80F800A9C5E0 /* ThemeStoreTests.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -2408,6 +2414,7 @@
 				9E5D20402FB25E6300F2896A /* QuickSnackSheet.swift in Sources */,
 				9E6C2C3D2FB4778E0083A08B /* BadgeCard.swift in Sources */,
 				F36AED7D304346D400935A3C /* MealPlanCalendar.swift in Sources */,
+				F3AEF8DB309B80FC00A9C5E0 /* ThemeStore.swift in Sources */,
 				9E6C2C3E2FB4778E0083A08B /* ChefTypeCard.swift in Sources */,
 				F3E9D266304B71CA008BF231 /* GroceriesHeader.swift in Sources */,
 				F3B837DB3055F15B0003AEF8 /* CollectionDetailView.swift in Sources */,
@@ -2553,6 +2560,7 @@
 				F3B837E13055F9EE0003AEF8 /* RecipeWizardPersistenceTests.swift in Sources */,
 				F3D04F2C305EC6E5005A930D /* CookingSessionTests.swift in Sources */,
 				9E5B399D2FAD024A00C96DB3 /* BadgeModelTests.swift in Sources */,
+				F3AEF8D9309B80F800A9C5E0 /* ThemeStoreTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

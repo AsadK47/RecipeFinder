@@ -7,7 +7,6 @@ private let logger = AppLogger.logger(category: "PhotoImport")
 struct PhotoImportSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
 
     @State private var selectedItem: PhotosPickerItem?
     @State private var showCamera = false
@@ -27,12 +26,11 @@ struct PhotoImportSheet: View {
 
     var body: some View {
         // Capture theme/scheme as Sendable values so the @Sendable label closures don't touch @MainActor state.
-        let theme = selectedTheme
+        let theme = ThemeStore.shared.theme
         let scheme = colorScheme
         return NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: theme, colorScheme: scheme)
-                    .ignoresSafeArea()
+                AppBackground()
 
                 VStack(spacing: AppTheme.spacing16) {
                     Text("Point at a cookbook page, screenshot, or handwritten recipe. We read the text on your device — nothing leaves your phone.")

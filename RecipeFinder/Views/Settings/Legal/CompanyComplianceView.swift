@@ -2,14 +2,11 @@ import SwiftUI
 
 struct CompanyComplianceView: View {
     @Environment(\.dismiss) var dismiss
-    @Environment(\.colorScheme) var colorScheme
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                    .ignoresSafeArea()
+                AppBackground()
                 
                 ScrollView {
                     VStack(alignment: .leading, spacing: AppTheme.spacing24) {

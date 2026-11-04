@@ -5,8 +5,6 @@ struct ImportView: View {
     @Environment(\.recipeStore) private var recipeStore
     private var recipes: [RecipeModel] { recipeStore.recipes }
 
-    @Environment(\.colorScheme) private var colorScheme
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
 
     @State private var showLinkImport = false
     @State private var showPasteImport = false
@@ -17,8 +15,7 @@ struct ImportView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                    .ignoresSafeArea()
+                AppBackground()
 
                 VStack(spacing: 0) {
                     ScreenTitleHeader("Import a Recipe") {
@@ -171,5 +168,4 @@ struct ImportView: View {
 
 #Preview {
     ImportView()
-        .environment(\.appTheme, .teal)
 }

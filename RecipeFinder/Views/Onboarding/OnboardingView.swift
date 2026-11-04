@@ -3,8 +3,6 @@ import SwiftUI
 struct OnboardingView: View {
     @Environment(\.dismiss) private var dismiss
     var onComplete: (() -> Void)? = nil
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
-    @Environment(\.colorScheme) private var colorScheme
 
     @State private var currentPage = 0
 
@@ -65,17 +63,16 @@ struct OnboardingView: View {
 
     private var backdrop: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                .ignoresSafeArea()
+            AppBackground()
 
             Circle()
-                .fill(AppTheme.accentColor(for: selectedTheme).opacity(0.25))
+                .fill(AppTheme.accentColor.opacity(0.25))
                 .frame(width: 300, height: 300)
                 .blur(radius: 70)
                 .offset(x: -120, y: -200)
 
             Circle()
-                .fill(AppTheme.accentColor(for: selectedTheme).opacity(0.15))
+                .fill(AppTheme.accentColor.opacity(0.15))
                 .frame(width: 260, height: 260)
                 .blur(radius: 80)
                 .offset(x: 130, y: 280)

@@ -6,8 +6,6 @@ struct OnboardingSlideView: View {
     let isLastSlide: Bool
     let onNext: () -> Void
 
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
-    @Environment(\.colorScheme) private var colorScheme
     @State private var isAnimating = false
     @State private var appeared = false
 

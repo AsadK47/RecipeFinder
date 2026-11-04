@@ -27,8 +27,7 @@ private struct StarRatingView: View {
 // View-building content for RecipeDetailView, split out to keep the main file focused on state/body/actions.
 extension RecipeDetailView {
     var backgroundView: some View {
-        AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
-            .ignoresSafeArea()
+        AppBackground()
     }
 
     var recipeTitleView: some View {

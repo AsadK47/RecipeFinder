@@ -5,8 +5,6 @@ import SwiftUI
 // This copy is drafted from the code's real data flows; have a solicitor review before App Store submission.
 struct PrivacyPolicyView: View {
     @Environment(\.dismiss) var dismiss
-    @Environment(\.colorScheme) var colorScheme
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
 
     private static let dateFormatter: DateFormatter = {
         let f = DateFormatter(); f.dateFormat = "d MMMM yyyy"; return f
@@ -16,8 +14,7 @@ struct PrivacyPolicyView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                    .ignoresSafeArea()
+                AppBackground()
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: AppTheme.spacing24) {

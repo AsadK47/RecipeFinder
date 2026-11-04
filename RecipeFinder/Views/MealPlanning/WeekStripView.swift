@@ -7,7 +7,6 @@ struct WeekStripView: View {
     let monthYearString: String
     let cardStyle: CardStyle
     let colorScheme: ColorScheme
-    let selectedTheme: AppTheme.ThemeType
     /// Returns the planned meal times for a given date, used to draw indicator dots.
     let mealTimesFor: (Date) -> [MealTime]
     let onSelectDate: (Date) -> Void
@@ -67,7 +66,6 @@ struct WeekStripView: View {
                     isSelected: Calendar.current.isDate(date, inSameDayAs: selectedDate),
                     isToday: Calendar.current.isDateInToday(date),
                     mealTimes: mealTimesFor(date),
-                    selectedTheme: selectedTheme,
                     colorScheme: colorScheme,
                     onTap: { onSelectDate(date) }
                 )
@@ -81,7 +79,6 @@ private struct WeekDayCell: View {
     let isSelected: Bool
     let isToday: Bool
     let mealTimes: [MealTime]
-    let selectedTheme: AppTheme.ThemeType
     let colorScheme: ColorScheme
     let onTap: () -> Void
 
@@ -113,16 +110,16 @@ private struct WeekDayCell: View {
                 ZStack {
                     if isSelected {
                         Circle()
-                            .fill(AppTheme.accentColor(for: selectedTheme))
+                            .fill(AppTheme.accentColor)
                     } else if isToday {
                         Circle()
-                            .stroke(AppTheme.accentColor(for: selectedTheme), lineWidth: 1.5)
+                            .stroke(AppTheme.accentColor, lineWidth: 1.5)
                     }
                     Text(dayNumber)
                         .font(.system(size: AppTheme.fontSize14, weight: isSelected || isToday ? .bold : .regular))
                         .foregroundStyle(
                             isSelected ? .white
-                            : isToday ? AppTheme.accentColor(for: selectedTheme)
+                            : isToday ? AppTheme.accentColor
                             : AppTheme.adaptiveEmphasis(for: colorScheme)
                         )
                 }

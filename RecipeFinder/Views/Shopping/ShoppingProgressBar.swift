@@ -4,13 +4,12 @@ import SwiftUI
 struct ShoppingProgressBar: View {
     let checkedCount: Int
     let totalCount: Int
-    let selectedTheme: AppTheme.ThemeType
 
     var body: some View {
         VStack(spacing: AppTheme.spacing6) {
             // Clamp denominator to ≥1: total 0 gives ProgressView a NaN fraction → "Invalid frame dimension (non-finite)".
             ProgressView(value: Double(checkedCount), total: Double(max(totalCount, 1)))
-                .progressViewStyle(LinearProgressViewStyle(tint: AppTheme.accentColor(for: selectedTheme)))
+                .progressViewStyle(LinearProgressViewStyle(tint: AppTheme.accentColor))
                 .frame(height: AppTheme.height8)
                 .accessibilityLabel("Groceries progress")
                 .accessibilityValue("\(checkedCount) of \(totalCount) items checked")

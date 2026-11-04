@@ -8,8 +8,6 @@ struct BadgeEarnedSheet: View {
     /// Fired only on explicit "View all badges" tap (distinct from auto-dismiss) so the caller can navigate.
     let onViewAllBadges: () -> Void
 
-    @Environment(\.appTheme) private var theme
-    @Environment(\.colorScheme) private var colorScheme
     @State private var confettiCounter = 0
     @State private var appeared = false
     @State private var dismissTask: Task<Void, Never>?
@@ -18,8 +16,7 @@ struct BadgeEarnedSheet: View {
 
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: theme, colorScheme: colorScheme)
-                .ignoresSafeArea()
+            AppBackground()
 
             VStack(spacing: AppTheme.spacing24) {
                 // Badge medallion — concentric rings give it visual weight

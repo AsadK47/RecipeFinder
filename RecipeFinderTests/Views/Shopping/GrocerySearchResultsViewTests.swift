@@ -14,8 +14,7 @@ import ViewInspector
             searchText: searchText,
             searchResults: results,
             isInShopping: { _ in false },
-            onAddToShopping: onAdd,
-            selectedTheme: .teal
+            onAddToShopping: onAdd
         )
     }
 

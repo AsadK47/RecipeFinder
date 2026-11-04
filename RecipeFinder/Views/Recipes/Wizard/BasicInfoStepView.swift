@@ -9,7 +9,6 @@ struct BasicInfoStepView: View {
     @Binding var servings: Int
     let difficulties: [String]
     let categories: [String]
-    let appTheme: AppTheme.ThemeType
     let colorScheme: ColorScheme
 
     private func timeLabel(_ minutes: Int) -> String {

@@ -2,8 +2,6 @@ import SwiftUI
 
 struct QuickAddSheetView: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.colorScheme) var colorScheme
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
 
     let isItemAdded: (String) -> Bool
     let onAdd: (String) -> Void
@@ -27,8 +25,7 @@ struct QuickAddSheetView: View {
 
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                .ignoresSafeArea()
+            AppBackground()
 
             VStack(spacing: 0) {
                 HStack {

@@ -28,7 +28,6 @@ struct PrivacyInfoRow: View {
     let title: String
     let description: String
 
-    @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
         HStack(alignment: .top, spacing: AppTheme.spacing16) {

@@ -13,8 +13,6 @@ struct CookingModeView: View {
     @Environment(\.recipeTimer) private var timerManager
     @Environment(\.dismiss) private var dismiss
     @Environment(\.scenePhase) private var scenePhase
-    @Environment(\.colorScheme) private var colorScheme
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("measurementSystem") private var measurementSystem: MeasurementSystem = .metric
 
     // MARK: - Cooking items (ingredients + pre-prep + steps combined in order)
@@ -90,8 +88,7 @@ struct CookingModeView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                    .ignoresSafeArea()
+                AppBackground()
 
                 VStack(spacing: 0) {
                     progressBar
@@ -336,7 +333,7 @@ struct CookingModeView: View {
                 .frame(maxWidth: .infinity, minHeight: 56)
                 .background(
                     RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                        .fill(isLast ? Color.green.opacity(0.4) : AppTheme.accentColor(for: selectedTheme).opacity(0.35))
+                        .fill(isLast ? Color.green.opacity(0.4) : AppTheme.accentColor.opacity(0.35))
                 )
             }
             .buttonStyle(.plain)

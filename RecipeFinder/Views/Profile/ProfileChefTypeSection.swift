@@ -3,7 +3,6 @@ import SwiftUI
 /// "Chef Type" selection grid on the Profile screen.
 struct ProfileChefTypeSection: View {
     @Binding var selectedChefType: ChefType
-    let selectedTheme: AppTheme.ThemeType
 
     var body: some View {
         VStack(spacing: AppTheme.spacing12) {
@@ -23,7 +22,6 @@ struct ProfileChefTypeSection: View {
                     ChefTypeCard(
                         chefType: type,
                         isSelected: selectedChefType == type,
-                        selectedTheme: selectedTheme
                     ) {
                         withAnimation(.spring(response: 0.3)) {
                             selectedChefType = type

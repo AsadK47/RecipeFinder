@@ -6,8 +6,6 @@ struct RecipeDeleteConfirmationSheet: View {
     let onConfirm: () -> Void
     let onCancel: () -> Void
     
-    @Environment(\.colorScheme) var colorScheme
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
     var body: some View {
@@ -15,8 +13,7 @@ struct RecipeDeleteConfirmationSheet: View {
             let contentMaxWidth = max(0, geometry.size.width - 48)
 
             ZStack {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                    .ignoresSafeArea()
+                AppBackground()
                 
                 VStack(spacing: 0) {
                     RoundedRectangle(cornerRadius: AppTheme.cornerRadius3)

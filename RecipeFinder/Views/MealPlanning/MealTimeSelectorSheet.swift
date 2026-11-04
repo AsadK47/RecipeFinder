@@ -7,13 +7,11 @@ struct MealTimeSelectorSheet: View {
     
     @Environment(\.dismiss) var dismiss
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                .ignoresSafeArea()
+            AppBackground()
             
             VStack(spacing: 0) {
                 VStack(spacing: AppTheme.spacing12) {

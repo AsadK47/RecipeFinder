@@ -2,7 +2,6 @@ import SwiftUI
 
 struct RecipeWizardView: View {
     @Environment(\.dismiss) var dismiss
-    @Environment(\.appTheme) var appTheme
     @Environment(\.colorScheme) var colorScheme
 
     let onComplete: (RecipeModel) -> Void
@@ -102,8 +101,7 @@ struct RecipeWizardView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: appTheme, colorScheme: colorScheme)
-                    .ignoresSafeArea()
+                AppBackground()
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: AppTheme.spacing32) {
@@ -269,7 +267,6 @@ struct RecipeWizardView: View {
                 servings: $servings,
                 difficulties: difficulties,
                 categories: categories,
-                appTheme: appTheme,
                 colorScheme: colorScheme
             )
         }
@@ -279,7 +276,6 @@ struct RecipeWizardView: View {
                 ingredientItems: $ingredientItems,
                 focusedIngredientID: $focusedIngredientID,
                 cookingUnitGroups: cookingUnitGroups,
-                appTheme: appTheme,
                 colorScheme: colorScheme
             )
         }
@@ -292,7 +288,6 @@ struct RecipeWizardView: View {
                 illustration: "list.bullet.clipboard.fill",
                 fieldPlaceholder: "Describe the pre-prep step",
                 addButtonTitle: "Add Pre-prep Step",
-                appTheme: appTheme,
                 colorScheme: colorScheme
             )
         }
@@ -305,7 +300,6 @@ struct RecipeWizardView: View {
                 illustration: "flame.fill",
                 fieldPlaceholder: "Describe this cooking step",
                 addButtonTitle: "Add Cooking Step",
-                appTheme: appTheme,
                 colorScheme: colorScheme
             )
         }
@@ -399,5 +393,4 @@ struct RecipeWizardView: View {
 
 #Preview {
     RecipeWizardView(prefilledData: nil) { _ in }
-        .environment(\.appTheme, AppTheme.ThemeType.teal)
 }

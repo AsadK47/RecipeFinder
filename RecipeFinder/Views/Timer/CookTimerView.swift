@@ -7,7 +7,6 @@ struct CookTimerView: View {
     @State private var seconds: Int = 0
 
     @Environment(\.colorScheme) var colorScheme
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
 
     private var selectedTotalSeconds: Int {
@@ -20,8 +19,7 @@ struct CookTimerView: View {
 
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                .ignoresSafeArea()
+            AppBackground()
 
             ScrollView {
                 VStack(spacing: AppTheme.spacing24) {
@@ -48,7 +46,7 @@ struct CookTimerView: View {
                 Spacer()
                 Text(timerManager.isActive ? (timerManager.isPaused ? "Paused" : "Running") : "Stopped")
                     .font(.caption)
-                    .foregroundStyle(timerManager.isPaused ? .orange : AppTheme.accentColor(for: selectedTheme))
+                    .foregroundStyle(timerManager.isPaused ? .orange : AppTheme.accentColor)
             }
 
             Text(timerManager.displayTime)
@@ -127,7 +125,7 @@ struct CookTimerView: View {
                     .adaptiveForegroundColor()
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, AppTheme.spacing14)
-                    .background(AppTheme.accentColor(for: selectedTheme))
+                    .background(AppTheme.accentColor)
                     .cornerRadius(AppTheme.cornerRadius12)
             }
             .buttonStyle(.plain)

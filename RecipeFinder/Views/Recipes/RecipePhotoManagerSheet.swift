@@ -7,8 +7,6 @@ struct RecipePhotoManagerSheet: View {
     @Binding var recipe: RecipeModel
 
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.colorScheme) private var colorScheme
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
 
     @State private var selectedItems: [PhotosPickerItem] = []
     @State private var showCamera = false
@@ -27,8 +25,7 @@ struct RecipePhotoManagerSheet: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                    .ignoresSafeArea()
+                AppBackground()
 
                 ScrollView {
                     VStack(spacing: AppTheme.spacing20) {

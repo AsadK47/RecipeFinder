@@ -13,7 +13,6 @@ struct KitchenShoppingView: View {
     @State private var showKitchenSheet = false
 
     @Environment(\.colorScheme) private var colorScheme
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
 
     private var searchResults: [String] {
         guard !searchText.isEmpty else { return [] }
@@ -33,8 +32,7 @@ struct KitchenShoppingView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                    .ignoresSafeArea()
+                AppBackground()
 
                 VStack(spacing: 0) {
                     GroceriesHeader(
@@ -90,7 +88,6 @@ struct KitchenShoppingView: View {
                     shopping.items.contains { $0.name.lowercased() == ingredient.lowercased() }
                 },
                 onAddToShopping: addShoppingItemFromSearch,
-                selectedTheme: selectedTheme
             )
         } else if shopping.items.isEmpty {
             emptyState
@@ -101,7 +98,7 @@ struct KitchenShoppingView: View {
 
     private var shoppingList: some View {
         List {
-            ShoppingProgressBar(checkedCount: checkedCount, totalCount: totalCount, selectedTheme: selectedTheme)
+            ShoppingProgressBar(checkedCount: checkedCount, totalCount: totalCount)
                 .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 8, trailing: 16))
                 .listRowSeparator(.hidden)
                 .listRowBackground(Color.clear)
@@ -195,13 +192,11 @@ private struct KitchenInventorySheet: View {
     @State private var showQuickAdd = false
     @State private var showClear = false
     @Environment(\.colorScheme) private var colorScheme
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
 
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                    .ignoresSafeArea()
+                AppBackground()
 
                 VStack(spacing: 0) {
                     ScreenTitleHeader("Kitchen") {
@@ -265,5 +260,4 @@ private struct KitchenInventorySheet: View {
 
 #Preview {
     KitchenShoppingView()
-        .environment(\.appTheme, .teal)
 }

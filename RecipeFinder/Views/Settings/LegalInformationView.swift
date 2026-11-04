@@ -2,7 +2,6 @@ import SwiftUI
 
 struct LegalInformationView: View {
     @Environment(\.colorScheme) var colorScheme
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @State private var showPrivacyPolicy = false
     @State private var showTermsOfService = false
@@ -10,8 +9,7 @@ struct LegalInformationView: View {
 
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                .ignoresSafeArea()
+            AppBackground()
 
             ScrollView {
                 VStack(spacing: AppTheme.spacing32) {

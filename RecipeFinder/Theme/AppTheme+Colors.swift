@@ -97,7 +97,9 @@ extension AppTheme {
         }
     }
     
+    /// The user's chosen theme colour (was hard-coded teal, so 22 call sites ignored the picker).
+    @MainActor
     static var accentColor: Color {
-        return tealBrightLight
+        accentColor(for: ThemeStore.shared.theme)
     }
 }

@@ -3,8 +3,6 @@ import SwiftUI
 /// Sheet for adding kitchen ingredients by searching foods or browsing by category.
 struct AddIngredientSheet: View {
     @Environment(\.dismiss) var dismiss
-    @Environment(\.colorScheme) var colorScheme
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @State private var searchText = ""
     @State private var selectedCategory: String? = nil
     
@@ -25,8 +23,7 @@ struct AddIngredientSheet: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                    .ignoresSafeArea()
+                AppBackground()
                 
                 VStack(spacing: 0) {
                     SearchBar(text: $searchText, placeholder: "Search Foods...")
@@ -57,7 +54,7 @@ struct AddIngredientSheet: View {
                                         Image(systemName: "chevron.left")
                                         Text("Back to Categories")
                                     }
-                                    .foregroundStyle(AppTheme.accentColor(for: selectedTheme))
+                                    .foregroundStyle(AppTheme.accentColor)
                                     .padding(.horizontal, AppTheme.spacing20)
                                     .padding(.vertical, AppTheme.spacing8)
                                 }
@@ -98,7 +95,7 @@ struct AddIngredientSheet: View {
                     Button("Done") {
                         dismiss()
                     }
-                    .foregroundStyle(AppTheme.accentColor(for: selectedTheme))
+                    .foregroundStyle(AppTheme.accentColor)
                     .accessibilityHint("Closes add ingredients screen")
                 }
             }
@@ -166,7 +163,7 @@ struct AddIngredientSheet: View {
                 Spacer()
                 
                 Image(systemName: isInKitchen ? "checkmark.circle.fill" : "plus.circle")
-                    .foregroundStyle(isInKitchen ? .green : AppTheme.accentColor(for: selectedTheme))
+                    .foregroundStyle(isInKitchen ? .green : AppTheme.accentColor)
                     .font(.title3)
             }
             .padding(.horizontal, AppTheme.spacing16)

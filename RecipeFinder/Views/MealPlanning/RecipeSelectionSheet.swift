@@ -10,8 +10,6 @@ struct RecipeSelectionSheet: View {
     @Environment(\.dismiss) var dismiss
     @State private var searchText = ""
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
-    @Environment(\.colorScheme) var colorScheme
 
     var filteredRecipes: [RecipeModel] {
         if searchText.isEmpty {
@@ -23,8 +21,7 @@ struct RecipeSelectionSheet: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                    .ignoresSafeArea()
+                AppBackground()
 
                 VStack(spacing: AppTheme.spacing12) {
                     SearchBar(text: $searchText, placeholder: "Search Recipes...")

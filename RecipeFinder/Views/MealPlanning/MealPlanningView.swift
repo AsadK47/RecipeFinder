@@ -38,7 +38,6 @@ struct MealPlanningView: View {
     /// Non-nil while the meal-reminder time picker is presented.
     @State private var reminderContext: ReminderContext?
 
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @Environment(\.colorScheme) var colorScheme
 
@@ -46,8 +45,7 @@ struct MealPlanningView: View {
 
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                .ignoresSafeArea()
+            AppBackground()
 
             VStack(spacing: 0) {
                 MealPlannerHeader(
@@ -71,7 +69,6 @@ struct MealPlanningView: View {
                                 suggestions: pantryExpirySuggestions,
                                 cardStyle: cardStyle,
                                 colorScheme: colorScheme,
-                                selectedTheme: selectedTheme,
                                 onPlan: { recipe in
                                     pendingSuggestedRecipe = recipe
                                     showMealTimeSelector = true
@@ -193,7 +190,6 @@ struct MealPlanningView: View {
             monthYearString: monthYearString,
             cardStyle: cardStyle,
             colorScheme: colorScheme,
-            selectedTheme: selectedTheme,
             mealTimesFor: { date in
                 mealPlanningManager.mealPlans(for: date).map { $0.mealTime }
             },
@@ -215,7 +211,6 @@ struct MealPlanningView: View {
             selectedDateString: selectedDateString,
             cardStyle: cardStyle,
             colorScheme: colorScheme,
-            selectedTheme: selectedTheme,
             recipeFor: { getRecipe(for: selectedDate, mealTime: $0) },
             mealPlanFor: { mealPlanningManager.mealPlan(for: selectedDate, mealTime: $0) },
             onSelectMealTime: { mealTime in

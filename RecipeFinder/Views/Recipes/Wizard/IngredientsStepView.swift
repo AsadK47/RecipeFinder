@@ -5,7 +5,6 @@ struct IngredientsStepView: View {
     @Binding var ingredientItems: [RecipeWizardView.IngredientItem]
     @FocusState.Binding var focusedIngredientID: UUID?
     let cookingUnitGroups: [(group: String, units: [String])]
-    let appTheme: AppTheme.ThemeType
     let colorScheme: ColorScheme
 
     var body: some View {
@@ -75,7 +74,7 @@ struct IngredientsStepView: View {
                                                         Spacer(minLength: 0)
 
                                                         Image(systemName: "arrow.up.left.circle.fill")
-                                                            .foregroundStyle(AppTheme.accentColor(for: appTheme))
+                                                            .foregroundStyle(AppTheme.accentColor)
                                                     }
                                                     .padding(.vertical, AppTheme.spacing10)
                                                     .padding(.horizontal, AppTheme.spacing12)
@@ -140,7 +139,7 @@ struct IngredientsStepView: View {
                         focusedIngredientID = newItem.id
                     }) {
                         Label("Add Ingredient", systemImage: "plus.circle.fill")
-                            .foregroundStyle(AppTheme.accentColor(for: appTheme))
+                            .foregroundStyle(AppTheme.accentColor)
                             .frame(maxWidth: .infinity)
                             .padding()
                     }

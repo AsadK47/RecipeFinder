@@ -3,10 +3,8 @@ import SwiftUI
 struct BadgeDetailView: View {
     let badge: Badge
     @Environment(\.dismiss) var dismiss
-    @Environment(\.colorScheme) var colorScheme
     @Environment(\.recipeStore) private var recipeStore
     @Environment(\.cookingStreak) private var cookingStreak
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
 
     var badgeColor: Color { Badge.color(for: badge.color) }
 
@@ -19,8 +17,7 @@ struct BadgeDetailView: View {
 
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                .ignoresSafeArea()
+            AppBackground()
 
             VStack(spacing: AppTheme.spacing32) {
                 HStack {

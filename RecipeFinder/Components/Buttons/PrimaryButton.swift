@@ -7,7 +7,6 @@ struct PrimaryButton: View {
     var fillWidth: Bool = false
     let action: () -> Void
 
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
 
     init(_ title: String, systemImage: String? = nil, fillWidth: Bool = false, action: @escaping () -> Void) {
         self.title = title
@@ -27,7 +26,7 @@ struct PrimaryButton: View {
                 .padding(.horizontal, AppTheme.spacing20)
                 .padding(.vertical, AppTheme.spacing12)
                 .frame(maxWidth: fillWidth ? .infinity : nil)
-                .background(Capsule().fill(AppTheme.accentColor(for: selectedTheme)))
+                .background(Capsule().fill(AppTheme.accentColor))
         }
         .buttonStyle(.plain)
     }

@@ -8,7 +8,6 @@ struct EditableStepsStepView: View {
     let illustration: String
     let fieldPlaceholder: String
     let addButtonTitle: String
-    let appTheme: AppTheme.ThemeType
     let colorScheme: ColorScheme
 
     var body: some View {
@@ -57,7 +56,7 @@ struct EditableStepsStepView: View {
                         steps.append(EditableStep())
                     }) {
                         Label(addButtonTitle, systemImage: "plus.circle.fill")
-                            .foregroundStyle(AppTheme.accentColor(for: appTheme))
+                            .foregroundStyle(AppTheme.accentColor)
                             .frame(maxWidth: .infinity)
                             .padding()
                     }

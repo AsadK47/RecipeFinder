@@ -5,7 +5,6 @@ struct NewCollectionSheet: View {
     let manager: any CollectionManaging
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
 
     @State private var name: String = ""
     @State private var selectedColor: CollectionColor = .blue
@@ -13,8 +12,7 @@ struct NewCollectionSheet: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                    .ignoresSafeArea()
+                AppBackground()
 
                 Form {
                     Section("Name") {
@@ -82,7 +80,6 @@ struct EditCollectionSheet: View {
     let manager: any CollectionManaging
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
 
     @State private var name: String
     @State private var selectedColor: CollectionColor
@@ -97,8 +94,7 @@ struct EditCollectionSheet: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                    .ignoresSafeArea()
+                AppBackground()
 
                 Form {
                     Section("Name") {

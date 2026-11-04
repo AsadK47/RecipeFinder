@@ -6,8 +6,6 @@ struct SmartCollectionDetailView: View {
     @Environment(\.recipeStore) private var recipeStore
     private var recipes: [RecipeModel] { recipeStore.recipes }
 
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
-    @Environment(\.colorScheme) var colorScheme
 
     private var matchingRecipes: [RecipeModel] {
         smartCollection.recipes(from: recipes)
@@ -15,8 +13,7 @@ struct SmartCollectionDetailView: View {
 
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                .ignoresSafeArea()
+            AppBackground()
 
             if matchingRecipes.isEmpty {
                 emptyState

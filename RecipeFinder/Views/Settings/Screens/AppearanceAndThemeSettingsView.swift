@@ -2,7 +2,6 @@ import SwiftUI
 
 /// Accent color picker, appearance mode override, and extras.
 struct AppearanceAndThemeSettingsView: View {
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("preferredColorScheme") private var colorSchemePreference: Int = 0
 
     private let appearanceModes = ["System", "Light", "Dark"]
@@ -63,7 +62,7 @@ struct AppearanceAndThemeSettingsView: View {
 
     private func themeSwatch(_ theme: AppTheme.ThemeType) -> some View {
         Button(action: {
-            selectedTheme = theme
+            ThemeStore.shared.theme = theme
             HapticManager.shared.selection()
         }) {
             HStack(spacing: AppTheme.spacing12) {
@@ -72,7 +71,7 @@ struct AppearanceAndThemeSettingsView: View {
                     .frame(width: AppTheme.iconSize32, height: 32)
                     .overlay(
                         Circle()
-                            .strokeBorder(selectedTheme == theme ? Color.white : Color.clear, lineWidth: 2)
+                            .strokeBorder(ThemeStore.shared.theme == theme ? Color.white : Color.clear, lineWidth: 2)
                     )
 
                 Text(theme.rawValue)
@@ -83,18 +82,18 @@ struct AppearanceAndThemeSettingsView: View {
 
                 Spacer(minLength: AppTheme.spacing4)
 
-                if selectedTheme == theme {
+                if ThemeStore.shared.theme == theme {
                     Image(systemName: "checkmark")
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(AppTheme.accentColor(for: theme))
                 }
             }
             .padding(AppTheme.spacing12)
-            .background(selectedTheme == theme ? AppTheme.accentColor(for: theme).opacity(0.15) : AppTheme.secondaryText.opacity(0.05))
+            .background(ThemeStore.shared.theme == theme ? AppTheme.accentColor(for: theme).opacity(0.15) : AppTheme.secondaryText.opacity(0.05))
             .cornerRadius(AppTheme.cornerRadius12)
         }
         .buttonStyle(PlainButtonStyle())
-        .accessibilityAddTraits(selectedTheme == theme ? .isSelected : [])
+        .accessibilityAddTraits(ThemeStore.shared.theme == theme ? .isSelected : [])
     }
 }
 

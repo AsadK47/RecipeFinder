@@ -4,9 +4,6 @@ import SwiftUI
 struct WizardIntroSheet: View {
     let onDismiss: () -> Void
 
-    @Environment(\.appTheme) private var appTheme
-    @Environment(\.colorScheme) private var colorScheme
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
 
     private struct Point: Identifiable {
         let id = UUID()
@@ -29,15 +26,14 @@ struct WizardIntroSheet: View {
 
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                .ignoresSafeArea()
+            AppBackground()
 
             VStack(spacing: AppTheme.spacing24) {
                 Spacer(minLength: 0)
 
                 Image(systemName: "wand.and.stars")
                     .font(.system(size: AppTheme.fontSize42))
-                    .foregroundStyle(AppTheme.accentColor(for: selectedTheme))
+                    .foregroundStyle(AppTheme.accentColor)
                     .accessibilityHidden(true)
 
                 Text("Build a recipe, your way")
@@ -50,7 +46,7 @@ struct WizardIntroSheet: View {
                         HStack(alignment: .top, spacing: AppTheme.spacing16) {
                             Image(systemName: point.icon)
                                 .font(.title3)
-                                .foregroundStyle(AppTheme.accentColor(for: selectedTheme))
+                                .foregroundStyle(AppTheme.accentColor)
                                 .frame(width: AppTheme.spacing32)
                                 .accessibilityHidden(true)
                             VStack(alignment: .leading, spacing: AppTheme.spacing4) {
@@ -78,7 +74,7 @@ struct WizardIntroSheet: View {
                         .frame(minHeight: AppTheme.height50)
                         .background(
                             RoundedRectangle(cornerRadius: AppTheme.cornerRadius14)
-                                .fill(AppTheme.accentColor(for: selectedTheme))
+                                .fill(AppTheme.accentColor)
                         )
                 }
                 .buttonStyle(.plain)

@@ -4,8 +4,6 @@ private let logger = AppLogger.logger(category: "RecipeImport")
 
 struct RecipeImportView: View {
     @Environment(\.dismiss) var dismiss
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
-    @Environment(\.colorScheme) var colorScheme
     @StateObject private var importer = RecipeImporter()
     @State private var urlText = ""
     @FocusState private var isTextFieldFocused: Bool
@@ -53,14 +51,13 @@ struct RecipeImportView: View {
     var body: some View {
         NavigationStack {
             ZStack(alignment: .top) {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                    .ignoresSafeArea()
+                AppBackground()
 
                 VStack(spacing: AppTheme.spacing32) {
                     VStack(spacing: AppTheme.spacing12) {
                         Image(systemName: "arrow.down.doc.fill")
                             .font(.system(size: AppTheme.fontSize60))
-                            .foregroundStyle(AppTheme.accentColor(for: selectedTheme))
+                            .foregroundStyle(AppTheme.accentColor)
                     
                     Text("Import Recipe")
                         .font(.title2)
@@ -112,13 +109,13 @@ struct RecipeImportView: View {
                     VStack(spacing: AppTheme.spacing24) {
                         ZStack {
                             Circle()
-                                .stroke(AppTheme.accentColor(for: selectedTheme).opacity(0.3), lineWidth: 4)
+                                .stroke(AppTheme.accentColor.opacity(0.3), lineWidth: 4)
                                 .frame(width: AppTheme.width80, height: 80)
                             
                             Circle()
                                 .trim(from: 0, to: loadingStage.progress)
                                 .stroke(
-                                    AppTheme.accentColor(for: selectedTheme),
+                                    AppTheme.accentColor,
                                     style: StrokeStyle(lineWidth: 4, lineCap: .round)
                                 )
                                 .frame(width: AppTheme.width80, height: 80)
@@ -127,7 +124,7 @@ struct RecipeImportView: View {
                             
                             Image(systemName: "sparkles")
                                 .font(.title)
-                                .foregroundStyle(AppTheme.accentColor(for: selectedTheme))
+                                .foregroundStyle(AppTheme.accentColor)
                         }
                         
                         VStack(spacing: AppTheme.spacing8) {
@@ -154,7 +151,7 @@ struct RecipeImportView: View {
                         .adaptiveForegroundColor()
                         .frame(maxWidth: .infinity)
                         .frame(height: AppTheme.height56)
-                        .background(urlText.isEmpty ? Color.gray : AppTheme.accentColor(for: selectedTheme))
+                        .background(urlText.isEmpty ? Color.gray : AppTheme.accentColor)
                         .cornerRadius(AppTheme.cornerRadius16)
                     })
                     .disabled(urlText.isEmpty)

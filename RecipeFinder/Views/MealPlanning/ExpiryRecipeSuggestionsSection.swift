@@ -5,7 +5,6 @@ struct ExpiryRecipeSuggestionsSection: View {
     let suggestions: [PantryExpirySuggestions.Match]
     let cardStyle: CardStyle
     let colorScheme: ColorScheme
-    let selectedTheme: AppTheme.ThemeType
     let onPlan: (RecipeModel) -> Void
 
     var body: some View {

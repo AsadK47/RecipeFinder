@@ -3,7 +3,6 @@ import SwiftUI
 /// Root of the Settings tab. Each sub-screen lives in Views/Settings/Screens/.
 struct SettingsTabView: View {
     @Environment(\.colorScheme) var colorScheme
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @AppStorage("appearanceMode") private var appearanceMode: AppearanceMode = .system
     @AppStorage("measurementSystem") private var measurementSystem: MeasurementSystem = .metric
     @Environment(\.profile) private var profileManager
@@ -19,8 +18,7 @@ struct SettingsTabView: View {
     
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                .ignoresSafeArea()
+            AppBackground()
             
             ScrollView {
                 VStack(spacing: AppTheme.spacing20) {
@@ -54,7 +52,7 @@ struct SettingsTabView: View {
 
                     SettingsSection(title: "Preferences", items: [
                         .init(
-                            row: SettingsRow(icon: "paintpalette.fill", iconColor: .pink, title: "Appearance & Theme", value: selectedTheme.rawValue),
+                            row: SettingsRow(icon: "paintpalette.fill", iconColor: .pink, title: "Appearance & Theme", value: ThemeStore.shared.theme.rawValue),
                             destination: AppearanceAndThemeSettingsView()
                         ),
                         .init(
@@ -167,7 +165,7 @@ struct SettingsTabView: View {
                 .clipShape(Circle())
         } else {
             Circle()
-                .fill(AppTheme.accentColor(for: selectedTheme))
+                .fill(AppTheme.accentColor)
                 .frame(width: AppTheme.height54, height: AppTheme.height54)
                 .overlay {
                     Text(profileManager.initials)
@@ -186,5 +184,4 @@ struct SettingsTabView: View {
 
 #Preview {
     SettingsTabView()
-        .environment(\.appTheme, AppTheme.ThemeType.teal)
 }

@@ -6,8 +6,6 @@ struct CollectionDetailView: View {
     @Environment(\.recipeStore) private var recipeStore
     private var recipes: [RecipeModel] { recipeStore.recipes }
     @Environment(\.collections) private var manager
-    @Environment(\.colorScheme) var colorScheme
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @State private var showAddRecipes = false
     @State private var shoppingListFeedback: String?
 
@@ -22,8 +20,7 @@ struct CollectionDetailView: View {
 
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                .ignoresSafeArea()
+            AppBackground()
 
             if collectionRecipes.isEmpty {
                 emptyState

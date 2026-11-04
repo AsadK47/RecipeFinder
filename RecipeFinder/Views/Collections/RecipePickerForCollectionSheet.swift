@@ -6,8 +6,6 @@ struct RecipePickerForCollectionSheet: View {
     let recipes: [RecipeModel]
     @Environment(\.collections) private var manager
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.colorScheme) private var colorScheme
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     @State private var searchText = ""
 
     private var currentCollection: RecipeCollection {
@@ -22,8 +20,7 @@ struct RecipePickerForCollectionSheet: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                    .ignoresSafeArea()
+                AppBackground()
 
                 VStack(spacing: AppTheme.spacing12) {
                     SearchBar(text: $searchText, placeholder: "Search Recipes...")

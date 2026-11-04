@@ -7,13 +7,11 @@ struct RecipeFileImportSheet: View {
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
 
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                    .ignoresSafeArea()
+                AppBackground()
 
                 ScrollView {
                     VStack(spacing: AppTheme.spacing24) {
@@ -48,7 +46,7 @@ struct RecipeFileImportSheet: View {
         VStack(spacing: AppTheme.spacing8) {
             Image(systemName: "fork.knife.circle.fill")
                 .font(.system(size: 52))
-                .foregroundStyle(AppTheme.accentColor(for: selectedTheme))
+                .foregroundStyle(AppTheme.accentColor)
 
             Text(recipe.name)
                 .font(.title2.bold())
@@ -102,7 +100,7 @@ struct RecipeFileImportSheet: View {
         VStack(spacing: AppTheme.spacing4) {
             Image(systemName: icon)
                 .font(.system(size: AppTheme.fontSize14))
-                .foregroundStyle(AppTheme.accentColor(for: selectedTheme))
+                .foregroundStyle(AppTheme.accentColor)
             Text(value)
                 .font(.caption.weight(.semibold))
                 .adaptiveForegroundColor()
@@ -131,7 +129,7 @@ struct RecipeFileImportSheet: View {
             ForEach(recipe.ingredients.prefix(5)) { ingredient in
                 HStack(spacing: AppTheme.spacing8) {
                     Circle()
-                        .fill(AppTheme.accentColor(for: selectedTheme).opacity(0.4))
+                        .fill(AppTheme.accentColor.opacity(0.4))
                         .frame(width: 5, height: 5)
                     Text(ingredient.name)
                         .font(.subheadline)

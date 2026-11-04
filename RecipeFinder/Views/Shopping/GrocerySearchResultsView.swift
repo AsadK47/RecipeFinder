@@ -6,7 +6,6 @@ struct GrocerySearchResultsView: View {
     let searchResults: [String]
     let isInShopping: (String) -> Bool
     let onAddToShopping: (String) -> Void
-    let selectedTheme: AppTheme.ThemeType
 
     var body: some View {
         ScrollView {
@@ -74,7 +73,7 @@ struct GrocerySearchResultsView: View {
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(.white)
                             .frame(width: 52, height: 32)
-                            .background(Capsule().fill(AppTheme.accentColor(for: selectedTheme)))
+                            .background(Capsule().fill(AppTheme.accentColor))
                     }
                 }
                 // 32pt visual capsule but ≥44pt tap target (accessibility hit-region minimum).

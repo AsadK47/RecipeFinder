@@ -7,7 +7,6 @@ struct KitchenSectionsView: View {
 
     @Environment(\.kitchen) private var manager
     @Environment(\.colorScheme) private var colorScheme
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
 
     var body: some View {
         PantryAlertsSectionContent(manager: manager)
@@ -29,7 +28,7 @@ struct KitchenSectionsView: View {
                     .adaptiveForegroundColor()
                     .padding(.horizontal, AppTheme.spacing12)
                     .padding(.vertical, AppTheme.spacing6)
-                    .background(Capsule().fill(AppTheme.accentColor(for: selectedTheme)))
+                    .background(Capsule().fill(AppTheme.accentColor))
                 }
             }
             .padding(.horizontal, AppTheme.spacing4)

@@ -6,8 +6,6 @@ import UIKit
 struct PostCookPhotoSheet: View {
     let onPhotoSelected: (UIImage) -> Void
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.colorScheme) private var colorScheme
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
 
     @State private var selectedItem: PhotosPickerItem?
     @State private var showCamera = false
@@ -15,8 +13,7 @@ struct PostCookPhotoSheet: View {
 
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                .ignoresSafeArea()
+            AppBackground()
 
             VStack(spacing: AppTheme.spacing24) {
                 cookIcon

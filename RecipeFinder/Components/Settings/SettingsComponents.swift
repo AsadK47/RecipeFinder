@@ -89,7 +89,6 @@ struct SettingsRow: View {
 
 /// Settings row with a trailing switch, sharing the standard row anatomy.
 struct SettingsToggleRow: View {
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     
     let icon: String
     let iconColor: Color
@@ -115,7 +114,7 @@ struct SettingsToggleRow: View {
                 }
             }
         }
-        .tint(AppTheme.accentColor(for: selectedTheme))
+        .tint(AppTheme.accentColor)
         .padding(AppTheme.spacing20)
     }
 }
@@ -124,7 +123,6 @@ struct SettingsToggleRow: View {
 
 /// Settings row for one option in a mutually exclusive group; shows a checkmark when selected and fires a selection haptic on tap.
 struct SettingsChoiceRow: View {
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     
     let icon: String
     let iconColor: Color
@@ -158,7 +156,7 @@ struct SettingsChoiceRow: View {
                 if isSelected {
                     Image(systemName: "checkmark")
                         .font(.body.weight(.semibold))
-                        .foregroundStyle(AppTheme.accentColor(for: selectedTheme))
+                        .foregroundStyle(AppTheme.accentColor)
                 }
             }
             .contentShape(Rectangle())
@@ -184,7 +182,6 @@ struct SettingsRowDivider: View {
 /// Standard settings screen chrome (themed gradient, scroll view, inline title) so every sub-screen's backgrounds and margins stay identical.
 struct SettingsScreen<Content: View>: View {
     @Environment(\.colorScheme) var colorScheme
-    @AppStorage("appTheme") private var selectedTheme: AppTheme.ThemeType = .teal
     
     let title: String
     let content: Content
@@ -196,8 +193,7 @@ struct SettingsScreen<Content: View>: View {
     
     var body: some View {
         ZStack {
-            AppTheme.backgroundGradient(for: selectedTheme, colorScheme: colorScheme)
-                .ignoresSafeArea()
+            AppBackground()
             
             ScrollView {
                 VStack(spacing: AppTheme.spacing20) {
