@@ -16,6 +16,10 @@ RENDER AUDIT: `BundledRecipeRenderAuditTests` renders all bundled + starter reci
 (`IngredientRowView.amount` — now shared with cooking mode — and `Ingredient.displayParts`) in Metric + Imperial and
 lints titles, times, servings, amounts, units, names, brackets, duplicates, steps. 0 findings; 22 duplicate rows
 labelled "for the …" from source. Full suite 1790/1790.
+COMPLETENESS PASS (3 rounds: full review, step-count cross-check, targeted gap review; briefs BRIEF_COMPLETENESS.md /
+BRIEF_GAPS.md): 25 recipes fixed for missing method steps / unused ingredients (incl. Black Sesame Tangyuan filling);
+77 other flags accounted for as variants or blog text. Bhindi Masala final step INFERRED (source truncated) — re-source.
+Full suite 1790/1790, audit 0 findings.
 Next: user commits; then Kitchen surfacing / 🟡 backlog.
 
 # WORK: Account removal (2026-11-04) — STAGES 1–3 DONE (uncommitted; build + full suite 1769/1769 green)
