@@ -708,9 +708,9 @@
      "unit": "clove"
     },
     {
-     "name": "1-inch knob ginger, minced",
+     "name": "ginger, minced",
      "quantity": 1,
-     "unit": ""
+     "unit": "inch"
     },
     {
      "name": "Serrano pepper, minced",
@@ -1270,9 +1270,9 @@
      "unit": "clove"
     },
     {
-     "name": "1/2-inch piece ginger, roughly chopped",
+     "name": "ginger, roughly chopped",
      "quantity": 0.5,
-     "unit": ""
+     "unit": "inch"
     },
     {
      "name": "medium ripe tomatoes",
@@ -1497,9 +1497,9 @@
      "unit": "clove"
     },
     {
-     "name": "ginger, crushed (inch piece)",
+     "name": "ginger, crushed",
      "quantity": 0.75,
-     "unit": ""
+     "unit": "inch"
     },
     {
      "name": "small green chillies, thinly sliced",
@@ -1911,43 +1911,71 @@
    "difficulty": "Intermediate",
    "ingredients": [
     {
-     "name": "dark chocolate, melted",
-     "quantity": 160,
-     "unit": "g"
-    },
-    {
-     "name": "double cream",
-     "quantity": 290,
+     "name": "heavy whipping cream",
+     "quantity": 355,
      "unit": "ml"
     },
     {
-     "name": "large egg whites",
-     "quantity": 3,
-     "unit": ""
-    },
-    {
-     "name": "granulated sugar",
-     "quantity": 50,
+     "name": "semi-sweet chocolate chips",
+     "quantity": 355,
      "unit": "g"
     },
     {
-     "name": "cocoa powder, for serving",
+     "name": "halal gelatin powder (or 0.4 tsp agar agar)",
+     "quantity": 1,
+     "unit": "tsp"
+    },
+    {
+     "name": "powdered sugar, optional",
+     "quantity": 3,
+     "unit": "tbsp"
+    },
+    {
+     "name": "instant coffee, such as Nescafé",
+     "quantity": 0.5,
+     "unit": "tsp"
+    },
+    {
+     "name": "vanilla flavouring",
+     "quantity": 1,
+     "unit": "tsp"
+    },
+    {
+     "name": "vegetable oil, divided",
+     "quantity": 4,
+     "unit": "tbsp"
+    },
+    {
+     "name": "whipped cream, to serve",
+     "quantity": 0,
+     "unit": ""
+    },
+    {
+     "name": "shaved chocolate, to serve",
+     "quantity": 0,
+     "unit": ""
+    },
+    {
+     "name": "fresh berries, to serve",
      "quantity": 0,
      "unit": ""
     }
    ],
    "name": "Chocolate Mousse",
-   "notes": "",
+   "notes": "With darker chocolate you may want more powdered sugar. Keeps covered in the fridge for 3-4 days.",
    "prePrep": [],
-   "prepMinutes": 0,
-   "servings": 4,
+   "prepMinutes": 20,
+   "servings": 6,
    "steps": [
-    "Melt the dark chocolate and let it cool to room temperature.",
-    "Fill a bowl with ice and cold water and set a smaller mixing bowl inside it.",
-    "Pour the double cream into the small bowl and whisk until soft peaks form.",
-    "In a separate bowl, whisk the egg whites, gradually adding the sugar, until fluffy and foamy.",
-    "Gently fold the melted chocolate into the egg whites, then gently fold in the whipped cream.",
-    "Refrigerate for at least 3 hours, then sprinkle with cocoa powder to serve."
+    "Melt the chocolate in a heatproof bowl set over a pan of boiling water, stirring until melted.",
+    "Stir in the vanilla, coffee and half the oil, taking care not to get any water in the chocolate. If it isn't silky smooth, add the rest of the oil. Keep the bowl over the hot water, stirring now and then.",
+    "Mix a quarter of the cream with the gelatin in a small bowl and set aside.",
+    "Chill a mixing bowl and whisk in the freezer for at least 10 minutes.",
+    "Whip the remaining cream with the powdered sugar in the chilled bowl to semi-stiff peaks, about 5 minutes; it should hold its shape but stay fluffy.",
+    "Warm the reserved gelatin cream on the stove, stirring, until the gelatin dissolves, then stir it into the melted chocolate.",
+    "Gently fold half the whipped cream into the chocolate, then fold in the rest until you have a smooth, airy mousse.",
+    "Spoon into serving dishes, cover and refrigerate for 3 hours.",
+    "Top with whipped cream and shaved chocolate and serve with fresh berries."
    ]
   }
  },
@@ -3871,7 +3899,7 @@
     }
    ],
    "name": "Bhindi Masala",
-   "notes": "The source method ends here: stir in the spices, return the bhindi and finish with coriander leaves.",
+   "notes": "",
    "prePrep": [],
    "prepMinutes": 15,
    "servings": 4,
@@ -3882,7 +3910,8 @@
     "Add 2 tbsp more oil to the pan, then the cumin seeds.",
     "When they splutter, sauté the onions and green chilli until golden.",
     "Add the ginger garlic paste and sauté for 2 minutes until the raw smell goes.",
-    "Add the tomatoes with salt and sauté until soft and mushy."
+    "Add the tomatoes with salt and sauté until soft and mushy.",
+    "Stir in the turmeric, red chilli powder, garam masala, coriander powder and kasuri methi, then return the bhindi to the pan and mix well, adding a splash of water if needed. Finish with the coriander leaves."
    ]
   }
  },
@@ -3939,6 +3968,11 @@
    "prepMinutes": 0,
    "servings": 4,
    "steps": [
+    "Heat the butter until just melted, then remove from the heat.",
+    "Stir in the sugar and both ground sesame seeds until thoroughly combined.",
+    "Chill until the mixture has solidified, about 2 hours.",
+    "Roll teaspoon-sized amounts into balls between your palms and place on a tray; it's fine if they touch.",
+    "Freeze the sesame balls for about 1 hour.",
     "Gradually add the water to the rice flour, stirring, then knead until smooth and not sticky; add a little flour if too sticky.",
     "Flatten a tablespoon of dough into a thin disc about 1/4 inch thick.",
     "Place a frozen sesame ball in the centre, pinch the dough closed, remove any excess and roll smooth between your palms.",
@@ -5816,11 +5850,11 @@
    "prepMinutes": 0,
    "servings": 4,
    "steps": [
-    "Heat the oil in a pan and cook the chopped onion, vegetables and seasoning. Leave to cool.",
+    "Heat the oil in a pan and cook the chopped onion, carrot, garlic, celery, pepper, scotch bonnet and mushrooms with the black pepper, salt, paprika, ginger powder and all purpose seasoning. Leave to cool.",
     "Combine the breadcrumbs and stuffing mix with the nuts and dried fruit.",
     "Mix the chia seeds with 3 tbsp warm water and leave until it becomes a thick, runny paste.",
     "Add the chia paste to the dry mixture, adding more water a tablespoon at a time if too dry.",
-    "Add the cooked vegetables and mix everything together.",
+    "Add the lentils and the cooked vegetables and mix everything together.",
     "Press the mixture into a loaf tin and bake for 1 hour at 170C."
    ]
   }
@@ -7177,7 +7211,7 @@
    "prepMinutes": 0,
    "servings": 4,
    "steps": [
-    "Wash the lamb, place in a mixing bowl with the olive oil and mix thoroughly.",
+    "Wash the lamb, place in a mixing bowl with the olive oil (and the lemon juice, if using) and mix thoroughly.",
     "Combine the smoked paprika, cumin, black pepper, salt and oregano on a plate, then rub into the lamb.",
     "Marinate for at least 30 minutes.",
     "Fry the lamb in a pan until browned on both sides, flipping frequently to cook evenly. Alternatively, grill on a foil-lined tray under a preheated grill for 5–7 minutes per side, taking care not to overcook.",
@@ -8415,7 +8449,7 @@
    "servings": 12,
    "steps": [
     "Preheat the oven to 190C.",
-    "Whisk the flour, sugar, eggs and butter for 30 seconds.",
+    "Whisk the flour, baking powder, sugar, eggs and butter for 30 seconds.",
     "Add the milk and vanilla extract and whisk for another 30 seconds.",
     "Spoon the mixture into mini cupcake cases. If using raisins, toss them in 1 tsp flour and add them.",
     "Bake for 10-15 minutes at 190C.",
@@ -10436,6 +10470,16 @@
      "name": "water, for the egg wash",
      "quantity": 1,
      "unit": "tbsp"
+    },
+    {
+     "name": "sugar, for sprinkling",
+     "quantity": 0,
+     "unit": ""
+    },
+    {
+     "name": "icing sugar, for dusting",
+     "quantity": 0,
+     "unit": ""
     }
    ],
    "name": "Quick Puff Pastry with Pear, Walnut and Chocolate Crescents",
@@ -12057,7 +12101,7 @@
     "Lower the heat, stir in the flour and cook for about 2 minutes to a paste. Add the stock and cream, bring to a boil to thicken, then simmer.",
     "Adjust the seasoning so it is slightly salty and peppery. Stir in the frozen peas, then turn off the heat and let cool.",
     "Pour the filling into the oven dish, cover with the pastry and cut a small hole in the middle for steam.",
-    "Brush with the egg wash and bake for about 20-25 minutes until golden. Rest for 10-15 minutes before serving."
+    "Whisk the egg with the 1 tbsp water, brush over the pastry and bake for about 20-25 minutes until golden. Rest for 10-15 minutes before serving."
    ]
   }
  },
@@ -16369,9 +16413,9 @@
      "unit": "clove"
     },
     {
-     "name": "ginger, 2.5cm piece, sliced",
-     "quantity": 2.5,
-     "unit": ""
+     "name": "ginger, sliced",
+     "quantity": 1,
+     "unit": "inch"
     },
     {
      "name": "green onions, cut into 2.5cm pieces",
@@ -16496,9 +16540,9 @@
      "unit": "tbsp"
     },
     {
-     "name": "3-inch piece ginger, cut into pieces",
-     "quantity": 1,
-     "unit": ""
+     "name": "ginger, cut into pieces",
+     "quantity": 3,
+     "unit": "inch"
     }
    ],
    "name": "Homemade Chai Concentrate",
@@ -17653,9 +17697,9 @@
      "unit": ""
     },
     {
-     "name": "garlic, about 2 inches",
-     "quantity": 0,
-     "unit": ""
+     "name": "garlic",
+     "quantity": 2,
+     "unit": "inch"
     },
     {
      "name": "coriander leaves",
@@ -17881,6 +17925,7 @@
     "Set up a pot of water with a steamer basket. Well oil a heatproof bowl of about 2 cups volume.",
     "Dissolve the granulated and brown sugar in the hot water.",
     "Mix the glutinous rice flour and rice flour, then stir into the sugar water until evenly combined.",
+    "Stir in the blanched peanuts at this point, if using.",
     "Pour into the bowl. Optionally cut a red date and place it cut side down on top.",
     "Place in the steamer basket, cover and bring to the boil on high heat, then lower to medium and steam for 45 minutes to 1 hour.",
     "Serve warm."
@@ -18915,9 +18960,9 @@
      "unit": "clove"
     },
     {
-     "name": "ginger, 1-inch piece, peeled and roughly chopped",
+     "name": "ginger, peeled and roughly chopped",
      "quantity": 1,
-     "unit": ""
+     "unit": "inch"
     },
     {
      "name": "neutral oil, such as grapeseed or canola",
@@ -19005,9 +19050,9 @@
      "unit": "cup"
     },
     {
-     "name": "ginger, 1-inch piece, julienned, to garnish",
+     "name": "ginger, julienned, to garnish",
      "quantity": 1,
-     "unit": ""
+     "unit": "inch"
     },
     {
      "name": "green chili pepper, finely chopped, to garnish",
@@ -19046,7 +19091,7 @@
     "Blend the dal in the pot with an immersion blender until smooth. Set to Sauté (Low), add the shredded beef and oats and cook for 3-5 minutes until bubbling.",
     "Switch to Slow Cook (High) and cook for 20-30 minutes, stirring and crushing the beef and lentils against the side, until thick with a 'laced' consistency. Add 1/2-1 cup boiling water if it gets too thick. Stir in the garam masala and black pepper.",
     "For the optional tadka, fry the sliced onion in the ghee over medium-high heat for 5-6 minutes until deep golden brown, then pour over the haleem.",
-    "Garnish with cilantro, ginger, green chilies, lemon wedges and fried onions, and serve with extra garnishes on the side."
+    "Garnish with cilantro, ginger, green chilies, lemon wedges, fried onions and mint leaves if using, and serve with extra garnishes on the side."
    ]
   }
  },
@@ -22966,6 +23011,11 @@
      "name": "vanilla extract, for the frosting",
      "quantity": 1,
      "unit": "tsp"
+    },
+    {
+     "name": "matcha, for dusting",
+     "quantity": 0,
+     "unit": ""
     }
    ],
    "name": "Matcha Cupcakes",
@@ -23406,9 +23456,9 @@
      "unit": "clove"
     },
     {
-     "name": "inch piece of ginger, crushed",
+     "name": "ginger, crushed",
      "quantity": 0.75,
-     "unit": ""
+     "unit": "inch"
     },
     {
      "name": "boneless chicken, cut into 1-inch pieces",
@@ -25177,7 +25227,7 @@
     "Once fried, add the chopped tomatoes.",
     "Stir in 1 tbsp tomato paste, the Italian seasoning, chilli flakes, chicken seasoning and pasta bake sauce. Taste and adjust.",
     "Preheat the oven to 190C / gas mark 5.",
-    "Layer the pasta in a tray, add the chopped vegetables, then pour in the cooked sauce and toss until evenly coated.",
+    "Layer the pasta in a tray, add the chopped vegetables, tuna and sweetcorn, then pour in the cooked sauce and toss until evenly coated.",
     "Cover with foil and bake for 25 minutes.",
     "Stir the pasta thoroughly, sprinkle over the cheese and bake for a further 30 minutes."
    ]
@@ -25344,77 +25394,77 @@
    "ingredients": [
     {
      "name": "medium firm tofu",
-     "quantity": 496,
+     "quantity": 397,
      "unit": "g"
     },
     {
      "name": "fresh mushrooms",
-     "quantity": 142,
+     "quantity": 113,
      "unit": "g"
     },
     {
      "name": "eggs",
-     "quantity": 2.5,
+     "quantity": 2,
      "unit": ""
     },
     {
      "name": "tomatoes",
-     "quantity": 3.8,
+     "quantity": 3,
      "unit": ""
     },
     {
      "name": "ginger",
-     "quantity": 2.5,
+     "quantity": 2,
      "unit": "slice"
     },
     {
      "name": "spring onions",
-     "quantity": 3.8,
+     "quantity": 3,
      "unit": ""
     },
     {
      "name": "cornstarch",
-     "quantity": 3.8,
+     "quantity": 3,
      "unit": "tbsp"
     },
     {
      "name": "water, for the slurry",
-     "quantity": 5,
+     "quantity": 4,
      "unit": "tbsp"
     },
     {
      "name": "chicken broth",
-     "quantity": 496,
+     "quantity": 397,
      "unit": "g"
     },
     {
      "name": "water",
-     "quantity": 3.8,
+     "quantity": 3,
      "unit": "cup"
     },
     {
      "name": "ketchup",
-     "quantity": 2.5,
+     "quantity": 2,
      "unit": "tbsp"
     },
     {
      "name": "salt",
-     "quantity": 1.3,
+     "quantity": 1,
      "unit": "tsp"
     },
     {
      "name": "sugar",
-     "quantity": 2.5,
+     "quantity": 2,
      "unit": "tbsp"
     },
     {
      "name": "sesame oil",
-     "quantity": 1.3,
+     "quantity": 1,
      "unit": "tsp"
     },
     {
      "name": "cooking oil",
-     "quantity": 1.3,
+     "quantity": 1,
      "unit": "tbsp"
     }
    ],
@@ -25422,13 +25472,13 @@
    "notes": "Use medium firm or firmer tofu; silken or soft tofu will fall apart.",
    "prePrep": [],
    "prepMinutes": 20,
-   "servings": 5,
+   "servings": 4,
    "steps": [
     "Dice some of the tomatoes into small pieces and cut the rest into larger pieces. If you want to remove the skins, score them, pour boiling water over, leave for about 20 seconds, then peel.",
     "Dice the mushrooms. Chop the spring onions, separating the white parts from the greens. Slice and smash the ginger.",
     "Rinse the tofu and cut it into 32-40 medium pieces.",
     "Crack the eggs into a bowl and beat lightly, leaving some white and yolk separate.",
-    "Mix the cornstarch with 5 tbsp water until smooth to make a slurry.",
+    "Mix the cornstarch with 4 tbsp water until smooth to make a slurry.",
     "Heat a wok on high for 20-30 seconds, add the cooking oil and heat for 15-20 seconds, then add the ginger. Once the oil is rippling, turn the heat down.",
     "Sauté the white parts of the spring onion, then add the small diced tomatoes and cook for 20-30 seconds. Add the larger tomato pieces and cook for another 30 seconds.",
     "Add the mushrooms and cook for 20-30 seconds, then transfer everything to a large pot.",
@@ -27493,7 +27543,7 @@
    "prepMinutes": 80,
    "servings": 12,
    "steps": [
-    "Sift the flour and matcha together into a small bowl.",
+    "Sift the flour, matcha and salt together into a small bowl.",
     "In a stand mixer, beat the butter and sugar on medium until creamy and pale, then add the egg and mix until fully incorporated.",
     "Lower the speed and gradually add the flour mixture until just combined; the dough will be firm.",
     "Chill the dough for 10 minutes. Meanwhile, heat the oven to 180°C (350°F) and line two baking trays with parchment.",
@@ -27802,7 +27852,7 @@
    "servings": 4,
    "steps": [
     "Preheat the oven to 180C and line two baking trays with baking paper.",
-    "Cream the butter and sugars, then add the egg and beat vigorously.",
+    "Cream the butter and sugars, then add the egg and vanilla and beat vigorously.",
     "In another bowl, mix the flour, oats, baking powder and bicarbonate of soda.",
     "Add the chocolate, then add to the butter and egg mixture and beat together.",
     "Roll into 2cm balls and space about 5cm apart on the trays.",
@@ -28353,6 +28403,7 @@
     "Preheat the oven to 190C.",
     "Whisk the sugar and butter until pale and fluffy, about 5 minutes.",
     "Add the eggs.",
+    "Fold in the flour and baking powder.",
     "Add the milk and vanilla extract and whisk for another 30 seconds.",
     "Spoon the mixture into cupcake cases. If using raisins, toss them in 1 tsp flour and add them.",
     "Bake for 20 minutes at 190C.",
@@ -28386,9 +28437,9 @@
      "unit": "tsp"
     },
     {
-     "name": "cinnamon stick, 2 inch piece, broken up",
+     "name": "cinnamon stick, broken into pieces",
      "quantity": 2,
-     "unit": ""
+     "unit": "inch"
     },
     {
      "name": "small black cardamom",
@@ -31641,7 +31692,7 @@
     "Stir in the tomato purée for 30 seconds, then the mint sauce for 30 seconds.",
     "Add the chopped tomatoes, stir, turn up the heat and simmer to thicken for 10 minutes.",
     "Add the chickpeas and maple syrup and squeeze in the lemon juice. Turn the heat down and simmer for 15-20 minutes, stirring occasionally so it doesn't catch.",
-    "Meanwhile, halve the preserved lemon and put it in a mixing bowl with the olive oil, cumin, couscous and boiling water. Cover with a plate and set aside for 8-10 minutes, then fluff with a fork.",
+    "Meanwhile, halve the preserved lemon and put it in a mixing bowl with the extra virgin olive oil, cumin, chilli powder, couscous and boiling water. Cover with a plate and set aside for 8-10 minutes, then fluff with a fork and season with salt and pepper.",
     "Toast the pistachios in a dry pan over a high heat for 2 minutes.",
     "Spoon the couscous and jackfruit into bowls, garnish with coriander leaves, parsley, pistachios and pomegranate seeds and serve immediately, with hummus if you like."
    ]
