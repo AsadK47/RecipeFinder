@@ -163,13 +163,21 @@ struct UnitConversion {
         ingredientName: String? = nil
     ) -> (quantity: Double, unit: String) {
         let unitType = getUnitType(unit)
+        let normalizedUnit = unit.lowercased().trimmingCharacters(in: .whitespaces)
+        if ["pinch", "pinches"].contains(normalizedUnit) { return (value, unit) }
         
         switch unitType {
         case .weight:
             return convertWeightToSystem(value: value, unit: unit, system: system)
         case .volume:
             if let name = ingredientName, isSolidIngredient(name) {
-                return convertVolumeToWeightForSolids(value: value, unit: unit, system: system, ingredientName: name)
+                let weighed = convertVolumeToWeightForSolids(value: value, unit: unit, system: system, ingredientName: name)
+                // Spoonfuls of spice weighed out read as "½ g" — nobody weighs that; keep spoons below 10 g.
+                let spoonUnits: Set<String> = ["tsp", "teaspoon", "teaspoons", "tbsp", "tablespoon", "tablespoons"]
+                if spoonUnits.contains(normalizedUnit), weighed.unit == "g", weighed.quantity < 10 {
+                    return (value, unit)
+                }
+                return weighed
             } else {
                 return convertVolumeToSystem(value: value, unit: unit, system: system)
             }

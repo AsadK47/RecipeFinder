@@ -17,8 +17,11 @@ struct IngredientNameFormatter {
         options: [.caseInsensitive]
     )
 
+    /// Sentence case as written ("Butter, melted, plus extra") — `.capitalized` Title-Cased every word.
     static func formatForDisplay(_ name: String) -> String {
-        return name.capitalized
+        let trimmed = name.trimmingCharacters(in: .whitespaces)
+        guard let first = trimmed.first else { return trimmed }
+        return first.uppercased() + trimmed.dropFirst()
     }
 
     static func extractMainName(_ name: String) -> String {

@@ -1,3 +1,4 @@
+import Testing
 import XCTest
 @testable import RecipeFinder
 
@@ -229,5 +230,24 @@ final class UnitConversionTests: XCTestCase {
 
     func testUnknownWeightUnitPassthrough() {
         XCTAssertEqual(UnitConversion.convertWeight(value: 7, from: "xyz", to: "g"), 7.0)
+    }
+}
+
+@Suite("Ingredient display")
+struct IngredientDisplayTests {
+    @Test("Small spoonfuls of spice stay as spoons in both systems (was \"½ g\" of cumin)", arguments: ["tsp", "tbsp", "pinch"])
+    func smallSpoonsUnchanged(unit: String) {
+        for system in [MeasurementSystem.metric, .imperial] {
+            let converted = UnitConversion.convert(value: 0.5, unit: unit, to: system, ingredientName: "ground cumin")
+            #expect(converted.quantity == 0.5)
+            #expect(converted.unit == unit)
+        }
+    }
+
+    @Test("Ingredient names display in sentence case as written, not Title Case")
+    func sentenceCase() {
+        let ingredient = Ingredient(baseQuantity: 25, unit: "g", name: "butter, melted, plus extra for cooking")
+        #expect(ingredient.displayName == "Butter, melted, plus extra for cooking")
+        #expect(IngredientNameFormatter.formatForDisplay("Kashmiri chilli powder") == "Kashmiri chilli powder")
     }
 }

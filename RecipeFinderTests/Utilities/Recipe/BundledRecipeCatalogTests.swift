@@ -21,16 +21,66 @@ struct BundledRecipeCatalogTests {
     /// Parses raw entries into sample recipes with name-derived stable ids. Drops unparseable entries and
     /// duplicate names (the corpus has a few, and some overlap the hard-coded starters). `images` maps a source URL
     /// to its page's hero image (`recipes_source_images.json`, from tools/seed-images) — hotlinked, never bundled.
-    static func generate(from entries: [SourceEntry], images: [String: String] = [:]) -> [RecipeModel] {
+    static func generate(from entries: [SourceEntry], images: [String: String] = [:],
+                         curated: [String: CuratedEntry] = [:]) -> [RecipeModel] {
         var seen = Set(SeedRecipeProvider.recipes.map { normalised($0.name) })
         var recipes: [RecipeModel] = []
         for entry in entries {
             guard let prefill = TextRecipeParser.parse(entry.rawText) else { continue }
-            let model = makeModel(from: prefill, entry: entry, images: images)
+            var model = makeModel(from: prefill, entry: entry, images: images)
+            // A human-reviewed version (recipes_curated.json, keyed by the stable id) replaces the raw parse.
+            if let review = curated[model.id.uuidString] {
+                guard review.action != "drop" else { continue }
+                if let fixed = review.recipe { model = apply(fixed, to: model, sourceURL: sourceURL(in: entry.rawText)) }
+            }
             guard seen.insert(normalised(model.name)).inserted else { continue }
             recipes.append(model)
         }
         return recipes
+    }
+
+    // MARK: - Curated reviews
+
+    /// One reviewed recipe from `recipes_curated.json` (see tools/recipe-review/BRIEF.md for how they're produced).
+    struct CuratedEntry: Decodable {
+        let action: String          // keep | fix | drop
+        let recipe: CuratedRecipe?
+    }
+
+    struct CuratedRecipe: Decodable {
+        struct Item: Decodable { let quantity: Double; let unit: String; let name: String }
+        let name: String
+        let category: String
+        let difficulty: String
+        let prepMinutes: Int
+        let cookMinutes: Int
+        let servings: Int
+        let ingredients: [Item]
+        let prePrep: [String]
+        let steps: [String]
+        let notes: String
+    }
+
+    /// Builds the shipped recipe from its curated version, keeping the parsed model's stable id, photo and source link.
+    static func apply(_ curated: CuratedRecipe, to parsed: RecipeModel, sourceURL: String?) -> RecipeModel {
+        let idKey = parsed.id.uuidString
+        return RecipeModel(
+            id: parsed.id,
+            name: curated.name,
+            category: curated.category,
+            difficulty: curated.difficulty,
+            prepTime: "\(curated.prepMinutes) minutes",
+            cookingTime: "\(curated.cookMinutes) minutes",
+            baseServings: max(1, curated.servings),
+            ingredients: curated.ingredients.enumerated().map { index, item in
+                Ingredient(id: stableUUID("\(idKey)#curated#\(index)"), baseQuantity: item.quantity, unit: item.unit, name: item.name)
+            },
+            prePrepInstructions: curated.prePrep,
+            instructions: curated.steps,
+            notes: notes(curated.notes, sourceURL: sourceURL),
+            imageName: parsed.imageName,
+            isSampleRecipe: true
+        )
     }
 
     /// Sorted, pretty output so regenerations are deterministic and the committed diff is reviewable.
@@ -176,6 +226,12 @@ struct BundledRecipeCatalogTests {
     }
 
     /// Optional: a missing map just means no photos.
+    private static func loadCurated() throws -> [String: CuratedEntry] {
+        let dir = try #require(seedDirectory())
+        let data = try Data(contentsOf: dir.appendingPathComponent("recipes_curated.json"))
+        return try JSONDecoder().decode([String: CuratedEntry].self, from: data)
+    }
+
     private static func loadImages() throws -> [String: String] {
         let dir = try #require(seedDirectory())
         guard let data = try? Data(contentsOf: dir.appendingPathComponent("recipes_source_images.json")) else { return [:] }
@@ -187,7 +243,7 @@ struct BundledRecipeCatalogTests {
     @Test("committed recipes_seed.json matches the generator (rewrites it when stale)")
     func committedCatalogMatchesGenerator() throws {
         let dir = try #require(Self.seedDirectory())
-        let fresh = try Self.encode(Self.generate(from: Self.loadSource(), images: Self.loadImages()))
+        let fresh = try Self.encode(Self.generate(from: Self.loadSource(), images: Self.loadImages(), curated: Self.loadCurated()))
         let outputURL = dir.appendingPathComponent("recipes_seed.json")
         guard (try? Data(contentsOf: outputURL)) != fresh else { return }
         try fresh.write(to: outputURL)
@@ -198,7 +254,18 @@ struct BundledRecipeCatalogTests {
     func generationIsDeterministic() throws {
         let source = try Self.loadSource()
         let images = try Self.loadImages()
-        #expect(try Self.encode(Self.generate(from: source, images: images)) == Self.encode(Self.generate(from: source, images: images)))
+        let curated = try Self.loadCurated()
+        #expect(try Self.encode(Self.generate(from: source, images: images, curated: curated))
+                == Self.encode(Self.generate(from: source, images: images, curated: curated)))
+    }
+
+    @Test("every bundled recipe has a human review — new source recipes can't ship unreviewed")
+    func everyRecipeIsCurated() throws {
+        let curated = try Self.loadCurated()
+        let unreviewed = Self.generate(from: try Self.loadSource(), images: [:])
+            .filter { curated[$0.id.uuidString] == nil }
+            .map(\.name)
+        #expect(unreviewed.isEmpty, "Review these (tools/recipe-review/BRIEF.md) and add them to recipes_curated.json: \(unreviewed)")
     }
 
     // MARK: - Generator behaviour

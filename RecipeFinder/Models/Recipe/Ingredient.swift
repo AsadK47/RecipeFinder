@@ -55,7 +55,8 @@ struct Ingredient: Identifiable, Codable, Hashable {
     }
     
     var displayName: String {
-        return IngredientNameFormatter.formatForDisplay(name)
+        // From the stored name — `name` is Title-Cased for matching/grocery use, which read badly in recipes.
+        IngredientNameFormatter.formatForDisplay(_name)
     }
     
     var mainIngredientName: String {

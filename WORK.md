@@ -1,3 +1,14 @@
+# WORK: Bundled recipe curation (2026-11-04) — DONE, uncommitted (1774/1774 green)
+All 340 source recipes reviewed against their raw paste (6 reviewer batches, brief in tools/recipe-review/BRIEF.md) →
+`RecipeFinder/RecipeSeed/recipes_curated.json` (keyed by stable id; 332 fix, 8 drop). Generator
+(BundledRecipeCatalogTests.apply) builds shipped recipes from it; `everyRecipeIsCurated` blocks unreviewed additions.
+Display fixes: ingredient names sentence case (`displayName` from stored name); spoons <10 g stay spoons in Metric.
+Spot-check (reviewer judgement calls): un-scaled amounts in Aloo Gosht, Beef in Black Bean, Butter Chicken, Beef
+Stroganoff, Biang Biang, Pakistani Chana Dal (weakest), Dan Dan, Kofta, Dal Gosht, Nihari, Shami Kebab, Paella, Lamb
+Pulao, Green Curry, mooncakes; Pistachio Sponge final step written by reviewer; matcha rice cake gelatin→yeast; some
+method-only ingredients added with qty 0; Chicken Corn Soup / Clay Pot Rice cook time = total − prep.
+Next: user eyeballs a handful on device (reinstall), commits; then Kitchen surfacing / 🟡 backlog.
+
 # WORK: Account removal (2026-11-04) — STAGES 1–3 DONE (uncommitted; build + full suite 1769/1769 green)
 - S1: auth engine/UI, Keychain/PasswordHasher/SessionExpiry, sign-in UI tests and launch args deleted; legal/help copy de-accounted.
 - S2: per-user scoping → `LocalStore` (unscoped "rf." keys, no migration); Core Data `userId` dropped in RecipeModel 14.
