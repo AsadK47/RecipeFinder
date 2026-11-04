@@ -9,18 +9,18 @@ extension PersistenceController {
         
         let context = container.viewContext
         let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: Entity.recipe)
-        
-        if let userId = userID() {
-            fetchRequest.predicate = NSPredicate(format: "userId == %@", userId)
-        } else {
-            persistenceLogger.debug("⚠️ No user logged in, skipping database clear to protect other users' data")
-            return
-        }
-        
+        // nil userId = the guest's own scope (rows with userId == nil), so this never touches an account's recipes.
+        fetchRequest.predicate = Self.ownerPredicate(userID())
+
         let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-        
+        deleteRequest.resultType = .resultTypeObjectIDs
+
         do {
-            try context.execute(deleteRequest)
+            // Batch deletes bypass the context, so merge the deleted IDs or in-memory objects go stale.
+            let result = try context.execute(deleteRequest) as? NSBatchDeleteResult
+            if let ids = result?.result as? [NSManagedObjectID] {
+                NSManagedObjectContext.mergeChanges(fromRemoteContextSave: [NSDeletedObjectsKey: ids], into: [context])
+            }
             try context.save()
             persistenceLogger.debug("✅ Database cleared successfully for current user")
         } catch {

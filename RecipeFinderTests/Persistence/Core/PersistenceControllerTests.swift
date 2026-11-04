@@ -144,4 +144,20 @@ import Foundation
         controller.saveRecipeModel(makeRecipe(name: "Guest"))
         #expect(controller.fetchRecipes().map(\.name) == ["Guest"])
     }
+
+    @Test func clearDatabase_asGuest_clearsGuestRecipesButNeverAnAccounts() {
+        // Settings → Reset as a guest used to be a silent no-op (nil scope refused); it must clear the guest's rows only.
+        var currentUser: String? = "userA"
+        let controller = makeController(userID: { currentUser })
+        let account = makeRecipe(name: "Account recipe")
+        controller.saveRecipeModel(account)
+
+        currentUser = nil
+        controller.saveRecipeModel(makeRecipe(name: "Guest recipe"))
+        controller.clearDatabase()
+
+        #expect(controller.fetchRecipes().isEmpty)
+        currentUser = "userA"
+        #expect(controller.fetchRecipes().map(\.id) == [account.id])
+    }
 }

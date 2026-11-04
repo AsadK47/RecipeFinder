@@ -127,11 +127,11 @@ final class UserScopedStorage: @unchecked Sendable {
         userDefaults.removeObject(forKey: scopedKey(key))
     }
     
+    /// Removes every key in the current scope — an account's, or the guest's ("no_user_") when signed out.
     func clearCurrentUserData() {
-        guard let userId = currentUserId else { return }
-        
+        let prefix = "\(currentUserId ?? "no_user")_"
         let allKeys = userDefaults.dictionaryRepresentation().keys
-        let userKeys = allKeys.filter { $0.hasPrefix("\(userId)_") }
+        let userKeys = allKeys.filter { $0.hasPrefix(prefix) }
         
         for key in userKeys {
             userDefaults.removeObject(forKey: key)

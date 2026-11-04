@@ -1,75 +1,70 @@
-# WORK: Pre-TestFlight fixes (from SHIP_BAR checklist pass, 2026-10-30)
+# WORK: New-user exploratory QA (2026-11-03) — PAUSED mid-run
 
 ## ▶ Resume here
-All below is UNCOMMITTED (user reviews + commits). Last full suite: 1829/1829 green.
+Working tree clean before this file (all prior work committed: 184b2ed). No code changes in progress.
 
-### Done this session
-1. **test(ui) a11y audit fix** — grocery search targeted by `groceries.search` id (`AppSearchField.accessibilityID`);
-   `launchAuthenticated()` swipes away a launch "BADGE EARNED!" sheet (matched case-insensitively — title is uppercased).
-2. **🔴 Guest recipes lost on relaunch + missing from backup** — guest-only build: every user is a guest
-   (`userID()` nil). `RecipeStore` guest path showed in-memory `SeedRecipeProvider` only; `fetchRecipes*` returned []
-   for nil scope. Fix: nil userId = guest scope (`PersistenceController.ownerPredicate` → `userId == nil`), used by all
-   fetch/count/id predicates + `seedRecipes`; `RecipeStore` guests use the same fetch/seed path (`isGuestLibrary`
-   tracks guest↔account switch). Tests: RecipeStoreTests (relaunch, scope isolation, guest backup),
-   PersistenceControllerTests (2 tests rewritten to new contract).
+**Status:** Both testers DONE (2026-11-04). Run testers sequentially, never in parallel (shared run destination).
 
-### Decisions
-- Guest scope = rows with `userId == nil` (mirrors UserScopedStorage "no_user"), NOT a generated guest UUID —
-  smaller change, keeps existing tester data, no scope migration. Guest→account migration on future sign-in is OUT of
-  scope (sign-in UI hidden until enrolment).
-- Guest id predicates now `id AND userId == nil` (was id-only) — seed UUIDs are shared, id-only let a guest write land
-  on an account's row.
-- `clearDatabase()` still refuses nil scope (destructive — left deliberately).
+### 🔴 — ALL FIXED 2026-11-04 (uncommitted; full suite 1827/1827 green)
+1. Edit dropped isSampleRecipe/rating/dietaryInfo/cook history → `RecipeWizardBuilder.mergeEdit` at the single edit
+   save point (RecipeDetailView+Content editRecipeSheet). Test: RecipeWizardBuilderTests.mergeEditPreservesUneditedFields.
+   Dev devices that already edited bundled recipes keep the bad flag until Settings → Reset (now works).
+2. Grocery redraw → ShoppingListModel uses synthesized ==/hash (lookups already by id). Test updated/added.
+3. Guest Reset → nil userId = guest scope in `clearDatabase` (ownerPredicate + merge batch-delete IDs) and
+   `clearCurrentUserData` ("no_user_" prefix); reset reloads via `recipeStore.load` (re-seeds starters + bundled) instead
+   of legacy `populateDatabase`. **Decision reversed:** 2026-10-30 left clearDatabase refusing nil scope; that made the
+   confirmed user reset a silent no-op. Guest predicate can't touch account rows (test asserts it).
 
-3. **🟡 fixes (all done, full suite 1835/1835 green):**
-   a. `BadgeCard` shows full title (2 lines) — was first word only.
-   b. `RecipeModel.wasCookedToday()` → "Mark as Cooked" becomes disabled "Cooked today" (id `recipe.markCooked`);
-      HabitLoop UI test taps only if enabled (sim state isn't reset between runs).
-   c. Last-cooked uses `.relative(presentation: .named)` ("2 minutes ago").
-   d. `RecipeImportStore`: `.paste` awards no badge (Link Master is web-only).
-   e. Collection badges exclude starters: `BadgeMetrics.recipesCollected` filters `isSampleRecipe`;
-      `saveRecipe` uses new `fetchCollectedRecipeCount()`. (Needed now that guest seeds persist.)
+### Next action — cheap 🟡 first (one at a time)
+a. Ticks stay on row positions after edit (RecipeDetailView onChange resets only on count change) — reset on content change.
+b. Notification prompt on every launch (ContentView.onAppear) — remove; contextual asks already exist.
+c. Backup/restore feedback off-screen → alert near buttons + spinner during export.
+d. "Ingredi-ents" / "Purpl/e" wraps; Filters "Kitchen tab" copy dead-end; Update-from-Source toggle colour.
+e. Cooking timer sums all durations in a step. f. Difficulty vocab (Medium vs Basic/Intermediate/Expert).
+Watch: Ingredient & RecipeModel also use partial == (possible stale-UI, not yet observed).
 
-### Backlog (not cheap)
-- Paste import shows wizard defaults (Intermediate/4 servings/15+30 min) — wizard fields are non-optional Ints;
-  making them "unset" touches wizard + builder + persistence.
-- Stacked sheets in paste import; VoiceOver labels; misc layout (chat report 2026-10-30).
+## Findings — tester A (iPhone 18 Pro, core loop) — no crashes; edit crash fix confirmed
+### 🟡
+- Ticks land on wrong items after edit (state keyed by position, reset only on count change).
+- Cooking-mode timer sums every duration in a step ("6 hours, up to 48 hours" → 3240 min) — CookingModeView.cookTimerMinutes l.48.
+- Difficulty vocab mismatch: bundled "Medium" vs editor Basic/Intermediate/Expert; "Easy Recipes" collection + RecipeSearchView.swift:74 filter never match "Medium".
+- Parse quality: section headers/equipment as ingredients ("For Serving:", "Baking Rack"); "Plain whole-milk greek yogurt" → name "Plain"; source notes/nutrition become steps; all bundled category "Main", no cuisine; junk titles (Chapati PREP TIME…, paella "Serves 2.0…", "18.0 bites serving", URLs in titles, garbled Thai).
+- Nutrition estimate contradicts source figures shown above it.
+- Editor shows "0.333333"; notes Title-Cased ("Such As Grapeseed Oil"); cooking mode ignores Imperial.
+- Filters: "Add ingredients in the Kitchen tab first" but no Kitchen tab; What Can I Make toggle dead-ends (FilterSheet.swift:116).
+- Update-from-Source toggles render as off while on.
+- Lemon juice from recipe → groceries "2", no unit, "Beverages".
+### 🟢
+Delete only via long-press, no undo; edit cancel no discard prompt; new collection from Add-to-Collection doesn't add the recipe; Timer/Collections sheets no close; sort resets on relaunch; a11y (steps no checked state, photo remove "Close", nested "Drag"); no rating prompt; no onboarding.
+### Verified OK
+Instant first-launch library w/ images, search, sort, scaling, units, ticking, substitutions, groceries add, favourite, collections incl. smart, View Original, cooking mode + timer, confetti/badges, cook count + Cooked today, persistence across relaunch, delete w/ confirm.
 
-- 🟡 Backup/restore success message renders at the bottom of Data Management (below the fold, timed) — user
-  sees no feedback after Export/Import. Move to an alert/toast near the buttons.
-- 🟢 Guests upgrading from a pre-fix build get no starter recipes (seeding requires an empty library). Dev devices only.
-- 🟢 Recipe row VoiceOver reads prep time while the row shows the total time.
-
-### Verified by hand (simulator, 2026-10-30)
-Guest recipe + cook count survive relaunch; backup JSON contains guest recipes; restore is non-duplicating;
-"Cooked today" lock works; full badge titles; no Link Master on paste. SHIP_BAR checklist: all items pass.
-
-### Decisions (2026-11-03)
-- **App is free; RecipeFinder+ scrapped** (ROADMAP.md "Business model" updated). Bundled recipes go to everyone.
-- `recipes_seed.json` (355, personal collection, ~242 with source URLs) stays bundled — user accepted the copyright
-  risk for a free app; don't relitigate. Source URLs kept (useful for crediting + hotlinked photos).
-- Recipe photos: hotlink the source page's image at runtime with credit — never bundle third-party photos.
-
-### Done 2026-11-03 (UNCOMMITTED — full unit suite 1822/1822 + UI launch/habit/import/a11y 9/9 green)
-1. **Fresh install shows all recipes.** `recipes_source.json` (raw, test-only, NOT bundled) → generator
-   `BundledRecipeCatalogTests` → committed `recipes_seed.json` (341 structured recipes, stable SHA-derived ids,
-   `isSampleRecipe`). `RecipeStore.seedIfNeeded` seeds starters (empty library) + bundled once per scope
-   (`bundledRecipesSeeded_v1`, skips existing ids → existing installs get them too). Drift test rewrites the
-   JSON + fails when source/parser changes — re-run after. Removed `PersonalRecipeSeedService` (sign-in +
-   Settings → Data "Import My Recipes" paths) — superseded.
-   - **Parser bug fixed:** `TextRecipeParser` stripped "1." from decimals ("1.75 tbsp" → 75 tbsp) as a list
-     marker. Affected all paste/OCR imports. 6 recipes left `seed_parse_known_poor.json` as a result.
-2. **Source photos:** `tools/seed-images/fetch_seed_images.py` → `recipes_source_images.json` (source URL →
-   image URL, 170/239 resolved; rest are bot-blocked sites → placeholder). Generator sets `imageName` to the
-   https URL — hotlinked via Kingfisher, never bundled. 168 bundled recipes have photos.
-3. **Paywall deleted:** SubscriptionManager, PaywallView, PremiumGate(+tests), Settings upgrade card, import +
-   meal-reminder gates, `.storekit` + scheme refs.
-4. **PrivacyInfo.xcprivacy** for app (UserDefaults CA92.1 + 1C8F.1, FileTimestamp C617.1) and share extension
-   (1C8F.1); `ITSAppUsesNonExemptEncryption = NO`. Verified both land in the built bundles.
-
-### Known / backlog
-- 🟢 "Chocolate mousse" source has `51.72 Cup of granulated sugar` (bad source data, not parser).
-- 🟢 Scheme files edited (StoreKit ref removed) — quit + reopen Xcode so it reloads them.
-
-### Next action
-User reviews + commits, then TestFlight (paid enrolment + switch signing to RecipeFinder Limited).
+## Findings — tester B (iPhone 17e, fresh install, guest)
+### 🔴
+1. **Grocery check-off / +− qty don't redraw** — persists but row doesn't update; users re-tap and toggle back.
+   Cause: `ShoppingListModel` `==` compares `id` only → SwiftUI skips row diff.
+2. **Settings → Data → "Reset to Default" is a no-op for guests but reports success** — `clearAllRecipes` /
+   `clearCurrentUserData` / `populateDatabase` early-return on nil userId (log: "No user logged in, skipping database
+   clear"); recipe list not reloaded. (Guest scope = userId nil since the 2026-10-30 guest-persistence fix.)
+### 🟡
+3. Notification permission requested on every launch — `ContentView.onAppear` (~l.57); timer + reminder already ask in context.
+4. Groceries drop units/decimals: "1.5 tbsp olive oil" → "Olive Oil 2", "200g" → "200"; qty Int, + disabled at 200 (max 99).
+5. "View all badges" no-op — `ContentView.swift:114–121` presents a sheet while another dismisses.
+6. Recipe detail "Ingredients" header wraps "Ingredi-ents" (squeezed by edit/cart/Metric buttons).
+7. Theme "Purple" wraps "Purpl/e" when selected (checkmark).
+8. Backup export/import feedback off-screen at bottom, 2s auto-hide; export 3–5s with no spinner.
+9. Paste import invents 15+30 min times and "Intermediate" (seeds use "Medium") — known backlog item.
+10. URL import saves with no review step and no jump-to-recipe; only a badge sheet shows.
+11. Kitchen: no way to set expiry dates though Help says you can.
+12. Meal reminders only via long-press; tapping a planned meal swaps it; can't open the planned recipe.
+13. Seed data: "Easy & Simple Apam Balik…" title contains whole description; "American pancakes" shows "585 minutes".
+### 🟢
+Search ~1s lag + refocuses keyboard on back; tiny tap targets (tip ✕ 9pt, planner trash 14pt); keyboard-dismiss FAB
+covers "Add"; "(0/1)" grocery count confusing; raw "unsupported URL" error; manual editor cancel discards without
+confirm; "Validation Error" titles; Import inbox icon looks tappable; Kitchen sheet no close; generic category icons;
+Account avatar blank vs "RC"; locked badges low contrast/no hint; reminder sheet translucent bleed; menu button a11y
+label "Drag"; recipe row a11y reads prep time not total; low-contrast orange-on-blue and grey alert text.
+### Verified OK
+Paste import (1.5 tbsp survives), garbage/blank paste, BBC URL import + photo, invalid URL error, OCR graceful fail,
+manual validation, search, groceries from suggestions/recipe, kitchen add, What Can I Make, meal plan add/reorder/
+delete/reminder, badges, dark mode/themes, settings rows, privacy policy, reset confirm dialog. No crashes.

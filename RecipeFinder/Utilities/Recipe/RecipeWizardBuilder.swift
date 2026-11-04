@@ -96,4 +96,16 @@ enum RecipeWizardBuilder {
             photoNames: photoNames
         )
     }
+
+    /// An edit only covers the wizard's fields; carry over everything else from the stored recipe. Without this, editing
+    /// reset rating + dietary info and flipped bundled recipes to "user" ones (re-enabling source re-checks and badges).
+    static func mergeEdit(_ edited: RecipeModel, onto stored: RecipeModel) -> RecipeModel {
+        var merged = edited
+        merged.isSampleRecipe = stored.isSampleRecipe
+        merged.rating = stored.rating
+        merged.dietaryInfo = stored.dietaryInfo
+        merged.cookCount = stored.cookCount
+        merged.lastCookedAt = stored.lastCookedAt
+        return merged
+    }
 }

@@ -5,6 +5,18 @@ final class ShoppingListModelTests: XCTestCase {
 
     // MARK: - Default init values
 
+    // Regression: id-only == made SwiftUI skip redrawing a row after check-off / quantity change.
+    func testEquality_detectsCheckAndQuantityChanges() {
+        let item = ShoppingListModel(name: "Lemon")
+        var checked = item
+        checked.isChecked = true
+        var more = item
+        more.quantity = 2
+        XCTAssertNotEqual(item, checked)
+        XCTAssertNotEqual(item, more)
+        XCTAssertEqual(item, item)
+    }
+
     func testInit_defaultQuantity_isOne() {
         let item = ShoppingListModel(name: "Milk")
         XCTAssertEqual(item.quantity, 1)
@@ -69,10 +81,10 @@ final class ShoppingListModelTests: XCTestCase {
 
     // MARK: - Identifiable / Hashable
 
-    func testTwoItemsWithSameId_areEqual() {
-        let id = UUID()
-        let a = ShoppingListModel(id: id, name: "Bread")
-        let b = ShoppingListModel(id: id, name: "Bread")
+    func testCopyOfItem_isEqual() {
+        // Equality is now all-field (see testEquality_detectsCheckAndQuantityChanges), so compare a true copy.
+        let a = ShoppingListModel(name: "Bread")
+        let b = a
         XCTAssertEqual(a, b)
     }
 

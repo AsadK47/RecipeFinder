@@ -207,14 +207,19 @@ import Foundation
         #expect(defaults.string(forKey: "unscopedKey") == "keep")
     }
 
-    @Test func clearCurrentUserData_isNoOp_whenSignedOut() {
+    @Test func clearCurrentUserData_clearsGuestScope_andLeavesAccounts() {
+        // Guest-only build: signed out (nil) IS the guest's scope, so Settings → Reset must clear it.
         let storage = UserScopedStorage(userDefaults: freshDefaults())
-        // currentUserId is nil.
-        storage.set("anon", forKey: "k")
+        storage.currentUserId = "userA"
+        storage.set("a1", forKey: "k")
 
+        storage.currentUserId = nil
+        storage.set("guest", forKey: "k")
         storage.clearCurrentUserData()
 
-        #expect(storage.string(forKey: "k") == "anon")
+        #expect(storage.string(forKey: "k") == nil)
+        storage.currentUserId = "userA"
+        #expect(storage.string(forKey: "k") == "a1")
     }
 
     // MARK: - Scope-change notification

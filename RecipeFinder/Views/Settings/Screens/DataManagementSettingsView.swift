@@ -2,6 +2,8 @@ import SwiftUI
 
 /// Factory reset and destructive-action confirmation preferences.
 struct DataManagementSettingsView: View {
+    @Environment(\.recipeStore) private var recipeStore
+    @Environment(\.auth) private var auth
     @State private var showingResetAlert = false
     @State private var dataCleared = false
     @AppStorage("skipRecipeDeleteConfirmation") private var skipDeleteConfirmation: Bool = false
@@ -279,7 +281,7 @@ struct DataManagementSettingsView: View {
     }
 
     private func resetToDefault() {
-        // Scope the wipe to the signed-in user — an unpredicated delete erases other accounts and desyncs auth/scope state.
+        // Scope the wipe to the current scope (account, or the guest's nil scope) — never other accounts.
         PersistenceController.shared.clearAllRecipes()
         UserScopedStorage.shared.clearCurrentUserData()
 
@@ -289,9 +291,9 @@ struct DataManagementSettingsView: View {
         defaults.set("Frost Light", forKey: "cardStyle")
         defaults.set("metric", forKey: "measurementSystem")
 
-        // currentUserId is still set, so this repopulates the sample recipes.
-        PersistenceController.shared.populateDatabase()
-        UserScopedStorage.shared.set(true, forKey: Constants.UserDefaultsKeys.hasPopulatedDatabase)
+        // Seed flags were cleared above, so this re-seeds the starters + bundled collection a fresh install gets and
+        // refreshes the visible list (previously the list kept showing the deleted recipes).
+        recipeStore.load(isAuthenticated: auth.isAuthenticated)
 
         // Refresh in-memory managers so the UI reflects the reset immediately.
         ShoppingListManager.shared.reloadForCurrentUser()

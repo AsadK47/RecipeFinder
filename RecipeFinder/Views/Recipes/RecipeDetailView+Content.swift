@@ -511,8 +511,9 @@ extension RecipeDetailView {
             ),
             editingRecipeId: recipe.id,
             focus: focus,
-            onComplete: { updatedRecipe in
+            onComplete: { edited in
                 let previous = recipe
+                let updatedRecipe = RecipeWizardBuilder.mergeEdit(edited, onto: previous)
                 recipe = updatedRecipe
                 guard recipeStore.save(updatedRecipe) else {
                     recipe = previous

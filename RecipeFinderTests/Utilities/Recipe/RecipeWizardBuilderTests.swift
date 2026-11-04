@@ -169,4 +169,32 @@ struct RecipeWizardBuilderTests {
         )
         #expect(recipe.tags == expected)
     }
+
+    @Test("Editing keeps fields the wizard doesn't edit: sample flag, rating, dietary info, cook history")
+    func mergeEditPreservesUneditedFields() {
+        var stored = RecipeModel(name: "Tandoori Chicken", category: "Main", difficulty: "Medium",
+                                 prepTime: "10 minutes", cookingTime: "30 minutes", baseServings: 4,
+                                 ingredients: [], prePrepInstructions: [], instructions: ["Grill."],
+                                 notes: "https://example.com/tandoori", isSampleRecipe: true,
+                                 cookCount: 3, lastCookedAt: Date(timeIntervalSince1970: 1_000), rating: 4)
+        stored.dietaryInfo.isGlutenFree = true
+
+        // What the wizard hands back: its own fields edited, everything else at defaults.
+        let edited = RecipeModel(id: stored.id, name: "Tandoori Chicken (mine)", category: "Main",
+                                 difficulty: "Intermediate", prepTime: "15 minutes", cookingTime: "30 minutes",
+                                 baseServings: 2, ingredients: [], prePrepInstructions: [],
+                                 instructions: ["Marinate.", "Grill."], notes: stored.notes)
+
+        let merged = RecipeWizardBuilder.mergeEdit(edited, onto: stored)
+
+        #expect(merged.name == "Tandoori Chicken (mine)")
+        #expect(merged.instructions == ["Marinate.", "Grill."])
+        #expect(merged.isSampleRecipe)
+        #expect(merged.rating == 4)
+        #expect(merged.dietaryInfo.isGlutenFree)
+        #expect(merged.cookCount == 3)
+        #expect(merged.lastCookedAt == stored.lastCookedAt)
+        // Regression: an edited bundled recipe must not start re-checking its source site.
+        #expect(!merged.shouldAutoRefreshFromSource)
+    }
 }

@@ -1,8 +1,8 @@
 import Foundation
 
 struct ShoppingListModel: Identifiable, Codable, Hashable {
-    static func == (lhs: ShoppingListModel, rhs: ShoppingListModel) -> Bool { lhs.id == rhs.id }
-    func hash(into hasher: inout Hasher) { hasher.combine(id) }
+    // Synthesized (all-field) Equatable/Hashable on purpose: id-only equality made SwiftUI treat a checked or re-quantified
+    // item as unchanged, so its row never redrew. Look items up by `id` explicitly instead.
     var id: UUID = UUID()
     var name: String
     var quantity: Int
