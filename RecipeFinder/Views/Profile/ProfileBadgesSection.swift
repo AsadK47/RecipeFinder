@@ -11,7 +11,7 @@ struct ProfileBadgesSection: View {
     var body: some View {
         VStack(spacing: 0) {
             Button(action: {
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                withAnimation(.appSpring) {
                     isExpanded.toggle()
                 }
                 HapticManager.shared.light()

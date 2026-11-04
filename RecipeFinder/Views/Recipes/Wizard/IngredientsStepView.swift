@@ -150,7 +150,7 @@ struct IngredientsStepView: View {
     }
 
     private func ingredientAutocompleteSuggestions(for query: String, excluding existingIngredients: [String]) -> [IngredientAutocompleteSuggestion] {
-        let excludedNames = Set(existingIngredients.map { $0.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() }.filter { !$0.isEmpty })
+        let excludedNames = Set(existingIngredients.map { $0.trimmed.lowercased() }.filter { !$0.isEmpty })
 
         return IngredientAutocompleteEngine
             .suggestions(for: query, limit: 4)

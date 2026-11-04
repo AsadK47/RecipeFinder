@@ -20,8 +20,6 @@ enum Constants {
     }
     
     enum Animation {
-        static let springResponse: Double = 0.3
-        static let springDamping: Double = 0.8
         static let feedbackDuration: Double = 1.5
     }
     

@@ -305,7 +305,7 @@ enum CategoryClassifier {
     ]
 
     static func categorize(_ itemName: String) -> String {
-        let lowercased = itemName.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        let lowercased = itemName.lowercased().trimmed
 
         return categoryCache.value(for: lowercased) { normalized in
             // Whole-word match so "graham" isn't Meat via "ham"
@@ -332,7 +332,7 @@ enum CategoryClassifier {
         for ingredient in ingredients {
             // Part before first comma, then trim; parens needed or `.trimmingCharacters` binds to the `?? ingredient` fallback and leaves it untrimmed.
             let cleaned = (ingredient.components(separatedBy: ",").first ?? ingredient)
-                .trimmingCharacters(in: .whitespacesAndNewlines)
+                .trimmed
 
             let words = cleaned.split(separator: " ").map { String($0) }
             

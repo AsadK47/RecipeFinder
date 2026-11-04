@@ -75,24 +75,24 @@ extension RecipeParser {
         result.confidence = 0.95
 
         if let name = data["name"] as? String {
-            result.name = decodeHTMLEntities(name.trimmingCharacters(in: .whitespacesAndNewlines))
+            result.name = decodeHTMLEntities(name.trimmed)
         }
 
         if let description = data["description"] as? String {
-            result.description = decodeHTMLEntities(description.trimmingCharacters(in: .whitespacesAndNewlines))
+            result.description = decodeHTMLEntities(description.trimmed)
         }
 
         if let ingredientsArray = data["recipeIngredient"] as? [Any] {
             result.ingredients = ingredientsArray.compactMap { ingredient in
                 if let str = ingredient as? String {
-                    return decodeHTMLEntities(str.trimmingCharacters(in: .whitespacesAndNewlines))
+                    return decodeHTMLEntities(str.trimmed)
                 } else if let dict = ingredient as? [String: Any], let text = dict["text"] as? String {
-                    return decodeHTMLEntities(text.trimmingCharacters(in: .whitespacesAndNewlines))
+                    return decodeHTMLEntities(text.trimmed)
                 }
                 return nil
             }.filter { !$0.isEmpty }
         } else if let single = data["recipeIngredient"] as? String {
-            let decoded = decodeHTMLEntities(single.trimmingCharacters(in: .whitespacesAndNewlines))
+            let decoded = decodeHTMLEntities(single.trimmed)
             if !decoded.isEmpty { result.ingredients = [decoded] }
         }
 
@@ -102,7 +102,7 @@ extension RecipeParser {
             result.instructions = flattenInstructionSteps(from: [instructionsObject])
         } else if let instructionsString = data["recipeInstructions"] as? String {
             let steps = instructionsString.components(separatedBy: .newlines)
-                .map { decodeHTMLEntities($0.trimmingCharacters(in: .whitespacesAndNewlines)) }
+                .map { decodeHTMLEntities($0.trimmed) }
                 .filter { !$0.isEmpty }
             result.instructions = steps
         }
@@ -164,7 +164,7 @@ extension RecipeParser {
         var steps: [String] = []
         for item in items {
             if let str = item as? String {
-                let decoded = decodeHTMLEntities(str.trimmingCharacters(in: .whitespacesAndNewlines))
+                let decoded = decodeHTMLEntities(str.trimmed)
                 if !decoded.isEmpty { steps.append(decoded) }
             } else if let dict = item as? [String: Any] {
                 let typeStr: String
@@ -181,7 +181,7 @@ extension RecipeParser {
                 } else if let text = dict["text"] as? String {
                     // HowToStep (or any dict with a "text" field). Keep any non-empty step — these are
                     // author-marked instructions, so a short one ("Serve hot.", "Stir.") is real, not noise.
-                    let decoded = decodeHTMLEntities(text.trimmingCharacters(in: .whitespacesAndNewlines))
+                    let decoded = decodeHTMLEntities(text.trimmed)
                     if !decoded.isEmpty { steps.append(decoded) }
                 } else if let subItems = dict["itemListElement"] as? [Any] {
                     // Generic itemListElement fallback (unknown @type)
@@ -196,7 +196,7 @@ extension RecipeParser {
         // Full ISO-8601 duration (date + time parts); date part needed for forms like "P0DT0H30M" that a "PT"-only pattern dropped. Seconds matched but ignored for whole minutes.
         let pattern = #"^P(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$"#
 
-        let trimmed = duration.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmed = duration.trimmed
         guard let regex = try? NSRegularExpression(pattern: pattern, options: []) else {
             return nil
         }

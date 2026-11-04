@@ -71,7 +71,7 @@ final class CollectionManager: CollectionManaging {
     // MARK: - CRUD
 
     func createCollection(name: String, color: CollectionColor = .blue) {
-        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmed = name.trimmed
         guard !trimmed.isEmpty else { return }
         let collection = RecipeCollection(name: trimmed, colorName: color)
         var updated = collections
@@ -82,7 +82,7 @@ final class CollectionManager: CollectionManaging {
     }
 
     func rename(_ collection: RecipeCollection, to name: String) {
-        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmed = name.trimmed
         guard !trimmed.isEmpty else { return }
         var updated = collections
         guard let idx = updated.firstIndex(where: { $0.id == collection.id }) else { return }

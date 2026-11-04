@@ -87,9 +87,7 @@ struct AddIngredientSheet: View {
                     }
                 }
             }
-            .navigationTitle("Add Ingredients")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
+            .appNavigationTitle("Add Ingredients")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") {
@@ -142,7 +140,7 @@ struct AddIngredientSheet: View {
         let category = FoodsList.getCategoryForFood(food) ?? "Other"
         
         return Button(action: {
-            withAnimation(.spring(response: 0.3)) {
+            withAnimation(.appSpring) {
                 let adding = !KitchenInventoryManager.shared.hasItem(food)
                 KitchenInventoryManager.shared.toggleItem(food)
                 HapticManager.shared.light()

@@ -118,7 +118,7 @@ struct RecipeIngredientsSection: View {
                 .fontWeight(.semibold)
                 .foregroundStyle(AppTheme.adaptiveHighEmphasis(for: colorScheme))
                 .rotationEffect(.degrees(isExpanded ? 0 : -90))
-                .animation(.spring(response: 0.3), value: isExpanded)
+                .animation(.appSpring, value: isExpanded)
         }
         .buttonStyle(PlainButtonStyle())
         .accessibilityLabel(isExpanded ? "Collapse Ingredients" : "Expand Ingredients")

@@ -120,7 +120,7 @@ struct PlannedMealsSection: View {
         // .draggable/.dropDestination manage drag+cancel state, so there's no manual flag to get stuck (the old greyed-out bug).
         .dropDestination(for: String.self) { items, _ in
             guard let raw = items.first, let from = MealTime(rawValue: raw) else { return false }
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+            withAnimation(.appSpring) {
                 mealTimes = MealTimeReorder.moved(mealTimes, moving: from, to: mealTime)
             }
             return true

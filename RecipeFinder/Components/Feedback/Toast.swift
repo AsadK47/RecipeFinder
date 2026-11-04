@@ -20,7 +20,7 @@ private struct ToastModifier: ViewModifier {
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
             }
-            .animation(.spring(response: 0.4, dampingFraction: 0.8), value: message)
+            .animation(.appGentle, value: message)
             // `.task(id:)` restarts on message change so rapid updates reset the dismiss timer instead of clearing early.
             .task(id: message) {
                 guard message != nil else { return }

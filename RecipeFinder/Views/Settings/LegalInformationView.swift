@@ -191,9 +191,7 @@ struct LegalInformationView: View {
                 .padding(AppTheme.spacing24)
             }
         }
-        .navigationTitle("Legal Information")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.hidden, for: .navigationBar)
+        .appNavigationTitle("Legal Information")
         .toolbarColorScheme(.dark, for: .navigationBar)
         .sheet(isPresented: $showPrivacyPolicy) {
             PrivacyPolicyView()

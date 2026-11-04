@@ -187,7 +187,7 @@ struct RecipeNameStepView: View {
     }
 
     private var recipeNameValidationMessage: String? {
-        let trimmed = recipeName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmed = recipeName.trimmed
         guard !trimmed.isEmpty else { return nil }
 
         do {

@@ -11,7 +11,7 @@ extension RecipeParser {
         var foundFirstIngredient = false
 
         for line in lines {
-            let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
+            let trimmed = line.trimmed
 
             if trimmed.isEmpty {
                 if inIngredientSection && foundFirstIngredient {
@@ -65,7 +65,7 @@ extension RecipeParser {
     }
 
     static func isIngredientLine(_ line: String) -> Bool {
-        let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmed = line.trimmed
 
         guard trimmed.count >= 3 && trimmed.count < 200 else { return false }
 
@@ -110,7 +110,7 @@ extension RecipeParser {
         cleaned = cleaned.replacingOccurrences(of: "^[•\\-*]\\s*", with: "", options: .regularExpression)
         cleaned = cleaned.replacingOccurrences(of: "^[0-9]+\\.\\s*", with: "", options: .regularExpression)
 
-        return cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
+        return cleaned.trimmed
     }
 
     static func extractInstructions(from text: String, lines: [String]) -> [String] {
@@ -121,7 +121,7 @@ extension RecipeParser {
         var foundFirstInstruction = false
 
         for line in lines {
-            let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
+            let trimmed = line.trimmed
 
             if trimmed.isEmpty {
                 if inInstructionSection && foundFirstInstruction {
@@ -172,7 +172,7 @@ extension RecipeParser {
     }
 
     static func isInstructionLine(_ line: String) -> Bool {
-        let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmed = line.trimmed
 
         guard trimmed.count >= 10 && trimmed.count < 500 else { return false }
 
@@ -210,6 +210,6 @@ extension RecipeParser {
         cleaned = cleaned.replacingOccurrences(of: "^Step\\s*[0-9]+[:.)]?\\s*", with: "", options: [.regularExpression, .caseInsensitive])
         cleaned = cleaned.replacingOccurrences(of: "^[0-9]+[:.)]\\s*", with: "", options: .regularExpression)
 
-        return cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
+        return cleaned.trimmed
     }
 }

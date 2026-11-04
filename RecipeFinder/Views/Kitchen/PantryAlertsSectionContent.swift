@@ -119,7 +119,7 @@ struct PantryAlertsSectionContent: View {
 
     private func deleteButton(_ item: KitchenInventoryModel) -> some View {
         Button(role: .destructive) {
-            withAnimation(.spring(response: 0.25, dampingFraction: 0.85)) {
+            withAnimation(.appSnappy) {
                 manager.removeInventoryItem(item)
             }
         } label: {

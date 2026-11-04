@@ -56,8 +56,7 @@ struct KitchenShoppingView: View {
                     }
                 }
             }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
+            .appNavigationChrome()
         }
         .confettiCannon(trigger: $confettiTrigger, num: AppTheme.confettiCount, radius: AppTheme.confettiRadius)
         .onChange(of: checkedCount) { oldValue, newValue in

@@ -13,7 +13,7 @@ struct PasteTextImportSheet: View {
     /// Called with the finished recipe once the user confirms it in the wizard.
     var onImport: (RecipeModel) -> Void
 
-    private var trimmed: String { text.trimmingCharacters(in: .whitespacesAndNewlines) }
+    private var trimmed: String { text.trimmed }
 
     var body: some View {
         NavigationStack {
@@ -48,9 +48,7 @@ struct PasteTextImportSheet: View {
                     Spacer()
                 }
                 .padding(AppTheme.spacing20)
-                .navigationTitle("Paste Text")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbarBackground(.hidden, for: .navigationBar)
+                .appNavigationTitle("Paste Text")
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
                         Button("Cancel") { dismiss() }

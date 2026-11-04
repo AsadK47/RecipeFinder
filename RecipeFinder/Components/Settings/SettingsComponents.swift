@@ -204,9 +204,7 @@ struct SettingsScreen<Content: View>: View {
                 .padding(.bottom, AppTheme.spacing40)
             }
         }
-        .navigationTitle(title)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.hidden, for: .navigationBar)
+        .appNavigationTitle(title)
     }
 }
 

@@ -47,7 +47,7 @@ struct KitchenSectionsView: View {
                             .listRowBackground(Color.clear)
                             .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                 Button(role: .destructive) {
-                                    withAnimation(.spring(response: 0.25, dampingFraction: 0.85)) {
+                                    withAnimation(.appSnappy) {
                                         manager.removeItem(item)
                                     }
                                 } label: {
@@ -66,7 +66,7 @@ struct KitchenSectionsView: View {
     @ViewBuilder
     private func categoryHeader(category: String, items: [KitchenItem]) -> some View {
         Button(action: {
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.85)) {
+            withAnimation(.appSpring) {
                 if collapsedCategories.contains(category) {
                     collapsedCategories.remove(category)
                 } else {

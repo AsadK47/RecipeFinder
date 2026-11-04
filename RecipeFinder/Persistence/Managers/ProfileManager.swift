@@ -95,8 +95,8 @@ final class ProfileManager: ProfileManaging {
         lastName: String,
         chefType: ChefType
     ) {
-        let trimmedFirstName = firstName.trimmingCharacters(in: .whitespacesAndNewlines)
-        let trimmedLastName = lastName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedFirstName = firstName.trimmed
+        let trimmedLastName = lastName.trimmed
         
         self.firstName = trimmedFirstName
         self.lastName = trimmedLastName

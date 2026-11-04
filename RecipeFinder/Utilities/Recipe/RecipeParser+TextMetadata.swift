@@ -8,7 +8,7 @@ extension RecipeParser {
             var title = String(html[titleMatch])
             title = title.replacingOccurrences(of: "<title[^>]*>", with: "", options: .regularExpression)
             title = title.replacingOccurrences(of: "</title>", with: "")
-            title = title.trimmingCharacters(in: .whitespacesAndNewlines)
+            title = title.trimmed
 
             let suffixes = [" - Recipe", " Recipe", " | RecipeName", " - Cooking", " | Food"]
             for suffix in suffixes {
@@ -36,7 +36,7 @@ extension RecipeParser {
         if let h1Match = html.range(of: "<h1[^>]*>([^<]+)</h1>", options: .regularExpression) {
             var h1 = String(html[h1Match])
             h1 = h1.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
-            h1 = h1.trimmingCharacters(in: .whitespacesAndNewlines)
+            h1 = h1.trimmed
 
             if !h1.isEmpty && h1.count < 100 {
                 return h1
@@ -68,7 +68,7 @@ extension RecipeParser {
         }
 
         if !descriptionLines.isEmpty {
-            return descriptionLines.joined(separator: " ").trimmingCharacters(in: .whitespacesAndNewlines)
+            return descriptionLines.joined(separator: " ").trimmed
         }
 
         return nil

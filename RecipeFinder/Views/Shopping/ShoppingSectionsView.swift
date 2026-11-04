@@ -42,7 +42,7 @@ struct ShoppingSectionsView: View {
                 isCollapsed: collapsedCategories.contains(category),
                 colorScheme: colorScheme,
                 onToggle: {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.85)) {
+                    withAnimation(.appSpring) {
                         if collapsedCategories.contains(category) {
                             collapsedCategories.remove(category)
                         } else {

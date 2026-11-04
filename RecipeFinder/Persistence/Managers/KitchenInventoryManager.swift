@@ -224,7 +224,7 @@ final class KitchenInventoryManager: KitchenInventoryManaging {
 	}
 
 	func addItem(name: String, category: String? = nil, quantity: Double = 1, unit: String = "item") {
-		let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+		let trimmedName = name.trimmed
 		guard !trimmedName.isEmpty else { return }
 		guard quantity > 0 else { return }
 		

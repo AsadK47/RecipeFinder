@@ -28,9 +28,7 @@ struct RecipeFileImportSheet: View {
                 }
                 .scrollContentBackground(.hidden)
             }
-            .navigationTitle("Shared Recipe")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
+            .appNavigationTitle("Shared Recipe")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }

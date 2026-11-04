@@ -13,14 +13,6 @@ extension String {
         return prefix(1).uppercased() + dropFirst()
     }
     
-    var trimmed: String {
-        trimmingCharacters(in: .whitespacesAndNewlines)
-    }
-    
-    var isBlank: Bool {
-        trimmed.isEmpty
-    }
-    
     func ranges(of pattern: String, options: NSString.CompareOptions = []) -> [Range<String.Index>] {
         var ranges: [Range<String.Index>] = []
         var searchRange = startIndex..<endIndex

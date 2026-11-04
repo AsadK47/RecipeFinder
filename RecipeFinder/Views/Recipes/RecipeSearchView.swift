@@ -81,8 +81,7 @@ struct RecipeSearchView: View {
     var body: some View {
         NavigationStack(path: $navigationPath) {
             mainContentView
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbarBackground(.hidden, for: .navigationBar)
+                .appNavigationChrome()
                 .toolbar { keyboardToolbar }
                 .modifier(SheetPresentationModifier(
                     showFilters: $showFilters,
@@ -201,7 +200,7 @@ struct RecipeSearchView: View {
     }
 
     private func showImportToast(_ message: String) {
-        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+        withAnimation(.appGentle) {
             importToastMessage = message
         }
 
@@ -272,9 +271,7 @@ struct RecipeSearchView: View {
                 AppBackground()
                 CollectionsInlineView()
             }
-            .navigationTitle("Collections")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
+            .appNavigationTitle("Collections")
         }
     }
 

@@ -74,9 +74,7 @@ struct RecipePickerForCollectionSheet: View {
                 }
                 .padding(.top, AppTheme.spacing8)
             }
-            .navigationTitle("Add Recipes")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
+            .appNavigationTitle("Add Recipes")
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { dismiss() }

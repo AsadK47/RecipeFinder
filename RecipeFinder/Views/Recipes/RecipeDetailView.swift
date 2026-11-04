@@ -173,7 +173,7 @@ struct RecipeDetailView: View {
     }
 
     func toggleSection(_ section: String) {
-        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+        withAnimation(.appSpring) {
             if expandedSections.contains(section) {
                 expandedSections.remove(section)
             } else {
@@ -183,7 +183,7 @@ struct RecipeDetailView: View {
     }
 
     func toggleMeasurementSystem() {
-        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+        withAnimation(.appSpring) {
             measurementSystem = measurementSystem == .metric ? .imperial : .metric
             HapticManager.shared.selection()
         }

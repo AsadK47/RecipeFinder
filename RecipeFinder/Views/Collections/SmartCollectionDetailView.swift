@@ -21,9 +21,7 @@ struct SmartCollectionDetailView: View {
                 recipeList
             }
         }
-        .navigationTitle(smartCollection.name)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.hidden, for: .navigationBar)
+        .appNavigationTitle(smartCollection.name)
         .toolbarColorScheme(.dark, for: .navigationBar)
     }
 

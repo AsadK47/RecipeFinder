@@ -11,7 +11,7 @@ enum KitchenRecipeMatcher {
         normCache.value(for: raw) { _ in
             let main = IngredientNameFormatter.extractMainName(raw)
                 .lowercased()
-                .trimmingCharacters(in: .whitespacesAndNewlines)
+                .trimmed
             return main
                 .components(separatedBy: .whitespacesAndNewlines)
                 .filter { !$0.isEmpty }

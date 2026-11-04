@@ -119,9 +119,7 @@ struct RecipeWizardView: View {
                     }
                 }
             }
-            .navigationTitle(navigationTitleText)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
+            .appNavigationTitle(navigationTitleText)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
@@ -360,7 +358,7 @@ struct RecipeWizardView: View {
         )
         let allPhotoNames = existingGalleryReferences + newGalleryPaths
 
-        let cuisineValue = recipeCuisine.trimmingCharacters(in: .whitespacesAndNewlines)
+        let cuisineValue = recipeCuisine.trimmed
         let recipe = RecipeWizardBuilder.assemble(
             recipeId: recipeId,
             name: recipeName,

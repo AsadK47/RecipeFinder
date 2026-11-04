@@ -1,3 +1,14 @@
+# WORK: De-duplication campaign (2026-11-04) — low-risk batch 1–6 DONE (1798 green, uncommitted)
+User: "search for duplication and remove it — works once, easier to maintain". Sweep (Explore agent) ranked 15; doing
+lowest-risk first, one at a time (build + affected tests each, full suite at end). Order / status:
+1. [x] ContentView draws AppBackground behind TabView, but every tab root draws its own (NavigationStack is opaque) → drop ContentView's (iPhone layout). Roots MUST keep theirs (iPad detail has none).
+2. [x] 68 raw `.trimmingCharacters(in: .whitespacesAndNewlines)` while `.trimmed`/`.isBlank` exist unused (Utilities/Helpers/Extensions.swift) — only exact `AndNewlines` calls.
+3. [x] Fraction parsing twice: AppErrors.swift:124/138 vs IngredientLineParser.parseQuantity (AppErrors rejects "½" — bug).
+4. [x] 22 hard-coded `.spring(...)` vs unused Constants.Animation → `Animation.appSpring`.
+5. [x] Nav chrome (dismiss buttons deferred to sheet scaffold) `.navigationBarTitleDisplayMode(.inline)` + `.toolbarBackground(.hidden…)` ×26 → one modifier; dismiss-only Done/Cancel ×18.
+6. [x] Legal pages: 3 copied layouts; "Last Updated" = Date() at render (bug).
+Later / higher risk (confirm with user first): sheet scaffold (#2), cardStyle branches ×15 + GlassCard vs appCard, colorScheme helpers → adaptive colours (60 calls), SearchBar vs AppSearchField, 6 ingredient normalisers (behaviour change), duration formatters/parsers, empty-state copies, DateFormatters, share/top-VC walks.
+
 # WORK: Bundled recipe curation (2026-11-04) — DONE, uncommitted (1774/1774 green)
 All 340 source recipes reviewed against their raw paste (6 reviewer batches, brief in tools/recipe-review/BRIEF.md) →
 `RecipeFinder/RecipeSeed/recipes_curated.json` (keyed by stable id; 332 fix, 8 drop). Generator

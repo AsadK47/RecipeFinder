@@ -106,7 +106,7 @@ private struct ZoomablePhoto: View {
             }
             .onEnded { _ in
                 if scale <= 1 {
-                    withAnimation(.spring(response: 0.3)) { resetZoom() }
+                    withAnimation(.appSpring) { resetZoom() }
                 } else {
                     lastScale = scale
                 }
@@ -130,13 +130,13 @@ private struct ZoomablePhoto: View {
                 } else if abs(value.translation.height) > dismissThreshold {
                     onDismiss()
                 } else {
-                    withAnimation(.spring(response: 0.3)) { dragDismiss = 0 }
+                    withAnimation(.appSpring) { dragDismiss = 0 }
                 }
             }
     }
 
     private func toggleZoom() {
-        withAnimation(.spring(response: 0.3)) {
+        withAnimation(.appSpring) {
             if scale > 1 {
                 resetZoom()
             } else {

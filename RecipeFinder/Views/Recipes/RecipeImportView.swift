@@ -211,8 +211,7 @@ struct RecipeImportView: View {
             }
             
             }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
+            .appNavigationChrome()
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") {
@@ -273,9 +272,9 @@ struct RecipeImportView: View {
 
     private func pasteFromClipboard() {
         guard let string = UIPasteboard.general.string,
-              let url = URL(string: string.trimmingCharacters(in: .whitespacesAndNewlines)),
+              let url = URL(string: string.trimmed),
               url.scheme == "https" || url.scheme == "http" else { return }
-        urlText = string.trimmingCharacters(in: .whitespacesAndNewlines)
+        urlText = string.trimmed
         HapticManager.shared.light()
     }
 

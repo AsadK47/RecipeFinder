@@ -31,9 +31,7 @@ struct CookTimerView: View {
                 .padding(.bottom, AppTheme.spacing100)
             }
         }
-        .navigationTitle("Recipe Timer")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.hidden, for: .navigationBar)
+        .appNavigationTitle("Recipe Timer")
     }
 
     private var currentTimerCard: some View {

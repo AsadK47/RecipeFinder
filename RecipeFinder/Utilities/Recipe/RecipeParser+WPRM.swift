@@ -24,7 +24,7 @@ extension RecipeParser {
                 var name = String(matched[contentRange])
                     .replacingOccurrences(of: ">", with: "")
                     .replacingOccurrences(of: "<", with: "")
-                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                    .trimmed
                 name = decodeHTMLEntities(name)
                 result.name = name
             }
@@ -224,7 +224,7 @@ extension RecipeParser {
                         instruction = instruction.replacingOccurrences(of: "<[^>]+>", with: " ", options: .regularExpression)
                         instruction = instruction.replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
                         instruction = decodeHTMLEntities(instruction)
-                        instruction = instruction.trimmingCharacters(in: .whitespacesAndNewlines)
+                        instruction = instruction.trimmed
 
                         if !instruction.isEmpty && instruction.count >= 10 {
                             instructions.append(instruction)
@@ -242,7 +242,7 @@ extension RecipeParser {
                 let cuisine = String(matched[contentRange])
                     .replacingOccurrences(of: ">", with: "")
                     .replacingOccurrences(of: "<", with: "")
-                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                    .trimmed
                 result.cuisine = cuisine
             }
         }
@@ -253,7 +253,7 @@ extension RecipeParser {
                 let course = String(matched[contentRange])
                     .replacingOccurrences(of: ">", with: "")
                     .replacingOccurrences(of: "<", with: "")
-                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                    .trimmed
                 result.category = course
             }
         }

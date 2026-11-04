@@ -56,7 +56,7 @@ struct OnboardingView: View {
                 Capsule()
                     .fill(Color.white.opacity(currentPage == index ? 0.9 : 0.3))
                     .frame(width: currentPage == index ? 20 : 6, height: 6)
-                    .animation(.spring(response: 0.4, dampingFraction: 0.8), value: currentPage)
+                    .animation(.appGentle, value: currentPage)
             }
         }
     }

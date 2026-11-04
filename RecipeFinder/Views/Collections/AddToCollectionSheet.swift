@@ -20,9 +20,7 @@ struct AddToCollectionSheet: View {
                     }
                 }
             }
-            .navigationTitle("Add to Collection")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
+            .appNavigationTitle("Add to Collection")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Done") { dismiss() }

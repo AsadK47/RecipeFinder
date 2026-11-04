@@ -36,7 +36,7 @@ extension RecipeWizardView {
 extension RecipeWizardView.PrefilledRecipeData {
     /// Seeds the wizard from an on-device-interpreted recipe for user review; category/difficulty left nil (unreliable in free text), summary becomes the notes seed.
     init(interpreted recipe: InterpretedRecipe) {
-        let summary = recipe.summary?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let summary = recipe.summary?.trimmed
         self.init(
             name: recipe.name,
             description: nil,

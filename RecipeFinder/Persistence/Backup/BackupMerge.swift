@@ -35,6 +35,6 @@ enum BackupMerge {
     }
 
     private static func normalizedName(_ name: String) -> String {
-        name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        name.trimmed.lowercased()
     }
 }

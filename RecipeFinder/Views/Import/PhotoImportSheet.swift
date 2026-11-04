@@ -65,9 +65,7 @@ struct PhotoImportSheet: View {
                     Spacer()
                 }
                 .padding(AppTheme.spacing20)
-                .navigationTitle("Scan a Photo")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbarBackground(.hidden, for: .navigationBar)
+                .appNavigationTitle("Scan a Photo")
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
                         Button("Cancel") { dismiss() }

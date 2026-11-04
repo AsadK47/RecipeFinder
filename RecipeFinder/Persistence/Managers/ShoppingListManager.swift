@@ -104,8 +104,8 @@ final class ShoppingListManager: ShoppingListManaging {
 
     func addItem(name: String, quantity: Int = 1, unit: String = "", category: String? = nil) {
         var items = getItems()
-        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        let trimmedUnit = unit.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedName = name.trimmed
+        let trimmedUnit = unit.trimmed
         guard !trimmedName.isEmpty else {
             logger.error("❌ ShoppingListManager: Empty item name")
             return
@@ -162,7 +162,7 @@ final class ShoppingListManager: ShoppingListManaging {
     func updateName(at index: Int, name: String) {
         var items = getItems()
         guard index < items.count else { return }
-        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedName = name.trimmed
         guard !trimmedName.isEmpty else { return }
         
         items[index].name = trimmedName

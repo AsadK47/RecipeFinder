@@ -75,6 +75,6 @@ struct AppSearchField: View {
                 .transition(.move(edge: .trailing).combined(with: .opacity))
             }
         }
-        .animation(.spring(response: 0.3), value: isFocused.wrappedValue)
+        .animation(.appSpring, value: isFocused.wrappedValue)
     }
 }

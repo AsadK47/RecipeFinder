@@ -1,4 +1,4 @@
-import Foundation
+import SwiftUI
 
 /// Non-dimensional tokens: opacities, animation timings, shimmer/confetti config, haptic intervals.
 extension AppTheme {
@@ -62,4 +62,14 @@ extension AppTheme {
     static let hapticIntervalBase: UInt64 = 200_000_000
     static let hapticIntervalLong: UInt64 = 300_000_000
     static let hapticIntervalXLong: UInt64 = 500_000_000
+}
+
+/// The app's three spring feels — use these instead of hand-tuned `.spring(response:dampingFraction:)` literals.
+extension Animation {
+    /// Default UI spring (toggles, selection, expand/collapse).
+    static let appSpring = Animation.spring(response: 0.3, dampingFraction: 0.8)
+    /// Quicker, tighter spring for small controls.
+    static let appSnappy = Animation.spring(response: 0.25, dampingFraction: 0.85)
+    /// Slower spring for larger layout moves.
+    static let appGentle = Animation.spring(response: 0.4, dampingFraction: 0.8)
 }

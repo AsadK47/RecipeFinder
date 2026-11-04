@@ -100,9 +100,7 @@ struct CookingModeView: View {
                 .padding(.horizontal, AppTheme.spacing20)
                 .padding(.bottom, AppTheme.spacing32)
             }
-            .navigationTitle(recipe.name)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
+            .appNavigationTitle(recipe.name)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     // On the last step, Done counts as finishing — otherwise a user who cooked all the way
@@ -144,12 +142,12 @@ struct CookingModeView: View {
             }
             .onReceive(NotificationCenter.default.publisher(for: .cookingModeNextStep)) { _ in
                 guard !isLast else { return }
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) { currentIndex += 1 }
+                withAnimation(.appSpring) { currentIndex += 1 }
                 HapticManager.shared.selection()
             }
             .onReceive(NotificationCenter.default.publisher(for: .cookingModePreviousStep)) { _ in
                 guard !isFirst else { return }
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) { currentIndex -= 1 }
+                withAnimation(.appSpring) { currentIndex -= 1 }
                 HapticManager.shared.selection()
             }
         }
@@ -169,7 +167,7 @@ struct CookingModeView: View {
                         width: geo.size.width * CGFloat(plan.progress(currentIndex)),
                         height: 4
                     )
-                    .animation(.spring(response: 0.4, dampingFraction: 0.8), value: currentIndex)
+                    .animation(.appGentle, value: currentIndex)
             }
         }
         .frame(height: 4)
@@ -200,7 +198,7 @@ struct CookingModeView: View {
                     let ingredient = recipe.ingredients[i]
                     let isChecked = completedItems.contains(i)
                     Button {
-                        withAnimation(.spring(response: 0.25, dampingFraction: 0.8)) {
+                        withAnimation(.appSnappy) {
                             if isChecked { completedItems.remove(i) } else { completedItems.insert(i) }
                         }
                         HapticManager.shared.selection()
@@ -300,7 +298,7 @@ struct CookingModeView: View {
         HStack(spacing: AppTheme.spacing16) {
             if !isFirst {
                 Button {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) { currentIndex -= 1 }
+                    withAnimation(.appSpring) { currentIndex -= 1 }
                     HapticManager.shared.selection()
                 } label: {
                     HStack(spacing: AppTheme.spacing8) {
@@ -319,7 +317,7 @@ struct CookingModeView: View {
                 if isLast {
                     finishCooking()
                 } else {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) { currentIndex += 1 }
+                    withAnimation(.appSpring) { currentIndex += 1 }
                     HapticManager.shared.selection()
                 }
             } label: {

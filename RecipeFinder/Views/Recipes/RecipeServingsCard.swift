@@ -85,7 +85,7 @@ struct RecipeServingsCard: View {
 
         return Button(action: {
             HapticManager.shared.light()
-            withAnimation(.spring(response: 0.3)) {
+            withAnimation(.appSpring) {
                 recipe.updateServings(to: targetServings)
             }
         }) {
@@ -123,7 +123,7 @@ struct RecipeServingsCard: View {
     private func decreaseServings() {
         if recipe.currentServings > 1 {
             HapticManager.shared.light()
-            withAnimation(.spring(response: 0.3)) {
+            withAnimation(.appSpring) {
                 recipe.currentServings -= 1
             }
         }
@@ -131,7 +131,7 @@ struct RecipeServingsCard: View {
 
     private func increaseServings() {
         HapticManager.shared.light()
-        withAnimation(.spring(response: 0.3)) {
+        withAnimation(.appSpring) {
             recipe.currentServings += 1
         }
     }

@@ -37,7 +37,7 @@ struct FoundationModelsRecipeInterpreter: RecipeTextInterpreting {
         let response = try await session.respond(to: text, generating: GeneratedRecipe.self)
         let generated = response.content
 
-        let name = generated.name.trimmingCharacters(in: .whitespacesAndNewlines)
+        let name = generated.name.trimmed
         let ingredients = generated.ingredients.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
         guard !name.isEmpty, !ingredients.isEmpty else { return nil }
 

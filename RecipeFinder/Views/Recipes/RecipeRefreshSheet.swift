@@ -48,9 +48,7 @@ struct RecipeRefreshSheet: View {
                 }
                 .scrollContentBackground(.hidden)
             }
-            .navigationTitle("Update from Source")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
+            .appNavigationTitle("Update from Source")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Not Now") { dismiss() }

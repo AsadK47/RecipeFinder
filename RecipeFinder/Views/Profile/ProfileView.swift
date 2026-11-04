@@ -109,9 +109,7 @@ struct ProfileView: View {
                 }
             }
         }
-        .navigationTitle("")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.hidden, for: .navigationBar)
+        .appNavigationTitle("")
         .toolbarColorScheme(.dark, for: .navigationBar)
         .sheet(item: $activeSheet) { sheet in
             switch sheet {
@@ -125,8 +123,8 @@ struct ProfileView: View {
                     .presentationDragIndicator(.hidden)
             }
         }
-        .animation(.spring(response: 0.3), value: editingName)
-        .animation(.spring(response: 0.3), value: showSuccessFeedback)
+        .animation(.appSpring, value: editingName)
+        .animation(.appSpring, value: showSuccessFeedback)
         .onAppear {
             loadCurrentProfile()
         }

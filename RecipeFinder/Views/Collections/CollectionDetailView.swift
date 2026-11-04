@@ -28,9 +28,7 @@ struct CollectionDetailView: View {
                 recipeList
             }
         }
-        .navigationTitle(currentCollection.name)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.hidden, for: .navigationBar)
+        .appNavigationTitle(currentCollection.name)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 HStack(spacing: AppTheme.spacing4) {

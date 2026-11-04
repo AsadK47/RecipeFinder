@@ -101,7 +101,7 @@ struct BadgeMetrics: Equatable {
         let cuisineKeys = recipes
             .filter { $0.cookCount > 0 }
             .compactMap { r -> String? in
-                let key = (r.cuisine ?? r.category).trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+                let key = (r.cuisine ?? r.category).trimmed.lowercased()
                 return key.isEmpty ? nil : key
             }
         m.cuisinesCooked = Set(cuisineKeys).count

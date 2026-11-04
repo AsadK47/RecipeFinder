@@ -147,9 +147,7 @@ struct SettingsTabView: View {
                 .padding(.top, AppTheme.spacing20)
             }
         }
-        .navigationTitle("Settings")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.hidden, for: .navigationBar)
+        .appNavigationTitle("Settings")
         .onAppear {
             profileImage = profileManager.loadProfileImage()
         }

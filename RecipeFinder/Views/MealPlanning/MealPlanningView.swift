@@ -103,8 +103,8 @@ struct MealPlanningView: View {
         }
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbarColorScheme(.dark, for: .navigationBar)
-        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: selectedMealTimes)
-        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: pantryExpirySuggestions.count)
+        .animation(.appGentle, value: selectedMealTimes)
+        .animation(.appGentle, value: pantryExpirySuggestions.count)
         .confirmationDialog("Add to Groceries", isPresented: $showAddWeekConfirm, titleVisibility: .visible) {
             Button("Add \(weekAddCandidates.count) item\(weekAddCandidates.count == 1 ? "" : "s")") {
                 confirmAddWeek()

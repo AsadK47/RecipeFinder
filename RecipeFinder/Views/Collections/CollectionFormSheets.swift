@@ -25,9 +25,7 @@ struct NewCollectionSheet: View {
                 }
                 .scrollContentBackground(.hidden)
             }
-            .navigationTitle("New Collection")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
+            .appNavigationTitle("New Collection")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
@@ -37,7 +35,7 @@ struct NewCollectionSheet: View {
                         manager.createCollection(name: name, color: selectedColor)
                         dismiss()
                     }
-                    .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    .disabled(name.isBlank)
                 }
             }
         }
@@ -107,9 +105,7 @@ struct EditCollectionSheet: View {
                 }
                 .scrollContentBackground(.hidden)
             }
-            .navigationTitle("Edit Collection")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
+            .appNavigationTitle("Edit Collection")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
@@ -120,7 +116,7 @@ struct EditCollectionSheet: View {
                         manager.recolor(collection, to: selectedColor)
                         dismiss()
                     }
-                    .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    .disabled(name.isBlank)
                 }
             }
         }

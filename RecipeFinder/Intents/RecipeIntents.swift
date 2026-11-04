@@ -14,7 +14,7 @@ struct AddToShoppingListIntent: AppIntent {
     var itemName: String
 
     func perform() async throws -> some IntentResult & ReturnsValue<String> {
-        let name = itemName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let name = itemName.trimmed
         guard !name.isEmpty else {
             throw $itemName.needsValueError("What item would you like to add?")
         }
@@ -69,7 +69,7 @@ struct OpenRecipeIntent: AppIntent {
     var recipeName: String
 
     func perform() async throws -> some IntentResult & ReturnsValue<String> {
-        let name = recipeName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let name = recipeName.trimmed
         guard !name.isEmpty else {
             throw $recipeName.needsValueError("Which recipe would you like to open?")
         }
@@ -108,7 +108,7 @@ struct StartCookingIntent: AppIntent {
     var recipeName: String
 
     func perform() async throws -> some IntentResult & ReturnsValue<String> {
-        let name = recipeName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let name = recipeName.trimmed
         guard !name.isEmpty else {
             throw $recipeName.needsValueError("What would you like to cook?")
         }

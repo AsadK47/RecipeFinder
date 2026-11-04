@@ -47,7 +47,7 @@ struct RecipeImportBuilder {
 
         if let description = data.description, !description.isEmpty {
             let clean = description
-                .trimmingCharacters(in: .whitespacesAndNewlines)
+                .trimmed
                 .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
             lines.append(clean)
         }

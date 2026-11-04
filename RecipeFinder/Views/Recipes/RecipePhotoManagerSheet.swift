@@ -39,9 +39,7 @@ struct RecipePhotoManagerSheet: View {
                     .padding(AppTheme.spacing20)
                 }
             }
-            .navigationTitle("Photos")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
+            .appNavigationTitle("Photos")
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { dismiss() }

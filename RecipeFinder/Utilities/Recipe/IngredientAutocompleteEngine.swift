@@ -12,7 +12,7 @@ struct IngredientAutocompleteSuggestion: Identifiable, Hashable {
 enum IngredientAutocompleteEngine {
 
     static func suggestions(for query: String, limit: Int = 6, additionalCandidates: [String] = []) -> [IngredientAutocompleteSuggestion] {
-        let trimmedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedQuery = query.trimmed
         guard !trimmedQuery.isEmpty else { return [] }
 
         let normalizedQuery = normalizeForMatching(trimmedQuery)
@@ -100,7 +100,7 @@ enum IngredientAutocompleteEngine {
 
     private static func normalizeForMatching(_ string: String) -> String {
         IngredientNormalizer.normalize(string)
-            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .trimmed
             .lowercased()
     }
 
@@ -116,7 +116,7 @@ enum IngredientAutocompleteEngine {
         var ordered: [String] = []
 
         for candidate in candidates {
-            let key = candidate.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+            let key = candidate.trimmed.lowercased()
             guard !key.isEmpty, !seen.contains(key) else { continue }
             seen.insert(key)
             ordered.append(candidate)

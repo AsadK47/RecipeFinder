@@ -1,4 +1,5 @@
 import XCTest
+import Testing
 @testable import RecipeFinder
 
 final class ValidatorTests: XCTestCase {
@@ -124,5 +125,15 @@ final class ValidatorTests: XCTestCase {
                 return
             }
         }
+    }
+}
+
+@Suite("Validator quantity parsing")
+struct ValidatorUnicodeQuantityTests {
+    @Test("Accepts Unicode fractions, same as the ingredient parser", arguments: [
+        ("½", 0.5), ("1½", 1.5), ("2 ¾", 2.75),
+    ])
+    func acceptsUnicodeFractions(input: String, expected: Double) throws {
+        #expect(try Validator.validateQuantity(input, field: "Amount") == expected)
     }
 }

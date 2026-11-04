@@ -18,7 +18,7 @@ struct SharedTextImporter {
     }
 
     func handle(_ text: String) async -> Outcome {
-        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmed = text.trimmed
         guard !trimmed.isEmpty else { return .needsManualEntry(text) }
 
         do {

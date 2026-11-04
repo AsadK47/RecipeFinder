@@ -130,9 +130,8 @@ struct ContentView: View {
     }
 
     private var iPhoneLayout: some View {
+        // No backdrop here: each tab root draws its own AppBackground (their NavigationStacks are opaque, so one here never shows).
         ZStack {
-            AppBackground()
-
             TabView(selection: $selectedTab) {
                 RecipeSearchView(isLoading: store.isLoading)
                     .tabItem { Label("Recipes", systemImage: "book.fill") }
@@ -183,9 +182,7 @@ struct ContentView: View {
                     Label(item.label, systemImage: item.icon)
                 }
                 .scrollContentBackground(.hidden)
-                .navigationTitle("RecipeFinder")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbarBackground(.hidden, for: .navigationBar)
+                .appNavigationTitle("RecipeFinder")
             }
         } detail: {
             sidebarDetailView

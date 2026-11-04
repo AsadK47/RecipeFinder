@@ -40,9 +40,7 @@ struct CookingSheet: View {
                     .padding(AppTheme.spacing20)
                 }
             }
-            .navigationTitle("Cooking")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
+            .appNavigationTitle("Cooking")
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { dismiss() }

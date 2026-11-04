@@ -242,7 +242,7 @@ struct NotesStepView: View {
                     .onSubmit { addTag() }
 
                 Button("Add", action: addTag)
-                    .disabled(tagInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    .disabled(tagInput.isBlank)
             }
 
             VStack(alignment: .leading, spacing: AppTheme.spacing8) {
@@ -273,7 +273,7 @@ struct NotesStepView: View {
     }
 
     private func addTag() {
-        let trimmed = tagInput.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmed = tagInput.trimmed
         guard !trimmed.isEmpty, !tags.contains(trimmed) else { return }
         HapticManager.shared.light()
         tags.append(trimmed)

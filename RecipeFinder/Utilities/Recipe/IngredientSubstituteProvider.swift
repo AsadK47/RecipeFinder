@@ -19,7 +19,7 @@ enum IngredientSubstituteProvider {
     }
 
     private static func normalize(_ name: String) -> String {
-        name.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        name.lowercased().trimmed
     }
 
     private static let table: [String: [String]] = [

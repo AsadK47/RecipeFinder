@@ -51,7 +51,7 @@ extension RecipeParser {
                 let inner = ns.substring(with: m.range(at: 1))
                 let decoded = decodeHTMLEntities(inner.replacingOccurrences(of: "<[^>]+>", with: " ", options: .regularExpression))
                     .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
-                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                    .trimmed
                 if !decoded.isEmpty, seen.insert(decoded.lowercased()).inserted {
                     results.append(decoded)
                 }
@@ -145,7 +145,7 @@ extension RecipeParser {
     /// Decoded/trimmed immediate text-node values for elements with the attribute, e.g. `<li itemprop="recipeIngredient">2 lbs beef</li>`.
     private static func innerTexts(prop: String, attr: String, in html: String) -> [String] {
         allCaptures(#"\#(attr)=["']\#(prop)["'][^>]*>\s*([^<]+?)\s*<"#, in: html)
-            .map { decodeHTMLEntities($0).trimmingCharacters(in: .whitespacesAndNewlines) }
+            .map { decodeHTMLEntities($0).trimmed }
             .filter { !$0.isEmpty }
     }
 
@@ -191,7 +191,7 @@ extension RecipeParser {
         guard let inner = innerHTML(prop: "recipeInstructions", attr: attr, in: html) else { return [] }
         return cleanHTML(inner)
             .components(separatedBy: .newlines)
-            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .map { $0.trimmed }
             .filter { $0.count >= 10 }
     }
 

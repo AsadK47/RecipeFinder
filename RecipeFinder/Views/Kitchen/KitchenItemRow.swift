@@ -40,7 +40,7 @@ struct KitchenItemRow: View {
                 HStack(spacing: AppTheme.spacing8) {
                     Button(
                         action: {
-                            withAnimation(.spring(response: 0.25, dampingFraction: 0.85)) {
+                            withAnimation(.appSnappy) {
                                 KitchenInventoryManager.shared.updateQuantity(for: item, delta: -1)
                             }
                         },
@@ -63,7 +63,7 @@ struct KitchenItemRow: View {
 
                     Button(
                         action: {
-                            withAnimation(.spring(response: 0.25, dampingFraction: 0.85)) {
+                            withAnimation(.appSnappy) {
                                 KitchenInventoryManager.shared.updateQuantity(for: item, delta: 1)
                             }
                         },
@@ -83,7 +83,7 @@ struct KitchenItemRow: View {
                     Menu("Change Category") {
                         ForEach(allCategoryChoices, id: \.self) { category in
                             Button(action: {
-                                withAnimation(.spring(response: 0.25, dampingFraction: 0.85)) {
+                                withAnimation(.appSnappy) {
                                     KitchenInventoryManager.shared.updateCategory(for: item, category: category)
                                 }
                             }) {
@@ -99,7 +99,7 @@ struct KitchenItemRow: View {
                     Divider()
 
                     Button(role: .destructive, action: {
-                        withAnimation(.spring(response: 0.25, dampingFraction: 0.85)) {
+                        withAnimation(.appSnappy) {
                             KitchenInventoryManager.shared.removeItem(item)
                         }
                     }) {

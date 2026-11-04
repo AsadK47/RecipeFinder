@@ -122,7 +122,7 @@ struct RecipeParser {
                 result.ingredients = capIngredients
                 result.instructions = extractInstructions(from: caption, lines: capLines)
                 // On social pages the body title is junk ("loading…"); og:title is the real name.
-                if let ogTitle = extractMetaContent(property: "og:title", from: html)?.trimmingCharacters(in: .whitespacesAndNewlines), !ogTitle.isEmpty {
+                if let ogTitle = extractMetaContent(property: "og:title", from: html)?.trimmed, !ogTitle.isEmpty {
                     result.name = ogTitle
                 }
                 confidenceScore += 1.5
@@ -161,7 +161,7 @@ struct RecipeParser {
         text = text.replacingOccurrences(of: "[ \\t]+", with: " ", options: .regularExpression)
         text = text.replacingOccurrences(of: "\\n\\s*\\n\\s*\\n+", with: "\n\n", options: .regularExpression)
 
-        return text.trimmingCharacters(in: .whitespacesAndNewlines)
+        return text.trimmed
     }
 
     static func decodeHTMLEntities(_ text: String) -> String {
@@ -239,7 +239,7 @@ struct RecipeParser {
                let match = regex.firstMatch(in: html, options: [], range: NSRange(html.startIndex..., in: html)),
                let range = Range(match.range(at: 1), in: html) {
                 let decoded = decodeMetaPreservingNewlines(String(html[range]))
-                if !decoded.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                if !decoded.isBlank {
                     return decoded
                 }
             }

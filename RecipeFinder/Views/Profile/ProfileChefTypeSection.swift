@@ -23,7 +23,7 @@ struct ProfileChefTypeSection: View {
                         chefType: type,
                         isSelected: selectedChefType == type,
                     ) {
-                        withAnimation(.spring(response: 0.3)) {
+                        withAnimation(.appSpring) {
                             selectedChefType = type
                             HapticManager.shared.light()
                         }

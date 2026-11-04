@@ -11,7 +11,7 @@ struct UnsplashClient {
 
     /// Returns the `regular`-size image URL matching `query`; `nil` on any failure (missing key, network error, no results).
     func fetchImageURL(for query: String) async -> URL? {
-        let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmed = query.trimmed
         guard !Self.apiKey.isEmpty, !trimmed.isEmpty else { return nil }
 
         var components = URLComponents(string: "https://api.unsplash.com/photos/random")!

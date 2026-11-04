@@ -166,7 +166,7 @@ struct IngredientNormalizer {
 
     private static func computeNormalized(_ ingredient: String) -> String {
         let cleaned = ingredient
-            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .trimmed
             .lowercased()
         
         let measurementWords = ["cup", "cups", "tablespoon", "tablespoons", "tbsp", "teaspoon", "teaspoons", "tsp",
@@ -187,7 +187,7 @@ struct IngredientNormalizer {
         normalized = normalized.replacingOccurrences(of: "\\([^)]*\\)", with: "", options: .regularExpression)
         
         normalized = normalized.replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
-            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .trimmed
         
         if let standardName = normalizationMap[normalized] {
             return standardName

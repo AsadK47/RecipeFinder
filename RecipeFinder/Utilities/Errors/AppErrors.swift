@@ -89,7 +89,7 @@ enum AppError: LocalizedError {
 struct Validator {
     
     static func validateRecipeName(_ name: String) throws {
-        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmed = name.trimmed
         guard !trimmed.isEmpty else {
             throw AppError.emptyField(field: "Recipe name")
         }
@@ -105,44 +105,18 @@ struct Validator {
     }
     
     static func validateQuantity(_ quantity: String, field: String) throws -> Double {
-        let trimmed = quantity.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmed = quantity.trimmed
         guard !trimmed.isEmpty else {
             throw AppError.emptyField(field: field)
         }
         
-        if let value = parseFraction(trimmed) {
-            return value
-        }
-        
-        guard let value = Double(trimmed), value > 0 else {
+        // Same parser as ingredient lines, so "½", "1½" and "1 1/2" are accepted everywhere alike.
+        let normalised = IngredientLineParser.normaliseUnicodeFractions(trimmed)
+            .split(whereSeparator: \.isWhitespace).joined(separator: " ")
+        let value = IngredientLineParser.parseQuantity(normalised)
+        guard value > 0 else {
             throw AppError.invalidFormat(field: field)
         }
-        
         return value
-    }
-    
-    private static func parseFraction(_ string: String) -> Double? {
-        let components = string.split(separator: " ")
-        
-        if components.count == 2 {
-            guard let whole = Double(components[0]) else { return nil }
-            guard let fraction = parseSingleFraction(String(components[1])) else { return nil }
-            return whole + fraction
-        } else if components.count == 1 && string.contains("/") {
-            return parseSingleFraction(string)
-        }
-        
-        return nil
-    }
-    
-    private static func parseSingleFraction(_ string: String) -> Double? {
-        let parts = string.split(separator: "/")
-        guard parts.count == 2,
-              let numerator = Double(parts[0]),
-              let denominator = Double(parts[1]),
-              denominator != 0 else {
-            return nil
-        }
-        return numerator / denominator
     }
 }

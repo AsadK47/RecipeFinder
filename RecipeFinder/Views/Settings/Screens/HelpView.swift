@@ -241,7 +241,7 @@ struct FAQItem: View {
     var body: some View {
         VStack(alignment: .leading, spacing: AppTheme.spacing12) {
             Button(action: {
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                withAnimation(.appSpring) {
                     isExpanded.toggle()
                 }
                 HapticManager.shared.light()

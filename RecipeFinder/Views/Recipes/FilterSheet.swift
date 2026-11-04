@@ -261,9 +261,7 @@ struct FilterSheet: View {
                     .padding(AppTheme.spacing24)
                 }
             }
-            .navigationTitle("Filters")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
+            .appNavigationTitle("Filters")
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Clear All") {

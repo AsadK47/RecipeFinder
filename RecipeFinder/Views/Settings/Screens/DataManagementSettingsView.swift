@@ -99,7 +99,7 @@ struct DataManagementSettingsView: View {
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
-        .animation(.spring(response: 0.3), value: dataCleared)
+        .animation(.appSpring, value: dataCleared)
         // An alert, not an inline label: the label rendered below the fold and auto-hid, so users saw no feedback.
         .alert(
             backupMessageIsError ? "Backup Problem" : "Done",
