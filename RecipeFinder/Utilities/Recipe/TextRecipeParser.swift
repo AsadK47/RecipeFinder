@@ -291,27 +291,15 @@ enum TextRecipeParser {
         return prevEndsSentence && (line.first?.isUppercase ?? false)
     }
 
-    /// Time in minutes (pattern must capture the number in group 1); appends an optional unit group so "2 hours" → 120 and "45 mins" → 45.
+    /// Time in minutes after a label (pattern must capture the number in group 1): the regex only finds the duration's span
+    /// ("2 hours", "1 hr 30 min", bare "45"); `TimeExtractor` does the unit maths.
     private static func extractMinutes(_ pattern: String, in text: String) -> Int? {
-        // Optional trailing minutes term (group 3) so "1 hr 30 min" → 90, not 60.
-        let withUnit = pattern + #"\s*(h(?:r|rs|our|ours)?|m(?:in|ins|inute|inutes)?)?(?:\s*(\d+)\s*m(?:in|ins|inute|inutes)?)?\b"#
-        guard let regex = try? NSRegularExpression(pattern: withUnit, options: .caseInsensitive) else { return nil }
-        let nsRange = NSRange(text.startIndex..., in: text)
-        guard let match = regex.firstMatch(in: text, options: [], range: nsRange),
-              match.numberOfRanges > 1,
+        let withUnit = pattern + #"(?:\s*(?:h(?:r|rs|our|ours)?|m(?:in|ins|inute|inutes)?)\b)?(?:\s*\d+\s*m(?:in|ins|inute|inutes)?\b)?"#
+        guard let regex = try? NSRegularExpression(pattern: withUnit, options: .caseInsensitive),
+              let match = regex.firstMatch(in: text, options: [], range: NSRange(text.startIndex..., in: text)),
               let numRange = Range(match.range(at: 1), in: text),
-              let rawValue = Int(text[numRange]) else { return nil }
-        let value = min(rawValue, 1_000_000)  // guard `* 60` against overflow on garbage input
-        var isHours = false
-        if match.numberOfRanges > 2, let unitRange = Range(match.range(at: 2), in: text) {
-            isHours = String(text[unitRange]).lowercased().hasPrefix("h")
-        }
-        guard isHours else { return value }
-        var minutes = value * 60
-        if match.numberOfRanges > 3, let extraRange = Range(match.range(at: 3), in: text), let extra = Int(text[extraRange]) {
-            minutes += min(extra, 1_000_000)
-        }
-        return minutes
+              let matchRange = Range(match.range, in: text) else { return nil }
+        return TimeExtractor.extractMinutes(from: String(text[numRange.lowerBound..<matchRange.upperBound]))
     }
 
     private static func firstIntMatch(_ pattern: String, in text: String) -> Int? {

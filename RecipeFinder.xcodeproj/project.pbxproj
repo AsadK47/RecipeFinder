@@ -137,6 +137,7 @@
 		E7E7E7E7E7E7E7E7E7E70008 /* RecipeImportPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D22630477D84008BF231 /* RecipeImportPipeline.swift */; };
 		E7E7E7E7E7E7E7E7E7E70009 /* SharedImportInbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E97EEC83009401100D35FAB /* SharedImportInbox.swift */; };
 		E7E7E7E7E7E7E7E7E7E7000A /* String+Trimming.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AEF8DC309B851C00A9C5E0 /* String+Trimming.swift */; };
+		E7E7E7E7E7E7E7E7E7E7000B /* RecipeFormatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E9D1C93045D78D008BF231 /* RecipeFormatters.swift */; };
 		F36AED533040A5D700935A3C /* HTMLFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = F36AED523040A5D700935A3C /* HTMLFetcher.swift */; };
 		F36AED553040A5F200935A3C /* RecipeImporterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F36AED543040A5F200935A3C /* RecipeImporterTests.swift */; };
 		F36AED63304333DB00935A3C /* MemoCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = F36AED62304333DB00935A3C /* MemoCache.swift */; };
@@ -2174,6 +2175,7 @@
 				E7E7E7E7E7E7E7E7E7E70008 /* RecipeImportPipeline.swift in Sources */,
 				E7E7E7E7E7E7E7E7E7E70009 /* SharedImportInbox.swift in Sources */,
 				E7E7E7E7E7E7E7E7E7E7000A /* String+Trimming.swift in Sources */,
+				E7E7E7E7E7E7E7E7E7E7000B /* RecipeFormatters.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -69,3 +69,18 @@ enum TimeExtractor {
         return foundNumber ? max(0, Int(min(totalMinutes.rounded(), 1_000_000))) : 0
     }
 }
+
+/// The app's two duration formats, so every time label and countdown reads the same.
+enum DurationFormatter {
+    /// "45 minutes" under an hour, then "1 hr" / "9 hr 45 min" ("585 minutes" is unreadable).
+    static func label(minutes total: Int) -> String {
+        guard total >= 60 else { return "\(total) minutes" }
+        let hours = total / 60, minutes = total % 60
+        return minutes == 0 ? "\(hours) hr" : "\(hours) hr \(minutes) min"
+    }
+
+    /// Countdown clock, "01:05:09".
+    static func clock(seconds: Int) -> String {
+        String(format: "%02d:%02d:%02d", seconds / 3600, (seconds % 3600) / 60, seconds % 60)
+    }
+}

@@ -12,7 +12,7 @@ struct CookTimerView: View {
     }
 
     private var selectedTimeText: String {
-        String(format: "%02d:%02d:%02d", hours, minutes, seconds)
+        DurationFormatter.clock(seconds: selectedTotalSeconds)
     }
 
     var body: some View {

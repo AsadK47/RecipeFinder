@@ -157,16 +157,10 @@ extension RecipeParser {
             return mins
         }
         if let text = innerTexts(prop: prop, attr: attr, in: html).first {
-            return minutesFromText(text)
+            let minutes = TimeExtractor.extractMinutes(from: text)
+            return minutes > 0 ? minutes : nil
         }
         return nil
-    }
-
-    private static func minutesFromText(_ text: String) -> Int? {
-        var total = 0
-        if let h = firstCapture(#"(\d+)\s*(?:hours?|hrs?)\b"#, in: text) { total += min(Int(h) ?? 0, 1_000_000) * 60 }
-        if let m = firstCapture(#"(\d+)\s*(?:minutes?|mins?)\b"#, in: text) { total += min(Int(m) ?? 0, 1_000_000) }
-        return total > 0 ? total : nil
     }
 
     private static func allCaptures(_ pattern: String, in text: String) -> [String] {

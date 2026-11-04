@@ -1,4 +1,4 @@
-# WORK: De-duplication campaign batch 2 (2026-11-04) — #1 fc4920b, #2 0662f3f, 2b 202dd70 committed; #3 d151d9a committed; #4 28fc2d0 committed; #5 normalisers DONE (uncommitted, 1811 green)
+# WORK: De-duplication campaign batch 2 (2026-11-04) — #1 fc4920b, #2 0662f3f, 2b 202dd70 committed; #3 d151d9a committed; #4 28fc2d0 committed; #5 a2e03cb committed; #6 durations DONE (uncommitted, 1816 green) — CAMPAIGN COMPLETE
 Order (user-approved): 1 sheet scaffold → 2 card styles → 3 adaptive colours → 4 search fields → 5 ingredient normalisers → 6 duration code.
 1. [x] `Components/Sheets/SheetScaffold.swift`: `.sheetScaffold(title)` (NavigationStack + AppBackground + appNavigationChrome) and
    `.sheetDismissButton(_:placement:)` applied to 17 sheets. Decisions: modifier not container (toolbars must sit inside the stack, and
@@ -28,7 +28,13 @@ Order (user-approved): 1 sheet scaffold → 2 card styles → 3 adaptive colours
    "eggplant" got egg subs) and NutritionDatabase (adds its own descriptor filter on top; last-resort fallback substring → whole-word,
    longest/alphabetical). BackupMerge.normalizedName is recipe names — out of scope. +13 tests. Accepted: names that only
    substring-matched nutrition before (e.g. "buttercream" → butter) now count as unknown → nutrition coverage may dip slightly.
-**Next action:** user commits #5; then #6 duration formatters/minute-parsers.
+6. [x] `DurationFormatter.label(minutes:)` / `.clock(seconds:)` (RecipeFormatters.swift) replace RecipeModel.formatMinutes, wizard
+   timeLabel (now "45 minutes"/"2 hr", was "45 min"/"2 hrs"), RecipeTimerManager.formatTime, CookTimerView clock. Microdata
+   minutesFromText + TextRecipeParser unit maths → TimeExtractor. RecipeFormatters.swift ADDED to RecipeShareExtension Sources
+   (pbxproj E7E7…000B) — the extension compiles the parsers. Left alone: CookingModeView.cookTimerMinutes (picks one timer in step
+   text — different job), ISO-8601 parser (single).
+**Next action:** user commits #6, then clear this section. Remaining 🟢 from sweep: empty-state copies, DateFormatters, share/top-VC walks;
+sim notes: About icon teal-on-teal (Light), Paste Text box plain white, Panko substitute "Equal quantity panko", avatar initials blank.
 
 # WORK: De-duplication campaign (2026-11-04) — low-risk batch 1–6 DONE (1798 green, uncommitted)
 User: "search for duplication and remove it — works once, easier to maintain". Sweep (Explore agent) ranked 15; doing

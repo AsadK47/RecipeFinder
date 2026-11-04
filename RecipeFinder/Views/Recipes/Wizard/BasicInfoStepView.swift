@@ -11,13 +11,7 @@ struct BasicInfoStepView: View {
     let categories: [String]
 
     private func timeLabel(_ minutes: Int) -> String {
-        guard minutes > 0 else { return "0 min" }
-        let h = minutes / 60, m = minutes % 60
-        switch (h, m) {
-        case (0, _): return "\(m) min"
-        case (_, 0): return "\(h) \(h == 1 ? "hr" : "hrs")"
-        default:     return "\(h) \(h == 1 ? "hr" : "hrs") \(m) min"
-        }
+        DurationFormatter.label(minutes: minutes)
     }
 
     var body: some View {
