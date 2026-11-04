@@ -1,7 +1,7 @@
 import SwiftUI
 import ConfettiSwiftUI
 
-/// Celebratory bottom sheet per badge unlock: confetti + haptic on appear, auto-dismisses after 4 s, dequeues next via `BadgeManager.dismissCelebration()`.
+/// Celebratory bottom sheet per badge unlock: confetti + haptic on appear, auto-dismisses after 8 s, dequeues next via `BadgeManager.dismissCelebration()`.
 struct BadgeEarnedSheet: View {
     let badge: BadgeType
     let onDismiss: () -> Void
@@ -100,9 +100,9 @@ struct BadgeEarnedSheet: View {
             appeared = true
             confettiCounter += 1
             HapticManager.shared.celebrate()
-            // Auto-dismiss after 4 s; hold the task so a queued next badge cancels it instead of being dismissed by this one's timer.
+            // Auto-dismiss after 8 s (4 s was too short to reach "View all badges"); hold the task so a queued next badge cancels it instead of being dismissed by this one's timer.
             dismissTask = Task {
-                try? await Task.sleep(for: .seconds(4))
+                try? await Task.sleep(for: .seconds(8))
                 guard !Task.isCancelled else { return }
                 onDismiss()
             }

@@ -256,8 +256,8 @@ extension RecipeDetailView {
     var timeInfoCard: some View {
         GlassCard {
             InfoPairView(
-                label1: "Prep time", value1: recipe.prepTime, icon1: "clock",
-                label2: "Cook time", value2: recipe.cookingTime, icon2: "flame"
+                label1: "Prep time", value1: recipe.prepTimeDisplay, icon1: "clock",
+                label2: "Cook time", value2: recipe.cookTimeDisplay, icon2: "flame"
             )
             .padding()
         }

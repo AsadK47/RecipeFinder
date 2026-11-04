@@ -467,6 +467,13 @@ struct RecipeModelDisplayTests {
         #expect(recipe(prep: "30 min", cook: "30 min").totalTime == "1 hr")
     }
 
+    @Test("Prep and cook labels use the same hours format as the total")
+    func prepAndCookDisplay() {
+        let r = recipe(prep: "10 min", cook: "575 min")
+        #expect(r.cookTimeDisplay == "9 hr 35 min")
+        #expect(r.prepTimeDisplay == "10 minutes")
+    }
+
     @Test("No known time means no clock on the card (imports without timings)")
     func hasTotalTime() {
         #expect(!recipe(prep: "0 minutes", cook: "0 minutes").hasTotalTime)

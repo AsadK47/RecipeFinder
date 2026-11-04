@@ -35,9 +35,16 @@ review editor (shared `PrefilledRecipeData(recipe:)`); today's XCTest additions 
 Full suite 1855/1855 green (2026-11-04).
 DEFERRED 🟢: jump-to-recipe after URL import; header/equipment cleanup inside TextRecipeParser for user pastes (only
 done in the bundled generator); kitchen expiry UI; meal-reminder discoverability; nutrition estimate vs source figures.
-NEXT: (1) quick visual sim pass of the UI fixes (Ingredients header, Purple, backup alert, badges→Account, grocery
-units); (2) user commits; (3) task 16 — remove accounts entirely (plan in memory identity-and-accounts; staged, each
-stage build + tests green; start with a grep inventory of AuthenticationManager/AuthUIGate/UserScopedStorage/userId).
+VISUAL CHECK 2026-11-04 (iPhone 17e): all 8 targeted fixes PASS. Follow-ups fixed after: detail Prep/Cook time
+now "x hr y min" (`RecipeModel.formatMinutes`); card VoiceOver reads total time; badge sheet auto-dismiss 4s→8s.
+New 🟡 backlog: 4 bundled recipes with ≤2 ingredients (e.g. American pancakes — bad source, on known-poor list;
+575-min cook time / 11 servings); every bundled recipe category "Main" (source has none → consider CategoryClassifier
+on name); groceries "Kashmiri Chili Powder"→"Chili Powder", cornflour→Other; typed "200 g flour" in Groceries not
+parsed into qty/unit. 🟢: ticks lost on leaving recipe; editor shows "0" for unquantified; odd metric grams (3½ g);
+low-contrast checked grocery rows; white Paste box; Reset gives no confirmation; yogurt row named "Plain".
+NEXT: user commits these follow-ups; then task 16 — remove accounts entirely (plan in memory identity-and-accounts;
+staged, each stage build + tests green; start with a grep inventory of AuthenticationManager/AuthUIGate/
+UserScopedStorage/userId). Kitchen discoverability question raised by user 2026-11-04 (see chat).
 
 ## Findings — tester A (iPhone 18 Pro, core loop) — no crashes; edit crash fix confirmed
 ### 🟡

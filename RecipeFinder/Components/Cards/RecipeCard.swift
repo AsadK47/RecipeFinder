@@ -78,7 +78,8 @@ struct RecipeCard: View {
         }
         .clipShape(RoundedRectangle(cornerRadius: AppTheme.cardCornerRadius))
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(recipe.name), \(recipe.category), Preparation time: \(recipe.prepTime), Difficulty: \(recipe.difficulty)")
+        // Read the total time the card actually shows (it used to announce prep time only).
+        .accessibilityLabel("\(recipe.name), \(recipe.category), \(recipe.hasTotalTime ? "Total time: \(recipe.totalTime), " : "")Difficulty: \(recipe.difficulty)")
         .accessibilityHint("Double tap to view recipe details")
     }
 
