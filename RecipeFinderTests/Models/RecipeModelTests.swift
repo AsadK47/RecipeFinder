@@ -474,6 +474,11 @@ struct RecipeModelDisplayTests {
         #expect(r.prepTimeDisplay == "10 minutes")
     }
 
+    @Test("Unknown times read \"Not set\" on the recipe screen, not a fake 0 minutes")
+    func unknownTimeNotSet() {
+        #expect(recipe(prep: "0 minutes", cook: "0 minutes").prepTimeDisplay == "Not set")
+    }
+
     @Test("No known time means no clock on the card (imports without timings)")
     func hasTotalTime() {
         #expect(!recipe(prep: "0 minutes", cook: "0 minutes").hasTotalTime)

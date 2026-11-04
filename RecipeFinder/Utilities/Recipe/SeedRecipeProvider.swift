@@ -17,7 +17,7 @@ enum SeedRecipeProvider {
     private static let spaghettibolognese = RecipeModel(
         id: UUID(uuidString: "5EED0001-0000-0000-0000-000000000001")!,
         name: "Spaghetti Bolognese",
-        category: "Pasta",
+        category: "Main",
         difficulty: "Intermediate",
         prepTime: "15 minutes",
         cookingTime: "45 minutes",
@@ -51,7 +51,7 @@ enum SeedRecipeProvider {
     private static let chickenTikkaMasala = RecipeModel(
         id: UUID(uuidString: "5EED0001-0000-0000-0000-000000000002")!,
         name: "Chicken Tikka Masala",
-        category: "Curry",
+        category: "Main",
         difficulty: "Intermediate",
         prepTime: "20 minutes",
         cookingTime: "30 minutes",
@@ -116,7 +116,7 @@ enum SeedRecipeProvider {
     private static let bananaBread = RecipeModel(
         id: UUID(uuidString: "5EED0001-0000-0000-0000-000000000004")!,
         name: "Banana Bread",
-        category: "Baking",
+        category: "Dessert",
         difficulty: "Basic",
         prepTime: "15 minutes",
         cookingTime: "60 minutes",
@@ -181,7 +181,7 @@ enum SeedRecipeProvider {
     private static let greekSalad = RecipeModel(
         id: UUID(uuidString: "5EED0001-0000-0000-0000-000000000006")!,
         name: "Greek Salad",
-        category: "Salad",
+        category: "Side",
         difficulty: "Basic",
         prepTime: "10 minutes",
         cookingTime: "0 minutes",

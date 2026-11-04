@@ -148,8 +148,13 @@ struct RecipeModel: Identifiable, Codable, Hashable {
         return Self.formatMinutes(prepMinutes + cookMinutes)
     }
 
-    var prepTimeDisplay: String { Self.formatMinutes(TimeExtractor.extractMinutes(from: prepTime)) }
-    var cookTimeDisplay: String { Self.formatMinutes(TimeExtractor.extractMinutes(from: cookingTime)) }
+    // "Not set" rather than a fake "0 minutes" when the source gave no time (the card stays tappable to add one).
+    var prepTimeDisplay: String { Self.timeLabel(TimeExtractor.extractMinutes(from: prepTime)) }
+    var cookTimeDisplay: String { Self.timeLabel(TimeExtractor.extractMinutes(from: cookingTime)) }
+
+    private static func timeLabel(_ minutes: Int) -> String {
+        minutes > 0 ? formatMinutes(minutes) : "Not set"
+    }
 
     /// "585 minutes" is unreadable — show hours once past an hour ("9 hr 45 min"); one format for every time label.
     static func formatMinutes(_ total: Int) -> String {

@@ -7,7 +7,12 @@ Spot-check (reviewer judgement calls): un-scaled amounts in Aloo Gosht, Beef in 
 Stroganoff, Biang Biang, Pakistani Chana Dal (weakest), Dan Dan, Kofta, Dal Gosht, Nihari, Shami Kebab, Paella, Lamb
 Pulao, Green Curry, mooncakes; Pistachio Sponge final step written by reviewer; matcha rice cake gelatin→yeast; some
 method-only ingredients added with qty 0; Chicken Corn Soup / Clay Pot Rice cook time = total − prep.
-Next: user eyeballs a handful on device (reinstall), commits; then Kitchen surfacing / 🟡 backlog.
+ON-SCREEN CHECK (3 rounds, iPhone 18 Pro): content passes; fixed display layer — recipe rows show names as written
+(`Ingredient.displayParts`, bracket-aware), spoons never convert, cups convert only for known liquids / known-density
+non-herb solids, tidy rounding (ml 5/10, oz ½, ≥16 oz → lb, ≥4 tbsp → cups), thirds kept (⅓ not ⅜), "Not set" for
+unknown times, "L", plural cups, starter categories → filter list. Full suite 1789/1789. Last two fixes (thirds, 1 lb)
+verified by tests only. Open 🟢: Miso source link truncated "watch?"; near-duplicate pairs kept (distinct sources).
+Next: user commits; then Kitchen surfacing / 🟡 backlog.
 
 # WORK: Account removal (2026-11-04) — STAGES 1–3 DONE (uncommitted; build + full suite 1769/1769 green)
 - S1: auth engine/UI, Keychain/PasswordHasher/SessionExpiry, sign-in UI tests and launch args deleted; legal/help copy de-accounted.

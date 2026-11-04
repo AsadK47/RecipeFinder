@@ -59,6 +59,28 @@ struct Ingredient: Identifiable, Codable, Hashable {
         IngredientNameFormatter.formatForDisplay(_name)
     }
     
+    /// What the recipe screen shows: the name as written, split once at the first comma into the bold name and the
+    /// note ("Butter" / "melted, plus extra for cooking"). Unlike `mainIngredientName` (a matching key that strips
+    /// brackets and reorders words), nothing is dropped or moved.
+    var displayParts: (name: String, note: String?) {
+        let raw = _name.trimmingCharacters(in: .whitespaces)
+        // Split at the first comma outside brackets — "kombu (2 pieces, about 5 inches), dried" keeps its bracket whole.
+        var depth = 0
+        var boundary: String.Index?
+        for index in raw.indices {
+            switch raw[index] {
+            case "(": depth += 1
+            case ")": depth = max(0, depth - 1)
+            case "," where depth == 0: boundary = index
+            default: break
+            }
+            if boundary != nil { break }
+        }
+        guard let comma = boundary else { return (IngredientNameFormatter.formatForDisplay(raw), nil) }
+        let note = raw[raw.index(after: comma)...].trimmingCharacters(in: .whitespaces)
+        return (IngredientNameFormatter.formatForDisplay(String(raw[..<comma])), note.isEmpty ? nil : note)
+    }
+
     var mainIngredientName: String {
         return IngredientNameFormatter.extractMainName(name)
     }

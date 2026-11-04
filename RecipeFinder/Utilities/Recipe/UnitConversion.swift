@@ -164,36 +164,69 @@ struct UnitConversion {
     ) -> (quantity: Double, unit: String) {
         let unitType = getUnitType(unit)
         let normalizedUnit = unit.lowercased().trimmingCharacters(in: .whitespaces)
-        if ["pinch", "pinches"].contains(normalizedUnit) { return (value, unit) }
+        // Spoons and pinches are the same measure in both systems. Converting them produced "½ g" of cumin,
+        // "2½ ml" of lemon juice and inconsistent results (1 tbsp garlic → 15 g, but ginger stayed in tbsp).
+        let spoonUnits: Set<String> = ["tsp", "teaspoon", "teaspoons", "tbsp", "tablespoon", "tablespoons", "pinch", "pinches"]
+        if spoonUnits.contains(normalizedUnit) { return (value, unit) }
         
         switch unitType {
         case .weight:
-            return convertWeightToSystem(value: value, unit: unit, system: system)
+            return tidy(convertWeightToSystem(value: value, unit: unit, system: system))
         case .volume:
-            if let name = ingredientName, isSolidIngredient(name) {
-                let weighed = convertVolumeToWeightForSolids(value: value, unit: unit, system: system, ingredientName: name)
-                // Spoonfuls of spice weighed out read as "½ g" — nobody weighs that; keep spoons below 10 g.
-                let spoonUnits: Set<String> = ["tsp", "teaspoon", "teaspoons", "tbsp", "tablespoon", "tablespoons"]
-                if spoonUnits.contains(normalizedUnit), weighed.unit == "g", weighed.quantity < 10 {
-                    return (value, unit)
-                }
-                return weighed
-            } else {
-                return convertVolumeToSystem(value: value, unit: unit, system: system)
+            guard let name = ingredientName else {
+                return tidy(convertVolumeToSystem(value: value, unit: unit, system: system))
             }
+            // Only convert what we can convert honestly: liquids by volume, known-density solids by weight.
+            // Anything else ("175 ml chana dal", "475 ml chopped cabbage", "22 g fresh coriander") keeps its cups.
+            if isLiquidIngredient(name) {
+                return tidy(convertVolumeToSystem(value: value, unit: unit, system: system))
+            }
+            if system == .metric, isSolidIngredient(name), !isFreshHerb(name),
+               getDensityConversion(ingredientName: name, unit: unit) != nil {
+                return tidy(convertVolumeToWeightForSolids(value: value, unit: unit, system: system, ingredientName: name))
+            }
+            return (value, unit)
         case .none:
             return (value, unit)
         }
     }
     
+    private static let liquidKeywords = ["oil", "water", "milk", "cream", "stock", "broth", "juice",
+                                         "sauce", "vinegar", "wine", "soy sauce", "coconut milk", "honey",
+                                         "syrup", "extract", "liquid", "melted"]
+
+    private static func isLiquidIngredient(_ ingredientName: String) -> Bool {
+        let words = IngredientWordMatcher.words(in: ingredientName)
+        return liquidKeywords.contains { IngredientWordMatcher.matches(textWords: words, keyword: $0) }
+    }
+
+    /// Fresh herbs/leaves share names with dried spices ("coriander") but weigh a fraction as much.
+    private static func isFreshHerb(_ ingredientName: String) -> Bool {
+        let words = IngredientWordMatcher.words(in: ingredientName)
+        return ["fresh", "leaves", "leaf", "sprigs", "chopped"].contains { IngredientWordMatcher.matches(textWords: words, keyword: $0) }
+    }
+
+    /// Rounds converted amounts to what people actually measure: 945 ml → 950 ml, ⅞ oz → 1 oz, 16 oz → 1 lb,
+    /// 14 tbsp → 1 cup.
+    private static func tidy(_ result: (quantity: Double, unit: String)) -> (quantity: Double, unit: String) {
+        let q = result.quantity
+        func round(_ value: Double, to step: Double) -> Double { max(step, (value / step).rounded() * step) }
+        switch result.unit {
+        case "ml" where q >= 100: return (round(q, to: 10), "ml")
+        case "ml" where q >= 20: return (round(q, to: 5), "ml")
+        case "oz" where round(q, to: 0.5) >= 16: return (round(q / 16, to: 0.25), "lb")   // 450 g = 15.9 oz → 1 lb
+        case "oz": return (round(q, to: 0.5), "oz")
+        case "lb", "lbs": return (round(q, to: 0.25), "lb")   // "1 lbs" read oddly
+        case "tbsp" where q >= 4: return (round(q / 16, to: 0.25), "cup")
+        case "cup", "cups": return (round(q, to: 0.25), result.unit)
+        default: return result
+        }
+    }
+
     private static func isSolidIngredient(_ ingredientName: String) -> Bool {
         let nameWords = IngredientWordMatcher.words(in: ingredientName)
 
-        let liquids = ["oil", "water", "milk", "cream", "stock", "broth", "juice",
-                      "sauce", "vinegar", "wine", "soy sauce", "coconut milk", "honey",
-                      "syrup", "extract", "liquid", "melted"]
-
-        for liquid in liquids where IngredientWordMatcher.matches(textWords: nameWords, keyword: liquid) {
+        for liquid in liquidKeywords where IngredientWordMatcher.matches(textWords: nameWords, keyword: liquid) {
             return false
         }
 
@@ -205,7 +238,7 @@ struct UnitConversion {
                      "saffron", "sumac", "za'atar", "curry", "masala", "garam",
                      "star anise", "peppercorn", "sesame", "poppy", "caraway"]
 
-        let dryIngredients = ["flour", "sugar", "salt", "rice", "pasta", "oats",
+        let dryIngredients = ["butter", "flour", "sugar", "salt", "rice", "pasta", "oats",
                              "breadcrumb", "cornstarch", "cornflour", "baking powder",
                              "baking soda", "yeast", "cocoa", "coffee", "tea", "seed",
                              "nut", "almond", "walnut", "cashew", "peanut", "pecan",
@@ -226,6 +259,7 @@ struct UnitConversion {
         let densityMap: [String: (tsp: Double, tbsp: Double, cup: Double)] = [
             "salt": (tsp: 6, tbsp: 18, cup: 288),
             "sugar": (tsp: 4, tbsp: 12.5, cup: 200),
+            "butter": (tsp: 4.7, tbsp: 14, cup: 227),
             "flour": (tsp: 2.5, tbsp: 8, cup: 125),
             "cinnamon": (tsp: 2.6, tbsp: 8, cup: 128),
             "ginger": (tsp: 2, tbsp: 6, cup: 96),

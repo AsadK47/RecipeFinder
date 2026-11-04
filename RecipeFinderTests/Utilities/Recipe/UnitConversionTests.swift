@@ -250,4 +250,31 @@ struct IngredientDisplayTests {
         #expect(ingredient.displayName == "Butter, melted, plus extra for cooking")
         #expect(IngredientNameFormatter.formatForDisplay("Kashmiri chilli powder") == "Kashmiri chilli powder")
     }
+
+    @Test("Thirds stay thirds on screen (0.33 cup was shown as ⅜)", arguments: [
+        (0.33, "⅓"), (0.67, "⅔"), (1.33, "1⅓"), (0.375, "⅜"), (1.25, "1¼"),
+    ])
+    func thirdsStayThirds(value: Double, expected: String) {
+        #expect(FractionFormatter.format(IngredientRowView.prettyQuantity(value)) == expected)
+    }
+
+    @Test("Units read naturally: litres as L, plural cups")
+    func displayUnits() {
+        #expect(IngredientRowView.displayUnit("l", quantity: 1) == "L")
+        #expect(IngredientRowView.displayUnit("cup", quantity: 2) == "cups")
+        #expect(IngredientRowView.displayUnit("cup", quantity: 0.5) == "cup")
+    }
+
+    @Test("Recipe rows split name and note once, keeping words, order and brackets as written")
+    func displayPartsAreFaithful() {
+        let kombu = Ingredient(baseQuantity: 2, unit: "", name: "dried kombu (about 5 inches, cut in half), rinsed")
+        #expect(kombu.displayParts.name == "Dried kombu (about 5 inches, cut in half)")
+        #expect(kombu.displayParts.note == "rinsed")
+        let peas = Ingredient(baseQuantity: 100, unit: "g", name: "frozen peas")
+        #expect(peas.displayParts.name == "Frozen peas")
+        #expect(peas.displayParts.note == nil)
+        let noodles = Ingredient(baseQuantity: 400, unit: "g", name: "fresh or dried white noodles, medium thickness")
+        #expect(noodles.displayParts.name == "Fresh or dried white noodles")
+        #expect(noodles.displayParts.note == "medium thickness")
+    }
 }

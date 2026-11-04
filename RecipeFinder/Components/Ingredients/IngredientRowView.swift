@@ -30,7 +30,7 @@ struct IngredientRowView: View {
                     }
 
                     if !convertedIngredient.unit.isEmpty {
-                        Text(convertedIngredient.unit.lowercased())
+                        Text(Self.displayUnit(convertedIngredient.unit, quantity: convertedIngredient.quantity))
                             .font(.caption)
                             .adaptiveSecondaryForeground()
                             .lineLimit(1)
@@ -50,14 +50,15 @@ struct IngredientRowView: View {
                 }
             }) {
                 VStack(alignment: .leading, spacing: AppTheme.spacing2) {
-                    Text(ingredient.mainIngredientName)
+                    let parts = ingredient.displayParts
+                    Text(parts.name)
                         .font(.body)
                         .fontWeight(.semibold)
                         .strikethrough(isChecked)
                         .foregroundStyle(isChecked ? .secondary : .primary)
                         .fixedSize(horizontal: false, vertical: true)
 
-                    if let prep = ingredient.preparationNotes {
+                    if let prep = parts.note {
                         Text(prep)
                             .font(.caption)
                             .adaptiveSecondaryForeground()
@@ -112,13 +113,23 @@ struct IngredientRowView: View {
     }
 
     // Snaps converted quantities to cooking-sensible precision so conversions don't surface ugly values like "14.79 ml".
-    private func prettyQuantity(_ q: Double) -> Double {
+    private func prettyQuantity(_ q: Double) -> Double { Self.prettyQuantity(q) }
+
+    /// Nearest of the fractions cooks use — eighths/quarters OR thirds, whichever is closer (⅓ used to become ⅜).
+    static func prettyQuantity(_ q: Double) -> Double {
         guard q > 0 else { return q }
         if q >= 100 { return (q / 5).rounded() * 5 }
         if q >= 10 { return q.rounded() }
-        if q >= 1 { return (q * 4).rounded() / 4 }
-        return (q * 8).rounded() / 8
+        let binary = q >= 1 ? (q * 4).rounded() / 4 : (q * 8).rounded() / 8
+        let thirds = (q * 3).rounded() / 3
+        return abs(thirds - q) < abs(binary - q) ? thirds : binary
+    }
+
+    /// "L" (not "l", which reads as "I") and plural cups ("2 cups", not "2 cup").
+    static func displayUnit(_ unit: String, quantity: Double) -> String {
+        let lower = unit.lowercased()
+        if lower == "l" { return "L" }
+        if lower == "cup", quantity > 1 { return "cups" }
+        return lower
     }
 }
-
-
