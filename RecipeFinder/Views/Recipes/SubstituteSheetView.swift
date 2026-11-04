@@ -29,24 +29,23 @@ struct SubstituteSheetView: View {
     }
 
     private func substituteRow(_ text: String, number: Int) -> some View {
-        GlassCard {
-            HStack(alignment: .top, spacing: AppTheme.spacing12) {
-                // White-on-accent step badge — accent text on the frosted card was low-contrast.
-                Text("\(number)")
-                    .font(.caption)
-                    .fontWeight(.bold)
-                    .foregroundStyle(.white)
-                    .frame(width: 22, height: 22)
-                    .background(Circle().fill(AppTheme.accentColor))
-                    .padding(.top, AppTheme.spacing2)
+        HStack(alignment: .top, spacing: AppTheme.spacing12) {
+            // White-on-accent step badge — accent text on the frosted card was low-contrast.
+            Text("\(number)")
+                .font(.caption)
+                .fontWeight(.bold)
+                .foregroundStyle(.white)
+                .frame(width: 22, height: 22)
+                .background(Circle().fill(AppTheme.accentColor))
+                .padding(.top, AppTheme.spacing2)
 
-                Text(text)
-                    .font(.subheadline)
-                    .foregroundStyle(.primary)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .padding(AppTheme.spacing16)
+            Text(text)
+                .font(.subheadline)
+                .foregroundStyle(.primary)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .padding(AppTheme.spacing16)
+        .appCard(elevated: true)
     }
 }

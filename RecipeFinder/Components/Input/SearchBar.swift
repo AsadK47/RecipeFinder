@@ -5,7 +5,6 @@ struct SearchBar: View {
     var placeholder: String
     @FocusState private var isFocused: Bool
     @Environment(\.colorScheme) var colorScheme
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
 
     private enum Timing {
         static let springResponse: Double = 0.3
@@ -35,15 +34,7 @@ struct SearchBar: View {
                 }
             }
             .padding(AppTheme.spacing16)
-            .background {
-                if cardStyle == .solid {
-                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                        .fill(AppTheme.adaptiveCardMedium(for: colorScheme))
-                } else {
-                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                        .fill(.ultraThinMaterial)
-                }
-            }
+            .appCard(cornerRadius: AppTheme.cornerRadius12)
 
             if isFocused {
                 Button("Cancel") {

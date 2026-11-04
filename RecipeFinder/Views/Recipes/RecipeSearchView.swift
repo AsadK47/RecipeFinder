@@ -33,7 +33,6 @@ struct RecipeSearchView: View {
     @State private var availableCuisines: [String] = []
     @State private var categories: [String] = []
     @FocusState private var isSearchFocused: Bool
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @AppStorage("skipRecipeDeleteConfirmation") private var skipDeleteConfirmation: Bool = false
     @Environment(\.collections) private var collectionManager
     @Environment(\.cookingStreak) private var cookingStreak

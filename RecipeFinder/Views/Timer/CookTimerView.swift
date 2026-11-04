@@ -7,7 +7,6 @@ struct CookTimerView: View {
     @State private var seconds: Int = 0
 
     @Environment(\.colorScheme) var colorScheme
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
 
     private var selectedTotalSeconds: Int {
         (hours * 3600) + (minutes * 60) + seconds
@@ -85,15 +84,7 @@ struct CookTimerView: View {
             }
         }
         .padding(AppTheme.spacing24)
-        .background {
-            if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: AppTheme.cornerRadius20)
-                    .fill(AppTheme.cardBackground(for: colorScheme))
-            } else {
-                RoundedRectangle(cornerRadius: AppTheme.cornerRadius20)
-                    .fill(.regularMaterial)
-            }
-        }
+        .appCard(cornerRadius: AppTheme.cornerRadius20)
     }
 
     private var pickerCard: some View {
@@ -131,15 +122,7 @@ struct CookTimerView: View {
             .opacity(selectedTotalSeconds == 0 ? 0.5 : 1)
         }
         .padding(AppTheme.spacing24)
-        .background {
-            if cardStyle == .solid {
-                RoundedRectangle(cornerRadius: AppTheme.cornerRadius20)
-                    .fill(AppTheme.cardBackground(for: colorScheme))
-            } else {
-                RoundedRectangle(cornerRadius: AppTheme.cornerRadius20)
-                    .fill(.regularMaterial)
-            }
-        }
+        .appCard(cornerRadius: AppTheme.cornerRadius20)
     }
 
     private func wheelPicker(title: String, selection: Binding<Int>, range: Range<Int>) -> some View {

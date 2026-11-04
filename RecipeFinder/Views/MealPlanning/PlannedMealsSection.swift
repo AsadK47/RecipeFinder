@@ -4,7 +4,6 @@ import SwiftUI
 struct PlannedMealsSection: View {
     @Binding var mealTimes: [MealTime]
     let selectedDateString: String
-    let cardStyle: CardStyle
     let colorScheme: ColorScheme
     let recipeFor: (MealTime) -> RecipeModel?
     let mealPlanFor: (MealTime) -> MealPlanModel?
@@ -56,7 +55,6 @@ struct PlannedMealsSection: View {
                     mealTime: mealTime,
                     recipe: recipeFor(mealTime),
                     isRecurring: mealPlanFor(mealTime)?.isRecurring ?? false,
-                    cardStyle: cardStyle,
                     colorScheme: colorScheme,
                     onRemove: { onRemove(mealTime) }
                 )
@@ -103,7 +101,6 @@ struct PlannedMealsSection: View {
                         mealTime: mealTime,
                         recipe: recipeFor(mealTime),
                         isRecurring: mealPlanFor(mealTime)?.isRecurring ?? false,
-                        cardStyle: cardStyle,
                         colorScheme: colorScheme,
                         onRemove: {}
                     )

@@ -4,7 +4,6 @@ import SwiftUI
 struct SelectedDayEmptyStateView: View {
     let selectedDateString: String
     let shortDateString: String
-    let cardStyle: CardStyle
     let colorScheme: ColorScheme
     let onAddMeal: () -> Void
 

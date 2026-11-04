@@ -4,7 +4,6 @@ struct RecipeCard: View {
     let recipe: RecipeModel
     let viewMode: RecipeViewMode
     @Environment(\.colorScheme) var colorScheme
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
 
     private enum Layout {
         static let difficultyBarSize: CGFloat = 3.5
@@ -73,25 +72,11 @@ struct RecipeCard: View {
                 .foregroundStyle(AppTheme.adaptiveSubtitle(for: colorScheme))
         }
         .padding(AppTheme.spacing16)
-        .background {
-            cardBackground
-        }
+        .appCard(cornerRadius: AppTheme.cardCornerRadius)
         .clipShape(RoundedRectangle(cornerRadius: AppTheme.cardCornerRadius))
         .accessibilityElement(children: .combine)
         // Read the total time the card actually shows (it used to announce prep time only).
         .accessibilityLabel("\(recipe.name), \(recipe.category), \(recipe.hasTotalTime ? "Total time: \(recipe.totalTime), " : "")Difficulty: \(recipe.difficulty)")
         .accessibilityHint("Double tap to view recipe details")
-    }
-
-    @ViewBuilder
-    private var cardBackground: some View {
-        if cardStyle == .solid {
-            RoundedRectangle(cornerRadius: AppTheme.cardCornerRadius)
-                .fill(AppTheme.cardBackground(for: colorScheme))
-                .shadow(color: Color.black.opacity(CardViewLayout.shadowOpacitySolid), radius: AppTheme.shadowRadiusLarge, x: 0, y: AppTheme.shadowOffsetLarge)
-        } else {
-            RoundedRectangle(cornerRadius: AppTheme.cardCornerRadius)
-                .fill(.ultraThinMaterial)
-        }
     }
 }

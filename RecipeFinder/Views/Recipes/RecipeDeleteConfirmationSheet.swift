@@ -6,7 +6,6 @@ struct RecipeDeleteConfirmationSheet: View {
     let onConfirm: () -> Void
     let onCancel: () -> Void
     
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
     var body: some View {
         GeometryReader { geometry in

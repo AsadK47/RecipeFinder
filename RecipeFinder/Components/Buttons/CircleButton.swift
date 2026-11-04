@@ -5,7 +5,6 @@ struct CircleButton: View {
     let action: () -> Void
 
     @Environment(\.colorScheme) var colorScheme
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
 
     var body: some View {
         Button(action: action) {
@@ -13,15 +12,7 @@ struct CircleButton: View {
                 .font(.title2)
                 .foregroundStyle(AppTheme.adaptiveEmphasis(for: colorScheme))
                 .padding(AppTheme.spacing12)
-                .background {
-                    if cardStyle == .solid {
-                        Circle()
-                            .fill(AppTheme.adaptiveCardMedium(for: colorScheme))
-                    } else {
-                        Circle()
-                            .fill(.ultraThinMaterial)
-                    }
-                }
+                .appCard(in: Circle())
         }
         .buttonStyle(PlainButtonStyle())
         .accessibilityAddTraits(.isButton)

@@ -2,7 +2,6 @@ import SwiftUI
 
 struct LegalInformationView: View {
     @Environment(\.colorScheme) var colorScheme
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @State private var showPrivacyPolicy = false
     @State private var showTermsOfService = false
     @State private var showCompanyCompliance = false

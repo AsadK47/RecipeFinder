@@ -10,7 +10,6 @@ struct AppSearchField: View {
     var accessibilityID: String?
 
     @Environment(\.colorScheme) private var colorScheme
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
 
     var body: some View {
         HStack(spacing: AppTheme.spacing12) {
@@ -48,15 +47,7 @@ struct AppSearchField: View {
             }
             .padding(.horizontal, AppTheme.spacing16)
             .padding(.vertical, AppTheme.spacing14)
-            .background {
-                if cardStyle == .solid {
-                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                        .fill(AppTheme.adaptiveCard(for: colorScheme))
-                } else {
-                    RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                        .fill(.ultraThinMaterial)
-                }
-            }
+            .appCard(cornerRadius: AppTheme.cornerRadius12)
 
             if isFocused.wrappedValue {
                 Button(

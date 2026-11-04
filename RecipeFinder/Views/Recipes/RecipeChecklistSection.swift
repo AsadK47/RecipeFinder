@@ -38,11 +38,10 @@ struct RecipeChecklistSection<Content: View>: View {
             .buttonStyle(PlainButtonStyle())
 
             if isExpanded {
-                GlassCard {
-                    content()
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(AppTheme.spacing24)
-                }
+                content()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(AppTheme.spacing24)
+                .appCard(elevated: true)
                 .transition(.asymmetric(
                     insertion: .scale(scale: AppTheme.transitionScaleDown).combined(with: .opacity),
                     removal: .scale(scale: AppTheme.transitionScaleDown).combined(with: .opacity)

@@ -5,7 +5,6 @@ struct WeekStripView: View {
     let week: [Date]
     let selectedDate: Date
     let monthYearString: String
-    let cardStyle: CardStyle
     let colorScheme: ColorScheme
     /// Returns the planned meal times for a given date, used to draw indicator dots.
     let mealTimesFor: (Date) -> [MealTime]

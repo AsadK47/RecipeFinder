@@ -27,95 +27,94 @@ struct KitchenItemRow: View {
     }
 
     var body: some View {
-        GlassCard {
-            HStack(spacing: AppTheme.spacing12) {
-                Text(item.name)
-                    .font(.subheadline)
+        HStack(spacing: AppTheme.spacing12) {
+            Text(item.name)
+                .font(.subheadline)
+                .fontWeight(.semibold)
+                .adaptiveForegroundColor()
+                .lineLimit(1)
+
+            Spacer(minLength: 0)
+
+            HStack(spacing: AppTheme.spacing8) {
+                Button(
+                    action: {
+                        withAnimation(.appSnappy) {
+                            KitchenInventoryManager.shared.updateQuantity(for: item, delta: -1)
+                        }
+                    },
+                    label: {
+                        Image(systemName: "minus")
+                            .font(.system(size: AppTheme.fontSize12, weight: .bold))
+                            .adaptiveForegroundColor()
+                            .frame(width: 30, height: 30)
+                            .background(Circle().fill(.ultraThinMaterial))
+                    }
+                )
+                .buttonStyle(.plain)
+                .disabled(item.quantity <= 1)
+
+                Text(quantityText)
+                    .font(.subheadline.monospacedDigit())
                     .fontWeight(.semibold)
                     .adaptiveForegroundColor()
-                    .lineLimit(1)
+                    .frame(minWidth: 24)
 
-                Spacer(minLength: 0)
-
-                HStack(spacing: AppTheme.spacing8) {
-                    Button(
-                        action: {
-                            withAnimation(.appSnappy) {
-                                KitchenInventoryManager.shared.updateQuantity(for: item, delta: -1)
-                            }
-                        },
-                        label: {
-                            Image(systemName: "minus")
-                                .font(.system(size: AppTheme.fontSize12, weight: .bold))
-                                .adaptiveForegroundColor()
-                                .frame(width: 30, height: 30)
-                                .background(Circle().fill(.ultraThinMaterial))
-                        }
-                    )
-                    .buttonStyle(.plain)
-                    .disabled(item.quantity <= 1)
-
-                    Text(quantityText)
-                        .font(.subheadline.monospacedDigit())
-                        .fontWeight(.semibold)
-                        .adaptiveForegroundColor()
-                        .frame(minWidth: 24)
-
-                    Button(
-                        action: {
-                            withAnimation(.appSnappy) {
-                                KitchenInventoryManager.shared.updateQuantity(for: item, delta: 1)
-                            }
-                        },
-                        label: {
-                            Image(systemName: "plus")
-                                .font(.system(size: AppTheme.fontSize12, weight: .bold))
-                                .adaptiveForegroundColor()
-                                .frame(width: 30, height: 30)
-                                .background(Circle().fill(.ultraThinMaterial))
-                        }
-                    )
-                    .buttonStyle(.plain)
-                    .disabled(item.quantity >= 99)
-                }
-
-                Menu {
-                    Menu("Change Category") {
-                        ForEach(allCategoryChoices, id: \.self) { category in
-                            Button(action: {
-                                withAnimation(.appSnappy) {
-                                    KitchenInventoryManager.shared.updateCategory(for: item, category: category)
-                                }
-                            }) {
-                                if category == item.category {
-                                    Label(category, systemImage: "checkmark")
-                                } else {
-                                    Label(category, systemImage: CategoryClassifier.categoryIcon(for: category))
-                                }
-                            }
-                        }
-                    }
-
-                    Divider()
-
-                    Button(role: .destructive, action: {
+                Button(
+                    action: {
                         withAnimation(.appSnappy) {
-                            KitchenInventoryManager.shared.removeItem(item)
+                            KitchenInventoryManager.shared.updateQuantity(for: item, delta: 1)
                         }
-                    }) {
-                        Label("Remove", systemImage: "trash")
+                    },
+                    label: {
+                        Image(systemName: "plus")
+                            .font(.system(size: AppTheme.fontSize12, weight: .bold))
+                            .adaptiveForegroundColor()
+                            .frame(width: 30, height: 30)
+                            .background(Circle().fill(.ultraThinMaterial))
                     }
-                } label: {
-                    Image(systemName: "ellipsis")
-                        .font(.caption)
-                        .adaptiveSecondaryForeground()
-                        .frame(width: 18, height: 36)
-                        .contentShape(Rectangle())
-                }
+                )
                 .buttonStyle(.plain)
+                .disabled(item.quantity >= 99)
             }
-            .padding(.horizontal, AppTheme.spacing12)
-            .padding(.vertical, AppTheme.spacing10)
+
+            Menu {
+                Menu("Change Category") {
+                    ForEach(allCategoryChoices, id: \.self) { category in
+                        Button(action: {
+                            withAnimation(.appSnappy) {
+                                KitchenInventoryManager.shared.updateCategory(for: item, category: category)
+                            }
+                        }) {
+                            if category == item.category {
+                                Label(category, systemImage: "checkmark")
+                            } else {
+                                Label(category, systemImage: CategoryClassifier.categoryIcon(for: category))
+                            }
+                        }
+                    }
+                }
+
+                Divider()
+
+                Button(role: .destructive, action: {
+                    withAnimation(.appSnappy) {
+                        KitchenInventoryManager.shared.removeItem(item)
+                    }
+                }) {
+                    Label("Remove", systemImage: "trash")
+                }
+            } label: {
+                Image(systemName: "ellipsis")
+                    .font(.caption)
+                    .adaptiveSecondaryForeground()
+                    .frame(width: 18, height: 36)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
         }
+        .padding(.horizontal, AppTheme.spacing12)
+        .padding(.vertical, AppTheme.spacing10)
+        .appCard(elevated: true)
     }
 }

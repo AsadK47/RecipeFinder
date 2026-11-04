@@ -6,7 +6,6 @@ struct MealTimeSelectorSheet: View {
     let onContinue: (MealTime) -> Void
     
     @Environment(\.dismiss) var dismiss
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {

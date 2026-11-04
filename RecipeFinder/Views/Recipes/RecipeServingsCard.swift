@@ -5,25 +5,24 @@ struct RecipeServingsCard: View {
     @Binding var recipe: RecipeModel
 
     var body: some View {
-        GlassCard {
-            VStack(spacing: AppTheme.spacing16) {
-                HStack {
-                    servingsDisplay
-
-                    Divider()
-                        .frame(height: AppTheme.height60)
-                        .padding(.horizontal)
-
-                    servingsControls
-                }
+        VStack(spacing: AppTheme.spacing16) {
+            HStack {
+                servingsDisplay
 
                 Divider()
-                    .background(Color.white.opacity(AppTheme.shadowDarkOpacity))
+                    .frame(height: AppTheme.height60)
+                    .padding(.horizontal)
 
-                quickScaleButtons
+                servingsControls
             }
-            .padding()
+
+            Divider()
+                .background(Color.white.opacity(AppTheme.shadowDarkOpacity))
+
+            quickScaleButtons
         }
+        .padding()
+        .appCard(elevated: true)
     }
 
     private var servingsDisplay: some View {

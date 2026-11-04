@@ -162,30 +162,29 @@ struct RecipeIngredientsSection: View {
     }
 
     private var ingredientsList: some View {
-        GlassCard {
-            VStack(spacing: AppTheme.spacing16) {
-                if !hasSeenTapHint && !ingredientsState.contains(true) && !recipe.ingredients.isEmpty {
-                    tapHint
-                }
-                // ingredient.id identity lets SwiftUI diff individual rows, not rebuild all N on every pantry/shopping change.
-                let substituteIDs = ingredientsWithSubstitutes
-                ForEach(Array(recipe.ingredients.enumerated()), id: \.element.id) { index, ingredient in
-                    IngredientRowView(
-                        ingredient: ingredient,
-                        // Safe read: the parent resizes its state in onChange, which runs after this render sees an edited recipe.
-                        isChecked: ingredientsState[safe: index] ?? false,
-                        toggle: { onToggleIngredient(index) },
-                        scaleFactor: recipe.scaleFactor,
-                        measurementSystem: measurementSystem,
-                        onAddToShopping: { onAddToShopping(index) },
-                        isInShoppingList: isInShoppingList(ingredient),
-                        onTapQuantity: { onEditIngredient(index) },
-                        onSubstitute: (substituteIDs.contains(ingredient.id) && onSubstitute != nil) ? { onSubstitute?(index) } : nil
-                    )
-                }
+        VStack(spacing: AppTheme.spacing16) {
+            if !hasSeenTapHint && !ingredientsState.contains(true) && !recipe.ingredients.isEmpty {
+                tapHint
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(AppTheme.spacing24)
+            // ingredient.id identity lets SwiftUI diff individual rows, not rebuild all N on every pantry/shopping change.
+            let substituteIDs = ingredientsWithSubstitutes
+            ForEach(Array(recipe.ingredients.enumerated()), id: \.element.id) { index, ingredient in
+                IngredientRowView(
+                    ingredient: ingredient,
+                    // Safe read: the parent resizes its state in onChange, which runs after this render sees an edited recipe.
+                    isChecked: ingredientsState[safe: index] ?? false,
+                    toggle: { onToggleIngredient(index) },
+                    scaleFactor: recipe.scaleFactor,
+                    measurementSystem: measurementSystem,
+                    onAddToShopping: { onAddToShopping(index) },
+                    isInShoppingList: isInShoppingList(ingredient),
+                    onTapQuantity: { onEditIngredient(index) },
+                    onSubstitute: (substituteIDs.contains(ingredient.id) && onSubstitute != nil) ? { onSubstitute?(index) } : nil
+                )
+            }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(AppTheme.spacing24)
+        .appCard(elevated: true)
     }
 }

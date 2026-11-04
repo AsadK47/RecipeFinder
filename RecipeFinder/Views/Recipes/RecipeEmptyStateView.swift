@@ -6,7 +6,6 @@ struct RecipeEmptyStateView: View {
     let onClearFilters: () -> Void
 
     @Environment(\.colorScheme) private var colorScheme
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
 
     var body: some View {
         ScrollView {
@@ -35,17 +34,7 @@ struct RecipeEmptyStateView: View {
                         .adaptiveForegroundColor()
                         .padding(.horizontal, AppTheme.spacing20)
                         .padding(.vertical, AppTheme.spacing12)
-                        .background(
-                            Group {
-                                if cardStyle == .solid {
-                                    Capsule()
-                                        .fill(AppTheme.adaptiveCard(for: colorScheme))
-                                } else {
-                                    Capsule()
-                                        .fill(.ultraThinMaterial)
-                                }
-                            }
-                        )
+                        .appCard(in: Capsule())
                     })
                 }
             }

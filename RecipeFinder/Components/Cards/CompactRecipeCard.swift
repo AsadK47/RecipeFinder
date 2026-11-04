@@ -3,7 +3,6 @@ import SwiftUI
 struct CompactRecipeCard: View {
     let recipe: RecipeModel
     @Environment(\.colorScheme) var colorScheme
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
 
     private enum Layout {
         static let cardHeight: CGFloat = 220
@@ -69,26 +68,7 @@ struct CompactRecipeCard: View {
         }
         .padding(.horizontal, AppTheme.spacing12)
         .frame(maxWidth: .infinity, maxHeight: Layout.cardHeight, alignment: .top)
-        .background {
-            cardBackground
-        }
+        .appCard(cornerRadius: AppTheme.cornerRadius12)
         .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius12))
-    }
-
-    @ViewBuilder
-    private var cardBackground: some View {
-        if cardStyle == .solid {
-            RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                .fill(AppTheme.cardBackground(for: colorScheme))
-                .shadow(
-                    color: Color.black.opacity(CardViewLayout.shadowOpacitySolid),
-                    radius: AppTheme.shadowRadiusLarge,
-                    x: 0,
-                    y: AppTheme.shadowOffsetLarge
-                )
-        } else {
-            RoundedRectangle(cornerRadius: AppTheme.cornerRadius12)
-                .fill(.ultraThinMaterial)
-        }
     }
 }

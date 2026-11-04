@@ -5,7 +5,6 @@ struct MealTimeCard: View {
     let mealTime: MealTime
     let recipe: RecipeModel?
     var isRecurring: Bool = false
-    let cardStyle: CardStyle
     let colorScheme: ColorScheme
     var onRemove: (() -> Void)? = nil
 

@@ -7,7 +7,6 @@ struct ShoppingSectionsView: View {
     @Environment(\.shopping) private var manager
     @Environment(\.kitchen) private var kitchen
     @Environment(\.colorScheme) private var colorScheme
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
 
     /// Lowercased kitchen item names so each shopping row can flag "you already have this".
     private var kitchenNameSet: Set<String> {

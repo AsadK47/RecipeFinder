@@ -240,47 +240,44 @@ extension RecipeDetailView {
     }
 
     var tagsCard: some View {
-        GlassCard {
-            VStack(alignment: .leading, spacing: AppTheme.spacing8) {
-                Label("Tags", systemImage: "tag")
-                    .font(.caption)
-                    .adaptiveSecondaryForeground()
-                TagRowView(tags: recipe.tags, font: .subheadline)
-            }
-            .padding()
-            .frame(maxWidth: .infinity, alignment: .leading)
+        VStack(alignment: .leading, spacing: AppTheme.spacing8) {
+            Label("Tags", systemImage: "tag")
+                .font(.caption)
+                .adaptiveSecondaryForeground()
+            TagRowView(tags: recipe.tags, font: .subheadline)
         }
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .appCard(elevated: true)
     }
 
     var timeInfoCard: some View {
-        GlassCard {
-            InfoPairView(
-                label1: "Prep time", value1: recipe.prepTimeDisplay, icon1: "clock",
-                label2: "Cook time", value2: recipe.cookTimeDisplay, icon2: "flame"
-            )
-            .padding()
-        }
+        InfoPairView(
+            label1: "Prep time", value1: recipe.prepTimeDisplay, icon1: "clock",
+            label2: "Cook time", value2: recipe.cookTimeDisplay, icon2: "flame"
+        )
+        .padding()
+        .appCard(elevated: true)
         .editableCard(onEdit: { beginEdit(section: .details) }, hint: "Edit prep and cook time")
         .accessibilityIdentifier("recipe.card.time")
     }
 
     var detailsInfoCard: some View {
-        GlassCard {
-            VStack(spacing: 0) {
-                InfoPairView(
-                    label1: "Difficulty", value1: recipe.difficulty, icon1: "chart.bar",
-                    label2: "Category", value2: recipe.category, icon2: "fork.knife"
-                )
-                if let cuisine = recipe.cuisine, !cuisine.isEmpty {
-                    Divider()
-                        .padding(.horizontal, AppTheme.spacing24)
-                        .padding(.top, AppTheme.spacing12)
-                    InfoItem(icon: "globe", label: "Cuisine", value: cuisine)
-                        .padding(.top, AppTheme.spacing12)
-                }
+        VStack(spacing: 0) {
+            InfoPairView(
+                label1: "Difficulty", value1: recipe.difficulty, icon1: "chart.bar",
+                label2: "Category", value2: recipe.category, icon2: "fork.knife"
+            )
+            if let cuisine = recipe.cuisine, !cuisine.isEmpty {
+                Divider()
+                    .padding(.horizontal, AppTheme.spacing24)
+                    .padding(.top, AppTheme.spacing12)
+                InfoItem(icon: "globe", label: "Cuisine", value: cuisine)
+                    .padding(.top, AppTheme.spacing12)
             }
-            .padding()
         }
+        .padding()
+        .appCard(elevated: true)
         .editableCard(onEdit: { beginEdit(section: .details) }, hint: "Edit difficulty, category and cuisine")
     }
 
@@ -508,63 +505,62 @@ extension RecipeDetailView {
     }
 
     var cookHistoryCard: some View {
-        GlassCard {
-            VStack(alignment: .leading, spacing: AppTheme.spacing12) {
-                // Rating only appears once the recipe has actually been cooked — you rate what you've made,
-                // not a recipe you've never tried. Before the first cook the card leads with "Mark as Cooked".
-                if recipe.cookCount > 0 {
-                    HStack {
-                        Label("Rating", systemImage: "star")
-                            .font(.caption)
-                            .adaptiveSecondaryForeground()
-                        Spacer()
-                        StarRatingView(rating: recipe.rating, onTap: updateRating)
-                            .accessibilityIdentifier("recipe.rating")
-                    }
-
-                    Divider()
+        VStack(alignment: .leading, spacing: AppTheme.spacing12) {
+            // Rating only appears once the recipe has actually been cooked — you rate what you've made,
+            // not a recipe you've never tried. Before the first cook the card leads with "Mark as Cooked".
+            if recipe.cookCount > 0 {
+                HStack {
+                    Label("Rating", systemImage: "star")
+                        .font(.caption)
+                        .adaptiveSecondaryForeground()
+                    Spacer()
+                    StarRatingView(rating: recipe.rating, onTap: updateRating)
+                        .accessibilityIdentifier("recipe.rating")
                 }
 
-                HStack(alignment: .firstTextBaseline) {
-                    Label(
-                        recipe.cookCount == 0
-                            ? "Not cooked yet"
-                            : "Cooked \(recipe.cookCount) \(recipe.cookCount == 1 ? "time" : "times")",
-                        systemImage: "frying.pan"
-                    )
-                    .font(.caption)
-                    .adaptiveSecondaryForeground()
-
-                    if let lastCooked = recipe.lastCookedAt {
-                        Spacer()
-                        // Named relative ("2 minutes ago"); `style: .relative` read like a duration ("44 secs").
-                        Text(lastCooked.formatted(.relative(presentation: .named)))
-                            .font(.caption)
-                            .adaptiveSecondaryForeground()
-                    }
-                }
-
-                let cookedToday = recipe.wasCookedToday()
-                Button(action: recordCook) {
-                    Label(cookedToday ? "Cooked today" : "Mark as Cooked", systemImage: "checkmark.circle.fill")
-                        .font(.subheadline.weight(.semibold))
-                        .adaptiveForegroundColor()
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, AppTheme.spacing10)
-                        .background(
-                            RoundedRectangle(cornerRadius: AppTheme.cornerRadius8)
-                                .fill(AppTheme.accentColor.opacity(0.15))
-                        )
-                }
-                .buttonStyle(.plain)
-                .disabled(cookedToday)
-                .accessibilityIdentifier("recipe.markCooked")
-                .opacity(cookedToday ? AppTheme.glassLightOpacity : 1)
-                .accessibilityHint(cookedToday ? "Already logged today" : "Increments the cook count and records today")
+                Divider()
             }
-            .padding()
-            .frame(maxWidth: .infinity, alignment: .leading)
+
+            HStack(alignment: .firstTextBaseline) {
+                Label(
+                    recipe.cookCount == 0
+                        ? "Not cooked yet"
+                        : "Cooked \(recipe.cookCount) \(recipe.cookCount == 1 ? "time" : "times")",
+                    systemImage: "frying.pan"
+                )
+                .font(.caption)
+                .adaptiveSecondaryForeground()
+
+                if let lastCooked = recipe.lastCookedAt {
+                    Spacer()
+                    // Named relative ("2 minutes ago"); `style: .relative` read like a duration ("44 secs").
+                    Text(lastCooked.formatted(.relative(presentation: .named)))
+                        .font(.caption)
+                        .adaptiveSecondaryForeground()
+                }
+            }
+
+            let cookedToday = recipe.wasCookedToday()
+            Button(action: recordCook) {
+                Label(cookedToday ? "Cooked today" : "Mark as Cooked", systemImage: "checkmark.circle.fill")
+                    .font(.subheadline.weight(.semibold))
+                    .adaptiveForegroundColor()
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, AppTheme.spacing10)
+                    .background(
+                        RoundedRectangle(cornerRadius: AppTheme.cornerRadius8)
+                            .fill(AppTheme.accentColor.opacity(0.15))
+                    )
+            }
+            .buttonStyle(.plain)
+            .disabled(cookedToday)
+            .accessibilityIdentifier("recipe.markCooked")
+            .opacity(cookedToday ? AppTheme.glassLightOpacity : 1)
+            .accessibilityHint(cookedToday ? "Already logged today" : "Increments the cook count and records today")
         }
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .appCard(elevated: true)
     }
 
 }

@@ -8,7 +8,6 @@ struct RecipeSelectionSheet: View {
     let onSelectExisting: (RecipeModel) -> Void
 
     @State private var searchText = ""
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
 
     var filteredRecipes: [RecipeModel] {
         if searchText.isEmpty {

@@ -22,7 +22,6 @@ struct RecipeListSkeleton: View {
 /// One skeleton row mirroring `RecipeCard`'s layout: square image block, title bar, shorter metadata bar.
 private struct RecipeCardSkeleton: View {
     @Environment(\.colorScheme) private var colorScheme
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
 
     var body: some View {
         HStack(spacing: AppTheme.cardVerticalSpacing) {
@@ -44,23 +43,12 @@ private struct RecipeCardSkeleton: View {
             Spacer(minLength: 0)
         }
         .padding(AppTheme.spacing16)
-        .background { cardBackground }
+        .appCard(cornerRadius: AppTheme.cardCornerRadius)
         .clipShape(RoundedRectangle(cornerRadius: AppTheme.cardCornerRadius))
         .shimmering()
     }
 
     private var blockColor: Color {
         Color.primary.opacity(colorScheme == .dark ? 0.14 : 0.10)
-    }
-
-    @ViewBuilder
-    private var cardBackground: some View {
-        if cardStyle == .solid {
-            RoundedRectangle(cornerRadius: AppTheme.cardCornerRadius)
-                .fill(AppTheme.cardBackground(for: colorScheme))
-        } else {
-            RoundedRectangle(cornerRadius: AppTheme.cardCornerRadius)
-                .fill(.ultraThinMaterial)
-        }
     }
 }

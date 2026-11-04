@@ -38,7 +38,6 @@ struct MealPlanningView: View {
     /// Non-nil while the meal-reminder time picker is presented.
     @State private var reminderContext: ReminderContext?
 
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     @Environment(\.colorScheme) var colorScheme
 
     private let mealCalendar = MealPlanCalendar()
@@ -67,7 +66,6 @@ struct MealPlanningView: View {
                         if !pantryExpirySuggestions.isEmpty {
                             ExpiryRecipeSuggestionsSection(
                                 suggestions: pantryExpirySuggestions,
-                                cardStyle: cardStyle,
                                 colorScheme: colorScheme,
                                 onPlan: { recipe in
                                     pendingSuggestedRecipe = recipe
@@ -188,7 +186,6 @@ struct MealPlanningView: View {
             week: daysInCurrentWeek,
             selectedDate: selectedDate,
             monthYearString: monthYearString,
-            cardStyle: cardStyle,
             colorScheme: colorScheme,
             mealTimesFor: { date in
                 mealPlanningManager.mealPlans(for: date).map { $0.mealTime }
@@ -209,7 +206,6 @@ struct MealPlanningView: View {
         PlannedMealsSection(
             mealTimes: $orderedMealTimes,
             selectedDateString: selectedDateString,
-            cardStyle: cardStyle,
             colorScheme: colorScheme,
             recipeFor: { getRecipe(for: selectedDate, mealTime: $0) },
             mealPlanFor: { mealPlanningManager.mealPlan(for: selectedDate, mealTime: $0) },
@@ -241,7 +237,6 @@ struct MealPlanningView: View {
         SelectedDayEmptyStateView(
             selectedDateString: selectedDateString,
             shortDateString: shortDateString,
-            cardStyle: cardStyle,
             colorScheme: colorScheme,
             onAddMeal: {
                 showMealTimeSelector = true

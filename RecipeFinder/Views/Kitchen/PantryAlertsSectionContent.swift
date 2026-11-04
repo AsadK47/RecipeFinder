@@ -86,35 +86,34 @@ struct PantryAlertsSectionContent: View {
     }
 
     private func alertRow(_ item: KitchenInventoryModel, type: AlertType) -> some View {
-        GlassCard {
-            HStack(spacing: AppTheme.spacing12) {
-                Image(systemName: type.icon)
-                    .font(.body)
+        HStack(spacing: AppTheme.spacing12) {
+            Image(systemName: type.icon)
+                .font(.body)
+                .foregroundStyle(type.color)
+                .frame(width: AppTheme.iconSize24)
+
+            VStack(alignment: .leading, spacing: AppTheme.spacing2) {
+                Text(item.name)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .adaptiveForegroundColor()
+                    .lineLimit(1)
+                Text(item.expiryStatusText)
+                    .font(.caption)
                     .foregroundStyle(type.color)
-                    .frame(width: AppTheme.iconSize24)
-
-                VStack(alignment: .leading, spacing: AppTheme.spacing2) {
-                    Text(item.name)
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .adaptiveForegroundColor()
-                        .lineLimit(1)
-                    Text(item.expiryStatusText)
-                        .font(.caption)
-                        .foregroundStyle(type.color)
-                }
-
-                Spacer(minLength: 0)
-
-                if type == .lowStock {
-                    Text("Low stock")
-                        .font(.caption)
-                        .foregroundStyle(type.color)
-                }
             }
-            .padding(.horizontal, AppTheme.spacing12)
-            .padding(.vertical, AppTheme.spacing10)
+
+            Spacer(minLength: 0)
+
+            if type == .lowStock {
+                Text("Low stock")
+                    .font(.caption)
+                    .foregroundStyle(type.color)
+            }
         }
+        .padding(.horizontal, AppTheme.spacing12)
+        .padding(.vertical, AppTheme.spacing10)
+        .appCard(elevated: true)
     }
 
     private func deleteButton(_ item: KitchenInventoryModel) -> some View {

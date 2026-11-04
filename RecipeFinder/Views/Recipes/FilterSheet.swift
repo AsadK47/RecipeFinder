@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct FilterSheet: View {
-    @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
     
     let categories: [String]
     let difficulties: [String]
