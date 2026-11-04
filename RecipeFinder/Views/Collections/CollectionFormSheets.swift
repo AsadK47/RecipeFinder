@@ -10,35 +10,27 @@ struct NewCollectionSheet: View {
     @State private var selectedColor: CollectionColor = .blue
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                AppBackground()
-
-                Form {
-                    Section("Name") {
-                        TextField("Collection name", text: $name)
-                    }
-
-                    Section("Colour") {
-                        colorPicker
-                    }
-                }
-                .scrollContentBackground(.hidden)
+        Form {
+            Section("Name") {
+                TextField("Collection name", text: $name)
             }
-            .appNavigationTitle("New Collection")
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Create") {
-                        manager.createCollection(name: name, color: selectedColor)
-                        dismiss()
-                    }
-                    .disabled(name.isBlank)
-                }
+
+            Section("Colour") {
+                colorPicker
             }
         }
+        .scrollContentBackground(.hidden)
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Create") {
+                    manager.createCollection(name: name, color: selectedColor)
+                    dismiss()
+                }
+                .disabled(name.isBlank)
+            }
+        }
+        .sheetDismissButton("Cancel", placement: .cancellationAction)
+        .sheetScaffold("New Collection")
     }
 
     private var colorPicker: some View {
@@ -90,36 +82,28 @@ struct EditCollectionSheet: View {
     }
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                AppBackground()
-
-                Form {
-                    Section("Name") {
-                        TextField("Collection name", text: $name)
-                    }
-
-                    Section("Colour") {
-                        colorPicker
-                    }
-                }
-                .scrollContentBackground(.hidden)
+        Form {
+            Section("Name") {
+                TextField("Collection name", text: $name)
             }
-            .appNavigationTitle("Edit Collection")
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        manager.rename(collection, to: name)
-                        manager.recolor(collection, to: selectedColor)
-                        dismiss()
-                    }
-                    .disabled(name.isBlank)
-                }
+
+            Section("Colour") {
+                colorPicker
             }
         }
+        .scrollContentBackground(.hidden)
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Save") {
+                    manager.rename(collection, to: name)
+                    manager.recolor(collection, to: selectedColor)
+                    dismiss()
+                }
+                .disabled(name.isBlank)
+            }
+        }
+        .sheetDismissButton("Cancel", placement: .cancellationAction)
+        .sheetScaffold("Edit Collection")
     }
 
     private var colorPicker: some View {

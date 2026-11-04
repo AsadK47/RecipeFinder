@@ -16,55 +16,47 @@ struct PasteTextImportSheet: View {
     private var trimmed: String { text.trimmed }
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                AppBackground()
+        VStack(alignment: .leading, spacing: AppTheme.spacing16) {
+            Text("Paste a recipe from anywhere — a caption, notes, or a message. We'll pull out the ingredients and steps for you to review.")
+                .font(.subheadline)
+                .adaptiveForegroundColor()
 
-                VStack(alignment: .leading, spacing: AppTheme.spacing16) {
-                    Text("Paste a recipe from anywhere — a caption, notes, or a message. We'll pull out the ingredients and steps for you to review.")
-                        .font(.subheadline)
-                        .adaptiveForegroundColor()
-
-                    TextEditor(text: $text)
-                        .focused($focused)
-                        .frame(minHeight: 220)
-                        .padding(AppTheme.spacing8)
-                        .appCard(cornerRadius: AppTheme.cornerRadius12)
-                        .overlay(alignment: .topLeading) {
-                            if text.isEmpty {
-                                Text("Paste recipe text here…")
-                                    .adaptiveSecondaryForeground()
-                                    .padding(AppTheme.spacing16)
-                                    .allowsHitTesting(false)
-                            }
-                        }
-
-                    if let errorMessage {
-                        Text(errorMessage)
-                            .font(.footnote)
-                            .foregroundStyle(.orange)
-                    }
-
-                    Spacer()
-                }
-                .padding(AppTheme.spacing20)
-                .appNavigationTitle("Paste Text")
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button("Cancel") { dismiss() }
-                    }
-                    ToolbarItem(placement: .confirmationAction) {
-                        if isProcessing {
-                            ProgressView()
-                        } else {
-                            Button("Import") { run() }
-                                .disabled(trimmed.isEmpty)
-                        }
+            TextEditor(text: $text)
+                .focused($focused)
+                .frame(minHeight: 220)
+                .padding(AppTheme.spacing8)
+                .appCard(cornerRadius: AppTheme.cornerRadius12)
+                .overlay(alignment: .topLeading) {
+                    if text.isEmpty {
+                        Text("Paste recipe text here…")
+                            .adaptiveSecondaryForeground()
+                            .padding(AppTheme.spacing16)
+                            .allowsHitTesting(false)
                     }
                 }
-                .onAppear { focused = true }
+
+            if let errorMessage {
+                Text(errorMessage)
+                    .font(.footnote)
+                    .foregroundStyle(.orange)
+            }
+
+            Spacer()
+        }
+        .padding(AppTheme.spacing20)
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                if isProcessing {
+                    ProgressView()
+                } else {
+                    Button("Import") { run() }
+                        .disabled(trimmed.isEmpty)
+                }
             }
         }
+        .sheetDismissButton("Cancel", placement: .cancellationAction)
+        .onAppear { focused = true }
+        .sheetScaffold("Paste Text")
         .sheet(item: $prefill) { prefill in
             RecipeWizardView(prefilledData: prefill) { recipe in
                 onImport(recipe)

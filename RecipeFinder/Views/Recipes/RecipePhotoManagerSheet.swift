@@ -6,7 +6,6 @@ import UIKit
 struct RecipePhotoManagerSheet: View {
     @Binding var recipe: RecipeModel
 
-    @Environment(\.dismiss) private var dismiss
 
     @State private var selectedItems: [PhotosPickerItem] = []
     @State private var showCamera = false
@@ -23,41 +22,31 @@ struct RecipePhotoManagerSheet: View {
     }
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                AppBackground()
-
-                ScrollView {
-                    VStack(spacing: AppTheme.spacing20) {
-                        if allImageNames.isEmpty {
-                            emptyState
-                        } else {
-                            photoGrid
-                        }
-                        addButtons
-                    }
-                    .padding(AppTheme.spacing20)
+        ScrollView {
+            VStack(spacing: AppTheme.spacing20) {
+                if allImageNames.isEmpty {
+                    emptyState
+                } else {
+                    photoGrid
                 }
+                addButtons
             }
-            .appNavigationTitle("Photos")
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
-                }
-            }
-            .fullScreenCover(isPresented: $showCamera) {
-                CameraPicker { image in addPhotos([image]) }
-            }
-            .onChange(of: selectedItems) { _, items in
-                guard !items.isEmpty else { return }
-                Task { await addPickedItems(items) }
-            }
-            .alert("Couldn't Save Photos", isPresented: $showSaveError) {
-                Button("OK", role: .cancel) {}
-            } message: {
-                Text("Your photo change couldn't be saved. Please try again.")
-            }
+            .padding(AppTheme.spacing20)
         }
+        .sheetDismissButton()
+        .fullScreenCover(isPresented: $showCamera) {
+            CameraPicker { image in addPhotos([image]) }
+        }
+        .onChange(of: selectedItems) { _, items in
+            guard !items.isEmpty else { return }
+            Task { await addPickedItems(items) }
+        }
+        .alert("Couldn't Save Photos", isPresented: $showSaveError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Your photo change couldn't be saved. Please try again.")
+        }
+        .sheetScaffold("Photos")
     }
 
     private var emptyState: some View {

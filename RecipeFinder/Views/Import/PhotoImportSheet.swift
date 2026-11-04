@@ -28,51 +28,41 @@ struct PhotoImportSheet: View {
         // Capture theme/scheme as Sendable values so the @Sendable label closures don't touch @MainActor state.
         let theme = ThemeStore.shared.theme
         let scheme = colorScheme
-        return NavigationStack {
-            ZStack {
-                AppBackground()
+        return VStack(spacing: AppTheme.spacing16) {
+            Text("Point at a cookbook page, screenshot, or handwritten recipe. We read the text on your device — nothing leaves your phone.")
+                .font(.subheadline)
+                .adaptiveForegroundColor()
+                .multilineTextAlignment(.center)
 
-                VStack(spacing: AppTheme.spacing16) {
-                    Text("Point at a cookbook page, screenshot, or handwritten recipe. We read the text on your device — nothing leaves your phone.")
-                        .font(.subheadline)
-                        .adaptiveForegroundColor()
-                        .multilineTextAlignment(.center)
-
-                    PhotosPicker(selection: $selectedItem, matching: .images) {
-                        photoSourceLabel(icon: "photo.on.rectangle", title: "Choose from Library", theme: theme)
-                    }
-                    .disabled(isProcessing)
-
-                    if cameraAvailable {
-                        Button { showCamera = true } label: {
-                            photoSourceLabel(icon: "camera", title: "Take a Photo", theme: theme)
-                        }
-                        .disabled(isProcessing)
-                    }
-
-                    if isProcessing {
-                        ProgressView("Reading recipe…")
-                            .padding(.top, AppTheme.spacing8)
-                    }
-
-                    if let errorMessage {
-                        Text(errorMessage)
-                            .font(.footnote)
-                            .foregroundStyle(.orange)
-                            .multilineTextAlignment(.center)
-                    }
-
-                    Spacer()
-                }
-                .padding(AppTheme.spacing20)
-                .appNavigationTitle("Scan a Photo")
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button("Cancel") { dismiss() }
-                    }
-                }
+            PhotosPicker(selection: $selectedItem, matching: .images) {
+                photoSourceLabel(icon: "photo.on.rectangle", title: "Choose from Library", theme: theme)
             }
+            .disabled(isProcessing)
+
+            if cameraAvailable {
+                Button { showCamera = true } label: {
+                    photoSourceLabel(icon: "camera", title: "Take a Photo", theme: theme)
+                }
+                .disabled(isProcessing)
+            }
+
+            if isProcessing {
+                ProgressView("Reading recipe…")
+                    .padding(.top, AppTheme.spacing8)
+            }
+
+            if let errorMessage {
+                Text(errorMessage)
+                    .font(.footnote)
+                    .foregroundStyle(.orange)
+                    .multilineTextAlignment(.center)
+            }
+
+            Spacer()
         }
+        .padding(AppTheme.spacing20)
+        .sheetDismissButton("Cancel", placement: .cancellationAction)
+        .sheetScaffold("Scan a Photo")
         .onChange(of: selectedItem) { _, newItem in
             guard let newItem else { return }
             Task { await handlePickedItem(newItem) }

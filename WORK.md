@@ -1,3 +1,12 @@
+# WORK: De-duplication campaign batch 2 (2026-11-04) — #1 sheet scaffold DONE (uncommitted, build + 31 affected tests green, 10 sheets checked on sim)
+Order (user-approved): 1 sheet scaffold → 2 card styles → 3 adaptive colours → 4 search fields → 5 ingredient normalisers → 6 duration code.
+1. [x] `Components/Sheets/SheetScaffold.swift`: `.sheetScaffold(title)` (NavigationStack + AppBackground + appNavigationChrome) and
+   `.sheetDismissButton(_:placement:)` applied to 17 sheets. Decisions: modifier not container (toolbars must sit inside the stack, and
+   it avoids re-nesting); apply it LAST after .toolbar/.sheet. Dismiss buttons now plain system tint (dropped ad-hoc
+   adaptiveForegroundColor/accent/semibold) — intentional consistency. Not converted: buttons with side effects (wizard Cancel haptic,
+   cooking-mode Done→finish, Save/Apply), Settings screens without AppBackground (NotificationSettings/MealReminder time pickers), tab roots.
+**Next action:** user commits #1; then #2 card styles (15 hand-written cardStyle branches + GlassCard vs .appCard()).
+
 # WORK: De-duplication campaign (2026-11-04) — low-risk batch 1–6 DONE (1798 green, uncommitted)
 User: "search for duplication and remove it — works once, easier to maintain". Sweep (Explore agent) ranked 15; doing
 lowest-risk first, one at a time (build + affected tests each, full suite at end). Order / status:

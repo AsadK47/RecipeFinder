@@ -86,71 +86,65 @@ struct CookingModeView: View {
     // MARK: - Body
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                AppBackground()
-
-                VStack(spacing: 0) {
-                    progressBar
-                    Spacer(minLength: 0)
-                    contentCard
-                    Spacer(minLength: 0)
-                    navigationRow
-                }
-                .padding(.horizontal, AppTheme.spacing20)
-                .padding(.bottom, AppTheme.spacing32)
+        VStack(spacing: 0) {
+            progressBar
+            Spacer(minLength: 0)
+            contentCard
+            Spacer(minLength: 0)
+            navigationRow
+        }
+        .padding(.horizontal, AppTheme.spacing20)
+        .padding(.bottom, AppTheme.spacing32)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                // On the last step, Done counts as finishing — otherwise a user who cooked all the way
+                // through but tapped Done (not the green Finish) would silently lose streak/badge credit.
+                Button("Done") { isLast ? finishCooking() : dismiss() }
+                    .font(.body.weight(.semibold))
+                    .adaptiveForegroundColor()
             }
-            .appNavigationTitle(recipe.name)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    // On the last step, Done counts as finishing — otherwise a user who cooked all the way
-                    // through but tapped Done (not the green Finish) would silently lose streak/badge credit.
-                    Button("Done") { isLast ? finishCooking() : dismiss() }
-                        .font(.body.weight(.semibold))
-                        .adaptiveForegroundColor()
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    timerToolbarButton
-                }
-            }
-            .sheet(isPresented: $showTimerSheet) {
-                CookTimerView()
-            }
-            .onAppear {
-                UIApplication.shared.isIdleTimerDisabled = true
-                CookingSession.shared.start(
-                    recipeName: recipe.name,
-                    items: cookingItems.map { item in
-                        switch item {
-                        case .ingredientList:        return "First, gather your ingredients."
-                        case .prePrep(_, let text):  return text
-                        case .step(_, let text):     return text
-                        }
-                    }
-                )
-            }
-            .onDisappear {
-                UIApplication.shared.isIdleTimerDisabled = false
-                CookingSession.shared.end()
-            }
-            // Restore idle timer if interrupted (call/PiP/alert) and onDisappear never fires.
-            .onChange(of: scenePhase) { _, phase in
-                UIApplication.shared.isIdleTimerDisabled = (phase == .active)
-            }
-            .onChange(of: currentIndex) { _, new in
-                CookingSession.shared.setIndex(new)
-            }
-            .onReceive(NotificationCenter.default.publisher(for: .cookingModeNextStep)) { _ in
-                guard !isLast else { return }
-                withAnimation(.appSpring) { currentIndex += 1 }
-                HapticManager.shared.selection()
-            }
-            .onReceive(NotificationCenter.default.publisher(for: .cookingModePreviousStep)) { _ in
-                guard !isFirst else { return }
-                withAnimation(.appSpring) { currentIndex -= 1 }
-                HapticManager.shared.selection()
+            ToolbarItem(placement: .navigationBarTrailing) {
+                timerToolbarButton
             }
         }
+        .sheet(isPresented: $showTimerSheet) {
+            CookTimerView()
+        }
+        .onAppear {
+            UIApplication.shared.isIdleTimerDisabled = true
+            CookingSession.shared.start(
+                recipeName: recipe.name,
+                items: cookingItems.map { item in
+                    switch item {
+                    case .ingredientList:        return "First, gather your ingredients."
+                    case .prePrep(_, let text):  return text
+                    case .step(_, let text):     return text
+                    }
+                }
+            )
+        }
+        .onDisappear {
+            UIApplication.shared.isIdleTimerDisabled = false
+            CookingSession.shared.end()
+        }
+        // Restore idle timer if interrupted (call/PiP/alert) and onDisappear never fires.
+        .onChange(of: scenePhase) { _, phase in
+            UIApplication.shared.isIdleTimerDisabled = (phase == .active)
+        }
+        .onChange(of: currentIndex) { _, new in
+            CookingSession.shared.setIndex(new)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .cookingModeNextStep)) { _ in
+            guard !isLast else { return }
+            withAnimation(.appSpring) { currentIndex += 1 }
+            HapticManager.shared.selection()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .cookingModePreviousStep)) { _ in
+            guard !isFirst else { return }
+            withAnimation(.appSpring) { currentIndex -= 1 }
+            HapticManager.shared.selection()
+        }
+        .sheetScaffold(recipe.name)
     }
 
     // MARK: - Progress bar

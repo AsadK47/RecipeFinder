@@ -4,42 +4,28 @@ struct SubstituteSheetView: View {
     let ingredientName: String
     let substitutes: [String]
 
-    @Environment(\.dismiss) private var dismiss
-
     var body: some View {
-        ZStack {
-            AppBackground()
-
-            NavigationStack {
-                ScrollView {
-                    VStack(alignment: .leading, spacing: AppTheme.spacing16) {
-                        if substitutes.isEmpty {
-                            Text("No known substitutes for \(ingredientName).")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                                .padding(.top, AppTheme.spacing24)
-                                .frame(maxWidth: .infinity, alignment: .center)
-                        } else {
-                            ForEach(substitutes.indices, id: \.self) { index in
-                                substituteRow(substitutes[index], number: index + 1)
-                            }
-                        }
-                    }
-                    .padding(.horizontal, AppTheme.spacing20)
-                    .padding(.top, AppTheme.spacing16)
-                    .padding(.bottom, AppTheme.spacing40)
-                }
-                .scrollContentBackground(.hidden)
-                .navigationTitle("Substitute for \(ingredientName)")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button("Done") { dismiss() }
+        ScrollView {
+            VStack(alignment: .leading, spacing: AppTheme.spacing16) {
+                if substitutes.isEmpty {
+                    Text("No known substitutes for \(ingredientName).")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .padding(.top, AppTheme.spacing24)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                } else {
+                    ForEach(substitutes.indices, id: \.self) { index in
+                        substituteRow(substitutes[index], number: index + 1)
                     }
                 }
-                .toolbarBackground(.hidden, for: .navigationBar)
             }
+            .padding(.horizontal, AppTheme.spacing20)
+            .padding(.top, AppTheme.spacing16)
+            .padding(.bottom, AppTheme.spacing40)
         }
+        .scrollContentBackground(.hidden)
+        .sheetDismissButton()
+        .sheetScaffold("Substitute for \(ingredientName)")
     }
 
     private func substituteRow(_ text: String, number: Int) -> some View {

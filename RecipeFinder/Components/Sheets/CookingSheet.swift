@@ -7,7 +7,6 @@ struct CookingSheet: View {
 
     @Environment(\.recipeStore) private var recipeStore
     @Environment(\.badges) private var badges
-    @Environment(\.dismiss) private var dismiss
 
     private var metrics: BadgeMetrics {
         BadgeMetrics.from(recipes: recipeStore.recipes, streakWeeks: streak.currentWeeks)
@@ -28,25 +27,15 @@ struct CookingSheet: View {
     }
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                AppBackground()
-
-                ScrollView {
-                    VStack(spacing: AppTheme.spacing20) {
-                        streakCard
-                        badgesCard
-                    }
-                    .padding(AppTheme.spacing20)
-                }
+        ScrollView {
+            VStack(spacing: AppTheme.spacing20) {
+                streakCard
+                badgesCard
             }
-            .appNavigationTitle("Cooking")
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
-                }
-            }
+            .padding(AppTheme.spacing20)
         }
+        .sheetDismissButton()
+        .sheetScaffold("Cooking")
     }
 
     // MARK: - Streak

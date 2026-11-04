@@ -21,83 +21,69 @@ struct AddIngredientSheet: View {
     }
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                AppBackground()
-                
-                VStack(spacing: 0) {
-                    SearchBar(text: $searchText, placeholder: "Search Foods...")
-                        .padding(.horizontal, AppTheme.spacing20)
-                        .padding(.top, AppTheme.spacing16)
-                        .padding(.bottom, AppTheme.spacing12)
-                    
-                    if !searchText.isEmpty {
-                        ScrollView {
-                            LazyVStack(spacing: AppTheme.spacing8) {
-                                ForEach(searchResults, id: \.self) { food in
-                                    foodButton(food)
-                                }
-                            }
-                            .padding(.horizontal, AppTheme.spacing20)
-                            .padding(.vertical, AppTheme.spacing12)
-                        }
-                    } else if let category = selectedCategory {
-                        ScrollView {
-                            VStack(alignment: .leading, spacing: AppTheme.spacing16) {
-                                Button(action: {
-                                    withAnimation {
-                                        selectedCategory = nil
-                                        HapticManager.shared.light()
-                                    }
-                                }) {
-                                    HStack {
-                                        Image(systemName: "chevron.left")
-                                        Text("Back to Categories")
-                                    }
-                                    .foregroundStyle(AppTheme.accentColor)
-                                    .padding(.horizontal, AppTheme.spacing20)
-                                    .padding(.vertical, AppTheme.spacing8)
-                                }
-                                
-                                Text(category)
-                                    .font(.title2)
-                                    .fontWeight(.bold)
-                                    .adaptiveForegroundColor()
-                                    .padding(.horizontal, AppTheme.spacing20)
-                                
-                                LazyVStack(spacing: AppTheme.spacing8) {
-                                    ForEach(FoodsList.getFoods(forCategory: category), id: \.self) { food in
-                                        foodButton(food)
-                                    }
-                                }
-                                .padding(.horizontal, AppTheme.spacing20)
-                            }
-                            .padding(.vertical, AppTheme.spacing12)
-                        }
-                    } else {
-                        ScrollView {
-                            LazyVStack(spacing: AppTheme.spacing12) {
-                                ForEach(filteredCategories, id: \.self) { category in
-                                    categoryButton(category)
-                                }
-                            }
-                            .padding(.horizontal, AppTheme.spacing20)
-                            .padding(.vertical, AppTheme.spacing12)
+        VStack(spacing: 0) {
+            SearchBar(text: $searchText, placeholder: "Search Foods...")
+                .padding(.horizontal, AppTheme.spacing20)
+                .padding(.top, AppTheme.spacing16)
+                .padding(.bottom, AppTheme.spacing12)
+
+            if !searchText.isEmpty {
+                ScrollView {
+                    LazyVStack(spacing: AppTheme.spacing8) {
+                        ForEach(searchResults, id: \.self) { food in
+                            foodButton(food)
                         }
                     }
+                    .padding(.horizontal, AppTheme.spacing20)
+                    .padding(.vertical, AppTheme.spacing12)
                 }
-            }
-            .appNavigationTitle("Add Ingredients")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
-                        dismiss()
+            } else if let category = selectedCategory {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: AppTheme.spacing16) {
+                        Button(action: {
+                            withAnimation {
+                                selectedCategory = nil
+                                HapticManager.shared.light()
+                            }
+                        }) {
+                            HStack {
+                                Image(systemName: "chevron.left")
+                                Text("Back to Categories")
+                            }
+                            .foregroundStyle(AppTheme.accentColor)
+                            .padding(.horizontal, AppTheme.spacing20)
+                            .padding(.vertical, AppTheme.spacing8)
+                        }
+
+                        Text(category)
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .adaptiveForegroundColor()
+                            .padding(.horizontal, AppTheme.spacing20)
+
+                        LazyVStack(spacing: AppTheme.spacing8) {
+                            ForEach(FoodsList.getFoods(forCategory: category), id: \.self) { food in
+                                foodButton(food)
+                            }
+                        }
+                        .padding(.horizontal, AppTheme.spacing20)
                     }
-                    .foregroundStyle(AppTheme.accentColor)
-                    .accessibilityHint("Closes add ingredients screen")
+                    .padding(.vertical, AppTheme.spacing12)
+                }
+            } else {
+                ScrollView {
+                    LazyVStack(spacing: AppTheme.spacing12) {
+                        ForEach(filteredCategories, id: \.self) { category in
+                            categoryButton(category)
+                        }
+                    }
+                    .padding(.horizontal, AppTheme.spacing20)
+                    .padding(.vertical, AppTheme.spacing12)
                 }
             }
         }
+        .sheetDismissButton()
+        .sheetScaffold("Add Ingredients")
     }
     
     private func categoryButton(_ category: String) -> some View {

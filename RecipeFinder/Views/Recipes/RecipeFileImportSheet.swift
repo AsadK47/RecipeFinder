@@ -9,33 +9,22 @@ struct RecipeFileImportSheet: View {
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                AppBackground()
-
-                ScrollView {
-                    VStack(spacing: AppTheme.spacing24) {
-                        headerCard
-                        statsRow
-                        if !recipe.ingredients.isEmpty {
-                            ingredientPreview
-                        }
-                        saveButton
-                    }
-                    .padding(.horizontal, AppTheme.spacing20)
-                    .padding(.top, AppTheme.spacing20)
-                    .padding(.bottom, AppTheme.spacing100)
+        ScrollView {
+            VStack(spacing: AppTheme.spacing24) {
+                headerCard
+                statsRow
+                if !recipe.ingredients.isEmpty {
+                    ingredientPreview
                 }
-                .scrollContentBackground(.hidden)
+                saveButton
             }
-            .appNavigationTitle("Shared Recipe")
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
-                        .adaptiveForegroundColor()
-                }
-            }
+            .padding(.horizontal, AppTheme.spacing20)
+            .padding(.top, AppTheme.spacing20)
+            .padding(.bottom, AppTheme.spacing100)
         }
+        .scrollContentBackground(.hidden)
+        .sheetDismissButton("Cancel", placement: .cancellationAction)
+        .sheetScaffold("Shared Recipe")
     }
 
     // MARK: - Subviews

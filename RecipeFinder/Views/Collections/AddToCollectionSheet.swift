@@ -4,40 +4,31 @@ import SwiftUI
 struct AddToCollectionSheet: View {
     let recipe: RecipeModel
     @Environment(\.collections) private var manager
-    @Environment(\.dismiss) var dismiss
     @State private var showNewCollection = false
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                AppBackground()
-
-                Group {
-                    if manager.collections.isEmpty {
-                        emptyState
-                    } else {
-                        collectionList
-                    }
-                }
-            }
-            .appNavigationTitle("Add to Collection")
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Done") { dismiss() }
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        showNewCollection = true
-                    } label: {
-                        Image(systemName: "plus")
-                    }
-                    .accessibilityLabel("New Collection")
-                }
-            }
-            .sheet(isPresented: $showNewCollection) {
-                NewCollectionSheet(manager: manager)
+        Group {
+            if manager.collections.isEmpty {
+                emptyState
+            } else {
+                collectionList
             }
         }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    showNewCollection = true
+                } label: {
+                    Image(systemName: "plus")
+                }
+                .accessibilityLabel("New Collection")
+            }
+        }
+        .sheetDismissButton(placement: .cancellationAction)
+        .sheet(isPresented: $showNewCollection) {
+            NewCollectionSheet(manager: manager)
+        }
+        .sheetScaffold("Add to Collection")
     }
 
     private var collectionList: some View {

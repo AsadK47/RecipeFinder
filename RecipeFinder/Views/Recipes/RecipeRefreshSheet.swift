@@ -16,53 +16,46 @@ struct RecipeRefreshSheet: View {
     }
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                AppBackground()
-                List {
-                    Section {
-                        Label {
-                            Text("\(diff.changed.count) update\(diff.changed.count == 1 ? "" : "s") from ")
-                            + Text(sourceURL.host ?? "source").bold()
-                        } icon: {
-                            Image(systemName: "arrow.clockwise.circle.fill")
-                                .foregroundStyle(AppTheme.accentColor)
-                        }
-                        .font(.subheadline)
-                        .adaptiveForegroundColor()
-                        .listRowBackground(Color.clear)
-                    }
-
-                    Section("Changes") {
-                        ForEach(RecipeDiffField.allCases.filter { diff.changed.contains($0) }, id: \.self) { field in
-                            diffRow(for: field)
-                        }
-                    }
-
-                    Section {
-                        Text("Notes, tags, servings, ratings, and cook history are always preserved.")
-                            .font(.caption)
-                            .adaptiveSecondaryForeground()
-                            .listRowBackground(Color.clear)
-                    }
+        List {
+            Section {
+                Label {
+                    Text("\(diff.changed.count) update\(diff.changed.count == 1 ? "" : "s") from ")
+                    + Text(sourceURL.host ?? "source").bold()
+                } icon: {
+                    Image(systemName: "arrow.clockwise.circle.fill")
+                        .foregroundStyle(AppTheme.accentColor)
                 }
-                .scrollContentBackground(.hidden)
+                .font(.subheadline)
+                .adaptiveForegroundColor()
+                .listRowBackground(Color.clear)
             }
-            .appNavigationTitle("Update from Source")
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Not Now") { dismiss() }
+
+            Section("Changes") {
+                ForEach(RecipeDiffField.allCases.filter { diff.changed.contains($0) }, id: \.self) { field in
+                    diffRow(for: field)
                 }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Apply \(selectedFields.count)") {
-                        onApply(diff.applying(selections: selectedFields))
-                        dismiss()
-                    }
-                    .fontWeight(.semibold)
-                    .disabled(selectedFields.isEmpty)
-                }
+            }
+
+            Section {
+                Text("Notes, tags, servings, ratings, and cook history are always preserved.")
+                    .font(.caption)
+                    .adaptiveSecondaryForeground()
+                    .listRowBackground(Color.clear)
             }
         }
+        .scrollContentBackground(.hidden)
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Apply \(selectedFields.count)") {
+                    onApply(diff.applying(selections: selectedFields))
+                    dismiss()
+                }
+                .fontWeight(.semibold)
+                .disabled(selectedFields.isEmpty)
+            }
+        }
+        .sheetDismissButton("Not Now", placement: .cancellationAction)
+        .sheetScaffold("Update from Source")
     }
 
     private func diffRow(for field: RecipeDiffField) -> some View {

@@ -99,42 +99,36 @@ struct RecipeWizardView: View {
     ]
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                AppBackground()
-
-                ScrollView {
-                    VStack(alignment: .leading, spacing: AppTheme.spacing32) {
-                        sections
-                    }
-                    .padding(.top, AppTheme.spacing16)
-                    .padding(.horizontal, AppTheme.spacing20)
-                    .padding(.bottom, AppTheme.spacing32)
-                }
-                .onAppear {
-                    applyPrefilledData()
-                    // First full create-flow only — not focused edits or updates.
-                    if focus == nil, editingRecipeId == nil, !hasSeenWizardIntro {
-                        showIntro = true
-                    }
-                }
+        ScrollView {
+            VStack(alignment: .leading, spacing: AppTheme.spacing32) {
+                sections
             }
-            .appNavigationTitle(navigationTitleText)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
-                        HapticManager.shared.selection()
-                        dismiss()
-                    }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button(editingRecipeId != nil ? "Update" : "Save") {
-                        createRecipe()
-                    }
-                    .fontWeight(.semibold)
-                }
+            .padding(.top, AppTheme.spacing16)
+            .padding(.horizontal, AppTheme.spacing20)
+            .padding(.bottom, AppTheme.spacing32)
+        }
+        .onAppear {
+            applyPrefilledData()
+            // First full create-flow only — not focused edits or updates.
+            if focus == nil, editingRecipeId == nil, !hasSeenWizardIntro {
+                showIntro = true
             }
         }
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Cancel") {
+                    HapticManager.shared.selection()
+                    dismiss()
+                }
+            }
+            ToolbarItem(placement: .confirmationAction) {
+                Button(editingRecipeId != nil ? "Update" : "Save") {
+                    createRecipe()
+                }
+                .fontWeight(.semibold)
+            }
+        }
+        .sheetScaffold(navigationTitleText)
         .sheet(isPresented: $showIntro) {
             WizardIntroSheet {
                 hasSeenWizardIntro = true

@@ -178,41 +178,28 @@ enum LegalDocument {
 
 /// Shared frame for legal documents: themed background, title + subtitle header, scrolling body, Done button.
 struct LegalDocumentScaffold<Content: View>: View {
-    @Environment(\.dismiss) private var dismiss
     let title: String
     let subtitle: String
     @ViewBuilder let content: Content
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                AppBackground()
+        ScrollView {
+            VStack(alignment: .leading, spacing: AppTheme.spacing24) {
+                Text(title)
+                    .font(.system(size: AppTheme.fontSize32, weight: .bold))
+                    .adaptiveForegroundColor()
 
-                ScrollView {
-                    VStack(alignment: .leading, spacing: AppTheme.spacing24) {
-                        Text(title)
-                            .font(.system(size: AppTheme.fontSize32, weight: .bold))
-                            .adaptiveForegroundColor()
+                Text(subtitle)
+                    .font(.caption)
+                    .adaptiveSecondaryForeground()
 
-                        Text(subtitle)
-                            .font(.caption)
-                            .adaptiveSecondaryForeground()
+                Divider()
 
-                        Divider()
-
-                        content
-                    }
-                    .padding(AppTheme.spacing32)
-                }
+                content
             }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
-                        dismiss()
-                    }
-                }
-            }
+            .padding(AppTheme.spacing32)
         }
+        .sheetDismissButton()
+        .sheetScaffold()
     }
 }

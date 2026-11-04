@@ -7,7 +7,6 @@ struct RecipeSelectionSheet: View {
     let mealTime: MealTime?
     let onSelectExisting: (RecipeModel) -> Void
 
-    @Environment(\.dismiss) var dismiss
     @State private var searchText = ""
     @AppStorage("cardStyle") private var cardStyle: CardStyle = .frosted
 
@@ -19,55 +18,42 @@ struct RecipeSelectionSheet: View {
     }
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                AppBackground()
+        VStack(spacing: AppTheme.spacing12) {
+            SearchBar(text: $searchText, placeholder: "Search Recipes...")
+                .padding(.horizontal)
 
-                VStack(spacing: AppTheme.spacing12) {
-                    SearchBar(text: $searchText, placeholder: "Search Recipes...")
-                        .padding(.horizontal)
-
-                    if filteredRecipes.isEmpty {
-                        Spacer()
-                        EmptyStateView(
-                            icon: "book.closed",
-                            title: "No recipes found",
-                            message: "Try a different search, or add a recipe to your library."
-                        )
-                        Spacer()
-                    } else {
-                        ScrollView {
-                            LazyVGrid(columns: [
-                                GridItem(.flexible()),
-                                GridItem(.flexible())
-                            ], spacing: AppTheme.spacing12) {
-                                ForEach(filteredRecipes) { recipe in
-                                    Button(action: {
-                                        onSelectExisting(recipe)
-                                        HapticManager.shared.light()
-                                    }) {
-                                        MealPickerRecipeCard(recipe: recipe)
-                                    }
-                                    .buttonStyle(.plain)
-                                }
+            if filteredRecipes.isEmpty {
+                Spacer()
+                EmptyStateView(
+                    icon: "book.closed",
+                    title: "No recipes found",
+                    message: "Try a different search, or add a recipe to your library."
+                )
+                Spacer()
+            } else {
+                ScrollView {
+                    LazyVGrid(columns: [
+                        GridItem(.flexible()),
+                        GridItem(.flexible())
+                    ], spacing: AppTheme.spacing12) {
+                        ForEach(filteredRecipes) { recipe in
+                            Button(action: {
+                                onSelectExisting(recipe)
+                                HapticManager.shared.light()
+                            }) {
+                                MealPickerRecipeCard(recipe: recipe)
                             }
-                            .padding(.horizontal)
-                            .padding(.bottom, AppTheme.spacing100)
+                            .buttonStyle(.plain)
                         }
                     }
-                }
-                .padding(.top, AppTheme.spacing8)
-            }
-            .navigationTitle(mealTime.map { "Add to \($0.rawValue)" } ?? "Add Recipe")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
-                        .adaptiveForegroundColor()
+                    .padding(.horizontal)
+                    .padding(.bottom, AppTheme.spacing100)
                 }
             }
-            .toolbarBackground(.hidden, for: .navigationBar)
         }
+        .padding(.top, AppTheme.spacing8)
+        .sheetDismissButton("Cancel", placement: .cancellationAction)
+        .sheetScaffold(mealTime.map { "Add to \($0.rawValue)" } ?? "Add Recipe")
     }
 }
 
