@@ -8,15 +8,7 @@ enum KitchenRecipeMatcher {
 
     /// Normalises an ingredient name to its comparable main term (lowercased, whitespace-collapsed, qualifiers stripped).
     static func normalizedTerm(_ raw: String) -> String {
-        normCache.value(for: raw) { _ in
-            let main = IngredientNameFormatter.extractMainName(raw)
-                .lowercased()
-                .trimmed
-            return main
-                .components(separatedBy: .whitespacesAndNewlines)
-                .filter { !$0.isEmpty }
-                .joined(separator: " ")
-        }
+        normCache.value(for: raw) { IngredientNameFormatter.matchKey($0) }
     }
 
     /// Two normalised terms match on exact equality or a shared whole word (≥3 chars), never on substrings ("gin" ≠ "ginger").

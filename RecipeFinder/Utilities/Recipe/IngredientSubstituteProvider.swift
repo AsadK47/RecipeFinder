@@ -1,25 +1,28 @@
 import Foundation
 
-/// Curated ingredient-substitution table; both sides normalized so lookups are case/whitespace insensitive.
+/// Curated ingredient-substitution table, looked up by `IngredientNameFormatter.matchKey` so prep words, amounts and case don't matter.
 enum IngredientSubstituteProvider {
 
     // Called per ingredient per RecipeIngredientsSection body eval; cache so repeated renders are O(1).
     private static let cache = MemoCache<String, [String]>(maxSize: 300)
 
     static func substitutes(for ingredientName: String) -> [String] {
-        let key = normalize(ingredientName)
-        return cache.value(for: key) { normalized in
-            if let exact = table[normalized] { return exact }
-            // Partial match: "large eggs" → "eggs", "full-fat buttermilk" → "buttermilk"
-            for (tableKey, subs) in table where normalized.contains(tableKey) || tableKey.contains(normalized) {
-                return subs
-            }
-            return []
+        let key = IngredientNameFormatter.matchKey(ingredientName)
+        return cache.value(for: key) { key in
+            if let exact = table[key] { return exact }
+            // Whole-word match, most specific key first: "large eggs" → "eggs", "full-fat buttermilk" → "buttermilk"
+            // (not "butter"/"milk"), and "eggplant" matches nothing.
+            let words = IngredientWordMatcher.words(in: key)
+            return keysBySpecificity
+                .first { IngredientWordMatcher.matches(textWords: words, keyword: $0) }
+                .flatMap { table[$0] } ?? []
         }
     }
 
-    private static func normalize(_ name: String) -> String {
-        name.lowercased().trimmed
+    // Longest key first, then alphabetical, so the winner is deterministic (Dictionary order isn't).
+    private static let keysBySpecificity: [String] = table.keys.sorted { lhs, rhs in
+        let l = lhs.split(separator: " ").count, r = rhs.split(separator: " ").count
+        return l != r ? l > r : lhs < rhs
     }
 
     private static let table: [String: [String]] = [

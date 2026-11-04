@@ -201,4 +201,20 @@ import Foundation
             "Expected '\(name)' to resolve to a known ingredient"
         )
     }
+
+    // MARK: - Lookup key (shared IngredientNameFormatter.matchKey)
+
+    @Test("Decorated names find the same entry as the plain name", arguments: [
+        ("2 large eggs, beaten", 155.0),
+        ("Fresh basil, chopped", 23.0),
+        ("Unsalted butter, melted", 717.0),
+    ])
+    func lookupIgnoresDecoration(name: String, kcal: Double) {
+        #expect(NutritionDatabase.lookup(name)?.kcalPer100g == kcal)
+    }
+
+    @Test func lookupFallbackIsWholeWordOnly() {
+        // Used to substring-match "butter" (717 kcal) inside "buttercream".
+        #expect(NutritionDatabase.lookup("buttercream") == nil)
+    }
 }

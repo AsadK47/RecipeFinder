@@ -33,4 +33,13 @@ struct IngredientNameFormatterTests {
     func noPrep() {
         #expect(IngredientNameFormatter.extractPreparationNotes("Kosher Salt") == nil)
     }
+
+    @Test("Match key is the lowercased main name, so decorated and plain names compare equal", arguments: [
+        ("Fresh Basil", "basil"),
+        ("  Chicken   Breast, diced ", "chicken breast"),
+        ("2 Large Eggs (Room Temperature)", "large eggs"),
+    ])
+    func matchKey(input: String, expected: String) {
+        #expect(IngredientNameFormatter.matchKey(input) == expected)
+    }
 }

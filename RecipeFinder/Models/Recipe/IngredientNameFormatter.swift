@@ -74,6 +74,15 @@ struct IngredientNameFormatter {
         return removeLeadingPrepWords(result)
     }
     
+    /// The one comparison key for matching an ingredient against anything (pantry, substitutes, nutrition): the main
+    /// name lowercased with whitespace collapsed, so "Fresh Basil" and "basil" compare equal.
+    static func matchKey(_ name: String) -> String {
+        extractMainName(name)
+            .lowercased()
+            .split(whereSeparator: \.isWhitespace)
+            .joined(separator: " ")
+    }
+
     static func extractPreparationNotes(_ name: String) -> String? {
         let parts = name.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
         var phrases: [String] = []

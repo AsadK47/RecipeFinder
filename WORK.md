@@ -1,4 +1,4 @@
-# WORK: De-duplication campaign batch 2 (2026-11-04) — #1 fc4920b, #2 0662f3f, 2b 202dd70 committed; #3 d151d9a committed; #4 search fields DONE (uncommitted, 1798 green, 5 fields sim-checked)
+# WORK: De-duplication campaign batch 2 (2026-11-04) — #1 fc4920b, #2 0662f3f, 2b 202dd70 committed; #3 d151d9a committed; #4 28fc2d0 committed; #5 normalisers DONE (uncommitted, 1811 green)
 Order (user-approved): 1 sheet scaffold → 2 card styles → 3 adaptive colours → 4 search fields → 5 ingredient normalisers → 6 duration code.
 1. [x] `Components/Sheets/SheetScaffold.swift`: `.sheetScaffold(title)` (NavigationStack + AppBackground + appNavigationChrome) and
    `.sheetDismissButton(_:placement:)` applied to 17 sheets. Decisions: modifier not container (toolbars must sit inside the stack, and
@@ -22,7 +22,13 @@ Order (user-approved): 1 sheet scaffold → 2 card styles → 3 adaptive colours
    (AppTheme+Gradients), UIKit tab bar (ContentView). Pre-existing 🟢 seen on sim: About icon teal-on-teal in Light.
 4. [x] SearchBar deleted; AppSearchField takes optional `isFocused` (owns @FocusState when nil) — 3 sheets switched. Sheet fields now
    match the tab-header look (callout font, 14pt vertical padding, 44pt Cancel target).
-**Next action:** user commits #4; then #5 ingredient normalisers (behaviour change — map all 6, write agreeing tests FIRST).
+5. [x] Six "normalisers" were two concepts: canonical display name (IngredientNormalizer — synonyms; autocomplete already reuses it;
+   KEPT) vs match key. Match key unified: `IngredientNameFormatter.matchKey` (extractMainName + lowercase + collapse ws) now used by
+   KitchenRecipeMatcher.normalizedTerm, IngredientSubstituteProvider (was raw lowercase + substring both ways in random dict order →
+   "eggplant" got egg subs) and NutritionDatabase (adds its own descriptor filter on top; last-resort fallback substring → whole-word,
+   longest/alphabetical). BackupMerge.normalizedName is recipe names — out of scope. +13 tests. Accepted: names that only
+   substring-matched nutrition before (e.g. "buttercream" → butter) now count as unknown → nutrition coverage may dip slightly.
+**Next action:** user commits #5; then #6 duration formatters/minute-parsers.
 
 # WORK: De-duplication campaign (2026-11-04) — low-risk batch 1–6 DONE (1798 green, uncommitted)
 User: "search for duplication and remove it — works once, easier to maintain". Sweep (Explore agent) ranked 15; doing

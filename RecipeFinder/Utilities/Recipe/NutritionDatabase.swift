@@ -57,18 +57,18 @@ enum NutritionDatabase {
             if let entry = entries[candidate] { return entry }
         }
 
-        // Fall back to entry whose key is the longest substring of the normalised name
-        var best: (key: String, entry: Entry)? = nil
-        for (dbKey, entry) in entries where dbKey.count >= 3 {
-            if key.contains(dbKey), best == nil || dbKey.count > best!.key.count {
-                best = (dbKey, entry)
-            }
-        }
-        return best?.entry
+        // Fall back to the longest entry key found as whole words ("egg" must not match "eggplant"); ties break
+        // alphabetically so the result doesn't depend on Dictionary order.
+        let keyWords = IngredientWordMatcher.words(in: key)
+        let best = entries.keys
+            .filter { $0.count >= 3 && IngredientWordMatcher.matches(textWords: keyWords, keyword: $0) }
+            .max { ($0.count, $1) < ($1.count, $0) }
+        return best.flatMap { entries[$0] }
     }
 
     private static func normalize(_ name: String) -> String {
-        let base = name.lowercased().components(separatedBy: ",").first ?? name.lowercased()
+        // Shared match key, then drop the descriptors only nutrition cares to ignore ("large", "extra virgin", "low fat").
+        let base = IngredientNameFormatter.matchKey(name)
         let adjectives: Set<String> = [
             "fresh", "dried", "frozen", "canned", "tinned", "chopped", "diced",
             "sliced", "minced", "crushed", "grated", "shredded", "cooked", "raw",
@@ -84,8 +84,8 @@ enum NutritionDatabase {
         ]
         let words = base
             .components(separatedBy: .whitespaces)
-            .filter { !$0.isEmpty && !adjectives.contains($0) && !$0.hasPrefix("(") }
-        return words.joined(separator: " ").trimmingCharacters(in: .whitespaces)
+            .filter { !$0.isEmpty && !adjectives.contains($0) }
+        return words.joined(separator: " ")
     }
 
     // MARK: - Reference data (per 100 g, UK FSA / USDA)
